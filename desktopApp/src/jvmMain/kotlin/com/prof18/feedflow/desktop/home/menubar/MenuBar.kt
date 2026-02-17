@@ -12,36 +12,31 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.SingletonImageLoader
 import coil3.compose.LocalPlatformContext
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.DesktopConfig
-import com.prof18.feedflow.desktop.accounts.AccountsScreen
-import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
-import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
-import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
-import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.shared.presentation.MenuBarViewModel
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FrameWindowScope.FeedFlowMenuBar(
     state: MenuBarState,
     actions: MenuBarActions,
+    onNavigateToFeedSourceList: () -> Unit,
+    onNavigateToBlockedWords: () -> Unit,
+    onNavigateToAccounts: () -> Unit,
 ) {
     val isMacOS = getDesktopOS().isMacOs()
     val appConfig = DI.koin.get<DesktopConfig>()
     val userFeedbackReporter = DI.koin.get<UserFeedbackReporter>()
-    val navigator = LocalNavigator.currentOrThrow
-    val menuBarViewModel = desktopViewModel { DI.koin.get<MenuBarViewModel>() }
+    val menuBarViewModel = koinViewModel<MenuBarViewModel>()
     val settingsState by menuBarViewModel.state.collectAsState()
     var showPrefetchWarningDialog by remember { mutableStateOf(false) }
     var showClearDownloadedArticlesDialog by remember { mutableStateOf(false) }
@@ -50,21 +45,13 @@ fun FrameWindowScope.FeedFlowMenuBar(
     val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
     val feedMenuCallbacks = FeedMenuCallbacks(
         onAddFeed = {
-            navigator.push(
-                AddFeedFullScreen(
-                    onFeedAdded = actions.onRefreshClick,
-                ),
-            )
+            actions.onRefreshClick()
         },
         onEditFeed = { feedSource ->
-            navigator.push(EditFeedScreen(feedSource))
+            // This is actually not used in the desktop menu bar but kept for consistency
         },
-        onFeedsClick = {
-            navigator.push(FeedSourceListScreen())
-        },
-        onBlockedWordsClick = {
-            navigator.push(BlockedWordsScreen())
-        },
+        onFeedsClick = onNavigateToFeedSourceList,
+        onBlockedWordsClick = onNavigateToBlockedWords,
     )
     val viewMenuCallbacks = ViewMenuCallbacks(
         onThemeModeSelected = menuBarViewModel::updateThemeMode,
@@ -73,9 +60,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
         onFeedOrderSelected = menuBarViewModel::updateFeedOrder,
     )
     val behaviorMenuCallbacks = BehaviorMenuCallbacks(
-        onAccountsClick = {
-            navigator.push(AccountsScreen())
-        },
+        onAccountsClick = onNavigateToAccounts,
         onReaderModeToggled = menuBarViewModel::updateReaderMode,
         onSaveReaderModeContentToggled = menuBarViewModel::updateSaveReaderModeContent,
         onPrefetchToggle = { enabled ->

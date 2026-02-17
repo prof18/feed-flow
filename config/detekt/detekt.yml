@@ -1068,7 +1068,7 @@ Compose:
   CompositionLocalAllowlist:
     active: true
     # -- You can optionally define a list of CompositionLocals that are allowed here
-    allowedCompositionLocals: LocalComponentContext, LocalFeedFlowStrings, LocalReduceMotion
+    allowedCompositionLocals: LocalComponentContext, LocalFeedFlowStrings, LocalReduceMotion, LocalComposeWindow
   CompositionLocalNaming:
     active: true
   ContentEmitterReturningValues:

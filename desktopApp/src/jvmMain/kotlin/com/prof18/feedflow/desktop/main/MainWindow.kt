@@ -1,8 +1,15 @@
 package com.prof18.feedflow.desktop.main
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,6 +29,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,22 +40,60 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowState
-import cafe.adriel.voyager.navigator.CurrentScreen
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.transitions.ScaleTransition
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.DesktopDatabaseErrorState
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
+import com.prof18.feedflow.desktop.Accounts
+import com.prof18.feedflow.desktop.AddFeed
+import com.prof18.feedflow.desktop.BazquxSync
+import com.prof18.feedflow.desktop.BlockedWords
 import com.prof18.feedflow.desktop.DesktopConfig
-import com.prof18.feedflow.desktop.desktopViewModel
+import com.prof18.feedflow.desktop.DropboxSync
+import com.prof18.feedflow.desktop.EditFeed
+import com.prof18.feedflow.desktop.FeedSourceList
+import com.prof18.feedflow.desktop.FeedSuggestions
+import com.prof18.feedflow.desktop.FeedbinSync
+import com.prof18.feedflow.desktop.FreshRssSync
+import com.prof18.feedflow.desktop.GoogleDriveSync
+import com.prof18.feedflow.desktop.Home
+import com.prof18.feedflow.desktop.ICloudSync
+import com.prof18.feedflow.desktop.ImportExport
+import com.prof18.feedflow.desktop.MinifluxSync
+import com.prof18.feedflow.desktop.ReaderMode
+import com.prof18.feedflow.desktop.Search
+import com.prof18.feedflow.desktop.accounts.AccountsScreen
+import com.prof18.feedflow.desktop.accounts.bazqux.BazquxSyncScreen
+import com.prof18.feedflow.desktop.accounts.dropbox.DropboxSyncScreen
+import com.prof18.feedflow.desktop.accounts.feedbin.FeedbinSyncScreen
+import com.prof18.feedflow.desktop.accounts.freshrss.FreshRssSyncScreen
+import com.prof18.feedflow.desktop.accounts.googledrive.GoogleDriveSyncScreen
+import com.prof18.feedflow.desktop.accounts.icloud.ICloudSyncScreen
+import com.prof18.feedflow.desktop.accounts.miniflux.MinifluxSyncScreen
+import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
+import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
+import com.prof18.feedflow.desktop.feedsuggestions.FeedSuggestionsScreen
+import com.prof18.feedflow.desktop.home.HomeScreen
 import com.prof18.feedflow.desktop.home.menubar.FeedFlowMenuBar
 import com.prof18.feedflow.desktop.home.menubar.MenuBarActions
 import com.prof18.feedflow.desktop.home.menubar.MenuBarState
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
+import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
+import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
+import com.prof18.feedflow.desktop.toEditFeed
+import com.prof18.feedflow.desktop.toFeedSource
+import com.prof18.feedflow.desktop.toReaderMode
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
+import com.prof18.feedflow.desktop.utils.LocalComposeWindow
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
@@ -58,6 +104,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
 import kotlin.math.roundToInt
@@ -214,8 +261,8 @@ private fun FrameWindowScope.MainWindowContent(
     isDarkTheme: Boolean,
     appConfig: DesktopConfig,
 ) {
-    val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
-    val feedListSettingsViewModel = desktopViewModel { DI.koin.get<FeedListSettingsViewModel>() }
+    val homeViewModel = koinViewModel<HomeViewModel>()
+    val feedListSettingsViewModel = koinViewModel<FeedListSettingsViewModel>()
 
     LaunchedEffect(Unit) {
         homeViewModel.onAppLaunch()
@@ -298,96 +345,119 @@ private fun FrameWindowScope.MainWindowContent(
         val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
         val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsState()
 
-        Surface(
-            modifier = Modifier
-                .then(
-                    if (getDesktopOS().isMacOs()) {
-                        Modifier
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(top = Spacing.regular)
-                    } else {
-                        Modifier
-                    },
-                ),
-        ) {
-            Navigator(
-                @Suppress("ViewModelForwarding")
-                HomeScreenContainer(
-                    frameWindowScope = this@MainWindowContent,
-                    appEnvironment = appConfig.appEnvironment,
-                    version = appConfig.version,
-                    homeViewModel = homeViewModel,
-                    listState = listState,
-                ),
-            ) { navigator ->
-                FeedFlowMenuBar(
-                    state = MenuBarState(
-                        showDebugMenu = appConfig.appEnvironment.isDebug(),
-                        feedFilter = currentFeedFilter,
-                        isSyncUploadRequired = isSyncUploadRequired,
-                    ),
-                    actions = MenuBarActions(
-                        onRefreshClick = {
-                            scope.launch {
-                                listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                                homeViewModel.getNewFeeds()
-                            }
-                        },
-                        onMarkAllReadClick = {
-                            showMarkAllReadDialog = true
-                        },
-                        onImportExportClick = {
-                            navigator.push(
-                                ImportExportScreen(
-                                    composeWindow = window,
-                                    triggerFeedFetch = {
-                                        homeViewModel.getNewFeeds()
-                                    },
-                                ),
-                            )
-                        },
-                        onClearOldFeedClick = {
-                            showClearOldArticlesDialog = true
-                        },
-                        onAboutClick = {
-                            aboutDialogVisibility = true
-                        },
-                        onForceRefreshClick = {
-                            scope.launch {
-                                listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                                homeViewModel.forceFeedRefresh()
-                            }
-                        },
-                        onFeedFontScaleClick = {
-                            feedListFontDialogState = true
-                        },
-                        deleteFeeds = {
-                            homeViewModel.deleteAllFeeds()
-                        },
-                        onBackupClick = {
-                            homeViewModel.enqueueBackup()
-                        },
-                        onExitClick = {
-                            window.dispatchEvent(WindowEvent(window, WindowEvent.WINDOW_CLOSING))
-                        },
-                    ),
-                )
-
-                if (reduceMotionEnabled) {
-                    CurrentScreen()
-                } else {
-                    ScaleTransition(navigator)
-                }
+        val backStack = remember { mutableStateListOf<NavKey>(Home) }
+        val navigateBack: () -> Unit = {
+            if (backStack.size > 1) {
+                backStack.removeLastOrNull()
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom,
+        CompositionLocalProvider(
+            LocalScrollbarStyle provides scrollbarStyle(),
+            LocalComposeWindow provides window,
         ) {
-            SnackbarHost(snackbarHostState)
+            Surface(
+                modifier = Modifier
+                    .then(
+                        if (getDesktopOS().isMacOs()) {
+                            Modifier
+                                .background(MaterialTheme.colorScheme.background)
+                                .padding(top = Spacing.regular)
+                        } else {
+                            Modifier
+                        },
+                    ),
+            ) {
+                Box {
+                    NavDisplay(
+                        backStack = backStack,
+                        onBack = navigateBack,
+                        transitionSpec = {
+                            if (reduceMotionEnabled) {
+                                EnterTransition.None togetherWith ExitTransition.None
+                            } else {
+                                fadeIn(animationSpec = tween(durationMillis = 150)) togetherWith
+                                    fadeOut(animationSpec = tween(durationMillis = 150))
+                            }
+                        },
+                        popTransitionSpec = {
+                            if (reduceMotionEnabled) {
+                                EnterTransition.None togetherWith ExitTransition.None
+                            } else {
+                                fadeIn(animationSpec = tween(durationMillis = 150)) togetherWith
+                                    fadeOut(animationSpec = tween(durationMillis = 150))
+                            }
+                        },
+                        entryProvider = entryProvider {
+                            screens(
+                                backStack = backStack,
+                                navigateBack = navigateBack,
+                                homeViewModel = homeViewModel,
+                                snackbarHostState = snackbarHostState,
+                                listState = listState,
+                            )
+                        },
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Bottom,
+                    ) {
+                        SnackbarHost(snackbarHostState)
+                    }
+                }
+            }
+
+            FeedFlowMenuBar(
+                state = MenuBarState(
+                    showDebugMenu = appConfig.appEnvironment.isDebug(),
+                    feedFilter = currentFeedFilter,
+                    isSyncUploadRequired = isSyncUploadRequired,
+                ),
+                actions = MenuBarActions(
+                    onRefreshClick = {
+                        scope.launch {
+                            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                            homeViewModel.getNewFeeds()
+                        }
+                    },
+                    onMarkAllReadClick = {
+                        showMarkAllReadDialog = true
+                    },
+                    onImportExportClick = {
+                        backStack.add(ImportExport)
+                    },
+                    onClearOldFeedClick = {
+                        showClearOldArticlesDialog = true
+                    },
+                    onAboutClick = {
+                        aboutDialogVisibility = true
+                    },
+                    onForceRefreshClick = {
+                        scope.launch {
+                            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                            homeViewModel.forceFeedRefresh()
+                        }
+                    },
+                    onFeedFontScaleClick = {
+                        feedListFontDialogState = true
+                    },
+                    deleteFeeds = {
+                        homeViewModel.deleteAllFeeds()
+                    },
+                    onBackupClick = {
+                        homeViewModel.enqueueBackup()
+                    },
+                    onExitClick = {
+                        window.dispatchEvent(WindowEvent(window, WindowEvent.WINDOW_CLOSING))
+                    },
+                ),
+                onNavigateToFeedSourceList = { backStack.add(FeedSourceList) },
+                onNavigateToBlockedWords = { backStack.add(BlockedWords) },
+                onNavigateToAccounts = { backStack.add(Accounts) },
+            )
         }
     }
 }
@@ -437,6 +507,143 @@ private fun ClearOldArticlesDialog(
                 TextButton(onClick = onDismiss) {
                     Text(LocalFeedFlowStrings.current.cancelButton)
                 }
+            },
+        )
+    }
+}
+
+private fun EntryProviderScope<NavKey>.screens(
+    backStack: MutableList<NavKey>,
+    navigateBack: () -> Unit,
+    homeViewModel: HomeViewModel,
+    snackbarHostState: SnackbarHostState,
+    listState: androidx.compose.foundation.lazy.LazyListState,
+) {
+    entry<Home> {
+        HomeScreen(
+            homeViewModel = homeViewModel,
+            snackbarHostState = snackbarHostState,
+            listState = listState,
+            onImportExportClick = { backStack.add(ImportExport) },
+            onSearchClick = { backStack.add(Search) },
+            onAccountsClick = { backStack.add(Accounts) },
+            onSettingsButtonClicked = { backStack.add(FeedSourceList) },
+            navigateToReaderMode = { feedItemUrlInfo ->
+                backStack.add(feedItemUrlInfo.toReaderMode())
+            },
+            onAddFeedClick = { backStack.add(AddFeed) },
+            onEditFeedClick = { feedSource ->
+                backStack.add(feedSource.toEditFeed())
+            },
+            onFeedSuggestionsClick = { backStack.add(FeedSuggestions) },
+        )
+    }
+
+    entry<Search> {
+        com.prof18.feedflow.desktop.search.SearchScreen(
+            navigateBack = navigateBack,
+            navigateToReaderMode = { urlInfo ->
+                backStack.add(urlInfo.toReaderMode())
+            },
+            navigateToEditFeed = { feedSource ->
+                backStack.add(feedSource.toEditFeed())
+            },
+        )
+    }
+
+    entry<ReaderMode> { route ->
+        val feedItemUrlInfo = FeedItemUrlInfo(
+            id = route.id,
+            url = route.url,
+            title = route.title,
+            isBookmarked = route.isBookmarked,
+            linkOpeningPreference = LinkOpeningPreference.valueOf(route.linkOpeningPreference),
+            commentsUrl = route.commentsUrl,
+        )
+        ReaderModeScreen(
+            feedItemUrlInfo = feedItemUrlInfo,
+            navigateBack = navigateBack,
+        )
+    }
+
+    entry<Accounts> {
+        AccountsScreen(
+            navigateBack = navigateBack,
+            navigateToDropboxSync = { backStack.add(DropboxSync) },
+            navigateToGoogleDriveSync = { backStack.add(GoogleDriveSync) },
+            navigateToICloudSync = { backStack.add(ICloudSync) },
+            navigateToFreshRssSync = { backStack.add(FreshRssSync) },
+            navigateToMinifluxSync = { backStack.add(MinifluxSync) },
+            navigateToBazquxSync = { backStack.add(BazquxSync) },
+            navigateToFeedbinSync = { backStack.add(FeedbinSync) },
+        )
+    }
+
+    entry<FeedSuggestions> {
+        FeedSuggestionsScreen(
+            navigateBack = navigateBack,
+        )
+    }
+
+    entry<AddFeed> {
+        AddFeedFullScreen(
+            onFeedAdded = {
+                homeViewModel.getNewFeeds()
+                navigateBack()
+            },
+            navigateBack = navigateBack,
+        )
+    }
+
+    entry<ImportExport> {
+        val composeWindow = LocalComposeWindow.current
+        ImportExportScreen(
+            composeWindow = composeWindow,
+            triggerFeedFetch = { homeViewModel.getNewFeeds() },
+            navigateBack = navigateBack,
+        )
+    }
+
+    entry<EditFeed> { route ->
+        val feedSource = route.toFeedSource()
+        EditFeedScreen(
+            feedSource = feedSource,
+            navigateBack = navigateBack,
+        )
+    }
+
+    entry<DropboxSync> {
+        DropboxSyncScreen(navigateBack = navigateBack)
+    }
+    entry<GoogleDriveSync> {
+        GoogleDriveSyncScreen(navigateBack = navigateBack)
+    }
+    entry<ICloudSync> {
+        ICloudSyncScreen(navigateBack = navigateBack)
+    }
+    entry<FreshRssSync> {
+        FreshRssSyncScreen(navigateBack = navigateBack)
+    }
+    entry<MinifluxSync> {
+        MinifluxSyncScreen(navigateBack = navigateBack)
+    }
+    entry<BazquxSync> {
+        BazquxSyncScreen(navigateBack = navigateBack)
+    }
+    entry<FeedbinSync> {
+        FeedbinSyncScreen(navigateBack = navigateBack)
+    }
+
+    entry<BlockedWords> {
+        BlockedWordsScreen(navigateBack = navigateBack)
+    }
+
+    entry<FeedSourceList> {
+        FeedSourceListScreen(
+            onAddFeedClick = { backStack.add(AddFeed) },
+            navigateBack = navigateBack,
+            onEditFeedClick = { feedSource ->
+                backStack.add(feedSource.toEditFeed())
             },
         )
     }

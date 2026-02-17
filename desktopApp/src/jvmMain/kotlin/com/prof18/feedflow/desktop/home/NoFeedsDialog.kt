@@ -18,9 +18,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsInfoContent
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -31,10 +28,10 @@ internal fun NoFeedsDialog(
     onDismissRequest: () -> Unit,
     onImportExportClick: () -> Unit,
     onAccountsClick: () -> Unit,
+    onAddFeedClick: () -> Unit,
     onFeedSuggestionsClick: () -> Unit = {},
 ) {
     val dialogTitle = LocalFeedFlowStrings.current.noFeedModalTitle
-    val navigator = LocalNavigator.currentOrThrow
     val dialogState = rememberDialogState(
         size = DpSize(400.dp, 400.dp),
     )
@@ -59,13 +56,7 @@ internal fun NoFeedsDialog(
                     onDismissRequest = onDismissRequest,
                     onAddFeedClick = {
                         onDismissRequest()
-                        navigator.push(
-                            AddFeedFullScreen(
-                                onFeedAdded = {
-                                    onDismissRequest()
-                                },
-                            ),
-                        )
+                        onAddFeedClick()
                     },
                     onImportExportClick = {
                         onDismissRequest()

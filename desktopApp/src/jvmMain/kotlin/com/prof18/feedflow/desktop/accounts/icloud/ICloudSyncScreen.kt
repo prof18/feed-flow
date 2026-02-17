@@ -28,68 +28,57 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.SyncResult
-import com.prof18.feedflow.desktop.desktopViewModel
-import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
-internal class ICloudSyncScreen : Screen {
-    override val key: String = generateUniqueKey()
+@Composable
+internal fun ICloudSyncScreen(
+    navigateBack: () -> Unit,
+) {
+    val viewModel = koinViewModel<ICloudSyncViewModel>()
 
-    @Composable
-    override fun Content() {
-        val viewModel = desktopViewModel { DI.koin.get<ICloudSyncViewModel>() }
+    val uiState by viewModel.iCloudConnectionUiState.collectAsState()
 
-        val uiState by viewModel.iCloudConnectionUiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-        val snackbarHostState = remember { SnackbarHostState() }
-        val scope = rememberCoroutineScope()
-
-        val flowStrings = LocalFeedFlowStrings.current
-        LaunchedEffect(Unit) {
-            viewModel.syncMessageQueue.collect { event ->
-                if (event is SyncResult.Error) {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = flowStrings.errorAccountSync(event.errorCode.code),
-                            duration = SnackbarDuration.Short,
-                        )
-                    }
+    val flowStrings = LocalFeedFlowStrings.current
+    LaunchedEffect(Unit) {
+        viewModel.syncMessageQueue.collect { event ->
+            if (event is SyncResult.Error) {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = flowStrings.errorAccountSync(event.errorCode.code),
+                        duration = SnackbarDuration.Short,
+                    )
                 }
             }
         }
-
-        val navigator = LocalNavigator.currentOrThrow
-
-        IcloudSyncContent(
-            uiState = uiState,
-            onConnectClick = {
-                viewModel.setICloudAuth()
-            },
-            onBackupClick = {
-                viewModel.triggerBackup()
-            },
-            onDisconnectClick = {
-                viewModel.unlink()
-            },
-            onBackClick = {
-                navigator.pop()
-            },
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
-            },
-        )
     }
+
+    IcloudSyncContent(
+        uiState = uiState,
+        onConnectClick = {
+            viewModel.setICloudAuth()
+        },
+        onBackupClick = {
+            viewModel.triggerBackup()
+        },
+        onDisconnectClick = {
+            viewModel.unlink()
+        },
+        onBackClick = navigateBack,
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
+    )
 }
 
 @Composable

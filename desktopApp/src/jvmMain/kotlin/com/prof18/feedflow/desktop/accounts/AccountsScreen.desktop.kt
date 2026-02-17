@@ -3,61 +3,35 @@ package com.prof18.feedflow.desktop.accounts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.prof18.feedflow.desktop.accounts.bazqux.BazquxSyncScreen
-import com.prof18.feedflow.desktop.accounts.dropbox.DropboxSyncScreen
-import com.prof18.feedflow.desktop.accounts.feedbin.FeedbinSyncScreen
-import com.prof18.feedflow.desktop.accounts.freshrss.FreshRssSyncScreen
-import com.prof18.feedflow.desktop.accounts.googledrive.GoogleDriveSyncScreen
-import com.prof18.feedflow.desktop.accounts.icloud.ICloudSyncScreen
-import com.prof18.feedflow.desktop.accounts.miniflux.MinifluxSyncScreen
-import com.prof18.feedflow.desktop.desktopViewModel
-import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.ui.accounts.AccountsContent
 import kotlinx.collections.immutable.toPersistentList
+import org.koin.compose.viewmodel.koinViewModel
 
-internal class AccountsScreen : Screen {
+@Composable
+internal fun AccountsScreen(
+    navigateBack: () -> Unit,
+    navigateToDropboxSync: () -> Unit,
+    navigateToGoogleDriveSync: () -> Unit,
+    navigateToICloudSync: () -> Unit,
+    navigateToFreshRssSync: () -> Unit,
+    navigateToMinifluxSync: () -> Unit,
+    navigateToBazquxSync: () -> Unit,
+    navigateToFeedbinSync: () -> Unit,
+) {
+    val viewModel = koinViewModel<AccountsViewModel>()
+    val accountSync by viewModel.accountsState.collectAsState()
 
-    override val key: String = generateUniqueKey()
-
-    @Composable
-    override fun Content() {
-        val viewModel = desktopViewModel { DI.koin.get<AccountsViewModel>() }
-        val accountSync by viewModel.accountsState.collectAsState()
-
-        val navigator = LocalNavigator.currentOrThrow
-
-        AccountsContent(
-            syncAccount = accountSync,
-            accounts = viewModel.getSupportedAccounts().toPersistentList(),
-            onDropboxCLick = {
-                navigator.push(DropboxSyncScreen())
-            },
-            onGoogleDriveClick = {
-                navigator.push(GoogleDriveSyncScreen())
-            },
-            onICloudClick = {
-                navigator.push(ICloudSyncScreen())
-            },
-            onBackClick = {
-                navigator.pop()
-            },
-            onFreshRssClick = {
-                navigator.push(FreshRssSyncScreen())
-            },
-            onMinifluxClick = {
-                navigator.push(MinifluxSyncScreen())
-            },
-            onBazquxClick = {
-                navigator.push(BazquxSyncScreen())
-            },
-            onFeedbinClick = {
-                navigator.push(FeedbinSyncScreen())
-            },
-        )
-    }
+    AccountsContent(
+        syncAccount = accountSync,
+        accounts = viewModel.getSupportedAccounts().toPersistentList(),
+        onDropboxCLick = navigateToDropboxSync,
+        onGoogleDriveClick = navigateToGoogleDriveSync,
+        onICloudClick = navigateToICloudSync,
+        onBackClick = navigateBack,
+        onFreshRssClick = navigateToFreshRssSync,
+        onMinifluxClick = navigateToMinifluxSync,
+        onBazquxClick = navigateToBazquxSync,
+        onFeedbinClick = navigateToFeedbinSync,
+    )
 }

@@ -15,81 +15,73 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.GoogleDriveSynMessages
-import com.prof18.feedflow.desktop.desktopViewModel
-import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.ui.accounts.googledrive.GoogleDriveSyncContent
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
-internal class GoogleDriveSyncScreen : Screen {
+@Composable
+internal fun GoogleDriveSyncScreen(
+    navigateBack: () -> Unit,
+) {
+    val viewModel = koinViewModel<GoogleDriveSyncViewModel>()
 
-    @Composable
-    override fun Content() {
-        val viewModel = desktopViewModel { DI.koin.get<GoogleDriveSyncViewModel>() }
+    val uiState by viewModel.googleDriveConnectionUiState.collectAsState()
 
-        val uiState by viewModel.googleDriveConnectionUiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-        val snackbarHostState = remember { SnackbarHostState() }
-        val scope = rememberCoroutineScope()
+    val errorMessage = LocalFeedFlowStrings.current.googleDriveSyncError
 
-        val errorMessage = LocalFeedFlowStrings.current.googleDriveSyncError
-
-        LaunchedEffect(Unit) {
-            viewModel.googleDriveSyncMessageState.collect { event ->
-                when (event) {
-                    GoogleDriveSynMessages.Error -> {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = errorMessage,
-                                duration = SnackbarDuration.Short,
-                            )
-                        }
+    LaunchedEffect(Unit) {
+        viewModel.googleDriveSyncMessageState.collect { event ->
+            when (event) {
+                GoogleDriveSynMessages.Error -> {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = errorMessage,
+                            duration = SnackbarDuration.Short,
+                        )
                     }
                 }
             }
         }
-
-        val navigator = LocalNavigator.currentOrThrow
-        val strings = LocalFeedFlowStrings.current
-
-        GoogleDriveSyncContent(
-            uiState = uiState,
-            onBackClick = {
-                navigator.pop()
-            },
-            onBackupClick = {
-                viewModel.triggerBackup()
-            },
-            onDisconnectClick = {
-                viewModel.disconnect()
-            },
-            customPlatformUI = {
-                Column(
-                    modifier = Modifier.padding(top = Spacing.regular),
-                ) {
-                    Text(
-                        text = strings.googleDriveDesktopSyncDescription,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(horizontal = Spacing.regular),
-                    )
-
-                    SettingItem(
-                        modifier = Modifier.padding(top = Spacing.regular),
-                        title = strings.googleDriveConnectButton,
-                        icon = Icons.Default.Link,
-                        onClick = {
-                            viewModel.startGoogleDriveAuthFlow()
-                        },
-                    )
-                }
-            },
-        )
     }
+
+    val strings = LocalFeedFlowStrings.current
+
+    GoogleDriveSyncContent(
+        uiState = uiState,
+        onBackClick = navigateBack,
+        onBackupClick = {
+            viewModel.triggerBackup()
+        },
+        onDisconnectClick = {
+            viewModel.disconnect()
+        },
+        customPlatformUI = {
+            Column(
+                modifier = Modifier.padding(top = Spacing.regular),
+            ) {
+                Text(
+                    text = strings.googleDriveDesktopSyncDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = Spacing.regular),
+                )
+
+                SettingItem(
+                    modifier = Modifier.padding(top = Spacing.regular),
+                    title = strings.googleDriveConnectButton,
+                    icon = Icons.Default.Link,
+                    onClick = {
+                        viewModel.startGoogleDriveAuthFlow()
+                    },
+                )
+            }
+        },
+    )
 }

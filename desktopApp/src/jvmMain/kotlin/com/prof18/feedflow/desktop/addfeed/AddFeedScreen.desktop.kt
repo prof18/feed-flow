@@ -14,14 +14,13 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
-import com.prof18.feedflow.desktop.desktopViewModel
-import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
 import com.prof18.feedflow.shared.ui.feed.addfeed.AddFeedContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AddFeedScreenContent(
@@ -34,7 +33,7 @@ fun AddFeedScreenContent(
     var showLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
-    val viewModel = desktopViewModel { DI.koin.get<AddFeedViewModel>() }
+    val viewModel = koinViewModel<AddFeedViewModel>()
 
     val snackbarHostState = remember { SnackbarHostState() }
 

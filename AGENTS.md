@@ -99,6 +99,13 @@ Key points:
 - DO NOT excessively use try/catch blocks for every function. Use them only for the top caller or the bottom callers, depending on the cases.
 - ALWAYS run gradle tasks with the following flag: `--quiet --console=plain`
 
+### Desktop screens/windows
+- For desktop settings/details pages opened from the main screen, prefer a dedicated `DialogWindow` instead of in-window navigation.
+- Reuse `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/ui/components/DesktopDialogWindow.kt` for new desktop windows instead of duplicating window setup.
+- Use `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/main/DesktopDialogWindowNavigator.kt` to open/close windows from `MainWindow` (add destinations to the enum and keep visibility state there).
+- Keep the screen body content as a composable content block and avoid duplicating content calls; apply platform conditionals only to wrapper chrome (for example, toolbar/title handling).
+- On macOS, keep transparent title bar handling inside the reusable desktop window wrapper; on other desktop platforms avoid adding duplicate custom title UI.
+
 ### Git Commit Messages
 When creating commits:
 - Use simple, one-liner commit messages
@@ -121,4 +128,3 @@ When creating commits:
 - Run .scripts/refresh-translations.sh after adding a new translation, to re-generate the kotlin code
 - NEVER add hardcoded strings in the code. Always use the i18n resources.
 - NEVER try to translate other languages by yourself. Add only the English strings. The translations will be handled by professionals later.
-

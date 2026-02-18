@@ -164,6 +164,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.workmanager)
     implementation(libs.koin.composeVM)
+    implementation(libs.koin.core.vm)
 
     implementation(libs.dropbox.core.android)
     implementation(libs.workmanager)

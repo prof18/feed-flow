@@ -105,7 +105,6 @@
     <string name="feed_sync_in_progress">正在同步。完成后，应用将自动关闭。</string>
     <string name="bookmarked_articles_empty_screen_message">尚无文章，请先收藏！</string>
     <string name="link_copied_success">链接复制成功！</string>
-    <string name="reader_mode_warning">ℹ 阅读模式会尝试获取文章内容，可能存在解析异常或冗余字符。</string>
     <string name="reader_mode_font_size">字体大小</string>
     <string name="add_account_button">添加账号</string>
     <string name="icloud_sync_success">已成功连接您的 iCloud 账号</string>

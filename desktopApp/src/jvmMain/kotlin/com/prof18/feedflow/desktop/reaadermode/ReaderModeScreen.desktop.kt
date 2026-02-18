@@ -220,15 +220,6 @@ internal data class ReaderModeScreen(
                                 Column(
                                     modifier = contentModifier,
                                 ) {
-                                    Text(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = Spacing.regular),
-                                        text = LocalFeedFlowStrings.current.readerModeWarning,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Light,
-                                    )
-
                                     key(s.readerModeData.content, fontSize) {
                                         SelectionContainer {
                                             Markdown(

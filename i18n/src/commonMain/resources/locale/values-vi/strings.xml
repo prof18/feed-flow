@@ -106,7 +106,6 @@
     <string name="search_placeholder">Tìm kiếm…</string>
     <string name="add_account_button">Thêm tài khoản</string>
     <string name="in_app_browser">Mở luôn trong app</string>
-    <string name="reader_mode_warning">ℹ Chế độ đọc sẽ tập trung vào nội dung của bài viết. Có thể có lỗi hoặc hiện ký tự không mong muốn.</string>
     <string name="menu_add_to_bookmark">Lưu bài viết</string>
     <string name="menu_remove_from_bookmark">Bỏ lưu bài viết</string>
     <string name="icloud_sync_success">Kết nối tài khoản iCloud thành công</string>

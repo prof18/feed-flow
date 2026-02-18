@@ -44,7 +44,6 @@
     <string name="search_hint_title">Започнете да пишете…</string>
     <string name="search_hint_subtitle">резултатите ще се появят автоматично</string>
     <string name="link_copied_success">Връзката е копирана успешно!</string>
-    <string name="reader_mode_warning">ℹ Режимът на четене се опитва да получи съдържанието на статията. Възможно е да има някои проблеми или нежелани знаци.</string>
     <string name="settings_title_feed">Емисия</string>
     <string name="settings_accounts">Профили</string>
     <string name="settings_behaviour_title">Поведение</string>

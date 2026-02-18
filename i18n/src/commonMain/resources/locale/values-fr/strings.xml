@@ -92,7 +92,6 @@
     <string name="account_connect_button">Connecter</string>
     <string name="rename_feed_source_name_button">Renommer</string>
     <string name="link_copied_success">Lien copié avec succès !</string>
-    <string name="reader_mode_warning">ℹ Le mode lecture essaye d\'obtenir le contenu de l\'article. Il pourrait y avoir quelques glitch ou caractères indésirables.</string>
     <string name="reader_mode_font_size">Taille de police</string>
     <string name="icloud_sync_description">Connectez votre compte iCloud pour synchroniser les abonnements de flux, catégories, états de lecture et favoris entre vos appareils Android, IOS, IpadOS, et PC. Les données seront sauvegardées dans un dossier spécifique au sein de l\'application ; FeedFlow n\'aura aucun accès à vos fichiers</string>
     <string name="dropbox_sync_desktop_description">En cliquant sur le bouton « connecter » vous serez redirigé sur le site de Dropbox. Après vous être connecté à votre compte, copiez le code d\'autorisation et collez le ici dans l\'application</string>

@@ -89,7 +89,6 @@
     <string name="search_hint_title">Yazmaya başlayın…</string>
     <string name="search_hint_subtitle">sonuçlar otomatik olarak görünecektir</string>
     <string name="link_copied_success">Bağlantı başarıyla kopyalandı!</string>
-    <string name="reader_mode_warning">ℹ Okuyucu modu, makalenin içeriğini almaya çalışır. Bazı aksaklıklar veya istenmeyen karakterler olabilir.</string>
     <string name="settings_title_feed">Akış</string>
     <string name="settings_accounts">Hesaplar</string>
     <string name="accounts_description">Cihazlarınız arasında akış aboneliklerini, kategorileri, okunmuş ve yer imlerine eklenmiş makaleleri eşitlemek için bir hesap bağlayın.\n\nBu işlevsellik Beta aşamasındadır, sorunlar ortaya çıkabilir (örneğin, okunan makaleler tam olarak eşitlenmeyebilir). Gelecekte daha fazla servis desteklenecektir.\n\nAynı anda sadece bir hesap desteklenmektedir.</string>

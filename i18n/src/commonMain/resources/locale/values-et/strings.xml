@@ -56,7 +56,6 @@
     <string name="search_no_data">Puudub otsinguvaste: %s.</string>
     <string name="search_placeholder">Otsi…</string>
     <string name="search_hint_title">Alusta kirjutamist…</string>
-    <string name="reader_mode_warning">ℹ Lugemisvaade üritab artikli sisu laadida. Võib tekkida iluvigu ja liigseid tähemärke.</string>
     <string name="settings_title_feed">Uudisvoog</string>
     <string name="settings_accounts">Kasutajakontod</string>
     <string name="dropbox_sync_error">Dropboxiga ühenduse loomisel tekkis viga. Palun proovi uuesti</string>

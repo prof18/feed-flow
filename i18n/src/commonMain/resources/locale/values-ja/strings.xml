@@ -89,7 +89,6 @@
     <string name="search_hint_title">入力開始…</string>
     <string name="search_hint_subtitle">結果は自動で現れます</string>
     <string name="link_copied_success">リンクが正常にコピーされました！</string>
-    <string name="reader_mode_warning">ℹ リーダーモードは記事の内容の取得を試みます。不具合や余分な文字がある場合があります。</string>
     <string name="settings_title_feed">フィード</string>
     <string name="settings_accounts">アカウント</string>
     <string name="accounts_description">アカウントを接続すると、フィード購読、カテゴリ、既読、ブックマークした記事をデバイス間で同期できます。\n\nこの機能は現在ベータ版で、問題が発生する可能性があります(読んだ記事が完全には同期されないなど)。今後より多くのサービスがサポートされる予定です。\n\n同時にサポートされるアカウントは1つのみです。</string>

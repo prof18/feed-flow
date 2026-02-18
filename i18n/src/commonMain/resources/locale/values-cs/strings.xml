@@ -156,7 +156,6 @@
     <string name="delete_category_confirmation_message">Opravdu chcete tuto kategorii odstranit? Kanály v této kategorii budou přesunuty do kategorie Uncategorized.</string>
     <string name="link_opening_preference_preferred_browser">Oblíbený prohlížeč</string>
     <string name="link_opening_preference_internal_browser">Prohlížeč v aplikaci</string>
-    <string name="reader_mode_warning">ℹ Režim čtenáře se snaží získat obsah článku. Mohou se vyskytnout některé chyby nebo nechtěné znaky.</string>
     <string name="accounts_description">Připojením účtu můžete mezi svými zařízeními synchronizovat odběry zdrojů, kategorie, přečtené články a články se záložkami.\n\nFunkce je ve fázi beta, mohou se vyskytnout problémy (například přečtené články nemusí být plně synchronizovány). V budoucnu budou podporovány další služby.\n\nPodporován je pouze jeden účet najednou.</string>
     <string name="settings_font_scale_subtitle_example">To je titulek článku</string>
     <string name="dropbox_sync_common_description">Připojením účtu Dropbox můžete synchronizovat odběry kanálů, kategorie, přečtené články a články se záložkami mezi zařízeními se systémy Android, iOS, iPadOS a stolními počítači. Data budou uložena ve složce specifické pro aplikaci; FeedFlow nebude mít přístup k žádným vašim souborům</string>

@@ -88,7 +88,6 @@
     <string name="search_hint_title">ابدأ الكتابة…</string>
     <string name="search_hint_subtitle">ستظهر النتائج تلقائيًا</string>
     <string name="link_copied_success">تم نسخ الرابط بنجاح!</string>
-    <string name="reader_mode_warning">ℹ يحاول وضع القارئ استرداد محتوى المقال. قد تظهر بعض الأخطاء أو الأحرف غير المرغوبة.</string>
     <string name="settings_title_feed">الخلاصة</string>
     <string name="settings_accounts">الحسابات</string>
     <string name="accounts_description">اربط حسابًا لمزامنة اشتراكات الخلاصات والتصنيفات والمقالات المقروءة والمفضلة بين أجهزتك.\n\nالميزة في المرحلة التجريبية (Beta)، وقد تحدث بعض المشاكل (على سبيل المثال، قد لا تتم مزامنة المقالات المقروءة بالكامل). سيتم دعم المزيد من الخدمات في المستقبل.\n\nحساب واحد فقط مدعوم في الوقت ذاته.</string>

@@ -121,7 +121,6 @@
     <string name="search_filter_read">Read</string>
     <string name="search_filter_bookmarks">Bookmarks</string>
     <string name="link_copied_success">Link successfully copied!</string>
-    <string name="reader_mode_warning">ℹ The reader mode tries to get the content of the article. There might be some glitches or unwanted characters.</string>
     <string name="settings_title_feed">Feed</string>
     <string name="settings_accounts">Accounts</string>
     <string name="accounts_description">Connect an account to sync feed subscriptions, categories, read and bookmarked articles between your devices.\n\nThe functionality is in Beta, issues may occur (for example, read articles might not be fully synced). More services will be supported in the future.\n\nOnly one account at the same time is supported.</string>

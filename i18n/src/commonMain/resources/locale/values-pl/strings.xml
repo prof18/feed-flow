@@ -89,7 +89,6 @@
     <string name="search_hint_title">Rozpocznij pisanie...</string>
     <string name="search_hint_subtitle">Wyniki pojawią się automatycznie</string>
     <string name="link_copied_success">Link został pomyślnie skopiowany!</string>
-    <string name="reader_mode_warning">ℹ Tryb czytania próbuje pobrać treść artykułu. Mogą występować pewne błędy lub niepożądane znaki.</string>
     <string name="settings_title_feed">Kanał</string>
     <string name="settings_accounts">Konta</string>
     <string name="accounts_description">Połącz konto, aby synchronizować subskrypcje kanałów, kategorie, przeczytane i dodane do zakładek artykuły między urządzeniami.\n\nFunkcja jest w fazie beta, mogą wystąpić problemy (na przykład przeczytane artykuły mogą nie być w pełni zsynchronizowane). W przyszłości obsługiwane będą kolejne usługi.\n\nObsługiwane jest tylko jedno konto jednocześnie.</string>

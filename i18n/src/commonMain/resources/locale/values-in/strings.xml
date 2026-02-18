@@ -80,7 +80,6 @@
     <string name="search_hint_title">Mulai mengetik…</string>
     <string name="search_hint_subtitle">hasilnya akan muncul secara otomatis</string>
     <string name="link_copied_success">Tautan berhasil disalin!</string>
-    <string name="reader_mode_warning">ℹ Mode pembaca mencoba mendapatkan konten artikel. Mungkin ada beberapa gangguan atau karakter yang tidak diinginkan.</string>
     <string name="settings_title_feed">Umpan</string>
     <string name="settings_accounts">Akun</string>
     <string name="accounts_description">Hubungkan akun untuk menyinkronkan langganan umpan, kategori, artikel yang sudah dibaca dan bertanda markah antara perangkat Anda.\n\nFungsionalitas ini masih dalam versi Beta, masalah mungkin terjadi (misalnya, artikel yang sudah dibaca mungkin tidak sepenuhnya disinkronkan). Lebih banyak layanan akan didukung di masa mendatang.\n\nHanya satu akun yang didukung pada saat yang sama.</string>

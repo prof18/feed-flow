@@ -48,7 +48,6 @@
     <string name="done_button">בסדר</string>
     <string name="wrong_link_report_title">העדכונים הבאים לא נוספו כי הם לא חוקיים</string>
     <string name="dropbox_sync_desktop_description">על ידי לחיצה על כפתור החיבור תופנה לאתר דרופבוקס. לאחר חיבור החשבון, העתק את קוד ההרשאה והזן אותו כאן באפליקציה</string>
-    <string name="reader_mode_warning">ℹ מצב הקורא מנסה לקבל את תוכן המאמר. עשויות להיות כמה תקלות או גליצ\'ים לא רצויים.</string>
     <string name="feed_name">שם העדכון</string>
     <string name="no_dropbox_sync_yet">הנתונים עדיין לא מסונכרנים עם Dropbox. לחץ על לחצן הגיבוי כדי להפעיל סנכרון</string>
     <string name="issue_content_template">אנא תאר את הבעיה וספק קישור לעדכון ה-RSS שגורם לבעיות. אם אתה יכול, אנא צרף צילום מסך וקובץ OPML</string>

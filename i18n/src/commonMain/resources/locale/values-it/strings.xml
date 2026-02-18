@@ -83,7 +83,6 @@
     <string name="search_hint_subtitle">i risultati appariranno automaticamente</string>
     <string name="settings_reader_mode">Apri gli articoli in modalità lettura</string>
     <string name="link_copied_success">Link copiato!</string>
-    <string name="reader_mode_warning">ℹ La modalità Lettore tenta di estrarre il contenuto dell\'articolo. Potrebbero esserci piccole imperfezioni.</string>
     <string name="search_placeholder">Cerca…</string>
     <string name="search_hint_title">Inizia a scrivere…</string>
     <string name="settings_behaviour_title">Comportamento</string>

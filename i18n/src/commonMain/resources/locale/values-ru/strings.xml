@@ -53,7 +53,6 @@
     <string name="search_placeholder">Найти…</string>
     <string name="search_hint_title">Начните печатать…</string>
     <string name="search_hint_subtitle">результаты появятся автоматически</string>
-    <string name="reader_mode_warning">ℹ Режим чтения пытается получить содержание статьи. Могут быть некоторые сбои или нежелательные символы.</string>
     <string name="settings_accounts">Аккаунты</string>
     <string name="settings_behaviour_title">Поведение</string>
     <string name="settings_help_title">Помощь</string>

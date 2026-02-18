@@ -45,7 +45,10 @@
       "Bash(gh api:*)",
       "WebFetch(domain:cache-redirector.jetbrains.com)",
       "Bash(curl:*)",
-      "Bash(shasum:*)"
+      "Bash(shasum:*)",
+      "WebFetch(domain:search.maven.org)",
+      "WebFetch(domain:registry.npmjs.org)",
+      "WebFetch(domain:api.github.com)"
     ],
     "deny": []
   }

@@ -121,7 +121,6 @@ kotlin {
 
             dependencies {
                 implementation(libs.jsoup)
-                implementation(libs.readability4j)
                 implementation(libs.ktor.client.okhttp)
             }
         }
@@ -176,7 +175,8 @@ kotlin {
 
             dependencies {
                 implementation(libs.kotlinx.coroutines.swing)
-                implementation(libs.flexmark.html2md.converter)
+                implementation(libs.htmlunit)
+                implementation(libs.kotlinx.serialization.json)
                 api(libs.sentry)
             }
         }

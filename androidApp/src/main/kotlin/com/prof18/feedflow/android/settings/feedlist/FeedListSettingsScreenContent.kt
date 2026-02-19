@@ -62,6 +62,7 @@ internal fun FeedListSettingsScreenContent(
     onSwipeActionSelected: (SwipeDirection, SwipeActionType) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
+    setHideUnreadCount: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -159,6 +160,15 @@ internal fun FeedListSettingsScreenContent(
                 }
 
                 item {
+                    SettingSwitchItem(
+                        title = "Hide unread count", // TODO: Add string resource
+                        icon = Icons.Outlined.HideSource, // TODO: Check for better icon
+                        isChecked = state.isHideUnreadCountEnabled,
+                        onCheckedChange = setHideUnreadCount,
+                    )
+                }
+
+                item {
                     DateFormatSelector(
                         currentFormat = state.dateFormat,
                         onFormatSelected = onDateFormatSelected,
@@ -249,6 +259,7 @@ private fun FeedListSettingsScreenContentPreview() {
             onSwipeActionSelected = { _, _ -> },
             setRemoveTitleFromDescription = {},
             onFeedOrderSelected = {},
+            setHideUnreadCount = {},
         )
     }
 }

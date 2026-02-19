@@ -118,6 +118,9 @@ class FeedSourceListScreen : Screen {
                 SnackbarHost(snackbarHostState)
             },
             onOpenWebsite = { url -> uriHandler.openUri(url) },
+            onDeleteAllFeedsInCategory = { feedSources ->
+                viewModel.deleteAllFeedsInCategory(feedSources)
+            },
         )
     }
 }
@@ -139,6 +142,7 @@ private fun FeedSourceListContentPreview() {
             onRenameFeedSourceClick = { _, _ -> },
             onPinFeedClick = {},
             onOpenWebsite = {},
+            onDeleteAllFeedsInCategory = {},
         )
     }
 }

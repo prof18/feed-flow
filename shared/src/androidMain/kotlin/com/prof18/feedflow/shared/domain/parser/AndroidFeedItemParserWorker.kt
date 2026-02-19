@@ -18,7 +18,7 @@ internal class AndroidFeedItemParserWorker(
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val settingsRepository: SettingsRepository,
 ) : FeedItemParserWorker {
-    override suspend fun parse(feedItemId: String, url: String): ParsingResult {
+    override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
         logger.d { "Triggering immediate parsing for: $url (feedItemId: $feedItemId)" }
 
         val deferredResult = CompletableDeferred<ParsingResult>()

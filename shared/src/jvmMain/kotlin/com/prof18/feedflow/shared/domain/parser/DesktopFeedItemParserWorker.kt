@@ -36,6 +36,7 @@ internal class DesktopFeedItemParserWorker(
     private val htmlShell: String by lazy {
         val readabilityJs = loadResource("readability-es5.js")
         val turndownJs = loadResource("turndown-es5.js")
+        val readerContentParserJs = loadResource("reader-content-parser.js")
         // language=HTML
         """
         <html dir='auto'>
@@ -43,13 +44,14 @@ internal class DesktopFeedItemParserWorker(
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <script>$readabilityJs</script>
           <script>$turndownJs</script>
+          <script>$readerContentParserJs</script>
         </head>
         <body></body>
         </html>
         """.trimIndent()
     }
 
-    override suspend fun parse(feedItemId: String, url: String): ParsingResult {
+    override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
         logger.d { "Triggering immediate parsing for: $url (feedItemId: $feedItemId)" }
 
         return withContext(dispatcherProvider.io) {
@@ -80,7 +82,7 @@ internal class DesktopFeedItemParserWorker(
                     )
                     .replace(Regex("<frame\\b[^>]*>", RegexOption.IGNORE_CASE), "")
 
-                val parseResult = runReadability(cleanedHtml, url)
+                val parseResult = runReadability(cleanedHtml, url, imageUrl)
                 if (parseResult == null) {
                     logger.d { "Readability returned no result for: $url" }
                     return@withContext ParsingResult.Error
@@ -94,9 +96,16 @@ internal class DesktopFeedItemParserWorker(
                 val markdown = buildString {
                     if (!parseResult.title.isNullOrBlank()) {
                         appendLine("# ${parseResult.title}")
+                        appendLine()
                     }
                     if (!parseResult.siteName.isNullOrBlank()) {
                         appendLine("**${parseResult.siteName}**")
+                        appendLine()
+                    }
+                    if (!imageUrl.isNullOrBlank()) {
+                        appendLine()
+                        appendLine("![]($imageUrl)")
+                        appendLine()
                     }
                     if (!parseResult.title.isNullOrBlank() || !parseResult.siteName.isNullOrBlank()) {
                         appendLine()
@@ -127,9 +136,10 @@ internal class DesktopFeedItemParserWorker(
         val siteName: String?,
     )
 
-    private fun runReadability(html: String, url: String): ReadabilityResult? {
+    private fun runReadability(html: String, url: String, imageUrl: String?): ReadabilityResult? {
         val htmlEscaped = Json.encodeToString(html)
         val urlEscaped = Json.encodeToString(url)
+        val imageUrlEscaped = imageUrl?.let { Json.encodeToString(it) } ?: "null"
 
         WebClient(BrowserVersion.CHROME).use { webClient ->
             webClient.options.apply {
@@ -148,40 +158,12 @@ internal class DesktopFeedItemParserWorker(
                 try {
                     var htmlContent = $htmlEscaped;
                     var link = $urlEscaped;
-                    var domParser = new DOMParser();
-                    var doc = domParser.parseFromString(htmlContent, 'text/html');
-
-                    // Inject <base> so Readability can resolve relative links and image URLs
-                    var base = doc.createElement('base');
-                    base.href = link;
-                    doc.head.insertBefore(base, doc.head.firstChild);
-
-                    // Normalize lazy-loaded images before Readability strips unknown attributes
-                    var imgs = doc.querySelectorAll('img');
-                    for (var i = 0; i < imgs.length; i++) {
-                        var img = imgs[i];
-                        var lazySrc = img.getAttribute('data-src')
-                            || img.getAttribute('data-lazy-src')
-                            || img.getAttribute('data-original')
-                            || img.getAttribute('data-lazy');
-                        if (lazySrc && (!img.getAttribute('src') || img.getAttribute('src').indexOf('data:') === 0)) {
-                            img.setAttribute('src', lazySrc);
-                        }
-                    }
-
-                    var reader = new Readability(doc);
-                    var article = reader.parse();
-
-                    if (!article) {
-                        parsingError = "Readability returned null";
-                    } else {
-                        var turndown = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
-                        var markdown = turndown.turndown(article.content || '');
-                        parsingResult = JSON.stringify({
-                            content: markdown,
-                            title: article.title || null,
-                            siteName: article.siteName || null
-                        });
+                    var bannerImage = $imageUrlEscaped;
+                    parsingResult = parseReaderContent(htmlContent, link, bannerImage);
+                    var parsed = JSON.parse(parsingResult);
+                    if (parsed.error) {
+                        parsingError = parsed.error;
+                        parsingResult = null;
                     }
                 } catch(e) {
                     parsingError = e.toString();

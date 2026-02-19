@@ -47,7 +47,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
     override fun getTestModules(): List<Module> = super.getTestModules() + module {
         single<FeedItemParserWorker> {
             object : FeedItemParserWorker {
-                override suspend fun parse(feedItemId: String, url: String): ParsingResult =
+                override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult =
                     when (parserBehavior) {
                         ParserBehavior.Success -> ParsingResult.Success(
                             htmlContent = "Content",
@@ -335,7 +335,7 @@ class ReaderModeViewModelTimeoutTest : KoinTestBase() {
     override fun getTestModules(): List<Module> = super.getTestModules() + module {
         single<FeedItemParserWorker> {
             object : FeedItemParserWorker {
-                override suspend fun parse(feedItemId: String, url: String): ParsingResult {
+                override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
                     delay(2.minutes)
                     return ParsingResult.Success(
                         htmlContent = "Content",

@@ -195,7 +195,7 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
             results[feedItemId] = result
         }
 
-        override suspend fun parse(feedItemId: String, url: String): ParsingResult {
+        override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
             return results[feedItemId] ?: ParsingResult.Error
         }
     }

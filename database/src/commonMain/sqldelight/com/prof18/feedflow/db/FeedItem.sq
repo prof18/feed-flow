@@ -268,7 +268,7 @@ AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
 )));
 
 getFeedUrl:
-SELECT feed_item.url_hash, feed_item.url, feed_item.title, is_bookmarked, feed_source_preferences.link_opening_preference AS feed_source_link_opening_preference, feed_item.comments_url FROM feed_item
+SELECT feed_item.url_hash, feed_item.url, feed_item.title, feed_item.image_url, is_bookmarked, feed_source_preferences.link_opening_preference AS feed_source_link_opening_preference, feed_item.comments_url FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category

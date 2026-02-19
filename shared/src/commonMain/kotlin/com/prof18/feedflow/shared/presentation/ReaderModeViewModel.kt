@@ -95,7 +95,7 @@ class ReaderModeViewModel internal constructor(
 
             // Content not cached, trigger parsing
             val result = withTimeoutOrNull(20.seconds) {
-                feedItemParserWorker.parse(feedItemId, urlInfo.url)
+                feedItemParserWorker.parse(feedItemId, urlInfo.url, urlInfo.imageUrl)
             }
 
             when (result) {
@@ -193,5 +193,6 @@ class ReaderModeViewModel internal constructor(
         isBookmarked = isBookmarked,
         commentsUrl = commentsUrl,
         linkOpeningPreference = LinkOpeningPreference.READER_MODE,
+        imageUrl = imageUrl,
     )
 }

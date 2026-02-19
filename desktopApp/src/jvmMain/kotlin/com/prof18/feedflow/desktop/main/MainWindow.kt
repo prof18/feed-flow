@@ -45,6 +45,7 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.DesktopDatabaseErrorState
@@ -55,7 +56,6 @@ import com.prof18.feedflow.desktop.Accounts
 import com.prof18.feedflow.desktop.BazquxSync
 import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.DropboxSync
-import com.prof18.feedflow.desktop.EditFeed
 import com.prof18.feedflow.desktop.FeedSuggestions
 import com.prof18.feedflow.desktop.FeedbinSync
 import com.prof18.feedflow.desktop.FreshRssSync
@@ -84,8 +84,6 @@ import com.prof18.feedflow.desktop.home.menubar.MenuBarState
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
-import com.prof18.feedflow.desktop.toEditFeed
-import com.prof18.feedflow.desktop.toFeedSource
 import com.prof18.feedflow.desktop.toReaderMode
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
@@ -355,6 +353,17 @@ private fun FrameWindowScope.MainWindowContent(
             onFeedAdded = { homeViewModel.getNewFeeds() },
         )
 
+        var feedSourceToEdit: FeedSource? by remember { mutableStateOf(null) }
+
+        EditFeedScreen(
+            visible = dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.EditFeed),
+            feedSource = feedSourceToEdit,
+            onCloseRequest = {
+                dialogWindowNavigator.close(DesktopDialogWindowDestination.EditFeed)
+                feedSourceToEdit = null
+            },
+        )
+
         val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
         val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsState()
 
@@ -408,6 +417,10 @@ private fun FrameWindowScope.MainWindowContent(
                                 snackbarHostState = snackbarHostState,
                                 listState = listState,
                                 dialogWindowNavigator = dialogWindowNavigator,
+                                onEditFeedRequested = { feedSource ->
+                                    feedSourceToEdit = feedSource
+                                    dialogWindowNavigator.open(DesktopDialogWindowDestination.EditFeed)
+                                },
                             )
                         },
                     )
@@ -536,6 +549,7 @@ private fun EntryProviderScope<NavKey>.screens(
     snackbarHostState: SnackbarHostState,
     listState: androidx.compose.foundation.lazy.LazyListState,
     dialogWindowNavigator: DesktopDialogWindowNavigator,
+    onEditFeedRequested: (FeedSource) -> Unit,
 ) {
     entry<Home> {
         HomeScreen(
@@ -554,9 +568,7 @@ private fun EntryProviderScope<NavKey>.screens(
                 backStack.add(feedItemUrlInfo.toReaderMode())
             },
             onAddFeedClick = { dialogWindowNavigator.open(DesktopDialogWindowDestination.AddFeed) },
-            onEditFeedClick = { feedSource ->
-                backStack.add(feedSource.toEditFeed())
-            },
+            onEditFeedClick = onEditFeedRequested,
             onFeedSuggestionsClick = { backStack.add(FeedSuggestions) },
         )
     }
@@ -567,9 +579,7 @@ private fun EntryProviderScope<NavKey>.screens(
             navigateToReaderMode = { urlInfo ->
                 backStack.add(urlInfo.toReaderMode())
             },
-            navigateToEditFeed = { feedSource ->
-                backStack.add(feedSource.toEditFeed())
-            },
+            navigateToEditFeed = onEditFeedRequested,
         )
     }
 
@@ -603,14 +613,6 @@ private fun EntryProviderScope<NavKey>.screens(
 
     entry<FeedSuggestions> {
         FeedSuggestionsScreen(
-            navigateBack = navigateBack,
-        )
-    }
-
-    entry<EditFeed> { route ->
-        val feedSource = route.toFeedSource()
-        EditFeedScreen(
-            feedSource = feedSource,
             navigateBack = navigateBack,
         )
     }

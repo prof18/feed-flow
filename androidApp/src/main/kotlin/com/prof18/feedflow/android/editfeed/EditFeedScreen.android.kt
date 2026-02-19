@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -101,46 +102,9 @@ internal fun EditScreen(
         }
     }
 
-    EditFeedContent(
+    Scaffold(
         modifier = modifier,
-        feedUrl = feedUrl,
-        feedName = feedName,
-        showError = showError,
-        errorMessage = errorMessage,
-        showLoading = showLoading,
-        categoriesState = categoriesState,
-        canEditUrl = viewModel.canEditUrl(),
-        feedSourceSettings = feedSourceSettings,
-        onFeedUrlUpdated = { url ->
-            viewModel.updateFeedUrlTextFieldValue(url)
-        },
-        onFeedNameUpdated = { name ->
-            viewModel.updateFeedNameTextFieldValue(name)
-        },
-        onLinkOpeningPreferenceSelected = { preference ->
-            viewModel.updateLinkOpeningPreference(preference)
-        },
-        onHiddenToggled = { hidden ->
-            viewModel.updateIsHiddenFromTimeline(hidden)
-        },
-        onPinnedToggled = { pinned ->
-            viewModel.updateIsPinned(pinned)
-        },
-        showNotificationToggle = showNotificationToggle,
-        onNotificationToggleChanged = { isNotificationEnabled ->
-            viewModel.updateIsNotificationEnabled(isNotificationEnabled)
-        },
-        editFeed = {
-            viewModel.editFeed()
-        },
-        onCategorySelectorClick = {
-            showCategorySheet = true
-        },
-        showDeleteDialog = showDeleteDialog,
-        onShowDeleteDialog = { showDeleteDialog = true },
-        onDismissDeleteDialog = { showDeleteDialog = false },
-        onConfirmDelete = { viewModel.deleteFeed() },
-        topAppBar = {
+        topBar = {
             TopAppBar(
                 title = {
                     Text(LocalFeedFlowStrings.current.editFeed)
@@ -159,7 +123,48 @@ internal fun EditScreen(
                 },
             )
         },
-    )
+    ) { innerPadding ->
+        EditFeedContent(
+            feedUrl = feedUrl,
+            feedName = feedName,
+            showError = showError,
+            errorMessage = errorMessage,
+            showLoading = showLoading,
+            categoriesState = categoriesState,
+            canEditUrl = viewModel.canEditUrl(),
+            feedSourceSettings = feedSourceSettings,
+            onFeedUrlUpdated = { url ->
+                viewModel.updateFeedUrlTextFieldValue(url)
+            },
+            onFeedNameUpdated = { name ->
+                viewModel.updateFeedNameTextFieldValue(name)
+            },
+            onLinkOpeningPreferenceSelected = { preference ->
+                viewModel.updateLinkOpeningPreference(preference)
+            },
+            onHiddenToggled = { hidden ->
+                viewModel.updateIsHiddenFromTimeline(hidden)
+            },
+            onPinnedToggled = { pinned ->
+                viewModel.updateIsPinned(pinned)
+            },
+            showNotificationToggle = showNotificationToggle,
+            onNotificationToggleChanged = { isNotificationEnabled ->
+                viewModel.updateIsNotificationEnabled(isNotificationEnabled)
+            },
+            editFeed = {
+                viewModel.editFeed()
+            },
+            onCategorySelectorClick = {
+                showCategorySheet = true
+            },
+            showDeleteDialog = showDeleteDialog,
+            onShowDeleteDialog = { showDeleteDialog = true },
+            onDismissDeleteDialog = { showDeleteDialog = false },
+            onConfirmDelete = { viewModel.deleteFeed() },
+            contentPadding = innerPadding,
+        )
+    }
 
     if (showCategorySheet) {
         EditCategorySheet(
@@ -192,29 +197,8 @@ internal fun EditScreen(
 @Composable
 private fun EditScreenPreview() {
     FeedFlowTheme {
-        EditFeedContent(
-            feedUrl = "https://www.ablog.com/feed",
-            feedName = "Feed Name",
-            showError = false,
-            showLoading = false,
-            errorMessage = "",
-            canEditUrl = true,
-            categoriesState = categoriesExpandedState,
-            feedSourceSettings = FeedSourceSettings(),
-            onFeedUrlUpdated = {},
-            onFeedNameUpdated = {},
-            onLinkOpeningPreferenceSelected = {},
-            onHiddenToggled = {},
-            onPinnedToggled = {},
-            showNotificationToggle = true,
-            onNotificationToggleChanged = {},
-            editFeed = { },
-            onCategorySelectorClick = {},
-            showDeleteDialog = true,
-            onShowDeleteDialog = {},
-            onDismissDeleteDialog = {},
-            onConfirmDelete = {},
-            topAppBar = {
+        Scaffold(
+            topBar = {
                 TopAppBar(
                     title = {
                         Text(LocalFeedFlowStrings.current.editFeed)
@@ -231,6 +215,31 @@ private fun EditScreenPreview() {
                     },
                 )
             },
-        )
+        ) { innerPadding ->
+            EditFeedContent(
+                feedUrl = "https://www.ablog.com/feed",
+                feedName = "Feed Name",
+                showError = false,
+                showLoading = false,
+                errorMessage = "",
+                canEditUrl = true,
+                categoriesState = categoriesExpandedState,
+                feedSourceSettings = FeedSourceSettings(),
+                onFeedUrlUpdated = {},
+                onFeedNameUpdated = {},
+                onLinkOpeningPreferenceSelected = {},
+                onHiddenToggled = {},
+                onPinnedToggled = {},
+                showNotificationToggle = true,
+                onNotificationToggleChanged = {},
+                editFeed = { },
+                onCategorySelectorClick = {},
+                showDeleteDialog = true,
+                onShowDeleteDialog = {},
+                onDismissDeleteDialog = {},
+                onConfirmDelete = {},
+                contentPadding = innerPadding,
+            )
+        }
     }
 }

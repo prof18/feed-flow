@@ -57,9 +57,6 @@ data class EditFeed(
 
 @Serializable data object FeedbinSync : NavKey
 
-// Settings
-@Serializable data object FeedSourceList : NavKey
-
 // Convert domain models to/from routes
 fun FeedSource.toEditFeed(): EditFeed = EditFeed(
     id = id,

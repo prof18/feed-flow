@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.feedsourcelist
+package com.prof18.feedflow.android.feedsourcelist
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,6 +8,10 @@ import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
+import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun FeedSourceListContent(
@@ -51,5 +55,26 @@ fun FeedSourceListContent(
                 paddingValues = paddingValues,
             )
         }
+    }
+}
+
+@PreviewPhone
+@Composable
+private fun FeedSourceListContentPreview() {
+    FeedFlowTheme {
+        FeedSourceListContent(
+            feedSourceListState = FeedSourceListState(
+                feedSourcesWithoutCategory = persistentListOf(),
+                feedSourcesWithCategory = feedSourcesState,
+            ),
+            onAddFeedClick = {},
+            onDeleteFeedClick = {},
+            onExpandClicked = {},
+            navigateBack = {},
+            onRenameFeedSourceClick = { _, _ -> },
+            onEditFeedSourceClick = {},
+            onPinFeedClick = {},
+            onOpenWebsite = {},
+        )
     }
 }

@@ -386,9 +386,8 @@ class MainActivity : BaseThemeActivity() {
                 entry<ImportExport> {
                     ImportExportScreen(
                         navigateBack = navigateBack,
-                        onDoneClick = {
+                        refreshFeeds = {
                             homeViewModel.getNewFeeds()
-                            navigateBack()
                         },
                     )
                 }

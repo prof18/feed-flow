@@ -52,7 +52,6 @@ import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.Accounts
-import com.prof18.feedflow.desktop.AddFeed
 import com.prof18.feedflow.desktop.BazquxSync
 import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.DropboxSync
@@ -75,7 +74,7 @@ import com.prof18.feedflow.desktop.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.desktop.accounts.googledrive.GoogleDriveSyncScreen
 import com.prof18.feedflow.desktop.accounts.icloud.ICloudSyncScreen
 import com.prof18.feedflow.desktop.accounts.miniflux.MinifluxSyncScreen
-import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
+import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
@@ -352,6 +351,12 @@ private fun FrameWindowScope.MainWindowContent(
             triggerFeedFetch = { homeViewModel.getNewFeeds() },
         )
 
+        AddFeedScreen(
+            visible = dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.AddFeed),
+            onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.AddFeed) },
+            onFeedAdded = { homeViewModel.getNewFeeds() },
+        )
+
         val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
         val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsState()
 
@@ -432,6 +437,9 @@ private fun FrameWindowScope.MainWindowContent(
                             listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
                             homeViewModel.getNewFeeds()
                         }
+                    },
+                    onAddFeedClick = {
+                        dialogWindowNavigator.open(DesktopDialogWindowDestination.AddFeed)
                     },
                     onMarkAllReadClick = {
                         showMarkAllReadDialog = true
@@ -546,7 +554,7 @@ private fun EntryProviderScope<NavKey>.screens(
             navigateToReaderMode = { feedItemUrlInfo ->
                 backStack.add(feedItemUrlInfo.toReaderMode())
             },
-            onAddFeedClick = { backStack.add(AddFeed) },
+            onAddFeedClick = { dialogWindowNavigator.open(DesktopDialogWindowDestination.AddFeed) },
             onEditFeedClick = { feedSource ->
                 backStack.add(feedSource.toEditFeed())
             },
@@ -600,16 +608,6 @@ private fun EntryProviderScope<NavKey>.screens(
         )
     }
 
-    entry<AddFeed> {
-        AddFeedFullScreen(
-            onFeedAdded = {
-                homeViewModel.getNewFeeds()
-                navigateBack()
-            },
-            navigateBack = navigateBack,
-        )
-    }
-
     entry<EditFeed> { route ->
         val feedSource = route.toFeedSource()
         EditFeedScreen(
@@ -642,7 +640,7 @@ private fun EntryProviderScope<NavKey>.screens(
 
     entry<FeedSourceList> {
         FeedSourceListScreen(
-            onAddFeedClick = { backStack.add(AddFeed) },
+            onAddFeedClick = { dialogWindowNavigator.open(DesktopDialogWindowDestination.AddFeed) },
             navigateBack = navigateBack,
             onEditFeedClick = { feedSource ->
                 backStack.add(feedSource.toEditFeed())

@@ -56,7 +56,6 @@ import com.prof18.feedflow.desktop.BazquxSync
 import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.DropboxSync
 import com.prof18.feedflow.desktop.EditFeed
-import com.prof18.feedflow.desktop.FeedSourceList
 import com.prof18.feedflow.desktop.FeedSuggestions
 import com.prof18.feedflow.desktop.FeedbinSync
 import com.prof18.feedflow.desktop.FreshRssSync
@@ -77,7 +76,6 @@ import com.prof18.feedflow.desktop.accounts.miniflux.MinifluxSyncScreen
 import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
-import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.desktop.feedsuggestions.FeedSuggestionsScreen
 import com.prof18.feedflow.desktop.home.HomeScreen
 import com.prof18.feedflow.desktop.home.menubar.FeedFlowMenuBar
@@ -472,7 +470,6 @@ private fun FrameWindowScope.MainWindowContent(
                         window.dispatchEvent(WindowEvent(window, WindowEvent.WINDOW_CLOSING))
                     },
                 ),
-                onNavigateToFeedSourceList = { backStack.add(FeedSourceList) },
                 onNavigateToBlockedWords = {
                     dialogWindowNavigator.open(DesktopDialogWindowDestination.BlockedWords)
                 },
@@ -550,7 +547,9 @@ private fun EntryProviderScope<NavKey>.screens(
             },
             onSearchClick = { backStack.add(Search) },
             onAccountsClick = { backStack.add(Accounts) },
-            onSettingsButtonClicked = { backStack.add(FeedSourceList) },
+            onSettingsButtonClicked = {
+                // There's no settings button on desktop
+            },
             navigateToReaderMode = { feedItemUrlInfo ->
                 backStack.add(feedItemUrlInfo.toReaderMode())
             },
@@ -636,15 +635,5 @@ private fun EntryProviderScope<NavKey>.screens(
     }
     entry<FeedbinSync> {
         FeedbinSyncScreen(navigateBack = navigateBack)
-    }
-
-    entry<FeedSourceList> {
-        FeedSourceListScreen(
-            onAddFeedClick = { dialogWindowNavigator.open(DesktopDialogWindowDestination.AddFeed) },
-            navigateBack = navigateBack,
-            onEditFeedClick = { feedSource ->
-                backStack.add(feedSource.toEditFeed())
-            },
-        )
     }
 }

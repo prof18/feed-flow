@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.feedsourcelist
+package com.prof18.feedflow.android.feedsourcelist
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
@@ -64,16 +64,12 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
+import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.conditionalAnimateFloatAsState
 import kotlinx.collections.immutable.ImmutableList
-
-expect fun Modifier.singleAndLongClickModifier(
-    onClick: () -> Unit = {},
-    onLongClick: (() -> Unit)?,
-): Modifier
 
 @Composable
 internal fun FeedSourcesWithCategoryList(

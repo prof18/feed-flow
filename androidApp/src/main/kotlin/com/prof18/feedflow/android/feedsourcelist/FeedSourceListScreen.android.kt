@@ -12,15 +12,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
-import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceListContent
-import com.prof18.feedflow.shared.ui.preview.PreviewPhone
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import kotlinx.collections.immutable.persistentListOf
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -96,25 +90,4 @@ fun FeedSourceListScreen(
         },
         onOpenWebsite = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
     )
-}
-
-@PreviewPhone
-@Composable
-private fun FeedSourceListContentPreview() {
-    FeedFlowTheme {
-        FeedSourceListContent(
-            feedSourceListState = FeedSourceListState(
-                feedSourcesWithoutCategory = persistentListOf(),
-                feedSourcesWithCategory = feedSourcesState,
-            ),
-            onAddFeedClick = {},
-            onDeleteFeedClick = {},
-            onExpandClicked = {},
-            navigateBack = {},
-            onRenameFeedSourceClick = { _, _ -> },
-            onEditFeedSourceClick = {},
-            onPinFeedClick = {},
-            onOpenWebsite = {},
-        )
-    }
 }

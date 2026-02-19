@@ -29,7 +29,6 @@ import org.koin.compose.viewmodel.koinViewModel
 fun FrameWindowScope.FeedFlowMenuBar(
     state: MenuBarState,
     actions: MenuBarActions,
-    onNavigateToFeedSourceList: () -> Unit,
     onNavigateToBlockedWords: () -> Unit,
     onNavigateToAccounts: () -> Unit,
 ) {
@@ -50,7 +49,6 @@ fun FrameWindowScope.FeedFlowMenuBar(
         onEditFeed = { feedSource ->
             // This is actually not used in the desktop menu bar but kept for consistency
         },
-        onFeedsClick = onNavigateToFeedSourceList,
         onBlockedWordsClick = onNavigateToBlockedWords,
     )
     val viewMenuCallbacks = ViewMenuCallbacks(

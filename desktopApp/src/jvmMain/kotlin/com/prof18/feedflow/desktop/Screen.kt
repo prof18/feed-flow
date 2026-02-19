@@ -15,8 +15,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable data object FeedSuggestions : NavKey
 
-@Serializable data object AddFeed : NavKey
-
 @Serializable
 data class ReaderMode(
     val id: String,

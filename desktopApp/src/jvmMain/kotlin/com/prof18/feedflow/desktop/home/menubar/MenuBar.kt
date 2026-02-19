@@ -45,7 +45,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
     val feedMenuCallbacks = FeedMenuCallbacks(
         onAddFeed = {
-            actions.onRefreshClick()
+            actions.onAddFeedClick()
         },
         onEditFeed = { feedSource ->
             // This is actually not used in the desktop menu bar but kept for consistency
@@ -256,6 +256,7 @@ private fun ClearImageCacheDialog(
 
 data class MenuBarActions(
     val onRefreshClick: () -> Unit,
+    val onAddFeedClick: () -> Unit,
     val onMarkAllReadClick: () -> Unit,
     val onImportExportClick: () -> Unit,
     val onClearOldFeedClick: () -> Unit,

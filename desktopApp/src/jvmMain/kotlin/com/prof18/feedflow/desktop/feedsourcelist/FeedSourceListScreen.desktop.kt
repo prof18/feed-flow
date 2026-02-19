@@ -8,14 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.window.DialogWindow
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
-import com.prof18.feedflow.desktop.addfeed.AddFeedScreenContent
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
@@ -31,19 +27,6 @@ internal fun FeedSourceListScreen(
     navigateBack: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
 ) {
-    var dialogState by remember { mutableStateOf(false) }
-
-    DialogWindow(
-        title = LocalFeedFlowStrings.current.addFeed,
-        visible = dialogState,
-        onCloseRequest = { dialogState = false },
-    ) {
-        AddFeedScreenContent(
-            onFeedAdded = {
-                dialogState = false
-            },
-        )
-    }
     val viewModel = koinViewModel<FeedSourceListViewModel>()
     val feedSources by viewModel.feedSourcesState.collectAsState()
 

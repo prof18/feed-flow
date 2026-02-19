@@ -1,15 +1,6 @@
 package com.prof18.feedflow.desktop.editfeed
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,9 +9,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
+import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
@@ -31,11 +26,34 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun EditFeedScreen(
+    visible: Boolean,
+    feedSource: FeedSource?,
+    onCloseRequest: () -> Unit,
+) {
+    if (feedSource == null) return
+
+    DesktopDialogWindow(
+        title = LocalFeedFlowStrings.current.editFeed,
+        size = DpSize(560.dp, 700.dp),
+        visible = visible,
+        onCloseRequest = onCloseRequest,
+    ) { modifier ->
+        EditFeedScreenContent(
+            modifier = modifier,
+            feedSource = feedSource,
+            onCloseRequest = onCloseRequest,
+        )
+    }
+}
+
+@Composable
+private fun EditFeedScreenContent(
     feedSource: FeedSource,
-    navigateBack: () -> Unit,
+    onCloseRequest: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val viewModel = koinViewModel<EditFeedViewModel>()
-    val currentNavigateBack by rememberUpdatedState(navigateBack)
+    val currentCloseRequest by rememberUpdatedState(onCloseRequest)
 
     LaunchedEffect(feedSource) {
         viewModel.loadFeedToEdit(feedSource)
@@ -49,7 +67,6 @@ internal fun EditFeedScreen(
     var showError by remember { mutableStateOf(false) }
 
     val categoriesState by viewModel.categoriesState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
     val showNotificationToggle by viewModel.showNotificationToggleState.collectAsState()
 
     val strings = LocalFeedFlowStrings.current
@@ -69,12 +86,7 @@ internal fun EditFeedScreen(
 
                 is FeedEditedState.FeedEdited -> {
                     showLoading = false
-                    val message = strings.feedEditedMessage(feedAddedState.feedName)
-                    snackbarHostState.showSnackbar(
-                        message,
-                        duration = SnackbarDuration.Short,
-                    )
-                    currentNavigateBack()
+                    currentCloseRequest()
                 }
 
                 FeedEditedState.Idle -> {
@@ -95,7 +107,7 @@ internal fun EditFeedScreen(
     LaunchedEffect(Unit) {
         viewModel.feedDeletedState.collect {
             showDeleteDialog = false
-            currentNavigateBack()
+            currentCloseRequest()
         }
     }
 
@@ -135,28 +147,11 @@ internal fun EditFeedScreen(
         onCategorySelectorClick = {
             showCategoryDialog = true
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topAppBar = {
-            TopAppBar(
-                title = {
-                    Text(LocalFeedFlowStrings.current.editFeed)
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = navigateBack,
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                        )
-                    }
-                },
-            )
-        },
         showDeleteDialog = showDeleteDialog,
         onShowDeleteDialog = { showDeleteDialog = true },
         onDismissDeleteDialog = { showDeleteDialog = false },
         onConfirmDelete = { viewModel.deleteFeed() },
+        modifier = modifier,
     )
 
     if (showCategoryDialog) {
@@ -207,23 +202,6 @@ private fun EditScreenPreview() {
             onShowDeleteDialog = {},
             onDismissDeleteDialog = {},
             onConfirmDelete = {},
-            topAppBar = {
-                TopAppBar(
-                    title = {
-                        Text(LocalFeedFlowStrings.current.editFeed)
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {},
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                )
-            },
         )
     }
 }

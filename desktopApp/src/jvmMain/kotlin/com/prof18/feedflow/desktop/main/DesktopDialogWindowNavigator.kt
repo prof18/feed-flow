@@ -6,6 +6,7 @@ import androidx.compose.runtime.remember
 
 internal enum class DesktopDialogWindowDestination {
     BlockedWords,
+    ImportExport,
 }
 
 internal class DesktopDialogWindowNavigator {

@@ -4,12 +4,23 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,7 +42,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ImportExportScreen(
     navigateBack: () -> Unit,
-    onDoneClick: () -> Unit,
+    refreshFeeds: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val viewModel = koinViewModel<ImportExportViewModel>()
 
@@ -81,34 +93,62 @@ fun ImportExportScreen(
 
     val feedImporterState by viewModel.importExportState.collectAsStateWithLifecycle()
 
-    ImportExportContent(
-        navigateBack = navigateBack,
-        feedImportExportState = feedImporterState,
-        onDoneClick = onDoneClick,
-        onRetryClick = {
-            viewModel.clearState()
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = LocalFeedFlowStrings.current.importExportOpmlTitle)
+                },
+                navigationIcon = {
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                        )
+                    }
+                },
+            )
         },
-        onImportClick = {
-            openOpmlFileAction.launch(arrayOf("*/*"))
-        },
-        onExportClick = {
-            val deviceName = "${Build.MANUFACTURER}-${Build.MODEL}"
-            val formattedDate = viewModel.getCurrentDateForExport()
-            val fileName = "feedflow-export_${formattedDate}_$deviceName.opml".lowercase()
-            createOpmlFileAction.launch(fileName)
-        },
-        onImportArticlesClick = {
-            openArticlesFileAction.launch(arrayOf("*/*"))
-        },
-        onExportArticlesClick = { filter ->
-            articleExportFilter = filter
-            viewModel.startExport(ImportExportContentType.ArticlesCsv)
-            val deviceName = "${Build.MANUFACTURER}-${Build.MODEL}"
-            val formattedDate = viewModel.getCurrentDateForExport()
-            val fileName = "feedflow-articles-export_${formattedDate}_${deviceName}_${filter.name.lowercase()}.csv"
-            createArticlesFileAction.launch(fileName)
-        },
-    )
+    ) { paddingValues ->
+        val layoutDir = LocalLayoutDirection.current
+        ImportExportContent(
+            feedImportExportState = feedImporterState,
+            onDoneClick = {
+                refreshFeeds()
+                viewModel.clearState()
+            },
+            onRetryClick = {
+                viewModel.clearState()
+            },
+            onImportClick = {
+                openOpmlFileAction.launch(arrayOf("*/*"))
+            },
+            onExportClick = {
+                val deviceName = "${Build.MANUFACTURER}-${Build.MODEL}"
+                val formattedDate = viewModel.getCurrentDateForExport()
+                val fileName = "feedflow-export_${formattedDate}_$deviceName.opml".lowercase()
+                createOpmlFileAction.launch(fileName)
+            },
+            onImportArticlesClick = {
+                openArticlesFileAction.launch(arrayOf("*/*"))
+            },
+            onExportArticlesClick = { filter ->
+                articleExportFilter = filter
+                viewModel.startExport(ImportExportContentType.ArticlesCsv)
+                val deviceName = "${Build.MANUFACTURER}-${Build.MODEL}"
+                val formattedDate = viewModel.getCurrentDateForExport()
+                val fileName = "feedflow-articles-export_${formattedDate}_${deviceName}_${filter.name.lowercase()}.csv"
+                createArticlesFileAction.launch(fileName)
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
+                .padding(start = paddingValues.calculateLeftPadding(layoutDir))
+                .padding(end = paddingValues.calculateRightPadding(layoutDir))
+                .padding(bottom = paddingValues.calculateBottomPadding()),
+        )
+    }
 }
 
 @PreviewPhone
@@ -119,7 +159,6 @@ private fun ImportExportContentPreview(
     FeedFlowTheme {
         ImportExportContent(
             feedImportExportState = state,
-            navigateBack = {},
             onRetryClick = {},
             onDoneClick = {},
             onImportClick = {},

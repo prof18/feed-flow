@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.ui.feed.editfeed
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +12,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -54,200 +54,193 @@ fun EditFeedContent(
     showDeleteDialog: Boolean,
     onShowDeleteDialog: () -> Unit,
     onDismissDeleteDialog: () -> Unit,
+    onConfirmDelete: () -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
     onNotificationToggleChanged: (Boolean) -> Unit = {},
     showNotificationToggle: Boolean = false,
-    snackbarHost: @Composable () -> Unit = {},
-    topAppBar: @Composable () -> Unit = {},
-    onConfirmDelete: () -> Unit,
 ) {
-    Scaffold(
-        modifier = modifier,
-        topBar = topAppBar,
-        snackbarHost = snackbarHost,
-    ) { paddingValues ->
-        if (showDeleteDialog) {
-            var deleteInProgressState by remember(showDeleteDialog) { mutableStateOf(false) }
-            AlertDialog(
-                onDismissRequest = {
-                    if (!deleteInProgressState) onDismissDeleteDialog()
-                },
-                title = { Text(LocalFeedFlowStrings.current.deleteFeedConfirmationTitle) },
-                text = { Text(LocalFeedFlowStrings.current.deleteFeedConfirmationMessage) },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            deleteInProgressState = true
-                            onConfirmDelete()
-                        },
-                        enabled = !deleteInProgressState,
-                    ) {
-                        if (deleteInProgressState) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(ButtonDefaults.IconSize),
-                            )
-                        } else {
-                            Text(LocalFeedFlowStrings.current.deleteFeed)
-                        }
-                    }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = onDismissDeleteDialog,
-                        enabled = !deleteInProgressState,
-                    ) {
-                        Text(LocalFeedFlowStrings.current.deleteCategoryCloseButton)
-                    }
-                },
-            )
-        }
-        val layoutDir = LocalLayoutDirection.current
-        LazyColumn(
-            modifier = Modifier
-                .padding(top = paddingValues.calculateTopPadding())
-                .padding(start = paddingValues.calculateLeftPadding(layoutDir))
-                .padding(end = paddingValues.calculateRightPadding(layoutDir))
-                .padding(horizontal = Spacing.regular),
-        ) {
-            item {
-                FeedNameTextField(
-                    modifier = Modifier
-                        .padding(top = Spacing.regular)
-                        .fillMaxWidth(),
-                    feedName = feedName,
-                    onFeedNameUpdated = onFeedNameUpdated,
-                )
-            }
-
-            if (canEditUrl) {
-                item {
-                    FeedUrlTextField(
-                        modifier = Modifier
-                            .padding(top = Spacing.regular)
-                            .fillMaxWidth(),
-                        feedUrl = feedUrl,
-                        showError = showError,
-                        errorMessage = errorMessage,
-                        onFeedUrlUpdated = onFeedUrlUpdated,
-                    )
-                }
-            }
-
-            item {
-                LinkOpeningPreferenceSelector(
-                    modifier = Modifier
-                        .padding(top = Spacing.regular)
-                        .fillMaxWidth(),
-                    currentPreference = feedSourceSettings.linkOpeningPreference,
-                    onPreferenceSelected = onLinkOpeningPreferenceSelected,
-                )
-            }
-
-            item {
-                Row(
-                    modifier = Modifier
-                        .padding(top = Spacing.regular),
-                    verticalAlignment = Alignment.CenterVertically,
+    if (showDeleteDialog) {
+        var deleteInProgressState by remember(showDeleteDialog) { mutableStateOf(false) }
+        AlertDialog(
+            onDismissRequest = {
+                if (!deleteInProgressState) onDismissDeleteDialog()
+            },
+            title = { Text(LocalFeedFlowStrings.current.deleteFeedConfirmationTitle) },
+            text = { Text(LocalFeedFlowStrings.current.deleteFeedConfirmationMessage) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        deleteInProgressState = true
+                        onConfirmDelete()
+                    },
+                    enabled = !deleteInProgressState,
                 ) {
-                    Text(
-                        text = LocalFeedFlowStrings.current.hideFeedFromTimelineDescription,
-                        modifier = Modifier.padding(top = Spacing.xsmall)
-                            .weight(1f),
-                    )
-                    Switch(
-                        checked = feedSourceSettings.isHiddenFromTimeline,
-                        onCheckedChange = onHiddenToggled,
-                        modifier = Modifier.padding(start = Spacing.regular),
-                    )
-                }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier
-                        .padding(top = Spacing.regular),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = LocalFeedFlowStrings.current.pinFeedSourceDescription,
-                        modifier = Modifier.padding(top = Spacing.xsmall)
-                            .weight(1f),
-                    )
-                    Switch(
-                        checked = feedSourceSettings.isPinned,
-                        onCheckedChange = onPinnedToggled,
-                        modifier = Modifier.padding(start = Spacing.regular),
-                    )
-                }
-            }
-
-            item {
-                if (showNotificationToggle) {
-                    Row(
-                        modifier = Modifier
-                            .padding(top = Spacing.regular),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = LocalFeedFlowStrings.current.enableNotificationsForFeed,
-                            modifier = Modifier.padding(top = Spacing.xsmall)
-                                .weight(1f),
-                        )
-                        Switch(
-                            checked = feedSourceSettings.isNotificationEnabled,
-                            onCheckedChange = onNotificationToggleChanged,
-                            modifier = Modifier.padding(start = Spacing.regular),
-                        )
-                    }
-                }
-            }
-
-            item {
-                CategoriesSelector(
-                    modifier = Modifier
-                        .padding(vertical = Spacing.regular),
-                    categoriesState = categoriesState,
-                    onClick = onCategorySelectorClick,
-                )
-            }
-
-            item {
-                Button(
-                    modifier = Modifier
-                        .padding(top = Spacing.small)
-                        .padding(bottom = Spacing.regular)
-                        .fillMaxWidth(),
-                    enabled = feedUrl.isNotBlank() && !showLoading,
-                    onClick = editFeed,
-                ) {
-                    if (showLoading) {
+                    if (deleteInProgressState) {
                         CircularProgressIndicator(
-                            color = Color.White,
                             modifier = Modifier.size(ButtonDefaults.IconSize),
                         )
                     } else {
-                        Text(LocalFeedFlowStrings.current.actionSave)
+                        Text(LocalFeedFlowStrings.current.deleteFeed)
                     }
                 }
-            }
-
-            item {
+            },
+            dismissButton = {
                 TextButton(
-                    modifier = Modifier
-                        .padding(bottom = Spacing.regular)
-                        .fillMaxWidth(),
-                    onClick = onShowDeleteDialog,
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = Color(color = 0xFFD32F2F),
-                    ),
+                    onClick = onDismissDeleteDialog,
+                    enabled = !deleteInProgressState,
                 ) {
-                    Text(LocalFeedFlowStrings.current.deleteFeedButton)
+                    Text(LocalFeedFlowStrings.current.deleteCategoryCloseButton)
+                }
+            },
+        )
+    }
+    val layoutDir = LocalLayoutDirection.current
+    LazyColumn(
+        modifier = modifier
+            .padding(top = contentPadding.calculateTopPadding())
+            .padding(start = contentPadding.calculateLeftPadding(layoutDir))
+            .padding(end = contentPadding.calculateRightPadding(layoutDir))
+            .padding(horizontal = Spacing.regular),
+    ) {
+        item {
+            FeedNameTextField(
+                modifier = Modifier
+                    .padding(top = Spacing.regular)
+                    .fillMaxWidth(),
+                feedName = feedName,
+                onFeedNameUpdated = onFeedNameUpdated,
+            )
+        }
+
+        if (canEditUrl) {
+            item {
+                FeedUrlTextField(
+                    modifier = Modifier
+                        .padding(top = Spacing.regular)
+                        .fillMaxWidth(),
+                    feedUrl = feedUrl,
+                    showError = showError,
+                    errorMessage = errorMessage,
+                    onFeedUrlUpdated = onFeedUrlUpdated,
+                )
+            }
+        }
+
+        item {
+            LinkOpeningPreferenceSelector(
+                modifier = Modifier
+                    .padding(top = Spacing.regular)
+                    .fillMaxWidth(),
+                currentPreference = feedSourceSettings.linkOpeningPreference,
+                onPreferenceSelected = onLinkOpeningPreferenceSelected,
+            )
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .padding(top = Spacing.regular),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = LocalFeedFlowStrings.current.hideFeedFromTimelineDescription,
+                    modifier = Modifier.padding(top = Spacing.xsmall)
+                        .weight(1f),
+                )
+                Switch(
+                    checked = feedSourceSettings.isHiddenFromTimeline,
+                    onCheckedChange = onHiddenToggled,
+                    modifier = Modifier.padding(start = Spacing.regular),
+                )
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .padding(top = Spacing.regular),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = LocalFeedFlowStrings.current.pinFeedSourceDescription,
+                    modifier = Modifier.padding(top = Spacing.xsmall)
+                        .weight(1f),
+                )
+                Switch(
+                    checked = feedSourceSettings.isPinned,
+                    onCheckedChange = onPinnedToggled,
+                    modifier = Modifier.padding(start = Spacing.regular),
+                )
+            }
+        }
+
+        item {
+            if (showNotificationToggle) {
+                Row(
+                    modifier = Modifier
+                        .padding(top = Spacing.regular),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = LocalFeedFlowStrings.current.enableNotificationsForFeed,
+                        modifier = Modifier.padding(top = Spacing.xsmall)
+                            .weight(1f),
+                    )
+                    Switch(
+                        checked = feedSourceSettings.isNotificationEnabled,
+                        onCheckedChange = onNotificationToggleChanged,
+                        modifier = Modifier.padding(start = Spacing.regular),
+                    )
                 }
             }
+        }
 
-            item {
-                Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
+        item {
+            CategoriesSelector(
+                modifier = Modifier
+                    .padding(vertical = Spacing.regular),
+                categoriesState = categoriesState,
+                onClick = onCategorySelectorClick,
+            )
+        }
+
+        item {
+            Button(
+                modifier = Modifier
+                    .padding(top = Spacing.small)
+                    .padding(bottom = Spacing.regular)
+                    .fillMaxWidth(),
+                enabled = feedUrl.isNotBlank() && !showLoading,
+                onClick = editFeed,
+            ) {
+                if (showLoading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                    )
+                } else {
+                    Text(LocalFeedFlowStrings.current.actionSave)
+                }
             }
+        }
+
+        item {
+            TextButton(
+                modifier = Modifier
+                    .padding(bottom = Spacing.regular)
+                    .fillMaxWidth(),
+                onClick = onShowDeleteDialog,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = Color(color = 0xFFD32F2F),
+                ),
+            ) {
+                Text(LocalFeedFlowStrings.current.deleteFeedButton)
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(contentPadding.calculateBottomPadding()))
         }
     }
 }

@@ -64,7 +64,6 @@ import com.prof18.feedflow.desktop.FreshRssSync
 import com.prof18.feedflow.desktop.GoogleDriveSync
 import com.prof18.feedflow.desktop.Home
 import com.prof18.feedflow.desktop.ICloudSync
-import com.prof18.feedflow.desktop.ImportExport
 import com.prof18.feedflow.desktop.MinifluxSync
 import com.prof18.feedflow.desktop.ReaderMode
 import com.prof18.feedflow.desktop.Search
@@ -92,7 +91,6 @@ import com.prof18.feedflow.desktop.toEditFeed
 import com.prof18.feedflow.desktop.toFeedSource
 import com.prof18.feedflow.desktop.toReaderMode
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
-import com.prof18.feedflow.desktop.utils.LocalComposeWindow
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
@@ -347,6 +345,13 @@ private fun FrameWindowScope.MainWindowContent(
             onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.BlockedWords) },
         )
 
+        ImportExportScreen(
+            composeWindow = window,
+            visible = dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.ImportExport),
+            onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.ImportExport) },
+            triggerFeedFetch = { homeViewModel.getNewFeeds() },
+        )
+
         val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
         val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsState()
 
@@ -359,7 +364,6 @@ private fun FrameWindowScope.MainWindowContent(
 
         CompositionLocalProvider(
             LocalScrollbarStyle provides scrollbarStyle(),
-            LocalComposeWindow provides window,
         ) {
             Surface(
                 modifier = Modifier
@@ -400,6 +404,7 @@ private fun FrameWindowScope.MainWindowContent(
                                 homeViewModel = homeViewModel,
                                 snackbarHostState = snackbarHostState,
                                 listState = listState,
+                                dialogWindowNavigator = dialogWindowNavigator,
                             )
                         },
                     )
@@ -432,7 +437,7 @@ private fun FrameWindowScope.MainWindowContent(
                         showMarkAllReadDialog = true
                     },
                     onImportExportClick = {
-                        backStack.add(ImportExport)
+                        dialogWindowNavigator.open(DesktopDialogWindowDestination.ImportExport)
                     },
                     onClearOldFeedClick = {
                         showClearOldArticlesDialog = true
@@ -525,13 +530,16 @@ private fun EntryProviderScope<NavKey>.screens(
     homeViewModel: HomeViewModel,
     snackbarHostState: SnackbarHostState,
     listState: androidx.compose.foundation.lazy.LazyListState,
+    dialogWindowNavigator: DesktopDialogWindowNavigator,
 ) {
     entry<Home> {
         HomeScreen(
             homeViewModel = homeViewModel,
             snackbarHostState = snackbarHostState,
             listState = listState,
-            onImportExportClick = { backStack.add(ImportExport) },
+            onImportExportClick = {
+                dialogWindowNavigator.open(DesktopDialogWindowDestination.ImportExport)
+            },
             onSearchClick = { backStack.add(Search) },
             onAccountsClick = { backStack.add(Accounts) },
             onSettingsButtonClicked = { backStack.add(FeedSourceList) },
@@ -598,15 +606,6 @@ private fun EntryProviderScope<NavKey>.screens(
                 homeViewModel.getNewFeeds()
                 navigateBack()
             },
-            navigateBack = navigateBack,
-        )
-    }
-
-    entry<ImportExport> {
-        val composeWindow = LocalComposeWindow.current
-        ImportExportScreen(
-            composeWindow = composeWindow,
-            triggerFeedFetch = { homeViewModel.getNewFeeds() },
             navigateBack = navigateBack,
         )
     }

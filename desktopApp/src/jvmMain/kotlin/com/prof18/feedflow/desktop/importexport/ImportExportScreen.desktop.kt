@@ -8,8 +8,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.awt.AwtWindow
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.ArticleExportFilter
+import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.ImportExportContentType
+import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.desktop.utils.getUnixDeviceName
 import com.prof18.feedflow.shared.domain.csv.CsvInput
 import com.prof18.feedflow.shared.domain.csv.CsvOutput
@@ -26,12 +30,14 @@ import javax.swing.JFrame
 @Composable
 internal fun ImportExportScreen(
     composeWindow: ComposeWindow,
+    visible: Boolean,
+    onCloseRequest: () -> Unit,
     triggerFeedFetch: () -> Unit,
-    navigateBack: () -> Unit,
 ) {
     val viewModel = koinViewModel<ImportExportViewModel>()
     val feedImporterState by viewModel.importExportState.collectAsState()
 
+    val importExportTitle = LocalFeedFlowStrings.current.importExportOpmlTitle
     val importDialogTitle = LocalFeedFlowStrings.current.importDialogTitle
     val exportDialogTitle = LocalFeedFlowStrings.current.exportDialogTitle
     val importArticlesDialogTitle = LocalFeedFlowStrings.current.importArticlesDialogTitle
@@ -42,6 +48,14 @@ internal fun ImportExportScreen(
     var showImportArticlesDialog by remember { mutableStateOf(false) }
     var showExportArticlesDialog by remember { mutableStateOf(false) }
     var articleExportFilter by remember { mutableStateOf(ArticleExportFilter.All) }
+    val closeDialog = {
+        showImportDialog = false
+        showExportDialog = false
+        showImportArticlesDialog = false
+        showExportArticlesDialog = false
+        viewModel.clearState()
+        onCloseRequest()
+    }
 
     if (showImportDialog) {
         FileDialog(
@@ -125,31 +139,42 @@ internal fun ImportExportScreen(
         )
     }
 
-    ImportExportContent(
-        navigateBack = navigateBack,
-        feedImportExportState = feedImporterState,
-        onDoneClick = {
-            triggerFeedFetch()
-            navigateBack()
-        },
-        onRetryClick = {
-            viewModel.clearState()
-        },
-        onImportClick = {
-            showImportDialog = true
-        },
-        onExportClick = {
-            showExportDialog = true
-        },
-        onImportArticlesClick = {
-            showImportArticlesDialog = true
-        },
-        onExportArticlesClick = { filter ->
-            articleExportFilter = filter
-            viewModel.startExport(ImportExportContentType.ArticlesCsv)
-            showExportArticlesDialog = true
-        },
-    )
+    DesktopDialogWindow(
+        title = importExportTitle,
+        size = DpSize(500.dp, 600.dp),
+        visible = visible,
+        onCloseRequest = closeDialog,
+    ) { modifier ->
+        ImportExportContent(
+            modifier = modifier,
+            feedImportExportState = feedImporterState,
+            onDoneClick = {
+                val isImportResult = feedImporterState is FeedImportExportState.ImportSuccess ||
+                    feedImporterState is FeedImportExportState.ArticleImportSuccess
+                if (isImportResult) {
+                    triggerFeedFetch()
+                }
+                viewModel.clearState()
+            },
+            onRetryClick = {
+                viewModel.clearState()
+            },
+            onImportClick = {
+                showImportDialog = true
+            },
+            onExportClick = {
+                showExportDialog = true
+            },
+            onImportArticlesClick = {
+                showImportArticlesDialog = true
+            },
+            onExportArticlesClick = { filter ->
+                articleExportFilter = filter
+                viewModel.startExport(ImportExportContentType.ArticlesCsv)
+                showExportArticlesDialog = true
+            },
+        )
+    }
 }
 
 @Composable

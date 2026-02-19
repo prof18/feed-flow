@@ -10,21 +10,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,7 +45,6 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun ImportExportContent(
     feedImportExportState: FeedImportExportState,
-    navigateBack: () -> Unit,
     onRetryClick: () -> Unit,
     onDoneClick: () -> Unit,
     onImportClick: () -> Unit,
@@ -74,107 +68,88 @@ fun ImportExportContent(
         )
     }
 
-    Scaffold(
+    ImportExportBody(
+        feedImportExportState = feedImportExportState,
+        onRetryClick = onRetryClick,
+        onDoneClick = onDoneClick,
+        onImportClick = onImportClick,
+        onExportClick = onExportClick,
+        onImportArticlesClick = onImportArticlesClick,
+        onOpenExportArticlesDialog = { showExportArticlesDialog = true },
         modifier = modifier,
-        topBar = {
-            ImportExportNavBar(navigateBack)
-        },
-    ) { paddingValues ->
-        when (feedImportExportState) {
-            is FeedImportExportState.Idle ->
-                ImportExportIdleView(
-                    modifier = Modifier.padding(paddingValues),
-                    onImportClick = onImportClick,
-                    onExportClick = onExportClick,
-                    onImportArticlesClick = onImportArticlesClick,
-                    onExportArticlesClick = { showExportArticlesDialog = true },
-                )
-
-            FeedImportExportState.Error ->
-                ImportExportErrorView(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    onRetryClick = onRetryClick,
-                )
-
-            is FeedImportExportState.LoadingImport ->
-                ImportExportLoadingView(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    message = when (feedImportExportState.contentType) {
-                        ImportExportContentType.FeedsOpml ->
-                            LocalFeedFlowStrings.current.feedAddInProgressMessage
-                        ImportExportContentType.ArticlesCsv ->
-                            LocalFeedFlowStrings.current.articlesImportingMessage
-                    },
-                )
-
-            is FeedImportExportState.LoadingExport ->
-                ImportExportLoadingView(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    message = LocalFeedFlowStrings.current.exportStartedMessage,
-                )
-
-            FeedImportExportState.ExportSuccess ->
-                ExportDoneView(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    onDoneClick = onDoneClick,
-                )
-
-            FeedImportExportState.ArticleExportSuccess ->
-                ArticleExportDoneView(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    onDoneClick = onDoneClick,
-                )
-
-            is FeedImportExportState.ImportSuccess ->
-                ImportDoneView(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    feedSourcesInvalid = feedImportExportState.notValidFeedSources,
-                    feedSourceWithError = feedImportExportState.feedSourceWithError,
-                    onDoneClick = onDoneClick,
-                )
-
-            FeedImportExportState.ArticleImportSuccess ->
-                ArticleImportDoneView(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    onDoneClick = onDoneClick,
-                )
-        }
-    }
+    )
 }
 
 @Composable
-private fun ImportExportNavBar(navigateBack: () -> Unit) {
-    TopAppBar(
-        title = {
-            Text(LocalFeedFlowStrings.current.importExportOpmlTitle)
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    navigateBack()
+private fun ImportExportBody(
+    feedImportExportState: FeedImportExportState,
+    onRetryClick: () -> Unit,
+    onDoneClick: () -> Unit,
+    onImportClick: () -> Unit,
+    onExportClick: () -> Unit,
+    onImportArticlesClick: () -> Unit,
+    onOpenExportArticlesDialog: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when (feedImportExportState) {
+        is FeedImportExportState.Idle ->
+            ImportExportIdleView(
+                modifier = modifier,
+                onImportClick = onImportClick,
+                onExportClick = onExportClick,
+                onImportArticlesClick = onImportArticlesClick,
+                onExportArticlesClick = onOpenExportArticlesDialog,
+            )
+
+        FeedImportExportState.Error ->
+            ImportExportErrorView(
+                modifier = modifier.fillMaxSize(),
+                onRetryClick = onRetryClick,
+            )
+
+        is FeedImportExportState.LoadingImport ->
+            ImportExportLoadingView(
+                modifier = modifier.fillMaxSize(),
+                message = when (feedImportExportState.contentType) {
+                    ImportExportContentType.FeedsOpml ->
+                        LocalFeedFlowStrings.current.feedAddInProgressMessage
+                    ImportExportContentType.ArticlesCsv ->
+                        LocalFeedFlowStrings.current.articlesImportingMessage
                 },
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                )
-            }
-        },
-    )
+            )
+
+        is FeedImportExportState.LoadingExport ->
+            ImportExportLoadingView(
+                modifier = modifier.fillMaxSize(),
+                message = LocalFeedFlowStrings.current.exportStartedMessage,
+            )
+
+        FeedImportExportState.ExportSuccess ->
+            ExportDoneView(
+                modifier = modifier.fillMaxSize(),
+                onDoneClick = onDoneClick,
+            )
+
+        FeedImportExportState.ArticleExportSuccess ->
+            ArticleExportDoneView(
+                modifier = modifier.fillMaxSize(),
+                onDoneClick = onDoneClick,
+            )
+
+        is FeedImportExportState.ImportSuccess ->
+            ImportDoneView(
+                modifier = modifier.fillMaxSize(),
+                feedSourcesInvalid = feedImportExportState.notValidFeedSources,
+                feedSourceWithError = feedImportExportState.feedSourceWithError,
+                onDoneClick = onDoneClick,
+            )
+
+        FeedImportExportState.ArticleImportSuccess ->
+            ArticleImportDoneView(
+                modifier = modifier.fillMaxSize(),
+                onDoneClick = onDoneClick,
+            )
+    }
 }
 
 @Composable
@@ -592,7 +567,6 @@ private fun ImportExportIdlePreview() {
     PreviewTheme {
         ImportExportContent(
             feedImportExportState = FeedImportExportState.Idle,
-            navigateBack = {},
             onRetryClick = {},
             onDoneClick = {},
             onImportClick = {},
@@ -609,7 +583,6 @@ private fun ImportExportLoadingPreview() {
     PreviewTheme {
         ImportExportContent(
             feedImportExportState = FeedImportExportState.LoadingExport(ImportExportContentType.ArticlesCsv),
-            navigateBack = {},
             onRetryClick = {},
             onDoneClick = {},
             onImportClick = {},
@@ -626,7 +599,6 @@ private fun ImportExportArticleDonePreview() {
     PreviewTheme {
         ImportExportContent(
             feedImportExportState = FeedImportExportState.ArticleExportSuccess,
-            navigateBack = {},
             onRetryClick = {},
             onDoneClick = {},
             onImportClick = {},

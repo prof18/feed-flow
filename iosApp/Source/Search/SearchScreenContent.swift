@@ -99,7 +99,8 @@ struct SearchScreenContent: View {
                 openOnlyOnBrowser: false,
                 isBookmarked: feedItem.isBookmarked,
                 linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
-                commentsUrl: feedItem.commentsUrl
+                commentsUrl: feedItem.commentsUrl,
+                imageUrl: feedItem.imageUrl
             )
             readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
             self.appState.navigate(route: CommonViewRoute.readerMode)

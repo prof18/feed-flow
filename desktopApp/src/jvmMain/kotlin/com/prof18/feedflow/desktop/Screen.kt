@@ -8,8 +8,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable data object Search : NavKey
 
-@Serializable data object Accounts : NavKey
-
 @Serializable data object FeedSuggestions : NavKey
 
 @Serializable
@@ -21,21 +19,6 @@ data class ReaderMode(
     val linkOpeningPreference: String,
     val commentsUrl: String?,
 ) : NavKey
-
-// Sync screens
-@Serializable data object DropboxSync : NavKey
-
-@Serializable data object GoogleDriveSync : NavKey
-
-@Serializable data object ICloudSync : NavKey
-
-@Serializable data object FreshRssSync : NavKey
-
-@Serializable data object MinifluxSync : NavKey
-
-@Serializable data object BazquxSync : NavKey
-
-@Serializable data object FeedbinSync : NavKey
 
 fun FeedItemUrlInfo.toReaderMode(): ReaderMode = ReaderMode(
     id = id,

@@ -52,27 +52,12 @@ import com.prof18.feedflow.core.utils.DesktopDatabaseErrorState
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
-import com.prof18.feedflow.desktop.Accounts
-import com.prof18.feedflow.desktop.BazquxSync
 import com.prof18.feedflow.desktop.DesktopConfig
-import com.prof18.feedflow.desktop.DropboxSync
 import com.prof18.feedflow.desktop.FeedSuggestions
-import com.prof18.feedflow.desktop.FeedbinSync
-import com.prof18.feedflow.desktop.FreshRssSync
-import com.prof18.feedflow.desktop.GoogleDriveSync
 import com.prof18.feedflow.desktop.Home
-import com.prof18.feedflow.desktop.ICloudSync
-import com.prof18.feedflow.desktop.MinifluxSync
 import com.prof18.feedflow.desktop.ReaderMode
 import com.prof18.feedflow.desktop.Search
-import com.prof18.feedflow.desktop.accounts.AccountsScreen
-import com.prof18.feedflow.desktop.accounts.bazqux.BazquxSyncScreen
-import com.prof18.feedflow.desktop.accounts.dropbox.DropboxSyncScreen
-import com.prof18.feedflow.desktop.accounts.feedbin.FeedbinSyncScreen
-import com.prof18.feedflow.desktop.accounts.freshrss.FreshRssSyncScreen
-import com.prof18.feedflow.desktop.accounts.googledrive.GoogleDriveSyncScreen
-import com.prof18.feedflow.desktop.accounts.icloud.ICloudSyncScreen
-import com.prof18.feedflow.desktop.accounts.miniflux.MinifluxSyncScreen
+import com.prof18.feedflow.desktop.accounts.AccountsWindow
 import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
@@ -364,6 +349,11 @@ private fun FrameWindowScope.MainWindowContent(
             },
         )
 
+        AccountsWindow(
+            visible = dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.Accounts),
+            onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.Accounts) },
+        )
+
         val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
         val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsState()
 
@@ -486,7 +476,7 @@ private fun FrameWindowScope.MainWindowContent(
                 onNavigateToBlockedWords = {
                     dialogWindowNavigator.open(DesktopDialogWindowDestination.BlockedWords)
                 },
-                onNavigateToAccounts = { backStack.add(Accounts) },
+                onNavigateToAccounts = { dialogWindowNavigator.open(DesktopDialogWindowDestination.Accounts) },
             )
         }
     }
@@ -560,7 +550,7 @@ private fun EntryProviderScope<NavKey>.screens(
                 dialogWindowNavigator.open(DesktopDialogWindowDestination.ImportExport)
             },
             onSearchClick = { backStack.add(Search) },
-            onAccountsClick = { backStack.add(Accounts) },
+            onAccountsClick = { dialogWindowNavigator.open(DesktopDialogWindowDestination.Accounts) },
             onSettingsButtonClicked = {
                 // There's no settings button on desktop
             },
@@ -598,44 +588,9 @@ private fun EntryProviderScope<NavKey>.screens(
         )
     }
 
-    entry<Accounts> {
-        AccountsScreen(
-            navigateBack = navigateBack,
-            navigateToDropboxSync = { backStack.add(DropboxSync) },
-            navigateToGoogleDriveSync = { backStack.add(GoogleDriveSync) },
-            navigateToICloudSync = { backStack.add(ICloudSync) },
-            navigateToFreshRssSync = { backStack.add(FreshRssSync) },
-            navigateToMinifluxSync = { backStack.add(MinifluxSync) },
-            navigateToBazquxSync = { backStack.add(BazquxSync) },
-            navigateToFeedbinSync = { backStack.add(FeedbinSync) },
-        )
-    }
-
     entry<FeedSuggestions> {
         FeedSuggestionsScreen(
             navigateBack = navigateBack,
         )
-    }
-
-    entry<DropboxSync> {
-        DropboxSyncScreen(navigateBack = navigateBack)
-    }
-    entry<GoogleDriveSync> {
-        GoogleDriveSyncScreen(navigateBack = navigateBack)
-    }
-    entry<ICloudSync> {
-        ICloudSyncScreen(navigateBack = navigateBack)
-    }
-    entry<FreshRssSync> {
-        FreshRssSyncScreen(navigateBack = navigateBack)
-    }
-    entry<MinifluxSync> {
-        MinifluxSyncScreen(navigateBack = navigateBack)
-    }
-    entry<BazquxSync> {
-        BazquxSyncScreen(navigateBack = navigateBack)
-    }
-    entry<FeedbinSync> {
-        FeedbinSyncScreen(navigateBack = navigateBack)
     }
 }

@@ -9,6 +9,7 @@ internal enum class DesktopDialogWindowDestination {
     EditFeed,
     BlockedWords,
     ImportExport,
+    Accounts,
 }
 
 internal class DesktopDialogWindowNavigator {

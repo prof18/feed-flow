@@ -212,8 +212,6 @@ internal fun ReaderModeScreen(
                             Column(
                                 modifier = contentModifier,
                             ) {
-
-
                                 key(s.readerModeData.content, fontSize) {
                                     SelectionContainer {
                                         Markdown(

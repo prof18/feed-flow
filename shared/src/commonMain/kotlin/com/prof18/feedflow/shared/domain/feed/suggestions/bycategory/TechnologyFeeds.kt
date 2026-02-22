@@ -27,6 +27,12 @@ internal val technologyFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=9to5mac.com&sz=64",
         ),
         SuggestedFeed(
+            name = "Android Authority",
+            url = "https://www.androidauthority.com/feed/",
+            description = "Android ecosystem news and device coverage",
+            logoUrl = "https://www.google.com/s2/favicons?domain=androidauthority.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "AppleInsider",
             url = "https://appleinsider.com/rss/news/",
             description = "Apple news and analysis",
@@ -57,6 +63,12 @@ internal val technologyFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=gizmodo.com&sz=64",
         ),
         SuggestedFeed(
+            name = "GSM Arena",
+            url = "https://www.gsmarena.com/rss-news-reviews.php3",
+            description = "Technology news and updates from Gsmarena",
+            logoUrl = "https://www.google.com/s2/favicons?domain=gsmarena.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "Hacker News",
             url = "https://news.ycombinator.com/rss",
             description = "Top discussions from the tech and startup community",
@@ -75,10 +87,28 @@ internal val technologyFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=macrumors.com&sz=64",
         ),
         SuggestedFeed(
+            name = "MacStories",
+            url = "https://www.macstories.net/feed/",
+            description = "Apple software and productivity coverage",
+            logoUrl = "https://www.google.com/s2/favicons?domain=macstories.net&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Mashable",
+            url = "http://feeds.mashable.com/mashable/tech",
+            description = "Technology news and updates from Mashable",
+            logoUrl = "https://www.google.com/s2/favicons?domain=mashable.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "MIT News",
             url = "https://news.mit.edu/rss/feed",
             description = "Research and innovation from MIT",
             logoUrl = "https://www.google.com/s2/favicons?domain=mit.edu&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Phonearena",
+            url = "https://www.phonearena.com/feed/news",
+            description = "Technology news and updates from Phonearena",
+            logoUrl = "https://www.google.com/s2/favicons?domain=phonearena.com&sz=64",
         ),
         SuggestedFeed(
             name = "Tech Emails",
@@ -105,10 +135,22 @@ internal val technologyFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=theverge.com&sz=64",
         ),
         SuggestedFeed(
+            name = "Tonsky",
+            url = "https://tonsky.me/atom.xml",
+            description = "Technology news and updates from Tonsky",
+            logoUrl = "https://www.google.com/s2/favicons?domain=tonsky.me&sz=64",
+        ),
+        SuggestedFeed(
             name = "Wired",
             url = "https://www.wired.com/feed/rss",
             description = "How technology is changing every aspect of our lives",
             logoUrl = "https://www.google.com/s2/favicons?domain=wired.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Zdnet",
+            url = "https://www.zdnet.com/news/rss.xml",
+            description = "Technology news and updates from Zdnet",
+            logoUrl = "https://www.google.com/s2/favicons?domain=zdnet.com&sz=64",
         ),
     ),
 )

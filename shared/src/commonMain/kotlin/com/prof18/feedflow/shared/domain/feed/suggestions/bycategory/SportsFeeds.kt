@@ -18,7 +18,19 @@ internal val sportsFeeds = SuggestedFeedCategory(
             name = "BBC Sport",
             url = "https://feeds.bbci.co.uk/sport/rss.xml",
             description = "Global sports coverage from the BBC",
-            logoUrl = "https://www.google.com/s2/favicons?domain=bbc.co.uk&sz=64",
+            logoUrl = "https://www.google.com/s2/favicons?domain=bbci.co.uk&sz=64",
+        ),
+        SuggestedFeed(
+            name = "CaughtOffside",
+            url = "https://www.caughtoffside.com/feed/",
+            description = "Football news, transfer rumors, and match commentary",
+            logoUrl = "https://www.google.com/s2/favicons?domain=caughtoffside.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Defector",
+            url = "https://defector.com/feed",
+            description = "Sports and culture writing with independent editorial voice",
+            logoUrl = "https://www.google.com/s2/favicons?domain=defector.com&sz=64",
         ),
         SuggestedFeed(
             name = "ESPN Top Headlines",
@@ -27,10 +39,22 @@ internal val sportsFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=espn.com&sz=64",
         ),
         SuggestedFeed(
+            name = "FiveThirtyEight - Sports",
+            url = "https://fivethirtyeight.com/sports/feed/",
+            description = "Data-driven analysis of sports trends and outcomes",
+            logoUrl = "https://www.google.com/s2/favicons?domain=fivethirtyeight.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "Motorsport",
             url = "https://www.motorsport.com/rss/all/news/",
             description = "Racing and motorsport coverage",
             logoUrl = "https://www.google.com/s2/favicons?domain=motorsport.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "SB Nation",
+            url = "https://www.sbnation.com/rss/index.xml",
+            description = "Team-focused sports news across major leagues",
+            logoUrl = "https://www.google.com/s2/favicons?domain=sbnation.com&sz=64",
         ),
         SuggestedFeed(
             name = "Sky Sports",
@@ -54,7 +78,7 @@ internal val sportsFeeds = SuggestedFeedCategory(
             name = "The Independent - Sports",
             url = "https://www.the-independent.com/sport/rss",
             description = "Sports news and features",
-            logoUrl = "https://www.google.com/s2/favicons?domain=independent.co.uk&sz=64",
+            logoUrl = "https://www.google.com/s2/favicons?domain=the-independent.com&sz=64",
         ),
     ),
 )

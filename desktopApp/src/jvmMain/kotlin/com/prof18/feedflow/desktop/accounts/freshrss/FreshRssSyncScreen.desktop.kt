@@ -20,6 +20,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun FreshRssSyncScreen(
     navigateBack: () -> Unit,
+    showNavigateBack: Boolean = true,
 ) {
     val viewModel = koinViewModel<FreshRssSyncViewModel>()
 
@@ -51,6 +52,7 @@ internal fun FreshRssSyncScreen(
         uiState = uiState,
         isLoginLoading = isLoginLoading,
         onBackClick = navigateBack,
+        showNavigateBack = showNavigateBack,
         onLoginClick = { serverUrl, username, password ->
             viewModel.login(username, password, serverUrl)
         },

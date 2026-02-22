@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.ui.accounts.AccountsContent
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -12,6 +13,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun AccountsScreen(
+    selectedAccount: SyncAccounts?,
     navigateToDropboxSync: () -> Unit,
     navigateToGoogleDriveSync: () -> Unit,
     navigateToICloudSync: () -> Unit,
@@ -25,6 +27,7 @@ internal fun AccountsScreen(
 
     AccountsContent(
         syncAccount = accountSync,
+        selectedAccount = selectedAccount,
         accounts = viewModel.getSupportedAccounts().toPersistentList(),
         contentPadding = PaddingValues(top = Spacing.regular),
         onDropboxCLick = navigateToDropboxSync,

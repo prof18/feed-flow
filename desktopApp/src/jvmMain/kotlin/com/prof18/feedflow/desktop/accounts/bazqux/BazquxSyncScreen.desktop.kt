@@ -20,6 +20,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun BazquxSyncScreen(
     navigateBack: () -> Unit,
+    showNavigateBack: Boolean = true,
 ) {
     val viewModel = koinViewModel<BazquxSyncViewModel>()
 
@@ -53,6 +54,7 @@ internal fun BazquxSyncScreen(
         uiState = uiState,
         isLoginLoading = isLoginLoading,
         onBackClick = navigateBack,
+        showNavigateBack = showNavigateBack,
         onLoginClick = { username, password ->
             viewModel.login(username, password)
         },

@@ -27,6 +27,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun GoogleDriveSyncScreen(
     navigateBack: () -> Unit,
+    showNavigateBack: Boolean = true,
 ) {
     val viewModel = koinViewModel<GoogleDriveSyncViewModel>()
 
@@ -57,6 +58,7 @@ internal fun GoogleDriveSyncScreen(
     GoogleDriveSyncContent(
         uiState = uiState,
         onBackClick = navigateBack,
+        showNavigateBack = showNavigateBack,
         onBackupClick = {
             viewModel.triggerBackup()
         },

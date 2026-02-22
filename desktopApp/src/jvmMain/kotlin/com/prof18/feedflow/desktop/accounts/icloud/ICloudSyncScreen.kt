@@ -41,6 +41,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun ICloudSyncScreen(
     navigateBack: () -> Unit,
+    showNavigateBack: Boolean = true,
 ) {
     val viewModel = koinViewModel<ICloudSyncViewModel>()
 
@@ -75,6 +76,7 @@ internal fun ICloudSyncScreen(
             viewModel.unlink()
         },
         onBackClick = navigateBack,
+        showNavigateBack = showNavigateBack,
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         },
@@ -90,17 +92,20 @@ private fun IcloudSyncContent(
     onDisconnectClick: () -> Unit,
     modifier: Modifier = Modifier,
     snackbarHost: @Composable () -> Unit = {},
+    showNavigateBack: Boolean = true,
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                        )
+                    if (showNavigateBack) {
+                        IconButton(onClick = onBackClick) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = null,
+                            )
+                        }
                     }
                 },
                 title = {

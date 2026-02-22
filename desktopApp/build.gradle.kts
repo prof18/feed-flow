@@ -34,6 +34,7 @@ kotlin {
     compilerOptions {
         optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
         optIn.add("androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi")
+        optIn.add("androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi")
     }
 
     jvm()
@@ -67,6 +68,8 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.flatlaf)
+                implementation(libs.compose.multiplatform.material3.adaptive.layout)
+                implementation(libs.compose.multiplatform.material3.adaptive.navigation)
             }
         }
 

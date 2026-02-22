@@ -20,6 +20,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun MinifluxSyncScreen(
     navigateBack: () -> Unit,
+    showNavigateBack: Boolean = true,
 ) {
     val viewModel = koinViewModel<MinifluxSyncViewModel>()
 
@@ -51,6 +52,7 @@ internal fun MinifluxSyncScreen(
         uiState = uiState,
         isLoginLoading = isLoginLoading,
         onBackClick = navigateBack,
+        showNavigateBack = showNavigateBack,
         onLoginClick = { serverUrl, username, password ->
             viewModel.login(username, password, serverUrl)
         },

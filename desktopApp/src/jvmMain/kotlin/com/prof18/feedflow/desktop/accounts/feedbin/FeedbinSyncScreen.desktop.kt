@@ -20,6 +20,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun FeedbinSyncScreen(
     navigateBack: () -> Unit,
+    showNavigateBack: Boolean = true,
 ) {
     val viewModel = koinViewModel<FeedbinSyncViewModel>()
 
@@ -51,6 +52,7 @@ internal fun FeedbinSyncScreen(
         uiState = uiState,
         isLoginLoading = isLoginLoading,
         onBackClick = navigateBack,
+        showNavigateBack = showNavigateBack,
         onLoginClick = { username, password ->
             viewModel.login(username, password)
         },

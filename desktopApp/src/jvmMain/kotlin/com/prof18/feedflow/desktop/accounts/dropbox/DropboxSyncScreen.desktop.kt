@@ -34,6 +34,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun DropboxSyncScreen(
     navigateBack: () -> Unit,
+    showNavigateBack: Boolean = true,
 ) {
     val viewModel = koinViewModel<DropboxSyncViewModel>()
 
@@ -77,6 +78,7 @@ internal fun DropboxSyncScreen(
     DropboxSyncContent(
         uiState = uiState,
         onBackClick = navigateBack,
+        showNavigateBack = showNavigateBack,
         onBackupClick = {
             viewModel.triggerBackup()
         },

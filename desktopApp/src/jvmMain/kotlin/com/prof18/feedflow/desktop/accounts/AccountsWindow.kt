@@ -1,20 +1,19 @@
 package com.prof18.feedflow.desktop.accounts
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.ui.NavDisplay
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.desktop.accounts.bazqux.BazquxSyncScreen
 import com.prof18.feedflow.desktop.accounts.dropbox.DropboxSyncScreen
 import com.prof18.feedflow.desktop.accounts.feedbin.FeedbinSyncScreen
@@ -24,8 +23,7 @@ import com.prof18.feedflow.desktop.accounts.icloud.ICloudSyncScreen
 import com.prof18.feedflow.desktop.accounts.miniflux.MinifluxSyncScreen
 import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
-import kotlinx.serialization.Serializable
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun AccountsWindow(
@@ -34,98 +32,102 @@ internal fun AccountsWindow(
 ) {
     DesktopDialogWindow(
         title = LocalFeedFlowStrings.current.settingsAccounts,
-        size = DpSize(600.dp, 700.dp),
+        size = DpSize(900.dp, 800.dp),
         visible = visible,
         onCloseRequest = onCloseRequest,
     ) { modifier ->
-        val backStack = remember { mutableStateListOf<NavKey>(AccountsHome) }
-        val reduceMotionEnabled = LocalReduceMotion.current
+        val navigator = rememberListDetailPaneScaffoldNavigator<SyncAccounts>()
+        val coroutineScope = rememberCoroutineScope()
+        val showNavigateBack = navigator.scaffoldValue[ListDetailPaneScaffoldRole.List] != PaneAdaptedValue.Expanded
 
         LaunchedEffect(visible) {
             if (visible) {
-                backStack.clear()
-                backStack.add(AccountsHome)
+                while (navigator.canNavigateBack(BackNavigationBehavior.PopLatest)) {
+                    navigator.navigateBack(BackNavigationBehavior.PopLatest)
+                }
             }
         }
 
-        val navigateBack: () -> Unit = {
-            if (backStack.size > 1) {
-                backStack.removeLastOrNull()
-            } else {
-                onCloseRequest()
+        val navigateToDetail: suspend (SyncAccounts) -> Unit = { account ->
+            if (navigator.currentDestination?.pane == ListDetailPaneScaffoldRole.Detail) {
+                navigator.navigateBack(BackNavigationBehavior.PopLatest)
             }
+            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, account)
         }
 
-        NavDisplay(
+        ListDetailPaneScaffold(
             modifier = modifier,
-            backStack = backStack,
-            onBack = navigateBack,
-            transitionSpec = {
-                if (reduceMotionEnabled) {
-                    EnterTransition.None togetherWith ExitTransition.None
-                } else {
-                    fadeIn(animationSpec = tween(durationMillis = 150)) togetherWith
-                        fadeOut(animationSpec = tween(durationMillis = 150))
-                }
-            },
-            popTransitionSpec = {
-                if (reduceMotionEnabled) {
-                    EnterTransition.None togetherWith ExitTransition.None
-                } else {
-                    fadeIn(animationSpec = tween(durationMillis = 150)) togetherWith
-                        fadeOut(animationSpec = tween(durationMillis = 150))
-                }
-            },
-            entryProvider = entryProvider {
-                entry<AccountsHome> {
+            directive = navigator.scaffoldDirective,
+            value = navigator.scaffoldValue,
+            listPane = {
+                Box(modifier = Modifier.fillMaxSize()) {
                     AccountsScreen(
-                        navigateToDropboxSync = { backStack.add(AccountsDropboxSync) },
-                        navigateToGoogleDriveSync = { backStack.add(AccountsGoogleDriveSync) },
-                        navigateToICloudSync = { backStack.add(AccountsICloudSync) },
-                        navigateToFreshRssSync = { backStack.add(AccountsFreshRssSync) },
-                        navigateToMinifluxSync = { backStack.add(AccountsMinifluxSync) },
-                        navigateToBazquxSync = { backStack.add(AccountsBazquxSync) },
-                        navigateToFeedbinSync = { backStack.add(AccountsFeedbinSync) },
+                        selectedAccount = navigator.currentDestination?.contentKey,
+                        navigateToDropboxSync = {
+                            coroutineScope.launch { navigateToDetail(SyncAccounts.DROPBOX) }
+                        },
+                        navigateToGoogleDriveSync = {
+                            coroutineScope.launch { navigateToDetail(SyncAccounts.GOOGLE_DRIVE) }
+                        },
+                        navigateToICloudSync = {
+                            coroutineScope.launch { navigateToDetail(SyncAccounts.ICLOUD) }
+                        },
+                        navigateToFreshRssSync = {
+                            coroutineScope.launch { navigateToDetail(SyncAccounts.FRESH_RSS) }
+                        },
+                        navigateToMinifluxSync = {
+                            coroutineScope.launch { navigateToDetail(SyncAccounts.MINIFLUX) }
+                        },
+                        navigateToBazquxSync = {
+                            coroutineScope.launch { navigateToDetail(SyncAccounts.BAZQUX) }
+                        },
+                        navigateToFeedbinSync = {
+                            coroutineScope.launch { navigateToDetail(SyncAccounts.FEEDBIN) }
+                        },
                     )
                 }
-                entry<AccountsDropboxSync> {
-                    DropboxSyncScreen(navigateBack = navigateBack)
-                }
-                entry<AccountsGoogleDriveSync> {
-                    GoogleDriveSyncScreen(navigateBack = navigateBack)
-                }
-                entry<AccountsICloudSync> {
-                    ICloudSyncScreen(navigateBack = navigateBack)
-                }
-                entry<AccountsFreshRssSync> {
-                    FreshRssSyncScreen(navigateBack = navigateBack)
-                }
-                entry<AccountsMinifluxSync> {
-                    MinifluxSyncScreen(navigateBack = navigateBack)
-                }
-                entry<AccountsBazquxSync> {
-                    BazquxSyncScreen(navigateBack = navigateBack)
-                }
-                entry<AccountsFeedbinSync> {
-                    FeedbinSyncScreen(navigateBack = navigateBack)
+            },
+            detailPane = {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    val navigateBack = {
+                        coroutineScope.launch {
+                            navigator.navigateBack(BackNavigationBehavior.PopLatest)
+                        }
+                        Unit
+                    }
+                    when (navigator.currentDestination?.contentKey) {
+                        SyncAccounts.DROPBOX -> DropboxSyncScreen(
+                            navigateBack = navigateBack,
+                            showNavigateBack = showNavigateBack,
+                        )
+                        SyncAccounts.GOOGLE_DRIVE -> GoogleDriveSyncScreen(
+                            navigateBack = navigateBack,
+                            showNavigateBack = showNavigateBack,
+                        )
+                        SyncAccounts.ICLOUD -> ICloudSyncScreen(
+                            navigateBack = navigateBack,
+                            showNavigateBack = showNavigateBack,
+                        )
+                        SyncAccounts.FRESH_RSS -> FreshRssSyncScreen(
+                            navigateBack = navigateBack,
+                            showNavigateBack = showNavigateBack,
+                        )
+                        SyncAccounts.MINIFLUX -> MinifluxSyncScreen(
+                            navigateBack = navigateBack,
+                            showNavigateBack = showNavigateBack,
+                        )
+                        SyncAccounts.BAZQUX -> BazquxSyncScreen(
+                            navigateBack = navigateBack,
+                            showNavigateBack = showNavigateBack,
+                        )
+                        SyncAccounts.FEEDBIN -> FeedbinSyncScreen(
+                            navigateBack = navigateBack,
+                            showNavigateBack = showNavigateBack,
+                        )
+                        else -> {}
+                    }
                 }
             },
         )
     }
 }
-
-@Serializable private data object AccountsHome : NavKey
-
-@Serializable private data object AccountsDropboxSync : NavKey
-
-@Serializable private data object AccountsGoogleDriveSync : NavKey
-
-@Serializable private data object AccountsICloudSync : NavKey
-
-@Serializable private data object AccountsFreshRssSync : NavKey
-
-@Serializable private data object AccountsMinifluxSync : NavKey
-
-@Serializable private data object AccountsBazquxSync : NavKey
-
-@Serializable private data object AccountsFeedbinSync : NavKey

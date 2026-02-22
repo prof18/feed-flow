@@ -51,19 +51,22 @@ fun FreshRssSyncContent(
     modifier: Modifier = Modifier,
     snackbarHost: @Composable () -> Unit = {
     },
+    showNavigateBack: Boolean = true,
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = {
-                        onBackClick()
-                    }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                        )
+                    if (showNavigateBack) {
+                        IconButton(onClick = {
+                            onBackClick()
+                        }) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = null,
+                            )
+                        }
                     }
                 },
                 title = {

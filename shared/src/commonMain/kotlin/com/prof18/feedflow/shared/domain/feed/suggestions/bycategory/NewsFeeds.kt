@@ -33,6 +33,12 @@ internal val newsFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=euronews.com&sz=64",
         ),
         SuggestedFeed(
+            name = "Esquire",
+            url = "https://www.esquire.com/rss/news-politics.xml/",
+            description = "Political news and analysis from Esquire",
+            logoUrl = "https://www.google.com/s2/favicons?domain=esquire.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "Foreign Affairs",
             url = "https://www.foreignaffairs.com/rss.xml",
             description = "International relations and foreign policy",

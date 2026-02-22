@@ -53,7 +53,6 @@ import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.DesktopConfig
-import com.prof18.feedflow.desktop.FeedSuggestions
 import com.prof18.feedflow.desktop.Home
 import com.prof18.feedflow.desktop.ReaderMode
 import com.prof18.feedflow.desktop.Search
@@ -320,39 +319,50 @@ private fun FrameWindowScope.MainWindowContent(
             },
         )
 
-        BlockedWordsScreen(
-            visible = dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.BlockedWords),
-            onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.BlockedWords) },
-        )
+        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.BlockedWords)) {
+            BlockedWordsScreen(
+                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.BlockedWords) },
+            )
+        }
 
-        ImportExportScreen(
-            composeWindow = window,
-            visible = dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.ImportExport),
-            onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.ImportExport) },
-            triggerFeedFetch = { homeViewModel.getNewFeeds() },
-        )
+        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.ImportExport)) {
+            ImportExportScreen(
+                composeWindow = window,
+                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.ImportExport) },
+                triggerFeedFetch = { homeViewModel.getNewFeeds() },
+            )
+        }
 
-        AddFeedScreen(
-            visible = dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.AddFeed),
-            onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.AddFeed) },
-            onFeedAdded = { homeViewModel.getNewFeeds() },
-        )
+        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.AddFeed)) {
+            AddFeedScreen(
+                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.AddFeed) },
+                onFeedAdded = { homeViewModel.getNewFeeds() },
+            )
+        }
+
+        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.FeedSuggestions)) {
+            FeedSuggestionsScreen(
+                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.FeedSuggestions) },
+            )
+        }
 
         var feedSourceToEdit: FeedSource? by remember { mutableStateOf(null) }
 
-        EditFeedScreen(
-            visible = dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.EditFeed),
-            feedSource = feedSourceToEdit,
-            onCloseRequest = {
-                dialogWindowNavigator.close(DesktopDialogWindowDestination.EditFeed)
-                feedSourceToEdit = null
-            },
-        )
+        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.EditFeed)) {
+            EditFeedScreen(
+                feedSource = feedSourceToEdit,
+                onCloseRequest = {
+                    dialogWindowNavigator.close(DesktopDialogWindowDestination.EditFeed)
+                    feedSourceToEdit = null
+                },
+            )
+        }
 
-        AccountsWindow(
-            visible = dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.Accounts),
-            onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.Accounts) },
-        )
+        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.Accounts)) {
+            AccountsWindow(
+                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.Accounts) },
+            )
+        }
 
         val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
         val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsState()
@@ -559,7 +569,9 @@ private fun EntryProviderScope<NavKey>.screens(
             },
             onAddFeedClick = { dialogWindowNavigator.open(DesktopDialogWindowDestination.AddFeed) },
             onEditFeedClick = onEditFeedRequested,
-            onFeedSuggestionsClick = { backStack.add(FeedSuggestions) },
+            onFeedSuggestionsClick = {
+                dialogWindowNavigator.open(DesktopDialogWindowDestination.FeedSuggestions)
+            },
         )
     }
 
@@ -584,12 +596,6 @@ private fun EntryProviderScope<NavKey>.screens(
         )
         ReaderModeScreen(
             feedItemUrlInfo = feedItemUrlInfo,
-            navigateBack = navigateBack,
-        )
-    }
-
-    entry<FeedSuggestions> {
-        FeedSuggestionsScreen(
             navigateBack = navigateBack,
         )
     }

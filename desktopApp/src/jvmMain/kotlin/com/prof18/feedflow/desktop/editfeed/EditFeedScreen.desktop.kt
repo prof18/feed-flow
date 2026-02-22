@@ -26,7 +26,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun EditFeedScreen(
-    visible: Boolean,
     feedSource: FeedSource?,
     onCloseRequest: () -> Unit,
 ) {
@@ -35,7 +34,6 @@ internal fun EditFeedScreen(
     DesktopDialogWindow(
         title = LocalFeedFlowStrings.current.editFeed,
         size = DpSize(560.dp, 700.dp),
-        visible = visible,
         onCloseRequest = onCloseRequest,
     ) { modifier ->
         EditFeedScreenContent(

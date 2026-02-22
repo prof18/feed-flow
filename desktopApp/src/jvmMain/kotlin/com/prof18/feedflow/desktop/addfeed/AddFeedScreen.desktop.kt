@@ -27,14 +27,12 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun AddFeedScreen(
-    visible: Boolean,
     onCloseRequest: () -> Unit,
     onFeedAdded: () -> Unit,
 ) {
     DesktopDialogWindow(
         title = LocalFeedFlowStrings.current.addFeed,
         size = DpSize(520.dp, 500.dp),
-        visible = visible,
         onCloseRequest = onCloseRequest,
     ) { modifier ->
         AddFeedScreenContent(

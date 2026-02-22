@@ -8,8 +8,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable data object Search : NavKey
 
-@Serializable data object FeedSuggestions : NavKey
-
 @Serializable
 data class ReaderMode(
     val id: String,

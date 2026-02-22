@@ -12,7 +12,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun BlockedWordsScreen(
-    visible: Boolean,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel = koinViewModel<BlockedWordsViewModel>()
@@ -22,7 +21,6 @@ internal fun BlockedWordsScreen(
     DesktopDialogWindow(
         title = title,
         size = DpSize(500.dp, 700.dp),
-        visible = visible,
         onCloseRequest = onCloseRequest,
     ) { modifier ->
         BlockedWordsContent(

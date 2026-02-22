@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 internal enum class DesktopDialogWindowDestination {
     AddFeed,
     EditFeed,
+    FeedSuggestions,
     BlockedWords,
     ImportExport,
     Accounts,

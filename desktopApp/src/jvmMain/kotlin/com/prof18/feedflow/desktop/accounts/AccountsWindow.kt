@@ -27,24 +27,20 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun AccountsWindow(
-    visible: Boolean,
     onCloseRequest: () -> Unit,
 ) {
     DesktopDialogWindow(
         title = LocalFeedFlowStrings.current.settingsAccounts,
         size = DpSize(900.dp, 800.dp),
-        visible = visible,
         onCloseRequest = onCloseRequest,
     ) { modifier ->
         val navigator = rememberListDetailPaneScaffoldNavigator<SyncAccounts>()
         val coroutineScope = rememberCoroutineScope()
         val showNavigateBack = navigator.scaffoldValue[ListDetailPaneScaffoldRole.List] != PaneAdaptedValue.Expanded
 
-        LaunchedEffect(visible) {
-            if (visible) {
-                while (navigator.canNavigateBack(BackNavigationBehavior.PopLatest)) {
-                    navigator.navigateBack(BackNavigationBehavior.PopLatest)
-                }
+        LaunchedEffect(Unit) {
+            while (navigator.canNavigateBack(BackNavigationBehavior.PopLatest)) {
+                navigator.navigateBack(BackNavigationBehavior.PopLatest)
             }
         }
 

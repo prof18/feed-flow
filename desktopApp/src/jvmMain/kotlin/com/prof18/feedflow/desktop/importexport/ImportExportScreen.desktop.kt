@@ -30,7 +30,6 @@ import javax.swing.JFrame
 @Composable
 internal fun ImportExportScreen(
     composeWindow: ComposeWindow,
-    visible: Boolean,
     onCloseRequest: () -> Unit,
     triggerFeedFetch: () -> Unit,
 ) {
@@ -142,7 +141,6 @@ internal fun ImportExportScreen(
     DesktopDialogWindow(
         title = importExportTitle,
         size = DpSize(500.dp, 600.dp),
-        visible = visible,
         onCloseRequest = closeDialog,
     ) { modifier ->
         ImportExportContent(

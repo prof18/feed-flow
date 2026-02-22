@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.RssFeed
@@ -25,13 +24,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,8 +52,8 @@ fun FeedSuggestionsContent(
     isLoading: Boolean,
     onCategorySelected: (String) -> Unit,
     onAddFeed: (SuggestedFeed, String) -> Unit,
-    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val selectedCategory = selectedCategoryId?.let { categoryId ->
         categories.find { it.id == categoryId }
@@ -65,81 +61,62 @@ fun FeedSuggestionsContent(
 
     val filteredFeeds = selectedCategory?.feeds ?: emptyList()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(LocalFeedFlowStrings.current.feedSuggestionsTitle)
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                        )
-                    }
-                },
+    if (isLoading) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            CircularProgressIndicator()
+        }
+    } else {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+        ) {
+            Text(
+                text = LocalFeedFlowStrings.current.feedSuggestionsDescription,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .padding(horizontal = Spacing.regular)
+                    .padding(bottom = Spacing.small),
             )
-        },
-        modifier = modifier,
-    ) { paddingValues ->
-        if (isLoading) {
-            Column(
+
+            CategoryFilterRow(
+                categories = categories,
+                selectedCategoryId = selectedCategoryId,
+                onCategorySelected = onCategorySelected,
+            )
+
+            HorizontalDivider(
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                modifier = Modifier.padding(top = Spacing.small),
+            )
+
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentPadding = PaddingValues(vertical = Spacing.small),
             ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-            ) {
-                Text(
-                    text = LocalFeedFlowStrings.current.feedSuggestionsDescription,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .padding(horizontal = Spacing.regular)
-                        .padding(bottom = Spacing.small),
-                )
-
-                CategoryFilterRow(
-                    categories = categories,
-                    selectedCategoryId = selectedCategoryId,
-                    onCategorySelected = onCategorySelected,
-                )
-
-                HorizontalDivider(
-                    thickness = 0.5.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                    modifier = Modifier.padding(top = Spacing.small),
-                )
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentPadding = PaddingValues(vertical = Spacing.small),
-                ) {
-                    items(
-                        items = filteredFeeds,
-                        key = { it.url },
-                    ) { feed ->
-                        val feedState = feedStatesMap[feed.url] ?: FeedAddState.NotAdded
-                        SuggestedFeedListItem(
-                            feed = feed,
-                            feedState = feedState,
-                            onAddFeed = {
-                                selectedCategory?.name?.let { categoryName ->
-                                    onAddFeed(feed, categoryName)
-                                }
-                            },
-                        )
-                    }
+                items(
+                    items = filteredFeeds,
+                    key = { it.url },
+                ) { feed ->
+                    val feedState = feedStatesMap[feed.url] ?: FeedAddState.NotAdded
+                    SuggestedFeedListItem(
+                        feed = feed,
+                        feedState = feedState,
+                        onAddFeed = {
+                            selectedCategory?.name?.let { categoryName ->
+                                onAddFeed(feed, categoryName)
+                            }
+                        },
+                    )
                 }
             }
         }

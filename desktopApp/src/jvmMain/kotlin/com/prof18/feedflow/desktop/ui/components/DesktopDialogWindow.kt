@@ -27,7 +27,6 @@ private val MacToolbarTitleAreaHeight = 30.dp
 internal fun DesktopDialogWindow(
     title: String,
     size: DpSize,
-    visible: Boolean,
     onCloseRequest: () -> Unit,
     content: @Composable (Modifier) -> Unit,
 ) {
@@ -37,7 +36,6 @@ internal fun DesktopDialogWindow(
     DialogWindow(
         state = dialogState,
         title = title,
-        visible = visible,
         onCloseRequest = onCloseRequest,
     ) {
         LaunchedEffect(window) {

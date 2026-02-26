@@ -446,7 +446,7 @@ private fun FrameWindowScope.MainWindowContent(
                     onRefreshClick = {
                         scope.launch {
                             listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                            homeViewModel.getNewFeeds()
+                            homeViewModel.refreshFeeds()
                         }
                     },
                     onAddFeedClick = {
@@ -467,7 +467,7 @@ private fun FrameWindowScope.MainWindowContent(
                     onForceRefreshClick = {
                         scope.launch {
                             listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                            homeViewModel.forceFeedRefresh()
+                            homeViewModel.forceRefreshFeeds()
                         }
                     },
                     onFeedFontScaleClick = {
@@ -563,9 +563,6 @@ private fun EntryProviderScope<NavKey>.screens(
             onAccountsClick = { dialogWindowNavigator.open(DesktopDialogWindowDestination.Accounts) },
             onSettingsButtonClicked = {
                 // There's no settings button on desktop
-            },
-            navigateToReaderMode = { feedItemUrlInfo ->
-                backStack.add(feedItemUrlInfo.toReaderMode())
             },
             onAddFeedClick = { dialogWindowNavigator.open(DesktopDialogWindowDestination.AddFeed) },
             onEditFeedClick = onEditFeedRequested,

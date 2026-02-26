@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
+import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
@@ -88,12 +89,15 @@ private val readerModeMaxContentWidth = 720.dp
 internal fun ReaderModeScreen(
     feedItemUrlInfo: FeedItemUrlInfo,
     navigateBack: () -> Unit,
+    showBackButton: Boolean = true,
+    isDetailFullscreen: Boolean = false,
+    onToggleDetailFullscreen: (() -> Unit)? = null,
 ) {
     val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
     val state by readerModeViewModel.readerModeState.collectAsState()
     val fontSize by readerModeViewModel.readerFontSizeState.collectAsState()
 
-    LaunchedEffect(feedItemUrlInfo) {
+    LaunchedEffect(feedItemUrlInfo.id) {
         readerModeViewModel.getReaderModeHtml(feedItemUrlInfo)
     }
 
@@ -134,6 +138,9 @@ internal fun ReaderModeScreen(
                     readerModeState = state,
                     fontSize = fontSize,
                     navigateBack = navigateBack,
+                    showBackButton = showBackButton,
+                    onToggleDetailFullscreen = onToggleDetailFullscreen,
+                    isDetailFullscreen = isDetailFullscreen,
                     openInBrowser = { url ->
                         if (isValidUrl(url)) {
                             uriHandler.openUri(url)
@@ -382,6 +389,9 @@ private fun ReaderModeToolbar(
     readerModeState: ReaderModeState,
     fontSize: Int,
     navigateBack: () -> Unit,
+    showBackButton: Boolean,
+    onToggleDetailFullscreen: (() -> Unit)?,
+    isDetailFullscreen: Boolean,
     openInBrowser: (String) -> Unit,
     onShareClick: (String) -> Unit,
     onArchiveClick: (String) -> Unit,
@@ -393,14 +403,37 @@ private fun ReaderModeToolbar(
 
     TopAppBar(
         title = {},
-        navigationIcon = {
-            IconButton(
-                onClick = navigateBack,
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                )
+        navigationIcon = when {
+            onToggleDetailFullscreen != null -> {
+                {
+                    IconButton(
+                        onClick = onToggleDetailFullscreen,
+                    ) {
+                        Icon(
+                            imageVector = if (isDetailFullscreen) {
+                                Icons.AutoMirrored.Filled.ArrowBack
+                            } else {
+                                Icons.Default.Fullscreen
+                            },
+                            contentDescription = null,
+                        )
+                    }
+                }
+            }
+            showBackButton -> {
+                {
+                    IconButton(
+                        onClick = navigateBack,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                        )
+                    }
+                }
+            }
+            else -> {
+                { }
             }
         },
         actions = {

@@ -77,6 +77,8 @@ class HomeViewModel internal constructor(
 
     private val feedOperationMutableState = MutableStateFlow<FeedOperation>(FeedOperation.None)
     val feedOperationState: StateFlow<FeedOperation> = feedOperationMutableState.asStateFlow()
+    private val refreshTriggerMutableState = MutableStateFlow(0)
+    val refreshTriggerState: StateFlow<Int> = refreshTriggerMutableState.asStateFlow()
 
     private var lastUpdateIndex = 0
     private var hasTriggeredAppLaunch = false
@@ -293,6 +295,16 @@ class HomeViewModel internal constructor(
         viewModelScope.launch {
             feedFetcherRepository.fetchFeeds(forceRefresh = true)
         }
+    }
+
+    fun refreshFeeds() {
+        refreshTriggerMutableState.update { it + 1 }
+        getNewFeeds()
+    }
+
+    fun forceRefreshFeeds() {
+        refreshTriggerMutableState.update { it + 1 }
+        forceFeedRefresh()
     }
 
     fun deleteAllFeeds() {

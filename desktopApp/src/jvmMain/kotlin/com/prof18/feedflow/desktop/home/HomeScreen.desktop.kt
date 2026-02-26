@@ -1,16 +1,8 @@
 package com.prof18.feedflow.desktop.home
 
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,9 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOperation
@@ -35,15 +26,13 @@ import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.sanitizeUrl
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.prof18.feedflow.shared.ui.home.AdaptiveHomeView
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.WindowSizeClass
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
-import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -57,7 +46,6 @@ internal fun HomeScreen(
     onSearchClick: () -> Unit,
     onAccountsClick: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
-    navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
     onAddFeedClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onFeedSuggestionsClick: () -> Unit = {},
@@ -74,8 +62,11 @@ internal fun HomeScreen(
     val swipeActions by homeViewModel.swipeActions.collectAsState()
     val feedOperation by homeViewModel.feedOperationState.collectAsState()
     val feedLayout by homeViewModel.feedLayout.collectAsState()
+    val refreshTrigger by homeViewModel.refreshTriggerState.collectAsState()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsState()
+    val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
+    val currentReaderArticle by readerModeViewModel.currentArticleState.collectAsState()
 
     var showChangeCategorySheet by remember { mutableStateOf(false) }
     var showNoFeedsBottomSheet by remember { mutableStateOf(false) }
@@ -139,29 +130,39 @@ internal fun HomeScreen(
         feedLayout = feedLayout,
     )
 
+    val openReaderArticle: (FeedItemUrlInfo) -> Unit = { article ->
+        readerModeViewModel.getReaderModeHtml(article)
+    }
+    val resetReaderArticle: () -> Unit = {
+        readerModeViewModel.resetState()
+    }
+
+    LaunchedEffect(refreshTrigger) {
+        if (refreshTrigger > 0) {
+            resetReaderArticle()
+        }
+    }
+
     val feedListActions = FeedListActions(
         onClearOldArticlesClicked = { homeViewModel.deleteOldFeedItems() },
         onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
-        refreshData = { homeViewModel.getNewFeeds() },
+        refreshData = { homeViewModel.refreshFeeds() },
         requestNewData = { homeViewModel.requestNewFeedsPage() },
-        forceRefreshData = { homeViewModel.forceFeedRefresh() },
+        forceRefreshData = { homeViewModel.forceRefreshFeeds() },
         markAllRead = { homeViewModel.markAllRead() },
-        onBackToTimelineClick = { homeViewModel.onFeedFilterSelected(FeedFilter.Timeline) },
+        onBackToTimelineClick = {
+            resetReaderArticle()
+            homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
+        },
         markAsReadOnScroll = { lastVisibleIndex -> homeViewModel.markAsReadOnScroll(lastVisibleIndex) },
         markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
         openUrl = { feedItemUrlInfo ->
-            when (feedItemUrlInfo.linkOpeningPreference) {
-                LinkOpeningPreference.READER_MODE -> navigateToReaderMode(feedItemUrlInfo)
-                LinkOpeningPreference.INTERNAL_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
-                LinkOpeningPreference.PREFERRED_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
-                LinkOpeningPreference.DEFAULT -> {
-                    if (browserManager.openReaderMode() && !feedItemUrlInfo.shouldOpenInBrowser()) {
-                        navigateToReaderMode(feedItemUrlInfo)
-                    } else {
-                        uriHandler.openUri(feedItemUrlInfo.url.sanitizeUrl())
-                    }
-                }
-            }
+            handleOpenUrlForDesktop(
+                feedItemUrlInfo = feedItemUrlInfo,
+                browserManager = browserManager,
+                uriHandler = uriHandler,
+                onOpenReaderArticle = openReaderArticle,
+            )
         },
         updateBookmarkStatus = { feedItemId, isBookmarked ->
             homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
@@ -173,7 +174,10 @@ internal fun HomeScreen(
 
     val feedManagementActions = FeedManagementActions(
         onAddFeedClick = onAddFeedClick,
-        onFeedFilterSelected = { feedFilter -> homeViewModel.onFeedFilterSelected(feedFilter) },
+        onFeedFilterSelected = { feedFilter ->
+            resetReaderArticle()
+            homeViewModel.onFeedFilterSelected(feedFilter)
+        },
         onEditFeedClick = onEditFeedClick,
         onDeleteFeedSourceClick = { feedSource -> homeViewModel.deleteFeedSource(feedSource) },
         onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
@@ -190,7 +194,7 @@ internal fun HomeScreen(
     )
 
     val linkCopiedSuccess = LocalFeedFlowStrings.current.linkCopiedSuccess
-    AdaptiveHomeView(
+    DesktopHomeScaffold(
         listState = listState,
         onSearchClick = onSearchClick,
         onSettingsButtonClicked = onSettingsButtonClicked,
@@ -208,34 +212,9 @@ internal fun HomeScreen(
             shareLinkTitle = LocalFeedFlowStrings.current.menuCopyLink,
             shareCommentsTitle = LocalFeedFlowStrings.current.menuCopyLinkComments,
         ),
-        windowSizeClass = when (calculateWindowSizeClass().widthSizeClass) {
-            WindowWidthSizeClass.Compact -> WindowSizeClass.Compact
-            WindowWidthSizeClass.Medium -> WindowSizeClass.Medium
-            else -> WindowSizeClass.Expanded
-        },
-        showDropdownMenu = false,
-        feedContentWrapper = { content ->
-            Box(
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(end = Spacing.xsmall),
-                ) {
-                    content()
-                }
-
-                VerticalScrollbar(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .fillMaxHeight(),
-                    adapter = rememberScrollbarAdapter(
-                        scrollState = listState,
-                    ),
-                )
-            }
-        },
         onFeedSuggestionsClick = onFeedSuggestionsClick,
+        currentReaderArticle = currentReaderArticle,
+        onReaderClosed = { readerModeViewModel.resetState() },
         onEmptyStateClick = {
             showNoFeedsBottomSheet = true
         },
@@ -285,4 +264,33 @@ internal fun HomeScreen(
             onFeedSuggestionsClick()
         },
     )
+}
+
+private fun handleOpenUrlForDesktop(
+    feedItemUrlInfo: FeedItemUrlInfo,
+    browserManager: BrowserManager,
+    uriHandler: UriHandler,
+    onOpenReaderArticle: (FeedItemUrlInfo) -> Unit,
+) {
+    when (feedItemUrlInfo.linkOpeningPreference) {
+        LinkOpeningPreference.READER_MODE -> {
+            onOpenReaderArticle(feedItemUrlInfo)
+        }
+
+        LinkOpeningPreference.INTERNAL_BROWSER -> {
+            uriHandler.openUri(feedItemUrlInfo.url)
+        }
+
+        LinkOpeningPreference.PREFERRED_BROWSER -> {
+            uriHandler.openUri(feedItemUrlInfo.url)
+        }
+
+        LinkOpeningPreference.DEFAULT -> {
+            if (browserManager.openReaderMode() && !feedItemUrlInfo.shouldOpenInBrowser()) {
+                onOpenReaderArticle(feedItemUrlInfo)
+            } else {
+                uriHandler.openUri(feedItemUrlInfo.url.sanitizeUrl())
+            }
+        }
+    }
 }

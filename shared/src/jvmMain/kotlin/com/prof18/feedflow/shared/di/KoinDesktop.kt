@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.database.createDatabaseDriver
+import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.DatabaseCloser
@@ -119,6 +120,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     single {
         DesktopWindowSettingsRepository(
+            settings = get(),
+        )
+    }
+
+    single {
+        DesktopHomeSettingsRepository(
             settings = get(),
         )
     }

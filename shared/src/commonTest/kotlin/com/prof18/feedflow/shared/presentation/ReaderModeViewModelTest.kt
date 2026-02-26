@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -33,6 +34,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 
@@ -47,8 +49,9 @@ class ReaderModeViewModelTest : KoinTestBase() {
     override fun getTestModules(): List<Module> = super.getTestModules() + module {
         single<FeedItemParserWorker> {
             object : FeedItemParserWorker {
-                override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult =
-                    when (parserBehavior) {
+                override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
+                    val currentParserBehavior = parserBehavior
+                    return when (currentParserBehavior) {
                         ParserBehavior.Success -> ParsingResult.Success(
                             htmlContent = "Content",
                             title = "Title",
@@ -60,7 +63,17 @@ class ReaderModeViewModelTest : KoinTestBase() {
                             siteName = "Site Name",
                         )
                         ParserBehavior.Error -> ParsingResult.Error
+                        is ParserBehavior.DelayedSuccessById -> {
+                            val delayMillis = currentParserBehavior.delaysByArticleId[feedItemId] ?: 0
+                            delay(delayMillis)
+                            ParsingResult.Success(
+                                htmlContent = "Content-$feedItemId",
+                                title = "Title-$feedItemId",
+                                siteName = "Site Name",
+                            )
+                        }
                     }
+                }
             }
         }
     }
@@ -74,6 +87,59 @@ class ReaderModeViewModelTest : KoinTestBase() {
     fun `initial state is loading and font size is from settings`() = runTest {
         assertEquals(ReaderModeState.Loading, viewModel.readerModeState.value)
         assertEquals(DEFAULT_READER_MODE_FONT_SIZE, viewModel.readerFontSizeState.value)
+        assertNull(viewModel.currentArticleState.value)
+    }
+
+    @Test
+    fun `getReaderModeHtml updates selected article`() = runTest {
+        val urlInfo = FeedItemUrlInfo(
+            id = "open-1",
+            url = "https://example.com/articles/open-1",
+            title = "Open Article",
+            isBookmarked = false,
+            linkOpeningPreference = LinkOpeningPreference.READER_MODE,
+            commentsUrl = null,
+        )
+
+        viewModel.getReaderModeHtml(urlInfo)
+
+        assertEquals(urlInfo.id, viewModel.currentArticleState.value?.id)
+    }
+
+    @Test
+    fun `clearSelection clears selected article only`() = runTest {
+        val urlInfo = FeedItemUrlInfo(
+            id = "clear-1",
+            url = "https://example.com/articles/clear-1",
+            title = "Clear Article",
+            isBookmarked = false,
+            linkOpeningPreference = LinkOpeningPreference.READER_MODE,
+            commentsUrl = null,
+        )
+
+        viewModel.getReaderModeHtml(urlInfo)
+        assertEquals(urlInfo.id, viewModel.currentArticleState.value?.id)
+
+        viewModel.clearSelection()
+
+        assertNull(viewModel.currentArticleState.value)
+    }
+
+    @Test
+    fun `resetState clears selected article and navigation flags`() = runTest {
+        val feedItems = seedFeedItems()
+        viewModel.getReaderModeHtml(feedItems[1].toUrlInfo())
+
+        assertTrue(viewModel.canNavigateToPreviousState.value)
+        assertTrue(viewModel.canNavigateToNextState.value)
+        assertEquals(feedItems[1].id, viewModel.currentArticleState.value?.id)
+
+        viewModel.resetState()
+
+        assertEquals(ReaderModeState.Loading, viewModel.readerModeState.value)
+        assertNull(viewModel.currentArticleState.value)
+        assertFalse(viewModel.canNavigateToPreviousState.value)
+        assertFalse(viewModel.canNavigateToNextState.value)
     }
 
     @Test
@@ -182,6 +248,41 @@ class ReaderModeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `getReaderModeHtml keeps latest requested article when previous request finishes later`() = runTest {
+        parserBehavior = ParserBehavior.DelayedSuccessById(
+            delaysByArticleId = mapOf(
+                "slow-article" to 300,
+                "fast-article" to 10,
+            ),
+        )
+
+        val slowArticle = FeedItemUrlInfo(
+            id = "slow-article",
+            url = "https://example.com/articles/slow",
+            title = "Slow Article",
+            isBookmarked = false,
+            linkOpeningPreference = LinkOpeningPreference.READER_MODE,
+            commentsUrl = null,
+        )
+        val fastArticle = FeedItemUrlInfo(
+            id = "fast-article",
+            url = "https://example.com/articles/fast",
+            title = "Fast Article",
+            isBookmarked = false,
+            linkOpeningPreference = LinkOpeningPreference.READER_MODE,
+            commentsUrl = null,
+        )
+
+        viewModel.getReaderModeHtml(slowArticle)
+        viewModel.getReaderModeHtml(fastArticle)
+        advanceUntilIdle()
+
+        val state = viewModel.readerModeState.value
+        assertIs<ReaderModeState.Success>(state)
+        assertEquals("fast-article", state.readerModeData.id.id)
+    }
+
+    @Test
     fun `updateFontSize updates settings and state`() = runTest {
         viewModel.updateFontSize(22)
 
@@ -230,6 +331,25 @@ class ReaderModeViewModelTest : KoinTestBase() {
         assertEquals(middleItem.id, previousState.readerModeData.id.id)
         assertTrue(viewModel.canNavigateToPreviousState.value)
         assertTrue(viewModel.canNavigateToNextState.value)
+    }
+
+    @Test
+    fun `navigation fails gracefully when feed list changes externally`() = runTest {
+        val feedItems = seedFeedItems()
+        val middleItem = feedItems[1]
+
+        viewModel.getReaderModeHtml(middleItem.toUrlInfo())
+        assertTrue(viewModel.canNavigateToNextState.value)
+
+        feedStateRepository.updateFeedFilter(FeedFilter.Bookmarks)
+        assertTrue(feedStateRepository.feedState.value.isEmpty())
+
+        viewModel.navigateToNextArticle()
+        advanceUntilIdle()
+
+        assertFalse(viewModel.canNavigateToNextState.value)
+        // Reader state is unchanged — still showing the article that was open
+        assertIs<ReaderModeState.Success>(viewModel.readerModeState.value)
     }
 
     private suspend fun seedFeedItems(): List<FeedItem> {
@@ -325,6 +445,9 @@ class ReaderModeViewModelTest : KoinTestBase() {
         data object Success : ParserBehavior
         data object HtmlNull : ParserBehavior
         data object Error : ParserBehavior
+        data class DelayedSuccessById(
+            val delaysByArticleId: Map<String, Long>,
+        ) : ParserBehavior
     }
 }
 

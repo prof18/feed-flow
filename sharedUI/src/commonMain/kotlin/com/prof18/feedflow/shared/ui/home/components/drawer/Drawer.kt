@@ -30,7 +30,7 @@ import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-internal fun Drawer(
+fun Drawer(
     displayState: HomeDisplayState,
     feedManagementActions: FeedManagementActions,
     onFeedFilterSelected: (FeedFilter) -> Unit,

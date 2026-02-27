@@ -31,6 +31,8 @@ fun FrameWindowScope.FeedFlowMenuBar(
     actions: MenuBarActions,
     onNavigateToBlockedWords: () -> Unit,
     onNavigateToAccounts: () -> Unit,
+    isDesktopMultiPaneLayoutEnabled: Boolean,
+    onDesktopMultiPaneLayoutToggled: (Boolean) -> Unit,
 ) {
     val isMacOS = getDesktopOS().isMacOs()
     val appConfig = DI.koin.get<DesktopConfig>()
@@ -54,6 +56,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     val viewMenuCallbacks = ViewMenuCallbacks(
         onThemeModeSelected = menuBarViewModel::updateThemeMode,
         onFeedListAppearanceClick = actions.onFeedFontScaleClick,
+        onDesktopMultiPaneLayoutToggled = onDesktopMultiPaneLayoutToggled,
         onShowReadItemsToggled = menuBarViewModel::updateShowReadItemsOnTimeline,
         onFeedOrderSelected = menuBarViewModel::updateFeedOrder,
     )
@@ -148,7 +151,9 @@ fun FrameWindowScope.FeedFlowMenuBar(
         )
 
         ViewMenu(
-            settingsState = settingsState,
+            settingsState = settingsState.copy(
+                isDesktopMultiPaneLayoutEnabled = isDesktopMultiPaneLayoutEnabled,
+            ),
             callbacks = viewMenuCallbacks,
         )
 

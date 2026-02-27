@@ -1,8 +1,16 @@
 package com.prof18.feedflow.desktop.home
 
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,6 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import com.prof18.feedflow.core.model.FeedFilter
@@ -24,15 +34,19 @@ import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.sanitizeUrl
+import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
+import com.prof18.feedflow.shared.ui.home.AdaptiveHomeView
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
+import com.prof18.feedflow.shared.ui.home.WindowSizeClass
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
+import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -46,12 +60,15 @@ internal fun HomeScreen(
     onSearchClick: () -> Unit,
     onAccountsClick: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
+    navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
     onAddFeedClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onFeedSuggestionsClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val changeFeedCategoryViewModel = koinViewModel<ChangeFeedCategoryViewModel>()
+    val homeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
+    val isMultiPaneLayoutEnabled by homeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
 
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()
@@ -137,8 +154,8 @@ internal fun HomeScreen(
         readerModeViewModel.resetState()
     }
 
-    LaunchedEffect(refreshTrigger) {
-        if (refreshTrigger > 0) {
+    LaunchedEffect(refreshTrigger, isMultiPaneLayoutEnabled) {
+        if (isMultiPaneLayoutEnabled && refreshTrigger > 0) {
             resetReaderArticle()
         }
     }
@@ -161,7 +178,11 @@ internal fun HomeScreen(
                 feedItemUrlInfo = feedItemUrlInfo,
                 browserManager = browserManager,
                 uriHandler = uriHandler,
-                onOpenReaderArticle = openReaderArticle,
+                onOpenReaderArticle = if (isMultiPaneLayoutEnabled) {
+                    openReaderArticle
+                } else {
+                    navigateToReaderMode
+                },
             )
         },
         updateBookmarkStatus = { feedItemId, isBookmarked ->
@@ -194,31 +215,76 @@ internal fun HomeScreen(
     )
 
     val linkCopiedSuccess = LocalFeedFlowStrings.current.linkCopiedSuccess
-    DesktopHomeScaffold(
-        listState = listState,
-        onSearchClick = onSearchClick,
-        onSettingsButtonClicked = onSettingsButtonClicked,
-        displayState = homeDisplayState,
-        feedListActions = feedListActions,
-        feedManagementActions = feedManagementActions,
-        snackbarHostState = snackbarHostState,
-        shareBehavior = ShareBehavior(
-            onShareClick = { urlTitle ->
-                copyToClipboard(urlTitle.url)
-                scope.launch {
-                    snackbarHostState.showSnackbar(message = linkCopiedSuccess)
+    val shareBehavior = ShareBehavior(
+        onShareClick = { urlTitle ->
+            copyToClipboard(urlTitle.url)
+            scope.launch {
+                snackbarHostState.showSnackbar(message = linkCopiedSuccess)
+            }
+        },
+        shareLinkTitle = LocalFeedFlowStrings.current.menuCopyLink,
+        shareCommentsTitle = LocalFeedFlowStrings.current.menuCopyLinkComments,
+    )
+    if (isMultiPaneLayoutEnabled) {
+        DesktopHomeScaffold(
+            listState = listState,
+            onSearchClick = onSearchClick,
+            onSettingsButtonClicked = onSettingsButtonClicked,
+            displayState = homeDisplayState,
+            feedListActions = feedListActions,
+            feedManagementActions = feedManagementActions,
+            snackbarHostState = snackbarHostState,
+            shareBehavior = shareBehavior,
+            onFeedSuggestionsClick = onFeedSuggestionsClick,
+            currentReaderArticle = currentReaderArticle,
+            onReaderClosed = { readerModeViewModel.resetState() },
+            onEmptyStateClick = {
+                showNoFeedsBottomSheet = true
+            },
+        )
+    } else {
+        AdaptiveHomeView(
+            listState = listState,
+            onSearchClick = onSearchClick,
+            onSettingsButtonClicked = onSettingsButtonClicked,
+            displayState = homeDisplayState,
+            feedListActions = feedListActions,
+            feedManagementActions = feedManagementActions,
+            snackbarHostState = snackbarHostState,
+            shareBehavior = shareBehavior,
+            windowSizeClass = when (calculateWindowSizeClass().widthSizeClass) {
+                WindowWidthSizeClass.Compact -> WindowSizeClass.Compact
+                WindowWidthSizeClass.Medium -> WindowSizeClass.Medium
+                else -> WindowSizeClass.Expanded
+            },
+            showDropdownMenu = false,
+            feedContentWrapper = { content ->
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = Spacing.xsmall),
+                    ) {
+                        content()
+                    }
+
+                    VerticalScrollbar(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .fillMaxHeight(),
+                        adapter = rememberScrollbarAdapter(
+                            scrollState = listState,
+                        ),
+                    )
                 }
             },
-            shareLinkTitle = LocalFeedFlowStrings.current.menuCopyLink,
-            shareCommentsTitle = LocalFeedFlowStrings.current.menuCopyLinkComments,
-        ),
-        onFeedSuggestionsClick = onFeedSuggestionsClick,
-        currentReaderArticle = currentReaderArticle,
-        onReaderClosed = { readerModeViewModel.resetState() },
-        onEmptyStateClick = {
-            showNoFeedsBottomSheet = true
-        },
-    )
+            onFeedSuggestionsClick = onFeedSuggestionsClick,
+            onEmptyStateClick = {
+                showNoFeedsBottomSheet = true
+            },
+        )
+    }
 
     if (showChangeCategorySheet) {
         EditCategoryDialog(

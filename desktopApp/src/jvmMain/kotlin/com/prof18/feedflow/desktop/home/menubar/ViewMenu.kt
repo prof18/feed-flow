@@ -44,6 +44,12 @@ internal fun MenuBarScope.ViewMenu(
         Separator()
 
         CheckboxItem(
+            text = LocalFeedFlowStrings.current.settingsDesktopMultiPaneLayout,
+            checked = settingsState.isDesktopMultiPaneLayoutEnabled,
+            onCheckedChange = callbacks.onDesktopMultiPaneLayoutToggled,
+        )
+
+        CheckboxItem(
             text = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
             checked = settingsState.isShowReadItemsEnabled,
             onCheckedChange = callbacks.onShowReadItemsToggled,
@@ -67,6 +73,7 @@ internal fun MenuBarScope.ViewMenu(
 internal data class ViewMenuCallbacks(
     val onThemeModeSelected: (ThemeMode) -> Unit,
     val onFeedListAppearanceClick: () -> Unit,
+    val onDesktopMultiPaneLayoutToggled: (Boolean) -> Unit,
     val onShowReadItemsToggled: (Boolean) -> Unit,
     val onFeedOrderSelected: (FeedOrder) -> Unit,
 )

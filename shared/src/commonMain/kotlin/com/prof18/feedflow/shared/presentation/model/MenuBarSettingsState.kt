@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.ThemeMode
 
 data class MenuBarSettingsState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    val isDesktopMultiPaneLayoutEnabled: Boolean = true,
     val isMarkReadWhenScrollingEnabled: Boolean = true,
     val isShowReadItemsEnabled: Boolean = false,
     val isHideReadItemsEnabled: Boolean = false,

@@ -2,10 +2,28 @@ package com.prof18.feedflow.shared.data
 
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class DesktopHomeSettingsRepository(
     private val settings: Settings,
 ) {
+    private val isMultiPaneLayoutEnabledMutableFlow = MutableStateFlow(isMultiPaneLayoutEnabled())
+    val isMultiPaneLayoutEnabledFlow: StateFlow<Boolean> = isMultiPaneLayoutEnabledMutableFlow.asStateFlow()
+
+    fun isMultiPaneLayoutEnabled(): Boolean =
+        settings.getBoolean(
+            DesktopHomeSettingsFields.DESKTOP_HOME_MULTI_PANE_LAYOUT_ENABLED.name,
+            defaultValue = true,
+        )
+
+    fun setMultiPaneLayoutEnabled(value: Boolean) {
+        settings.set(DesktopHomeSettingsFields.DESKTOP_HOME_MULTI_PANE_LAYOUT_ENABLED.name, value)
+        isMultiPaneLayoutEnabledMutableFlow.update { value }
+    }
+
     fun isDrawerVisible(): Boolean =
         settings.getBoolean(
             DesktopHomeSettingsFields.DESKTOP_HOME_DRAWER_VISIBLE.name,
@@ -30,6 +48,7 @@ class DesktopHomeSettingsRepository(
 }
 
 private enum class DesktopHomeSettingsFields {
+    DESKTOP_HOME_MULTI_PANE_LAYOUT_ENABLED,
     DESKTOP_HOME_DRAWER_VISIBLE,
     DESKTOP_HOME_PANE_EXPANSION_INDEX,
 }

@@ -70,6 +70,7 @@ import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.desktop.toReaderMode
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
+import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
@@ -239,6 +240,8 @@ private fun FrameWindowScope.MainWindowContent(
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
     val feedListSettingsViewModel = koinViewModel<FeedListSettingsViewModel>()
+    val desktopHomeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
+    val isDesktopMultiPaneLayoutEnabled by desktopHomeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
 
     LaunchedEffect(Unit) {
         homeViewModel.onAppLaunch()
@@ -487,6 +490,8 @@ private fun FrameWindowScope.MainWindowContent(
                     dialogWindowNavigator.open(DesktopDialogWindowDestination.BlockedWords)
                 },
                 onNavigateToAccounts = { dialogWindowNavigator.open(DesktopDialogWindowDestination.Accounts) },
+                isDesktopMultiPaneLayoutEnabled = isDesktopMultiPaneLayoutEnabled,
+                onDesktopMultiPaneLayoutToggled = desktopHomeSettingsRepository::setMultiPaneLayoutEnabled,
             )
         }
     }
@@ -563,6 +568,9 @@ private fun EntryProviderScope<NavKey>.screens(
             onAccountsClick = { dialogWindowNavigator.open(DesktopDialogWindowDestination.Accounts) },
             onSettingsButtonClicked = {
                 // There's no settings button on desktop
+            },
+            navigateToReaderMode = { feedItemUrlInfo ->
+                backStack.add(feedItemUrlInfo.toReaderMode())
             },
             onAddFeedClick = { dialogWindowNavigator.open(DesktopDialogWindowDestination.AddFeed) },
             onEditFeedClick = onEditFeedRequested,

@@ -70,6 +70,8 @@ kotlin {
                 implementation(libs.flatlaf)
                 implementation(libs.compose.multiplatform.material3.adaptive.layout)
                 implementation(libs.compose.multiplatform.material3.adaptive.navigation)
+                implementation(libs.haze)
+                implementation(libs.haze.materials)
             }
         }
 

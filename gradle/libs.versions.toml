@@ -30,6 +30,7 @@ google-api-services-drive = "v3-rev20251210-2.0.0"
 google-oauth-client-jetty = "1.39.0"
 google-identity-googleid = "1.2.0"
 google-play-services-auth = "21.5.0"
+haze = "1.7.1"
 htmlunit = "4.13.0"
 glance = "1.1.1"
 google-services = "4.4.4"
@@ -123,6 +124,8 @@ dropbox-core-android = { module = "com.dropbox.core:dropbox-android-sdk", versio
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 flatlaf = { module = "com.formdev:flatlaf", version.ref = "flatlaf" }
+haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
+haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
 htmlunit = { module = "org.htmlunit:htmlunit", version.ref = "htmlunit" }
 glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 glance-material = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }

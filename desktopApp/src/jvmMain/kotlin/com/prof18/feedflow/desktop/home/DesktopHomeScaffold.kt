@@ -1,21 +1,25 @@
 package com.prof18.feedflow.desktop.home
 
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -40,11 +44,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
+import com.prof18.feedflow.desktop.ui.components.drawerHazeStyle
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
@@ -55,6 +61,11 @@ import com.prof18.feedflow.shared.ui.home.components.drawer.Drawer
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -75,6 +86,8 @@ internal fun DesktopHomeScaffold(
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
     val homeSettingsRepository = DI.koin.get<DesktopHomeSettingsRepository>()
+    val hazeState = rememberHazeState()
+    val hazeStyle = drawerHazeStyle()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     var isDockedDrawerVisible by remember { mutableStateOf(homeSettingsRepository.isDrawerVisible()) }
 
@@ -264,39 +277,77 @@ internal fun DesktopHomeScaffold(
         }
 
         if (isThreePaneLayout) {
-            Row(
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                if (isDockedDrawerVisible) {
-                    Box(
-                        modifier = Modifier
-                            .width(drawerPaneWidth)
-                            .fillMaxHeight(),
-                    ) {
-                        drawerContent()
-                    }
-
-                    VerticalDivider()
-                }
-
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    paneContent()
-                }
-            }
+            DockedDrawerLayout(
+                isDockedDrawerVisible = isDockedDrawerVisible,
+                hazeState = hazeState,
+                hazeStyle = hazeStyle,
+                drawerContent = drawerContent,
+                paneContent = paneContent,
+            )
         } else {
-            ModalNavigationDrawer(
+            ModalDrawerLayout(
                 drawerState = drawerState,
-                drawerContent = {
-                    ModalDrawerSheet {
-                        drawerContent()
-                    }
-                },
+                drawerContent = drawerContent,
+                paneContent = paneContent,
+            )
+        }
+    }
+}
+
+@Composable
+private fun DockedDrawerLayout(
+    isDockedDrawerVisible: Boolean,
+    hazeState: HazeState,
+    hazeStyle: HazeStyle?,
+    drawerContent: @Composable () -> Unit,
+    paneContent: @Composable () -> Unit,
+) {
+    Row(modifier = Modifier.fillMaxSize()) {
+        if (isDockedDrawerVisible) {
+            Box(
+                modifier = Modifier
+                    .width(drawerPaneWidth)
+                    .fillMaxHeight()
+                    .padding(horizontal = drawerPanelMargin, vertical = drawerPanelVerticalMargin)
+                    .shadow(elevation = drawerPanelElevation, shape = drawerPanelShape)
+                    .let { base ->
+                        if (hazeStyle != null) {
+                            base.hazeEffect(state = hazeState, style = hazeStyle)
+                        } else {
+                            base.background(MaterialTheme.colorScheme.surface)
+                        }
+                    },
             ) {
-                paneContent()
+                drawerContent()
             }
         }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .hazeSource(state = hazeState),
+        ) {
+            paneContent()
+        }
+    }
+}
+
+@Composable
+private fun ModalDrawerLayout(
+    drawerState: DrawerState,
+    drawerContent: @Composable () -> Unit,
+    paneContent: @Composable () -> Unit,
+) {
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet(
+                drawerContainerColor = MaterialTheme.colorScheme.background,
+            ) {
+                drawerContent()
+            }
+        },
+    ) {
+        paneContent()
     }
 }
 
@@ -330,6 +381,10 @@ private fun SyncReaderPaneNavigation(
 
 private val threePaneMinWidth = 1360.dp
 private val drawerPaneWidth = 320.dp
+private val drawerPanelMargin = 8.dp
+private val drawerPanelVerticalMargin = 12.dp
+private val drawerPanelElevation = 2.dp
+private val drawerPanelShape = RoundedCornerShape(16.dp)
 private val detailFullscreenAnchor = PaneExpansionAnchor.Proportion(0f)
 private val listFullscreenAnchor = PaneExpansionAnchor.Proportion(1f)
 private val paneAnchors: List<PaneExpansionAnchor> = buildList {

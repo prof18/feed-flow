@@ -18,7 +18,6 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -33,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -64,6 +62,7 @@ import kotlinx.collections.immutable.toImmutableList
 internal fun DrawerFeedSourcesByCategories(
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
+    drawerItemVisualStyle: DrawerItemVisualStyle,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     selectedFeedSourceIds: ImmutableSet<String>,
     onFeedSourceClick: (FeedSource, Boolean) -> Unit,
@@ -94,6 +93,7 @@ internal fun DrawerFeedSourcesByCategories(
                 drawerFeedSources = navDrawerState.feedSourcesWithoutCategory
                     .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                 currentFeedFilter = currentFeedFilter,
+                drawerItemVisualStyle = drawerItemVisualStyle,
                 selectedFeedSourceIds = selectedFeedSourceIds,
                 onFeedSourceClick = onFeedSourceClick,
                 selectedFeedSourcesProvider = selectedFeedSourcesProvider,
@@ -116,6 +116,7 @@ internal fun DrawerFeedSourcesByCategories(
                     drawerFeedSources = drawerFeedSources
                         .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                     currentFeedFilter = currentFeedFilter,
+                    drawerItemVisualStyle = drawerItemVisualStyle,
                     isCategoryExpanded = isCategoryExpanded,
                     onCategoryExpand = {
                         isCategoryExpanded = !isCategoryExpanded
@@ -144,6 +145,7 @@ internal fun DrawerFeedSourceByCategoryItem(
     feedSourceCategoryWrapper: DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper,
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
+    drawerItemVisualStyle: DrawerItemVisualStyle,
     isCategoryExpanded: Boolean,
     onCategoryExpand: () -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
@@ -194,14 +196,14 @@ internal fun DrawerFeedSourceByCategoryItem(
             } else {
                 currentFeedFilter is FeedFilter.Uncategorized
             }
-            val navItemColors = NavigationDrawerItemDefaults.colors(
-                unselectedContainerColor = Color.Transparent,
-            )
+            val navItemColors = drawerItemColors(drawerItemVisualStyle)
+            val itemShape = drawerItemVisualStyle.itemShape
             val dropTargetModifier = Modifier.Companion.dropTargetModifier(
                 dragState = dragState,
                 category = category,
                 isDropTargetActive = isDropTargetActive,
                 highlightColor = MaterialTheme.colorScheme.primary,
+                shape = itemShape,
             )
             val onClick = {
                 if (category != null) {
@@ -214,7 +216,7 @@ internal fun DrawerFeedSourceByCategoryItem(
             Surface(
                 selected = isSelected,
                 onClick = onClick,
-                shape = CircleShape,
+                shape = itemShape,
                 color = navItemColors.containerColor(isSelected).value,
                 modifier = Modifier
                     .weight(1f)
@@ -279,6 +281,7 @@ internal fun DrawerFeedSourceByCategoryItem(
             isCategoryExpanded = isCategoryExpanded,
             drawerFeedSources = drawerFeedSources,
             currentFeedFilter = currentFeedFilter,
+            drawerItemVisualStyle = drawerItemVisualStyle,
             selectedFeedSourceIds = selectedFeedSourceIds,
             onFeedSourceClick = onFeedSourceClick,
             selectedFeedSourcesProvider = selectedFeedSourcesProvider,
@@ -329,6 +332,7 @@ private fun DrawerFeedSourcesByCategoriesPreview() {
                 categories = persistentListOf(),
             ),
             currentFeedFilter = FeedFilter.Timeline,
+            drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
             onFeedFilterSelected = {},
             selectedFeedSourceIds = persistentSetOf(),
             onFeedSourceClick = { _, _ -> },

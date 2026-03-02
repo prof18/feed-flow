@@ -11,8 +11,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -22,6 +25,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
 import com.prof18.feedflow.shared.ui.home.FeedListActions
@@ -54,6 +59,8 @@ fun HomeScreenContent(
     showDropdownMenu: Boolean = false,
     onBackupClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
+    topAppBarColors: TopAppBarColors? = null,
+    toolbarElevation: Dp = 0.dp,
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -68,38 +75,41 @@ fun HomeScreenContent(
     Scaffold(
         modifier = modifier,
         topBar = {
-            HomeAppBar(
-                currentFeedFilter = displayState.currentFeedFilter,
-                unReadCount = displayState.unReadCount,
-                showDrawerMenu = showDrawerMenu,
-                isDrawerOpen = isDrawerOpen,
-                onDrawerMenuClick = onDrawerMenuClick,
-                onSearchClick = onSearchClick,
-                showDropdownMenu = showDropdownMenu,
-                onMarkAllReadClicked = feedListActions.markAllRead,
-                onClearOldArticlesClicked = feedListActions.onClearOldArticlesClicked,
-                onSettingsButtonClicked = onSettingsButtonClicked,
-                onForceRefreshClick = {
-                    scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                        feedListActions.forceRefreshData()
-                    }
-                },
-                onEditFeedClick = feedManagementActions.onEditFeedClick,
-                onClick = {
-                    scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                    }
-                },
-                onDoubleClick = {
-                    scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                        onRefresh()
-                    }
-                },
-                isSyncUploadRequired = displayState.isSyncUploadRequired,
-                onBackupClick = onBackupClick,
-            )
+            Surface(shadowElevation = toolbarElevation) {
+                HomeAppBar(
+                    currentFeedFilter = displayState.currentFeedFilter,
+                    unReadCount = displayState.unReadCount,
+                    showDrawerMenu = showDrawerMenu,
+                    isDrawerOpen = isDrawerOpen,
+                    onDrawerMenuClick = onDrawerMenuClick,
+                    onSearchClick = onSearchClick,
+                    showDropdownMenu = showDropdownMenu,
+                    onMarkAllReadClicked = feedListActions.markAllRead,
+                    onClearOldArticlesClicked = feedListActions.onClearOldArticlesClicked,
+                    onSettingsButtonClicked = onSettingsButtonClicked,
+                    onForceRefreshClick = {
+                        scope.launch {
+                            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                            feedListActions.forceRefreshData()
+                        }
+                    },
+                    onEditFeedClick = feedManagementActions.onEditFeedClick,
+                    onClick = {
+                        scope.launch {
+                            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                        }
+                    },
+                    onDoubleClick = {
+                        scope.launch {
+                            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                            onRefresh()
+                        }
+                    },
+                    isSyncUploadRequired = displayState.isSyncUploadRequired,
+                    onBackupClick = onBackupClick,
+                    colors = topAppBarColors ?: TopAppBarDefaults.topAppBarColors(),
+                )
+            }
         },
         snackbarHost = {
             SnackbarHost(snackbarHostState) { data ->

@@ -33,6 +33,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -220,13 +221,14 @@ internal fun Modifier.dropTargetModifier(
     category: FeedSourceCategory?,
     isDropTargetActive: Boolean,
     highlightColor: Color,
+    shape: Shape,
 ): Modifier {
     if (!dragState.isEnabled) return this
     val highlightModifier = if (isDropTargetActive) {
         Modifier.border(
             width = 1.dp,
             color = highlightColor.copy(alpha = 0.6f),
-            shape = CircleShape,
+            shape = shape,
         )
     } else {
         Modifier

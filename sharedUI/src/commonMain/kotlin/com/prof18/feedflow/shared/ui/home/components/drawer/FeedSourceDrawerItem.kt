@@ -9,14 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationDrawerItemColors
-import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -51,6 +48,7 @@ internal fun FeedSourceDrawerItem(
     feedSource: FeedSource,
     label: @Composable () -> Unit,
     selected: Boolean,
+    drawerItemVisualStyle: DrawerItemVisualStyle,
     isMultiSelected: Boolean,
     onClick: () -> Unit,
     icon: @Composable () -> Unit,
@@ -61,9 +59,10 @@ internal fun FeedSourceDrawerItem(
     onOpenWebsite: (String) -> Unit,
     unreadCount: Long,
     modifier: Modifier = Modifier,
-    colors: NavigationDrawerItemColors = NavigationDrawerItemDefaults.colors(),
 ) {
     var showFeedMenu by remember { mutableStateOf(false) }
+    val itemShape = drawerItemVisualStyle.itemShape
+    val itemColors = drawerItemColors(drawerItemVisualStyle)
 
     Row(
         modifier = modifier,
@@ -94,7 +93,7 @@ internal fun FeedSourceDrawerItem(
             Modifier.border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                shape = CircleShape,
+                shape = itemShape,
             )
         } else {
             Modifier
@@ -108,8 +107,8 @@ internal fun FeedSourceDrawerItem(
                 .heightIn(min = 56.0.dp)
                 .fillMaxWidth()
                 .then(multiSelectModifier),
-            shape = CircleShape,
-            color = colors.containerColor(selected).value,
+            shape = itemShape,
+            color = itemColors.containerColor(selected).value,
         ) {
             val paddingStart = if (feedSource.fetchFailed) {
                 Spacing.xsmall
@@ -134,12 +133,12 @@ internal fun FeedSourceDrawerItem(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f),
                 ) {
-                    val iconColor = colors.iconColor(selected).value
+                    val iconColor = itemColors.iconColor(selected).value
                     CompositionLocalProvider(LocalContentColor provides iconColor, content = icon)
                     Spacer(Modifier.width(12.dp))
 
                     Box(Modifier.weight(1f)) {
-                        val labelColor = colors.textColor(selected).value
+                        val labelColor = itemColors.textColor(selected).value
                         CompositionLocalProvider(LocalContentColor provides labelColor, content = label)
                     }
                 }
@@ -149,7 +148,7 @@ internal fun FeedSourceDrawerItem(
                         modifier = Modifier.padding(start = Spacing.small),
                         text = unreadCount.toString(),
                         style = MaterialTheme.typography.labelMedium,
-                        color = colors.textColor(selected).value,
+                        color = itemColors.textColor(selected).value,
                     )
                 }
             }
@@ -178,6 +177,7 @@ private fun FeedSourceDrawerItemPreview() {
             feedSource = feedSourcesForPreview.first(),
             label = { Text("Feed Source Title") },
             selected = false,
+            drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
             isMultiSelected = false,
             onClick = {},
             icon = { Icon(Icons.Default.Warning, contentDescription = null) },

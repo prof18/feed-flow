@@ -4,10 +4,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.PlaylistAddCheck
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -17,6 +15,7 @@ import com.prof18.feedflow.shared.ui.utils.PreviewHelper
 internal fun DrawerReadItem(
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    drawerItemVisualStyle: DrawerItemVisualStyle,
 ) {
     NavigationDrawerItem(
         selected = currentFeedFilter is FeedFilter.Read,
@@ -31,7 +30,8 @@ internal fun DrawerReadItem(
                 contentDescription = null,
             )
         },
-        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+        shape = drawerItemVisualStyle.itemShape,
+        colors = drawerItemColors(drawerItemVisualStyle),
         onClick = {
             onFeedFilterSelected(FeedFilter.Read)
         },
@@ -45,6 +45,7 @@ private fun DrawerReadItemPreview() {
         DrawerReadItem(
             currentFeedFilter = FeedFilter.Read,
             onFeedFilterSelected = {},
+            drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
         )
     }
 }

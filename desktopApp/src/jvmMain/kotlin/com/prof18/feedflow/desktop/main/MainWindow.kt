@@ -38,6 +38,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowState
 import androidx.navigation3.runtime.EntryProviderScope
@@ -386,7 +387,6 @@ private fun FrameWindowScope.MainWindowContent(
                         if (getDesktopOS().isMacOs()) {
                             Modifier
                                 .background(MaterialTheme.colorScheme.background)
-                                .padding(top = Spacing.regular)
                         } else {
                             Modifier
                         },
@@ -581,27 +581,39 @@ private fun EntryProviderScope<NavKey>.screens(
     }
 
     entry<Search> {
-        com.prof18.feedflow.desktop.search.SearchScreen(
-            navigateBack = navigateBack,
-            navigateToReaderMode = { urlInfo ->
-                backStack.add(urlInfo.toReaderMode())
-            },
-            navigateToEditFeed = onEditFeedRequested,
-        )
+        MacOsTitleBarPadding {
+            com.prof18.feedflow.desktop.search.SearchScreen(
+                navigateBack = navigateBack,
+                navigateToReaderMode = { urlInfo ->
+                    backStack.add(urlInfo.toReaderMode())
+                },
+                navigateToEditFeed = onEditFeedRequested,
+            )
+        }
     }
 
     entry<ReaderMode> { route ->
-        val feedItemUrlInfo = FeedItemUrlInfo(
-            id = route.id,
-            url = route.url,
-            title = route.title,
-            isBookmarked = route.isBookmarked,
-            linkOpeningPreference = LinkOpeningPreference.valueOf(route.linkOpeningPreference),
-            commentsUrl = route.commentsUrl,
-        )
-        ReaderModeScreen(
-            feedItemUrlInfo = feedItemUrlInfo,
-            navigateBack = navigateBack,
-        )
+        MacOsTitleBarPadding {
+            val feedItemUrlInfo = FeedItemUrlInfo(
+                id = route.id,
+                url = route.url,
+                title = route.title,
+                isBookmarked = route.isBookmarked,
+                linkOpeningPreference = LinkOpeningPreference.valueOf(route.linkOpeningPreference),
+                commentsUrl = route.commentsUrl,
+            )
+            ReaderModeScreen(
+                feedItemUrlInfo = feedItemUrlInfo,
+                navigateBack = navigateBack,
+            )
+        }
+    }
+}
+
+@Composable
+private fun MacOsTitleBarPadding(content: @Composable () -> Unit) {
+    val topPadding = if (getDesktopOS().isMacOs()) Spacing.regular else 0.dp
+    Box(modifier = Modifier.padding(top = topPadding)) {
+        content()
     }
 }

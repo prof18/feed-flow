@@ -5,10 +5,8 @@ import androidx.compose.material.icons.automirrored.filled.Feed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
@@ -20,6 +18,7 @@ internal fun DrawerTimelineItem(
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     drawerItem: DrawerItem.Timeline,
+    drawerItemVisualStyle: DrawerItemVisualStyle,
 ) {
     NavigationDrawerItem(
         selected = currentFeedFilter is FeedFilter.Timeline,
@@ -44,7 +43,8 @@ internal fun DrawerTimelineItem(
                 contentDescription = null,
             )
         },
-        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+        shape = drawerItemVisualStyle.itemShape,
+        colors = drawerItemColors(drawerItemVisualStyle),
         onClick = {
             onFeedFilterSelected(FeedFilter.Timeline)
         },
@@ -59,6 +59,7 @@ private fun DrawerTimelineItemPreview() {
             currentFeedFilter = FeedFilter.Timeline,
             onFeedFilterSelected = {},
             drawerItem = DrawerItem.Timeline(unreadCount = 10),
+            drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
         )
     }
 }

@@ -134,45 +134,47 @@ internal fun ReaderModeScreen(
     ) {
         Scaffold(
             topBar = {
-                ReaderModeToolbar(
-                    readerModeState = state,
-                    fontSize = fontSize,
-                    navigateBack = navigateBack,
-                    showBackButton = showBackButton,
-                    onToggleDetailFullscreen = onToggleDetailFullscreen,
-                    isDetailFullscreen = isDetailFullscreen,
-                    openInBrowser = { url ->
-                        if (isValidUrl(url)) {
-                            uriHandler.openUri(url)
-                        }
-                    },
-                    onShareClick = { url ->
-                        val result = copyToClipboard(url)
-                        if (result) {
-                            scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    message = message,
-                                    duration = SnackbarDuration.Short,
-                                )
+                Surface(shadowElevation = 2.dp) {
+                    ReaderModeToolbar(
+                        readerModeState = state,
+                        fontSize = fontSize,
+                        navigateBack = navigateBack,
+                        showBackButton = showBackButton,
+                        onToggleDetailFullscreen = onToggleDetailFullscreen,
+                        isDetailFullscreen = isDetailFullscreen,
+                        openInBrowser = { url ->
+                            if (isValidUrl(url)) {
+                                uriHandler.openUri(url)
                             }
-                        }
-                    },
-                    onArchiveClick = { articleUrl ->
-                        val archiveUrl = getArchiveISUrl(articleUrl)
-                        if (isValidUrl(archiveUrl)) {
-                            uriHandler.openUri(archiveUrl)
-                        }
-                    },
-                    onCommentsClick = { commentsUrl ->
-                        if (isValidUrl(commentsUrl)) {
-                            uriHandler.openUri(commentsUrl)
-                        }
-                    },
-                    onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
-                    onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
-                        readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
-                    },
-                )
+                        },
+                        onShareClick = { url ->
+                            val result = copyToClipboard(url)
+                            if (result) {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = message,
+                                        duration = SnackbarDuration.Short,
+                                    )
+                                }
+                            }
+                        },
+                        onArchiveClick = { articleUrl ->
+                            val archiveUrl = getArchiveISUrl(articleUrl)
+                            if (isValidUrl(archiveUrl)) {
+                                uriHandler.openUri(archiveUrl)
+                            }
+                        },
+                        onCommentsClick = { commentsUrl ->
+                            if (isValidUrl(commentsUrl)) {
+                                uriHandler.openUri(commentsUrl)
+                            }
+                        },
+                        onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
+                        onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
+                            readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+                        },
+                    )
+                }
             },
             snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { contentPadding ->

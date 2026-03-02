@@ -11,11 +11,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
@@ -38,6 +36,7 @@ import kotlinx.collections.immutable.toImmutableList
 internal fun DrawerFeedSourcesList(
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
+    drawerItemVisualStyle: DrawerItemVisualStyle,
     selectedFeedSourceIds: ImmutableSet<String>,
     onFeedSourceClick: (FeedSource, Boolean) -> Unit,
     selectedFeedSourcesProvider: () -> List<FeedSource>,
@@ -64,6 +63,7 @@ internal fun DrawerFeedSourcesList(
                 },
                 selected = currentFeedFilter is FeedFilter.Source &&
                     currentFeedFilter.feedSource == feedSourceWrapper.feedSource,
+                drawerItemVisualStyle = drawerItemVisualStyle,
                 onClick = {
                     onFeedSourceClick(feedSourceWrapper.feedSource, isMultiSelectPressed)
                 },
@@ -81,9 +81,6 @@ internal fun DrawerFeedSourcesList(
                         )
                     }
                 },
-                colors = NavigationDrawerItemDefaults.colors(
-                    unselectedContainerColor = Color.Transparent,
-                ),
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onPinFeedClick = onPinFeedClick,
@@ -108,6 +105,7 @@ internal fun ColumnScope.FeedSourcesListWithCategorySelector(
     isCategoryExpanded: Boolean,
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
+    drawerItemVisualStyle: DrawerItemVisualStyle,
     selectedFeedSourceIds: ImmutableSet<String>,
     onFeedSourceClick: (FeedSource, Boolean) -> Unit,
     selectedFeedSourcesProvider: () -> List<FeedSource>,
@@ -132,6 +130,7 @@ internal fun ColumnScope.FeedSourcesListWithCategorySelector(
         DrawerFeedSourcesList(
             drawerFeedSources = drawerFeedSources,
             currentFeedFilter = currentFeedFilter,
+            drawerItemVisualStyle = drawerItemVisualStyle,
             selectedFeedSourceIds = selectedFeedSourceIds,
             onFeedSourceClick = onFeedSourceClick,
             selectedFeedSourcesProvider = selectedFeedSourcesProvider,
@@ -158,6 +157,7 @@ private fun FeedSourcesListPreview() {
                 )
             }.toImmutableList(),
             currentFeedFilter = FeedFilter.Timeline,
+            drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
             selectedFeedSourceIds = persistentSetOf(),
             onFeedSourceClick = { _, _ -> },
             selectedFeedSourcesProvider = { emptyList() },

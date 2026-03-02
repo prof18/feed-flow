@@ -35,6 +35,7 @@ fun Drawer(
     feedManagementActions: FeedManagementActions,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     modifier: Modifier = Modifier,
+    drawerItemVisualStyle: DrawerItemVisualStyle = DefaultDrawerItemVisualStyle,
     onFeedSuggestionsClick: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
@@ -117,6 +118,7 @@ fun Drawer(
                     currentFeedFilter = displayState.currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelectedWithClear,
                     drawerItem = timelineItem,
+                    drawerItemVisualStyle = drawerItemVisualStyle,
                 )
             }
 
@@ -124,6 +126,7 @@ fun Drawer(
                 DrawerReadItem(
                     currentFeedFilter = displayState.currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelectedWithClear,
+                    drawerItemVisualStyle = drawerItemVisualStyle,
                 )
             }
 
@@ -135,18 +138,21 @@ fun Drawer(
                         .filterIsInstance<DrawerItem.Bookmarks>()
                         .firstOrNull()
                         ?: DrawerItem.Bookmarks(unreadCount = 0),
+                    drawerItemVisualStyle = drawerItemVisualStyle,
                 )
             }
 
             item {
                 DrawerFeedSuggestionsItem(
                     onFeedSuggestionsClick = onFeedSuggestionsClick,
+                    drawerItemVisualStyle = drawerItemVisualStyle,
                 )
             }
 
             item {
                 DrawerAddItem(
                     onAddFeedClicked = feedManagementActions.onAddFeedClick,
+                    drawerItemVisualStyle = drawerItemVisualStyle,
                 )
             }
 
@@ -169,6 +175,7 @@ fun Drawer(
                             drawerFeedSources = displayState.navDrawerState.pinnedFeedSources
                                 .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                             currentFeedFilter = displayState.currentFeedFilter,
+                            drawerItemVisualStyle = drawerItemVisualStyle,
                             selectedFeedSourceIds = selectedFeedSourceIds,
                             onFeedSourceClick = onFeedSourceClick,
                             selectedFeedSourcesProvider = { selectedFeedSourceIds.mapNotNull { allFeedSources[it] } },
@@ -191,6 +198,7 @@ fun Drawer(
                     DrawerFeedSourcesByCategories(
                         navDrawerState = displayState.navDrawerState,
                         currentFeedFilter = displayState.currentFeedFilter,
+                        drawerItemVisualStyle = drawerItemVisualStyle,
                         onFeedFilterSelected = onFeedFilterSelectedWithClear,
                         selectedFeedSourceIds = selectedFeedSourceIds,
                         onFeedSourceClick = onFeedSourceClick,

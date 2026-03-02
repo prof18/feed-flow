@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
@@ -20,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -44,10 +47,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.utils.getDesktopOS
+import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.ui.components.drawerHazeStyle
@@ -58,6 +66,7 @@ import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.HomeScreenContent
 import com.prof18.feedflow.shared.ui.home.components.drawer.Drawer
+import com.prof18.feedflow.shared.ui.home.components.drawer.DrawerItemVisualStyle
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
@@ -66,6 +75,7 @@ import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -85,7 +95,14 @@ internal fun DesktopHomeScaffold(
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
+    val focusManager = LocalFocusManager.current
     val homeSettingsRepository = DI.koin.get<DesktopHomeSettingsRepository>()
+
+    @Suppress("MagicNumber")
+    LaunchedEffect(Unit) {
+        delay(100)
+        focusManager.clearFocus()
+    }
     val hazeState = rememberHazeState()
     val hazeStyle = drawerHazeStyle()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -136,6 +153,7 @@ internal fun DesktopHomeScaffold(
             Drawer(
                 displayState = displayState,
                 feedManagementActions = feedManagementActions,
+                drawerItemVisualStyle = desktopDrawerItemVisualStyle,
                 onFeedFilterSelected = { feedFilter: FeedFilter ->
                     feedManagementActions.onFeedFilterSelected(feedFilter)
                     scope.launch {
@@ -189,6 +207,7 @@ internal fun DesktopHomeScaffold(
                             snackbarHostState = snackbarHostState,
                             onSearchClick = onSearchClick,
                             onSettingsButtonClicked = onSettingsButtonClicked,
+                            toolbarElevation = 2.dp,
                             showDrawerMenu = true,
                             isDrawerOpen = if (isThreePaneLayout) {
                                 isDockedDrawerVisible
@@ -276,19 +295,32 @@ internal fun DesktopHomeScaffold(
             )
         }
 
+        val elevatedPaneContent: @Composable () -> Unit = {
+            Box(modifier = Modifier.fillMaxSize().clipToBounds()) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(toolbarHeight),
+                    shadowElevation = 2.dp,
+                    color = MaterialTheme.colorScheme.surface,
+                ) {}
+                paneContent()
+            }
+        }
+
         if (isThreePaneLayout) {
             DockedDrawerLayout(
                 isDockedDrawerVisible = isDockedDrawerVisible,
                 hazeState = hazeState,
                 hazeStyle = hazeStyle,
                 drawerContent = drawerContent,
-                paneContent = paneContent,
+                paneContent = elevatedPaneContent,
             )
         } else {
             ModalDrawerLayout(
                 drawerState = drawerState,
                 drawerContent = drawerContent,
-                paneContent = paneContent,
+                paneContent = elevatedPaneContent,
             )
         }
     }
@@ -302,14 +334,15 @@ private fun DockedDrawerLayout(
     drawerContent: @Composable () -> Unit,
     paneContent: @Composable () -> Unit,
 ) {
+    val macOsTopPadding = if (getDesktopOS().isMacOs()) Spacing.regular else 0.dp
+
     Row(modifier = Modifier.fillMaxSize()) {
         if (isDockedDrawerVisible) {
             Box(
                 modifier = Modifier
                     .width(drawerPaneWidth)
                     .fillMaxHeight()
-                    .padding(horizontal = drawerPanelMargin, vertical = drawerPanelVerticalMargin)
-                    .shadow(elevation = drawerPanelElevation, shape = drawerPanelShape)
+                    .zIndex(1f)
                     .let { base ->
                         if (hazeStyle != null) {
                             base.hazeEffect(state = hazeState, style = hazeStyle)
@@ -318,12 +351,20 @@ private fun DockedDrawerLayout(
                         }
                     },
             ) {
-                drawerContent()
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = macOsTopPadding),
+                ) {
+                    drawerContent()
+                }
             }
         }
+        val paneTopPadding = if (isDockedDrawerVisible) Spacing.small else macOsTopPadding
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(top = paneTopPadding)
                 .hazeSource(state = hazeState),
         ) {
             paneContent()
@@ -337,17 +378,20 @@ private fun ModalDrawerLayout(
     drawerContent: @Composable () -> Unit,
     paneContent: @Composable () -> Unit,
 ) {
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet(
-                drawerContainerColor = MaterialTheme.colorScheme.background,
-            ) {
-                drawerContent()
-            }
-        },
-    ) {
-        paneContent()
+    val macOsTopPadding = if (getDesktopOS().isMacOs()) Spacing.regular else 0.dp
+    Box(modifier = Modifier.padding(top = macOsTopPadding)) {
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            drawerContent = {
+                ModalDrawerSheet(
+                    drawerContainerColor = MaterialTheme.colorScheme.background,
+                ) {
+                    drawerContent()
+                }
+            },
+        ) {
+            paneContent()
+        }
     }
 }
 
@@ -381,10 +425,12 @@ private fun SyncReaderPaneNavigation(
 
 private val threePaneMinWidth = 1360.dp
 private val drawerPaneWidth = 320.dp
-private val drawerPanelMargin = 8.dp
-private val drawerPanelVerticalMargin = 12.dp
-private val drawerPanelElevation = 2.dp
-private val drawerPanelShape = RoundedCornerShape(16.dp)
+private val toolbarHeight = 64.dp
+private val desktopDrawerItemVisualStyle = DrawerItemVisualStyle(
+    itemShape = RoundedCornerShape(14.dp),
+    selectedContainerColor = Color(0xFF0A84FF),
+    selectedContentColor = Color.White,
+)
 private val detailFullscreenAnchor = PaneExpansionAnchor.Proportion(0f)
 private val listFullscreenAnchor = PaneExpansionAnchor.Proportion(1f)
 private val paneAnchors: List<PaneExpansionAnchor> = buildList {

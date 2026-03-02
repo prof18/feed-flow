@@ -13,6 +13,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +46,7 @@ internal fun HomeAppBar(
     onEditFeedClick: (FeedSource) -> Unit,
     isSyncUploadRequired: Boolean,
     onBackupClick: () -> Unit,
+    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -124,6 +127,7 @@ internal fun HomeAppBar(
                 )
             }
         },
+        colors = colors,
         modifier = Modifier
             .pointerInput(Unit) {
                 detectTapGestures(

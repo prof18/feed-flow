@@ -5,10 +5,8 @@ import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
@@ -20,6 +18,7 @@ internal fun DrawerBookmarksItem(
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     drawerItem: DrawerItem.Bookmarks,
+    drawerItemVisualStyle: DrawerItemVisualStyle,
 ) {
     NavigationDrawerItem(
         selected = currentFeedFilter is FeedFilter.Bookmarks,
@@ -44,7 +43,8 @@ internal fun DrawerBookmarksItem(
                 contentDescription = null,
             )
         },
-        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+        shape = drawerItemVisualStyle.itemShape,
+        colors = drawerItemColors(drawerItemVisualStyle),
         onClick = {
             onFeedFilterSelected(FeedFilter.Bookmarks)
         },
@@ -59,6 +59,7 @@ private fun DrawerBookmarksItemPreview() {
             currentFeedFilter = FeedFilter.Bookmarks,
             onFeedFilterSelected = {},
             drawerItem = DrawerItem.Bookmarks(unreadCount = 5),
+            drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
         )
     }
 }

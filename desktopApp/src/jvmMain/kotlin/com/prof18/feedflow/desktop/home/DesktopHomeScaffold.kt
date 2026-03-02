@@ -48,7 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -106,6 +106,7 @@ internal fun DesktopHomeScaffold(
     val hazeState = rememberHazeState()
     val hazeStyle = drawerHazeStyle()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val drawerItemVisualStyle = desktopDrawerItemVisualStyle()
     var isDockedDrawerVisible by remember { mutableStateOf(homeSettingsRepository.isDrawerVisible()) }
 
     val initialAnchorIndex = remember {
@@ -153,7 +154,7 @@ internal fun DesktopHomeScaffold(
             Drawer(
                 displayState = displayState,
                 feedManagementActions = feedManagementActions,
-                drawerItemVisualStyle = desktopDrawerItemVisualStyle,
+                drawerItemVisualStyle = drawerItemVisualStyle,
                 onFeedFilterSelected = { feedFilter: FeedFilter ->
                     feedManagementActions.onFeedFilterSelected(feedFilter)
                     scope.launch {
@@ -426,11 +427,29 @@ private fun SyncReaderPaneNavigation(
 private val threePaneMinWidth = 1360.dp
 private val drawerPaneWidth = 320.dp
 private val toolbarHeight = 64.dp
-private val desktopDrawerItemVisualStyle = DrawerItemVisualStyle(
-    itemShape = RoundedCornerShape(14.dp),
-    selectedContainerColor = Color(0xFF0A84FF),
-    selectedContentColor = Color.White,
-)
+
+@Composable
+private fun desktopDrawerItemVisualStyle(): DrawerItemVisualStyle {
+    val colorScheme = MaterialTheme.colorScheme
+    val selectedAlpha = if (colorScheme.surface.luminance() < DARK_THEME_LUMINANCE_THRESHOLD) {
+        DARK_MODE_DRAWER_SELECTION_ALPHA
+    } else {
+        LIGHT_MODE_DRAWER_SELECTION_ALPHA
+    }
+
+    return DrawerItemVisualStyle(
+        itemShape = RoundedCornerShape(14.dp),
+        itemMinHeight = 44.dp,
+        itemVerticalPadding = 2.dp,
+        selectedContainerColor = colorScheme.onSurface.copy(alpha = selectedAlpha),
+        selectedContentColor = colorScheme.onSurface,
+    )
+}
+
+private const val DARK_THEME_LUMINANCE_THRESHOLD = 0.5f
+private const val DARK_MODE_DRAWER_SELECTION_ALPHA = 0.14f
+private const val LIGHT_MODE_DRAWER_SELECTION_ALPHA = 0.1f
+
 private val detailFullscreenAnchor = PaneExpansionAnchor.Proportion(0f)
 private val listFullscreenAnchor = PaneExpansionAnchor.Proportion(1f)
 private val paneAnchors: List<PaneExpansionAnchor> = buildList {

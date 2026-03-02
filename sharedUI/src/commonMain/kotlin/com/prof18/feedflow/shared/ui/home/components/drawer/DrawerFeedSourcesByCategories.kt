@@ -221,7 +221,7 @@ internal fun DrawerFeedSourceByCategoryItem(
                 modifier = Modifier
                     .weight(1f)
                     .semantics { role = Role.Tab }
-                    .heightIn(min = 56.dp)
+                    .heightIn(min = drawerItemVisualStyle.itemMinHeight)
                     .hoverable(remember { MutableInteractionSource() })
                     .then(dropTargetModifier),
             ) {

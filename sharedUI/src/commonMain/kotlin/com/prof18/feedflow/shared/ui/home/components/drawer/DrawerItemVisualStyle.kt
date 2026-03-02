@@ -7,10 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 @Immutable
 data class DrawerItemVisualStyle(
     val itemShape: Shape = CircleShape,
+    val itemMinHeight: Dp = 56.dp,
+    val itemVerticalPadding: Dp = 0.dp,
     val selectedContainerColor: Color? = null,
     val selectedContentColor: Color? = null,
 )

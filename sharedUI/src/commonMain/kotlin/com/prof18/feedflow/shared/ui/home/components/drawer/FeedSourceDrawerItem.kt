@@ -104,7 +104,7 @@ internal fun FeedSourceDrawerItem(
             onClick = onClick,
             modifier = Modifier
                 .semantics { role = Role.Tab }
-                .heightIn(min = 56.0.dp)
+                .heightIn(min = drawerItemVisualStyle.itemMinHeight)
                 .fillMaxWidth()
                 .then(multiSelectModifier),
             shape = itemShape,

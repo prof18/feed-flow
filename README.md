@@ -39,6 +39,12 @@ FeedFlow is available for Android, iOS, and macOS.
     width="225px">
 </a>
 </div>
+<div align="center"><a href="https://flathub.org/en/apps/com.prof18.feedflow">
+    <img src="https://flathub.org/api/badge?svg"
+    alt="Get it on Flathub"
+    width="200px">
+</a>
+</div>
 
 You can get the latest Linux version 
 

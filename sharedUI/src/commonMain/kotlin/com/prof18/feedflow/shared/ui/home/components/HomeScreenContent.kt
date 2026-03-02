@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
+import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
@@ -61,6 +63,7 @@ fun HomeScreenContent(
     onEmptyStateClick: (() -> Unit)? = null,
     topAppBarColors: TopAppBarColors? = null,
     toolbarElevation: Dp = 0.dp,
+    topToolbarContentFadeHeight: Dp = 0.dp,
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -164,48 +167,60 @@ fun HomeScreenContent(
                 )
 
                 else -> feedContentWrapper {
-                    Column {
-                        FeedLoader(loadingState = displayState.feedUpdateStatus)
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        Column {
+                            FeedLoader(loadingState = displayState.feedUpdateStatus)
 
-                        if (displayState.feedItems.isEmpty() && displayState.feedUpdateStatus.isLoading()) {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .fillMaxSize(),
-                            ) {
-                                CircularProgressIndicator()
+                            if (displayState.feedItems.isEmpty() && displayState.feedUpdateStatus.isLoading()) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .fillMaxSize(),
+                                ) {
+                                    CircularProgressIndicator()
+                                }
                             }
+
+                            FeedList(
+                                modifier = Modifier,
+                                feedItems = displayState.feedItems,
+                                listState = listState,
+                                feedFontSize = displayState.feedFontSizes,
+                                shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
+                                shareMenuLabel = shareBehavior.shareLinkTitle,
+                                currentFeedFilter = displayState.currentFeedFilter,
+                                swipeActions = displayState.swipeActions,
+                                requestMoreItems = feedListActions.requestNewData,
+                                onFeedItemClick = { feedInfo ->
+                                    feedListActions.openUrl(feedInfo)
+                                    feedListActions.markAsRead(FeedItemId(feedInfo.id))
+                                },
+                                onBookmarkClick = feedListActions.updateBookmarkStatus,
+                                onReadStatusClick = feedListActions.updateReadStatus,
+                                onCommentClick = { feedInfo ->
+                                    feedListActions.openUrl(feedInfo)
+                                    feedListActions.markAsRead(FeedItemId(feedInfo.id))
+                                },
+                                updateReadStatus = feedListActions.markAsReadOnScroll,
+                                markAllAsRead = feedListActions.markAllRead,
+                                onShareClick = shareBehavior.onShareClick,
+                                onOpenFeedSettings = feedManagementActions.onEditFeedClick,
+                                onOpenFeedWebsite = feedManagementActions.onOpenWebsite,
+                                feedLayout = displayState.feedLayout,
+                                onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
+                                onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
+                            )
                         }
 
-                        FeedList(
-                            modifier = Modifier,
-                            feedItems = displayState.feedItems,
-                            listState = listState,
-                            feedFontSize = displayState.feedFontSizes,
-                            shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
-                            shareMenuLabel = shareBehavior.shareLinkTitle,
-                            currentFeedFilter = displayState.currentFeedFilter,
-                            swipeActions = displayState.swipeActions,
-                            requestMoreItems = feedListActions.requestNewData,
-                            onFeedItemClick = { feedInfo ->
-                                feedListActions.openUrl(feedInfo)
-                                feedListActions.markAsRead(FeedItemId(feedInfo.id))
-                            },
-                            onBookmarkClick = feedListActions.updateBookmarkStatus,
-                            onReadStatusClick = feedListActions.updateReadStatus,
-                            onCommentClick = { feedInfo ->
-                                feedListActions.openUrl(feedInfo)
-                                feedListActions.markAsRead(FeedItemId(feedInfo.id))
-                            },
-                            updateReadStatus = feedListActions.markAsReadOnScroll,
-                            markAllAsRead = feedListActions.markAllRead,
-                            onShareClick = shareBehavior.onShareClick,
-                            onOpenFeedSettings = feedManagementActions.onEditFeedClick,
-                            onOpenFeedWebsite = feedManagementActions.onOpenWebsite,
-                            feedLayout = displayState.feedLayout,
-                            onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
-                            onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
-                        )
+                        if (topToolbarContentFadeHeight > 0.dp) {
+                            TopToolbarContentFade(
+                                modifier = Modifier.align(Alignment.TopCenter),
+                                height = topToolbarContentFadeHeight,
+                                color = MaterialTheme.colorScheme.surface,
+                            )
+                        }
                     }
                 }
             }

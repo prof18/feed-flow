@@ -74,6 +74,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -84,6 +85,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 private val readerModeMaxContentWidth = 720.dp
+private val readerPaneTopContentFadeHeight = 30.dp
 
 @Composable
 internal fun ReaderModeScreen(
@@ -292,6 +294,12 @@ internal fun ReaderModeScreen(
                         }
                     }
                 }
+
+                TopToolbarContentFade(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    height = readerPaneTopContentFadeHeight,
+                    color = MaterialTheme.colorScheme.surface,
+                )
             }
         }
 

@@ -209,6 +209,7 @@ internal fun DesktopHomeScaffold(
                             onSearchClick = onSearchClick,
                             onSettingsButtonClicked = onSettingsButtonClicked,
                             toolbarElevation = 2.dp,
+                            topToolbarContentFadeHeight = listPaneTopContentFadeHeight,
                             showDrawerMenu = true,
                             isDrawerOpen = if (isThreePaneLayout) {
                                 isDockedDrawerVisible
@@ -427,6 +428,7 @@ private fun SyncReaderPaneNavigation(
 private val threePaneMinWidth = 1360.dp
 private val drawerPaneWidth = 320.dp
 private val toolbarHeight = 64.dp
+private val listPaneTopContentFadeHeight = 30.dp
 
 @Composable
 private fun desktopDrawerItemVisualStyle(): DrawerItemVisualStyle {

@@ -1,5 +1,9 @@
 package com.prof18.feedflow.desktop.home
 
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -197,7 +201,12 @@ internal fun DesktopHomeScaffold(
                     )
                 },
                 listPane = {
-                    AnimatedPane {
+                    val tweenSpec = tween<Float>(durationMillis = DESKTOP_PANE_TRANSITION_DURATION)
+                    AnimatedPane(
+                        enterTransition = fadeIn(animationSpec = tweenSpec),
+                        exitTransition = fadeOut(animationSpec = tweenSpec),
+                        boundsAnimationSpec = snap(),
+                    ) {
                         HomeScreenContent(
                             modifier = Modifier.fillMaxSize(),
                             displayState = displayState,
@@ -210,6 +219,7 @@ internal fun DesktopHomeScaffold(
                             onSettingsButtonClicked = onSettingsButtonClicked,
                             toolbarElevation = 2.dp,
                             topToolbarContentFadeHeight = listPaneTopContentFadeHeight,
+                            toolbarExpandedHeight = toolbarHeight,
                             showDrawerMenu = true,
                             isDrawerOpen = if (isThreePaneLayout) {
                                 isDockedDrawerVisible
@@ -257,7 +267,12 @@ internal fun DesktopHomeScaffold(
                     }
                 },
                 detailPane = {
-                    AnimatedPane {
+                    val tweenSpec = tween<Float>(durationMillis = DESKTOP_PANE_TRANSITION_DURATION)
+                    AnimatedPane(
+                        enterTransition = fadeIn(animationSpec = tweenSpec),
+                        exitTransition = fadeOut(animationSpec = tweenSpec),
+                        boundsAnimationSpec = snap(),
+                    ) {
                         if (currentReaderArticle != null) {
                             ReaderModeScreen(
                                 feedItemUrlInfo = currentReaderArticle,
@@ -336,7 +351,7 @@ private fun DockedDrawerLayout(
     drawerContent: @Composable () -> Unit,
     paneContent: @Composable () -> Unit,
 ) {
-    val macOsTopPadding = if (getDesktopOS().isMacOs()) Spacing.regular else 0.dp
+    val macOsTopPadding = if (getDesktopOS().isMacOs()) Spacing.medium else 0.dp
 
     Row(modifier = Modifier.fillMaxSize()) {
         if (isDockedDrawerVisible) {
@@ -380,7 +395,7 @@ private fun ModalDrawerLayout(
     drawerContent: @Composable () -> Unit,
     paneContent: @Composable () -> Unit,
 ) {
-    val macOsTopPadding = if (getDesktopOS().isMacOs()) Spacing.regular else 0.dp
+    val macOsTopPadding = if (getDesktopOS().isMacOs()) Spacing.medium else 0.dp
     Box(modifier = Modifier.padding(top = macOsTopPadding)) {
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -427,8 +442,9 @@ private fun SyncReaderPaneNavigation(
 
 private val threePaneMinWidth = 1360.dp
 private val drawerPaneWidth = 320.dp
-private val toolbarHeight = 64.dp
+private val toolbarHeight = 48.dp
 private val listPaneTopContentFadeHeight = 30.dp
+private const val DESKTOP_PANE_TRANSITION_DURATION = 120
 
 @Composable
 private fun desktopDrawerItemVisualStyle(): DrawerItemVisualStyle {

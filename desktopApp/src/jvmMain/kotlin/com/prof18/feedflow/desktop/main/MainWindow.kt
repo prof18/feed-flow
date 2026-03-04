@@ -612,7 +612,7 @@ private fun EntryProviderScope<NavKey>.screens(
 
 @Composable
 private fun MacOsTitleBarPadding(content: @Composable () -> Unit) {
-    val topPadding = if (getDesktopOS().isMacOs()) Spacing.regular else 0.dp
+    val topPadding = if (getDesktopOS().isMacOs()) Spacing.medium else 0.dp
     Box(modifier = Modifier.padding(top = topPadding)) {
         content()
     }

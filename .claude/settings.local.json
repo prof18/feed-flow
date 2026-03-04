@@ -46,7 +46,7 @@
       "WebFetch(domain:cache-redirector.jetbrains.com)",
       "Bash(curl:*)",
       "Bash(shasum:*)",
-      "Bash(jar tf:*)"
+      "Bash(jar tf:*)",
       "Bash(shasum:*)",
       "WebFetch(domain:search.maven.org)",
       "WebFetch(domain:api.github.com)"

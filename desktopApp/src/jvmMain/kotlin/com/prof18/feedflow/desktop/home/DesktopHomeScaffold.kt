@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,12 +53,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import java.awt.Cursor
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.utils.getDesktopOS
@@ -83,6 +83,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.awt.Cursor
 
 @Composable
 internal fun DesktopHomeScaffold(
@@ -258,14 +259,19 @@ internal fun DesktopHomeScaffold(
                             showDropdownMenu = false,
                             onEmptyStateClick = onEmptyStateClick,
                             feedContentWrapper = { content ->
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                ) {
+                                Box(modifier = Modifier.fillMaxSize()) {
                                     Box(
-                                        modifier = Modifier
-                                            .fillMaxSize(),
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.TopCenter,
                                     ) {
-                                        content()
+                                        Box(
+                                            modifier = Modifier
+                                                .widthIn(max = listPaneMaxContentWidth)
+                                                .fillMaxWidth()
+                                                .fillMaxHeight(),
+                                        ) {
+                                            content()
+                                        }
                                     }
 
                                     VerticalScrollbar(
@@ -358,7 +364,7 @@ internal fun DesktopHomeScaffold(
 }
 
 @Composable
-private fun DockedDrawerLayout(
+internal fun DockedDrawerLayout(
     isDockedDrawerVisible: Boolean,
     hazeState: HazeState,
     hazeStyle: HazeStyle?,
@@ -404,7 +410,7 @@ private fun DockedDrawerLayout(
 }
 
 @Composable
-private fun ModalDrawerLayout(
+internal fun ModalDrawerLayout(
     drawerState: DrawerState,
     drawerContent: @Composable () -> Unit,
     paneContent: @Composable () -> Unit,
@@ -454,14 +460,15 @@ private fun SyncReaderPaneNavigation(
     }
 }
 
-private val threePaneMinWidth = 1360.dp
-private val drawerPaneWidth = 320.dp
-private val toolbarHeight = 48.dp
-private val listPaneTopContentFadeHeight = 30.dp
+internal val threePaneMinWidth = 1360.dp
+internal val drawerPaneWidth = 320.dp
+internal val toolbarHeight = 48.dp
+internal val listPaneTopContentFadeHeight = 30.dp
+internal val listPaneMaxContentWidth = 720.dp
 private const val DESKTOP_PANE_TRANSITION_DURATION = 120
 
 @Composable
-private fun desktopDrawerItemVisualStyle(): DrawerItemVisualStyle {
+internal fun desktopDrawerItemVisualStyle(): DrawerItemVisualStyle {
     val colorScheme = MaterialTheme.colorScheme
     val selectedAlpha = if (colorScheme.surface.luminance() < DARK_THEME_LUMINANCE_THRESHOLD) {
         DARK_MODE_DRAWER_SELECTION_ALPHA

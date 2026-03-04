@@ -412,6 +412,7 @@ private fun ReaderModeToolbar(
     var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
+        expandedHeight = 48.dp,
         title = {},
         navigationIcon = when {
             onToggleDetailFullscreen != null -> {

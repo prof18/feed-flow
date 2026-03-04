@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.MenuOpen
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -22,10 +20,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.shared.ui.icons.CloseSidebar
+import com.prof18.feedflow.shared.ui.icons.CloseSidebarReversed
+import com.prof18.feedflow.shared.ui.icons.OpenSidebar
+import com.prof18.feedflow.shared.ui.icons.OpenSidebarReversed
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -47,10 +52,12 @@ internal fun HomeAppBar(
     isSyncUploadRequired: Boolean,
     onBackupClick: () -> Unit,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
+    expandedHeight: Dp = TopAppBarDefaults.TopAppBarExpandedHeight,
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
+        expandedHeight = expandedHeight,
         navigationIcon = if (showDrawerMenu) {
             {
                 DrawerIcon(
@@ -151,17 +158,20 @@ private fun FeedFilter.getTitle(): String =
 
 @Composable
 private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     IconButton(
         onClick = {
             onDrawerMenuClick()
         },
     ) {
+        val icon = when {
+            isDrawerOpen && isRtl -> CloseSidebarReversed
+            isDrawerOpen -> CloseSidebar
+            isRtl -> OpenSidebarReversed
+            else -> OpenSidebar
+        }
         Icon(
-            imageVector = if (isDrawerOpen) {
-                Icons.AutoMirrored.Filled.MenuOpen
-            } else {
-                Icons.Default.Menu
-            },
+            imageVector = icon,
             contentDescription = LocalFeedFlowStrings.current.drawerMenuButtonContentDescription,
         )
     }

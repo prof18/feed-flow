@@ -64,6 +64,7 @@ fun HomeScreenContent(
     topAppBarColors: TopAppBarColors? = null,
     toolbarElevation: Dp = 0.dp,
     topToolbarContentFadeHeight: Dp = 0.dp,
+    toolbarExpandedHeight: Dp = TopAppBarDefaults.TopAppBarExpandedHeight,
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -111,6 +112,7 @@ fun HomeScreenContent(
                     isSyncUploadRequired = displayState.isSyncUploadRequired,
                     onBackupClick = onBackupClick,
                     colors = topAppBarColors ?: TopAppBarDefaults.topAppBarColors(),
+                    expandedHeight = toolbarExpandedHeight,
                 )
             }
         },

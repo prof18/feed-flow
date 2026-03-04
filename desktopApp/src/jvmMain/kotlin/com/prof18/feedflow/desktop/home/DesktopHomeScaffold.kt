@@ -27,7 +27,6 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
@@ -54,8 +53,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import java.awt.Cursor
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.utils.getDesktopOS
@@ -191,14 +193,26 @@ internal fun DesktopHomeScaffold(
                 paneExpansionState = paneExpansionState,
                 paneExpansionDragHandle = { state ->
                     val interactionSource = remember { MutableInteractionSource() }
-                    VerticalDragHandle(
-                        modifier = Modifier.paneExpansionDraggable(
-                            state = state,
-                            minTouchTargetSize = LocalMinimumInteractiveComponentSize.current,
-                            interactionSource = interactionSource,
-                        ),
-                        interactionSource = interactionSource,
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(8.dp)
+                            .paneExpansionDraggable(
+                                state = state,
+                                minTouchTargetSize = LocalMinimumInteractiveComponentSize.current,
+                                interactionSource = interactionSource,
+                            )
+                            .pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR))),
+                        contentAlignment = Alignment.TopCenter,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .padding(top = toolbarHeight)
+                                .fillMaxHeight()
+                                .width(1.dp)
+                                .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                        )
+                    }
                 },
                 listPane = {
                     val tweenSpec = tween<Float>(durationMillis = DESKTOP_PANE_TRANSITION_DURATION)

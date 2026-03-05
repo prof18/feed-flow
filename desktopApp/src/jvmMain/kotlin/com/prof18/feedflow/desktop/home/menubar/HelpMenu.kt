@@ -5,14 +5,12 @@ import androidx.compose.ui.window.MenuBarScope
 import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isLinux
-import com.prof18.feedflow.shared.presentation.model.MenuBarSettingsState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import java.awt.Desktop
 import java.net.URI
 
 @Composable
 internal fun MenuBarScope.HelpMenu(
-    settingsState: MenuBarSettingsState,
     callbacks: HelpMenuCallbacks,
 ) {
     Menu(LocalFeedFlowStrings.current.settingsHelpTitle, mnemonic = 'H') {
@@ -34,15 +32,9 @@ internal fun MenuBarScope.HelpMenu(
             onClick = callbacks.onBugReportClick,
         )
 
-        CheckboxItem(
-            text = LocalFeedFlowStrings.current.settingsCrashReporting,
-            checked = settingsState.isCrashReportingEnabled,
-            onCheckedChange = callbacks.onCrashReportingToggled,
-        )
-
-        Separator()
-
         if (getDesktopOS().isLinux()) {
+            Separator()
+
             Item(
                 text = LocalFeedFlowStrings.current.supportTheProject,
                 onClick = {
@@ -52,16 +44,9 @@ internal fun MenuBarScope.HelpMenu(
                 },
             )
         }
-
-        Item(
-            text = LocalFeedFlowStrings.current.aboutButton,
-            onClick = callbacks.onAboutClick,
-        )
     }
 }
 
 internal data class HelpMenuCallbacks(
     val onBugReportClick: () -> Unit,
-    val onCrashReportingToggled: (Boolean) -> Unit,
-    val onAboutClick: () -> Unit,
 )

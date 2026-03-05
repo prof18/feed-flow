@@ -21,13 +21,15 @@ import androidx.compose.ui.window.rememberDialogState
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 
-private val MacToolbarTitleAreaHeight = 30.dp
+internal val MacToolbarTitleAreaHeight = 30.dp
 
 @Composable
 internal fun DesktopDialogWindow(
     title: String,
     size: DpSize,
     onCloseRequest: () -> Unit,
+    resizable: Boolean = true,
+    extendBehindTitleBar: Boolean = false,
     content: @Composable (Modifier) -> Unit,
 ) {
     val dialogState = rememberDialogState(size = size)
@@ -37,6 +39,7 @@ internal fun DesktopDialogWindow(
         state = dialogState,
         title = title,
         onCloseRequest = onCloseRequest,
+        resizable = resizable,
     ) {
         LaunchedEffect(window) {
             if (isMacOs) {
@@ -49,8 +52,9 @@ internal fun DesktopDialogWindow(
         }
 
         Surface(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                if (isMacOs) {
+            if (isMacOs && extendBehindTitleBar) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    content(Modifier.fillMaxSize())
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -64,7 +68,24 @@ internal fun DesktopDialogWindow(
                         )
                     }
                 }
-                content(Modifier.fillMaxSize())
+            } else {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    if (isMacOs) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(MacToolbarTitleAreaHeight),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = title,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                        }
+                    }
+                    content(Modifier.fillMaxSize())
+                }
             }
         }
     }

@@ -10,7 +10,7 @@ internal enum class DesktopDialogWindowDestination {
     FeedSuggestions,
     BlockedWords,
     ImportExport,
-    Accounts,
+    Settings,
 }
 
 internal class DesktopDialogWindowNavigator {

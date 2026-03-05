@@ -57,7 +57,6 @@ import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.Home
 import com.prof18.feedflow.desktop.ReaderMode
 import com.prof18.feedflow.desktop.Search
-import com.prof18.feedflow.desktop.accounts.AccountsWindow
 import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
@@ -68,13 +67,13 @@ import com.prof18.feedflow.desktop.home.menubar.MenuBarActions
 import com.prof18.feedflow.desktop.home.menubar.MenuBarState
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
+import com.prof18.feedflow.desktop.settings.DesktopSettingsCategory
+import com.prof18.feedflow.desktop.settings.SettingsWindow
 import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.desktop.toReaderMode
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
-import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
-import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
@@ -240,9 +239,6 @@ private fun FrameWindowScope.MainWindowContent(
     appConfig: DesktopConfig,
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
-    val feedListSettingsViewModel = koinViewModel<FeedListSettingsViewModel>()
-    val desktopHomeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
-    val isDesktopMultiPaneLayoutEnabled by desktopHomeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
 
     LaunchedEffect(Unit) {
         homeViewModel.onAppLaunch()
@@ -253,57 +249,10 @@ private fun FrameWindowScope.MainWindowContent(
         val listState = rememberLazyListState()
         val reduceMotionEnabled = LocalReduceMotion.current
 
-        var aboutDialogVisibility by remember { mutableStateOf(false) }
         var showMarkAllReadDialog by remember { mutableStateOf(false) }
         var showClearOldArticlesDialog by remember { mutableStateOf(false) }
         val dialogWindowNavigator = rememberDesktopDialogWindowNavigator()
-
-        AboutDialog(
-            visible = aboutDialogVisibility,
-            onCloseRequest = { aboutDialogVisibility = false },
-            version = appConfig.version ?: "N/A",
-            isDarkTheme = isDarkTheme,
-        )
-
-        var feedListFontDialogState by remember { mutableStateOf(false) }
-        val fontSizesState by feedListSettingsViewModel.feedFontSizeState.collectAsState()
-        val feedListSettingsState by feedListSettingsViewModel.state.collectAsState()
-
-        FeedListAppearanceDialog(
-            visible = feedListFontDialogState,
-            onCloseRequest = { feedListFontDialogState = false },
-            fontSizesState = fontSizesState,
-            settingsState = feedListSettingsState,
-            callbacks = FeedListAppearanceCallbacks(
-                onFontScaleUpdate = { fontScale ->
-                    feedListSettingsViewModel.updateFontScale(fontScale)
-                },
-                onFeedLayoutUpdate = { feedLayout ->
-                    feedListSettingsViewModel.updateFeedLayout(feedLayout)
-                },
-                onHideDescriptionUpdate = { enabled ->
-                    feedListSettingsViewModel.updateHideDescription(enabled)
-                },
-                onHideImagesUpdate = { enabled ->
-                    feedListSettingsViewModel.updateHideImages(enabled)
-                },
-                onHideDateUpdate = { enabled ->
-                    feedListSettingsViewModel.updateHideDate(enabled)
-                },
-                onRemoveTitleFromDescUpdate = { enabled ->
-                    feedListSettingsViewModel.updateRemoveTitleFromDescription(enabled)
-                },
-                onDateFormatUpdate = { format ->
-                    feedListSettingsViewModel.updateDateFormat(format)
-                },
-                onTimeFormatUpdate = { format ->
-                    feedListSettingsViewModel.updateTimeFormat(format)
-                },
-                onSwipeActionUpdate = { direction, action ->
-                    feedListSettingsViewModel.updateSwipeAction(direction, action)
-                },
-            ),
-        )
+        var initialSettingsCategory by remember { mutableStateOf(DesktopSettingsCategory.GENERAL) }
 
         MarkAllReadDialog(
             visible = showMarkAllReadDialog,
@@ -362,9 +311,11 @@ private fun FrameWindowScope.MainWindowContent(
             )
         }
 
-        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.Accounts)) {
-            AccountsWindow(
-                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.Accounts) },
+        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.Settings)) {
+            SettingsWindow(
+                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.Settings) },
+                isDarkTheme = isDarkTheme,
+                initialCategory = initialSettingsCategory,
             )
         }
 
@@ -377,6 +328,7 @@ private fun FrameWindowScope.MainWindowContent(
                 backStack.removeLastOrNull()
             }
         }
+        val shouldShowWindowSnackbarHost = backStack.lastOrNull() != Home
 
         CompositionLocalProvider(
             LocalScrollbarStyle provides scrollbarStyle(),
@@ -420,6 +372,10 @@ private fun FrameWindowScope.MainWindowContent(
                                 snackbarHostState = snackbarHostState,
                                 listState = listState,
                                 dialogWindowNavigator = dialogWindowNavigator,
+                                onAccountsRequested = {
+                                    initialSettingsCategory = DesktopSettingsCategory.ACCOUNTS
+                                    dialogWindowNavigator.open(DesktopDialogWindowDestination.Settings)
+                                },
                                 onEditFeedRequested = { feedSource ->
                                     feedSourceToEdit = feedSource
                                     dialogWindowNavigator.open(DesktopDialogWindowDestination.EditFeed)
@@ -428,13 +384,14 @@ private fun FrameWindowScope.MainWindowContent(
                         },
                     )
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Bottom,
-                    ) {
-                        SnackbarHost(snackbarHostState)
+                    if (shouldShowWindowSnackbarHost) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Bottom,
+                        ) {
+                            SnackbarHost(snackbarHostState)
+                        }
                     }
                 }
             }
@@ -464,17 +421,15 @@ private fun FrameWindowScope.MainWindowContent(
                     onClearOldFeedClick = {
                         showClearOldArticlesDialog = true
                     },
-                    onAboutClick = {
-                        aboutDialogVisibility = true
-                    },
                     onForceRefreshClick = {
                         scope.launch {
                             listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
                             homeViewModel.forceRefreshFeeds()
                         }
                     },
-                    onFeedFontScaleClick = {
-                        feedListFontDialogState = true
+                    onSettingsClick = {
+                        initialSettingsCategory = DesktopSettingsCategory.GENERAL
+                        dialogWindowNavigator.open(DesktopDialogWindowDestination.Settings)
                     },
                     deleteFeeds = {
                         homeViewModel.deleteAllFeeds()
@@ -489,9 +444,6 @@ private fun FrameWindowScope.MainWindowContent(
                 onNavigateToBlockedWords = {
                     dialogWindowNavigator.open(DesktopDialogWindowDestination.BlockedWords)
                 },
-                onNavigateToAccounts = { dialogWindowNavigator.open(DesktopDialogWindowDestination.Accounts) },
-                isDesktopMultiPaneLayoutEnabled = isDesktopMultiPaneLayoutEnabled,
-                onDesktopMultiPaneLayoutToggled = desktopHomeSettingsRepository::setMultiPaneLayoutEnabled,
             )
         }
     }
@@ -554,6 +506,7 @@ private fun EntryProviderScope<NavKey>.screens(
     snackbarHostState: SnackbarHostState,
     listState: androidx.compose.foundation.lazy.LazyListState,
     dialogWindowNavigator: DesktopDialogWindowNavigator,
+    onAccountsRequested: () -> Unit,
     onEditFeedRequested: (FeedSource) -> Unit,
 ) {
     entry<Home> {
@@ -565,7 +518,7 @@ private fun EntryProviderScope<NavKey>.screens(
                 dialogWindowNavigator.open(DesktopDialogWindowDestination.ImportExport)
             },
             onSearchClick = { backStack.add(Search) },
-            onAccountsClick = { dialogWindowNavigator.open(DesktopDialogWindowDestination.Accounts) },
+            onAccountsClick = onAccountsRequested,
             onSettingsButtonClicked = {
                 // There's no settings button on desktop
             },

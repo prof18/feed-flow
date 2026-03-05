@@ -1,28 +1,17 @@
 package com.prof18.feedflow.desktop.home.menubar
 
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
-import coil3.SingletonImageLoader
-import coil3.compose.LocalPlatformContext
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
-import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.shared.presentation.MenuBarViewModel
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
-import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -30,55 +19,23 @@ fun FrameWindowScope.FeedFlowMenuBar(
     state: MenuBarState,
     actions: MenuBarActions,
     onNavigateToBlockedWords: () -> Unit,
-    onNavigateToAccounts: () -> Unit,
-    isDesktopMultiPaneLayoutEnabled: Boolean,
-    onDesktopMultiPaneLayoutToggled: (Boolean) -> Unit,
 ) {
     val isMacOS = getDesktopOS().isMacOs()
-    val appConfig = DI.koin.get<DesktopConfig>()
     val userFeedbackReporter = DI.koin.get<UserFeedbackReporter>()
     val menuBarViewModel = koinViewModel<MenuBarViewModel>()
     val settingsState by menuBarViewModel.state.collectAsState()
-    var showPrefetchWarningDialog by remember { mutableStateOf(false) }
-    var showClearDownloadedArticlesDialog by remember { mutableStateOf(false) }
-    var showClearImageCacheDialog by remember { mutableStateOf(false) }
     val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
     val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
+
     val feedMenuCallbacks = FeedMenuCallbacks(
-        onAddFeed = {
-            actions.onAddFeedClick()
-        },
-        onEditFeed = { feedSource ->
-            // This is actually not used in the desktop menu bar but kept for consistency
-        },
+        onAddFeed = { actions.onAddFeedClick() },
+        onEditFeed = { _ -> },
         onBlockedWordsClick = onNavigateToBlockedWords,
     )
     val viewMenuCallbacks = ViewMenuCallbacks(
         onThemeModeSelected = menuBarViewModel::updateThemeMode,
-        onFeedListAppearanceClick = actions.onFeedFontScaleClick,
-        onDesktopMultiPaneLayoutToggled = onDesktopMultiPaneLayoutToggled,
         onShowReadItemsToggled = menuBarViewModel::updateShowReadItemsOnTimeline,
         onFeedOrderSelected = menuBarViewModel::updateFeedOrder,
-    )
-    val behaviorMenuCallbacks = BehaviorMenuCallbacks(
-        onAccountsClick = onNavigateToAccounts,
-        onReaderModeToggled = menuBarViewModel::updateReaderMode,
-        onSaveReaderModeContentToggled = menuBarViewModel::updateSaveReaderModeContent,
-        onPrefetchToggle = { enabled ->
-            if (enabled) {
-                showPrefetchWarningDialog = true
-            } else {
-                menuBarViewModel.updatePrefetchArticleContent(false)
-            }
-        },
-        onRefreshFeedsOnLaunchToggled = menuBarViewModel::updateRefreshFeedsOnLaunch,
-        onShowRssParsingErrorsToggled = menuBarViewModel::updateShowRssParsingErrors,
-        onMarkReadWhenScrollingToggled = menuBarViewModel::updateMarkReadWhenScrolling,
-        onHideReadItemsToggled = menuBarViewModel::updateHideReadItems,
-        onReduceMotionToggled = menuBarViewModel::updateReduceMotionEnabled,
-        onAutoDeletePeriodSelected = menuBarViewModel::updateAutoDeletePeriod,
-        onClearDownloadedArticles = { showClearDownloadedArticlesDialog = true },
-        onClearImageCache = { showClearImageCacheDialog = true },
     )
     val helpMenuCallbacks = HelpMenuCallbacks(
         onBugReportClick = {
@@ -90,50 +47,6 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 ),
             )
             desktop.mail(uri)
-        },
-        onCrashReportingToggled = { enabled ->
-            menuBarViewModel.updateCrashReporting(enabled)
-            if (enabled) {
-                if (
-                    appConfig.appEnvironment.isRelease() &&
-                    appConfig.sentryDns != null &&
-                    appConfig.version != null
-                ) {
-                    com.prof18.feedflow.desktop.utils.initSentry(
-                        dns = appConfig.sentryDns,
-                        version = appConfig.version,
-                    )
-                }
-            } else {
-                com.prof18.feedflow.desktop.utils.disableSentry()
-            }
-        },
-        onAboutClick = actions.onAboutClick,
-    )
-
-    PrefetchWarningDialog(
-        visible = showPrefetchWarningDialog,
-        onDismiss = { showPrefetchWarningDialog = false },
-        onConfirm = {
-            menuBarViewModel.updatePrefetchArticleContent(true)
-            showPrefetchWarningDialog = false
-        },
-    )
-
-    ClearDownloadedArticlesDialog(
-        visible = showClearDownloadedArticlesDialog,
-        onDismiss = { showClearDownloadedArticlesDialog = false },
-        onConfirm = {
-            menuBarViewModel.clearDownloadedArticleContent()
-            showClearDownloadedArticlesDialog = false
-        },
-    )
-
-    ClearImageCacheDialog(
-        visible = showClearImageCacheDialog,
-        onDismiss = { showClearImageCacheDialog = false },
-        onConfirm = {
-            showClearImageCacheDialog = false
         },
     )
 
@@ -151,108 +64,12 @@ fun FrameWindowScope.FeedFlowMenuBar(
         )
 
         ViewMenu(
-            settingsState = settingsState.copy(
-                isDesktopMultiPaneLayoutEnabled = isDesktopMultiPaneLayoutEnabled,
-            ),
+            settingsState = settingsState,
             callbacks = viewMenuCallbacks,
         )
 
-        BehaviorMenu(
-            isMacOS = isMacOS,
-            settingsState = settingsState,
-            callbacks = behaviorMenuCallbacks,
-        )
-
         HelpMenu(
-            settingsState = settingsState,
             callbacks = helpMenuCallbacks,
-        )
-    }
-}
-
-@Composable
-private fun PrefetchWarningDialog(
-    visible: Boolean,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-) {
-    if (visible) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(LocalFeedFlowStrings.current.settingsPrefetchArticleContent) },
-            text = { Text(LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning) },
-            confirmButton = {
-                TextButton(onClick = onConfirm) {
-                    Text(LocalFeedFlowStrings.current.confirmButton)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(LocalFeedFlowStrings.current.cancelButton)
-                }
-            },
-        )
-    }
-}
-
-@Composable
-private fun ClearDownloadedArticlesDialog(
-    visible: Boolean,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-) {
-    if (visible) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogTitle) },
-            text = { Text(LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogMessage) },
-            confirmButton = {
-                TextButton(onClick = onConfirm) {
-                    Text(LocalFeedFlowStrings.current.confirmButton)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(LocalFeedFlowStrings.current.cancelButton)
-                }
-            },
-        )
-    }
-}
-
-@Composable
-private fun ClearImageCacheDialog(
-    visible: Boolean,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-) {
-    if (visible) {
-        val context = LocalPlatformContext.current
-        val scope = rememberCoroutineScope()
-
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(LocalFeedFlowStrings.current.settingsClearImageCacheDialogTitle) },
-            text = { Text(LocalFeedFlowStrings.current.settingsClearImageCacheDialogMessage) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        scope.launch {
-                            val imageLoader = SingletonImageLoader.get(context)
-                            imageLoader.memoryCache?.clear()
-                            imageLoader.diskCache?.clear()
-                        }
-                        onConfirm()
-                    },
-                ) {
-                    Text(LocalFeedFlowStrings.current.confirmButton)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(LocalFeedFlowStrings.current.cancelButton)
-                }
-            },
         )
     }
 }
@@ -263,9 +80,8 @@ data class MenuBarActions(
     val onMarkAllReadClick: () -> Unit,
     val onImportExportClick: () -> Unit,
     val onClearOldFeedClick: () -> Unit,
-    val onAboutClick: () -> Unit,
     val onForceRefreshClick: () -> Unit,
-    val onFeedFontScaleClick: () -> Unit,
+    val onSettingsClick: () -> Unit,
     val deleteFeeds: () -> Unit,
     val onBackupClick: () -> Unit,
     val onExitClick: () -> Unit,

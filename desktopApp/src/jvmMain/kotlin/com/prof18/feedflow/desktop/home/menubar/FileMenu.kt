@@ -83,6 +83,16 @@ internal fun MenuBarScope.FileMenu(
             },
         )
 
+        Item(
+            text = LocalFeedFlowStrings.current.settingsTitle,
+            onClick = actions.onSettingsClick,
+            shortcut = if (isMacOS) {
+                KeyShortcut(Key.Comma, meta = true)
+            } else {
+                KeyShortcut(Key.Comma, ctrl = true)
+            },
+        )
+
         if (getDesktopOS().isWindows()) {
             Separator()
 

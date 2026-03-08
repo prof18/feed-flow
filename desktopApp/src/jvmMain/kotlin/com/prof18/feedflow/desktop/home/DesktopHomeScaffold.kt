@@ -22,7 +22,6 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -130,7 +129,8 @@ internal fun DesktopHomeScaffold(
         initialAnchoredIndex = initialAnchorIndex,
     )
 
-    val scaffoldDirective = calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+    val baseDirective = calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+    val scaffoldDirective = baseDirective.copy(horizontalPartitionSpacerSize = 8.dp)
     val navigator = rememberListDetailPaneScaffoldNavigator<String>(
         scaffoldDirective = scaffoldDirective,
     )
@@ -200,7 +200,7 @@ internal fun DesktopHomeScaffold(
                             .width(8.dp)
                             .paneExpansionDraggable(
                                 state = state,
-                                minTouchTargetSize = LocalMinimumInteractiveComponentSize.current,
+                                minTouchTargetSize = 0.dp,
                                 interactionSource = interactionSource,
                             )
                             .pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR))),
@@ -278,7 +278,7 @@ internal fun DesktopHomeScaffold(
                                         modifier = Modifier
                                             .align(Alignment.CenterEnd)
                                             .fillMaxHeight()
-                                            .width(Spacing.xsmall),
+                                            .width(6.dp),
                                         adapter = rememberScrollbarAdapter(scrollState = listState),
                                     )
                                 }

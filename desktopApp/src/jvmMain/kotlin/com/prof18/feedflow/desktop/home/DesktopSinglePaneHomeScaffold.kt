@@ -41,7 +41,6 @@ import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.HomeScreenContent
 import com.prof18.feedflow.shared.ui.home.components.drawer.Drawer
-import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import dev.chrisbanes.haze.rememberHazeState
@@ -167,7 +166,7 @@ internal fun DesktopSinglePaneHomeScaffold(
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
                                     .fillMaxHeight()
-                                    .width(Spacing.xsmall),
+                                    .width(6.dp),
                                 adapter = rememberScrollbarAdapter(scrollState = listState),
                             )
                         }

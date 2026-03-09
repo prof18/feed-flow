@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,6 +57,7 @@ internal fun FeedItemView(
             false,
         )
     }
+    var menuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
 
     val clickableItemModifier = if (disableClick) {
         Modifier
@@ -75,6 +77,11 @@ internal fun FeedItemView(
                 )
             },
             onLongClick = {
+                menuPositionInWindow = null
+                showItemMenu = true
+            },
+            onLongClickPositioned = { position ->
+                menuPositionInWindow = position
                 showItemMenu = true
             },
         )
@@ -127,7 +134,9 @@ internal fun FeedItemView(
                 showMenu = showItemMenu,
                 closeMenu = {
                     showItemMenu = false
+                    menuPositionInWindow = null
                 },
+                menuPositionInWindow = menuPositionInWindow,
                 feedItem = feedItem,
                 shareMenuLabel = shareMenuLabel,
                 shareCommentsMenuLabel = shareCommentsMenuLabel,

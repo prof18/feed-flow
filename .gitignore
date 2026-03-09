@@ -140,3 +140,4 @@ iosApp/.build/
 /.junie/memory/tasks.md
 /.tmp/
 tmp
+.claude/worktrees

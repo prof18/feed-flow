@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
@@ -61,6 +62,7 @@ internal fun FeedSourceDrawerItem(
     modifier: Modifier = Modifier,
 ) {
     var showFeedMenu by remember { mutableStateOf(false) }
+    var menuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
     val itemShape = drawerItemVisualStyle.itemShape
     val itemColors = drawerItemColors(drawerItemVisualStyle)
 
@@ -122,6 +124,11 @@ internal fun FeedSourceDrawerItem(
                             onClick()
                         },
                         onLongClick = {
+                            menuPositionInWindow = null
+                            showFeedMenu = true
+                        },
+                        onLongClickPositioned = { position ->
+                            menuPositionInWindow = position
                             showFeedMenu = true
                         },
                     )
@@ -157,7 +164,9 @@ internal fun FeedSourceDrawerItem(
                 showFeedMenu = showFeedMenu,
                 hideMenu = {
                     showFeedMenu = false
+                    menuPositionInWindow = null
                 },
+                menuPositionInWindow = menuPositionInWindow,
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 feedSource = feedSource,

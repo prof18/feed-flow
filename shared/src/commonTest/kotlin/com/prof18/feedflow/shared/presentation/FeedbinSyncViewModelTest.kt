@@ -194,10 +194,11 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(state)
 
-            val accountType = networkSettings.getSyncAccountType()
-            assertEquals(SyncAccounts.FEEDBIN, accountType)
-            assertEquals("testuser", networkSettings.getSyncUsername())
+            cancelAndIgnoreRemainingEvents()
         }
+
+        assertEquals(SyncAccounts.FEEDBIN, networkSettings.getSyncAccountType())
+        assertEquals("testuser", networkSettings.getSyncUsername())
     }
 
     @Test

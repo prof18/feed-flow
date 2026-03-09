@@ -50,7 +50,6 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun SettingsWindow(
     onCloseRequest: () -> Unit,
-    isDarkTheme: Boolean,
     initialCategory: DesktopSettingsCategory = DesktopSettingsCategory.GENERAL,
 ) {
     val strings = LocalFeedFlowStrings.current
@@ -208,7 +207,6 @@ internal fun SettingsWindow(
                     )
 
                     DesktopSettingsCategory.ABOUT -> AboutPane(
-                        isDarkTheme = isDarkTheme,
                         isCrashReportingEnabled = settingsState.isCrashReportingEnabled,
                         onCrashReportingToggled = { enabled ->
                             menuBarViewModel.updateCrashReporting(enabled)

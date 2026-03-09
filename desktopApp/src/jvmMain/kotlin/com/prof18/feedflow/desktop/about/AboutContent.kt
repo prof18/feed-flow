@@ -41,7 +41,6 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 @Composable
 fun AboutContent(
     versionLabel: String,
-    isDarkTheme: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -52,7 +51,6 @@ fun AboutContent(
 
         if (showLicensesScreen) {
             LicensesScreen(
-                isDarkTheme = isDarkTheme,
                 onBackClick = {
                     showLicensesScreen = false
                 },
@@ -158,7 +156,6 @@ private fun SettingsItemList(
 private fun AboutContentPreview() {
     FeedFlowTheme {
         AboutContent(
-            isDarkTheme = false,
             versionLabel = "Version: 1.0.0",
         )
     }

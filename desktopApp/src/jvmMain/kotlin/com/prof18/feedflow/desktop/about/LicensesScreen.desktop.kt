@@ -24,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.useResource
 import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
@@ -37,7 +36,6 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun LicensesScreen(
-    isDarkTheme: Boolean,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -71,17 +69,8 @@ fun LicensesScreen(
         }
         val libs by rememberLibraries(aboutLibsJson)
 
-        val backgroundColor = if (isDarkTheme) {
-            Color(color = 0xFF1e1e1e)
-        } else {
-            Color(color = 0xFFf6f8fa)
-        }
-
-        val borderColor = if (isDarkTheme) {
-            Color(color = 0xFF444444)
-        } else {
-            Color(color = 0xFFd1d9e0)
-        }
+        val backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        val borderColor = MaterialTheme.colorScheme.outlineVariant
 
         val colors = LibraryDefaults.libraryColors(
             libraryBackgroundColor = backgroundColor,

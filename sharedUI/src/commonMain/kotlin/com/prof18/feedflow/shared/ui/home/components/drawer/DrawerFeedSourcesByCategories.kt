@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -164,6 +165,7 @@ internal fun DrawerFeedSourceByCategoryItem(
 ) {
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
     var showMenu by rememberSaveable { mutableStateOf(false) }
+    var menuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
 
     val category = feedSourceCategoryWrapper.feedSourceCategory
     val unreadCount = drawerFeedSources.sumOf { it.unreadCount }
@@ -228,7 +230,14 @@ internal fun DrawerFeedSourceByCategoryItem(
                 val contentModifier = if (category != null) {
                     Modifier.singleAndLongClickModifier(
                         onClick = onClick,
-                        onLongClick = { showMenu = true },
+                        onLongClick = {
+                            menuPositionInWindow = null
+                            showMenu = true
+                        },
+                        onLongClickPositioned = { position ->
+                            menuPositionInWindow = position
+                            showMenu = true
+                        },
                     )
                 } else {
                     Modifier
@@ -298,10 +307,15 @@ internal fun DrawerFeedSourceByCategoryItem(
     if (category != null) {
         CategoryContextMenu(
             showMenu = showMenu,
-            hideMenu = { showMenu = false },
+            menuPositionInWindow = menuPositionInWindow,
+            hideMenu = {
+                showMenu = false
+                menuPositionInWindow = null
+            },
             categoryId = CategoryId(category.id),
             onEditCategoryClick = {
                 showMenu = false
+                menuPositionInWindow = null
                 showEditDialog = true
             },
             onDeleteCategoryClick = onDeleteCategoryClick,

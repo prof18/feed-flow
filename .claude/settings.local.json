@@ -50,7 +50,8 @@
       "Bash(shasum:*)",
       "WebFetch(domain:search.maven.org)",
       "WebFetch(domain:api.github.com)",
-      "WebFetch(domain:chrisbanes.github.io)"
+      "WebFetch(domain:chrisbanes.github.io)",
+      "WebFetch(domain:composables.com)"
     ],
     "deny": []
   }

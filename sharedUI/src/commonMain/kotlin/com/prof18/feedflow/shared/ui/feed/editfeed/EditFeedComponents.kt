@@ -12,6 +12,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -232,7 +233,7 @@ fun EditFeedContent(
                     .fillMaxWidth(),
                 onClick = onShowDeleteDialog,
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = Color(color = 0xFFD32F2F),
+                    contentColor = MaterialTheme.colorScheme.error,
                 ),
             ) {
                 Text(LocalFeedFlowStrings.current.deleteFeedButton)

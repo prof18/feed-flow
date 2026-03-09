@@ -27,6 +27,11 @@ import md_theme_dark_scrim
 import md_theme_dark_secondary
 import md_theme_dark_secondaryContainer
 import md_theme_dark_surface
+import md_theme_dark_surfaceContainer
+import md_theme_dark_surfaceContainerHigh
+import md_theme_dark_surfaceContainerHighest
+import md_theme_dark_surfaceContainerLow
+import md_theme_dark_surfaceContainerLowest
 import md_theme_dark_surfaceTint
 import md_theme_dark_surfaceVariant
 import md_theme_dark_tertiary
@@ -56,6 +61,11 @@ import md_theme_light_scrim
 import md_theme_light_secondary
 import md_theme_light_secondaryContainer
 import md_theme_light_surface
+import md_theme_light_surfaceContainer
+import md_theme_light_surfaceContainerHigh
+import md_theme_light_surfaceContainerHighest
+import md_theme_light_surfaceContainerLow
+import md_theme_light_surfaceContainerLowest
 import md_theme_light_surfaceTint
 import md_theme_light_surfaceVariant
 import md_theme_light_tertiary
@@ -125,6 +135,11 @@ val LightColorScheme = lightColorScheme(
     surfaceTint = md_theme_light_surfaceTint,
     outlineVariant = md_theme_light_outlineVariant,
     scrim = md_theme_light_scrim,
+    surfaceContainerLowest = md_theme_light_surfaceContainerLowest,
+    surfaceContainerLow = md_theme_light_surfaceContainerLow,
+    surfaceContainer = md_theme_light_surfaceContainer,
+    surfaceContainerHigh = md_theme_light_surfaceContainerHigh,
+    surfaceContainerHighest = md_theme_light_surfaceContainerHighest,
 )
 
 val DarkColorScheme = darkColorScheme(
@@ -157,6 +172,11 @@ val DarkColorScheme = darkColorScheme(
     surfaceTint = md_theme_dark_surfaceTint,
     outlineVariant = md_theme_dark_outlineVariant,
     scrim = md_theme_dark_scrim,
+    surfaceContainerLowest = md_theme_dark_surfaceContainerLowest,
+    surfaceContainerLow = md_theme_dark_surfaceContainerLow,
+    surfaceContainer = md_theme_dark_surfaceContainer,
+    surfaceContainerHigh = md_theme_dark_surfaceContainerHigh,
+    surfaceContainerHighest = md_theme_dark_surfaceContainerHighest,
 )
 
 val OledColorScheme = darkColorScheme(

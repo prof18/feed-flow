@@ -40,7 +40,6 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun AboutPane(
-    isDarkTheme: Boolean,
     isCrashReportingEnabled: Boolean,
     onCrashReportingToggled: (Boolean) -> Unit,
 ) {
@@ -51,7 +50,6 @@ internal fun AboutPane(
 
     if (showLicenses) {
         LicensesScreen(
-            isDarkTheme = isDarkTheme,
             onBackClick = { showLicenses = false },
         )
         return
@@ -147,7 +145,6 @@ internal fun updateDesktopCrashReporting(enabled: Boolean) {
 private fun AboutPanePreview() {
     FeedFlowTheme {
         AboutPane(
-            isDarkTheme = false,
             isCrashReportingEnabled = false,
             onCrashReportingToggled = {},
         )

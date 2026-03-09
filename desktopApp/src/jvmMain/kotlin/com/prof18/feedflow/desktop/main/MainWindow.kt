@@ -111,7 +111,6 @@ internal fun FrameWindowScope.MainWindow(
     } else {
         MainWindowContent(
             snackbarHostState = snackbarHostState,
-            isDarkTheme = isDarkTheme,
             appConfig = appConfig,
         )
     }
@@ -235,7 +234,6 @@ private fun MainWindowEffects(
 @Composable
 private fun FrameWindowScope.MainWindowContent(
     snackbarHostState: SnackbarHostState,
-    isDarkTheme: Boolean,
     appConfig: DesktopConfig,
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
@@ -314,7 +312,6 @@ private fun FrameWindowScope.MainWindowContent(
         if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.Settings)) {
             SettingsWindow(
                 onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.Settings) },
-                isDarkTheme = isDarkTheme,
                 initialCategory = initialSettingsCategory,
             )
         }

@@ -1,12 +1,8 @@
 package com.prof18.feedflow.shared.presentation
 
 import com.prof18.feedflow.core.model.FeedFilter
-import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlin.math.max
 
 class GetNextFeedFilterOrNullUseCase internal constructor(
     private val feedSourcesRepository: FeedSourcesRepository,
@@ -15,7 +11,6 @@ class GetNextFeedFilterOrNullUseCase internal constructor(
     suspend operator fun invoke(
         currentFeedFilter: FeedFilter,
     ): FeedFilter? {
-
         when (currentFeedFilter) {
             is FeedFilter.Category -> {
                 val unreadCategoryList = feedSourcesRepository
@@ -33,7 +28,7 @@ class GetNextFeedFilterOrNullUseCase internal constructor(
                     feedCategory = unreadCategoryList
                         .drop(currentCategoryIndex + 1)
                         .firstOrNull()
-                        ?: return null
+                        ?: return null,
                 )
             }
             is FeedFilter.Source -> {
@@ -46,14 +41,14 @@ class GetNextFeedFilterOrNullUseCase internal constructor(
                     it.feedSource.id == currentFeedFilter.feedSource.id
                 }
 
-                if (currentSourceIndex  == -1) return null
+                if (currentSourceIndex == -1) return null
 
                 val nextUnreadSource = feedSources
                     .drop(currentSourceIndex + 1)
                     .firstOrNull { it.unreadCount > 0 }
 
                 return FeedFilter.Source(
-                    feedSource = nextUnreadSource?.feedSource ?: return null
+                    feedSource = nextUnreadSource?.feedSource ?: return null,
                 )
             }
             else -> return null

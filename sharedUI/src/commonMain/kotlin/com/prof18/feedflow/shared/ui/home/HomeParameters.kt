@@ -25,10 +25,20 @@ class HomeDisplayState(
     val feedUpdateStatus: FeedUpdateStatus,
     val feedFontSizes: FeedFontSizes,
     val currentFeedFilter: FeedFilter,
+    val nextFeedDisplayState: NextFeedDisplayState,
     val swipeActions: SwipeActions,
     val feedLayout: FeedLayout,
     val isSyncUploadRequired: Boolean = false,
 )
+
+@Stable
+sealed class NextFeedDisplayState {
+    class NextFeedDisplayEnabledState(
+        val title: String,
+    ) : NextFeedDisplayState()
+
+    class NextFeedDisplayDisabledState : NextFeedDisplayState()
+}
 
 @Stable
 class FeedListActions(

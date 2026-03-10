@@ -72,6 +72,9 @@ internal class FeedSourcesRepository(
     fun getFeedSources(): Flow<List<FeedSource>> =
         databaseHelper.getFeedSourcesFlow()
 
+    fun getFeedSourcesWithUnreadCount(): Flow<List<FeedSourceWithUnreadCount>> =
+        databaseHelper.getFeedSourcesWithUnreadCountFlow()
+
     suspend fun deleteFeed(feedSource: FeedSource) {
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {

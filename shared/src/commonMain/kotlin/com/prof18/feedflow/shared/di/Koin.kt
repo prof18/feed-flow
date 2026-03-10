@@ -50,6 +50,7 @@ import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.FeedbinSyncViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
+import com.prof18.feedflow.shared.presentation.GetNextFeedFilterOrNullUseCase
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.MainSettingsViewModel
@@ -197,6 +198,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedCategoryRepository = get(),
             feedStateRepository = get(),
             feedFetcherRepository = get(),
+            getNextFeedFilterOrNullUseCase = get(),
         )
     }
 
@@ -575,6 +577,12 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             databaseHelper = get(),
             settingsRepository = get(),
             backgroundSyncScheduler = get(),
+        )
+    }
+
+    single {
+        GetNextFeedFilterOrNullUseCase(
+            feedSourcesRepository = get(),
         )
     }
 }

@@ -24,6 +24,7 @@ All the business logic is shared via Kotlin Multiplatform.
 ## Build, Test, and Development Commands
 
 ### Build Commands
+All Gradle commands in this section should be run with `--quiet --console=plain`.
 
 - `./gradlew detekt allTests` -> Run all checks including tests and linting for Shared code, Android and Desktop
 - `./gradlew detekt` -> Run static analysis with Detekt for Shared code, Android and Desktop
@@ -159,3 +160,4 @@ When creating commits:
 - Pipeline: `checks` (macOS-15, detekt + allTests + swiftlint) -> `build-android-app` + `build-desktop-app` + `build-ios-app` (in parallel)
 - CI runs `.scripts/refresh-translations.sh` before checks; do this locally before pushing if translations changed
 - Debugging CI failures: `gh run list --limit=10`, then `gh run view <run-id> --log`
+- Red CI recovery loop: `gh run rerun <run-id>` (or `gh run rerun <run-id> --failed`), then fix and push until green

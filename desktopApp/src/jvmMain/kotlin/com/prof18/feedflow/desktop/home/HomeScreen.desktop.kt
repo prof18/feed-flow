@@ -32,6 +32,7 @@ import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
+import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState.NextFeedDisplayDisabledState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -132,6 +133,7 @@ internal fun HomeScreen(
         currentFeedFilter = currentFeedFilter,
         swipeActions = swipeActions,
         feedLayout = feedLayout,
+        nextFeedDisplayState = NextFeedDisplayDisabledState(),
     )
 
     val openReaderArticle: (FeedItemUrlInfo) -> Unit = { article ->

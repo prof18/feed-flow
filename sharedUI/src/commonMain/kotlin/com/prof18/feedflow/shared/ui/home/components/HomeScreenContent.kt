@@ -65,6 +65,7 @@ fun HomeScreenContent(
     toolbarElevation: Dp = 0.dp,
     topToolbarContentFadeHeight: Dp = 0.dp,
     toolbarExpandedHeight: Dp = TopAppBarDefaults.TopAppBarExpandedHeight,
+    onNavigateToNextFeed: () -> Unit = { },
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -190,31 +191,32 @@ fun HomeScreenContent(
                                 feedItems = displayState.feedItems,
                                 listState = listState,
                                 feedFontSize = displayState.feedFontSizes,
-                                shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
-                                shareMenuLabel = shareBehavior.shareLinkTitle,
-                                currentFeedFilter = displayState.currentFeedFilter,
-                                swipeActions = displayState.swipeActions,
-                                requestMoreItems = feedListActions.requestNewData,
-                                onFeedItemClick = { feedInfo ->
-                                    feedListActions.openUrl(feedInfo)
-                                    feedListActions.markAsRead(FeedItemId(feedInfo.id))
-                                },
-                                onBookmarkClick = feedListActions.updateBookmarkStatus,
-                                onReadStatusClick = feedListActions.updateReadStatus,
-                                onCommentClick = { feedInfo ->
-                                    feedListActions.openUrl(feedInfo)
-                                    feedListActions.markAsRead(FeedItemId(feedInfo.id))
-                                },
-                                updateReadStatus = feedListActions.markAsReadOnScroll,
-                                markAllAsRead = feedListActions.markAllRead,
-                                onShareClick = shareBehavior.onShareClick,
-                                onOpenFeedSettings = feedManagementActions.onEditFeedClick,
-                                onOpenFeedWebsite = feedManagementActions.onOpenWebsite,
-                                feedLayout = displayState.feedLayout,
-                                onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
-                                onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
-                            )
-                        }
+                                nextFeedState = displayState.nextFeedDisplayState,
+                            shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
+                            shareMenuLabel = shareBehavior.shareLinkTitle,
+                            currentFeedFilter = displayState.currentFeedFilter,
+                            swipeActions = displayState.swipeActions,
+                            requestMoreItems = feedListActions.requestNewData,
+                            onFeedItemClick = { feedInfo ->
+                                feedListActions.openUrl(feedInfo)
+                                feedListActions.markAsRead(FeedItemId(feedInfo.id))
+                            },
+                            onBookmarkClick = feedListActions.updateBookmarkStatus,
+                            onReadStatusClick = feedListActions.updateReadStatus,
+                            onCommentClick = { feedInfo ->
+                                feedListActions.openUrl(feedInfo)
+                                feedListActions.markAsRead(FeedItemId(feedInfo.id))
+                            },
+                            updateReadStatus = feedListActions.markAsReadOnScroll,
+                            markAllAsRead = feedListActions.markAllRead,
+                            onShareClick = shareBehavior.onShareClick,
+                            onOpenFeedSettings = feedManagementActions.onEditFeedClick,
+                            onOpenFeedWebsite = feedManagementActions.onOpenWebsite,
+                            feedLayout = displayState.feedLayout,
+                            onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
+                            onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
+                            onNavigateNext = { onNavigateToNextFeed() },
+                        )}
 
                         if (topToolbarContentFadeHeight > 0.dp) {
                             TopToolbarContentFade(

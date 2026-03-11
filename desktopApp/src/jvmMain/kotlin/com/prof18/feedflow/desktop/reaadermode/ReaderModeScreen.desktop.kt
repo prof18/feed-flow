@@ -1,5 +1,6 @@
 package com.prof18.feedflow.desktop.reaadermode
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,7 +52,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
@@ -309,14 +309,19 @@ internal fun ReaderModeScreen(
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = Spacing.regular, bottom = Spacing.regular)
-                    .clip(RoundedCornerShape(12.dp)),
-                tonalElevation = 3.dp,
-                shadowElevation = 8.dp,
+                    .padding(end = Spacing.regular, bottom = Spacing.regular),
+                shape = RoundedCornerShape(18.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                tonalElevation = 2.dp,
+                shadowElevation = 4.dp,
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                ),
             ) {
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = Spacing.small),
+                    modifier = Modifier.padding(horizontal = Spacing.small),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Spacing.small),
                 ) {

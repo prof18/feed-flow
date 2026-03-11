@@ -113,7 +113,8 @@ class HomeViewModel internal constructor(
             feedCategoryRepository.observeCategoriesWithUnreadCount(),
             feedStateRepository.getUnreadTimelineCountFlow(),
             feedStateRepository.getUnreadBookmarksCountFlow(),
-        ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, bookmarksCount ->
+            feedAppearanceSettingsRepository.hideUnreadCountFlow,
+        ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, bookmarksCount, hideUnreadCount ->
             val containsOnlyNullKey = feedSourceByCategoryWithCount.keys.all { it == null }
 
             val pinnedFeedSources = feedSourceByCategoryWithCount.values.flatten().filter { it.feedSource.isPinned }
@@ -122,24 +123,24 @@ class HomeViewModel internal constructor(
                 ?.map { feedSourceWithCount ->
                     DrawerFeedSource(
                         feedSource = feedSourceWithCount.feedSource,
-                        unreadCount = feedSourceWithCount.unreadCount,
+                        unreadCount = if (hideUnreadCount) 0 else feedSourceWithCount.unreadCount,
                     )
                 }?.toImmutableList() ?: persistentListOf()
 
             NavDrawerState(
-                timeline = persistentListOf(DrawerItem.Timeline(unreadCount = timelineCount)),
+                timeline = persistentListOf(DrawerItem.Timeline(unreadCount = if (hideUnreadCount) 0 else timelineCount)),
                 read = persistentListOf(DrawerItem.Read),
-                bookmarks = persistentListOf(DrawerItem.Bookmarks(unreadCount = bookmarksCount)),
+                bookmarks = persistentListOf(DrawerItem.Bookmarks(unreadCount = if (hideUnreadCount) 0 else bookmarksCount)),
                 categories = categoriesWithCount.map { categoryWithCount ->
                     DrawerCategory(
                         category = categoryWithCount.category,
-                        unreadCount = categoryWithCount.unreadCount,
+                        unreadCount = if (hideUnreadCount) 0 else categoryWithCount.unreadCount,
                     )
                 }.toImmutableList(),
                 pinnedFeedSources = pinnedFeedSources.map { feedSourceWithCount ->
                     DrawerFeedSource(
                         feedSource = feedSourceWithCount.feedSource,
-                        unreadCount = feedSourceWithCount.unreadCount,
+                        unreadCount = if (hideUnreadCount) 0 else feedSourceWithCount.unreadCount,
                     )
                 }.toImmutableList(),
                 feedSourcesWithoutCategory = if (containsOnlyNullKey) {
@@ -157,7 +158,7 @@ class HomeViewModel internal constructor(
                         categoryWrapper to feedSources.map { feedSourceWithCount ->
                             DrawerFeedSource(
                                 feedSource = feedSourceWithCount.feedSource,
-                                unreadCount = feedSourceWithCount.unreadCount,
+                                unreadCount = if (hideUnreadCount) 0 else feedSourceWithCount.unreadCount,
                             )
                         }
                     }.toMap().toPersistentMap()

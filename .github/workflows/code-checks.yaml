@@ -134,4 +134,4 @@ jobs:
         run: |
           set -o pipefail
           cd iosApp
-          xcodebuild -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" build | xcbeautify --renderer github-actions
+          xcodebuild -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build | xcbeautify --renderer github-actions

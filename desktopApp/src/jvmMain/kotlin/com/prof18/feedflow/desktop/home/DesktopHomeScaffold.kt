@@ -385,7 +385,7 @@ internal fun DockedDrawerLayout(
                         if (hazeStyle != null) {
                             base.hazeEffect(state = hazeState, style = hazeStyle)
                         } else {
-                            base.background(colorScheme.surfaceContainer)
+                            base.background(colorScheme.surface)
                         }
                     },
             ) {

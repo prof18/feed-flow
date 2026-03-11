@@ -372,6 +372,7 @@ internal fun DockedDrawerLayout(
     paneContent: @Composable () -> Unit,
 ) {
     val macOsTopPadding = if (getDesktopOS().isMacOs()) Spacing.medium else 0.dp
+    val colorScheme = MaterialTheme.colorScheme
 
     Row(modifier = Modifier.fillMaxSize()) {
         if (isDockedDrawerVisible) {
@@ -384,7 +385,7 @@ internal fun DockedDrawerLayout(
                         if (hazeStyle != null) {
                             base.hazeEffect(state = hazeState, style = hazeStyle)
                         } else {
-                            base.background(MaterialTheme.colorScheme.surface)
+                            base.background(colorScheme.surfaceContainer)
                         }
                     },
             ) {
@@ -394,6 +395,16 @@ internal fun DockedDrawerLayout(
                         .padding(top = macOsTopPadding),
                 ) {
                     drawerContent()
+                }
+
+                if (hazeStyle == null) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .fillMaxHeight()
+                            .width(1.dp)
+                            .background(colorScheme.outlineVariant.copy(alpha = 0.6f)),
+                    )
                 }
             }
         }

@@ -6,12 +6,11 @@ import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.getDesktopOS
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.materials.CupertinoMaterials
-import dev.chrisbanes.haze.materials.FluentMaterials
 
 @Composable
 @ReadOnlyComposable
 fun drawerHazeStyle(): HazeStyle? = when (getDesktopOS()) {
     DesktopOS.MAC -> CupertinoMaterials.ultraThin()
-    DesktopOS.WINDOWS -> FluentMaterials.acrylicBase()
+    DesktopOS.WINDOWS -> null
     DesktopOS.LINUX -> null
 }

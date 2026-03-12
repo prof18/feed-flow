@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.android.openShareSheet
@@ -29,11 +30,15 @@ import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
+import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewDisabledState
+import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewEnabledState
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.home.AdaptiveHomeView
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
+import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.WindowSizeClass
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
@@ -49,8 +54,9 @@ internal fun HomeScreen(
     onSearchClick: () -> Unit,
     onAccountsClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
-    onImportExportClick: () -> Unit = {},
     onFeedSuggestionsClick: () -> Unit,
+    onNavigateToNextFeed: () -> Unit,
+    onImportExportClick: () -> Unit = {},
 ) {
     val browserManager = koinInject<BrowserManager>()
     val changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = koinInject()
@@ -59,6 +65,7 @@ internal fun HomeScreen(
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
     val navDrawerState by homeViewModel.navDrawerState.collectAsStateWithLifecycle()
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsStateWithLifecycle()
+    val nextFeedPreviewState: NextFeedPreviewState by homeViewModel.nextFeedPreviewState.collectAsStateWithLifecycle()
     val unReadCount by homeViewModel.unreadCountFlow.collectAsStateWithLifecycle(initialValue = 0)
     val feedFontSizes by homeViewModel.feedFontSizeState.collectAsStateWithLifecycle()
     val swipeActions by homeViewModel.swipeActions.collectAsStateWithLifecycle()
@@ -130,6 +137,7 @@ internal fun HomeScreen(
         swipeActions = swipeActions,
         feedLayout = feedLayout,
         isSyncUploadRequired = isSyncUploadRequired,
+        nextFeedDisplayState = nextFeedPreviewState.asDisplayState(),
     )
 
     val feedListActions = FeedListActions(
@@ -168,8 +176,8 @@ internal fun HomeScreen(
 
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val adaptiveWindowSizeClass = when (windowSizeClass.windowWidthSizeClass) {
-        androidx.window.core.layout.WindowWidthSizeClass.COMPACT -> WindowSizeClass.Compact
-        androidx.window.core.layout.WindowWidthSizeClass.MEDIUM -> WindowSizeClass.Medium
+        WindowWidthSizeClass.COMPACT -> WindowSizeClass.Compact
+        WindowWidthSizeClass.MEDIUM -> WindowSizeClass.Medium
         else -> WindowSizeClass.Expanded
     }
 
@@ -208,6 +216,7 @@ internal fun HomeScreen(
         onEmptyStateClick = {
             showNoFeedsBottomSheet = true
         },
+        onNavigateToNextFeed = onNavigateToNextFeed,
     )
 
     if (showChangeCategorySheet) {
@@ -277,4 +286,9 @@ private fun openUrl(
             }
         }
     }
+}
+
+fun NextFeedPreviewState.asDisplayState(): NextFeedDisplayState = when (this) {
+    is NextFeedPreviewDisabledState -> NextFeedDisplayState.NextFeedDisplayDisabledState()
+    is NextFeedPreviewEnabledState -> NextFeedDisplayState.NextFeedDisplayEnabledState(this.title)
 }

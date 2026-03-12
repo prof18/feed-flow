@@ -289,6 +289,7 @@ class MainActivity : BaseThemeActivity() {
                             backStack.add(feedSource.toEditFeed())
                         },
                         onFeedSuggestionsClick = { backStack.add(FeedSuggestions) },
+                        onNavigateToNextFeed = { homeViewModel.onNavigateToNextFeed() },
                     )
                 }
 

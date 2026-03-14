@@ -158,6 +158,7 @@ When creating commits:
 ### CI/CD
 - CI config: `.github/workflows/code-checks.yaml`
 - Pipeline: `checks` (macOS-15, detekt + allTests + swiftlint) -> `build-android-app` + `build-desktop-app` + `build-ios-app` (in parallel)
+- iOS CI build forces arm64 simulator architecture: `xcodebuild -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build | xcbeautify --renderer github-actions`
 - CI runs `.scripts/refresh-translations.sh` before checks; do this locally before pushing if translations changed
 - Debugging CI failures: `gh run list --limit=10`, then `gh run view <run-id> --log`
 - Red CI recovery loop: `gh run rerun <run-id>` (or `gh run rerun <run-id> --failed`), then fix and push until green

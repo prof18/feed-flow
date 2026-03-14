@@ -53,7 +53,9 @@
       "WebFetch(domain:chrisbanes.github.io)",
       "WebFetch(domain:composables.com)",
       "mcp__XcodeBuildMCP__session_show_defaults",
-      "mcp__XcodeBuildMCP__session_set_defaults"
+      "mcp__XcodeBuildMCP__session_set_defaults",
+      "WebFetch(domain:maven.pkg.jetbrains.space)",
+      "WebFetch(domain:central.sonatype.com)"
     ],
     "deny": []
   }

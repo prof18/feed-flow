@@ -513,9 +513,6 @@ private fun EntryProviderScope<NavKey>.screens(
             },
             onSearchClick = { backStack.add(Search) },
             onAccountsClick = onAccountsRequested,
-            onSettingsButtonClicked = {
-                // There's no settings button on desktop
-            },
             navigateToReaderMode = { feedItemUrlInfo ->
                 backStack.add(feedItemUrlInfo.toReaderMode())
             },

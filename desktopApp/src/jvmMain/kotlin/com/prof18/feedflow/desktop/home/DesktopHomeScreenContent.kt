@@ -19,7 +19,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -39,7 +38,6 @@ import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.EmptyFeedView
 import com.prof18.feedflow.shared.ui.home.components.FeedLoader
-import com.prof18.feedflow.shared.ui.home.components.HomeAppBar
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.shared.ui.home.components.ScrollToTopButton
 import com.prof18.feedflow.shared.ui.home.components.list.FeedList
@@ -56,7 +54,6 @@ fun DesktopHomeScreenContent(
     listState: LazyListState,
     snackbarHostState: SnackbarHostState,
     onSearchClick: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
     showDrawerMenu: Boolean = true,
     isDrawerOpen: Boolean = false,
@@ -76,24 +73,13 @@ fun DesktopHomeScreenContent(
     Scaffold(
         modifier = modifier,
         topBar = {
-            HomeAppBar(
+            DesktopHomeAppBar(
                 currentFeedFilter = displayState.currentFeedFilter,
                 unReadCount = displayState.unReadCount,
                 showDrawerMenu = showDrawerMenu,
                 isDrawerOpen = isDrawerOpen,
                 onDrawerMenuClick = onDrawerMenuClick,
                 onSearchClick = onSearchClick,
-                showDropdownMenu = false,
-                onMarkAllReadClicked = feedListActions.markAllRead,
-                onClearOldArticlesClicked = feedListActions.onClearOldArticlesClicked,
-                onSettingsButtonClicked = onSettingsButtonClicked,
-                onForceRefreshClick = {
-                    scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                        feedListActions.forceRefreshData()
-                    }
-                },
-                onEditFeedClick = feedManagementActions.onEditFeedClick,
                 onClick = {
                     scope.launch {
                         listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
@@ -105,10 +91,6 @@ fun DesktopHomeScreenContent(
                         feedListActions.refreshData()
                     }
                 },
-                isSyncUploadRequired = displayState.isSyncUploadRequired,
-                onBackupClick = {},
-                expandedHeight = toolbarHeight,
-                colors = TopAppBarDefaults.topAppBarColors(),
             )
         },
         snackbarHost = {

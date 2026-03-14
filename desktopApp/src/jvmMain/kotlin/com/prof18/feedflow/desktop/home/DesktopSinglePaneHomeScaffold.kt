@@ -49,7 +49,6 @@ internal fun DesktopSinglePaneHomeScaffold(
     listState: LazyListState,
     snackbarHostState: SnackbarHostState,
     onSearchClick: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
     onFeedSuggestionsClick: () -> Unit,
     onEmptyStateClick: () -> Unit,
 ) {
@@ -117,7 +116,6 @@ internal fun DesktopSinglePaneHomeScaffold(
                     listState = listState,
                     snackbarHostState = snackbarHostState,
                     onSearchClick = onSearchClick,
-                    onSettingsButtonClicked = onSettingsButtonClicked,
                     showDrawerMenu = true,
                     isDrawerOpen = if (usesDockedDrawer) isDockedDrawerVisible else drawerState.isOpen,
                     onDrawerMenuClick = {

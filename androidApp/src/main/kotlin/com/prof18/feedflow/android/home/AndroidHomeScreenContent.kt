@@ -29,7 +29,6 @@ import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.EmptyFeedView
 import com.prof18.feedflow.shared.ui.home.components.FeedLoader
-import com.prof18.feedflow.shared.ui.home.components.HomeAppBar
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.shared.ui.home.components.ScrollToTopButton
 import com.prof18.feedflow.shared.ui.home.components.list.FeedList
@@ -70,14 +69,13 @@ fun AndroidHomeScreenContent(
     Scaffold(
         modifier = modifier,
         topBar = {
-            HomeAppBar(
+            AndroidHomeAppBar(
                 currentFeedFilter = displayState.currentFeedFilter,
                 unReadCount = displayState.unReadCount,
                 showDrawerMenu = showDrawerMenu,
                 isDrawerOpen = isDrawerOpen,
                 onDrawerMenuClick = onDrawerMenuClick,
                 onSearchClick = onSearchClick,
-                showDropdownMenu = true,
                 onMarkAllReadClicked = feedListActions.markAllRead,
                 onClearOldArticlesClicked = feedListActions.onClearOldArticlesClicked,
                 onSettingsButtonClicked = onSettingsButtonClicked,

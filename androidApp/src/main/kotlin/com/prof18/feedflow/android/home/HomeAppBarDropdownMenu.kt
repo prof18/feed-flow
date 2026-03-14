@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.home.components
+package com.prof18.feedflow.android.home
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete

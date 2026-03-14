@@ -1,32 +1,23 @@
-package com.prof18.feedflow.shared.ui.home.components
+package com.prof18.feedflow.desktop.home
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
-import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.ui.icons.CloseSidebar
 import com.prof18.feedflow.shared.ui.icons.CloseSidebarReversed
 import com.prof18.feedflow.shared.ui.icons.OpenSidebar
@@ -34,31 +25,19 @@ import com.prof18.feedflow.shared.ui.icons.OpenSidebarReversed
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
-fun HomeAppBar(
+fun DesktopHomeAppBar(
     currentFeedFilter: FeedFilter,
     unReadCount: Long,
     showDrawerMenu: Boolean,
     isDrawerOpen: Boolean,
-    showDropdownMenu: Boolean,
     onDrawerMenuClick: () -> Unit,
-    onMarkAllReadClicked: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
-    onClearOldArticlesClicked: () -> Unit,
     onClick: () -> Unit,
     onDoubleClick: () -> Unit,
-    onForceRefreshClick: () -> Unit,
     onSearchClick: () -> Unit,
-    onEditFeedClick: (FeedSource) -> Unit,
-    isSyncUploadRequired: Boolean,
-    onBackupClick: () -> Unit,
     modifier: Modifier = Modifier,
-    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
-    expandedHeight: Dp = TopAppBarDefaults.TopAppBarExpandedHeight,
 ) {
-    var showMenu by remember { mutableStateOf(false) }
-
     TopAppBar(
-        expandedHeight = expandedHeight,
+        expandedHeight = toolbarHeight,
         navigationIcon = if (showDrawerMenu) {
             {
                 DrawerIcon(
@@ -67,7 +46,7 @@ fun HomeAppBar(
                 )
             }
         } else {
-            { }
+            {}
         },
         title = {
             Row {
@@ -83,59 +62,18 @@ fun HomeAppBar(
                     currentFeedFilter !is FeedFilter.Bookmarks
                 ) {
                     Spacer(modifier = Modifier.width(4.dp))
-
                     Text(text = "($unReadCount)")
                 }
             }
         },
         actions = {
-            IconButton(
-                onClick = onSearchClick,
-            ) {
+            IconButton(onClick = onSearchClick) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = LocalFeedFlowStrings.current.searchButtonContentDescription,
                 )
             }
-
-            if (showDropdownMenu) {
-                IconButton(
-                    onClick = {
-                        showMenu = !showMenu
-                    },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = LocalFeedFlowStrings.current.moreOptionsButtonContentDescription,
-                    )
-                }
-
-                HomeAppBarDropdownMenu(
-                    showMenu = showMenu,
-                    feedFilter = currentFeedFilter,
-                    closeMenu = {
-                        showMenu = false
-                    },
-                    onMarkAllReadClicked = onMarkAllReadClicked,
-                    onClearOldArticlesClicked = onClearOldArticlesClicked,
-                    onSettingsButtonClicked = {
-                        showMenu = false
-                        onSettingsButtonClicked()
-                    },
-                    onForceRefreshClick = onForceRefreshClick,
-                    onEditFeedClick = { feedSource ->
-                        showMenu = false
-                        onEditFeedClick(feedSource)
-                    },
-                    isSyncUploadRequired = isSyncUploadRequired,
-                    onBackupClick = {
-                        showMenu = false
-                        onBackupClick()
-                    },
-                )
-            }
         },
-        colors = colors,
         modifier = modifier
             .pointerInput(Unit) {
                 detectTapGestures(
@@ -160,11 +98,7 @@ private fun FeedFilter.getTitle(): String =
 @Composable
 private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    IconButton(
-        onClick = {
-            onDrawerMenuClick()
-        },
-    ) {
+    IconButton(onClick = onDrawerMenuClick) {
         val icon = when {
             isDrawerOpen && isRtl -> CloseSidebarReversed
             isDrawerOpen -> CloseSidebar

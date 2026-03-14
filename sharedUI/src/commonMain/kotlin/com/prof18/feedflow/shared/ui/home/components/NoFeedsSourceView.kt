@@ -14,7 +14,7 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
-internal fun NoFeedsSourceView(
+fun NoFeedsSourceView(
     modifier: Modifier = Modifier,
     onAddFeedClick: () -> Unit,
 ) {

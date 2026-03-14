@@ -34,7 +34,7 @@ import com.prof18.feedflow.shared.ui.icons.OpenSidebarReversed
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
-internal fun HomeAppBar(
+fun HomeAppBar(
     currentFeedFilter: FeedFilter,
     unReadCount: Long,
     showDrawerMenu: Boolean,
@@ -51,6 +51,7 @@ internal fun HomeAppBar(
     onEditFeedClick: (FeedSource) -> Unit,
     isSyncUploadRequired: Boolean,
     onBackupClick: () -> Unit,
+    modifier: Modifier = Modifier,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     expandedHeight: Dp = TopAppBarDefaults.TopAppBarExpandedHeight,
 ) {
@@ -135,7 +136,7 @@ internal fun HomeAppBar(
             }
         },
         colors = colors,
-        modifier = Modifier
+        modifier = modifier
             .pointerInput(Unit) {
                 detectTapGestures(
                     onDoubleTap = { onDoubleClick() },

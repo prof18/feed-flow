@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.home.components
+package com.prof18.feedflow.android.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -6,17 +6,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.TopAppBarColors
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -26,23 +21,24 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
-import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
+import com.prof18.feedflow.shared.ui.home.components.EmptyFeedView
+import com.prof18.feedflow.shared.ui.home.components.FeedLoader
+import com.prof18.feedflow.shared.ui.home.components.HomeAppBar
+import com.prof18.feedflow.shared.ui.home.components.NoFeedsSourceView
+import com.prof18.feedflow.shared.ui.home.components.ScrollToTopButton
 import com.prof18.feedflow.shared.ui.home.components.list.FeedList
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenContent(
+fun AndroidHomeScreenContent(
     displayState: HomeDisplayState,
     feedListActions: FeedListActions,
     feedManagementActions: FeedManagementActions,
@@ -56,15 +52,9 @@ fun HomeScreenContent(
     isDrawerOpen: Boolean = false,
     onDrawerMenuClick: () -> Unit = {},
     onRefresh: () -> Unit = {},
-    toolbarContent: @Composable () -> Unit = {},
     feedContentWrapper: @Composable (@Composable () -> Unit) -> Unit = { content -> content() },
-    showDropdownMenu: Boolean = false,
     onBackupClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
-    topAppBarColors: TopAppBarColors? = null,
-    toolbarElevation: Dp = 0.dp,
-    topToolbarContentFadeHeight: Dp = 0.dp,
-    toolbarExpandedHeight: Dp = TopAppBarDefaults.TopAppBarExpandedHeight,
     onNavigateToNextFeed: () -> Unit = { },
 ) {
     val scope = rememberCoroutineScope()
@@ -80,42 +70,38 @@ fun HomeScreenContent(
     Scaffold(
         modifier = modifier,
         topBar = {
-            Surface(shadowElevation = toolbarElevation) {
-                HomeAppBar(
-                    currentFeedFilter = displayState.currentFeedFilter,
-                    unReadCount = displayState.unReadCount,
-                    showDrawerMenu = showDrawerMenu,
-                    isDrawerOpen = isDrawerOpen,
-                    onDrawerMenuClick = onDrawerMenuClick,
-                    onSearchClick = onSearchClick,
-                    showDropdownMenu = showDropdownMenu,
-                    onMarkAllReadClicked = feedListActions.markAllRead,
-                    onClearOldArticlesClicked = feedListActions.onClearOldArticlesClicked,
-                    onSettingsButtonClicked = onSettingsButtonClicked,
-                    onForceRefreshClick = {
-                        scope.launch {
-                            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                            feedListActions.forceRefreshData()
-                        }
-                    },
-                    onEditFeedClick = feedManagementActions.onEditFeedClick,
-                    onClick = {
-                        scope.launch {
-                            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                        }
-                    },
-                    onDoubleClick = {
-                        scope.launch {
-                            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                            onRefresh()
-                        }
-                    },
-                    isSyncUploadRequired = displayState.isSyncUploadRequired,
-                    onBackupClick = onBackupClick,
-                    colors = topAppBarColors ?: TopAppBarDefaults.topAppBarColors(),
-                    expandedHeight = toolbarExpandedHeight,
-                )
-            }
+            HomeAppBar(
+                currentFeedFilter = displayState.currentFeedFilter,
+                unReadCount = displayState.unReadCount,
+                showDrawerMenu = showDrawerMenu,
+                isDrawerOpen = isDrawerOpen,
+                onDrawerMenuClick = onDrawerMenuClick,
+                onSearchClick = onSearchClick,
+                showDropdownMenu = true,
+                onMarkAllReadClicked = feedListActions.markAllRead,
+                onClearOldArticlesClicked = feedListActions.onClearOldArticlesClicked,
+                onSettingsButtonClicked = onSettingsButtonClicked,
+                onForceRefreshClick = {
+                    scope.launch {
+                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                        feedListActions.forceRefreshData()
+                    }
+                },
+                onEditFeedClick = feedManagementActions.onEditFeedClick,
+                onClick = {
+                    scope.launch {
+                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                    }
+                },
+                onDoubleClick = {
+                    scope.launch {
+                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                        onRefresh()
+                    }
+                },
+                isSyncUploadRequired = displayState.isSyncUploadRequired,
+                onBackupClick = onBackupClick,
+            )
         },
         snackbarHost = {
             SnackbarHost(snackbarHostState) { data ->
@@ -154,8 +140,6 @@ fun HomeScreenContent(
                 .padding(start = innerPadding.calculateLeftPadding(layoutDir))
                 .padding(end = innerPadding.calculateRightPadding(layoutDir)),
         ) {
-            toolbarContent()
-
             when {
                 displayState.feedUpdateStatus is NoFeedSourcesStatus -> NoFeedsSourceView(
                     onAddFeedClick = onEmptyStateClick ?: feedManagementActions.onAddFeedClick,
@@ -217,14 +201,6 @@ fun HomeScreenContent(
                                 onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
                                 onNavigateNext = { onNavigateToNextFeed() },
                                 feedItemDisplaySettings = displayState.feedItemDisplaySettings,
-                            )
-                        }
-
-                        if (topToolbarContentFadeHeight > 0.dp) {
-                            TopToolbarContentFade(
-                                modifier = Modifier.align(Alignment.TopCenter),
-                                height = topToolbarContentFadeHeight,
-                                color = MaterialTheme.colorScheme.surface,
                             )
                         }
                     }

@@ -59,7 +59,7 @@ import me.saket.swipe.SwipeableActionsBox
 
 @Suppress("MagicNumber")
 @Composable
-internal fun FeedList(
+fun FeedList(
     feedItems: ImmutableList<FeedItem>,
     nextFeedState: NextFeedDisplayState,
     feedFontSize: FeedFontSizes,

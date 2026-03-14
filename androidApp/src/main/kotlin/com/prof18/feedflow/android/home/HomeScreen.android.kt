@@ -189,7 +189,6 @@ internal fun HomeScreen(
         feedListActions = feedListActions,
         feedManagementActions = feedManagementActions,
         windowSizeClass = adaptiveWindowSizeClass,
-        showDropdownMenu = true,
         feedContentWrapper = { content ->
             val pullToRefreshState = rememberPullToRefreshState()
             PullToRefreshBox(

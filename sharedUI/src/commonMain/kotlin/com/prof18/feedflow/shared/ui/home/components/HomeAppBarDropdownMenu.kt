@@ -18,13 +18,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
-internal fun HomeAppBarDropdownMenu(
+fun HomeAppBarDropdownMenu(
     showMenu: Boolean,
     feedFilter: FeedFilter,
     closeMenu: () -> Unit,
@@ -35,6 +36,7 @@ internal fun HomeAppBarDropdownMenu(
     onEditFeedClick: (FeedSource) -> Unit,
     isSyncUploadRequired: Boolean,
     onBackupClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var showMarkAllReadDialog by remember { mutableStateOf(false) }
     var showClearOldArticlesDialog by remember { mutableStateOf(false) }
@@ -92,6 +94,7 @@ internal fun HomeAppBarDropdownMenu(
     }
 
     DropdownMenu(
+        modifier = modifier,
         expanded = showMenu,
         onDismissRequest = closeMenu,
         properties = PopupProperties(

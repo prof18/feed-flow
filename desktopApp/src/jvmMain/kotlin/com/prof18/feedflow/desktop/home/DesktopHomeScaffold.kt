@@ -4,7 +4,6 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -16,9 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -69,7 +66,6 @@ import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.components.HomeScreenContent
 import com.prof18.feedflow.shared.ui.home.components.drawer.Drawer
 import com.prof18.feedflow.shared.ui.home.components.drawer.DrawerItemVisualStyle
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -222,7 +218,7 @@ internal fun DesktopHomeScaffold(
                         exitTransition = fadeOut(animationSpec = tweenSpec),
                         boundsAnimationSpec = snap(),
                     ) {
-                        HomeScreenContent(
+                        DesktopHomeScreenContent(
                             modifier = Modifier.fillMaxSize(),
                             displayState = displayState,
                             feedListActions = feedListActions,
@@ -232,9 +228,6 @@ internal fun DesktopHomeScaffold(
                             snackbarHostState = snackbarHostState,
                             onSearchClick = onSearchClick,
                             onSettingsButtonClicked = onSettingsButtonClicked,
-                            toolbarElevation = 2.dp,
-                            topToolbarContentFadeHeight = listPaneTopContentFadeHeight,
-                            toolbarExpandedHeight = toolbarHeight,
                             showDrawerMenu = true,
                             isDrawerOpen = if (isThreePaneLayout) {
                                 isDockedDrawerVisible
@@ -255,34 +248,7 @@ internal fun DesktopHomeScaffold(
                                     }
                                 }
                             },
-                            onRefresh = feedListActions.refreshData,
-                            showDropdownMenu = false,
                             onEmptyStateClick = onEmptyStateClick,
-                            feedContentWrapper = { content ->
-                                Box(modifier = Modifier.fillMaxSize()) {
-                                    Box(
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentAlignment = Alignment.TopCenter,
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .widthIn(max = listPaneMaxContentWidth)
-                                                .fillMaxWidth()
-                                                .fillMaxHeight(),
-                                        ) {
-                                            content()
-                                        }
-                                    }
-
-                                    VerticalScrollbar(
-                                        modifier = Modifier
-                                            .align(Alignment.CenterEnd)
-                                            .fillMaxHeight()
-                                            .width(6.dp),
-                                        adapter = rememberScrollbarAdapter(scrollState = listState),
-                                    )
-                                }
-                            },
                         )
                     }
                 },

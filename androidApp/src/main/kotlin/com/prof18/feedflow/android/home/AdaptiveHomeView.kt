@@ -22,7 +22,6 @@ import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.components.HomeScreenContent
 import com.prof18.feedflow.shared.ui.home.components.drawer.Drawer
 import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
@@ -41,7 +40,6 @@ fun AdaptiveHomeView(
     shareBehavior: ShareBehavior,
     listState: LazyListState = rememberLazyListState(),
     windowSizeClass: WindowSizeClass = WindowSizeClass.Compact,
-    showDropdownMenu: Boolean = false,
     feedContentWrapper: @Composable (@Composable () -> Unit) -> Unit = { content -> content() },
     onBackupClick: () -> Unit = {},
     onFeedSuggestionsClick: () -> Unit = {},
@@ -58,7 +56,7 @@ fun AdaptiveHomeView(
         isDrawerMenuOpen: Boolean = false,
         onDrawerMenuClick: () -> Unit,
     ) {
-        HomeScreenContent(
+        AndroidHomeScreenContent(
             modifier = modifier,
             displayState = displayState,
             feedListActions = feedListActions,
@@ -71,7 +69,6 @@ fun AdaptiveHomeView(
             isDrawerOpen = isDrawerMenuOpen,
             onDrawerMenuClick = onDrawerMenuClick,
             onRefresh = feedListActions.refreshData,
-            showDropdownMenu = showDropdownMenu,
             feedContentWrapper = feedContentWrapper,
             shareBehavior = shareBehavior,
             onBackupClick = onBackupClick,

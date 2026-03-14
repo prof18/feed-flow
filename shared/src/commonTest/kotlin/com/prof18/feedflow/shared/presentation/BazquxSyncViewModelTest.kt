@@ -97,7 +97,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
                 password = "testpassword",
             )
 
-            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
+            val state = awaitLinkedStateAfterSync()
             assertIs<AccountConnectionUiState.Linked>(state)
         }
     }
@@ -202,7 +202,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
                 password = "testpassword",
             )
 
-            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
+            val state = awaitLinkedStateAfterSync()
             assertIs<AccountConnectionUiState.Linked>(state)
 
             val accountType = networkSettings.getSyncAccountType()
@@ -269,3 +269,9 @@ private suspend fun <T> TurbineTestContext<T>.awaitItemMatching(
         }
     }
 }
+
+private suspend fun TurbineTestContext<AccountConnectionUiState>.awaitLinkedStateAfterSync():
+    AccountConnectionUiState.Linked =
+    awaitItemMatching { state ->
+        state is AccountConnectionUiState.Linked && state.syncState !is AccountSyncUIState.Loading
+    } as AccountConnectionUiState.Linked

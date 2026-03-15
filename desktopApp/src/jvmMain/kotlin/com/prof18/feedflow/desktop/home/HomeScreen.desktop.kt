@@ -42,7 +42,6 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun HomeScreen(
     homeViewModel: HomeViewModel,
     snackbarHostState: SnackbarHostState,
-    listState: LazyListState,
     onImportExportClick: () -> Unit,
     onSearchClick: () -> Unit,
     onAccountsClick: () -> Unit,
@@ -56,6 +55,7 @@ internal fun HomeScreen(
     val changeFeedCategoryViewModel = koinViewModel<ChangeFeedCategoryViewModel>()
     val homeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
     val isMultiPaneLayoutEnabled by homeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
+    val listState = remember(isMultiPaneLayoutEnabled) { LazyListState() }
 
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()

@@ -367,7 +367,6 @@ private fun FrameWindowScope.MainWindowContent(
                                 navigateBack = navigateBack,
                                 homeViewModel = homeViewModel,
                                 snackbarHostState = snackbarHostState,
-                                listState = listState,
                                 dialogWindowNavigator = dialogWindowNavigator,
                                 onAccountsRequested = {
                                     initialSettingsCategory = DesktopSettingsCategory.ACCOUNTS
@@ -501,7 +500,6 @@ private fun EntryProviderScope<NavKey>.screens(
     navigateBack: () -> Unit,
     homeViewModel: HomeViewModel,
     snackbarHostState: SnackbarHostState,
-    listState: androidx.compose.foundation.lazy.LazyListState,
     dialogWindowNavigator: DesktopDialogWindowNavigator,
     onAccountsRequested: () -> Unit,
     onEditFeedRequested: (FeedSource) -> Unit,
@@ -510,7 +508,6 @@ private fun EntryProviderScope<NavKey>.screens(
         HomeScreen(
             homeViewModel = homeViewModel,
             snackbarHostState = snackbarHostState,
-            listState = listState,
             onImportExportClick = {
                 dialogWindowNavigator.open(DesktopDialogWindowDestination.ImportExport)
             },

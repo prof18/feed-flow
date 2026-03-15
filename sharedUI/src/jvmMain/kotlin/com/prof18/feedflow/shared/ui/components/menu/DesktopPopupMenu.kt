@@ -53,7 +53,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlin.math.roundToInt
 
 @Composable
-internal fun DesktopPopupMenu(
+fun DesktopPopupMenu(
     showMenu: Boolean,
     menuPositionInWindow: Offset?,
     menuEntries: ImmutableList<DesktopPopupMenuEntry>,
@@ -137,7 +137,7 @@ internal fun DesktopPopupMenu(
     }
 }
 
-internal sealed interface DesktopPopupMenuEntry {
+sealed interface DesktopPopupMenuEntry {
     data class Action(
         val text: String,
         val onClick: () -> Unit,

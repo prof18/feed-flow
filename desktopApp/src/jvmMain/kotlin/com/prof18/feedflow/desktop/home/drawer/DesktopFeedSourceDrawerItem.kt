@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.home.components.drawer
+package com.prof18.feedflow.desktop.home.drawer
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -34,18 +34,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceContextMenu
+import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenu
+import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenuEntry
 import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
-import com.prof18.feedflow.shared.ui.preview.feedSourcesForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.PreviewHelper
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-internal fun FeedSourceDrawerItem(
+internal fun DesktopFeedSourceDrawerItem(
     feedSource: FeedSource,
     label: @Composable () -> Unit,
     selected: Boolean,
@@ -56,7 +55,7 @@ internal fun FeedSourceDrawerItem(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
-    onChangeFeedCategoryClick: ((FeedSource) -> Unit),
+    onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
     unreadCount: Long,
     modifier: Modifier = Modifier,
@@ -120,9 +119,7 @@ internal fun FeedSourceDrawerItem(
             Row(
                 Modifier
                     .singleAndLongClickModifier(
-                        onClick = {
-                            onClick()
-                        },
+                        onClick = { onClick() },
                         onLongClick = {
                             menuPositionInWindow = null
                             showFeedMenu = true
@@ -160,42 +157,75 @@ internal fun FeedSourceDrawerItem(
                 }
             }
 
-            FeedSourceContextMenu(
-                showFeedMenu = showFeedMenu,
-                hideMenu = {
+            val strings = LocalFeedFlowStrings.current
+            val menuEntries = buildList {
+                add(
+                    DesktopPopupMenuEntry.Action(
+                        text = strings.deleteFeed,
+                        onClick = {
+                            onDeleteFeedSourceClick(feedSource)
+                            showFeedMenu = false
+                        },
+                    ),
+                )
+
+                val websiteUrl = feedSource.websiteUrlFallback()
+                if (websiteUrl != null) {
+                    add(
+                        DesktopPopupMenuEntry.Action(
+                            text = strings.openWebsiteButton,
+                            onClick = {
+                                onOpenWebsite(websiteUrl)
+                                showFeedMenu = false
+                            },
+                        ),
+                    )
+                }
+
+                add(
+                    DesktopPopupMenuEntry.Action(
+                        text = strings.editFeedSourceNameButton,
+                        onClick = {
+                            onEditFeedClick(feedSource)
+                            showFeedMenu = false
+                        },
+                    ),
+                )
+
+                add(
+                    DesktopPopupMenuEntry.Action(
+                        text = strings.changeCategory,
+                        onClick = {
+                            onChangeFeedCategoryClick(feedSource)
+                            showFeedMenu = false
+                        },
+                    ),
+                )
+
+                add(
+                    DesktopPopupMenuEntry.Action(
+                        text = if (feedSource.isPinned) {
+                            strings.menuRemoveFromPinned
+                        } else {
+                            strings.menuAddToPinned
+                        },
+                        onClick = {
+                            onPinFeedClick(feedSource)
+                            showFeedMenu = false
+                        },
+                    ),
+                )
+            }.toImmutableList()
+
+            DesktopPopupMenu(
+                showMenu = showFeedMenu,
+                menuPositionInWindow = menuPositionInWindow,
+                menuEntries = menuEntries,
+                closeMenu = {
                     showFeedMenu = false
                     menuPositionInWindow = null
                 },
-                menuPositionInWindow = menuPositionInWindow,
-                onEditFeedClick = onEditFeedClick,
-                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                feedSource = feedSource,
-                onPinFeedClick = onPinFeedClick,
-                onChangeFeedCategoryClick = onChangeFeedCategoryClick,
-                onOpenWebsite = onOpenWebsite,
             )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun FeedSourceDrawerItemPreview() {
-    PreviewHelper {
-        FeedSourceDrawerItem(
-            feedSource = feedSourcesForPreview.first(),
-            label = { Text("Feed Source Title") },
-            selected = false,
-            drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
-            isMultiSelected = false,
-            onClick = {},
-            icon = { Icon(Icons.Default.Warning, contentDescription = null) },
-            onEditFeedClick = {},
-            onDeleteFeedSourceClick = {},
-            onPinFeedClick = {},
-            onChangeFeedCategoryClick = {},
-            onOpenWebsite = {},
-            unreadCount = 10,
-        )
     }
 }

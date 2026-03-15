@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.home.components.drawer
+package com.prof18.feedflow.android.home.drawer
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider

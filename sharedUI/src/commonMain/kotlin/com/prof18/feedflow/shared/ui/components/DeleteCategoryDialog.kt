@@ -9,7 +9,7 @@ import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
-internal fun DeleteCategoryDialog(
+fun DeleteCategoryDialog(
     showDialog: Boolean,
     categoryId: CategoryId,
     onDismiss: () -> Unit,

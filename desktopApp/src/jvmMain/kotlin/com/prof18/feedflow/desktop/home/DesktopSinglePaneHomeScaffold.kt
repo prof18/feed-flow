@@ -27,13 +27,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.home.drawer.DesktopDrawer
 import com.prof18.feedflow.desktop.ui.components.drawerHazeStyle
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.components.drawer.Drawer
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import dev.chrisbanes.haze.rememberHazeState
@@ -64,7 +64,6 @@ internal fun DesktopSinglePaneHomeScaffold(
 
     val hazeState = rememberHazeState()
     val hazeStyle = drawerHazeStyle()
-    val drawerItemVisualStyle = desktopDrawerItemVisualStyle()
     var isDockedDrawerVisible by remember { mutableStateOf(homeSettingsRepository.isDrawerVisible()) }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -74,10 +73,9 @@ internal fun DesktopSinglePaneHomeScaffold(
         }
 
         val drawerContent: @Composable () -> Unit = {
-            Drawer(
+            DesktopDrawer(
                 displayState = displayState,
                 feedManagementActions = feedManagementActions,
-                drawerItemVisualStyle = drawerItemVisualStyle,
                 onFeedFilterSelected = { feedFilter: FeedFilter ->
                     feedManagementActions.onFeedFilterSelected(feedFilter)
                     scope.launch {

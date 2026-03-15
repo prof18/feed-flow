@@ -17,12 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.prof18.feedflow.android.home.drawer.AndroidDrawer
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.components.drawer.Drawer
 import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
@@ -82,7 +82,7 @@ fun AdaptiveHomeView(
         modifier: Modifier = Modifier,
         onFeedFilterSelectedLambda: (FeedFilter) -> Unit,
     ) {
-        Drawer(
+        AndroidDrawer(
             modifier = modifier,
             displayState = displayState,
             feedManagementActions = feedManagementActions,

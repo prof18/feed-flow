@@ -1,56 +1,70 @@
-package com.prof18.feedflow.shared.ui.home.components.drawer
+package com.prof18.feedflow.android.home.drawer
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.PlaylistAddCheck
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.PreviewHelper
 
 @Composable
-internal fun DrawerReadItem(
+internal fun DrawerBookmarksItem(
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    drawerItem: DrawerItem.Bookmarks,
     drawerItemVisualStyle: DrawerItemVisualStyle,
 ) {
     NavigationDrawerItem(
         modifier = Modifier
             .padding(vertical = drawerItemVisualStyle.itemVerticalPadding)
             .height(drawerItemVisualStyle.itemMinHeight),
-        selected = currentFeedFilter is FeedFilter.Read,
+        selected = currentFeedFilter is FeedFilter.Bookmarks,
         label = {
             Text(
-                text = LocalFeedFlowStrings.current.drawerTitleRead,
+                text = LocalFeedFlowStrings.current.drawerTitleBookmarks,
             )
+        },
+        badge = if (drawerItem.unreadCount > 0) {
+            {
+                Text(
+                    text = drawerItem.unreadCount.toString(),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
+        } else {
+            null
         },
         icon = {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.PlaylistAddCheck,
+                imageVector = Icons.Default.Bookmarks,
                 contentDescription = null,
             )
         },
         shape = drawerItemVisualStyle.itemShape,
         colors = drawerItemColors(drawerItemVisualStyle),
         onClick = {
-            onFeedFilterSelected(FeedFilter.Read)
+            onFeedFilterSelected(FeedFilter.Bookmarks)
         },
     )
 }
 
 @Preview
 @Composable
-private fun DrawerReadItemPreview() {
+private fun DrawerBookmarksItemPreview() {
     PreviewHelper {
-        DrawerReadItem(
-            currentFeedFilter = FeedFilter.Read,
+        DrawerBookmarksItem(
+            currentFeedFilter = FeedFilter.Bookmarks,
             onFeedFilterSelected = {},
+            drawerItem = DrawerItem.Bookmarks(unreadCount = 5),
             drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
         )
     }

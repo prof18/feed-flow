@@ -64,7 +64,7 @@
   </content_rating>
 
   <releases>
-      <release version="1.11.0" date="2026-03-15">
+      <release version="1.11.1" date="2026-03-15">
           <description>
               <p>Added a new three-pane desktop layout and a switch for users who prefer the single-pane view.</p>
               <p>Added a dedicated Settings window with sections for reading, feed list, accounts, sync storage, and about.</p>

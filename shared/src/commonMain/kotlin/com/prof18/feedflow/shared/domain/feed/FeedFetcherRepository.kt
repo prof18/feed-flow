@@ -51,32 +51,21 @@ class FeedFetcherRepository internal constructor(
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
 
-    @Suppress("MagicNumber")
     suspend fun fetchFeeds(
         forceRefresh: Boolean = false,
         isFirstLaunch: Boolean = false,
-        isFetchingFromBackground: Boolean = false,
     ) {
         return withContext(dispatcherProvider.io) {
             feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
             when {
                 gReaderRepository.isAccountSet() -> {
                     fetchFeedsWithGReader()
-                    if (!isFetchingFromBackground) {
-                        databaseHelper.markFeedItemsAsNotified()
-                    }
                 }
                 feedbinRepository.isAccountSet() -> {
                     fetchFeedsWithFeedbin()
-                    if (!isFetchingFromBackground) {
-                        databaseHelper.markFeedItemsAsNotified()
-                    }
                 }
                 else -> {
                     fetchFeedsWithRssParser(forceRefresh, isFirstLaunch)
-                    if (!isFetchingFromBackground) {
-                        databaseHelper.markFeedItemsAsNotified()
-                    }
                 }
             }
         }

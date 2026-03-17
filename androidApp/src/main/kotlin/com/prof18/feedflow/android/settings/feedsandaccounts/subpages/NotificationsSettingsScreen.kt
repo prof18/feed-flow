@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -111,22 +112,20 @@ private fun NotificationSettingsScreenContent(
 
     val context = LocalContext.current
     val activity = LocalActivity.current
-    var hasNotificationPermission by remember { mutableStateOf(checkNotificationPermission(context)) }
-    var shouldShowRationale by remember { mutableStateOf(false) }
+    var hasNotificationPermission by remember { mutableStateOf(areNotificationsEnabled(context)) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
-            hasNotificationPermission = isGranted
-            if (!isGranted) {
-                shouldShowRationale = shouldShowPermissionDialog(activity)
+            hasNotificationPermission = areNotificationsEnabled(context)
+            if (!isGranted && !shouldShowPermissionDialog(activity)) {
+                openAppSettings(context)
             }
         },
     )
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        hasNotificationPermission = checkNotificationPermission(context)
-        shouldShowRationale = shouldShowPermissionDialog(activity)
+        hasNotificationPermission = areNotificationsEnabled(context)
     }
 
     Scaffold(
@@ -178,14 +177,12 @@ private fun NotificationSettingsScreenContent(
                         PermissionStatusRow(
                             hasPermission = hasNotificationPermission,
                             onRequestClick = {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                    if (shouldShowRationale) {
-                                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                    } else {
-                                        openAppSettings(context)
-                                    }
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                                    !hasRuntimeNotificationPermission(context)
+                                ) {
+                                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                                 } else {
-                                    hasNotificationPermission = true
+                                    openAppSettings(context)
                                 }
                             },
                         )
@@ -354,8 +351,12 @@ private fun PermissionStatusRow(
     }
 }
 
-private fun checkNotificationPermission(context: Context): Boolean {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+private fun areNotificationsEnabled(context: Context): Boolean =
+    NotificationManagerCompat.from(context).areNotificationsEnabled() &&
+        hasRuntimeNotificationPermission(context)
+
+private fun hasRuntimeNotificationPermission(context: Context): Boolean =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.POST_NOTIFICATIONS,
@@ -363,7 +364,6 @@ private fun checkNotificationPermission(context: Context): Boolean {
     } else {
         true
     }
-}
 
 private fun shouldShowPermissionDialog(activity: Activity?): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

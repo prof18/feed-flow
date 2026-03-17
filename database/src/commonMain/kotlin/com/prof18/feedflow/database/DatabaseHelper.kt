@@ -629,9 +629,9 @@ class DatabaseHelper(
     ) = dbRef.transactionWithContext(backgroundDispatcher) {
         syncedFeedItems.forEach { syncedFeedItem ->
             dbRef.feedItemQueries.updateFeedItemReadAndBookmarked(
-                is_read = syncedFeedItem.isRead,
-                is_bookmarked = syncedFeedItem.isBookmarked,
-                url_hash = syncedFeedItem.id,
+                isRead = syncedFeedItem.isRead,
+                isBookmarked = syncedFeedItem.isBookmarked,
+                urlHash = syncedFeedItem.id,
             )
         }
     }

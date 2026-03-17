@@ -55,7 +55,8 @@
       "mcp__XcodeBuildMCP__session_show_defaults",
       "mcp__XcodeBuildMCP__session_set_defaults",
       "WebFetch(domain:maven.pkg.jetbrains.space)",
-      "WebFetch(domain:central.sonatype.com)"
+      "WebFetch(domain:central.sonatype.com)",
+      "Bash(gh pr:*)"
     ],
     "deny": []
   }

@@ -27,18 +27,24 @@ class AndroidNotifier(
 
     private val notificationManager = NotificationManagerCompat.from(context)
 
-    override fun showNewArticlesNotification(feedSourcesToNotify: List<FeedSourceToNotify>) {
+    override fun showNewArticlesNotification(feedSourcesToNotify: List<FeedSourceToNotify>): Boolean {
         val areNotificationsEnabled = notificationManager.areNotificationsEnabled()
         if (!areNotificationsEnabled) {
-            return
+            return false
         }
 
         createNotificationChannel()
+        if (!isNotificationChannelEnabled()) {
+            return false
+        }
         val feedFlowStrings = feedFlowStrings()
         val notificationMode = settingsRepository.getNotificationMode()
 
-        when (notificationMode) {
+        return when (notificationMode) {
             NotificationMode.FEED_SOURCE -> {
+                if (feedSourcesToNotify.isEmpty()) {
+                    return false
+                }
                 for ((index, sourceToNotify) in feedSourcesToNotify.withIndex()) {
                     showNotification(
                         notificationId = BASE_NOTIFICATION_ID + index,
@@ -47,10 +53,14 @@ class AndroidNotifier(
                         url = "feedflow://feedsourcefilter/${sourceToNotify.feedSourceId}",
                     )
                 }
+                true
             }
 
             NotificationMode.CATEGORY -> {
                 val groupedByCategory = feedSourcesToNotify.groupBy { it.categoryTitle }
+                if (groupedByCategory.isEmpty()) {
+                    return false
+                }
                 var index = 0
                 for ((categoryTitle, sources) in groupedByCategory) {
                     val categoryId = sources.first().categoryId
@@ -73,16 +83,18 @@ class AndroidNotifier(
                     )
                     index++
                 }
+                true
             }
 
             NotificationMode.GROUPED -> {
-                if (feedSourcesToNotify.isEmpty()) return
+                if (feedSourcesToNotify.isEmpty()) return false
                 showNotification(
                     notificationId = BASE_NOTIFICATION_ID,
                     title = feedFlowStrings.newArticlesNotificationTitle,
                     content = feedFlowStrings.notificationGroupedBody,
                     url = null,
                 )
+                true
             }
         }
     }
@@ -129,9 +141,11 @@ class AndroidNotifier(
         val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
             description = descriptionText
         }
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
+
+    private fun isNotificationChannelEnabled(): Boolean =
+        notificationManager.getNotificationChannel(CHANNEL_ID)?.importance != NotificationManager.IMPORTANCE_NONE
 
     private fun feedFlowStrings(): FeedFlowStrings {
         val languageTag = Locale.getDefault().toLanguageTag()

@@ -50,6 +50,7 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
         setupFeedbinAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
+        databaseHelper.updateNotificationEnabledStatus(feedSource.id, true)
 
         val feedItems = listOf(
             buildFeedItem("5031084432", "Article 1", 10000L, feedSource),
@@ -76,7 +77,9 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
             val item = updatedItems.find { it.url_hash == itemId.id }
             assertNotNull(item, "Item ${itemId.id} should exist")
             assertTrue(item.is_read, "Item ${itemId.id} should be marked as read")
+            assertTrue(item.notification_sent, "Item ${itemId.id} should be marked as notified")
         }
+        assertTrue(databaseHelper.getFeedSourceToNotify().isEmpty())
     }
 
     @Test

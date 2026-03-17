@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.feed
 
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -25,6 +26,67 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
     private val databaseHelper: DatabaseHelper by inject()
     private val feedStateRepository: FeedStateRepository by inject()
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository by inject()
+
+    @Test
+    fun `markAsRead marks pending notifications as sent`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource("source-1", "Test Feed")
+        databaseHelper.insertFeedSourceWithCategory(feedSource)
+        databaseHelper.updateNotificationEnabledStatus(feedSource.id, true)
+
+        val feedItem = buildFeedItem("item1", "Article 1", 10000L, feedSource)
+        databaseHelper.insertFeedItems(listOf(feedItem), lastSyncTimestamp = 0)
+
+        assertTrue(databaseHelper.getFeedSourceToNotify().isNotEmpty())
+
+        feedActionsRepository.markAsRead(hashSetOf(FeedItemId(feedItem.id)))
+        advanceUntilIdle()
+
+        val updatedItem = databaseHelper.getFeedItems(
+            feedFilter = FeedFilter.Timeline,
+            pageSize = 10,
+            offset = 0,
+            showReadItems = true,
+            sortOrder = FeedOrder.NEWEST_FIRST,
+        ).first { it.url_hash == feedItem.id }
+
+        assertTrue(updatedItem.is_read)
+        assertTrue(updatedItem.notification_sent)
+        assertTrue(databaseHelper.getFeedSourceToNotify().isEmpty())
+    }
+
+    @Test
+    fun `markAllCurrentFeedAsRead marks pending notifications as sent`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource("source-1", "Test Feed")
+        databaseHelper.insertFeedSourceWithCategory(feedSource)
+        databaseHelper.updateNotificationEnabledStatus(feedSource.id, true)
+
+        val feedItems = listOf(
+            buildFeedItem("item1", "Article 1", 10000L, feedSource),
+            buildFeedItem("item2", "Article 2", 9000L, feedSource),
+        )
+        databaseHelper.insertFeedItems(feedItems, lastSyncTimestamp = 0)
+        feedStateRepository.updateFeedSourceFilter(feedSource.id)
+        advanceUntilIdle()
+
+        assertTrue(databaseHelper.getFeedSourceToNotify().isNotEmpty())
+
+        feedActionsRepository.markAllCurrentFeedAsRead()
+        advanceUntilIdle()
+
+        val updatedItems = databaseHelper.getFeedItems(
+            feedFilter = FeedFilter.Source(feedSource),
+            pageSize = 10,
+            offset = 0,
+            showReadItems = true,
+            sortOrder = FeedOrder.NEWEST_FIRST,
+        )
+
+        updatedItems.forEach { item ->
+            assertTrue(item.is_read)
+            assertTrue(item.notification_sent)
+        }
+        assertTrue(databaseHelper.getFeedSourceToNotify().isEmpty())
+    }
 
     @Test
     fun `markAllAboveAsRead with NEWEST_FIRST should mark newer items as read`() = runTest(testDispatcher) {

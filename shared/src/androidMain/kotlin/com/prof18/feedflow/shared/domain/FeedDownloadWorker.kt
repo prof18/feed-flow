@@ -22,10 +22,12 @@ class FeedDownloadWorker internal constructor(
             return Result.success()
         }
         return try {
-            feedFetcherRepository.fetchFeeds(isFetchingFromBackground = true)
+            feedFetcherRepository.fetchFeeds()
             val itemsToNotify = databaseHelper.getFeedSourceToNotify()
-            notifier.showNewArticlesNotification(itemsToNotify)
-            databaseHelper.markFeedItemsAsNotified()
+            val hasShownNotifications = notifier.showNewArticlesNotification(itemsToNotify)
+            if (hasShownNotifications) {
+                databaseHelper.markFeedItemsAsNotified()
+            }
             widgetUpdater.update()
             Result.success()
         } catch (_: Exception) {

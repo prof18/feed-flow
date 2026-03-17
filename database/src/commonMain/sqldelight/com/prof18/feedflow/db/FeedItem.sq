@@ -108,23 +108,24 @@ INSERT OR REPLACE INTO feed_item(
 
 updateReadStatus:
 UPDATE feed_item
-SET is_read = :isRead
+SET is_read = :isRead,
+    notification_sent = CASE WHEN :isRead THEN 1 ELSE notification_sent END
 WHERE url_hash = :urlHash;
 
 markAllRead:
 UPDATE feed_item
-SET is_read = 1
+SET is_read = 1, notification_sent = 1
 WHERE is_read = 0;
 
 markAllReadByFeedSource:
 UPDATE feed_item
-SET is_read = 1
+SET is_read = 1, notification_sent = 1
 WHERE feed_source_id = :feedSourceId
 AND is_read = 0;
 
 markAllReadByCategory:
 UPDATE feed_item
-SET is_read = 1
+SET is_read = 1, notification_sent = 1
 WHERE feed_source_id IN (
   SELECT url_hash
   FROM feed_source
@@ -134,7 +135,7 @@ AND is_read = 0;
 
 markAllReadUncategorized:
 UPDATE feed_item
-SET is_read = 1
+SET is_read = 1, notification_sent = 1
 WHERE feed_source_id IN (
   SELECT url_hash
   FROM feed_source
@@ -196,8 +197,10 @@ WHERE url_hash = :urlHash;
 
 updateFeedItemReadAndBookmarked:
 UPDATE feed_item
-SET is_read = ?, is_bookmarked = ?
-WHERE url_hash = ?;
+SET is_read = :isRead,
+    is_bookmarked = :isBookmarked,
+    notification_sent = CASE WHEN :isRead THEN 1 ELSE notification_sent END
+WHERE url_hash = :urlHash;
 
 selectForSync:
 SELECT url_hash, is_read, is_bookmarked, pub_date
@@ -206,7 +209,8 @@ WHERE is_read = 1 OR is_bookmarked = 1;
 
 updateAllReadStatus:
 UPDATE feed_item
-SET is_read = :isRead
+SET is_read = :isRead,
+    notification_sent = CASE WHEN :isRead THEN 1 ELSE notification_sent END
 WHERE url_hash IN :urlHash;
 
 selectNewerItems:
@@ -239,7 +243,7 @@ AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
 
 markAllNewerAsRead:
 UPDATE feed_item
-SET is_read = 1
+SET is_read = 1, notification_sent = 1
 WHERE is_read = 0
 AND pub_date >= (
     SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId
@@ -254,7 +258,7 @@ AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
 
 markAllOlderAsRead:
 UPDATE feed_item
-SET is_read = 1
+SET is_read = 1, notification_sent = 1
 WHERE is_read = 0
 AND pub_date <= (
     SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId
@@ -303,7 +307,16 @@ ORDER BY pub_date DESC;
 
 markFeedItemsNotified:
 UPDATE feed_item
-SET notification_sent = 1;
+SET notification_sent = 1
+WHERE url_hash IN (
+    SELECT feed_item.url_hash
+    FROM feed_item
+    INNER JOIN feed_source ON feed_item.feed_source_id == feed_source.url_hash
+    LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferences.feed_source_id
+    WHERE feed_source_preferences.notifications_enabled = 1
+    AND feed_item.notification_sent = 0
+    AND is_blocked = 0
+);
 
 updateReadStatusFromFeedItemStatus:
 UPDATE feed_item

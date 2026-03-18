@@ -35,6 +35,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerIosDesktop
 import com.prof18.feedflow.shared.domain.model.CurrentOS
+import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerIos
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
@@ -58,6 +59,7 @@ import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.MainSettingsViewModel
 import com.prof18.feedflow.shared.presentation.MinifluxSyncViewModel
+import com.prof18.feedflow.shared.presentation.NotificationsViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReadingBehaviorSettingsViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
@@ -88,6 +90,7 @@ fun initKoinIos(
     appVersion: String,
     telemetry: Telemetry,
     feedItemParserWorker: FeedItemParserWorker,
+    notifier: Notifier,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
         appEnvironment = appEnvironment,
@@ -107,6 +110,7 @@ fun initKoinIos(
             single { googleDrivePlatformClient }
             single { telemetry }
             single { feedItemParserWorker }
+            single<Notifier> { notifier }
             single<FeedFlowStrings> {
                 when {
                     languageCode == null -> EnFeedFlowStrings
@@ -305,6 +309,8 @@ object Deps : KoinComponent {
     fun getDeeplinkFeedViewModel() = getKoin().get<DeeplinkFeedViewModel>()
     fun getReviewViewModel() = getKoin().get<ReviewViewModel>()
     fun getSerialFeedFetcherRepository() = getKoin().get<SerialFeedFetcherRepository>()
+    fun getNotificationsViewModel() = getKoin().get<NotificationsViewModel>()
+    fun getNotifier() = getKoin().get<Notifier>()
     fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()
     fun getHtmlRetriever() = getKoin().get<HtmlRetriever>()
     fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()

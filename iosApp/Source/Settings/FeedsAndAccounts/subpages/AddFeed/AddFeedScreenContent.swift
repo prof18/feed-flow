@@ -20,12 +20,15 @@ struct AddFeedScreenContent: View {
     @Binding var showError: Bool
     @Binding var errorMessage: String
     @Binding var isAddingFeed: Bool
+    var showNotificationToggle: Bool
+    @Binding var isNotificationEnabled: Bool
 
     var categorySelectorObserver: CategorySelectorObserver
     let viewModel: AddFeedViewModel
 
     let showCloseButton: Bool
     let updateFeedUrlTextFieldValue: (String) -> Void
+    let onNotificationToggled: (Bool) -> Void
     let addFeed: () -> Void
 
     var body: some View {
@@ -87,6 +90,17 @@ struct AddFeedScreenContent: View {
                     }
                 )
                 .buttonStyle(.plain)
+            }
+
+            if showNotificationToggle {
+                Section {
+                    Toggle(isOn: $isNotificationEnabled) {
+                        Text(feedFlowStrings.enableNotificationsForFeed)
+                    }
+                    .onChange(of: isNotificationEnabled) {
+                        onNotificationToggled(isNotificationEnabled)
+                    }
+                }
             }
         }
         .scrollContentBackground(.hidden)

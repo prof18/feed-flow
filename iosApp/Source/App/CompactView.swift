@@ -149,5 +149,9 @@ struct CompactView: View {
                 self.navDrawerState = state
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { _ in
+            showAddFeedSheet = false
+            showEditFeedSheet = false
+        }
     }
 }

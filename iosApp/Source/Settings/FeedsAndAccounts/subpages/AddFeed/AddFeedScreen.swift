@@ -21,6 +21,8 @@ struct AddFeedScreen: View {
     @State private var errorMessage = ""
     @State private var isAddingFeed = false
     @State var feedURL = ""
+    @State private var showNotificationToggle = false
+    @State private var isNotificationEnabled = false
 
     var showCloseButton: Bool
 
@@ -37,11 +39,16 @@ struct AddFeedScreen: View {
                 showError: $showError,
                 errorMessage: $errorMessage,
                 isAddingFeed: $isAddingFeed,
+                showNotificationToggle: showNotificationToggle,
+                isNotificationEnabled: $isNotificationEnabled,
                 categorySelectorObserver: categorySelectorObserver,
                 viewModel: vmStoreOwner.instance,
                 showCloseButton: showCloseButton,
                 updateFeedUrlTextFieldValue: { value in
                     vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
+                },
+                onNotificationToggled: { enabled in
+                    vmStoreOwner.instance.updateNotificationStatus(status: enabled)
                 },
                 addFeed: {
                     vmStoreOwner.instance.addFeed()
@@ -104,6 +111,16 @@ struct AddFeedScreen: View {
                 self.categorySelectorObserver.selectedCategory = state.categories.first {
                     $0.isSelected
                 }
+            }
+        }
+        .task {
+            for await show in vmStoreOwner.instance.showNotificationToggleState {
+                self.showNotificationToggle = show as? Bool ?? false
+            }
+        }
+        .task {
+            for await enabled in vmStoreOwner.instance.isNotificationEnabledState {
+                self.isNotificationEnabled = enabled as? Bool ?? false
             }
         }
     }

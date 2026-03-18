@@ -44,7 +44,7 @@ jsoup = "1.22.1"
 # https://github.com/java-native-access/jna
 jsystem-theme-detector = "3.9.1"
 junit = "4.13.2"
-kermit = "2.0.8"
+kermit = "2.1.0"
 koin-bom = "4.1.1"
 kotest = "6.1.2"
 kotlin = "2.3.0"

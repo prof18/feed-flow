@@ -101,11 +101,11 @@ internal class FeedSyncIosWorker(
                 logger.e(e) { "SQLiteException during upload" }
                 try {
                     feedSyncer.closeDB()
-                    logger.e { "Sync database closed after error" }
+                    logger.d { "Sync database closed after error" }
                     getDatabaseUrl()?.let { path ->
                         NSFileManager.defaultManager.removeItemAtURL(path, null)
                         feedSyncer.populateSyncDbIfEmpty()
-                        logger.e { "Sync database recreated after error" }
+                        logger.d { "Sync database recreated after error" }
                     }
                 } catch (_: Exception) {
                     // best effort

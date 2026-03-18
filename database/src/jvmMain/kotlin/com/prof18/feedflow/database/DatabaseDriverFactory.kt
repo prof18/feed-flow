@@ -20,6 +20,7 @@ fun createDatabaseDriver(
     val databasePath = File(appPath, "/${DatabaseHelper.DB_FILE_NAME_WITH_EXTENSION}")
 
     fun createDriver(): JdbcSqliteDriver {
+        databasePath.parentFile?.mkdirs()
         val properties = Properties().apply {
             setProperty("journal_mode", "WAL")
             setProperty("synchronous", "NORMAL")

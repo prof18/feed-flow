@@ -47,6 +47,7 @@ internal fun createDatabaseDriver(
 
     var driver: JdbcSqliteDriver? = null
     try {
+        databasePath.parentFile?.mkdirs()
         driver = JdbcSqliteDriver("jdbc:sqlite:${databasePath.absolutePath}", properties)
 
         applyPragmaSettings(driver, logger)
@@ -94,6 +95,7 @@ internal fun createDatabaseDriver(
     } catch (_: java.sql.SQLException) {
         driver?.close()
         deleteDatabaseFiles(databasePath, logger)
+        databasePath.parentFile?.mkdirs()
         val newDriver = JdbcSqliteDriver("jdbc:sqlite:${databasePath.absolutePath}", properties)
         applyPragmaSettings(newDriver, logger)
         recreateSyncSchema(newDriver, schemaVersion)

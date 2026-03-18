@@ -21,9 +21,7 @@ object AppDataPathBuilder {
         } else {
             appDataPath
         }
-        if (!File(appPath).exists()) {
-            File(appPath).mkdirs()
-        }
+        File(appPath).mkdirs()
         return appPath
     }
 }

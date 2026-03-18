@@ -9,7 +9,11 @@
 import FeedFlowKit
 import Foundation
 
-func startKoin() {
+private class NoOpNotifier: Notifier {
+    func showNewArticlesNotification(feedSourcesToNotify: [FeedSourceToNotify]) -> Bool { false }
+}
+
+func startKoin(notifier: (any Notifier)? = nil) {
     let appEnvironment: AppEnvironment
     #if DEBUG
         appEnvironment = AppEnvironment.Debug()
@@ -30,7 +34,8 @@ func startKoin() {
         googleDrivePlatformClient: GoogleDrivePlatformClient(),
         appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
         telemetry: TelemetryReporter(),
-        feedItemParserWorker: FeedItemParserWorkerIos()
+        feedItemParserWorker: FeedItemParserWorkerIos(),
+        notifier: notifier ?? NoOpNotifier()
     )
     _feedFlowStrings = Deps.shared.getFeedFlowStrings()
 }

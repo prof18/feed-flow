@@ -155,5 +155,10 @@ struct RegularView: View {
                 self.navDrawerState = state
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { _ in
+            showAddFeedSheet = false
+            showEditFeedSheet = false
+            showSettings = false
+        }
     }
 }

@@ -6,6 +6,7 @@ import Foundation
 import SwiftUI
 import SwiftyDropbox
 import TelemetryDeck
+import UserNotifications
 import WidgetKit
 
 @main
@@ -20,7 +21,7 @@ struct FeedFlowApp: App {
     private var feedSyncTimer: FeedSyncTimer = .init()
 
     init() {
-        startKoin()
+        startKoin(notifier: IOSNotifier())
         setupTelemetry()
         _browserSelector = State(initialValue: BrowserSelector())
 
@@ -54,20 +55,43 @@ struct FeedFlowApp: App {
             }
 
             let backgroundTask = Task {
+                let repo = Deps.shared.getSerialFeedFetcherRepository()
+                var fetchSucceeded = false
+
+                // Phase 1: Fetch feeds (expensive, may be interrupted)
                 do {
-                    let repo = Deps.shared.getSerialFeedFetcherRepository()
                     try await repo.fetchFeeds()
-                    if Task.isCancelled {
-                        finish(success: false)
-                        return
-                    }
-                    WidgetCenter.shared.reloadAllTimelines()
-                    finish(success: true)
+                    fetchSucceeded = true
                 } catch is CancellationError {
+                    // System cancelled — items carry over to next run
                     finish(success: false)
+                    return
                 } catch {
-                    finish(success: false)
+                    // Non-cancellation error — partial results may exist, continue to notifications
                 }
+
+                WidgetCenter.shared.reloadAllTimelines()
+
+                // Phase 2: Send notifications for whatever was fetched
+                if !Task.isCancelled {
+                    let authStatus = await UNUserNotificationCenter.current().notificationSettings()
+                    if authStatus.authorizationStatus == .authorized || authStatus.authorizationStatus == .provisional {
+                        do {
+                            let itemsToNotify = try await repo.getFeedSourceToNotify()
+                            if !itemsToNotify.isEmpty {
+                                let notifier = Deps.shared.getNotifier()
+                                let hasShown = notifier.showNewArticlesNotification(feedSourcesToNotify: itemsToNotify)
+                                if hasShown {
+                                    try await repo.markItemsAsNotified()
+                                }
+                            }
+                        } catch {
+                            // Best effort — items will be picked up next run
+                        }
+                    }
+                }
+
+                finish(success: fetchSucceeded)
             }
 
             task.expirationHandler = {
@@ -155,16 +179,42 @@ func setupTelemetry() {
     #endif
 }
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+        UNUserNotificationCenter.current().delegate = self
+
         #if !DEBUG
             configureFirebase()
         #endif
 
         return true
+    }
+
+    func userNotificationCenter(
+        _: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let userInfo = response.notification.request.content.userInfo
+        if let urlString = userInfo["url"] as? String {
+            NotificationCenter.default.post(
+                name: .didReceiveNotificationDeepLink,
+                object: nil,
+                userInfo: ["url": urlString]
+            )
+        }
+        completionHandler()
+    }
+
+    func userNotificationCenter(
+        _: UNUserNotificationCenter,
+        willPresent _: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound])
     }
 
     func application(

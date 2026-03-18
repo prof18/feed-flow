@@ -50,6 +50,10 @@ struct FeedsAndAccountsScreen: View {
                     }
                 }
 
+                NavigationLink(destination: NotificationsSettingsScreen()) {
+                    Label(feedFlowStrings.settingsNotificationsTitle, systemImage: "bell")
+                }
+
                 NavigationLink(destination: BlockedWordsScreen()) {
                     Label(feedFlowStrings.settingsBlockedWords, systemImage: "exclamationmark.triangle")
                 }

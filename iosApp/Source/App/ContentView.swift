@@ -19,6 +19,16 @@ struct ContentView: View {
     @State private var hasTriggeredLaunch = false
 
     @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline(unreadCount: 0)
+    @State private var navDrawerState: NavDrawerState = .init(
+        timeline: [],
+        read: [],
+        bookmarks: [],
+        categories: [],
+        pinnedFeedSources: [],
+        feedSourcesWithoutCategory: [],
+        feedSourcesByCategory: [:]
+    )
+    @State private var pendingNotificationSelection: NotificationSelectionTarget?
 
     var body: some View {
         @Bindable var appState = appState
@@ -78,5 +88,84 @@ struct ContentView: View {
                 }
             }
         }
+        .task {
+            for await state in vmStoreOwner.instance.navDrawerState {
+                navDrawerState = state
+                if let target = pendingNotificationSelection,
+                   let drawerItem = drawerItem(for: target) {
+                    selectedDrawerItem = drawerItem
+                    pendingNotificationSelection = nil
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { notification in
+            guard let urlString = notification.userInfo?["url"] as? String,
+                  let url = URL(string: urlString),
+                  url.scheme == "feedflow" else { return }
+            handleFeedFlowNotificationURL(url)
+        }
     }
+
+    private func handleFeedFlowNotificationURL(_ url: URL) {
+        let host = url.host ?? ""
+        let pathComponents = url.pathComponents.filter { $0 != "/" }
+
+        switch host {
+        case "feedsourcefilter":
+            if let feedSourceId = pathComponents.first {
+                showFeedScreen()
+                let target = NotificationSelectionTarget.feedSource(feedSourceId)
+                pendingNotificationSelection = target
+                selectedDrawerItem = drawerItem(for: target)
+                vmStoreOwner.instance.updateFeedSourceFilter(feedSourceId: feedSourceId)
+            }
+        case "category":
+            if let categoryId = pathComponents.first {
+                showFeedScreen()
+                let target = NotificationSelectionTarget.category(categoryId)
+                pendingNotificationSelection = target
+                selectedDrawerItem = drawerItem(for: target)
+                vmStoreOwner.instance.updateCategoryFilter(categoryId: categoryId)
+            }
+        default:
+            break
+        }
+    }
+
+    private func showFeedScreen() {
+        if appState.sizeClass == .compact {
+            appState.compatNavigationPath = NavigationPath()
+            appState.compatNavigationPath.append(CompactViewRoute.feed)
+        } else {
+            appState.regularNavigationPath = NavigationPath()
+        }
+    }
+
+    private func drawerItem(for target: NotificationSelectionTarget) -> DrawerItem? {
+        switch target {
+        case let .feedSource(feedSourceId):
+            return allFeedSourceDrawerItems().first { $0.feedSource.id == feedSourceId }
+        case let .category(categoryId):
+            return navDrawerState.categories
+                .compactMap { $0 as? DrawerItem.DrawerCategory }
+                .first { $0.category.id == categoryId }
+        }
+    }
+
+    private func allFeedSourceDrawerItems() -> [DrawerItem.DrawerFeedSource] {
+        let groupedFeedSources = navDrawerState.feedSourcesByCategory.values
+            .flatMap { $0 }
+            .compactMap { $0 as? DrawerItem.DrawerFeedSource }
+
+        return navDrawerState.pinnedFeedSources
+            .compactMap { $0 as? DrawerItem.DrawerFeedSource } +
+            navDrawerState.feedSourcesWithoutCategory
+            .compactMap { $0 as? DrawerItem.DrawerFeedSource } +
+            groupedFeedSources
+    }
+}
+
+private enum NotificationSelectionTarget {
+    case feedSource(String)
+    case category(String)
 }

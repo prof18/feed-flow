@@ -106,6 +106,9 @@ struct HomeContent: View {
         .onReceive(NotificationCenter.default.publisher(for: .feedFlowMarkAllRead)) { _ in
             showMarkAllReadDialog = true
         }
+        .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { _ in
+            sheetToShow = nil
+        }
         .onReceive(NotificationCenter.default.publisher(for: .feedFlowClearOldArticles)) { _ in
             showClearOldArticlesDialog = true
         }

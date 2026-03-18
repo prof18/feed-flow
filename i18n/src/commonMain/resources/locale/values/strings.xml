@@ -273,6 +273,8 @@
     <string name="settings_title_notifications">Notifications</string>
     <string name="settings_notifications_enable_all_title">Enable All Notifications</string>
     <string name="notification_channel_description">Notifications for new articles in your feeds</string>
+    <string name="settings_notifications_permission_description">FeedFlow needs your permission to send notifications when new articles arrive in your feeds.</string>
+    <string name="settings_notifications_open_settings_button">Open Settings</string>
     <string name="settings_notifications_permission_status_title">Permission Status</string>
     <string name="settings_notifications_permission_status_granted">Granted</string>
     <string name="settings_notifications_permission_status_denied">Denied</string>

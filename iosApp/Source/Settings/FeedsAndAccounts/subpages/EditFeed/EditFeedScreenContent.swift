@@ -25,6 +25,8 @@ struct EditFeedScreenContent: View {
     @Binding var linkOpeningPreference: LinkOpeningPreference
     @Binding var isHidden: Bool
     @Binding var isPinned: Bool
+    var showNotificationToggle: Bool
+    @Binding var isNotificationEnabled: Bool
 
     var categorySelectorObserver: CategorySelectorObserver
     let viewModel: EditFeedViewModel
@@ -34,6 +36,7 @@ struct EditFeedScreenContent: View {
     let updateLinkOpeningPreference: (LinkOpeningPreference) -> Void
     let onHiddenToggled: (Bool) -> Void
     let onPinnedToggled: (Bool) -> Void
+    let onNotificationToggled: (Bool) -> Void
     let addFeed: () -> Void
     let updateCategoryName: (String, String) -> Void
     let onDeleteFeed: () -> Void
@@ -108,6 +111,15 @@ struct EditFeedScreenContent: View {
                 }
                 .onChange(of: isPinned) {
                     onPinnedToggled(isPinned)
+                }
+
+                if showNotificationToggle {
+                    Toggle(isOn: $isNotificationEnabled) {
+                        Text(feedFlowStrings.enableNotificationsForFeed)
+                    }
+                    .onChange(of: isNotificationEnabled) {
+                        onNotificationToggled(isNotificationEnabled)
+                    }
                 }
             }
 

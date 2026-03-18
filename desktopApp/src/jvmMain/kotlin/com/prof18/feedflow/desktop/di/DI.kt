@@ -44,7 +44,7 @@ object DI {
                     }
 
                     single<Notifier> {
-                        Notifier {}
+                        Notifier { false }
                     }
 
                     single<TelemetryDeckClient> {

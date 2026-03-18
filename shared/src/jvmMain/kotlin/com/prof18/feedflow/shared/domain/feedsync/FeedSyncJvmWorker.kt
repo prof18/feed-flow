@@ -81,10 +81,12 @@ internal class FeedSyncJvmWorker(
                 feedSyncer.updateFeedItemsToSyncDatabase()
                 feedSyncer.closeDB()
 
-                accountSpecificUpload()
+                val uploaded = accountSpecificUpload()
 
-                settingsRepository.setIsSyncUploadRequired(false)
-                emitSuccessMessage()
+                if (uploaded) {
+                    settingsRepository.setIsSyncUploadRequired(false)
+                    emitSuccessMessage()
+                }
             } catch (e: Exception) {
                 if (!e.isTemporaryNetworkError()) {
                     logger.e("Upload to dropbox failed", e)
@@ -94,7 +96,7 @@ internal class FeedSyncJvmWorker(
         }
     }
 
-    private suspend fun accountSpecificUpload() =
+    private suspend fun accountSpecificUpload(): Boolean =
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.DROPBOX -> {
                 restoreDropboxClient()
@@ -107,6 +109,7 @@ internal class FeedSyncJvmWorker(
                 dropboxDataSource.performUpload(dropboxUploadParam)
                 dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.d { "Upload to dropbox successfully" }
+                true
             }
 
             SyncAccounts.ICLOUD -> {
@@ -129,10 +132,14 @@ internal class FeedSyncJvmWorker(
                         logger.d { "Unknown error during iCloud upload. Check the enum mapping" }
                     }
                 }
+                true
             }
 
             SyncAccounts.GOOGLE_DRIVE -> {
                 restoreGoogleDriveClient()
+                if (!googleDriveDataSource.isClientSet()) {
+                    return false
+                }
 
                 val googleDriveUploadParam = GoogleDriveUploadParam(
                     fileName = getDatabaseNameWithExtension(),
@@ -142,6 +149,7 @@ internal class FeedSyncJvmWorker(
                 googleDriveDataSource.performUpload(googleDriveUploadParam)
                 googleDriveSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.d { "Upload to Google Drive successfully" }
+                true
             }
 
             SyncAccounts.LOCAL,
@@ -149,9 +157,7 @@ internal class FeedSyncJvmWorker(
             SyncAccounts.MINIFLUX,
             SyncAccounts.BAZQUX,
             SyncAccounts.FEEDBIN,
-            -> {
-                // Do nothing
-            }
+            -> true
         }
 
     override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
@@ -226,6 +232,9 @@ internal class FeedSyncJvmWorker(
             }
             SyncAccounts.GOOGLE_DRIVE -> {
                 restoreGoogleDriveClient()
+                if (!googleDriveDataSource.isClientSet()) {
+                    return SyncResult.General(SyncDownloadError.GoogleDriveDownloadFailed)
+                }
 
                 val googleDriveDownloadParam = GoogleDriveDownloadParam(
                     fileName = getDatabaseNameWithExtension(),

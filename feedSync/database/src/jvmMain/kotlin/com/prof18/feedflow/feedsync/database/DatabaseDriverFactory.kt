@@ -167,9 +167,8 @@ private fun deleteDatabaseFiles(databasePath: File, logger: Logger) {
             shmFile.delete()
             logger.d("Deleted corrupted SHM file")
         }
-    } catch (deleteException: Exception) {
-        logger.e("Failed to delete corrupted database files: ${deleteException.message}")
-        throw deleteException
+    } catch (e: Exception) {
+        logger.e("Failed to delete corrupted database files: ${e.message}")
     }
 }
 

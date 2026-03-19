@@ -126,7 +126,7 @@ class SerialFeedFetcherRepository internal constructor(
                 // Ignore HTTP errors
                 logger.d { "Error, skip: ${feedSource.url}. Error: $e" }
             } catch (e: Throwable) {
-                logger.e { "Error, skip: ${feedSource.url}. Error: $e" }
+                logger.d { "Error, skip: ${feedSource.url}. Error: $e" }
             }
         }
     }

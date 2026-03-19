@@ -20,6 +20,7 @@ fun createDatabaseDriver(
     val databasePath = File(appPath, "/${DatabaseHelper.DB_FILE_NAME_WITH_EXTENSION}")
 
     fun createDriver(): JdbcSqliteDriver {
+        databasePath.parentFile?.mkdirs()
         val properties = Properties().apply {
             setProperty("journal_mode", "WAL")
             setProperty("synchronous", "NORMAL")
@@ -58,7 +59,8 @@ private fun initDatabase(driver: SqlDriver, logger: Logger): SqlDriver {
     if (currentVer == 0L) {
         if (hasAnyUserTables(driver)) {
             logger.w("init: existing tables with user_version 0, recreating schema")
-            throw java.sql.SQLException("inconsistent database state: tables exist but user_version is 0")
+            DesktopDatabaseErrorState.setError(true)
+            dropAllUserObjects(driver)
         }
         FeedFlowDB.Schema.create(driver)
         setVersion(driver, schemaVersion)
@@ -90,6 +92,32 @@ private fun hasAnyUserTables(driver: SqlDriver): Boolean {
         null,
     )
     return (cursor.value ?: 0L) > 0L
+}
+
+private fun dropAllUserObjects(driver: SqlDriver) {
+    val viewsCursor = driver.executeQuery(
+        null,
+        "SELECT group_concat(name, ',') FROM sqlite_master WHERE type='view';",
+        { QueryResult.Value(it.getString(0)) },
+        0,
+        null,
+    )
+    viewsCursor.value?.split(',')?.filter { it.isNotBlank() }?.forEach { viewName ->
+        driver.execute(null, "DROP VIEW IF EXISTS \"$viewName\";", 0, null)
+    }
+
+    val tablesCursor = driver.executeQuery(
+        null,
+        "SELECT group_concat(name, ',') FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';",
+        { QueryResult.Value(it.getString(0)) },
+        0,
+        null,
+    )
+    driver.execute(null, "PRAGMA foreign_keys=OFF;", 0, null)
+    tablesCursor.value?.split(',')?.filter { it.isNotBlank() }?.forEach { tableName ->
+        driver.execute(null, "DROP TABLE IF EXISTS \"$tableName\";", 0, null)
+    }
+    driver.execute(null, "PRAGMA foreign_keys=ON;", 0, null)
 }
 
 private fun deleteDatabaseFiles(databasePath: File, logger: Logger) {

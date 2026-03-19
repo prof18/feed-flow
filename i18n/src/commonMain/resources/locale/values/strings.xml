@@ -27,6 +27,7 @@
     <string name="export_dialog_title">Save OPML file</string>
     <string name="export_started_message">Generating export</string>
     <string name="generic_error_message">Sorry, something went wrong :(</string>
+    <string name="browser_launch_error">Unable to open the link. Please check your browser settings.</string>
     <string name="load_file_error_message">Unable to load file</string>
     <string name="default_browser">Default browser</string>
     <string name="feed_error_message_improved">Couldn’t load "%s". It may be unavailable, or your internet connection might be down.</string>

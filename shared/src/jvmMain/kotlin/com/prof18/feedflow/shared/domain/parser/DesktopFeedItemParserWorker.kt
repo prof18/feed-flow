@@ -179,7 +179,7 @@ internal class DesktopFeedItemParserWorker(
 
             val errorObj = page.executeJavaScript("parsingError").javaScriptResult
             if (errorObj != null && errorObj != Undefined.instance) {
-                logger.e { "Readability JS error: $errorObj" }
+                logger.d { "Readability JS error: $errorObj" }
                 return null
             }
 
@@ -187,14 +187,14 @@ internal class DesktopFeedItemParserWorker(
             val resultJson = if (resultObj != null && resultObj != Undefined.instance) {
                 resultObj.toString()
             } else {
-                logger.e { "Readability returned no result" }
+                logger.d { "Readability returned no result" }
                 return null
             }
 
             val jsObject = Json.parseToJsonElement(resultJson).jsonObject
             val content = jsObject["content"]?.jsonPrimitive?.content
             if (content.isNullOrBlank()) {
-                logger.e { "Readability returned empty content" }
+                logger.d { "Readability returned empty content" }
                 return null
             }
             val title = jsObject["title"]?.jsonPrimitive?.takeIf { it.isString }?.content

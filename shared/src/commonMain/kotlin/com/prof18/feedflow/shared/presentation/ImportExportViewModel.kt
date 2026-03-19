@@ -43,7 +43,7 @@ class ImportExportViewModel internal constructor(
                     )
                 }
             } catch (e: Throwable) {
-                logger.e(e) { "Error while importing feed" }
+                logger.d(e) { "Error while importing feed" }
                 importerMutableState.update { FeedImportExportState.Error }
             }
         }

@@ -203,7 +203,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `disconnect clears account and sets state to Unlinked from Linked after login`() = runTest(testDispatcher) {
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val unlinkedState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
 

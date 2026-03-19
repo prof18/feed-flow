@@ -46,7 +46,7 @@ class GoogleDriveDataSourceJvmImpl(
             googleDriveSettings.setGoogleDriveLinked(true)
             true
         } catch (e: Exception) {
-            logger.e(e) { "Error during Google Drive auth flow" }
+            logger.d(e) { "Error during Google Drive auth flow" }
             false
         }
     }

@@ -170,6 +170,14 @@ internal fun HomeScreen(
                 } else {
                     navigateToReaderMode
                 },
+                onBrowserError = {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            strings.browserLaunchError,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+                },
             )
         },
         updateBookmarkStatus = { feedItemId, isBookmarked ->
@@ -195,7 +203,17 @@ internal fun HomeScreen(
             changeFeedCategoryViewModel.loadFeedSource(feedSource)
             showChangeCategorySheet = true
         },
-        onOpenWebsite = { url -> uriHandler.openUri(url.sanitizeUrl()) },
+        onOpenWebsite = { url ->
+            runCatching { uriHandler.openUri(url.sanitizeUrl()) }
+                .onFailure {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            strings.browserLaunchError,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+                }
+        },
         onMoveFeedSourcesToCategory = { feedSources, category ->
             changeFeedCategoryViewModel.moveFeedSourcesToCategory(feedSources, category)
         },
@@ -297,25 +315,31 @@ private fun handleOpenUrlForDesktop(
     browserManager: BrowserManager,
     uriHandler: UriHandler,
     onOpenReaderArticle: (FeedItemUrlInfo) -> Unit,
+    onBrowserError: () -> Unit,
 ) {
+    fun openUri(url: String) {
+        runCatching { uriHandler.openUri(url) }
+            .onFailure { onBrowserError() }
+    }
+
     when (feedItemUrlInfo.linkOpeningPreference) {
         LinkOpeningPreference.READER_MODE -> {
             onOpenReaderArticle(feedItemUrlInfo)
         }
 
         LinkOpeningPreference.INTERNAL_BROWSER -> {
-            uriHandler.openUri(feedItemUrlInfo.url)
+            openUri(feedItemUrlInfo.url)
         }
 
         LinkOpeningPreference.PREFERRED_BROWSER -> {
-            uriHandler.openUri(feedItemUrlInfo.url)
+            openUri(feedItemUrlInfo.url)
         }
 
         LinkOpeningPreference.DEFAULT -> {
             if (browserManager.openReaderMode() && !feedItemUrlInfo.shouldOpenInBrowser()) {
                 onOpenReaderArticle(feedItemUrlInfo)
             } else {
-                uriHandler.openUri(feedItemUrlInfo.url.sanitizeUrl())
+                openUri(feedItemUrlInfo.url.sanitizeUrl())
             }
         }
     }

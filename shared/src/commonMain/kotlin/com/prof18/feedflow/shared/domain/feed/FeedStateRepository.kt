@@ -140,9 +140,6 @@ internal class FeedStateRepository(
         currentFeedFilterMutableState.update {
             feedFilter
         }
-        // nextFeedFilterMutableState.update {
-        //     getNextFeedFilterOrNullUseCase(feedFilter)
-        // }
         getFeeds()
     }
 

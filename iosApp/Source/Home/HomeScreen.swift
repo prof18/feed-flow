@@ -45,6 +45,8 @@ struct HomeScreen: View {
 
     @State var feedLayout: FeedLayout = .list
 
+    @State var isHideUnreadDotEnabled: Bool = false
+
     @Binding var toggleListScroll: Bool
 
     @Binding var showSettings: Bool
@@ -75,6 +77,7 @@ struct HomeScreen: View {
             feedFontSizes: $feedFontSizes,
             swipeActions: $swipeActions,
             feedLayout: $feedLayout,
+            isHideUnreadDotEnabled: $isHideUnreadDotEnabled,
             onRefresh: {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
@@ -228,6 +231,11 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.feedLayout {
                 self.feedLayout = state
+            }
+        }
+        .task {
+            for await state in homeViewModel.hideUnreadDot {
+                self.isHideUnreadDotEnabled = state as? Bool ?? false
             }
         }
         .onChange(of: scenePhase) {

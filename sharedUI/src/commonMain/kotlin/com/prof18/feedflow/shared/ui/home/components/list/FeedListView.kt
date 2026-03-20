@@ -82,6 +82,7 @@ internal fun FeedList(
     listState: LazyListState = rememberLazyListState(),
     onMarkAllAboveAsRead: (String) -> Unit = {},
     onMarkAllBelowAsRead: (String) -> Unit = {},
+    isHideUnreadDotEnabled: Boolean = false,
 ) {
     val shouldStartPaginate = remember {
         derivedStateOf {
@@ -146,6 +147,7 @@ internal fun FeedList(
                             currentFeedFilter = currentFeedFilter,
                             onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                             onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                            isHideUnreadDotEnabled = isHideUnreadDotEnabled,
                         )
                     } else {
                         SwipeableActionsBox(
@@ -169,6 +171,7 @@ internal fun FeedList(
                                 currentFeedFilter = currentFeedFilter,
                                 onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                                 onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                                isHideUnreadDotEnabled = isHideUnreadDotEnabled,
                             )
                         }
                     }

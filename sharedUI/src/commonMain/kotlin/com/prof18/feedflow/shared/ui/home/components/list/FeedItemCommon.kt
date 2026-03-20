@@ -31,11 +31,12 @@ internal fun FeedSourceAndUnreadDotRow(
     feedItem: FeedItem,
     feedFontSize: FeedFontSizes,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
+    isHideUnreadDotEnabled: Boolean = false,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (!feedItem.isRead) {
+        if (!feedItem.isRead && !isHideUnreadDotEnabled) {
             UnreadDot(
                 modifier = Modifier
                     .padding(

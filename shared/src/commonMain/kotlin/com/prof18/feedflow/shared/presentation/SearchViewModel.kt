@@ -66,6 +66,7 @@ class SearchViewModel internal constructor(
     private val dateFormat: DateFormat = feedAppearanceSettingsRepository.getDateFormat()
     private val timeFormat: TimeFormat = feedAppearanceSettingsRepository.getTimeFormat()
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
+    val hideUnreadDot: StateFlow<Boolean> = feedAppearanceSettingsRepository.hideUnreadDot
 
     private val feedLayout = feedAppearanceSettingsRepository.getFeedLayout()
 

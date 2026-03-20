@@ -67,6 +67,7 @@ internal fun HomeScreen(
     val swipeActions by homeViewModel.swipeActions.collectAsState()
     val feedOperation by homeViewModel.feedOperationState.collectAsState()
     val feedLayout by homeViewModel.feedLayout.collectAsState()
+    val isHideUnreadDotEnabled by homeViewModel.hideUnreadDot.collectAsState()
     val refreshTrigger by homeViewModel.refreshTriggerState.collectAsState()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsState()
@@ -134,6 +135,7 @@ internal fun HomeScreen(
         swipeActions = swipeActions,
         feedLayout = feedLayout,
         nextFeedDisplayState = NextFeedDisplayDisabledState,
+        isHideUnreadDotEnabled = isHideUnreadDotEnabled,
     )
 
     val openReaderArticle: (FeedItemUrlInfo) -> Unit = { article ->

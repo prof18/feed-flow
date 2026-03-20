@@ -85,6 +85,7 @@ fun SearchScreenContent(
     onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
     onOpenFeedWebsite: (String) -> Unit,
     modifier: Modifier = Modifier,
+    isHideUnreadDotEnabled: Boolean = false,
     snackbarHost: @Composable () -> Unit = {
     },
 ) {
@@ -166,6 +167,7 @@ fun SearchScreenContent(
                                     onShareClick = onShareClick,
                                     onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                                     onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                                    isHideUnreadDotEnabled = isHideUnreadDotEnabled,
                                 )
                             }
                         }

@@ -28,6 +28,7 @@ fun FeedItemPreview(
     dateFormat: DateFormat,
     timeFormat: TimeFormat,
     modifier: Modifier = Modifier,
+    isHideUnreadDotEnabled: Boolean = false,
 ) {
     Box(
         modifier = modifier
@@ -95,6 +96,7 @@ fun FeedItemPreview(
                 feedLayout = feedLayout,
                 onMarkAllAboveAsRead = {},
                 onMarkAllBelowAsRead = {},
+                isHideUnreadDotEnabled = isHideUnreadDotEnabled,
             )
         }
     }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.outlined.EventBusy
+import androidx.compose.material.icons.outlined.FiberManualRecord
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
 import androidx.compose.material.icons.outlined.SubtitlesOff
@@ -62,6 +63,7 @@ internal fun FeedListPane(
     onTimeFormatUpdate: (TimeFormat) -> Unit,
     onSwipeActionUpdate: (SwipeDirection, SwipeActionType) -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
+    onHideUnreadDotUpdate: (Boolean) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
     var showFeedOrderDialog by remember { mutableStateOf(false) }
@@ -75,6 +77,7 @@ internal fun FeedListPane(
             isHideDateEnabled = settingsState.isHideDateEnabled,
             dateFormat = settingsState.dateFormat,
             timeFormat = settingsState.timeFormat,
+            isHideUnreadDotEnabled = settingsState.isHideUnreadDotEnabled,
         )
 
         Column(
@@ -120,6 +123,13 @@ internal fun FeedListPane(
                 icon = Icons.Outlined.EventBusy,
                 isChecked = settingsState.isHideDateEnabled,
                 onCheckedChange = onHideDateUpdate,
+            )
+
+            SettingSwitchItem(
+                title = LocalFeedFlowStrings.current.settingsHideUnreadDot,
+                icon = Icons.Outlined.FiberManualRecord,
+                isChecked = settingsState.isHideUnreadDotEnabled,
+                onCheckedChange = onHideUnreadDotUpdate,
             )
 
             SettingSwitchItem(
@@ -248,6 +258,7 @@ private fun FeedListPanePreview() {
             onTimeFormatUpdate = {},
             onSwipeActionUpdate = { _, _ -> },
             onFeedOrderSelected = {},
+            onHideUnreadDotUpdate = {},
         )
     }
 }

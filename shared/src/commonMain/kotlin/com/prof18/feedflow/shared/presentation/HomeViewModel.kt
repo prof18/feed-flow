@@ -94,6 +94,7 @@ class HomeViewModel internal constructor(
     val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
     val swipeActions: StateFlow<SwipeActions> = feedAppearanceSettingsRepository.swipeActions
     val feedLayout: StateFlow<FeedLayout> = feedAppearanceSettingsRepository.feedLayout
+    val hideUnreadDot: StateFlow<Boolean> = feedAppearanceSettingsRepository.hideUnreadDot
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 

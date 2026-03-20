@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.outlined.EventBusy
+import androidx.compose.material.icons.outlined.FiberManualRecord
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
 import androidx.compose.material.icons.outlined.SubtitlesOff
@@ -62,6 +63,7 @@ internal fun FeedListSettingsScreenContent(
     onSwipeActionSelected: (SwipeDirection, SwipeActionType) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
+    setHideUnreadDot: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -93,6 +95,7 @@ internal fun FeedListSettingsScreenContent(
                 isHideDateEnabled = state.isHideDateEnabled,
                 dateFormat = state.dateFormat,
                 timeFormat = state.timeFormat,
+                isHideUnreadDotEnabled = state.isHideUnreadDotEnabled,
             )
 
             LazyColumn {
@@ -146,6 +149,15 @@ internal fun FeedListSettingsScreenContent(
                         icon = Icons.Outlined.EventBusy,
                         isChecked = state.isHideDateEnabled,
                         onCheckedChange = setHideDate,
+                    )
+                }
+
+                item {
+                    SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideUnreadDot,
+                        icon = Icons.Outlined.FiberManualRecord,
+                        isChecked = state.isHideUnreadDotEnabled,
+                        onCheckedChange = setHideUnreadDot,
                     )
                 }
 
@@ -249,6 +261,7 @@ private fun FeedListSettingsScreenContentPreview() {
             onSwipeActionSelected = { _, _ -> },
             setRemoveTitleFromDescription = {},
             onFeedOrderSelected = {},
+            setHideUnreadDot = {},
         )
     }
 }

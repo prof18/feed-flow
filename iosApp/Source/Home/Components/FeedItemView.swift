@@ -18,11 +18,12 @@ struct FeedItemView: View {
     let feedFontSizes: FeedFontSizes
     var feedLayout: FeedLayout = .list
     var currentFeedFilter: FeedFilter = .Timeline()
+    var isHideUnreadDotEnabled: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                if !feedItem.isRead {
+                if !feedItem.isRead && !isHideUnreadDotEnabled {
                     Circle()
                         .fill(Color.accentColor)
                         .frame(width: 10, height: 10)

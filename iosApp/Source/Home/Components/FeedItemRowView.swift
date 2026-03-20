@@ -18,6 +18,7 @@ struct FeedItemRowView: View {
     let swipeActions: SwipeActions
     let feedLayout: FeedLayout
     let currentFeedFilter: FeedFilter
+    var isHideUnreadDotEnabled: Bool = false
     let onItemClick: (FeedItemUrlInfo) -> Void
     let onReaderModeClick: (FeedItemUrlInfo) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
@@ -75,7 +76,8 @@ struct FeedItemRowView: View {
                     index: index,
                     feedFontSizes: feedFontSizes,
                     feedLayout: feedLayout,
-                    currentFeedFilter: currentFeedFilter
+                    currentFeedFilter: currentFeedFilter,
+                    isHideUnreadDotEnabled: isHideUnreadDotEnabled
                 )
                 .contentShape(Rectangle())
             }

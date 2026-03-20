@@ -50,6 +50,7 @@ internal fun FeedItemView(
     modifier: Modifier = Modifier,
     disableClick: Boolean = false,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
+    isHideUnreadDotEnabled: Boolean = false,
     onMarkAllBelowAsRead: (String) -> Unit,
 ) {
     var showItemMenu by remember {
@@ -100,6 +101,7 @@ internal fun FeedItemView(
                 feedItem = feedItem,
                 feedFontSize = feedFontSize,
                 currentFeedFilter = currentFeedFilter,
+                isHideUnreadDotEnabled = isHideUnreadDotEnabled,
             )
 
             TitleSubtitleAndImageRow(

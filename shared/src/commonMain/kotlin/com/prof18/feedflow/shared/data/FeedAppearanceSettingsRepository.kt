@@ -28,6 +28,17 @@ class FeedAppearanceSettingsRepository(
     private val feedLayoutMutableFlow = MutableStateFlow(getFeedLayout())
     val feedLayout: StateFlow<FeedLayout> = feedLayoutMutableFlow.asStateFlow()
 
+    private val hideUnreadDotMutableFlow = MutableStateFlow(getHideUnreadDot())
+    val hideUnreadDot: StateFlow<Boolean> = hideUnreadDotMutableFlow.asStateFlow()
+
+    fun getHideUnreadDot(): Boolean =
+        settings.getBoolean(FeedAppearanceSettingsFields.HIDE_UNREAD_DOT.name, false)
+
+    fun setHideUnreadDot(value: Boolean) {
+        settings.set(FeedAppearanceSettingsFields.HIDE_UNREAD_DOT.name, value)
+        hideUnreadDotMutableFlow.update { value }
+    }
+
     fun getRemoveTitleFromDescription(): Boolean =
         settings.getBoolean(FeedAppearanceSettingsFields.REMOVE_TITLE_FROM_DESCRIPTION.name, false)
 
@@ -133,4 +144,5 @@ private enum class FeedAppearanceSettingsFields {
     DATE_FORMAT,
     TIME_FORMAT,
     FEED_LAYOUT,
+    HIDE_UNREAD_DOT,
 }

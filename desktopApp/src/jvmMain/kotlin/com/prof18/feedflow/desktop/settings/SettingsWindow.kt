@@ -179,6 +179,7 @@ internal fun SettingsWindow(
                         onTimeFormatUpdate = feedListSettingsViewModel::updateTimeFormat,
                         onSwipeActionUpdate = feedListSettingsViewModel::updateSwipeAction,
                         onFeedOrderSelected = menuBarViewModel::updateFeedOrder,
+                        onHideUnreadDotUpdate = feedListSettingsViewModel::updateHideUnreadDot,
                     )
 
                     DesktopSettingsCategory.READING -> ReadingPane(

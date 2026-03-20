@@ -21,7 +21,8 @@ struct FeedListSettingsScreen: View {
         leftSwipeActionType: .toggleReadStatus,
         rightSwipeActionType: .toggleBookmarkStatus,
         isRemoveTitleFromDescriptionEnabled: false,
-        feedOrder: .newestFirst
+        feedOrder: .newestFirst,
+        isHideUnreadDotEnabled: false
     )
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor: Double = 0.0
@@ -90,6 +91,10 @@ struct FeedListSettingsScreen: View {
             feedOrder: Binding(
                 get: { settingsState.feedOrder },
                 set: { vmStoreOwner.instance.updateFeedOrder(feedOrder: $0) }
+            ),
+            isHideUnreadDotEnabled: Binding(
+                get: { settingsState.isHideUnreadDotEnabled },
+                set: { vmStoreOwner.instance.updateHideUnreadDot(value: $0) }
             ),
             onScaleFactorChange: { newValue in
                 vmStoreOwner.instance.updateFontScale(value: Int32(newValue))

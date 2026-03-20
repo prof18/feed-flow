@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.EventBusy
+import androidx.compose.material.icons.outlined.FiberManualRecord
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
 import androidx.compose.material.icons.outlined.SubtitlesOff
@@ -68,6 +69,7 @@ internal fun FeedListAppearanceDialog(
                     isHideDateEnabled = settingsState.isHideDateEnabled,
                     dateFormat = settingsState.dateFormat,
                     timeFormat = settingsState.timeFormat,
+                    isHideUnreadDotEnabled = settingsState.isHideUnreadDotEnabled,
                 )
 
                 Column(
@@ -116,6 +118,13 @@ internal fun FeedListAppearanceDialog(
                         icon = Icons.Outlined.EventBusy,
                         isChecked = settingsState.isHideDateEnabled,
                         onCheckedChange = { callbacks.onHideDateUpdate(it) },
+                    )
+
+                    SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideUnreadDot,
+                        icon = Icons.Outlined.FiberManualRecord,
+                        isChecked = settingsState.isHideUnreadDotEnabled,
+                        onCheckedChange = { callbacks.onHideUnreadDotUpdate(it) },
                     )
 
                     SettingSwitchItem(
@@ -170,4 +179,5 @@ internal data class FeedListAppearanceCallbacks(
     val onDateFormatUpdate: (DateFormat) -> Unit,
     val onTimeFormatUpdate: (TimeFormat) -> Unit,
     val onSwipeActionUpdate: (SwipeDirection, SwipeActionType) -> Unit,
+    val onHideUnreadDotUpdate: (Boolean) -> Unit,
 )

@@ -33,11 +33,11 @@ class HomeDisplayState(
 
 @Stable
 sealed class NextFeedDisplayState {
-    class NextFeedDisplayEnabledState(
+    data class NextFeedDisplayEnabledState(
         val title: String,
     ) : NextFeedDisplayState()
 
-    class NextFeedDisplayDisabledState : NextFeedDisplayState()
+    data object NextFeedDisplayDisabledState : NextFeedDisplayState()
 }
 
 @Stable

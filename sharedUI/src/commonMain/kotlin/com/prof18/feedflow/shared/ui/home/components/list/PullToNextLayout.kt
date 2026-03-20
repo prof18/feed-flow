@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 
 @Composable
@@ -166,6 +167,7 @@ fun PullToNextIndicator(
     modifier: Modifier = Modifier,
     title: String? = null,
 ) {
+    val flowStrings = LocalFeedFlowStrings.current
     val fillStartThreshold = 0.50f
 
     val fillProgress = if (progress > fillStartThreshold) {
@@ -202,7 +204,7 @@ fun PullToNextIndicator(
             )
             Icon(
                 imageVector = Icons.Default.KeyboardArrowUp,
-                contentDescription = "Next",
+                contentDescription = flowStrings.next,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp),
             )

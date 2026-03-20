@@ -289,6 +289,6 @@ private fun openUrl(
 }
 
 fun NextFeedPreviewState.asDisplayState(): NextFeedDisplayState = when (this) {
-    is NextFeedPreviewDisabledState -> NextFeedDisplayState.NextFeedDisplayDisabledState()
+    is NextFeedPreviewDisabledState -> NextFeedDisplayState.NextFeedDisplayDisabledState
     is NextFeedPreviewEnabledState -> NextFeedDisplayState.NextFeedDisplayEnabledState(this.title)
 }

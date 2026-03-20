@@ -296,7 +296,7 @@ internal fun FeedListPreview() {
         PreviewColumn {
             FeedList(
                 feedItems = feedItemsForPreview,
-                nextFeedState = NextFeedDisplayState.NextFeedDisplayDisabledState(),
+                nextFeedState = NextFeedDisplayState.NextFeedDisplayDisabledState,
                 feedFontSize = FeedFontSizes(),
                 feedLayout = FeedLayout.LIST,
                 currentFeedFilter = FeedFilter.Timeline,
@@ -321,7 +321,7 @@ internal fun FeedListPreview() {
 
             FeedList(
                 feedItems = feedItemsForPreview,
-                nextFeedState = NextFeedDisplayState.NextFeedDisplayDisabledState(),
+                nextFeedState = NextFeedDisplayState.NextFeedDisplayDisabledState,
                 feedFontSize = FeedFontSizes(),
                 feedLayout = FeedLayout.CARD,
                 currentFeedFilter = FeedFilter.Timeline,

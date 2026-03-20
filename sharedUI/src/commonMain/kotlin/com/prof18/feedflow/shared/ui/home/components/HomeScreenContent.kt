@@ -192,31 +192,32 @@ fun HomeScreenContent(
                                 listState = listState,
                                 feedFontSize = displayState.feedFontSizes,
                                 nextFeedState = displayState.nextFeedDisplayState,
-                            shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
-                            shareMenuLabel = shareBehavior.shareLinkTitle,
-                            currentFeedFilter = displayState.currentFeedFilter,
-                            swipeActions = displayState.swipeActions,
-                            requestMoreItems = feedListActions.requestNewData,
-                            onFeedItemClick = { feedInfo ->
-                                feedListActions.openUrl(feedInfo)
-                                feedListActions.markAsRead(FeedItemId(feedInfo.id))
-                            },
-                            onBookmarkClick = feedListActions.updateBookmarkStatus,
-                            onReadStatusClick = feedListActions.updateReadStatus,
-                            onCommentClick = { feedInfo ->
-                                feedListActions.openUrl(feedInfo)
-                                feedListActions.markAsRead(FeedItemId(feedInfo.id))
-                            },
-                            updateReadStatus = feedListActions.markAsReadOnScroll,
-                            markAllAsRead = feedListActions.markAllRead,
-                            onShareClick = shareBehavior.onShareClick,
-                            onOpenFeedSettings = feedManagementActions.onEditFeedClick,
-                            onOpenFeedWebsite = feedManagementActions.onOpenWebsite,
-                            feedLayout = displayState.feedLayout,
-                            onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
-                            onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
-                            onNavigateNext = { onNavigateToNextFeed() },
-                        )}
+                                shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
+                                shareMenuLabel = shareBehavior.shareLinkTitle,
+                                currentFeedFilter = displayState.currentFeedFilter,
+                                swipeActions = displayState.swipeActions,
+                                requestMoreItems = feedListActions.requestNewData,
+                                onFeedItemClick = { feedInfo ->
+                                    feedListActions.openUrl(feedInfo)
+                                    feedListActions.markAsRead(FeedItemId(feedInfo.id))
+                                },
+                                onBookmarkClick = feedListActions.updateBookmarkStatus,
+                                onReadStatusClick = feedListActions.updateReadStatus,
+                                onCommentClick = { feedInfo ->
+                                    feedListActions.openUrl(feedInfo)
+                                    feedListActions.markAsRead(FeedItemId(feedInfo.id))
+                                },
+                                updateReadStatus = feedListActions.markAsReadOnScroll,
+                                markAllAsRead = feedListActions.markAllRead,
+                                onShareClick = shareBehavior.onShareClick,
+                                onOpenFeedSettings = feedManagementActions.onEditFeedClick,
+                                onOpenFeedWebsite = feedManagementActions.onOpenWebsite,
+                                feedLayout = displayState.feedLayout,
+                                onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
+                                onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
+                                onNavigateNext = { onNavigateToNextFeed() },
+                            )
+                        }
 
                         if (topToolbarContentFadeHeight > 0.dp) {
                             TopToolbarContentFade(

@@ -133,7 +133,7 @@ internal fun HomeScreen(
         currentFeedFilter = currentFeedFilter,
         swipeActions = swipeActions,
         feedLayout = feedLayout,
-        nextFeedDisplayState = NextFeedDisplayDisabledState(),
+        nextFeedDisplayState = NextFeedDisplayDisabledState,
     )
 
     val openReaderArticle: (FeedItemUrlInfo) -> Unit = { article ->

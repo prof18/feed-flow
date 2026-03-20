@@ -307,6 +307,7 @@
     <string name="scroll_to_top_button_content_description">Scroll to top</string>
     <string name="previous_article">Previous article</string>
     <string name="next_article">Next article</string>
+    <string name="next">Next</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_system">System</string>
     <string name="settings_theme_light">Light</string>

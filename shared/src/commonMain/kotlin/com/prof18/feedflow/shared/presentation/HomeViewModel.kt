@@ -29,6 +29,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
+import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import kotlinx.collections.immutable.ImmutableList
@@ -57,6 +58,7 @@ class HomeViewModel internal constructor(
     private val feedCategoryRepository: FeedCategoryRepository,
     private val feedStateRepository: FeedStateRepository,
     private val feedFetcherRepository: FeedFetcherRepository,
+    private val getNextFeedFilterOrNullUseCase: GetNextFeedFilterOrNullUseCase,
 ) : ViewModel() {
 
     // Loading
@@ -79,6 +81,11 @@ class HomeViewModel internal constructor(
     val feedOperationState: StateFlow<FeedOperation> = feedOperationMutableState.asStateFlow()
     private val refreshTriggerMutableState = MutableStateFlow(0)
     val refreshTriggerState: StateFlow<Int> = refreshTriggerMutableState.asStateFlow()
+
+    private val nextFeedPreviewMutableState: MutableStateFlow<NextFeedPreviewState> = MutableStateFlow(
+        NextFeedPreviewState.NextFeedPreviewDisabledState,
+    )
+    val nextFeedPreviewState: StateFlow<NextFeedPreviewState> = nextFeedPreviewMutableState.asStateFlow()
 
     private var lastUpdateIndex = 0
     private var hasTriggeredAppLaunch = false
@@ -332,6 +339,28 @@ class HomeViewModel internal constructor(
             feedStateRepository.updateFeedFilter(selectedFeedFilter)
             lastUpdateIndex = 0
         }
+
+        updateNextFeedPreview(selectedFeedFilter)
+    }
+
+    fun updateNextFeedPreview(currentFeedFilter: FeedFilter) {
+        viewModelScope.launch {
+            nextFeedPreviewMutableState.update {
+                val nextFeed = getNextFeedFilterOrNullUseCase(currentFeedFilter)
+
+                when (nextFeed) {
+                    is FeedFilter.Category -> NextFeedPreviewState.NextFeedPreviewEnabledState(
+                        feedFilter = nextFeed,
+                        title = nextFeed.feedCategory.title,
+                    )
+                    is FeedFilter.Source -> NextFeedPreviewState.NextFeedPreviewEnabledState(
+                        feedFilter = nextFeed,
+                        title = nextFeed.feedSource.title,
+                    )
+                    else -> NextFeedPreviewState.NextFeedPreviewDisabledState
+                }
+            }
+        }
     }
 
     fun updateReadStatus(feedItemId: FeedItemId, read: Boolean) {
@@ -382,6 +411,15 @@ class HomeViewModel internal constructor(
         viewModelScope.launch {
             feedCategoryRepository.deleteCategory(categoryId.value)
             feedStateRepository.getFeeds()
+        }
+    }
+
+    fun onNavigateToNextFeed() {
+        when (val nextFeed = nextFeedPreviewState.value) {
+            is NextFeedPreviewState.NextFeedPreviewEnabledState -> {
+                onFeedFilterSelected(selectedFeedFilter = nextFeed.feedFilter)
+            }
+            is NextFeedPreviewState.NextFeedPreviewDisabledState -> {}
         }
     }
 

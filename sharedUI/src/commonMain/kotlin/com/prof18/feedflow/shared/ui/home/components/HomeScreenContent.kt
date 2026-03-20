@@ -65,6 +65,7 @@ fun HomeScreenContent(
     toolbarElevation: Dp = 0.dp,
     topToolbarContentFadeHeight: Dp = 0.dp,
     toolbarExpandedHeight: Dp = TopAppBarDefaults.TopAppBarExpandedHeight,
+    onNavigateToNextFeed: () -> Unit = { },
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -190,6 +191,7 @@ fun HomeScreenContent(
                                 feedItems = displayState.feedItems,
                                 listState = listState,
                                 feedFontSize = displayState.feedFontSizes,
+                                nextFeedState = displayState.nextFeedDisplayState,
                                 shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
                                 shareMenuLabel = shareBehavior.shareLinkTitle,
                                 currentFeedFilter = displayState.currentFeedFilter,
@@ -213,6 +215,7 @@ fun HomeScreenContent(
                                 feedLayout = displayState.feedLayout,
                                 onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
                                 onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
+                                onNavigateNext = { onNavigateToNextFeed() },
                             )
                         }
 

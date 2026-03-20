@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 
+@Suppress("MagicNumber")
 @Composable
 fun PullToNextLayout(
     onNavigateNext: () -> Unit,
@@ -161,6 +162,7 @@ fun PullToNextLayout(
     }
 }
 
+@Suppress("MagicNumber")
 @Composable
 fun PullToNextIndicator(
     progress: Float,

@@ -62,6 +62,7 @@ mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/marco.gomiero/Works
 
 
 ### Running Specific Tests
+- `./gradlew :shared:allTests` -> Run all shared module tests across supported targets
 - `./gradlew :shared:jvmTest --tests "com.prof18.feedflow.shared.presentation.SomeTest"` -> Run a specific test class on JVM
 - `./gradlew :shared:iosSimulatorArm64Test` -> Run shared tests on iOS simulator
 
@@ -75,9 +76,10 @@ IMPORTANT: When editing code, you MUST:
 ## Handing off
 
 Before handing off you must:
-1. Run `./gradlew detekt` to ensure all checks pass - don't run it if you modified only swift files
-2. Run `.scripts/ios-format.sh` to format iOS code - only run if you made changes on the iOS app
-3. Fix any issues found during the above steps
+1. Run `.scripts/refresh-translations.sh` before the Gradle checks if you changed translation resources
+2. Run `./gradlew detekt allTests` to ensure Kotlin/shared/Android/Desktop checks pass - don't run it if you modified only swift files
+3. Run `.scripts/ios-format.sh` to format iOS code - only run if you made changes on the iOS app
+4. Fix any issues found during the above steps
 
 ### Initial Setup (for building from scratch)
 ```bash
@@ -92,6 +94,8 @@ cp config/dummy-google-service.plist iosApp/GoogleService-Info.plist
 # iOS: Create Config.xcconfig
 cp iosApp/Assets/Config.xcconfig.template iosApp/Assets/Config.xcconfig
 ```
+
+For compile-only local/CI iOS builds without real sync credentials, you can use `cp config/dummy-config.xcconfig iosApp/Assets/Config.xcconfig` instead.
 
 ## Testing
 

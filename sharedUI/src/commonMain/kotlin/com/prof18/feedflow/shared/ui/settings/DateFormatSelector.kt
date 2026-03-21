@@ -66,6 +66,7 @@ fun DateFormatSelector(
                 text = when (currentFormat) {
                     DateFormat.NORMAL -> LocalFeedFlowStrings.current.dateFormatNormal
                     DateFormat.AMERICAN -> LocalFeedFlowStrings.current.dateFormatAmerican
+                    DateFormat.ISO -> LocalFeedFlowStrings.current.dateFormatIso
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -128,6 +129,7 @@ private fun DateFormatSelectionDialog(
                             text = when (format) {
                                 DateFormat.NORMAL -> strings.dateFormatNormal
                                 DateFormat.AMERICAN -> strings.dateFormatAmerican
+                                DateFormat.ISO -> strings.dateFormatIso
                             },
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(start = Spacing.small),

@@ -1,10 +1,18 @@
 package com.prof18.feedflow.shared.domain
 
+import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.test.FakeClock
 import com.prof18.feedflow.shared.test.testLogger
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.time.Instant
 
 class DateFormatterTest {
 
@@ -100,4 +108,63 @@ class DateFormatterTest {
         val result = dateFormatter.getDateMillisFromString(input)
         assertNull(result)
     }
+
+    @Test
+    fun `formatDateForFeed uses ISO format for today`() {
+        val millis = FakeClock.DEFAULT.now().toEpochMilliseconds()
+        val expectedDateTime = Instant.fromEpochMilliseconds(millis)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+
+        val formatted = dateFormatter.formatDateForFeed(
+            millis = millis,
+            dateFormat = DateFormat.ISO,
+            timeFormat = TimeFormat.HOURS_24,
+        )
+
+        val expected = "${expectedDateTime.hour.padded()}:${expectedDateTime.minute.padded()}"
+
+        assertEquals(expected, formatted)
+    }
+
+    @Test
+    fun `formatDateForFeed uses ISO format for an article from the same year`() {
+        val timezone = TimeZone.currentSystemDefault()
+        val millis = LocalDateTime(
+            year = 2025,
+            monthNumber = 2,
+            dayOfMonth = 3,
+            hour = 14,
+            minute = 30,
+        ).toInstant(timezone).toEpochMilliseconds()
+
+        val formatted = dateFormatter.formatDateForFeed(
+            millis = millis,
+            dateFormat = DateFormat.ISO,
+            timeFormat = TimeFormat.HOURS_24,
+        )
+
+        assertEquals("2025-02-03 - 14:30", formatted)
+    }
+
+    @Test
+    fun `formatDateForFeed uses ISO format with 12 hour clock`() {
+        val timezone = TimeZone.currentSystemDefault()
+        val millis = LocalDateTime(
+            year = 2024,
+            monthNumber = 12,
+            dayOfMonth = 25,
+            hour = 14,
+            minute = 30,
+        ).toInstant(timezone).toEpochMilliseconds()
+
+        val formatted = dateFormatter.formatDateForFeed(
+            millis = millis,
+            dateFormat = DateFormat.ISO,
+            timeFormat = TimeFormat.HOURS_12,
+        )
+
+        assertEquals("2024-12-25 - 2:30 PM", formatted)
+    }
+
+    private fun Int.padded(): String = toString().padStart(2, '0')
 }

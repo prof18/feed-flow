@@ -200,7 +200,14 @@ struct FeedListSettingsScreenContent: View {
 }
 
 private func formatDateTimeExample(dateFormat: DateFormat, timeFormat: TimeFormat) -> String {
-    let datePart = dateFormat == .normal ? "25/12" : "12/25"
+    let datePart: String = switch dateFormat {
+    case .normal:
+        "25/12"
+    case .american:
+        "12/25"
+    case .iso:
+        "2025-12-25"
+    }
     let timePart = timeFormat == .hours24 ? "14:30" : "2:30 PM"
     return "\(datePart) - \(timePart)"
 }

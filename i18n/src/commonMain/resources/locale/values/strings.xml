@@ -297,6 +297,7 @@
     <string name="date_format_title">Date format</string>
     <string name="date_format_normal">Day/Month</string>
     <string name="date_format_american">Month/Day</string>
+    <string name="date_format_iso">Year-Month-Day</string>
     <string name="time_format_title">Time format</string>
     <string name="time_format_hours_24">24 hours</string>
     <string name="time_format_hours_12">12 hours</string>

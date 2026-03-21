@@ -6,4 +6,7 @@ enum class DateFormat {
 
     // MM/DD
     AMERICAN,
+
+    // YYYY-MM-DD
+    ISO,
 }

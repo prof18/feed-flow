@@ -72,6 +72,7 @@ fun FeedItemPreview(
                         val datePart = when (dateFormat) {
                             DateFormat.NORMAL -> "25/12"
                             DateFormat.AMERICAN -> "12/25"
+                            DateFormat.ISO -> "2025-12-25"
                         }
                         val timePart = when (timeFormat) {
                             TimeFormat.HOURS_24 -> "14:30"

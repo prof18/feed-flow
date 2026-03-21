@@ -767,9 +767,13 @@ class DateFormatterImpl(
 
             else -> {
                 LocalDateTime.Format {
-                    dayAndMonth(dateFormat)
-                    char('/')
-                    year()
+                    if (dateFormat == DateFormat.ISO) {
+                        yearMonthDay()
+                    } else {
+                        dayAndMonth(dateFormat)
+                        char('/')
+                        year()
+                    }
                     chars(" - ")
                     hourAndMinute(timeFormat)
                 }
@@ -792,7 +796,19 @@ class DateFormatterImpl(
                 char('/')
                 day()
             }
+
+            DateFormat.ISO -> {
+                yearMonthDay()
+            }
         }
+    }
+
+    private fun DateTimeFormatBuilder.WithDateTime.yearMonthDay() {
+        year()
+        char('-')
+        monthNumber()
+        char('-')
+        day()
     }
 
     private fun DateTimeFormatBuilder.WithDateTime.hourAndMinute(timeFormat: TimeFormat) {

@@ -44,7 +44,7 @@ struct FeedPreviewSection: View {
                         ),
                         pubDateMillis: nil,
                         isRead: false,
-                        dateString: dateFormat == .normal ? "25/12" : "12/25",
+                        dateString: previewDateString(dateFormat: dateFormat),
                         commentsUrl: nil,
                         isBookmarked: false
                     ),
@@ -82,5 +82,16 @@ struct FeedPreviewSection: View {
                 Image(systemName: "plus")
             }
         }.padding(.bottom, Spacing.regular)
+    }
+}
+
+private func previewDateString(dateFormat: DateFormat) -> String {
+    switch dateFormat {
+    case .normal:
+        "25/12"
+    case .american:
+        "12/25"
+    case .iso:
+        "2025-12-25"
     }
 }

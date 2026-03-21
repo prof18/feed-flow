@@ -10,6 +10,8 @@ struct DateFormatSection: View {
                 .tag(DateFormat.normal)
             Text(feedFlowStrings.dateFormatAmerican)
                 .tag(DateFormat.american)
+            Text(feedFlowStrings.dateFormatIso)
+                .tag(DateFormat.iso)
         } label: {
             Label(feedFlowStrings.dateFormatTitle, systemImage: "calendar")
         }

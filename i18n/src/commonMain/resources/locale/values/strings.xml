@@ -48,7 +48,10 @@
     <string name="import_export_label">Import and export</string>
     <string name="import_export_opml_title">Import and export</string>
     <string name="retry_button">Retry</string>
+    <string name="choose_another_file_button">Choose another file</string>
     <string name="done_button">OK</string>
+    <string name="invalid_opml_import_title">Can’t import this file</string>
+    <string name="invalid_opml_import_description">This doesn’t look like a valid OPML file. Try exporting your feeds as OPML from your RSS app and import it again.</string>
     <string name="wrong_link_report_title">The following feeds were not added because they are not valid</string>
     <string name="feed_add_in_progress_message">Importing feed...</string>
     <string name="issue_report_title">Report an issue with FeedFlow</string>

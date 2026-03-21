@@ -24,6 +24,7 @@ struct ImportExportContent: View {
     let onImportArticlesClick: () -> Void
     let onExportArticlesClick: (ArticleExportFilter) -> Void
     let onRetryClick: () -> Void
+    let onChooseAnotherFileClick: () -> Void
     let onDoneClick: () -> Void
 
     private let articleExportFilters: [ArticleExportFilter] = [
@@ -46,6 +47,9 @@ extension ImportExportContent {
 
         case .error:
             errorView
+
+        case .invalidOpml:
+            invalidOpmlView
 
         case let .loadingImport(state):
             makeLoadingView(message: loadingMessage(for: state.contentType))
@@ -163,6 +167,33 @@ private extension ImportExportContent {
 
             Button(action: onRetryClick) {
                 Text(feedFlowStrings.retryButton)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .padding(.top, Spacing.regular)
+            .padding(.horizontal, Spacing.medium)
+
+            Spacer()
+        }.frame(maxWidth: .infinity)
+    }
+
+    @ViewBuilder private var invalidOpmlView: some View {
+        VStack {
+            Spacer()
+
+            Text(feedFlowStrings.invalidOpmlImportTitle)
+                .font(.headline)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, Spacing.medium)
+
+            Text(feedFlowStrings.invalidOpmlImportDescription)
+                .font(.body)
+                .multilineTextAlignment(.center)
+                .padding(.top, Spacing.regular)
+                .padding(.horizontal, Spacing.medium)
+
+            Button(action: onChooseAnotherFileClick) {
+                Text(feedFlowStrings.chooseAnotherFileButton)
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)

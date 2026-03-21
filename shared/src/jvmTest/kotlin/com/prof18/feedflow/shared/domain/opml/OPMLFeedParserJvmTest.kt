@@ -2,6 +2,7 @@
 
 package com.prof18.feedflow.shared.domain.opml
 
+import com.prof18.feedflow.shared.nonOpmlDocumentWithMalformedLinkAttribute
 import com.prof18.feedflow.shared.opml
 import com.prof18.feedflow.shared.opmlWithMalformedXml
 import com.prof18.feedflow.shared.opmlWithText
@@ -106,6 +107,23 @@ class OPMLFeedParserJvmTest {
             fail("Expected OpmlParsingException to be thrown")
         } catch (e: OpmlParsingException) {
             assertTrue(e.message?.contains("Failed to parse OPML file") == true)
+        }
+    }
+
+    @Test
+    fun `generateFeedSources throws OpmlParsingException for malformed html link attributes`() = runTest {
+        val file = File.createTempFile("invalid-link-", ".tmp").apply {
+            deleteOnExit()
+            writeText(nonOpmlDocumentWithMalformedLinkAttribute)
+        }
+
+        val opmlInput = OpmlInput(file = file)
+
+        try {
+            parser.generateFeedSources(opmlInput)
+            fail("Expected OpmlParsingException to be thrown")
+        } catch (e: OpmlParsingException) {
+            assertEquals(e.message?.contains("Failed to parse OPML file"), true)
         }
     }
 

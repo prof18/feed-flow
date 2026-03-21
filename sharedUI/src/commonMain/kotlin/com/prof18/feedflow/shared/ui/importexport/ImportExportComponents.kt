@@ -46,6 +46,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun ImportExportContent(
     feedImportExportState: FeedImportExportState,
     onRetryClick: () -> Unit,
+    onChooseAnotherFileClick: () -> Unit,
     onDoneClick: () -> Unit,
     onImportClick: () -> Unit,
     onExportClick: () -> Unit,
@@ -71,6 +72,7 @@ fun ImportExportContent(
     ImportExportBody(
         feedImportExportState = feedImportExportState,
         onRetryClick = onRetryClick,
+        onChooseAnotherFileClick = onChooseAnotherFileClick,
         onDoneClick = onDoneClick,
         onImportClick = onImportClick,
         onExportClick = onExportClick,
@@ -84,6 +86,7 @@ fun ImportExportContent(
 private fun ImportExportBody(
     feedImportExportState: FeedImportExportState,
     onRetryClick: () -> Unit,
+    onChooseAnotherFileClick: () -> Unit,
     onDoneClick: () -> Unit,
     onImportClick: () -> Unit,
     onExportClick: () -> Unit,
@@ -105,6 +108,12 @@ private fun ImportExportBody(
             ImportExportErrorView(
                 modifier = modifier.fillMaxSize(),
                 onRetryClick = onRetryClick,
+            )
+
+        FeedImportExportState.InvalidOpml ->
+            InvalidOpmlImportView(
+                modifier = modifier.fillMaxSize(),
+                onChooseAnotherFileClick = onChooseAnotherFileClick,
             )
 
         is FeedImportExportState.LoadingImport ->
@@ -327,6 +336,38 @@ private fun ImportExportErrorView(
             onClick = onRetryClick,
         ) {
             Text(LocalFeedFlowStrings.current.retryButton)
+        }
+    }
+}
+
+@Composable
+private fun InvalidOpmlImportView(
+    onChooseAnotherFileClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = Spacing.medium),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = LocalFeedFlowStrings.current.invalidOpmlImportTitle,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            modifier = Modifier.padding(top = Spacing.regular),
+            text = LocalFeedFlowStrings.current.invalidOpmlImportDescription,
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+        )
+        Button(
+            modifier = Modifier.padding(top = Spacing.regular),
+            onClick = onChooseAnotherFileClick,
+        ) {
+            Text(LocalFeedFlowStrings.current.chooseAnotherFileButton)
         }
     }
 }
@@ -568,6 +609,7 @@ private fun ImportExportIdlePreview() {
         ImportExportContent(
             feedImportExportState = FeedImportExportState.Idle,
             onRetryClick = {},
+            onChooseAnotherFileClick = {},
             onDoneClick = {},
             onImportClick = {},
             onExportClick = {},
@@ -584,6 +626,7 @@ private fun ImportExportLoadingPreview() {
         ImportExportContent(
             feedImportExportState = FeedImportExportState.LoadingExport(ImportExportContentType.ArticlesCsv),
             onRetryClick = {},
+            onChooseAnotherFileClick = {},
             onDoneClick = {},
             onImportClick = {},
             onExportClick = {},
@@ -600,6 +643,7 @@ private fun ImportExportArticleDonePreview() {
         ImportExportContent(
             feedImportExportState = FeedImportExportState.ArticleExportSuccess,
             onRetryClick = {},
+            onChooseAnotherFileClick = {},
             onDoneClick = {},
             onImportClick = {},
             onExportClick = {},

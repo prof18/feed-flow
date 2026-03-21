@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ImportExportContentType
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.shared.domain.opml.InvalidOpmlImportException
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
@@ -131,6 +132,25 @@ class ImportExportViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `importFeed reports invalid opml when parser rejects file`() = runTest {
+        fakeOpmlFeedHandler.throwInvalidOpmlOnGenerate = true
+
+        val opmlInput = createOpmlInput(OPML_CONTENT)
+
+        assertEquals(FeedImportExportState.Idle, viewModel.importExportState.value)
+
+        viewModel.importFeed(opmlInput)
+
+        runCurrent()
+        assertEquals(
+            FeedImportExportState.LoadingImport(ImportExportContentType.FeedsOpml),
+            viewModel.importExportState.value,
+        )
+        advanceUntilIdle()
+        assertEquals(FeedImportExportState.InvalidOpml, viewModel.importExportState.value)
+    }
+
+    @Test
     fun `exportFeed reports error when opml handler fails`() = runTest {
         fakeOpmlFeedHandler.throwOnExport = true
 
@@ -210,11 +230,15 @@ class ImportExportViewModelTest : KoinTestBase() {
 
     private class FakeOpmlFeedHandler : OpmlFeedHandler {
         var throwOnGenerate: Boolean = false
+        var throwInvalidOpmlOnGenerate: Boolean = false
         var throwOnExport: Boolean = false
         var feedSources: List<ParsedFeedSource> = emptyList()
 
         override suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> {
             simulateWork()
+            if (throwInvalidOpmlOnGenerate) {
+                throw InvalidOpmlImportException("Invalid OPML")
+            }
             if (throwOnGenerate) {
                 error("Import failed")
             }

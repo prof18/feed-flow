@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
 import org.xml.sax.Attributes
 import org.xml.sax.InputSource
+import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
@@ -15,7 +16,7 @@ import java.nio.charset.Charset
 import javax.xml.parsers.SAXParserFactory
 import javax.xml.stream.XMLOutputFactory
 
-class OpmlParsingException(message: String, cause: Throwable? = null) : Exception(message, cause)
+class OpmlParsingException(message: String, cause: Throwable? = null) : InvalidOpmlImportException(message, cause)
 
 internal class OpmlFeedHandlerJvm(
     private val dispatcherProvider: DispatcherProvider,
@@ -46,7 +47,7 @@ internal class OpmlFeedHandlerJvm(
                 val handler = SaxFeedHandler()
                 parser.parse(InputSource(StringReader(sanitizedFeed)), handler)
                 return@withContext handler.getFeedSource()
-            } catch (e: Exception) {
+            } catch (e: SAXException) {
                 throw OpmlParsingException("Failed to parse OPML file: ${e.message}", e)
             }
         }

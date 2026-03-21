@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared
 
+import com.prof18.feedflow.shared.domain.opml.InvalidOpmlImportException
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerAndroid
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
@@ -9,6 +10,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
@@ -78,5 +80,16 @@ class OPMLFeedParserAndroidTest {
         )
         val feedSources = parser.generateFeedSources(opmlInput)
         assertTrue(feedSources.isNotEmpty())
+    }
+
+    @Test
+    fun `generateFeedSources throws InvalidOpmlImportException for malformed html link attributes`() = runTest {
+        val opmlInput = OpmlInput(
+            inputStream = nonOpmlDocumentWithMalformedLinkAttribute.byteInputStream(),
+        )
+
+        assertFailsWith<InvalidOpmlImportException> {
+            parser.generateFeedSources(opmlInput)
+        }
     }
 }

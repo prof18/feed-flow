@@ -65,6 +65,10 @@ struct ImportExportScreen: View {
                 onRetryClick: {
                     vmStoreOwner.instance.clearState()
                 },
+                onChooseAnotherFileClick: {
+                    vmStoreOwner.instance.clearState()
+                    sheetToShow = .opmlFilePicker
+                },
                 onDoneClick: {
                     fetchFeeds()
                     vmStoreOwner.instance.clearState()
@@ -110,7 +114,7 @@ struct ImportExportScreen: View {
             .sheet(item: $sheetToShow) { item in
                 switch item {
                 case .opmlFilePicker:
-                    FilePickerController { url in
+                    FilePickerController(supportedTypes: opmlImportContentTypes) { url in
                         do {
                             let data = try Data(contentsOf: url)
                             vmStoreOwner.instance.importFeed(opmlInput: OpmlInput(opmlData: data))
@@ -126,7 +130,7 @@ struct ImportExportScreen: View {
                         }
                     }
                 case .csvFilePicker:
-                    FilePickerController { url in
+                    FilePickerController(supportedTypes: [.commaSeparatedText]) { url in
                         do {
                             let data = try Data(contentsOf: url)
                             vmStoreOwner.instance.importArticles(csvInput: CsvInput(csvData: data))
@@ -223,5 +227,13 @@ struct ImportExportScreen: View {
         case .bookmarked:
             return "bookmarked"
         }
+    }
+
+    private var opmlImportContentTypes: [UTType] {
+        var types: [UTType] = [.xml, .plainText]
+        if let opmlType = UTType(filenameExtension: "opml") {
+            types.insert(opmlType, at: 0)
+        }
+        return types
     }
 }

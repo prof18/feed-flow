@@ -3,6 +3,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct FilePickerController: UIViewControllerRepresentable {
+    let supportedTypes: [UTType]
     var callback: (URL) -> Void
 
     func makeCoordinator() -> Coordinator {
@@ -15,7 +16,6 @@ struct FilePickerController: UIViewControllerRepresentable {
     ) {}
 
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
-        let supportedTypes: [UTType] = [.item]
         let controller = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
         controller.delegate = context.coordinator
         return controller

@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.domain.opml
 
+import com.prof18.feedflow.shared.nonOpmlDocumentWithMalformedLinkAttribute
 import com.prof18.feedflow.shared.opml
 import com.prof18.feedflow.shared.opmlWithText
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
@@ -11,6 +12,7 @@ import platform.Foundation.create
 import platform.Foundation.dataUsingEncoding
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class OPMLFeedParserIosTest {
@@ -79,5 +81,17 @@ class OPMLFeedParserIosTest {
         )
         val feedSources = parser.generateFeedSources(opmlInput)
         assertTrue(feedSources.isNotEmpty())
+    }
+
+    @Test
+    fun `generateFeedSources throws InvalidOpmlImportException for malformed html link attributes`() = runTest {
+        val opmlInput = OpmlInput(
+            opmlData = NSString.create(string = nonOpmlDocumentWithMalformedLinkAttribute)
+                .dataUsingEncoding(NSUTF8StringEncoding) ?: NSData(),
+        )
+
+        assertFailsWith<InvalidOpmlImportException> {
+            parser.generateFeedSources(opmlInput)
+        }
     }
 }

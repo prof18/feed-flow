@@ -9,6 +9,7 @@ import com.prof18.feedflow.shared.attributeValue
 import com.prof18.feedflow.shared.contains
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
 import org.xmlpull.v1.XmlSerializer
 import java.io.Reader
@@ -18,56 +19,58 @@ internal class OpmlFeedHandlerAndroid(
 ) : OpmlFeedHandler {
     override suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.default) {
-            val inputStream = opmlInput.inputStream
-            val feedSources = mutableListOf<ParsedFeedSource>()
+            try {
+                val feedSources = mutableListOf<ParsedFeedSource>()
 
-            val factory = XmlPullParserFactory.newInstance()
-            factory.isNamespaceAware = false
+                val factory = XmlPullParserFactory.newInstance()
+                factory.isNamespaceAware = false
 
-            val xmlPullParser = factory.newPullParser()
+                val xmlPullParser = factory.newPullParser()
 
-            // Read the full content first to sanitize
-            val content = inputStream?.bufferedReader()?.use { it.readText() }
-            val cleanContent = content?.replace("\uFEFF", "")
-                ?.replace("&(?!(?:amp|lt|gt|apos|quot|#[0-9]+);)".toRegex(), "&amp;") // Fix unescaped &
-                ?.trimStart()
+                // Read the full content first to sanitize
+                val content = opmlInput.inputStream?.bufferedReader()?.use { it.readText() }
+                val cleanContent = content?.replace("\uFEFF", "")
+                    ?.replace("&(?!(?:amp|lt|gt|apos|quot|#[0-9]+);)".toRegex(), "&amp;")
+                    ?.trimStart()
 
-            val reader: Reader = java.io.StringReader(cleanContent ?: "")
+                val reader: Reader = java.io.StringReader(cleanContent ?: "")
 
-            xmlPullParser.setInput(reader)
+                xmlPullParser.setInput(reader)
 
-            var eventType = xmlPullParser.eventType
-            var categoryName: String? = null
+                var eventType = xmlPullParser.eventType
+                var categoryName: String? = null
 
-            // Start parsing the xml
-            loop@ while (eventType != XmlPullParser.END_DOCUMENT) {
-                when (eventType) {
-                    XmlPullParser.START_TAG -> when {
-                        xmlPullParser.contains(OpmlConstants.OUTLINE) -> {
-                            val xmlUrl = xmlPullParser.attributeValue(OpmlConstants.XML_URL)
-                            if (xmlUrl != null) {
-                                val builder = ParsedFeedSource.Builder().apply {
-                                    title(xmlPullParser.attributeValue(OpmlConstants.TITLE))
-                                    titleIfNull(xmlPullParser.attributeValue(OpmlConstants.TEXT))
-                                    url(xmlPullParser.attributeValue(OpmlConstants.XML_URL))
-                                    category(categoryName)
-                                }
-                                builder.build()?.let {
-                                    feedSources.add(it)
-                                }
-                            } else {
-                                categoryName = xmlPullParser.attributeValue(OpmlConstants.TITLE)
-                                if (categoryName == null) {
-                                    categoryName = xmlPullParser.attributeValue(OpmlConstants.TEXT)
+                while (eventType != XmlPullParser.END_DOCUMENT) {
+                    when (eventType) {
+                        XmlPullParser.START_TAG -> when {
+                            xmlPullParser.contains(OpmlConstants.OUTLINE) -> {
+                                val xmlUrl = xmlPullParser.attributeValue(OpmlConstants.XML_URL)
+                                if (xmlUrl != null) {
+                                    val builder = ParsedFeedSource.Builder().apply {
+                                        title(xmlPullParser.attributeValue(OpmlConstants.TITLE))
+                                        titleIfNull(xmlPullParser.attributeValue(OpmlConstants.TEXT))
+                                        url(xmlPullParser.attributeValue(OpmlConstants.XML_URL))
+                                        category(categoryName)
+                                    }
+                                    builder.build()?.let {
+                                        feedSources.add(it)
+                                    }
+                                } else {
+                                    categoryName = xmlPullParser.attributeValue(OpmlConstants.TITLE)
+                                    if (categoryName == null) {
+                                        categoryName = xmlPullParser.attributeValue(OpmlConstants.TEXT)
+                                    }
                                 }
                             }
                         }
                     }
+                    eventType = xmlPullParser.next()
                 }
-                eventType = xmlPullParser.next()
+
+                return@withContext feedSources
+            } catch (e: XmlPullParserException) {
+                throw InvalidOpmlImportException("Failed to parse OPML file: ${e.message}", e)
             }
-            inputStream?.close()
-            return@withContext feedSources
         }
 
     override suspend fun exportFeed(

@@ -14,6 +14,8 @@ sealed class FeedImportExportState {
         val contentType: ImportExportContentType,
     ) : FeedImportExportState()
 
+    data object InvalidOpml : FeedImportExportState()
+
     data object Error : FeedImportExportState()
 
     data class ImportSuccess(

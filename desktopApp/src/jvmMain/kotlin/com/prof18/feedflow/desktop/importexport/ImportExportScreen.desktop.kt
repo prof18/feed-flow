@@ -22,6 +22,8 @@ import com.prof18.feedflow.shared.domain.opml.OpmlOutput
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.ui.importexport.ImportExportContent
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentSetOf
 import org.koin.compose.viewmodel.koinViewModel
 import java.awt.FileDialog
 import java.io.File
@@ -61,6 +63,7 @@ internal fun ImportExportScreen(
             parent = composeWindow,
             dialogTitle = importDialogTitle,
             isLoadDialog = true,
+            allowedExtensions = persistentSetOf("opml", "xml", "txt"),
             onCloseRequest = { result ->
                 showImportDialog = false
                 if (result != null) {
@@ -157,6 +160,10 @@ internal fun ImportExportScreen(
             onRetryClick = {
                 viewModel.clearState()
             },
+            onChooseAnotherFileClick = {
+                viewModel.clearState()
+                showImportDialog = true
+            },
             onImportClick = {
                 showImportDialog = true
             },
@@ -182,6 +189,7 @@ private fun FileDialog(
     onCloseRequest: (result: File?) -> Unit,
     exportFileName: String? = null,
     isLoadDialog: Boolean = false,
+    allowedExtensions: ImmutableSet<String> = persistentSetOf(),
 ) = AwtWindow(
     create = {
         val flag = if (isLoadDialog) FileDialog.LOAD else FileDialog.SAVE
@@ -191,6 +199,12 @@ private fun FileDialog(
                 if (value) {
                     onCloseRequest(files.firstOrNull())
                 }
+            }
+        }
+        if (isLoadDialog && allowedExtensions.isNotEmpty()) {
+            dialog.filenameFilter = java.io.FilenameFilter { _, name ->
+                val lowercaseName = name.lowercase()
+                allowedExtensions.any { extension -> lowercaseName.endsWith(".$extension") }
             }
         }
         dialog.file = exportFileName

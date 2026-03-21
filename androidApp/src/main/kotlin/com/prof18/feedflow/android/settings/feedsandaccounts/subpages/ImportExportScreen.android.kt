@@ -51,6 +51,14 @@ fun ImportExportScreen(
     val importingFeedMessage = LocalFeedFlowStrings.current.feedsImportingMessage
     val importingArticlesMessage = LocalFeedFlowStrings.current.articlesImportingMessage
     var articleExportFilter by remember { mutableStateOf(ArticleExportFilter.All) }
+    val opmlMimeTypes = remember {
+        arrayOf(
+            "text/x-opml",
+            "text/xml",
+            "application/xml",
+            "text/*",
+        )
+    }
 
     val openOpmlFileAction = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument(),
@@ -121,8 +129,12 @@ fun ImportExportScreen(
             onRetryClick = {
                 viewModel.clearState()
             },
+            onChooseAnotherFileClick = {
+                viewModel.clearState()
+                openOpmlFileAction.launch(opmlMimeTypes)
+            },
             onImportClick = {
-                openOpmlFileAction.launch(arrayOf("*/*"))
+                openOpmlFileAction.launch(opmlMimeTypes)
             },
             onExportClick = {
                 val deviceName = "${Build.MANUFACTURER}-${Build.MODEL}"
@@ -160,6 +172,7 @@ private fun ImportExportContentPreview(
         ImportExportContent(
             feedImportExportState = state,
             onRetryClick = {},
+            onChooseAnotherFileClick = {},
             onDoneClick = {},
             onImportClick = {},
             onExportClick = {},

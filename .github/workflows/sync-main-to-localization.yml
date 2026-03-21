@@ -25,9 +25,9 @@ jobs:
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "feedflowbot@feedflow.dev"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Merge main into localization
+      - name: Rebase localization onto main
         run: |
           set -euo pipefail
 
@@ -36,9 +36,9 @@ jobs:
 
           before_sha="$(git rev-parse HEAD)"
 
-          if ! git merge --no-edit origin/main; then
-            git merge --abort || true
-            echo "::error::Merge conflict while syncing main into localization. Resolve it manually."
+          if ! git rebase origin/main; then
+            git rebase --abort || true
+            echo "::error::Rebase conflict while syncing localization onto main. Resolve it manually."
             exit 1
           fi
 
@@ -49,4 +49,4 @@ jobs:
             exit 0
           fi
 
-          git push origin localization
+          git push --force-with-lease origin HEAD:localization

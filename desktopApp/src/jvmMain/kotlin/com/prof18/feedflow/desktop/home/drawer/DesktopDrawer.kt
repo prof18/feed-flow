@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.home.components.drawer
+package com.prof18.feedflow.desktop.home.drawer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,12 +30,11 @@ import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-fun Drawer(
+fun DesktopDrawer(
     displayState: HomeDisplayState,
     feedManagementActions: FeedManagementActions,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     modifier: Modifier = Modifier,
-    drawerItemVisualStyle: DrawerItemVisualStyle = DefaultDrawerItemVisualStyle,
     onFeedSuggestionsClick: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
@@ -118,7 +117,7 @@ fun Drawer(
                     currentFeedFilter = displayState.currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelectedWithClear,
                     drawerItem = timelineItem,
-                    drawerItemVisualStyle = drawerItemVisualStyle,
+                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
                 )
             }
 
@@ -126,7 +125,7 @@ fun Drawer(
                 DrawerReadItem(
                     currentFeedFilter = displayState.currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelectedWithClear,
-                    drawerItemVisualStyle = drawerItemVisualStyle,
+                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
                 )
             }
 
@@ -138,21 +137,21 @@ fun Drawer(
                         .filterIsInstance<DrawerItem.Bookmarks>()
                         .firstOrNull()
                         ?: DrawerItem.Bookmarks(unreadCount = 0),
-                    drawerItemVisualStyle = drawerItemVisualStyle,
+                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
                 )
             }
 
             item {
                 DrawerFeedSuggestionsItem(
                     onFeedSuggestionsClick = onFeedSuggestionsClick,
-                    drawerItemVisualStyle = drawerItemVisualStyle,
+                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
                 )
             }
 
             item {
                 DrawerAddItem(
                     onAddFeedClicked = feedManagementActions.onAddFeedClick,
-                    drawerItemVisualStyle = drawerItemVisualStyle,
+                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
                 )
             }
 
@@ -171,11 +170,11 @@ fun Drawer(
                             style = MaterialTheme.typography.labelLarge,
                         )
 
-                        DrawerFeedSourcesList(
+                        DesktopDrawerFeedSourcesList(
                             drawerFeedSources = displayState.navDrawerState.pinnedFeedSources
                                 .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                             currentFeedFilter = displayState.currentFeedFilter,
-                            drawerItemVisualStyle = drawerItemVisualStyle,
+                            drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
                             selectedFeedSourceIds = selectedFeedSourceIds,
                             onFeedSourceClick = onFeedSourceClick,
                             selectedFeedSourcesProvider = { selectedFeedSourceIds.mapNotNull { allFeedSources[it] } },
@@ -195,10 +194,10 @@ fun Drawer(
                 displayState.navDrawerState.feedSourcesWithoutCategory.isNotEmpty()
             ) {
                 item {
-                    DrawerFeedSourcesByCategories(
+                    DesktopDrawerFeedSourcesByCategories(
                         navDrawerState = displayState.navDrawerState,
                         currentFeedFilter = displayState.currentFeedFilter,
-                        drawerItemVisualStyle = drawerItemVisualStyle,
+                        drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
                         onFeedFilterSelected = onFeedFilterSelectedWithClear,
                         selectedFeedSourceIds = selectedFeedSourceIds,
                         onFeedSourceClick = onFeedSourceClick,

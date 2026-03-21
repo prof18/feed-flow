@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.home
+package com.prof18.feedflow.android.home
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -17,9 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.prof18.feedflow.android.home.drawer.AndroidDrawer
 import com.prof18.feedflow.core.model.FeedFilter
-import com.prof18.feedflow.shared.ui.home.components.HomeScreenContent
-import com.prof18.feedflow.shared.ui.home.components.drawer.Drawer
+import com.prof18.feedflow.shared.ui.home.FeedListActions
+import com.prof18.feedflow.shared.ui.home.FeedManagementActions
+import com.prof18.feedflow.shared.ui.home.HomeDisplayState
+import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
@@ -37,7 +40,6 @@ fun AdaptiveHomeView(
     shareBehavior: ShareBehavior,
     listState: LazyListState = rememberLazyListState(),
     windowSizeClass: WindowSizeClass = WindowSizeClass.Compact,
-    showDropdownMenu: Boolean = false,
     feedContentWrapper: @Composable (@Composable () -> Unit) -> Unit = { content -> content() },
     onBackupClick: () -> Unit = {},
     onFeedSuggestionsClick: () -> Unit = {},
@@ -54,7 +56,7 @@ fun AdaptiveHomeView(
         isDrawerMenuOpen: Boolean = false,
         onDrawerMenuClick: () -> Unit,
     ) {
-        HomeScreenContent(
+        AndroidHomeScreenContent(
             modifier = modifier,
             displayState = displayState,
             feedListActions = feedListActions,
@@ -67,7 +69,6 @@ fun AdaptiveHomeView(
             isDrawerOpen = isDrawerMenuOpen,
             onDrawerMenuClick = onDrawerMenuClick,
             onRefresh = feedListActions.refreshData,
-            showDropdownMenu = showDropdownMenu,
             feedContentWrapper = feedContentWrapper,
             shareBehavior = shareBehavior,
             onBackupClick = onBackupClick,
@@ -81,7 +82,7 @@ fun AdaptiveHomeView(
         modifier: Modifier = Modifier,
         onFeedFilterSelectedLambda: (FeedFilter) -> Unit,
     ) {
-        Drawer(
+        AndroidDrawer(
             modifier = modifier,
             displayState = displayState,
             feedManagementActions = feedManagementActions,

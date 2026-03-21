@@ -4,7 +4,6 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -16,10 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +47,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalFocusManager
@@ -62,6 +57,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.home.drawer.DesktopDrawer
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.ui.components.drawerHazeStyle
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
@@ -69,9 +65,6 @@ import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.components.HomeScreenContent
-import com.prof18.feedflow.shared.ui.home.components.drawer.Drawer
-import com.prof18.feedflow.shared.ui.home.components.drawer.DrawerItemVisualStyle
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
@@ -93,7 +86,6 @@ internal fun DesktopHomeScaffold(
     listState: LazyListState,
     snackbarHostState: SnackbarHostState,
     onSearchClick: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
     onFeedSuggestionsClick: () -> Unit,
     currentReaderArticle: FeedItemUrlInfo?,
     onReaderClosed: () -> Unit,
@@ -112,7 +104,6 @@ internal fun DesktopHomeScaffold(
     val hazeState = rememberHazeState()
     val hazeStyle = drawerHazeStyle()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val drawerItemVisualStyle = desktopDrawerItemVisualStyle()
     var isDockedDrawerVisible by remember { mutableStateOf(homeSettingsRepository.isDrawerVisible()) }
 
     val initialAnchorIndex = remember {
@@ -158,10 +149,9 @@ internal fun DesktopHomeScaffold(
         val canToggleDetailFullscreen = navigator.scaffoldDirective.maxHorizontalPartitions > 1
 
         val drawerContent: @Composable () -> Unit = {
-            Drawer(
+            DesktopDrawer(
                 displayState = displayState,
                 feedManagementActions = feedManagementActions,
-                drawerItemVisualStyle = drawerItemVisualStyle,
                 onFeedFilterSelected = { feedFilter: FeedFilter ->
                     feedManagementActions.onFeedFilterSelected(feedFilter)
                     scope.launch {
@@ -222,7 +212,7 @@ internal fun DesktopHomeScaffold(
                         exitTransition = fadeOut(animationSpec = tweenSpec),
                         boundsAnimationSpec = snap(),
                     ) {
-                        HomeScreenContent(
+                        DesktopHomeScreenContent(
                             modifier = Modifier.fillMaxSize(),
                             displayState = displayState,
                             feedListActions = feedListActions,
@@ -231,10 +221,6 @@ internal fun DesktopHomeScaffold(
                             listState = listState,
                             snackbarHostState = snackbarHostState,
                             onSearchClick = onSearchClick,
-                            onSettingsButtonClicked = onSettingsButtonClicked,
-                            toolbarElevation = 2.dp,
-                            topToolbarContentFadeHeight = listPaneTopContentFadeHeight,
-                            toolbarExpandedHeight = toolbarHeight,
                             showDrawerMenu = true,
                             isDrawerOpen = if (isThreePaneLayout) {
                                 isDockedDrawerVisible
@@ -255,34 +241,7 @@ internal fun DesktopHomeScaffold(
                                     }
                                 }
                             },
-                            onRefresh = feedListActions.refreshData,
-                            showDropdownMenu = false,
                             onEmptyStateClick = onEmptyStateClick,
-                            feedContentWrapper = { content ->
-                                Box(modifier = Modifier.fillMaxSize()) {
-                                    Box(
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentAlignment = Alignment.TopCenter,
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .widthIn(max = listPaneMaxContentWidth)
-                                                .fillMaxWidth()
-                                                .fillMaxHeight(),
-                                        ) {
-                                            content()
-                                        }
-                                    }
-
-                                    VerticalScrollbar(
-                                        modifier = Modifier
-                                            .align(Alignment.CenterEnd)
-                                            .fillMaxHeight()
-                                            .width(6.dp),
-                                        adapter = rememberScrollbarAdapter(scrollState = listState),
-                                    )
-                                }
-                            },
                         )
                     }
                 },
@@ -477,28 +436,6 @@ internal val toolbarHeight = 48.dp
 internal val listPaneTopContentFadeHeight = 30.dp
 internal val listPaneMaxContentWidth = 720.dp
 private const val DESKTOP_PANE_TRANSITION_DURATION = 120
-
-@Composable
-internal fun desktopDrawerItemVisualStyle(): DrawerItemVisualStyle {
-    val colorScheme = MaterialTheme.colorScheme
-    val selectedAlpha = if (colorScheme.surface.luminance() < DARK_THEME_LUMINANCE_THRESHOLD) {
-        DARK_MODE_DRAWER_SELECTION_ALPHA
-    } else {
-        LIGHT_MODE_DRAWER_SELECTION_ALPHA
-    }
-
-    return DrawerItemVisualStyle(
-        itemShape = RoundedCornerShape(14.dp),
-        itemMinHeight = 44.dp,
-        itemVerticalPadding = 2.dp,
-        selectedContainerColor = colorScheme.onSurface.copy(alpha = selectedAlpha),
-        selectedContentColor = colorScheme.onSurface,
-    )
-}
-
-private const val DARK_THEME_LUMINANCE_THRESHOLD = 0.5f
-private const val DARK_MODE_DRAWER_SELECTION_ALPHA = 0.14f
-private const val LIGHT_MODE_DRAWER_SELECTION_ALPHA = 0.1f
 
 private val detailFullscreenAnchor = PaneExpansionAnchor.Proportion(0f)
 private val listFullscreenAnchor = PaneExpansionAnchor.Proportion(1f)

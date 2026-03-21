@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.home.components.drawer
+package com.prof18.feedflow.desktop.home.drawer
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -46,7 +46,6 @@ import androidx.compose.ui.zIndex
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
-import com.prof18.feedflow.shared.ui.home.components.isDragAndDropEnabled
 import com.prof18.feedflow.shared.ui.style.Spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -65,7 +64,6 @@ private const val DragMaxScrollPerTickDp = 18
 private const val DraggingAlpha = 0.35f
 
 internal class FeedSourceDragState(
-    val isEnabled: Boolean,
     private val listState: LazyListState,
     private val coroutineScope: CoroutineScope,
     private val edgeThresholdPx: Float,
@@ -81,14 +79,12 @@ internal class FeedSourceDragState(
     private var autoScrollDelta by mutableStateOf(0f)
 
     fun startDrag(feedSources: List<FeedSource>, positionInWindow: Offset) {
-        if (!isEnabled) return
         draggedFeedSources = feedSources
         dragPositionInWindow = positionInWindow
         updateAutoScroll()
     }
 
     fun updateDragPosition(positionInWindow: Offset) {
-        if (!isEnabled) return
         dragPositionInWindow = positionInWindow
         updateAutoScroll()
     }
@@ -100,14 +96,12 @@ internal class FeedSourceDragState(
     }
 
     fun updateListBounds(coordinates: LayoutCoordinates) {
-        if (!isEnabled) return
         val position = coordinates.positionInWindow()
         val size = coordinates.size
         listBoundsInWindow = Rect(position, Size(size.width.toFloat(), size.height.toFloat()))
     }
 
     fun updateDropTarget(category: FeedSourceCategory?, coordinates: LayoutCoordinates) {
-        if (!isEnabled) return
         val position = coordinates.positionInWindow()
         val size = coordinates.size
         val rect = Rect(position, Size(size.width.toFloat(), size.height.toFloat()))
@@ -117,7 +111,6 @@ internal class FeedSourceDragState(
     }
 
     fun removeDropTarget(category: FeedSourceCategory?) {
-        if (!isEnabled) return
         val key = categoryKey(category)
         dropTargets.remove(key)
         dropTargetCategories.remove(key)
@@ -200,14 +193,12 @@ internal class FeedSourceDragState(
 
 @Composable
 internal fun rememberFeedSourceDragState(listState: LazyListState): FeedSourceDragState {
-    val isEnabled = isDragAndDropEnabled()
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current
     val edgeThresholdPx = with(density) { DragEdgeThresholdDp.dp.toPx() }
     val maxScrollPerTickPx = with(density) { DragMaxScrollPerTickDp.dp.toPx() }
-    return remember(isEnabled, listState, edgeThresholdPx, maxScrollPerTickPx) {
+    return remember(listState, edgeThresholdPx, maxScrollPerTickPx) {
         FeedSourceDragState(
-            isEnabled = isEnabled,
             listState = listState,
             coroutineScope = coroutineScope,
             edgeThresholdPx = edgeThresholdPx,
@@ -223,7 +214,6 @@ internal fun Modifier.dropTargetModifier(
     highlightColor: Color,
     shape: Shape,
 ): Modifier {
-    if (!dragState.isEnabled) return this
     val highlightModifier = if (isDropTargetActive) {
         Modifier.border(
             width = 1.dp,
@@ -245,8 +235,6 @@ internal fun Modifier.feedSourceDragSource(
     selectedFeedSources: () -> List<FeedSource>,
     onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
 ): Modifier = composed {
-    if (!dragState.isEnabled) return@composed this
-
     var coordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     val updatedFeedSource by rememberUpdatedState(feedSource)
     val updatedSelectedFeedSources by rememberUpdatedState(selectedFeedSources)
@@ -299,8 +287,6 @@ internal fun DragGhost(
     dragState: FeedSourceDragState,
     drawerCoordinates: LayoutCoordinates?,
 ) {
-    if (!dragState.isEnabled) return
-
     val feedSource = dragState.draggedFeedSources.firstOrNull() ?: return
     val containerCoordinates = drawerCoordinates ?: return
     val offset = dragState.dragOffsetInContainer(containerCoordinates) ?: return
@@ -368,7 +354,6 @@ internal fun FeedSourceDropTargetCleanup(
     dragState: FeedSourceDragState,
     category: FeedSourceCategory?,
 ) {
-    if (!dragState.isEnabled) return
     DisposableEffect(category) {
         onDispose { dragState.removeDropTarget(category) }
     }

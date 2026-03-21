@@ -34,13 +34,11 @@ import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewDisabledState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewEnabledState
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.prof18.feedflow.shared.ui.home.AdaptiveHomeView
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.WindowSizeClass
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.koinInject
@@ -191,7 +189,6 @@ internal fun HomeScreen(
         feedListActions = feedListActions,
         feedManagementActions = feedManagementActions,
         windowSizeClass = adaptiveWindowSizeClass,
-        showDropdownMenu = true,
         feedContentWrapper = { content ->
             val pullToRefreshState = rememberPullToRefreshState()
             PullToRefreshBox(

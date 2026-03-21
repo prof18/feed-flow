@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.home.components.drawer
+package com.prof18.feedflow.desktop.home.drawer
 
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
@@ -36,7 +35,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
@@ -45,22 +43,21 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.shared.ui.components.DeleteCategoryDialog
 import com.prof18.feedflow.shared.ui.components.EditCategoryNameDialog
+import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenu
+import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenuEntry
 import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
-import com.prof18.feedflow.shared.ui.home.components.CategoryContextMenu
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.PreviewHelper
 import com.prof18.feedflow.shared.ui.utils.conditionalAnimateFloatAsState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.persistentMapOf
-import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-internal fun DrawerFeedSourcesByCategories(
+internal fun DesktopDrawerFeedSourcesByCategories(
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     drawerItemVisualStyle: DrawerItemVisualStyle,
@@ -73,7 +70,7 @@ internal fun DrawerFeedSourcesByCategories(
     onPinFeedClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
-    onChangeFeedCategoryClick: ((FeedSource) -> Unit),
+    onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
     onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
     dragState: FeedSourceDragState,
@@ -90,7 +87,7 @@ internal fun DrawerFeedSourcesByCategories(
                 style = MaterialTheme.typography.labelLarge,
             )
 
-            DrawerFeedSourcesList(
+            DesktopDrawerFeedSourcesList(
                 drawerFeedSources = navDrawerState.feedSourcesWithoutCategory
                     .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                 currentFeedFilter = currentFeedFilter,
@@ -108,20 +105,16 @@ internal fun DrawerFeedSourcesByCategories(
             )
 
             for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
-                var isCategoryExpanded by rememberSaveable {
-                    mutableStateOf(false)
-                }
+                var isCategoryExpanded by rememberSaveable { mutableStateOf(false) }
 
-                DrawerFeedSourceByCategoryItem(
+                DesktopDrawerFeedSourceByCategoryItem(
                     feedSourceCategoryWrapper = categoryWrapper,
                     drawerFeedSources = drawerFeedSources
                         .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                     currentFeedFilter = currentFeedFilter,
                     drawerItemVisualStyle = drawerItemVisualStyle,
                     isCategoryExpanded = isCategoryExpanded,
-                    onCategoryExpand = {
-                        isCategoryExpanded = !isCategoryExpanded
-                    },
+                    onCategoryExpand = { isCategoryExpanded = !isCategoryExpanded },
                     onFeedFilterSelected = onFeedFilterSelected,
                     selectedFeedSourceIds = selectedFeedSourceIds,
                     onFeedSourceClick = onFeedSourceClick,
@@ -142,7 +135,7 @@ internal fun DrawerFeedSourcesByCategories(
 }
 
 @Composable
-internal fun DrawerFeedSourceByCategoryItem(
+private fun DesktopDrawerFeedSourceByCategoryItem(
     feedSourceCategoryWrapper: DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper,
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
@@ -156,7 +149,7 @@ internal fun DrawerFeedSourceByCategoryItem(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
-    onChangeFeedCategoryClick: ((FeedSource) -> Unit),
+    onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
@@ -166,6 +159,7 @@ internal fun DrawerFeedSourceByCategoryItem(
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
     var showMenu by rememberSaveable { mutableStateOf(false) }
     var menuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     val category = feedSourceCategoryWrapper.feedSourceCategory
     val unreadCount = drawerFeedSources.sumOf { it.unreadCount }
@@ -177,8 +171,7 @@ internal fun DrawerFeedSourceByCategoryItem(
     )
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         @Suppress("MagicNumber")
         val degrees by conditionalAnimateFloatAsState(
@@ -200,7 +193,7 @@ internal fun DrawerFeedSourceByCategoryItem(
             }
             val navItemColors = drawerItemColors(drawerItemVisualStyle)
             val itemShape = drawerItemVisualStyle.itemShape
-            val dropTargetModifier = Modifier.Companion.dropTargetModifier(
+            val dropTargetModifier = Modifier.dropTargetModifier(
                 dragState = dragState,
                 category = category,
                 isDropTargetActive = isDropTargetActive,
@@ -305,20 +298,44 @@ internal fun DrawerFeedSourceByCategoryItem(
     }
 
     if (category != null) {
-        CategoryContextMenu(
+        val strings = LocalFeedFlowStrings.current
+        val menuEntries = persistentListOf(
+            DesktopPopupMenuEntry.Action(
+                text = strings.editFeedSourceNameButton,
+                onClick = {
+                    showMenu = false
+                    menuPositionInWindow = null
+                    showEditDialog = true
+                },
+            ),
+            DesktopPopupMenuEntry.Action(
+                text = strings.deleteFeed,
+                onClick = {
+                    showMenu = false
+                    menuPositionInWindow = null
+                    showDeleteDialog = true
+                },
+            ),
+        )
+
+        DesktopPopupMenu(
             showMenu = showMenu,
             menuPositionInWindow = menuPositionInWindow,
-            hideMenu = {
+            menuEntries = menuEntries,
+            closeMenu = {
                 showMenu = false
                 menuPositionInWindow = null
             },
+        )
+
+        DeleteCategoryDialog(
+            showDialog = showDeleteDialog,
             categoryId = CategoryId(category.id),
-            onEditCategoryClick = {
-                showMenu = false
-                menuPositionInWindow = null
-                showEditDialog = true
+            onDismiss = { showDeleteDialog = false },
+            onDeleteCategory = { id ->
+                onDeleteCategoryClick(id)
+                showDeleteDialog = false
             },
-            onDeleteCategoryClick = onDeleteCategoryClick,
         )
 
         EditCategoryNameDialog(
@@ -327,39 +344,6 @@ internal fun DrawerFeedSourceByCategoryItem(
             initialCategoryName = category.title,
             onDismiss = { showEditDialog = false },
             onEditCategory = onEditCategoryClick,
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun DrawerFeedSourcesByCategoriesPreview() {
-    PreviewHelper {
-        DrawerFeedSourcesByCategories(
-            navDrawerState = NavDrawerState(
-                timeline = persistentListOf(),
-                read = persistentListOf(),
-                bookmarks = persistentListOf(),
-                pinnedFeedSources = persistentListOf(),
-                feedSourcesWithoutCategory = persistentListOf(),
-                feedSourcesByCategory = persistentMapOf(),
-                categories = persistentListOf(),
-            ),
-            currentFeedFilter = FeedFilter.Timeline,
-            drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
-            onFeedFilterSelected = {},
-            selectedFeedSourceIds = persistentSetOf(),
-            onFeedSourceClick = { _, _ -> },
-            selectedFeedSourcesProvider = { emptyList() },
-            onEditFeedClick = {},
-            onDeleteFeedSourceClick = {},
-            onPinFeedClick = {},
-            onOpenWebsite = {},
-            onEditCategoryClick = { _, _ -> },
-            onChangeFeedCategoryClick = {},
-            onDeleteCategoryClick = {},
-            onMoveFeedSourcesToCategory = { _, _ -> },
-            dragState = rememberFeedSourceDragState(rememberLazyListState()),
         )
     }
 }

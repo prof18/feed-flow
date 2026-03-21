@@ -141,3 +141,4 @@ iosApp/.build/
 /.tmp/
 tmp
 .claude/worktrees
+.claude/settings.local.json

@@ -1,6 +1,7 @@
 package com.prof18.feedflow.feedsync.googledrive
 
 import co.touchlab.kermit.Logger
+import com.google.api.client.auth.oauth2.TokenResponseException
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
@@ -158,7 +159,18 @@ class GoogleDriveDataSourceJvmImpl(
         }
         val client = requireNotNull(driveService) { "Drive client not initialized" }
         return withContext(dispatcherProvider.io) {
-            block(client)
+            try {
+                block(client)
+            } catch (e: TokenResponseException) {
+                if (e.details?.error == "invalid_grant") {
+                    logger.d(e) { "Google Drive token expired or revoked, needs re-auth" }
+                    revokeAccess()
+                    throw GoogleDriveNeedsReAuthException(
+                        errorMessage = "Google Drive token expired or revoked",
+                    )
+                }
+                throw e
+            }
         }
     }
 

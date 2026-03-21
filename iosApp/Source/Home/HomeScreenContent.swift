@@ -35,6 +35,7 @@ struct HomeContent: View {
     @Binding var feedFontSizes: FeedFontSizes
     @Binding var swipeActions: SwipeActions
     @Binding var feedLayout: FeedLayout
+    @Binding var feedItemDisplaySettings: FeedItemDisplaySettings
 
     @State var isToolbarVisible = true
     @State var showScrollToTop = false
@@ -141,6 +142,7 @@ private extension HomeContent {
             feedFontSizes: feedFontSizes,
             swipeActions: swipeActions,
             feedLayout: feedLayout,
+            feedItemDisplaySettings: feedItemDisplaySettings,
             onReloadClick: onRefresh,
             onAddFeedClick: {
                 self.sheetToShow = .noFeedSource

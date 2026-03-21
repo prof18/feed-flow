@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -45,6 +46,9 @@ class FeedListSettingsViewModel internal constructor(
         val rightSwipeAction = feedAppearanceSettingsRepository.getSwipeAction(SwipeDirection.RIGHT)
         val isRemoveTitleFromDescriptionEnabled = feedAppearanceSettingsRepository.getRemoveTitleFromDescription()
         val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
+        val isHideUnreadDotEnabled = feedAppearanceSettingsRepository.getHideUnreadDot()
+        val isHideFeedSourceEnabled = feedAppearanceSettingsRepository.getHideFeedSource()
+        val descriptionLineLimit = feedAppearanceSettingsRepository.getDescriptionLineLimit()
 
         stateMutableFlow.update {
             FeedListSettingsState(
@@ -59,6 +63,9 @@ class FeedListSettingsViewModel internal constructor(
                 rightSwipeActionType = rightSwipeAction,
                 isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
                 feedOrder = feedOrder,
+                isHideUnreadDotEnabled = isHideUnreadDotEnabled,
+                isHideFeedSourceEnabled = isHideFeedSourceEnabled,
+                descriptionLineLimit = descriptionLineLimit,
             )
         }
     }
@@ -159,6 +166,33 @@ class FeedListSettingsViewModel internal constructor(
                 it.copy(feedOrder = feedOrder)
             }
             feedStateRepository.getFeeds()
+        }
+    }
+
+    fun updateHideUnreadDot(value: Boolean) {
+        viewModelScope.launch {
+            feedAppearanceSettingsRepository.setHideUnreadDot(value)
+            stateMutableFlow.update {
+                it.copy(isHideUnreadDotEnabled = value)
+            }
+        }
+    }
+
+    fun updateHideFeedSource(value: Boolean) {
+        viewModelScope.launch {
+            feedAppearanceSettingsRepository.setHideFeedSource(value)
+            stateMutableFlow.update {
+                it.copy(isHideFeedSourceEnabled = value)
+            }
+        }
+    }
+
+    fun updateDescriptionLineLimit(limit: DescriptionLineLimit) {
+        viewModelScope.launch {
+            feedAppearanceSettingsRepository.setDescriptionLineLimit(limit)
+            stateMutableFlow.update {
+                it.copy(descriptionLineLimit = limit)
+            }
         }
     }
 }

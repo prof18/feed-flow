@@ -9,8 +9,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.outlined.EventBusy
+import androidx.compose.material.icons.outlined.FiberManualRecord
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
+import androidx.compose.material.icons.outlined.LabelOff
 import androidx.compose.material.icons.outlined.SubtitlesOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,7 +30,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.settings.components.FeedOrderSelectionDialog
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -37,6 +41,7 @@ import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.presentation.model.FeedListSettingsState
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
+import com.prof18.feedflow.shared.ui.settings.DescriptionLineLimitSelector
 import com.prof18.feedflow.shared.ui.settings.FeedItemPreview
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.SettingSelectorItem
@@ -62,6 +67,9 @@ internal fun FeedListSettingsScreenContent(
     onSwipeActionSelected: (SwipeDirection, SwipeActionType) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
+    setHideUnreadDot: (Boolean) -> Unit,
+    setHideFeedSource: (Boolean) -> Unit,
+    onDescriptionLineLimitSelected: (DescriptionLineLimit) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -93,6 +101,11 @@ internal fun FeedListSettingsScreenContent(
                 isHideDateEnabled = state.isHideDateEnabled,
                 dateFormat = state.dateFormat,
                 timeFormat = state.timeFormat,
+                feedItemDisplaySettings = FeedItemDisplaySettings(
+                    isHideUnreadDotEnabled = state.isHideUnreadDotEnabled,
+                    isHideFeedSourceEnabled = state.isHideFeedSourceEnabled,
+                    descriptionLineLimit = state.descriptionLineLimit,
+                ),
             )
 
             LazyColumn {
@@ -151,10 +164,35 @@ internal fun FeedListSettingsScreenContent(
 
                 item {
                     SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideUnreadDot,
+                        icon = Icons.Outlined.FiberManualRecord,
+                        isChecked = state.isHideUnreadDotEnabled,
+                        onCheckedChange = setHideUnreadDot,
+                    )
+                }
+
+                item {
+                    SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideFeedSource,
+                        icon = Icons.Outlined.LabelOff,
+                        isChecked = state.isHideFeedSourceEnabled,
+                        onCheckedChange = setHideFeedSource,
+                    )
+                }
+
+                item {
+                    SettingSwitchItem(
                         title = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
                         icon = Icons.Outlined.HideSource,
                         isChecked = state.isRemoveTitleFromDescriptionEnabled,
                         onCheckedChange = setRemoveTitleFromDescription,
+                    )
+                }
+
+                item {
+                    DescriptionLineLimitSelector(
+                        currentLimit = state.descriptionLineLimit,
+                        onLimitSelected = onDescriptionLineLimitSelected,
                     )
                 }
 
@@ -249,6 +287,9 @@ private fun FeedListSettingsScreenContentPreview() {
             onSwipeActionSelected = { _, _ -> },
             setRemoveTitleFromDescription = {},
             onFeedOrderSelected = {},
+            setHideUnreadDot = {},
+            setHideFeedSource = {},
+            onDescriptionLineLimitSelected = {},
         )
     }
 }

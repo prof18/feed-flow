@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
@@ -29,6 +30,7 @@ class HomeDisplayState(
     val swipeActions: SwipeActions,
     val feedLayout: FeedLayout,
     val isSyncUploadRequired: Boolean = false,
+    val feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
 )
 
 @Stable

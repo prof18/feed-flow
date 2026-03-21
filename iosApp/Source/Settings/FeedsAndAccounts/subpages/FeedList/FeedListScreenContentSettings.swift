@@ -17,6 +17,9 @@ struct FeedListSettingsScreenContent: View {
     @Binding var rightSwipeAction: SwipeActionType
     @Binding var isRemoveTitleFromDescriptionEnabled: Bool
     @Binding var feedOrder: FeedOrder
+    @Binding var isHideUnreadDotEnabled: Bool
+    @Binding var isHideFeedSourceEnabled: Bool
+    @Binding var descriptionLineLimit: DescriptionLineLimit
     let onScaleFactorChange: (Double) -> Void
 
     private let feedFlowStrings = Deps.shared.getStrings()
@@ -56,7 +59,12 @@ struct FeedListSettingsScreenContent: View {
                     ),
                     index: 0,
                     feedFontSizes: feedFontSizes,
-                    feedLayout: feedLayout
+                    feedLayout: feedLayout,
+                    feedItemDisplaySettings: FeedItemDisplaySettings(
+                        isHideUnreadDotEnabled: isHideUnreadDotEnabled,
+                        isHideFeedSourceEnabled: isHideFeedSourceEnabled,
+                        descriptionLineLimit: descriptionLineLimit
+                    )
                 )
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(Spacing.small)
@@ -118,6 +126,29 @@ struct FeedListSettingsScreenContent: View {
                         Label(feedFlowStrings.settingsHideDate, systemImage: "calendar.badge.minus")
                     }.onTapGesture {
                         isHideDateEnabled.toggle()
+                    }
+
+                    Toggle(isOn: $isHideUnreadDotEnabled) {
+                        Label(feedFlowStrings.settingsHideUnreadDot, systemImage: "circle.fill")
+                    }.onTapGesture {
+                        isHideUnreadDotEnabled.toggle()
+                    }
+
+                    Toggle(isOn: $isHideFeedSourceEnabled) {
+                        Label(feedFlowStrings.settingsHideFeedSource, systemImage: "person.slash")
+                    }.onTapGesture {
+                        isHideFeedSourceEnabled.toggle()
+                    }
+
+                    Picker(selection: $descriptionLineLimit) {
+                        Text(feedFlowStrings.settingsDescriptionLinesThree)
+                            .tag(DescriptionLineLimit.three)
+                        Text(feedFlowStrings.settingsDescriptionLinesFive)
+                            .tag(DescriptionLineLimit.five)
+                        Text(feedFlowStrings.settingsDescriptionLinesNoLimit)
+                            .tag(DescriptionLineLimit.noLimit)
+                    } label: {
+                        Label(feedFlowStrings.settingsDescriptionMaxLines, systemImage: "list.number")
                     }
 
                     Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {

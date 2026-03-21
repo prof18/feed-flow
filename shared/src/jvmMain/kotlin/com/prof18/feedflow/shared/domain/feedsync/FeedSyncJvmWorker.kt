@@ -19,6 +19,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceJvm
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDownloadParam
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveNeedsReAuthException
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
@@ -87,6 +88,9 @@ internal class FeedSyncJvmWorker(
                     settingsRepository.setIsSyncUploadRequired(false)
                     emitSuccessMessage()
                 }
+            } catch (e: GoogleDriveNeedsReAuthException) {
+                logger.d("Google Drive needs re-authorization", e)
+                feedSyncMessageQueue.emitResult(SyncResult.GoogleDriveNeedReAuth())
             } catch (e: Exception) {
                 if (!e.isTemporaryNetworkError()) {
                     logger.e("Upload to dropbox failed", e)
@@ -171,6 +175,9 @@ internal class FeedSyncJvmWorker(
             try {
                 feedSyncer.closeDB()
                 accountSpecificDownload()
+            } catch (e: GoogleDriveNeedsReAuthException) {
+                logger.d("Google Drive needs re-authorization", e)
+                SyncResult.GoogleDriveNeedReAuth()
             } catch (e: Exception) {
                 val currentAccount = accountsRepository.getCurrentSyncAccount()
                 val downloadError = syncDownloadErrorForAccount(currentAccount)

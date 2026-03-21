@@ -7,8 +7,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.EventBusy
+import androidx.compose.material.icons.outlined.FiberManualRecord
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
+import androidx.compose.material.icons.outlined.LabelOff
 import androidx.compose.material.icons.outlined.SubtitlesOff
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -20,7 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -28,6 +32,7 @@ import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.presentation.model.FeedListSettingsState
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
+import com.prof18.feedflow.shared.ui.settings.DescriptionLineLimitSelector
 import com.prof18.feedflow.shared.ui.settings.FeedItemPreview
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
@@ -68,6 +73,11 @@ internal fun FeedListAppearanceDialog(
                     isHideDateEnabled = settingsState.isHideDateEnabled,
                     dateFormat = settingsState.dateFormat,
                     timeFormat = settingsState.timeFormat,
+                    feedItemDisplaySettings = FeedItemDisplaySettings(
+                        isHideUnreadDotEnabled = settingsState.isHideUnreadDotEnabled,
+                        isHideFeedSourceEnabled = settingsState.isHideFeedSourceEnabled,
+                        descriptionLineLimit = settingsState.descriptionLineLimit,
+                    ),
                 )
 
                 Column(
@@ -119,10 +129,29 @@ internal fun FeedListAppearanceDialog(
                     )
 
                     SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideUnreadDot,
+                        icon = Icons.Outlined.FiberManualRecord,
+                        isChecked = settingsState.isHideUnreadDotEnabled,
+                        onCheckedChange = { callbacks.onHideUnreadDotUpdate(it) },
+                    )
+
+                    SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideFeedSource,
+                        icon = Icons.Outlined.LabelOff,
+                        isChecked = settingsState.isHideFeedSourceEnabled,
+                        onCheckedChange = { callbacks.onHideFeedSourceUpdate(it) },
+                    )
+
+                    SettingSwitchItem(
                         title = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
                         icon = Icons.Outlined.HideSource,
                         isChecked = settingsState.isRemoveTitleFromDescriptionEnabled,
                         onCheckedChange = { callbacks.onRemoveTitleFromDescUpdate(it) },
+                    )
+
+                    DescriptionLineLimitSelector(
+                        currentLimit = settingsState.descriptionLineLimit,
+                        onLimitSelected = { callbacks.onDescriptionLineLimitUpdate(it) },
                     )
 
                     DateFormatSelector(
@@ -170,4 +199,7 @@ internal data class FeedListAppearanceCallbacks(
     val onDateFormatUpdate: (DateFormat) -> Unit,
     val onTimeFormatUpdate: (TimeFormat) -> Unit,
     val onSwipeActionUpdate: (SwipeDirection, SwipeActionType) -> Unit,
+    val onHideUnreadDotUpdate: (Boolean) -> Unit,
+    val onHideFeedSourceUpdate: (Boolean) -> Unit,
+    val onDescriptionLineLimitUpdate: (DescriptionLineLimit) -> Unit,
 )

@@ -11,8 +11,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.outlined.EventBusy
+import androidx.compose.material.icons.outlined.FiberManualRecord
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
+import androidx.compose.material.icons.outlined.LabelOff
 import androidx.compose.material.icons.outlined.SubtitlesOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -28,7 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -37,6 +41,7 @@ import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.presentation.model.FeedListSettingsState
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
+import com.prof18.feedflow.shared.ui.settings.DescriptionLineLimitSelector
 import com.prof18.feedflow.shared.ui.settings.FeedItemPreview
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.SettingSelectorItem
@@ -62,6 +67,9 @@ internal fun FeedListPane(
     onTimeFormatUpdate: (TimeFormat) -> Unit,
     onSwipeActionUpdate: (SwipeDirection, SwipeActionType) -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
+    onHideUnreadDotUpdate: (Boolean) -> Unit,
+    onHideFeedSourceUpdate: (Boolean) -> Unit,
+    onDescriptionLineLimitUpdate: (DescriptionLineLimit) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
     var showFeedOrderDialog by remember { mutableStateOf(false) }
@@ -75,6 +83,11 @@ internal fun FeedListPane(
             isHideDateEnabled = settingsState.isHideDateEnabled,
             dateFormat = settingsState.dateFormat,
             timeFormat = settingsState.timeFormat,
+            feedItemDisplaySettings = FeedItemDisplaySettings(
+                isHideUnreadDotEnabled = settingsState.isHideUnreadDotEnabled,
+                isHideFeedSourceEnabled = settingsState.isHideFeedSourceEnabled,
+                descriptionLineLimit = settingsState.descriptionLineLimit,
+            ),
         )
 
         Column(
@@ -123,10 +136,29 @@ internal fun FeedListPane(
             )
 
             SettingSwitchItem(
+                title = LocalFeedFlowStrings.current.settingsHideUnreadDot,
+                icon = Icons.Outlined.FiberManualRecord,
+                isChecked = settingsState.isHideUnreadDotEnabled,
+                onCheckedChange = onHideUnreadDotUpdate,
+            )
+
+            SettingSwitchItem(
+                title = LocalFeedFlowStrings.current.settingsHideFeedSource,
+                icon = Icons.Outlined.LabelOff,
+                isChecked = settingsState.isHideFeedSourceEnabled,
+                onCheckedChange = onHideFeedSourceUpdate,
+            )
+
+            SettingSwitchItem(
                 title = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
                 icon = Icons.Outlined.HideSource,
                 isChecked = settingsState.isRemoveTitleFromDescriptionEnabled,
                 onCheckedChange = onRemoveTitleFromDescUpdate,
+            )
+
+            DescriptionLineLimitSelector(
+                currentLimit = settingsState.descriptionLineLimit,
+                onLimitSelected = onDescriptionLineLimitUpdate,
             )
 
             val feedOrderLabel = when (feedOrder) {
@@ -248,6 +280,9 @@ private fun FeedListPanePreview() {
             onTimeFormatUpdate = {},
             onSwipeActionUpdate = { _, _ -> },
             onFeedOrderSelected = {},
+            onHideUnreadDotUpdate = {},
+            onHideFeedSourceUpdate = {},
+            onDescriptionLineLimitUpdate = {},
         )
     }
 }

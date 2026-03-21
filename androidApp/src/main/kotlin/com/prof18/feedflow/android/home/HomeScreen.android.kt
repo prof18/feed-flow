@@ -72,6 +72,7 @@ internal fun HomeScreen(
     val feedOperation by homeViewModel.feedOperationState.collectAsStateWithLifecycle()
     val feedLayout by homeViewModel.feedLayout.collectAsStateWithLifecycle()
     val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsStateWithLifecycle()
+    val feedItemDisplaySettings by homeViewModel.feedItemDisplaySettings.collectAsStateWithLifecycle()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsStateWithLifecycle()
 
@@ -138,6 +139,7 @@ internal fun HomeScreen(
         feedLayout = feedLayout,
         isSyncUploadRequired = isSyncUploadRequired,
         nextFeedDisplayState = nextFeedPreviewState.asDisplayState(),
+        feedItemDisplaySettings = feedItemDisplaySettings,
     )
 
     val feedListActions = FeedListActions(

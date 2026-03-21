@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
@@ -25,13 +26,16 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -66,6 +70,17 @@ class SearchViewModel internal constructor(
     private val dateFormat: DateFormat = feedAppearanceSettingsRepository.getDateFormat()
     private val timeFormat: TimeFormat = feedAppearanceSettingsRepository.getTimeFormat()
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
+    val feedItemDisplaySettings: StateFlow<FeedItemDisplaySettings> = combine(
+        feedAppearanceSettingsRepository.hideUnreadDot,
+        feedAppearanceSettingsRepository.hideFeedSource,
+        feedAppearanceSettingsRepository.descriptionLineLimit,
+    ) { hideUnreadDot, hideFeedSource, descriptionLineLimit ->
+        FeedItemDisplaySettings(
+            isHideUnreadDotEnabled = hideUnreadDot,
+            isHideFeedSourceEnabled = hideFeedSource,
+            descriptionLineLimit = descriptionLineLimit,
+        )
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, FeedItemDisplaySettings())
 
     private val feedLayout = feedAppearanceSettingsRepository.getFeedLayout()
 

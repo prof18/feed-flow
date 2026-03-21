@@ -216,6 +216,7 @@ fun HomeScreenContent(
                                 onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
                                 onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
                                 onNavigateNext = { onNavigateToNextFeed() },
+                                feedItemDisplaySettings = displayState.feedItemDisplaySettings,
                             )
                         }
 

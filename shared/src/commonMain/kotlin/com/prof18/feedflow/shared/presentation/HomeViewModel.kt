@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOperation
@@ -41,10 +42,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -94,6 +97,17 @@ class HomeViewModel internal constructor(
     val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
     val swipeActions: StateFlow<SwipeActions> = feedAppearanceSettingsRepository.swipeActions
     val feedLayout: StateFlow<FeedLayout> = feedAppearanceSettingsRepository.feedLayout
+    val feedItemDisplaySettings: StateFlow<FeedItemDisplaySettings> = combine(
+        feedAppearanceSettingsRepository.hideUnreadDot,
+        feedAppearanceSettingsRepository.hideFeedSource,
+        feedAppearanceSettingsRepository.descriptionLineLimit,
+    ) { hideUnreadDot, hideFeedSource, descriptionLineLimit ->
+        FeedItemDisplaySettings(
+            isHideUnreadDotEnabled = hideUnreadDot,
+            isHideFeedSourceEnabled = hideFeedSource,
+            descriptionLineLimit = descriptionLineLimit,
+        )
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, FeedItemDisplaySettings())
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 

@@ -15,6 +15,11 @@ struct SearchScreenContent: View {
     @Binding var searchFilter: SearchFilter
     let currentFeedFilter: FeedFilter?
     @Binding var feedFontSizes: FeedFontSizes
+    var feedItemDisplaySettings = FeedItemDisplaySettings(
+        isHideUnreadDotEnabled: false,
+        isHideFeedSourceEnabled: false,
+        descriptionLineLimit: .three
+    )
 
     @State private var isPresented = true
 
@@ -77,7 +82,7 @@ struct SearchScreenContent: View {
         Button {
             handleSearchItemTap(feedItem: feedItem)
         } label: {
-            FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes)
+            FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes, feedItemDisplaySettings: feedItemDisplaySettings)
         }
         .buttonStyle(.plain)
         .id(feedItem.id)

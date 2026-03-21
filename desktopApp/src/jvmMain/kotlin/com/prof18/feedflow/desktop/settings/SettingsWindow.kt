@@ -180,6 +180,8 @@ internal fun SettingsWindow(
                         onSwipeActionUpdate = feedListSettingsViewModel::updateSwipeAction,
                         onFeedOrderSelected = menuBarViewModel::updateFeedOrder,
                         onHideUnreadDotUpdate = feedListSettingsViewModel::updateHideUnreadDot,
+                        onHideFeedSourceUpdate = feedListSettingsViewModel::updateHideFeedSource,
+                        onDescriptionLineLimitUpdate = feedListSettingsViewModel::updateDescriptionLineLimit,
                     )
 
                     DesktopSettingsCategory.READING -> ReadingPane(

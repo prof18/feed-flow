@@ -163,6 +163,10 @@
     <string name="settings_hide_date">Hide article date</string>
     <string name="settings_hide_unread_dot">Hide unread indicator</string>
     <string name="settings_hide_feed_source">Hide feed source</string>
+    <string name="settings_description_max_lines">Description lines</string>
+    <string name="settings_description_lines_three">3 lines</string>
+    <string name="settings_description_lines_five">5 lines</string>
+    <string name="settings_description_lines_no_limit">No limit</string>
     <string name="reader_mode_font_size">Font Size</string>
     <string name="edit_feed_source_name_button">Edit</string>
     <string name="edit_feed">Edit feed</string>

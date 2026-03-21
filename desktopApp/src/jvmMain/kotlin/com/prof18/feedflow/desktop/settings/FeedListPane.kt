@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
@@ -40,6 +41,7 @@ import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.presentation.model.FeedListSettingsState
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
+import com.prof18.feedflow.shared.ui.settings.DescriptionLineLimitSelector
 import com.prof18.feedflow.shared.ui.settings.FeedItemPreview
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.SettingSelectorItem
@@ -67,6 +69,7 @@ internal fun FeedListPane(
     onFeedOrderSelected: (FeedOrder) -> Unit,
     onHideUnreadDotUpdate: (Boolean) -> Unit,
     onHideFeedSourceUpdate: (Boolean) -> Unit,
+    onDescriptionLineLimitUpdate: (DescriptionLineLimit) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
     var showFeedOrderDialog by remember { mutableStateOf(false) }
@@ -83,6 +86,7 @@ internal fun FeedListPane(
             feedItemDisplaySettings = FeedItemDisplaySettings(
                 isHideUnreadDotEnabled = settingsState.isHideUnreadDotEnabled,
                 isHideFeedSourceEnabled = settingsState.isHideFeedSourceEnabled,
+                descriptionLineLimit = settingsState.descriptionLineLimit,
             ),
         )
 
@@ -150,6 +154,11 @@ internal fun FeedListPane(
                 icon = Icons.Outlined.HideSource,
                 isChecked = settingsState.isRemoveTitleFromDescriptionEnabled,
                 onCheckedChange = onRemoveTitleFromDescUpdate,
+            )
+
+            DescriptionLineLimitSelector(
+                currentLimit = settingsState.descriptionLineLimit,
+                onLimitSelected = onDescriptionLineLimitUpdate,
             )
 
             val feedOrderLabel = when (feedOrder) {
@@ -273,6 +282,7 @@ private fun FeedListPanePreview() {
             onFeedOrderSelected = {},
             onHideUnreadDotUpdate = {},
             onHideFeedSourceUpdate = {},
+            onDescriptionLineLimitUpdate = {},
         )
     }
 }

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
@@ -31,6 +32,7 @@ import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.presentation.model.FeedListSettingsState
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
+import com.prof18.feedflow.shared.ui.settings.DescriptionLineLimitSelector
 import com.prof18.feedflow.shared.ui.settings.FeedItemPreview
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
@@ -74,6 +76,7 @@ internal fun FeedListAppearanceDialog(
                     feedItemDisplaySettings = FeedItemDisplaySettings(
                         isHideUnreadDotEnabled = settingsState.isHideUnreadDotEnabled,
                         isHideFeedSourceEnabled = settingsState.isHideFeedSourceEnabled,
+                        descriptionLineLimit = settingsState.descriptionLineLimit,
                     ),
                 )
 
@@ -146,6 +149,11 @@ internal fun FeedListAppearanceDialog(
                         onCheckedChange = { callbacks.onRemoveTitleFromDescUpdate(it) },
                     )
 
+                    DescriptionLineLimitSelector(
+                        currentLimit = settingsState.descriptionLineLimit,
+                        onLimitSelected = { callbacks.onDescriptionLineLimitUpdate(it) },
+                    )
+
                     DateFormatSelector(
                         currentFormat = settingsState.dateFormat,
                         onFormatSelected = { format ->
@@ -193,4 +201,5 @@ internal data class FeedListAppearanceCallbacks(
     val onSwipeActionUpdate: (SwipeDirection, SwipeActionType) -> Unit,
     val onHideUnreadDotUpdate: (Boolean) -> Unit,
     val onHideFeedSourceUpdate: (Boolean) -> Unit,
+    val onDescriptionLineLimitUpdate: (DescriptionLineLimit) -> Unit,
 )

@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -47,6 +48,7 @@ class FeedListSettingsViewModel internal constructor(
         val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
         val isHideUnreadDotEnabled = feedAppearanceSettingsRepository.getHideUnreadDot()
         val isHideFeedSourceEnabled = feedAppearanceSettingsRepository.getHideFeedSource()
+        val descriptionLineLimit = feedAppearanceSettingsRepository.getDescriptionLineLimit()
 
         stateMutableFlow.update {
             FeedListSettingsState(
@@ -63,6 +65,7 @@ class FeedListSettingsViewModel internal constructor(
                 feedOrder = feedOrder,
                 isHideUnreadDotEnabled = isHideUnreadDotEnabled,
                 isHideFeedSourceEnabled = isHideFeedSourceEnabled,
+                descriptionLineLimit = descriptionLineLimit,
             )
         }
     }
@@ -180,6 +183,15 @@ class FeedListSettingsViewModel internal constructor(
             feedAppearanceSettingsRepository.setHideFeedSource(value)
             stateMutableFlow.update {
                 it.copy(isHideFeedSourceEnabled = value)
+            }
+        }
+    }
+
+    fun updateDescriptionLineLimit(limit: DescriptionLineLimit) {
+        viewModelScope.launch {
+            feedAppearanceSettingsRepository.setDescriptionLineLimit(limit)
+            stateMutableFlow.update {
+                it.copy(descriptionLineLimit = limit)
             }
         }
     }

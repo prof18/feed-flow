@@ -113,6 +113,7 @@ internal fun FeedItemView(
                 feedItem = feedItem,
                 feedFontSize = feedFontSize,
                 currentFeedFilter = currentFeedFilter,
+                descriptionLineLimit = feedItemDisplaySettings.descriptionLineLimit,
             )
 
             feedItem.dateString?.let { dateString ->

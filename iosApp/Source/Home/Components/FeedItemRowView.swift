@@ -18,7 +18,11 @@ struct FeedItemRowView: View {
     let swipeActions: SwipeActions
     let feedLayout: FeedLayout
     let currentFeedFilter: FeedFilter
-    var feedItemDisplaySettings = FeedItemDisplaySettings(isHideUnreadDotEnabled: false, isHideFeedSourceEnabled: false)
+    var feedItemDisplaySettings = FeedItemDisplaySettings(
+        isHideUnreadDotEnabled: false,
+        isHideFeedSourceEnabled: false,
+        descriptionLineLimit: .three
+    )
     let onItemClick: (FeedItemUrlInfo) -> Void
     let onReaderModeClick: (FeedItemUrlInfo) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void

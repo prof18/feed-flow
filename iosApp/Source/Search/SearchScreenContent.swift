@@ -15,7 +15,11 @@ struct SearchScreenContent: View {
     @Binding var searchFilter: SearchFilter
     let currentFeedFilter: FeedFilter?
     @Binding var feedFontSizes: FeedFontSizes
-    var feedItemDisplaySettings = FeedItemDisplaySettings(isHideUnreadDotEnabled: false, isHideFeedSourceEnabled: false)
+    var feedItemDisplaySettings = FeedItemDisplaySettings(
+        isHideUnreadDotEnabled: false,
+        isHideFeedSourceEnabled: false,
+        descriptionLineLimit: .three
+    )
 
     @State private var isPresented = true
 

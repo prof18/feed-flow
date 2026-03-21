@@ -19,6 +19,7 @@ struct FeedListSettingsScreenContent: View {
     @Binding var feedOrder: FeedOrder
     @Binding var isHideUnreadDotEnabled: Bool
     @Binding var isHideFeedSourceEnabled: Bool
+    @Binding var descriptionLineLimit: DescriptionLineLimit
     let onScaleFactorChange: (Double) -> Void
 
     private let feedFlowStrings = Deps.shared.getStrings()
@@ -61,7 +62,8 @@ struct FeedListSettingsScreenContent: View {
                     feedLayout: feedLayout,
                     feedItemDisplaySettings: FeedItemDisplaySettings(
                         isHideUnreadDotEnabled: isHideUnreadDotEnabled,
-                        isHideFeedSourceEnabled: isHideFeedSourceEnabled
+                        isHideFeedSourceEnabled: isHideFeedSourceEnabled,
+                        descriptionLineLimit: descriptionLineLimit
                     )
                 )
                 .fixedSize(horizontal: false, vertical: true)
@@ -136,6 +138,17 @@ struct FeedListSettingsScreenContent: View {
                         Label(feedFlowStrings.settingsHideFeedSource, systemImage: "person.slash")
                     }.onTapGesture {
                         isHideFeedSourceEnabled.toggle()
+                    }
+
+                    Picker(selection: $descriptionLineLimit) {
+                        Text(feedFlowStrings.settingsDescriptionLinesThree)
+                            .tag(DescriptionLineLimit.three)
+                        Text(feedFlowStrings.settingsDescriptionLinesFive)
+                            .tag(DescriptionLineLimit.five)
+                        Text(feedFlowStrings.settingsDescriptionLinesNoLimit)
+                            .tag(DescriptionLineLimit.noLimit)
+                    } label: {
+                        Label(feedFlowStrings.settingsDescriptionMaxLines, systemImage: "list.number")
                     }
 
                     Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {

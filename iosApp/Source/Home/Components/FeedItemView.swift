@@ -18,7 +18,11 @@ struct FeedItemView: View {
     let feedFontSizes: FeedFontSizes
     var feedLayout: FeedLayout = .list
     var currentFeedFilter: FeedFilter = .Timeline()
-    var feedItemDisplaySettings = FeedItemDisplaySettings(isHideUnreadDotEnabled: false, isHideFeedSourceEnabled: false)
+    var feedItemDisplaySettings = FeedItemDisplaySettings(
+        isHideUnreadDotEnabled: false,
+        isHideFeedSourceEnabled: false,
+        descriptionLineLimit: .three
+    )
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -101,8 +105,11 @@ struct FeedItemView: View {
             }
 
             if let subtitle = feedItem.subtitle {
+                let lineLimit = feedItemDisplaySettings.descriptionLineLimit == .noLimit
+                    ? nil
+                    : Int(feedItemDisplaySettings.descriptionLineLimit.lines)
                 Text(subtitle)
-                    .lineLimit(3)
+                    .lineLimit(lineLimit)
                     .font(.system(size: CGFloat(feedFontSizes.feedDescFontSize)))
                     .padding(.top, getPaddingTop(feedItem: feedItem))
                     .opacity(

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -95,6 +96,7 @@ internal fun TitleSubtitleAndImageRow(
     feedFontSize: FeedFontSizes,
     modifier: Modifier = Modifier,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
+    descriptionLineLimit: DescriptionLineLimit = DescriptionLineLimit.THREE,
 ) {
     Row(
         modifier = modifier,
@@ -133,7 +135,7 @@ internal fun TitleSubtitleAndImageRow(
                     modifier = Modifier
                         .padding(top = paddingTop),
                     text = subtitle,
-                    maxLines = 3,
+                    maxLines = descriptionLineLimit.lines,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = feedFontSize.feedDescFontSize.sp,
                     lineHeight = (feedFontSize.feedDescFontSize + 6).sp,

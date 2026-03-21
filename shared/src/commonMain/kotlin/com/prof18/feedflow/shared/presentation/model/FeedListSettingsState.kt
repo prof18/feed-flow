@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.presentation.model
 
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -20,4 +21,5 @@ data class FeedListSettingsState(
     val feedOrder: FeedOrder = FeedOrder.NEWEST_FIRST,
     val isHideUnreadDotEnabled: Boolean = false,
     val isHideFeedSourceEnabled: Boolean = false,
+    val descriptionLineLimit: DescriptionLineLimit = DescriptionLineLimit.THREE,
 )

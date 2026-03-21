@@ -45,7 +45,11 @@ struct HomeScreen: View {
 
     @State var feedLayout: FeedLayout = .list
 
-    @State var feedItemDisplaySettings = FeedItemDisplaySettings(isHideUnreadDotEnabled: false, isHideFeedSourceEnabled: false)
+    @State var feedItemDisplaySettings = FeedItemDisplaySettings(
+        isHideUnreadDotEnabled: false,
+        isHideFeedSourceEnabled: false,
+        descriptionLineLimit: .three
+    )
 
     @Binding var toggleListScroll: Bool
 

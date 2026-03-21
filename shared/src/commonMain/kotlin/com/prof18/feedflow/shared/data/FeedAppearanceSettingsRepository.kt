@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -34,6 +35,9 @@ class FeedAppearanceSettingsRepository(
     private val hideFeedSourceMutableFlow = MutableStateFlow(getHideFeedSource())
     val hideFeedSource: StateFlow<Boolean> = hideFeedSourceMutableFlow.asStateFlow()
 
+    private val descriptionLineLimitMutableFlow = MutableStateFlow(getDescriptionLineLimit())
+    val descriptionLineLimit: StateFlow<DescriptionLineLimit> = descriptionLineLimitMutableFlow.asStateFlow()
+
     fun getHideUnreadDot(): Boolean =
         settings.getBoolean(FeedAppearanceSettingsFields.HIDE_UNREAD_DOT.name, false)
 
@@ -48,6 +52,15 @@ class FeedAppearanceSettingsRepository(
     fun setHideFeedSource(value: Boolean) {
         settings.set(FeedAppearanceSettingsFields.HIDE_FEED_SOURCE.name, value)
         hideFeedSourceMutableFlow.update { value }
+    }
+
+    fun getDescriptionLineLimit(): DescriptionLineLimit =
+        settings.getString(FeedAppearanceSettingsFields.DESCRIPTION_LINE_LIMIT.name, DescriptionLineLimit.THREE.name)
+            .let { DescriptionLineLimit.valueOf(it) }
+
+    fun setDescriptionLineLimit(limit: DescriptionLineLimit) {
+        settings.set(FeedAppearanceSettingsFields.DESCRIPTION_LINE_LIMIT.name, limit.name)
+        descriptionLineLimitMutableFlow.update { limit }
     }
 
     fun getRemoveTitleFromDescription(): Boolean =
@@ -157,4 +170,5 @@ private enum class FeedAppearanceSettingsFields {
     FEED_LAYOUT,
     HIDE_UNREAD_DOT,
     HIDE_FEED_SOURCE,
+    DESCRIPTION_LINE_LIMIT,
 }

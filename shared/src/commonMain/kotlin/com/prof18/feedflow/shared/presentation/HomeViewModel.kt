@@ -100,10 +100,12 @@ class HomeViewModel internal constructor(
     val feedItemDisplaySettings: StateFlow<FeedItemDisplaySettings> = combine(
         feedAppearanceSettingsRepository.hideUnreadDot,
         feedAppearanceSettingsRepository.hideFeedSource,
-    ) { hideUnreadDot, hideFeedSource ->
+        feedAppearanceSettingsRepository.descriptionLineLimit,
+    ) { hideUnreadDot, hideFeedSource, descriptionLineLimit ->
         FeedItemDisplaySettings(
             isHideUnreadDotEnabled = hideUnreadDot,
             isHideFeedSourceEnabled = hideFeedSource,
+            descriptionLineLimit = descriptionLineLimit,
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, FeedItemDisplaySettings())
 

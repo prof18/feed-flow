@@ -23,7 +23,8 @@ struct FeedListSettingsScreen: View {
         isRemoveTitleFromDescriptionEnabled: false,
         feedOrder: .newestFirst,
         isHideUnreadDotEnabled: false,
-        isHideFeedSourceEnabled: false
+        isHideFeedSourceEnabled: false,
+        descriptionLineLimit: .three
     )
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor: Double = 0.0
@@ -100,6 +101,10 @@ struct FeedListSettingsScreen: View {
             isHideFeedSourceEnabled: Binding(
                 get: { settingsState.isHideFeedSourceEnabled },
                 set: { vmStoreOwner.instance.updateHideFeedSource(value: $0) }
+            ),
+            descriptionLineLimit: Binding(
+                get: { settingsState.descriptionLineLimit },
+                set: { vmStoreOwner.instance.updateDescriptionLineLimit(limit: $0) }
             ),
             onScaleFactorChange: { newValue in
                 vmStoreOwner.instance.updateFontScale(value: Int32(newValue))

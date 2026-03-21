@@ -17,7 +17,11 @@ struct SearchScreen: View {
 
     @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 
-    @State var feedItemDisplaySettings = FeedItemDisplaySettings(isHideUnreadDotEnabled: false, isHideFeedSourceEnabled: false)
+    @State var feedItemDisplaySettings = FeedItemDisplaySettings(
+        isHideUnreadDotEnabled: false,
+        isHideFeedSourceEnabled: false,
+        descriptionLineLimit: .three
+    )
 
     let readerModeViewModel: ReaderModeViewModel
     

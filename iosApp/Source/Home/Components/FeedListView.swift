@@ -31,7 +31,11 @@ struct FeedListView: View {
     let feedFontSizes: FeedFontSizes
     let swipeActions: SwipeActions
     let feedLayout: FeedLayout
-    var feedItemDisplaySettings = FeedItemDisplaySettings(isHideUnreadDotEnabled: false, isHideFeedSourceEnabled: false)
+    var feedItemDisplaySettings = FeedItemDisplaySettings(
+        isHideUnreadDotEnabled: false,
+        isHideFeedSourceEnabled: false,
+        descriptionLineLimit: .three
+    )
 
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void

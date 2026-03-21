@@ -24,7 +24,7 @@
     <string name="drawer_title_feed_sources">订阅源</string>
     <string name="toggle_mark_read_when_scrolling">滚动时自动标记为已读</string>
     <string name="action_done">完成</string>
-    <string name="settings_app_title">应用</string>
+    <string name="settings_app_title">常规</string>
     <string name="about_app_version">应用版本：%s</string>
     <string name="add_feed_category_title">类别</string>
     <string name="add_feed_categories_title">类别</string>
@@ -355,4 +355,22 @@
     <string name="settings_hide_read_items">标记为已读时自动隐藏文章</string>
     <string name="settings_show_rss_parsing_errors">显示订阅源加载错误消息</string>
     <string name="exit_menu">退出</string>
+    <string name="browser_launch_error">无法打开链接。请检查浏览器设置。</string>
+    <string name="choose_another_file_button">选择另一个文件</string>
+    <string name="invalid_opml_import_title">无法导入此文件</string>
+    <string name="invalid_opml_import_description">这看起来不像有效的 OPML 文件。试着从 RSS 应用将源导出为 OPML 并再次导入。</string>
+    <string name="drawer_title_library">库</string>
+    <string name="settings_desktop_multi_pane_layout">使用多面板首页布局</string>
+    <string name="settings_three_pane_layout">在大屏幕上使用三面板布局</string>
+    <string name="select_article_to_read">选择要阅读的文章</string>
+    <string name="settings_hide_unread_dot">隐藏未读指示器</string>
+    <string name="settings_hide_feed_source">隐藏源地址</string>
+    <string name="settings_description_max_lines">描述行</string>
+    <string name="settings_description_lines_three">3 行</string>
+    <string name="settings_description_lines_five">5 行</string>
+    <string name="settings_description_lines_no_limit">无限制</string>
+    <string name="settings_notifications_permission_description">FeedFlow 需要在文章来到订阅源时发送通知的权限。</string>
+    <string name="settings_notifications_open_settings_button">打开设置</string>
+    <string name="date_format_iso">年-月-日</string>
+    <string name="next">下一篇</string>
 </resources>

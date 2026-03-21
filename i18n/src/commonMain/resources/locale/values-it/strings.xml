@@ -56,7 +56,7 @@
     <string name="drawer_title_feed_sources">Iscrizioni</string>
     <string name="toggle_mark_read_when_scrolling">Segna come letto durante lo scorrimento</string>
     <string name="action_done">Fatto</string>
-    <string name="settings_app_title">Aoo</string>
+    <string name="settings_app_title">Generale</string>
     <string name="about_app_version">Versione dell\'app: %s</string>
     <string name="add_feed_category_title">Categoria</string>
     <string name="add_feed_categories_title">Categorie</string>
@@ -350,4 +350,7 @@
     <string name="no_google_drive_sync_yet">I dati non sono ancora sincronizzati con Google Drive. Clicca sul pulsante backup per avviare la sincronizzazione</string>
     <string name="google_drive_connect_button">Connetti Google Drive</string>
     <string name="google_drive_desktop_sync_description">Fai clic sul pulsante qui sotto per collegare il tuo account Google Drive. Si aprirà una finestra del browser per l\'autenticazione. Una volta completato l\'accesso, potrai tornare a questa app.</string>
+    <string name="browser_launch_error">Impossibile aprire il link. Controlla le impostazioni del browser.</string>
+    <string name="open_feed_website_button">Apri sito del feed</string>
+    <string name="drawer_title_library">Libreria</string>
 </resources>

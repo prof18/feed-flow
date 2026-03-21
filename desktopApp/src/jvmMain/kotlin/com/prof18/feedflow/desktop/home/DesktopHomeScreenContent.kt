@@ -175,6 +175,7 @@ fun DesktopHomeScreenContent(
                                         feedItems = displayState.feedItems,
                                         listState = listState,
                                         feedFontSize = displayState.feedFontSizes,
+                                        nextFeedState = displayState.nextFeedDisplayState,
                                         shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
                                         shareMenuLabel = shareBehavior.shareLinkTitle,
                                         currentFeedFilter = displayState.currentFeedFilter,
@@ -198,6 +199,8 @@ fun DesktopHomeScreenContent(
                                         feedLayout = displayState.feedLayout,
                                         onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
                                         onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
+                                        onNavigateNext = {},
+                                        feedItemDisplaySettings = displayState.feedItemDisplaySettings,
                                     )
                                 }
                             }

@@ -18,6 +18,7 @@ struct FeedListSettingsScreenContent: View {
     @Binding var isRemoveTitleFromDescriptionEnabled: Bool
     @Binding var feedOrder: FeedOrder
     @Binding var isHideUnreadDotEnabled: Bool
+    @Binding var isHideFeedSourceEnabled: Bool
     let onScaleFactorChange: (Double) -> Void
 
     private let feedFlowStrings = Deps.shared.getStrings()
@@ -58,7 +59,10 @@ struct FeedListSettingsScreenContent: View {
                     index: 0,
                     feedFontSizes: feedFontSizes,
                     feedLayout: feedLayout,
-                    isHideUnreadDotEnabled: isHideUnreadDotEnabled
+                    feedItemDisplaySettings: FeedItemDisplaySettings(
+                        isHideUnreadDotEnabled: isHideUnreadDotEnabled,
+                        isHideFeedSourceEnabled: isHideFeedSourceEnabled
+                    )
                 )
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(Spacing.small)
@@ -126,6 +130,12 @@ struct FeedListSettingsScreenContent: View {
                         Label(feedFlowStrings.settingsHideUnreadDot, systemImage: "circle.fill")
                     }.onTapGesture {
                         isHideUnreadDotEnabled.toggle()
+                    }
+
+                    Toggle(isOn: $isHideFeedSourceEnabled) {
+                        Label(feedFlowStrings.settingsHideFeedSource, systemImage: "person.slash")
+                    }.onTapGesture {
+                        isHideFeedSourceEnabled.toggle()
                     }
 
                     Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {

@@ -17,7 +17,7 @@ struct SearchScreen: View {
 
     @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 
-    @State var isHideUnreadDotEnabled: Bool = false
+    @State var feedItemDisplaySettings = FeedItemDisplaySettings(isHideUnreadDotEnabled: false, isHideFeedSourceEnabled: false)
 
     let readerModeViewModel: ReaderModeViewModel
     
@@ -30,7 +30,7 @@ struct SearchScreen: View {
             searchFilter: $searchFilter,
             currentFeedFilter: currentFeedFilter,
             feedFontSizes: $feedFontSizes,
-            isHideUnreadDotEnabled: isHideUnreadDotEnabled,
+            feedItemDisplaySettings: feedItemDisplaySettings,
             readerModeViewModel: readerModeViewModel,
             onSearchFilterSelected: { filter in
                 vmStoreOwner.instance.updateSearchFilter(filter: filter)
@@ -78,8 +78,8 @@ struct SearchScreen: View {
             }
         }
         .task {
-            for await state in vmStoreOwner.instance.hideUnreadDot {
-                self.isHideUnreadDotEnabled = state as? Bool ?? false
+            for await state in vmStoreOwner.instance.feedItemDisplaySettings {
+                self.feedItemDisplaySettings = state
             }
         }
         .task {

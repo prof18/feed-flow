@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -32,11 +33,18 @@ internal fun FeedSourceAndUnreadDotRow(
     feedFontSize: FeedFontSizes,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
     isHideUnreadDotEnabled: Boolean = false,
+    isHideFeedSourceEnabled: Boolean = false,
 ) {
+    val showUnreadDot = !feedItem.isRead && !isHideUnreadDotEnabled
+    val showFeedSource = !isHideFeedSourceEnabled
+    val showBookmark = feedItem.isBookmarked
+
+    if (!showUnreadDot && !showFeedSource && !showBookmark) return
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (!feedItem.isRead && !isHideUnreadDotEnabled) {
+        if (showUnreadDot) {
             UnreadDot(
                 modifier = Modifier
                     .padding(
@@ -46,25 +54,29 @@ internal fun FeedSourceAndUnreadDotRow(
             )
         }
 
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .padding(bottom = Spacing.small),
-            text = feedItem.feedSource.title,
-            fontSize = feedFontSize.feedMetaFontSize.sp,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(
-                alpha = if (feedItem.isRead &&
-                    currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
-                ) {
-                    0.6f
-                } else {
-                    1f
-                },
-            ),
-        )
+        if (showFeedSource) {
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(bottom = Spacing.small),
+                text = feedItem.feedSource.title,
+                fontSize = feedFontSize.feedMetaFontSize.sp,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(
+                    alpha = if (feedItem.isRead &&
+                        currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
+                    ) {
+                        0.6f
+                    } else {
+                        1f
+                    },
+                ),
+            )
+        } else {
+            Spacer(modifier = Modifier.weight(1f))
+        }
 
-        if (feedItem.isBookmarked) {
+        if (showBookmark) {
             Icon(
                 modifier = Modifier
                     .size(24.dp)

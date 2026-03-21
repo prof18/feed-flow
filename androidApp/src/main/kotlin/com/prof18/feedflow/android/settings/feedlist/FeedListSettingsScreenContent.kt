@@ -12,6 +12,7 @@ import androidx.compose.material.icons.outlined.EventBusy
 import androidx.compose.material.icons.outlined.FiberManualRecord
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
+import androidx.compose.material.icons.outlined.LabelOff
 import androidx.compose.material.icons.outlined.SubtitlesOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.settings.components.FeedOrderSelectionDialog
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -64,6 +66,7 @@ internal fun FeedListSettingsScreenContent(
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
     setHideUnreadDot: (Boolean) -> Unit,
+    setHideFeedSource: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -95,7 +98,10 @@ internal fun FeedListSettingsScreenContent(
                 isHideDateEnabled = state.isHideDateEnabled,
                 dateFormat = state.dateFormat,
                 timeFormat = state.timeFormat,
-                isHideUnreadDotEnabled = state.isHideUnreadDotEnabled,
+                feedItemDisplaySettings = FeedItemDisplaySettings(
+                    isHideUnreadDotEnabled = state.isHideUnreadDotEnabled,
+                    isHideFeedSourceEnabled = state.isHideFeedSourceEnabled,
+                ),
             )
 
             LazyColumn {
@@ -158,6 +164,15 @@ internal fun FeedListSettingsScreenContent(
                         icon = Icons.Outlined.FiberManualRecord,
                         isChecked = state.isHideUnreadDotEnabled,
                         onCheckedChange = setHideUnreadDot,
+                    )
+                }
+
+                item {
+                    SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideFeedSource,
+                        icon = Icons.Outlined.LabelOff,
+                        isChecked = state.isHideFeedSourceEnabled,
+                        onCheckedChange = setHideFeedSource,
                     )
                 }
 
@@ -262,6 +277,7 @@ private fun FeedListSettingsScreenContentPreview() {
             setRemoveTitleFromDescription = {},
             onFeedOrderSelected = {},
             setHideUnreadDot = {},
+            setHideFeedSource = {},
         )
     }
 }

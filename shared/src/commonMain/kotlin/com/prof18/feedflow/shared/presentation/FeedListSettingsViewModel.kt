@@ -46,6 +46,7 @@ class FeedListSettingsViewModel internal constructor(
         val isRemoveTitleFromDescriptionEnabled = feedAppearanceSettingsRepository.getRemoveTitleFromDescription()
         val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
         val isHideUnreadDotEnabled = feedAppearanceSettingsRepository.getHideUnreadDot()
+        val isHideFeedSourceEnabled = feedAppearanceSettingsRepository.getHideFeedSource()
 
         stateMutableFlow.update {
             FeedListSettingsState(
@@ -61,6 +62,7 @@ class FeedListSettingsViewModel internal constructor(
                 isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
                 feedOrder = feedOrder,
                 isHideUnreadDotEnabled = isHideUnreadDotEnabled,
+                isHideFeedSourceEnabled = isHideFeedSourceEnabled,
             )
         }
     }
@@ -169,6 +171,15 @@ class FeedListSettingsViewModel internal constructor(
             feedAppearanceSettingsRepository.setHideUnreadDot(value)
             stateMutableFlow.update {
                 it.copy(isHideUnreadDotEnabled = value)
+            }
+        }
+    }
+
+    fun updateHideFeedSource(value: Boolean) {
+        viewModelScope.launch {
+            feedAppearanceSettingsRepository.setHideFeedSource(value)
+            stateMutableFlow.update {
+                it.copy(isHideFeedSourceEnabled = value)
             }
         }
     }

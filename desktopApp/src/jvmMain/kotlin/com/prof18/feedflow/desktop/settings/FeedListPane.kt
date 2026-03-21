@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.EventBusy
 import androidx.compose.material.icons.outlined.FiberManualRecord
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
+import androidx.compose.material.icons.outlined.LabelOff
 import androidx.compose.material.icons.outlined.SubtitlesOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -64,6 +66,7 @@ internal fun FeedListPane(
     onSwipeActionUpdate: (SwipeDirection, SwipeActionType) -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
     onHideUnreadDotUpdate: (Boolean) -> Unit,
+    onHideFeedSourceUpdate: (Boolean) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
     var showFeedOrderDialog by remember { mutableStateOf(false) }
@@ -77,7 +80,10 @@ internal fun FeedListPane(
             isHideDateEnabled = settingsState.isHideDateEnabled,
             dateFormat = settingsState.dateFormat,
             timeFormat = settingsState.timeFormat,
-            isHideUnreadDotEnabled = settingsState.isHideUnreadDotEnabled,
+            feedItemDisplaySettings = FeedItemDisplaySettings(
+                isHideUnreadDotEnabled = settingsState.isHideUnreadDotEnabled,
+                isHideFeedSourceEnabled = settingsState.isHideFeedSourceEnabled,
+            ),
         )
 
         Column(
@@ -130,6 +136,13 @@ internal fun FeedListPane(
                 icon = Icons.Outlined.FiberManualRecord,
                 isChecked = settingsState.isHideUnreadDotEnabled,
                 onCheckedChange = onHideUnreadDotUpdate,
+            )
+
+            SettingSwitchItem(
+                title = LocalFeedFlowStrings.current.settingsHideFeedSource,
+                icon = Icons.Outlined.LabelOff,
+                isChecked = settingsState.isHideFeedSourceEnabled,
+                onCheckedChange = onHideFeedSourceUpdate,
             )
 
             SettingSwitchItem(
@@ -259,6 +272,7 @@ private fun FeedListPanePreview() {
             onSwipeActionUpdate = { _, _ -> },
             onFeedOrderSelected = {},
             onHideUnreadDotUpdate = {},
+            onHideFeedSourceUpdate = {},
         )
     }
 }

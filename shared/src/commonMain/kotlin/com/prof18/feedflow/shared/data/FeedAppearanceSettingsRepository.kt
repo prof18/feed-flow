@@ -31,12 +31,23 @@ class FeedAppearanceSettingsRepository(
     private val hideUnreadDotMutableFlow = MutableStateFlow(getHideUnreadDot())
     val hideUnreadDot: StateFlow<Boolean> = hideUnreadDotMutableFlow.asStateFlow()
 
+    private val hideFeedSourceMutableFlow = MutableStateFlow(getHideFeedSource())
+    val hideFeedSource: StateFlow<Boolean> = hideFeedSourceMutableFlow.asStateFlow()
+
     fun getHideUnreadDot(): Boolean =
         settings.getBoolean(FeedAppearanceSettingsFields.HIDE_UNREAD_DOT.name, false)
 
     fun setHideUnreadDot(value: Boolean) {
         settings.set(FeedAppearanceSettingsFields.HIDE_UNREAD_DOT.name, value)
         hideUnreadDotMutableFlow.update { value }
+    }
+
+    fun getHideFeedSource(): Boolean =
+        settings.getBoolean(FeedAppearanceSettingsFields.HIDE_FEED_SOURCE.name, false)
+
+    fun setHideFeedSource(value: Boolean) {
+        settings.set(FeedAppearanceSettingsFields.HIDE_FEED_SOURCE.name, value)
+        hideFeedSourceMutableFlow.update { value }
     }
 
     fun getRemoveTitleFromDescription(): Boolean =
@@ -145,4 +156,5 @@ private enum class FeedAppearanceSettingsFields {
     TIME_FORMAT,
     FEED_LAYOUT,
     HIDE_UNREAD_DOT,
+    HIDE_FEED_SOURCE,
 }

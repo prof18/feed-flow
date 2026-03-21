@@ -10,6 +10,7 @@ import androidx.compose.material.icons.outlined.EventBusy
 import androidx.compose.material.icons.outlined.FiberManualRecord
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
+import androidx.compose.material.icons.outlined.LabelOff
 import androidx.compose.material.icons.outlined.SubtitlesOff
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,6 +23,7 @@ import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -69,7 +71,10 @@ internal fun FeedListAppearanceDialog(
                     isHideDateEnabled = settingsState.isHideDateEnabled,
                     dateFormat = settingsState.dateFormat,
                     timeFormat = settingsState.timeFormat,
-                    isHideUnreadDotEnabled = settingsState.isHideUnreadDotEnabled,
+                    feedItemDisplaySettings = FeedItemDisplaySettings(
+                        isHideUnreadDotEnabled = settingsState.isHideUnreadDotEnabled,
+                        isHideFeedSourceEnabled = settingsState.isHideFeedSourceEnabled,
+                    ),
                 )
 
                 Column(
@@ -128,6 +133,13 @@ internal fun FeedListAppearanceDialog(
                     )
 
                     SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideFeedSource,
+                        icon = Icons.Outlined.LabelOff,
+                        isChecked = settingsState.isHideFeedSourceEnabled,
+                        onCheckedChange = { callbacks.onHideFeedSourceUpdate(it) },
+                    )
+
+                    SettingSwitchItem(
                         title = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
                         icon = Icons.Outlined.HideSource,
                         isChecked = settingsState.isRemoveTitleFromDescriptionEnabled,
@@ -180,4 +192,5 @@ internal data class FeedListAppearanceCallbacks(
     val onTimeFormatUpdate: (TimeFormat) -> Unit,
     val onSwipeActionUpdate: (SwipeDirection, SwipeActionType) -> Unit,
     val onHideUnreadDotUpdate: (Boolean) -> Unit,
+    val onHideFeedSourceUpdate: (Boolean) -> Unit,
 )

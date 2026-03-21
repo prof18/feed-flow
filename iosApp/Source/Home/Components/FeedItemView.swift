@@ -18,35 +18,43 @@ struct FeedItemView: View {
     let feedFontSizes: FeedFontSizes
     var feedLayout: FeedLayout = .list
     var currentFeedFilter: FeedFilter = .Timeline()
-    var isHideUnreadDotEnabled: Bool = false
+    var feedItemDisplaySettings = FeedItemDisplaySettings(isHideUnreadDotEnabled: false, isHideFeedSourceEnabled: false)
 
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                if !feedItem.isRead && !isHideUnreadDotEnabled {
-                    Circle()
-                        .fill(Color.accentColor)
-                        .frame(width: 10, height: 10)
-                        .padding(.top, Spacing.small)
-                }
+            let showUnreadDot = !feedItem.isRead && !feedItemDisplaySettings.isHideUnreadDotEnabled
+            let showFeedSource = !feedItemDisplaySettings.isHideFeedSourceEnabled
+            let showBookmark = feedItem.isBookmarked
 
-                Text(feedItem.feedSource.title)
-                    .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
-                    .padding(.top, Spacing.small)
-                    .opacity(
-                        feedItem.isRead &&
-                            !(currentFeedFilter is FeedFilter.Read) &&
-                            !(currentFeedFilter is FeedFilter.Bookmarks)
-                            ? 0.6 : 1.0
-                    )
+            if showUnreadDot || showFeedSource || showBookmark {
+                HStack {
+                    if showUnreadDot {
+                        Circle()
+                            .fill(Color.accentColor)
+                            .frame(width: 10, height: 10)
+                            .padding(.top, Spacing.small)
+                    }
 
-                Spacer()
+                    if showFeedSource {
+                        Text(feedItem.feedSource.title)
+                            .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
+                            .padding(.top, Spacing.small)
+                            .opacity(
+                                feedItem.isRead &&
+                                    !(currentFeedFilter is FeedFilter.Read) &&
+                                    !(currentFeedFilter is FeedFilter.Bookmarks)
+                                    ? 0.6 : 1.0
+                            )
+                    }
 
-                if feedItem.isBookmarked {
-                    Image(systemName: "bookmark.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color.accentColor)
-                        .padding(.top, Spacing.small)
+                    Spacer()
+
+                    if showBookmark {
+                        Image(systemName: "bookmark.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color.accentColor)
+                            .padding(.top, Spacing.small)
+                    }
                 }
             }
 

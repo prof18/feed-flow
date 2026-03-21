@@ -31,7 +31,7 @@ struct FeedListView: View {
     let feedFontSizes: FeedFontSizes
     let swipeActions: SwipeActions
     let feedLayout: FeedLayout
-    var isHideUnreadDotEnabled: Bool = false
+    var feedItemDisplaySettings = FeedItemDisplaySettings(isHideUnreadDotEnabled: false, isHideFeedSourceEnabled: false)
 
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
@@ -79,7 +79,7 @@ struct FeedListView: View {
                             swipeActions: swipeActions,
                             feedLayout: feedLayout,
                             currentFeedFilter: currentFeedFilter,
-                            isHideUnreadDotEnabled: isHideUnreadDotEnabled,
+                            feedItemDisplaySettings: feedItemDisplaySettings,
                             onItemClick: onItemClick,
                             onReaderModeClick: onReaderModeClick,
                             onBookmarkClick: onBookmarkClick,
@@ -104,7 +104,7 @@ struct FeedListView: View {
                                         feedFontSizes: feedFontSizes,
                                         feedLayout: feedLayout,
                                         currentFeedFilter: currentFeedFilter,
-                                        isHideUnreadDotEnabled: isHideUnreadDotEnabled
+                                        feedItemDisplaySettings: feedItemDisplaySettings
                                     )
                                     .background(Color(.secondarySystemBackground))
                                     .frame(idealWidth: 600, idealHeight: 300)

@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
@@ -82,7 +83,7 @@ internal fun FeedList(
     listState: LazyListState = rememberLazyListState(),
     onMarkAllAboveAsRead: (String) -> Unit = {},
     onMarkAllBelowAsRead: (String) -> Unit = {},
-    isHideUnreadDotEnabled: Boolean = false,
+    feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
 ) {
     val shouldStartPaginate = remember {
         derivedStateOf {
@@ -147,7 +148,7 @@ internal fun FeedList(
                             currentFeedFilter = currentFeedFilter,
                             onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                             onMarkAllBelowAsRead = onMarkAllBelowAsRead,
-                            isHideUnreadDotEnabled = isHideUnreadDotEnabled,
+                            feedItemDisplaySettings = feedItemDisplaySettings,
                         )
                     } else {
                         SwipeableActionsBox(
@@ -171,7 +172,7 @@ internal fun FeedList(
                                 currentFeedFilter = currentFeedFilter,
                                 onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                                 onMarkAllBelowAsRead = onMarkAllBelowAsRead,
-                                isHideUnreadDotEnabled = isHideUnreadDotEnabled,
+                                feedItemDisplaySettings = feedItemDisplaySettings,
                             )
                         }
                     }

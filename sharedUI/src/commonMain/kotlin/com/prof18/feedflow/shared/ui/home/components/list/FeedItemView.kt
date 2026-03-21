@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
@@ -50,7 +51,7 @@ internal fun FeedItemView(
     modifier: Modifier = Modifier,
     disableClick: Boolean = false,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
-    isHideUnreadDotEnabled: Boolean = false,
+    feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
     onMarkAllBelowAsRead: (String) -> Unit,
 ) {
     var showItemMenu by remember {
@@ -101,7 +102,8 @@ internal fun FeedItemView(
                 feedItem = feedItem,
                 feedFontSize = feedFontSize,
                 currentFeedFilter = currentFeedFilter,
-                isHideUnreadDotEnabled = isHideUnreadDotEnabled,
+                isHideUnreadDotEnabled = feedItemDisplaySettings.isHideUnreadDotEnabled,
+                isHideFeedSourceEnabled = feedItemDisplaySettings.isHideFeedSourceEnabled,
             )
 
             TitleSubtitleAndImageRow(

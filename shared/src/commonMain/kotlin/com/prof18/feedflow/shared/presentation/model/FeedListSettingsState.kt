@@ -19,4 +19,5 @@ data class FeedListSettingsState(
     val isRemoveTitleFromDescriptionEnabled: Boolean = false,
     val feedOrder: FeedOrder = FeedOrder.NEWEST_FIRST,
     val isHideUnreadDotEnabled: Boolean = false,
+    val isHideFeedSourceEnabled: Boolean = false,
 )

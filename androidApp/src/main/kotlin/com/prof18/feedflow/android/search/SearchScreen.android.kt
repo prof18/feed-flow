@@ -39,7 +39,7 @@ internal fun SearchScreen(
     val searchQuery by viewModel.searchQueryState.collectAsStateWithLifecycle()
     val searchFilter by viewModel.searchFilterState.collectAsStateWithLifecycle()
     val currentFeedFilter by viewModel.searchFeedFilterState.collectAsStateWithLifecycle()
-    val isHideUnreadDotEnabled by viewModel.hideUnreadDot.collectAsStateWithLifecycle()
+    val feedItemDisplaySettings by viewModel.feedItemDisplaySettings.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
 
@@ -133,7 +133,7 @@ internal fun SearchScreen(
         onOpenFeedWebsite = { url ->
             browserManager.openUrlWithFavoriteBrowser(url, context)
         },
-        isHideUnreadDotEnabled = isHideUnreadDotEnabled,
+        feedItemDisplaySettings = feedItemDisplaySettings,
     )
 }
 

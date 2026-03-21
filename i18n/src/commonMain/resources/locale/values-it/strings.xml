@@ -352,4 +352,5 @@
     <string name="google_drive_desktop_sync_description">Fai clic sul pulsante qui sotto per collegare il tuo account Google Drive. Si aprirà una finestra del browser per l\'autenticazione. Una volta completato l\'accesso, potrai tornare a questa app.</string>
     <string name="browser_launch_error">Impossibile aprire il link. Controlla le impostazioni del browser.</string>
     <string name="open_feed_website_button">Apri sito del feed</string>
+    <string name="drawer_title_library">Libreria</string>
 </resources>

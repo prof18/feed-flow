@@ -820,7 +820,7 @@ class DateFormatterImpl(
             }
 
             TimeFormat.HOURS_12 -> {
-                amPmHour()
+                amPmHour(padding = Padding.NONE)
                 char(':')
                 minute()
                 char(' ')

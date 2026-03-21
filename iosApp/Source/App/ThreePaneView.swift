@@ -184,6 +184,12 @@ struct ThreePaneView: View {
                 preferredColumn = .detail
             }
         }
+        .onChange(of: appState.pendingExternalURL) { _, newURL in
+            if let url = newURL {
+                appState.pendingExternalURL = nil
+                openURL(url)
+            }
+        }
         .task {
             for await state in homeViewModel.navDrawerState {
                 self.navDrawerState = state
@@ -207,7 +213,11 @@ struct ThreePaneView: View {
             ReaderModeScreen(
                 viewModel: readerModeViewModel,
                 onInAppBrowserClick: { url in
-                    detailNavigationPath.append(CommonViewRoute.inAppBrowser(url: url))
+                    if url.scheme == "http" || url.scheme == "https" {
+                        detailNavigationPath.append(CommonViewRoute.inAppBrowser(url: url))
+                    } else {
+                        openURL(url)
+                    }
                 }
             )
         case let .inAppBrowser(url):

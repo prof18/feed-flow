@@ -20,13 +20,18 @@ class AppState {
 
     var redrawAfterFeedSourceEdit = false
     var pendingBrowserURL: URL?
+    var pendingExternalURL: URL?
 
     func navigate(route: any Hashable) {
         regularNavigationPath.append(route)
     }
 
     func openInAppBrowser(url: URL) {
-        pendingBrowserURL = url
+        if url.scheme == "http" || url.scheme == "https" {
+            pendingBrowserURL = url
+        } else {
+            pendingExternalURL = url
+        }
     }
 
     func emitGenericError() {

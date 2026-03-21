@@ -7,18 +7,15 @@ struct ContentView: View {
     private var appState
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass: UserInterfaceSizeClass?
 
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
     @StateObject private var reviewVmStoreOwner = VMStoreOwner<ReviewViewModel>(Deps.shared.getReviewViewModel())
     @StateObject private var readerModeVmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
         Deps.shared.getReaderModeViewModel())
 
-    @State private var isAppInBackground = false
     @State private var hasTriggeredLaunch = false
 
-    @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline(unreadCount: 0)
+    @State private var selectedSidebarItem: SidebarSelection? = .timeline
     @State private var navDrawerState: NavDrawerState = .init(
         timeline: [],
         read: [],
@@ -31,47 +28,23 @@ struct ContentView: View {
     @State private var pendingNotificationSelection: NotificationSelectionTarget?
 
     var body: some View {
-        @Bindable var appState = appState
-
-        Group {
-            if appState.sizeClass == .compact {
-                CompactView(
-                    selectedDrawerItem: $selectedDrawerItem,
-                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
-                    homeViewModel: vmStoreOwner.instance,
-                    readerModeViewModel: readerModeVmStoreOwner.instance
-                )
-            } else {
-                RegularView(
-                    selectedDrawerItem: $selectedDrawerItem,
-                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
-                    homeViewModel: vmStoreOwner.instance,
-                    readerModeViewModel: readerModeVmStoreOwner.instance
-                )
-            }
-        }
+        ThreePaneView(
+            selectedSidebarItem: $selectedSidebarItem,
+            indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+            homeViewModel: vmStoreOwner.instance,
+            readerModeViewModel: readerModeVmStoreOwner.instance
+        )
         .onAppear {
-            if appState.sizeClass == nil {
-                appState.sizeClass = horizontalSizeClass
-            }
             let savedThemeMode = vmStoreOwner.instance.getCurrentThemeMode()
             appState.updateTheme(savedThemeMode)
-        }
-        .onChange(of: horizontalSizeClass) {
-            if !isAppInBackground && horizontalSizeClass != appState.sizeClass {
-                appState.sizeClass = horizontalSizeClass
-            }
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
             case .active:
-                isAppInBackground = false
                 if !hasTriggeredLaunch {
                     hasTriggeredLaunch = true
                     vmStoreOwner.instance.onAppLaunch()
                 }
-            case .background:
-                isAppInBackground = true
             default:
                 break
             }
@@ -91,9 +64,8 @@ struct ContentView: View {
         .task {
             for await state in vmStoreOwner.instance.navDrawerState {
                 navDrawerState = state
-                if let target = pendingNotificationSelection,
-                   let drawerItem = drawerItem(for: target) {
-                    selectedDrawerItem = drawerItem
+                if let target = pendingNotificationSelection {
+                    selectedSidebarItem = sidebarSelection(for: target)
                     pendingNotificationSelection = nil
                 }
             }
@@ -113,18 +85,18 @@ struct ContentView: View {
         switch host {
         case "feedsourcefilter":
             if let feedSourceId = pathComponents.first {
-                showFeedScreen()
+                appState.regularNavigationPath = NavigationPath()
                 let target = NotificationSelectionTarget.feedSource(feedSourceId)
                 pendingNotificationSelection = target
-                selectedDrawerItem = drawerItem(for: target)
+                selectedSidebarItem = sidebarSelection(for: target)
                 vmStoreOwner.instance.updateFeedSourceFilter(feedSourceId: feedSourceId)
             }
         case "category":
             if let categoryId = pathComponents.first {
-                showFeedScreen()
+                appState.regularNavigationPath = NavigationPath()
                 let target = NotificationSelectionTarget.category(categoryId)
                 pendingNotificationSelection = target
-                selectedDrawerItem = drawerItem(for: target)
+                selectedSidebarItem = sidebarSelection(for: target)
                 vmStoreOwner.instance.updateCategoryFilter(categoryId: categoryId)
             }
         default:
@@ -132,36 +104,13 @@ struct ContentView: View {
         }
     }
 
-    private func showFeedScreen() {
-        if appState.sizeClass == .compact {
-            appState.compatNavigationPath = NavigationPath()
-            appState.compatNavigationPath.append(CompactViewRoute.feed)
-        } else {
-            appState.regularNavigationPath = NavigationPath()
-        }
-    }
-
-    private func drawerItem(for target: NotificationSelectionTarget) -> DrawerItem? {
+    private func sidebarSelection(for target: NotificationSelectionTarget) -> SidebarSelection {
         switch target {
         case let .feedSource(feedSourceId):
-            return allFeedSourceDrawerItems().first { $0.feedSource.id == feedSourceId }
+            return .feedSource(id: feedSourceId)
         case let .category(categoryId):
-            return navDrawerState.categories
-                .compactMap { $0 as? DrawerItem.DrawerCategory }
-                .first { $0.category.id == categoryId }
+            return .category(id: categoryId)
         }
-    }
-
-    private func allFeedSourceDrawerItems() -> [DrawerItem.DrawerFeedSource] {
-        let groupedFeedSources = navDrawerState.feedSourcesByCategory.values
-            .flatMap { $0 }
-            .compactMap { $0 as? DrawerItem.DrawerFeedSource }
-
-        return navDrawerState.pinnedFeedSources
-            .compactMap { $0 as? DrawerItem.DrawerFeedSource } +
-            navDrawerState.feedSourcesWithoutCategory
-            .compactMap { $0 as? DrawerItem.DrawerFeedSource } +
-            groupedFeedSources
     }
 }
 

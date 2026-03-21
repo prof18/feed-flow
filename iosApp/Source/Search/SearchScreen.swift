@@ -24,7 +24,8 @@ struct SearchScreen: View {
     )
 
     let readerModeViewModel: ReaderModeViewModel
-    
+    let onReaderModeNavigate: (() -> Void)?
+
     var body: some View {
         @Bindable var appState = appState
         
@@ -36,6 +37,7 @@ struct SearchScreen: View {
             feedFontSizes: $feedFontSizes,
             feedItemDisplaySettings: feedItemDisplaySettings,
             readerModeViewModel: readerModeViewModel,
+            onReaderModeNavigate: onReaderModeNavigate,
             onSearchFilterSelected: { filter in
                 vmStoreOwner.instance.updateSearchFilter(filter: filter)
             },

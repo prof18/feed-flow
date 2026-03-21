@@ -10,6 +10,7 @@ import FeedFlowKit
 import SwiftUI
 
 struct FeedSuggestionsSection: View {
+    let isCompact: Bool
     let onFeedSuggestionsClick: () -> Void
 
     var body: some View {
@@ -21,5 +22,6 @@ struct FeedSuggestionsSection: View {
         .onTapGesture {
             onFeedSuggestionsClick()
         }
+        .listRowBackground(sidebarSelectionBackground(isSelected: false, isCompact: isCompact))
     }
 }

@@ -20,7 +20,7 @@ struct DeepLinkFeedScreen: View {
     let readerModeViewModel: ReaderModeViewModel
 
     var body: some View {
-        ReaderModeScreen(viewModel: readerModeViewModel)
+        ReaderModeScreen(viewModel: readerModeViewModel, onInAppBrowserClick: nil)
         .onAppear {
             vmStoreOwner.instance.getReaderModeUrl(feedItemId: FeedItemId(id: feedId))
         }
@@ -34,7 +34,7 @@ struct DeepLinkFeedScreen: View {
                     case .internalBrowser:
                         if let url = URL(string: urlInfo.url) {
                             if browserSelector.isValidForInAppBrowser(url) {
-                                appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                                appState.openInAppBrowser(url: url)
                             } else {
                                 openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
                                 self.dismiss()
@@ -49,7 +49,7 @@ struct DeepLinkFeedScreen: View {
                         } else if browserSelector.openInAppBrowser() {
                             if let url = URL(string: urlInfo.url) {
                                 if browserSelector.isValidForInAppBrowser(url) {
-                                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                                    appState.openInAppBrowser(url: url)
                                 } else {
                                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
                                     self.dismiss()

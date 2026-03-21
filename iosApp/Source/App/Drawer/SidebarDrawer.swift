@@ -21,7 +21,7 @@ struct SidebarDrawer: View {
     @Environment(\.openURL)
     var openURL
 
-    @Binding var selectedDrawerItem: DrawerItem?
+    @Binding var selectedSidebarItem: SidebarSelection?
 
     @StateObject var categoryVMStoreOwner = VMStoreOwner<ChangeFeedCategoryViewModel>(
         Deps.shared.getChangeFeedCategoryViewModel()
@@ -37,6 +37,7 @@ struct SidebarDrawer: View {
     @State var editedCategoryName: String = ""
     @State var showChangeCategorySheet = false
     @State var selectedFeedForCategoryChange: FeedSource?
+    @State var showFeedSuggestionsSheet = false
 
     let navDrawerState: NavDrawerState
     let onFeedFilterSelected: (FeedFilter) -> Void
@@ -46,42 +47,82 @@ struct SidebarDrawer: View {
     let deleteAllFeeds: () -> Void
     let onShowSettingsClick: () -> Void
     let onAddFeedClick: () -> Void
-    let onFeedSuggestionsClick: () -> Void
     let onEditFeedClick: (FeedSource) -> Void
     let onDeleteFeedClick: (FeedSource) -> Void
     let onPinFeedClick: (FeedSource) -> Void
     let onDeleteCategory: (String) -> Void
     let onUpdateCategoryName: (String, String) -> Void
 
-    var body: some View {
-        List(selection: $selectedDrawerItem) {
-            TimelineSection(
-                timeline: navDrawerState.timeline,
-                onSelect: { self.selectedDrawerItem = $0 },
-                onFeedFilterSelected: onFeedFilterSelected
-            )
+    var isCompactPhone: Bool {
+        UIDevice.current.userInterfaceIdiom == .phone
+    }
 
-            ReadSection(
-                read: navDrawerState.read,
-                onSelect: { self.selectedDrawerItem = $0 },
-                onFeedFilterSelected: onFeedFilterSelected
-            )
+    @ViewBuilder private var styledList: some View {
+        if isCompactPhone {
+            sidebarList
+                .listStyle(.sidebar)
+                .scrollContentBackground(.hidden)
+                .background(Color(.systemGroupedBackground))
+        } else {
+            sidebarList.listStyle(.sidebar)
+        }
+    }
 
-            BookmarksSection(
-                bookmarks: navDrawerState.bookmarks,
-                onSelect: { self.selectedDrawerItem = $0 },
-                onFeedFilterSelected: onFeedFilterSelected
-            )
+    private var sidebarList: some View {
+        List {
+            Section(feedFlowStrings.drawerTitleLibrary) {
+                TimelineSection(
+                    timeline: navDrawerState.timeline,
+                    isSelected: selectedSidebarItem == .timeline,
+                    isCompact: isCompactPhone,
+                    onSelect: { self.selectedSidebarItem = .timeline },
+                    onFeedFilterSelected: self.onFeedFilterSelected
+                )
 
-            FeedSuggestionsSection(onFeedSuggestionsClick: onFeedSuggestionsClick)
+                ReadSection(
+                    read: navDrawerState.read,
+                    isSelected: selectedSidebarItem == .read,
+                    isCompact: isCompactPhone,
+                    onSelect: { self.selectedSidebarItem = .read },
+                    onFeedFilterSelected: self.onFeedFilterSelected
+                )
 
-            if !navDrawerState.pinnedFeedSources.isEmpty {
-                pinnedFeedSourcesSection
+                BookmarksSection(
+                    bookmarks: navDrawerState.bookmarks,
+                    isSelected: selectedSidebarItem == .bookmarks,
+                    isCompact: isCompactPhone,
+                    onSelect: { self.selectedSidebarItem = .bookmarks },
+                    onFeedFilterSelected: self.onFeedFilterSelected
+                )
+
+                FeedSuggestionsSection(
+                    isCompact: isCompactPhone,
+                    onFeedSuggestionsClick: { showFeedSuggestionsSheet = true }
+                )
             }
 
-            feedSourcesSection
+            if !navDrawerState.pinnedFeedSources.isEmpty {
+                Section(feedFlowStrings.drawerTitlePinnedFeeds) {
+                    pinnedFeedSourcesContent
+                }
+            }
+
+            Section(feedFlowStrings.feedsTitle) {
+                feedSourcesContent
+            }
         }
-        .listStyle(.sidebar)
+    }
+
+    var body: some View {
+        styledList
+            .toolbar {
+            ToolbarItemGroup(placement: .bottomBar) {
+                Spacer()
+                Button(action: onAddFeedClick) {
+                    Image(systemName: "plus")
+                }
+            }
+            }
         .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {
             Button(feedFlowStrings.cancelButton, role: .cancel) {}
             Button(feedFlowStrings.confirmButton) {
@@ -113,6 +154,9 @@ struct SidebarDrawer: View {
                 onSave: onUpdateCategoryName
             )
         )
+        .sheet(isPresented: $showFeedSuggestionsSheet) {
+            FeedSuggestionsScreen()
+        }
         .sheet(isPresented: $showChangeCategorySheet) {
             EditCategorySheetForChangeCategory(
                 viewModel: categoryVMStoreOwner.instance,

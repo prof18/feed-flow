@@ -47,6 +47,9 @@ Ensure an emulator or device is connected via `adb`, then run:
 - `.scripts/run-android.sh` -> Install and launch the debug app on device/emulator
 
 ### Building for iOS Simulator
+
+- If using XcodeBuildMCP, use the installed XcodeBuildMCP skill before calling XcodeBuildMCP tools.
+
 To build FeedFlow for iPhone 17 Pro simulator:
 ```bash
 mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/mg/Workspace/feedflow/feed-flow/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"

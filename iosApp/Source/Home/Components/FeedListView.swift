@@ -110,8 +110,9 @@ struct FeedListView: View {
                                         currentFeedFilter: currentFeedFilter,
                                         feedItemDisplaySettings: feedItemDisplaySettings
                                     )
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .frame(width: 350)
                                     .background(Color(.secondarySystemBackground))
-                                    .frame(idealWidth: 600, idealHeight: 300)
                                 }
                         }
                         .if(feedLayout == .list) { view in
@@ -126,6 +127,15 @@ struct FeedListView: View {
                                         onOpenFeedSettings: onOpenFeedSettings
                                     )
                                     .environment(browserSelector)
+                                } preview: {
+                                    FeedItemView(
+                                        feedItem: feedItem,
+                                        index: index,
+                                        feedFontSizes: feedFontSizes,
+                                        feedLayout: feedLayout,
+                                        currentFeedFilter: currentFeedFilter
+                                    )
+                                    .frame(width: 350, alignment: .leading)
                                 }
                         }
                         .listRowSeparator(feedLayout == .card ? .hidden : .automatic)

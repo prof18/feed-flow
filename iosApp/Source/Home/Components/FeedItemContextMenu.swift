@@ -109,7 +109,7 @@ struct FeedItemContextMenu: View {
             Button {
                 if let url = URL(string: commentsUrl), browserSelector.openInAppBrowser() {
                     if browserSelector.isValidForInAppBrowser(url) {
-                        appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                        appState.openInAppBrowser(url: url)
                     } else {
                         openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
                     }
@@ -162,7 +162,7 @@ struct FeedItemContextMenu: View {
     private func openWebsite(_ url: String) {
         if let url = URL(string: url), browserSelector.openInAppBrowser() {
             if browserSelector.isValidForInAppBrowser(url) {
-                appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                appState.openInAppBrowser(url: url)
             } else {
                 openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
             }

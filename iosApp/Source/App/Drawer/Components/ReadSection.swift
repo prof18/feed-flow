@@ -2,7 +2,7 @@
 //  ReadSection.swift
 //  FeedFlow
 //
-//  Created by AI Assistant on 19/03/24.
+//  Created by Marco Gomiero on 19/03/24.
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
@@ -11,20 +11,24 @@ import SwiftUI
 
 struct ReadSection: View {
     let read: [DrawerItem]
-    let onSelect: (DrawerItem) -> Void
+    let isSelected: Bool
+    let isCompact: Bool
+    let onSelect: () -> Void
     let onFeedFilterSelected: (FeedFilter) -> Void
 
     var body: some View {
-        ForEach(read, id: \.self) { drawerItem in
+        if !read.isEmpty {
             HStack {
                 Label(feedFlowStrings.drawerTitleRead, systemImage: "text.badge.checkmark")
                 Spacer()
             }
             .contentShape(Rectangle())
             .onTapGesture {
-                onSelect(drawerItem)
+                onSelect()
                 onFeedFilterSelected(FeedFilter.Read())
             }
+            .tag(SidebarSelection.read)
+            .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))
         }
     }
 }

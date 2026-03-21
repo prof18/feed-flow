@@ -14,9 +14,23 @@ struct FeedSuggestionsScreen: View {
         Deps.shared.getFeedSuggestionsViewModel()
     )
 
+    @Environment(\.dismiss)
+    private var dismiss
+
     var body: some View {
-        FeedSuggestionsContent(
-            viewModel: vmStoreOwner.instance
-        )
+        NavigationStack {
+            FeedSuggestionsContent(
+                viewModel: vmStoreOwner.instance
+            )
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+            }
+        }
     }
 }

@@ -12,6 +12,7 @@ import SwiftUI
 
 struct SFSafariView: UIViewControllerRepresentable {
     let url: URL
+    var onDismiss: (() -> Void)?
     @Environment(\.dismiss)
     private var dismiss
 
@@ -40,7 +41,11 @@ struct SFSafariView: UIViewControllerRepresentable {
         }
 
         func safariViewControllerDidFinish(_: SFSafariViewController) {
-            parent.dismiss()
+            if let onDismiss = parent.onDismiss {
+                onDismiss()
+            } else {
+                parent.dismiss()
+            }
         }
     }
 }

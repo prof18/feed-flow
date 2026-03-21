@@ -61,6 +61,7 @@
     <string name="drawer_title_timeline">Timeline</string>
     <string name="drawer_title_categories">Categories</string>
     <string name="drawer_title_feed_sources">Feed Sources</string>
+    <string name="drawer_title_library">Library</string>
     <string name="toggle_mark_read_when_scrolling">Mark as read when scrolling</string>
     <string name="action_done">Done</string>
     <string name="settings_app_title">General</string>
@@ -90,6 +91,8 @@
     <string name="drawer_title_read">Read</string>
     <string name="settings_toggle_show_read_articles">Show read articles in lists</string>
     <string name="settings_desktop_multi_pane_layout">Use multi-pane home layout</string>
+    <string name="settings_three_pane_layout">Use three-pane layout on large screens</string>
+    <string name="select_article_to_read">Select an article to read</string>
     <string name="settings_hide_read_items">Auto-hide articles when marked as read</string>
     <string name="menu_add_to_bookmark">Add to bookmarks</string>
     <string name="menu_remove_from_bookmark">Remove from bookmarks</string>

@@ -55,12 +55,11 @@ struct HomeScreen: View {
 
     @Binding var showSettings: Bool
 
-    @Binding var selectedDrawerItem: DrawerItem?
-
     @Binding var columnVisibility: NavigationSplitViewVisibility
 
     let homeViewModel: HomeViewModel
     let readerModeViewModel: ReaderModeViewModel
+    let onReaderModeNavigate: (() -> Void)?
 
     let openDrawer: () -> Void
 
@@ -108,7 +107,11 @@ struct HomeScreen: View {
             },
             onReaderModeClick: { feedItemUrlInfo in
                 readerModeViewModel.getReaderModeHtml(urlInfo: feedItemUrlInfo)
-                appState.navigate(route: CommonViewRoute.readerMode)
+                if let navigate = onReaderModeNavigate {
+                    navigate()
+                } else {
+                    appState.navigate(route: CommonViewRoute.readerMode)
+                }
             },
             onBookmarkClick: { feedItemId, isBookmarked in
                 homeViewModel.updateBookmarkStatus(feedItemId: feedItemId, bookmarked: isBookmarked)

@@ -10,8 +10,8 @@ import FeedFlowKit
 import SwiftUI
 
 struct EmptyFeedView: View {
-    @Environment(AppState.self)
-    private var appState
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
     @Environment(\.dismiss)
     private var dismiss
 
@@ -48,7 +48,7 @@ struct EmptyFeedView: View {
             if columnVisibility != .all {
                 Button(
                     action: {
-                        if appState.sizeClass == .compact {
+                        if horizontalSizeClass == .compact {
                             dismiss()
                         } else {
                             openDrawer()

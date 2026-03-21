@@ -3,22 +3,15 @@ import NukeUI
 import SwiftUI
 
 extension SidebarDrawer {
-    var pinnedFeedSourcesSection: some View {
-        Section(
-            content: {
-                ForEach(navDrawerState.pinnedFeedSources, id: \.self) { drawerItem in
-                    if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
-                        makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
-                    }
-                }
-            },
-            header: {
-                Text(feedFlowStrings.drawerTitlePinnedFeeds)
+    @ViewBuilder var pinnedFeedSourcesContent: some View {
+        ForEach(navDrawerState.pinnedFeedSources, id: \.stableId) { drawerItem in
+            if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
+                makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
             }
-        )
+        }
     }
 
-    @ViewBuilder var feedSourcesSection: some View {
+    @ViewBuilder var feedSourcesContent: some View {
         if !navDrawerState.feedSourcesByCategory.isEmpty || !navDrawerState.feedSourcesWithoutCategory.isEmpty {
             let uncategorizedFromMap = navDrawerState.feedSourcesByCategory
                 .filter { $0.key.feedSourceCategory == nil }
@@ -26,96 +19,35 @@ extension SidebarDrawer {
             let uncategorizedItems: [DrawerItem] =
                 Array(navDrawerState.feedSourcesWithoutCategory) + uncategorizedFromMap
 
-            Section(
-                content: {
-                    makeUncategorizedDropdown(drawerItems: uncategorizedItems)
+            makeUncategorizedDropdown(drawerItems: uncategorizedItems)
 
-                    ForEach(
-                        navDrawerState.feedSourcesByCategory.keys.sorted {
-                            $0.feedSourceCategory?.title ?? "" < $1.feedSourceCategory?.title ?? ""
-                        },
-                        id: \.self
-                    ) { category in
-                        let categoryWrapper =
-                            category as DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
-
-                        if categoryWrapper.feedSourceCategory != nil {
-                            let drawerItems = navDrawerState.feedSourcesByCategory[categoryWrapper] ?? []
-                            makeCategoryDropdown(
-                                drawerItems: drawerItems,
-                                categoryWrapper: categoryWrapper
-                            )
-                        } else {
-                            EmptyView()
-                        }
-                    }
+            ForEach(
+                navDrawerState.feedSourcesByCategory.keys.sorted {
+                    $0.feedSourceCategory?.title ?? "" < $1.feedSourceCategory?.title ?? ""
                 },
-                header: {
-                    makeAddFeedButton(title: feedFlowStrings.drawerTitleFeedSources)
-                }
-            )
-        }
-    }
+                id: \.self
+            ) { category in
+                let categoryWrapper =
+                    category as DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
 
-    @ViewBuilder
-    func makeAddFeedButton(title: String) -> some View {
-        HStack {
-            Text(title)
-            Spacer()
-            if #available(iOS 26.0, *) {
-                Button(
-                    action: {
-                        onAddFeedClick()
-                    },
-                    label: {
-                        Image(systemName: "plus")
-                            .foregroundStyle(.primary)
-                            .fontWeight(.medium)
-                            .imageScale(.medium)
-                    }
-                )
-                .buttonStyle(.glass)
-                .modifier(GlassEffectModifier())
-                .padding(.horizontal, -8)
-            } else {
-                Button(
-                    action: {
-                        onAddFeedClick()
-                    },
-                    label: {
-                        Image(systemName: "plus.app")
-                    }
-                )
+                if categoryWrapper.feedSourceCategory != nil {
+                    let drawerItems = navDrawerState.feedSourcesByCategory[categoryWrapper] ?? []
+                    makeCategoryDropdown(
+                        drawerItems: drawerItems,
+                        categoryWrapper: categoryWrapper
+                    )
+                }
             }
-        }
-        .if(appState.sizeClass == .compact) { view in
-            view.listRowInsets(
-                EdgeInsets(
-                    top: Spacing.small,
-                    leading: Spacing.small,
-                    bottom: Spacing.small,
-                    trailing: Spacing.small
-                )
-            )
-        }
-        .if(appState.sizeClass == .regular) { view in
-            view.listRowInsets(
-                EdgeInsets(
-                    top: Spacing.small,
-                    leading: Spacing.small,
-                    bottom: Spacing.small,
-                    trailing: -Spacing.xsmall
-                )
-            )
         }
     }
 
     @ViewBuilder
     func makeFeedSourceDrawerItem(drawerItem: DrawerItem.DrawerFeedSource) -> some View {
+        let isSelected = selectedSidebarItem == .feedSource(id: drawerItem.feedSource.id)
         FeedSourceDrawerItem(
             drawerItem: drawerItem,
             onSelect: { item in
-                self.selectedDrawerItem = item
+                self.selectedSidebarItem = .feedSource(id: item.feedSource.id)
                 self.onFeedFilterSelected(FeedFilter.Source(feedSource: item.feedSource))
             },
             onEdit: onEditFeedClick,
@@ -127,16 +59,20 @@ extension SidebarDrawer {
             },
             onDelete: onDeleteFeedClick,
             onOpenWebsite: { url in
-                // TODO: open in app?
                 if browserSelector.openInAppBrowser() {
                     guard let url = URL(string: url) else { return }
-                    self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                    self.appState.openInAppBrowser(url: url)
                 } else {
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url))
                 }
             }
         )
-        .tag(drawerItem)
+        .tag(SidebarSelection.feedSource(id: drawerItem.feedSource.id))
+        .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))
+    }
+
+    var isCompact: Bool {
+        isCompactPhone
     }
 
     @ViewBuilder
@@ -147,7 +83,7 @@ extension SidebarDrawer {
         if let categoryItem = categoryItem(for: categoryWrapper) {
             let categoryId = categoryIdentifier(for: categoryWrapper)
             let isExpanded = expandedCategoryIds.contains(categoryId)
-            let isSelected = selectedDrawerItem == categoryItem
+            let isSelected = selectedSidebarItem == .category(id: categoryItem.category.id)
 
             Group {
                 categoryHeader(
@@ -158,7 +94,7 @@ extension SidebarDrawer {
                 )
 
                 if isExpanded {
-                    feedSourcesList(drawerItems: drawerItems, trailingInset: Spacing.regular)
+                    feedSourcesList(drawerItems: drawerItems)
                 }
             }
         } else {
@@ -168,32 +104,48 @@ extension SidebarDrawer {
 
     @ViewBuilder
     func makeUncategorizedDropdown(drawerItems: [DrawerItem]) -> some View {
-        if drawerItems.isEmpty {
-            EmptyView()
-        } else {
+        if !drawerItems.isEmpty {
             let categoryId = categoryIdentifier(for: nil)
             let isExpanded = expandedCategoryIds.contains(categoryId)
             let unreadCount = drawerItems
                 .compactMap { $0 as? DrawerItem.DrawerFeedSource }
                 .map(\.unreadCount)
                 .reduce(0 as Int64, +)
-            let uncategorizedCategory = DrawerItem.DrawerCategory(
-                category: FeedSourceCategory(id: categoryId, title: feedFlowStrings.noCategory),
-                unreadCount: 0
-            )
-            let isSelected = selectedDrawerItem == uncategorizedCategory
+            let isSelected = selectedSidebarItem == .category(id: categoryId)
 
             Group {
-                uncategorizedHeader(
-                    categoryId: categoryId,
-                    unreadCount: unreadCount,
-                    isExpanded: isExpanded,
-                    isSelected: isSelected,
-                    uncategorizedCategory: uncategorizedCategory
-                )
+                HStack(spacing: Spacing.xsmall) {
+                    HStack {
+                        Image(systemName: "folder")
+                            .foregroundStyle(.secondary)
+                        Text(feedFlowStrings.noCategory)
+                        Spacer()
+                        if unreadCount > 0 {
+                            Text("\(unreadCount)")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.secondary.opacity(0.15))
+                                .clipShape(Capsule())
+                        }
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        self.selectedSidebarItem = .category(id: categoryId)
+                        self.onFeedFilterSelected(FeedFilter.Uncategorized())
+                    }
+                    .foregroundStyle(Color.primary)
+
+                    expansionToggle(isExpanded: isExpanded) {
+                        toggleCategoryExpansion(for: categoryId)
+                    }
+                }
+                .tag(SidebarSelection.category(id: categoryId))
+                .listRowBackground(categorySelectionBackground(isSelected: isSelected, isCompact: isCompact))
 
                 if isExpanded {
-                    feedSourcesList(drawerItems: drawerItems, trailingInset: Spacing.small)
+                    feedSourcesList(drawerItems: drawerItems)
                 }
             }
         }
@@ -208,63 +160,41 @@ extension SidebarDrawer {
     ) -> some View {
         HStack(spacing: Spacing.xsmall) {
             HStack {
+                Image(systemName: "folder")
+                    .foregroundStyle(.secondary)
                 Text(categoryItem.category.title)
                 Spacer()
-                makeCategoryUnreadBadge(unreadCount: categoryItem.unreadCount)
+                if categoryItem.unreadCount > 0 {
+                    Text("\(categoryItem.unreadCount)")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.secondary.opacity(0.15))
+                        .clipShape(Capsule())
+                }
             }
             .contentShape(Rectangle())
             .onTapGesture {
-                selectCategory(categoryItem)
+                self.selectedSidebarItem = .category(id: categoryItem.category.id)
+                self.onFeedFilterSelected(FeedFilter.Category(feedCategory: categoryItem.category))
             }
-            .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+            .foregroundStyle(Color.primary)
             .contextMenu {
                 categoryContextMenu(categoryItem: categoryItem)
             }
 
-            expansionToggleButton(isExpanded: isExpanded) {
+            expansionToggle(isExpanded: isExpanded) {
                 toggleCategoryExpansion(for: categoryId)
             }
         }
-        .tag(categoryItem)
-        .listRowBackground(
-            selectionBackground(isSelected: isSelected)
-        )
+        .tag(SidebarSelection.category(id: categoryItem.category.id))
+        .listRowBackground(categorySelectionBackground(isSelected: isSelected, isCompact: isCompact))
     }
 
     @ViewBuilder
-    func uncategorizedHeader(
-        categoryId: String,
-        unreadCount: Int64,
-        isExpanded: Bool,
-        isSelected: Bool,
-        uncategorizedCategory: DrawerItem.DrawerCategory
-    ) -> some View {
-        HStack(spacing: Spacing.xsmall) {
-            HStack {
-                Text(feedFlowStrings.noCategory)
-                Spacer()
-                makeCategoryUnreadBadge(unreadCount: unreadCount)
-            }
-            .contentShape(Rectangle())
-            .onTapGesture {
-                self.selectedDrawerItem = uncategorizedCategory
-                self.onFeedFilterSelected(FeedFilter.Uncategorized())
-            }
-            .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
-
-            expansionToggleButton(isExpanded: isExpanded) {
-                toggleCategoryExpansion(for: categoryId)
-            }
-        }
-        .tag(uncategorizedCategory)
-        .listRowBackground(
-            selectionBackground(isSelected: isSelected)
-        )
-    }
-
-    @ViewBuilder
-    func feedSourcesList(drawerItems: [DrawerItem], trailingInset: CGFloat) -> some View {
-        ForEach(drawerItems, id: \.self) { drawerItem in
+    func feedSourcesList(drawerItems: [DrawerItem]) -> some View {
+        ForEach(drawerItems, id: \.stableId) { drawerItem in
             if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
                 makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
                     .listRowInsets(
@@ -272,7 +202,7 @@ extension SidebarDrawer {
                             top: Spacing.small,
                             leading: Spacing.medium,
                             bottom: Spacing.small,
-                            trailing: trailingInset
+                            trailing: Spacing.regular
                         )
                     )
             } else {
@@ -282,17 +212,15 @@ extension SidebarDrawer {
     }
 
     @ViewBuilder
-    func expansionToggleButton(isExpanded: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.secondary)
-                .padding(.leading, Spacing.medium)
-                .padding(.trailing, Spacing.small)
-                .padding(.vertical, Spacing.xxsmall)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
+    func expansionToggle(isExpanded: Bool, action: @escaping () -> Void) -> some View {
+        Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundStyle(.secondary)
+            .padding(.leading, Spacing.small)
+            .padding(.trailing, Spacing.small)
+            .padding(.vertical, Spacing.xxsmall)
+            .contentShape(Rectangle())
+            .onTapGesture(perform: action)
     }
 
     @ViewBuilder
@@ -311,11 +239,6 @@ extension SidebarDrawer {
         } label: {
             Label(feedFlowStrings.deleteFeed, systemImage: "trash")
         }
-    }
-
-    func selectCategory(_ categoryItem: DrawerItem.DrawerCategory) {
-        self.selectedDrawerItem = categoryItem
-        self.onFeedFilterSelected(FeedFilter.Category(feedCategory: categoryItem.category))
     }
 
     func toggleCategoryExpansion(for categoryId: String) {
@@ -349,40 +272,16 @@ extension SidebarDrawer {
     }
 
     @ViewBuilder
-    func makeCategoryUnreadBadge(unreadCount: Int64) -> some View {
-        if unreadCount > 0 {
-            Text("\(unreadCount)")
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .padding(.horizontal, 8)
-                .background(Color.secondary.opacity(0.2))
-                .clipShape(Capsule())
-        }
-    }
-
-    @ViewBuilder
-    func selectionOverlay(isSelected: Bool) -> some View {
-        if isSelected {
-            if appState.sizeClass == .compact {
-                Color(.systemGray5)
-            } else {
-                RoundedRectangle(cornerRadius: 36, style: .continuous)
-                    .fill(Color(.systemGray5))
-                    .padding(.horizontal, Spacing.xsmall)
-                    .padding(.vertical, Spacing.xxsmall)
-            }
+    func categorySelectionBackground(isSelected: Bool, isCompact: Bool) -> some View {
+        if isSelected && isCompact {
+            Color(.systemGray4)
+        } else if isSelected {
+            RoundedRectangle(cornerRadius: 28)
+                .fill(Color(.systemGray4))
+        } else if isCompact {
+            Color(.secondarySystemGroupedBackground)
         } else {
             Color.clear
-        }
-    }
-
-    @ViewBuilder
-    func selectionBackground(isSelected: Bool) -> some View {
-        if appState.sizeClass == .compact {
-            Color(.secondarySystemGroupedBackground)
-                .overlay(selectionOverlay(isSelected: isSelected))
-        } else {
-            selectionOverlay(isSelected: isSelected)
         }
     }
 }

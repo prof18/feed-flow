@@ -57,7 +57,10 @@
       "WebFetch(domain:maven.pkg.jetbrains.space)",
       "WebFetch(domain:central.sonatype.com)",
       "Bash(gh pr:*)",
-      "Bash(git show:*)"
+      "Bash(git show:*)",
+      "Bash(xcodebuildmcp utilities:*)",
+      "Bash(xcodebuildmcp simulator:*)",
+      "mcp__XcodeBuildMCP__screenshot"
     ],
     "deny": []
   }

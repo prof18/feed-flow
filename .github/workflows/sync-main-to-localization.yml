@@ -1,0 +1,54 @@
+name: Sync Main To Localization
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-main-to-localization
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge main into localization
+        run: |
+          set -euo pipefail
+
+          git fetch origin main localization
+          git checkout -B localization origin/localization
+
+          before_sha="$(git rev-parse HEAD)"
+
+          if ! git merge --no-edit origin/main; then
+            git merge --abort || true
+            echo "::error::Merge conflict while syncing main into localization. Resolve it manually."
+            exit 1
+          fi
+
+          after_sha="$(git rev-parse HEAD)"
+
+          if [ "${before_sha}" = "${after_sha}" ]; then
+            echo "Localization is already up to date with main."
+            exit 0
+          fi
+
+          git push origin localization

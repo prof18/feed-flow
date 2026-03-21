@@ -71,3 +71,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr merge "${{ steps.pr.outputs.number }}" --auto --rebase
+
+      - name: Trigger code checks
+        if: steps.pr.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run code-checks.yaml --ref localization

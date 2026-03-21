@@ -93,7 +93,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
+            val state = awaitLinkedStateAfterSync()
             assertIs<AccountConnectionUiState.Linked>(state)
         }
     }
@@ -125,7 +125,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
         viewModel.uiState.test(timeout = uiTimeout) {
             // Skip initial Loading and Linked states
-            val linkedState = awaitItemMatching { it is AccountConnectionUiState.Linked }
+            val linkedState = awaitLinkedStateAfterSync()
             assertIs<AccountConnectionUiState.Linked>(linkedState)
 
             viewModel.disconnect()
@@ -191,7 +191,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
+            val state = awaitLinkedStateAfterSync()
             assertIs<AccountConnectionUiState.Linked>(state)
 
             cancelAndIgnoreRemainingEvents()
@@ -215,7 +215,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val linkedState = awaitItemMatching { it is AccountConnectionUiState.Linked }
+            val linkedState = awaitLinkedStateAfterSync()
             assertIs<AccountConnectionUiState.Linked>(linkedState)
 
             // Disconnect
@@ -244,3 +244,9 @@ private suspend fun <T> TurbineTestContext<T>.awaitItemMatching(
         }
     }
 }
+
+private suspend fun TurbineTestContext<AccountConnectionUiState>.awaitLinkedStateAfterSync():
+    AccountConnectionUiState.Linked =
+    awaitItemMatching { state ->
+        state is AccountConnectionUiState.Linked && state.syncState !is AccountSyncUIState.Loading
+    } as AccountConnectionUiState.Linked

@@ -53,7 +53,7 @@
     <string name="drawer_title_feed_sources">Zdroje kanálů</string>
     <string name="toggle_mark_read_when_scrolling">Označit jako přečtené při posouvání</string>
     <string name="action_done">Hotovo</string>
-    <string name="settings_app_title">Aplikace</string>
+    <string name="settings_app_title">Obecné</string>
     <string name="about_app_version">Verze aplikace: %s</string>
     <string name="add_feed_category_title">Kategorie zdroje</string>
     <string name="add_feed_categories_title">Kategorie zdrojů</string>
@@ -355,4 +355,22 @@
     <string name="settings_hide_read_items">Automaticky skrývat články označené jako přečtené</string>
     <string name="settings_show_rss_parsing_errors">Zobrazit chybové zprávy při načítání zdroje</string>
     <string name="exit_menu">Ukončit</string>
+    <string name="browser_launch_error">Nelze otevřít odkaz. Zkontrolujte nastavení prohlížeče.</string>
+    <string name="choose_another_file_button">Vyberte jiný soubor</string>
+    <string name="invalid_opml_import_title">Nelze importovat tento soubor</string>
+    <string name="invalid_opml_import_description">Toto nevypadá to jako platný soubor OPML. Zkuste ze své RSS aplikace exportovat zdroje jako OPML a opětovat import.</string>
+    <string name="drawer_title_library">Knihovna</string>
+    <string name="settings_desktop_multi_pane_layout">Použít rozložení ve vícero blocích</string>
+    <string name="settings_three_pane_layout">Použijte 3-blokové rozložení na velkých obrazovkách</string>
+    <string name="select_article_to_read">Vyberte článek pro čtení</string>
+    <string name="settings_hide_unread_dot">Skrýt indikátor nepřečtených</string>
+    <string name="settings_hide_feed_source">Skrýt zdroj vlákna</string>
+    <string name="settings_description_max_lines">Popis řádků</string>
+    <string name="settings_description_lines_three">3 řádky</string>
+    <string name="settings_description_lines_five">5 řádků</string>
+    <string name="settings_description_lines_no_limit">Žádné omezení</string>
+    <string name="settings_notifications_permission_description">FeedFlow potřebuje vaše oprávnění, aby odeslal upozornění, když se objeví nové články.</string>
+    <string name="settings_notifications_open_settings_button">Otevřít nastavení</string>
+    <string name="date_format_iso">Rok-Měsíc-Den</string>
+    <string name="next">Následující</string>
 </resources>

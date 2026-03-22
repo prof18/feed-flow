@@ -373,4 +373,7 @@
     <string name="settings_notifications_open_settings_button">打开设置</string>
     <string name="date_format_iso">年-月-日</string>
     <string name="next">下一篇</string>
+    <string name="delete_all_feeds_in_category">删除所有源</string>
+    <string name="delete_all_feeds_confirmation_title">删除类别中的所有源？</string>
+    <string name="delete_all_feeds_confirmation_message">确定要删除此类别中的所有源吗？该操作无法撤销。</string>
 </resources>

@@ -92,6 +92,21 @@ class DateFormatterTest {
         "Tue, 09 Dec 2025 13:46:55 +0000 2025-12-09 13:46:55",
         "Wed,28 Jan 2026 22:22:12 -0000",
         "2026-02-04-T08:00:00+02:00",
+        // ISO date with T separator but no seconds (JAVA-B3)
+        "2017-10-12T12:32",
+        "2018-05-17T13:27",
+        // Non-English day-of-week with English month (JAVA-6J)
+        "lun, 16 Mar 2026 17:08:21 +0100",
+        // Greek locale day-of-week and month (JAVA-G6)
+        "Σάβ, 21 Μαρ 2026 18:00:00 +0200",
+        // French locale
+        "ven, 14 fév 2025 10:00:00 +0100",
+        // Italian locale
+        "mar, 09 dic 2025 13:46:55 +0000",
+        // Spanish locale
+        "lun, 10 ene 2026 08:30:00 +0100",
+        // German locale
+        "Mi, 05 Mär 2025 12:00:00 +0100",
     )
 
     @Test

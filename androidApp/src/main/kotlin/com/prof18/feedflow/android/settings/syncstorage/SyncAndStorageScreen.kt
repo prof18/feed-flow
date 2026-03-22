@@ -19,6 +19,7 @@ fun SyncAndStorageScreen(
     SyncAndStorageScreenContent(
         navigateBack = navigateBack,
         syncPeriod = state.syncPeriod,
+        backgroundSyncRestrictions = state.backgroundSyncRestrictions,
         autoDeletePeriod = state.autoDeletePeriod,
         refreshFeedsOnLaunch = state.refreshFeedsOnLaunch,
         showRssParsingErrors = state.showRssParsingErrors,
@@ -28,6 +29,12 @@ fun SyncAndStorageScreen(
         },
         onAutoDeletePeriodSelected = { period ->
             viewModel.updateAutoDeletePeriod(period)
+        },
+        onSyncOnlyOnWifiToggle = { enabled ->
+            viewModel.updateSyncOnlyOnWifi(enabled)
+        },
+        onSyncOnlyWhenChargingToggle = { enabled ->
+            viewModel.updateSyncOnlyWhenCharging(enabled)
         },
         onRefreshFeedsOnLaunchToggle = { enabled ->
             viewModel.updateRefreshFeedsOnLaunch(enabled)

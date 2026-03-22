@@ -30,6 +30,7 @@ class WidgetSettingsViewModel(
     init {
         viewModelScope.launch {
             val currentPeriod = settingsRepository.getSyncPeriod()
+            val backgroundSyncRestrictions = settingsRepository.getBackgroundSyncRestrictions()
             val currentFeedLayout = widgetSettingsRepository.getFeedWidgetLayout()
             val currentShowHeader = widgetSettingsRepository.getWidgetShowHeader()
             val currentFontScale = widgetSettingsRepository.getWidgetFontScaleFactor()
@@ -42,6 +43,7 @@ class WidgetSettingsViewModel(
                     } else {
                         currentPeriod
                     },
+                    backgroundSyncRestrictions = backgroundSyncRestrictions,
                     feedLayout = currentFeedLayout,
                     showHeader = currentShowHeader,
                     fontScale = currentFontScale,
@@ -62,6 +64,36 @@ class WidgetSettingsViewModel(
         viewModelScope.launch {
             widgetUpdater.update()
         }
+    }
+
+    fun updateSyncOnlyOnWifi(enabled: Boolean) {
+        if (_settingsState.value.backgroundSyncRestrictions.syncOnlyOnWifi == enabled) {
+            return
+        }
+        _settingsState.update {
+            it.copy(
+                backgroundSyncRestrictions = it.backgroundSyncRestrictions.copy(
+                    syncOnlyOnWifi = enabled,
+                ),
+            )
+        }
+        settingsRepository.setBackgroundSyncOnlyOnWifi(enabled)
+        feedDownloadWorkerEnqueuer.updateWorker(settingsRepository.getSyncPeriod())
+    }
+
+    fun updateSyncOnlyWhenCharging(enabled: Boolean) {
+        if (_settingsState.value.backgroundSyncRestrictions.syncOnlyWhenCharging == enabled) {
+            return
+        }
+        _settingsState.update {
+            it.copy(
+                backgroundSyncRestrictions = it.backgroundSyncRestrictions.copy(
+                    syncOnlyWhenCharging = enabled,
+                ),
+            )
+        }
+        settingsRepository.setBackgroundSyncOnlyWhenCharging(enabled)
+        feedDownloadWorkerEnqueuer.updateWorker(settingsRepository.getSyncPeriod())
     }
 
     fun updateFeedLayout(feedLayout: FeedLayout) {

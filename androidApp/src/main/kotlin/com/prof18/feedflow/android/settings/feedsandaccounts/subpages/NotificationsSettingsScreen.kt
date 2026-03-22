@@ -52,10 +52,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BuildConfig
+import com.prof18.feedflow.android.settings.components.BackgroundSyncRestrictionsSection
 import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
 import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.NotificationSettingState
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
+import com.prof18.feedflow.shared.domain.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.NotificationsViewModel
 import com.prof18.feedflow.shared.ui.settings.NotificationToggleRow
@@ -73,15 +75,19 @@ internal fun NotificationsSettingsScreen(
 
     val notificationState by viewModel.notificationSettingState.collectAsStateWithLifecycle()
     val syncPeriodState by viewModel.syncPeriodFlow.collectAsStateWithLifecycle()
+    val backgroundSyncRestrictions by viewModel.backgroundSyncRestrictionsFlow.collectAsStateWithLifecycle()
 
     NotificationSettingsScreenContent(
         notificationState,
         syncPeriodState,
+        backgroundSyncRestrictions,
         onNavigateBack = navigateBack,
         onSyncPeriodSelected = { period ->
             viewModel.updateSyncPeriod(period)
             feedDownloadWorkerEnqueuer.updateWorker(period)
         },
+        onSyncOnlyOnWifiToggle = viewModel::updateSyncOnlyOnWifi,
+        onSyncOnlyWhenChargingToggle = viewModel::updateSyncOnlyWhenCharging,
         onAllNotificationsToggle = { status ->
             viewModel.updateAllNotificationStatus(status)
         },
@@ -101,8 +107,11 @@ internal fun NotificationsSettingsScreen(
 private fun NotificationSettingsScreenContent(
     notificationState: NotificationSettingState,
     syncPeriodState: SyncPeriod,
+    backgroundSyncRestrictions: BackgroundSyncRestrictions,
     onNavigateBack: () -> Unit,
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
+    onSyncOnlyOnWifiToggle: (Boolean) -> Unit,
+    onSyncOnlyWhenChargingToggle: (Boolean) -> Unit,
     onAllNotificationsToggle: (Boolean) -> Unit,
     onFeedSourceNotificationsToggle: (feedSourceId: String, status: Boolean) -> Unit,
     onNotificationModeSelected: (NotificationMode) -> Unit,
@@ -201,6 +210,14 @@ private fun NotificationSettingsScreenContent(
                     SyncPeriodSelector(
                         currentPeriod = syncPeriodState,
                         onPeriodSelected = onSyncPeriodSelected,
+                    )
+
+                    BackgroundSyncRestrictionsSection(
+                        syncOnlyOnWifi = backgroundSyncRestrictions.syncOnlyOnWifi,
+                        syncOnlyWhenCharging = backgroundSyncRestrictions.syncOnlyWhenCharging,
+                        onSyncOnlyOnWifiChange = onSyncOnlyOnWifiToggle,
+                        onSyncOnlyWhenChargingChange = onSyncOnlyWhenChargingToggle,
+                        modifier = Modifier.padding(vertical = Spacing.small),
                     )
 
                     if (BuildConfig.DEBUG) {

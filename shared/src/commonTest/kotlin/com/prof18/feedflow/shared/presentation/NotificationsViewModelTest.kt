@@ -125,4 +125,26 @@ class NotificationsViewModelTest : KoinTestBase() {
             assertEquals(SyncPeriod.TWELVE_HOURS, awaitItem())
         }
     }
+
+    @Test
+    fun `updateSyncOnlyOnWifi updates repository`() = runTest {
+        viewModel.backgroundSyncRestrictionsFlow.test {
+            assertFalse(awaitItem().syncOnlyOnWifi)
+
+            viewModel.updateSyncOnlyOnWifi(true)
+
+            assertTrue(awaitItem().syncOnlyOnWifi)
+        }
+    }
+
+    @Test
+    fun `updateSyncOnlyWhenCharging updates repository`() = runTest {
+        viewModel.backgroundSyncRestrictionsFlow.test {
+            assertFalse(awaitItem().syncOnlyWhenCharging)
+
+            viewModel.updateSyncOnlyWhenCharging(true)
+
+            assertTrue(awaitItem().syncOnlyWhenCharging)
+        }
+    }
 }

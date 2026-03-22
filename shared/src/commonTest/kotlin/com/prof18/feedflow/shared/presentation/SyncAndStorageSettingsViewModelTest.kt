@@ -23,6 +23,8 @@ class SyncAndStorageSettingsViewModelTest : KoinTestBase() {
             val initialState = awaitItem()
             assertEquals(SyncPeriod.NEVER, initialState.syncPeriod)
             assertEquals(AutoDeletePeriod.DISABLED, initialState.autoDeletePeriod)
+            assertFalse(initialState.backgroundSyncRestrictions.syncOnlyOnWifi)
+            assertFalse(initialState.backgroundSyncRestrictions.syncOnlyWhenCharging)
             assertTrue(initialState.refreshFeedsOnLaunch)
             assertTrue(initialState.showRssParsingErrors)
         }
@@ -49,6 +51,32 @@ class SyncAndStorageSettingsViewModelTest : KoinTestBase() {
             viewModel.updateAutoDeletePeriod(newPeriod)
 
             assertEquals(newPeriod, awaitItem().autoDeletePeriod)
+        }
+    }
+
+    @Test
+    fun `updateSyncOnlyOnWifi updates state`() = runTest {
+        viewModel.state.test {
+            awaitItem()
+
+            viewModel.updateSyncOnlyOnWifi(true)
+            assertTrue(awaitItem().backgroundSyncRestrictions.syncOnlyOnWifi)
+
+            viewModel.updateSyncOnlyOnWifi(false)
+            assertFalse(awaitItem().backgroundSyncRestrictions.syncOnlyOnWifi)
+        }
+    }
+
+    @Test
+    fun `updateSyncOnlyWhenCharging updates state`() = runTest {
+        viewModel.state.test {
+            awaitItem()
+
+            viewModel.updateSyncOnlyWhenCharging(true)
+            assertTrue(awaitItem().backgroundSyncRestrictions.syncOnlyWhenCharging)
+
+            viewModel.updateSyncOnlyWhenCharging(false)
+            assertFalse(awaitItem().backgroundSyncRestrictions.syncOnlyWhenCharging)
         }
     }
 

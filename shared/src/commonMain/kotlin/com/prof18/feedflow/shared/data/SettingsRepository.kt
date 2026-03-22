@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.data
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.shared.domain.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
@@ -23,6 +24,11 @@ class SettingsRepository(
 
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
     val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
+
+    private val backgroundSyncRestrictionsMutableFlow =
+        MutableStateFlow(getBackgroundSyncRestrictions())
+    val backgroundSyncRestrictionsFlow: StateFlow<BackgroundSyncRestrictions> =
+        backgroundSyncRestrictionsMutableFlow.asStateFlow()
 
     private val themeModeMutableFlow = MutableStateFlow(getThemeMode())
     val themeModeFlow: StateFlow<ThemeMode> = themeModeMutableFlow.asStateFlow()
@@ -135,6 +141,37 @@ class SettingsRepository(
         syncPeriodMutableFlow.update { period }
     }
 
+    fun getBackgroundSyncRestrictions(): BackgroundSyncRestrictions =
+        BackgroundSyncRestrictions(
+            syncOnlyOnWifi = settings.getBoolean(
+                SettingsFields.BACKGROUND_SYNC_WIFI_ONLY.name,
+                false,
+            ),
+            syncOnlyWhenCharging = settings.getBoolean(
+                SettingsFields.BACKGROUND_SYNC_CHARGING_ONLY.name,
+                false,
+            ),
+        )
+
+    fun setBackgroundSyncRestrictions(restrictions: BackgroundSyncRestrictions) {
+        settings[SettingsFields.BACKGROUND_SYNC_WIFI_ONLY.name] = restrictions.syncOnlyOnWifi
+        settings[SettingsFields.BACKGROUND_SYNC_CHARGING_ONLY.name] =
+            restrictions.syncOnlyWhenCharging
+        backgroundSyncRestrictionsMutableFlow.update { restrictions }
+    }
+
+    fun setBackgroundSyncOnlyOnWifi(value: Boolean) {
+        setBackgroundSyncRestrictions(
+            getBackgroundSyncRestrictions().copy(syncOnlyOnWifi = value),
+        )
+    }
+
+    fun setBackgroundSyncOnlyWhenCharging(value: Boolean) {
+        setBackgroundSyncRestrictions(
+            getBackgroundSyncRestrictions().copy(syncOnlyWhenCharging = value),
+        )
+    }
+
     internal fun getRefreshFeedsOnLaunch(): Boolean =
         settings.getBoolean(SettingsFields.REFRESH_FEEDS_ON_LAUNCH.name, true)
 
@@ -189,6 +226,8 @@ private enum class SettingsFields {
     AUTO_DELETE_PERIOD,
     CRASH_REPORTING_ENABLED,
     SYNC_PERIOD,
+    BACKGROUND_SYNC_WIFI_ONLY,
+    BACKGROUND_SYNC_CHARGING_ONLY,
     THEME_MODE,
     REDUCE_MOTION_ENABLED,
     REFRESH_FEEDS_ON_LAUNCH,

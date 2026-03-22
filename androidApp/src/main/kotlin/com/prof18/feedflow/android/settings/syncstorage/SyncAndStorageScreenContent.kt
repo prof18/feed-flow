@@ -27,8 +27,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.imageLoader
 import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
+import com.prof18.feedflow.android.settings.components.BackgroundSyncRestrictionsSection
 import com.prof18.feedflow.android.settings.components.SyncPeriodSelector
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.shared.domain.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.ui.settings.ConfirmationSettingItem
 import com.prof18.feedflow.shared.ui.settings.SettingSelectorItem
@@ -40,12 +42,15 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 @Composable
 internal fun SyncAndStorageScreenContent(
     syncPeriod: SyncPeriod,
+    backgroundSyncRestrictions: BackgroundSyncRestrictions,
     autoDeletePeriod: AutoDeletePeriod,
     refreshFeedsOnLaunch: Boolean,
     showRssParsingErrors: Boolean,
     navigateBack: () -> Unit,
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
+    onSyncOnlyOnWifiToggle: (Boolean) -> Unit,
+    onSyncOnlyWhenChargingToggle: (Boolean) -> Unit,
     onRefreshFeedsOnLaunchToggle: (Boolean) -> Unit,
     onShowRssParsingErrorsToggle: (Boolean) -> Unit,
     onClearDownloadedArticles: () -> Unit,
@@ -96,6 +101,16 @@ internal fun SyncAndStorageScreenContent(
                 SyncPeriodSelector(
                     currentPeriod = syncPeriod,
                     onPeriodSelected = onSyncPeriodSelected,
+                )
+            }
+
+            item {
+                BackgroundSyncRestrictionsSection(
+                    syncOnlyOnWifi = backgroundSyncRestrictions.syncOnlyOnWifi,
+                    syncOnlyWhenCharging = backgroundSyncRestrictions.syncOnlyWhenCharging,
+                    onSyncOnlyOnWifiChange = onSyncOnlyOnWifiToggle,
+                    onSyncOnlyWhenChargingChange = onSyncOnlyWhenChargingToggle,
+                    showHeader = false,
                 )
             }
 
@@ -172,10 +187,13 @@ private fun SyncAndStorageScreenContentPreview() {
         SyncAndStorageScreenContent(
             navigateBack = {},
             syncPeriod = SyncPeriod.ONE_HOUR,
+            backgroundSyncRestrictions = BackgroundSyncRestrictions(),
             autoDeletePeriod = AutoDeletePeriod.ONE_WEEK,
             refreshFeedsOnLaunch = true,
             onSyncPeriodSelected = {},
             onAutoDeletePeriodSelected = {},
+            onSyncOnlyOnWifiToggle = {},
+            onSyncOnlyWhenChargingToggle = {},
             onRefreshFeedsOnLaunchToggle = {},
             showRssParsingErrors = true,
             onShowRssParsingErrorsToggle = {},

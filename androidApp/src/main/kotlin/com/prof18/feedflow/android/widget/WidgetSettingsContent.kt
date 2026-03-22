@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.prof18.feedflow.android.settings.components.BackgroundSyncRestrictionsSection
 import com.prof18.feedflow.android.settings.components.SyncPeriodSelector
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
@@ -52,6 +53,8 @@ import kotlin.math.roundToInt
 fun WidgetSettingsContent(
     settingsState: WidgetSettingsState,
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
+    onSyncOnlyOnWifiSelected: (Boolean) -> Unit,
+    onSyncOnlyWhenChargingSelected: (Boolean) -> Unit,
     onFeedLayoutSelected: (FeedLayout) -> Unit,
     onShowHeaderSelected: (Boolean) -> Unit,
     onFontScaleSelected: (Int) -> Unit,
@@ -82,6 +85,14 @@ fun WidgetSettingsContent(
             currentPeriod = settingsState.syncPeriod,
             onPeriodSelected = onSyncPeriodSelected,
             showNeverSync = false,
+        )
+
+        BackgroundSyncRestrictionsSection(
+            syncOnlyOnWifi = settingsState.backgroundSyncRestrictions.syncOnlyOnWifi,
+            syncOnlyWhenCharging = settingsState.backgroundSyncRestrictions.syncOnlyWhenCharging,
+            onSyncOnlyOnWifiChange = onSyncOnlyOnWifiSelected,
+            onSyncOnlyWhenChargingChange = onSyncOnlyWhenChargingSelected,
+            modifier = Modifier.padding(vertical = Spacing.small),
         )
 
         Text(
@@ -317,6 +328,8 @@ private fun WidgetSettingsContentPreview() {
                     backgroundOpacityPercent = 80,
                 ),
                 onSyncPeriodSelected = {},
+                onSyncOnlyOnWifiSelected = {},
+                onSyncOnlyWhenChargingSelected = {},
                 onFeedLayoutSelected = {},
                 onShowHeaderSelected = {},
                 onFontScaleSelected = {},

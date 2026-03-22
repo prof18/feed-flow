@@ -46,6 +46,8 @@ class WidgetConfigurationActivity : BaseThemeActivity() {
             title = strings.widgetConfigurationTitle,
             settingsState = settingsState,
             onSyncPeriodSelected = viewModel::updateSyncPeriod,
+            onSyncOnlyOnWifiSelected = viewModel::updateSyncOnlyOnWifi,
+            onSyncOnlyWhenChargingSelected = viewModel::updateSyncOnlyWhenCharging,
             onFeedLayoutSelected = viewModel::updateFeedLayout,
             onShowHeaderSelected = viewModel::updateShowHeader,
             onFontScaleSelected = viewModel::updateFontScale,

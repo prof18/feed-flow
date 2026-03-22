@@ -25,6 +25,7 @@ class WidgetConfigurationViewModel(
     init {
         viewModelScope.launch {
             val currentPeriod = settingsRepository.getSyncPeriod()
+            val backgroundSyncRestrictions = settingsRepository.getBackgroundSyncRestrictions()
             val currentFeedLayout = widgetSettingsRepository.getFeedWidgetLayout()
             val currentShowHeader = widgetSettingsRepository.getWidgetShowHeader()
             val currentFontScale = widgetSettingsRepository.getWidgetFontScaleFactor()
@@ -38,6 +39,7 @@ class WidgetConfigurationViewModel(
                     } else {
                         currentPeriod
                     },
+                    backgroundSyncRestrictions = backgroundSyncRestrictions,
                     feedLayout = currentFeedLayout,
                     showHeader = currentShowHeader,
                     fontScale = currentFontScale,
@@ -54,6 +56,26 @@ class WidgetConfigurationViewModel(
 
     fun updateFeedLayout(feedLayout: FeedLayout) {
         _settingsState.update { it.copy(feedLayout = feedLayout) }
+    }
+
+    fun updateSyncOnlyOnWifi(enabled: Boolean) {
+        _settingsState.update {
+            it.copy(
+                backgroundSyncRestrictions = it.backgroundSyncRestrictions.copy(
+                    syncOnlyOnWifi = enabled,
+                ),
+            )
+        }
+    }
+
+    fun updateSyncOnlyWhenCharging(enabled: Boolean) {
+        _settingsState.update {
+            it.copy(
+                backgroundSyncRestrictions = it.backgroundSyncRestrictions.copy(
+                    syncOnlyWhenCharging = enabled,
+                ),
+            )
+        }
     }
 
     fun updateShowHeader(showHeader: Boolean) {
@@ -75,6 +97,7 @@ class WidgetConfigurationViewModel(
     fun enqueueWorker() {
         val state = settingsState.value
         settingsRepository.setSyncPeriod(state.syncPeriod)
+        settingsRepository.setBackgroundSyncRestrictions(state.backgroundSyncRestrictions)
         widgetSettingsRepository.setFeedWidgetLayout(state.feedLayout)
         widgetSettingsRepository.setWidgetShowHeader(state.showHeader)
         widgetSettingsRepository.setWidgetFontScaleFactor(state.fontScale)

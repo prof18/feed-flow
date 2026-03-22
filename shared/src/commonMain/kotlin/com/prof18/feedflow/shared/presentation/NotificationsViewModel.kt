@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.NotificationSettingState
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
+import com.prof18.feedflow.shared.domain.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -34,6 +35,8 @@ class NotificationsViewModel internal constructor(
     val notificationSettingState = notificationSettingsMutableStateFlow.asStateFlow()
 
     val syncPeriodFlow: StateFlow<SyncPeriod> = settingsRepository.syncPeriodFlow
+    val backgroundSyncRestrictionsFlow: StateFlow<BackgroundSyncRestrictions> =
+        settingsRepository.backgroundSyncRestrictionsFlow
 
     init {
         viewModelScope.launch {
@@ -96,6 +99,20 @@ class NotificationsViewModel internal constructor(
         viewModelScope.launch {
             settingsRepository.setSyncPeriod(period)
             backgroundSyncScheduler.updateSyncPeriod(period)
+        }
+    }
+
+    fun updateSyncOnlyOnWifi(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setBackgroundSyncOnlyOnWifi(enabled)
+            backgroundSyncScheduler.updateSyncPeriod(syncPeriodFlow.value)
+        }
+    }
+
+    fun updateSyncOnlyWhenCharging(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setBackgroundSyncOnlyWhenCharging(enabled)
+            backgroundSyncScheduler.updateSyncPeriod(syncPeriodFlow.value)
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import java.util.concurrent.TimeUnit.MINUTES
 
@@ -16,10 +17,27 @@ class FeedDownloadWorkerEnqueuer internal constructor(
     private val context: Context,
 ) {
     fun enqueueWork() {
-        updateWorker(settingsRepository.getSyncPeriod())
+        updateWorker()
     }
 
-    fun updateWorker(syncPeriod: SyncPeriod) =
+    fun updateWorker() {
+        updateWorker(
+            syncPeriod = settingsRepository.getSyncPeriod(),
+            restrictions = settingsRepository.getBackgroundSyncRestrictions(),
+        )
+    }
+
+    fun updateWorker(syncPeriod: SyncPeriod) {
+        updateWorker(
+            syncPeriod = syncPeriod,
+            restrictions = settingsRepository.getBackgroundSyncRestrictions(),
+        )
+    }
+
+    private fun updateWorker(
+        syncPeriod: SyncPeriod,
+        restrictions: BackgroundSyncRestrictions,
+    ) =
         when (syncPeriod) {
             SyncPeriod.NEVER -> cancel()
             SyncPeriod.FIFTEEN_MINUTES,
@@ -29,7 +47,7 @@ class FeedDownloadWorkerEnqueuer internal constructor(
             SyncPeriod.SIX_HOURS,
             SyncPeriod.TWELVE_HOURS,
             SyncPeriod.ONE_DAY,
-            -> enqueue(syncPeriod.minutes)
+            -> enqueue(syncPeriod.minutes, restrictions)
         }
 
     /**
@@ -38,11 +56,7 @@ class FeedDownloadWorkerEnqueuer internal constructor(
     fun triggerManualSync() {
         val workRequest = OneTimeWorkRequestBuilder<FeedDownloadWorker>()
             .addTag(WORKER_TAG)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build(),
-            )
+            .setConstraints(buildConstraints(settingsRepository.getBackgroundSyncRestrictions()))
             .build()
 
         WorkManager.getInstance(context).enqueue(workRequest)
@@ -52,14 +66,13 @@ class FeedDownloadWorkerEnqueuer internal constructor(
         WorkManager.getInstance(context).cancelUniqueWork(WORKER_TAG)
     }
 
-    private fun enqueue(minutes: Long) {
+    private fun enqueue(
+        minutes: Long,
+        restrictions: BackgroundSyncRestrictions,
+    ) {
         val instructions = PeriodicWorkRequestBuilder<FeedDownloadWorker>(minutes, MINUTES)
             .addTag(WORKER_TAG)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build(),
-            )
+            .setConstraints(buildConstraints(restrictions))
             .build()
 
         WorkManager.getInstance(context)
@@ -69,6 +82,18 @@ class FeedDownloadWorkerEnqueuer internal constructor(
                 instructions,
             )
     }
+
+    private fun buildConstraints(restrictions: BackgroundSyncRestrictions): Constraints =
+        Constraints.Builder()
+            .setRequiredNetworkType(
+                if (restrictions.syncOnlyOnWifi) {
+                    NetworkType.UNMETERED
+                } else {
+                    NetworkType.CONNECTED
+                },
+            )
+            .setRequiresCharging(restrictions.syncOnlyWhenCharging)
+            .build()
 
     private companion object {
         const val WORKER_TAG = "FeedDownloadWorker"

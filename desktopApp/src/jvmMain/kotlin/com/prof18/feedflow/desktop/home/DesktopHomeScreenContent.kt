@@ -41,6 +41,7 @@ import com.prof18.feedflow.shared.ui.home.components.FeedLoader
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.shared.ui.home.components.ScrollToTopButton
 import com.prof18.feedflow.shared.ui.home.components.list.FeedList
+import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
@@ -158,7 +159,13 @@ fun DesktopHomeScreenContent(
                                     .fillMaxHeight(),
                             ) {
                                 Column {
-                                    FeedLoader(loadingState = displayState.feedUpdateStatus)
+                                    FeedLoader(
+                                        loadingState = displayState.feedUpdateStatus,
+                                        modifier = Modifier.padding(
+                                            top = Spacing.small,
+                                            bottom = Spacing.small,
+                                        ),
+                                    )
 
                                     if (displayState.feedItems.isEmpty() && displayState.feedUpdateStatus.isLoading()) {
                                         Box(

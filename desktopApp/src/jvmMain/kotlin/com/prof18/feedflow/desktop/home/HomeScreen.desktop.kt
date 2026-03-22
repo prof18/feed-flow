@@ -36,6 +36,8 @@ import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState.NextFeedDisplayDi
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
+import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -144,9 +146,14 @@ internal fun HomeScreen(
         readerModeViewModel.resetState()
     }
 
+    val reduceMotionEnabled = LocalReduceMotion.current
+
     LaunchedEffect(refreshTrigger, isMultiPaneLayoutEnabled) {
-        if (isMultiPaneLayoutEnabled && refreshTrigger > 0) {
-            resetReaderArticle()
+        if (refreshTrigger > 0) {
+            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+            if (isMultiPaneLayoutEnabled) {
+                resetReaderArticle()
+            }
         }
     }
 

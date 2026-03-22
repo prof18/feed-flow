@@ -40,10 +40,31 @@ internal class FeedSourceLogoRetrieverImpl(
     }
 
     private fun normalizeLogoUrl(baseDomain: String?, logoUrl: String?): String? {
-        if (baseDomain != null && (logoUrl == null || logoUrl.startsWith("/"))) {
-            return "$baseDomain/favicon.ico"
+        if (logoUrl.isNullOrBlank()) {
+            return baseDomain?.let { "$it/favicon.ico" }
         }
-        return logoUrl
+        if (baseDomain == null) {
+            return logoUrl
+        }
+        return when {
+            logoUrl.startsWith("http://", ignoreCase = true) ||
+                logoUrl.startsWith("https://", ignoreCase = true) ||
+                logoUrl.startsWith("data:", ignoreCase = true) -> {
+                logoUrl
+            }
+
+            logoUrl.startsWith("//") -> {
+                val scheme = if (baseDomain.startsWith("https://", ignoreCase = true)) {
+                    "https:"
+                } else {
+                    "http:"
+                }
+                "$scheme$logoUrl"
+            }
+
+            logoUrl.startsWith("/") -> "$baseDomain$logoUrl"
+            else -> "$baseDomain/${logoUrl.removePrefix("./")}"
+        }
     }
 
     private fun getFaviconFromGoogle(websiteLink: String): String {

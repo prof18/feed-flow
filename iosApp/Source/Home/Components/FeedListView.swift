@@ -101,6 +101,7 @@ struct FeedListView: View {
                                         onOpenFeedSettings: onOpenFeedSettings
                                     )
                                     .environment(browserSelector)
+                                    .environment(appState)
                                 } preview: {
                                     FeedItemView(
                                         feedItem: feedItem,
@@ -127,6 +128,7 @@ struct FeedListView: View {
                                         onOpenFeedSettings: onOpenFeedSettings
                                     )
                                     .environment(browserSelector)
+                                    .environment(appState)
                                 } preview: {
                                     FeedItemView(
                                         feedItem: feedItem,

@@ -93,6 +93,7 @@ struct SearchScreenContent: View {
         .contextMenu {
             makeSearchItemContextMenu(feedItem: feedItem)
                 .environment(browserSelector)
+                .environment(appState)
         }
     }
 

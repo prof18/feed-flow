@@ -63,6 +63,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
@@ -111,11 +112,16 @@ internal fun ReaderModeScreen(
 
     val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsState()
     val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsState()
+    var hoveredLink by remember { mutableStateOf<String?>(null) }
 
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+    }
+
+    LaunchedEffect(state) {
+        hoveredLink = null
     }
 
     Box(
@@ -231,6 +237,9 @@ internal fun ReaderModeScreen(
                                                 .padding(bottom = 64.dp),
                                             content = s.readerModeData.content,
                                             imageTransformer = Coil3ImageTransformerImpl,
+                                            components = desktopReaderModeMarkdownComponents(
+                                                onHoveredLinkChange = { hoveredLink = it },
+                                            ),
                                             animations = markdownAnimations(
                                                 animateTextSize = {
                                                     this
@@ -299,6 +308,33 @@ internal fun ReaderModeScreen(
                     modifier = Modifier.align(Alignment.TopCenter),
                     height = readerPaneTopContentFadeHeight,
                     color = MaterialTheme.colorScheme.surface,
+                )
+            }
+        }
+
+        hoveredLink?.let { hoveredUrl ->
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = Spacing.regular, bottom = Spacing.regular),
+                shape = RoundedCornerShape(18.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                tonalElevation = 2.dp,
+                shadowElevation = 4.dp,
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                ),
+            ) {
+                Text(
+                    text = hoveredUrl,
+                    modifier = Modifier
+                        .widthIn(max = 420.dp)
+                        .padding(horizontal = Spacing.regular, vertical = Spacing.small),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }

@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.feedsourcelist
+package com.prof18.feedflow.android.feedsourcelist
 
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -19,7 +19,7 @@ internal fun CategoryHeaderContextMenu(
     showMenu: Boolean,
     feedSources: ImmutableList<FeedSource>,
     hideMenu: () -> Unit,
-    onDeleteAllFeedsClick: (List<FeedSource>) -> Unit,
+    onDeleteAllFeedsClick: (ImmutableList<FeedSource>) -> Unit,
 ) {
     var showConfirmation by remember { mutableStateOf(false) }
 

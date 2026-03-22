@@ -94,25 +94,3 @@ fun FeedSourceListScreen(
         },
     )
 }
-
-@PreviewPhone
-@Composable
-private fun FeedSourceListContentPreview() {
-    FeedFlowTheme {
-        FeedSourceListContent(
-            feedSourceListState = FeedSourceListState(
-                feedSourcesWithoutCategory = persistentListOf(),
-                feedSourcesWithCategory = feedSourcesState,
-            ),
-            onAddFeedClick = {},
-            onDeleteFeedClick = {},
-            onExpandClicked = {},
-            navigateBack = {},
-            onRenameFeedSourceClick = { _, _ -> },
-            onEditFeedSourceClick = {},
-            onPinFeedClick = {},
-            onOpenWebsite = {},
-            onDeleteAllFeedsInCategory = {},
-        )
-    }
-}

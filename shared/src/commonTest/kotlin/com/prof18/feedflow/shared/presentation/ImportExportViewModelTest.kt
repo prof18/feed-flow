@@ -182,6 +182,18 @@ class ImportExportViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `importArticles reports error when csv header is missing`() = runTest {
+        val csvInput = createCsvInput(HEADERLESS_CSV_CONTENT)
+
+        assertEquals(FeedImportExportState.Idle, viewModel.importExportState.value)
+
+        viewModel.importArticles(csvInput)
+
+        advanceUntilIdle()
+        assertEquals(FeedImportExportState.Error, viewModel.importExportState.value)
+    }
+
+    @Test
     fun `exportArticles reports error when output fails`() = runTest {
         val csvOutput = createFailingCsvOutput()
 
@@ -288,5 +300,6 @@ class ImportExportViewModelTest : KoinTestBase() {
             "false,false,0,,false,false\n"
 
         const val INVALID_CSV_CONTENT = "url,title\nhttps://example.com,Title\n"
+        const val HEADERLESS_CSV_CONTENT = ""
     }
 }

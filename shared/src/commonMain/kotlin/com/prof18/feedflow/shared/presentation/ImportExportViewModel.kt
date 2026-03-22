@@ -78,6 +78,12 @@ class ImportExportViewModel internal constructor(
                 importerMutableState.update {
                     FeedImportExportState.ArticleImportSuccess
                 }
+            } catch (e: IllegalArgumentException) {
+                logger.d(e) { "Invalid article CSV import file" }
+                importerMutableState.update { FeedImportExportState.Error }
+            } catch (e: IllegalStateException) {
+                logger.d(e) { "Invalid article CSV import file" }
+                importerMutableState.update { FeedImportExportState.Error }
             } catch (e: Throwable) {
                 logger.e(e) { "Error while importing articles" }
                 importerMutableState.update { FeedImportExportState.Error }

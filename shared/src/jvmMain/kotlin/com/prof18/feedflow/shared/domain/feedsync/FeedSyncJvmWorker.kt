@@ -181,9 +181,7 @@ internal class FeedSyncJvmWorker(
             } catch (e: Exception) {
                 val currentAccount = accountsRepository.getCurrentSyncAccount()
                 val downloadError = syncDownloadErrorForAccount(currentAccount)
-                if (!e.isTemporaryNetworkError()) {
-                    logger.e("Download failed for account $currentAccount", e)
-                }
+                logger.d(e) { "Download failed for account $currentAccount" }
                 SyncResult.General(downloadError)
             }
         }

@@ -235,15 +235,19 @@ private extension HomeContent {
                     self.sheetToShow = .feedSuggestions
                 }
             )
+            .environment(appState)
 
         case .addFeed:
             AddFeedScreen(showCloseButton: true)
+                .environment(appState)
 
         case .importExport:
             ImportExportScreen(showCloseButton: true, fetchFeeds: onRefresh)
+                .environment(appState)
 
         case let .editFeed(source):
             EditFeedScreen(feedSource: source)
+                .environment(appState)
 
         case .feedSuggestions:
             FeedSuggestionsScreen()

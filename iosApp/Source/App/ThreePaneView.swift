@@ -101,6 +101,8 @@ struct ThreePaneView: View {
                     )
                 }
             )
+            .environment(appState)
+            .environment(browserSelector)
             .navigationBarTitleDisplayMode(.inline)
         } content: {
             @Bindable var appState = appState
@@ -121,6 +123,8 @@ struct ThreePaneView: View {
                     }
                 )
                 .environment(indexHolder)
+                .environment(appState)
+                .environment(browserSelector)
                 .navigationDestination(for: CommonViewRoute.self) { route in
                     switch route {
                     case .readerMode:
@@ -154,6 +158,8 @@ struct ThreePaneView: View {
         } detail: {
             NavigationStack(path: $detailNavigationPath) {
                 detailPaneView
+                    .environment(appState)
+                    .environment(browserSelector)
                     .navigationDestination(for: CommonViewRoute.self) { route in
                         switch route {
                         case let .inAppBrowser(url):
@@ -170,10 +176,14 @@ struct ThreePaneView: View {
         .background(Color(.systemGroupedBackground))
         .sheet(isPresented: $showAddFeedSheet) {
             AddFeedScreen(showCloseButton: true)
+                .environment(appState)
+                .environment(browserSelector)
         }
         .sheet(isPresented: $showEditFeedSheet) {
             if let feedSource = feedSourceToEdit {
                 EditFeedScreen(feedSource: feedSource)
+                    .environment(appState)
+                    .environment(browserSelector)
             }
         }
         .onChange(of: appState.pendingBrowserURL) { _, newURL in

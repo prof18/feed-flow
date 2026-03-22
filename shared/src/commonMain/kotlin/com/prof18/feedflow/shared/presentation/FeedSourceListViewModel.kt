@@ -130,6 +130,16 @@ class FeedSourceListViewModel internal constructor(
         }
     }
 
+    fun deleteAllFeedsInCategory(feedSources: List<FeedSource>) {
+        viewModelScope.launch {
+            setExpandedCategory()
+            for (feedSource in feedSources) {
+                feedSourcesRepository.deleteFeed(feedSource)
+            }
+            feedFetcherRepository.fetchFeeds()
+        }
+    }
+
     fun expandCategory(categoryId: CategoryId?) {
         if (categoryId == null) return
 

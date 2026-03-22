@@ -25,6 +25,7 @@ fun FeedSourceListContent(
     onPinFeedClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onDeleteAllFeedsInCategory: (List<FeedSource>) -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
 ) {
     Scaffold(
@@ -52,6 +53,7 @@ fun FeedSourceListContent(
                 onEditFeedClick = onEditFeedSourceClick,
                 onPinFeedClick = onPinFeedClick,
                 onOpenWebsite = onOpenWebsite,
+                onDeleteAllFeedsInCategory = onDeleteAllFeedsInCategory,
                 paddingValues = paddingValues,
             )
         }

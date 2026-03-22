@@ -5,7 +5,6 @@ import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -81,6 +80,7 @@ internal fun FeedSourcesWithCategoryList(
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
+    onDeleteAllFeedsInCategory: (List<FeedSource>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val layoutDir = LocalLayoutDirection.current
@@ -104,6 +104,8 @@ internal fun FeedSourcesWithCategoryList(
 
         items(feedSourceState.feedSourcesWithCategory) { feedSourceState ->
             Column {
+                var showCategoryMenu by remember { mutableStateOf(false) }
+
                 @Suppress("MagicNumber")
                 val degrees by conditionalAnimateFloatAsState(
                     targetValue = if (feedSourceState.isExpanded) {
@@ -116,9 +118,14 @@ internal fun FeedSourcesWithCategoryList(
                 Row(
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.medium)
-                        .clickable {
-                            onExpandClicked(feedSourceState.categoryId)
-                        }
+                        .singleAndLongClickModifier(
+                            onClick = {
+                                onExpandClicked(feedSourceState.categoryId)
+                            },
+                            onLongClick = {
+                                showCategoryMenu = true
+                            },
+                        )
                         .fillMaxWidth()
                         .padding(vertical = Spacing.regular),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -140,6 +147,13 @@ internal fun FeedSourcesWithCategoryList(
                         modifier = Modifier.rotate(degrees),
                     )
                 }
+
+                CategoryHeaderContextMenu(
+                    showMenu = showCategoryMenu,
+                    feedSources = feedSourceState.feedSources,
+                    hideMenu = { showCategoryMenu = false },
+                    onDeleteAllFeedsClick = onDeleteAllFeedsInCategory,
+                )
 
                 FeedSourcesListWithCategorySelector(
                     feedSourceState = feedSourceState,

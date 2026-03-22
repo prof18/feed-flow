@@ -89,5 +89,8 @@ fun FeedSourceListScreen(
             SnackbarHost(snackbarHostState)
         },
         onOpenWebsite = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
+        onDeleteAllFeedsInCategory = { feedSources ->
+            viewModel.deleteAllFeedsInCategory(feedSources)
+        },
     )
 }

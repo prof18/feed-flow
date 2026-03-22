@@ -7,7 +7,6 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
-import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
@@ -29,7 +28,6 @@ import kotlinx.coroutines.launch
 class FeedSourceListViewModel internal constructor(
     private val feedSourcesRepository: FeedSourcesRepository,
     private val feedStateRepository: FeedStateRepository,
-    private val feedFetcherRepository: FeedFetcherRepository,
 ) : ViewModel() {
 
     private val feedsMutableState: MutableStateFlow<FeedSourceListState> = MutableStateFlow(FeedSourceListState())
@@ -38,7 +36,7 @@ class FeedSourceListViewModel internal constructor(
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState> = MutableSharedFlow()
     val errorState: SharedFlow<UIErrorState> = mutableUIErrorState.asSharedFlow()
 
-    private var expandedCategories: MutableList<CategoryId> = mutableListOf()
+    private val expandedCategories = mutableSetOf<CategoryId>()
 
     init {
         observeErrorState()
@@ -86,7 +84,6 @@ class FeedSourceListViewModel internal constructor(
                             feedSourcesWithCategory = feedSourceStates.toImmutableList(),
                         )
                     }
-                    expandedCategories.clear()
                 }
             }
         }
@@ -128,13 +125,18 @@ class FeedSourceListViewModel internal constructor(
 
     fun deleteFeedSource(feedSource: FeedSource) {
         viewModelScope.launch {
-            setExpandedCategory()
             feedSourcesRepository.deleteFeed(feedSource)
-            feedFetcherRepository.fetchFeeds()
+            feedStateRepository.getFeeds()
         }
     }
 
     fun expandCategory(categoryId: CategoryId?) {
+        if (categoryId == null) return
+
+        if (!expandedCategories.add(categoryId)) {
+            expandedCategories.remove(categoryId)
+        }
+
         feedsMutableState.update { oldState ->
             val newFeedSourceStates = oldState.feedSourcesWithCategory.map { feedSourceState ->
                 if (categoryId == feedSourceState.categoryId) {
@@ -152,18 +154,9 @@ class FeedSourceListViewModel internal constructor(
 
     fun updateFeedName(feedSource: FeedSource, newName: String) {
         viewModelScope.launch {
-            setExpandedCategory()
             feedSourcesRepository.updateFeedSourceName(feedSource.id, newName)
             feedStateRepository.getFeeds()
         }
-    }
-
-    private fun setExpandedCategory() {
-        expandedCategories = feedSourcesState.value.feedSourcesWithCategory.filter {
-            it.isExpanded
-        }.mapNotNull {
-            it.categoryId
-        }.toMutableList()
     }
 
     fun toggleFeedPin(feedSource: FeedSource) {

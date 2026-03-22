@@ -221,7 +221,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         FeedSourceListViewModel(
             feedSourcesRepository = get(),
             feedStateRepository = get(),
-            feedFetcherRepository = get(),
         )
     }
 

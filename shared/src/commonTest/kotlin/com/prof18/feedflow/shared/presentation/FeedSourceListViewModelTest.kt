@@ -91,6 +91,54 @@ class FeedSourceListViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `expanded category stays expanded across multiple feed source updates`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "tech", title = "Tech")
+        val newsCategory = FeedSourceCategory(id = "news", title = "News")
+        val techSource = createFeedSource(id = "tech-source", title = "Tech Source", category = techCategory)
+        val newsSource = createFeedSource(id = "news-source", title = "News Source", category = newsCategory)
+        insertFeedSources(databaseHelper, techSource, newsSource)
+
+        advanceUntilIdle()
+
+        viewModel.expandCategory(CategoryId("tech"))
+        assertTrue(
+            viewModel.feedSourcesState.value.feedSourcesWithCategory
+                .first { it.categoryId == CategoryId("tech") }
+                .isExpanded,
+        )
+
+        insertFeedSources(
+            createFeedSource(
+                id = "tech-source-2",
+                title = "Tech Source 2",
+                category = techCategory,
+            ),
+        )
+        advanceUntilIdle()
+
+        assertTrue(
+            viewModel.feedSourcesState.value.feedSourcesWithCategory
+                .first { it.categoryId == CategoryId("tech") }
+                .isExpanded,
+        )
+
+        insertFeedSources(
+            createFeedSource(
+                id = "news-source-2",
+                title = "News Source 2",
+                category = newsCategory,
+            ),
+        )
+        advanceUntilIdle()
+
+        assertTrue(
+            viewModel.feedSourcesState.value.feedSourcesWithCategory
+                .first { it.categoryId == CategoryId("tech") }
+                .isExpanded,
+        )
+    }
+
+    @Test
     fun `updateFeedName updates database and feed state`() = runTest(testDispatcher) {
         val feedSource = createFeedSource(id = "source-1", title = "Old Name")
         val feedItem = createFeedItem(id = "item-1", title = "Item Title", feedSource = feedSource)
@@ -172,6 +220,10 @@ class FeedSourceListViewModelTest : KoinTestBase() {
         if (categories.isNotEmpty()) {
             databaseHelper.insertCategories(categories)
         }
+        insertFeedSources(*sources)
+    }
+
+    private suspend fun insertFeedSources(vararg sources: FeedSource) {
         databaseHelper.insertFeedSource(
             sources.map { source ->
                 ParsedFeedSource(

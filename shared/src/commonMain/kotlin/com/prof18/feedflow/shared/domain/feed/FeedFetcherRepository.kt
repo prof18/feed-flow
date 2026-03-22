@@ -294,10 +294,14 @@ class FeedFetcherRepository internal constructor(
 
         if (allFeedItems.isNotEmpty()) {
             logger.d { "Inserting ${allFeedItems.size} items into database" }
-            databaseHelper.insertFeedItems(
-                feedItems = allFeedItems,
-                lastSyncTimestamp = dateFormatter.currentTimeMillis(),
-            )
+            try {
+                databaseHelper.insertFeedItems(
+                    feedItems = allFeedItems,
+                    lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+                )
+            } catch (e: Throwable) {
+                logger.d(e) { "Failed to insert feed items into database" }
+            }
         }
     }
 }

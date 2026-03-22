@@ -21,9 +21,7 @@ class OPMLFeedParserAndroidTest {
         dispatcherProvider = TestDispatcherProvider,
     )
 
-    private val opmlInput = OpmlInput(
-        inputStream = opml.byteInputStream(),
-    )
+    private val opmlInput = OpmlInput { opml.byteInputStream() }
 
     @Test
     fun `generateFeedSources parses correct number of feeds`() = runTest {
@@ -75,18 +73,14 @@ class OPMLFeedParserAndroidTest {
 
     @Test
     fun `generateFeedSources parses OPML with text attribute`() = runTest {
-        val opmlInput = OpmlInput(
-            inputStream = opmlWithText.byteInputStream(),
-        )
+        val opmlInput = OpmlInput { opmlWithText.byteInputStream() }
         val feedSources = parser.generateFeedSources(opmlInput)
         assertTrue(feedSources.isNotEmpty())
     }
 
     @Test
     fun `generateFeedSources throws InvalidOpmlImportException for malformed html link attributes`() = runTest {
-        val opmlInput = OpmlInput(
-            inputStream = nonOpmlDocumentWithMalformedLinkAttribute.byteInputStream(),
-        )
+        val opmlInput = OpmlInput { nonOpmlDocumentWithMalformedLinkAttribute.byteInputStream() }
 
         assertFailsWith<InvalidOpmlImportException> {
             parser.generateFeedSources(opmlInput)

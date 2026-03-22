@@ -28,7 +28,7 @@ internal class OpmlFeedHandlerAndroid(
                 val xmlPullParser = factory.newPullParser()
 
                 // Read the full content first to sanitize
-                val content = opmlInput.inputStream?.bufferedReader()?.use { it.readText() }
+                val content = opmlInput.inputStreamProvider()?.bufferedReader()?.use { it.readText() }
                 val cleanContent = content?.replace("\uFEFF", "")
                     ?.replace("&(?!(?:amp|lt|gt|apos|quot|#[0-9]+);)".toRegex(), "&amp;")
                     ?.trimStart()
@@ -78,9 +78,10 @@ internal class OpmlFeedHandlerAndroid(
         feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,
     ): Unit =
         withContext(dispatcherProvider.default) {
+            val outputStream = opmlOutput.outputStreamProvider()
             val serializer: XmlSerializer = Xml.newSerializer()
 
-            serializer.setOutput(opmlOutput.outputStream, "UTF-8")
+            serializer.setOutput(outputStream, "UTF-8")
             serializer.startDocument("UTF-8", true)
             serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true)
 
@@ -121,6 +122,6 @@ internal class OpmlFeedHandlerAndroid(
             serializer.endDocument()
 
             serializer.flush()
-            opmlOutput.outputStream?.close()
+            outputStream?.close()
         }
 }

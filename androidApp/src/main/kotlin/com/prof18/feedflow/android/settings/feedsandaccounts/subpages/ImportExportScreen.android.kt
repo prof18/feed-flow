@@ -52,19 +52,14 @@ fun ImportExportScreen(
     val importingArticlesMessage = LocalFeedFlowStrings.current.articlesImportingMessage
     var articleExportFilter by remember { mutableStateOf(ArticleExportFilter.All) }
     val opmlMimeTypes = remember {
-        arrayOf(
-            "text/x-opml",
-            "text/xml",
-            "application/xml",
-            "text/*",
-        )
+        arrayOf("*/*")
     }
 
     val openOpmlFileAction = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument(),
     ) { uri ->
         uri?.let {
-            viewModel.importFeed(OpmlInput(context.contentResolver.openInputStream(uri)))
+            viewModel.importFeed(OpmlInput { context.contentResolver.openInputStream(uri) })
             Toast.makeText(context, importingFeedMessage, Toast.LENGTH_SHORT)
                 .show()
         }
@@ -74,7 +69,7 @@ fun ImportExportScreen(
         ActivityResultContracts.OpenDocument(),
     ) { uri ->
         uri?.let {
-            viewModel.importArticles(CsvInput(context.contentResolver.openInputStream(uri)))
+            viewModel.importArticles(CsvInput { context.contentResolver.openInputStream(uri) })
             Toast.makeText(context, importingArticlesMessage, Toast.LENGTH_SHORT)
                 .show()
         }
@@ -84,7 +79,7 @@ fun ImportExportScreen(
         ActivityResultContracts.CreateDocument("text/x-opml"),
     ) { uri ->
         uri?.let {
-            viewModel.exportFeed(OpmlOutput(context.contentResolver.openOutputStream(it)))
+            viewModel.exportFeed(OpmlOutput { context.contentResolver.openOutputStream(it) })
         }
     }
 
@@ -93,7 +88,7 @@ fun ImportExportScreen(
     ) { uri ->
         uri?.let {
             viewModel.exportArticles(
-                csvOutput = CsvOutput(context.contentResolver.openOutputStream(it)),
+                csvOutput = CsvOutput { context.contentResolver.openOutputStream(it) },
                 filter = articleExportFilter,
             )
         } ?: viewModel.clearState()

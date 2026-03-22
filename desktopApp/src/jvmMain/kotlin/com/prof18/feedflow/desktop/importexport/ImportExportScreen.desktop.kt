@@ -63,7 +63,7 @@ internal fun ImportExportScreen(
             parent = composeWindow,
             dialogTitle = importDialogTitle,
             isLoadDialog = true,
-            allowedExtensions = persistentSetOf("opml", "xml", "txt"),
+            allowedExtensions = persistentSetOf(),
             onCloseRequest = { result ->
                 showImportDialog = false
                 if (result != null) {

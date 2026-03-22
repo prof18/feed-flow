@@ -230,10 +230,6 @@ struct ImportExportScreen: View {
     }
 
     private var opmlImportContentTypes: [UTType] {
-        var types: [UTType] = [.xml, .plainText]
-        if let opmlType = UTType(filenameExtension: "opml") {
-            types.insert(opmlType, at: 0)
-        }
-        return types
+        [.item]
     }
 }

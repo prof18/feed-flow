@@ -10,22 +10,22 @@ import java.io.IOException
 import java.io.OutputStream
 
 actual fun createOpmlInput(content: String): OpmlInput =
-    OpmlInput(inputStream = ByteArrayInputStream(content.toByteArray()))
+    OpmlInput { ByteArrayInputStream(content.toByteArray()) }
 
 actual fun createOpmlOutput(): OpmlOutput =
-    OpmlOutput(outputStream = ByteArrayOutputStream())
+    OpmlOutput { ByteArrayOutputStream() }
 
 actual fun createCsvInput(content: String): CsvInput =
-    CsvInput(inputStream = ByteArrayInputStream(content.toByteArray()))
+    CsvInput { ByteArrayInputStream(content.toByteArray()) }
 
 actual fun createCsvOutput(): CsvOutput =
-    CsvOutput(outputStream = ByteArrayOutputStream())
+    CsvOutput { ByteArrayOutputStream() }
 
 actual fun createFailingCsvOutput(): CsvOutput =
-    CsvOutput(
-        outputStream = object : OutputStream() {
+    CsvOutput {
+        object : OutputStream() {
             override fun write(b: Int) {
                 throw IOException("Failed to write CSV")
             }
-        },
-    )
+        }
+    }

@@ -132,7 +132,9 @@ internal class FeedImportExportRepository(
         csvInput: CsvInput,
     ) = withContext(dispatcherProvider.io) {
         val csvText = csvInput.readText()
-        val csv = CsvWithHeader.fromCsvText(csvText) as CsvWithHeader
+        val csv = requireNotNull(CsvWithHeader.fromCsvText(csvText)) {
+            "CSV input is missing a header row"
+        }
         val header = csv.header
 
         val urlHashIndex = header.columnIndex(articleCsvHeaders[0])

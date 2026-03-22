@@ -468,6 +468,18 @@ class DatabaseHelper(
             dbRef.feedSourceCategoryQueries.delete(id = id)
         }
 
+    suspend fun getCategoryByName(name: String): FeedSourceCategory? =
+        withContext(backgroundDispatcher) {
+            dbRef.feedSourceCategoryQueries.getCategoryByName(name)
+                .executeAsOneOrNull()
+                ?.let { category ->
+                    FeedSourceCategory(
+                        id = category.id,
+                        title = category.title,
+                    )
+                }
+        }
+
     suspend fun updateCategoryName(id: String, newName: String) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedSourceCategoryQueries.updateCategoryName(title = newName, id = id)

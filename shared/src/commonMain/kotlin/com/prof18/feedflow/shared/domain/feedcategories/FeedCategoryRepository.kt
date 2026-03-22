@@ -101,6 +101,11 @@ internal class FeedCategoryRepository(
     }
 
     suspend fun updateCategoryName(categoryId: CategoryId, newName: CategoryName) {
+        val existingCategory = databaseHelper.getCategoryByName(newName.name)
+        if (existingCategory != null && existingCategory.id != categoryId.value) {
+            return
+        }
+
         // If the category being edited is currently selected, update selectedCategoryName
         val selectedCategory = categoriesState.value.categories.firstOrNull { it.isSelected }
         if (selectedCategory?.id == categoryId.value) {
@@ -161,6 +166,11 @@ internal class FeedCategoryRepository(
         databaseHelper.observeCategoriesWithUnreadCount()
 
     suspend fun createCategory(categoryName: CategoryName) {
+        val existingCategory = databaseHelper.getCategoryByName(categoryName.name)
+        if (existingCategory != null) {
+            return
+        }
+
         val categoryId = when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX ->
                 gReaderRepository.buildCategoryId(categoryName)

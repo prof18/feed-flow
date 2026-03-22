@@ -64,6 +64,19 @@
   </content_rating>
 
   <releases>
+      <release version="1.11.2" date="2026-03-22">
+          <description>
+              <p>Added a new three-pane desktop layout and a switch for users who prefer the single-pane view.</p>
+              <p>Added a dedicated Settings window with sections for reading, feed list, accounts, sync storage, and about.</p>
+              <p>Moved accounts, add feed, edit feed, import and export, and blocked words into separate desktop windows.</p>
+              <p>Improved the docked sidebar with clearer icons, better contrast, stronger selection states, and refreshed colors.</p>
+              <p>Improved Reader Mode with a new engine, cleaner navigation buttons, better spacing, and a clearer split between list and article panes.</p>
+              <p>Improved desktop context menus and scrollbars.</p>
+              <p>Expanded Feed Suggestions with a new Marketing category and more curated sources.</p>
+              <p>Fixed Reader Mode so fast article switches no longer show stale content.</p>
+          </description>
+      </release>
+
       <release version="1.11.1" date="2026-03-15">
           <description>
               <p>Added a new three-pane desktop layout and a switch for users who prefer the single-pane view.</p>

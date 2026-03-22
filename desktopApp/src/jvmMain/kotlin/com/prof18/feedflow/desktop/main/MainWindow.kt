@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -79,7 +78,6 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
-import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import java.awt.event.WindowEvent
@@ -243,8 +241,6 @@ private fun FrameWindowScope.MainWindowContent(
     }
 
     CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
-        val scope = rememberCoroutineScope()
-        val listState = rememberLazyListState()
         val reduceMotionEnabled = LocalReduceMotion.current
 
         var showMarkAllReadDialog by remember { mutableStateOf(false) }
@@ -400,10 +396,7 @@ private fun FrameWindowScope.MainWindowContent(
                 ),
                 actions = MenuBarActions(
                     onRefreshClick = {
-                        scope.launch {
-                            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                            homeViewModel.refreshFeeds()
-                        }
+                        homeViewModel.refreshFeeds()
                     },
                     onAddFeedClick = {
                         dialogWindowNavigator.open(DesktopDialogWindowDestination.AddFeed)
@@ -418,10 +411,7 @@ private fun FrameWindowScope.MainWindowContent(
                         showClearOldArticlesDialog = true
                     },
                     onForceRefreshClick = {
-                        scope.launch {
-                            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                            homeViewModel.forceRefreshFeeds()
-                        }
+                        homeViewModel.forceRefreshFeeds()
                     },
                     onSettingsClick = {
                         initialSettingsCategory = DesktopSettingsCategory.GENERAL

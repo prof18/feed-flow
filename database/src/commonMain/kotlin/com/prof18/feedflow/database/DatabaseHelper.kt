@@ -84,7 +84,7 @@ class DatabaseHelper(
             .selectFeedUrls()
             .asFlow()
             .catch {
-                logger.e(it) { "Something wrong while getting data from Database" }
+                logger.d(it) { "Something wrong while getting data from Database" }
             }
             .mapToList(backgroundDispatcher)
             .map { feedSources ->
@@ -97,7 +97,7 @@ class DatabaseHelper(
             .getFeedSourcesWithUnreadCount()
             .asFlow()
             .catch {
-                logger.e(it) { "Something wrong while getting data from Database" }
+                logger.d(it) { "Something wrong while getting data from Database" }
             }
             .mapToList(backgroundDispatcher)
             .map { feedSources ->
@@ -339,7 +339,7 @@ class DatabaseHelper(
                 )
             }
         } catch (_: Exception) {
-            logger.e { "Error while deleting old feed items" }
+            logger.d { "Error while deleting old feed items" }
         }
 
     suspend fun getOldFeedItem(timeThreshold: Long, feedFilter: FeedFilter) = withContext(backgroundDispatcher) {
@@ -362,7 +362,7 @@ class DatabaseHelper(
                 dbRef.deletedFeedItemsQueries.cleanupOldDeletedItems(thresholdTime)
             }
         } catch (_: Exception) {
-            logger.e { "Error while cleaning up old deleted items" }
+            logger.d { "Error while cleaning up old deleted items" }
         }
 
     suspend fun deleteFeedSource(feedSourceId: String) =
@@ -457,7 +457,7 @@ class DatabaseHelper(
             )
             .asFlow()
             .catch {
-                logger.e(it) { "Something wrong while getting data from Database" }
+                logger.d(it) { "Something wrong while getting data from Database" }
             }
             .mapToOneOrDefault(0, backgroundDispatcher)
             .flowOn(backgroundDispatcher)
@@ -511,7 +511,7 @@ class DatabaseHelper(
     ): Flow<List<Search>> =
         dbRef.feedSearchQueries
             .search(
-                query = searchQuery,
+                query = searchQuery.toFtsPrefixQuery(),
                 feedSourceId = feedFilter?.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter?.getCategoryId(),
                 isUncategorized = feedFilter?.getIsUncategorized(),
@@ -522,6 +522,36 @@ class DatabaseHelper(
             .asFlow()
             .mapToList(backgroundDispatcher)
             .flowOn(backgroundDispatcher)
+
+    private fun String.toFtsPrefixQuery(): String {
+        val terms = mutableListOf<String>()
+        val token = StringBuilder()
+        var tokenContainsLettersOrDigits = false
+
+        fun flushToken() {
+            if (tokenContainsLettersOrDigits && token.isNotEmpty()) {
+                terms.add(token.toString())
+            }
+            token.clear()
+            tokenContainsLettersOrDigits = false
+        }
+
+        for (char in this) {
+            when {
+                char.isLetterOrDigit() -> {
+                    token.append(char)
+                    tokenContainsLettersOrDigits = true
+                }
+
+                char.isWhitespace() || char == '-' -> flushToken()
+                char != '"' && token.isNotEmpty() -> token.append(char)
+                else -> flushToken()
+            }
+        }
+        flushToken()
+
+        return terms.joinToString(separator = " ") { "$it*" }
+    }
 
     suspend fun getLastChangeTimestamp(tableName: DatabaseTables): Long? = withContext(backgroundDispatcher) {
         dbRef.syncMetadataQueries.selectLastChangeTimestamp(tableName.tableName)
@@ -599,9 +629,9 @@ class DatabaseHelper(
     ) = dbRef.transactionWithContext(backgroundDispatcher) {
         syncedFeedItems.forEach { syncedFeedItem ->
             dbRef.feedItemQueries.updateFeedItemReadAndBookmarked(
-                is_read = syncedFeedItem.isRead,
-                is_bookmarked = syncedFeedItem.isBookmarked,
-                url_hash = syncedFeedItem.id,
+                isRead = syncedFeedItem.isRead,
+                isBookmarked = syncedFeedItem.isBookmarked,
+                urlHash = syncedFeedItem.id,
             )
         }
     }
@@ -709,6 +739,7 @@ class DatabaseHelper(
                     isBookmarked = url.is_bookmarked,
                     linkOpeningPreference = url.feed_source_link_opening_preference ?: LinkOpeningPreference.DEFAULT,
                     commentsUrl = url.comments_url,
+                    imageUrl = url.image_url,
                 )
             }
     }
@@ -768,7 +799,7 @@ class DatabaseHelper(
             .selectBlockedKeywords()
             .asFlow()
             .catch {
-                logger.e(it) { "Something wrong while observing blocked words from Database" }
+                logger.d(it) { "Something wrong while observing blocked words from Database" }
             }
             .mapToList(backgroundDispatcher)
             .flowOn(backgroundDispatcher)

@@ -16,21 +16,21 @@ class AppState {
     var snackbarQueue: Deque<SnackbarData> = Deque()
     var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
     var regularNavigationPath = NavigationPath()
-    var compatNavigationPath = NavigationPath()
-    var sizeClass: UserInterfaceSizeClass?
     var colorScheme: ColorScheme?
 
     var redrawAfterFeedSourceEdit = false
-
-    init() {
-        compatNavigationPath.append(CompactViewRoute.feed)
-    }
+    var pendingBrowserURL: URL?
+    var pendingExternalURL: URL?
 
     func navigate(route: any Hashable) {
-        if sizeClass == .compact {
-            compatNavigationPath.append(route)
+        regularNavigationPath.append(route)
+    }
+
+    func openInAppBrowser(url: URL) {
+        if url.scheme == "http" || url.scheme == "https" {
+            pendingBrowserURL = url
         } else {
-            regularNavigationPath.append(route)
+            pendingExternalURL = url
         }
     }
 

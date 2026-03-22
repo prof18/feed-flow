@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.database.createDatabaseDriver
+import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.DatabaseCloser
@@ -32,16 +33,15 @@ import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
-import com.prof18.feedflow.shared.presentation.MarkdownToHtmlConverter
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
 import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
-import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter
 import okhttp3.OkHttpClient
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import java.util.prefs.Preferences
 
@@ -124,6 +124,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
+    single {
+        DesktopHomeSettingsRepository(
+            settings = get(),
+        )
+    }
+
     single<FeedItemContentFileHandler> {
         FeedItemContentFileHandlerDesktop(
             dispatcherProvider = get(),
@@ -138,7 +144,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("FeedItemParserWorker"),
             dispatcherProvider = get(),
             feedItemContentFileHandler = get(),
-            markdownToHtmlConverter = get(),
             settingsRepository = get(),
         )
     }
@@ -189,13 +194,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             DesktopOS.WINDOWS -> CurrentOS.Desktop.Windows
             DesktopOS.LINUX -> CurrentOS.Desktop.Linux
         }
-    }
-
-    single {
-        MarkdownToHtmlConverter(
-            converter = FlexmarkHtmlConverter.builder().build(),
-            dispatcherProvider = get(),
-        )
     }
 
     factoryOf(::DatabaseCloser)

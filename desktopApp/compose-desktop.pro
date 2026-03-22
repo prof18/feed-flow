@@ -186,6 +186,11 @@
 # Because of coil crash: Error: java.io.IOException: canceled due to java.lang.VerifyError: Bad return type
 -keep class okio.** { *; }
 
+# Navigation3: ProGuard optimization strips class hierarchy causing VerifyError
+# (NavigationEventInfo not assignable to SceneInfo)
+-keep class androidx.navigation3.** { *; }
+-keep class androidx.navigationevent.** { *; }
+
 
 # ---- Targeted fixes for Kotlinx Serialization + Ktor Resources VerifyError (keep optimizations on) ----
 # Keep the internal descriptor class to avoid optimizer rewriting causing bad bytecode
@@ -246,6 +251,30 @@
 -dontnote java.nio.file.Files, java.nio.file.Path
 -dontnote sun.misc.Unsafe
 -dontwarn sun.misc.Unsafe
+
+# HtmlUnit + Apache Commons Logging
+# Commons Logging uses reflection to find LogFactoryImpl at runtime
+-keep class org.apache.commons.logging.** { *; }
+-keep class org.htmlunit.** { *; }
+-dontwarn org.htmlunit.**
+-dontwarn org.apache.commons.logging.**
+
+# HtmlUnit transitive dependencies loaded via reflection/ServiceLoader
+-dontwarn net.sourceforge.htmlunit.**
+-dontwarn org.apache.http.**
+-dontwarn org.eclipse.jetty.**
+
+# HtmlUnit + Apache Commons Logging
+# Commons Logging uses reflection to find LogFactoryImpl at runtime
+-keep class org.apache.commons.logging.** { *; }
+-keep class org.htmlunit.** { *; }
+-dontwarn org.htmlunit.**
+-dontwarn org.apache.commons.logging.**
+
+# HtmlUnit transitive dependencies loaded via reflection/ServiceLoader
+-dontwarn net.sourceforge.htmlunit.**
+-dontwarn org.apache.http.**
+-dontwarn org.eclipse.jetty.**
 
 # FlatLaF Look and Feel
 -keep class com.formdev.flatlaf.** { *; }

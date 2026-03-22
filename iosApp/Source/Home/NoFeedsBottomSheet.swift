@@ -19,6 +19,7 @@ struct NoFeedsBottomSheet: View {
 
     let onAddFeedClick: () -> Void
     let onImportExportClick: () -> Void
+
     let onFeedSuggestionsClick: () -> Void
 
     var body: some View {

@@ -6,6 +6,7 @@ import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.development
 import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.entertainmentFeeds
 import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.gamingFeeds
 import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.lifestyleFeeds
+import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.marketingFeeds
 import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.newsFeeds
 import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.scienceFeeds
 import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.sportsFeeds
@@ -17,6 +18,7 @@ val suggestedFeeds: List<SuggestedFeedCategory> = listOf(
     entertainmentFeeds,
     gamingFeeds,
     lifestyleFeeds,
+    marketingFeeds,
     newsFeeds,
     scienceFeeds,
     sportsFeeds,

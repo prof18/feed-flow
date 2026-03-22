@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.feed
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
@@ -29,6 +30,14 @@ class SerialFeedFetcherRepository internal constructor(
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
 ) {
+    @Suppress("unused") // Used on iOS
+    suspend fun getFeedSourceToNotify(): List<FeedSourceToNotify> =
+        databaseHelper.getFeedSourceToNotify()
+
+    @Suppress("unused") // Used on iOS
+    suspend fun markItemsAsNotified() =
+        databaseHelper.markFeedItemsAsNotified()
+
     suspend fun fetchFeeds() {
         return withContext(dispatcherProvider.io) {
             feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
@@ -117,7 +126,7 @@ class SerialFeedFetcherRepository internal constructor(
                 // Ignore HTTP errors
                 logger.d { "Error, skip: ${feedSource.url}. Error: $e" }
             } catch (e: Throwable) {
-                logger.e { "Error, skip: ${feedSource.url}. Error: $e" }
+                logger.d { "Error, skip: ${feedSource.url}. Error: $e" }
             }
         }
     }

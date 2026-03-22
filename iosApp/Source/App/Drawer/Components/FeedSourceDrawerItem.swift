@@ -78,16 +78,14 @@ struct FeedSourceDrawerItem: View {
 
     @ViewBuilder
     private func makeUnreadCountBadge(count: Int64) -> some View {
-        switch count {
-        case let positiveCount where positiveCount > 0:
-            Text("\(positiveCount)")
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .padding(.horizontal, 8)
-                .background(Color.secondary.opacity(0.2))
+        if count > 0 {
+            Text("\(count)")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(Color.secondary.opacity(0.15))
                 .clipShape(Capsule())
-        default:
-            EmptyView()
         }
     }
 

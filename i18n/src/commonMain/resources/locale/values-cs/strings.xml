@@ -61,7 +61,7 @@
     <string name="no_feed_modal_title">Přidat zdroj</string>
     <string name="no_feed_modal_message">Odběr můžete přidat ručně, můžete importovat odběry z jiné čtečky RSS nebo můžete připojit účet a synchronizovat data z jiného zařízení (tato funkce je ve fázi beta).</string>
     <string name="drawer_title_read">Přečteno</string>
-    <string name="settings_toggle_show_read_articles">Zobrazit přečtené články na časové ose</string>
+    <string name="settings_toggle_show_read_articles">Zobrazit přečtené články v seznamech</string>
     <string name="menu_add_to_bookmark">Přidat do záložek</string>
     <string name="menu_mark_as_read">Označit jako přečtené</string>
     <string name="menu_mark_as_unread">Označit jako nepřečtené</string>
@@ -156,7 +156,6 @@
     <string name="delete_category_confirmation_message">Opravdu chcete tuto kategorii odstranit? Kanály v této kategorii budou přesunuty do kategorie Uncategorized.</string>
     <string name="link_opening_preference_preferred_browser">Oblíbený prohlížeč</string>
     <string name="link_opening_preference_internal_browser">Prohlížeč v aplikaci</string>
-    <string name="reader_mode_warning">ℹ Režim čtenáře se snaží získat obsah článku. Mohou se vyskytnout některé chyby nebo nechtěné znaky.</string>
     <string name="accounts_description">Připojením účtu můžete mezi svými zařízeními synchronizovat odběry zdrojů, kategorie, přečtené články a články se záložkami.\n\nFunkce je ve fázi beta, mohou se vyskytnout problémy (například přečtené články nemusí být plně synchronizovány). V budoucnu budou podporovány další služby.\n\nPodporován je pouze jeden účet najednou.</string>
     <string name="settings_font_scale_subtitle_example">To je titulek článku</string>
     <string name="dropbox_sync_common_description">Připojením účtu Dropbox můžete synchronizovat odběry kanálů, kategorie, přečtené články a články se záložkami mezi zařízeními se systémy Android, iOS, iPadOS a stolními počítači. Data budou uložena ve složce specifické pro aplikaci; FeedFlow nebude mít přístup k žádným vašim souborům</string>
@@ -208,8 +207,8 @@
     <string name="settings_experimental_parsing">Použit experimentální engine pro režim čtečky</string>
     <string name="enable_notifications_for_feed">Povolit upozornění na nové články</string>
     <string name="settings_sync_period_fifteen_minutes">Každých 15 minut</string>
-    <string name="settings_left_swipe_action">Swipe doleva</string>
-    <string name="settings_right_swipe_action">Swipe doprava</string>
+    <string name="settings_left_swipe_action">Posun doleva</string>
+    <string name="settings_right_swipe_action">Posun doprava</string>
     <string name="settings_swipe_action_toggle_read">Přepnout stav přečtení</string>
     <string name="settings_swipe_action_toggle_bookmark">Přepnout záložku</string>
     <string name="settings_swipe_action_none">Vypnuté</string>
@@ -332,7 +331,7 @@
     <string name="increase_font_size_button_content_description">Zvětšit velikost písma</string>
     <string name="decrease_font_size_button_content_description">Zmenšit velikost písma</string>
     <string name="scroll_to_top_button_content_description">Přejít na začátek</string>
-    <string name="settings_theme_oled">Černá</string>
+    <string name="settings_theme_oled">Černý</string>
     <string name="feed_suggestions_title">Návrhy zdrojů</string>
     <string name="feed_suggestions_description">Procházejte a přidávejte zdroje do své sbírky</string>
     <string name="reset_button">Resetovat</string>
@@ -352,4 +351,8 @@
     <string name="settings_notification_mode_feed_source">Podle zdroje</string>
     <string name="settings_notification_mode_category">Podle kategorie</string>
     <string name="settings_notification_mode_grouped">Vše dohromady</string>
+    <string name="open_feed_website_button">Otevřít webovou stránku zdroje</string>
+    <string name="settings_hide_read_items">Automaticky skrývat články označené jako přečtené</string>
+    <string name="settings_show_rss_parsing_errors">Zobrazit chybové zprávy při načítání zdroje</string>
+    <string name="exit_menu">Ukončit</string>
 </resources>

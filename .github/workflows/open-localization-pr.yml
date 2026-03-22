@@ -1,0 +1,81 @@
+name: Open Localization PR
+
+on:
+  push:
+    branches:
+      - localization
+    paths:
+      - i18n/src/commonMain/resources/locale/**
+      - assets/storecopy/**
+      - website/content/**
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: open-localization-pr
+  cancel-in-progress: false
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_REPO: ${{ github.repository }}
+
+    steps:
+      - name: Check if localization is ahead of main
+        id: compare
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          ahead_by="$(gh api "repos/${{ github.repository }}/compare/main...localization" --jq '.ahead_by')"
+          echo "ahead_by=${ahead_by}" >> "${GITHUB_OUTPUT}"
+
+      - name: Find existing PR
+        if: steps.compare.outputs.ahead_by != '0'
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          pr_number="$(gh pr list \
+            --base main \
+            --head localization \
+            --state open \
+            --json number \
+            --jq '.[0].number')"
+
+          if [ -n "${pr_number}" ]; then
+            echo "number=${pr_number}" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          pr_url="$(gh pr create \
+            --base main \
+            --head localization \
+            --title "Merge localization into main" \
+            --body "Automated PR for translation updates coming from the \`localization\` branch.")"
+
+          echo "number=$(gh pr view "${pr_url}" --json number --jq '.number')" >> "${GITHUB_OUTPUT}"
+
+      - name: Enable auto-merge
+        if: steps.pr.outputs.number != ''
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge "${{ steps.pr.outputs.number }}" --auto --rebase
+
+      - name: Trigger code checks
+        if: steps.pr.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run code-checks.yaml --ref localization

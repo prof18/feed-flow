@@ -81,6 +81,7 @@ kotlin {
                 implementation(project(":feedSync:feedbin"))
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
+                implementation(libs.koin.core.vm)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.com.prof18.rss.parser)
                 implementation(libs.csv)
@@ -121,7 +122,6 @@ kotlin {
 
             dependencies {
                 implementation(libs.jsoup)
-                implementation(libs.readability4j)
                 implementation(libs.ktor.client.okhttp)
             }
         }
@@ -176,7 +176,8 @@ kotlin {
 
             dependencies {
                 implementation(libs.kotlinx.coroutines.swing)
-                implementation(libs.flexmark.html2md.converter)
+                implementation(libs.htmlunit)
+                implementation(libs.kotlinx.serialization.json)
                 api(libs.sentry)
             }
         }

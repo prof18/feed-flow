@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.HorizontalDivider
@@ -20,9 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,76 +26,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-fun BlockedWordsScreenContent(
+fun BlockedWordsContent(
     keywords: ImmutableList<String>,
-    onBackClick: () -> Unit,
     onAddWord: (String) -> Unit,
     onRemoveWord: (String) -> Unit,
     modifier: Modifier = Modifier,
-) {
-    Scaffold(
-        topBar = {
-            BlockedKeywordsTopAppBar(
-                onBackClick = onBackClick,
-            )
-        },
-        modifier = modifier,
-    ) { paddingValues ->
-        val layoutDir = LocalLayoutDirection.current
-        BlockedKeywordsContent(
-            keywords = keywords,
-            onAddWord = onAddWord,
-            onRemoveWord = onRemoveWord,
-            bottomPadding = paddingValues.calculateBottomPadding(),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding())
-                .padding(start = paddingValues.calculateLeftPadding(layoutDir))
-                .padding(end = paddingValues.calculateRightPadding(layoutDir)),
-        )
-    }
-}
-
-@Composable
-private fun BlockedKeywordsTopAppBar(
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    TopAppBar(
-        title = {
-            Text(text = LocalFeedFlowStrings.current.settingsBlockedWords)
-        },
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                )
-            }
-        },
-        modifier = modifier,
-    )
-}
-
-@Composable
-private fun BlockedKeywordsContent(
-    keywords: ImmutableList<String>,
-    bottomPadding: Dp,
-    onAddWord: (String) -> Unit,
-    onRemoveWord: (String) -> Unit,
-    modifier: Modifier = Modifier,
+    bottomPadding: Dp = 0.dp,
 ) {
     Column(
         modifier = modifier.padding(Spacing.regular),
@@ -226,9 +170,8 @@ private fun WordItem(
 @Preview
 @Composable
 private fun BlockedKeywordsEmptyPreview() {
-    BlockedWordsScreenContent(
+    BlockedWordsContent(
         keywords = emptyList<String>().toImmutableList(),
-        onBackClick = {},
         onAddWord = {},
         onRemoveWord = {},
     )
@@ -237,9 +180,8 @@ private fun BlockedKeywordsEmptyPreview() {
 @Preview
 @Composable
 private fun BlockedKeywordsPopulatedPreview() {
-    BlockedWordsScreenContent(
+    BlockedWordsContent(
         keywords = listOf("politics", "crypto", "sports", "another", "test").toImmutableList(),
-        onBackClick = {},
         onAddWord = {},
         onRemoveWord = {},
     )

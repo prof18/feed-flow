@@ -7,64 +7,44 @@ struct ContentView: View {
     private var appState
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass: UserInterfaceSizeClass?
 
-    @State var browserSelector: BrowserSelector = .init()
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
     @StateObject private var reviewVmStoreOwner = VMStoreOwner<ReviewViewModel>(Deps.shared.getReviewViewModel())
     @StateObject private var readerModeVmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
         Deps.shared.getReaderModeViewModel())
 
-    @State private var isAppInBackground = false
     @State private var hasTriggeredLaunch = false
 
-    @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline(unreadCount: 0)
+    @State private var selectedSidebarItem: SidebarSelection? = .timeline
+    @State private var navDrawerState: NavDrawerState = .init(
+        timeline: [],
+        read: [],
+        bookmarks: [],
+        categories: [],
+        pinnedFeedSources: [],
+        feedSourcesWithoutCategory: [],
+        feedSourcesByCategory: [:]
+    )
+    @State private var pendingNotificationSelection: NotificationSelectionTarget?
 
     var body: some View {
-        @Bindable var appState = appState
-
-        Group {
-            if appState.sizeClass == .compact {
-                CompactView(
-                    selectedDrawerItem: $selectedDrawerItem,
-                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
-                    homeViewModel: vmStoreOwner.instance,
-                    readerModeViewModel: readerModeVmStoreOwner.instance
-                )
-                .environment(browserSelector)
-            } else {
-                RegularView(
-                    selectedDrawerItem: $selectedDrawerItem,
-                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
-                    homeViewModel: vmStoreOwner.instance,
-                    readerModeViewModel: readerModeVmStoreOwner.instance
-                )
-                .environment(browserSelector)
-            }
-        }
+        ThreePaneView(
+            selectedSidebarItem: $selectedSidebarItem,
+            indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+            homeViewModel: vmStoreOwner.instance,
+            readerModeViewModel: readerModeVmStoreOwner.instance
+        )
         .onAppear {
-            if appState.sizeClass == nil {
-                appState.sizeClass = horizontalSizeClass
-            }
             let savedThemeMode = vmStoreOwner.instance.getCurrentThemeMode()
             appState.updateTheme(savedThemeMode)
-        }
-        .onChange(of: horizontalSizeClass) {
-            if !isAppInBackground && horizontalSizeClass != appState.sizeClass {
-                appState.sizeClass = horizontalSizeClass
-            }
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
             case .active:
-                isAppInBackground = false
                 if !hasTriggeredLaunch {
                     hasTriggeredLaunch = true
                     vmStoreOwner.instance.onAppLaunch()
                 }
-            case .background:
-                isAppInBackground = true
             default:
                 break
             }
@@ -81,5 +61,60 @@ struct ContentView: View {
                 }
             }
         }
+        .task {
+            for await state in vmStoreOwner.instance.navDrawerState {
+                navDrawerState = state
+                if let target = pendingNotificationSelection {
+                    selectedSidebarItem = sidebarSelection(for: target)
+                    pendingNotificationSelection = nil
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { notification in
+            guard let urlString = notification.userInfo?["url"] as? String,
+                  let url = URL(string: urlString),
+                  url.scheme == "feedflow" else { return }
+            handleFeedFlowNotificationURL(url)
+        }
     }
+
+    private func handleFeedFlowNotificationURL(_ url: URL) {
+        let host = url.host ?? ""
+        let pathComponents = url.pathComponents.filter { $0 != "/" }
+
+        switch host {
+        case "feedsourcefilter":
+            if let feedSourceId = pathComponents.first {
+                appState.regularNavigationPath = NavigationPath()
+                let target = NotificationSelectionTarget.feedSource(feedSourceId)
+                pendingNotificationSelection = target
+                selectedSidebarItem = sidebarSelection(for: target)
+                vmStoreOwner.instance.updateFeedSourceFilter(feedSourceId: feedSourceId)
+            }
+        case "category":
+            if let categoryId = pathComponents.first {
+                appState.regularNavigationPath = NavigationPath()
+                let target = NotificationSelectionTarget.category(categoryId)
+                pendingNotificationSelection = target
+                selectedSidebarItem = sidebarSelection(for: target)
+                vmStoreOwner.instance.updateCategoryFilter(categoryId: categoryId)
+            }
+        default:
+            break
+        }
+    }
+
+    private func sidebarSelection(for target: NotificationSelectionTarget) -> SidebarSelection {
+        switch target {
+        case let .feedSource(feedSourceId):
+            return .feedSource(id: feedSourceId)
+        case let .category(categoryId):
+            return .category(id: categoryId)
+        }
+    }
+}
+
+private enum NotificationSelectionTarget {
+    case feedSource(String)
+    case category(String)
 }

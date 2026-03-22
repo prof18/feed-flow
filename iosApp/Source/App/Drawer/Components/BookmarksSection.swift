@@ -2,7 +2,7 @@
 //  BookmarksSection.swift
 //  FeedFlow
 //
-//  Created by AI Assistant on 19/03/24.
+//  Created by Marco Gomiero on 19/03/24.
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
@@ -11,29 +11,33 @@ import SwiftUI
 
 struct BookmarksSection: View {
     let bookmarks: [DrawerItem]
-    let onSelect: (DrawerItem) -> Void
+    let isSelected: Bool
+    let isCompact: Bool
+    let onSelect: () -> Void
     let onFeedFilterSelected: (FeedFilter) -> Void
 
     var body: some View {
-        ForEach(bookmarks, id: \.self) { drawerItem in
+        if let bookmarksItem = bookmarks.first as? DrawerItem.Bookmarks {
             HStack {
                 Label(feedFlowStrings.drawerTitleBookmarks, systemImage: "bookmark.square")
                 Spacer()
-                if let bookmarksItem = drawerItem as? DrawerItem.Bookmarks,
-                   bookmarksItem.unreadCount > 0 {
+                if bookmarksItem.unreadCount > 0 {
                     Text("\(bookmarksItem.unreadCount)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(.horizontal, 8)
-                        .background(Color.secondary.opacity(0.2))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.secondary.opacity(0.15))
                         .clipShape(Capsule())
                 }
             }
             .contentShape(Rectangle())
             .onTapGesture {
-                onSelect(drawerItem)
+                onSelect()
                 onFeedFilterSelected(FeedFilter.Bookmarks())
             }
+            .tag(SidebarSelection.bookmarks)
+            .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))
         }
     }
 }

@@ -50,6 +50,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
@@ -85,6 +86,7 @@ fun SearchScreenContent(
     onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
     onOpenFeedWebsite: (String) -> Unit,
     modifier: Modifier = Modifier,
+    feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
     snackbarHost: @Composable () -> Unit = {
     },
 ) {
@@ -166,6 +168,7 @@ fun SearchScreenContent(
                                     onShareClick = onShareClick,
                                     onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                                     onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                                    feedItemDisplaySettings = feedItemDisplaySettings,
                                 )
                             }
                         }

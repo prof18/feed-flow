@@ -1,6 +1,5 @@
 package com.prof18.feedflow.desktop.addfeed
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -13,15 +12,37 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
-import com.prof18.feedflow.desktop.desktopViewModel
-import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
 import com.prof18.feedflow.shared.ui.feed.addfeed.AddFeedContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import org.koin.compose.viewmodel.koinViewModel
+
+@Composable
+internal fun AddFeedScreen(
+    onCloseRequest: () -> Unit,
+    onFeedAdded: () -> Unit,
+) {
+    DesktopDialogWindow(
+        title = LocalFeedFlowStrings.current.addFeed,
+        size = DpSize(520.dp, 500.dp),
+        onCloseRequest = onCloseRequest,
+    ) { modifier ->
+        AddFeedScreenContent(
+            modifier = modifier,
+            onFeedAdded = {
+                onFeedAdded()
+            },
+        )
+    }
+}
 
 @Composable
 fun AddFeedScreenContent(
@@ -34,7 +55,7 @@ fun AddFeedScreenContent(
     var showLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
-    val viewModel = desktopViewModel { DI.koin.get<AddFeedViewModel>() }
+    val viewModel = koinViewModel<AddFeedViewModel>()
 
     val snackbarHostState = remember { SnackbarHostState() }
 

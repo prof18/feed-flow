@@ -1,4 +1,3 @@
-import com.mikepenz.aboutlibraries.plugin.AboutLibrariesExtension
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -35,6 +34,7 @@ kotlin {
     compilerOptions {
         optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
         optIn.add("androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi")
+        optIn.add("androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi")
     }
 
     jvm()
@@ -56,17 +56,22 @@ kotlin {
 
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
+                implementation(libs.koin.composeVM)
 
                 implementation(libs.multiplatform.markdown.renderer.m3)
                 implementation(libs.multiplatform.markdown.renderer.coil)
-                implementation(libs.voyager.navigator)
-                implementation(libs.voyager.transition)
+                implementation(libs.jetbrains.navigation3.ui)
+                implementation(libs.jetbrains.lifecycle.viewmodel.navigation3)
                 implementation(libs.material.window.size)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.flatlaf)
+                implementation(libs.compose.multiplatform.material3.adaptive.layout)
+                implementation(libs.compose.multiplatform.material3.adaptive.navigation)
+                implementation(libs.haze)
+                implementation(libs.haze.materials)
             }
         }
 

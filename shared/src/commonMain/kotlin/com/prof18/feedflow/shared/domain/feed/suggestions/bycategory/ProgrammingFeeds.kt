@@ -39,6 +39,12 @@ internal val developmentFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=jetbrains.com&sz=64",
         ),
         SuggestedFeed(
+            name = "Lobsters",
+            url = "https://lobste.rs/rss",
+            description = "Lobsters is a computing-focused community centered around link aggregation and discussion",
+            logoUrl = "https://lobste.rs/favicon.ico",
+        ),
+        SuggestedFeed(
             name = "Product Hunt",
             url = "https://www.producthunt.com/feed",
             description = "Latest product launches",

@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.domain.opml
 
-import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
@@ -18,6 +17,7 @@ import platform.Foundation.dataUsingEncoding
 import platform.Foundation.writeToURL
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 internal class OpmlFeedHandlerIos(
     private val dispatcherProvider: DispatcherProvider,
@@ -27,17 +27,38 @@ internal class OpmlFeedHandlerIos(
             suspendCancellableCoroutine { continuation ->
                 val data = opmlInput.opmlData
                 val string = NSString.create(data, NSUTF8StringEncoding)?.toString()
-                    ?: error("OPML input data is not UTF-8")
+                    ?: throw InvalidOpmlImportException(
+                        "Failed to parse OPML file: The selected file is not a valid OPML document.",
+                    )
 
                 val cleanString = string.replace("\uFEFF", "")
-                    .replace("&(?!(?:amp|lt|gt|apos|quot|#[0-9]+);)".toRegex(), "&amp;") // Fix unescaped &
+                    .replace("&(?!(?:amp|lt|gt|apos|quot|#[0-9]+);)".toRegex(), "&amp;")
                     .trimStart()
 
                 val cleanData = NSString.create(string = cleanString).dataUsingEncoding(NSUTF8StringEncoding)
-
-                NSXMLParser(cleanData ?: data).apply {
-                    delegate = NSXMLParserDelegate { continuation.resume(it) }
-                }.parse()
+                val delegate = NSXMLParserDelegate(
+                    onSuccess = { feedSources ->
+                        if (continuation.isActive) {
+                            continuation.resume(feedSources)
+                        }
+                    },
+                    onError = { exception ->
+                        if (continuation.isActive) {
+                            continuation.resumeWithException(exception)
+                        }
+                    },
+                )
+                val parser = NSXMLParser(cleanData ?: data).apply {
+                    this.delegate = delegate
+                }
+                val didParse = parser.parse()
+                if (!didParse && continuation.isActive) {
+                    continuation.resumeWithException(
+                        InvalidOpmlImportException(
+                            "Failed to parse OPML file: The selected file is not a valid OPML document.",
+                        ),
+                    )
+                }
             }
         }
 
@@ -99,7 +120,8 @@ internal class OpmlFeedHandlerIos(
 }
 
 private class NSXMLParserDelegate(
-    private val onEnd: (List<ParsedFeedSource>) -> Unit,
+    private val onSuccess: (List<ParsedFeedSource>) -> Unit,
+    private val onError: (InvalidOpmlImportException) -> Unit,
 ) : NSObject(), NSXMLParserDelegateProtocol {
 
     private var isInsideCategory: Boolean = false
@@ -110,6 +132,7 @@ private class NSXMLParserDelegate(
     private var currentElement: String? = null
 
     private val feedSource = mutableListOf<ParsedFeedSource>()
+    private var completed = false
 
     override fun parser(
         parser: NSXMLParser,
@@ -163,11 +186,21 @@ private class NSXMLParserDelegate(
     }
 
     override fun parserDidEndDocument(parser: NSXMLParser) {
-        onEnd(feedSource)
+        if (completed) {
+            return
+        }
+        completed = true
+        onSuccess(feedSource)
     }
 
     override fun parser(parser: NSXMLParser, parseErrorOccurred: NSError) {
-        Logger.d { "ERROR" }
-        Logger.d { parseErrorOccurred.localizedDescription() }
+        if (completed) {
+            return
+        }
+        completed = true
+        val description = parseErrorOccurred.localizedDescription()
+            .takeIf { it.isNotBlank() }
+            ?: "The selected file is not a valid OPML document."
+        onError(InvalidOpmlImportException("Failed to parse OPML file: $description"))
     }
 }

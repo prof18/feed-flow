@@ -18,6 +18,11 @@ struct FeedItemRowView: View {
     let swipeActions: SwipeActions
     let feedLayout: FeedLayout
     let currentFeedFilter: FeedFilter
+    var feedItemDisplaySettings = FeedItemDisplaySettings(
+        isHideUnreadDotEnabled: false,
+        isHideFeedSourceEnabled: false,
+        descriptionLineLimit: .three
+    )
     let onItemClick: (FeedItemUrlInfo) -> Void
     let onReaderModeClick: (FeedItemUrlInfo) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
@@ -34,7 +39,8 @@ struct FeedItemRowView: View {
                     openOnlyOnBrowser: false,
                     isBookmarked: feedItem.isBookmarked,
                     linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
-                    commentsUrl: feedItem.commentsUrl
+                    commentsUrl: feedItem.commentsUrl,
+                    imageUrl: feedItem.imageUrl
                 )
 
                 guard let url = URL(string: feedItem.url) else {
@@ -47,7 +53,7 @@ struct FeedItemRowView: View {
                     onReaderModeClick(urlInfo)
                 case .internalBrowser:
                     if browserSelector.isValidForInAppBrowser(url) {
-                        self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                        self.appState.openInAppBrowser(url: url)
                     } else {
                         openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                     }
@@ -58,7 +64,7 @@ struct FeedItemRowView: View {
                         onReaderModeClick(urlInfo)
                     } else if browserSelector.openInAppBrowser() {
                         if browserSelector.isValidForInAppBrowser(url) {
-                            self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                            self.appState.openInAppBrowser(url: url)
                         } else {
                             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                         }
@@ -74,7 +80,8 @@ struct FeedItemRowView: View {
                     index: index,
                     feedFontSizes: feedFontSizes,
                     feedLayout: feedLayout,
-                    currentFeedFilter: currentFeedFilter
+                    currentFeedFilter: currentFeedFilter,
+                    feedItemDisplaySettings: feedItemDisplaySettings
                 )
                 .contentShape(Rectangle())
             }

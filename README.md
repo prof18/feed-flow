@@ -39,6 +39,12 @@ FeedFlow is available for Android, iOS, and macOS.
     width="225px">
 </a>
 </div>
+<div align="center"><a href="https://flathub.org/en/apps/com.prof18.feedflow">
+    <img src="https://flathub.org/api/badge?svg"
+    alt="Get it on Flathub"
+    width="200px">
+</a>
+</div>
 
 You can get the latest Linux version 
 
@@ -119,7 +125,7 @@ To add a new translation, you can use [Weblate](https://hosted.weblate.org/engag
 ## License 📄
 
 ```
-   Copyright 2023 Marco Gomiero
+   Copyright 2026 Marco Gomiero
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

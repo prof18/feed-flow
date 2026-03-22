@@ -94,7 +94,6 @@
     <string name="search_hint_title">開始輸入…</string>
     <string name="search_hint_subtitle">結果將自動顯示</string>
     <string name="link_copied_success">連結複製成功！</string>
-    <string name="reader_mode_warning">ℹ 閱讀模式會嘗試取得文章內容，可能有解析異常或冗餘字元。</string>
     <string name="settings_title_feed">消息來源</string>
     <string name="settings_accounts">帳戶</string>
     <string name="accounts_description">連接帳號以在裝置之間同步訂閱內容、類別、已讀和收藏的文章。\n\n此功能處於測試階段，可能會出現問題（例如，已讀文章可能無法完全同步）。未來將支援更多服務。\n\n僅支援同時登入一個帳號。</string>

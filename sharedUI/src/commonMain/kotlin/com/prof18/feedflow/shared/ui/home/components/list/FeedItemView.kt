@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
@@ -49,6 +51,7 @@ internal fun FeedItemView(
     modifier: Modifier = Modifier,
     disableClick: Boolean = false,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
+    feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
     onMarkAllBelowAsRead: (String) -> Unit,
 ) {
     var showItemMenu by remember {
@@ -56,6 +59,7 @@ internal fun FeedItemView(
             false,
         )
     }
+    var menuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
 
     val clickableItemModifier = if (disableClick) {
         Modifier
@@ -70,10 +74,16 @@ internal fun FeedItemView(
                         isBookmarked = feedItem.isBookmarked,
                         linkOpeningPreference = feedItem.feedSource.linkOpeningPreference,
                         commentsUrl = feedItem.commentsUrl,
+                        imageUrl = feedItem.imageUrl,
                     ),
                 )
             },
             onLongClick = {
+                menuPositionInWindow = null
+                showItemMenu = true
+            },
+            onLongClickPositioned = { position ->
+                menuPositionInWindow = position
                 showItemMenu = true
             },
         )
@@ -92,6 +102,8 @@ internal fun FeedItemView(
                 feedItem = feedItem,
                 feedFontSize = feedFontSize,
                 currentFeedFilter = currentFeedFilter,
+                isHideUnreadDotEnabled = feedItemDisplaySettings.isHideUnreadDotEnabled,
+                isHideFeedSourceEnabled = feedItemDisplaySettings.isHideFeedSourceEnabled,
             )
 
             TitleSubtitleAndImageRow(
@@ -101,6 +113,7 @@ internal fun FeedItemView(
                 feedItem = feedItem,
                 feedFontSize = feedFontSize,
                 currentFeedFilter = currentFeedFilter,
+                descriptionLineLimit = feedItemDisplaySettings.descriptionLineLimit,
             )
 
             feedItem.dateString?.let { dateString ->
@@ -126,7 +139,9 @@ internal fun FeedItemView(
                 showMenu = showItemMenu,
                 closeMenu = {
                     showItemMenu = false
+                    menuPositionInWindow = null
                 },
+                menuPositionInWindow = menuPositionInWindow,
                 feedItem = feedItem,
                 shareMenuLabel = shareMenuLabel,
                 shareCommentsMenuLabel = shareCommentsMenuLabel,

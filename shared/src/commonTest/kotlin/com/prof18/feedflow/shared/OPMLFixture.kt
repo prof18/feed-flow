@@ -39,6 +39,18 @@ val opmlWithMalformedXml = """
     </opml>
 """.trimIndent()
 
+val nonOpmlDocumentWithMalformedLinkAttribute = """
+    <?xml version="1.0" encoding="UTF-8"?>
+    <html>
+        <head>
+            <link rel="preconnect" href="https://example.com" crossorigin>
+        </head>
+        <body>
+            <p>This is not an OPML export.</p>
+        </body>
+    </html>
+""".trimIndent()
+
 val opmlWithText = """
     <?xml version="1.0" encoding="UTF-8"?>
     <opml xmlns:rssowl="http://www.rssowl.org" version="1.1">

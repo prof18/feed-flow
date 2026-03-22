@@ -12,7 +12,7 @@ import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.first
 
 internal class FeedFlowWidget(
     private val repository: FeedWidgetRepository,
@@ -20,11 +20,16 @@ internal class FeedFlowWidget(
     private val browserManager: BrowserManager,
 ) : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        val feedItemsFlow = repository.getFeeds()
+        // Glance rebuilds can briefly render the collectAsState initial value before the DB flow emits.
+        // Preloading the current items avoids flashing the widget empty state during refreshes.
+        val initialFeedItems = feedItemsFlow.first()
+
         provideContent {
             val lyricist = rememberFeedFlowStrings()
 
             ProvideFeedFlowStrings(lyricist) {
-                val feedItems by repository.getFeeds().collectAsState(persistentListOf())
+                val feedItems by feedItemsFlow.collectAsState(initialFeedItems)
                 val feedLayout by widgetSettingsRepository.feedWidgetLayout.collectAsState()
                 val showHeader by widgetSettingsRepository.widgetShowHeader.collectAsState()
                 val fontScale by widgetSettingsRepository.widgetFontScale.collectAsState()

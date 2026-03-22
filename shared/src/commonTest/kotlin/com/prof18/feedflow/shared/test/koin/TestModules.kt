@@ -95,7 +95,7 @@ object TestModules {
         }
         single<FeedItemParserWorker> {
             object : FeedItemParserWorker {
-                override suspend fun parse(feedItemId: String, url: String): ParsingResult =
+                override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult =
                     ParsingResult.Success(
                         htmlContent = "Content",
                         title = "Title",

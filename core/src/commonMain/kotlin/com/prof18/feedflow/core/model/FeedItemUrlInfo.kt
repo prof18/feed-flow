@@ -8,6 +8,7 @@ data class FeedItemUrlInfo(
     val isBookmarked: Boolean,
     val linkOpeningPreference: LinkOpeningPreference,
     val commentsUrl: String?,
+    val imageUrl: String? = null,
 )
 
 fun FeedItemUrlInfo.shouldOpenInBrowser(): Boolean =

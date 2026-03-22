@@ -88,7 +88,7 @@ internal class FeedStateRepository(
                 }.toImmutableList()
             }
         } catch (e: Throwable) {
-            logger.e(e) { "Something wrong while getting data from Database" }
+            logger.d(e) { "Something wrong while getting data from Database" }
             errorMutableState.emit(DatabaseError(DatabaseErrorCode.FeedRetrievalFailed))
         }
     }
@@ -131,7 +131,7 @@ internal class FeedStateRepository(
                 (currentItems + newList).toImmutableList()
             }
         } catch (e: Throwable) {
-            logger.e(e) { "Something wrong while getting data from Database" }
+            logger.d(e) { "Something wrong while getting data from Database" }
             errorMutableState.emit(DatabaseError(DatabaseErrorCode.PaginationFailed))
         }
     }

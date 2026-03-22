@@ -36,7 +36,7 @@ class OpmlBOMParsingAndroidTest {
         val contentWithBom = "\uFEFF$opmlContent"
         val inputStream = ByteArrayInputStream(contentWithBom.toByteArray(Charsets.UTF_8))
 
-        val opmlInput = OpmlInput(inputStream = inputStream)
+        val opmlInput = OpmlInput { inputStream }
 
         val feedSources = parser.generateFeedSources(opmlInput)
         assertTrue(feedSources.isNotEmpty())
@@ -55,8 +55,7 @@ class OpmlBOMParsingAndroidTest {
             </opml>
         """.trimIndent()
 
-        val inputStream = ByteArrayInputStream(opmlWithAmpersand.toByteArray(Charsets.UTF_8))
-        val opmlInput = OpmlInput(inputStream = inputStream)
+        val opmlInput = OpmlInput { ByteArrayInputStream(opmlWithAmpersand.toByteArray(Charsets.UTF_8)) }
 
         val feedSources = parser.generateFeedSources(opmlInput)
         assertEquals(feedSources.size, 2)

@@ -89,7 +89,7 @@ class DropboxSyncViewModel internal constructor(
                 val authorizeUrl = pkceWebAuth.authorize(webAuthRequest)
                 dropboxSyncMessageMutableState.emit(DropboxSynMessages.ProceedToAuth(authorizeUrl))
             } catch (e: Throwable) {
-                logger.e(e) { "Error while trying to auth with Dropbox before getting the code" }
+                logger.d(e) { "Error while trying to auth with Dropbox before getting the code" }
                 dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)
                 dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
                 return@launch
@@ -134,12 +134,12 @@ class DropboxSyncViewModel internal constructor(
                     dropboxSyncMessageMutableState.emit(DropboxSynMessages.CodeExpired)
                     dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
                 } else {
-                    logger.e(e) { "Error while trying to auth with Dropbox after getting the code" }
+                    logger.d(e) { "Error while trying to auth with Dropbox after getting the code" }
                     dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)
                     dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
                 }
             } catch (e: Throwable) {
-                logger.e(e) { "Error while trying to auth with Dropbox after getting the code" }
+                logger.d(e) { "Error while trying to auth with Dropbox after getting the code" }
                 dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)
                 dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             }

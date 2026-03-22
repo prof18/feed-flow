@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOperation
@@ -29,6 +30,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
+import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import kotlinx.collections.immutable.ImmutableList
@@ -40,10 +42,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -57,6 +61,7 @@ class HomeViewModel internal constructor(
     private val feedCategoryRepository: FeedCategoryRepository,
     private val feedStateRepository: FeedStateRepository,
     private val feedFetcherRepository: FeedFetcherRepository,
+    private val getNextFeedFilterOrNullUseCase: GetNextFeedFilterOrNullUseCase,
 ) : ViewModel() {
 
     // Loading
@@ -77,6 +82,13 @@ class HomeViewModel internal constructor(
 
     private val feedOperationMutableState = MutableStateFlow<FeedOperation>(FeedOperation.None)
     val feedOperationState: StateFlow<FeedOperation> = feedOperationMutableState.asStateFlow()
+    private val refreshTriggerMutableState = MutableStateFlow(0)
+    val refreshTriggerState: StateFlow<Int> = refreshTriggerMutableState.asStateFlow()
+
+    private val nextFeedPreviewMutableState: MutableStateFlow<NextFeedPreviewState> = MutableStateFlow(
+        NextFeedPreviewState.NextFeedPreviewDisabledState,
+    )
+    val nextFeedPreviewState: StateFlow<NextFeedPreviewState> = nextFeedPreviewMutableState.asStateFlow()
 
     private var lastUpdateIndex = 0
     private var hasTriggeredAppLaunch = false
@@ -85,10 +97,19 @@ class HomeViewModel internal constructor(
     val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
     val swipeActions: StateFlow<SwipeActions> = feedAppearanceSettingsRepository.swipeActions
     val feedLayout: StateFlow<FeedLayout> = feedAppearanceSettingsRepository.feedLayout
+    val feedItemDisplaySettings: StateFlow<FeedItemDisplaySettings> = combine(
+        feedAppearanceSettingsRepository.hideUnreadDot,
+        feedAppearanceSettingsRepository.hideFeedSource,
+        feedAppearanceSettingsRepository.descriptionLineLimit,
+    ) { hideUnreadDot, hideFeedSource, descriptionLineLimit ->
+        FeedItemDisplaySettings(
+            isHideUnreadDotEnabled = hideUnreadDot,
+            isHideFeedSourceEnabled = hideFeedSource,
+            descriptionLineLimit = descriptionLineLimit,
+        )
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, FeedItemDisplaySettings())
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
-
-    val showReadArticlesState: StateFlow<Boolean> = settingsRepository.showReadArticlesTimelineFlow
 
     init {
         observeErrorState()
@@ -297,6 +318,16 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun refreshFeeds() {
+        refreshTriggerMutableState.update { it + 1 }
+        getNewFeeds()
+    }
+
+    fun forceRefreshFeeds() {
+        refreshTriggerMutableState.update { it + 1 }
+        forceFeedRefresh()
+    }
+
     fun deleteAllFeeds() {
         viewModelScope.launch {
             feedSourcesRepository.deleteAllFeeds()
@@ -321,6 +352,28 @@ class HomeViewModel internal constructor(
         viewModelScope.launch {
             feedStateRepository.updateFeedFilter(selectedFeedFilter)
             lastUpdateIndex = 0
+        }
+
+        updateNextFeedPreview(selectedFeedFilter)
+    }
+
+    fun updateNextFeedPreview(currentFeedFilter: FeedFilter) {
+        viewModelScope.launch {
+            nextFeedPreviewMutableState.update {
+                val nextFeed = getNextFeedFilterOrNullUseCase(currentFeedFilter)
+
+                when (nextFeed) {
+                    is FeedFilter.Category -> NextFeedPreviewState.NextFeedPreviewEnabledState(
+                        feedFilter = nextFeed,
+                        title = nextFeed.feedCategory.title,
+                    )
+                    is FeedFilter.Source -> NextFeedPreviewState.NextFeedPreviewEnabledState(
+                        feedFilter = nextFeed,
+                        title = nextFeed.feedSource.title,
+                    )
+                    else -> NextFeedPreviewState.NextFeedPreviewDisabledState
+                }
+            }
         }
     }
 
@@ -375,12 +428,14 @@ class HomeViewModel internal constructor(
         }
     }
 
-    fun getCurrentThemeMode() = settingsRepository.getThemeMode()
-
-    fun updateShowReadArticlesOnTimeline(value: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.setShowReadArticlesTimeline(value)
-            feedStateRepository.getFeeds()
+    fun onNavigateToNextFeed() {
+        when (val nextFeed = nextFeedPreviewState.value) {
+            is NextFeedPreviewState.NextFeedPreviewEnabledState -> {
+                onFeedFilterSelected(selectedFeedFilter = nextFeed.feedFilter)
+            }
+            is NextFeedPreviewState.NextFeedPreviewDisabledState -> {}
         }
     }
+
+    fun getCurrentThemeMode() = settingsRepository.getThemeMode()
 }

@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
@@ -28,6 +29,7 @@ fun FeedItemPreview(
     dateFormat: DateFormat,
     timeFormat: TimeFormat,
     modifier: Modifier = Modifier,
+    feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
 ) {
     Box(
         modifier = modifier
@@ -70,6 +72,7 @@ fun FeedItemPreview(
                         val datePart = when (dateFormat) {
                             DateFormat.NORMAL -> "25/12"
                             DateFormat.AMERICAN -> "12/25"
+                            DateFormat.ISO -> "2025-12-25"
                         }
                         val timePart = when (timeFormat) {
                             TimeFormat.HOURS_24 -> "14:30"
@@ -95,6 +98,7 @@ fun FeedItemPreview(
                 feedLayout = feedLayout,
                 onMarkAllAboveAsRead = {},
                 onMarkAllBelowAsRead = {},
+                feedItemDisplaySettings = feedItemDisplaySettings,
             )
         }
     }

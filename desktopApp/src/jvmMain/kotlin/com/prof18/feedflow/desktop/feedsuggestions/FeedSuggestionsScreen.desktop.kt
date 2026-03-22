@@ -1,34 +1,35 @@
 package com.prof18.feedflow.desktop.feedsuggestions
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.prof18.feedflow.desktop.desktopViewModel
-import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.utils.generateUniqueKey
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsContent
-import kotlinx.collections.immutable.toPersistentList
+import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import org.koin.compose.viewmodel.koinViewModel
 
-internal class FeedSuggestionsScreen : Screen {
+@Composable
+internal fun FeedSuggestionsScreen(
+    onCloseRequest: () -> Unit,
+) {
+    val viewModel = koinViewModel<FeedSuggestionsViewModel>()
+    val suggestedCategories by viewModel.suggestedCategoriesState.collectAsState()
+    val selectedCategoryId by viewModel.selectedCategoryIdState.collectAsState()
+    val feedStatesMap by viewModel.feedStatesMapState.collectAsState()
+    val isLoading by viewModel.isLoadingState.collectAsState()
 
-    override val key: String = generateUniqueKey()
-
-    @Composable
-    override fun Content() {
-        val viewModel = desktopViewModel { DI.koin.get<FeedSuggestionsViewModel>() }
-        val suggestedCategories by viewModel.suggestedCategoriesState.collectAsState()
-        val selectedCategoryId by viewModel.selectedCategoryIdState.collectAsState()
-        val feedStatesMap by viewModel.feedStatesMapState.collectAsState()
-        val isLoading by viewModel.isLoadingState.collectAsState()
-
-        val navigator = LocalNavigator.currentOrThrow
-
+    DesktopDialogWindow(
+        title = LocalFeedFlowStrings.current.feedSuggestionsTitle,
+        size = DpSize(840.dp, 720.dp),
+        onCloseRequest = onCloseRequest,
+    ) { modifier ->
         FeedSuggestionsContent(
-            categories = suggestedCategories.toPersistentList(),
+            categories = suggestedCategories,
             selectedCategoryId = selectedCategoryId,
             feedStatesMap = feedStatesMap,
             isLoading = isLoading,
@@ -36,9 +37,8 @@ internal class FeedSuggestionsScreen : Screen {
             onAddFeed = { feed, categoryName ->
                 viewModel.addFeed(feed, categoryName)
             },
-            onNavigateBack = {
-                navigator.pop()
-            },
+            modifier = modifier,
+            contentPadding = PaddingValues(top = Spacing.regular),
         )
     }
 }

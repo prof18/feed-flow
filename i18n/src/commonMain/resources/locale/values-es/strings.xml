@@ -84,7 +84,6 @@
     <string name="settings_reader_mode">Abrir artículo en modo lectura</string>
     <string name="search_hint_subtitle">los resultados aparecerán automáticamente</string>
     <string name="search_hint_title">Empezando a escribir…</string>
-    <string name="reader_mode_warning">ℹ El modo lector intenta obtener el contenido del artículo. Pueden aparecer errores o caracteres no deseados.</string>
     <string name="settings_accounts">Cuentas</string>
     <string name="settings_behaviour_title">Comportamiento</string>
     <string name="settings_help_title">Ayuda</string>

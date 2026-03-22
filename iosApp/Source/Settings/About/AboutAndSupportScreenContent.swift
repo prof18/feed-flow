@@ -45,7 +45,7 @@ struct AboutAndSupportScreenContent: View {
 
                         if let url = URL(string: faqUrl) {
                             dismiss()
-                            appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                            appState.openInAppBrowser(url: url)
                         }
                     } label: {
                         Label(feedFlowStrings.aboutMenuFaq, systemImage: "questionmark")

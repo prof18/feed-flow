@@ -62,7 +62,7 @@
     <string name="feed_name">Ziņu plūsmas nosaukums</string>
     <string name="settings_font_scale_title_example">Raksta nosaukums</string>
     <string name="fresh_rss_password_hint">FreshRSS API parole (Iestatījumi &gt; Profils)</string>
-    <string name="settings_toggle_show_read_articles">Rādīt lasītos rakstus rakstu hronikā</string>
+    <string name="settings_toggle_show_read_articles">Rādīt lasītos rakstus sarakstos</string>
     <string name="open_source_licenses">Atvērtā pirmkoda licences</string>
     <string name="open_another_feed">Atvērt citu ziņu plūsmu</string>
     <string name="show_on_github">Skatīt GitHub</string>
@@ -245,4 +245,9 @@
     <string name="articles_export_filter_bookmarked">Saglabātos rakstus</string>
     <string name="search_filter_bookmarks">Saglabātajos</string>
     <string name="articles_export_filter_description">Atlasiet, kādus rakstus vēlaties izgūt.</string>
+    <string name="widget_background_color_preview">Priekšskatījums</string>
+    <string name="settings_about_and_support">Par lietotni un atbalsts</string>
+    <string name="database_error_reset">Neizdevās ielādēt jūsu datus, nācās atmest esošos datus un atiestatīt lietotni. Tas nozīmē, ka jums viss atkal jāsāk no jauna. Atvainojiet par nepatīkamo ziņu.</string>
+    <string name="articles_export_done_message">Raksti izgūti</string>
+    <string name="articles_import_done_message">Raksti ievietoti</string>
 </resources>

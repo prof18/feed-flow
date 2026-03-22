@@ -1,16 +1,8 @@
 package com.prof18.feedflow.desktop.home
 
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,52 +11,53 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.compose.ui.platform.UriHandler
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOperation
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.desktop.BrowserManager
-import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
 import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
-import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.sanitizeUrl
+import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.prof18.feedflow.shared.ui.home.AdaptiveHomeView
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
+import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState.NextFeedDisplayDisabledState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.WindowSizeClass
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
-import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
+import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun HomeScreen(
     homeViewModel: HomeViewModel,
     snackbarHostState: SnackbarHostState,
-    listState: LazyListState,
     onImportExportClick: () -> Unit,
     onSearchClick: () -> Unit,
     onAccountsClick: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
+    onAddFeedClick: () -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
     onFeedSuggestionsClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
-    val changeFeedCategoryViewModel = desktopViewModel { DI.koin.get<ChangeFeedCategoryViewModel>() }
+    val changeFeedCategoryViewModel = koinViewModel<ChangeFeedCategoryViewModel>()
+    val homeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
+    val isMultiPaneLayoutEnabled by homeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
+    val listState = remember(isMultiPaneLayoutEnabled) { LazyListState() }
 
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()
@@ -75,8 +68,12 @@ internal fun HomeScreen(
     val swipeActions by homeViewModel.swipeActions.collectAsState()
     val feedOperation by homeViewModel.feedOperationState.collectAsState()
     val feedLayout by homeViewModel.feedLayout.collectAsState()
+    val feedItemDisplaySettings by homeViewModel.feedItemDisplaySettings.collectAsState()
+    val refreshTrigger by homeViewModel.refreshTriggerState.collectAsState()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsState()
+    val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
+    val currentReaderArticle by readerModeViewModel.currentArticleState.collectAsState()
 
     var showChangeCategorySheet by remember { mutableStateOf(false) }
     var showNoFeedsBottomSheet by remember { mutableStateOf(false) }
@@ -84,7 +81,6 @@ internal fun HomeScreen(
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
     val uriHandler = LocalUriHandler.current
-    val navigator = LocalNavigator.currentOrThrow
 
     if (feedOperation != FeedOperation.None) {
         LoadingOperationDialog(feedOperation)
@@ -139,31 +135,60 @@ internal fun HomeScreen(
         currentFeedFilter = currentFeedFilter,
         swipeActions = swipeActions,
         feedLayout = feedLayout,
+        nextFeedDisplayState = NextFeedDisplayDisabledState,
+        feedItemDisplaySettings = feedItemDisplaySettings,
     )
+
+    val openReaderArticle: (FeedItemUrlInfo) -> Unit = { article ->
+        readerModeViewModel.getReaderModeHtml(article)
+    }
+    val resetReaderArticle: () -> Unit = {
+        readerModeViewModel.resetState()
+    }
+
+    val reduceMotionEnabled = LocalReduceMotion.current
+
+    LaunchedEffect(refreshTrigger, isMultiPaneLayoutEnabled) {
+        if (refreshTrigger > 0) {
+            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+            if (isMultiPaneLayoutEnabled) {
+                resetReaderArticle()
+            }
+        }
+    }
 
     val feedListActions = FeedListActions(
         onClearOldArticlesClicked = { homeViewModel.deleteOldFeedItems() },
         onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
-        refreshData = { homeViewModel.getNewFeeds() },
+        refreshData = { homeViewModel.refreshFeeds() },
         requestNewData = { homeViewModel.requestNewFeedsPage() },
-        forceRefreshData = { homeViewModel.forceFeedRefresh() },
+        forceRefreshData = { homeViewModel.forceRefreshFeeds() },
         markAllRead = { homeViewModel.markAllRead() },
-        onBackToTimelineClick = { homeViewModel.onFeedFilterSelected(FeedFilter.Timeline) },
+        onBackToTimelineClick = {
+            resetReaderArticle()
+            homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
+        },
         markAsReadOnScroll = { lastVisibleIndex -> homeViewModel.markAsReadOnScroll(lastVisibleIndex) },
         markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
         openUrl = { feedItemUrlInfo ->
-            when (feedItemUrlInfo.linkOpeningPreference) {
-                LinkOpeningPreference.READER_MODE -> navigateToReaderMode(feedItemUrlInfo)
-                LinkOpeningPreference.INTERNAL_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
-                LinkOpeningPreference.PREFERRED_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
-                LinkOpeningPreference.DEFAULT -> {
-                    if (browserManager.openReaderMode() && !feedItemUrlInfo.shouldOpenInBrowser()) {
-                        navigateToReaderMode(feedItemUrlInfo)
-                    } else {
-                        uriHandler.openUri(feedItemUrlInfo.url.sanitizeUrl())
+            handleOpenUrlForDesktop(
+                feedItemUrlInfo = feedItemUrlInfo,
+                browserManager = browserManager,
+                uriHandler = uriHandler,
+                onOpenReaderArticle = if (isMultiPaneLayoutEnabled) {
+                    openReaderArticle
+                } else {
+                    navigateToReaderMode
+                },
+                onBrowserError = {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            strings.browserLaunchError,
+                            duration = SnackbarDuration.Short,
+                        )
                     }
-                }
-            }
+                },
+            )
         },
         updateBookmarkStatus = { feedItemId, isBookmarked ->
             homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
@@ -174,17 +199,12 @@ internal fun HomeScreen(
     )
 
     val feedManagementActions = FeedManagementActions(
-        onAddFeedClick = {
-            navigator.push(
-                AddFeedFullScreen(
-                    onFeedAdded = {
-                        homeViewModel.getNewFeeds()
-                    },
-                ),
-            )
+        onAddFeedClick = onAddFeedClick,
+        onFeedFilterSelected = { feedFilter ->
+            resetReaderArticle()
+            homeViewModel.onFeedFilterSelected(feedFilter)
         },
-        onFeedFilterSelected = { feedFilter -> homeViewModel.onFeedFilterSelected(feedFilter) },
-        onEditFeedClick = { feedSource -> navigator.push(EditFeedScreen(feedSource)) }, // Pass the navigator action
+        onEditFeedClick = onEditFeedClick,
         onDeleteFeedSourceClick = { feedSource -> homeViewModel.deleteFeedSource(feedSource) },
         onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
         onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
@@ -193,63 +213,64 @@ internal fun HomeScreen(
             changeFeedCategoryViewModel.loadFeedSource(feedSource)
             showChangeCategorySheet = true
         },
-        onOpenWebsite = { url -> uriHandler.openUri(url.sanitizeUrl()) },
+        onOpenWebsite = { url ->
+            runCatching { uriHandler.openUri(url.sanitizeUrl()) }
+                .onFailure {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            strings.browserLaunchError,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+                }
+        },
         onMoveFeedSourcesToCategory = { feedSources, category ->
             changeFeedCategoryViewModel.moveFeedSourcesToCategory(feedSources, category)
         },
     )
 
     val linkCopiedSuccess = LocalFeedFlowStrings.current.linkCopiedSuccess
-    AdaptiveHomeView(
-        listState = listState,
-        onSearchClick = onSearchClick,
-        onSettingsButtonClicked = onSettingsButtonClicked,
-        displayState = homeDisplayState,
-        feedListActions = feedListActions,
-        feedManagementActions = feedManagementActions,
-        snackbarHostState = snackbarHostState,
-        shareBehavior = ShareBehavior(
-            onShareClick = { urlTitle ->
-                copyToClipboard(urlTitle.url)
-                scope.launch {
-                    snackbarHostState.showSnackbar(message = linkCopiedSuccess)
-                }
-            },
-            shareLinkTitle = LocalFeedFlowStrings.current.menuCopyLink,
-            shareCommentsTitle = LocalFeedFlowStrings.current.menuCopyLinkComments,
-        ),
-        windowSizeClass = when (calculateWindowSizeClass().widthSizeClass) {
-            WindowWidthSizeClass.Compact -> WindowSizeClass.Compact
-            WindowWidthSizeClass.Medium -> WindowSizeClass.Medium
-            else -> WindowSizeClass.Expanded
-        },
-        showDropdownMenu = false,
-        feedContentWrapper = { content ->
-            Box(
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(end = Spacing.xsmall),
-                ) {
-                    content()
-                }
-
-                VerticalScrollbar(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .fillMaxHeight(),
-                    adapter = rememberScrollbarAdapter(
-                        scrollState = listState,
-                    ),
-                )
+    val shareBehavior = ShareBehavior(
+        onShareClick = { urlTitle ->
+            copyToClipboard(urlTitle.url)
+            scope.launch {
+                snackbarHostState.showSnackbar(message = linkCopiedSuccess)
             }
         },
-        onFeedSuggestionsClick = onFeedSuggestionsClick,
-        onEmptyStateClick = {
-            showNoFeedsBottomSheet = true
-        },
+        shareLinkTitle = LocalFeedFlowStrings.current.menuCopyLink,
+        shareCommentsTitle = LocalFeedFlowStrings.current.menuCopyLinkComments,
     )
+    if (isMultiPaneLayoutEnabled) {
+        DesktopHomeScaffold(
+            listState = listState,
+            onSearchClick = onSearchClick,
+            displayState = homeDisplayState,
+            feedListActions = feedListActions,
+            feedManagementActions = feedManagementActions,
+            snackbarHostState = snackbarHostState,
+            shareBehavior = shareBehavior,
+            onFeedSuggestionsClick = onFeedSuggestionsClick,
+            currentReaderArticle = currentReaderArticle,
+            onReaderClosed = { readerModeViewModel.resetState() },
+            onEmptyStateClick = {
+                showNoFeedsBottomSheet = true
+            },
+        )
+    } else {
+        DesktopSinglePaneHomeScaffold(
+            listState = listState,
+            onSearchClick = onSearchClick,
+            displayState = homeDisplayState,
+            feedListActions = feedListActions,
+            feedManagementActions = feedManagementActions,
+            snackbarHostState = snackbarHostState,
+            shareBehavior = shareBehavior,
+            onFeedSuggestionsClick = onFeedSuggestionsClick,
+            onEmptyStateClick = {
+                showNoFeedsBottomSheet = true
+            },
+        )
+    }
 
     if (showChangeCategorySheet) {
         EditCategoryDialog(
@@ -286,9 +307,48 @@ internal fun HomeScreen(
             showNoFeedsBottomSheet = false
             onAccountsClick()
         },
+        onAddFeedClick = {
+            showNoFeedsBottomSheet = false
+            onAddFeedClick()
+        },
         onFeedSuggestionsClick = {
             showNoFeedsBottomSheet = false
             onFeedSuggestionsClick()
         },
     )
+}
+
+private fun handleOpenUrlForDesktop(
+    feedItemUrlInfo: FeedItemUrlInfo,
+    browserManager: BrowserManager,
+    uriHandler: UriHandler,
+    onOpenReaderArticle: (FeedItemUrlInfo) -> Unit,
+    onBrowserError: () -> Unit,
+) {
+    fun openUri(url: String) {
+        runCatching { uriHandler.openUri(url) }
+            .onFailure { onBrowserError() }
+    }
+
+    when (feedItemUrlInfo.linkOpeningPreference) {
+        LinkOpeningPreference.READER_MODE -> {
+            onOpenReaderArticle(feedItemUrlInfo)
+        }
+
+        LinkOpeningPreference.INTERNAL_BROWSER -> {
+            openUri(feedItemUrlInfo.url)
+        }
+
+        LinkOpeningPreference.PREFERRED_BROWSER -> {
+            openUri(feedItemUrlInfo.url)
+        }
+
+        LinkOpeningPreference.DEFAULT -> {
+            if (browserManager.openReaderMode() && !feedItemUrlInfo.shouldOpenInBrowser()) {
+                onOpenReaderArticle(feedItemUrlInfo)
+            } else {
+                openUri(feedItemUrlInfo.url.sanitizeUrl())
+            }
+        }
+    }
 }

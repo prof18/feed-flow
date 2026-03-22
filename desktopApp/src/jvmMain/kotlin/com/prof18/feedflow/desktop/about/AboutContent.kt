@@ -1,6 +1,5 @@
 package com.prof18.feedflow.desktop.about
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
@@ -26,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
@@ -41,7 +41,6 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 @Composable
 fun AboutContent(
     versionLabel: String,
-    isDarkTheme: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -52,7 +51,6 @@ fun AboutContent(
 
         if (showLicensesScreen) {
             LicensesScreen(
-                isDarkTheme = isDarkTheme,
                 onBackClick = {
                     showLicensesScreen = false
                 },
@@ -158,7 +156,6 @@ private fun SettingsItemList(
 private fun AboutContentPreview() {
     FeedFlowTheme {
         AboutContent(
-            isDarkTheme = false,
             versionLabel = "Version: 1.0.0",
         )
     }

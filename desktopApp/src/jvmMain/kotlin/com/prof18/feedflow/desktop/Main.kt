@@ -43,8 +43,8 @@ import java.io.File
 import java.io.InputStream
 import java.util.Properties
 
-private const val DARK_THEME_BACKGROUND = 0x1C1B1F
-private const val LIGHT_THEME_BACKGROUND = 0xFFFBFE
+private const val DARK_THEME_BACKGROUND = 0x1A1B1F
+private const val LIGHT_THEME_BACKGROUND = 0xFAFAFA
 private const val OLED_THEME_BACKGROUND = 0x000000
 
 fun main() {

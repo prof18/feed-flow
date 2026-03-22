@@ -32,6 +32,7 @@ struct ReaderModeScreen: View {
     @State private var macOSThemeChangeToken = UUID()
 
     let viewModel: ReaderModeViewModel
+    let onInAppBrowserClick: ((URL) -> Void)?
 
     var body: some View {
         ReaderView(
@@ -39,7 +40,11 @@ struct ReaderModeScreen: View {
             options: ReaderViewOptions(
                 onLinkClicked: { url in
                     if browserSelector.openInAppBrowser() {
-                        appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                        if let browserClick = onInAppBrowserClick {
+                            browserClick(url)
+                        } else {
+                            appState.openInAppBrowser(url: url)
+                        }
                     } else {
                         openURL(
                             browserSelector.getUrlForDefaultBrowser(
@@ -76,9 +81,13 @@ struct ReaderModeScreen: View {
                         let archiveUrlString = getArchiveISUrl(articleUrl: url.absoluteString)
                         if browserSelector.openInAppBrowser() {
                             if let archiveUrl = URL(string: archiveUrlString) {
-                                appState.navigate(
-                                    route: CommonViewRoute.inAppBrowser(url: archiveUrl)
-                                )
+                                if let browserClick = onInAppBrowserClick {
+                                    browserClick(archiveUrl)
+                                } else {
+                                    appState.navigate(
+                                        route: CommonViewRoute.inAppBrowser(url: archiveUrl)
+                                    )
+                                }
                             }
                         } else {
                             if let archiveUrl = URL(string: archiveUrlString) {
@@ -95,19 +104,20 @@ struct ReaderModeScreen: View {
                     }
                 },
                 onComments: commentsUrl != nil ? {
-                    if let commentsUrlString = commentsUrl {
+                    if let commentsUrlString = commentsUrl,
+                       let commUrl = URL(string: commentsUrlString) {
                         if browserSelector.openInAppBrowser() {
-                            if let commUrl = URL(string: commentsUrlString) {
+                            if let browserClick = onInAppBrowserClick {
+                                browserClick(commUrl)
+                            } else {
                                 appState.navigate(
                                     route: CommonViewRoute.inAppBrowser(url: commUrl)
                                 )
                             }
                         } else {
-                            if let commUrl = URL(string: commentsUrlString) {
-                                openURL(
-                                    browserSelector.getUrlForDefaultBrowser(
-                                        stringUrl: commUrl.absoluteString))
-                            }
+                            openURL(
+                                browserSelector.getUrlForDefaultBrowser(
+                                    stringUrl: commUrl.absoluteString))
                         }
                     }
                 } : nil,
@@ -205,7 +215,11 @@ struct ReaderModeScreen: View {
 
     private func openInBrowser(url: URL) {
         if browserSelector.openInAppBrowser() {
-            appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+            if let browserClick = onInAppBrowserClick {
+                browserClick(url)
+            } else {
+                appState.openInAppBrowser(url: url)
+            }
         } else {
             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
         }

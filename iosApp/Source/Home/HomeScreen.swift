@@ -45,18 +45,21 @@ struct HomeScreen: View {
 
     @State var feedLayout: FeedLayout = .list
 
-    @State var isShowReadArticlesEnabled = false
+    @State var feedItemDisplaySettings = FeedItemDisplaySettings(
+        isHideUnreadDotEnabled: false,
+        isHideFeedSourceEnabled: false,
+        descriptionLineLimit: .three
+    )
 
     @Binding var toggleListScroll: Bool
 
     @Binding var showSettings: Bool
 
-    @Binding var selectedDrawerItem: DrawerItem?
-
     @Binding var columnVisibility: NavigationSplitViewVisibility
 
     let homeViewModel: HomeViewModel
     let readerModeViewModel: ReaderModeViewModel
+    let onReaderModeNavigate: (() -> Void)?
 
     let openDrawer: () -> Void
 
@@ -77,6 +80,7 @@ struct HomeScreen: View {
             feedFontSizes: $feedFontSizes,
             swipeActions: $swipeActions,
             feedLayout: $feedLayout,
+            feedItemDisplaySettings: $feedItemDisplaySettings,
             onRefresh: {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
@@ -103,7 +107,11 @@ struct HomeScreen: View {
             },
             onReaderModeClick: { feedItemUrlInfo in
                 readerModeViewModel.getReaderModeHtml(urlInfo: feedItemUrlInfo)
-                appState.navigate(route: CommonViewRoute.readerMode)
+                if let navigate = onReaderModeNavigate {
+                    navigate()
+                } else {
+                    appState.navigate(route: CommonViewRoute.readerMode)
+                }
             },
             onBookmarkClick: { feedItemId, isBookmarked in
                 homeViewModel.updateBookmarkStatus(feedItemId: feedItemId, bookmarked: isBookmarked)
@@ -123,11 +131,7 @@ struct HomeScreen: View {
             onFeedSyncClick: {
                 homeViewModel.enqueueBackup()
             },
-            openDrawer: openDrawer,
-            isShowReadArticlesEnabled: isShowReadArticlesEnabled,
-            onShowReadArticlesToggled: { value in
-                homeViewModel.updateShowReadArticlesOnTimeline(value: value)
-            }
+            openDrawer: openDrawer
         )
         .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
@@ -237,8 +241,8 @@ struct HomeScreen: View {
             }
         }
         .task {
-            for await state in homeViewModel.showReadArticlesState {
-                self.isShowReadArticlesEnabled = state as? Bool ?? false
+            for await state in homeViewModel.feedItemDisplaySettings {
+                self.feedItemDisplaySettings = state
             }
         }
         .onChange(of: scenePhase) {

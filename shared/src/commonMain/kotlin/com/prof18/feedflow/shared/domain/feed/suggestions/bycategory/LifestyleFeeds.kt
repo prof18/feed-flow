@@ -111,9 +111,9 @@ internal val lifestyleFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=vox.com&sz=64",
         ),
         SuggestedFeed(
-            name = "Wallpaper*",
+            name = "Wallpaper",
             url = "http://feeds.feedburner.com/Wallpaperfeed",
-            description = "Design, architecture, and lifestyle",
+            description = "Design, architecture, and culture",
             logoUrl = "https://www.google.com/s2/favicons?domain=wallpaper.com&sz=64",
         ),
     ),

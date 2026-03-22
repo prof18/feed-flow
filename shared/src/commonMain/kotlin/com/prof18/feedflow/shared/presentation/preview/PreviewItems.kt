@@ -84,6 +84,7 @@ val feedSourcesForPreview = persistentListOf(
 
 val importExportStates = listOf(
     FeedImportExportState.Idle,
+    FeedImportExportState.InvalidOpml,
     FeedImportExportState.Error,
     FeedImportExportState.LoadingImport(ImportExportContentType.FeedsOpml),
     FeedImportExportState.LoadingExport(ImportExportContentType.FeedsOpml),

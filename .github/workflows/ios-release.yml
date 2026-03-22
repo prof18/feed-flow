@@ -30,7 +30,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 60
 
     steps:
@@ -110,6 +110,7 @@ jobs:
 
       - name: build archive
         run: |
+          set -o pipefail
           cd iosApp
           
           xcrun xcodebuild \
@@ -186,6 +187,7 @@ jobs:
       - id: export_archive
         name: export archive
         run: |
+          set -o pipefail
           xcrun xcodebuild \
             -exportArchive \
             -exportOptionsPlist "${RUNNER_TEMP}/Build/ExportOptions.plist" \

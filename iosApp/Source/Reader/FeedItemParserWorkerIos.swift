@@ -12,7 +12,8 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
     func parse(
         feedItemId: String,
         url: String,
-        completionHandler: @escaping (ParsingResult?, (any Error)?) -> Void
+        imageUrl _: String?,
+        completionHandler: @escaping @Sendable (ParsingResult?, (any Error)?) -> Void
     ) {
         DispatchQueue.main.async { [weak self] in
             guard let this = self else { return }
@@ -26,6 +27,14 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
                 completionHandler(result, nil)
             }
         }
+    }
+
+    func parse(
+        feedItemId: String,
+        url: String,
+        completionHandler: @escaping (ParsingResult?, (any Error)?) -> Void
+    ) {
+        parse(feedItemId: feedItemId, url: url, imageUrl: nil, completionHandler: completionHandler)
     }
 
     private func handleParsing(

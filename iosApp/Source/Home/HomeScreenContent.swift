@@ -16,6 +16,8 @@ struct HomeContent: View {
     private var appState
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
 
     @Environment(\.dismiss)
     private var dismiss
@@ -35,6 +37,7 @@ struct HomeContent: View {
     @Binding var feedFontSizes: FeedFontSizes
     @Binding var swipeActions: SwipeActions
     @Binding var feedLayout: FeedLayout
+    @Binding var feedItemDisplaySettings: FeedItemDisplaySettings
 
     @State var isToolbarVisible = true
     @State var showScrollToTop = false
@@ -57,8 +60,10 @@ struct HomeContent: View {
     let onBackToTimelineClick: () -> Void
     let onFeedSyncClick: () -> Void
     let openDrawer: () -> Void
-    let isShowReadArticlesEnabled: Bool
-    let onShowReadArticlesToggled: (Bool) -> Void
+
+    private var isCompactPhone: Bool {
+        horizontalSizeClass == .compact && UIDevice.current.userInterfaceIdiom == .phone
+    }
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -108,6 +113,9 @@ struct HomeContent: View {
         .onReceive(NotificationCenter.default.publisher(for: .feedFlowMarkAllRead)) { _ in
             showMarkAllReadDialog = true
         }
+        .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { _ in
+            sheetToShow = nil
+        }
         .onReceive(NotificationCenter.default.publisher(for: .feedFlowClearOldArticles)) { _ in
             showClearOldArticlesDialog = true
         }
@@ -140,6 +148,7 @@ private extension HomeContent {
             feedFontSizes: feedFontSizes,
             swipeActions: swipeActions,
             feedLayout: feedLayout,
+            feedItemDisplaySettings: feedItemDisplaySettings,
             onReloadClick: onRefresh,
             onAddFeedClick: {
                 self.sheetToShow = .noFeedSource
@@ -174,15 +183,23 @@ private extension HomeContent {
             .onChange(of: showSettings) {
                 sheetToShow = .settings
             }
-            .if(appState.sizeClass == .compact) { view in
-                view.navigationBarBackButtonHidden(true)
-            }
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(isCompactPhone)
             .if(isiOS26OrLater()) { view in
                 view.navigationTitle(getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount))
             }
             .toolbar {
                 if isToolbarVisible {
+                    if isCompactPhone {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button {
+                                openDrawer()
+                            } label: {
+                                Image(systemName: "sidebar.leading")
+                            }
+                        }
+                    }
+
                     if isiOS26OrLater() {
                         makeIOS26ToolbarContent(proxy: proxy)
                     } else {
@@ -215,34 +232,30 @@ private extension HomeContent {
                     self.sheetToShow = .importExport
                 },
                 onFeedSuggestionsClick: {
-                    self.sheetToShow = nil
-                    appState.navigate(route: CommonViewRoute.feedSuggestions)
+                    self.sheetToShow = .feedSuggestions
                 }
             )
+            .environment(appState)
 
         case .addFeed:
             AddFeedScreen(showCloseButton: true)
+                .environment(appState)
 
         case .importExport:
             ImportExportScreen(showCloseButton: true, fetchFeeds: onRefresh)
+                .environment(appState)
 
         case let .editFeed(source):
             EditFeedScreen(feedSource: source)
+                .environment(appState)
+
+        case .feedSuggestions:
+            FeedSuggestionsScreen()
         }
     }
 
     @ToolbarContentBuilder
     func makeIOS26ToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
-        if appState.sizeClass == .compact {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    self.dismiss()
-                } label: {
-                    Image(systemName: "sidebar.left")
-                }
-            }
-        }
-
         if #available(iOS 26.0, *) {
             ToolbarSpacer(.fixed)
         }
@@ -276,33 +289,23 @@ private extension HomeContent {
     func makeToolbarHeaderView(proxy: ScrollViewProxy) -> some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
             HStack {
-                if appState.sizeClass == .compact {
-                    Button {
-                        self.dismiss()
-                    } label: {
-                        Image(systemName: "sidebar.left")
-                    }
-                }
+                Text(getNavBarName(feedFilter: currentFeedFilter))
+                    .font(.title2)
 
-                HStack {
-                    Text(getNavBarName(feedFilter: currentFeedFilter))
+                if !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks) {
+                    Text("(\(unreadCount))")
                         .font(.title2)
-
-                    if !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks) {
-                        Text("(\(unreadCount))")
-                            .font(.title2)
-                    }
                 }
-                .padding(.vertical, Spacing.medium)
-                .onTapGesture(count: 1) {
-                    proxy.scrollTo(feedState.first?.id)
-                }
-                .onTapGesture(count: 2) {
-                    updateReadStatus(Int32(indexHolder.getLastReadIndex()))
-                    self.indexHolder.refresh()
-                    proxy.scrollTo(feedState.first?.id)
-                    onRefresh()
-                }
+            }
+            .padding(.vertical, Spacing.medium)
+            .onTapGesture(count: 1) {
+                proxy.scrollTo(feedState.first?.id)
+            }
+            .onTapGesture(count: 2) {
+                updateReadStatus(Int32(indexHolder.getLastReadIndex()))
+                self.indexHolder.refresh()
+                proxy.scrollTo(feedState.first?.id)
+                onRefresh()
             }
         }
     }
@@ -378,27 +381,6 @@ private extension HomeContent {
             Label(feedFlowStrings.settingsButton, systemImage: "gear")
         }
 
-        makeReadArticlesMenuItem()
-        makeDebugMenuItem()
-    }
-
-    @ViewBuilder
-    private func makeReadArticlesMenuItem() -> some View {
-        Divider()
-
-        Toggle(isOn: Binding(
-            get: { isShowReadArticlesEnabled },
-            set: { onShowReadArticlesToggled($0) }
-        )) {
-            Label(
-                feedFlowStrings.menuShowReadArticles,
-                systemImage: isShowReadArticlesEnabled ? "eye" : "eye.slash"
-            )
-        }
-    }
-
-    @ViewBuilder
-    private func makeDebugMenuItem() -> some View {
         #if DEBUG
             Button {
                 deleteAllFeeds()

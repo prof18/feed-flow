@@ -1,13 +1,16 @@
 package com.prof18.feedflow.desktop.reaadermode
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -18,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
+import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
@@ -48,7 +52,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
@@ -62,9 +65,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
@@ -72,11 +72,9 @@ import com.mikepenz.markdown.model.markdownAnimations
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
-import com.prof18.feedflow.desktop.desktopViewModel
-import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
-import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -84,60 +82,68 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
-internal data class ReaderModeScreen(
-    private val feedItemUrlInfo: FeedItemUrlInfo,
-) : Screen {
-    override val key: String = generateUniqueKey()
+private val readerModeMaxContentWidth = 720.dp
+private val readerPaneTopContentFadeHeight = 30.dp
 
-    @Composable
-    override fun Content() {
-        val readerModeViewModel = desktopViewModel { DI.koin.get<ReaderModeViewModel>() }
-        val state by readerModeViewModel.readerModeState.collectAsState()
-        val fontSize by readerModeViewModel.readerFontSizeState.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+@Composable
+internal fun ReaderModeScreen(
+    feedItemUrlInfo: FeedItemUrlInfo,
+    navigateBack: () -> Unit,
+    showBackButton: Boolean = true,
+    isDetailFullscreen: Boolean = false,
+    onToggleDetailFullscreen: (() -> Unit)? = null,
+) {
+    val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
+    val state by readerModeViewModel.readerModeState.collectAsState()
+    val fontSize by readerModeViewModel.readerFontSizeState.collectAsState()
 
-        LaunchedEffect(feedItemUrlInfo) {
-            readerModeViewModel.getReaderModeHtml(feedItemUrlInfo)
-        }
+    LaunchedEffect(feedItemUrlInfo.id) {
+        readerModeViewModel.getReaderModeHtml(feedItemUrlInfo)
+    }
 
-        val snackbarHostState = remember { SnackbarHostState() }
-        val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-        val message = LocalFeedFlowStrings.current.linkCopiedSuccess
-        val uriHandler = LocalUriHandler.current
+    val message = LocalFeedFlowStrings.current.linkCopiedSuccess
+    val uriHandler = LocalUriHandler.current
 
-        val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsState()
-        val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsState()
+    val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsState()
+    val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsState()
 
-        val focusRequester = remember { FocusRequester() }
+    val focusRequester = remember { FocusRequester() }
 
-        LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
-        }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .focusRequester(focusRequester)
-                .focusable()
-                .onKeyEvent { keyEvent ->
-                    handleKeyEvent(
-                        keyEvent = keyEvent,
-                        state = state,
-                        canNavigatePrevious = canNavigatePrevious,
-                        canNavigateNext = canNavigateNext,
-                        onNavigatePrevious = { readerModeViewModel.navigateToPreviousArticle() },
-                        onNavigateNext = { readerModeViewModel.navigateToNextArticle() },
-                    )
-                },
-        ) {
-            Scaffold(
-                topBar = {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .focusRequester(focusRequester)
+            .focusable()
+            .onKeyEvent { keyEvent ->
+                handleKeyEvent(
+                    keyEvent = keyEvent,
+                    state = state,
+                    canNavigatePrevious = canNavigatePrevious,
+                    canNavigateNext = canNavigateNext,
+                    onNavigatePrevious = { readerModeViewModel.navigateToPreviousArticle() },
+                    onNavigateNext = { readerModeViewModel.navigateToNextArticle() },
+                )
+            },
+    ) {
+        Scaffold(
+            topBar = {
+                Surface(shadowElevation = 2.dp) {
                     ReaderModeToolbar(
                         readerModeState = state,
                         fontSize = fontSize,
-                        navigateBack = { navigator.pop() },
+                        navigateBack = navigateBack,
+                        showBackButton = showBackButton,
+                        onToggleDetailFullscreen = onToggleDetailFullscreen,
+                        isDetailFullscreen = isDetailFullscreen,
                         openInBrowser = { url ->
                             if (isValidUrl(url)) {
                                 uriHandler.openUri(url)
@@ -170,15 +176,25 @@ internal data class ReaderModeScreen(
                             readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
                         },
                     )
-                },
-                snackbarHost = { SnackbarHost(snackbarHostState) },
-            ) { contentPadding ->
+                }
+            },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+        ) { contentPadding ->
+            Box(
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.TopCenter,
+            ) {
+                val contentModifier = Modifier
+                    .widthIn(max = readerModeMaxContentWidth)
+                    .fillMaxWidth()
+
                 when (val s = state) {
                     is ReaderModeState.HtmlNotAvailable -> {
                         ReaderModeFallbackContent(
-                            modifier = Modifier
-                                .padding(contentPadding)
-                                .fillMaxSize(),
+                            modifier = contentModifier
+                                .fillMaxHeight(),
                             onOpenInBrowser = {
                                 if (isValidUrl(s.url)) {
                                     uriHandler.openUri(s.url)
@@ -186,154 +202,162 @@ internal data class ReaderModeScreen(
                             },
                         )
                     }
+
                     ReaderModeState.Loading -> {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
-                                .padding(contentPadding)
-                                .fillMaxWidth(),
+                                .fillMaxSize(),
                         ) {
                             androidx.compose.material3.CircularProgressIndicator()
                         }
                     }
-                    is ReaderModeState.Success -> {
-                        Column(
-                            modifier = Modifier
-                                .padding(contentPadding)
-                                .verticalScroll(rememberScrollState()),
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = Spacing.regular),
-                                text = LocalFeedFlowStrings.current.readerModeWarning,
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Light,
-                            )
 
-                            key(s.readerModeData.content, fontSize) {
-                                SelectionContainer {
-                                    Markdown(
-                                        modifier = Modifier
-                                            .padding(Spacing.regular)
-                                            .padding(bottom = 64.dp),
-                                        content = s.readerModeData.content,
-                                        imageTransformer = Coil3ImageTransformerImpl,
-                                        animations = markdownAnimations(
-                                            animateTextSize = {
-                                                this
-                                                /** No animation */
-                                            },
-                                        ),
-                                        typography = markdownTypography(
-                                            h1 = MaterialTheme.typography.displaySmall.copy(
-                                                fontSize = (fontSize + 20).sp,
-                                                lineHeight = (fontSize + 32).sp,
+                    is ReaderModeState.Success -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState()),
+                            contentAlignment = Alignment.TopCenter,
+                        ) {
+                            Column(
+                                modifier = contentModifier,
+                            ) {
+                                key(s.readerModeData.content, fontSize) {
+                                    SelectionContainer {
+                                        Markdown(
+                                            modifier = Modifier
+                                                .padding(Spacing.regular)
+                                                .padding(bottom = 64.dp),
+                                            content = s.readerModeData.content,
+                                            imageTransformer = Coil3ImageTransformerImpl,
+                                            animations = markdownAnimations(
+                                                animateTextSize = {
+                                                    this
+                                                    /** No animation */
+                                                },
                                             ),
-                                            h2 = MaterialTheme.typography.titleLarge.copy(
-                                                fontSize = (fontSize + 6).sp,
-                                                lineHeight = (fontSize + 16).sp,
-                                            ),
-                                            h3 = MaterialTheme.typography.titleLarge.copy(
-                                                fontSize = (fontSize + 6).sp,
-                                                lineHeight = (fontSize + 16).sp,
-                                            ),
-                                            h4 = MaterialTheme.typography.titleMedium.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            h5 = MaterialTheme.typography.titleMedium.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            h6 = MaterialTheme.typography.titleMedium.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            paragraph = MaterialTheme.typography.bodyLarge.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            text = MaterialTheme.typography.bodyLarge.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            code = MaterialTheme.typography.bodyMedium.copy(
-                                                fontSize = (fontSize - 2).sp,
-                                                lineHeight = (fontSize + 8).sp,
-                                            ),
-                                            list = MaterialTheme.typography.bodyLarge.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            textLink = TextLinkStyles(
-                                                style = MaterialTheme.typography.bodyLarge.copy(
+                                            typography = markdownTypography(
+                                                h1 = MaterialTheme.typography.displaySmall.copy(
+                                                    fontSize = (fontSize + 20).sp,
+                                                    lineHeight = (fontSize + 32).sp,
+                                                ),
+                                                h2 = MaterialTheme.typography.titleLarge.copy(
+                                                    fontSize = (fontSize + 6).sp,
+                                                    lineHeight = (fontSize + 16).sp,
+                                                ),
+                                                h3 = MaterialTheme.typography.titleLarge.copy(
+                                                    fontSize = (fontSize + 6).sp,
+                                                    lineHeight = (fontSize + 16).sp,
+                                                ),
+                                                h4 = MaterialTheme.typography.titleMedium.copy(
                                                     fontSize = fontSize.sp,
                                                     lineHeight = (fontSize + 12).sp,
-                                                    fontWeight = FontWeight.Bold,
-                                                    textDecoration = TextDecoration.Underline,
-                                                ).toSpanStyle(),
+                                                ),
+                                                h5 = MaterialTheme.typography.titleMedium.copy(
+                                                    fontSize = fontSize.sp,
+                                                    lineHeight = (fontSize + 12).sp,
+                                                ),
+                                                h6 = MaterialTheme.typography.titleMedium.copy(
+                                                    fontSize = fontSize.sp,
+                                                    lineHeight = (fontSize + 12).sp,
+                                                ),
+                                                paragraph = MaterialTheme.typography.bodyLarge.copy(
+                                                    fontSize = fontSize.sp,
+                                                    lineHeight = (fontSize + 12).sp,
+                                                ),
+                                                text = MaterialTheme.typography.bodyLarge.copy(
+                                                    fontSize = fontSize.sp,
+                                                    lineHeight = (fontSize + 12).sp,
+                                                ),
+                                                code = MaterialTheme.typography.bodyMedium.copy(
+                                                    fontSize = (fontSize - 2).sp,
+                                                    lineHeight = (fontSize + 8).sp,
+                                                ),
+                                                list = MaterialTheme.typography.bodyLarge.copy(
+                                                    fontSize = fontSize.sp,
+                                                    lineHeight = (fontSize + 12).sp,
+                                                ),
+                                                textLink = TextLinkStyles(
+                                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                                        fontSize = fontSize.sp,
+                                                        lineHeight = (fontSize + 12).sp,
+                                                        fontWeight = FontWeight.Bold,
+                                                        textDecoration = TextDecoration.Underline,
+                                                    ).toSpanStyle(),
+                                                ),
                                             ),
-                                        ),
-                                    )
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
+                TopToolbarContentFade(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    height = readerPaneTopContentFadeHeight,
+                    color = MaterialTheme.colorScheme.surface,
+                )
             }
+        }
 
-            if (state is ReaderModeState.Success || state is ReaderModeState.HtmlNotAvailable) {
-                val strings = LocalFeedFlowStrings.current
+        if (state is ReaderModeState.Success || state is ReaderModeState.HtmlNotAvailable) {
+            val strings = LocalFeedFlowStrings.current
 
-                Surface(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(end = Spacing.regular, bottom = Spacing.regular)
-                        .clip(RoundedCornerShape(12.dp)),
-                    tonalElevation = 3.dp,
-                    shadowElevation = 8.dp,
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = Spacing.regular, bottom = Spacing.regular),
+                shape = RoundedCornerShape(18.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                tonalElevation = 2.dp,
+                shadowElevation = 4.dp,
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                ),
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = Spacing.small),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.small),
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = Spacing.small),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(Spacing.small),
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                            positioning = TooltipAnchorPosition.Above,
+                        ),
+                        state = rememberTooltipState(),
+                        tooltip = { PlainTooltip { Text(strings.previousArticle) } },
                     ) {
-                        TooltipBox(
-                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                                positioning = TooltipAnchorPosition.Above,
-                            ),
-                            state = rememberTooltipState(),
-                            tooltip = { PlainTooltip { Text(strings.previousArticle) } },
+                        IconButton(
+                            onClick = { readerModeViewModel.navigateToPreviousArticle() },
+                            enabled = canNavigatePrevious,
                         ) {
-                            IconButton(
-                                onClick = { readerModeViewModel.navigateToPreviousArticle() },
-                                enabled = canNavigatePrevious,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = strings.previousArticle,
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = strings.previousArticle,
+                            )
                         }
+                    }
 
-                        TooltipBox(
-                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                                positioning = TooltipAnchorPosition.Above,
-                            ),
-                            state = rememberTooltipState(),
-                            tooltip = { PlainTooltip { Text(strings.nextArticle) } },
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                            positioning = TooltipAnchorPosition.Above,
+                        ),
+                        state = rememberTooltipState(),
+                        tooltip = { PlainTooltip { Text(strings.nextArticle) } },
+                    ) {
+                        IconButton(
+                            onClick = { readerModeViewModel.navigateToNextArticle() },
+                            enabled = canNavigateNext,
                         ) {
-                            IconButton(
-                                onClick = { readerModeViewModel.navigateToNextArticle() },
-                                enabled = canNavigateNext,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                    contentDescription = strings.nextArticle,
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = strings.nextArticle,
+                            )
                         }
                     }
                 }
@@ -380,6 +404,9 @@ private fun ReaderModeToolbar(
     readerModeState: ReaderModeState,
     fontSize: Int,
     navigateBack: () -> Unit,
+    showBackButton: Boolean,
+    onToggleDetailFullscreen: (() -> Unit)?,
+    isDetailFullscreen: Boolean,
     openInBrowser: (String) -> Unit,
     onShareClick: (String) -> Unit,
     onArchiveClick: (String) -> Unit,
@@ -390,15 +417,39 @@ private fun ReaderModeToolbar(
     var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
+        expandedHeight = 48.dp,
         title = {},
-        navigationIcon = {
-            IconButton(
-                onClick = navigateBack,
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                )
+        navigationIcon = when {
+            onToggleDetailFullscreen != null -> {
+                {
+                    IconButton(
+                        onClick = onToggleDetailFullscreen,
+                    ) {
+                        Icon(
+                            imageVector = if (isDetailFullscreen) {
+                                Icons.AutoMirrored.Filled.ArrowBack
+                            } else {
+                                Icons.Default.Fullscreen
+                            },
+                            contentDescription = null,
+                        )
+                    }
+                }
+            }
+            showBackButton -> {
+                {
+                    IconButton(
+                        onClick = navigateBack,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                        )
+                    }
+                }
+            }
+            else -> {
+                { }
             }
         },
         actions = {

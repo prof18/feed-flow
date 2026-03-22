@@ -2,6 +2,7 @@
 
 package com.prof18.feedflow.shared.domain.opml
 
+import com.prof18.feedflow.shared.nonOpmlDocumentWithMalformedLinkAttribute
 import com.prof18.feedflow.shared.opml
 import com.prof18.feedflow.shared.opmlWithMalformedXml
 import com.prof18.feedflow.shared.opmlWithText
@@ -110,6 +111,23 @@ class OPMLFeedParserJvmTest {
     }
 
     @Test
+    fun `generateFeedSources throws OpmlParsingException for malformed html link attributes`() = runTest {
+        val file = File.createTempFile("invalid-link-", ".tmp").apply {
+            deleteOnExit()
+            writeText(nonOpmlDocumentWithMalformedLinkAttribute)
+        }
+
+        val opmlInput = OpmlInput(file = file)
+
+        try {
+            parser.generateFeedSources(opmlInput)
+            fail("Expected OpmlParsingException to be thrown")
+        } catch (e: OpmlParsingException) {
+            assertEquals(e.message?.contains("Failed to parse OPML file"), true)
+        }
+    }
+
+    @Test
     fun `generateFeedSources parses OPML with text attribute`() = runTest {
         val file = File.createTempFile("some-prefix", ".tmp").apply {
             deleteOnExit()
@@ -199,6 +217,30 @@ class OPMLFeedParserJvmTest {
 
         assertTrue(feedSources.isNotEmpty())
         assertEquals("Feed with BOM", feedSources[0].title)
+    }
+
+    @Test
+    fun `generateFeedSources parses UTF16 OPML with BOM`() = runTest {
+        val bomUtf16Le = byteArrayOf(0xFF.toByte(), 0xFE.toByte())
+        val opmlContent = """
+            <?xml version="1.0" encoding="UTF-16"?>
+            <opml version="2.0">
+                <body>
+                    <outline text="Feed with UTF16 BOM" xmlUrl="https://example.com/feed.xml" />
+                </body>
+            </opml>
+        """.trimIndent()
+
+        val file = File.createTempFile("bom-utf16le-", ".tmp").apply {
+            deleteOnExit()
+            writeBytes(bomUtf16Le + opmlContent.toByteArray(Charsets.UTF_16LE))
+        }
+
+        val opmlInput = OpmlInput(file = file)
+        val feedSources = parser.generateFeedSources(opmlInput)
+
+        assertTrue(feedSources.isNotEmpty())
+        assertEquals("Feed with UTF16 BOM", feedSources[0].title)
     }
 
     @Test

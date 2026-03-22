@@ -93,7 +93,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
+            val state = awaitLinkedStateAfterSync()
             assertIs<AccountConnectionUiState.Linked>(state)
         }
     }
@@ -125,7 +125,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
         viewModel.uiState.test(timeout = uiTimeout) {
             // Skip initial Loading and Linked states
-            val linkedState = awaitItemMatching { it is AccountConnectionUiState.Linked }
+            val linkedState = awaitLinkedStateAfterSync()
             assertIs<AccountConnectionUiState.Linked>(linkedState)
 
             viewModel.disconnect()
@@ -191,18 +191,19 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
+            val state = awaitLinkedStateAfterSync()
             assertIs<AccountConnectionUiState.Linked>(state)
 
-            val accountType = networkSettings.getSyncAccountType()
-            assertEquals(SyncAccounts.FEEDBIN, accountType)
-            assertEquals("testuser", networkSettings.getSyncUsername())
+            cancelAndIgnoreRemainingEvents()
         }
+
+        assertEquals(SyncAccounts.FEEDBIN, networkSettings.getSyncAccountType())
+        assertEquals("testuser", networkSettings.getSyncUsername())
     }
 
     @Test
     fun `disconnect clears account and sets state to Unlinked from Linked after login`() = runTest(testDispatcher) {
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val unlinkedState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
 
@@ -214,7 +215,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val linkedState = awaitItemMatching { it is AccountConnectionUiState.Linked }
+            val linkedState = awaitLinkedStateAfterSync()
             assertIs<AccountConnectionUiState.Linked>(linkedState)
 
             // Disconnect
@@ -243,3 +244,9 @@ private suspend fun <T> TurbineTestContext<T>.awaitItemMatching(
         }
     }
 }
+
+private suspend fun TurbineTestContext<AccountConnectionUiState>.awaitLinkedStateAfterSync():
+    AccountConnectionUiState.Linked =
+    awaitItemMatching { state ->
+        state is AccountConnectionUiState.Linked && state.syncState !is AccountSyncUIState.Loading
+    } as AccountConnectionUiState.Linked

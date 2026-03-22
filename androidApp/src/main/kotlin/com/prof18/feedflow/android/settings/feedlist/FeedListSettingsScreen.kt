@@ -28,5 +28,8 @@ fun FeedListSettingsScreen(
         onSwipeActionSelected = viewModel::updateSwipeAction,
         setRemoveTitleFromDescription = viewModel::updateRemoveTitleFromDescription,
         onFeedOrderSelected = viewModel::updateFeedOrder,
+        setHideUnreadDot = viewModel::updateHideUnreadDot,
+        setHideFeedSource = viewModel::updateHideFeedSource,
+        onDescriptionLineLimitSelected = viewModel::updateDescriptionLineLimit,
     )
 }

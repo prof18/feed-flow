@@ -1,6 +1,7 @@
 package com.prof18.feedflow.feedsync.googledrive
 
 import co.touchlab.kermit.Logger
+import com.google.api.client.auth.oauth2.TokenResponseException
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
@@ -36,9 +37,7 @@ class GoogleDriveDataSourceJvmImpl(
     override suspend fun startAuthFlow(): Boolean = withContext(dispatcherProvider.io) {
         try {
             val flow = buildAuthFlow()
-
-            @Suppress("MagicNumber")
-            val receiver = LocalServerReceiver.Builder().setPort(8888).build()
+            val receiver = buildLocalServerReceiver()
             val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
 
             driveService = Drive.Builder(httpTransport, jsonFactory, credential)
@@ -48,7 +47,7 @@ class GoogleDriveDataSourceJvmImpl(
             googleDriveSettings.setGoogleDriveLinked(true)
             true
         } catch (e: Exception) {
-            logger.e(e) { "Error during Google Drive auth flow" }
+            logger.d(e) { "Error during Google Drive auth flow" }
             false
         }
     }
@@ -111,23 +110,27 @@ class GoogleDriveDataSourceJvmImpl(
 
     override suspend fun performDownload(downloadParam: GoogleDriveDownloadParam): GoogleDriveDownloadResult =
         withDriveClient { client ->
-            var fileId = googleDriveSettings.getBackupFileId()
-
-            if (fileId == null) {
+            val fileId = googleDriveSettings.getBackupFileId() ?: run {
                 val result = client.files().list()
                     .setSpaces("appDataFolder")
                     .setQ("name = '${downloadParam.fileName}' and trashed = false")
                     .setFields("files(id)")
                     .execute()
 
-                fileId = result.files.firstOrNull()?.id
+                val discoveredFileId = result.files.firstOrNull()?.id
 
-                if (fileId != null) {
-                    googleDriveSettings.setBackupFileId(fileId)
+                if (discoveredFileId != null) {
+                    googleDriveSettings.setBackupFileId(discoveredFileId)
                 }
+                discoveredFileId
             }
 
-            val inputStream = client.files().get(fileId).executeMediaAsInputStream()
+            val resolvedFileId = requireGoogleDriveBackupFileId(
+                fileId = fileId,
+                fileName = downloadParam.fileName,
+            )
+
+            val inputStream = client.files().get(resolvedFileId).executeMediaAsInputStream()
             downloadParam.outputStream.use { outputStream ->
                 inputStream.copyTo(outputStream)
             }
@@ -156,7 +159,18 @@ class GoogleDriveDataSourceJvmImpl(
         }
         val client = requireNotNull(driveService) { "Drive client not initialized" }
         return withContext(dispatcherProvider.io) {
-            block(client)
+            try {
+                block(client)
+            } catch (e: TokenResponseException) {
+                if (e.details?.error == "invalid_grant") {
+                    logger.d(e) { "Google Drive token expired or revoked, needs re-auth" }
+                    revokeAccess()
+                    throw GoogleDriveNeedsReAuthException(
+                        errorMessage = "Google Drive token expired or revoked",
+                    )
+                }
+                throw e
+            }
         }
     }
 
@@ -172,3 +186,12 @@ class GoogleDriveDataSourceJvmImpl(
         googleDriveSettings.setBackupFileId(newFile.id)
     }
 }
+
+internal fun requireGoogleDriveBackupFileId(
+    fileId: String?,
+    fileName: String,
+): String = fileId ?: throw GoogleDriveDownloadException(
+    errorMessage = "No Google Drive backup file found for '$fileName'",
+)
+
+internal fun buildLocalServerReceiver(): LocalServerReceiver = LocalServerReceiver.Builder().build()

@@ -24,7 +24,6 @@ import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
-import com.prof18.feedflow.shared.utils.skipLogging
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
@@ -52,32 +51,21 @@ class FeedFetcherRepository internal constructor(
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
 
-    @Suppress("MagicNumber")
     suspend fun fetchFeeds(
         forceRefresh: Boolean = false,
         isFirstLaunch: Boolean = false,
-        isFetchingFromBackground: Boolean = false,
     ) {
         return withContext(dispatcherProvider.io) {
             feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
             when {
                 gReaderRepository.isAccountSet() -> {
                     fetchFeedsWithGReader()
-                    if (!isFetchingFromBackground) {
-                        databaseHelper.markFeedItemsAsNotified()
-                    }
                 }
                 feedbinRepository.isAccountSet() -> {
                     fetchFeedsWithFeedbin()
-                    if (!isFetchingFromBackground) {
-                        databaseHelper.markFeedItemsAsNotified()
-                    }
                 }
                 else -> {
                     fetchFeedsWithRssParser(forceRefresh, isFirstLaunch)
-                    if (!isFetchingFromBackground) {
-                        databaseHelper.markFeedItemsAsNotified()
-                    }
                 }
             }
         }
@@ -283,9 +271,7 @@ class FeedFetcherRepository internal constructor(
                             feedSource = feedSource,
                         )
                     } catch (e: Throwable) {
-                        if (!e.skipLogging()) {
-                            logger.e { "Error, skip: ${feedSource.url}}. Error: $e" }
-                        }
+                        logger.d { "Error, skip: ${feedSource.url}}. Error: $e" }
                         // Mark failure flag on error
                         databaseHelper.setFeedFetchFailed(feedSource.id, true)
                         if (shouldShowParsingErrors) {

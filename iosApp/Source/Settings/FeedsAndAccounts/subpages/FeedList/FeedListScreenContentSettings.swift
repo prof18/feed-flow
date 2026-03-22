@@ -17,6 +17,9 @@ struct FeedListSettingsScreenContent: View {
     @Binding var rightSwipeAction: SwipeActionType
     @Binding var isRemoveTitleFromDescriptionEnabled: Bool
     @Binding var feedOrder: FeedOrder
+    @Binding var isHideUnreadDotEnabled: Bool
+    @Binding var isHideFeedSourceEnabled: Bool
+    @Binding var descriptionLineLimit: DescriptionLineLimit
     let onScaleFactorChange: (Double) -> Void
 
     private let feedFlowStrings = Deps.shared.getStrings()
@@ -56,7 +59,12 @@ struct FeedListSettingsScreenContent: View {
                     ),
                     index: 0,
                     feedFontSizes: feedFontSizes,
-                    feedLayout: feedLayout
+                    feedLayout: feedLayout,
+                    feedItemDisplaySettings: FeedItemDisplaySettings(
+                        isHideUnreadDotEnabled: isHideUnreadDotEnabled,
+                        isHideFeedSourceEnabled: isHideFeedSourceEnabled,
+                        descriptionLineLimit: descriptionLineLimit
+                    )
                 )
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(Spacing.small)
@@ -120,6 +128,29 @@ struct FeedListSettingsScreenContent: View {
                         isHideDateEnabled.toggle()
                     }
 
+                    Toggle(isOn: $isHideUnreadDotEnabled) {
+                        Label(feedFlowStrings.settingsHideUnreadDot, systemImage: "circle.fill")
+                    }.onTapGesture {
+                        isHideUnreadDotEnabled.toggle()
+                    }
+
+                    Toggle(isOn: $isHideFeedSourceEnabled) {
+                        Label(feedFlowStrings.settingsHideFeedSource, systemImage: "person.slash")
+                    }.onTapGesture {
+                        isHideFeedSourceEnabled.toggle()
+                    }
+
+                    Picker(selection: $descriptionLineLimit) {
+                        Text(feedFlowStrings.settingsDescriptionLinesThree)
+                            .tag(DescriptionLineLimit.three)
+                        Text(feedFlowStrings.settingsDescriptionLinesFive)
+                            .tag(DescriptionLineLimit.five)
+                        Text(feedFlowStrings.settingsDescriptionLinesNoLimit)
+                            .tag(DescriptionLineLimit.noLimit)
+                    } label: {
+                        Label(feedFlowStrings.settingsDescriptionMaxLines, systemImage: "list.number")
+                    }
+
                     Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {
                         Label(feedFlowStrings.settingsHideDuplicatedTitleFromDesc, systemImage: "eye.slash")
                     }.onTapGesture {
@@ -169,7 +200,14 @@ struct FeedListSettingsScreenContent: View {
 }
 
 private func formatDateTimeExample(dateFormat: DateFormat, timeFormat: TimeFormat) -> String {
-    let datePart = dateFormat == .normal ? "25/12" : "12/25"
+    let datePart: String = switch dateFormat {
+    case .normal:
+        "25/12"
+    case .american:
+        "12/25"
+    case .iso:
+        "2025-12-25"
+    }
     let timePart = timeFormat == .hours24 ? "14:30" : "2:30 PM"
     return "\(datePart) - \(timePart)"
 }

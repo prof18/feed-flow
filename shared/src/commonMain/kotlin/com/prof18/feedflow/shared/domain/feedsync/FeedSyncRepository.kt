@@ -185,7 +185,7 @@ class FeedSyncRepository internal constructor(
         try {
             body()
         } catch (e: Exception) {
-            logger.e(e) { "Error during feed sync" }
+            logger.d(e) { "Error during feed sync" }
         }
     }
 }

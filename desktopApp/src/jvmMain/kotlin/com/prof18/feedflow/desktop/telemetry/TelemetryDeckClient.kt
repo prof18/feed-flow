@@ -67,7 +67,7 @@ class TelemetryDeckClient(
         val id = appId
         val userId = userIdManager?.getHashedUserId()
         if (userId.isNullOrEmpty()) {
-            logger.w { "TelemetryDeck: appId or userId is not set, skipping signal." }
+            logger.d { "TelemetryDeck: appId or userId is not set, skipping signal." }
             return
         }
         val signal = TelemetrySignal(

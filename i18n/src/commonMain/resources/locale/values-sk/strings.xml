@@ -84,7 +84,6 @@
     <string name="search_no_data">Žiadne zhody pre %s.</string>
     <string name="search_placeholder">Vyhľadať…</string>
     <string name="link_copied_success">Odkaz úspešne skopírovaný!</string>
-    <string name="reader_mode_warning">ℹ Režim čítačky sa snaží získať obsah článku. Môžu sa vyskytnúť chyby alebo nechcené znaky.</string>
     <string name="settings_accounts">Účty</string>
     <string name="settings_title_feed">Feed</string>
     <string name="accounts_description">Pripoj účet pre synchronizáciu odberu feedov, kategórií, prečítaných článkov a záložiek medzi zariadeniami. \n \nFunkcia je ešte v Beta verzii a môžu sa vyskytnúť problémy (napríklad prečítané články nemusia byť úplne synchronizované). V budúcnosti pribudne podpora pre ďalšie služby. \n \nPodporovaný je iba jeden účet súčasne.</string>

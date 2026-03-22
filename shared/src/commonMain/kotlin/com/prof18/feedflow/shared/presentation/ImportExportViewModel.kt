@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.ImportExportContentType
 import com.prof18.feedflow.shared.domain.csv.CsvInput
 import com.prof18.feedflow.shared.domain.csv.CsvOutput
 import com.prof18.feedflow.shared.domain.feed.FeedImportExportRepository
+import com.prof18.feedflow.shared.domain.opml.InvalidOpmlImportException
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
 import kotlinx.collections.immutable.toImmutableList
@@ -42,8 +43,11 @@ class ImportExportViewModel internal constructor(
                         feedSourceWithError = notValidFeedSources.feedSourcesWithError.toImmutableList(),
                     )
                 }
+            } catch (e: InvalidOpmlImportException) {
+                logger.d { "Invalid OPML import file: ${e.message}" }
+                importerMutableState.update { FeedImportExportState.InvalidOpml }
             } catch (e: Throwable) {
-                logger.e(e) { "Error while importing feed" }
+                logger.d(e) { "Error while importing feed" }
                 importerMutableState.update { FeedImportExportState.Error }
             }
         }
@@ -74,6 +78,12 @@ class ImportExportViewModel internal constructor(
                 importerMutableState.update {
                     FeedImportExportState.ArticleImportSuccess
                 }
+            } catch (e: IllegalArgumentException) {
+                logger.d(e) { "Invalid article CSV import file" }
+                importerMutableState.update { FeedImportExportState.Error }
+            } catch (e: IllegalStateException) {
+                logger.d(e) { "Invalid article CSV import file" }
+                importerMutableState.update { FeedImportExportState.Error }
             } catch (e: Throwable) {
                 logger.e(e) { "Error while importing articles" }
                 importerMutableState.update { FeedImportExportState.Error }

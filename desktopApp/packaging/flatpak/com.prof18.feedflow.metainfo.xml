@@ -64,6 +64,42 @@
   </content_rating>
 
   <releases>
+      <release version="1.11.2" date="2026-03-22">
+          <description>
+              <p>Added a new three-pane desktop layout and a switch for users who prefer the single-pane view.</p>
+              <p>Added a dedicated Settings window with sections for reading, feed list, accounts, sync storage, and about.</p>
+              <p>Moved accounts, add feed, edit feed, import and export, and blocked words into separate desktop windows.</p>
+              <p>Improved the docked sidebar with clearer icons, better contrast, stronger selection states, and refreshed colors.</p>
+              <p>Improved Reader Mode with a new engine, cleaner navigation buttons, better spacing, and a clearer split between list and article panes.</p>
+              <p>Improved desktop context menus and scrollbars.</p>
+              <p>Expanded Feed Suggestions with a new Marketing category and more curated sources.</p>
+              <p>Fixed Reader Mode so fast article switches no longer show stale content.</p>
+          </description>
+      </release>
+
+      <release version="1.11.1" date="2026-03-15">
+          <description>
+              <p>Added a new three-pane desktop layout and a switch for users who prefer the single-pane view.</p>
+              <p>Added a dedicated Settings window with sections for reading, feed list, accounts, sync storage, and about.</p>
+              <p>Moved accounts, add feed, edit feed, import and export, and blocked words into separate desktop windows.</p>
+              <p>Improved the docked sidebar with clearer icons, better contrast, stronger selection states, and refreshed colors.</p>
+              <p>Improved Reader Mode with a new engine, cleaner navigation buttons, better spacing, and a clearer split between list and article panes.</p>
+              <p>Improved desktop context menus and scrollbars.</p>
+              <p>Expanded Feed Suggestions with a new Marketing category and more curated sources.</p>
+              <p>Fixed Reader Mode so fast article switches no longer show stale content.</p>
+          </description>
+      </release>
+
+      <release version="1.10.0" date="2026-02-09">
+          <description>
+              <p>Fixed text scaling on HDPI screens</p>
+              <p>Added Open Feed Website actions from feed lists for faster source access.</p>
+              <p>Added auto-hide for articles marked as read and an option to hide feed loading errors.</p>
+              <p>Improved reader mode rendering with some characters</p>
+              <p>Fixed some bugs and possible crashes</p>
+              <p>Improved reader mode readability with better content width and spacing on large screens.</p>
+          </description>
+      </release>
       <release version="1.9.0" date="2026-01-20">
           <description>
               <p>Added Miniflux, Feedbin, and Bazqux sync integrations</p>

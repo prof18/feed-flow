@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,9 +32,9 @@ fun SplashContent(
 ) {
     val isDark = rememberDesktopDarkTheme()
 
-    val backgroundColor = if (isDark) Color(0xFF1A1B1F) else Color(0xFFFDFBFF)
+    val backgroundColor = if (isDark) Color(0xFF1A1B1F) else Color(0xFFFAFAFA)
     val primaryColor = if (isDark) Color(0xFFABC7FF) else Color(0xFF2C5EA7)
-    val borderColor = if (isDark) Color(0xFF3A3B3F) else Color(0xFFE0E0E0)
+    val borderColor = if (isDark) Color(0xFF36373B) else Color(0xFFE4E4E7)
 
     val shape = if (useRoundedCorners) RoundedCornerShape(16.dp) else RoundedCornerShape(0.dp)
 

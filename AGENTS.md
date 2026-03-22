@@ -24,6 +24,7 @@ All the business logic is shared via Kotlin Multiplatform.
 ## Build, Test, and Development Commands
 
 ### Build Commands
+All Gradle commands in this section should be run with `--quiet --console=plain`.
 
 - `./gradlew detekt allTests` -> Run all checks including tests and linting for Shared code, Android and Desktop
 - `./gradlew detekt` -> Run static analysis with Detekt for Shared code, Android and Desktop
@@ -31,14 +32,24 @@ All the business logic is shared via Kotlin Multiplatform.
 - `./gradlew test` -> Run all tests for Shared code, Android and Desktop
 - `.scripts/refresh-translations.sh` -> Regenerate i18n translation code after adding new translations
 - `./gradlew :androidApp:assembleGooglePlayDebug` -> Build Android debug
+- `./gradlew :androidApp:compileGooglePlayDebugKotlin` -> Quick compile check for Android (no APK assembly)
 - `.scripts/run-android.sh` -> Install and launch Android Google Play debug
 - `./gradlew desktopApp:run` -> Run Desktop app
--
+- `./gradlew :desktopApp:compileKotlinJvm` -> Quick compile check for Desktop
+- `./gradlew :desktopApp:jvmMainClasses` -> Compile Desktop main classes (faster than full build)
+- `.scripts/delete-desktop-debug-db.sh` -> Delete local Desktop debug database and prefs
+- `./gradlew :shared:compileKotlinJvm` -> Quick compile check for shared module only (fastest iteration)
+- `./gradlew :feedSync:feedbin:build` -> Build a specific feedSync sub-module (pattern: `:feedSync:<module>:build`)
+- `./gradlew :desktopApp:packageDistributionForCurrentOS` -> Package desktop app distribution for the current OS
+
 ### Running Android App
 Ensure an emulator or device is connected via `adb`, then run:
 - `.scripts/run-android.sh` -> Install and launch the debug app on device/emulator
 
 ### Building for iOS Simulator
+
+- If using XcodeBuildMCP, use the installed XcodeBuildMCP skill before calling XcodeBuildMCP tools.
+
 To build FeedFlow for iPhone 17 Pro simulator:
 ```bash
 mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/mg/Workspace/feedflow/feed-flow/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"
@@ -53,19 +64,25 @@ mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/marco.gomiero/Works
 ```
 
 
+### Running Specific Tests
+- `./gradlew :shared:allTests` -> Run all shared module tests across supported targets
+- `./gradlew :shared:jvmTest --tests "com.prof18.feedflow.shared.presentation.SomeTest"` -> Run a specific test class on JVM
+- `./gradlew :shared:iosSimulatorArm64Test` -> Run shared tests on iOS simulator
+
 ### Build Verification Process
 
 IMPORTANT: When editing code, you MUST:
 1. Build the project after making changes
 2. Fix any compilation errors before proceeding
-Be sure to build ONLY for the platform you are working on to save time.
+   Be sure to build ONLY for the platform you are working on to save time.
 
 ## Handing off
 
 Before handing off you must:
-1. Run `./gradlew detekt` to ensure all checks pass - don't run it if you modified only swift files
-2. Run `.scripts/ios-format.sh` to format iOS code - only run if you made changes on the iOS app
-3. Fix any issues found during the above steps
+1. Run `.scripts/refresh-translations.sh` before the Gradle checks if you changed translation resources
+2. Run `./gradlew detekt allTests` to ensure Kotlin/shared/Android/Desktop checks pass - don't run it if you modified only swift files
+3. Run `.scripts/ios-format.sh` to format iOS code - only run if you made changes on the iOS app
+4. Fix any issues found during the above steps
 
 ### Initial Setup (for building from scratch)
 ```bash
@@ -81,6 +98,8 @@ cp config/dummy-google-service.plist iosApp/GoogleService-Info.plist
 cp iosApp/Assets/Config.xcconfig.template iosApp/Assets/Config.xcconfig
 ```
 
+For compile-only local/CI iOS builds without real sync credentials, you can use `cp config/dummy-config.xcconfig iosApp/Assets/Config.xcconfig` instead.
+
 ## Testing
 
 When writing tests, follow the comprehensive testing guide at **`.ai/TESTING.md`**.
@@ -90,7 +109,8 @@ Key points:
 - Use Turbine for Flow testing
 - Prefer fakes over mocking libraries
 - Use data generators from `shared/src/commonTest/.../test/generators/`
-- For sync service tests, use the `feedSync/test-utils` module
+- For sync service tests, use the `feedSync/test-utils` module (provides mock HTTP engines and Koin modules for GReader/Feedbin)
+- Run specific test classes with `--tests "fully.qualified.ClassName"` to iterate quickly
 
 ## General rules:
 
@@ -98,6 +118,13 @@ Key points:
 - If you touch or create any business logic, ensure it's thoroughly tested with unit tests.
 - DO NOT excessively use try/catch blocks for every function. Use them only for the top caller or the bottom callers, depending on the cases.
 - ALWAYS run gradle tasks with the following flag: `--quiet --console=plain`
+
+### Desktop screens/windows
+- For desktop settings/details pages opened from the main screen, prefer a dedicated `DialogWindow` instead of in-window navigation.
+- Reuse `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/ui/components/DesktopDialogWindow.kt` for new desktop windows instead of duplicating window setup.
+- Use `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/main/DesktopDialogWindowNavigator.kt` to open/close windows from `MainWindow` (add destinations to the enum and keep visibility state there).
+- Keep the screen body content as a composable content block and avoid duplicating content calls; apply platform conditionals only to wrapper chrome (for example, toolbar/title handling).
+- On macOS, keep transparent title bar handling inside the reusable desktop window wrapper; on other desktop platforms avoid adding duplicate custom title UI.
 
 ### Git Commit Messages
 When creating commits:
@@ -107,8 +134,14 @@ When creating commits:
 - DO NOT add "Co-Authored-By: Claude" attribution
 - Example: `git commit -m "Add foundation for unified article parsing system"`
 
+### macOS Desktop Code Signing
+- Native libraries in `desktopApp/resources-sandbox/macos-arm64/` must be signed with the Mac App Store certificate when it is renewed.
+- Sign with: `codesign --force --timestamp --options runtime --sign "3rd Party Mac Developer Application: Marco Gomiero (Q7CUB3RNAK)" <path>`
+- Verify with: `codesign -dvvv <path>`
+
 ### iOS Development
 - ALWAYS build with xcodebuild with -quiet flag when building for iOS. If the command returns errors you may run xcodebuild again without the -quiet flag.
+- Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet`
 - IMPORTANT: The project now supports iOS 26 SDK (June 2025) while maintaining iOS 18 as the minimum deployment target. Use #available checks when adopting iOS 26+ APIs.
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
 - Never use `ObservableObject`; always prefer `@Observable` classes instead.
@@ -122,3 +155,17 @@ When creating commits:
 - NEVER add hardcoded strings in the code. Always use the i18n resources.
 - NEVER try to translate other languages by yourself. Add only the English strings. The translations will be handled by professionals later.
 
+### Flatpak / Linux Desktop
+- `.scripts/flatpak-build-setup.sh` -> Prepare the project for Flatpak builds (sets release props, disables JetBrains JDK vendor, disables toolchain auto-provisioning, comments out Android-only Gradle plugins)
+- `.scripts/disable-android-for-flatpak.sh` -> Comments out all Android-related Gradle config across all `build.gradle.kts` and build-logic files; excludes `androidApp` from `settings.gradle.kts`
+- Flatpak packaging files live in `desktopApp/packaging/flatpak/` (manifest, launch script, desktop entry, AppStream metadata, icon)
+- The `flatpak=true` property in `desktopApp/src/jvmMain/resources/props.properties` is used to disable platform-specific features (e.g., Google Drive sync) in Flatpak builds
+- HiDPI scaling for the JVM uses `sun.java2d.uiScale` JVM argument. For local testing: `./gradlew desktopApp:run -PjvmArgs="-Dsun.java2d.uiScale=2.0"`
+
+### CI/CD
+- CI config: `.github/workflows/code-checks.yaml`
+- Pipeline: `checks` (macos-26, detekt + allTests + swiftlint) -> `build-android-app` + `build-desktop-app` + `build-ios-app` (in parallel)
+- iOS CI build forces arm64 simulator architecture: `xcodebuild -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build | xcbeautify --renderer github-actions`
+- CI runs `.scripts/refresh-translations.sh` before checks; do this locally before pushing if translations changed
+- Debugging CI failures: `gh run list --limit=10`, then `gh run view <run-id> --log`
+- Red CI recovery loop: `gh run rerun <run-id>` (or `gh run rerun <run-id> --failed`), then fix and push until green

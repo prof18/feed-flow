@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
@@ -43,6 +44,8 @@ import com.prof18.feedflow.core.model.SwipeActionType.NONE
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_BOOKMARK_STATUS
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_READ_STATUS
 import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
+import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState.NextFeedDisplayEnabledState
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -56,8 +59,9 @@ import me.saket.swipe.SwipeableActionsBox
 
 @Suppress("MagicNumber")
 @Composable
-internal fun FeedList(
+fun FeedList(
     feedItems: ImmutableList<FeedItem>,
+    nextFeedState: NextFeedDisplayState,
     feedFontSize: FeedFontSizes,
     feedLayout: FeedLayout,
     currentFeedFilter: FeedFilter,
@@ -74,10 +78,12 @@ internal fun FeedList(
     onShareClick: (FeedItemUrlTitle) -> Unit,
     onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
     onOpenFeedWebsite: (String) -> Unit,
+    onNavigateNext: () -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     onMarkAllAboveAsRead: (String) -> Unit = {},
     onMarkAllBelowAsRead: (String) -> Unit = {},
+    feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
 ) {
     val shouldStartPaginate = remember {
         derivedStateOf {
@@ -89,61 +95,47 @@ internal fun FeedList(
         }
     }
 
-    LazyColumn(
+    PullToNextLayout(
         modifier = modifier,
-        state = listState,
+        onNavigateNext = { onNavigateNext() },
+        enabled = nextFeedState is NextFeedDisplayEnabledState,
+        indicator = { progress ->
+            PullToNextIndicator(
+                progress = progress,
+                title = (nextFeedState as? NextFeedDisplayEnabledState)?.title,
+            )
+        },
     ) {
-        itemsIndexed(
-            items = feedItems,
-        ) { index, item ->
-            val swipeBackgroundColor = when (feedLayout) {
-                FeedLayout.LIST -> MaterialTheme.colorScheme.surfaceContainerHighest
-                FeedLayout.CARD -> MaterialTheme.colorScheme.surfaceContainer
-            }
+        LazyColumn(
+            state = listState,
+        ) {
+            itemsIndexed(
+                items = feedItems,
+            ) { index, item ->
+                val swipeBackgroundColor = when (feedLayout) {
+                    FeedLayout.LIST -> MaterialTheme.colorScheme.surfaceContainerHighest
+                    FeedLayout.CARD -> MaterialTheme.colorScheme.surfaceContainer
+                }
 
-            val swipeToRight = swipeActions.rightSwipeAction.toSwipeAction(
-                feedItem = item,
-                swipeBackgroundColor = swipeBackgroundColor,
-                onBookmarkClick = onBookmarkClick,
-                onReadStatusClick = onReadStatusClick,
-            )
-            val swipeToLeft = swipeActions.leftSwipeAction.toSwipeAction(
-                feedItem = item,
-                swipeBackgroundColor = swipeBackgroundColor,
-                onBookmarkClick = onBookmarkClick,
-                onReadStatusClick = onReadStatusClick,
-            )
+                val swipeToRight = swipeActions.rightSwipeAction.toSwipeAction(
+                    feedItem = item,
+                    swipeBackgroundColor = swipeBackgroundColor,
+                    onBookmarkClick = onBookmarkClick,
+                    onReadStatusClick = onReadStatusClick,
+                )
+                val swipeToLeft = swipeActions.leftSwipeAction.toSwipeAction(
+                    feedItem = item,
+                    swipeBackgroundColor = swipeBackgroundColor,
+                    onBookmarkClick = onBookmarkClick,
+                    onReadStatusClick = onReadStatusClick,
+                )
 
-            FeedItemContainer(feedLayout = feedLayout) {
-                if (swipeToRight == null && swipeToLeft == null) {
-                    FeedItemView(
-                        feedItem = item,
-                        shareMenuLabel = shareMenuLabel,
-                        shareCommentsMenuLabel = shareCommentsMenuLabel,
-                        onFeedItemClick = onFeedItemClick,
-                        onCommentClick = onCommentClick,
-                        onBookmarkClick = onBookmarkClick,
-                        onReadStatusClick = onReadStatusClick,
-                        feedFontSize = feedFontSize,
-                        onOpenFeedSettings = onOpenFeedSettings,
-                        onOpenFeedWebsite = onOpenFeedWebsite,
-                        onShareClick = onShareClick,
-                        feedLayout = feedLayout,
-                        currentFeedFilter = currentFeedFilter,
-                        onMarkAllAboveAsRead = onMarkAllAboveAsRead,
-                        onMarkAllBelowAsRead = onMarkAllBelowAsRead,
-                    )
-                } else {
-                    SwipeableActionsBox(
-                        backgroundUntilSwipeThreshold = swipeBackgroundColor,
-                        startActions = swipeToRight?.let { listOf(it) }.orEmpty(),
-                        endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
-                    ) {
+                FeedItemContainer(feedLayout = feedLayout) {
+                    if (swipeToRight == null && swipeToLeft == null) {
                         FeedItemView(
                             feedItem = item,
                             shareMenuLabel = shareMenuLabel,
                             shareCommentsMenuLabel = shareCommentsMenuLabel,
-                            feedLayout = feedLayout,
                             onFeedItemClick = onFeedItemClick,
                             onCommentClick = onCommentClick,
                             onBookmarkClick = onBookmarkClick,
@@ -152,27 +144,54 @@ internal fun FeedList(
                             onOpenFeedSettings = onOpenFeedSettings,
                             onOpenFeedWebsite = onOpenFeedWebsite,
                             onShareClick = onShareClick,
+                            feedLayout = feedLayout,
                             currentFeedFilter = currentFeedFilter,
                             onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                             onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                            feedItemDisplaySettings = feedItemDisplaySettings,
                         )
+                    } else {
+                        SwipeableActionsBox(
+                            backgroundUntilSwipeThreshold = swipeBackgroundColor,
+                            startActions = swipeToRight?.let { listOf(it) }.orEmpty(),
+                            endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
+                        ) {
+                            FeedItemView(
+                                feedItem = item,
+                                shareMenuLabel = shareMenuLabel,
+                                shareCommentsMenuLabel = shareCommentsMenuLabel,
+                                feedLayout = feedLayout,
+                                onFeedItemClick = onFeedItemClick,
+                                onCommentClick = onCommentClick,
+                                onBookmarkClick = onBookmarkClick,
+                                onReadStatusClick = onReadStatusClick,
+                                feedFontSize = feedFontSize,
+                                onOpenFeedSettings = onOpenFeedSettings,
+                                onOpenFeedWebsite = onOpenFeedWebsite,
+                                onShareClick = onShareClick,
+                                currentFeedFilter = currentFeedFilter,
+                                onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+                                onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                                feedItemDisplaySettings = feedItemDisplaySettings,
+                            )
+                        }
                     }
                 }
-            }
-            if (index == feedItems.size - 1 && currentFeedFilter !is FeedFilter.Read) {
-                Box(
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .fillMaxWidth(),
-                ) {
-                    TextButton(
+                if (index == feedItems.size - 1 && currentFeedFilter !is FeedFilter.Read) {
+                    Box(
                         modifier = Modifier
-                            .padding(top = Spacing.small)
-                            .padding(bottom = Spacing.medium)
-                            .align(Alignment.Center),
-                        onClick = markAllAsRead,
+                            .navigationBarsPadding()
+                            .fillMaxWidth(),
                     ) {
-                        Text(LocalFeedFlowStrings.current.markAllReadButton)
+                        TextButton(
+                            modifier = Modifier
+                                .padding(top = Spacing.small)
+                                .padding(bottom = Spacing.medium)
+                                .align(Alignment.Center),
+                            onClick = markAllAsRead,
+                        ) {
+                            Text(LocalFeedFlowStrings.current.markAllReadButton)
+                        }
                     }
                 }
             }
@@ -281,6 +300,7 @@ internal fun FeedListPreview() {
         PreviewColumn {
             FeedList(
                 feedItems = feedItemsForPreview,
+                nextFeedState = NextFeedDisplayState.NextFeedDisplayDisabledState,
                 feedFontSize = FeedFontSizes(),
                 feedLayout = FeedLayout.LIST,
                 currentFeedFilter = FeedFilter.Timeline,
@@ -300,10 +320,12 @@ internal fun FeedListPreview() {
                 onShareClick = {},
                 onOpenFeedSettings = {},
                 onOpenFeedWebsite = {},
+                onNavigateNext = {},
             )
 
             FeedList(
                 feedItems = feedItemsForPreview,
+                nextFeedState = NextFeedDisplayState.NextFeedDisplayDisabledState,
                 feedFontSize = FeedFontSizes(),
                 feedLayout = FeedLayout.CARD,
                 currentFeedFilter = FeedFilter.Timeline,
@@ -323,6 +345,7 @@ internal fun FeedListPreview() {
                 onShareClick = {},
                 onOpenFeedSettings = {},
                 onOpenFeedWebsite = {},
+                onNavigateNext = {},
             )
         }
     }

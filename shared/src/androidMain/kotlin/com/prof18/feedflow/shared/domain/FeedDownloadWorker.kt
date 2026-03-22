@@ -13,15 +13,21 @@ class FeedDownloadWorker internal constructor(
     private val widgetUpdater: WidgetUpdater,
     private val databaseHelper: DatabaseHelper,
     private val notifier: Notifier,
+    private val appForegroundState: AppForegroundState,
     appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
+        if (appForegroundState.isAppInForeground()) {
+            return Result.success()
+        }
         return try {
-            feedFetcherRepository.fetchFeeds(isFetchingFromBackground = true)
+            feedFetcherRepository.fetchFeeds()
             val itemsToNotify = databaseHelper.getFeedSourceToNotify()
-            notifier.showNewArticlesNotification(itemsToNotify)
-            databaseHelper.markFeedItemsAsNotified()
+            val hasShownNotifications = notifier.showNewArticlesNotification(itemsToNotify)
+            if (hasShownNotifications) {
+                databaseHelper.markFeedItemsAsNotified()
+            }
             widgetUpdater.update()
             Result.success()
         } catch (_: Exception) {

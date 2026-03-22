@@ -92,7 +92,6 @@
     <string name="account_connect_button">Connecter</string>
     <string name="rename_feed_source_name_button">Renommer</string>
     <string name="link_copied_success">Lien copié avec succès !</string>
-    <string name="reader_mode_warning">ℹ Le mode lecture essaye d\'obtenir le contenu de l\'article. Il pourrait y avoir quelques glitch ou caractères indésirables.</string>
     <string name="reader_mode_font_size">Taille de police</string>
     <string name="icloud_sync_description">Connectez votre compte iCloud pour synchroniser les abonnements de flux, catégories, états de lecture et favoris entre vos appareils Android, IOS, IpadOS, et PC. Les données seront sauvegardées dans un dossier spécifique au sein de l\'application ; FeedFlow n\'aura aucun accès à vos fichiers</string>
     <string name="dropbox_sync_desktop_description">En cliquant sur le bouton « connecter » vous serez redirigé sur le site de Dropbox. Après vous être connecté à votre compte, copiez le code d\'autorisation et collez le ici dans l\'application</string>
@@ -228,7 +227,7 @@
     <string name="feed_fetch_failed_tooltip_short">Échec de l\'actualisation des flux</string>
     <string name="support_the_project">Soutenez le projet</string>
     <string name="open_feed_settings">Ouvrir les réglages des flux</string>
-    <string name="reader_mode_browser_button_content_description">Ouvrir dans un navigateur</string>
+    <string name="reader_mode_browser_button_content_description">Ouvrir dans le navigateur</string>
     <string name="delete_feed_confirmation_title">Supprimer le flux ?</string>
     <string name="delete_feed_confirmation_message">Êtes-vous sûr.e de vouloir supprimer ce flux ? Cette action est irréversible.</string>
     <string name="delete_feed_button">Supprimer le flux</string>
@@ -248,4 +247,17 @@
     <string name="feed_add_in_progress_message">Importation du flux...</string>
     <string name="import_export_opml_section_title">Abonnements (OPML)</string>
     <string name="import_export_articles_section_title">Articles (CSV)</string>
+    <string name="browser_launch_error">Impossible d\'ouvrir le lien. Veuillez vérifier les paramètres de votre navigateur.</string>
+    <string name="open_feed_website_button">Accéder au site Web de flux</string>
+    <string name="no_feedbin_sync_yet">Données non encore synchronisées</string>
+    <string name="exit_menu">Quitter</string>
+    <string name="menu_view">Afficher</string>
+    <string name="settings_hide_feed_source">Masquer la source du flux</string>
+    <string name="settings_clear_downloaded_articles">Effacer les articles téléchargés</string>
+    <string name="settings_about_and_support">A propos &amp; support</string>
+    <string name="search_button_content_description">Rechercher</string>
+    <string name="reader_mode_fallback_open_browser_button">Ouvrir dans le navigateur</string>
+    <string name="previous_article">Article précédent</string>
+    <string name="no_miniflux_sync_yet">Données non encore synchronisées</string>
+    <string name="notification_grouped_body">Vous avez de nouveaux articles à lire !</string>
 </resources>

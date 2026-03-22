@@ -82,7 +82,7 @@ internal class DropboxDataSourceJvm(
         return try {
             DbxCredential.Reader.readFully(stringCredentials)
         } catch (e: Exception) {
-            logger.e("Unable to create credentials from string", e)
+            logger.d("Unable to create credentials from string", e)
             null
         }
     }
@@ -123,7 +123,7 @@ internal class DropboxDataSourceJvm(
                     )
                     continuation.resume(uploadResult)
                 } else {
-                    logger.e { "Metadata from Dropbox are null" }
+                    logger.d { "Metadata from Dropbox are null" }
                     continuation.resumeWithException(DropboxUploadException("Metadata from Dropbox are null"))
                 }
             } catch (e: Exception) {
@@ -154,7 +154,7 @@ internal class DropboxDataSourceJvm(
                     )
                     continuation.resume(downloadResult)
                 } else {
-                    logger.e { "Metadata from Dropbox are null" }
+                    logger.d { "Metadata from Dropbox are null" }
                     continuation.resumeWithException(DropboxDownloadException("Metadata from Dropbox are null"))
                 }
             } catch (e: Exception) {

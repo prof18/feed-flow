@@ -184,6 +184,40 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     }
 
     @Test
+    fun `fetchFeeds preserves pending notifications after foreground refresh`() = runTest(testDispatcher) {
+        setupLocalAccount()
+
+        val feedSource = createFeedSource(
+            id = "source-1",
+            title = "Notify Feed",
+            websiteUrl = null,
+            logoUrl = null,
+        )
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.updateNotificationEnabledStatus(feedSource.id, true)
+
+        val rssChannel = createRssChannel(
+            title = "Notify Feed",
+            link = "https://example.com",
+            items = listOf(
+                createRssItem(
+                    id = "item-1",
+                    title = "Item 1",
+                    link = "https://example.com/item-1",
+                ),
+            ),
+        )
+        fakeRssParserWrapper.setChannel(feedSource.url, rssChannel)
+
+        feedFetcherRepository.fetchFeeds()
+        advanceUntilIdle()
+
+        val sourcesToNotify = feedFetcherRepository.getFeedSourceToNotify()
+        assertEquals(1, sourcesToNotify.size)
+        assertEquals(feedSource.id, sourcesToNotify.single().feedSourceId)
+    }
+
+    @Test
     fun `fetchFeeds respects openrss threshold even with forceRefresh`() = runTest(testDispatcher) {
         setupLocalAccount()
 

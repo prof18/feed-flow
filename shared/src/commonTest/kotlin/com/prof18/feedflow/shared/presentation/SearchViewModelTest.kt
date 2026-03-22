@@ -130,6 +130,99 @@ class SearchViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `search treats hyphen as separator for FTS queries`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        val databaseHelper = getDatabaseHelper()
+
+        val feedSource = createFeedSource(id = "source-hyphen", title = "Source Hyphen")
+        insertFeedSources(databaseHelper, feedSource)
+
+        val hyphenatedItem = createFeedItem(
+            id = "item-hyphenated",
+            title = "Mini-Solaranlage guide",
+            feedSource = feedSource,
+            pubDateMillis = 2000,
+        )
+        val controlItem = createFeedItem(
+            id = "item-control",
+            title = "Miniature lights",
+            feedSource = feedSource,
+            pubDateMillis = 1000,
+        )
+        databaseHelper.insertFeedItems(listOf(hyphenatedItem, controlItem), lastSyncTimestamp = 0)
+
+        viewModel.updateSearchQuery("Mini-Solar")
+
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+
+        val state = viewModel.searchState.value as SearchState.DataFound
+        state.items.map { it.id } shouldBe listOf(hyphenatedItem.id)
+    }
+
+    @Test
+    fun `search preserves plus symbols for FTS queries`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        val databaseHelper = getDatabaseHelper()
+
+        val feedSource = createFeedSource(id = "source-symbols", title = "Source Symbols")
+        insertFeedSources(databaseHelper, feedSource)
+
+        val cppItem = createFeedItem(
+            id = "item-cpp",
+            title = "C++ Memory model explained",
+            feedSource = feedSource,
+            pubDateMillis = 2000,
+        )
+        val controlItem = createFeedItem(
+            id = "item-control-symbols",
+            title = "Cats weekly roundup",
+            feedSource = feedSource,
+            pubDateMillis = 1000,
+        )
+        databaseHelper.insertFeedItems(listOf(cppItem, controlItem), lastSyncTimestamp = 0)
+
+        viewModel.updateSearchQuery("C++")
+
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+
+        val state = viewModel.searchState.value as SearchState.DataFound
+        state.items.map { it.id } shouldBe listOf(cppItem.id)
+    }
+
+    @Test
+    fun `search preserves hash symbols for FTS queries`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        val databaseHelper = getDatabaseHelper()
+
+        val feedSource = createFeedSource(id = "source-hash-symbols", title = "Source Hash Symbols")
+        insertFeedSources(databaseHelper, feedSource)
+
+        val cSharpItem = createFeedItem(
+            id = "item-csharp",
+            title = "C# Pattern matching tips",
+            feedSource = feedSource,
+            pubDateMillis = 2000,
+        )
+        val controlItem = createFeedItem(
+            id = "item-control-hash-symbols",
+            title = "Cats weekly roundup",
+            feedSource = feedSource,
+            pubDateMillis = 1000,
+        )
+        databaseHelper.insertFeedItems(listOf(cSharpItem, controlItem), lastSyncTimestamp = 0)
+
+        viewModel.updateSearchQuery("C#")
+
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+
+        val state = viewModel.searchState.value as SearchState.DataFound
+        state.items.map { it.id } shouldBe listOf(cSharpItem.id)
+    }
+
+    @Test
     fun `updateSearchFilter re-runs search for read and bookmarked items`() = runTest(testDispatcher) {
         val viewModel = getViewModel()
         val databaseHelper = getDatabaseHelper()

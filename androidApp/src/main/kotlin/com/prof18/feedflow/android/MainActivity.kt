@@ -138,11 +138,27 @@ class MainActivity : BaseThemeActivity() {
             currentIntent?.let { intent ->
                 if (intent.action == Intent.ACTION_VIEW && intent.data != null) {
                     val uri = intent.data
-                    if (uri?.scheme == "feedflow" && uri.host == "feed") {
-                        val feedId = uri.pathSegments.firstOrNull()
-                        if (feedId != null) {
-                            readerModeViewModel.setLoading()
-                            deeplinkViewModel.getReaderModeUrl(FeedItemId(feedId))
+                    if (uri?.scheme == "feedflow") {
+                        when (uri.host) {
+                            "feed" -> {
+                                val feedId = uri.pathSegments.firstOrNull()
+                                if (feedId != null) {
+                                    readerModeViewModel.setLoading()
+                                    deeplinkViewModel.getReaderModeUrl(FeedItemId(feedId))
+                                }
+                            }
+                            "feedsourcefilter" -> {
+                                val feedSourceId = uri.pathSegments.firstOrNull()
+                                if (feedSourceId != null) {
+                                    homeViewModel.updateFeedSourceFilter(feedSourceId)
+                                }
+                            }
+                            "category" -> {
+                                val categoryId = uri.pathSegments.firstOrNull()
+                                if (categoryId != null) {
+                                    homeViewModel.updateCategoryFilter(categoryId)
+                                }
+                            }
                         }
                     }
                 }
@@ -199,10 +215,11 @@ class MainActivity : BaseThemeActivity() {
         readerModeViewModel: ReaderModeViewModel,
     ) {
         val reduceMotionEnabled = LocalReduceMotion.current
+        val navigateBack: () -> Unit = { popBackStackOrFinish(backStack) }
 
         NavDisplay(
             backStack = backStack,
-            onBack = { backStack.removeLastOrNull() },
+            onBack = navigateBack,
             transitionSpec = {
                 if (reduceMotionEnabled) {
                     EnterTransition.None togetherWith ExitTransition.None
@@ -240,7 +257,7 @@ class MainActivity : BaseThemeActivity() {
             entryProvider = entryProvider {
                 entry<FeedSuggestions> {
                     FeedSuggestionsScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
@@ -272,12 +289,13 @@ class MainActivity : BaseThemeActivity() {
                             backStack.add(feedSource.toEditFeed())
                         },
                         onFeedSuggestionsClick = { backStack.add(FeedSuggestions) },
+                        onNavigateToNextFeed = { homeViewModel.onNavigateToNextFeed() },
                     )
                 }
 
                 entry<Settings> {
                     SettingsScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                         navigateToFeedsAndAccounts = { backStack.add(FeedsAndAccounts) },
                         navigateToFeedListSettings = { backStack.add(FeedListSettings) },
                         navigateToReadingBehavior = { backStack.add(ReadingBehavior) },
@@ -290,7 +308,7 @@ class MainActivity : BaseThemeActivity() {
 
                 entry<FeedsAndAccounts> {
                     FeedsAndAccountsScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                         onFeedListClick = { backStack.add(FeedList) },
                         onAddFeedClick = { backStack.add(AddFeed) },
                         navigateToImportExport = { backStack.add(ImportExport) },
@@ -302,51 +320,51 @@ class MainActivity : BaseThemeActivity() {
 
                 entry<FeedListSettings> {
                     FeedListSettingsScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<ReadingBehavior> {
                     ReadingBehaviorScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<SyncAndStorage> {
                     SyncAndStorageScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<Extras> {
                     ExtrasScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<WidgetSettings> {
                     WidgetSettingsScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<AboutAndSupport> {
                     AboutAndSupportScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                         onAboutClick = { backStack.add(About) },
                     )
                 }
 
                 entry<AddFeed> {
                     AddFeedScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<FeedList> {
                     FeedSourceListScreen(
                         onAddFeedClick = { backStack.add(AddFeed) },
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                         onEditFeedClick = { feedSource ->
                             backStack.add(feedSource.toEditFeed())
                         },
@@ -355,23 +373,22 @@ class MainActivity : BaseThemeActivity() {
 
                 entry<About> {
                     AboutScreen(
-                        onBackClick = { backStack.removeLastOrNull() },
+                        onBackClick = navigateBack,
                         navigateToLibrariesScreen = { backStack.add(Licenses) },
                     )
                 }
 
                 entry<Licenses> {
                     LicensesScreen(
-                        onBackClick = { backStack.removeLastOrNull() },
+                        onBackClick = navigateBack,
                     )
                 }
 
                 entry<ImportExport> {
                     ImportExportScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
-                        onDoneClick = {
+                        navigateBack = navigateBack,
+                        refreshFeeds = {
                             homeViewModel.getNewFeeds()
-                            backStack.removeLastOrNull()
                         },
                     )
                 }
@@ -391,7 +408,7 @@ class MainActivity : BaseThemeActivity() {
                         readerModeState = readerModeState,
                         fontSize = fontSizeState,
                         themeMode = themeState,
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                         onUpdateFontSize = { newFontSize ->
                             readerModeViewModel.updateFontSize(newFontSize)
                         },
@@ -411,7 +428,7 @@ class MainActivity : BaseThemeActivity() {
 
                 entry<Search> {
                     SearchScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                         navigateToReaderMode = { urlInfo ->
                             readerModeViewModel.getReaderModeHtml(urlInfo)
                             backStack.add(ReaderMode)
@@ -424,7 +441,7 @@ class MainActivity : BaseThemeActivity() {
 
                 entry<Accounts> {
                     AccountsScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                         navigateToFreshRssSync = { backStack.add(FreshRssSync) },
                         navigateToMinifluxSync = { backStack.add(MinifluxSync) },
                         navigateToBazquxSync = { backStack.add(BazquxSync) },
@@ -442,47 +459,55 @@ class MainActivity : BaseThemeActivity() {
 
                     EditScreen(
                         viewModel = viewModel,
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<FreshRssSync> {
                     FreshRssSyncScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<MinifluxSync> {
                     MinifluxSyncScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<BazquxSync> {
                     BazquxSyncScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<FeedbinSync> {
                     FeedbinSyncScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<Notifications> {
                     NotificationsSettingsScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
 
                 entry<BlockedWords> {
                     BlockedWordsScreen(
-                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateBack = navigateBack,
                     )
                 }
             },
         )
+    }
+
+    private fun popBackStackOrFinish(backStack: NavBackStack<NavKey>) {
+        if (backStack.size > 1) {
+            backStack.removeLastOrNull()
+        } else {
+            finish()
+        }
     }
 
     private fun handleDeepLinkState(

@@ -273,11 +273,13 @@ class DateFormatterImpl(
             hour()
             char(':')
             minute()
-            char(':')
-            second()
             optional {
-                char('.')
-                secondFraction(1, 9)
+                char(':')
+                second()
+                optional {
+                    char('.')
+                    secondFraction(1, 9)
+                }
             }
             optional {
                 char(' ')
@@ -647,67 +649,21 @@ class DateFormatterImpl(
         },
     )
 
-    private val timezoneReplacements = mapOf(
-        "EST" to "-0500", // Eastern Standard Time
-        "EDT" to "-0400", // Eastern Daylight Time
-        "CST" to "-0600", // Central Standard Time (US)
-        "CDT" to "-0500", // Central Daylight Time
-        "PST" to "-0800", // Pacific Standard Time
-        "PDT" to "-0700", // Pacific Daylight Time
-        "GMT" to "+0000", // Greenwich Mean Time
-        "UTC" to "+0000", // Coordinated Universal Time
-        "CET" to "+0100", // Central European Time
-        "CEST" to "+0200", // Central European Summer Time
-        "EEST" to "+0300", // Eastern European Summer Time
-    )
-
-    private fun normalizeTimezones(dateString: String): String {
-        var normalized = dateString
-        // Replace timezone abbreviations with numeric offsets
-        timezoneReplacements.forEach { (abbrev, offset) ->
-            val regex = Regex("\\b$abbrev\\b")
-            normalized = regex.replace(normalized, offset)
-        }
-
-        // Normalize non-standard month abbreviation "Sept" -> "Sep" (case-insensitive)
-        // This helps parse inputs like: "Fri, 18 Sept 2020 10:30:00 -0600"
-        normalized = Regex("\\bsept\\b", RegexOption.IGNORE_CASE)
-            .replace(normalized, "Sep")
-
-        // Handle double spaces
-        normalized = normalized.replace("  ", " ")
-
-        // Remove appended timestamp (garbage)
-        // e.g. "Mar, 09 Dic 2025 13:46:55 +0000 2025-12-09 13:46:55"
-        normalized = normalized.replace(Regex("\\s\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}$"), "")
-
-        return normalized
-    }
-
     override fun getDateMillisFromString(dateString: String): Long? {
         if (dateString == "Date:") {
             return null
         }
-        var exception: Throwable? = null
-        var errorMessage: String? = null
 
-        // Replace timezone abbreviations with numeric offsets
-        val normalizedDateString = normalizeTimezones(dateString)
+        val basicNormalized = normalizeBasic(dateString)
 
-        val parsed = formats.firstNotNullOfOrNull { format ->
-            try {
-                format.parse(normalizedDateString)
-            } catch (e: IllegalArgumentException) {
-                exception = e
-                errorMessage = "Error while trying to format the date with dateFormatter. Date: $dateString"
-                null
-            }
-        }
+        // First pass: try all formats with cheap normalization only
+        val parsed = tryParse(basicNormalized)
+            // Second pass (fallback): apply expensive locale normalization for non-English dates
+            ?: tryParse(normalizeLocale(basicNormalized))
 
         if (parsed == null) {
-            exception?.printStackTrace()
-            logger.e(exception) {
-                errorMessage ?: "N/A"
+            logger.e {
+                "Error while trying to format the date with dateFormatter. Date: $dateString"
             }
         }
 
@@ -758,9 +714,13 @@ class DateFormatterImpl(
 
             else -> {
                 LocalDateTime.Format {
-                    dayAndMonth(dateFormat)
-                    char('/')
-                    year()
+                    if (dateFormat == DateFormat.ISO) {
+                        yearMonthDay()
+                    } else {
+                        dayAndMonth(dateFormat)
+                        char('/')
+                        year()
+                    }
                     chars(" - ")
                     hourAndMinute(timeFormat)
                 }
@@ -768,40 +728,6 @@ class DateFormatterImpl(
         }
 
         return dateFormatBuilder.format(dateTime)
-    }
-
-    private fun DateTimeFormatBuilder.WithDateTime.dayAndMonth(dateFormat: DateFormat) {
-        when (dateFormat) {
-            DateFormat.NORMAL -> {
-                day()
-                char('/')
-                monthNumber()
-            }
-
-            DateFormat.AMERICAN -> {
-                monthNumber()
-                char('/')
-                day()
-            }
-        }
-    }
-
-    private fun DateTimeFormatBuilder.WithDateTime.hourAndMinute(timeFormat: TimeFormat) {
-        when (timeFormat) {
-            TimeFormat.HOURS_24 -> {
-                hour()
-                char(':')
-                minute()
-            }
-
-            TimeFormat.HOURS_12 -> {
-                amPmHour()
-                char(':')
-                minute()
-                char(' ')
-                amPmMarker("AM", "PM")
-            }
-        }
     }
 
     override fun formatDateForLastRefresh(millis: Long): String {
@@ -833,4 +759,185 @@ class DateFormatterImpl(
         val dateTime: LocalDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
         return "${dateTime.day}-${dateTime.month.number}-${dateTime.year}"
     }
+
+    private fun normalizeBasic(dateString: String): String {
+        var normalized = dateString
+        // Replace timezone abbreviations with numeric offsets
+        timezoneReplacements.forEach { (abbrev, offset) ->
+            val regex = Regex("\\b$abbrev\\b")
+            normalized = regex.replace(normalized, offset)
+        }
+
+        // Normalize non-standard month abbreviation "Sept" -> "Sep" (case-insensitive)
+        // This helps parse inputs like: "Fri, 18 Sept 2020 10:30:00 -0600"
+        normalized = Regex("\\bsept\\b", RegexOption.IGNORE_CASE)
+            .replace(normalized, "Sep")
+
+        // Handle double spaces
+        normalized = normalized.replace("  ", " ")
+
+        // Handle missing space after day-of-week comma (e.g., "Wed,28" -> "Wed, 28")
+        normalized = Regex("([A-Za-z]{3}),(\\d)")
+            .replace(normalized) { matchResult ->
+                "${matchResult.groupValues[1]}, ${matchResult.groupValues[2]}"
+            }
+
+        // Handle extra hyphen before T in ISO format (e.g., "2026-02-04-T08:00:00" -> "2026-02-04T08:00:00")
+        normalized = normalized.replace("-T", "T")
+
+        // Remove appended timestamp (garbage)
+        // e.g. "Mar, 09 Dic 2025 13:46:55 +0000 2025-12-09 13:46:55"
+        normalized = normalized.replace(Regex("\\s\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}$"), "")
+
+        return normalized
+    }
+
+    /**
+     * Expensive fallback normalization for non-English locale dates.
+     * Strips non-English day-of-week prefixes and replaces non-English month
+     * abbreviations with English equivalents.
+     * Only called when [normalizeBasic] + all formats fail to parse.
+     */
+    private fun normalizeLocale(dateString: String): String {
+        var normalized = dateString
+
+        // Strip non-English day-of-week prefix from RFC-822 style dates.
+        // e.g. "lun, 16 Mar 2026 ..." -> "16 Mar 2026 ..."
+        // e.g. "Σάβ, 21 Μαρ 2026 ..." -> "21 Μαρ 2026 ..."
+        val dayOfWeekMatch = Regex("^(\\p{L}+),\\s+").find(normalized)
+        if (dayOfWeekMatch != null) {
+            val dayName = dayOfWeekMatch.groupValues[1]
+            if (dayName !in englishDayAbbreviations) {
+                normalized = normalized.removePrefix(dayOfWeekMatch.value)
+            }
+        }
+
+        // Replace non-English month abbreviations with English equivalents.
+        // e.g. "21 Μαρ 2026" -> "21 Mar 2026", "09 Dic 2025" -> "09 Dec 2025"
+        // Uses Unicode-aware boundaries (\p{L}, \d) instead of \b which is ASCII-only in Java.
+        monthReplacements.forEach { (localized, english) ->
+            val regex = Regex(
+                "(?<![\\p{L}\\d])${Regex.escape(localized)}(?![\\p{L}\\d])",
+                RegexOption.IGNORE_CASE,
+            )
+            normalized = regex.replace(normalized, english)
+        }
+
+        return normalized
+    }
+
+    private fun tryParse(dateString: String) = formats.firstNotNullOfOrNull { format ->
+        try {
+            format.parse(dateString)
+        } catch (_: Throwable) {
+            null
+        }
+    }
+
+    private fun DateTimeFormatBuilder.WithDateTime.dayAndMonth(dateFormat: DateFormat) {
+        when (dateFormat) {
+            DateFormat.NORMAL -> {
+                day()
+                char('/')
+                monthNumber()
+            }
+
+            DateFormat.AMERICAN -> {
+                monthNumber()
+                char('/')
+                day()
+            }
+
+            DateFormat.ISO -> {
+                yearMonthDay()
+            }
+        }
+    }
+
+    private fun DateTimeFormatBuilder.WithDateTime.yearMonthDay() {
+        year()
+        char('-')
+        monthNumber()
+        char('-')
+        day()
+    }
+
+    private fun DateTimeFormatBuilder.WithDateTime.hourAndMinute(timeFormat: TimeFormat) {
+        when (timeFormat) {
+            TimeFormat.HOURS_24 -> {
+                hour()
+                char(':')
+                minute()
+            }
+
+            TimeFormat.HOURS_12 -> {
+                amPmHour(padding = Padding.NONE)
+                char(':')
+                minute()
+                char(' ')
+                amPmMarker("AM", "PM")
+            }
+        }
+    }
+
+    // Non-English month abbreviations mapped to English equivalents.
+    // Covers: French, Italian, Spanish, Portuguese, German, Dutch, Greek, Turkish, Polish, Romanian
+    private val monthReplacements = mapOf(
+        // January
+        "janv" to "Jan", "jan" to "Jan", "gen" to "Jan", "ene" to "Jan",
+        "Ιαν" to "Jan", "oca" to "Jan", "sty" to "Jan", "ian" to "Jan",
+        // February
+        "fév" to "Feb", "févr" to "Feb", "feb" to "Feb",
+        "fev" to "Feb", "Φεβ" to "Feb", "şub" to "Feb", "lut" to "Feb",
+        // March
+        "mars" to "Mar", "mar" to "Mar", "mär" to "Mar",
+        "mrt" to "Mar", "Μαρ" to "Mar", "Μάρ" to "Mar",
+        // April
+        "avr" to "Apr", "avri" to "Apr", "apr" to "Apr", "abr" to "Apr",
+        "Απρ" to "Apr", "nis" to "Apr", "kwi" to "Apr",
+        // May
+        "mai" to "May", "mag" to "May", "may" to "May",
+        "mei" to "May", "Μαΐ" to "May", "Μάι" to "May",
+        "Μαϊ" to "May", "mayıs" to "May", "maj" to "May",
+        // June
+        "juin" to "Jun", "giu" to "Jun", "jun" to "Jun",
+        "Ιουν" to "Jun", "haz" to "Jun", "cze" to "Jun", "iun" to "Jun",
+        // July
+        "juil" to "Jul", "juill" to "Jul", "lug" to "Jul", "jul" to "Jul",
+        "Ιουλ" to "Jul", "tem" to "Jul", "lip" to "Jul", "iul" to "Jul",
+        // August
+        "août" to "Aug", "aou" to "Aug", "ago" to "Aug", "aug" to "Aug",
+        "Αυγ" to "Aug", "ağu" to "Aug", "sie" to "Aug",
+        // September
+        "sep" to "Sep", "set" to "Sep",
+        "Σεπ" to "Sep", "eyl" to "Sep", "wrz" to "Sep",
+        // October
+        "oct" to "Oct", "okt" to "Oct", "ott" to "Oct", "out" to "Oct",
+        "Οκτ" to "Oct", "eki" to "Oct", "paź" to "Oct",
+        // November
+        "nov" to "Nov", "Νοε" to "Nov", "kas" to "Nov", "lis" to "Nov",
+        "noi" to "Nov",
+        // December
+        "déc" to "Dec", "dic" to "Dec", "dez" to "Dec", "dec" to "Dec",
+        "Δεκ" to "Dec", "ara" to "Dec", "gru" to "Dec",
+    )
+
+    private val englishDayAbbreviations = setOf(
+        "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",
+        "mon", "tue", "wed", "thu", "fri", "sat", "sun",
+    )
+
+    private val timezoneReplacements = mapOf(
+        "EST" to "-0500", // Eastern Standard Time
+        "EDT" to "-0400", // Eastern Daylight Time
+        "CST" to "-0600", // Central Standard Time (US)
+        "CDT" to "-0500", // Central Daylight Time
+        "PST" to "-0800", // Pacific Standard Time
+        "PDT" to "-0700", // Pacific Daylight Time
+        "GMT" to "+0000", // Greenwich Mean Time
+        "UTC" to "+0000", // Coordinated Universal Time
+        "CET" to "+0100", // Central European Time
+        "CEST" to "+0200", // Central European Summer Time
+        "EEST" to "+0300", // Eastern European Summer Time
+    )
 }

@@ -36,11 +36,6 @@ internal fun MenuBarScope.ViewMenu(
             )
         }
 
-        Item(
-            text = LocalFeedFlowStrings.current.feedListAppearance,
-            onClick = callbacks.onFeedListAppearanceClick,
-        )
-
         Separator()
 
         CheckboxItem(
@@ -66,7 +61,6 @@ internal fun MenuBarScope.ViewMenu(
 
 internal data class ViewMenuCallbacks(
     val onThemeModeSelected: (ThemeMode) -> Unit,
-    val onFeedListAppearanceClick: () -> Unit,
     val onShowReadItemsToggled: (Boolean) -> Unit,
     val onFeedOrderSelected: (FeedOrder) -> Unit,
 )

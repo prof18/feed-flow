@@ -19,6 +19,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceJvm
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDownloadParam
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveNeedsReAuthException
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
@@ -81,10 +82,15 @@ internal class FeedSyncJvmWorker(
                 feedSyncer.updateFeedItemsToSyncDatabase()
                 feedSyncer.closeDB()
 
-                accountSpecificUpload()
+                val uploaded = accountSpecificUpload()
 
-                settingsRepository.setIsSyncUploadRequired(false)
-                emitSuccessMessage()
+                if (uploaded) {
+                    settingsRepository.setIsSyncUploadRequired(false)
+                    emitSuccessMessage()
+                }
+            } catch (e: GoogleDriveNeedsReAuthException) {
+                logger.d("Google Drive needs re-authorization", e)
+                feedSyncMessageQueue.emitResult(SyncResult.GoogleDriveNeedReAuth())
             } catch (e: Exception) {
                 if (!e.isTemporaryNetworkError()) {
                     logger.e("Upload to dropbox failed", e)
@@ -94,7 +100,7 @@ internal class FeedSyncJvmWorker(
         }
     }
 
-    private suspend fun accountSpecificUpload() =
+    private suspend fun accountSpecificUpload(): Boolean =
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.DROPBOX -> {
                 restoreDropboxClient()
@@ -107,6 +113,7 @@ internal class FeedSyncJvmWorker(
                 dropboxDataSource.performUpload(dropboxUploadParam)
                 dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.d { "Upload to dropbox successfully" }
+                true
             }
 
             SyncAccounts.ICLOUD -> {
@@ -118,21 +125,25 @@ internal class FeedSyncJvmWorker(
                     }
 
                     UploadResult.ICLOUD_FOLDER_URL_NULL -> {
-                        logger.e { "iCloud folder URL is null" }
+                        logger.d { "iCloud folder URL is null" }
                     }
 
                     UploadResult.UPLOAD_ERROR -> {
-                        logger.e { "Error during iCloud upload" }
+                        logger.d { "Error during iCloud upload" }
                     }
 
                     UploadResult.UNKNOWN_ERROR -> {
-                        logger.e { "Unknown error during iCloud upload. Check the enum mapping" }
+                        logger.d { "Unknown error during iCloud upload. Check the enum mapping" }
                     }
                 }
+                true
             }
 
             SyncAccounts.GOOGLE_DRIVE -> {
                 restoreGoogleDriveClient()
+                if (!googleDriveDataSource.isClientSet()) {
+                    return false
+                }
 
                 val googleDriveUploadParam = GoogleDriveUploadParam(
                     fileName = getDatabaseNameWithExtension(),
@@ -142,6 +153,7 @@ internal class FeedSyncJvmWorker(
                 googleDriveDataSource.performUpload(googleDriveUploadParam)
                 googleDriveSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.d { "Upload to Google Drive successfully" }
+                true
             }
 
             SyncAccounts.LOCAL,
@@ -149,9 +161,7 @@ internal class FeedSyncJvmWorker(
             SyncAccounts.MINIFLUX,
             SyncAccounts.BAZQUX,
             SyncAccounts.FEEDBIN,
-            -> {
-                // Do nothing
-            }
+            -> true
         }
 
     override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
@@ -165,11 +175,16 @@ internal class FeedSyncJvmWorker(
             try {
                 feedSyncer.closeDB()
                 accountSpecificDownload()
+            } catch (e: GoogleDriveNeedsReAuthException) {
+                logger.d("Google Drive needs re-authorization", e)
+                SyncResult.GoogleDriveNeedReAuth()
             } catch (e: Exception) {
+                val currentAccount = accountsRepository.getCurrentSyncAccount()
+                val downloadError = syncDownloadErrorForAccount(currentAccount)
                 if (!e.isTemporaryNetworkError()) {
-                    logger.e("Download from dropbox failed", e)
+                    logger.e("Download failed for account $currentAccount", e)
                 }
-                SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
+                SyncResult.General(downloadError)
             }
         }
     }
@@ -197,33 +212,36 @@ internal class FeedSyncJvmWorker(
                     }
 
                     DownloadResult.URL_NULL -> {
-                        logger.e { "iCloud URL is null" }
+                        logger.d { "iCloud URL is null" }
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.TEMP_URL_NULL -> {
-                        logger.e { "Temporary URL is null" }
+                        logger.d { "Temporary URL is null" }
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.DOWNLOAD_ERROR -> {
-                        logger.e { "Error during iCloud download" }
+                        logger.d { "Error during iCloud download" }
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.DATABASE_REPLACE_ERROR -> {
-                        logger.e { "Error during database replace" }
+                        logger.d { "Error during database replace" }
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.UNKNOWN_ERROR -> {
-                        logger.e { "Unknown error during iCloud download. Check the enum mapping" }
+                        logger.d { "Unknown error during iCloud download. Check the enum mapping" }
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
                 }
             }
             SyncAccounts.GOOGLE_DRIVE -> {
                 restoreGoogleDriveClient()
+                if (!googleDriveDataSource.isClientSet()) {
+                    return SyncResult.General(SyncDownloadError.GoogleDriveDownloadFailed)
+                }
 
                 val googleDriveDownloadParam = GoogleDriveDownloadParam(
                     fileName = getDatabaseNameWithExtension(),
@@ -317,3 +335,16 @@ internal class FeedSyncJvmWorker(
     private suspend fun emitSuccessMessage() =
         feedSyncMessageQueue.emitResult(SyncResult.Success)
 }
+
+internal fun syncDownloadErrorForAccount(account: SyncAccounts): SyncDownloadError =
+    when (account) {
+        SyncAccounts.GOOGLE_DRIVE -> SyncDownloadError.GoogleDriveDownloadFailed
+        SyncAccounts.ICLOUD -> SyncDownloadError.ICloudDownloadFailed
+        SyncAccounts.DROPBOX,
+        SyncAccounts.LOCAL,
+        SyncAccounts.FRESH_RSS,
+        SyncAccounts.MINIFLUX,
+        SyncAccounts.BAZQUX,
+        SyncAccounts.FEEDBIN,
+        -> SyncDownloadError.DropboxDownloadFailed
+    }

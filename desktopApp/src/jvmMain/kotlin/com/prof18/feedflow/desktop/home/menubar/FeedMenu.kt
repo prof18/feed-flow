@@ -39,18 +39,6 @@ internal fun MenuBarScope.FeedMenu(
         }
 
         Item(
-            text = LocalFeedFlowStrings.current.feedsTitle,
-            onClick = callbacks.onFeedsClick,
-            shortcut = if (isMacOS) {
-                KeyShortcut(Key.L, meta = true)
-            } else {
-                KeyShortcut(Key.L, ctrl = true)
-            },
-        )
-
-        Separator()
-
-        Item(
             text = LocalFeedFlowStrings.current.settingsBlockedWords,
             onClick = callbacks.onBlockedWordsClick,
         )
@@ -60,6 +48,5 @@ internal fun MenuBarScope.FeedMenu(
 internal data class FeedMenuCallbacks(
     val onAddFeed: () -> Unit,
     val onEditFeed: (FeedSource) -> Unit,
-    val onFeedsClick: () -> Unit,
     val onBlockedWordsClick: () -> Unit,
 )

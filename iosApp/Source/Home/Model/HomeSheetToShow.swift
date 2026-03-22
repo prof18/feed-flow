@@ -15,6 +15,7 @@ enum HomeSheetToShow: Identifiable, Hashable {
     case addFeed
     case importExport
     case editFeed(FeedSource)
+    case feedSuggestions
 
     var id: Int {
         hashValue

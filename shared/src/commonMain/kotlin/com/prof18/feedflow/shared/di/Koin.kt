@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.di
 
-import androidx.lifecycle.ViewModel
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
@@ -51,6 +50,7 @@ import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.FeedbinSyncViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
+import com.prof18.feedflow.shared.presentation.GetNextFeedFilterOrNullUseCase
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.MainSettingsViewModel
@@ -71,13 +71,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
-import org.koin.core.definition.Definition
-import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.parameter.parametersOf
-import org.koin.core.qualifier.Qualifier
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
 import kotlin.time.Clock
@@ -200,6 +198,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedCategoryRepository = get(),
             feedStateRepository = get(),
             feedFetcherRepository = get(),
+            getNextFeedFilterOrNullUseCase = get(),
         )
     }
 
@@ -580,18 +579,17 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             backgroundSyncScheduler = get(),
         )
     }
+
+    single {
+        GetNextFeedFilterOrNullUseCase(
+            feedSourcesRepository = get(),
+        )
+    }
 }
 
 internal expect fun platformLogWriters(): List<LogWriter>
 
 internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module
-
-inline fun <reified T : ViewModel> Module.viewModel(
-    qualifier: Qualifier? = null,
-    noinline definition: Definition<T>,
-): KoinDefinition<T> {
-    return factory(qualifier, definition)
-}
 
 inline fun <reified T> Scope.getWith(vararg params: Any?): T {
     return get(parameters = { parametersOf(*params) })

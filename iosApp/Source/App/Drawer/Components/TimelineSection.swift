@@ -2,7 +2,7 @@
 //  TimelineSection.swift
 //  FeedFlow
 //
-//  Created by AI Assistant on 19/03/24.
+//  Created by Marco Gomiero on 19/03/24.
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
@@ -11,29 +11,33 @@ import SwiftUI
 
 struct TimelineSection: View {
     let timeline: [DrawerItem]
-    let onSelect: (DrawerItem) -> Void
+    let isSelected: Bool
+    let isCompact: Bool
+    let onSelect: () -> Void
     let onFeedFilterSelected: (FeedFilter) -> Void
 
     var body: some View {
-        ForEach(timeline, id: \.self) { drawerItem in
+        if let timelineItem = timeline.first as? DrawerItem.Timeline {
             HStack {
                 Label(feedFlowStrings.drawerTitleTimeline, systemImage: "newspaper")
                 Spacer()
-                if let timelineItem = drawerItem as? DrawerItem.Timeline,
-                   timelineItem.unreadCount > 0 {
+                if timelineItem.unreadCount > 0 {
                     Text("\(timelineItem.unreadCount)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(.horizontal, 8)
-                        .background(Color.secondary.opacity(0.2))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.secondary.opacity(0.15))
                         .clipShape(Capsule())
                 }
             }
             .contentShape(Rectangle())
             .onTapGesture {
-                onSelect(drawerItem)
+                onSelect()
                 onFeedFilterSelected(FeedFilter.Timeline())
             }
+            .tag(SidebarSelection.timeline)
+            .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))
         }
     }
 }

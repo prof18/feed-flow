@@ -15,10 +15,16 @@ struct SearchScreenContent: View {
     @Binding var searchFilter: SearchFilter
     let currentFeedFilter: FeedFilter?
     @Binding var feedFontSizes: FeedFontSizes
+    var feedItemDisplaySettings = FeedItemDisplaySettings(
+        isHideUnreadDotEnabled: false,
+        isHideFeedSourceEnabled: false,
+        descriptionLineLimit: .three
+    )
 
     @State private var isPresented = true
 
     let readerModeViewModel: ReaderModeViewModel
+    let onReaderModeNavigate: (() -> Void)?
     let onSearchFilterSelected: (SearchFilter) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
@@ -77,7 +83,7 @@ struct SearchScreenContent: View {
         Button {
             handleSearchItemTap(feedItem: feedItem)
         } label: {
-            FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes)
+            FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes, feedItemDisplaySettings: feedItemDisplaySettings)
         }
         .buttonStyle(.plain)
         .id(feedItem.id)
@@ -87,6 +93,7 @@ struct SearchScreenContent: View {
         .contextMenu {
             makeSearchItemContextMenu(feedItem: feedItem)
                 .environment(browserSelector)
+                .environment(appState)
         }
     }
 
@@ -99,14 +106,19 @@ struct SearchScreenContent: View {
                 openOnlyOnBrowser: false,
                 isBookmarked: feedItem.isBookmarked,
                 linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
-                commentsUrl: feedItem.commentsUrl
+                commentsUrl: feedItem.commentsUrl,
+                imageUrl: feedItem.imageUrl
             )
             readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
-            self.appState.navigate(route: CommonViewRoute.readerMode)
+            if let navigate = onReaderModeNavigate {
+                navigate()
+            } else {
+                self.appState.navigate(route: CommonViewRoute.readerMode)
+            }
         } else if browserSelector.openInAppBrowser() {
             if let url = URL(string: feedItem.url) {
                 if browserSelector.isValidForInAppBrowser(url) {
-                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                    appState.openInAppBrowser(url: url)
                 } else {
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                 }
@@ -183,7 +195,7 @@ struct SearchScreenContent: View {
                 if browserSelector.openInAppBrowser() {
                     if let url = URL(string: commentsUrl) {
                         if browserSelector.isValidForInAppBrowser(url) {
-                            appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                            appState.openInAppBrowser(url: url)
                         } else {
                             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
                         }

@@ -16,8 +16,8 @@ Galvenās funkcijas:
   ar iCloud (iOS/macOS) vai Dropbox (visas platformas)
 - FreshRSS integrācija: variet pievienot savu FreshRSS serveri, lai veiktu
   uzlabotu plūsmu pārvaldību
-- Elastīgi lasīšanas varianti: variet atlasīt tīmekļa skatu, iebūvēto lasītāju
-  vai savu vēlamo pārlūku
+- Iespēja atlasīt lasīšanas režīmu: tīmekļa skatu, iebūvēto lasītāju vai savu
+  vēlamo pārlūku
 - Uz konfidencialitāti orientēts: Iespēja atlasīt savu iecienītāko privātuma
   pārlūku, lai iegūtu personisku lasīšanas pieredzi
 - Vienkārši pāriet uz citu RSS lietotni: variet ievietot un izgūt RSS ziņu
@@ -37,8 +37,8 @@ Ideāli piemērots:
 - Satura veidotājiem, kas seko vairākiem ziņu avotiem
 - Ikvienam, kuri vēlas vienkāršot savu digitālo lasīšanas pieredzi
 
-Pievienojieties tūkstošiem lasītāju, kuri izvēlējušies FeedFlow, kā labāko veidu
-palikt informētiem mūsu digitālajā informācijas laikmetā.
+Esiet starp tiem tūkstošiem lasītāju, kuri izvēlējušies FeedFlow, kā labāko
+veidu palikt informētiem mūsu digitālajā informācijas laikmetā.
 
 Piezīme: Sinhronizācijas funkcijas pašlaik ir beta stadijā. Pieredze tiek
 nepārtraukti uzlabota, pamatojoties uz lietotāju atsauksmēm.

@@ -109,7 +109,6 @@
     <string name="account_connect_button">Conectar</string>
     <string name="backup_button">Copia de apoio</string>
     <string name="link_copied_success">Ligazón copiada correctamente!</string>
-    <string name="reader_mode_warning">ℹ O modo lector intenta obter o contido do artigo. Podería haber algún erro ou caracteres incorrectos.</string>
     <string name="settings_accounts">Contas</string>
     <string name="feed_edited_message">Actualizouse a canle %s</string>
     <string name="edit_feed_source_name_button">Editar</string>

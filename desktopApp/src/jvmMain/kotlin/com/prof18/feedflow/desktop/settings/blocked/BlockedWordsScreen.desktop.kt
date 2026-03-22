@@ -2,30 +2,32 @@ package com.prof18.feedflow.desktop.settings.blocked
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.prof18.feedflow.desktop.desktopViewModel
-import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.utils.generateUniqueKey
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
-import com.prof18.feedflow.shared.ui.settings.BlockedWordsScreenContent
+import com.prof18.feedflow.shared.ui.settings.BlockedWordsContent
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import org.koin.compose.viewmodel.koinViewModel
 
-internal class BlockedWordsScreen : Screen {
+@Composable
+internal fun BlockedWordsScreen(
+    onCloseRequest: () -> Unit,
+) {
+    val viewModel = koinViewModel<BlockedWordsViewModel>()
+    val keywords = viewModel.wordsState.collectAsState().value
+    val title = LocalFeedFlowStrings.current.settingsBlockedWords
 
-    override val key: String = generateUniqueKey()
-
-    @Composable
-    override fun Content() {
-        val viewModel = desktopViewModel { DI.koin.get<BlockedWordsViewModel>() }
-        val navigator = LocalNavigator.currentOrThrow
-        val keywords = viewModel.wordsState.collectAsState().value
-
-        BlockedWordsScreenContent(
+    DesktopDialogWindow(
+        title = title,
+        size = DpSize(500.dp, 700.dp),
+        onCloseRequest = onCloseRequest,
+    ) { modifier ->
+        BlockedWordsContent(
             keywords = keywords,
-            onBackClick = { navigator.pop() },
             onAddWord = viewModel::onAddWord,
             onRemoveWord = viewModel::onRemoveWord,
+            modifier = modifier,
         )
     }
 }

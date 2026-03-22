@@ -1,7 +1,3 @@
-- Added Miniflux, Feedbin, Bazqux, and Google Drive sync integrations
-- Widget customization and reconfiguration support
-- Article export and backup functionality
-- Open images full screen from reader mode
-- Search filters and mark all above/below as read
-- Feed Suggestions to discover new content
-- Change feed category from drawer
+- Expanded Feed Suggestions with a new Marketing category and more curated sources
+- Fixed an issue where Reader Mode could show the wrong article if you switched between items quickly
+- Bug fixes and improvements

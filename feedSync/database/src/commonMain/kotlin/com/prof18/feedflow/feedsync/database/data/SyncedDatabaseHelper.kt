@@ -28,6 +28,7 @@ class SyncedDatabaseHelper(
 ) : KoinComponent {
 
     private var dbRef: AtomicReference<FeedFlowFeedSyncDB?> = AtomicReference(null)
+    private var driverRef: AtomicReference<SqlDriver?> = AtomicReference(null)
     private val dbMutex = Mutex()
 
     private suspend fun getDbRef(): FeedFlowFeedSyncDB =
@@ -37,6 +38,7 @@ class SyncedDatabaseHelper(
                     val scope = getKoin().getOrCreateScope(FEED_SYNC_SCOPE_NAME, named(FEED_SYNC_SCOPE_NAME))
 
                     val driver = scope.get<SqlDriver>(qualifier = named(SYNC_DB_DRIVER))
+                    driverRef.set(driver)
                     dbRef.set(FeedFlowFeedSyncDB(driver))
                 }
                 return@withLock requireNotNull(dbRef.get())
@@ -44,10 +46,21 @@ class SyncedDatabaseHelper(
         }
 
     fun closeScope() {
-        val scope = getKoin().getOrCreateScope(FEED_SYNC_SCOPE_NAME, named(FEED_SYNC_SCOPE_NAME))
-        val driver = scope.get<SqlDriver>(qualifier = named(SYNC_DB_DRIVER))
-        driver.close()
-        scope.close()
+        val driver = driverRef.value
+        val database = dbRef.value
+        if (driver == null && database == null) {
+            return
+        }
+
+        runCatching {
+            driver?.close()
+        }
+
+        runCatching {
+            getKoin().getScope(FEED_SYNC_SCOPE_NAME).close()
+        }
+
+        driverRef.set(null)
         dbRef.set(null)
     }
 

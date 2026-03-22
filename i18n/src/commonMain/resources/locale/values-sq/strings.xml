@@ -88,7 +88,6 @@
     <string name="search_hint_title">Fillo të shkruash…</string>
     <string name="search_hint_subtitle">rezultatet do të shfaqen automatikisht</string>
     <string name="link_copied_success">Lidhja u kopjua me sukses!</string>
-    <string name="reader_mode_warning">ℹ Modaliteti i leximit përpiqet të marrë përmbajtjen e artikullit. Mund të ketë gabime apo karaktere të padëshiruara.</string>
     <string name="settings_title_feed">Prurje</string>
     <string name="settings_accounts">Llogari</string>
     <string name="accounts_description">Lidh një llogari për të sinkronizuar prurjet, kategoritë, artikujt e lexuar dhe të shtuar te të preferuarat midis pajisjeve të tua.\n\nKy funksionalitet është në Beta, mund të ndodhin probleme (p.sh. artikujt e lexuar mund të mos sinkronizohen plotësisht). Më shumë shërbime do të mbështeten në të ardhme.n\n\nMbështetet vetëm një llogari në të njëjtën kohë.</string>

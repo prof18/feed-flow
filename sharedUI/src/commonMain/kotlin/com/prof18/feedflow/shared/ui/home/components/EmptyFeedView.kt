@@ -17,7 +17,7 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
-internal fun EmptyFeedView(
+fun EmptyFeedView(
     currentFeedFilter: FeedFilter,
     isDrawerVisible: Boolean,
     onReloadClick: () -> Unit,

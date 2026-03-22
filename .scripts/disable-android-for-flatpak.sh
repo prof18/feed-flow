@@ -11,8 +11,8 @@ disable_android_in_file() {
     awk '
     BEGIN { in_android_block = 0; brace_count = 0 }
     
-    # Match androidTarget lines
-    /^[[:space:]]*androidTarget/ {
+    # Match androidLibrary lines
+    /^[[:space:]]*androidLibrary/ {
         print "// " $0
         if ($0 ~ /{[[:space:]]*$/) {
             in_android_block = 1
@@ -20,7 +20,7 @@ disable_android_in_file() {
         }
         next
     }
-    
+
     # Match android { blocks
     /^[[:space:]]*android[[:space:]]*{/ {
         print "// " $0
@@ -28,7 +28,7 @@ disable_android_in_file() {
         brace_count = 1
         next
     }
-    
+
     # Handle lines inside android blocks
     in_android_block {
         # Special case: looking for opening brace after val declaration
@@ -46,9 +46,9 @@ disable_android_in_file() {
                 if (char == "}") brace_count--
             }
         }
-        
+
         print "// " $0
-        
+
         # End of block when brace count reaches 0
         if (brace_count <= 0) {
             in_android_block = 0
@@ -56,19 +56,19 @@ disable_android_in_file() {
         }
         next
     }
-    
+
     # Match Android plugin applications
     /alias\(libs\.plugins\.android\./ {
         print "// " $0
         next
     }
-    
+
     # Match kotlin.android plugin
     /alias\(libs\.plugins\.kotlin\.android\)/ {
         print "// " $0
         next
     }
-    
+
     # Match direct android plugin applications
     /apply\("com\.android\./ {
         print "// " $0
@@ -86,19 +86,19 @@ disable_android_in_file() {
         print "// " $0
         next
     }
-    
+
     # Match debugImplementation lines (Android-specific)
     /debugImplementation/ {
         print "// " $0
         next
     }
-    
+
     # Match android gradle plugin dependencies
     /libs\.android\.gradle\.plugin/ {
         print "// " $0
         next
     }
-    
+
     # Match LibraryExtension configuration blocks
     /configure<LibraryExtension>/ {
         print "// " $0
@@ -106,7 +106,15 @@ disable_android_in_file() {
         brace_count = 1
         next
     }
-    
+
+    # Match KotlinMultiplatformAndroidLibraryTarget configuration blocks
+    /configure<KotlinMultiplatformAndroidLibraryTarget>/ {
+        print "// " $0
+        in_android_block = 1
+        brace_count = 1
+        next
+    }
+
     # Match pure Android source sets (not commonJvmAndroid)
     /^[[:space:]]*androidMain[[:space:]]*{/ {
         print "// " $0
@@ -114,8 +122,8 @@ disable_android_in_file() {
         brace_count = 1
         next
     }
-    
-    /^[[:space:]]*val androidUnitTest/ {
+
+    /getByName\("androidHostTest"\)/ {
         print "// " $0
         in_android_block = 1
         # Check if opening brace is on same line

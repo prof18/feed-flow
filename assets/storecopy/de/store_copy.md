@@ -49,7 +49,7 @@ Alle ihre Feeds in der Tasche
 
 ## Screenshot 3
 
-Import der bestehenden RSS-Sammlung
+Bestehende Sammlung importieren
 
 ## Screenshot 4
 

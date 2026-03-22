@@ -87,8 +87,8 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
 
         feedStateRepository.feedState.test {
             awaitItem() shouldBe emptyList()
-            viewModel.updateDateFormat(DateFormat.AMERICAN)
-            assertEquals(DateFormat.AMERICAN, viewModel.state.value.dateFormat)
+            viewModel.updateDateFormat(DateFormat.ISO)
+            assertEquals(DateFormat.ISO, viewModel.state.value.dateFormat)
             awaitItem()
         }
     }

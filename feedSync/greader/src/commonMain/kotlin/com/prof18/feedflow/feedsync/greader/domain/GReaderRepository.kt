@@ -366,7 +366,7 @@ class GReaderRepository internal constructor(
         logger.d { "Result: $result" }
 
         if (result.isError()) {
-            logger.e { "Failed to fetch starred items: $result" }
+            logger.d { "Failed to fetch starred items: $result" }
             return result.failure.error()
         }
 
@@ -383,7 +383,7 @@ class GReaderRepository internal constructor(
         )
 
         if (result.isError()) {
-            logger.e { "Failed to fetch unread items: $result" }
+            logger.d { "Failed to fetch unread items: $result" }
             return result.failure.error()
         }
 
@@ -403,7 +403,7 @@ class GReaderRepository internal constructor(
             val result = block(currentContinuation)
 
             if (result.isError()) {
-                logger.e { "Failed to fetch reading list items: $result" }
+                logger.d { "Failed to fetch reading list items: $result" }
                 return result.failure.error()
             }
 
@@ -455,7 +455,7 @@ class GReaderRepository internal constructor(
             logger.d { "No items with since filter and empty DB; retrying without since" }
             idsResult = fetchItemIds(stream = stream, excludedStream = excludedStream, since = null)
             if (idsResult.isError()) {
-                logger.e { "Failed to fetch item IDs without since: $idsResult" }
+                logger.d { "Failed to fetch item IDs without since: $idsResult" }
                 return idsResult.failure.error()
             }
             itemIds = idsResult.requireSuccess().map { item ->
@@ -474,7 +474,7 @@ class GReaderRepository internal constructor(
         for (chunk in itemIds.chunked(ITEM_CONTENTS_CHUNK_SIZE)) {
             val contentResult = gReaderClient.getItemContents(chunk)
             if (contentResult.isError()) {
-                logger.e { "Failed to fetch item contents: $contentResult" }
+                logger.d { "Failed to fetch item contents: $contentResult" }
                 return contentResult.failure.error()
             }
             contentResult.onSuccessSuspend { items ->

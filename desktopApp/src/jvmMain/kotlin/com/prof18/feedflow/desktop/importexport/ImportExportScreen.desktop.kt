@@ -8,14 +8,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.awt.AwtWindow
 import androidx.compose.ui.awt.ComposeWindow
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.ArticleExportFilter
+import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.ImportExportContentType
-import com.prof18.feedflow.desktop.desktopViewModel
-import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.utils.generateUniqueKey
+import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.desktop.utils.getUnixDeviceName
 import com.prof18.feedflow.shared.domain.csv.CsvInput
 import com.prof18.feedflow.shared.domain.csv.CsvOutput
@@ -24,128 +22,147 @@ import com.prof18.feedflow.shared.domain.opml.OpmlOutput
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.ui.importexport.ImportExportContent
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentSetOf
+import org.koin.compose.viewmodel.koinViewModel
 import java.awt.FileDialog
 import java.io.File
 import javax.swing.JFrame
 
-internal class ImportExportScreen(
-    private val composeWindow: ComposeWindow,
-    private val triggerFeedFetch: () -> Unit,
-) : Screen {
+@Composable
+internal fun ImportExportScreen(
+    composeWindow: ComposeWindow,
+    onCloseRequest: () -> Unit,
+    triggerFeedFetch: () -> Unit,
+) {
+    val viewModel = koinViewModel<ImportExportViewModel>()
+    val feedImporterState by viewModel.importExportState.collectAsState()
 
-    override val key: String = generateUniqueKey()
+    val importExportTitle = LocalFeedFlowStrings.current.importExportOpmlTitle
+    val importDialogTitle = LocalFeedFlowStrings.current.importDialogTitle
+    val exportDialogTitle = LocalFeedFlowStrings.current.exportDialogTitle
+    val importArticlesDialogTitle = LocalFeedFlowStrings.current.importArticlesDialogTitle
+    val exportArticlesDialogTitle = LocalFeedFlowStrings.current.exportArticlesDialogTitle
 
-    @Composable
-    override fun Content() {
-        val viewModel = desktopViewModel { DI.koin.get<ImportExportViewModel>() }
-        val feedImporterState by viewModel.importExportState.collectAsState()
+    var showImportDialog by remember { mutableStateOf(false) }
+    var showExportDialog by remember { mutableStateOf(false) }
+    var showImportArticlesDialog by remember { mutableStateOf(false) }
+    var showExportArticlesDialog by remember { mutableStateOf(false) }
+    var articleExportFilter by remember { mutableStateOf(ArticleExportFilter.All) }
+    val closeDialog = {
+        showImportDialog = false
+        showExportDialog = false
+        showImportArticlesDialog = false
+        showExportArticlesDialog = false
+        viewModel.clearState()
+        onCloseRequest()
+    }
 
-        val importDialogTitle = LocalFeedFlowStrings.current.importDialogTitle
-        val exportDialogTitle = LocalFeedFlowStrings.current.exportDialogTitle
-        val importArticlesDialogTitle = LocalFeedFlowStrings.current.importArticlesDialogTitle
-        val exportArticlesDialogTitle = LocalFeedFlowStrings.current.exportArticlesDialogTitle
-
-        var showImportDialog by remember { mutableStateOf(false) }
-        var showExportDialog by remember { mutableStateOf(false) }
-        var showImportArticlesDialog by remember { mutableStateOf(false) }
-        var showExportArticlesDialog by remember { mutableStateOf(false) }
-        var articleExportFilter by remember { mutableStateOf(ArticleExportFilter.All) }
-
-        val navigator = LocalNavigator.currentOrThrow
-
-        if (showImportDialog) {
-            FileDialog(
-                parent = composeWindow,
-                dialogTitle = importDialogTitle,
-                isLoadDialog = true,
-                onCloseRequest = { result ->
-                    showImportDialog = false
-                    if (result != null) {
-                        viewModel.importFeed(OpmlInput(result))
-                    }
-                },
-            )
-        }
-
-        if (showExportDialog) {
-            val deviceName = getUnixDeviceName()
-            val formattedDate = viewModel.getCurrentDateForExport()
-            val fileName = "feedflow-export_${formattedDate}_$deviceName.opml".lowercase()
-
-            FileDialog(
-                parent = composeWindow,
-                dialogTitle = exportDialogTitle,
-                exportFileName = fileName,
-                onCloseRequest = { result ->
-                    showExportDialog = false
-                    if (result != null) {
-                        var outputFile = result
-
-                        if (!outputFile.name.endsWith(".opml")) {
-                            outputFile = File(outputFile.absolutePath + ".opml")
-                        }
-                        viewModel.exportFeed(OpmlOutput(outputFile))
-                    }
-                },
-            )
-        }
-
-        if (showImportArticlesDialog) {
-            FileDialog(
-                parent = composeWindow,
-                dialogTitle = importArticlesDialogTitle,
-                isLoadDialog = true,
-                onCloseRequest = { result ->
-                    showImportArticlesDialog = false
-                    if (result != null) {
-                        viewModel.importArticles(CsvInput(result))
-                    }
-                },
-            )
-        }
-
-        if (showExportArticlesDialog) {
-            val deviceName = getUnixDeviceName()
-            val formattedDate = viewModel.getCurrentDateForExport()
-            val fileName =
-                """
-                    feedflow-articles-export_${formattedDate}_${deviceName}_${articleExportFilter.name.lowercase()}.csv
-                """.trimIndent()
-
-            FileDialog(
-                parent = composeWindow,
-                dialogTitle = exportArticlesDialogTitle,
-                exportFileName = fileName,
-                onCloseRequest = { result ->
-                    showExportArticlesDialog = false
-                    if (result != null) {
-                        var outputFile = result
-
-                        if (!outputFile.name.endsWith(".csv")) {
-                            outputFile = File(outputFile.absolutePath + ".csv")
-                        }
-                        viewModel.exportArticles(
-                            csvOutput = CsvOutput(outputFile),
-                            filter = articleExportFilter,
-                        )
-                    } else {
-                        viewModel.clearState()
-                    }
-                },
-            )
-        }
-
-        ImportExportContent(
-            navigateBack = {
-                navigator.pop()
+    if (showImportDialog) {
+        FileDialog(
+            parent = composeWindow,
+            dialogTitle = importDialogTitle,
+            isLoadDialog = true,
+            allowedExtensions = persistentSetOf(),
+            onCloseRequest = { result ->
+                showImportDialog = false
+                if (result != null) {
+                    viewModel.importFeed(OpmlInput(result))
+                }
             },
+        )
+    }
+
+    if (showExportDialog) {
+        val deviceName = getUnixDeviceName()
+        val formattedDate = viewModel.getCurrentDateForExport()
+        val fileName = "feedflow-export_${formattedDate}_$deviceName.opml".lowercase()
+
+        FileDialog(
+            parent = composeWindow,
+            dialogTitle = exportDialogTitle,
+            exportFileName = fileName,
+            onCloseRequest = { result ->
+                showExportDialog = false
+                if (result != null) {
+                    var outputFile = result
+
+                    if (!outputFile.name.endsWith(".opml")) {
+                        outputFile = File(outputFile.absolutePath + ".opml")
+                    }
+                    viewModel.exportFeed(OpmlOutput(outputFile))
+                }
+            },
+        )
+    }
+
+    if (showImportArticlesDialog) {
+        FileDialog(
+            parent = composeWindow,
+            dialogTitle = importArticlesDialogTitle,
+            isLoadDialog = true,
+            onCloseRequest = { result ->
+                showImportArticlesDialog = false
+                if (result != null) {
+                    viewModel.importArticles(CsvInput(result))
+                }
+            },
+        )
+    }
+
+    if (showExportArticlesDialog) {
+        val deviceName = getUnixDeviceName()
+        val formattedDate = viewModel.getCurrentDateForExport()
+        val fileName =
+            """
+                feedflow-articles-export_${formattedDate}_${deviceName}_${articleExportFilter.name.lowercase()}.csv
+            """.trimIndent()
+
+        FileDialog(
+            parent = composeWindow,
+            dialogTitle = exportArticlesDialogTitle,
+            exportFileName = fileName,
+            onCloseRequest = { result ->
+                showExportArticlesDialog = false
+                if (result != null) {
+                    var outputFile = result
+
+                    if (!outputFile.name.endsWith(".csv")) {
+                        outputFile = File(outputFile.absolutePath + ".csv")
+                    }
+                    viewModel.exportArticles(
+                        csvOutput = CsvOutput(outputFile),
+                        filter = articleExportFilter,
+                    )
+                } else {
+                    viewModel.clearState()
+                }
+            },
+        )
+    }
+
+    DesktopDialogWindow(
+        title = importExportTitle,
+        size = DpSize(500.dp, 600.dp),
+        onCloseRequest = closeDialog,
+    ) { modifier ->
+        ImportExportContent(
+            modifier = modifier,
             feedImportExportState = feedImporterState,
             onDoneClick = {
-                triggerFeedFetch()
-                navigator.pop()
+                val isImportResult = feedImporterState is FeedImportExportState.ImportSuccess ||
+                    feedImporterState is FeedImportExportState.ArticleImportSuccess
+                if (isImportResult) {
+                    triggerFeedFetch()
+                }
+                viewModel.clearState()
             },
             onRetryClick = {
                 viewModel.clearState()
+            },
+            onChooseAnotherFileClick = {
+                viewModel.clearState()
+                showImportDialog = true
             },
             onImportClick = {
                 showImportDialog = true
@@ -172,6 +189,7 @@ private fun FileDialog(
     onCloseRequest: (result: File?) -> Unit,
     exportFileName: String? = null,
     isLoadDialog: Boolean = false,
+    allowedExtensions: ImmutableSet<String> = persistentSetOf(),
 ) = AwtWindow(
     create = {
         val flag = if (isLoadDialog) FileDialog.LOAD else FileDialog.SAVE
@@ -181,6 +199,12 @@ private fun FileDialog(
                 if (value) {
                     onCloseRequest(files.firstOrNull())
                 }
+            }
+        }
+        if (isLoadDialog && allowedExtensions.isNotEmpty()) {
+            dialog.filenameFilter = java.io.FilenameFilter { _, name ->
+                val lowercaseName = name.lowercase()
+                allowedExtensions.any { extension -> lowercaseName.endsWith(".$extension") }
             }
         }
         dialog.file = exportFileName

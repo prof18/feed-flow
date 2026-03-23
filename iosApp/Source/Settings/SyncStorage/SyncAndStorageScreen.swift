@@ -12,6 +12,7 @@ struct SyncAndStorageScreen: View {
 
     @State private var settingsState = SyncAndStorageState(
         syncPeriod: .oneHour,
+        backgroundSyncRestrictions: BackgroundSyncRestrictions(syncOnlyOnWifi: false, syncOnlyWhenCharging: false),
         autoDeletePeriod: .disabled,
         refreshFeedsOnLaunch: true,
         showRssParsingErrors: true

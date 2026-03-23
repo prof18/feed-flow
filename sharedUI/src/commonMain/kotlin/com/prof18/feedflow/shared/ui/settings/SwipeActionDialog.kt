@@ -77,6 +77,7 @@ fun SwipeActionSelector(
                 text = when (currentAction) {
                     SwipeActionType.TOGGLE_READ_STATUS -> strings.settingsSwipeActionToggleRead
                     SwipeActionType.TOGGLE_BOOKMARK_STATUS -> strings.settingsSwipeActionToggleBookmark
+                    SwipeActionType.OPEN_IN_BROWSER -> strings.settingsSwipeActionOpenInBrowser
                     SwipeActionType.NONE -> strings.settingsSwipeActionNone
                 },
                 style = MaterialTheme.typography.bodyMedium,
@@ -139,6 +140,16 @@ private fun SwipeActionDialog(
                         selected = currentAction == SwipeActionType.TOGGLE_BOOKMARK_STATUS,
                         onClick = {
                             onActionSelected(SwipeActionType.TOGGLE_BOOKMARK_STATUS)
+                            dismissDialog()
+                        },
+                    )
+                }
+                item {
+                    ActionOption(
+                        text = strings.settingsSwipeActionOpenInBrowser,
+                        selected = currentAction == SwipeActionType.OPEN_IN_BROWSER,
+                        onClick = {
+                            onActionSelected(SwipeActionType.OPEN_IN_BROWSER)
                             dismissDialog()
                         },
                     )

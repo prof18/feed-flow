@@ -131,6 +131,12 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `updateSwipeAction updates state for OPEN_IN_BROWSER`() = runTest {
+        viewModel.updateSwipeAction(SwipeDirection.LEFT, SwipeActionType.OPEN_IN_BROWSER)
+        assertEquals(SwipeActionType.OPEN_IN_BROWSER, viewModel.state.value.leftSwipeActionType)
+    }
+
+    @Test
     fun `updateRemoveTitleFromDescription updates state`() = runTest {
         viewModel.updateRemoveTitleFromDescription(true)
         assertTrue(viewModel.state.value.isRemoveTitleFromDescriptionEnabled)

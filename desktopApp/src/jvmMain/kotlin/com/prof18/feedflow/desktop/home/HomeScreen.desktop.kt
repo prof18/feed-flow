@@ -190,6 +190,17 @@ internal fun HomeScreen(
                 },
             )
         },
+        openInBrowser = { feedItemUrlInfo ->
+            runCatching { uriHandler.openUri(feedItemUrlInfo.url.sanitizeUrl()) }
+                .onFailure {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            strings.browserLaunchError,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+                }
+        },
         updateBookmarkStatus = { feedItemId, isBookmarked ->
             homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
         },

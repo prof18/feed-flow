@@ -3,146 +3,204 @@ import Foundation
 import SwiftUI
 
 struct FeedItemRowView: View {
-    @Environment(HomeListIndexHolder.self)
-    private var indexHolder
-    @Environment(\.openURL)
-    private var openURL
-    @Environment(BrowserSelector.self)
-    private var browserSelector
-    @Environment(AppState.self)
-    private var appState
+  @Environment(HomeListIndexHolder.self)
+  private var indexHolder
+  @Environment(\.openURL)
+  private var openURL
+  @Environment(BrowserSelector.self)
+  private var browserSelector
+  @Environment(AppState.self)
+  private var appState
 
-    let feedItem: FeedItem
-    let index: Int
-    let feedFontSizes: FeedFontSizes
-    let swipeActions: SwipeActions
-    let feedLayout: FeedLayout
-    let currentFeedFilter: FeedFilter
-    var feedItemDisplaySettings = FeedItemDisplaySettings(
-        isHideUnreadDotEnabled: false,
-        isHideFeedSourceEnabled: false,
-        descriptionLineLimit: .three
-    )
-    let onItemClick: (FeedItemUrlInfo) -> Void
-    let onReaderModeClick: (FeedItemUrlInfo) -> Void
-    let onBookmarkClick: (FeedItemId, Bool) -> Void
-    let onReadStatusClick: (FeedItemId, Bool) -> Void
+  let feedItem: FeedItem
+  let index: Int
+  let feedFontSizes: FeedFontSizes
+  let swipeActions: SwipeActions
+  let feedLayout: FeedLayout
+  let currentFeedFilter: FeedFilter
+  var feedItemDisplaySettings = FeedItemDisplaySettings(
+    isHideUnreadDotEnabled: false,
+    isHideFeedSourceEnabled: false,
+    descriptionLineLimit: .three
+  )
+  let onItemClick: (FeedItemUrlInfo) -> Void
+  let onReaderModeClick: (FeedItemUrlInfo) -> Void
+  let onBookmarkClick: (FeedItemId, Bool) -> Void
+  let onReadStatusClick: (FeedItemId, Bool) -> Void
 
-    var body: some View {
-        Button(
-            action: {
-                indexHolder.pauseUpdates()
-                let urlInfo = FeedItemUrlInfo(
-                    id: feedItem.id,
-                    url: feedItem.url,
-                    title: feedItem.title,
-                    openOnlyOnBrowser: false,
-                    isBookmarked: feedItem.isBookmarked,
-                    linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
-                    commentsUrl: feedItem.commentsUrl,
-                    imageUrl: feedItem.imageUrl
-                )
-
-                guard let url = URL(string: feedItem.url) else {
-                    onItemClick(urlInfo)
-                    return
-                }
-
-                switch urlInfo.linkOpeningPreference {
-                case .readerMode:
-                    onReaderModeClick(urlInfo)
-                case .internalBrowser:
-                    if browserSelector.isValidForInAppBrowser(url) {
-                        self.appState.openInAppBrowser(url: url)
-                    } else {
-                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                    }
-                case .preferredBrowser:
-                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                case .default:
-                    if browserSelector.openReaderMode(link: feedItem.url) {
-                        onReaderModeClick(urlInfo)
-                    } else if browserSelector.openInAppBrowser() {
-                        if browserSelector.isValidForInAppBrowser(url) {
-                            self.appState.openInAppBrowser(url: url)
-                        } else {
-                            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                        }
-                    } else {
-                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                    }
-                }
-                onItemClick(urlInfo)
-            },
-            label: {
-                FeedItemView(
-                    feedItem: feedItem,
-                    index: index,
-                    feedFontSizes: feedFontSizes,
-                    feedLayout: feedLayout,
-                    currentFeedFilter: currentFeedFilter,
-                    feedItemDisplaySettings: feedItemDisplaySettings
-                )
-                .contentShape(Rectangle())
-            }
+  var body: some View {
+    Button(
+      action: {
+        indexHolder.pauseUpdates()
+        let urlInfo = FeedItemUrlInfo(
+          id: feedItem.id,
+          url: feedItem.url,
+          title: feedItem.title,
+          openOnlyOnBrowser: false,
+          isBookmarked: feedItem.isBookmarked,
+          linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
+          commentsUrl: feedItem.commentsUrl,
+          imageUrl: feedItem.imageUrl
         )
-        .buttonStyle(.plain)
-        .id(feedItem.id)
-        .listRowInsets(EdgeInsets())
-        .hoverEffect()
-        .if(swipeActions.leftSwipeAction != .none) { view in
-            view.swipeActions(edge: .trailing) {
-                swipeActionButton(for: swipeActions.leftSwipeAction)
-            }
+
+        guard let url = URL(string: feedItem.url) else {
+          onItemClick(urlInfo)
+          return
         }
-        .if(swipeActions.rightSwipeAction != .none) { view in
-            view.swipeActions(edge: .leading) {
-                swipeActionButton(for: swipeActions.rightSwipeAction)
+
+        switch urlInfo.linkOpeningPreference {
+        case .readerMode:
+          onReaderModeClick(urlInfo)
+        case .internalBrowser:
+          if browserSelector.isValidForInAppBrowser(url) {
+            self.appState.openInAppBrowser(url: url)
+          } else {
+            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+          }
+        case .preferredBrowser:
+          openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+        case .default:
+          if browserSelector.openReaderMode(link: feedItem.url) {
+            onReaderModeClick(urlInfo)
+          } else if browserSelector.openInAppBrowser() {
+            if browserSelector.isValidForInAppBrowser(url) {
+              self.appState.openInAppBrowser(url: url)
+            } else {
+              openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
             }
+          } else {
+            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+          }
         }
+        onItemClick(urlInfo)
+      },
+      label: {
+        FeedItemView(
+          feedItem: feedItem,
+          index: index,
+          feedFontSizes: feedFontSizes,
+          feedLayout: feedLayout,
+          currentFeedFilter: currentFeedFilter,
+          feedItemDisplaySettings: feedItemDisplaySettings
+        )
+        .contentShape(Rectangle())
+      }
+    )
+    .buttonStyle(.plain)
+    .id(feedItem.id)
+    .listRowInsets(EdgeInsets())
+    .hoverEffect()
+    .if(swipeActions.leftSwipeAction != .none) { view in
+      view.swipeActions(edge: .trailing) {
+        swipeActionButton(for: swipeActions.leftSwipeAction)
+      }
+    }
+    .if(swipeActions.rightSwipeAction != .none) { view in
+      view.swipeActions(edge: .leading) {
+        swipeActionButton(for: swipeActions.rightSwipeAction)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func swipeActionButton(for action: SwipeActionType) -> some View {
+    switch action {
+    case .toggleReadStatus:
+      createSwipeButton(
+        action: { onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead) },
+        isToggled: feedItem.isRead,
+        toggledImageName: "envelope.badge",
+        untoggledImageName: "envelope.open"
+      )
+    case .toggleBookmarkStatus:
+      createSwipeButton(
+        action: { onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked) },
+        isToggled: feedItem.isBookmarked,
+        toggledImageName: "bookmark.slash",
+        untoggledImageName: "bookmark"
+      )
+    case .openInBrowser:
+      createSwipeButton(
+        action: openItemInBrowser,
+        systemImageName: "globe"
+      )
+    case .none:
+      EmptyView()
+    @unknown default:
+      EmptyView()
+    }
+  }
+
+  @ViewBuilder
+  private func createSwipeButton(
+    action: @escaping () -> Void,
+    isToggled: Bool,
+    toggledImageName: String,
+    untoggledImageName: String
+  ) -> some View {
+    Button(action: action) {
+      Image(systemName: isToggled ? toggledImageName : untoggledImageName)
+        .if(feedLayout == .card) { image in
+          image
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(Color.accentColor, Color.accentColor)
+        }
+    }
+    .if(feedLayout == .card) { button in
+      button.tint(Color(.systemBackground))
+    }
+  }
+
+  @ViewBuilder
+  private func createSwipeButton(
+    action: @escaping () -> Void,
+    systemImageName: String
+  ) -> some View {
+    Button(action: action) {
+      Image(systemName: systemImageName)
+        .if(feedLayout == .card) { image in
+          image
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(Color.accentColor, Color.accentColor)
+        }
+    }
+    .if(feedLayout == .card) { button in
+      button.tint(Color(.systemBackground))
+    }
+  }
+
+  private func openItemInBrowser() {
+    guard let url = URL(string: feedItem.url) else {
+      return
     }
 
-    @ViewBuilder
-    private func swipeActionButton(for action: SwipeActionType) -> some View {
-        switch action {
-        case .toggleReadStatus:
-            createSwipeButton(
-                action: { onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead) },
-                isToggled: feedItem.isRead,
-                toggledImageName: "envelope.badge",
-                untoggledImageName: "envelope.open"
-            )
-        case .toggleBookmarkStatus:
-            createSwipeButton(
-                action: { onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked) },
-                isToggled: feedItem.isBookmarked,
-                toggledImageName: "bookmark.slash",
-                untoggledImageName: "bookmark"
-            )
-        case .none:
-            EmptyView()
-        @unknown default:
-            EmptyView()
+    switch feedItem.feedSource.linkOpeningPreference {
+    case .internalBrowser:
+      if browserSelector.isValidForInAppBrowser(url) {
+        self.appState.openInAppBrowser(url: url)
+      } else {
+        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+      }
+    case .preferredBrowser:
+      openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+    case .readerMode, .default:
+      if browserSelector.openInAppBrowser() {
+        if browserSelector.isValidForInAppBrowser(url) {
+          self.appState.openInAppBrowser(url: url)
+        } else {
+          openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
         }
+      } else {
+        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+      }
     }
 
-    @ViewBuilder
-    private func createSwipeButton(
-        action: @escaping () -> Void,
-        isToggled: Bool,
-        toggledImageName: String,
-        untoggledImageName: String
-    ) -> some View {
-        Button(action: action) {
-            Image(systemName: isToggled ? toggledImageName : untoggledImageName)
-                .if(feedLayout == .card) { image in
-                    image
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(Color.accentColor, Color.accentColor)
-                }
-        }
-        .if(feedLayout == .card) { button in
-            button.tint(Color(.systemBackground))
-        }
+    markAsReadIfNeeded()
+  }
+
+  private func markAsReadIfNeeded() {
+    if !feedItem.isRead {
+      onReadStatusClick(FeedItemId(id: feedItem.id), true)
     }
+  }
 }

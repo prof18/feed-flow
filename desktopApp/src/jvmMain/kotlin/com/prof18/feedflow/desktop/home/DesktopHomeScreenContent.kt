@@ -192,6 +192,7 @@ fun DesktopHomeScreenContent(
                                             feedListActions.openUrl(feedInfo)
                                             feedListActions.markAsRead(FeedItemId(feedInfo.id))
                                         },
+                                        onOpenInBrowser = feedListActions.openInBrowser,
                                         onBookmarkClick = feedListActions.updateBookmarkStatus,
                                         onReadStatusClick = feedListActions.updateReadStatus,
                                         onCommentClick = { feedInfo ->

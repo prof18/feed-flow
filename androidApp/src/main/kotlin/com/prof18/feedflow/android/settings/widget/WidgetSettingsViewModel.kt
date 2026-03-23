@@ -6,19 +6,17 @@ import com.prof18.feedflow.android.widget.WidgetSettingsState
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
-import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
-import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class WidgetSettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val widgetSettingsRepository: WidgetSettingsRepository,
-    private val feedDownloadWorkerEnqueuer: FeedDownloadWorkerEnqueuer,
     private val widgetUpdater: WidgetUpdater,
 ) : ViewModel() {
 
@@ -29,71 +27,42 @@ class WidgetSettingsViewModel(
 
     init {
         viewModelScope.launch {
-            val currentPeriod = settingsRepository.getSyncPeriod()
-            val backgroundSyncRestrictions = settingsRepository.getBackgroundSyncRestrictions()
-            val currentFeedLayout = widgetSettingsRepository.getFeedWidgetLayout()
-            val currentShowHeader = widgetSettingsRepository.getWidgetShowHeader()
-            val currentFontScale = widgetSettingsRepository.getWidgetFontScaleFactor()
-            val currentBackgroundColor = widgetSettingsRepository.getWidgetBackgroundColor()
-            val currentBackgroundOpacity = widgetSettingsRepository.getWidgetBackgroundOpacityPercent()
-            _settingsState.update {
-                it.copy(
-                    syncPeriod = if (currentPeriod == SyncPeriod.NEVER) {
-                        SyncPeriod.ONE_HOUR
-                    } else {
-                        currentPeriod
-                    },
-                    backgroundSyncRestrictions = backgroundSyncRestrictions,
-                    feedLayout = currentFeedLayout,
-                    showHeader = currentShowHeader,
-                    fontScale = currentFontScale,
-                    backgroundColor = currentBackgroundColor,
-                    backgroundOpacityPercent = currentBackgroundOpacity,
+            val globalSyncSettingsFlow = settingsRepository.syncPeriodFlow
+
+            val widgetAppearanceSettingsFlow = combine(
+                widgetSettingsRepository.feedWidgetLayout,
+                widgetSettingsRepository.widgetShowHeader,
+                widgetSettingsRepository.widgetFontScale,
+                widgetSettingsRepository.widgetBackgroundColor,
+                widgetSettingsRepository.widgetBackgroundOpacity,
+            ) { feedLayout, showHeader, fontScale, backgroundColor, backgroundOpacity ->
+                WidgetAppearanceSettings(
+                    feedLayout = feedLayout,
+                    showHeader = showHeader,
+                    fontScale = fontScale,
+                    backgroundColor = backgroundColor,
+                    backgroundOpacity = backgroundOpacity,
                 )
             }
-        }
-    }
 
-    fun updateSyncPeriod(period: SyncPeriod) {
-        if (_settingsState.value.syncPeriod == period) {
-            return
+            combine(
+                globalSyncSettingsFlow,
+                widgetAppearanceSettingsFlow,
+            ) { syncPeriod, widgetAppearanceSettings ->
+                WidgetSettingsState(
+                    syncPeriod = syncPeriod,
+                    feedLayout = widgetAppearanceSettings.feedLayout,
+                    showHeader = widgetAppearanceSettings.showHeader,
+                    fontScale = widgetAppearanceSettings.fontScale,
+                    backgroundColor = widgetAppearanceSettings.backgroundColor,
+                    backgroundOpacityPercent = widgetAppearanceSettings.backgroundOpacity,
+                )
+            }.collect { widgetSettingsState ->
+                _settingsState.update {
+                    widgetSettingsState
+                }
+            }
         }
-        _settingsState.update { it.copy(syncPeriod = period) }
-        settingsRepository.setSyncPeriod(period)
-        feedDownloadWorkerEnqueuer.updateWorker(period)
-        viewModelScope.launch {
-            widgetUpdater.update()
-        }
-    }
-
-    fun updateSyncOnlyOnWifi(enabled: Boolean) {
-        if (_settingsState.value.backgroundSyncRestrictions.syncOnlyOnWifi == enabled) {
-            return
-        }
-        _settingsState.update {
-            it.copy(
-                backgroundSyncRestrictions = it.backgroundSyncRestrictions.copy(
-                    syncOnlyOnWifi = enabled,
-                ),
-            )
-        }
-        settingsRepository.setBackgroundSyncOnlyOnWifi(enabled)
-        feedDownloadWorkerEnqueuer.updateWorker(settingsRepository.getSyncPeriod())
-    }
-
-    fun updateSyncOnlyWhenCharging(enabled: Boolean) {
-        if (_settingsState.value.backgroundSyncRestrictions.syncOnlyWhenCharging == enabled) {
-            return
-        }
-        _settingsState.update {
-            it.copy(
-                backgroundSyncRestrictions = it.backgroundSyncRestrictions.copy(
-                    syncOnlyWhenCharging = enabled,
-                ),
-            )
-        }
-        settingsRepository.setBackgroundSyncOnlyWhenCharging(enabled)
-        feedDownloadWorkerEnqueuer.updateWorker(settingsRepository.getSyncPeriod())
     }
 
     fun updateFeedLayout(feedLayout: FeedLayout) {
@@ -150,4 +119,12 @@ class WidgetSettingsViewModel(
             widgetUpdater.update()
         }
     }
+
+    private data class WidgetAppearanceSettings(
+        val feedLayout: FeedLayout,
+        val showHeader: Boolean,
+        val fontScale: Int,
+        val backgroundColor: Int?,
+        val backgroundOpacity: Int,
+    )
 }

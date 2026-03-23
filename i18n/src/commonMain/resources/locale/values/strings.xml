@@ -267,8 +267,11 @@
     <string name="widget_check_feed_sources">Make sure to have some feed sources added</string>
     <string name="widget_latest_items">Most Recent</string>
     <string name="widget_configuration_title">Widget Configuration</string>
-    <string name="widget_configuration_description">Choose how often to check for new articles in the background and update the widget.</string>
+    <string name="widget_configuration_description">Widget updates follow your background sync settings from Sync &amp; Storage.</string>
     <string name="widget_configuration_confirm">Add Widget</string>
+    <string name="widget_background_sync_title">Background sync</string>
+    <string name="widget_background_sync_description">Configure background sync from Sync &amp; Storage if you want the widget to refresh automatically.</string>
+    <string name="widget_background_sync_disabled_warning">Background sync is currently disabled, so the widget will not refresh automatically.</string>
     <string name="widget_appearance_title">Appearance</string>
     <string name="widget_show_header_title">Show header title</string>
     <string name="widget_background_color_title">Background color</string>

@@ -185,7 +185,6 @@
     <string name="widget_check_feed_sources">Birkaç akış kaynağı eklediğinizden emin olun</string>
     <string name="widget_latest_items">En Son</string>
     <string name="widget_configuration_title">Widget Yapılandırması</string>
-    <string name="widget_configuration_description">Arka planda yeni makalelerin ne sıklıkta kontrol edileceğini ve widget\'ın güncelleneceğini seçin.</string>
     <string name="widget_configuration_confirm">Widget Ekle</string>
     <string name="file_menu">Dosya</string>
     <string name="settings_left_swipe_action">Sola kaydırma</string>

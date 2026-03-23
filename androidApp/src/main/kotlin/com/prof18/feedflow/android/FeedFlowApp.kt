@@ -116,14 +116,12 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                         WidgetConfigurationViewModel(
                             settingsRepository = get(),
                             widgetSettingsRepository = get(),
-                            feedDownloadWorkerEnqueuer = get(),
                         )
                     }
                     viewModel {
                         WidgetSettingsViewModel(
                             settingsRepository = get(),
                             widgetSettingsRepository = get(),
-                            feedDownloadWorkerEnqueuer = get(),
                             widgetUpdater = get(),
                         )
                     }

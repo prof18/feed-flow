@@ -185,7 +185,6 @@
     <string name="widget_check_feed_sources">Upewnij się, że dodano źródła kanałów</string>
     <string name="widget_latest_items">Najnowsze</string>
     <string name="widget_configuration_title">Konfiguracja widżetu</string>
-    <string name="widget_configuration_description">Wybierz częstotliwość sprawdzania w tle dostępności nowych artykułów i aktualizowania widżetu.</string>
     <string name="widget_configuration_confirm">Dodaj widżet</string>
     <string name="file_menu">Plik</string>
     <string name="settings_left_swipe_action">Przesuń w lewo</string>

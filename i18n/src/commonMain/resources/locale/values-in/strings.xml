@@ -245,7 +245,6 @@
     <string name="widget_check_feed_sources">Pastikan Anda sudah menambahkan beberapa sumber feed</string>
     <string name="widget_latest_items">Paling Baru</string>
     <string name="widget_configuration_title">Konfigurasi Widget</string>
-    <string name="widget_configuration_description">Pilih seberapa sering memeriksa artikel baru di latar belakang dan memperbarui widget.</string>
     <string name="widget_configuration_confirm">Tambah Widget</string>
     <string name="widget_appearance_title">Tampilan</string>
     <string name="widget_show_header_title">Tampilkan judul header</string>

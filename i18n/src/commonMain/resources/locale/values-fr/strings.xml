@@ -161,7 +161,6 @@
     <string name="wrong_credentials_error_message">Les informations d\'identification sont incorrects. Veuillez réessayer.</string>
     <string name="link_with_error_report_title">Les flux suivant n\'ont pas été ajoutés dû à une erreur</string>
     <string name="wrong_url_error_message">Le lien fourni est incorrect. Veuillez réessayer.</string>
-    <string name="widget_configuration_description">Choisissez à quelle fréquence rechercher de nouveaux articles en arrière plan et mettre à jour le widget.</string>
     <string name="feed_list_appearance">Apparence de la liste de flux</string>
     <string name="menu_add_to_pinned">Épingler</string>
     <string name="menu_remove_from_pinned">Désépingler</string>

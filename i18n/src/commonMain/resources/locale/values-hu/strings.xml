@@ -212,7 +212,6 @@
     <string name="settings_auto_delete_period_two_weeks">Két hétnél régebbiek</string>
     <string name="settings_sync_period_fifteen_minutes">15 percenként</string>
     <string name="settings_feed_list_title">Hírforráslista</string>
-    <string name="widget_configuration_description">Válassza ki, hogy milyen időközönként szeretné ellenőrizni az új cikkeket a háttérben, és frissíteni a madult.</string>
     <string name="open_feed_settings">Hírforrás-beállítások megnyitása</string>
     <string name="settings_feed_layout_list">Lista</string>
     <string name="settings_feed_layout_card">Kártya</string>

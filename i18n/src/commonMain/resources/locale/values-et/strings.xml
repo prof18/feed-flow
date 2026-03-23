@@ -183,7 +183,6 @@
     <string name="widget_configuration_title">Vidinate seadistus</string>
     <string name="settings_sync_period_twelve_hours">Kord kaheteist tunni jooksul</string>
     <string name="settings_sync_period_never">Mitte kunagi</string>
-    <string name="widget_configuration_description">Vali uute artiklite taustal kontrollimise ning järgneva vidinas kuvatavate andmete uuenduse sagedus.</string>
     <string name="file_menu">Fail</string>
     <string name="settings_sync_period_thirty_minutes">Iga 30 minuti järel</string>
     <string name="settings_sync_period_one_day">Kord päevas</string>

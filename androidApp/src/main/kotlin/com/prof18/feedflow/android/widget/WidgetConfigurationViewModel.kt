@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
-import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
-import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +14,6 @@ import kotlinx.coroutines.launch
 class WidgetConfigurationViewModel(
     private val settingsRepository: SettingsRepository,
     private val widgetSettingsRepository: WidgetSettingsRepository,
-    private val feedDownloadWorkerEnqueuer: FeedDownloadWorkerEnqueuer,
 ) : ViewModel() {
 
     private val _settingsState = MutableStateFlow(WidgetSettingsState())
@@ -24,8 +21,6 @@ class WidgetConfigurationViewModel(
 
     init {
         viewModelScope.launch {
-            val currentPeriod = settingsRepository.getSyncPeriod()
-            val backgroundSyncRestrictions = settingsRepository.getBackgroundSyncRestrictions()
             val currentFeedLayout = widgetSettingsRepository.getFeedWidgetLayout()
             val currentShowHeader = widgetSettingsRepository.getWidgetShowHeader()
             val currentFontScale = widgetSettingsRepository.getWidgetFontScaleFactor()
@@ -34,12 +29,6 @@ class WidgetConfigurationViewModel(
 
             _settingsState.update {
                 it.copy(
-                    syncPeriod = if (currentPeriod == SyncPeriod.NEVER) {
-                        SyncPeriod.ONE_HOUR
-                    } else {
-                        currentPeriod
-                    },
-                    backgroundSyncRestrictions = backgroundSyncRestrictions,
                     feedLayout = currentFeedLayout,
                     showHeader = currentShowHeader,
                     fontScale = currentFontScale,
@@ -48,34 +37,20 @@ class WidgetConfigurationViewModel(
                 )
             }
         }
-    }
 
-    fun updateSyncPeriod(period: SyncPeriod) {
-        _settingsState.update { it.copy(syncPeriod = period) }
+        viewModelScope.launch {
+            settingsRepository.syncPeriodFlow.collect { syncPeriod ->
+                _settingsState.update {
+                    it.copy(
+                        syncPeriod = syncPeriod,
+                    )
+                }
+            }
+        }
     }
 
     fun updateFeedLayout(feedLayout: FeedLayout) {
         _settingsState.update { it.copy(feedLayout = feedLayout) }
-    }
-
-    fun updateSyncOnlyOnWifi(enabled: Boolean) {
-        _settingsState.update {
-            it.copy(
-                backgroundSyncRestrictions = it.backgroundSyncRestrictions.copy(
-                    syncOnlyOnWifi = enabled,
-                ),
-            )
-        }
-    }
-
-    fun updateSyncOnlyWhenCharging(enabled: Boolean) {
-        _settingsState.update {
-            it.copy(
-                backgroundSyncRestrictions = it.backgroundSyncRestrictions.copy(
-                    syncOnlyWhenCharging = enabled,
-                ),
-            )
-        }
     }
 
     fun updateShowHeader(showHeader: Boolean) {
@@ -96,13 +71,10 @@ class WidgetConfigurationViewModel(
 
     fun enqueueWorker() {
         val state = settingsState.value
-        settingsRepository.setSyncPeriod(state.syncPeriod)
-        settingsRepository.setBackgroundSyncRestrictions(state.backgroundSyncRestrictions)
         widgetSettingsRepository.setFeedWidgetLayout(state.feedLayout)
         widgetSettingsRepository.setWidgetShowHeader(state.showHeader)
         widgetSettingsRepository.setWidgetFontScaleFactor(state.fontScale)
         widgetSettingsRepository.setWidgetBackgroundColor(state.backgroundColor)
         widgetSettingsRepository.setWidgetBackgroundOpacityPercent(state.backgroundOpacityPercent)
-        feedDownloadWorkerEnqueuer.updateWorker(state.syncPeriod)
     }
 }

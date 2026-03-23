@@ -157,7 +157,6 @@
     <string name="widget_check_feed_sources">Asegúrate de tener fuentes añadidas</string>
     <string name="widget_latest_items">Más reciente</string>
     <string name="widget_configuration_title">Configuración del widget</string>
-    <string name="widget_configuration_description">Selecciona la frecuencia de actualización de artículos en segundo plano y actualizar el widget.</string>
     <string name="widget_configuration_confirm">Añadir widget</string>
     <string name="file_menu">Archivo</string>
     <string name="settings_left_swipe_action">Deslizar desde la izquierda</string>

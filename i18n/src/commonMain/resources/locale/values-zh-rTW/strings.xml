@@ -193,7 +193,6 @@
     <string name="widget_check_feed_sources">別忘了新增一些消息來源</string>
     <string name="widget_latest_items">最新消息</string>
     <string name="widget_configuration_title">小工具設定</string>
-    <string name="widget_configuration_description">選擇多久背景檢查一次新文章並更新小工具。</string>
     <string name="widget_configuration_confirm">新增小工具</string>
     <string name="file_menu">檔案</string>
     <string name="settings_left_swipe_action">向左滑動</string>

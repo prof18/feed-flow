@@ -182,7 +182,6 @@
     <string name="settings_sync_period_one_hour">Щогодини</string>
     <string name="settings_sync_period_twelve_hours">Кожні 12 годин</string>
     <string name="widget_configuration_title">Конфігурація віджета</string>
-    <string name="widget_configuration_description">Виберіть, як часто перевіряти наявність нових статей у фоновому режимі та оновлювати віджет.</string>
     <string name="widget_configuration_confirm">Додати віджет</string>
     <string name="file_menu">Файл</string>
     <string name="settings_left_swipe_action">Свайп ліворуч</string>

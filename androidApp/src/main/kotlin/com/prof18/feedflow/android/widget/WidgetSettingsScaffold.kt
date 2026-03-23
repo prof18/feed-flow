@@ -26,9 +26,6 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun WidgetSettingsScaffold(
     title: String,
     settingsState: WidgetSettingsState,
-    onSyncPeriodSelected: (SyncPeriod) -> Unit,
-    onSyncOnlyOnWifiSelected: (Boolean) -> Unit,
-    onSyncOnlyWhenChargingSelected: (Boolean) -> Unit,
     onFeedLayoutSelected: (FeedLayout) -> Unit,
     onShowHeaderSelected: (Boolean) -> Unit,
     onFontScaleSelected: (Int) -> Unit,
@@ -74,9 +71,6 @@ fun WidgetSettingsScaffold(
                 item {
                     WidgetSettingsContent(
                         settingsState = settingsState,
-                        onSyncPeriodSelected = onSyncPeriodSelected,
-                        onSyncOnlyOnWifiSelected = onSyncOnlyOnWifiSelected,
-                        onSyncOnlyWhenChargingSelected = onSyncOnlyWhenChargingSelected,
                         onFeedLayoutSelected = onFeedLayoutSelected,
                         onShowHeaderSelected = onShowHeaderSelected,
                         onFontScaleSelected = onFontScaleSelected,
@@ -111,9 +105,6 @@ private fun WidgetSettingsScaffoldPreview() {
                 backgroundColor = null,
                 backgroundOpacityPercent = 100,
             ),
-            onSyncPeriodSelected = {},
-            onSyncOnlyOnWifiSelected = {},
-            onSyncOnlyWhenChargingSelected = {},
             onFeedLayoutSelected = {},
             onShowHeaderSelected = {},
             onFontScaleSelected = {},

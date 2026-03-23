@@ -89,7 +89,7 @@
     <string name="no_category_selected_header">Нет категории</string>
     <string name="no_category">Без категории</string>
     <string name="toggle_mark_read_when_scrolling">Отметить как прочитанное при прокрутке</string>
-    <string name="settings_app_title">Приложение</string>
+    <string name="settings_app_title">Основные</string>
     <string name="add_feed_category_title">Категория</string>
     <string name="drawer_title_bookmarks">Закладки</string>
     <string name="import_export_description">FeedFlow поддерживает импорт и экспорт ваших подписок с помощью файла OPML для лучшей совместимости с другими RSS-ридерами.</string>
@@ -354,4 +354,25 @@
     <string name="settings_hide_read_items">Автоскрывать прочитанные статьи</string>
     <string name="settings_show_rss_parsing_errors">Показывать ошибки загрузки лент</string>
     <string name="exit_menu">Выход</string>
+    <string name="browser_launch_error">Не удаётся открыть ссылку. Проверьте настройки браузера.</string>
+    <string name="choose_another_file_button">Выбрать другой файл</string>
+    <string name="invalid_opml_import_title">Не удаётся импортировать этот файл</string>
+    <string name="invalid_opml_import_description">Неверный формат OPML-файла. Экспортируйте ленты из RSS-приложения в OPML и попробуйте снова.</string>
+    <string name="drawer_title_library">Библиотека</string>
+    <string name="settings_desktop_multi_pane_layout">Использовать многооконный макет главного экрана</string>
+    <string name="settings_three_pane_layout">Использовать трёхпанельный макет на больших экранах</string>
+    <string name="select_article_to_read">Выберите статью для чтения</string>
+    <string name="settings_hide_unread_dot">Скрыть индикатор непрочитанных</string>
+    <string name="settings_hide_feed_source">Скрыть источник ленты</string>
+    <string name="settings_description_max_lines">Строки описания</string>
+    <string name="settings_description_lines_three">3 строки</string>
+    <string name="settings_description_lines_five">5 строк</string>
+    <string name="settings_description_lines_no_limit">Без ограничения</string>
+    <string name="settings_notifications_permission_description">FeedFlow требует ваше разрешение для отправки уведомлений при появлении новых статей в ваших лентах.</string>
+    <string name="settings_notifications_open_settings_button">Открыть настройки</string>
+    <string name="date_format_iso">Год-Месяц-День</string>
+    <string name="next">Далее</string>
+    <string name="delete_all_feeds_in_category">Удалить все ленты</string>
+    <string name="delete_all_feeds_confirmation_title">Удалить все ленты в категории?</string>
+    <string name="delete_all_feeds_confirmation_message">Вы уверены, что хотите удалить все ленты в этой категории? Это действие нельзя отменить.</string>
 </resources>

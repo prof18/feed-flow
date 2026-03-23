@@ -166,6 +166,8 @@ struct FeedListSettingsScreenContent: View {
                             .tag(SwipeActionType.toggleReadStatus)
                         Text(feedFlowStrings.settingsSwipeActionToggleBookmark)
                             .tag(SwipeActionType.toggleBookmarkStatus)
+                        Text(feedFlowStrings.settingsSwipeActionOpenInBrowser)
+                            .tag(SwipeActionType.openInBrowser)
                         Text(feedFlowStrings.settingsSwipeActionNone)
                             .tag(SwipeActionType.none)
                     } label: {
@@ -177,10 +179,12 @@ struct FeedListSettingsScreenContent: View {
                             .tag(SwipeActionType.toggleReadStatus)
                         Text(feedFlowStrings.settingsSwipeActionToggleBookmark)
                             .tag(SwipeActionType.toggleBookmarkStatus)
+                        Text(feedFlowStrings.settingsSwipeActionOpenInBrowser)
+                            .tag(SwipeActionType.openInBrowser)
                         Text(feedFlowStrings.settingsSwipeActionNone)
-                    .tag(SwipeActionType.none)
+                            .tag(SwipeActionType.none)
                     } label: {
-                Label(feedFlowStrings.settingsRightSwipeAction, systemImage: "arrow.left")
+                        Label(feedFlowStrings.settingsRightSwipeAction, systemImage: "arrow.left")
                     }
 
                     Picker(selection: $feedOrder) {

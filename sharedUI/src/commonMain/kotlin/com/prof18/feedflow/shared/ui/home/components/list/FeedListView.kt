@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.MarkEmailRead
@@ -39,8 +40,10 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActionType.NONE
+import com.prof18.feedflow.core.model.SwipeActionType.OPEN_IN_BROWSER
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_BOOKMARK_STATUS
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_READ_STATUS
 import com.prof18.feedflow.core.model.SwipeActions
@@ -71,6 +74,7 @@ fun FeedList(
     updateReadStatus: (Int) -> Unit,
     requestMoreItems: () -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onOpenInBrowser: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
@@ -120,12 +124,14 @@ fun FeedList(
                 val swipeToRight = swipeActions.rightSwipeAction.toSwipeAction(
                     feedItem = item,
                     swipeBackgroundColor = swipeBackgroundColor,
+                    onOpenInBrowser = onOpenInBrowser,
                     onBookmarkClick = onBookmarkClick,
                     onReadStatusClick = onReadStatusClick,
                 )
                 val swipeToLeft = swipeActions.leftSwipeAction.toSwipeAction(
                     feedItem = item,
                     swipeBackgroundColor = swipeBackgroundColor,
+                    onOpenInBrowser = onOpenInBrowser,
                     onBookmarkClick = onBookmarkClick,
                     onReadStatusClick = onReadStatusClick,
                 )
@@ -241,6 +247,7 @@ fun FeedItemContainer(
 private fun SwipeActionType.toSwipeAction(
     feedItem: FeedItem,
     swipeBackgroundColor: Color,
+    onOpenInBrowser: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
 ): SwipeAction? {
@@ -289,9 +296,41 @@ private fun SwipeActionType.toSwipeAction(
             },
         )
 
+        OPEN_IN_BROWSER -> SwipeAction(
+            icon = {
+                Icon(
+                    modifier = Modifier.padding(Spacing.regular),
+                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            },
+            background = swipeBackgroundColor,
+            onSwipe = {
+                onOpenInBrowser(feedItem.toSwipeActionUrlInfo())
+                if (!feedItem.isRead) {
+                    onReadStatusClick(
+                        FeedItemId(feedItem.id),
+                        true,
+                    )
+                }
+            },
+        )
+
         NONE -> null
     }
 }
+
+private fun FeedItem.toSwipeActionUrlInfo(): FeedItemUrlInfo =
+    FeedItemUrlInfo(
+        id = id,
+        url = url,
+        title = title,
+        isBookmarked = isBookmarked,
+        linkOpeningPreference = LinkOpeningPreference.PREFERRED_BROWSER,
+        commentsUrl = commentsUrl,
+        imageUrl = imageUrl,
+    )
 
 @Preview
 @Composable
@@ -313,6 +352,7 @@ internal fun FeedListPreview() {
                 updateReadStatus = {},
                 requestMoreItems = {},
                 onFeedItemClick = {},
+                onOpenInBrowser = {},
                 onBookmarkClick = { _, _ -> },
                 onReadStatusClick = { _, _ -> },
                 onCommentClick = {},
@@ -338,6 +378,7 @@ internal fun FeedListPreview() {
                 updateReadStatus = {},
                 requestMoreItems = {},
                 onFeedItemClick = {},
+                onOpenInBrowser = {},
                 onBookmarkClick = { _, _ -> },
                 onReadStatusClick = { _, _ -> },
                 onCommentClick = {},

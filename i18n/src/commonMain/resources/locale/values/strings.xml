@@ -286,6 +286,7 @@
     <string name="settings_right_swipe_action">Right swipe</string>
     <string name="settings_swipe_action_toggle_read">Toggle read</string>
     <string name="settings_swipe_action_toggle_bookmark">Toggle bookmark</string>
+    <string name="settings_swipe_action_open_in_browser">Open in preferred browser</string>
     <string name="settings_swipe_action_none">Disabled</string>
     <string name="settings_notification_no_feed">Looks like you haven\'t added any feeds yet. Add some to start receiving notifications!</string>
     <string name="settings_notification_check_period">Notification check frequency</string>

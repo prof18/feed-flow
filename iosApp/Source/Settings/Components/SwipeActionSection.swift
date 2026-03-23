@@ -12,6 +12,8 @@ struct SwipeActionSection: View {
                     .tag(SwipeActionType.toggleReadStatus)
                 Text(feedFlowStrings.settingsSwipeActionToggleBookmark)
                     .tag(SwipeActionType.toggleBookmarkStatus)
+                Text(feedFlowStrings.settingsSwipeActionOpenInBrowser)
+                    .tag(SwipeActionType.openInBrowser)
                 Text(feedFlowStrings.settingsSwipeActionNone)
                     .tag(SwipeActionType.none)
             } label: {
@@ -23,6 +25,8 @@ struct SwipeActionSection: View {
                     .tag(SwipeActionType.toggleReadStatus)
                 Text(feedFlowStrings.settingsSwipeActionToggleBookmark)
                     .tag(SwipeActionType.toggleBookmarkStatus)
+                Text(feedFlowStrings.settingsSwipeActionOpenInBrowser)
+                    .tag(SwipeActionType.openInBrowser)
                 Text(feedFlowStrings.settingsSwipeActionNone)
                     .tag(SwipeActionType.none)
             } label: {

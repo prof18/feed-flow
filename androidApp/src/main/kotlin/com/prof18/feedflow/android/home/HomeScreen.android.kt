@@ -151,6 +151,7 @@ internal fun HomeScreen(
         markAsReadOnScroll = { lastVisibleIndex -> homeViewModel.markAsReadOnScroll(lastVisibleIndex) },
         markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
         openUrl = { urlInfo -> openUrl(urlInfo, navigateToReaderMode, browserManager, context) },
+        openInBrowser = { urlInfo -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context) },
         updateBookmarkStatus = { feedItemId, isBookmarked ->
             homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
         },

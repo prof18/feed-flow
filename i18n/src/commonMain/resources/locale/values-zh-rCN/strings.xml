@@ -154,7 +154,7 @@
     <string name="link_opening_preference_preferred_browser">首选浏览器</string>
     <string name="delete_category_confirmation_title">删除类别？</string>
     <string name="settings_auto_delete">自动删除旧文章</string>
-    <string name="delete_category_confirmation_message">是否确定要删除此类别？此类别中的订阅源将移至未分类。</string>
+    <string name="delete_category_confirmation_message">确定要删除此类别吗？此类别中的订阅源将移至未分类。</string>
     <string name="settings_auto_delete_period_disabled">已禁用</string>
     <string name="settings_auto_delete_period_one_week">一周前</string>
     <string name="settings_auto_delete_period_two_weeks">两周前</string>
@@ -227,7 +227,7 @@
     <string name="open_feed_settings">打开订阅源设置</string>
     <string name="reader_mode_browser_button_content_description">在浏览器中打开</string>
     <string name="delete_feed_confirmation_title">删除订阅源？</string>
-    <string name="delete_feed_confirmation_message">是否确定要删除此订阅源？此操作无法撤销。</string>
+    <string name="delete_feed_confirmation_message">确定要删除此订阅源吗？此操作无法撤销。</string>
     <string name="delete_feed_button">删除订阅源</string>
     <string name="feed_fetch_failed_tooltip">订阅源更新失败。请检查网站是否正常运行</string>
     <string name="feed_fetch_failed_tooltip_short">订阅源更新失败</string>
@@ -236,8 +236,8 @@
     <string name="add_word_placeholder">添加词</string>
     <string name="blocked_words_empty_state">尚无屏蔽词</string>
     <string name="blocked_words_description">标题或描述中包含这些词的文章将被隐藏。</string>
-    <string name="mark_all_read_dialog_message">是否确定要将所有文章标记为已读？</string>
-    <string name="clear_old_articles_dialog_message">是否确定要删除旧文章？</string>
+    <string name="mark_all_read_dialog_message">确定要将所有文章标记为已读吗？</string>
+    <string name="clear_old_articles_dialog_message">确定要删除旧文章吗？</string>
     <string name="confirm_button">确认</string>
     <string name="cancel_button">取消</string>
     <string name="reader_mode_comments_button_content_description">打开评论</string>
@@ -358,7 +358,7 @@
     <string name="browser_launch_error">无法打开链接。请检查浏览器设置。</string>
     <string name="choose_another_file_button">选择另一个文件</string>
     <string name="invalid_opml_import_title">无法导入此文件</string>
-    <string name="invalid_opml_import_description">这看起来不像有效的 OPML 文件。试着从 RSS 应用将源导出为 OPML 并再次导入。</string>
+    <string name="invalid_opml_import_description">这看起来不像有效的 OPML 文件。请尝试从您的 RSS 应用中将订阅源导出为 OPML，然后再次导入。</string>
     <string name="drawer_title_library">库</string>
     <string name="settings_desktop_multi_pane_layout">使用多面板首页布局</string>
     <string name="settings_three_pane_layout">在大屏幕上使用三面板布局</string>
@@ -369,11 +369,11 @@
     <string name="settings_description_lines_three">3 行</string>
     <string name="settings_description_lines_five">5 行</string>
     <string name="settings_description_lines_no_limit">无限制</string>
-    <string name="settings_notifications_permission_description">FeedFlow 需要在文章来到订阅源时发送通知的权限。</string>
+    <string name="settings_notifications_permission_description">FeedFlow 需要您授予权限才能在订阅源有新文章时发送通知。</string>
     <string name="settings_notifications_open_settings_button">打开设置</string>
     <string name="date_format_iso">年-月-日</string>
     <string name="next">下一篇</string>
-    <string name="delete_all_feeds_in_category">删除所有源</string>
-    <string name="delete_all_feeds_confirmation_title">删除类别中的所有源？</string>
-    <string name="delete_all_feeds_confirmation_message">确定要删除此类别中的所有源吗？该操作无法撤销。</string>
+    <string name="delete_all_feeds_in_category">删除所有订阅源</string>
+    <string name="delete_all_feeds_confirmation_title">删除类别中的所有订阅源？</string>
+    <string name="delete_all_feeds_confirmation_message">确定要删除此类别中的所有订阅源吗？此操作无法撤销。</string>
 </resources>

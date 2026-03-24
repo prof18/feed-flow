@@ -181,8 +181,8 @@
     <string name="settings_sync_period_never">永不</string>
     <string name="settings_sync_period_two_hours">每 2 小时</string>
     <string name="settings_sync_period_desc">选择在后台检查新文章的频率</string>
-    <string name="widget_configuration_title">挂件配置</string>
-    <string name="widget_configuration_confirm">添加挂件</string>
+    <string name="widget_configuration_title">小组件配置</string>
+    <string name="widget_configuration_confirm">添加小组件</string>
     <string name="file_menu">文件</string>
     <string name="settings_sync_period_fifteen_minutes">每 15 分钟</string>
     <string name="settings_sync_period_thirty_minutes">每 30 分钟</string>
@@ -357,7 +357,7 @@
     <string name="browser_launch_error">无法打开链接。请检查浏览器设置。</string>
     <string name="choose_another_file_button">选择另一个文件</string>
     <string name="invalid_opml_import_title">无法导入此文件</string>
-    <string name="invalid_opml_import_description">这看起来不像有效的 OPML 文件。试着从 RSS 应用将源导出为 OPML 并再次导入。</string>
+    <string name="invalid_opml_import_description">这看起来不像有效的 OPML 文件。试着从 RSS 应用将订阅源导出为 OPML 并再次导入。</string>
     <string name="drawer_title_library">库</string>
     <string name="settings_desktop_multi_pane_layout">使用多面板首页布局</string>
     <string name="settings_three_pane_layout">在大屏幕上使用三面板布局</string>
@@ -375,8 +375,13 @@
     <string name="delete_all_feeds_in_category">删除所有订阅源</string>
     <string name="delete_all_feeds_confirmation_title">删除类别中的所有订阅源？</string>
     <string name="delete_all_feeds_confirmation_message">确定要删除此类别中的所有订阅源吗？此操作无法撤销。</string>
-    <string name="widget_configuration_description">小挂件更新遵照“同步和存储”处的后台同步设置。</string>
-    <string name="widget_background_sync_description">如果希望小挂件自动刷新，请配置“同步和存储”处的后台同步。</string>
+    <string name="widget_configuration_description">小组件更新遵循“同步和存储”中的后台同步设置。</string>
+    <string name="widget_background_sync_description">如果您希望小组件自动刷新，请在“同步和存储”中配置后台同步。</string>
     <string name="settings_background_sync_wifi_only">仅在 Wi-Fi 连接时进行后台同步</string>
-    <string name="widget_background_sync_disabled_warning">后台同步当前已禁用，因此小挂件不会自动刷新。</string>
+    <string name="widget_background_sync_disabled_warning">后台同步当前已禁用，因此小组件不会自动刷新。</string>
+    <string name="settings_background_sync_restrictions_title">后台同步条件</string>
+    <string name="settings_background_sync_restrictions_description">使用其中一个或两个选项来限制后台同步的运行时间。</string>
+    <string name="settings_background_sync_charging_only">仅在充电时进行后台同步</string>
+    <string name="widget_background_sync_title">后台同步</string>
+    <string name="settings_swipe_action_open_in_browser">在首选浏览器中打开</string>
 </resources>

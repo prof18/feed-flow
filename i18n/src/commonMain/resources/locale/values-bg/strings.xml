@@ -383,4 +383,5 @@
     <string name="delete_all_feeds_in_category">Изтриване на всички емисии</string>
     <string name="delete_all_feeds_confirmation_title">Изтриване на всички емисии в категорията?</string>
     <string name="delete_all_feeds_confirmation_message">Сигурни ли сте, че искате да изтриете всички емисии в тази категория? Това действие не може да бъде отменено.</string>
+    <string name="settings_swipe_action_open_in_browser">Отвори в предпочитан браузър</string>
 </resources>

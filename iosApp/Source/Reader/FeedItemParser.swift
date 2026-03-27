@@ -10,6 +10,7 @@ import Foundation
 import WebKit
 
 private let minContentLength = 200
+private let maxHTMLContentSize = 20 * 1024 * 1024 // 20 MB
 
 class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {
     static let shared = FeedItemParser()
@@ -79,6 +80,16 @@ class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {
 
         guard let request = currentRequest else {
             isParsing = false
+            return
+        }
+
+        if request.htmlContent.utf8.count > maxHTMLContentSize {
+            Deps.shared.getLogger(tag: "FeedItemParser").w(
+                messageString: "HTML content too large (\(request.htmlContent.utf8.count) bytes), skipping: \(request.url)"
+            )
+            request.onResult(ParsingResult.Error())
+            isParsing = false
+            processQueue()
             return
         }
 

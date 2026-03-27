@@ -22,6 +22,7 @@ fun WidgetSettingsScreen(
         onFontScaleSelected = viewModel::updateFontScale,
         onBackgroundColorSelected = viewModel::updateBackgroundColor,
         onBackgroundOpacitySelected = viewModel::updateBackgroundOpacityPercent,
+        onHideImagesSelected = viewModel::updateHideImages,
         showConfirmButton = false,
         onConfirm = {},
         onNavigateBack = navigateBack,

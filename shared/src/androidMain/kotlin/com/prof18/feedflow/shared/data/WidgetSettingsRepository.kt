@@ -26,6 +26,9 @@ class WidgetSettingsRepository(
     private val widgetBackgroundOpacityMutableFlow = MutableStateFlow(getWidgetBackgroundOpacityPercent())
     val widgetBackgroundOpacity: StateFlow<Int> = widgetBackgroundOpacityMutableFlow.asStateFlow()
 
+    private val widgetHideImagesMutableFlow = MutableStateFlow(getWidgetHideImages())
+    val widgetHideImages: StateFlow<Boolean> = widgetHideImagesMutableFlow.asStateFlow()
+
     fun getFeedWidgetLayout(): FeedLayout =
         settings.getString(WidgetSettingsFields.FEED_WIDGET_LAYOUT.name, FeedLayout.LIST.name)
             .let { FeedLayout.valueOf(it) }
@@ -77,6 +80,14 @@ class WidgetSettingsRepository(
         widgetBackgroundOpacityMutableFlow.update { value }
     }
 
+    fun getWidgetHideImages(): Boolean =
+        settings.getBoolean(WidgetSettingsFields.WIDGET_HIDE_IMAGES.name, false)
+
+    fun setWidgetHideImages(value: Boolean) {
+        settings[WidgetSettingsFields.WIDGET_HIDE_IMAGES.name] = value
+        widgetHideImagesMutableFlow.update { value }
+    }
+
     private companion object {
         const val DEFAULT_WIDGET_FONT_SCALE_FACTOR = 0
         const val DEFAULT_WIDGET_BACKGROUND_OPACITY_PERCENT = 100
@@ -89,4 +100,5 @@ private enum class WidgetSettingsFields {
     WIDGET_FONT_SCALE_FACTOR,
     WIDGET_BACKGROUND_COLOR,
     WIDGET_BACKGROUND_OPACITY_PERCENT,
+    WIDGET_HIDE_IMAGES,
 }

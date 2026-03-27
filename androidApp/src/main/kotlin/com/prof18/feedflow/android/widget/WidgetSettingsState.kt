@@ -10,4 +10,5 @@ data class WidgetSettingsState(
     val fontScale: Int = 0,
     val backgroundColor: Int? = null,
     val backgroundOpacityPercent: Int = 100,
+    val hideImages: Boolean = false,
 )

@@ -58,6 +58,7 @@ internal fun WidgetFeedItemList(
     feedItem: FeedItem,
     browserManager: BrowserManager,
     fontSizes: WidgetFontSizes,
+    hideImages: Boolean,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     val context = LocalContext.current.applicationContext
@@ -70,7 +71,7 @@ internal fun WidgetFeedItemList(
             .clickable(clickAction),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Content(feedItem, fontSizes)
+        Content(feedItem, fontSizes, hideImages)
     }
 }
 
@@ -79,6 +80,7 @@ internal fun WidgetFeedItemCard(
     feedItem: FeedItem,
     browserManager: BrowserManager,
     fontSizes: WidgetFontSizes,
+    hideImages: Boolean,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     val context = LocalContext.current.applicationContext
@@ -97,7 +99,7 @@ internal fun WidgetFeedItemCard(
                 .clickable(clickAction),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Content(feedItem, fontSizes)
+            Content(feedItem, fontSizes, hideImages)
         }
     }
 }
@@ -106,6 +108,7 @@ internal fun WidgetFeedItemCard(
 private fun RowScope.Content(
     feedItem: FeedItem,
     fontSizes: WidgetFontSizes,
+    hideImages: Boolean,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     val modifier = modifier.defaultWeight()
@@ -145,8 +148,10 @@ private fun RowScope.Content(
         }
     }
 
-    feedItem.imageUrl?.let { imageUrl ->
-        FeedItemImage(imageUrl)
+    if (!hideImages) {
+        feedItem.imageUrl?.let { imageUrl ->
+            FeedItemImage(imageUrl)
+        }
     }
 }
 

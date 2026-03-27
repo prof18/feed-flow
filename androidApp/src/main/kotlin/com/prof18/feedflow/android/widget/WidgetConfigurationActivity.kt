@@ -50,6 +50,7 @@ class WidgetConfigurationActivity : BaseThemeActivity() {
             onFontScaleSelected = viewModel::updateFontScale,
             onBackgroundColorSelected = viewModel::updateBackgroundColor,
             onBackgroundOpacitySelected = viewModel::updateBackgroundOpacityPercent,
+            onHideImagesSelected = viewModel::updateHideImages,
             showConfirmButton = true,
             onConfirm = {
                 viewModel.enqueueWorker()

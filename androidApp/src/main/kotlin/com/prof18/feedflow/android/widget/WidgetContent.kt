@@ -44,6 +44,7 @@ internal fun WidgetContent(
     fontScale: Int,
     backgroundColor: Int?,
     backgroundOpacityPercent: Int,
+    hideImages: Boolean,
 ) {
     val context = LocalContext.current
     val openAppAction = createOpenAppAction(context)
@@ -120,8 +121,8 @@ internal fun WidgetContent(
 
                 items(feedItems) { feedItem ->
                     when (feedLayout) {
-                        FeedLayout.LIST -> WidgetFeedItemList(feedItem, browserManager, fontSizes)
-                        FeedLayout.CARD -> WidgetFeedItemCard(feedItem, browserManager, fontSizes)
+                        FeedLayout.LIST -> WidgetFeedItemList(feedItem, browserManager, fontSizes, hideImages)
+                        FeedLayout.CARD -> WidgetFeedItemCard(feedItem, browserManager, fontSizes, hideImages)
                     }
                 }
 

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.ViewHeadline
 import androidx.compose.material3.Button
@@ -55,6 +56,7 @@ fun WidgetSettingsContent(
     onFontScaleSelected: (Int) -> Unit,
     onBackgroundColorSelected: (Int?) -> Unit,
     onBackgroundOpacitySelected: (Int) -> Unit,
+    onHideImagesSelected: (Boolean) -> Unit,
     showConfirmButton: Boolean,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
@@ -101,6 +103,13 @@ fun WidgetSettingsContent(
             icon = Icons.Outlined.ViewHeadline,
             isChecked = settingsState.showHeader,
             onCheckedChange = onShowHeaderSelected,
+        )
+
+        SettingSwitchItem(
+            title = strings.settingsHideImages,
+            icon = Icons.Outlined.HideImage,
+            isChecked = settingsState.hideImages,
+            onCheckedChange = onHideImagesSelected,
         )
 
         WidgetColorSettingItem(
@@ -153,7 +162,6 @@ fun WidgetSettingsContent(
     if (showColorPicker) {
         WidgetColorPickerDialog(
             initialColor = resolvedBackgroundColor,
-            defaultColor = defaultBackgroundColor,
             onDismiss = { showColorPicker = false },
             onConfirm = { color ->
                 onBackgroundColorSelected(color.toArgb())
@@ -217,7 +225,6 @@ private fun WidgetColorSettingItem(
 @Composable
 private fun WidgetColorPickerDialog(
     initialColor: Color,
-    defaultColor: Color,
     onDismiss: () -> Unit,
     onConfirm: (Color) -> Unit,
     onReset: () -> Unit,
@@ -273,8 +280,6 @@ private fun WidgetColorPickerDialog(
                 ) {
                     TextButton(
                         onClick = {
-                            controller.selectByColor(defaultColor, false)
-                            selectedColor = defaultColor
                             onReset()
                         },
                     ) {
@@ -322,6 +327,7 @@ private fun WidgetSettingsContentPreview() {
                 onFontScaleSelected = {},
                 onBackgroundColorSelected = {},
                 onBackgroundOpacitySelected = {},
+                onHideImagesSelected = {},
                 showConfirmButton = true,
                 onConfirm = {},
             )

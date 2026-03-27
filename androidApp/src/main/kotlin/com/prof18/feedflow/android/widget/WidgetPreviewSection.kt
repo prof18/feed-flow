@@ -47,6 +47,7 @@ internal fun WidgetPreviewSection(
         WidgetPreviewWallpaper(
             feedLayout = settingsState.feedLayout,
             showWidgetHeader = settingsState.showHeader,
+            hideImages = settingsState.hideImages,
             fontSizes = fontSizes,
             backgroundColor = previewBackgroundColor,
             modifier = Modifier
@@ -59,6 +60,7 @@ internal fun WidgetPreviewSection(
 private fun WidgetPreviewWallpaper(
     feedLayout: FeedLayout,
     showWidgetHeader: Boolean,
+    hideImages: Boolean,
     fontSizes: WidgetFontSizes,
     backgroundColor: Color,
     modifier: Modifier = Modifier,
@@ -85,6 +87,7 @@ private fun WidgetPreviewWallpaper(
         WidgetPreview(
             feedLayout = feedLayout,
             showWidgetHeader = showWidgetHeader,
+            hideImages = hideImages,
             fontSizes = fontSizes,
             backgroundColor = backgroundColor,
             modifier = Modifier.fillMaxWidth(fraction = 0.9f),
@@ -96,6 +99,7 @@ private fun WidgetPreviewWallpaper(
 private fun WidgetPreview(
     feedLayout: FeedLayout,
     showWidgetHeader: Boolean,
+    hideImages: Boolean,
     fontSizes: WidgetFontSizes,
     backgroundColor: Color,
     modifier: Modifier = Modifier,
@@ -139,8 +143,8 @@ private fun WidgetPreview(
             ) {
                 items.forEach { item ->
                     when (feedLayout) {
-                        FeedLayout.LIST -> WidgetPreviewListItem(item, fontSizes)
-                        FeedLayout.CARD -> WidgetPreviewCardItem(item, fontSizes)
+                        FeedLayout.LIST -> WidgetPreviewListItem(item, fontSizes, hideImages)
+                        FeedLayout.CARD -> WidgetPreviewCardItem(item, fontSizes, hideImages)
                     }
                 }
             }
@@ -158,6 +162,7 @@ private data class WidgetPreviewItem(
 private fun WidgetPreviewListItem(
     item: WidgetPreviewItem,
     fontSizes: WidgetFontSizes,
+    hideImages: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -172,7 +177,9 @@ private fun WidgetPreviewListItem(
             fontSizes = fontSizes,
             modifier = Modifier.weight(1f),
         )
-        WidgetPreviewImage()
+        if (!hideImages) {
+            WidgetPreviewImage()
+        }
     }
 }
 
@@ -180,6 +187,7 @@ private fun WidgetPreviewListItem(
 private fun WidgetPreviewCardItem(
     item: WidgetPreviewItem,
     fontSizes: WidgetFontSizes,
+    hideImages: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -199,7 +207,9 @@ private fun WidgetPreviewCardItem(
                 fontSizes = fontSizes,
                 modifier = Modifier.weight(1f),
             )
-            WidgetPreviewImage()
+            if (!hideImages) {
+                WidgetPreviewImage()
+            }
         }
     }
 }

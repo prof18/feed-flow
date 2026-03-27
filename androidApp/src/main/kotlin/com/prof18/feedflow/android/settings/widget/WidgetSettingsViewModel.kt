@@ -48,7 +48,8 @@ class WidgetSettingsViewModel(
             combine(
                 globalSyncSettingsFlow,
                 widgetAppearanceSettingsFlow,
-            ) { syncPeriod, widgetAppearanceSettings ->
+                widgetSettingsRepository.widgetHideImages,
+            ) { syncPeriod, widgetAppearanceSettings, hideImages ->
                 WidgetSettingsState(
                     syncPeriod = syncPeriod,
                     feedLayout = widgetAppearanceSettings.feedLayout,
@@ -56,6 +57,7 @@ class WidgetSettingsViewModel(
                     fontScale = widgetAppearanceSettings.fontScale,
                     backgroundColor = widgetAppearanceSettings.backgroundColor,
                     backgroundOpacityPercent = widgetAppearanceSettings.backgroundOpacity,
+                    hideImages = hideImages,
                 )
             }.collect { widgetSettingsState ->
                 _settingsState.update {
@@ -115,6 +117,17 @@ class WidgetSettingsViewModel(
         }
         _settingsState.update { it.copy(backgroundOpacityPercent = opacityPercent) }
         widgetSettingsRepository.setWidgetBackgroundOpacityPercent(opacityPercent)
+        viewModelScope.launch {
+            widgetUpdater.update()
+        }
+    }
+
+    fun updateHideImages(hideImages: Boolean) {
+        if (_settingsState.value.hideImages == hideImages) {
+            return
+        }
+        _settingsState.update { it.copy(hideImages = hideImages) }
+        widgetSettingsRepository.setWidgetHideImages(hideImages)
         viewModelScope.launch {
             widgetUpdater.update()
         }

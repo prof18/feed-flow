@@ -8,6 +8,7 @@ import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -21,60 +22,81 @@ class WidgetConfigurationViewModel(
 
     init {
         viewModelScope.launch {
-            val currentFeedLayout = widgetSettingsRepository.getFeedWidgetLayout()
-            val currentShowHeader = widgetSettingsRepository.getWidgetShowHeader()
-            val currentFontScale = widgetSettingsRepository.getWidgetFontScaleFactor()
-            val currentBackgroundColor = widgetSettingsRepository.getWidgetBackgroundColor()
-            val currentBackgroundOpacity = widgetSettingsRepository.getWidgetBackgroundOpacityPercent()
-
-            _settingsState.update {
-                it.copy(
-                    feedLayout = currentFeedLayout,
-                    showHeader = currentShowHeader,
-                    fontScale = currentFontScale,
-                    backgroundColor = currentBackgroundColor,
-                    backgroundOpacityPercent = currentBackgroundOpacity,
+            val widgetAppearanceSettingsFlow = combine(
+                widgetSettingsRepository.feedWidgetLayout,
+                widgetSettingsRepository.widgetShowHeader,
+                widgetSettingsRepository.widgetFontScale,
+                widgetSettingsRepository.widgetBackgroundColor,
+                widgetSettingsRepository.widgetBackgroundOpacity,
+            ) { feedLayout, showHeader, fontScale, backgroundColor, backgroundOpacity ->
+                WidgetAppearanceSettings(
+                    feedLayout = feedLayout,
+                    showHeader = showHeader,
+                    fontScale = fontScale,
+                    backgroundColor = backgroundColor,
+                    backgroundOpacity = backgroundOpacity,
                 )
             }
-        }
 
-        viewModelScope.launch {
-            settingsRepository.syncPeriodFlow.collect { syncPeriod ->
-                _settingsState.update {
-                    it.copy(
-                        syncPeriod = syncPeriod,
-                    )
-                }
+            combine(
+                settingsRepository.syncPeriodFlow,
+                widgetAppearanceSettingsFlow,
+                widgetSettingsRepository.widgetHideImages,
+            ) { syncPeriod, appearance, hideImages ->
+                WidgetSettingsState(
+                    syncPeriod = syncPeriod,
+                    feedLayout = appearance.feedLayout,
+                    showHeader = appearance.showHeader,
+                    fontScale = appearance.fontScale,
+                    backgroundColor = appearance.backgroundColor,
+                    backgroundOpacityPercent = appearance.backgroundOpacity,
+                    hideImages = hideImages,
+                )
+            }.collect { state ->
+                _settingsState.update { state }
             }
         }
     }
 
     fun updateFeedLayout(feedLayout: FeedLayout) {
-        _settingsState.update { it.copy(feedLayout = feedLayout) }
+        if (_settingsState.value.feedLayout == feedLayout) return
+        widgetSettingsRepository.setFeedWidgetLayout(feedLayout)
     }
 
     fun updateShowHeader(showHeader: Boolean) {
-        _settingsState.update { it.copy(showHeader = showHeader) }
+        if (_settingsState.value.showHeader == showHeader) return
+        widgetSettingsRepository.setWidgetShowHeader(showHeader)
     }
 
     fun updateFontScale(scaleFactor: Int) {
-        _settingsState.update { it.copy(fontScale = scaleFactor) }
+        if (_settingsState.value.fontScale == scaleFactor) return
+        widgetSettingsRepository.setWidgetFontScaleFactor(scaleFactor)
     }
 
     fun updateBackgroundColor(colorArgb: Int?) {
-        _settingsState.update { it.copy(backgroundColor = colorArgb) }
+        if (_settingsState.value.backgroundColor == colorArgb) return
+        widgetSettingsRepository.setWidgetBackgroundColor(colorArgb)
     }
 
     fun updateBackgroundOpacityPercent(opacityPercent: Int) {
-        _settingsState.update { it.copy(backgroundOpacityPercent = opacityPercent) }
+        if (_settingsState.value.backgroundOpacityPercent == opacityPercent) return
+        widgetSettingsRepository.setWidgetBackgroundOpacityPercent(opacityPercent)
+    }
+
+    fun updateHideImages(hideImages: Boolean) {
+        if (_settingsState.value.hideImages == hideImages) return
+        widgetSettingsRepository.setWidgetHideImages(hideImages)
     }
 
     fun enqueueWorker() {
-        val state = settingsState.value
-        widgetSettingsRepository.setFeedWidgetLayout(state.feedLayout)
-        widgetSettingsRepository.setWidgetShowHeader(state.showHeader)
-        widgetSettingsRepository.setWidgetFontScaleFactor(state.fontScale)
-        widgetSettingsRepository.setWidgetBackgroundColor(state.backgroundColor)
-        widgetSettingsRepository.setWidgetBackgroundOpacityPercent(state.backgroundOpacityPercent)
+        // Settings are already persisted by the update methods
     }
+
+    private data class WidgetAppearanceSettings(
+        val feedLayout: FeedLayout,
+        val showHeader: Boolean,
+        val fontScale: Int,
+        val backgroundColor: Int?,
+        val backgroundOpacity: Int,
+    )
 }

@@ -168,7 +168,7 @@ internal fun DrawerFeedSourceByCategoryItem(
     var menuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
 
     val category = feedSourceCategoryWrapper.feedSourceCategory
-    val unreadCount = drawerFeedSources.sumOf { it.unreadCount }
+    val unreadCount: Long = drawerFeedSources.sumOf { it.unreadCount }
     val isDropTargetActive = dragState.isDragOver(category)
 
     FeedSourceDropTargetCleanup(

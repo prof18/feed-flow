@@ -1,20 +1,18 @@
 package com.prof18.feedflow.android.readermode
 
 import android.webkit.CookieManager
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.AppBarRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
-import androidx.compose.material3.HorizontalFloatingToolbar
-import androidx.compose.material3.Icon
+import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -24,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +46,6 @@ import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import org.koin.compose.koinInject
@@ -72,6 +70,15 @@ internal fun ReaderModeScreen(
     val context = LocalContext.current
     val navigator = rememberWebViewNavigator()
     var fullscreenImageUrl by remember { mutableStateOf<String?>(null) }
+    var toolbarExpanded by rememberSaveable { mutableStateOf(true) }
+    val scrollState = rememberScrollState()
+    val isAtBottom by remember {
+        derivedStateOf {
+            scrollState.value >= scrollState.maxValue && scrollState.maxValue > 0
+        }
+    }
+
+    LaunchedEffect(isAtBottom) { if (isAtBottom) toolbarExpanded = true }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -79,8 +86,6 @@ internal fun ReaderModeScreen(
         Scaffold(
             topBar = {
                 ReaderModeToolbar(
-                    readerModeState = readerModeState,
-                    fontSize = fontSize,
                     navigateBack = {
                         if (navigator.canGoBack) {
                             navigator.navigateBack()
@@ -90,84 +95,62 @@ internal fun ReaderModeScreen(
                     },
                     isDetailFullscreen = isDetailFullscreen,
                     onToggleDetailFullscreen = onToggleDetailFullscreen,
-                    openInBrowser = { url ->
-                        if (isValidUrl(url)) {
-                            browserManager.openUrlWithFavoriteBrowser(url, context)
-                        }
-                    },
-                    onShareClick = { url, title ->
-                        context.openShareSheet(
-                            title = title,
-                            url = url,
-                        )
-                    },
-                    onArchiveClick = { articleUrl ->
-                        val archiveUrl = getArchiveISUrl(articleUrl)
-                        if (isValidUrl(archiveUrl)) {
-                            browserManager.openUrlWithFavoriteBrowser(archiveUrl, context)
-                        }
-                    },
-                    onCommentsClick = { commentsUrl ->
-                        if (isValidUrl(commentsUrl)) {
-                            browserManager.openUrlWithFavoriteBrowser(commentsUrl, context)
-                        }
-                    },
-                    onFontSizeChange = { newFontSize ->
-                        navigator.evaluateJavaScript(
-                            """
-                            document.getElementById("container").style.fontSize = "$newFontSize" + "px";
-                            document.getElementById("container").style.lineHeight = "1.5em";
-                            """.trimIndent(),
-                        )
-                        onUpdateFontSize(newFontSize)
-                    },
-                    onBookmarkClick = onBookmarkClick,
                 )
             },
+
         ) { contentPadding ->
             Box(
                 modifier = Modifier,
             ) {
                 if (readerModeState !is ReaderModeState.Loading) {
-                    val strings = LocalFeedFlowStrings.current
-
-                    HorizontalFloatingToolbar(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
+                    ReaderModeFloatingToolbar(
+                        modifier = Modifier.align(Alignment.BottomCenter)
                             .offset(y = -ScreenOffset)
                             .zIndex(1f)
-                            .padding(end = Spacing.regular)
-                            .padding(bottom = contentPadding.calculateBottomPadding()),
-                        expanded = true,
-                        content = {
-                            AppBarRow(
-                                modifier = Modifier,
-                            ) {
-                                clickableItem(
-                                    onClick = onNavigateToPrevious,
-                                    enabled = canNavigatePrevious,
-                                    icon = {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                                            contentDescription = strings.previousArticle,
-                                        )
-                                    },
-                                    label = strings.previousArticle,
-                                )
-
-                                clickableItem(
-                                    onClick = onNavigateToNext,
-                                    enabled = canNavigateNext,
-                                    icon = {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                            contentDescription = strings.nextArticle,
-                                        )
-                                    },
-                                    label = strings.nextArticle,
-                                )
+                            .padding(
+                                start = Spacing.small,
+                                end = Spacing.small,
+                                bottom = contentPadding.calculateBottomPadding()
+                            ),
+                        expanded = toolbarExpanded,
+                        readerModeState = readerModeState,
+                        fontSize = fontSize,
+                        openInBrowser = { url ->
+                            if (isValidUrl(url)) {
+                                browserManager.openUrlWithFavoriteBrowser(url, context)
                             }
                         },
+                        onShareClick = { url, title ->
+                            context.openShareSheet(
+                                title = title,
+                                url = url,
+                            )
+                        },
+                        onArchiveClick = { articleUrl ->
+                            val archiveUrl = getArchiveISUrl(articleUrl)
+                            if (isValidUrl(archiveUrl)) {
+                                browserManager.openUrlWithFavoriteBrowser(archiveUrl, context)
+                            }
+                        },
+                        onCommentsClick = { commentsUrl ->
+                            if (isValidUrl(commentsUrl)) {
+                                browserManager.openUrlWithFavoriteBrowser(commentsUrl, context)
+                            }
+                        },
+                        onFontSizeChange = { newFontSize ->
+                            navigator.evaluateJavaScript(
+                                """
+        document.getElementById("container").style.fontSize = "$newFontSize" + "px";
+        document.getElementById("container").style.lineHeight = "1.5em";
+                                """.trimIndent(),
+                            )
+                            onUpdateFontSize(newFontSize)
+                        },
+                        onBookmarkClick = onBookmarkClick,
+                        canNavigatePrevious = canNavigatePrevious,
+                        canNavigateNext = canNavigateNext,
+                        onNavigateToPrevious = onNavigateToPrevious,
+                        onNavigateToNext = onNavigateToNext,
                     )
                 }
 
@@ -179,6 +162,7 @@ internal fun ReaderModeScreen(
                             navigator = navigator,
                         )
                     }
+
                     ReaderModeState.Loading -> {
                         Box(
                             contentAlignment = Alignment.Center,
@@ -189,8 +173,15 @@ internal fun ReaderModeScreen(
                             CircularProgressIndicator()
                         }
                     }
+
                     is ReaderModeState.Success -> {
                         ReaderMode(
+                            modifier = Modifier.floatingToolbarVerticalNestedScroll(
+                                expanded = toolbarExpanded,
+                                onExpand = { toolbarExpanded = true },
+                                onCollapse = { toolbarExpanded = false },
+                            ),
+                            scrollState = scrollState,
                             readerModeState = readerModeState,
                             openInBrowser = { url ->
                                 if (isValidUrl(url)) {
@@ -244,6 +235,8 @@ private fun ReaderMode(
     onImageClick: (String) -> Unit,
     contentPadding: PaddingValues,
     navigator: WebViewNavigator,
+    modifier: Modifier = Modifier,
+    scrollState: ScrollState = rememberScrollState(),
 ) {
     val bodyColor = MaterialTheme.colorScheme.onSurface.toArgb().toHexString().substring(2)
     val linkColor = MaterialTheme.colorScheme.primary.toArgb().toHexString().substring(2)
@@ -328,8 +321,9 @@ private fun ReaderMode(
 
     val layoutDir = LocalLayoutDirection.current
     WebView(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(top = contentPadding.calculateTopPadding())
             .padding(start = contentPadding.calculateLeftPadding(layoutDir))
             .padding(end = contentPadding.calculateRightPadding(layoutDir)),

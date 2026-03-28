@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -18,7 +17,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.window.core.layout.WindowWidthSizeClass
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.android.openShareSheet
@@ -30,6 +28,8 @@ import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewDisabledState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewEnabledState
@@ -42,11 +42,12 @@ import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun HomeScreen(
     homeViewModel: HomeViewModel,
-    navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
+    readerModeViewModel: ReaderModeViewModel,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
     onSearchClick: () -> Unit,
@@ -58,6 +59,7 @@ internal fun HomeScreen(
 ) {
     val browserManager = koinInject<BrowserManager>()
     val changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = koinInject()
+    val themeViewModel: ThemeViewModel = koinViewModel()
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
@@ -73,6 +75,12 @@ internal fun HomeScreen(
     val feedItemDisplaySettings by homeViewModel.feedItemDisplaySettings.collectAsStateWithLifecycle()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsStateWithLifecycle()
+    val currentReaderArticle by readerModeViewModel.currentArticleState.collectAsStateWithLifecycle()
+    val readerModeState by readerModeViewModel.readerModeState.collectAsStateWithLifecycle()
+    val readerFontSize by readerModeViewModel.readerFontSizeState.collectAsStateWithLifecycle()
+    val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsStateWithLifecycle()
+    val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsStateWithLifecycle()
+    val themeMode by themeViewModel.themeState.collectAsStateWithLifecycle()
 
     var showChangeCategorySheet by rememberSaveable { mutableStateOf(false) }
     var showNoFeedsBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -140,6 +148,16 @@ internal fun HomeScreen(
         feedItemDisplaySettings = feedItemDisplaySettings,
     )
 
+    val openReaderArticle: (FeedItemUrlInfo) -> Unit = { article ->
+        readerModeViewModel.getReaderModeHtml(article)
+    }
+    val closeReaderSelection: () -> Unit = {
+        readerModeViewModel.clearSelection()
+    }
+    val resetReaderArticle: () -> Unit = {
+        readerModeViewModel.resetState()
+    }
+
     val feedListActions = FeedListActions(
         onClearOldArticlesClicked = { homeViewModel.deleteOldFeedItems() },
         onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
@@ -147,10 +165,20 @@ internal fun HomeScreen(
         requestNewData = { homeViewModel.requestNewFeedsPage() },
         forceRefreshData = { homeViewModel.forceFeedRefresh() },
         markAllRead = { homeViewModel.markAllRead() },
-        onBackToTimelineClick = { homeViewModel.onFeedFilterSelected(FeedFilter.Timeline) },
+        onBackToTimelineClick = {
+            resetReaderArticle()
+            homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
+        },
         markAsReadOnScroll = { lastVisibleIndex -> homeViewModel.markAsReadOnScroll(lastVisibleIndex) },
         markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
-        openUrl = { urlInfo -> openUrl(urlInfo, navigateToReaderMode, browserManager, context) },
+        openUrl = { urlInfo ->
+            openUrl(
+                urlInfo = urlInfo,
+                onOpenReaderArticle = openReaderArticle,
+                browserManager = browserManager,
+                context = context,
+            )
+        },
         openInBrowser = { urlInfo -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context) },
         updateBookmarkStatus = { feedItemId, isBookmarked ->
             homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
@@ -162,7 +190,10 @@ internal fun HomeScreen(
 
     val feedManagementActions = FeedManagementActions(
         onAddFeedClick = onAddFeedClick,
-        onFeedFilterSelected = { feedFilter -> homeViewModel.onFeedFilterSelected(feedFilter) },
+        onFeedFilterSelected = { feedFilter ->
+            resetReaderArticle()
+            homeViewModel.onFeedFilterSelected(feedFilter)
+        },
         onEditFeedClick = onEditFeedClick,
         onDeleteFeedSourceClick = { feedSource -> homeViewModel.deleteFeedSource(feedSource) },
         onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
@@ -175,13 +206,6 @@ internal fun HomeScreen(
         onOpenWebsite = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
     )
 
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-    val adaptiveWindowSizeClass = when (windowSizeClass.windowWidthSizeClass) {
-        WindowWidthSizeClass.COMPACT -> WindowSizeClass.Compact
-        WindowWidthSizeClass.MEDIUM -> WindowSizeClass.Medium
-        else -> WindowSizeClass.Expanded
-    }
-
     AdaptiveHomeView(
         snackbarHostState = snackbarHostState,
         onSettingsButtonClicked = onSettingsButtonClicked,
@@ -189,7 +213,6 @@ internal fun HomeScreen(
         displayState = homeDisplayState,
         feedListActions = feedListActions,
         feedManagementActions = feedManagementActions,
-        windowSizeClass = adaptiveWindowSizeClass,
         feedContentWrapper = { content ->
             val pullToRefreshState = rememberPullToRefreshState()
             PullToRefreshBox(
@@ -217,6 +240,17 @@ internal fun HomeScreen(
             showNoFeedsBottomSheet = true
         },
         onNavigateToNextFeed = onNavigateToNextFeed,
+        currentReaderArticle = currentReaderArticle,
+        readerModeState = readerModeState,
+        readerFontSize = readerFontSize,
+        themeMode = themeMode,
+        canNavigatePrevious = canNavigatePrevious,
+        canNavigateNext = canNavigateNext,
+        onReaderClosed = closeReaderSelection,
+        onUpdateReaderFontSize = readerModeViewModel::updateFontSize,
+        onReaderBookmarkClick = readerModeViewModel::updateBookmarkStatus,
+        onNavigateToPreviousArticle = readerModeViewModel::navigateToPreviousArticle,
+        onNavigateToNextArticle = readerModeViewModel::navigateToNextArticle,
     )
 
     if (showChangeCategorySheet) {
@@ -270,17 +304,17 @@ internal fun HomeScreen(
 
 private fun openUrl(
     urlInfo: FeedItemUrlInfo,
-    navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
+    onOpenReaderArticle: (FeedItemUrlInfo) -> Unit,
     browserManager: BrowserManager,
     context: Context,
 ) {
     when (urlInfo.linkOpeningPreference) {
-        LinkOpeningPreference.READER_MODE -> navigateToReaderMode(urlInfo)
+        LinkOpeningPreference.READER_MODE -> onOpenReaderArticle(urlInfo)
         LinkOpeningPreference.INTERNAL_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
         LinkOpeningPreference.PREFERRED_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
         LinkOpeningPreference.DEFAULT -> {
             if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
-                navigateToReaderMode(urlInfo)
+                onOpenReaderArticle(urlInfo)
             } else {
                 browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
             }

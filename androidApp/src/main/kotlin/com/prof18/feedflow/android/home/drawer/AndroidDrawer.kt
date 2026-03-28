@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
@@ -38,8 +39,14 @@ fun AndroidDrawer(
         state = listState,
         modifier = modifier
             .fillMaxWidth()
-            .padding(Spacing.regular),
-        verticalArrangement = Arrangement.Center,
+            .statusBarsPadding()
+            .padding(
+                start = Spacing.regular,
+                top = Spacing.medium,
+                end = Spacing.regular,
+                bottom = Spacing.regular,
+            ),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         item {

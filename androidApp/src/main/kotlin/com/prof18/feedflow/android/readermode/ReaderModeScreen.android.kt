@@ -64,6 +64,8 @@ internal fun ReaderModeScreen(
     canNavigateNext: Boolean,
     onNavigateToPrevious: () -> Unit,
     onNavigateToNext: () -> Unit,
+    isDetailFullscreen: Boolean = false,
+    onToggleDetailFullscreen: (() -> Unit)? = null,
 ) {
     val browserManager = koinInject<BrowserManager>()
 
@@ -86,6 +88,8 @@ internal fun ReaderModeScreen(
                             navigateBack()
                         }
                     },
+                    isDetailFullscreen = isDetailFullscreen,
+                    onToggleDetailFullscreen = onToggleDetailFullscreen,
                     openInBrowser = { url ->
                         if (isValidUrl(url)) {
                             browserManager.openUrlWithFavoriteBrowser(url, context)

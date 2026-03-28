@@ -7,6 +7,7 @@ import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.createDatabaseDriver
+import com.prof18.feedflow.shared.data.AndroidHomeSettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.AppForegroundState
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
@@ -83,6 +84,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     single {
         WidgetSettingsRepository(
+            settings = get(),
+        )
+    }
+
+    single {
+        AndroidHomeSettingsRepository(
             settings = get(),
         )
     }

@@ -9,6 +9,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Comment
+import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
@@ -47,6 +48,8 @@ internal fun ReaderModeToolbar(
     onArchiveClick: (String) -> Unit,
     onCommentsClick: (String) -> Unit,
     onFontSizeChange: (Int) -> Unit,
+    isDetailFullscreen: Boolean = false,
+    onToggleDetailFullscreen: (() -> Unit)? = null,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
 ) {
     var showFontSizeMenu by remember { mutableStateOf(false) }
@@ -56,10 +59,14 @@ internal fun ReaderModeToolbar(
         title = {},
         navigationIcon = {
             IconButton(
-                onClick = navigateBack,
+                onClick = onToggleDetailFullscreen ?: navigateBack,
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    imageVector = if (onToggleDetailFullscreen != null && !isDetailFullscreen) {
+                        Icons.Default.Fullscreen
+                    } else {
+                        Icons.AutoMirrored.Filled.ArrowBack
+                    },
                     contentDescription = null,
                 )
             }

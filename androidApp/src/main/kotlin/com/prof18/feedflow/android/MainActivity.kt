@@ -208,6 +208,7 @@ class MainActivity : BaseThemeActivity() {
         }
     }
 
+    @Suppress("ViewModelForwarding")
     @OptIn(ExperimentalAnimationApi::class)
     @Composable
     private fun FeedFlowNavigation(
@@ -276,13 +277,10 @@ class MainActivity : BaseThemeActivity() {
 
                     HomeScreen(
                         homeViewModel = homeViewModel,
+                        readerModeViewModel = readerModeViewModel,
                         onSettingsButtonClicked = { backStack.add(Settings) },
                         onAddFeedClick = { backStack.add(AddFeed) },
                         onImportExportClick = { backStack.add(ImportExport) },
-                        navigateToReaderMode = { url ->
-                            readerModeViewModel.getReaderModeHtml(url)
-                            backStack.add(ReaderMode)
-                        },
                         onSearchClick = { backStack.add(Search) },
                         onAccountsClick = { backStack.add(Accounts) },
                         onEditFeedClick = { feedSource ->

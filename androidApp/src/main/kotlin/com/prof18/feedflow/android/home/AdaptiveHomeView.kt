@@ -1,32 +1,26 @@
 package com.prof18.feedflow.android.home
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.android.home.drawer.AndroidDrawer
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.shared.data.AndroidHomeSettingsRepository
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @Suppress("MultipleEmitters", "ModifierMissing")
 @Composable
@@ -39,15 +33,26 @@ fun AdaptiveHomeView(
     feedManagementActions: FeedManagementActions,
     shareBehavior: ShareBehavior,
     listState: LazyListState = rememberLazyListState(),
-    windowSizeClass: WindowSizeClass = WindowSizeClass.Compact,
     feedContentWrapper: @Composable (@Composable () -> Unit) -> Unit = { content -> content() },
     onBackupClick: () -> Unit = {},
     onFeedSuggestionsClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
     onNavigateToNextFeed: (() -> Unit) = {},
+    currentReaderArticle: FeedItemUrlInfo? = null,
+    readerModeState: ReaderModeState = ReaderModeState.Loading,
+    readerFontSize: Int = 16,
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
+    canNavigatePrevious: Boolean = false,
+    canNavigateNext: Boolean = false,
+    onReaderClosed: () -> Unit = {},
+    onUpdateReaderFontSize: (Int) -> Unit = {},
+    onReaderBookmarkClick: (FeedItemId, Boolean) -> Unit = { _, _ -> },
+    onNavigateToPreviousArticle: () -> Unit = {},
+    onNavigateToNextArticle: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
+    val homeSettingsRepository = koinInject<AndroidHomeSettingsRepository>()
 
     @Composable
     fun HomeContentInternal(
@@ -79,90 +84,59 @@ fun AdaptiveHomeView(
 
     @Composable
     fun DrawerInternal(
-        modifier: Modifier = Modifier,
         onFeedFilterSelectedLambda: (FeedFilter) -> Unit,
+        modifier: Modifier = Modifier,
+        onFeedSuggestionsClickLambda: () -> Unit = onFeedSuggestionsClick,
     ) {
         AndroidDrawer(
             modifier = modifier,
             displayState = displayState,
             feedManagementActions = feedManagementActions,
             onFeedFilterSelected = onFeedFilterSelectedLambda,
-            onFeedSuggestionsClick = onFeedSuggestionsClick,
+            onFeedSuggestionsClick = onFeedSuggestionsClickLambda,
         )
     }
 
-    when (windowSizeClass) {
-        WindowSizeClass.Compact -> {
-            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            ModalNavigationDrawer(
-                drawerState = drawerState,
-                drawerContent = {
-                    ModalDrawerSheet {
-                        DrawerInternal(
-                            onFeedFilterSelectedLambda = { feedFilter ->
-                                feedManagementActions.onFeedFilterSelected(feedFilter)
-                                scope.launch {
-                                    drawerState.close()
-                                    if (reduceMotionEnabled) {
-                                        listState.scrollToItem(0)
-                                    } else {
-                                        listState.animateScrollToItem(0)
-                                    }
-                                }
-                            },
+    AndroidThreePaneHomeScaffold(
+        currentReaderArticle = currentReaderArticle,
+        readerModeState = readerModeState,
+        readerFontSize = readerFontSize,
+        themeMode = themeMode,
+        canNavigatePrevious = canNavigatePrevious,
+        canNavigateNext = canNavigateNext,
+        initialPaneExpansionIndex = homeSettingsRepository.getPaneExpansionIndex(),
+        onReaderClosed = onReaderClosed,
+        onUpdateReaderFontSize = onUpdateReaderFontSize,
+        onReaderBookmarkClick = onReaderBookmarkClick,
+        onNavigateToPreviousArticle = onNavigateToPreviousArticle,
+        onNavigateToNextArticle = onNavigateToNextArticle,
+        onPaneExpansionIndexChanged = homeSettingsRepository::setPaneExpansionIndex,
+        drawerPane = { modifier, _, onCloseDrawer ->
+            DrawerInternal(
+                modifier = modifier,
+                onFeedFilterSelectedLambda = { feedFilter ->
+                    feedManagementActions.onFeedFilterSelected(feedFilter)
+                    onCloseDrawer()
+                    scope.launch {
+                        listState.scrollToItemConditionally(
+                            0,
+                            reduceMotionEnabled = reduceMotionEnabled,
                         )
                     }
                 },
-            ) {
-                HomeContentInternal(
-                    showDrawerMenu = true,
-                    onDrawerMenuClick = {
-                        scope.launch {
-                            if (drawerState.isOpen) {
-                                drawerState.close()
-                            } else {
-                                drawerState.open()
-                            }
-                        }
-                    },
-                )
-            }
-        }
-        WindowSizeClass.Medium, WindowSizeClass.Expanded -> {
-            var isDrawerMenuFullVisible by remember { mutableStateOf(true) }
-            Row {
-                ConditionalAnimatedVisibility(
-                    modifier = Modifier.weight(1f),
-                    visible = isDrawerMenuFullVisible,
-                ) {
-                    Scaffold { paddingValues ->
-                        DrawerInternal(
-                            modifier = Modifier.padding(paddingValues),
-                            onFeedFilterSelectedLambda = { feedFilter ->
-                                feedManagementActions.onFeedFilterSelected(feedFilter)
-                                scope.launch {
-                                    listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                                }
-                            },
-                        )
-                    }
-                }
-
-                HomeContentInternal(
-                    modifier = Modifier.weight(2f),
-                    showDrawerMenu = true,
-                    isDrawerMenuOpen = isDrawerMenuFullVisible,
-                    onDrawerMenuClick = {
-                        isDrawerMenuFullVisible = !isDrawerMenuFullVisible
-                    },
-                )
-            }
-        }
-    }
-}
-
-enum class WindowSizeClass {
-    Compact,
-    Medium,
-    Expanded,
+                onFeedSuggestionsClickLambda = {
+                    onCloseDrawer()
+                    onFeedSuggestionsClick()
+                },
+            )
+        },
+        listPane = { modifier, isDrawerOpen, onDrawerClick ->
+            HomeContentInternal(
+                modifier = modifier,
+                showDrawerMenu = true,
+                isDrawerMenuOpen = isDrawerOpen,
+                onDrawerMenuClick = onDrawerClick,
+            )
+        },
+    )
 }

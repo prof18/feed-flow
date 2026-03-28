@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -21,8 +22,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
+import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
@@ -32,6 +35,7 @@ import com.prof18.feedflow.shared.ui.home.components.FeedLoader
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.shared.ui.home.components.ScrollToTopButton
 import com.prof18.feedflow.shared.ui.home.components.list.FeedList
+import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
@@ -156,7 +160,13 @@ fun AndroidHomeScreenContent(
                         modifier = Modifier.fillMaxSize(),
                     ) {
                         Column {
-                            FeedLoader(loadingState = displayState.feedUpdateStatus)
+                            FeedLoader(
+                                loadingState = displayState.feedUpdateStatus,
+                                modifier = Modifier.padding(
+                                    top = Spacing.small,
+                                    bottom = Spacing.small,
+                                ),
+                            )
 
                             if (displayState.feedItems.isEmpty() && displayState.feedUpdateStatus.isLoading()) {
                                 Box(
@@ -202,6 +212,12 @@ fun AndroidHomeScreenContent(
                                 feedItemDisplaySettings = displayState.feedItemDisplaySettings,
                             )
                         }
+
+                        TopToolbarContentFade(
+                            modifier = Modifier.align(Alignment.TopCenter),
+                            height = 30.dp,
+                            color = MaterialTheme.colorScheme.surface,
+                        )
                     }
                 }
             }

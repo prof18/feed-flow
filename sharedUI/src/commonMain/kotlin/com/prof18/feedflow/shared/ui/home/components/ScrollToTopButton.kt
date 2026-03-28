@@ -8,9 +8,11 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -19,6 +21,8 @@ fun ScrollToTopButton(
     visible: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    containerColor: Color = FloatingActionButtonDefaults.containerColor,
+    contentColor: Color = Color.Unspecified,
 ) {
     ConditionalAnimatedVisibility(
         visible = visible,
@@ -30,6 +34,8 @@ fun ScrollToTopButton(
         FloatingActionButton(
             onClick = onClick,
             modifier = modifier,
+            containerColor = containerColor,
+            contentColor = contentColor,
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowUpward,

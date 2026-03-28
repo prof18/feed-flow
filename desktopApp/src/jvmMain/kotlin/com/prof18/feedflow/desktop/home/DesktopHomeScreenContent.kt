@@ -120,6 +120,8 @@ fun DesktopHomeScreenContent(
                         listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
                     }
                 },
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = MaterialTheme.colorScheme.onSurface,
             )
         },
     ) { innerPadding ->

@@ -13,9 +13,9 @@ class IOSNotifier: Notifier {
 
         switch mode {
         case .feedSource:
-            for (index, source) in feedSourcesToNotify.enumerated() {
+            for source in feedSourcesToNotify {
                 scheduleNotification(
-                    identifier: "feedflow-source-\(index)",
+                    identifier: makeNotificationIdentifier(prefix: "source", key: source.feedSourceId),
                     title: feedFlowStrings.newArticlesNotificationTitle,
                     body: source.feedSourceTitle,
                     url: "feedflow://feedsourcefilter/\(source.feedSourceId)"
@@ -24,7 +24,7 @@ class IOSNotifier: Notifier {
 
         case .category:
             let grouped = Dictionary(grouping: feedSourcesToNotify) { $0.categoryTitle as String? }
-            for (index, (categoryTitle, sources)) in grouped.enumerated() {
+            for (categoryTitle, sources) in grouped {
                 let categoryId = sources.first?.categoryId
                 let body: String
                 if let title = categoryTitle {
@@ -34,7 +34,10 @@ class IOSNotifier: Notifier {
                 }
                 let url = categoryId.map { "feedflow://category/\($0)" }
                 scheduleNotification(
-                    identifier: "feedflow-category-\(index)",
+                    identifier: makeNotificationIdentifier(
+                        prefix: "category",
+                        key: categoryId ?? categoryTitle ?? "uncategorized"
+                    ),
                     title: feedFlowStrings.newArticlesNotificationTitle,
                     body: body,
                     url: url
@@ -43,7 +46,7 @@ class IOSNotifier: Notifier {
 
         case .grouped:
             scheduleNotification(
-                identifier: "feedflow-grouped",
+                identifier: makeNotificationIdentifier(prefix: "grouped", key: "all"),
                 title: feedFlowStrings.newArticlesNotificationTitle,
                 body: feedFlowStrings.notificationGroupedBody,
                 url: nil
@@ -70,5 +73,9 @@ class IOSNotifier: Notifier {
                 print("IOSNotifier: error scheduling notification: \(error.localizedDescription)")
             }
         }
+    }
+
+    private func makeNotificationIdentifier(prefix: String, key: String) -> String {
+        "\(prefix)-\(key)-\(UUID().uuidString)"
     }
 }

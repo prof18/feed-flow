@@ -45,9 +45,9 @@ class AndroidNotifier(
                 if (feedSourcesToNotify.isEmpty()) {
                     return false
                 }
-                for ((index, sourceToNotify) in feedSourcesToNotify.withIndex()) {
+                for (sourceToNotify in feedSourcesToNotify) {
                     showNotification(
-                        notificationId = BASE_NOTIFICATION_ID + index,
+                        notificationId = newNotificationId(sourceToNotify.feedSourceId),
                         title = feedFlowStrings.newArticlesNotificationTitle,
                         content = sourceToNotify.feedSourceTitle,
                         url = "feedflow://feedsourcefilter/${sourceToNotify.feedSourceId}",
@@ -61,7 +61,6 @@ class AndroidNotifier(
                 if (groupedByCategory.isEmpty()) {
                     return false
                 }
-                var index = 0
                 for ((categoryTitle, sources) in groupedByCategory) {
                     val categoryId = sources.first().categoryId
                     val deeplink = if (categoryId != null) {
@@ -76,12 +75,11 @@ class AndroidNotifier(
                         feedFlowStrings.notificationGroupedBody
                     }
                     showNotification(
-                        notificationId = BASE_NOTIFICATION_ID + index,
+                        notificationId = newNotificationId(categoryId ?: categoryTitle ?: "uncategorized"),
                         title = feedFlowStrings.newArticlesNotificationTitle,
                         content = content,
                         url = deeplink,
                     )
-                    index++
                 }
                 true
             }
@@ -89,7 +87,7 @@ class AndroidNotifier(
             NotificationMode.GROUPED -> {
                 if (feedSourcesToNotify.isEmpty()) return false
                 showNotification(
-                    notificationId = BASE_NOTIFICATION_ID,
+                    notificationId = newNotificationId("grouped"),
                     title = feedFlowStrings.newArticlesNotificationTitle,
                     content = feedFlowStrings.notificationGroupedBody,
                     url = null,
@@ -153,8 +151,10 @@ class AndroidNotifier(
         return feedFlowStrings
     }
 
+    private fun newNotificationId(key: String): Int =
+        "$key-${UUID.randomUUID()}".hashCode() and Int.MAX_VALUE
+
     companion object {
         private const val CHANNEL_ID = "feedflow_new_articles_channel"
-        private const val BASE_NOTIFICATION_ID = 1001
     }
 }

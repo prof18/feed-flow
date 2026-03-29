@@ -3,6 +3,10 @@ package com.prof18.feedflow.android.home
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -199,7 +203,10 @@ internal fun AndroidThreePaneHomeScaffold(
                         )
                     }
                 } else {
-                    AnimatedPane {
+                    AnimatedPane(
+                        enterTransition = fadeIn() + slideInHorizontally { -it },
+                        exitTransition = fadeOut() + slideOutHorizontally { -it },
+                    ) {
                         listPane(
                             Modifier.fillMaxSize(),
                             drawerState.isOpen,
@@ -246,7 +253,10 @@ internal fun AndroidThreePaneHomeScaffold(
                         )
                     }
                 } else {
-                    AnimatedPane {
+                    AnimatedPane(
+                        enterTransition = fadeIn() + slideInHorizontally { it },
+                        exitTransition = fadeOut() + slideOutHorizontally { it },
+                    ) {
                         ReaderPaneContent(
                             articleToRender = articleToRender,
                             readerModeState = readerModeState,

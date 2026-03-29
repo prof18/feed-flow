@@ -1,24 +1,23 @@
 package com.prof18.feedflow.android.home
 
 import android.content.Context
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
+import com.prof18.feedflow.android.home.drawer.AndroidDrawer
 import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -26,6 +25,7 @@ import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
+import com.prof18.feedflow.shared.data.AndroidHomeSettingsRepository
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
@@ -41,6 +41,9 @@ import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
+import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -206,51 +209,77 @@ internal fun HomeScreen(
         onOpenWebsite = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
     )
 
-    AdaptiveHomeView(
-        snackbarHostState = snackbarHostState,
-        onSettingsButtonClicked = onSettingsButtonClicked,
-        onSearchClick = onSearchClick,
-        displayState = homeDisplayState,
-        feedListActions = feedListActions,
-        feedManagementActions = feedManagementActions,
-        feedContentWrapper = { content ->
-            val pullToRefreshState = rememberPullToRefreshState()
-            PullToRefreshBox(
-                modifier = Modifier.fillMaxSize(),
-                state = pullToRefreshState,
-                isRefreshing = homeDisplayState.feedUpdateStatus.isLoading(),
-                onRefresh = feedListActions.refreshData,
-            ) {
-                content()
-            }
+    val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
+    val reduceMotionEnabled = LocalReduceMotion.current
+    val homeSettingsRepository = koinInject<AndroidHomeSettingsRepository>()
+
+    val shareBehavior = ShareBehavior(
+        onShareClick = { titleAndUrl ->
+            context.openShareSheet(
+                title = titleAndUrl.title,
+                url = titleAndUrl.url,
+            )
         },
-        shareBehavior = ShareBehavior(
-            onShareClick = { titleAndUrl ->
-                context.openShareSheet(
-                    title = titleAndUrl.title,
-                    url = titleAndUrl.url,
-                )
-            },
-            shareLinkTitle = strings.menuShare,
-            shareCommentsTitle = strings.menuShareComments,
-        ),
-        onBackupClick = homeViewModel::enqueueBackup,
-        onFeedSuggestionsClick = onFeedSuggestionsClick,
-        onEmptyStateClick = {
-            showNoFeedsBottomSheet = true
-        },
-        onNavigateToNextFeed = onNavigateToNextFeed,
+        shareLinkTitle = strings.menuShare,
+        shareCommentsTitle = strings.menuShareComments,
+    )
+
+    AndroidThreePaneHomeScaffold(
         currentReaderArticle = currentReaderArticle,
         readerModeState = readerModeState,
         readerFontSize = readerFontSize,
         themeMode = themeMode,
         canNavigatePrevious = canNavigatePrevious,
         canNavigateNext = canNavigateNext,
+        initialPaneExpansionIndex = homeSettingsRepository.getPaneExpansionIndex(),
         onReaderClosed = closeReaderSelection,
         onUpdateReaderFontSize = readerModeViewModel::updateFontSize,
         onReaderBookmarkClick = readerModeViewModel::updateBookmarkStatus,
         onNavigateToPreviousArticle = readerModeViewModel::navigateToPreviousArticle,
         onNavigateToNextArticle = readerModeViewModel::navigateToNextArticle,
+        onPaneExpansionIndexChanged = homeSettingsRepository::setPaneExpansionIndex,
+        drawerPane = { modifier, _, onCloseDrawer ->
+            AndroidDrawer(
+                modifier = modifier,
+                displayState = homeDisplayState,
+                feedManagementActions = feedManagementActions,
+                onFeedFilterSelected = { feedFilter ->
+                    feedManagementActions.onFeedFilterSelected(feedFilter)
+                    onCloseDrawer()
+                    scope.launch {
+                        listState.scrollToItemConditionally(
+                            0,
+                            reduceMotionEnabled = reduceMotionEnabled,
+                        )
+                    }
+                },
+                onFeedSuggestionsClick = {
+                    onCloseDrawer()
+                    onFeedSuggestionsClick()
+                },
+            )
+        },
+        listPane = { modifier, isDrawerOpen, onDrawerClick ->
+            AndroidHomeScreenContent(
+                modifier = modifier,
+                displayState = homeDisplayState,
+                feedListActions = feedListActions,
+                feedManagementActions = feedManagementActions,
+                listState = listState,
+                snackbarHostState = snackbarHostState,
+                onSearchClick = onSearchClick,
+                onSettingsButtonClicked = onSettingsButtonClicked,
+                showDrawerMenu = true,
+                isDrawerOpen = isDrawerOpen,
+                onDrawerMenuClick = onDrawerClick,
+                onRefresh = feedListActions.refreshData,
+                shareBehavior = shareBehavior,
+                onBackupClick = homeViewModel::enqueueBackup,
+                onEmptyStateClick = { showNoFeedsBottomSheet = true },
+                onNavigateToNextFeed = onNavigateToNextFeed,
+            )
+        },
     )
 
     if (showChangeCategorySheet) {

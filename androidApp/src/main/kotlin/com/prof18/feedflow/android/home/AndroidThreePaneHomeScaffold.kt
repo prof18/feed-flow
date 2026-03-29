@@ -3,6 +3,8 @@ package com.prof18.feedflow.android.home
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -25,7 +27,6 @@ import androidx.compose.material3.adaptive.layout.PaneExpansionAnchor
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
-import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.rememberDrawerState
@@ -40,6 +41,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.readermode.ReaderModeScreen
 import com.prof18.feedflow.core.model.FeedItemId
@@ -70,6 +72,7 @@ internal fun AndroidThreePaneHomeScaffold(
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
+    val transitions = rememberPaneTransitions(reduceMotionEnabled)
     val initialAnchorIndex = remember(initialPaneExpansionIndex) {
         if (initialPaneExpansionIndex in 1 until androidHomePaneAnchors.lastIndex) {
             initialPaneExpansionIndex
@@ -102,10 +105,6 @@ internal fun AndroidThreePaneHomeScaffold(
         ) {
             lastReaderArticle = null
         }
-    }
-
-    BackHandler(enabled = currentReaderArticle != null) {
-        onReaderClosed()
     }
 
     LaunchedEffect(paneExpansionState.currentAnchor) {
@@ -166,6 +165,14 @@ internal fun AndroidThreePaneHomeScaffold(
             null
         }
 
+        BackHandler(enabled = currentReaderArticle != null) {
+            if (isDetailFullscreen && toggleDetailFullscreen != null) {
+                toggleDetailFullscreen()
+            } else {
+                onReaderClosed()
+            }
+        }
+
         ListDetailPaneScaffold(
             modifier = Modifier.fillMaxSize(),
             directive = navigator.scaffoldDirective,
@@ -183,44 +190,23 @@ internal fun AndroidThreePaneHomeScaffold(
             },
             paneExpansionState = paneExpansionState,
             listPane = {
-                if (reduceMotionEnabled) {
-                    AnimatedPane(
-                        enterTransition = EnterTransition.None,
-                        exitTransition = ExitTransition.None,
-                    ) {
-                        listPane(
-                            Modifier.fillMaxSize(),
-                            drawerState.isOpen,
-                            {
-                                scope.launch {
-                                    if (drawerState.isOpen) {
-                                        drawerState.close()
-                                    } else {
-                                        drawerState.open()
-                                    }
+                AnimatedPane(
+                    enterTransition = transitions.listEnter,
+                    exitTransition = transitions.listExit,
+                ) {
+                    listPane(
+                        Modifier.fillMaxSize(),
+                        drawerState.isOpen,
+                        {
+                            scope.launch {
+                                if (drawerState.isOpen) {
+                                    drawerState.close()
+                                } else {
+                                    drawerState.open()
                                 }
-                            },
-                        )
-                    }
-                } else {
-                    AnimatedPane(
-                        enterTransition = fadeIn() + slideInHorizontally { -it },
-                        exitTransition = fadeOut() + slideOutHorizontally { -it },
-                    ) {
-                        listPane(
-                            Modifier.fillMaxSize(),
-                            drawerState.isOpen,
-                            {
-                                scope.launch {
-                                    if (drawerState.isOpen) {
-                                        drawerState.close()
-                                    } else {
-                                        drawerState.open()
-                                    }
-                                }
-                            },
-                        )
-                    }
+                            }
+                        },
+                    )
                 }
             },
             detailPane = {
@@ -231,50 +217,59 @@ internal fun AndroidThreePaneHomeScaffold(
                 } else {
                     null
                 }
-                if (reduceMotionEnabled) {
-                    AnimatedPane(
-                        enterTransition = EnterTransition.None,
-                        exitTransition = ExitTransition.None,
-                    ) {
-                        ReaderPaneContent(
-                            articleToRender = articleToRender,
+                AnimatedPane(
+                    enterTransition = transitions.detailEnter,
+                    exitTransition = transitions.detailExit,
+                ) {
+                    if (articleToRender != null) {
+                        ReaderModeScreen(
                             readerModeState = readerModeState,
-                            readerFontSize = readerFontSize,
+                            fontSize = readerFontSize,
                             themeMode = themeMode,
-                            onUpdateReaderFontSize = onUpdateReaderFontSize,
-                            onReaderBookmarkClick = onReaderBookmarkClick,
-                            onReaderClosed = onReaderClosed,
+                            onUpdateFontSize = onUpdateReaderFontSize,
+                            onBookmarkClick = onReaderBookmarkClick,
+                            navigateBack = onReaderClosed,
                             canNavigatePrevious = canNavigatePrevious,
                             canNavigateNext = canNavigateNext,
-                            onNavigateToPreviousArticle = onNavigateToPreviousArticle,
-                            onNavigateToNextArticle = onNavigateToNextArticle,
+                            onNavigateToPrevious = onNavigateToPreviousArticle,
+                            onNavigateToNext = onNavigateToNextArticle,
                             isDetailFullscreen = isDetailFullscreen,
                             onToggleDetailFullscreen = toggleDetailFullscreen,
                         )
-                    }
-                } else {
-                    AnimatedPane(
-                        enterTransition = fadeIn() + slideInHorizontally { it },
-                        exitTransition = fadeOut() + slideOutHorizontally { it },
-                    ) {
-                        ReaderPaneContent(
-                            articleToRender = articleToRender,
-                            readerModeState = readerModeState,
-                            readerFontSize = readerFontSize,
-                            themeMode = themeMode,
-                            onUpdateReaderFontSize = onUpdateReaderFontSize,
-                            onReaderBookmarkClick = onReaderBookmarkClick,
-                            onReaderClosed = onReaderClosed,
-                            canNavigatePrevious = canNavigatePrevious,
-                            canNavigateNext = canNavigateNext,
-                            onNavigateToPreviousArticle = onNavigateToPreviousArticle,
-                            onNavigateToNextArticle = onNavigateToNextArticle,
-                            isDetailFullscreen = isDetailFullscreen,
-                            onToggleDetailFullscreen = toggleDetailFullscreen,
-                        )
+                    } else {
+                        Box(modifier = Modifier.fillMaxSize())
                     }
                 }
             },
+        )
+    }
+}
+
+@Composable
+private fun rememberPaneTransitions(reduceMotionEnabled: Boolean): PaneTransitions = remember(
+    reduceMotionEnabled,
+) {
+    if (reduceMotionEnabled) {
+        PaneTransitions(
+            listEnter = EnterTransition.None,
+            listExit = ExitTransition.None,
+            detailEnter = EnterTransition.None,
+            detailExit = ExitTransition.None,
+        )
+    } else {
+        PaneTransitions(
+            listEnter = fadeIn() + slideInHorizontally(
+                spring(visibilityThreshold = IntOffset.VisibilityThreshold),
+            ) { -it },
+            listExit = fadeOut() + slideOutHorizontally(
+                spring(visibilityThreshold = IntOffset.VisibilityThreshold),
+            ) { -it },
+            detailEnter = fadeIn() + slideInHorizontally(
+                spring(visibilityThreshold = IntOffset.VisibilityThreshold),
+            ) { it },
+            detailExit = fadeOut() + slideOutHorizontally(
+                spring(visibilityThreshold = IntOffset.VisibilityThreshold),
+            ) { it },
         )
     }
 }
@@ -284,41 +279,12 @@ private fun isReaderPaneActive(
     currentPane: ThreePaneScaffoldRole?,
 ): Boolean = currentReaderArticle != null || currentPane == ListDetailPaneScaffoldRole.Detail
 
-@Composable
-private fun ReaderPaneContent(
-    articleToRender: FeedItemUrlInfo?,
-    readerModeState: ReaderModeState,
-    readerFontSize: Int,
-    themeMode: ThemeMode,
-    onUpdateReaderFontSize: (Int) -> Unit,
-    onReaderBookmarkClick: (FeedItemId, Boolean) -> Unit,
-    onReaderClosed: () -> Unit,
-    canNavigatePrevious: Boolean,
-    canNavigateNext: Boolean,
-    onNavigateToPreviousArticle: () -> Unit,
-    onNavigateToNextArticle: () -> Unit,
-    isDetailFullscreen: Boolean = false,
-    onToggleDetailFullscreen: (() -> Unit)? = null,
-) {
-    if (articleToRender != null) {
-        ReaderModeScreen(
-            readerModeState = readerModeState,
-            fontSize = readerFontSize,
-            themeMode = themeMode,
-            onUpdateFontSize = onUpdateReaderFontSize,
-            onBookmarkClick = onReaderBookmarkClick,
-            navigateBack = onReaderClosed,
-            canNavigatePrevious = canNavigatePrevious,
-            canNavigateNext = canNavigateNext,
-            onNavigateToPrevious = onNavigateToPreviousArticle,
-            onNavigateToNext = onNavigateToNextArticle,
-            isDetailFullscreen = isDetailFullscreen,
-            onToggleDetailFullscreen = onToggleDetailFullscreen,
-        )
-    } else {
-        Box(modifier = Modifier.fillMaxSize())
-    }
-}
+private data class PaneTransitions(
+    val listEnter: EnterTransition,
+    val listExit: ExitTransition,
+    val detailEnter: EnterTransition,
+    val detailExit: ExitTransition,
+)
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -327,12 +293,9 @@ private fun SyncAndroidReaderPaneNavigation(
     navigator: ThreePaneScaffoldNavigator<String>,
 ) {
     LaunchedEffect(currentReaderArticle?.id) {
-        if (currentReaderArticle != null) {
-            if (navigator.currentDestination?.pane == ListDetailPaneScaffoldRole.Detail) {
-                navigator.navigateBack(
-                    backNavigationBehavior = BackNavigationBehavior.PopLatest,
-                )
-            }
+        if (currentReaderArticle != null &&
+            navigator.currentDestination?.pane != ListDetailPaneScaffoldRole.Detail
+        ) {
             navigator.navigateTo(
                 pane = ListDetailPaneScaffoldRole.Detail,
                 contentKey = currentReaderArticle.id,

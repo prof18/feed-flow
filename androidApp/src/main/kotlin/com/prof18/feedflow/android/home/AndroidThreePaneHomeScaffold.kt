@@ -18,6 +18,7 @@ import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.PaneExpansionAnchor
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
@@ -116,9 +117,14 @@ internal fun AndroidThreePaneHomeScaffold(
         currentReaderArticle = currentReaderArticle,
         navigator = navigator,
     )
+    val isReaderPaneActive = isReaderPaneActive(
+        currentReaderArticle = currentReaderArticle,
+        currentPane = navigator.currentDestination?.pane,
+    )
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = drawerState.isOpen || !isReaderPaneActive,
         drawerContent = {
             ModalDrawerSheet(
                 windowInsets = WindowInsets(0.dp),
@@ -262,6 +268,11 @@ internal fun AndroidThreePaneHomeScaffold(
         )
     }
 }
+
+private fun isReaderPaneActive(
+    currentReaderArticle: FeedItemUrlInfo?,
+    currentPane: ThreePaneScaffoldRole?,
+): Boolean = currentReaderArticle != null || currentPane == ListDetailPaneScaffoldRole.Detail
 
 @Composable
 private fun ReaderPaneContent(

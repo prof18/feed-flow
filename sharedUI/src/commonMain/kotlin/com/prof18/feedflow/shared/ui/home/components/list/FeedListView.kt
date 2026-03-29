@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.ui.home.components.list
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -85,6 +86,7 @@ fun FeedList(
     onNavigateNext: () -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
+    contentPadding: PaddingValues = PaddingValues(),
     onMarkAllAboveAsRead: (String) -> Unit = {},
     onMarkAllBelowAsRead: (String) -> Unit = {},
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
@@ -112,6 +114,7 @@ fun FeedList(
     ) {
         LazyColumn(
             state = listState,
+            contentPadding = contentPadding,
         ) {
             itemsIndexed(
                 items = feedItems,

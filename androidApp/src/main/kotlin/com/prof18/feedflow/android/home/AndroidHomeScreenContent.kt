@@ -2,6 +2,7 @@ package com.prof18.feedflow.android.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
@@ -41,6 +42,8 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
+
+private val listTopContentPadding = 4.dp
 
 @Composable
 fun AndroidHomeScreenContent(
@@ -190,6 +193,7 @@ fun AndroidHomeScreenContent(
                                     modifier = Modifier,
                                     feedItems = displayState.feedItems,
                                     listState = listState,
+                                    contentPadding = PaddingValues(top = listTopContentPadding),
                                     feedFontSize = displayState.feedFontSizes,
                                     nextFeedState = displayState.nextFeedDisplayState,
                                     shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,

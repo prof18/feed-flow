@@ -2,6 +2,7 @@ package com.prof18.feedflow.desktop.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -183,6 +184,7 @@ fun DesktopHomeScreenContent(
                                         modifier = Modifier,
                                         feedItems = displayState.feedItems,
                                         listState = listState,
+                                        contentPadding = PaddingValues(top = listPaneTopContentPadding),
                                         feedFontSize = displayState.feedFontSizes,
                                         nextFeedState = displayState.nextFeedDisplayState,
                                         shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,

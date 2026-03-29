@@ -72,6 +72,7 @@ kotlin {
                 implementation(libs.compose.multiplatform.material3.adaptive.navigation)
                 implementation(libs.haze)
                 implementation(libs.haze.materials)
+                implementation(libs.compose.unstyled.primitives)
             }
         }
 

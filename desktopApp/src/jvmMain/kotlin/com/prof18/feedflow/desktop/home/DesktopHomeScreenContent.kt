@@ -1,16 +1,13 @@
 package com.prof18.feedflow.desktop.home
 
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,9 +25,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.dp
+import com.composables.core.ScrollArea
+import com.composables.core.rememberScrollAreaState
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
+import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
@@ -147,7 +146,8 @@ fun DesktopHomeScreenContent(
                 )
 
                 else -> {
-                    Box(
+                    ScrollArea(
+                        state = rememberScrollAreaState(listState),
                         modifier = Modifier.fillMaxSize(),
                     ) {
                         Box(
@@ -216,13 +216,7 @@ fun DesktopHomeScreenContent(
                             }
                         }
 
-                        VerticalScrollbar(
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .fillMaxHeight()
-                                .width(6.dp),
-                            adapter = rememberScrollbarAdapter(scrollState = listState),
-                        )
+                        FeedFlowVerticalScrollbar()
 
                         TopToolbarContentFade(
                             modifier = Modifier.align(Alignment.TopCenter),

@@ -66,6 +66,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.composables.core.ScrollArea
+import com.composables.core.rememberScrollAreaState
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
@@ -73,6 +75,7 @@ import com.mikepenz.markdown.model.markdownAnimations
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
@@ -220,86 +223,95 @@ internal fun ReaderModeScreen(
                     }
 
                     is ReaderModeState.Success -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(rememberScrollState()),
-                            contentAlignment = Alignment.TopCenter,
+                        val scrollState = rememberScrollState()
+
+                        ScrollArea(
+                            state = rememberScrollAreaState(scrollState),
+                            modifier = Modifier.fillMaxSize(),
                         ) {
-                            Column(
-                                modifier = contentModifier,
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(scrollState),
+                                contentAlignment = Alignment.TopCenter,
                             ) {
-                                key(s.readerModeData.content, fontSize) {
-                                    SelectionContainer {
-                                        Markdown(
-                                            modifier = Modifier
-                                                .padding(Spacing.regular)
-                                                .padding(bottom = 64.dp),
-                                            content = s.readerModeData.content,
-                                            imageTransformer = Coil3ImageTransformerImpl,
-                                            components = desktopReaderModeMarkdownComponents(
-                                                onHoveredLinkChange = { hoveredLink = it },
-                                            ),
-                                            animations = markdownAnimations(
-                                                animateTextSize = {
-                                                    this
-                                                    /** No animation */
-                                                },
-                                            ),
-                                            typography = markdownTypography(
-                                                h1 = MaterialTheme.typography.displaySmall.copy(
-                                                    fontSize = (fontSize + 20).sp,
-                                                    lineHeight = (fontSize + 32).sp,
+                                Column(
+                                    modifier = contentModifier,
+                                ) {
+                                    key(s.readerModeData.content, fontSize) {
+                                        SelectionContainer {
+                                            Markdown(
+                                                modifier = Modifier
+                                                    .padding(Spacing.regular)
+                                                    .padding(bottom = 64.dp),
+                                                content = s.readerModeData.content,
+                                                imageTransformer = Coil3ImageTransformerImpl,
+                                                components = desktopReaderModeMarkdownComponents(
+                                                    onHoveredLinkChange = { hoveredLink = it },
                                                 ),
-                                                h2 = MaterialTheme.typography.titleLarge.copy(
-                                                    fontSize = (fontSize + 6).sp,
-                                                    lineHeight = (fontSize + 16).sp,
+                                                animations = markdownAnimations(
+                                                    animateTextSize = {
+                                                        this
+                                                        /** No animation */
+                                                    },
                                                 ),
-                                                h3 = MaterialTheme.typography.titleLarge.copy(
-                                                    fontSize = (fontSize + 6).sp,
-                                                    lineHeight = (fontSize + 16).sp,
-                                                ),
-                                                h4 = MaterialTheme.typography.titleMedium.copy(
-                                                    fontSize = fontSize.sp,
-                                                    lineHeight = (fontSize + 12).sp,
-                                                ),
-                                                h5 = MaterialTheme.typography.titleMedium.copy(
-                                                    fontSize = fontSize.sp,
-                                                    lineHeight = (fontSize + 12).sp,
-                                                ),
-                                                h6 = MaterialTheme.typography.titleMedium.copy(
-                                                    fontSize = fontSize.sp,
-                                                    lineHeight = (fontSize + 12).sp,
-                                                ),
-                                                paragraph = MaterialTheme.typography.bodyLarge.copy(
-                                                    fontSize = fontSize.sp,
-                                                    lineHeight = (fontSize + 12).sp,
-                                                ),
-                                                text = MaterialTheme.typography.bodyLarge.copy(
-                                                    fontSize = fontSize.sp,
-                                                    lineHeight = (fontSize + 12).sp,
-                                                ),
-                                                code = MaterialTheme.typography.bodyMedium.copy(
-                                                    fontSize = (fontSize - 2).sp,
-                                                    lineHeight = (fontSize + 8).sp,
-                                                ),
-                                                list = MaterialTheme.typography.bodyLarge.copy(
-                                                    fontSize = fontSize.sp,
-                                                    lineHeight = (fontSize + 12).sp,
-                                                ),
-                                                textLink = TextLinkStyles(
-                                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                                typography = markdownTypography(
+                                                    h1 = MaterialTheme.typography.displaySmall.copy(
+                                                        fontSize = (fontSize + 20).sp,
+                                                        lineHeight = (fontSize + 32).sp,
+                                                    ),
+                                                    h2 = MaterialTheme.typography.titleLarge.copy(
+                                                        fontSize = (fontSize + 6).sp,
+                                                        lineHeight = (fontSize + 16).sp,
+                                                    ),
+                                                    h3 = MaterialTheme.typography.titleLarge.copy(
+                                                        fontSize = (fontSize + 6).sp,
+                                                        lineHeight = (fontSize + 16).sp,
+                                                    ),
+                                                    h4 = MaterialTheme.typography.titleMedium.copy(
                                                         fontSize = fontSize.sp,
                                                         lineHeight = (fontSize + 12).sp,
-                                                        fontWeight = FontWeight.Bold,
-                                                        textDecoration = TextDecoration.Underline,
-                                                    ).toSpanStyle(),
+                                                    ),
+                                                    h5 = MaterialTheme.typography.titleMedium.copy(
+                                                        fontSize = fontSize.sp,
+                                                        lineHeight = (fontSize + 12).sp,
+                                                    ),
+                                                    h6 = MaterialTheme.typography.titleMedium.copy(
+                                                        fontSize = fontSize.sp,
+                                                        lineHeight = (fontSize + 12).sp,
+                                                    ),
+                                                    paragraph = MaterialTheme.typography.bodyLarge.copy(
+                                                        fontSize = fontSize.sp,
+                                                        lineHeight = (fontSize + 12).sp,
+                                                    ),
+                                                    text = MaterialTheme.typography.bodyLarge.copy(
+                                                        fontSize = fontSize.sp,
+                                                        lineHeight = (fontSize + 12).sp,
+                                                    ),
+                                                    code = MaterialTheme.typography.bodyMedium.copy(
+                                                        fontSize = (fontSize - 2).sp,
+                                                        lineHeight = (fontSize + 8).sp,
+                                                    ),
+                                                    list = MaterialTheme.typography.bodyLarge.copy(
+                                                        fontSize = fontSize.sp,
+                                                        lineHeight = (fontSize + 12).sp,
+                                                    ),
+                                                    textLink = TextLinkStyles(
+                                                        style = MaterialTheme.typography.bodyLarge.copy(
+                                                            fontSize = fontSize.sp,
+                                                            lineHeight = (fontSize + 12).sp,
+                                                            fontWeight = FontWeight.Bold,
+                                                            textDecoration = TextDecoration.Underline,
+                                                        ).toSpanStyle(),
+                                                    ),
                                                 ),
-                                            ),
-                                        )
+                                            )
+                                        }
                                     }
                                 }
                             }
+
+                            FeedFlowVerticalScrollbar()
                         }
                     }
                 }

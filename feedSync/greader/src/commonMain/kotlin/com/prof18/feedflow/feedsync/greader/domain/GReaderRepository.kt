@@ -305,12 +305,16 @@ class GReaderRepository internal constructor(
         newFeedSource: FeedSource,
         originalFeedSource: FeedSource?,
     ): DataResult<Unit> {
+        val categoryUpdate = buildCategoryUpdate(
+            originalCategory = originalFeedSource?.category,
+            newCategory = newFeedSource.category,
+        )
         val result = gReaderClient.editSubscription(
             feedSourceId = newFeedSource.id,
             editAction = SubscriptionEditAction.EDIT,
             title = newFeedSource.title,
-            addCategoryId = newFeedSource.category?.id,
-            removeCategoryId = originalFeedSource?.category?.id,
+            addCategoryId = categoryUpdate.addCategoryId,
+            removeCategoryId = categoryUpdate.removeCategoryId,
         )
         if (result.isError()) {
             return result
@@ -580,3 +584,24 @@ class GReaderRepository internal constructor(
         private const val BAZQUX_ITEM_ID_PREFIX = "tag:google.com,2005:reader/item/"
     }
 }
+
+internal fun buildCategoryUpdate(
+    originalCategory: FeedSourceCategory?,
+    newCategory: FeedSourceCategory?,
+): CategoryUpdate {
+    val originalCategoryId = originalCategory?.id
+    val newCategoryId = newCategory?.id
+    if (originalCategoryId == newCategoryId) {
+        return CategoryUpdate()
+    }
+
+    return CategoryUpdate(
+        addCategoryId = newCategoryId,
+        removeCategoryId = originalCategoryId,
+    )
+}
+
+internal data class CategoryUpdate(
+    val addCategoryId: String? = null,
+    val removeCategoryId: String? = null,
+)

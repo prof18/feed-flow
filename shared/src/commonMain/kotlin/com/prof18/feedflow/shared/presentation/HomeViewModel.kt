@@ -415,6 +415,15 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun deleteAllFeedsInCategory(feedSources: List<FeedSource>) {
+        viewModelScope.launch {
+            for (feedSource in feedSources) {
+                feedSourcesRepository.deleteFeed(feedSource)
+            }
+            feedFetcherRepository.fetchFeeds()
+        }
+    }
+
     fun updateCategoryName(categoryId: CategoryId, newName: CategoryName) {
         viewModelScope.launch {
             feedCategoryRepository.updateCategoryName(categoryId, newName)

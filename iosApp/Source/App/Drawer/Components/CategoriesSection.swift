@@ -59,7 +59,7 @@ struct CategoriesSection: View {
                                     categoryToDelete = categoryItem.category.id
                                     showDeleteCategoryDialog = true
                                 } label: {
-                                    Label(feedFlowStrings.deleteFeed, systemImage: "trash")
+                                    Label(feedFlowStrings.deleteCategory, systemImage: "trash")
                                 }
                             }
                         }

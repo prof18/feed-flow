@@ -209,6 +209,7 @@ fun DesktopDrawer(
                         onOpenWebsite = feedManagementActions.onOpenWebsite,
                         onEditCategoryClick = feedManagementActions.onEditCategoryClick,
                         onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
+                        onDeleteAllFeedsInCategoryClick = feedManagementActions.onDeleteAllFeedsInCategoryClick,
                         onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
                         dragState = dragState,
                     )

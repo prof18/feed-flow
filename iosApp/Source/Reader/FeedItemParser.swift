@@ -10,7 +10,7 @@ import Foundation
 import WebKit
 
 private let minContentLength = 200
-private let maxHTMLContentSize = 20 * 1024 * 1024 // 20 MB
+private let maxHTMLContentSize = 20 * 1_024 * 1_024 // 20 MB
 
 class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {
     static let shared = FeedItemParser()

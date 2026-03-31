@@ -73,6 +73,7 @@ class FeedManagementActions(
     val onChangeFeedCategoryClick: (FeedSource) -> Unit,
     val onOpenWebsite: (String) -> Unit,
     val onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit = { _, _ -> },
+    val onDeleteAllFeedsInCategoryClick: (List<FeedSource>) -> Unit = { _ -> },
 )
 
 @Stable

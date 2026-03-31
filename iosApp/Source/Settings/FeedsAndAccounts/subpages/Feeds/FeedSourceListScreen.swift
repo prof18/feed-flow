@@ -31,6 +31,9 @@ struct FeedSourceListScreen: View {
             },
             renameFeedSource: { feedSource, newName in
                 vmStoreOwner.instance.updateFeedName(feedSource: feedSource, newName: newName)
+            },
+            deleteAllFeedsInCategory: { feedSources in
+                vmStoreOwner.instance.deleteAllFeedsInCategory(feedSources: feedSources)
             }
         )
         .id(appState.redrawAfterFeedSourceEdit)

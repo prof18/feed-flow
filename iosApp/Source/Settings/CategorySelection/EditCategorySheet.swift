@@ -152,7 +152,7 @@ struct EditCategorySheet: View {
             ),
             titleVisibility: .visible
         ) {
-            Button(feedFlowStrings.deleteFeed, role: .destructive) {
+            Button(feedFlowStrings.deleteCategory, role: .destructive) {
                 if let id = categoryToDelete {
                     onDeleteCategory(id)
                 }

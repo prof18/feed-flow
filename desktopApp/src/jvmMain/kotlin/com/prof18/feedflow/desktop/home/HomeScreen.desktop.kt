@@ -238,6 +238,9 @@ internal fun HomeScreen(
         onMoveFeedSourcesToCategory = { feedSources, category ->
             changeFeedCategoryViewModel.moveFeedSourcesToCategory(feedSources, category)
         },
+        onDeleteAllFeedsInCategoryClick = { feedSources ->
+            homeViewModel.deleteAllFeedsInCategory(feedSources)
+        },
     )
 
     val linkCopiedSuccess = LocalFeedFlowStrings.current.linkCopiedSuccess

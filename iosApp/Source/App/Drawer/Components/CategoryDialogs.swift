@@ -12,7 +12,7 @@ struct DeleteCategoryDialog: View {
                 Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) {
                     categoryToDelete = nil
                 }
-                Button(feedFlowStrings.deleteFeed, role: .destructive) {
+                Button(feedFlowStrings.deleteCategory, role: .destructive) {
                     if let id = categoryToDelete {
                         onDelete(id)
                     }

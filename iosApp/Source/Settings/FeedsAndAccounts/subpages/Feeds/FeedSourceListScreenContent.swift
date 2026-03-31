@@ -18,10 +18,14 @@ struct FeedSourceListScreenContent: View {
 
     @State private var showAddFeed = false
 
+    @State private var showDeleteAllFeedsDialog = false
+    @State private var feedSourcesToDelete: [FeedSource]?
+
     @Binding var feedState: FeedSourceListState
 
     let deleteFeedSource: (FeedSource) -> Void
     let renameFeedSource: (FeedSource, String) -> Void
+    let deleteAllFeedsInCategory: ([FeedSource]) -> Void
 
     var body: some View {
         VStack {
@@ -73,15 +77,30 @@ struct FeedSourceListScreenContent: View {
     @ViewBuilder private var feedSourcesWithoutCategoryList: some View {
         if !feedState.feedSourcesWithoutCategory.isEmpty {
             List {
-                ForEach(feedState.feedSourcesWithoutCategory, id: \.self.id) { feedSource in
-                    FeedSourceListItem(
-                        feedSource: feedSource,
-                        feedSourceTitle: feedSource.title,
-                        deleteFeedSource: deleteFeedSource,
-                        renameFeedSource: renameFeedSource
-                    )
-                    .id(feedSource.id)
-                    .listRowInsets(EdgeInsets())
+                Section {
+                    ForEach(feedState.feedSourcesWithoutCategory, id: \.self.id) { feedSource in
+                        FeedSourceListItem(
+                            feedSource: feedSource,
+                            feedSourceTitle: feedSource.title,
+                            deleteFeedSource: deleteFeedSource,
+                            renameFeedSource: renameFeedSource
+                        )
+                        .id(feedSource.id)
+                        .listRowInsets(EdgeInsets())
+                    }
+                } header: {
+                    Text(feedFlowStrings.noCategory)
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                feedSourcesToDelete = Array(feedState.feedSourcesWithoutCategory)
+                                showDeleteAllFeedsDialog = true
+                            } label: {
+                                Label(
+                                    feedFlowStrings.deleteAllFeedsInCategory,
+                                    systemImage: "trash"
+                                )
+                            }
+                        }
                 }
             }
         }
@@ -107,6 +126,17 @@ struct FeedSourceListScreenContent: View {
                             .font(.system(size: 16))
                             .foregroundStyle(Color(UIColor.label))
                             .padding(Spacing.regular)
+                            .contextMenu {
+                                Button(role: .destructive) {
+                                    feedSourcesToDelete = Array(feedSourceState.feedSources)
+                                    showDeleteAllFeedsDialog = true
+                                } label: {
+                                    Label(
+                                        feedFlowStrings.deleteAllFeedsInCategory,
+                                        systemImage: "trash"
+                                    )
+                                }
+                            }
                     }
                 )
                 .listRowInsets(
@@ -118,6 +148,22 @@ struct FeedSourceListScreenContent: View {
                     )
                 )
             }
+        }
+        .alert(
+            feedFlowStrings.deleteAllFeedsConfirmationTitle,
+            isPresented: $showDeleteAllFeedsDialog
+        ) {
+            Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) {
+                feedSourcesToDelete = nil
+            }
+            Button(feedFlowStrings.deleteAllFeedsInCategory, role: .destructive) {
+                if let feedSources = feedSourcesToDelete {
+                    deleteAllFeedsInCategory(feedSources)
+                }
+                feedSourcesToDelete = nil
+            }
+        } message: {
+            Text(feedFlowStrings.deleteAllFeedsConfirmationMessage)
         }
     }
 }

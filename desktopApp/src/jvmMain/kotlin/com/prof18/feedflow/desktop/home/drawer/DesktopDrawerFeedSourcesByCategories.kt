@@ -43,6 +43,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.shared.ui.components.DeleteAllFeedsInCategoryDialog
 import com.prof18.feedflow.shared.ui.components.DeleteCategoryDialog
 import com.prof18.feedflow.shared.ui.components.EditCategoryNameDialog
 import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenu
@@ -72,24 +73,49 @@ internal fun DesktopDrawerFeedSourcesByCategories(
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    onDeleteAllFeedsInCategoryClick: (List<FeedSource>) -> Unit,
     onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
     dragState: FeedSourceDragState,
 ) {
+    var showUncategorizedMenu by rememberSaveable { mutableStateOf(false) }
+    var uncategorizedMenuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
+    var showDeleteAllUncategorizedDialog by remember { mutableStateOf(false) }
+    val uncategorizedFeedSources = navDrawerState.feedSourcesWithoutCategory
+        .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
+    val showStandaloneUncategorizedMenu = uncategorizedFeedSources.isNotEmpty() &&
+        navDrawerState.feedSourcesByCategory.isEmpty()
+
     Column {
         Column {
             DrawerDivider()
 
+            val headerMenuModifier = if (showStandaloneUncategorizedMenu) {
+                Modifier.singleAndLongClickModifier(
+                    onClick = {},
+                    onLongClick = {
+                        uncategorizedMenuPositionInWindow = null
+                        showUncategorizedMenu = true
+                    },
+                    onLongClickPositioned = { position ->
+                        uncategorizedMenuPositionInWindow = position
+                        showUncategorizedMenu = true
+                    },
+                )
+            } else {
+                Modifier
+            }
+
             Text(
                 modifier = Modifier
                     .padding(start = Spacing.regular)
-                    .padding(bottom = Spacing.regular),
+                    .padding(bottom = Spacing.regular)
+                    .then(headerMenuModifier),
                 text = LocalFeedFlowStrings.current.drawerTitleFeedSources,
                 style = MaterialTheme.typography.labelLarge,
             )
 
             DesktopDrawerFeedSourcesList(
-                drawerFeedSources = navDrawerState.feedSourcesWithoutCategory
-                    .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
+                drawerFeedSources = uncategorizedFeedSources,
                 currentFeedFilter = currentFeedFilter,
                 drawerItemVisualStyle = drawerItemVisualStyle,
                 selectedFeedSourceIds = selectedFeedSourceIds,
@@ -126,11 +152,44 @@ internal fun DesktopDrawerFeedSourcesByCategories(
                     onOpenWebsite = onOpenWebsite,
                     onEditCategoryClick = onEditCategoryClick,
                     onDeleteCategoryClick = onDeleteCategoryClick,
+                    onDeleteAllFeedsInCategoryClick = onDeleteAllFeedsInCategoryClick,
                     onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
                     dragState = dragState,
                 )
             }
         }
+    }
+
+    if (showStandaloneUncategorizedMenu) {
+        val menuEntries = persistentListOf(
+            DesktopPopupMenuEntry.Action(
+                text = LocalFeedFlowStrings.current.deleteAllFeedsInCategory,
+                onClick = {
+                    showUncategorizedMenu = false
+                    uncategorizedMenuPositionInWindow = null
+                    showDeleteAllUncategorizedDialog = true
+                },
+            ),
+        )
+
+        DesktopPopupMenu(
+            showMenu = showUncategorizedMenu,
+            menuPositionInWindow = uncategorizedMenuPositionInWindow,
+            menuEntries = menuEntries,
+            closeMenu = {
+                showUncategorizedMenu = false
+                uncategorizedMenuPositionInWindow = null
+            },
+        )
+
+        DeleteAllFeedsInCategoryDialog(
+            showDialog = showDeleteAllUncategorizedDialog,
+            onDismiss = { showDeleteAllUncategorizedDialog = false },
+            onDeleteAllFeeds = {
+                onDeleteAllFeedsInCategoryClick(uncategorizedFeedSources.map { it.feedSource })
+                showDeleteAllUncategorizedDialog = false
+            },
+        )
     }
 }
 
@@ -153,6 +212,7 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
     onOpenWebsite: (String) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    onDeleteAllFeedsInCategoryClick: (List<FeedSource>) -> Unit,
     onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
     dragState: FeedSourceDragState,
 ) {
@@ -160,6 +220,7 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
     var showMenu by rememberSaveable { mutableStateOf(false) }
     var menuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showDeleteAllFeedsDialog by remember { mutableStateOf(false) }
 
     val category = feedSourceCategoryWrapper.feedSourceCategory
     val unreadCount = drawerFeedSources.sumOf { it.unreadCount }
@@ -220,21 +281,17 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
                     .hoverable(remember { MutableInteractionSource() })
                     .then(dropTargetModifier),
             ) {
-                val contentModifier = if (category != null) {
-                    Modifier.singleAndLongClickModifier(
-                        onClick = onClick,
-                        onLongClick = {
-                            menuPositionInWindow = null
-                            showMenu = true
-                        },
-                        onLongClickPositioned = { position ->
-                            menuPositionInWindow = position
-                            showMenu = true
-                        },
-                    )
-                } else {
-                    Modifier
-                }
+                val contentModifier = Modifier.singleAndLongClickModifier(
+                    onClick = onClick,
+                    onLongClick = {
+                        menuPositionInWindow = null
+                        showMenu = true
+                    },
+                    onLongClickPositioned = { position ->
+                        menuPositionInWindow = position
+                        showMenu = true
+                    },
+                )
 
                 Row(
                     modifier = contentModifier.padding(start = Spacing.regular, end = 24.dp),
@@ -297,8 +354,17 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
         )
     }
 
+    val strings = LocalFeedFlowStrings.current
+    val deleteAllFeedsEntry = DesktopPopupMenuEntry.Action(
+        text = strings.deleteAllFeedsInCategory,
+        onClick = {
+            showMenu = false
+            menuPositionInWindow = null
+            showDeleteAllFeedsDialog = true
+        },
+    )
+
     if (category != null) {
-        val strings = LocalFeedFlowStrings.current
         val menuEntries = persistentListOf(
             DesktopPopupMenuEntry.Action(
                 text = strings.editFeedSourceNameButton,
@@ -308,8 +374,9 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
                     showEditDialog = true
                 },
             ),
+            deleteAllFeedsEntry,
             DesktopPopupMenuEntry.Action(
-                text = strings.deleteFeed,
+                text = strings.deleteCategory,
                 onClick = {
                     showMenu = false
                     menuPositionInWindow = null
@@ -345,5 +412,26 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
             onDismiss = { showEditDialog = false },
             onEditCategory = onEditCategoryClick,
         )
+    } else {
+        val menuEntries = persistentListOf(deleteAllFeedsEntry)
+
+        DesktopPopupMenu(
+            showMenu = showMenu,
+            menuPositionInWindow = menuPositionInWindow,
+            menuEntries = menuEntries,
+            closeMenu = {
+                showMenu = false
+                menuPositionInWindow = null
+            },
+        )
     }
+
+    DeleteAllFeedsInCategoryDialog(
+        showDialog = showDeleteAllFeedsDialog,
+        onDismiss = { showDeleteAllFeedsDialog = false },
+        onDeleteAllFeeds = {
+            onDeleteAllFeedsInCategoryClick(drawerFeedSources.map { it.feedSource })
+            showDeleteAllFeedsDialog = false
+        },
+    )
 }

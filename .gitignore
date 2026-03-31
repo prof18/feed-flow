@@ -142,3 +142,4 @@ iosApp/.build/
 tmp
 .claude/worktrees
 .claude/settings.local.json
+/.xcodebuildmcp/

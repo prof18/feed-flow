@@ -277,7 +277,17 @@
     <string name="widget_background_color_title">Background color</string>
     <string name="widget_background_color_default">System</string>
     <string name="widget_background_color_preview">Preview</string>
+    <string name="widget_background_color_brightness">Brightness</string>
+    <string name="widget_background_color_hex_label">Hex color</string>
+    <string name="widget_background_color_hex_hint">Use #RRGGBB</string>
+    <string name="widget_background_color_hex_error">Enter a valid 6-digit hex color</string>
     <string name="widget_background_opacity_title">Background opacity: %s%%</string>
+    <string name="widget_text_color_title">Main text color</string>
+    <string name="widget_text_color_automatic">Automatic</string>
+    <string name="widget_text_color_light">Light</string>
+    <string name="widget_text_color_dark">Dark</string>
+    <string name="widget_preview_note">Preview colors may look different on your actual home screen because wallpaper, theme, and launcher background can affect the final result.</string>
+    <string name="widget_preview_toggle_background">Toggle preview background</string>
     <string name="widget_font_size_title">Font size</string>
     <string name="file_menu">File</string>
     <string name="exit_menu">Exit</string>

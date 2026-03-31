@@ -1,9 +1,9 @@
 package com.prof18.feedflow.android.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -31,10 +31,12 @@ import com.prof18.feedflow.android.widget.components.WidgetFeedItemCard
 import com.prof18.feedflow.android.widget.components.WidgetFeedItemList
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 
+@SuppressLint("RestrictedApi")
 @Composable
 internal fun WidgetContent(
     feedItems: ImmutableList<FeedItem>,
@@ -44,6 +46,7 @@ internal fun WidgetContent(
     fontScale: Int,
     backgroundColor: Int?,
     backgroundOpacityPercent: Int,
+    textColorMode: WidgetTextColorMode,
     hideImages: Boolean,
 ) {
     val context = LocalContext.current
@@ -57,6 +60,25 @@ internal fun WidgetContent(
         backgroundColor = backgroundColor,
         backgroundOpacity = backgroundOpacity,
     )
+    val textColors = when {
+        backgroundColor != null -> {
+            val effectiveBackgroundColor = widgetEffectiveBackgroundColor(
+                backgroundColor = widgetColorFromArgb(backgroundColor),
+                backgroundOpacity = backgroundOpacity,
+                underlayColor = GlanceTheme.colors.widgetBackground.getColor(context),
+            )
+            widgetTextColorsForMode(textColorMode, effectiveBackgroundColor)
+        }
+        textColorMode != WidgetTextColorMode.AUTOMATIC -> {
+            widgetTextColorsForMode(
+                textColorMode = textColorMode,
+                backgroundColor = GlanceTheme.colors.widgetBackground.getColor(context),
+            )
+        }
+        else -> null
+    }
+    val primaryTextColor = textColors?.primary?.let(::ColorProvider) ?: GlanceTheme.colors.onSurface
+    val secondaryTextColor = textColors?.secondary?.let(::ColorProvider) ?: GlanceTheme.colors.onSurface
 
     Scaffold(
         titleBar = if (showHeader) {
@@ -72,7 +94,7 @@ internal fun WidgetContent(
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = fontSizes.header.sp,
-                        color = GlanceTheme.colors.onSurface,
+                        color = primaryTextColor,
                     ),
                 )
             }
@@ -99,7 +121,7 @@ internal fun WidgetContent(
                     style = TextStyle(
                         fontWeight = FontWeight.Normal,
                         fontSize = fontSizes.empty.sp,
-                        color = (GlanceTheme.colors.onSurface),
+                        color = primaryTextColor,
                     ),
                 )
 
@@ -109,7 +131,7 @@ internal fun WidgetContent(
                     style = TextStyle(
                         fontWeight = FontWeight.Normal,
                         fontSize = fontSizes.empty.sp,
-                        color = (GlanceTheme.colors.onSurface),
+                        color = secondaryTextColor,
                     ),
                 )
             }
@@ -121,7 +143,14 @@ internal fun WidgetContent(
 
                 items(feedItems) { feedItem ->
                     when (feedLayout) {
-                        FeedLayout.LIST -> WidgetFeedItemList(feedItem, browserManager, fontSizes, hideImages)
+                        FeedLayout.LIST -> WidgetFeedItemList(
+                            feedItem = feedItem,
+                            browserManager = browserManager,
+                            fontSizes = fontSizes,
+                            hideImages = hideImages,
+                            primaryTextColor = primaryTextColor,
+                            secondaryTextColor = secondaryTextColor,
+                        )
                         FeedLayout.CARD -> WidgetFeedItemCard(feedItem, browserManager, fontSizes, hideImages)
                     }
                 }
@@ -132,6 +161,7 @@ internal fun WidgetContent(
     }
 }
 
+@SuppressLint("RestrictedApi")
 @Composable
 private fun resolveWidgetBackgroundColor(
     context: Context,
@@ -139,7 +169,7 @@ private fun resolveWidgetBackgroundColor(
     backgroundOpacity: Float,
 ): ColorProvider {
     if (backgroundColor != null) {
-        return ColorProvider(Color(backgroundColor).copy(alpha = backgroundOpacity))
+        return ColorProvider(widgetColorFromArgb(backgroundColor).copy(alpha = backgroundOpacity))
     }
 
     if (backgroundOpacity < 1f) {

@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.Palette
@@ -19,6 +21,7 @@ import androidx.compose.material.icons.outlined.ViewHeadline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,21 +34,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import java.util.Locale
 import kotlin.math.roundToInt
 
 @Composable
@@ -56,6 +59,7 @@ fun WidgetSettingsContent(
     onFontScaleSelected: (Int) -> Unit,
     onBackgroundColorSelected: (Int?) -> Unit,
     onBackgroundOpacitySelected: (Int) -> Unit,
+    onTextColorModeSelected: (WidgetTextColorMode) -> Unit,
     onHideImagesSelected: (Boolean) -> Unit,
     showConfirmButton: Boolean,
     onConfirm: () -> Unit,
@@ -64,8 +68,8 @@ fun WidgetSettingsContent(
     val strings = LocalFeedFlowStrings.current
     val backgroundOpacity = settingsState.backgroundOpacityPercent.coerceIn(minimumValue = 0, maximumValue = 100)
     val defaultBackgroundColor = MaterialTheme.colorScheme.surface
-    val resolvedBackgroundColor = settingsState.backgroundColor?.let { Color(it) } ?: defaultBackgroundColor
-    val backgroundLabel = settingsState.backgroundColor?.let { formatColorHex(it) }
+    val resolvedBackgroundColor = settingsState.backgroundColor?.let(::widgetColorFromArgb) ?: defaultBackgroundColor
+    val backgroundLabel = settingsState.backgroundColor?.let(::formatWidgetColorHex)
         ?: strings.widgetBackgroundColorDefault
     var showColorPicker by remember { mutableStateOf(false) }
 
@@ -132,6 +136,11 @@ fun WidgetSettingsContent(
             valueRange = 0f..100f,
         )
 
+        WidgetTextColorSelector(
+            currentMode = settingsState.textColorMode,
+            onModeSelected = onTextColorModeSelected,
+        )
+
         Text(
             text = strings.widgetFontSizeTitle,
             modifier = Modifier.padding(horizontal = Spacing.regular, vertical = Spacing.small),
@@ -164,7 +173,7 @@ fun WidgetSettingsContent(
             initialColor = resolvedBackgroundColor,
             onDismiss = { showColorPicker = false },
             onConfirm = { color ->
-                onBackgroundColorSelected(color.toArgb())
+                onBackgroundColorSelected(widgetColorToOpaqueArgb(color))
                 showColorPicker = false
             },
             onReset = {
@@ -232,6 +241,13 @@ private fun WidgetColorPickerDialog(
     val strings = LocalFeedFlowStrings.current
     val controller = rememberColorPickerController()
     var selectedColor by remember(initialColor) { mutableStateOf(initialColor) }
+    var hexInput by remember(initialColor) {
+        mutableStateOf(
+            formatWidgetColorHex(widgetColorToOpaqueArgb(initialColor)),
+        )
+    }
+    val parsedHexColor = parseWidgetColorHex(hexInput)
+    val isHexInputValid = parsedHexColor != null
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -239,7 +255,9 @@ private fun WidgetColorPickerDialog(
             color = MaterialTheme.colorScheme.surface,
         ) {
             Column(
-                modifier = Modifier.padding(Spacing.regular),
+                modifier = Modifier
+                    .padding(Spacing.regular)
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(Spacing.medium),
             ) {
                 Text(
@@ -271,6 +289,46 @@ private fun WidgetColorPickerDialog(
                     initialColor = initialColor,
                     onColorChanged = { colorEnvelope ->
                         selectedColor = colorEnvelope.color
+                        hexInput = formatWidgetColorHex(widgetColorToOpaqueArgb(colorEnvelope.color))
+                    },
+                )
+
+                Text(
+                    text = strings.widgetBackgroundColorBrightness,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+
+                BrightnessSlider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(36.dp),
+                    controller = controller,
+                    borderColor = MaterialTheme.colorScheme.outlineVariant,
+                    initialColor = initialColor,
+                )
+
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = hexInput,
+                    onValueChange = { value ->
+                        val updatedValue = value.uppercase()
+                        hexInput = updatedValue
+                        parseWidgetColorHex(updatedValue)?.let { color ->
+                            controller.selectByColor(color = color, fromUser = false)
+                        }
+                    },
+                    label = {
+                        Text(text = strings.widgetBackgroundColorHexLabel)
+                    },
+                    singleLine = true,
+                    isError = hexInput.isNotBlank() && !isHexInputValid,
+                    supportingText = {
+                        val supportingText = if (hexInput.isBlank() || isHexInputValid) {
+                            strings.widgetBackgroundColorHexHint
+                        } else {
+                            strings.widgetBackgroundColorHexError
+                        }
+                        Text(text = supportingText)
                     },
                 )
 
@@ -292,7 +350,10 @@ private fun WidgetColorPickerDialog(
                         TextButton(onClick = onDismiss) {
                             Text(text = strings.cancelButton)
                         }
-                        TextButton(onClick = { onConfirm(selectedColor) }) {
+                        TextButton(
+                            onClick = { onConfirm(selectedColor) },
+                            enabled = isHexInputValid,
+                        ) {
                             Text(text = strings.confirmButton)
                         }
                     }
@@ -300,10 +361,6 @@ private fun WidgetColorPickerDialog(
             }
         }
     }
-}
-
-private fun formatColorHex(colorArgb: Int): String {
-    return String.format(Locale.US, "#%08X", colorArgb)
 }
 
 @Preview
@@ -327,6 +384,7 @@ private fun WidgetSettingsContentPreview() {
                 onFontScaleSelected = {},
                 onBackgroundColorSelected = {},
                 onBackgroundOpacitySelected = {},
+                onTextColorModeSelected = {},
                 onHideImagesSelected = {},
                 showConfirmButton = true,
                 onConfirm = {},

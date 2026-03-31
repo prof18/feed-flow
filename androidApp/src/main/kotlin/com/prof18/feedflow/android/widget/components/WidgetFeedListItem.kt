@@ -37,6 +37,7 @@ import androidx.glance.layout.size
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import androidx.glance.unit.ColorProvider
 import coil3.asDrawable
 import coil3.imageLoader
 import coil3.request.ErrorResult
@@ -59,6 +60,8 @@ internal fun WidgetFeedItemList(
     browserManager: BrowserManager,
     fontSizes: WidgetFontSizes,
     hideImages: Boolean,
+    primaryTextColor: ColorProvider,
+    secondaryTextColor: ColorProvider,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     val context = LocalContext.current.applicationContext
@@ -71,7 +74,13 @@ internal fun WidgetFeedItemList(
             .clickable(clickAction),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Content(feedItem, fontSizes, hideImages)
+        Content(
+            feedItem = feedItem,
+            fontSizes = fontSizes,
+            hideImages = hideImages,
+            primaryTextColor = primaryTextColor,
+            secondaryTextColor = secondaryTextColor,
+        )
     }
 }
 
@@ -99,7 +108,13 @@ internal fun WidgetFeedItemCard(
                 .clickable(clickAction),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Content(feedItem, fontSizes, hideImages)
+            Content(
+                feedItem = feedItem,
+                fontSizes = fontSizes,
+                hideImages = hideImages,
+                primaryTextColor = GlanceTheme.colors.onSurface,
+                secondaryTextColor = GlanceTheme.colors.onSurface,
+            )
         }
     }
 }
@@ -109,6 +124,8 @@ private fun RowScope.Content(
     feedItem: FeedItem,
     fontSizes: WidgetFontSizes,
     hideImages: Boolean,
+    primaryTextColor: ColorProvider,
+    secondaryTextColor: ColorProvider,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     val modifier = modifier.defaultWeight()
@@ -120,7 +137,7 @@ private fun RowScope.Content(
         val fontStyle = TextStyle(
             fontWeight = FontWeight.Normal,
             fontSize = fontSizes.meta.sp,
-            color = (GlanceTheme.colors.onSurface),
+            color = secondaryTextColor,
         )
 
         Row {
@@ -135,7 +152,7 @@ private fun RowScope.Content(
             style = TextStyle(
                 fontWeight = FontWeight.Bold,
                 fontSize = fontSizes.title.sp,
-                color = (GlanceTheme.colors.onSurface),
+                color = primaryTextColor,
             ),
         )
 

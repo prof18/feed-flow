@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
+import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,27 +23,22 @@ class WidgetConfigurationViewModel(
 
     init {
         viewModelScope.launch {
-            val widgetAppearanceSettingsFlow = combine(
+            val appearanceFlow = combine(
                 widgetSettingsRepository.feedWidgetLayout,
                 widgetSettingsRepository.widgetShowHeader,
                 widgetSettingsRepository.widgetFontScale,
                 widgetSettingsRepository.widgetBackgroundColor,
                 widgetSettingsRepository.widgetBackgroundOpacity,
             ) { feedLayout, showHeader, fontScale, backgroundColor, backgroundOpacity ->
-                WidgetAppearanceSettings(
-                    feedLayout = feedLayout,
-                    showHeader = showHeader,
-                    fontScale = fontScale,
-                    backgroundColor = backgroundColor,
-                    backgroundOpacity = backgroundOpacity,
-                )
+                WidgetAppearanceSettings(feedLayout, showHeader, fontScale, backgroundColor, backgroundOpacity)
             }
 
             combine(
+                appearanceFlow,
                 settingsRepository.syncPeriodFlow,
-                widgetAppearanceSettingsFlow,
+                widgetSettingsRepository.widgetTextColorMode,
                 widgetSettingsRepository.widgetHideImages,
-            ) { syncPeriod, appearance, hideImages ->
+            ) { appearance, syncPeriod, textColorMode, hideImages ->
                 WidgetSettingsState(
                     syncPeriod = syncPeriod,
                     feedLayout = appearance.feedLayout,
@@ -50,6 +46,7 @@ class WidgetConfigurationViewModel(
                     fontScale = appearance.fontScale,
                     backgroundColor = appearance.backgroundColor,
                     backgroundOpacityPercent = appearance.backgroundOpacity,
+                    textColorMode = textColorMode,
                     hideImages = hideImages,
                 )
             }.collect { state ->
@@ -81,6 +78,11 @@ class WidgetConfigurationViewModel(
     fun updateBackgroundOpacityPercent(opacityPercent: Int) {
         if (_settingsState.value.backgroundOpacityPercent == opacityPercent) return
         widgetSettingsRepository.setWidgetBackgroundOpacityPercent(opacityPercent)
+    }
+
+    fun updateTextColorMode(textColorMode: WidgetTextColorMode) {
+        if (_settingsState.value.textColorMode == textColorMode) return
+        widgetSettingsRepository.setWidgetTextColorMode(textColorMode)
     }
 
     fun updateHideImages(hideImages: Boolean) {

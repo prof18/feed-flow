@@ -189,6 +189,7 @@ dependencies {
 
     debugImplementation(libs.compose.multiplatform.ui.tooling)
 
+    testImplementation(libs.junit)
     testImplementation(libs.koin.test)
 }
 

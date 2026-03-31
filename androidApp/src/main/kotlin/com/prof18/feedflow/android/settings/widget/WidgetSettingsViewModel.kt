@@ -6,6 +6,7 @@ import com.prof18.feedflow.android.widget.WidgetSettingsState
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
+import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,10 +45,16 @@ class WidgetSettingsViewModel(
                     backgroundOpacity = backgroundOpacity,
                 )
             }
+            val widgetAppearanceSettingsWithTextColorFlow = combine(
+                widgetAppearanceSettingsFlow,
+                widgetSettingsRepository.widgetTextColorMode,
+            ) { appearance, textColorMode ->
+                appearance.copy(textColorMode = textColorMode)
+            }
 
             combine(
                 globalSyncSettingsFlow,
-                widgetAppearanceSettingsFlow,
+                widgetAppearanceSettingsWithTextColorFlow,
                 widgetSettingsRepository.widgetHideImages,
             ) { syncPeriod, widgetAppearanceSettings, hideImages ->
                 WidgetSettingsState(
@@ -57,6 +64,7 @@ class WidgetSettingsViewModel(
                     fontScale = widgetAppearanceSettings.fontScale,
                     backgroundColor = widgetAppearanceSettings.backgroundColor,
                     backgroundOpacityPercent = widgetAppearanceSettings.backgroundOpacity,
+                    textColorMode = widgetAppearanceSettings.textColorMode,
                     hideImages = hideImages,
                 )
             }.collect { widgetSettingsState ->
@@ -122,6 +130,17 @@ class WidgetSettingsViewModel(
         }
     }
 
+    fun updateTextColorMode(textColorMode: WidgetTextColorMode) {
+        if (_settingsState.value.textColorMode == textColorMode) {
+            return
+        }
+        _settingsState.update { it.copy(textColorMode = textColorMode) }
+        widgetSettingsRepository.setWidgetTextColorMode(textColorMode)
+        viewModelScope.launch {
+            widgetUpdater.update()
+        }
+    }
+
     fun updateHideImages(hideImages: Boolean) {
         if (_settingsState.value.hideImages == hideImages) {
             return
@@ -139,5 +158,6 @@ class WidgetSettingsViewModel(
         val fontScale: Int,
         val backgroundColor: Int?,
         val backgroundOpacity: Int,
+        val textColorMode: WidgetTextColorMode = WidgetTextColorMode.AUTOMATIC,
     )
 }

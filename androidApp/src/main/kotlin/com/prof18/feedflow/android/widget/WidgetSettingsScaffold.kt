@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
+import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -31,6 +33,7 @@ fun WidgetSettingsScaffold(
     onFontScaleSelected: (Int) -> Unit,
     onBackgroundColorSelected: (Int?) -> Unit,
     onBackgroundOpacitySelected: (Int) -> Unit,
+    onTextColorModeSelected: (WidgetTextColorMode) -> Unit,
     onHideImagesSelected: (Boolean) -> Unit,
     showConfirmButton: Boolean,
     onConfirm: () -> Unit,
@@ -62,8 +65,18 @@ fun WidgetSettingsScaffold(
                 .padding(start = paddingValues.calculateLeftPadding(layoutDir))
                 .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         ) {
+            val strings = LocalFeedFlowStrings.current
             WidgetPreviewSection(
                 settingsState = settingsState,
+            )
+            Text(
+                text = strings.widgetPreviewNote,
+                modifier = Modifier
+                    .padding(horizontal = Spacing.regular)
+                    .padding(end = Spacing.large)
+                    .padding(bottom = Spacing.small),
+                style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.88f),
             )
 
             LazyColumn(
@@ -77,6 +90,7 @@ fun WidgetSettingsScaffold(
                         onFontScaleSelected = onFontScaleSelected,
                         onBackgroundColorSelected = onBackgroundColorSelected,
                         onBackgroundOpacitySelected = onBackgroundOpacitySelected,
+                        onTextColorModeSelected = onTextColorModeSelected,
                         onHideImagesSelected = onHideImagesSelected,
                         showConfirmButton = showConfirmButton,
                         onConfirm = onConfirm,
@@ -112,6 +126,7 @@ private fun WidgetSettingsScaffoldPreview() {
             onFontScaleSelected = {},
             onBackgroundColorSelected = {},
             onBackgroundOpacitySelected = {},
+            onTextColorModeSelected = {},
             onHideImagesSelected = {},
             showConfirmButton = true,
             onConfirm = {},

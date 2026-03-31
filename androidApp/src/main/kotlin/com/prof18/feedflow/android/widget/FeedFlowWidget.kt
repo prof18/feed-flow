@@ -35,6 +35,7 @@ internal class FeedFlowWidget(
                 val fontScale by widgetSettingsRepository.widgetFontScale.collectAsState()
                 val backgroundColor by widgetSettingsRepository.widgetBackgroundColor.collectAsState()
                 val backgroundOpacity by widgetSettingsRepository.widgetBackgroundOpacity.collectAsState()
+                val textColorMode by widgetSettingsRepository.widgetTextColorMode.collectAsState()
                 val hideImages by widgetSettingsRepository.widgetHideImages.collectAsState()
 
                 GlanceTheme {
@@ -46,6 +47,7 @@ internal class FeedFlowWidget(
                         fontScale = fontScale,
                         backgroundColor = backgroundColor,
                         backgroundOpacityPercent = backgroundOpacity,
+                        textColorMode = textColorMode,
                         hideImages = hideImages,
                     )
                 }

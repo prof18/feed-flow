@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +26,9 @@ class WidgetSettingsRepository(
 
     private val widgetBackgroundOpacityMutableFlow = MutableStateFlow(getWidgetBackgroundOpacityPercent())
     val widgetBackgroundOpacity: StateFlow<Int> = widgetBackgroundOpacityMutableFlow.asStateFlow()
+
+    private val widgetTextColorModeMutableFlow = MutableStateFlow(getWidgetTextColorMode())
+    val widgetTextColorMode: StateFlow<WidgetTextColorMode> = widgetTextColorModeMutableFlow.asStateFlow()
 
     private val widgetHideImagesMutableFlow = MutableStateFlow(getWidgetHideImages())
     val widgetHideImages: StateFlow<Boolean> = widgetHideImagesMutableFlow.asStateFlow()
@@ -80,6 +84,17 @@ class WidgetSettingsRepository(
         widgetBackgroundOpacityMutableFlow.update { value }
     }
 
+    fun getWidgetTextColorMode(): WidgetTextColorMode =
+        settings.getString(
+            WidgetSettingsFields.WIDGET_TEXT_COLOR_MODE.name,
+            WidgetTextColorMode.AUTOMATIC.name,
+        ).let { WidgetTextColorMode.valueOf(it) }
+
+    fun setWidgetTextColorMode(value: WidgetTextColorMode) {
+        settings[WidgetSettingsFields.WIDGET_TEXT_COLOR_MODE.name] = value.name
+        widgetTextColorModeMutableFlow.update { value }
+    }
+
     fun getWidgetHideImages(): Boolean =
         settings.getBoolean(WidgetSettingsFields.WIDGET_HIDE_IMAGES.name, false)
 
@@ -100,5 +115,6 @@ private enum class WidgetSettingsFields {
     WIDGET_FONT_SCALE_FACTOR,
     WIDGET_BACKGROUND_COLOR,
     WIDGET_BACKGROUND_OPACITY_PERCENT,
+    WIDGET_TEXT_COLOR_MODE,
     WIDGET_HIDE_IMAGES,
 }

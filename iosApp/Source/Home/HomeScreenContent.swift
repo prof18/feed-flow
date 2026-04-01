@@ -11,9 +11,9 @@ import SwiftUI
 
 struct HomeContent: View {
     @Environment(HomeListIndexHolder.self)
-    private var indexHolder
+    var indexHolder
     @Environment(AppState.self)
-    private var appState
+    var appState
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
     @Environment(\.horizontalSizeClass)
@@ -63,8 +63,12 @@ struct HomeContent: View {
     let onFeedSyncClick: () -> Void
     let openDrawer: () -> Void
 
-    private var isCompactPhone: Bool {
+    var isCompactPhone: Bool {
         horizontalSizeClass == .compact && UIDevice.current.userInterfaceIdiom == .phone
+    }
+
+    var shouldUseSystemNavigationTitle: Bool {
+        isiOS26OrLater() && !isCompactPhone
     }
 
     var body: some View {
@@ -189,22 +193,14 @@ private extension HomeContent {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isCompactPhone)
-            .if(isiOS26OrLater()) { view in
+            .if(shouldUseSystemNavigationTitle) { view in
                 view.navigationTitle(getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount))
             }
             .toolbar {
                 if isToolbarVisible {
                     if isCompactPhone {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button {
-                                openDrawer()
-                            } label: {
-                                Image(systemName: "sidebar.leading")
-                            }
-                        }
-                    }
-
-                    if isiOS26OrLater() {
+                        makeCompactPhoneToolbarContent(proxy: proxy)
+                    } else if isiOS26OrLater() {
                         makeIOS26ToolbarContent(proxy: proxy)
                     } else {
                         makeLegacyToolbarContent(proxy: proxy)
@@ -255,182 +251,6 @@ private extension HomeContent {
 
         case .feedSuggestions:
             FeedSuggestionsScreen()
-        }
-    }
-
-    @ToolbarContentBuilder
-    func makeIOS26ToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
-        if #available(iOS 26.0, *) {
-            ToolbarSpacer(.fixed)
-        }
-
-        ToolbarItem {
-            Button {
-                self.appState.navigate(
-                    route: CommonViewRoute.search
-                )
-            } label: {
-                Image(systemName: "magnifyingglass")
-            }
-        }
-
-        if #available(iOS 26.0, *) {
-            ToolbarSpacer(.fixed)
-        }
-
-        makeMenuToolbarView(proxy: proxy)
-    }
-
-    @ToolbarContentBuilder
-    func makeLegacyToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
-        makeToolbarHeaderView(proxy: proxy)
-
-        makeSearchToolbarView()
-        makeMenuToolbarView(proxy: proxy)
-    }
-
-    @ToolbarContentBuilder
-    func makeToolbarHeaderView(proxy: ScrollViewProxy) -> some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            HStack {
-                Text(getNavBarName(feedFilter: currentFeedFilter))
-                    .font(.title2)
-
-                if !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks) {
-                    Text("(\(unreadCount))")
-                        .font(.title2)
-                }
-            }
-            .padding(.vertical, Spacing.medium)
-            .onTapGesture(count: 1) {
-                proxy.scrollTo(feedState.first?.id)
-            }
-            .onTapGesture(count: 2) {
-                updateReadStatus(Int32(indexHolder.getLastReadIndex()))
-                self.indexHolder.refresh()
-                proxy.scrollTo(feedState.first?.id)
-                onRefresh()
-            }
-        }
-    }
-
-    @ToolbarContentBuilder
-    func makeSearchToolbarView() -> some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                self.appState.navigate(
-                    route: CommonViewRoute.search
-                )
-            } label: {
-                Image(systemName: "magnifyingglass")
-            }
-        }
-    }
-
-    @ToolbarContentBuilder
-    func makeMenuToolbarView(proxy: ScrollViewProxy) -> some ToolbarContent {
-        ToolbarItem(placement: .primaryAction) {
-            Menu {
-                makeMenuActions(proxy: proxy)
-            } label: {
-                if isiOS26OrLater() {
-                    Image(systemName: "ellipsis")
-                } else {
-                    Image(systemName: "ellipsis.circle")
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    func makeMenuActions(proxy: ScrollViewProxy) -> some View {
-        if showFeedSyncButton {
-            Button {
-                self.onFeedSyncClick()
-            } label: {
-                Label(feedFlowStrings.triggerFeedSync, systemImage: "arrow.uturn.up")
-            }
-        }
-
-        Button {
-            showMarkAllReadDialog = true
-        } label: {
-            Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark")
-        }
-
-        Button {
-            showClearOldArticlesDialog = true
-        } label: {
-            Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
-        }
-
-        Button {
-            proxy.scrollTo(feedState.first?.id)
-            onForceRefreshClick()
-        } label: {
-            Label(feedFlowStrings.forceFeedRefresh, systemImage: "arrow.clockwise")
-        }
-
-        if let source = (currentFeedFilter as? FeedFilter.Source)?.feedSource {
-            Button {
-                self.sheetToShow = .editFeed(source)
-            } label: {
-                Label(feedFlowStrings.editFeed, systemImage: "pencil")
-            }
-        }
-
-        Button {
-            self.sheetToShow = .settings
-        } label: {
-            Label(feedFlowStrings.settingsButton, systemImage: "gear")
-        }
-
-        #if DEBUG
-            Button {
-                deleteAllFeeds()
-            } label: {
-                Label("Delete Database", systemImage: "trash")
-            }
-        #endif
-    }
-
-    func getNavBarTitleWithCount(feedFilter: FeedFilter, unreadCount: Int) -> String {
-        let baseName = getNavBarName(feedFilter: feedFilter)
-
-        if !(feedFilter is FeedFilter.Read) && !(feedFilter is FeedFilter.Bookmarks) {
-            return "\(baseName) (\(unreadCount))"
-        } else {
-            return baseName
-        }
-    }
-
-    func getNavBarName(feedFilter: FeedFilter) -> String {
-        let deviceType = getDeviceType()
-
-        func getTruncatedTitle(_ title: String) -> String {
-            switch deviceType {
-            case .iphonePortrait:
-                return title.truncate(maxChar: 12)
-            case .ipad, .iphoneLandscape:
-                return title.truncate(maxChar: 40)
-            }
-        }
-
-        switch feedFilter {
-        case let category as FeedFilter.Category:
-            return getTruncatedTitle(category.feedCategory.title)
-
-        case let source as FeedFilter.Source:
-            return getTruncatedTitle(source.feedSource.title)
-
-        case is FeedFilter.Read:
-            return feedFlowStrings.drawerTitleRead
-
-        case is FeedFilter.Bookmarks:
-            return feedFlowStrings.drawerTitleBookmarks
-
-        default:
-            return feedFlowStrings.appName
         }
     }
 }

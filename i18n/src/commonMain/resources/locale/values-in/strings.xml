@@ -219,7 +219,6 @@
     <string name="settings_auto_delete_period_one_week">Lebih dari satu minggu</string>
     <string name="settings_auto_delete_period_two_weeks">Lebih dari dua minggu</string>
     <string name="settings_auto_delete_period_one_month">Lebih dari satu bulan</string>
-    <string name="settings_sync_period">Frekuensi sinkronisasi latar belakang</string>
     <string name="settings_sync_period_desc">Pilih seberapa sering memeriksa artikel baru di latar belakang</string>
     <string name="settings_refresh_feeds_on_launch">Segarkan feed saat aplikasi dimulai</string>
     <string name="settings_sync_period_never">Tidak pernah</string>

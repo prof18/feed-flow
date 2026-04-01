@@ -237,7 +237,7 @@
     <string name="settings_auto_delete_period_one_week">One week old</string>
     <string name="settings_auto_delete_period_two_weeks">Two weeks old</string>
     <string name="settings_auto_delete_period_one_month">One month old</string>
-    <string name="settings_sync_period">Background sync frequency</string>
+    <string name="settings_sync_period">Background sync</string>
     <string name="settings_sync_period_desc">Choose how often to check for new articles in the background</string>
     <string name="settings_background_sync_restrictions_title">Background sync conditions</string>
     <string name="settings_background_sync_restrictions_description">Use one or both options to limit when background sync can run.</string>

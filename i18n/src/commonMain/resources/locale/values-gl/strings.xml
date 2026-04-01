@@ -176,7 +176,6 @@
     <string name="settings_sync_period_six_hours">Cada 6 horas</string>
     <string name="settings_sync_period_two_hours">Cada 2 horas</string>
     <string name="settings_sync_period_desc">Elixir a frecuencia coa que se comproba se hai novos artigos</string>
-    <string name="settings_sync_period">Frecuencia de sincr. en segundo plano</string>
     <string name="settings_sync_period_one_hour">Cada hora</string>
     <string name="settings_sync_period_twelve_hours">Cada 12 horas</string>
     <string name="widget_check_feed_sources">Comproba que engadiches algunhas canles</string>

@@ -165,7 +165,6 @@
     <string name="menu_add_to_pinned">Épingler</string>
     <string name="menu_remove_from_pinned">Désépingler</string>
     <string name="deleting_feed_dialog_title">Suppression...</string>
-    <string name="settings_sync_period">Fréquence de la synchronisation en arrière-plan</string>
     <string name="settings_sync_period_desc">Choisissez la fréquence de recherche de nouveaux articles en arrière-plan</string>
     <string name="settings_sync_period_two_hours">Toutes les deux heures</string>
     <string name="settings_sync_period_six_hours">Toutes les six heures</string>

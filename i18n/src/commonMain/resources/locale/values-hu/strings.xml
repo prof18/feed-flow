@@ -149,7 +149,6 @@
     <string name="date_format_american">Hónap/nap</string>
     <string name="file_menu">Fájl</string>
     <string name="settings_sync_period_two_hours">2 óránként</string>
-    <string name="settings_sync_period">Háttér-szinkronizálás időköze</string>
     <string name="settings_sync_period_desc">Válassza ki, hogy milyen időközönként szeretné ellenőrizni az új cikkeket a háttérben</string>
     <string name="settings_sync_period_never">Soha</string>
     <string name="settings_sync_period_one_hour">Óránként</string>

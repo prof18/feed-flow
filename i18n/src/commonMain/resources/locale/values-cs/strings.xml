@@ -128,7 +128,6 @@
     <string name="settings_auto_delete_period_disabled">Deaktivováno</string>
     <string name="settings_auto_delete_period_two_weeks">Automatické mazání 2 týdny starých článků</string>
     <string name="settings_auto_delete_period_one_month">Automatické mazání měsíc starých článků</string>
-    <string name="settings_sync_period">Frekvence synchronizace na pozadí</string>
     <string name="settings_sync_period_never">Nikdy</string>
     <string name="settings_sync_period_one_hour">Každou hodinu</string>
     <string name="settings_sync_period_two_hours">Každé dvě hodiny</string>

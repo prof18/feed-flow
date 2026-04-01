@@ -147,7 +147,6 @@
     <string name="menu_mark_as_read">Atzīmēt kā lasītu</string>
     <string name="menu_mark_as_unread">Atzīmēt kā nelasītu</string>
     <string name="menu_copy_link_comments">Kopēt komentāru saiti</string>
-    <string name="settings_sync_period">Atsvaidzināt ziņu plūsmas fonā</string>
     <string name="settings_sync_period_two_hours">Ik pēc 2 stundām</string>
     <string name="settings_sync_period_six_hours">Ik pēc 6 stundām</string>
     <string name="settings_sync_period_twelve_hours">Ik pēc 12 stundām</string>

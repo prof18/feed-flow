@@ -172,7 +172,6 @@
     <string name="error_feed_add">Midagi läks uudisvoo lisamisel viltu</string>
     <string name="menu_share">Jaga</string>
     <string name="menu_copy_link_comments">Kopeeri kommentaaride link</string>
-    <string name="settings_sync_period">Taustal sünkroonimise sagedus</string>
     <string name="settings_sync_period_desc">Vali uute artiklite taustal kontrollimise sagedus</string>
     <string name="settings_sync_period_one_hour">Kord tunnis</string>
     <string name="settings_sync_period_two_hours">Kord kahe tunni jooksul</string>

@@ -172,7 +172,6 @@
     <string name="feed_url_help_text">添加任何直接订阅源、网站或 YouTube 频道链接。如果可能，将自动检测订阅源</string>
     <string name="hide_feed_from_timeline_description">从时间线隐藏此订阅源的文章</string>
     <string name="feed_list_appearance">订阅源列表外观</string>
-    <string name="settings_sync_period">后台同步频率</string>
     <string name="settings_sync_period_one_hour">每小时</string>
     <string name="settings_sync_period_twelve_hours">每 12 小时</string>
     <string name="widget_check_feed_sources">请确保添加了一些订阅源</string>

@@ -135,7 +135,6 @@
     <string name="settings_auto_delete_period_one_week">Una semana</string>
     <string name="settings_auto_delete_period_two_weeks">Dos semanas</string>
     <string name="settings_auto_delete_period_one_month">Un mes</string>
-    <string name="settings_sync_period">Frecuencia de actualización en segundo plano</string>
     <string name="settings_sync_period_desc">Selecciona la frecuencia de actualización de artículos en segundo plano</string>
     <string name="settings_sync_period_never">Nunca</string>
     <string name="settings_sync_period_fifteen_minutes">Cada 15 minutos</string>

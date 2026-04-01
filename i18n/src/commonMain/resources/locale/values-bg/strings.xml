@@ -173,7 +173,6 @@
     <string name="menu_copy_link">Копиране на връзката</string>
     <string name="error_feed_add">Нещо се обърка при добавянето на емисията</string>
     <string name="settings_sync_period_desc">Изберете колко често да проверявате за нови статии във фонов режим</string>
-    <string name="settings_sync_period">Честота на синхронизиране във фонов режим</string>
     <string name="settings_sync_period_two_hours">На всеки 2 часа</string>
     <string name="widget_latest_items">Най-нови</string>
     <string name="settings_sync_period_twelve_hours">На всеки 12 часа</string>

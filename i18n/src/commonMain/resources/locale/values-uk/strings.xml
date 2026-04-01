@@ -176,7 +176,6 @@
     <string name="settings_sync_period_six_hours">Кожні 6 годин</string>
     <string name="widget_check_feed_sources">Переконайтеся, що додано кілька джерел каналів</string>
     <string name="widget_latest_items">Останні</string>
-    <string name="settings_sync_period">Частота фонової синхронізації</string>
     <string name="settings_sync_period_desc">Виберіть, як часто перевіряти нові статті у фоновому режимі</string>
     <string name="settings_sync_period_never">Ніколи</string>
     <string name="settings_sync_period_one_hour">Щогодини</string>

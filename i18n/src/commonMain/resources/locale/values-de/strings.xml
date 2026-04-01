@@ -172,7 +172,6 @@
     <string name="menu_copy_link_comments">Kommentarlink kopieren</string>
     <string name="adding_feed">Feed wird hinzugefügt...</string>
     <string name="error_feed_add">Beim Hinzufügen des Feeds gab es ein Problem</string>
-    <string name="settings_sync_period">Häufigkeit der Hintergrund-Synchronisation</string>
     <string name="settings_sync_period_desc">Wie oft soll im Hintergrund auf neue Nachrichten geprüft werden</string>
     <string name="settings_sync_period_never">Niemals</string>
     <string name="settings_sync_period_one_hour">Stündlich</string>

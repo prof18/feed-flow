@@ -161,7 +161,6 @@
     <string name="settings_auto_delete_period_one_week">1週間前</string>
     <string name="settings_auto_delete_period_two_weeks">2週間前</string>
     <string name="settings_auto_delete_period_one_month">1ヶ月前</string>
-    <string name="settings_sync_period">バックグラウンドで同期する頻度</string>
     <string name="settings_sync_period_desc">バックグラウンドで新着記事を確認する頻度を選択</string>
     <string name="settings_sync_period_never">無効</string>
     <string name="settings_sync_period_one_hour">1時間毎</string>

@@ -161,7 +161,6 @@
     <string name="settings_auto_delete_period_one_week">Sprzed jednego tygodnia</string>
     <string name="settings_auto_delete_period_two_weeks">Sprzed dwóch tygodni</string>
     <string name="settings_auto_delete_period_one_month">Sprzed miesiąca</string>
-    <string name="settings_sync_period">Częstotliwość synchronizacji w tle</string>
     <string name="settings_sync_period_desc">Wybierz częstotliwość sprawdzania nowych artykułów w tle</string>
     <string name="settings_sync_period_never">Nigdy</string>
     <string name="settings_sync_period_fifteen_minutes">Co 15 minut</string>

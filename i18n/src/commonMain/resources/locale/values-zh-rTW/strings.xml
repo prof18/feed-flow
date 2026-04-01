@@ -169,7 +169,6 @@
     <string name="settings_auto_delete_period_one_week">1 週前</string>
     <string name="settings_auto_delete_period_two_weeks">2 週前</string>
     <string name="settings_auto_delete_period_one_month">1 個月前</string>
-    <string name="settings_sync_period">背景同步頻率</string>
     <string name="settings_sync_period_desc">多久檢查一次新文章</string>
     <string name="settings_sync_period_never">永不</string>
     <string name="settings_sync_period_fifteen_minutes">每 15 分鐘</string>

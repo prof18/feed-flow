@@ -161,7 +161,6 @@
     <string name="settings_auto_delete_period_one_week">Bir haftalık</string>
     <string name="settings_auto_delete_period_two_weeks">İki haftalık</string>
     <string name="settings_auto_delete_period_one_month">Bir aylık</string>
-    <string name="settings_sync_period">Arka planda eşitleme sıklığı</string>
     <string name="settings_sync_period_desc">Arka planda yeni makalelerin ne sıklıkta kontrol edileceğini seçin</string>
     <string name="settings_sync_period_never">Asla</string>
     <string name="settings_sync_period_fifteen_minutes">Her 15 dakikada bir</string>

@@ -106,6 +106,7 @@ struct FeedFlowApp: App {
             ContentView()
                 .environment(appState)
                 .environment(browserSelector)
+                .toggleStyle(BlueToggleStyle())
                 .preferredColorScheme(appState.colorScheme)
                 .onOpenURL { url in
                     if url.scheme == "feedflow" {

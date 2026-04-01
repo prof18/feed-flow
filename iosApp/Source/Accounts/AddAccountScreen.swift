@@ -37,6 +37,7 @@ struct AddAccountScreen: View {
                                             .resizable()
                                             .scaledToFit()
                                             .frame(width: 32, height: 32)
+                                            .foregroundStyle(.blue)
                                     }
                                     Spacer()
                                     Image(systemName: "chevron.right")
@@ -55,7 +56,7 @@ struct AddAccountScreen: View {
                                 } icon: {
                                     Image(systemName: "icloud")
                                         .fontWeight(.bold)
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(.blue)
                                 }
                             }
 
@@ -69,7 +70,7 @@ struct AddAccountScreen: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 22, height: 22)
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(.blue)
                                 }
                             }
 
@@ -83,7 +84,7 @@ struct AddAccountScreen: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 22, height: 22)
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(.blue)
                                 }
                             }
 
@@ -97,7 +98,7 @@ struct AddAccountScreen: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 22, height: 22)
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(.blue)
                                 }
                             }
 
@@ -111,7 +112,7 @@ struct AddAccountScreen: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 22, height: 22)
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(.blue)
                                 }
                             }
 
@@ -125,7 +126,7 @@ struct AddAccountScreen: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 22, height: 22)
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(.blue)
                                 }
                             }
 

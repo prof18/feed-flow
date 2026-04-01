@@ -181,12 +181,14 @@ struct ThreePaneView: View {
             AddFeedScreen(showCloseButton: true)
                 .environment(appState)
                 .environment(browserSelector)
+                .toggleStyle(BlueToggleStyle())
         }
         .sheet(isPresented: $showEditFeedSheet) {
             if let feedSource = feedSourceToEdit {
                 EditFeedScreen(feedSource: feedSource)
                     .environment(appState)
                     .environment(browserSelector)
+                    .toggleStyle(BlueToggleStyle())
             }
         }
         .onChange(of: appState.pendingBrowserURL) { _, newURL in

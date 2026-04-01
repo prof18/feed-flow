@@ -240,6 +240,7 @@ private extension HomeContent {
         case .addFeed:
             AddFeedScreen(showCloseButton: true)
                 .environment(appState)
+                .toggleStyle(BlueToggleStyle())
 
         case .importExport:
             ImportExportScreen(showCloseButton: true, fetchFeeds: onRefresh)
@@ -248,6 +249,7 @@ private extension HomeContent {
         case let .editFeed(source):
             EditFeedScreen(feedSource: source)
                 .environment(appState)
+                .toggleStyle(BlueToggleStyle())
 
         case .feedSuggestions:
             FeedSuggestionsScreen()

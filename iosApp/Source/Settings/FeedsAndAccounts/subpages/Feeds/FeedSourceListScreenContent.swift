@@ -42,14 +42,14 @@ struct FeedSourceListScreenContent: View {
         .navigationTitle(Text(feedFlowStrings.feedsTitle))
         .sheet(isPresented: $showAddFeed) {
             AddFeedScreen()
+                .toggleStyle(BlueToggleStyle())
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 NavigationLink(destination: AddFeedScreen()) {
                     Image(systemName: "plus")
+                        .foregroundStyle(.primary)
                 }
-                .buttonStyle(.bordered)
-                .padding(.trailing, Spacing.small)
             }
         }
     }

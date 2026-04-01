@@ -170,7 +170,6 @@ class MainActivity : BaseThemeActivity() {
                 state = deeplinkState,
                 deeplinkViewModel = deeplinkViewModel,
                 readerModeViewModel = readerModeViewModel,
-                backStack = backStack,
             )
         }
 
@@ -512,23 +511,21 @@ class MainActivity : BaseThemeActivity() {
         state: DeeplinkFeedState,
         deeplinkViewModel: DeeplinkFeedViewModel,
         readerModeViewModel: ReaderModeViewModel,
-        backStack: NavBackStack<NavKey>,
     ) {
         if (state is DeeplinkFeedState.Success) {
             val feedUrlInfo = state.data
             deeplinkViewModel.markAsRead(FeedItemId(feedUrlInfo.id))
-            handleLinkOpeningPreference(feedUrlInfo, readerModeViewModel, backStack)
+            handleLinkOpeningPreference(feedUrlInfo, readerModeViewModel)
         }
     }
 
     private fun handleLinkOpeningPreference(
         feedUrlInfo: FeedItemUrlInfo,
         readerModeViewModel: ReaderModeViewModel,
-        backStack: NavBackStack<NavKey>,
     ) {
         when (feedUrlInfo.linkOpeningPreference) {
             LinkOpeningPreference.READER_MODE -> {
-                navigateToReaderModeIfNeeded(readerModeViewModel, backStack, feedUrlInfo)
+                navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo)
             }
             LinkOpeningPreference.INTERNAL_BROWSER -> {
                 browserManager.openWithInAppBrowser(feedUrlInfo.url, this@MainActivity)
@@ -538,7 +535,7 @@ class MainActivity : BaseThemeActivity() {
             }
             LinkOpeningPreference.DEFAULT -> {
                 if (browserManager.openReaderMode() && !feedUrlInfo.shouldOpenInBrowser()) {
-                    navigateToReaderModeIfNeeded(readerModeViewModel, backStack, feedUrlInfo)
+                    navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo)
                 } else {
                     browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)
                 }
@@ -548,12 +545,8 @@ class MainActivity : BaseThemeActivity() {
 
     private fun navigateToReaderModeIfNeeded(
         readerModeViewModel: ReaderModeViewModel,
-        backStack: NavBackStack<NavKey>,
         feedUrlInfo: FeedItemUrlInfo,
     ) {
         readerModeViewModel.getReaderModeHtml(feedUrlInfo)
-        if (!backStack.contains(ReaderMode)) {
-            backStack.add(ReaderMode)
-        }
     }
 }

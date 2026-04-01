@@ -37,6 +37,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun DateFormatSelector(
     currentFormat: DateFormat,
     modifier: Modifier = Modifier,
+    showLeadingIcon: Boolean = true,
     onFormatSelected: (DateFormat) -> Unit,
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -50,10 +51,13 @@ fun DateFormatSelector(
             .padding(horizontal = Spacing.regular),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
-        Icon(
-            Icons.Outlined.DateRange,
-            contentDescription = null,
-        )
+        if (showLeadingIcon) {
+            Icon(
+                Icons.Outlined.DateRange,
+                contentDescription = null,
+                modifier = Modifier.padding(end = Spacing.regular),
+            )
+        }
 
         Column(
             modifier = Modifier.weight(1f),

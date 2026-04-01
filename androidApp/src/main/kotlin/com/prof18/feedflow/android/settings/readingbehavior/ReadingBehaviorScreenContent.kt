@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.Article
-import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
-import androidx.compose.material.icons.outlined.CloudDownload
-import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -74,7 +70,6 @@ internal fun ReadingBehaviorScreenContent(
             item {
                 SettingSwitchItem(
                     title = LocalFeedFlowStrings.current.settingsReaderMode,
-                    icon = Icons.AutoMirrored.Outlined.Article,
                     isChecked = state.isReaderModeEnabled,
                     onCheckedChange = setReaderMode,
                 )
@@ -83,7 +78,6 @@ internal fun ReadingBehaviorScreenContent(
             item {
                 SettingSwitchItem(
                     title = LocalFeedFlowStrings.current.settingsSaveReaderModeContent,
-                    icon = Icons.AutoMirrored.Outlined.Article,
                     isChecked = state.isSaveReaderModeContentEnabled,
                     onCheckedChange = setSaveReaderModeContent,
                 )
@@ -92,7 +86,6 @@ internal fun ReadingBehaviorScreenContent(
             item {
                 SettingSwitchItem(
                     title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
-                    icon = Icons.Outlined.CloudDownload,
                     isChecked = state.isPrefetchArticleContentEnabled,
                     onCheckedChange = setPrefetchArticleContent,
                     confirmationDialog = ConfirmationDialogConfig(
@@ -105,7 +98,6 @@ internal fun ReadingBehaviorScreenContent(
             item {
                 SettingSwitchItem(
                     title = LocalFeedFlowStrings.current.toggleMarkReadWhenScrolling,
-                    icon = Icons.Outlined.MarkAsUnread,
                     isChecked = state.isMarkReadWhenScrollingEnabled,
                     onCheckedChange = setMarkReadWhenScrolling,
                 )
@@ -114,7 +106,6 @@ internal fun ReadingBehaviorScreenContent(
             item {
                 SettingSwitchItem(
                     title = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
-                    icon = Icons.AutoMirrored.Outlined.PlaylistAddCheck,
                     isChecked = state.isShowReadItemsEnabled,
                     onCheckedChange = setShowReadItem,
                 )
@@ -123,7 +114,6 @@ internal fun ReadingBehaviorScreenContent(
             item {
                 SettingSwitchItem(
                     title = LocalFeedFlowStrings.current.settingsHideReadItems,
-                    icon = Icons.Outlined.MarkAsUnread,
                     isChecked = state.isHideReadItemsEnabled,
                     onCheckedChange = setHideReadItems,
                 )

@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.BugReport
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.QuestionMark
-import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -57,30 +53,27 @@ internal fun AboutAndSupportScreenContent(
                 .padding(start = paddingValues.calculateLeftPadding(layoutDir))
                 .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         ) {
-            item {
-                SettingItem(
-                    title = LocalFeedFlowStrings.current.reportIssueButton,
-                    icon = Icons.Outlined.BugReport,
-                    onClick = onReportIssueClick,
-                )
-            }
-
             if (showCrashReporting) {
                 item {
                     SettingSwitchItem(
                         title = LocalFeedFlowStrings.current.settingsCrashReporting,
-                        icon = Icons.Outlined.Report,
                         isChecked = isCrashReportingEnabled,
                         onCheckedChange = onCrashReportingEnabled,
                     )
                 }
             }
 
+            item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.reportIssueButton,
+                    onClick = onReportIssueClick,
+                )
+            }
+
             if (FeatureFlags.ENABLE_FAQ) {
                 item {
                     SettingItem(
                         title = LocalFeedFlowStrings.current.aboutMenuFaq,
-                        icon = Icons.Outlined.QuestionMark,
                         onClick = onFaqClick,
                     )
                 }
@@ -89,7 +82,6 @@ internal fun AboutAndSupportScreenContent(
             item {
                 SettingItem(
                     title = LocalFeedFlowStrings.current.aboutButton,
-                    icon = Icons.Outlined.Info,
                     onClick = onAboutClick,
                 )
             }

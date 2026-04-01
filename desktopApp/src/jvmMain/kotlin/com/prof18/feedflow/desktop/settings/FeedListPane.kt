@@ -1,32 +1,13 @@
 package com.prof18.feedflow.desktop.settings
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Sort
-import androidx.compose.material.icons.outlined.EventBusy
-import androidx.compose.material.icons.outlined.FiberManualRecord
-import androidx.compose.material.icons.outlined.HideImage
-import androidx.compose.material.icons.outlined.HideSource
-import androidx.compose.material.icons.outlined.LabelOff
-import androidx.compose.material.icons.outlined.SubtitlesOff
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.core.model.DateFormat
@@ -40,17 +21,15 @@ import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.presentation.model.FeedListSettingsState
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
-import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
-import com.prof18.feedflow.shared.ui.settings.DescriptionLineLimitSelector
+import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.shared.ui.settings.FeedItemPreview
-import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
-import com.prof18.feedflow.shared.ui.settings.SettingSelectorItem
+import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
-import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
-import com.prof18.feedflow.shared.ui.settings.TimeFormatSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun FeedListPane(
@@ -72,7 +51,6 @@ internal fun FeedListPane(
     onDescriptionLineLimitUpdate: (DescriptionLineLimit) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
-    var showFeedOrderDialog by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         FeedItemPreview(
@@ -109,158 +87,159 @@ internal fun FeedListPane(
                 steps = 20,
             )
 
-            FeedLayoutSelector(
-                feedLayout = settingsState.feedLayout,
-                onFeedLayoutSelected = onFeedLayoutUpdate,
+            CompactSettingDropdownRow(
+                title = strings.feedLayoutTitle,
+                currentValue = settingsState.feedLayout,
+                options = persistentListOf(
+                    SettingDropdownOption(FeedLayout.LIST, strings.settingsFeedLayoutList),
+                    SettingDropdownOption(FeedLayout.CARD, strings.settingsFeedLayoutCard),
+                ),
+                onOptionSelected = onFeedLayoutUpdate,
             )
 
             SettingSwitchItem(
                 title = LocalFeedFlowStrings.current.settingsHideDescription,
-                icon = Icons.Outlined.SubtitlesOff,
                 isChecked = settingsState.isHideDescriptionEnabled,
                 onCheckedChange = onHideDescriptionUpdate,
             )
 
             SettingSwitchItem(
                 title = LocalFeedFlowStrings.current.settingsHideImages,
-                icon = Icons.Outlined.HideImage,
                 isChecked = settingsState.isHideImagesEnabled,
                 onCheckedChange = onHideImagesUpdate,
             )
 
             SettingSwitchItem(
                 title = LocalFeedFlowStrings.current.settingsHideDate,
-                icon = Icons.Outlined.EventBusy,
                 isChecked = settingsState.isHideDateEnabled,
                 onCheckedChange = onHideDateUpdate,
             )
 
             SettingSwitchItem(
                 title = LocalFeedFlowStrings.current.settingsHideUnreadDot,
-                icon = Icons.Outlined.FiberManualRecord,
                 isChecked = settingsState.isHideUnreadDotEnabled,
                 onCheckedChange = onHideUnreadDotUpdate,
             )
 
             SettingSwitchItem(
                 title = LocalFeedFlowStrings.current.settingsHideFeedSource,
-                icon = Icons.Outlined.LabelOff,
                 isChecked = settingsState.isHideFeedSourceEnabled,
                 onCheckedChange = onHideFeedSourceUpdate,
             )
 
             SettingSwitchItem(
                 title = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
-                icon = Icons.Outlined.HideSource,
                 isChecked = settingsState.isRemoveTitleFromDescriptionEnabled,
                 onCheckedChange = onRemoveTitleFromDescUpdate,
             )
 
-            DescriptionLineLimitSelector(
-                currentLimit = settingsState.descriptionLineLimit,
-                onLimitSelected = onDescriptionLineLimitUpdate,
+            CompactSettingDropdownRow(
+                title = strings.settingsDescriptionMaxLines,
+                currentValue = settingsState.descriptionLineLimit,
+                options = persistentListOf(
+                    SettingDropdownOption(
+                        DescriptionLineLimit.THREE,
+                        strings.settingsDescriptionLinesThree,
+                    ),
+                    SettingDropdownOption(
+                        DescriptionLineLimit.FIVE,
+                        strings.settingsDescriptionLinesFive,
+                    ),
+                    SettingDropdownOption(
+                        DescriptionLineLimit.NO_LIMIT,
+                        strings.settingsDescriptionLinesNoLimit,
+                    ),
+                ),
+                onOptionSelected = onDescriptionLineLimitUpdate,
             )
 
-            val feedOrderLabel = when (feedOrder) {
-                FeedOrder.NEWEST_FIRST -> strings.settingsFeedOrderNewestFirst
-                FeedOrder.OLDEST_FIRST -> strings.settingsFeedOrderOldestFirst
-            }
-
-            SettingSelectorItem(
+            CompactSettingDropdownRow(
                 title = strings.settingsFeedOrderTitle,
-                currentValueLabel = feedOrderLabel,
-                icon = Icons.AutoMirrored.Outlined.Sort,
-                onClick = { showFeedOrderDialog = true },
+                currentValue = feedOrder,
+                options = persistentListOf(
+                    SettingDropdownOption(
+                        FeedOrder.NEWEST_FIRST,
+                        strings.settingsFeedOrderNewestFirst,
+                    ),
+                    SettingDropdownOption(
+                        FeedOrder.OLDEST_FIRST,
+                        strings.settingsFeedOrderOldestFirst,
+                    ),
+                ),
+                onOptionSelected = onFeedOrderSelected,
             )
 
-            if (showFeedOrderDialog) {
-                FeedOrderDialog(
-                    currentFeedOrder = feedOrder,
-                    onFeedOrderSelected = { selected ->
-                        onFeedOrderSelected(selected)
-                        showFeedOrderDialog = false
-                    },
-                    onDismiss = { showFeedOrderDialog = false },
-                )
-            }
-
-            DateFormatSelector(
-                currentFormat = settingsState.dateFormat,
-                onFormatSelected = onDateFormatUpdate,
+            CompactSettingDropdownRow(
+                title = strings.dateFormatTitle,
+                currentValue = settingsState.dateFormat,
+                options = persistentListOf(
+                    SettingDropdownOption(DateFormat.NORMAL, strings.dateFormatNormal),
+                    SettingDropdownOption(DateFormat.AMERICAN, strings.dateFormatAmerican),
+                    SettingDropdownOption(DateFormat.ISO, strings.dateFormatIso),
+                ),
+                onOptionSelected = onDateFormatUpdate,
             )
 
-            TimeFormatSelector(
-                currentFormat = settingsState.timeFormat,
-                onFormatSelected = onTimeFormatUpdate,
+            CompactSettingDropdownRow(
+                title = strings.timeFormatTitle,
+                currentValue = settingsState.timeFormat,
+                options = persistentListOf(
+                    SettingDropdownOption(TimeFormat.HOURS_24, strings.timeFormatHours24),
+                    SettingDropdownOption(TimeFormat.HOURS_12, strings.timeFormatHours12),
+                ),
+                onOptionSelected = onTimeFormatUpdate,
             )
 
-            SwipeActionSelector(
-                direction = SwipeDirection.LEFT,
-                currentAction = settingsState.leftSwipeActionType,
-                onActionSelected = { action ->
-                    onSwipeActionUpdate(SwipeDirection.LEFT, action)
-                },
+            CompactSettingDropdownRow(
+                title = strings.settingsLeftSwipeAction,
+                currentValue = settingsState.leftSwipeActionType,
+                options = swipeActionOptions(
+                    toggleReadLabel = strings.settingsSwipeActionToggleRead,
+                    toggleBookmarkLabel = strings.settingsSwipeActionToggleBookmark,
+                    openInBrowserLabel = strings.settingsSwipeActionOpenInBrowser,
+                    noneLabel = strings.settingsSwipeActionNone,
+                ),
+                onOptionSelected = { action -> onSwipeActionUpdate(SwipeDirection.LEFT, action) },
             )
 
-            SwipeActionSelector(
-                direction = SwipeDirection.RIGHT,
-                currentAction = settingsState.rightSwipeActionType,
-                onActionSelected = { action ->
-                    onSwipeActionUpdate(SwipeDirection.RIGHT, action)
-                },
+            CompactSettingDropdownRow(
+                title = strings.settingsRightSwipeAction,
+                currentValue = settingsState.rightSwipeActionType,
+                options = swipeActionOptions(
+                    toggleReadLabel = strings.settingsSwipeActionToggleRead,
+                    toggleBookmarkLabel = strings.settingsSwipeActionToggleBookmark,
+                    openInBrowserLabel = strings.settingsSwipeActionOpenInBrowser,
+                    noneLabel = strings.settingsSwipeActionNone,
+                ),
+                onOptionSelected = { action -> onSwipeActionUpdate(SwipeDirection.RIGHT, action) },
             )
         }
     }
 }
 
-@Composable
-private fun FeedOrderDialog(
-    currentFeedOrder: FeedOrder,
-    onFeedOrderSelected: (FeedOrder) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val strings = LocalFeedFlowStrings.current
-    val orders = listOf(
-        FeedOrder.NEWEST_FIRST to strings.settingsFeedOrderNewestFirst,
-        FeedOrder.OLDEST_FIRST to strings.settingsFeedOrderOldestFirst,
-    )
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(strings.settingsFeedOrderTitle) },
-        text = {
-            Column {
-                orders.forEach { (order, label) ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .selectable(
-                                selected = currentFeedOrder == order,
-                                onClick = { onFeedOrderSelected(order) },
-                            )
-                            .padding(vertical = Spacing.small),
-                    ) {
-                        RadioButton(
-                            selected = currentFeedOrder == order,
-                            onClick = { onFeedOrderSelected(order) },
-                        )
-                        Text(
-                            text = label,
-                            modifier = Modifier.padding(start = Spacing.small),
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {},
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(strings.cancelButton)
-            }
-        },
-    )
-}
+private fun swipeActionOptions(
+    toggleReadLabel: String,
+    toggleBookmarkLabel: String,
+    openInBrowserLabel: String,
+    noneLabel: String,
+): ImmutableList<SettingDropdownOption<SwipeActionType>> = persistentListOf(
+    SettingDropdownOption(
+        SwipeActionType.TOGGLE_READ_STATUS,
+        toggleReadLabel,
+    ),
+    SettingDropdownOption(
+        SwipeActionType.TOGGLE_BOOKMARK_STATUS,
+        toggleBookmarkLabel,
+    ),
+    SettingDropdownOption(
+        SwipeActionType.OPEN_IN_BROWSER,
+        openInBrowserLabel,
+    ),
+    SettingDropdownOption(
+        SwipeActionType.NONE,
+        noneLabel,
+    ),
+)
 
 @Preview
 @Composable

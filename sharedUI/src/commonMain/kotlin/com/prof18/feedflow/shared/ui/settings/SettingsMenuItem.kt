@@ -18,8 +18,8 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 @Composable
 fun SettingItem(
     title: String,
-    icon: ImageVector,
     modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
     isEnabled: Boolean = true,
     onClick: () -> Unit,
 ) {
@@ -40,10 +40,12 @@ fun SettingItem(
             .padding(Spacing.regular),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
-        Icon(
-            icon,
-            contentDescription = null,
-        )
+        if (icon != null) {
+            Icon(
+                icon,
+                contentDescription = null,
+            )
+        }
         Text(
             text = title,
             style = MaterialTheme.typography.bodyLarge,

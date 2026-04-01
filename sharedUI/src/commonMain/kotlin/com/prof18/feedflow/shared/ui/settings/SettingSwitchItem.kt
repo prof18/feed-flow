@@ -30,10 +30,10 @@ import com.prof18.feedflow.shared.ui.utils.PreviewTheme
 @Composable
 fun SettingSwitchItem(
     title: String,
-    icon: ImageVector,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
     confirmationDialog: ConfirmationDialogConfig? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -56,10 +56,12 @@ fun SettingSwitchItem(
             .padding(horizontal = Spacing.regular),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
-        Icon(
-            icon,
-            contentDescription = null,
-        )
+        if (icon != null) {
+            Icon(
+                icon,
+                contentDescription = null,
+            )
+        }
 
         Text(
             text = title,

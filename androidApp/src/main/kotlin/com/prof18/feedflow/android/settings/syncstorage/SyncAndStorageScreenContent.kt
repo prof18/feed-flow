@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.DeleteSweep
-import androidx.compose.material.icons.outlined.ErrorOutline
-import androidx.compose.material.icons.outlined.Image
-import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -17,27 +13,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.imageLoader
-import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BackgroundSyncRestrictionsSection
-import com.prof18.feedflow.android.settings.components.SyncPeriodSelector
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.shared.domain.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.shared.ui.settings.ConfirmationSettingItem
-import com.prof18.feedflow.shared.ui.settings.SettingSelectorItem
+import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun SyncAndStorageScreenContent(
@@ -82,7 +74,6 @@ internal fun SyncAndStorageScreenContent(
             item {
                 SettingSwitchItem(
                     title = LocalFeedFlowStrings.current.settingsRefreshFeedsOnLaunch,
-                    icon = Icons.Outlined.Sync,
                     isChecked = refreshFeedsOnLaunch,
                     onCheckedChange = onRefreshFeedsOnLaunchToggle,
                 )
@@ -91,16 +82,27 @@ internal fun SyncAndStorageScreenContent(
             item {
                 SettingSwitchItem(
                     title = LocalFeedFlowStrings.current.settingsShowRssParsingErrors,
-                    icon = Icons.Outlined.ErrorOutline,
                     isChecked = showRssParsingErrors,
                     onCheckedChange = onShowRssParsingErrorsToggle,
                 )
             }
 
             item {
-                SyncPeriodSelector(
-                    currentPeriod = syncPeriod,
-                    onPeriodSelected = onSyncPeriodSelected,
+                val strings = LocalFeedFlowStrings.current
+                CompactSettingDropdownRow(
+                    title = strings.settingsSyncPeriod,
+                    currentValue = syncPeriod,
+                    options = persistentListOf(
+                        SettingDropdownOption(SyncPeriod.NEVER, strings.settingsSyncPeriodNever),
+                        SettingDropdownOption(SyncPeriod.FIFTEEN_MINUTES, strings.settingsSyncPeriodFifteenMinutes),
+                        SettingDropdownOption(SyncPeriod.THIRTY_MINUTES, strings.settingsSyncPeriodThirtyMinutes),
+                        SettingDropdownOption(SyncPeriod.ONE_HOUR, strings.settingsSyncPeriodOneHour),
+                        SettingDropdownOption(SyncPeriod.TWO_HOURS, strings.settingsSyncPeriodTwoHours),
+                        SettingDropdownOption(SyncPeriod.SIX_HOURS, strings.settingsSyncPeriodSixHours),
+                        SettingDropdownOption(SyncPeriod.TWELVE_HOURS, strings.settingsSyncPeriodTwelveHours),
+                        SettingDropdownOption(SyncPeriod.ONE_DAY, strings.settingsSyncPeriodOneDay),
+                    ),
+                    onOptionSelected = onSyncPeriodSelected,
                 )
             }
 
@@ -115,29 +117,19 @@ internal fun SyncAndStorageScreenContent(
             }
 
             item {
-                val autoDeleteLabel = when (autoDeletePeriod) {
-                    AutoDeletePeriod.DISABLED -> LocalFeedFlowStrings.current.settingsAutoDeletePeriodDisabled
-                    AutoDeletePeriod.ONE_DAY -> LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneDay
-                    AutoDeletePeriod.ONE_WEEK -> LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneWeek
-                    AutoDeletePeriod.TWO_WEEKS -> LocalFeedFlowStrings.current.settingsAutoDeletePeriodTwoWeeks
-                    AutoDeletePeriod.ONE_MONTH -> LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneMonth
-                }
-                var showDialog by remember { mutableStateOf(false) }
-
-                SettingSelectorItem(
-                    title = LocalFeedFlowStrings.current.settingsAutoDelete,
-                    currentValueLabel = autoDeleteLabel,
-                    icon = Icons.Outlined.DeleteSweep,
-                    onClick = { showDialog = true },
+                val strings = LocalFeedFlowStrings.current
+                CompactSettingDropdownRow(
+                    title = strings.settingsAutoDelete,
+                    currentValue = autoDeletePeriod,
+                    options = persistentListOf(
+                        SettingDropdownOption(AutoDeletePeriod.DISABLED, strings.settingsAutoDeletePeriodDisabled),
+                        SettingDropdownOption(AutoDeletePeriod.ONE_DAY, strings.settingsAutoDeletePeriodOneDay),
+                        SettingDropdownOption(AutoDeletePeriod.ONE_WEEK, strings.settingsAutoDeletePeriodOneWeek),
+                        SettingDropdownOption(AutoDeletePeriod.TWO_WEEKS, strings.settingsAutoDeletePeriodTwoWeeks),
+                        SettingDropdownOption(AutoDeletePeriod.ONE_MONTH, strings.settingsAutoDeletePeriodOneMonth),
+                    ),
+                    onOptionSelected = onAutoDeletePeriodSelected,
                 )
-
-                if (showDialog) {
-                    AutoDeletePeriodDialog(
-                        currentPeriod = autoDeletePeriod,
-                        onPeriodSelected = onAutoDeletePeriodSelected,
-                        dismissDialog = { showDialog = false },
-                    )
-                }
             }
 
             item {
@@ -152,7 +144,6 @@ internal fun SyncAndStorageScreenContent(
             item {
                 ConfirmationSettingItem(
                     title = LocalFeedFlowStrings.current.settingsClearDownloadedArticles,
-                    icon = Icons.Outlined.DeleteSweep,
                     dialogTitle = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogTitle,
                     dialogMessage = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogMessage,
                     onConfirm = onClearDownloadedArticles,
@@ -162,7 +153,6 @@ internal fun SyncAndStorageScreenContent(
             item {
                 ConfirmationSettingItem(
                     title = LocalFeedFlowStrings.current.settingsClearImageCache,
-                    icon = Icons.Outlined.Image,
                     dialogTitle = LocalFeedFlowStrings.current.settingsClearImageCacheDialogTitle,
                     dialogMessage = LocalFeedFlowStrings.current.settingsClearImageCacheDialogMessage,
                     onConfirm = {

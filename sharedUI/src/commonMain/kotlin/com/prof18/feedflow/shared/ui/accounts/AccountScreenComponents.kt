@@ -144,7 +144,10 @@ private fun AccountsItem(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(Spacing.regular),
+        modifier = modifier.padding(
+            horizontal = Spacing.small,
+            vertical = Spacing.regular,
+        ),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
         Icon(

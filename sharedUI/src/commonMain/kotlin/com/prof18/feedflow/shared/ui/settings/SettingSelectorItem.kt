@@ -24,9 +24,9 @@ import com.prof18.feedflow.shared.ui.utils.PreviewTheme
 fun SettingSelectorItem(
     title: String,
     currentValueLabel: String,
-    icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -37,10 +37,12 @@ fun SettingSelectorItem(
             .padding(horizontal = Spacing.regular),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
-        Icon(
-            icon,
-            contentDescription = null,
-        )
+        if (icon != null) {
+            Icon(
+                icon,
+                contentDescription = null,
+            )
+        }
 
         Column(
             modifier = Modifier.weight(1f),

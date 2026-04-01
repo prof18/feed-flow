@@ -39,6 +39,7 @@ fun SwipeActionSelector(
     direction: SwipeDirection,
     currentAction: SwipeActionType,
     modifier: Modifier = Modifier,
+    showLeadingIcon: Boolean = true,
     onActionSelected: (SwipeActionType) -> Unit,
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -53,14 +54,17 @@ fun SwipeActionSelector(
             .padding(horizontal = Spacing.regular),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
-        Icon(
-            if (direction == SwipeDirection.LEFT) {
-                Icons.Outlined.SwipeLeft
-            } else {
-                Icons.Outlined.SwipeRight
-            },
-            contentDescription = null,
-        )
+        if (showLeadingIcon) {
+            Icon(
+                if (direction == SwipeDirection.LEFT) {
+                    Icons.Outlined.SwipeLeft
+                } else {
+                    Icons.Outlined.SwipeRight
+                },
+                contentDescription = null,
+                modifier = Modifier.padding(end = Spacing.regular),
+            )
+        }
 
         Column(
             modifier = Modifier.weight(1f),

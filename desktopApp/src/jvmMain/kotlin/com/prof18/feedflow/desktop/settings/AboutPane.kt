@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.QuestionMark
-import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +34,9 @@ import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.utils.UserFeedbackReporter
+import java.awt.Desktop
+import java.net.URI
 
 @Composable
 internal fun AboutPane(
@@ -45,6 +45,7 @@ internal fun AboutPane(
 ) {
     val strings = LocalFeedFlowStrings.current
     val appConfig = remember { DI.koin.get<DesktopConfig>() }
+    val userFeedbackReporter = remember { DI.koin.get<UserFeedbackReporter>() }
     val uriHandler = LocalUriHandler.current
     var showLicenses by remember { mutableStateOf(false) }
 
@@ -63,16 +64,29 @@ internal fun AboutPane(
         if (appConfig.appEnvironment.isRelease()) {
             SettingSwitchItem(
                 title = strings.settingsCrashReporting,
-                icon = Icons.Outlined.Report,
                 isChecked = isCrashReportingEnabled,
                 onCheckedChange = onCrashReportingToggled,
             )
         }
 
+        SettingItem(
+            title = strings.reportIssueButton,
+            onClick = {
+                runCatching {
+                    val uri = URI.create(
+                        userFeedbackReporter.getEmailUrl(
+                            subject = strings.issueContentTitle,
+                            content = strings.issueContentTemplate,
+                        ),
+                    )
+                    Desktop.getDesktop().mail(uri)
+                }
+            },
+        )
+
         if (FeatureFlags.ENABLE_FAQ) {
             SettingItem(
                 title = strings.aboutMenuFaq,
-                icon = Icons.Outlined.QuestionMark,
                 onClick = {
                     val languageCode = java.util.Locale.getDefault().language
                     runCatching {

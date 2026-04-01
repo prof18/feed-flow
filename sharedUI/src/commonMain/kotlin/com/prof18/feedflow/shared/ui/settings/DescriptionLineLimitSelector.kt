@@ -37,6 +37,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun DescriptionLineLimitSelector(
     currentLimit: DescriptionLineLimit,
     modifier: Modifier = Modifier,
+    showLeadingIcon: Boolean = true,
     onLimitSelected: (DescriptionLineLimit) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
@@ -57,10 +58,13 @@ fun DescriptionLineLimitSelector(
             .padding(horizontal = Spacing.regular),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
-        Icon(
-            Icons.Outlined.FormatListNumbered,
-            contentDescription = null,
-        )
+        if (showLeadingIcon) {
+            Icon(
+                Icons.Outlined.FormatListNumbered,
+                contentDescription = null,
+                modifier = Modifier.padding(end = Spacing.regular),
+            )
+        }
 
         Column(
             modifier = Modifier.weight(1f),

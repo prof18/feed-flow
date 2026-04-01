@@ -18,11 +18,11 @@ import com.prof18.feedflow.shared.ui.utils.PreviewTheme
 @Composable
 fun ConfirmationSettingItem(
     title: String,
-    icon: ImageVector,
     dialogTitle: String,
     dialogMessage: String,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
     confirmButtonText: String = LocalFeedFlowStrings.current.confirmButton,
     dismissButtonText: String = LocalFeedFlowStrings.current.cancelButton,
     isDestructive: Boolean = true,

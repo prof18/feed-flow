@@ -4,11 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Article
-import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
-import androidx.compose.material.icons.outlined.CloudDownload
-import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,21 +34,18 @@ internal fun ReadingPane(
     ) {
         SettingSwitchItem(
             title = LocalFeedFlowStrings.current.settingsReaderMode,
-            icon = Icons.AutoMirrored.Outlined.Article,
             isChecked = isReaderModeEnabled,
             onCheckedChange = onReaderModeToggled,
         )
 
         SettingSwitchItem(
             title = LocalFeedFlowStrings.current.settingsSaveReaderModeContent,
-            icon = Icons.AutoMirrored.Outlined.Article,
             isChecked = isSaveReaderModeContentEnabled,
             onCheckedChange = onSaveReaderModeContentToggled,
         )
 
         SettingSwitchItem(
             title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
-            icon = Icons.Outlined.CloudDownload,
             isChecked = isPrefetchArticleContentEnabled,
             onCheckedChange = onPrefetchToggled,
             confirmationDialog = ConfirmationDialogConfig(
@@ -64,21 +56,18 @@ internal fun ReadingPane(
 
         SettingSwitchItem(
             title = LocalFeedFlowStrings.current.toggleMarkReadWhenScrolling,
-            icon = Icons.Outlined.MarkAsUnread,
             isChecked = isMarkReadWhenScrollingEnabled,
             onCheckedChange = onMarkReadWhenScrollingToggled,
         )
 
         SettingSwitchItem(
             title = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
-            icon = Icons.AutoMirrored.Outlined.PlaylistAddCheck,
             isChecked = isShowReadItemsEnabled,
             onCheckedChange = onShowReadItemsToggled,
         )
 
         SettingSwitchItem(
             title = LocalFeedFlowStrings.current.settingsHideReadItems,
-            icon = Icons.Outlined.MarkAsUnread,
             isChecked = isHideReadItemsEnabled,
             onCheckedChange = onHideReadItemsToggled,
         )

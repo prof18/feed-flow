@@ -37,6 +37,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun TimeFormatSelector(
     currentFormat: TimeFormat,
     modifier: Modifier = Modifier,
+    showLeadingIcon: Boolean = true,
     onFormatSelected: (TimeFormat) -> Unit,
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -50,10 +51,13 @@ fun TimeFormatSelector(
             .padding(horizontal = Spacing.regular),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
-        Icon(
-            Icons.Outlined.AccessTime,
-            contentDescription = null,
-        )
+        if (showLeadingIcon) {
+            Icon(
+                Icons.Outlined.AccessTime,
+                contentDescription = null,
+                modifier = Modifier.padding(end = Spacing.regular),
+            )
+        }
 
         Column(
             modifier = Modifier.weight(1f),

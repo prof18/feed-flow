@@ -23,21 +23,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.android.settings.components.ThemeModeDialog
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
+import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
+import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.shared.ui.settings.SettingItem
-import com.prof18.feedflow.shared.ui.settings.SettingSelectorItem
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun SettingsScreenContent(
@@ -67,31 +64,19 @@ internal fun SettingsScreenContent(
                 .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         ) {
             item {
-                val themeModeLabel = when (themeMode) {
-                    ThemeMode.LIGHT -> LocalFeedFlowStrings.current.settingsThemeLight
-                    ThemeMode.DARK -> LocalFeedFlowStrings.current.settingsThemeDark
-                    ThemeMode.OLED -> LocalFeedFlowStrings.current.settingsThemeOled
-                    ThemeMode.SYSTEM -> LocalFeedFlowStrings.current.settingsThemeSystem
-                }
-                var showDialog by remember { mutableStateOf(false) }
-
-                SettingSelectorItem(
+                val strings = LocalFeedFlowStrings.current
+                CompactSettingDropdownRow(
                     title = LocalFeedFlowStrings.current.settingsTheme,
-                    currentValueLabel = themeModeLabel,
+                    currentValue = themeMode,
+                    options = persistentListOf(
+                        SettingDropdownOption(ThemeMode.SYSTEM, strings.settingsThemeSystem),
+                        SettingDropdownOption(ThemeMode.LIGHT, strings.settingsThemeLight),
+                        SettingDropdownOption(ThemeMode.DARK, strings.settingsThemeDark),
+                        SettingDropdownOption(ThemeMode.OLED, strings.settingsThemeOled),
+                    ),
                     icon = Icons.Outlined.DarkMode,
-                    onClick = { showDialog = true },
+                    onOptionSelected = onThemeModeSelected,
                 )
-
-                if (showDialog) {
-                    ThemeModeDialog(
-                        currentThemeMode = themeMode,
-                        onThemeModeSelected = { selectedThemeMode ->
-                            onThemeModeSelected(selectedThemeMode)
-                            showDialog = false
-                        },
-                        dismissDialog = { showDialog = false },
-                    )
-                }
             }
 
             item {

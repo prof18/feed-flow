@@ -7,13 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.Sort
-import androidx.compose.material.icons.outlined.EventBusy
-import androidx.compose.material.icons.outlined.FiberManualRecord
-import androidx.compose.material.icons.outlined.HideImage
-import androidx.compose.material.icons.outlined.HideSource
-import androidx.compose.material.icons.outlined.LabelOff
-import androidx.compose.material.icons.outlined.SubtitlesOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,14 +14,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
-import com.prof18.feedflow.android.settings.components.FeedOrderSelectionDialog
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFontSizes
@@ -40,17 +28,15 @@ import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.presentation.model.FeedListSettingsState
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
-import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
-import com.prof18.feedflow.shared.ui.settings.DescriptionLineLimitSelector
+import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.shared.ui.settings.FeedItemPreview
-import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
-import com.prof18.feedflow.shared.ui.settings.SettingSelectorItem
+import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
-import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
-import com.prof18.feedflow.shared.ui.settings.TimeFormatSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun FeedListSettingsScreenContent(
@@ -71,10 +57,12 @@ internal fun FeedListSettingsScreenContent(
     setHideFeedSource: (Boolean) -> Unit,
     onDescriptionLineLimitSelected: (DescriptionLineLimit) -> Unit,
 ) {
+    val strings = LocalFeedFlowStrings.current
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(LocalFeedFlowStrings.current.settingsFeedListTitle) },
+                title = { Text(strings.settingsFeedListTitle) },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
@@ -129,16 +117,20 @@ internal fun FeedListSettingsScreenContent(
 
                 item {
                     Spacer(modifier = Modifier.padding(top = Spacing.regular))
-                    FeedLayoutSelector(
-                        feedLayout = state.feedLayout,
-                        onFeedLayoutSelected = setFeedLayout,
+                    CompactSettingDropdownRow(
+                        title = strings.feedLayoutTitle,
+                        currentValue = state.feedLayout,
+                        options = persistentListOf(
+                            SettingDropdownOption(FeedLayout.LIST, strings.settingsFeedLayoutList),
+                            SettingDropdownOption(FeedLayout.CARD, strings.settingsFeedLayoutCard),
+                        ),
+                        onOptionSelected = setFeedLayout,
                     )
                 }
 
                 item {
                     SettingSwitchItem(
-                        title = LocalFeedFlowStrings.current.settingsHideDescription,
-                        icon = Icons.Outlined.SubtitlesOff,
+                        title = strings.settingsHideDescription,
                         isChecked = state.isHideDescriptionEnabled,
                         onCheckedChange = setHideDescription,
                     )
@@ -146,8 +138,7 @@ internal fun FeedListSettingsScreenContent(
 
                 item {
                     SettingSwitchItem(
-                        title = LocalFeedFlowStrings.current.settingsHideImages,
-                        icon = Icons.Outlined.HideImage,
+                        title = strings.settingsHideImages,
                         isChecked = state.isHideImagesEnabled,
                         onCheckedChange = setHideImages,
                     )
@@ -155,8 +146,7 @@ internal fun FeedListSettingsScreenContent(
 
                 item {
                     SettingSwitchItem(
-                        title = LocalFeedFlowStrings.current.settingsHideDate,
-                        icon = Icons.Outlined.EventBusy,
+                        title = strings.settingsHideDate,
                         isChecked = state.isHideDateEnabled,
                         onCheckedChange = setHideDate,
                     )
@@ -164,8 +154,7 @@ internal fun FeedListSettingsScreenContent(
 
                 item {
                     SettingSwitchItem(
-                        title = LocalFeedFlowStrings.current.settingsHideUnreadDot,
-                        icon = Icons.Outlined.FiberManualRecord,
+                        title = strings.settingsHideUnreadDot,
                         isChecked = state.isHideUnreadDotEnabled,
                         onCheckedChange = setHideUnreadDot,
                     )
@@ -173,8 +162,7 @@ internal fun FeedListSettingsScreenContent(
 
                 item {
                     SettingSwitchItem(
-                        title = LocalFeedFlowStrings.current.settingsHideFeedSource,
-                        icon = Icons.Outlined.LabelOff,
+                        title = strings.settingsHideFeedSource,
                         isChecked = state.isHideFeedSourceEnabled,
                         onCheckedChange = setHideFeedSource,
                     )
@@ -182,74 +170,102 @@ internal fun FeedListSettingsScreenContent(
 
                 item {
                     SettingSwitchItem(
-                        title = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
-                        icon = Icons.Outlined.HideSource,
+                        title = strings.settingsHideDuplicatedTitleFromDesc,
                         isChecked = state.isRemoveTitleFromDescriptionEnabled,
                         onCheckedChange = setRemoveTitleFromDescription,
                     )
                 }
 
                 item {
-                    DescriptionLineLimitSelector(
-                        currentLimit = state.descriptionLineLimit,
-                        onLimitSelected = onDescriptionLineLimitSelected,
+                    CompactSettingDropdownRow(
+                        title = strings.settingsDescriptionMaxLines,
+                        currentValue = state.descriptionLineLimit,
+                        options = persistentListOf(
+                            SettingDropdownOption(
+                                DescriptionLineLimit.THREE,
+                                strings.settingsDescriptionLinesThree,
+                            ),
+                            SettingDropdownOption(
+                                DescriptionLineLimit.FIVE,
+                                strings.settingsDescriptionLinesFive,
+                            ),
+                            SettingDropdownOption(
+                                DescriptionLineLimit.NO_LIMIT,
+                                strings.settingsDescriptionLinesNoLimit,
+                            ),
+                        ),
+                        onOptionSelected = onDescriptionLineLimitSelected,
                     )
                 }
 
                 item {
-                    DateFormatSelector(
-                        currentFormat = state.dateFormat,
-                        onFormatSelected = onDateFormatSelected,
+                    CompactSettingDropdownRow(
+                        title = strings.dateFormatTitle,
+                        currentValue = state.dateFormat,
+                        options = persistentListOf(
+                            SettingDropdownOption(DateFormat.NORMAL, strings.dateFormatNormal),
+                            SettingDropdownOption(DateFormat.AMERICAN, strings.dateFormatAmerican),
+                            SettingDropdownOption(DateFormat.ISO, strings.dateFormatIso),
+                        ),
+                        onOptionSelected = onDateFormatSelected,
                     )
                 }
 
                 item {
-                    TimeFormatSelector(
-                        currentFormat = state.timeFormat,
-                        onFormatSelected = onTimeFormatSelected,
+                    CompactSettingDropdownRow(
+                        title = strings.timeFormatTitle,
+                        currentValue = state.timeFormat,
+                        options = persistentListOf(
+                            SettingDropdownOption(TimeFormat.HOURS_24, strings.timeFormatHours24),
+                            SettingDropdownOption(TimeFormat.HOURS_12, strings.timeFormatHours12),
+                        ),
+                        onOptionSelected = onTimeFormatSelected,
                     )
                 }
 
                 item {
-                    val feedOrderLabel = when (state.feedOrder) {
-                        FeedOrder.NEWEST_FIRST -> LocalFeedFlowStrings.current.settingsFeedOrderNewestFirst
-                        FeedOrder.OLDEST_FIRST -> LocalFeedFlowStrings.current.settingsFeedOrderOldestFirst
-                    }
-                    var showDialog by remember { mutableStateOf(false) }
-
-                    SettingSelectorItem(
-                        title = LocalFeedFlowStrings.current.settingsFeedOrderTitle,
-                        currentValueLabel = feedOrderLabel,
-                        icon = Icons.AutoMirrored.Outlined.Sort,
-                        onClick = { showDialog = true },
-                    )
-
-                    if (showDialog) {
-                        FeedOrderSelectionDialog(
-                            currentFeedOrder = state.feedOrder,
-                            onFeedOrderSelected = onFeedOrderSelected,
-                            dismissDialog = { showDialog = false },
-                        )
-                    }
-                }
-
-                item {
-                    SwipeActionSelector(
-                        direction = SwipeDirection.LEFT,
-                        currentAction = state.leftSwipeActionType,
-                        onActionSelected = { action ->
-                            onSwipeActionSelected(SwipeDirection.LEFT, action)
-                        },
+                    CompactSettingDropdownRow(
+                        title = strings.settingsFeedOrderTitle,
+                        currentValue = state.feedOrder,
+                        options = persistentListOf(
+                            SettingDropdownOption(
+                                FeedOrder.NEWEST_FIRST,
+                                strings.settingsFeedOrderNewestFirst,
+                            ),
+                            SettingDropdownOption(
+                                FeedOrder.OLDEST_FIRST,
+                                strings.settingsFeedOrderOldestFirst,
+                            ),
+                        ),
+                        onOptionSelected = onFeedOrderSelected,
                     )
                 }
 
                 item {
-                    SwipeActionSelector(
-                        direction = SwipeDirection.RIGHT,
-                        currentAction = state.rightSwipeActionType,
-                        onActionSelected = { action ->
-                            onSwipeActionSelected(SwipeDirection.RIGHT, action)
-                        },
+                    CompactSettingDropdownRow(
+                        title = strings.settingsLeftSwipeAction,
+                        currentValue = state.leftSwipeActionType,
+                        options = swipeActionOptions(
+                            toggleReadLabel = strings.settingsSwipeActionToggleRead,
+                            toggleBookmarkLabel = strings.settingsSwipeActionToggleBookmark,
+                            openInBrowserLabel = strings.settingsSwipeActionOpenInBrowser,
+                            noneLabel = strings.settingsSwipeActionNone,
+                        ),
+                        onOptionSelected = { action -> onSwipeActionSelected(SwipeDirection.LEFT, action) },
+                    )
+                }
+
+                item {
+                    CompactSettingDropdownRow(
+                        title = strings.settingsRightSwipeAction,
+                        currentValue = state.rightSwipeActionType,
+                        options = swipeActionOptions(
+                            toggleReadLabel = strings.settingsSwipeActionToggleRead,
+                            toggleBookmarkLabel = strings.settingsSwipeActionToggleBookmark,
+                            openInBrowserLabel = strings.settingsSwipeActionOpenInBrowser,
+                            noneLabel = strings.settingsSwipeActionNone,
+                        ),
+                        onOptionSelected = { action -> onSwipeActionSelected(SwipeDirection.RIGHT, action) },
                     )
                 }
 
@@ -260,6 +276,30 @@ internal fun FeedListSettingsScreenContent(
         }
     }
 }
+
+private fun swipeActionOptions(
+    toggleReadLabel: String,
+    toggleBookmarkLabel: String,
+    openInBrowserLabel: String,
+    noneLabel: String,
+): ImmutableList<SettingDropdownOption<SwipeActionType>> = persistentListOf(
+    SettingDropdownOption(
+        SwipeActionType.TOGGLE_READ_STATUS,
+        toggleReadLabel,
+    ),
+    SettingDropdownOption(
+        SwipeActionType.TOGGLE_BOOKMARK_STATUS,
+        toggleBookmarkLabel,
+    ),
+    SettingDropdownOption(
+        SwipeActionType.OPEN_IN_BROWSER,
+        openInBrowserLabel,
+    ),
+    SettingDropdownOption(
+        SwipeActionType.NONE,
+        noneLabel,
+    ),
+)
 
 @Preview
 @Composable

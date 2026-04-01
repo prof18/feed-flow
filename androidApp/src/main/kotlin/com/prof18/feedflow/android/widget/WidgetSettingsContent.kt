@@ -14,12 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.HideImage
-import androidx.compose.material.icons.outlined.Palette
-import androidx.compose.material.icons.outlined.ViewHeadline
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
@@ -104,14 +99,12 @@ fun WidgetSettingsContent(
 
         SettingSwitchItem(
             title = strings.widgetShowHeaderTitle,
-            icon = Icons.Outlined.ViewHeadline,
             isChecked = settingsState.showHeader,
             onCheckedChange = onShowHeaderSelected,
         )
 
         SettingSwitchItem(
             title = strings.settingsHideImages,
-            icon = Icons.Outlined.HideImage,
             isChecked = settingsState.hideImages,
             onCheckedChange = onHideImagesSelected,
         )
@@ -201,11 +194,6 @@ private fun WidgetColorSettingItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
-        Icon(
-            imageVector = Icons.Outlined.Palette,
-            contentDescription = null,
-        )
-
         Column(
             modifier = Modifier.weight(1f),
         ) {

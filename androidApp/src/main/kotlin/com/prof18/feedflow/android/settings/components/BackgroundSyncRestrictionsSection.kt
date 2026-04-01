@@ -2,9 +2,6 @@ package com.prof18.feedflow.android.settings.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.BatteryChargingFull
-import androidx.compose.material.icons.outlined.Wifi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,14 +42,12 @@ fun BackgroundSyncRestrictionsSection(
 
         SettingSwitchItem(
             title = strings.settingsBackgroundSyncWifiOnly,
-            icon = Icons.Outlined.Wifi,
             isChecked = syncOnlyOnWifi,
             onCheckedChange = onSyncOnlyOnWifiChange,
         )
 
         SettingSwitchItem(
             title = strings.settingsBackgroundSyncChargingOnly,
-            icon = Icons.Outlined.BatteryChargingFull,
             isChecked = syncOnlyWhenCharging,
             onCheckedChange = onSyncOnlyWhenChargingChange,
         )

@@ -142,6 +142,8 @@ private fun getLoggingModule(
     }
 
 private fun getCoreModule(appConfig: AppConfig) = module {
+    single { appConfig }
+
     single<Clock> { Clock.System }
 
     single<DispatcherProvider> {

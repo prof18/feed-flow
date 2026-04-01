@@ -1,5 +1,6 @@
 package com.prof18.feedflow.feedsync.greader.di
 
+import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.feedsync.greader.data.GReaderClient
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
@@ -18,6 +19,7 @@ fun getGReaderModule(appEnvironment: AppEnvironment) = module {
                 networkSettings = get(),
                 appEnvironment = appEnvironment,
                 dispatcherProvider = get(),
+                appVersion = get<AppConfig>().appVersion,
             ),
             logger = get(parameters = { parametersOf("GReaderRepository") }),
             networkSettings = get(),
@@ -53,6 +55,7 @@ fun getGReaderTestModule(
                 networkSettings = get(),
                 appEnvironment = AppEnvironment.Debug,
                 dispatcherProvider = get(),
+                appVersion = "test",
                 providedHttpClient = httpClient,
             ),
             logger = get(parameters = { parametersOf("GReaderRepository") }),

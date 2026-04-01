@@ -1,5 +1,6 @@
 package com.prof18.feedflow.feedsync.feedbin.di
 
+import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.feedsync.feedbin.data.FeedbinClient
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
@@ -18,6 +19,7 @@ fun getFeedbinModule(appEnvironment: AppEnvironment) = module {
                 networkSettings = get(),
                 appEnvironment = appEnvironment,
                 dispatcherProvider = get(),
+                appVersion = get<AppConfig>().appVersion,
             ),
             logger = get(parameters = { parametersOf("FeedbinRepository") }),
             networkSettings = get(),
@@ -52,6 +54,7 @@ fun getFeedbinTestModule(
                 networkSettings = get(),
                 appEnvironment = AppEnvironment.Debug,
                 dispatcherProvider = get(),
+                appVersion = "test",
                 providedHttpClient = httpClient,
             ),
             logger = get(parameters = { parametersOf("FeedbinRepository") }),

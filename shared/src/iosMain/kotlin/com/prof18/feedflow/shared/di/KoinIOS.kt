@@ -8,7 +8,7 @@ import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
-import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
+import com.prof18.feedflow.core.utils.feedFlowUserAgent
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceIos
@@ -131,7 +131,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             nsUrlSession = NSURLSession.sessionWithConfiguration(
                 NSURLSessionConfiguration.defaultSessionConfiguration().apply {
                     HTTPAdditionalHeaders = mapOf(
-                        "User-Agent" to FEEDFLOW_USER_AGENT,
+                        "User-Agent" to feedFlowUserAgent(get<AppConfig>().appVersion),
                     )
                 },
             ),

@@ -82,7 +82,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         RssParserBuilder(
             callFactory = OkHttpClient
                 .Builder()
-                .addInterceptor(UserAgentInterceptor())
+                .addInterceptor(UserAgentInterceptor(get<AppConfig>().appVersion))
                 .build(),
         ).build()
     }

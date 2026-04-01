@@ -9,7 +9,7 @@ import com.prof18.feedflow.core.model.ignoreResultOnSuccess
 import com.prof18.feedflow.core.model.success
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
-import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
+import com.prof18.feedflow.core.utils.feedFlowUserAgent
 import com.prof18.feedflow.feedsync.feedbin.data.dto.CreateSubscriptionRequest
 import com.prof18.feedflow.feedsync.feedbin.data.dto.CreateTaggingRequest
 import com.prof18.feedflow.feedsync.feedbin.data.dto.DeleteTagRequest
@@ -53,6 +53,7 @@ internal class FeedbinClient internal constructor(
     private val networkSettings: NetworkSettings,
     private val appEnvironment: AppEnvironment,
     private val dispatcherProvider: DispatcherProvider,
+    private val appVersion: String,
     private val providedHttpClient: HttpClient? = null,
 ) {
 
@@ -355,7 +356,7 @@ internal class FeedbinClient internal constructor(
                     }
                 }
                 url(url)
-                header(HttpHeaders.UserAgent, FEEDFLOW_USER_AGENT)
+                header(HttpHeaders.UserAgent, feedFlowUserAgent(appVersion))
             }
             if (appEnvironment.isDebug()) {
                 install(Logging) {

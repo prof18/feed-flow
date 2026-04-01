@@ -11,7 +11,7 @@ import com.prof18.feedflow.core.model.isError
 import com.prof18.feedflow.core.model.onSuccess
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
-import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
+import com.prof18.feedflow.core.utils.feedFlowUserAgent
 import com.prof18.feedflow.feedsync.greader.data.dto.StreamItemIdDTO
 import com.prof18.feedflow.feedsync.greader.data.dto.StreamItemsContentsDTO
 import com.prof18.feedflow.feedsync.greader.data.dto.SubscriptionListDTO
@@ -48,6 +48,7 @@ internal class GReaderClient internal constructor(
     private val networkSettings: NetworkSettings,
     private val appEnvironment: AppEnvironment,
     private val dispatcherProvider: DispatcherProvider,
+    private val appVersion: String,
     private val providedHttpClient: HttpClient? = null,
 ) {
 
@@ -336,7 +337,7 @@ internal class GReaderClient internal constructor(
             defaultRequest {
                 url(finalBaseURL)
                 header("Authorization", "GoogleLogin auth=${networkSettings.getSyncPwd()}")
-                header(HttpHeaders.UserAgent, FEEDFLOW_USER_AGENT)
+                header(HttpHeaders.UserAgent, feedFlowUserAgent(appVersion))
             }
             if (appEnvironment.isDebug()) {
                 install(Logging) {

@@ -122,6 +122,7 @@ To add a new translation, you can use [Weblate](https://hosted.weblate.org/engag
 </a>
 </div>
 
+
 ## License 📄
 
 ```

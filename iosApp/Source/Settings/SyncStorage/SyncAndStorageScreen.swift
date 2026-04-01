@@ -22,10 +22,6 @@ struct SyncAndStorageScreen: View {
         @Bindable var appState = appState
 
         SyncAndStorageScreenContent(
-            syncPeriod: Binding(
-                get: { settingsState.syncPeriod },
-                set: { vmStoreOwner.instance.updateSyncPeriod(period: $0) }
-            ),
             autoDeletePeriod: Binding(
                 get: { settingsState.autoDeletePeriod },
                 set: { vmStoreOwner.instance.updateAutoDeletePeriod(period: $0) }

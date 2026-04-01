@@ -2,7 +2,6 @@ import FeedFlowKit
 import SwiftUI
 
 struct SyncAndStorageScreenContent: View {
-    @Binding var syncPeriod: SyncPeriod
     @Binding var autoDeletePeriod: AutoDeletePeriod
     @Binding var refreshFeedsOnLaunch: Bool
     @Binding var showRssParsingErrors: Bool
@@ -19,27 +18,6 @@ struct SyncAndStorageScreenContent: View {
 
                 Toggle(isOn: $showRssParsingErrors) {
                     Label(feedFlowStrings.settingsShowRssParsingErrors, systemImage: "exclamationmark.triangle")
-                }
-
-                Picker(selection: $syncPeriod) {
-                    Text(feedFlowStrings.settingsSyncPeriodNever)
-                        .tag(SyncPeriod.never)
-                    Text(feedFlowStrings.settingsSyncPeriodFifteenMinutes)
-                        .tag(SyncPeriod.fifteenMinutes)
-                    Text(feedFlowStrings.settingsSyncPeriodThirtyMinutes)
-                        .tag(SyncPeriod.thirtyMinutes)
-                    Text(feedFlowStrings.settingsSyncPeriodOneHour)
-                        .tag(SyncPeriod.oneHour)
-                    Text(feedFlowStrings.settingsSyncPeriodTwoHours)
-                        .tag(SyncPeriod.twoHours)
-                    Text(feedFlowStrings.settingsSyncPeriodSixHours)
-                        .tag(SyncPeriod.sixHours)
-                    Text(feedFlowStrings.settingsSyncPeriodTwelveHours)
-                        .tag(SyncPeriod.twelveHours)
-                    Text(feedFlowStrings.settingsSyncPeriodOneDay)
-                        .tag(SyncPeriod.oneDay)
-                } label: {
-                    Label(feedFlowStrings.settingsSyncPeriod, systemImage: "arrow.clockwise")
                 }
 
                 Picker(selection: $autoDeletePeriod) {

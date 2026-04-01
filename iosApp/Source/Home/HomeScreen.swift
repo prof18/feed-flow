@@ -45,6 +45,8 @@ struct HomeScreen: View {
 
     @State var feedLayout: FeedLayout = .list
 
+    @State var nextFeedPreviewState: NextFeedPreviewState = .NextFeedPreviewDisabledState()
+
     @State var feedItemDisplaySettings = FeedItemDisplaySettings(
         isHideUnreadDotEnabled: false,
         isHideFeedSourceEnabled: false,
@@ -62,6 +64,7 @@ struct HomeScreen: View {
     let onReaderModeNavigate: (() -> Void)?
 
     let openDrawer: () -> Void
+    var onSidebarSelectionChanged: ((FeedFilter) -> Void)?
 
     var body: some View {
         @Bindable var appState = appState
@@ -80,6 +83,7 @@ struct HomeScreen: View {
             feedFontSizes: $feedFontSizes,
             swipeActions: $swipeActions,
             feedLayout: $feedLayout,
+            nextFeedPreviewState: $nextFeedPreviewState,
             feedItemDisplaySettings: $feedItemDisplaySettings,
             onRefresh: {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
@@ -127,6 +131,14 @@ struct HomeScreen: View {
             },
             onBackToTimelineClick: {
                 homeViewModel.onFeedFilterSelected(selectedFeedFilter: FeedFilter.Timeline())
+            },
+            onNavigateToNextFeed: {
+                toggleListScroll.toggle()
+                if let nextFeed = homeViewModel.nextFeedPreviewState.value
+                    as? NextFeedPreviewState.NextFeedPreviewEnabledState {
+                    onSidebarSelectionChanged?(nextFeed.feedFilter)
+                }
+                homeViewModel.onNavigateToNextFeed()
             },
             onFeedSyncClick: {
                 homeViewModel.enqueueBackup()
@@ -238,6 +250,11 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.feedLayout {
                 self.feedLayout = state
+            }
+        }
+        .task {
+            for await state in homeViewModel.nextFeedPreviewState {
+                self.nextFeedPreviewState = state
             }
         }
         .task {

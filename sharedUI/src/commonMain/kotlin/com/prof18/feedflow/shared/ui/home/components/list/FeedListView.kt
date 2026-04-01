@@ -1,16 +1,20 @@
 package com.prof18.feedflow.shared.ui.home.components.list
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
@@ -87,6 +91,7 @@ fun FeedList(
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
+    showNextFeedButton: Boolean = false,
     onMarkAllAboveAsRead: (String) -> Unit = {},
     onMarkAllBelowAsRead: (String) -> Unit = {},
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
@@ -104,7 +109,7 @@ fun FeedList(
     PullToNextLayout(
         modifier = modifier,
         onNavigateNext = { onNavigateNext() },
-        enabled = nextFeedState is NextFeedDisplayEnabledState,
+        enabled = !showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState,
         indicator = { progress ->
             PullToNextIndicator(
                 progress = progress,
@@ -187,21 +192,17 @@ fun FeedList(
                     }
                 }
                 if (index == feedItems.size - 1 && currentFeedFilter !is FeedFilter.Read) {
-                    Box(
-                        modifier = Modifier
-                            .navigationBarsPadding()
-                            .fillMaxWidth(),
-                    ) {
-                        TextButton(
-                            modifier = Modifier
-                                .padding(top = Spacing.small)
-                                .padding(bottom = Spacing.medium)
-                                .align(Alignment.Center),
-                            onClick = markAllAsRead,
-                        ) {
-                            Text(LocalFeedFlowStrings.current.markAllReadButton)
-                        }
-                    }
+                    MarkAllReadButton(
+                        showNextFeedButton = showNextFeedButton,
+                        nextFeedState = nextFeedState,
+                        onClick = markAllAsRead,
+                    )
+                }
+                if (index == feedItems.size - 1 && showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState) {
+                    NavigateNextButton(
+                        title = nextFeedState.title,
+                        onClick = onNavigateNext,
+                    )
                 }
             }
         }
@@ -223,6 +224,66 @@ fun FeedList(
     LaunchedEffect(key1 = shouldStartPaginate.value) {
         if (shouldStartPaginate.value) {
             latestRequestMoreItems()
+        }
+    }
+}
+
+@Composable
+private fun MarkAllReadButton(
+    showNextFeedButton: Boolean,
+    nextFeedState: NextFeedDisplayState,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .navigationBarsPadding()
+            .fillMaxWidth(),
+    ) {
+        TextButton(
+            modifier = Modifier
+                .padding(top = Spacing.small)
+                .padding(
+                    bottom = if (showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState) {
+                        Spacing.small
+                    } else {
+                        Spacing.medium
+                    },
+                )
+                .align(Alignment.Center),
+            onClick = onClick,
+        ) {
+            Text(LocalFeedFlowStrings.current.markAllReadButton)
+        }
+    }
+}
+
+@Composable
+private fun NavigateNextButton(
+    title: String,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .navigationBarsPadding()
+            .fillMaxWidth(),
+    ) {
+        TextButton(
+            modifier = Modifier
+                .padding(bottom = Spacing.medium)
+                .align(Alignment.Center),
+            onClick = onClick,
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Spacing.xsmall),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(title)
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                )
+            }
         }
     }
 }

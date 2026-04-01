@@ -120,6 +120,9 @@ struct ThreePaneView: View {
                     },
                     openDrawer: {
                         preferredColumn = .sidebar
+                    },
+                    onSidebarSelectionChanged: { feedFilter in
+                        selectedSidebarItem = sidebarSelection(from: feedFilter)
                     }
                 )
                 .environment(indexHolder)
@@ -213,6 +216,21 @@ struct ThreePaneView: View {
             detailNavigationPath = NavigationPath()
             preferredColumn = .content
         }
+    }
+
+    private func sidebarSelection(from filter: FeedFilter) -> SidebarSelection? {
+        if filter is FeedFilter.Timeline {
+            return .timeline
+        } else if filter is FeedFilter.Read {
+            return .read
+        } else if filter is FeedFilter.Bookmarks {
+            return .bookmarks
+        } else if let category = filter as? FeedFilter.Category {
+            return .category(id: category.feedCategory.id)
+        } else if let source = filter as? FeedFilter.Source {
+            return .feedSource(id: source.feedSource.id)
+        }
+        return nil
     }
 
     @ViewBuilder private var detailPaneView: some View {

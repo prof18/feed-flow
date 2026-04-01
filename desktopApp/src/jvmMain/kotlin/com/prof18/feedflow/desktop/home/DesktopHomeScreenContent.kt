@@ -211,7 +211,8 @@ fun DesktopHomeScreenContent(
                                         feedLayout = displayState.feedLayout,
                                         onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
                                         onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
-                                        onNavigateNext = {},
+                                        onNavigateNext = feedListActions.onNavigateNext,
+                                        showNextFeedButton = true,
                                         feedItemDisplaySettings = displayState.feedItemDisplaySettings,
                                     )
                                 }

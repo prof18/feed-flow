@@ -59,6 +59,7 @@ class FeedListActions(
     val updateReadStatus: (FeedItemId, Boolean) -> Unit,
     val markAllAboveAsRead: (String) -> Unit,
     val markAllBelowAsRead: (String) -> Unit,
+    val onNavigateNext: () -> Unit = {},
 )
 
 @Stable

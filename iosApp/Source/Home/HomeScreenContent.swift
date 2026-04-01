@@ -37,6 +37,7 @@ struct HomeContent: View {
     @Binding var feedFontSizes: FeedFontSizes
     @Binding var swipeActions: SwipeActions
     @Binding var feedLayout: FeedLayout
+    @Binding var nextFeedPreviewState: NextFeedPreviewState
     @Binding var feedItemDisplaySettings: FeedItemDisplaySettings
 
     @State var isToolbarVisible = true
@@ -58,6 +59,7 @@ struct HomeContent: View {
     let onMarkAllAboveAsRead: (String) -> Void
     let onMarkAllBelowAsRead: (String) -> Void
     let onBackToTimelineClick: () -> Void
+    let onNavigateToNextFeed: () -> Void
     let onFeedSyncClick: () -> Void
     let openDrawer: () -> Void
 
@@ -149,6 +151,7 @@ private extension HomeContent {
             swipeActions: swipeActions,
             feedLayout: feedLayout,
             feedItemDisplaySettings: feedItemDisplaySettings,
+            nextFeedPreviewState: nextFeedPreviewState,
             onReloadClick: onRefresh,
             onAddFeedClick: {
                 self.sheetToShow = .noFeedSource
@@ -161,6 +164,7 @@ private extension HomeContent {
             onMarkAllAboveAsRead: onMarkAllAboveAsRead,
             onMarkAllBelowAsRead: onMarkAllBelowAsRead,
             onBackToTimelineClick: onBackToTimelineClick,
+            onNavigateToNextFeed: onNavigateToNextFeed,
             onMarkAllAsReadClick: onMarkAllReadClick,
             openDrawer: openDrawer,
             onScrollPositionChanged: { shouldShow in

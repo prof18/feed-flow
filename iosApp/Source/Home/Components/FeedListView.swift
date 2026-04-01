@@ -36,6 +36,7 @@ struct FeedListView: View {
         isHideFeedSourceEnabled: false,
         descriptionLineLimit: .three
     )
+    let nextFeedPreviewState: NextFeedPreviewState
 
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
@@ -47,6 +48,7 @@ struct FeedListView: View {
     let onMarkAllAboveAsRead: (String) -> Void
     let onMarkAllBelowAsRead: (String) -> Void
     let onBackToTimelineClick: () -> Void
+    let onNavigateToNextFeed: () -> Void
     let onMarkAllAsReadClick: () -> Void
     let openDrawer: () -> Void
     let onScrollPositionChanged: (Bool) -> Void
@@ -167,6 +169,14 @@ struct FeedListView: View {
                                 .buttonStyle(.borderless)
                                 .frame(maxWidth: .infinity)
                                 .listRowSeparator(.hidden)
+                            }
+
+                            if let enabledState = nextFeedPreviewState
+                                as? NextFeedPreviewState.NextFeedPreviewEnabledState {
+                                NextFeedButton(
+                                    title: enabledState.title,
+                                    onNavigateNext: onNavigateToNextFeed
+                                )
                             }
                         }
                     }

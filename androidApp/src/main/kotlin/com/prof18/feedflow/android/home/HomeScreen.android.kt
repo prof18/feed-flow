@@ -277,7 +277,15 @@ internal fun HomeScreen(
                 shareBehavior = shareBehavior,
                 onBackupClick = homeViewModel::enqueueBackup,
                 onEmptyStateClick = { showNoFeedsBottomSheet = true },
-                onNavigateToNextFeed = onNavigateToNextFeed,
+                onNavigateToNextFeed = {
+                    scope.launch {
+                        listState.scrollToItemConditionally(
+                            0,
+                            reduceMotionEnabled = reduceMotionEnabled,
+                        )
+                    }
+                    onNavigateToNextFeed()
+                },
             )
         },
     )

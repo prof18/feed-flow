@@ -28,11 +28,14 @@ import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
+import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewDisabledState
+import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewEnabledState
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
-import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState.NextFeedDisplayDisabledState
+import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -69,6 +72,7 @@ internal fun HomeScreen(
     val feedOperation by homeViewModel.feedOperationState.collectAsState()
     val feedLayout by homeViewModel.feedLayout.collectAsState()
     val feedItemDisplaySettings by homeViewModel.feedItemDisplaySettings.collectAsState()
+    val nextFeedPreviewState by homeViewModel.nextFeedPreviewState.collectAsState()
     val refreshTrigger by homeViewModel.refreshTriggerState.collectAsState()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsState()
@@ -135,7 +139,7 @@ internal fun HomeScreen(
         currentFeedFilter = currentFeedFilter,
         swipeActions = swipeActions,
         feedLayout = feedLayout,
-        nextFeedDisplayState = NextFeedDisplayDisabledState,
+        nextFeedDisplayState = nextFeedPreviewState.asDisplayState(),
         feedItemDisplaySettings = feedItemDisplaySettings,
     )
 
@@ -207,6 +211,10 @@ internal fun HomeScreen(
         updateReadStatus = { feedItemId, isRead -> homeViewModel.updateReadStatus(feedItemId, isRead) },
         markAllAboveAsRead = { feedItemId -> homeViewModel.markAllAboveAsRead(feedItemId) },
         markAllBelowAsRead = { feedItemId -> homeViewModel.markAllBelowAsRead(feedItemId) },
+        onNavigateNext = {
+            scope.launch { listState.scrollToItem(0) }
+            homeViewModel.onNavigateToNextFeed()
+        },
     )
 
     val feedManagementActions = FeedManagementActions(
@@ -365,4 +373,9 @@ private fun handleOpenUrlForDesktop(
             }
         }
     }
+}
+
+private fun NextFeedPreviewState.asDisplayState(): NextFeedDisplayState = when (this) {
+    is NextFeedPreviewDisabledState -> NextFeedDisplayState.NextFeedDisplayDisabledState
+    is NextFeedPreviewEnabledState -> NextFeedDisplayState.NextFeedDisplayEnabledState(this.title)
 }

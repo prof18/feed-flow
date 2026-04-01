@@ -11,9 +11,9 @@ import SwiftUI
 
 struct SettingToggleItem: View {
     @Binding var isOn: Bool
-    
+
     let title: String
-    let systemImage: String
+    var systemImage: String?
     var confirmationDialog: ConfirmationDialogConfig?
 
     @State private var showConfirmation = false
@@ -31,7 +31,11 @@ struct SettingToggleItem: View {
                 }
             }
         )) {
-            Label(title, systemImage: systemImage)
+            if let systemImage {
+                Label(title, systemImage: systemImage)
+            } else {
+                Text(title)
+            }
         }
         .onTapGesture {
             let newValue = !isOn

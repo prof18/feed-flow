@@ -107,35 +107,35 @@ struct FeedListSettingsScreenContent: View {
                         Text(feedFlowStrings.settingsFeedLayoutCard)
                             .tag(FeedLayout.card)
                     } label: {
-                        Label(feedFlowStrings.feedLayoutTitle, systemImage: "rectangle.grid.1x2")
+                        Text(feedFlowStrings.feedLayoutTitle)
                     }
 
                     Toggle(isOn: $isHideDescriptionEnabled) {
-                        Label(feedFlowStrings.settingsHideDescription, systemImage: "text.page.slash")
+                        Text(feedFlowStrings.settingsHideDescription)
                     }.onTapGesture {
                         isHideDescriptionEnabled.toggle()
                     }
 
                     Toggle(isOn: $isHideImagesEnabled) {
-                        Label(feedFlowStrings.settingsHideImages, systemImage: "square.slash")
+                        Text(feedFlowStrings.settingsHideImages)
                     }.onTapGesture {
                         isHideImagesEnabled.toggle()
                     }
 
                     Toggle(isOn: $isHideDateEnabled) {
-                        Label(feedFlowStrings.settingsHideDate, systemImage: "calendar.badge.minus")
+                        Text(feedFlowStrings.settingsHideDate)
                     }.onTapGesture {
                         isHideDateEnabled.toggle()
                     }
 
                     Toggle(isOn: $isHideUnreadDotEnabled) {
-                        Label(feedFlowStrings.settingsHideUnreadDot, systemImage: "circle.fill")
+                        Text(feedFlowStrings.settingsHideUnreadDot)
                     }.onTapGesture {
                         isHideUnreadDotEnabled.toggle()
                     }
 
                     Toggle(isOn: $isHideFeedSourceEnabled) {
-                        Label(feedFlowStrings.settingsHideFeedSource, systemImage: "person.slash")
+                        Text(feedFlowStrings.settingsHideFeedSource)
                     }.onTapGesture {
                         isHideFeedSourceEnabled.toggle()
                     }
@@ -148,11 +148,11 @@ struct FeedListSettingsScreenContent: View {
                         Text(feedFlowStrings.settingsDescriptionLinesNoLimit)
                             .tag(DescriptionLineLimit.noLimit)
                     } label: {
-                        Label(feedFlowStrings.settingsDescriptionMaxLines, systemImage: "list.number")
+                        Text(feedFlowStrings.settingsDescriptionMaxLines)
                     }
 
                     Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {
-                        Label(feedFlowStrings.settingsHideDuplicatedTitleFromDesc, systemImage: "eye.slash")
+                        Text(feedFlowStrings.settingsHideDuplicatedTitleFromDesc)
                     }.onTapGesture {
                         isRemoveTitleFromDescriptionEnabled.toggle()
                     }
@@ -171,7 +171,7 @@ struct FeedListSettingsScreenContent: View {
                         Text(feedFlowStrings.settingsSwipeActionNone)
                             .tag(SwipeActionType.none)
                     } label: {
-                        Label(feedFlowStrings.settingsLeftSwipeAction, systemImage: "arrow.right")
+                        Text(feedFlowStrings.settingsLeftSwipeAction)
                     }
 
                     Picker(selection: $rightSwipeAction) {
@@ -184,7 +184,7 @@ struct FeedListSettingsScreenContent: View {
                         Text(feedFlowStrings.settingsSwipeActionNone)
                             .tag(SwipeActionType.none)
                     } label: {
-                        Label(feedFlowStrings.settingsRightSwipeAction, systemImage: "arrow.left")
+                        Text(feedFlowStrings.settingsRightSwipeAction)
                     }
 
                     Picker(selection: $feedOrder) {
@@ -193,7 +193,7 @@ struct FeedListSettingsScreenContent: View {
                         Text(feedFlowStrings.settingsFeedOrderOldestFirst)
                             .tag(FeedOrder.oldestFirst)
                     } label: {
-                        Label(feedFlowStrings.settingsFeedOrderTitle, systemImage: "arrow.up.arrow.down.circle")
+                        Text(feedFlowStrings.settingsFeedOrderTitle)
                     }
                 }
             })

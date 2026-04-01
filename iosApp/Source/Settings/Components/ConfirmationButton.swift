@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ConfirmationButton: View {
     let title: String
-    let systemImage: String
+    var systemImage: String?
     let dialogTitle: String
     let dialogMessage: String
     let onConfirm: () -> Void
@@ -20,10 +20,14 @@ struct ConfirmationButton: View {
     @State private var showConfirmation = false
 
     var body: some View {
-        Button {
+        Button(role: isDestructive ? .destructive : nil) {
             showConfirmation = true
         } label: {
-            Label(title, systemImage: systemImage)
+            if let systemImage {
+                Label(title, systemImage: systemImage)
+            } else {
+                Text(title)
+            }
         }
         .confirmationDialog(
             title: dialogTitle,

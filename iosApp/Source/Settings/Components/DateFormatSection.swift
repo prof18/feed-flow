@@ -13,7 +13,7 @@ struct DateFormatSection: View {
             Text(feedFlowStrings.dateFormatIso)
                 .tag(DateFormat.iso)
         } label: {
-            Label(feedFlowStrings.dateFormatTitle, systemImage: "calendar")
+            Text(feedFlowStrings.dateFormatTitle)
         }
     }
 }

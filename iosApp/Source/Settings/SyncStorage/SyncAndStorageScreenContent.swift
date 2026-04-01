@@ -13,11 +13,11 @@ struct SyncAndStorageScreenContent: View {
         Form {
             Section {
                 Toggle(isOn: $refreshFeedsOnLaunch) {
-                    Label(feedFlowStrings.settingsRefreshFeedsOnLaunch, systemImage: "arrow.triangle.2.circlepath")
+                    Text(feedFlowStrings.settingsRefreshFeedsOnLaunch)
                 }
 
                 Toggle(isOn: $showRssParsingErrors) {
-                    Label(feedFlowStrings.settingsShowRssParsingErrors, systemImage: "exclamationmark.triangle")
+                    Text(feedFlowStrings.settingsShowRssParsingErrors)
                 }
 
                 Picker(selection: $autoDeletePeriod) {
@@ -32,12 +32,11 @@ struct SyncAndStorageScreenContent: View {
                     Text(feedFlowStrings.settingsAutoDeletePeriodOneMonth)
                         .tag(AutoDeletePeriod.oneMonth)
                 } label: {
-                    Label(feedFlowStrings.settingsAutoDelete, systemImage: "arrow.3.trianglepath")
+                    Text(feedFlowStrings.settingsAutoDelete)
                 }
 
                 ConfirmationButton(
                     title: feedFlowStrings.settingsClearDownloadedArticles,
-                    systemImage: "trash",
                     dialogTitle: feedFlowStrings.settingsClearDownloadedArticlesDialogTitle,
                     dialogMessage: feedFlowStrings.settingsClearDownloadedArticlesDialogMessage,
                     onConfirm: onClearDownloadedArticles

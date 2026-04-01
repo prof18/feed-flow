@@ -92,12 +92,6 @@ extension HomeContent {
                     .onTapGesture(count: 1) {
                         proxy.scrollTo(feedState.first?.id)
                     }
-                    .onTapGesture(count: 2) {
-                        updateReadStatus(Int32(indexHolder.getLastReadIndex()))
-                        self.indexHolder.refresh()
-                        proxy.scrollTo(feedState.first?.id)
-                        onRefresh()
-                    }
             }
             .fixedSize(horizontal: true, vertical: false)
             .layoutPriority(1)
@@ -146,12 +140,6 @@ extension HomeContent {
             .padding(.vertical, Spacing.medium)
             .onTapGesture(count: 1) {
                 proxy.scrollTo(feedState.first?.id)
-            }
-            .onTapGesture(count: 2) {
-                updateReadStatus(Int32(indexHolder.getLastReadIndex()))
-                self.indexHolder.refresh()
-                proxy.scrollTo(feedState.first?.id)
-                onRefresh()
             }
         }
     }

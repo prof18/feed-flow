@@ -23,18 +23,18 @@ struct ReadingBehaviorScreenContent: View {
                         }
                     },
                     label: {
-                        Label(feedFlowStrings.browserSelectionButton, systemImage: "globe")
+                        Text(feedFlowStrings.browserSelectionButton)
                     }
                 )
 
                 Toggle(isOn: $isReaderModeEnabled) {
-                    Label(feedFlowStrings.settingsReaderMode, systemImage: "doc.text")
+                    Text(feedFlowStrings.settingsReaderMode)
                 }.onTapGesture {
                     isReaderModeEnabled.toggle()
                 }
 
                 Toggle(isOn: $isSaveReaderModeContentEnabled) {
-                    Label(feedFlowStrings.settingsSaveReaderModeContent, systemImage: "arrow.down.doc")
+                    Text(feedFlowStrings.settingsSaveReaderModeContent)
                 }.onTapGesture {
                     isSaveReaderModeContentEnabled.toggle()
                 }
@@ -42,7 +42,6 @@ struct ReadingBehaviorScreenContent: View {
                 SettingToggleItem(
                     isOn: $isPrefetchArticleContentEnabled,
                     title: feedFlowStrings.settingsPrefetchArticleContent,
-                    systemImage: "icloud.and.arrow.down",
                     confirmationDialog: ConfirmationDialogConfig(
                         title: feedFlowStrings.settingsPrefetchArticleContent,
                         message: feedFlowStrings.settingsPrefetchArticleContentWarning
@@ -50,19 +49,19 @@ struct ReadingBehaviorScreenContent: View {
                 )
 
                 Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
-                    Label(feedFlowStrings.toggleMarkReadWhenScrolling, systemImage: "book")
+                    Text(feedFlowStrings.toggleMarkReadWhenScrolling)
                 }.onTapGesture {
                     isMarkReadWhenScrollingEnabled.toggle()
                 }
 
                 Toggle(isOn: $isShowReadItemEnabled) {
-                    Label(feedFlowStrings.settingsToggleShowReadArticles, systemImage: "checkmark.circle")
+                    Text(feedFlowStrings.settingsToggleShowReadArticles)
                 }.onTapGesture {
                     isShowReadItemEnabled.toggle()
                 }
 
                 Toggle(isOn: $isHideReadItemsEnabled) {
-                    Label(feedFlowStrings.settingsHideReadItems, systemImage: "eye.slash")
+                    Text(feedFlowStrings.settingsHideReadItems)
                 }.onTapGesture {
                     isHideReadItemsEnabled.toggle()
                 }

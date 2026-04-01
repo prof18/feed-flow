@@ -11,7 +11,7 @@ struct TimeFormatSection: View {
             Text(feedFlowStrings.timeFormatHours12)
                 .tag(TimeFormat.hours12)
         } label: {
-            Label(feedFlowStrings.timeFormatTitle, systemImage: "clock")
+            Text(feedFlowStrings.timeFormatTitle)
         }
     }
 }

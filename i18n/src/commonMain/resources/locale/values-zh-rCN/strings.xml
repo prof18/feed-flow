@@ -383,7 +383,7 @@
     <string name="settings_background_sync_charging_only">仅在充电时进行后台同步</string>
     <string name="widget_background_sync_title">后台同步</string>
     <string name="settings_swipe_action_open_in_browser">在首选浏览器中打开</string>
-    <string name="delete_category">删除分类</string>
+    <string name="delete_category">删除类别</string>
     <string name="settings_sync_period">后台同步</string>
     <string name="widget_background_color_brightness">亮度</string>
     <string name="widget_background_color_hex_label">16 进制颜色代码</string>

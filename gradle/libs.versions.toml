@@ -81,7 +81,7 @@ turbine = "1.2.1"
 workmanager = "2.11.2"
 flatpack-gradle-generator = "1.7.0"
 telemetry-deck = "6.3.0"
-telephoto = "0.18.0"
+telephoto = "0.19.0"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "about-libraries" }

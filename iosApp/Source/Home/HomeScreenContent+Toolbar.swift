@@ -35,7 +35,7 @@ extension HomeContent {
 
     @ToolbarContentBuilder
     func makeCompactPhoneToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
-        makeCompactPhoneHeaderToolbarView(proxy: proxy)
+        makeCompactPhoneHeaderToolbarView()
 
         if isiOS26OrLater() {
             if #available(iOS 26.0, *) {
@@ -64,14 +64,14 @@ extension HomeContent {
 
     @ToolbarContentBuilder
     func makeLegacyToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
-        makeToolbarHeaderView(proxy: proxy)
+        makeToolbarHeaderView()
 
         makeSearchToolbarView()
         makeMenuToolbarView(proxy: proxy)
     }
 
     @ToolbarContentBuilder
-    func makeCompactPhoneHeaderToolbarView(proxy: ScrollViewProxy) -> some ToolbarContent {
+    func makeCompactPhoneHeaderToolbarView() -> some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
             HStack(spacing: Spacing.small) {
                 Button {
@@ -88,10 +88,6 @@ extension HomeContent {
                     .frame(maxWidth: compactPhoneHeaderMaxWidth, alignment: .leading)
                     .padding(.trailing, Spacing.small)
                     .layoutPriority(1)
-                    .contentShape(Rectangle())
-                    .onTapGesture(count: 1) {
-                        proxy.scrollTo(feedState.first?.id)
-                    }
             }
             .fixedSize(horizontal: true, vertical: false)
             .layoutPriority(1)
@@ -126,7 +122,7 @@ extension HomeContent {
     }
 
     @ToolbarContentBuilder
-    func makeToolbarHeaderView(proxy: ScrollViewProxy) -> some ToolbarContent {
+    func makeToolbarHeaderView() -> some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
             HStack {
                 Text(getNavBarName(feedFilter: currentFeedFilter))
@@ -138,9 +134,6 @@ extension HomeContent {
                 }
             }
             .padding(.vertical, Spacing.medium)
-            .onTapGesture(count: 1) {
-                proxy.scrollTo(feedState.first?.id)
-            }
         }
     }
 

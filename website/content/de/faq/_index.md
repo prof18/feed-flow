@@ -6,5 +6,5 @@ layout: "list"
 heading: "Frequently Asked Questions"
 ---
 
-Willkommen im FeedFlow FAQ Bereich. Hier finden sie Antworten auf die häufigsten
+Willkommen im FeedFlow FAQ Bereich. Hier findest du Antworten auf die häufigsten
 Fragen zur Benutzung von FeedFlow.

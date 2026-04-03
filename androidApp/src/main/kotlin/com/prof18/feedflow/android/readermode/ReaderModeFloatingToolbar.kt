@@ -49,6 +49,8 @@ import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 private data class ToolbarAction(
     val icon: ImageVector,
@@ -106,7 +108,7 @@ fun ReaderModeFloatingToolbar(
                 ),
             )
         }
-    }
+    }.toImmutableList()
 
     val trailingActions = buildList {
         if (readerModeState is ReaderModeState.Success) {
@@ -160,7 +162,7 @@ fun ReaderModeFloatingToolbar(
                 )
             }
         }
-    }
+    }.toImmutableList()
 
     Surface(
         modifier = modifier,
@@ -240,8 +242,8 @@ fun ReaderModeFloatingToolbar(
 
 @Composable
 private fun OverflowToolbarLayout(
-    leadingActions: List<ToolbarAction>,
-    trailingActions: List<ToolbarAction>,
+    leadingActions: ImmutableList<ToolbarAction>,
+    trailingActions: ImmutableList<ToolbarAction>,
     isContentVisible: Boolean,
     showOverflowMenu: Boolean,
     onShowOverflowMenu: (Boolean) -> Unit,

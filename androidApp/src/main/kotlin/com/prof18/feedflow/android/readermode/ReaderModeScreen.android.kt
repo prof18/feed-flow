@@ -110,7 +110,7 @@ internal fun ReaderModeScreen(
                             .padding(
                                 start = Spacing.small,
                                 end = Spacing.small,
-                                bottom = contentPadding.calculateBottomPadding()
+                                bottom = contentPadding.calculateBottomPadding(),
                             ),
                         expanded = toolbarExpanded,
                         readerModeState = readerModeState,

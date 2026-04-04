@@ -25,13 +25,8 @@ import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -181,42 +176,26 @@ fun ReaderModeFloatingToolbar(
                 onShowOverflowMenu = { showOverflowMenu = it },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
             ) {
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                        TooltipAnchorPosition.Above,
-                    ),
-                    tooltip = { PlainTooltip { Text(strings.previousArticle) } },
-                    state = rememberTooltipState(),
+                IconButton(
+                    modifier = Modifier.focusProperties { canFocus = expanded },
+                    enabled = canNavigatePrevious,
+                    onClick = onNavigateToPrevious,
                 ) {
-                    IconButton(
-                        modifier = Modifier.focusProperties { canFocus = expanded },
-                        enabled = canNavigatePrevious,
-                        onClick = onNavigateToPrevious,
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = strings.previousArticle,
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = strings.previousArticle,
+                    )
                 }
 
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                        TooltipAnchorPosition.Above,
-                    ),
-                    tooltip = { PlainTooltip { Text(strings.nextArticle) } },
-                    state = rememberTooltipState(),
+                IconButton(
+                    modifier = Modifier.focusProperties { canFocus = expanded },
+                    enabled = canNavigateNext,
+                    onClick = onNavigateToNext,
                 ) {
-                    IconButton(
-                        modifier = Modifier.focusProperties { canFocus = expanded },
-                        enabled = canNavigateNext,
-                        onClick = onNavigateToNext,
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = strings.nextArticle,
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = strings.nextArticle,
+                    )
                 }
             }
 

@@ -161,6 +161,7 @@ dependencies {
     implementation(libs.compose.webview)
     implementation(libs.colorpicker.compose)
     implementation(libs.telephoto.zoomable)
+    implementation(libs.compose.unstyled.primitives)
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)

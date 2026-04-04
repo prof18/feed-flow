@@ -26,21 +26,21 @@ All the business logic is shared via Kotlin Multiplatform.
 ### Build Commands
 All Gradle commands in this section should be run with `--quiet --console=plain`.
 
-- `./gradlew detekt allTests` -> Run all checks including tests and linting for Shared code, Android and Desktop
-- `./gradlew detekt` -> Run static analysis with Detekt for Shared code, Android and Desktop
+- `./gradlew --quiet --console=plain detekt allTests` -> Run all checks including tests and linting for Shared code, Android and Desktop
+- `./gradlew --quiet --console=plain detekt` -> Run static analysis with Detekt for Shared code, Android and Desktop
 - `.scripts/ios-format.sh` -> Format iOS code through swiftformat and swiftlint
-- `./gradlew test` -> Run all tests for Shared code, Android and Desktop
+- `./gradlew --quiet --console=plain test` -> Run all tests for Shared code, Android and Desktop
 - `.scripts/refresh-translations.sh` -> Regenerate i18n translation code after adding new translations
-- `./gradlew :androidApp:assembleGooglePlayDebug` -> Build Android debug
-- `./gradlew :androidApp:compileGooglePlayDebugKotlin` -> Quick compile check for Android (no APK assembly)
-- `.scripts/run-android.sh` -> Install and launch Android Google Play debug
-- `./gradlew desktopApp:run` -> Run Desktop app
-- `./gradlew :desktopApp:compileKotlinJvm` -> Quick compile check for Desktop
-- `./gradlew :desktopApp:jvmMainClasses` -> Compile Desktop main classes (faster than full build)
+- `./gradlew --quiet --console=plain :androidApp:assembleGooglePlayDebug` -> Build Android debug
+- `./gradlew --quiet --console=plain :androidApp:compileGooglePlayDebugKotlin` -> Quick compile check for Android (no APK assembly)
+- `.scripts/run-android.sh` -> Install and launch Android Google Play debug (wraps `:androidApp:installGooglePlayDebug`)
+- `./gradlew --quiet --console=plain desktopApp:run` -> Run Desktop app
+- `./gradlew --quiet --console=plain :desktopApp:compileKotlinJvm` -> Quick compile check for Desktop
+- `./gradlew --quiet --console=plain :desktopApp:jvmMainClasses` -> Compile Desktop main classes (faster than full build)
 - `.scripts/delete-desktop-debug-db.sh` -> Delete local Desktop debug database and prefs
-- `./gradlew :shared:compileKotlinJvm` -> Quick compile check for shared module only (fastest iteration)
-- `./gradlew :feedSync:feedbin:build` -> Build a specific feedSync sub-module (pattern: `:feedSync:<module>:build`)
-- `./gradlew :desktopApp:packageDistributionForCurrentOS` -> Package desktop app distribution for the current OS
+- `./gradlew --quiet --console=plain :shared:compileKotlinJvm` -> Quick compile check for shared module only (fastest iteration)
+- `./gradlew --quiet --console=plain :feedSync:feedbin:build` -> Build a specific feedSync sub-module (pattern: `:feedSync:<module>:build`)
+- `./gradlew --quiet --console=plain :desktopApp:packageDistributionForCurrentOS` -> Package desktop app distribution for the current OS
 
 ### Running Android App
 Ensure an emulator or device is connected via `adb`, then run:
@@ -65,9 +65,9 @@ mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/marco.gomiero/Works
 
 
 ### Running Specific Tests
-- `./gradlew :shared:allTests` -> Run all shared module tests across supported targets
-- `./gradlew :shared:jvmTest --tests "com.prof18.feedflow.shared.presentation.SomeTest"` -> Run a specific test class on JVM
-- `./gradlew :shared:iosSimulatorArm64Test` -> Run shared tests on iOS simulator
+- `./gradlew --quiet --console=plain :shared:allTests` -> Run all shared module tests across supported targets
+- `./gradlew --quiet --console=plain :shared:jvmTest --tests "com.prof18.feedflow.shared.presentation.SomeTest"` -> Run a specific test class on JVM
+- `./gradlew --quiet --console=plain :shared:iosSimulatorArm64Test` -> Run shared tests on iOS simulator
 
 ### Build Verification Process
 
@@ -80,9 +80,10 @@ IMPORTANT: When editing code, you MUST:
 
 Before handing off you must:
 1. Run `.scripts/refresh-translations.sh` before the Gradle checks if you changed translation resources
-2. Run `./gradlew detekt allTests` to ensure Kotlin/shared/Android/Desktop checks pass - don't run it if you modified only swift files
+2. Run `./gradlew --quiet --console=plain detekt allTests` to ensure Kotlin/shared/Android/Desktop checks pass - don't run it if you modified only swift files
 3. Run `.scripts/ios-format.sh` to format iOS code - only run if you made changes on the iOS app
-4. Fix any issues found during the above steps
+4. If you changed iOS code, run `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet` before handoff; rerun without `-quiet` only if you need the full diagnostics
+5. Fix any issues found during the above steps
 
 ### Initial Setup (for building from scratch)
 ```bash
@@ -160,7 +161,7 @@ When creating commits:
 - `.scripts/disable-android-for-flatpak.sh` -> Comments out all Android-related Gradle config across all `build.gradle.kts` and build-logic files; excludes `androidApp` from `settings.gradle.kts`
 - Flatpak packaging files live in `desktopApp/packaging/flatpak/` (manifest, launch script, desktop entry, AppStream metadata, icon)
 - The `flatpak=true` property in `desktopApp/src/jvmMain/resources/props.properties` is used to disable platform-specific features (e.g., Google Drive sync) in Flatpak builds
-- HiDPI scaling for the JVM uses `sun.java2d.uiScale` JVM argument. For local testing: `./gradlew desktopApp:run -PjvmArgs="-Dsun.java2d.uiScale=2.0"`
+- HiDPI scaling for the JVM uses `sun.java2d.uiScale` JVM argument. For local testing: `./gradlew --quiet --console=plain desktopApp:run -PjvmArgs="-Dsun.java2d.uiScale=2.0"`
 
 ### CI/CD
 - CI config: `.github/workflows/code-checks.yaml`

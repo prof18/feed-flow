@@ -51,7 +51,6 @@ import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
-import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import org.koin.compose.koinInject
@@ -131,8 +130,8 @@ internal fun ReaderModeScreen(
                             .offset(y = -ScreenOffset)
                             .zIndex(1f)
                             .padding(
-                                start = Spacing.small,
-                                end = Spacing.small,
+                                start = 24.dp,
+                                end = 24.dp,
                                 bottom = contentPadding.calculateBottomPadding(),
                             ),
                         expanded = toolbarExpanded,

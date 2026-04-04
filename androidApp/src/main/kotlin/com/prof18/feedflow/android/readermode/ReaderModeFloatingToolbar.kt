@@ -88,8 +88,16 @@ fun ReaderModeFloatingToolbar(
     val isContentVisible = expanded && readerModeState !is ReaderModeState.Loading
 
     // Build action lists regardless of isContentVisible so AnimatedVisibility can animate exit
+    // Order: Browser, Share | < > | Bookmark, Comments, Archive, Font Size
     val leadingActions = buildList {
         if (readerModeState !is ReaderModeState.Loading && url != null) {
+            add(
+                ToolbarAction(
+                    icon = Icons.Default.Language,
+                    label = strings.readerModeBrowserButtonContentDescription,
+                    onClick = { openInBrowser(url) },
+                ),
+            )
             add(
                 ToolbarAction(
                     icon = Icons.Default.Share,
@@ -100,26 +108,10 @@ fun ReaderModeFloatingToolbar(
                     },
                 ),
             )
-            add(
-                ToolbarAction(
-                    icon = Icons.Default.Language,
-                    label = strings.readerModeBrowserButtonContentDescription,
-                    onClick = { openInBrowser(url) },
-                ),
-            )
         }
     }.toImmutableList()
 
     val trailingActions = buildList {
-        if (readerModeState is ReaderModeState.Success) {
-            add(
-                ToolbarAction(
-                    icon = Icons.Outlined.TextFields,
-                    label = strings.readerModeFontSize,
-                    onClick = { showFontSizeMenu = true },
-                ),
-            )
-        }
         if (id != null) {
             val bookmarkLabel = if (isBookmarked) {
                 strings.menuRemoveFromBookmark
@@ -142,15 +134,6 @@ fun ReaderModeFloatingToolbar(
                 ),
             )
         }
-        if (url != null) {
-            add(
-                ToolbarAction(
-                    icon = hammerIcon,
-                    label = strings.readerModeArchiveButton,
-                    onClick = { onArchiveClick(url) },
-                ),
-            )
-        }
         if (readerModeState is ReaderModeState.Success) {
             readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
                 add(
@@ -161,6 +144,24 @@ fun ReaderModeFloatingToolbar(
                     ),
                 )
             }
+        }
+        if (url != null) {
+            add(
+                ToolbarAction(
+                    icon = hammerIcon,
+                    label = strings.readerModeArchiveButton,
+                    onClick = { onArchiveClick(url) },
+                ),
+            )
+        }
+        if (readerModeState is ReaderModeState.Success) {
+            add(
+                ToolbarAction(
+                    icon = Icons.Outlined.TextFields,
+                    label = strings.readerModeFontSize,
+                    onClick = { showFontSizeMenu = true },
+                ),
+            )
         }
     }.toImmutableList()
 
@@ -178,7 +179,7 @@ fun ReaderModeFloatingToolbar(
                 isContentVisible = isContentVisible,
                 showOverflowMenu = showOverflowMenu,
                 onShowOverflowMenu = { showOverflowMenu = it },
-                modifier = Modifier.padding(horizontal = 12.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
             ) {
                 TooltipBox(
                     positionProvider = TooltipDefaults.rememberTooltipPositionProvider(

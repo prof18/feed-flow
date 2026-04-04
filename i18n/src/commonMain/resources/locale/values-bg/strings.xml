@@ -383,4 +383,16 @@
     <string name="delete_all_feeds_confirmation_title">Изтриване на всички емисии в категорията?</string>
     <string name="delete_all_feeds_confirmation_message">Сигурни ли сте, че искате да изтриете всички емисии в тази категория? Това действие не може да бъде отменено.</string>
     <string name="settings_swipe_action_open_in_browser">Отвори в предпочитан браузър</string>
+    <string name="delete_category">Изтриване на категория</string>
+    <string name="settings_sync_period">Синхронизиране на заден фона</string>
+    <string name="widget_background_color_brightness">Яркост</string>
+    <string name="widget_background_color_hex_label">Шестнадесетичен цвят</string>
+    <string name="widget_background_color_hex_hint">Използване на #RRGGBB</string>
+    <string name="widget_background_color_hex_error">Въведете валиден 6-цифрен шестнадесетичен код за цвят</string>
+    <string name="widget_text_color_title">Цвят на основния текст</string>
+    <string name="widget_text_color_automatic">Автоматично</string>
+    <string name="widget_text_color_light">Светъл</string>
+    <string name="widget_text_color_dark">Тъмен</string>
+    <string name="widget_preview_note">Цветовете за предварителен преглед може да изглеждат различно на действителния начален екран, тъй като тапетът, темата и фонът на стартера могат да повлияят на крайния резултат.</string>
+    <string name="widget_preview_toggle_background">Превключване на фона на прегледа</string>
 </resources>

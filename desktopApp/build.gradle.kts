@@ -87,6 +87,19 @@ kotlin {
 
 val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
 val isMacOS = System.getProperty("os.name").lowercase().contains("mac")
+val macSigningIdentity = "Marco Gomiero"
+// Full identity name for codesign. Compose's MacSigner derives this same form
+// internally (see ValidatedMacOSSigningSettings.fullDeveloperID).
+val macCodesignIdentity = if (isAppStoreRelease) {
+    "3rd Party Mac Developer Application: $macSigningIdentity"
+} else {
+    "Developer ID Application: $macSigningIdentity"
+}
+val macEntitlementsFile = if (isAppStoreRelease) {
+    project.file("entitlements.plist")
+} else {
+    project.file("default.entitlements")
+}
 
 val propsFile = project.file("src/jvmMain/resources/props.properties")
 val props = Properties()
@@ -176,18 +189,16 @@ compose {
 
                     signing {
                         sign.set(true)
-                        identity.set("Marco Gomiero")
+                        identity.set(macSigningIdentity)
                     }
 
                     minimumSystemVersion = "12.0"
 
+                    entitlementsFile.set(macEntitlementsFile)
                     if (isAppStoreRelease) {
-                        entitlementsFile.set(project.file("entitlements.plist"))
                         runtimeEntitlementsFile.set(project.file("runtime-entitlements.plist"))
                         provisioningProfile.set(project.file("embedded.provisionprofile"))
                         runtimeProvisioningProfile.set(project.file("runtime.provisionprofile"))
-                    } else {
-                        entitlementsFile.set(project.file("default.entitlements"))
                     }
 
                     appCategory = "public.app-category.news"
@@ -265,23 +276,66 @@ val assetsCarSource = if (isAppStoreRelease || isReleaseBuild) {
     project.file("macos-icon/debug/Assets.car")
 }
 
+// When Compose signs the .app via jpackage during createDistributable, the bundle's
+// CodeResources seal captures every file under Contents/. Copying Assets.car in
+// afterward invalidates the signature and notarization rejects the app. After the
+// copy we re-sign the bundle with the same identity and entitlements so the seal
+// matches the final contents.
 val copyAssetsCarDebug by tasks.registering {
     val appDirProvider = layout.buildDirectory.dir("release/main/app/FeedFlow.app")
     val assetsCarFile = assetsCarSource
+    val identity = macCodesignIdentity
+    val entitlements = macEntitlementsFile
     doLast {
-        val target = appDirProvider.get().asFile.resolve("Contents/Resources/Assets.car")
+        val appDir = appDirProvider.get().asFile
+        val target = appDir.resolve("Contents/Resources/Assets.car")
         target.parentFile.mkdirs()
         assetsCarFile.copyTo(target, overwrite = true)
+        // Re-sign only if the bundle was signed in the first place (local dev
+        // builds may skip signing when no identity is available).
+        if (appDir.resolve("Contents/_CodeSignature").exists()) {
+            val process = ProcessBuilder(
+                "codesign", "--force", "--timestamp", "--options", "runtime",
+                "--sign", identity,
+                "--entitlements", entitlements.absolutePath,
+                appDir.absolutePath,
+            ).redirectErrorStream(true).start()
+            val output = process.inputStream.bufferedReader().readText()
+            val result = process.waitFor()
+            println("codesign: $output")
+            if (result != 0) {
+                throw GradleException("codesign re-sign of ${appDir.name} failed with exit code $result:\n$output")
+            }
+        }
     }
 }
 
 val copyAssetsCarRelease by tasks.registering {
     val appDirProvider = layout.buildDirectory.dir("release/main-release/app/FeedFlow.app")
     val assetsCarFile = assetsCarSource
+    val identity = macCodesignIdentity
+    val entitlements = macEntitlementsFile
     doLast {
-        val target = appDirProvider.get().asFile.resolve("Contents/Resources/Assets.car")
+        val appDir = appDirProvider.get().asFile
+        val target = appDir.resolve("Contents/Resources/Assets.car")
         target.parentFile.mkdirs()
         assetsCarFile.copyTo(target, overwrite = true)
+        // Re-sign only if the bundle was signed in the first place (local dev
+        // builds may skip signing when no identity is available).
+        if (appDir.resolve("Contents/_CodeSignature").exists()) {
+            val process = ProcessBuilder(
+                "codesign", "--force", "--timestamp", "--options", "runtime",
+                "--sign", identity,
+                "--entitlements", entitlements.absolutePath,
+                appDir.absolutePath,
+            ).redirectErrorStream(true).start()
+            val output = process.inputStream.bufferedReader().readText()
+            val result = process.waitFor()
+            println("codesign: $output")
+            if (result != 0) {
+                throw GradleException("codesign re-sign of ${appDir.name} failed with exit code $result:\n$output")
+            }
+        }
     }
 }
 

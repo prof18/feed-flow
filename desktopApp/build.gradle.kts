@@ -1,5 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -84,6 +85,16 @@ kotlin {
     }
 }
 
+val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
+val isMacOS = System.getProperty("os.name").lowercase().contains("mac")
+
+val propsFile = project.file("src/jvmMain/resources/props.properties")
+val props = Properties()
+if (propsFile.exists()) {
+    propsFile.inputStream().use(props::load)
+}
+val isReleaseBuild = props.getProperty("is_release", "false").toBoolean()
+
 compose {
     resources {
         packageOfResClass = "com.prof18.feedflow.desktop.resources"
@@ -101,10 +112,6 @@ compose {
             buildTypes.release.proguard {
                 configurationFiles.from(project.file("compose-desktop.pro"))
             }
-
-            val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
-
-            val isMacOS = System.getProperty("os.name").lowercase().contains("mac")
 
             nativeDistributions {
                 outputBaseDir.set(layout.buildDirectory.asFile.get().resolve("release"))
@@ -134,7 +141,11 @@ compose {
                 copyright = "© 2024 Marco Gomiero. All rights reserved."
                 vendor = "Marco Gomiero"
 
-                val iconsRoot = project.file("src/jvmMain/resources/icons/")
+                val iconsRoot = if (isReleaseBuild) {
+                    project.file("src/jvmMain/resources/icons/")
+                } else {
+                    project.file("src/jvmMain/resources/icons-debug/")
+                }
 
                 linux {
                     iconFile.set(iconsRoot.resolve("icon.png"))
@@ -197,6 +208,8 @@ compose {
 
 val macExtraPlistKeys: String
     get() = """
+        <key>CFBundleIconName</key>
+        <string>AppIcon</string>
         <key>ITSAppUsesNonExemptEncryption</key>
         <false/>
         <key>CFBundleLocalizations</key>
@@ -241,6 +254,41 @@ val macExtraPlistKeys: String
             </dict>
         </dict>
     """.trimIndent()
+
+// Copy the Liquid Glass asset catalog (Assets.car) into Contents/Resources/ of the
+// packaged .app. macOS 26's CFBundleIconName lookup requires Assets.car at that
+// bundle-level path. jpackage / Compose don't know about this file, so we copy it
+// ourselves after the distributable is assembled.
+val assetsCarSource = if (isAppStoreRelease || isReleaseBuild) {
+    project.file("macos-icon/release/Assets.car")
+} else {
+    project.file("macos-icon/debug/Assets.car")
+}
+
+val copyAssetsCarDebug by tasks.registering {
+    val appDirProvider = layout.buildDirectory.dir("release/main/app/FeedFlow.app")
+    val assetsCarFile = assetsCarSource
+    doLast {
+        val target = appDirProvider.get().asFile.resolve("Contents/Resources/Assets.car")
+        target.parentFile.mkdirs()
+        assetsCarFile.copyTo(target, overwrite = true)
+    }
+}
+
+val copyAssetsCarRelease by tasks.registering {
+    val appDirProvider = layout.buildDirectory.dir("release/main-release/app/FeedFlow.app")
+    val assetsCarFile = assetsCarSource
+    doLast {
+        val target = appDirProvider.get().asFile.resolve("Contents/Resources/Assets.car")
+        target.parentFile.mkdirs()
+        assetsCarFile.copyTo(target, overwrite = true)
+    }
+}
+
+tasks.matching { it.name == "createDistributable" }
+    .configureEach { finalizedBy(copyAssetsCarDebug) }
+tasks.matching { it.name == "createReleaseDistributable" }
+    .configureEach { finalizedBy(copyAssetsCarRelease) }
 
 tasks.withType(KotlinCompile::class.java) {
     dependsOn("exportLibraryDefinitions")

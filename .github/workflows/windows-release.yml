@@ -352,17 +352,6 @@ jobs:
               Write-Warning "Dependencies node not found. Appended Resources node to Package."
           }
           
-          # 4. Update VisualElements to point to the new icon assets
-          $visualElementsNode = $xmlDoc.SelectSingleNode("/pkg:Package/pkg:Applications/pkg:Application/uap:VisualElements", $nsManager)
-          if ($visualElementsNode) {
-              Write-Host "Updating VisualElements icon references..."
-              $visualElementsNode.SetAttribute("Square44x44Logo", "Assets\Square44x44Logo.png")
-              $visualElementsNode.SetAttribute("Square150x150Logo", "Assets\Square150x150Logo.png")
-              Write-Host "VisualElements updated: Square44x44Logo=Assets\Square44x44Logo.png, Square150x150Logo=Assets\Square150x150Logo.png"
-          } else {
-              Write-Warning "uap:VisualElements node not found in manifest!"
-          }
-
           # Write the updated manifest back to file
           $xmlDoc.Save($manifestPath)
 

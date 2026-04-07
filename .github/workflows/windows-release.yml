@@ -266,7 +266,16 @@ jobs:
           $manifestPath = Join-Path $tempDir "AppxManifest.xml"
           # Log original content for debugging
           Write-Host "`nOriginal manifest contents:"
-          Get-Content $manifestPath 
+          Get-Content $manifestPath
+
+          # 0. Inject custom MSIX icon assets into the unpacked package
+          Write-Host "`nInjecting MSIX icon assets..."
+          $assetsDir = Join-Path $tempDir "Assets"
+          if (-not (Test-Path $assetsDir)) {
+            New-Item -ItemType Directory -Force -Path $assetsDir
+          }
+          Copy-Item -Path ".github/msix-assets/*" -Destination $assetsDir -Force
+          Write-Host "Copied $(Get-ChildItem $assetsDir -Filter '*.png' | Measure-Object | Select-Object -ExpandProperty Count) PNG assets into package"
 
           # Load manifest as XML for robust editing
           $xmlDoc = New-Object System.Xml.XmlDocument
@@ -344,8 +353,8 @@ jobs:
           }
           
           # Write the updated manifest back to file
-          $xmlDoc.Save($manifestPath) 
-          
+          $xmlDoc.Save($manifestPath)
+
           Write-Host "`nUpdated manifest contents:"
           Get-Content $manifestPath # Log updated content
           

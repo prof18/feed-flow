@@ -17,7 +17,7 @@ fun getReaderModeStyledHtml(
     return """
     <html lang="en" dir='auto'>
     <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
       ${readerModeCss(colors, fontSize)}
     </style>
@@ -119,7 +119,12 @@ internal fun readerModeCss(colors: ReaderColors?, fontSize: Int): String {
     --reader-border: $borderColor;
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
+    overflow-x: hidden;
     overflow-wrap: break-word;
     font: -apple-system-body;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;

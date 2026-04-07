@@ -14,7 +14,7 @@ struct ReaderWebView: View {
     var onImageClicked: ((URL) -> Void)?
     var onWebContentReady: ((WebContent) -> Void)?
 
-    @StateObject private var content = WebContent(transparent: true)
+    @StateObject private var content = WebContent(transparent: true, allowsZooming: false)
 
     var body: some View {
         WebView(content: content)

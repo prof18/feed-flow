@@ -22,7 +22,8 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     init(
         transparent: Bool = false,
         allowsInlinePlayback: Bool = false,
-        autoplayAllowed: Bool = false
+        autoplayAllowed: Bool = false,
+        allowsZooming: Bool = true
     ) {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = allowsInlinePlayback
@@ -32,7 +33,7 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
         // Enable shared HTTP cookie storage to access Safari cookies
         config.websiteDataStore = .default()
         webview = WKWebView(frame: .zero, configuration: config)
-        webview.allowsBackForwardNavigationGestures = true
+        webview.allowsBackForwardNavigationGestures = false
         self.transparent = transparent
         super.init()
         webview.navigationDelegate = self
@@ -69,6 +70,15 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
         )
 
         webview.scrollView.backgroundColor = nil
+        webview.scrollView.alwaysBounceHorizontal = false
+        webview.scrollView.showsHorizontalScrollIndicator = false
+        // UISplitViewController reports the wrong size to WKWebView which causes horizontal
+        // rubberbanding on iPad. This contentInset hack prevents the issue.
+        webview.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
+        if !allowsZooming {
+            webview.scrollView.minimumZoomScale = 1.0
+            webview.scrollView.maximumZoomScale = 1.0
+        }
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(appDidForeground),

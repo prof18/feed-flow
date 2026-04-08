@@ -95,6 +95,11 @@ class DateFormatterTest {
         // ISO date with T separator but no seconds (JAVA-B3)
         "2017-10-12T12:32",
         "2018-05-17T13:27",
+        // Uppercase RFC-822 style dates (JAVA-B3)
+        "TUE, 20 JAN 2026 09:17:26 -0400",
+        "WED, 18 MAR 2026 09:16:34 -0400",
+        // Non-English day-of-week with English month (JAVA-BB)
+        "Mer, 08 Apr 2026 12:31:28 +0200",
         // Non-English day-of-week with English month (JAVA-6J)
         "lun, 16 Mar 2026 17:08:21 +0100",
         // Greek locale day-of-week and month (JAVA-G6)
@@ -107,6 +112,13 @@ class DateFormatterTest {
         "lun, 10 ene 2026 08:30:00 +0100",
         // German locale
         "Mi, 05 Mär 2025 12:00:00 +0100",
+        // Full weekday and full month date only (JAVA-G6)
+        "Tuesday, 07 April 2026",
+        "Wednesday, 08 April 2026",
+        // JavaScript-style date string (JAVA-G6)
+        "Sun Feb 05 2012 10:48:29",
+        // Month-first timestamp without a day comma (JAVA-B3 follow-up in same Sentry bucket)
+        "Fri, Jun 14 2024 10:08:25 +0000",
     )
 
     @Test
@@ -119,9 +131,16 @@ class DateFormatterTest {
 
     @Test
     fun `getDateMillisFromString returns null for invalid input`() {
-        val input = "Date:"
-        val result = dateFormatter.getDateMillisFromString(input)
-        assertNull(result)
+        val invalidInputs = listOf(
+            "Date:",
+            "2026-04",
+            "Invalid Date",
+        )
+
+        for (input in invalidInputs) {
+            val result = dateFormatter.getDateMillisFromString(input)
+            assertNull(result, input)
+        }
     }
 
     @Test

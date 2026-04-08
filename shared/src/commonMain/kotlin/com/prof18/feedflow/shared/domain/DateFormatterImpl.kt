@@ -386,6 +386,33 @@ class DateFormatterImpl(
             year()
         },
 
+        // Tuesday, 07 April 2026
+        Format {
+            alternativeParsing({
+                // the day of week may be missing
+            }) {
+                alternativeParsing({
+                    dayOfWeek(DayOfWeekNames.ENGLISH_FULL)
+                }) {
+                    dayOfWeek(
+                        DayOfWeekNames(
+                            DayOfWeekNames.ENGLISH_FULL.names.map { it.lowercase() },
+                        ),
+                    )
+                }
+                chars(", ")
+            }
+            alternativeParsing({
+                day(Padding.ZERO)
+            }) {
+                day(Padding.NONE)
+            }
+            char(' ')
+            monthName(MonthNames.ENGLISH_FULL)
+            char(' ')
+            year()
+        },
+
         // Wed, 18 Dec 2024 17:46:49
         Format {
             alternativeParsing({
@@ -496,6 +523,64 @@ class DateFormatterImpl(
             }
             chars(" ")
             offset(UtcOffset.Formats.FOUR_DIGITS)
+        },
+
+        // Fri, Jun 14 2024 10:08:25 +0000
+        // Sun Feb 05 2012 10:48:29
+        Format {
+            alternativeParsing({
+                // the day of week may be missing
+            }) {
+                alternativeParsing({
+                    dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
+                }) {
+                    dayOfWeek(
+                        DayOfWeekNames(
+                            DayOfWeekNames.ENGLISH_ABBREVIATED.names.map { it.lowercase() },
+                        ),
+                    )
+                }
+                alternativeParsing({
+                    chars(", ")
+                }) {
+                    char(' ')
+                }
+            }
+            alternativeParsing({
+                monthName(MonthNames.ENGLISH_ABBREVIATED)
+            }) {
+                monthName(MonthNames.ENGLISH_FULL)
+            }
+            char(' ')
+            alternativeParsing({
+                day(Padding.ZERO)
+            }) {
+                day(Padding.NONE)
+            }
+            char(' ')
+            year()
+            char(' ')
+            alternativeParsing({
+                hour(padding = Padding.NONE)
+            }) {
+                hour()
+            }
+            char(':')
+            minute()
+            optional {
+                char(':')
+                second()
+            }
+            optional {
+                chars(" ")
+                alternativeParsing({
+                    offset(UtcOffset.Formats.FOUR_DIGITS)
+                }, {
+                    offset(UtcOffset.Formats.ISO_BASIC)
+                }) {
+                    offset(UtcOffset.Formats.ISO)
+                }
+            }
         },
 
         // 02/18/25 20:39:28
@@ -768,6 +853,11 @@ class DateFormatterImpl(
             normalized = regex.replace(normalized, offset)
         }
 
+        uppercaseEnglishDateTokenReplacements.forEach { (uppercaseToken, normalizedToken) ->
+            val regex = Regex("(?<![A-Za-z])$uppercaseToken(?![A-Za-z])")
+            normalized = regex.replace(normalized, normalizedToken)
+        }
+
         // Normalize non-standard month abbreviation "Sept" -> "Sep" (case-insensitive)
         // This helps parse inputs like: "Fri, 18 Sept 2020 10:30:00 -0600"
         normalized = Regex("\\bsept\\b", RegexOption.IGNORE_CASE)
@@ -925,6 +1015,28 @@ class DateFormatterImpl(
     private val englishDayAbbreviations = setOf(
         "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",
         "mon", "tue", "wed", "thu", "fri", "sat", "sun",
+    )
+
+    private val uppercaseEnglishDateTokenReplacements = mapOf(
+        "MON" to "Mon",
+        "TUE" to "Tue",
+        "WED" to "Wed",
+        "THU" to "Thu",
+        "FRI" to "Fri",
+        "SAT" to "Sat",
+        "SUN" to "Sun",
+        "JAN" to "Jan",
+        "FEB" to "Feb",
+        "MAR" to "Mar",
+        "APR" to "Apr",
+        "MAY" to "May",
+        "JUN" to "Jun",
+        "JUL" to "Jul",
+        "AUG" to "Aug",
+        "SEP" to "Sep",
+        "OCT" to "Oct",
+        "NOV" to "Nov",
+        "DEC" to "Dec",
     )
 
     private val timezoneReplacements = mapOf(

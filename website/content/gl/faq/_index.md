@@ -1,9 +1,9 @@
 ---
-title: "Frequently Asked Questions | FeedFlow"
-description: "Find answers to common questions about FeedFlow RSS Reader"
+title: "Preguntas Frecuentes | FeedFlow"
+description: "Atopa as respostas ás preguntas máis frecuentes sobre FeedFlow RSS Reader"
 type: "faq"
 layout: "list"
-heading: "Frequently Asked Questions"
+heading: "Preguntas Máis Frecuentes"
 ---
 
 Benvida á sección PMF de FeedFlow. Aquí podes ler as respostas ás preguntas que

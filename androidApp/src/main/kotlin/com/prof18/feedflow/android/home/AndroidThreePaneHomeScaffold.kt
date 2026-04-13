@@ -10,7 +10,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.DrawerValue
@@ -48,6 +47,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.shared.ui.readermode.ReaderModeEmptyState
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import kotlinx.coroutines.launch
 
@@ -237,7 +237,7 @@ internal fun AndroidThreePaneHomeScaffold(
                             onToggleDetailFullscreen = toggleDetailFullscreen,
                         )
                     } else {
-                        Box(modifier = Modifier.fillMaxSize())
+                        ReaderModeEmptyState()
                     }
                 }
             },

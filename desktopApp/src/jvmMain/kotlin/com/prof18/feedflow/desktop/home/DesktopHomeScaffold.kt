@@ -65,6 +65,7 @@ import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
+import com.prof18.feedflow.shared.ui.readermode.ReaderModeEmptyState
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
@@ -284,7 +285,7 @@ internal fun DesktopHomeScaffold(
                                 },
                             )
                         } else {
-                            Box(modifier = Modifier.fillMaxSize())
+                            ReaderModeEmptyState()
                         }
                     }
                 },

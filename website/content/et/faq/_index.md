@@ -1,9 +1,9 @@
 ---
-title: "Frequently Asked Questions | FeedFlow"
-description: "Find answers to common questions about FeedFlow RSS Reader"
+title: "Korduma kippuvad küsimused | FeedFlow"
+description: "Vastused korduma kippuvatele küsimustele FeedFlow uudisvoogude lugeja kohta"
 type: "faq"
 layout: "list"
-heading: "Frequently Asked Questions"
+heading: "Korduma kippuvad küsimused"
 ---
 
 Tere tulemast FeedFlow KKK alajaotusse. Siin leiad vastuseid korduma kippuvatele

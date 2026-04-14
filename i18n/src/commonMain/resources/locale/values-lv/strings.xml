@@ -249,4 +249,19 @@
     <string name="database_error_reset">Neizdevās ielādēt jūsu datus, nācās atmest esošos datus un atiestatīt lietotni. Tas nozīmē, ka jums viss atkal jāsāk no jauna. Atvainojiet par nepatīkamo ziņu.</string>
     <string name="articles_export_done_message">Raksti izgūti</string>
     <string name="articles_import_done_message">Raksti ievietoti</string>
+    <string name="settings_sync_period">Atsvaidzināt ziņu plūsmas fonā</string>
+    <string name="settings_auto_delete_period_one_day">Vecāki par vienu dienu</string>
+    <string name="settings_hide_date">Slēpt raksta datumu</string>
+    <string name="reader_mode_archive_button">Atvērt archive.is vietnē</string>
+    <string name="reader_mode_browser_button_content_description">Atvērt pārlūkā</string>
+    <string name="delete_category">Dzēst kategoriju</string>
+    <string name="settings_clear_downloaded_articles">Dzēst lejupielādētos rakstus</string>
+    <string name="settings_clear_downloaded_articles_dialog_title">Vai tiešām vēlaties dzēst lejupielādētos rakstus?</string>
+    <string name="settings_clear_downloaded_articles_dialog_message">Viss bezsaistes lasīšanai lejupielādētais raksta saturs tiks dzēsts. Šo darbību nevar atsaukt.</string>
+    <string name="settings_clear_image_cache">Tīrīt attēlu kešatmiņu</string>
+    <string name="settings_clear_image_cache_dialog_title">Vai tiešām vēlaties tīrīt attēlu kešatmiņu?</string>
+    <string name="settings_clear_image_cache_dialog_message">Visi kešatmiņā saglabātie attēli tiks dzēsti. Attēli tiks lejupielādēti pa jaunu, kad pārlūkosiet savus rakstus.</string>
+    <string name="database_error">Izgūstot plūsmas, radās problēma. Lūdzu, mēģiniet vēlreiz vai aizveriet un palaidiet pa jaunu lietotni - kļūdas kods: %s :(</string>
+    <string name="settings_refresh_feeds_on_launch">Atsvaidzināt ziņu plūsmas, kad atver lietotni</string>
+    <string name="settings_notification_no_feed">Izskatās, ka vēl neesiet pievienojuši nevienu ziņu plūsmu. Pievienojiet pāris, lai sāktu saņemt paziņojumus!</string>
 </resources>

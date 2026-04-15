@@ -3,6 +3,6 @@
   "google_play_short_description": "Minimal RSS reader with offline reading, reader mode & flexible sync options.",
   "app_store_subtitle": "Read Offline. Sync Your Way.",
   "app_store_promotional_text": "Open source and minimal. Read in your browser or Reader Mode, cache articles for offline reading, and sync your RSS feeds across all your devices. No algorithmic feeds.",
-  "app_store_keywords": "news,reading,mode,opml,filter,blog,article,bookmark,content,subscribe,web,icloud,timeline,category",
+  "app_store_keywords": "reading,mode,opml,filter,blog,article,bookmark,content,subscribe,web,icloud,timeline,category",
   "microsoft_store_short_description": "FeedFlow is an open source RSS reader for your desktop: a fast, chronological timeline for news and blogs. Three-pane layout with keyboard shortcuts for efficient reading. Open articles in your browser or use Reader Mode. Cache full articles for offline access. Import and export feeds with OPML. Sync across devices using cloud storage (Dropbox, Google Drive) or self-hosted services (FreshRSS, Miniflux, Feedbin, BazQux)."
 }

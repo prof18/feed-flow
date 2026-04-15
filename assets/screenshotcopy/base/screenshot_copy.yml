@@ -1,12 +1,3 @@
-# Screenshot copy source for store assets.
-# Recommended Weblate setup:
-# - file mask: assets/screenshotcopy/*/screenshot_copy.yml
-# - monolingual base language file: assets/screenshotcopy/base/screenshot_copy.yml
-# - file format: YAML file
-#
-# Keys intentionally mirror the Figma variable structure:
-# screenshot_copy_<platform>_<slot>_<field>
-
 screenshot_copy_android_phone_01_headline: "Just a list."
 screenshot_copy_android_phone_01_subheadline: "A clean RSS reader for focused reading."
 screenshot_copy_android_phone_02_headline: "Read your way"

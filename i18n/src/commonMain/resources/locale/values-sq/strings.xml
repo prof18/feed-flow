@@ -31,7 +31,6 @@
     <string name="author_label">Krijuar me ❤️ nga</string>
     <string name="show_on_github">Shfaq në GitHub</string>
     <string name="open_source_licenses">Licencat open source</string>
-    <string name="about_the_app">FeedFlow është një lexues RSS minimalist, i bazuar në opinionet personale të autorit. Artikujt hapen në faqet e tyre përkatëse dhe ti mund të zgjedhësh shfletuesin tënd të preferuar të fokusuar te privatësia për ta mbajtur përvojën e leximit të ndarë nga shfletuesi yt kryesor. Nëse do të shmangësh shfletuesin, FeedFlow ofron një modalitet leximi që të lejon të shijosh përmbajtjen e artikujve pa shpërqendrime.\nMund të importosh dhe të eksportosh koleksionin tënd të prurjeve RSS nga dhe në skedarë OPML.</string>
     <string name="about_nav_bar">Mbi aplikacionin</string>
     <string name="open_source_nav_bar">Licencat open source</string>
     <string name="report_issue_button">Raporto problem</string>

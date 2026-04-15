@@ -60,7 +60,6 @@
     <string name="export_feeds_button">Exportar los feeds a OPML</string>
     <string name="show_on_github">Mostrar en Github</string>
     <string name="open_source_licenses">Licencias de código abierto</string>
-    <string name="about_the_app">FeedFlow es un lector de RSS minimalista basado en las opiniones personales del autor. Los artículos se abren en sus respectivas páginas web y puedes elegir tu navegador favorito centrado en la privacidad para separar tu experiencia de lectura de tu navegador principal. Si quieres evitar el navegador, FeedFlow ofrece un modo lector para disfrutar del contenido de los artículos sin distracciones. \nPuedes importar y exportar tu colección RSS desde y hacia archivos OPML.</string>
     <string name="database_error">Algo salió mal durante la recuperación de los feeds. Vuelve a intentarlo o reinicia la aplicación - error code: %s :(</string>
     <string name="open_source_nav_bar">Licencias de código abierto</string>
     <string name="invalid_rss_url">El enlace proporcionado no es una fuente RSS válida</string>

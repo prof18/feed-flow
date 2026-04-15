@@ -36,7 +36,6 @@
     <string name="open_source_nav_bar">開放原始碼授權</string>
     <string name="report_issue_button">回報問題</string>
     <string name="open_website_button">前往網站</string>
-    <string name="about_the_app">FeedFlow是一款秉承作者個人理念設計的簡約RSS閱讀器。文章在原始網站上打開，您可以選用您信賴的隱私瀏覽器，與日常瀏覽互不干擾。另外，FeedFlow也提供閱讀模式，享受沉浸式閱讀體驗。\n您可以從OPML檔案匯入或匯出您的RSS收藏。</string>
     <string name="database_error">檢索訂閱源時出了點問題，請重試或重新啟動應用程式 - 錯誤代碼：%s :(</string>
     <string name="force_feed_refresh">強制更新來源</string>
     <string name="invalid_rss_url">你所提供的網址並非有效的消息來源</string>

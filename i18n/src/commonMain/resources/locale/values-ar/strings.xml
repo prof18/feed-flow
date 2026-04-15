@@ -31,7 +31,6 @@
     <string name="author_label">تم تطويره بكل ❤️ بواسطة</string>
     <string name="show_on_github">العرض على GitHub</string>
     <string name="open_source_licenses">تراخيص مفتوحة المصدر</string>
-    <string name="about_the_app">FeedFlow هو قارئ خلاصات RSS بسيط، تم تصميمه بناءً على الرؤية والتفضيلات الشخصية للمطور.تُفتح المقالات في مواقعها الأصلية، ويمكنك اختيار متصفحك المفضّل الذي يركّز على الخصوصية لفصل تجربة القراءة عن متصفحك الرئيسي.إذا كنت تفضّل تجنّب المتصفحات الخارجية، يوفر FeedFlow وضع القارئ لتمكينك من الاستمتاع بمحتوى المقالات دون أي تشتيت.\nيمكنك بسهولة استيراد وتصدير مجموعة خلاصات RSS الخاصة بك من ملفات OPML وإليها.</string>
     <string name="about_nav_bar">حول</string>
     <string name="open_source_nav_bar">تراخيص مفتوحة المصدر</string>
     <string name="report_issue_button">الإبلاغ عن مشكلة</string>

@@ -43,7 +43,6 @@
     <string name="import_feed_button">Hírforrás importálása OPML-fájlból</string>
     <string name="app_name" translatable="false">FeedFlow</string>
     <string name="feeds_title">Hírforrások</string>
-    <string name="about_the_app">A FeedFlow egy minimalista RSS-olvasó, amely a szerző személyes véleményén alapul. A cikkek a saját weboldalukon nyílnak meg, és kiválaszthatja a kedvenc, adatvédelem-központú böngészőjét, hogy elkülönítse az olvasási élményt a fő böngészőtől. Ha szeretné elkerülni a böngészőt, a FeedFlow olvasó módot is kínál, hogy a cikkek tartalmát zavaró tényezők nélkül élvezhesse.\nLehetősége ad az RSS-gyűjtemények OPML-fájlokból történő importálására és exportálására.</string>
     <string name="load_file_error_message">Nem sikerült betölteni a fájlt</string>
     <string name="add_feed">Hírforrás hozzáadása</string>
     <string name="in_app_browser">Beépített böngésző</string>

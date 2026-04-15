@@ -62,7 +62,6 @@
     <string name="open_website_button">Trang chủ</string>
     <string name="database_error">Đã xảy ra lỗi trong quá trình truy xuất nguồn tin. Hãy thử lại hoặc khởi động lại ứng dụng - error code: %s :(</string>
     <string name="settings_app_title">Ứng dụng</string>
-    <string name="about_the_app">FeedFlow là một trình đọc RSS tối giản theo quan điểm riêng của tác giả. Các bài viết được mở trên trang web của chúng thông qua trình duyệt của bạn. Nếu không thích bị phân tâm, FeedFlow có chế độ đọc các bài viết ngay trong ứng dụng.\nBạn có thể nhập và xuất bộ sưu tập RSS của mình bằng file OPML.</string>
     <string name="force_feed_refresh">Làm mới nguồn tin ngay</string>
     <string name="menu_mark_as_read">Đánh dấu đã đọc</string>
     <string name="menu_open_comments">Đọc bình luận</string>

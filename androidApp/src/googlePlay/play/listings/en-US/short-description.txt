@@ -1,1 +1,1 @@
-Minimal, fast, uncluttered
+Minimal RSS reader with offline reading, reader mode & flexible sync options.

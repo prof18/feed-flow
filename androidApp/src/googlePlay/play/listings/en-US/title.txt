@@ -1,1 +1,1 @@
-FeedFlow - RSS Reader
+FeedFlow - RSS Feed Reader

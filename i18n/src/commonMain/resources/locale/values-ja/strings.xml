@@ -32,7 +32,6 @@
     <string name="author_label">❤️ によって開発されています。開発者:</string>
     <string name="show_on_github">GitHubで表示</string>
     <string name="open_source_licenses">オープンソースライセンス</string>
-    <string name="about_the_app">FeedFlowは開発者の個人的な見解に基づくミニマルなRSSリーダーです。記事は各Webサイトで開かれ、閲覧をメインのブラウザから切り離すためお気に入りのプライバシー重視のブラウザを選ぶことができます。ブラウザを避けたい場合、FeedFlowのリーダーモードを使って気が散らずに記事を楽しむことができます。\nRSSのコレクションはOPMLファイルでインポートおよびエクスポートできます。</string>
     <string name="about_nav_bar">FeedFlowについて</string>
     <string name="open_source_nav_bar">オープンソースのライセンス</string>
     <string name="report_issue_button">問題を報告</string>

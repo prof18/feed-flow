@@ -48,7 +48,6 @@
     <string name="import_feed_button">Importa feed da OPML</string>
     <string name="app_name" translatable="false">FeedFlow</string>
     <string name="feeds_title">Elenco dei feed</string>
-    <string name="about_the_app">FeedFlow è un lettore RSS minimalista basato sulle opinioni personali dell\'autore. Gli articoli vengono aperti sui rispettivi siti web ed è possibile scegliere il proprio browser preferito incentrato sulla privacy per separare l\'esperienza di lettura dal browser principale. Se si desidera evitare il browser, FeedFlow offre una modalità lettore per godersi il contenuto degli articoli senza distrazioni. \nÈ possibile importare ed esportare la propria raccolta RSS da e verso file OPML.</string>
     <string name="load_file_error_message">Impossibile caricare il file</string>
     <string name="add_feed">Aggiungi feed</string>
     <string name="drawer_title_timeline">Timeline</string>

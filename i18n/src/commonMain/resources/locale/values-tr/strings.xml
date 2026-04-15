@@ -32,7 +32,6 @@
     <string name="author_label">❤️ ile geliştiren</string>
     <string name="show_on_github">GitHub\'da göster</string>
     <string name="open_source_licenses">Açık kaynak lisansları</string>
-    <string name="about_the_app">FeedFlow, yazarının kişisel görüşlerine dayanan minimalist bir RSS Okuyucusudur. Makaleler kendi web sitelerinde açılır ve okuma deneyiminizi ana tarayıcınızdan ayırmak için favori gizlilik odaklı tarayıcınızı seçebilirsiniz. Tarayıcı kullanmaktan kaçınmak isterseniz, FeedFlow, makalelerin içeriğini dikkat dağıtıcı unsurlar olmadan okumanız için bir okuyucu modu sunar.\nRSS koleksiyonunuzu OPML dosyaları aracılığıyla içe ve dışa aktarabilirsiniz.</string>
     <string name="about_nav_bar">Hakkında</string>
     <string name="open_source_nav_bar">Açık kaynak lisansları</string>
     <string name="report_issue_button">Sorun bildir</string>

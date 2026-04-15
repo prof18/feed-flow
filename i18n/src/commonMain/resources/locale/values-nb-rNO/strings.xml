@@ -45,5 +45,4 @@
     <string name="browser_selection_button">Favorittnettleser</string>
     <string name="issue_report_title">Innrapporter en feil med FeedFlow</string>
     <string name="mark_all_read_button">Marker alle som lest</string>
-    <string name="about_the_app">Minimalistisk RSS-leser med meningers mot. Artikler åpnes i respektiv nettside og du kan velge egen personvernsrespekterende nettleser for å gjøre opplevelsen bedre. \nDu kan importere og eksportere din RSS-samling til en OPML-fil.</string>
 </resources>

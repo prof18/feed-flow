@@ -32,7 +32,6 @@
     <string name="author_label">Stworzone z ❤️ przez</string>
     <string name="show_on_github">Pokaż na GitHub</string>
     <string name="open_source_licenses">Licencje open source</string>
-    <string name="about_the_app">FeedFlow to minimalistyczny czytnik RSS oparty na osobistych opiniach autora. Artykuły otwierają się na odpowiednich stronach internetowych, a Ty możesz wybrać swoją ulubioną przeglądarkę dbającą o prywatność, aby oddzielić czytanie od głównej przeglądarki. Jeśli chcesz uniknąć korzystania z przeglądarki, FeedFlow oferuje tryb czytania, który pozwala cieszyć się treścią artykułów bez rozpraszania uwagi.\nMożesz importować i eksportować swoją kolekcję RSS z plików OPML i do nich.</string>
     <string name="about_nav_bar">O programie</string>
     <string name="open_source_nav_bar">Licencje open source</string>
     <string name="report_issue_button">Zgłoś problem</string>

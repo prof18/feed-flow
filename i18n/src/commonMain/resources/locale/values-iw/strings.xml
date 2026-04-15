@@ -40,7 +40,6 @@
     <string name="browser_selection_button">דפדפן</string>
     <string name="about_button">אודות</string>
     <string name="import_dialog_title">בחר קובץ OPML</string>
-    <string name="about_the_app">FeedFlow הוא קורא RSS מינימליסטי המבוסס על דעותיו האישיות של המחבר. המאמרים נפתחים באתרי האינטרנט שלהם, ואתה יכול לבחור את הדפדפן המועדף עליך ממוקד פרטיות כדי להפריד את חווית הקריאה שלך מהדפדפן הראשי שלך. אם אתה רוצה להימנע מהדפדפן, FeedFlow מציע מצב קורא ליהנות מתוכן המאמרים ללא כל הסחות דעת.\nאתה יכול לייבא ולייצא את אוסף ה-RSS שלך מקובצי OPML ואליהם.</string>
     <string name="open_source_nav_bar">רישיונות קוד פתוח</string>
     <string name="report_issue_button">דווח על בעיה</string>
     <string name="import_export_opml_title">ייבוא וייצוא</string>

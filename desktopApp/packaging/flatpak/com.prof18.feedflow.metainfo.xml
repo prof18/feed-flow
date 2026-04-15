@@ -4,47 +4,70 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>Apache-2.0</project_license>
   <name>FeedFlow</name>
-  <summary>A minimalistic RSS Reader</summary>
+  <summary>An open source, minimal RSS reader for your desktop</summary>
   <description>
-    <p>Stay informed your way with FeedFlow, a minimalistic RSS reader that puts you in control of your content timeline.
-      Sync across all your devices and enjoy a clean, distraction-free reading experience.</p>
+    <p>FeedFlow is an open source RSS reader built for desktop — a fast, minimal timeline for your news, blogs, and feeds. No algorithms, no clutter, no noise.</p>
 
-    <p>Key Features:</p>
-
+    <p>A Desktop-First Reading Experience</p>
     <ul>
-      <li>Minimalist Design: Focus on what matters with a clutter-free interface</li>
-      <li>FreshRSS Integration: Connect to your FreshRSS server for advanced feed management</li>
-      <li>Flexible Reading Options: Choose between web view, reader mode, or your preferred browser</li>
-      <li>Privacy-Focused: Select your favorite privacy-focused browser for a separate reading experience</li>
-      <li>Easy Migration: Import and export your RSS feeds via OPML files</li>
+      <li>Three-pane layout: sidebar, feed list, and article view — all visible at once</li>
+      <li>Switch to single-pane mode if you prefer a focused view</li>
+      <li>Keyboard shortcuts for everything — refresh with F5, navigate with arrow keys, mark as read with Ctrl+Shift+A</li>
+      <li>The app remembers your window position and size between sessions</li>
+      <li>Dark mode, light mode, and OLED black theme</li>
     </ul>
 
-    <p>What Sets FeedFlow Apart:</p>
-
+    <p>Read Articles Your Way</p>
     <ul>
-      <li>Clean, intuitive interface that lets you focus on content</li>
-      <li>Multiple sync options to fit your workflow (Beta)</li>
-      <li>Customizable reading experience with reader mode</li>
-      <li>Fast and lightweight</li>
-      <li>Regular updates and active development</li>
+      <li>Open articles in your default browser, or use Reader Mode for a distraction-free reading experience</li>
+      <li>Adjust text size and spacing in Reader Mode for comfortable reading on any screen</li>
+      <li>Prefetch and cache full article content for offline reading</li>
     </ul>
 
-    <p>Perfect for:</p>
+    <p>Sync Feeds Across All Your Devices</p>
     <ul>
-      <li>News enthusiasts who want control over their information diet</li>
-      <li>Privacy-conscious readers</li>
-      <li>Content creators tracking multiple sources</li>
-      <li>Anyone looking to declutter their digital reading experience</li>
+      <li>Keep everything local, or sync with multiple backends</li>
+      <li>Cloud storage sync with Dropbox</li>
+      <li>Self-hosted and server sync with FreshRSS, Miniflux, Feedbin, or BazQux</li>
+      <li>Your feeds, read status, and bookmarks stay in sync across Linux, Windows, Android, iOS, and macOS</li>
     </ul>
 
-    <p>Join thousands of readers who've chosen FeedFlow for a better way to stay informed.</p>
+    <p>Stay Organized</p>
+    <ul>
+      <li>Import and export feeds with OPML — migrate from any RSS tool</li>
+      <li>Block keywords to filter out unwanted content</li>
+      <li>Organize feeds into categories and bookmark articles for later</li>
+      <li>Search across all your feeds to find articles quickly</li>
+    </ul>
+
+    <p>Built for RSS, Atom, and the Open Web</p>
+    <ul>
+      <li>Supports RSS 2.0, RSS 1.0, and Atom feed formats</li>
+      <li>Add feeds by URL or browse curated suggestions</li>
+      <li>No account required to get started</li>
+    </ul>
+
+    <p>Open source with an active community. Available on all major platforms. Translated into 25+ languages.</p>
   </description>
   
   <launchable type="desktop-id">com.prof18.feedflow.desktop</launchable>
   
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/prof18/feedflow-assets/refs/heads/main/screenshots/raw/linux/home.png</image>
+      <caption>Browse, select, and read in a fast three-pane layout</caption>
+      <image>https://raw.githubusercontent.com/prof18/feed-flow/refs/heads/main/assets/linux-screenshots/1.home.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Read long articles in a clean distraction-free Reader Mode</caption>
+      <image>https://raw.githubusercontent.com/prof18/feed-flow/refs/heads/main/assets/linux-screenshots/2.reader.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Choose local-only storage or sync with services that fit your workflow</caption>
+      <image>https://raw.githubusercontent.com/prof18/feed-flow/refs/heads/main/assets/linux-screenshots/3.sync.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Adjust layout, density, and what details stay visible</caption>
+      <image>https://raw.githubusercontent.com/prof18/feed-flow/refs/heads/main/assets/linux-screenshots/4.list.png</image>
     </screenshot>
   </screenshots>
 

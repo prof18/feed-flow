@@ -1,0 +1,87 @@
+# Screenshot copy source for store assets.
+# Recommended Weblate setup:
+# - file mask: assets/screenshotcopy/*/screenshot_copy.yml
+# - monolingual base language file: assets/screenshotcopy/base/screenshot_copy.yml
+# - file format: YAML file
+#
+# Keys intentionally mirror the Figma variable structure:
+# screenshot_copy_<platform>_<slot>_<field>
+
+screenshot_copy_android_phone_01_headline: "Just a list."
+screenshot_copy_android_phone_01_subheadline: "A clean RSS reader for focused reading."
+screenshot_copy_android_phone_02_headline: "Read your way"
+screenshot_copy_android_phone_02_subheadline: "Use Reader Mode for a cleaner, distraction-free reading experience."
+screenshot_copy_android_phone_03_headline: "Stay organized"
+screenshot_copy_android_phone_03_subheadline: "Unread counts, bookmarks, and categories keep everything in reach."
+screenshot_copy_android_phone_04_headline: "Sync your way"
+screenshot_copy_android_phone_04_subheadline: "Sync with Dropbox, Drive, FreshRSS, Feedbin and more."
+screenshot_copy_android_phone_05_headline: "Make the list yours"
+screenshot_copy_android_phone_05_subheadline: "Switch layouts and hide the details you do not need."
+screenshot_copy_android_phone_05_compact_label: "Compact list"
+screenshot_copy_android_phone_05_rich_cards_label: "Rich cards"
+screenshot_copy_android_phone_feature_graphic_headline: |-
+  Read your
+  feeds,
+  not the
+  clutter
+
+screenshot_copy_android_tablet_01_headline: "Just a list."
+screenshot_copy_android_tablet_01_subheadline: "A clean RSS reader for focused reading."
+screenshot_copy_android_tablet_02_headline: "Read your way"
+screenshot_copy_android_tablet_02_subheadline: "Use Reader Mode for a cleaner, distraction-free reading experience."
+screenshot_copy_android_tablet_03_headline: "Stay organized"
+screenshot_copy_android_tablet_03_subheadline: "Unread counts, bookmarks, and categories keep everything in reach."
+screenshot_copy_android_tablet_04_headline: "Sync your way"
+screenshot_copy_android_tablet_04_subheadline: "Sync with Dropbox, Drive, FreshRSS, Feedbin and more."
+screenshot_copy_android_tablet_05_headline: "Make the list yours"
+screenshot_copy_android_tablet_05_subheadline: "Switch layouts and hide the details you do not need."
+screenshot_copy_android_tablet_05_compact_label: "Compact list"
+screenshot_copy_android_tablet_05_rich_cards_label: "Rich cards"
+
+screenshot_copy_iphone_01_headline: "Just a list."
+screenshot_copy_iphone_01_subheadline: "A clean RSS reader for focused reading."
+screenshot_copy_iphone_02_headline: "Read your way"
+screenshot_copy_iphone_02_subheadline: "Use Reader Mode for a cleaner, distraction-free reading experience."
+screenshot_copy_iphone_03_headline: "Stay organized"
+screenshot_copy_iphone_03_subheadline: "Unread counts, bookmarks, and categories keep everything in reach."
+screenshot_copy_iphone_04_headline: "Sync your way"
+screenshot_copy_iphone_04_subheadline: "Sync with iCloud, Dropbox, Drive, FreshRSS, Feedbin and more."
+screenshot_copy_iphone_05_headline: "Make the list yours"
+screenshot_copy_iphone_05_subheadline: "Switch layouts and hide the details you do not need."
+screenshot_copy_iphone_05_compact_label: "Compact list"
+screenshot_copy_iphone_05_rich_cards_label: "Rich cards"
+
+screenshot_copy_ipad_01_headline: "Just a list."
+screenshot_copy_ipad_01_subheadline: "A clean RSS reader for focused reading."
+screenshot_copy_ipad_02_headline: "Read your way"
+screenshot_copy_ipad_02_subheadline: "Use Reader Mode for a cleaner, distraction-free reading experience."
+screenshot_copy_ipad_03_headline: "Stay organized"
+screenshot_copy_ipad_03_subheadline: "Unread counts, bookmarks, and folders keep everything in reach."
+screenshot_copy_ipad_04_headline: "Sync your way"
+screenshot_copy_ipad_04_subheadline: "Sync with iCloud, Dropbox, Drive, FreshRSS, Feedbin and more."
+screenshot_copy_ipad_05_headline: "Make the list yours"
+screenshot_copy_ipad_05_subheadline: "Switch layouts and hide the details you do not need."
+screenshot_copy_ipad_05_compact_label: "Compact list"
+screenshot_copy_ipad_05_rich_cards_label: "Rich cards"
+
+screenshot_copy_macos_01_headline: "Three panes"
+screenshot_copy_macos_01_subheadline: "Scan, select, and read at speed on a larger screen."
+screenshot_copy_macos_02_headline: "Read your way"
+screenshot_copy_macos_02_subheadline: "Reader Mode in the main pane keeps long reads clean."
+screenshot_copy_macos_03_headline: "Sync your way"
+screenshot_copy_macos_03_subheadline: "Keep everything local or sync with storage and reader services."
+screenshot_copy_macos_04_headline: "Make the list yours"
+screenshot_copy_macos_04_subheadline: "Adjust density, layout, and what stays visible."
+screenshot_copy_macos_04_compact_label: "Compact list"
+screenshot_copy_macos_04_rich_cards_label: "Rich cards"
+
+screenshot_copy_windows_01_caption: "Browse, select, and read in a fast three-pane layout."
+screenshot_copy_windows_02_caption: "Clutter-free Reader Mode with improved spacing and navigation."
+screenshot_copy_windows_03_caption: "Choose local-only or sync via storage and services that fit your workflow."
+screenshot_copy_windows_04_caption: "Adjust layout, density, and what details stay visible."
+
+screenshot_copy_flathub_01_caption: "Browse, select, and read in a fast three-pane layout"
+screenshot_copy_flathub_02_caption: "Read long articles in a clean distraction-free Reader Mode"
+screenshot_copy_flathub_03_caption: "Keep feeds organized with folders, bookmarks, and unread counts"
+screenshot_copy_flathub_04_caption: "Choose local-only storage or sync with services that fit your workflow"
+screenshot_copy_flathub_05_caption: "Adjust layout, density, and what details stay visible"

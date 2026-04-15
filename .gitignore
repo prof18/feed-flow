@@ -143,3 +143,4 @@ tmp
 .claude/worktrees
 .claude/settings.local.json
 /.xcodebuildmcp/
+/.ai/plan/

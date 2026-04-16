@@ -4,5 +4,16 @@
   "app_store_subtitle": "Read Offline. Sync Your Way.",
   "app_store_promotional_text": "Open source and minimal. Read in your browser or Reader Mode, cache articles for offline reading, and sync your RSS feeds across all your devices. No algorithmic feeds.",
   "app_store_keywords": "reading,mode,opml,filter,blog,article,bookmark,content,subscribe,web,icloud,timeline,category",
-  "microsoft_store_short_description": "FeedFlow is an open source RSS reader for your desktop: a fast, chronological timeline for news and blogs. Three-pane layout with keyboard shortcuts for efficient reading. Open articles in your browser or use Reader Mode. Cache full articles for offline access. Import and export feeds with OPML. Sync across devices using cloud storage (Dropbox, Google Drive) or self-hosted services (FreshRSS, Miniflux, Feedbin, BazQux)."
+  "microsoft_store_short_description": "FeedFlow is an open source RSS reader for your desktop: a fast, chronological timeline for news and blogs. Three-pane layout with keyboard shortcuts for efficient reading. Open articles in your browser or use Reader Mode. Cache full articles for offline access. Import and export feeds with OPML. Sync across devices using cloud storage (Dropbox, Google Drive) or self-hosted services (FreshRSS, Miniflux, Feedbin, BazQux).",
+  "microsoft_store_keywords": "rss reader,rss feed reader,offline reader mode,opml import export,news reader,feed aggregator,freshrss feedbin sync",
+  "microsoft_store_product_features": [
+    "Clean, chronological timeline — no algorithms, no clutter",
+    "Reader Mode for distraction-free reading, with adjustable text size",
+    "Offline reading — full articles prefetched and cached",
+    "Three-pane desktop layout with keyboard shortcuts",
+    "Sync with Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin, or BazQux",
+    "Organize with categories, bookmarks, and full-text search",
+    "Import and export feeds with OPML",
+    "Open source — no ads, no tracking, no account required"
+  ]
 }

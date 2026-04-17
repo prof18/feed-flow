@@ -394,4 +394,5 @@
     <string name="widget_text_color_title">Haupttextfarbe</string>
     <string name="widget_preview_note">Die Farben in der Vorschau können auf deinem tatsächlichen Startbildschirm anders aussehen, da Hintergrundbild, Design und Launcher-Hintergrund das endgültige Ergebnis beeinflussen können.</string>
     <string name="widget_preview_toggle_background">Vorschau-Hintergrund umschalten</string>
+    <string name="about_the_app">FeedFlow ist ein minimalistischer RSS-Reader für eine übersichtliche, chronologische Zeitleiste – keine Algorithmen, kein Durcheinander. Öffne Artikel in deinem bevorzugten Browser oder lies sie ablenkungsfrei im Lesemodus. Lade ganze Artikel vorab und speichere sie im Cache, um sie überall offline lesen zu können.\nSynchronisiere deine Feeds, Lesestatus und Lesezeichen über Android, iOS, macOS, Windows und Linux hinweg mit iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin oder BazQux. Organisiere Feeds in Kategorien, blockiere störende Schlüsselwörter und importiere oder exportiere alles mit OPML.</string>
 </resources>

@@ -146,9 +146,6 @@ struct ThreePaneView: View {
                     case .accounts:
                         AccountsScreen()
 
-                    case .dropboxSync:
-                        DropboxSyncScreen()
-
                     case let .deepLinkFeed(feedId):
                         DeepLinkFeedScreen(feedId: feedId, readerModeViewModel: readerModeViewModel)
 

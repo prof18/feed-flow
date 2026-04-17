@@ -12,8 +12,6 @@ import SwiftUI
 struct AddAccountScreen: View {
     @Environment(\.dismiss)
     private var dismiss
-    @Environment(AppState.self)
-    private var appState
 
     let supportedAccounts: [SyncAccounts]
 
@@ -24,30 +22,18 @@ struct AddAccountScreen: View {
                     ForEach(supportedAccounts, id: \.self) { account in
                         switch account {
                         case .dropbox:
-                            Button {
-                                self.dismiss()
-                                self.appState.navigate(route: CommonViewRoute.dropboxSync)
-                            } label: {
-                                HStack {
-                                    Label {
-                                        Text("Dropbox")
-                                    } icon: {
-                                        Image("dropbox")
-                                            .renderingMode(.template)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 32, height: 32)
-                                            .foregroundStyle(.blue)
-                                    }
-                                    Spacer()
-                                    Image(systemName: "chevron.right")
-                                        .font(.footnote.weight(.semibold))
-                                        .foregroundStyle(.tertiary)
+                            NavigationLink(destination: DropboxSyncScreen()) {
+                                Label {
+                                    Text("Dropbox")
+                                } icon: {
+                                    Image("dropbox")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 32, height: 32)
+                                        .foregroundStyle(.blue)
                                 }
-                                .contentShape(Rectangle())
-                                .foregroundStyle(.primary)
                             }
-                            .buttonStyle(.plain)
 
                         case .icloud:
                             NavigationLink(destination: ICloudSyncScreen(isFromAddAccount: true)) {

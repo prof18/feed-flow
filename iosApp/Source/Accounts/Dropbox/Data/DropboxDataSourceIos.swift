@@ -178,9 +178,14 @@ class DropboxDataSourceIos: DropboxDataSource {
             // no-op
             print("Dropbox authorization is not supported in app extensions")
         #else
+            let rootVC = UIApplication.shared.connectedScenes
+                .compactMap { ($0 as? UIWindowScene)?.keyWindow?.rootViewController }
+                .first
+            let topVC = rootVC?.topmostPresented
+
             DropboxClientsManager.authorizeFromControllerV2(
                 UIApplication.shared,
-                controller: nil,
+                controller: topVC,
                 loadingStatusDelegate: nil,
                 openURL: { url in
                     UIApplication.shared.open(url)

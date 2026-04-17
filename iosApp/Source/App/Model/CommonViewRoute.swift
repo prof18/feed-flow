@@ -13,7 +13,6 @@ enum CommonViewRoute: Hashable {
     case readerMode
     case search
     case accounts
-    case dropboxSync
     case deepLinkFeed(String)
     case inAppBrowser(url: URL)
 }

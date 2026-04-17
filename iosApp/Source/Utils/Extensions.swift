@@ -8,6 +8,7 @@
 
 import Nuke
 import SwiftUI
+import UIKit
 
 extension View {
     /// Applies the given transform if the given condition evaluates to `true`.
@@ -35,6 +36,12 @@ extension String {
             return self
         }
         return prefix(maxChar) + "..."
+    }
+}
+
+extension UIViewController {
+    var topmostPresented: UIViewController {
+        presentedViewController?.topmostPresented ?? self
     }
 }
 

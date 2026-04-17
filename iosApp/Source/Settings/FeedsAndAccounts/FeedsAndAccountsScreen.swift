@@ -2,15 +2,11 @@ import FeedFlowKit
 import SwiftUI
 
 struct FeedsAndAccountsScreen: View {
-    @Environment(AppState.self) 
+    @Environment(AppState.self)
     private var appState
-    
-    @Environment(\.dismiss) 
-    private var dismiss
-    
+
     private let feedFlowStrings = Deps.shared.getStrings()
     let fetchFeeds: () -> Void
-    let onClose: () -> Void
 
     var body: some View {
         @Bindable var appState = appState
@@ -29,25 +25,8 @@ struct FeedsAndAccountsScreen: View {
                     Label(feedFlowStrings.importExportLabel, systemImage: "arrow.up.arrow.down")
                 }
 
-                Button {
-                    onClose()
-                    appState.navigate(route: CommonViewRoute.accounts)
-                } label: {
-                    HStack {
-                        Label {
-                            Text(feedFlowStrings.settingsAccounts)
-                                .foregroundStyle(Color.colorOnBackground)
-                        } icon: {
-                            Image(systemName: "arrow.triangle.2.circlepath")
-                                .foregroundStyle(Color.accentColor)
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundStyle(Color(UIColor.tertiaryLabel))
-                    }
+                NavigationLink(destination: AccountsScreen()) {
+                    Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
                 }
 
                 NavigationLink(destination: NotificationsSettingsScreen()) {

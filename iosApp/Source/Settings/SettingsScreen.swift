@@ -38,8 +38,7 @@ struct SettingsScreen: View {
                     }
 
                     NavigationLink(destination: FeedsAndAccountsScreen(
-                        fetchFeeds: fetchFeeds,
-                        onClose: { dismiss() }
+                        fetchFeeds: fetchFeeds
                     )) {
                         Label(feedFlowStrings.settingsFeedsAndAccounts, systemImage: "arrow.triangle.2.circlepath")
                     }

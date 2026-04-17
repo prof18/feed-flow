@@ -105,8 +105,12 @@ extension HomeContent {
         }
     }
 
+    private var shouldShowUnreadCount: Bool {
+        !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks)
+    }
+
     func makeCompactPhoneHeaderText() -> some View {
-        VStack(alignment: .leading, spacing: Spacing.xxsmall) {
+        VStack(alignment: .leading, spacing: shouldShowUnreadCount ? Spacing.xxsmall : 0) {
             Text(getCompactToolbarTitle(feedFilter: currentFeedFilter))
                 .font(.headline)
                 .foregroundStyle(.primary)
@@ -118,6 +122,8 @@ extension HomeContent {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .monospacedDigit()
+                .frame(height: shouldShowUnreadCount ? nil : 0)
+                .clipped()
         }
     }
 

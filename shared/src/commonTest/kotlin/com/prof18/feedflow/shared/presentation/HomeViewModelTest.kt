@@ -32,7 +32,6 @@ import com.prof18.feedflow.shared.test.generators.RssItemGenerator
 import com.prof18.feedflow.shared.test.toParsedFeedSource
 import com.prof18.rssparser.model.RssChannel
 import com.prof18.rssparser.model.RssItem
-import io.kotest.property.arbitrary.next
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
@@ -750,7 +749,7 @@ class HomeViewModelTest : KoinTestBase() {
         title: String,
         category: FeedSourceCategory? = null,
         isPinned: Boolean = false,
-    ): FeedSource = FeedSourceGenerator.feedSourceArb.next().copy(
+    ): FeedSource = FeedSourceGenerator.feedSource(
         id = id,
         url = "https://example.com/$id/rss.xml",
         title = title,
@@ -766,7 +765,7 @@ class HomeViewModelTest : KoinTestBase() {
         title: String,
         link: String,
         items: List<RssItem> = emptyList(),
-    ) = RssChannelGenerator.rssChannelArb.next().copy(
+    ) = RssChannelGenerator.rssChannel(
         title = title,
         link = link,
         items = items,
@@ -776,15 +775,12 @@ class HomeViewModelTest : KoinTestBase() {
         id: String,
         title: String,
         link: String,
-    ) = RssItemGenerator.rssItemArb.next().copy(
+    ) = RssItemGenerator.rssItem(
         guid = id,
         title = title,
         link = link,
         categories = emptyList(),
-        itunesItemData = null,
         commentsUrl = null,
-        youtubeItemData = null,
-        rawEnclosure = null,
     )
 
     private suspend fun getDbItems() = databaseHelper.getFeedItems(

@@ -47,7 +47,6 @@ jsystem-theme-detector = "3.9.1"
 junit = "4.13.2"
 kermit = "2.1.0"
 koin-bom = "4.2.0"
-kotest = "6.1.10"
 kotlin = "2.3.0"
 # Because of telemetry deck still using version 0.6.x
 kotlinx-date-time = "0.7.1-0.6.x-compat"
@@ -154,8 +153,6 @@ koin-core = { module = "io.insert-koin:koin-core" }
 koin-core-vm = { module = "io.insert-koin:koin-core-viewmodel" }
 koin-test = { module = "io.insert-koin:koin-test" }
 koin-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
-kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }

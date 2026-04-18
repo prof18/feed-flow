@@ -17,7 +17,6 @@ import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
 import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
-import io.kotest.property.arbitrary.next
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -264,7 +263,7 @@ class FeedSourceListViewModelTest : KoinTestBase() {
         id: String,
         title: String,
         category: FeedSourceCategory? = null,
-    ) = FeedSourceGenerator.feedSourceArb.next().copy(
+    ) = FeedSourceGenerator.feedSource(
         id = id,
         url = "https://example.com/$id/feed.xml",
         title = title,
@@ -280,7 +279,7 @@ class FeedSourceListViewModelTest : KoinTestBase() {
         id: String,
         title: String,
         feedSource: FeedSource,
-    ) = FeedItemGenerator.unreadFeedItemArb().next().copy(
+    ) = FeedItemGenerator.unreadFeedItem(
         id = id,
         url = "https://example.com/articles/$id",
         title = title,

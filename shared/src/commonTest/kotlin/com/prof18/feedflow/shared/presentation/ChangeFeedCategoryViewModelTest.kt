@@ -9,7 +9,6 @@ import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import com.prof18.feedflow.shared.test.toParsedFeedSource
-import io.kotest.property.arbitrary.next
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -84,7 +83,7 @@ class ChangeFeedCategoryViewModelTest : KoinTestBase() {
         id: String,
         title: String,
         category: FeedSourceCategory? = null,
-    ): FeedSource = FeedSourceGenerator.feedSourceArb.next().copy(
+    ): FeedSource = FeedSourceGenerator.feedSource(
         id = id,
         url = "https://example.com/$id/rss.xml",
         title = title,

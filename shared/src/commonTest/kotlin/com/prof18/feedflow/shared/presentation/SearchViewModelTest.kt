@@ -21,7 +21,6 @@ import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
-import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -39,10 +38,10 @@ class SearchViewModelTest : KoinTestBase() {
     fun `initial state uses timeline defaults`() = runTest(testDispatcher) {
         val viewModel = getViewModel()
 
-        viewModel.searchState.value shouldBe SearchState.EmptyState
-        viewModel.searchQueryState.value shouldBe ""
-        viewModel.searchFilterState.value shouldBe SearchFilter.All
-        viewModel.searchFeedFilterState.value shouldBe null
+        assertEquals(SearchState.EmptyState, viewModel.searchState.value)
+        assertEquals("", viewModel.searchQueryState.value)
+        assertEquals(SearchFilter.All, viewModel.searchFilterState.value)
+        assertEquals(null, viewModel.searchFeedFilterState.value)
     }
 
     @Test
@@ -52,8 +51,8 @@ class SearchViewModelTest : KoinTestBase() {
         feedStateRepository.updateFeedFilter(FeedFilter.Bookmarks)
         val viewModel = getViewModel()
 
-        viewModel.searchFilterState.value shouldBe SearchFilter.Bookmarks
-        viewModel.searchFeedFilterState.value shouldBe null
+        assertEquals(SearchFilter.Bookmarks, viewModel.searchFilterState.value)
+        assertEquals(null, viewModel.searchFeedFilterState.value)
     }
 
     @Test
@@ -63,8 +62,8 @@ class SearchViewModelTest : KoinTestBase() {
         feedStateRepository.updateFeedFilter(FeedFilter.Read)
         val viewModel = getViewModel()
 
-        viewModel.searchFilterState.value shouldBe SearchFilter.Read
-        viewModel.searchFeedFilterState.value shouldBe null
+        assertEquals(SearchFilter.Read, viewModel.searchFilterState.value)
+        assertEquals(null, viewModel.searchFeedFilterState.value)
     }
 
     @Test
@@ -93,10 +92,10 @@ class SearchViewModelTest : KoinTestBase() {
         feedStateRepository.updateFeedSourceFilter(sourceA.id)
         val viewModel = getViewModel()
 
-        viewModel.searchFilterState.value shouldBe SearchFilter.CurrentFeed
+        assertEquals(SearchFilter.CurrentFeed, viewModel.searchFilterState.value)
         val searchFeedFilter = viewModel.searchFeedFilterState.value
         assertIs<FeedFilter.Source>(searchFeedFilter)
-        searchFeedFilter.feedSource.id shouldBe sourceA.id
+        assertEquals(sourceA.id, searchFeedFilter.feedSource.id)
 
         viewModel.updateSearchQuery("Query")
 
@@ -104,7 +103,7 @@ class SearchViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         val state = viewModel.searchState.value as SearchState.DataFound
-        state.items.map { it.id } shouldBe listOf(itemA.id)
+        assertEquals(listOf(itemA.id), state.items.map { it.id })
     }
 
     @Test
@@ -113,8 +112,8 @@ class SearchViewModelTest : KoinTestBase() {
 
         viewModel.updateSearchFilter(SearchFilter.Read)
 
-        viewModel.searchState.value shouldBe SearchState.EmptyState
-        viewModel.searchFilterState.value shouldBe SearchFilter.Read
+        assertEquals(SearchState.EmptyState, viewModel.searchState.value)
+        assertEquals(SearchFilter.Read, viewModel.searchFilterState.value)
     }
 
     @Test
@@ -126,7 +125,7 @@ class SearchViewModelTest : KoinTestBase() {
         advanceTimeBy(500.milliseconds)
         advanceUntilIdle()
 
-        viewModel.searchState.value shouldBe SearchState.NoDataFound(searchQuery = "missing")
+        assertEquals(SearchState.NoDataFound(searchQuery = "missing"), viewModel.searchState.value)
     }
 
     @Test
@@ -157,7 +156,7 @@ class SearchViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         val state = viewModel.searchState.value as SearchState.DataFound
-        state.items.map { it.id } shouldBe listOf(hyphenatedItem.id)
+        assertEquals(listOf(hyphenatedItem.id), state.items.map { it.id })
     }
 
     @Test
@@ -188,7 +187,7 @@ class SearchViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         val state = viewModel.searchState.value as SearchState.DataFound
-        state.items.map { it.id } shouldBe listOf(cppItem.id)
+        assertEquals(listOf(cppItem.id), state.items.map { it.id })
     }
 
     @Test
@@ -219,7 +218,7 @@ class SearchViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         val state = viewModel.searchState.value as SearchState.DataFound
-        state.items.map { it.id } shouldBe listOf(cSharpItem.id)
+        assertEquals(listOf(cSharpItem.id), state.items.map { it.id })
     }
 
     @Test
@@ -260,10 +259,13 @@ class SearchViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         val initialState = viewModel.searchState.value as SearchState.DataFound
-        initialState.items.map { it.id } shouldBe listOf(
-            readItem.id,
-            bookmarkedItem.id,
-            otherItem.id,
+        assertEquals(
+            listOf(
+                readItem.id,
+                bookmarkedItem.id,
+                otherItem.id,
+            ),
+            initialState.items.map { it.id },
         )
 
         viewModel.updateSearchFilter(SearchFilter.Read)
@@ -271,14 +273,14 @@ class SearchViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         val readState = viewModel.searchState.value as SearchState.DataFound
-        readState.items.map { it.id } shouldBe listOf(readItem.id)
+        assertEquals(listOf(readItem.id), readState.items.map { it.id })
 
         viewModel.updateSearchFilter(SearchFilter.Bookmarks)
 
         advanceUntilIdle()
 
         val bookmarkState = viewModel.searchState.value as SearchState.DataFound
-        bookmarkState.items.map { it.id } shouldBe listOf(bookmarkedItem.id)
+        assertEquals(listOf(bookmarkedItem.id), bookmarkState.items.map { it.id })
     }
 
     @Test

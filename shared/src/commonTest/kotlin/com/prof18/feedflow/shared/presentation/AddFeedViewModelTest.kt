@@ -13,7 +13,6 @@ import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
 import com.prof18.feedflow.shared.test.toParsedFeedSource
 import com.prof18.rssparser.model.RssChannel
-import io.kotest.property.arbitrary.next
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -47,7 +46,7 @@ class AddFeedViewModelTest : KoinTestBase() {
         single<RssParserWrapper> {
             FakeRssParserWrapper(
                 rssUrl = rssUrl,
-                channel = RssChannelGenerator.rssChannelArb.next().copy(
+                channel = RssChannelGenerator.rssChannel(
                     title = "Example Feed",
                     link = "https://example.com",
                 ),
@@ -147,7 +146,7 @@ class AddFeedViewModelTest : KoinTestBase() {
     private fun createFeedSource(
         id: String,
         title: String,
-    ): FeedSource = FeedSourceGenerator.feedSourceArb.next().copy(
+    ): FeedSource = FeedSourceGenerator.feedSource(
         id = id,
         url = "https://example.com/$id/feed.xml",
         title = title,

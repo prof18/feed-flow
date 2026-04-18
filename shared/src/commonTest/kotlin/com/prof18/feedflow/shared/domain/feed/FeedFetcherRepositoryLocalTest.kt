@@ -20,7 +20,6 @@ import com.prof18.feedflow.shared.test.generators.RssItemGenerator
 import com.prof18.feedflow.shared.test.toParsedFeedSource
 import com.prof18.rssparser.model.RssChannel
 import com.prof18.rssparser.model.RssItem
-import io.kotest.property.arbitrary.next
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
@@ -446,7 +445,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         title: String,
         link: String,
         items: List<RssItem>,
-    ): RssChannel = RssChannelGenerator.rssChannelArb.next().copy(
+    ): RssChannel = RssChannelGenerator.rssChannel(
         title = title,
         link = link,
         items = items,
@@ -456,16 +455,13 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         id: String,
         title: String,
         link: String,
-    ): RssItem = RssItemGenerator.rssItemArb.next().copy(
+    ): RssItem = RssItemGenerator.rssItem(
         guid = id,
         title = title,
         link = link,
         pubDate = null,
         categories = emptyList(),
-        itunesItemData = null,
         commentsUrl = null,
-        youtubeItemData = null,
-        rawEnclosure = null,
     )
 
     private class FakeRssParserWrapper : RssParserWrapper {

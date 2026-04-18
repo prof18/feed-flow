@@ -6,11 +6,10 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
-import io.kotest.matchers.shouldBe
-import io.kotest.property.arbitrary.next
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -29,18 +28,18 @@ class BlockedWordsViewModelTest : KoinTestBase() {
     @Test
     fun `onAddWord adds word to state`() = runTest {
         viewModel.wordsState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
             viewModel.onAddWord("test")
-            awaitItem() shouldBe listOf("test")
+            assertEquals(listOf("test"), awaitItem())
         }
     }
 
     @Test
     fun `onAddWord trims whitespace from word`() = runTest {
         viewModel.wordsState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
             viewModel.onAddWord("  trimmed  ")
-            awaitItem() shouldBe listOf("trimmed")
+            assertEquals(listOf("trimmed"), awaitItem())
         }
     }
 
@@ -50,22 +49,22 @@ class BlockedWordsViewModelTest : KoinTestBase() {
         populateDatabaseWithTitle("Article with $blockedWord in title")
 
         feedStateRepository.feedState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
 
             feedStateRepository.getFeeds()
             val feedsBeforeBlock = awaitItem()
-            feedsBeforeBlock.size shouldBe 1
+            assertEquals(1, feedsBeforeBlock.size)
 
             viewModel.onAddWord(blockedWord)
             val feedsAfterBlock = awaitItem()
-            feedsAfterBlock.size shouldBe 0
+            assertEquals(0, feedsAfterBlock.size)
         }
     }
 
     @Test
     fun `onRemoveWord removes word from state`() = runTest {
         viewModel.wordsState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
             viewModel.onAddWord("word1")
             val afterAdd = awaitItem()
             assertTrue(afterAdd.contains("word1"))
@@ -81,24 +80,24 @@ class BlockedWordsViewModelTest : KoinTestBase() {
         populateDatabaseWithTitle("Article with $blockedWord in title")
 
         feedStateRepository.feedState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
 
             feedStateRepository.getFeeds()
             val feedsBeforeBlock = awaitItem()
-            feedsBeforeBlock.size shouldBe 1
+            assertEquals(1, feedsBeforeBlock.size)
 
             viewModel.onAddWord(blockedWord)
             val feedsWhileBlocked = awaitItem()
-            feedsWhileBlocked.size shouldBe 0
+            assertEquals(0, feedsWhileBlocked.size)
 
             viewModel.onRemoveWord(blockedWord)
             val feedsAfterUnblock = awaitItem()
-            feedsAfterUnblock.size shouldBe 1
+            assertEquals(1, feedsAfterUnblock.size)
         }
     }
 
     private suspend fun populateDatabaseWithTitle(title: String) {
-        val feedItem = FeedItemGenerator.unreadFeedItemArb().next().copy(title = title)
+        val feedItem = FeedItemGenerator.unreadFeedItem(title = title)
         databaseHelper.insertFeedSource(
             listOf(
                 ParsedFeedSource(

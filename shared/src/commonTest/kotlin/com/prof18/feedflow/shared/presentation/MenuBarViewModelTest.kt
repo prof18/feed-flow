@@ -12,8 +12,6 @@ import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.test.ContentPrefetchRepositoryFake
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
-import io.kotest.matchers.shouldBe
-import io.kotest.property.arbitrary.next
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -64,7 +62,7 @@ class MenuBarViewModelTest : KoinTestBase() {
         populateDatabase()
 
         feedStateRepository.feedState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
             viewModel.updateShowReadItemsOnTimeline(true)
             assertTrue(viewModel.state.value.isShowReadItemsEnabled)
             awaitItem()
@@ -130,7 +128,7 @@ class MenuBarViewModelTest : KoinTestBase() {
         populateDatabase()
 
         feedStateRepository.feedState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
             viewModel.updateFeedOrder(FeedOrder.OLDEST_FIRST)
             assertEquals(FeedOrder.OLDEST_FIRST, viewModel.state.value.feedOrder)
             awaitItem()
@@ -157,7 +155,7 @@ class MenuBarViewModelTest : KoinTestBase() {
     }
 
     private suspend fun populateDatabase() {
-        val feedItem = FeedItemGenerator.unreadFeedItemArb().next()
+        val feedItem = FeedItemGenerator.unreadFeedItem()
         databaseHelper.insertFeedSource(
             listOf(
                 ParsedFeedSource(

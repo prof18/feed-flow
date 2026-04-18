@@ -12,7 +12,6 @@ import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.presentation.model.DeeplinkFeedState
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
-import io.kotest.property.arbitrary.next
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -28,7 +27,7 @@ class DeeplinkFeedViewModelTest : KoinTestBase() {
 
     @Test
     fun `getReaderModeUrl updates state to Success when item exists`() = runTest {
-        val feedItem = FeedItemGenerator.feedItemArb.next()
+        val feedItem = FeedItemGenerator.feedItem()
         val feedItemId = FeedItemId(feedItem.id)
         val feedItemUrlInfo = FeedItemUrlInfo(
             id = feedItem.id,
@@ -86,7 +85,7 @@ class DeeplinkFeedViewModelTest : KoinTestBase() {
 
     @Test
     fun `markAsRead calls repository`() = runTest {
-        val feedItem = FeedItemGenerator.unreadFeedItemArb().next()
+        val feedItem = FeedItemGenerator.unreadFeedItem()
         val feedItemId = FeedItemId(feedItem.id)
 
         // Seed database

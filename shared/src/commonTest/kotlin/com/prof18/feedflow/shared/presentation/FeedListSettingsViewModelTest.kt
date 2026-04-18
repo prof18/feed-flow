@@ -14,8 +14,6 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
-import io.kotest.matchers.shouldBe
-import io.kotest.property.arbitrary.next
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -50,7 +48,7 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
         populateDatabase()
 
         feedStateRepository.feedState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
             viewModel.updateHideDescription(true)
             assertTrue(viewModel.state.value.isHideDescriptionEnabled)
             awaitItem()
@@ -62,7 +60,7 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
         populateDatabase()
 
         feedStateRepository.feedState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
             viewModel.updateHideImages(true)
             assertTrue(viewModel.state.value.isHideImagesEnabled)
             awaitItem()
@@ -74,7 +72,7 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
         populateDatabase()
 
         feedStateRepository.feedState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
             viewModel.updateHideDate(true)
             assertTrue(viewModel.state.value.isHideDateEnabled)
             awaitItem()
@@ -86,7 +84,7 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
         populateDatabase()
 
         feedStateRepository.feedState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
             viewModel.updateDateFormat(DateFormat.ISO)
             assertEquals(DateFormat.ISO, viewModel.state.value.dateFormat)
             awaitItem()
@@ -98,7 +96,7 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
         populateDatabase()
 
         feedStateRepository.feedState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
             viewModel.updateTimeFormat(TimeFormat.HOURS_12)
             assertEquals(TimeFormat.HOURS_12, viewModel.state.value.timeFormat)
             awaitItem()
@@ -147,7 +145,7 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
         populateDatabase()
 
         feedStateRepository.feedState.test {
-            awaitItem() shouldBe emptyList()
+            assertEquals(emptyList(), awaitItem())
             viewModel.updateFeedOrder(FeedOrder.OLDEST_FIRST)
             assertEquals(FeedOrder.OLDEST_FIRST, viewModel.state.value.feedOrder)
             awaitItem()
@@ -155,7 +153,7 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
     }
 
     private suspend fun populateDatabase() {
-        val feedItem = FeedItemGenerator.unreadFeedItemArb().next()
+        val feedItem = FeedItemGenerator.unreadFeedItem()
         databaseHelper.insertFeedSource(
             listOf(
                 ParsedFeedSource(

@@ -108,8 +108,6 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.touchlab.kermit.test)
-                implementation(libs.kotest.assertions)
-                implementation(libs.kotest.property)
                 implementation(libs.koin.test)
                 implementation(libs.turbine)
                 implementation(libs.multiplatform.settings.test)

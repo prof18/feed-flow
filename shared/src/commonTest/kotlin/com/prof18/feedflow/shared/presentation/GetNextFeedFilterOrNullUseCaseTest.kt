@@ -10,7 +10,6 @@ import com.prof18.feedflow.shared.test.generators.CategoryGenerator
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
 import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import com.prof18.feedflow.shared.test.insertFeedSourceWithCategory
-import io.kotest.property.arbitrary.next
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.getValue
@@ -31,12 +30,12 @@ class GetNextFeedFilterOrNullUseCaseTest : KoinTestBase() {
 
         val currentFilterSource = createFeedSource(
             id = currentSourceId,
-            category = CategoryGenerator.categoryArb.next().copy(id = "category_id"),
+            category = CategoryGenerator.category(id = "category_id"),
         )
 
         val unreadFilterSource = createFeedSource(
             id = unreadSourceId,
-            category = CategoryGenerator.categoryArb.next().copy(id = "category_id"),
+            category = CategoryGenerator.category(id = "category_id"),
         )
 
         databaseHelper.insertFeedSourceWithCategory(unreadFilterSource)
@@ -79,12 +78,12 @@ class GetNextFeedFilterOrNullUseCaseTest : KoinTestBase() {
 
         val currentFilterSource = createFeedSource(
             id = currentSourceId,
-            category = CategoryGenerator.categoryArb.next().copy(id = "category_id"),
+            category = CategoryGenerator.category(id = "category_id"),
         )
 
         val readFilterSource = createFeedSource(
             id = readSourceId,
-            category = CategoryGenerator.categoryArb.next().copy(id = "category_id"),
+            category = CategoryGenerator.category(id = "category_id"),
         )
 
         databaseHelper.insertFeedSourceWithCategory(currentFilterSource)
@@ -124,10 +123,14 @@ class GetNextFeedFilterOrNullUseCaseTest : KoinTestBase() {
         val unreadSourceId = "unread_source_id"
         val currentSourceId = "current_source_id"
 
-        val currentCategory = CategoryGenerator.categoryArb.next()
-            .copy(id = "current_category", title = "current_category")
-        val unreadCategory = CategoryGenerator.categoryArb.next()
-            .copy(id = "unread_category", title = "unread_category")
+        val currentCategory = CategoryGenerator.category(
+            id = "current_category",
+            title = "current_category",
+        )
+        val unreadCategory = CategoryGenerator.category(
+            id = "unread_category",
+            title = "unread_category",
+        )
 
         val currentFilterSource = createFeedSource(
             id = currentSourceId,
@@ -177,10 +180,14 @@ class GetNextFeedFilterOrNullUseCaseTest : KoinTestBase() {
         val readSourceId = "read_source_id"
         val currentSourceId = "current_source_id"
 
-        val currentCategory = CategoryGenerator.categoryArb.next()
-            .copy(id = "current_category", title = "current_category")
-        val readCategory = CategoryGenerator.categoryArb.next()
-            .copy(id = "unread_category", title = "read_category")
+        val currentCategory = CategoryGenerator.category(
+            id = "current_category",
+            title = "current_category",
+        )
+        val readCategory = CategoryGenerator.category(
+            id = "unread_category",
+            title = "read_category",
+        )
 
         val currentFilterSource = createFeedSource(
             id = currentSourceId,
@@ -225,12 +232,12 @@ class GetNextFeedFilterOrNullUseCaseTest : KoinTestBase() {
     }
 
     fun generateFeedItem(id: String, feedSource: FeedSource, read: Boolean) =
-        FeedItemGenerator.feedItemArb.next().copy(id = id, title = id, feedSource = feedSource, isRead = read)
+        FeedItemGenerator.feedItem(id = id, title = id, feedSource = feedSource, isRead = read)
 
     private fun createFeedSource(
         id: String,
         category: FeedSourceCategory,
-    ): FeedSource = FeedSourceGenerator.feedSourceArb.next().copy(
+    ): FeedSource = FeedSourceGenerator.feedSource(
         id = id,
         title = id,
         category = category,

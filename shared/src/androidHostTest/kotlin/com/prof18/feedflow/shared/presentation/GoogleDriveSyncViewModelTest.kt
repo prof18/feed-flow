@@ -14,7 +14,6 @@ import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadParam
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadResult
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
-import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -40,7 +39,7 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
     @Test
     fun `initial state is Unlinked when Google Drive is not authorized`() = runTest {
         viewModel.googleDriveConnectionUiState.test {
-            awaitItem() shouldBe AccountConnectionUiState.Unlinked
+            assertEquals(AccountConnectionUiState.Unlinked, awaitItem())
         }
     }
 

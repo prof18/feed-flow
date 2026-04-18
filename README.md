@@ -1,5 +1,5 @@
 <div align="center">
-  <img style="border-radius: 50%" src="assets/logo/icon-512.png" width="100" alt="FeedFlow app icon">
+  <img style="border-radius: 50%" src="assets/logo.png" width="100" alt="FeedFlow app icon">
   <h1>FeedFlow</h1>
   <p><strong>Minimal, fast RSS reading without the clutter.</strong></p>
   <p>
@@ -26,7 +26,7 @@
   </p>
 </div>
 
-![FeedFlow screenshots](assets/banners.png)
+![FeedFlow banner](assets/banners.png)
 
 ## Why FeedFlow
 

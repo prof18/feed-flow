@@ -87,6 +87,20 @@
   </content_rating>
 
   <releases>
+      <release version="1.12.0" date="2026-04-18">
+          <description>
+              <p>Refreshed reader mode with new floating toolbar and navigation bar</p>
+              <p>Move to the next feed source with one click</p>
+              <p>Delete all feeds in a category directly from the app</p>
+              <p>Customize the feed list: hide unread dot, hide feed source, limit description lines</p>
+              <p>Cleaner settings screen and refined scroll bars</p>
+              <p>URL tooltip when hovering links</p>
+              <p>Brand new app icon</p>
+              <p>Better handling of invalid OPML and CSV imports</p>
+              <p>Various stability and reliability improvements</p>
+          </description>
+      </release>
+
       <release version="1.11.2" date="2026-03-22">
           <description>
               <p>Added a new three-pane desktop layout and a switch for users who prefer the single-pane view.</p>

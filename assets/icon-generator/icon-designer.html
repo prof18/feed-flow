@@ -421,7 +421,14 @@
     };
   }
 
-  function getBackgroundGradientStops(s) {
+  function getBackgroundGradientStops(s, opts = {}) {
+    if (opts.variant === 'windows-store') {
+      return [
+        { offset: 0, color: '#5367d8' },
+        { offset: 0.56, color: s.bg },
+        { offset: 1, color: '#3142a8' },
+      ];
+    }
     return [
       { offset: 0, color: '#5a6fe0' },
       { offset: 0.5, color: s.bg },
@@ -429,19 +436,19 @@
     ];
   }
 
-  function makeCanvasBackgroundGradient(ctx, size, s) {
+  function makeCanvasBackgroundGradient(ctx, size, s, opts = {}) {
     const g = ctx.createLinearGradient(0, 0, size, size);
-    getBackgroundGradientStops(s).forEach(stop => g.addColorStop(stop.offset, stop.color));
+    getBackgroundGradientStops(s, opts).forEach(stop => g.addColorStop(stop.offset, stop.color));
     return g;
   }
 
-  function drawTo(ctx, size, s) {
+  function drawTo(ctx, size, s, opts = {}) {
     ctx.clearRect(0, 0, size, size);
     // bg
     const cornerR = size * s.corner / 100;
     ctx.save();
     rrClipCanvas(ctx, 0, 0, size, size, cornerR);
-    ctx.fillStyle = makeCanvasBackgroundGradient(ctx, size, s);
+    ctx.fillStyle = makeCanvasBackgroundGradient(ctx, size, s, opts);
     ctx.fill();
     ctx.restore();
 
@@ -518,6 +525,15 @@
     ctx.restore();
   }
 
+  function getWindowsStoreBrandState(s) {
+    return {
+      ...s,
+      corner: Math.max(16, s.corner - 5),
+      dx: Math.round(s.dx * 0.45),
+      dy: Math.round(s.dy * 0.45),
+    };
+  }
+
   function render() {
     const s = getS();
     [['c512',512],['c128',128],['c64',64]].forEach(([id,sz]) => {
@@ -564,7 +580,7 @@
       }
     }
 
-    const gradientStops = getBackgroundGradientStops(s)
+    const gradientStops = getBackgroundGradientStops(s, opts)
       .map(stop => `<stop offset="${n(stop.offset * 100)}%" stop-color="${stop.color}"/>`)
       .join('');
     const bgRect = withBg ? `<rect x="0" y="0" width="${size}" height="${size}" rx="${n(cornerR)}" ry="${n(cornerR)}" fill="url(#bgGradient)"/>` : '';
@@ -705,12 +721,14 @@ ${clip}${bgRect}<g${clipAttr}><g transform="${xf}">${depthLayer}<path d="${fPath
       height: Math.round(150 * scale / 100),
       unplated: false,
     })),
-    { name: 'StoreLogo.png', width: 50, height: 50, unplated: false },
+    { name: 'StoreLogo.png', width: 50, height: 50, unplated: false, variant: 'windows-store', useStoreBrandState: true },
     ...WINDOWS_QUALIFIER_SCALES.map(scale => ({
       name: `StoreLogo.scale-${scale}.png`,
       width: Math.round(50 * scale / 100),
       height: Math.round(50 * scale / 100),
       unplated: false,
+      variant: 'windows-store',
+      useStoreBrandState: true,
     })),
   ];
   // We intentionally export the same plated artwork for targetsize-* assets too.
@@ -718,10 +736,9 @@ ${clip}${bgRect}<g${clipAttr}><g transform="${xf}">${depthLayer}<path d="${fPath
   // the blue FeedFlow tile visible across shell surfaces instead of allowing a glyph-only,
   // themed treatment on taskbar/Alt+Tab-like fallbacks.
   const WINDOWS_TARGETSIZE_PNGS = WINDOWS_TARGETSIZE_SIZES.flatMap(size => {
-    const contentScale = size <= 48 ? WINDOWS_SMALL_SCALE : WINDOWS_MAIN_SCALE;
     return [
-      { name: `Square44x44Logo.targetsize-${size}.png`, width: size, height: size, contentScale, unplated: false },
-      { name: `Square44x44Logo.targetsize-${size}_altform-unplated.png`, width: size, height: size, contentScale, unplated: false },
+      { name: `Square44x44Logo.targetsize-${size}.png`, width: size, height: size, contentScale: size <= 48 ? WINDOWS_SMALL_SCALE : WINDOWS_MAIN_SCALE, unplated: false },
+      { name: `Square44x44Logo.targetsize-${size}_altform-unplated.png`, width: size, height: size, contentScale: size <= 48 ? WINDOWS_SMALL_SCALE : WINDOWS_MAIN_SCALE, unplated: false },
     ];
   });
   const WINDOWS_REQUIRED_PNGS = [...WINDOWS_SCALE_PNGS, ...WINDOWS_TARGETSIZE_PNGS];
@@ -732,16 +749,20 @@ ${clip}${bgRect}<g${clipAttr}><g transform="${xf}">${depthLayer}<path d="${fPath
     const canvas = document.createElement('canvas');
     canvas.width = spec.width;
     canvas.height = spec.height;
+    let renderState = s;
+    if (spec.useStoreBrandState) {
+      renderState = getWindowsStoreBrandState(renderState);
+    }
     if (spec.unplated !== false) {
       // Unplated: transparent bg, glyph only — Windows themes/plates these itself.
-      drawFittedGlyphTo(canvas.getContext('2d'), spec.width, spec.height, s, {
+      drawFittedGlyphTo(canvas.getContext('2d'), spec.width, spec.height, renderState, {
         includeDepth: false,
-        fill: s.fill,
+        fill: renderState.fill,
         contentScale: spec.contentScale,
       });
     } else {
       // Plated: full icon with gradient background and rounded corners (for .ico).
-      drawTo(canvas.getContext('2d'), spec.width, s);
+      drawTo(canvas.getContext('2d'), spec.width, renderState, { variant: spec.variant });
     }
     return canvasToBlob(canvas, 'image/png');
   }
@@ -755,10 +776,11 @@ ${clip}${bgRect}<g${clipAttr}><g transform="${xf}">${depthLayer}<path d="${fPath
 
   async function buildWindowsStoreListingZipBlob(s) {
     const files = [];
+    const storeState = getWindowsStoreBrandState(s);
     for (const asset of WINDOWS_STORE_ASSETS) {
       const canvas = document.createElement('canvas');
       canvas.width = canvas.height = asset.size;
-      drawTo(canvas.getContext('2d'), asset.size, s);
+      drawTo(canvas.getContext('2d'), asset.size, storeState, { variant: 'windows-store' });
       const blob = await canvasToBlob(canvas, 'image/png');
       files.push({ name: asset.name, bytes: new Uint8Array(await blob.arrayBuffer()) });
     }

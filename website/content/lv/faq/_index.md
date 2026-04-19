@@ -1,9 +1,9 @@
 ---
-title: "Biežāk uzdotie jautājumi | FeedFlow"
-description: "Atrast atbildes uz FeedFlow RSS lasītāja bieži uzdotajiem jautājumiem"
+title: "Frequently Asked Questions | FeedFlow"
+description: "Find answers to common questions about FeedFlow RSS Reader — sync, reader mode, OPML import, and more."
 type: "faq"
 layout: "list"
-heading: "Biežāk uzdotie jautājumi"
+heading: "Frequently asked questions"
 ---
 
 Laipni lūdzam FeedFlow BUJ sadaļā. Šeit jūs atradīsiet atbildes uz visbiežāk

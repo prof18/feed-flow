@@ -1,9 +1,9 @@
 ---
-title: "Pertanyaan yang Sering Diajukan | FeedFlow"
-description: "Temukan jawaban atas pertanyaan umum tentang FeedFlow RSS Reader"
+title: "Frequently Asked Questions | FeedFlow"
+description: "Find answers to common questions about FeedFlow RSS Reader — sync, reader mode, OPML import, and more."
 type: "faq"
 layout: "list"
-heading: "Pertanyaan yang Sering Diajukan"
+heading: "Frequently asked questions"
 ---
 
 Selamat datang di bagian FAQ FeedFlow. Di sini Anda akan menemukan jawaban atas

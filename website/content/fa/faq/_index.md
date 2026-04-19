@@ -1,9 +1,9 @@
 ---
-title: "فید فلو |‌ پرسش‌های متداول"
-description: "پاسخ به پرسش‌های متداول راجع به خوراک خوان فید فلو بیابید"
+title: "Frequently Asked Questions | FeedFlow"
+description: "Find answers to common questions about FeedFlow RSS Reader — sync, reader mode, OPML import, and more."
 type: "faq"
 layout: "list"
-heading: "پرسش‌های متداول"
+heading: "Frequently asked questions"
 ---
 
 Welcome to FeedFlow's FAQ section. Here you'll find answers to the most common

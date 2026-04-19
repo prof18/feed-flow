@@ -1,9 +1,9 @@
 ---
-title: "常见问题 | FeedFlow"
-description: "查找关于 FeedFlow RSS 阅读器的常见问题解答"
+title: "Frequently Asked Questions | FeedFlow"
+description: "Find answers to common questions about FeedFlow RSS Reader — sync, reader mode, OPML import, and more."
 type: "faq"
 layout: "list"
-heading: "常见问题"
+heading: "Frequently asked questions"
 ---
 
 欢迎来到 FeedFlow 的常见问题专区，这里汇集了使用 FeedFlow 的高频问题解答。

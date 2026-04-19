@@ -1,9 +1,9 @@
 ---
-title: "Preguntas Frecuentes | FeedFlow"
-description: "Atopa as respostas ás preguntas máis frecuentes sobre FeedFlow RSS Reader"
+title: "Frequently Asked Questions | FeedFlow"
+description: "Find answers to common questions about FeedFlow RSS Reader — sync, reader mode, OPML import, and more."
 type: "faq"
 layout: "list"
-heading: "Preguntas Máis Frecuentes"
+heading: "Frequently asked questions"
 ---
 
 Benvida á sección PMF de FeedFlow. Aquí podes ler as respostas ás preguntas que

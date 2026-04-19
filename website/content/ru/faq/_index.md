@@ -1,9 +1,9 @@
 ---
-title: "Часто задаваемые вопросы | FeedFlow"
-description: "Ответы на распространённые вопросы о RSS читалка FeedFlow"
+title: "Frequently Asked Questions | FeedFlow"
+description: "Find answers to common questions about FeedFlow RSS Reader — sync, reader mode, OPML import, and more."
 type: "faq"
 layout: "list"
-heading: "Часто задаваемые вопросы"
+heading: "Frequently asked questions"
 ---
 
 Вас приветствует раздел ЧаВо FeedFlow. Здесь вы найдёте ответы на самые

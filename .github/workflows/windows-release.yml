@@ -288,9 +288,32 @@ jobs:
           $nsManager.AddNamespace("desktop7", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/7")
           $nsManager.AddNamespace("rescap", "http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities")
 
+          # Point manifest logo entries at the checked-in asset family so the package
+          # doesn't depend on whatever the MSIX conversion tool synthesized.
+          $propertiesNode = $xmlDoc.SelectSingleNode("/*[local-name()='Package']/*[local-name()='Properties']")
+          if ($propertiesNode) {
+              $logoNode = $propertiesNode.SelectSingleNode("*[local-name()='Logo']")
+              if (-not $logoNode) {
+                  $logoNode = $xmlDoc.CreateElement("Logo", $propertiesNode.NamespaceURI)
+                  $propertiesNode.AppendChild($logoNode) | Out-Null
+              }
+              $logoNode.InnerText = "Assets\StoreLogo.png"
+          } else {
+              Write-Warning "Properties node not found; skipping package logo update."
+          }
+
           # 1. Remove desktop7:Shortcut extension
           $applicationNode = $xmlDoc.SelectSingleNode("/pkg:Package/pkg:Applications/pkg:Application", $nsManager)
           if ($applicationNode) {
+              $visualElementsNode = $applicationNode.SelectSingleNode("*[local-name()='VisualElements']")
+              if ($visualElementsNode) {
+                  $visualElementsNode.SetAttribute("Square44x44Logo", "Assets\Square44x44Logo.png")
+                  $visualElementsNode.SetAttribute("Square150x150Logo", "Assets\Square150x150Logo.png")
+                  $visualElementsNode.SetAttribute("BackgroundColor", "#3d4db7")
+              } else {
+                  Write-Warning "VisualElements node not found; skipping logo attribute updates."
+              }
+
               $extensionsNode = $applicationNode.SelectSingleNode("pkg:Extensions", $nsManager)
               if ($extensionsNode) {
                   $shortcutExtensionNode = $extensionsNode.SelectSingleNode("desktop7:Extension[@Category='windows.shortcut']", $nsManager)

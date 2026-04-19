@@ -1,0 +1,78 @@
+<section class="section gallery" id="gallery" aria-labelledby="gallery-heading">
+  <div class="container">
+    <header class="gallery-header">
+      <span class="eyebrow">Screenshots</span>
+      <h2 id="gallery-heading">See it in action.</h2>
+      <p>Clean, focused reading across all your devices.</p>
+    </header>
+  </div>
+
+  <p class="gallery-scroll-hint" aria-hidden="true">
+    Scroll to explore
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M5 12h14M13 6l6 6-6 6"/>
+    </svg>
+  </p>
+
+  <div class="gallery-scroll-wrap">
+    <div class="gallery-strip">
+
+      <div class="gallery-item">
+        <button type="button" class="gallery-trigger" aria-label="Preview screenshot: FeedFlow reader mode on macOS">
+          <img src="/images/screenshots/gallery/gallery-macos-reader.webp"
+               alt="FeedFlow reader mode on macOS — full article with clean typography"
+               loading="lazy">
+        </button>
+      </div>
+
+      <div class="gallery-item">
+        <button type="button" class="gallery-trigger" aria-label="Preview screenshot: FeedFlow on iPad">
+          <img src="/images/screenshots/gallery/gallery-ipad.webp"
+               alt="FeedFlow on iPad — three-column layout with sidebar, list, and article"
+               loading="lazy">
+        </button>
+      </div>
+
+      <div class="gallery-item">
+        <button type="button" class="gallery-trigger" aria-label="Preview screenshot: FeedFlow timeline on iPhone">
+          <img src="/images/screenshots/gallery/gallery-iphone-timeline.webp"
+               alt="FeedFlow timeline on iPhone — chronological list of articles"
+               loading="lazy">
+        </button>
+      </div>
+
+      <div class="gallery-item">
+        <button type="button" class="gallery-trigger" aria-label="Preview screenshot: FeedFlow reader mode on iPhone">
+          <img src="/images/screenshots/gallery/gallery-iphone-reader.webp"
+               alt="FeedFlow reader mode on iPhone — distraction-free article view"
+               loading="lazy">
+        </button>
+      </div>
+
+      <div class="gallery-item">
+        <button type="button" class="gallery-trigger" aria-label="Preview screenshot: FeedFlow sidebar on Android">
+          <img src="/images/screenshots/gallery/gallery-android-sidebar.webp"
+               alt="FeedFlow sidebar on Android — feed sources and categories"
+               loading="lazy">
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="gallery-lightbox" hidden aria-hidden="true">
+    <div class="gallery-lightbox-backdrop" data-gallery-close></div>
+    <div class="gallery-lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="gallery-lightbox-title">
+      <button type="button" class="gallery-lightbox-close" data-gallery-close aria-label="Close screenshot preview">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <figure class="gallery-lightbox-figure">
+        <img class="gallery-lightbox-image" src="" alt="">
+        <figcaption class="gallery-lightbox-caption" id="gallery-lightbox-title"></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>

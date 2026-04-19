@@ -1,9 +1,15 @@
 {
+    "name": "FeedFlow",
+    "short_name": "FeedFlow",
+    "start_url": "/",
+    "display": "browser",
+    "background_color": "#FAFAFA",
+    "theme_color": "#2C5EA7",
     "icons": [
-        { "src": "/favicon.ico", "type": "image/x-icon", "sizes": "16x16 32x32" },
-        { "src": "/icon-192.png", "type": "image/png", "sizes": "192x192" },
-        { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512" },
-        { "src": "/icon-192-maskable.png", "type": "image/png", "sizes": "192x192", "purpose": "maskable" },
-        { "src": "/icon-512-maskable.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
+        { "src": "/images/favicon/favicon.ico", "type": "image/x-icon", "sizes": "16x16 32x32" },
+        { "src": "/images/favicon/icon-192.png", "type": "image/png", "sizes": "192x192" },
+        { "src": "/images/favicon/icon-512.png", "type": "image/png", "sizes": "512x512" },
+        { "src": "/images/favicon/icon-192-maskable.png", "type": "image/png", "sizes": "192x192", "purpose": "maskable" },
+        { "src": "/images/favicon/icon-512-maskable.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
     ]
 }

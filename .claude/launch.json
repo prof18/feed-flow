@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "feedflow-website",
+      "runtimeExecutable": "hugo",
+      "runtimeArgs": ["server", "--disableFastRender", "--port", "1314", "--source", "website"],
+      "port": 1314
+    }
+  ]
+}

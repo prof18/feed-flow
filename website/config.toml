@@ -2,66 +2,111 @@
 baseURL = "https://www.feedflow.dev/"
 defaultContentLanguage = "en"
 defaultContentLanguageInSubdir = false
-title = "FeedFlow | RSS Reader"
-description = "FeedFlow - RSS Reader for Android, iOS and MacOS"
-theme = "apsho"
+title = "FeedFlow — Minimal RSS Reader"
+theme = "feedflow"
+
+[outputs]
+  home    = ["HTML", "RSS", "ROBOTS"]
+  section = ["HTML", "RSS"]
+  page    = ["HTML"]
+
+[outputFormats]
+  [outputFormats.RSS]
+    mediatype = "application/rss+xml"
+    baseName  = "index"
 
 # Multilingual configuration
 [languages]
   [languages.en]
-    languageCode = "en-us"
+    languageCode = "en"
     languageName = "English"
     contentDir = "content/en"
     weight = 1
-    title = "FeedFlow | RSS Reader"
+    title = "FeedFlow — Minimal RSS Reader"
     [languages.en.params]
-      description = "FeedFlow - RSS Reader for Android, iOS and MacOS"
+      description = "Minimal RSS reader for people who want a clean, chronological timeline — no algorithms, no clutter, no noise. Available on Android, iOS, macOS, Windows, and Linux."
 
-  # Additional languages can be added here following Weblate translations
   [languages.it]
     languageCode = "it"
     languageName = "Italiano"
     contentDir = "content/it"
     weight = 2
-    title = "FeedFlow | Lettore RSS"
+    title = "FeedFlow — Lettore RSS Minimale"
 
-# Footer Sitemap
-[[menu.sitemap]]
-    name = "Home"
-    url = "#"
-    weight = 1
-#[[menu.sitemap]]
-#    name = "FAQ"
-#    url = "/faq/"
-#    weight = 2
-#    [menu.sitemap.params]
-#        newTab = true
-[[menu.sitemap]]
-    name = "Show on Github"
-    url = "https://github.com/prof18/feed-flow"
+  [languages.de]
+    languageCode = "de"
+    languageName = "Deutsch"
+    contentDir = "content/de"
     weight = 3
-[[menu.sitemap]]
-    name = "Privacy Policy"
-    url = "https://www.prof18.com/feed-flow/pp/privacy-policy-jul23/"
+    title = "FeedFlow — Minimaler RSS-Reader"
+
+  [languages.ru]
+    languageCode = "ru"
+    languageName = "Русский"
+    contentDir = "content/ru"
     weight = 4
-[[menu.sitemap]]
-    name = "Report issue"
-    url = "https://github.com/prof18/feed-flow/issues/new?title=App+issue&body=Please+describe+the+issue+and+provide+a+link+to+the+RSS+Feed+that+causes+the+issues:%0A"
+    title = "FeedFlow — RSS Читалка"
+
+  [languages.et]
+    languageCode = "et"
+    languageName = "Eesti"
+    contentDir = "content/et"
     weight = 5
-[[menu.sitemap]]
-    name = "Contribute with translations"
-    url = "https://hosted.weblate.org/projects/feedflow/"
+    title = "FeedFlow — RSS lugeja"
+
+  [languages.fa]
+    languageCode = "fa"
+    languageName = "فارسی"
+    contentDir = "content/fa"
     weight = 6
-[[menu.sitemap]]
-    name = "Donations 🙏"
-    url = "https://www.paypal.me/MarcoGomiero"
+    title = "FeedFlow — خواننده RSS"
+
+  [languages.gl]
+    languageCode = "gl"
+    languageName = "Galego"
+    contentDir = "content/gl"
     weight = 7
+    title = "FeedFlow — Lector RSS"
+
+  [languages.id]
+    languageCode = "id"
+    languageName = "Indonesia"
+    contentDir = "content/id"
+    weight = 8
+    title = "FeedFlow — Pembaca RSS"
+
+  [languages.lv]
+    languageCode = "lv"
+    languageName = "Latviešu"
+    contentDir = "content/lv"
+    weight = 9
+    title = "FeedFlow — RSS lasītājs"
+
+  [languages.zh_Hans]
+    languageCode = "zh-Hans"
+    languageName = "简体中文"
+    contentDir = "content/zh_Hans"
+    weight = 10
+    title = "FeedFlow — RSS 阅读器"
+
+  [languages.zh_Hant]
+    languageCode = "zh-Hant"
+    languageName = "繁體中文"
+    contentDir = "content/zh_Hant"
+    weight = 11
+    title = "FeedFlow — RSS 閱讀器"
+
+enableRobotsTXT = true
 
 [params]
-
-# Header
-logo = "images/logo.png"
-
-# Footer
-copyright1 = "All right reserved"
-copyright2 = "Copyright ©  <a href=\"https://www.marcogomiero.com/\" target=\"_blank\">Marco Gomiero </a> {year}"
+  logo          = "images/logo.png"
+  github        = "https://github.com/prof18/feed-flow"
+  weblate       = "https://hosted.weblate.org/projects/feedflow/"
+  bluesky       = "https://bsky.app/profile/feedflow.dev"
+  mastodon      = "https://mastodon.social/@feedflowapp"
+  donate        = "https://www.paypal.me/MarcoGomiero"
+  privacy       = "https://www.prof18.com/feed-flow/pp/privacy-policy-jul23/"
+  reportIssue   = "https://github.com/prof18/feed-flow/issues/new?title=App+issue&body=Please+describe+the+issue+and+provide+a+link+to+the+RSS+Feed+that+causes+the+issues:%0A"
+  authorName    = "Marco Gomiero"
+  authorURL     = "https://www.marcogomiero.com/"
+  twitterHandle = "@feedflowapp"

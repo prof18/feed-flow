@@ -1,0 +1,26 @@
+{{ if gt (len .Site.Languages) 1 -}}
+<details class="lang-switcher">
+  <summary aria-label="Switch language">
+    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+    {{ .Site.Language.LanguageName }}
+    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+  </summary>
+  <div class="lang-menu" role="menu">
+    {{ range .Site.Languages -}}
+      {{- $langURL := (relLangURL "/" | absLangURL) -}}
+      {{- /* Try to find the same page in this language */}}
+      {{- range $.AllTranslations -}}
+        {{- if eq .Site.Language.Lang $.Lang -}}
+          {{- $langURL = .Permalink -}}
+        {{- end -}}
+      {{- end -}}
+      <a href="{{ $langURL }}"
+         role="menuitem"
+         lang="{{ .Lang }}"
+         {{ if eq .Lang $.Site.Language.Lang }}class="active" aria-current="true"{{ end }}>
+        {{ .LanguageName }}
+      </a>
+    {{- end }}
+  </div>
+</details>
+{{- end }}

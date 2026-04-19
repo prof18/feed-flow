@@ -1,0 +1,33 @@
+<nav class="site-nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="{{ .Site.BaseURL }}" class="nav-brand">
+      <img src="/images/logo.svg" alt="FeedFlow" width="28" height="28">
+      <span>FeedFlow</span>
+    </a>
+
+    <ul class="nav-links" role="list">
+      <li><a href="{{ .Site.Home.RelPermalink }}#features">Features</a></li>
+      <li><a href="{{ .Site.Home.RelPermalink }}#gallery">Screenshots</a></li>
+      <li><a href="{{ .Site.Home.RelPermalink }}#social">Community</a></li>
+    </ul>
+
+    <div class="nav-cta">
+      <a href="#platforms" class="btn btn-primary btn-sm">Download</a>
+    </div>
+
+    <button class="nav-hamburger" aria-expanded="false" aria-label="Open navigation menu" aria-controls="mobile-nav">
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+    </button>
+  </div>
+
+  <div class="mobile-nav" id="mobile-nav">
+    <ul class="mobile-nav-links" role="list">
+      <li><a href="{{ .Site.Home.RelPermalink }}#features">Features</a></li>
+      <li><a href="{{ .Site.Home.RelPermalink }}#gallery">Screenshots</a></li>
+      <li><a href="{{ .Site.Home.RelPermalink }}#social">Community</a></li>
+    </ul>
+    <a href="#platforms" class="btn btn-primary mobile-nav-download">Download</a>
+  </div>
+</nav>

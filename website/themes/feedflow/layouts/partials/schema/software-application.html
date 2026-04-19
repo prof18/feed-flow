@@ -1,0 +1,28 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "FeedFlow",
+  "description": "{{ (.Site.Params.description | default .Site.Title) | htmlEscape }}",
+  "applicationCategory": "NewsApplication",
+  "operatingSystem": "Android, iOS, macOS, Windows, Linux",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "{{ .Site.Params.authorName | htmlEscape }}",
+    "url": "{{ .Site.Params.authorURL }}"
+  },
+  "publisher": {
+    "@id": "{{ .Site.BaseURL }}#organization"
+  },
+  "url": "{{ .Site.BaseURL }}",
+  "downloadUrl": "{{ .Site.BaseURL }}#platforms",
+  "screenshot": "{{ .Site.BaseURL }}images/screenshots/macos-feed.webp",
+  "softwareVersion": "latest",
+  "inLanguage": "en"
+}
+</script>

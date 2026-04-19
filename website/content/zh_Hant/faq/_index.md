@@ -2,7 +2,7 @@
 title: "常見問題｜FeedFlow"
 description: "查看 FeedFlow RSS 閱讀器的常見問題"
 type: "faq"
-lauout: "list"
+layout: "list"
 heading: "常見問題"
 ---
 

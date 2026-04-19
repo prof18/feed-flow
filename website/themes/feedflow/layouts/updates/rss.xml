@@ -1,0 +1,36 @@
+{{- $pctx := . -}}
+{{- if .IsHome -}}{{ $pctx = .Site }}{{- end -}}
+{{- $pages := slice -}}
+{{- if or $.IsHome $.IsSection -}}
+  {{- $pages = $pctx.RegularPages -}}
+{{- else -}}
+  {{- $pages = $pctx.Pages -}}
+{{- end -}}
+{{- $limit := .Site.Config.Services.RSS.Limit -}}
+{{- if ge $limit 1 -}}
+  {{- $pages = $pages | first $limit -}}
+{{- end -}}
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<rss version="2.0"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>FeedFlow — Updates</title>
+    <link>{{ .Permalink }}</link>
+    <description>Release notes, new features, and announcements from FeedFlow.</description>
+    <language>{{ site.Language.Lang }}</language>
+    <lastBuildDate>{{ now.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</lastBuildDate>
+    <atom:link href="{{ .Permalink }}index.xml" rel="self" type="application/rss+xml"/>
+    {{ range $pages }}
+    <item>
+      <title>{{ .Title }}</title>
+      <link>{{ .Permalink }}</link>
+      <guid isPermaLink="true">{{ .Permalink }}</guid>
+      <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</pubDate>
+      {{ with .Params.summary }}<description>{{ . | html }}</description>{{ else }}<description>{{ .Summary | html }}</description>{{ end }}
+      <content:encoded><![CDATA[{{ .Content }}]]></content:encoded>
+      {{ range .Params.tags }}<category>{{ . }}</category>{{ end }}
+    </item>
+    {{ end }}
+  </channel>
+</rss>

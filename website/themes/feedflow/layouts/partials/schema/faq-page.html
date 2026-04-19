@@ -1,0 +1,21 @@
+{{ if .Pages -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {{ range $i, $page := .Pages.ByWeight -}}
+    {{ if $i }},{{ end }}
+    {
+      "@type": "Question",
+      "name": {{ $page.Title | jsonify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ $page.Plain | jsonify }}
+      }
+    }
+    {{- end }}
+  ]
+}
+</script>
+{{ end -}}

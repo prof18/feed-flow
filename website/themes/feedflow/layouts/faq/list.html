@@ -1,0 +1,68 @@
+{{ define "main" }}
+{{- $hasFAQ := gt (len .Pages) 0 -}}
+{{- $enFAQ  := false -}}
+{{- if not $hasFAQ -}}
+  {{- range $.Site.Sites -}}
+    {{- if eq .Language.Lang "en" -}}
+      {{- $page := .GetPage "/faq" -}}
+      {{- if $page -}}{{- $enFAQ = $page -}}{{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+<div class="page-header">
+  <div class="container container-sm">
+    <span class="eyebrow">Support</span>
+    <h1>{{ with .Params.heading }}{{ . }}{{ else }}Frequently asked questions{{ end }}</h1>
+    <p>{{ .Content }}</p>
+  </div>
+</div>
+
+<section class="section faq-page-section">
+  <div class="container container-sm">
+
+    {{- if not $hasFAQ }}
+    <div class="faq-fallback-notice">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>This FAQ is still being translated. Showing English answers below.</span>
+    </div>
+    <meta name="robots" content="noindex,follow">
+    {{- end }}
+
+    <div class="faq-search-wrap" hidden>
+      <svg class="faq-search-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search"
+             class="faq-search"
+             placeholder="Search questions…"
+             aria-label="Search FAQ">
+    </div>
+
+    <div role="list">
+      {{- $pages := .Pages.ByWeight -}}
+      {{- if not $hasFAQ -}}{{- if $enFAQ -}}{{- $pages = $enFAQ.Pages.ByWeight -}}{{- end -}}{{- end -}}
+      {{ range $pages }}
+      <details class="faq-item-page" role="listitem">
+        <summary>
+          {{ .Title }}
+          <svg class="faq-arrow" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="faq-answer-page">
+          {{ .Content }}
+        </div>
+      </details>
+      {{ end }}
+    </div>
+
+    <div class="faq-support-card">
+      <div>
+        <strong>Still have a question?</strong>
+        <p>Open an issue on GitHub and the community will help.</p>
+      </div>
+      <a href="{{ .Site.Params.reportIssue }}" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">
+        Open an issue →
+      </a>
+    </div>
+
+  </div>
+</section>
+{{ end }}

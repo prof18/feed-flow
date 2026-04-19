@@ -1,0 +1,46 @@
+{{ define "main" }}
+<div class="page-header">
+  <div class="container container-sm">
+    <span class="eyebrow">Changelog &amp; Announcements</span>
+    <h1>Updates</h1>
+    <p>Release notes, new features, and announcements from FeedFlow.</p>
+    {{- with .OutputFormats.Get "RSS" }}
+    <p style="margin-top:1rem">
+      <a href="{{ .Permalink }}" class="btn btn-ghost btn-sm">
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+        Subscribe via RSS
+      </a>
+    </p>
+    {{- end }}
+  </div>
+</div>
+
+<section class="section updates-list">
+  <div class="container container-sm">
+    <div class="updates-index">
+      {{ range .Pages.ByDate.Reverse }}
+      <a href="{{ .RelPermalink }}" class="update-entry">
+        <div class="update-meta">
+          <time class="update-date" datetime="{{ .Date.Format "2006-01-02" }}">
+            {{ .Date.Format "Jan 2, 2006" }}
+          </time>
+          {{ with .Params.entry_kind }}
+          <span class="update-badge badge-{{ . }}">
+            {{ if eq . "release" }}{{ with $.Params.version }}v{{ . }} {{ end }}Release{{ else }}Note{{ end }}
+          </span>
+          {{ end }}
+        </div>
+        <div class="update-content">
+          <div class="update-title">{{ .Title }}</div>
+          {{ with .Params.summary }}
+          <p class="update-summary">{{ . }}</p>
+          {{ else }}
+          <p class="update-summary">{{ .Summary }}</p>
+          {{ end }}
+        </div>
+      </a>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}

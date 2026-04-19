@@ -1,0 +1,46 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="{{ .Site.BaseURL }}" class="footer-brand-name">
+          <img src="/images/logo.svg" alt="" width="26" height="26">
+          FeedFlow
+        </a>
+        <p>Minimal RSS reader for Android, iOS, macOS, Windows, and Linux. Your feeds, in the order they were published.</p>
+        <a href="{{ .Site.Params.donate }}" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">Donate ♥</a>
+      </div>
+
+      <div class="footer-col" id="footer-downloads">
+        <h4>Download</h4>
+        <div class="footer-download-groups">
+          {{ range .Site.Data.downloads.platforms -}}
+          <section class="footer-download-group" aria-labelledby="download-{{ lower .name | replaceRE `[^a-z0-9]` `-` }}">
+            <h5 class="footer-download-group-title" id="download-{{ lower .name | replaceRE `[^a-z0-9]` `-` }}">{{ .name }}</h5>
+            <ul class="footer-links" role="list">
+              {{- range .links }}
+              <li><a href="{{ .url }}" {{ if not (strings.HasPrefix .url "/") }}target="_blank" rel="noopener"{{ end }}>{{ .title }}</a></li>
+              {{- end }}
+            </ul>
+          </section>
+          {{- end }}
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul class="footer-links" role="list">
+          <li><a href="{{ .Site.BaseURL | relLangURL }}updates/">Updates</a></li>
+          <li><a href="{{ .Site.Params.github }}" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="{{ .Site.Params.weblate }}" target="_blank" rel="noopener">Translate on Weblate</a></li>
+          <li><a href="{{ .Site.Params.privacy }}" target="_blank" rel="noopener">Privacy Policy</a></li>
+          <li><a href="{{ .Site.Params.reportIssue }}" target="_blank" rel="noopener">Report an Issue</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© {{ now.Year }} <a href="{{ .Site.Params.authorURL }}" target="_blank" rel="noopener" style="color:rgba(255,255,255,.65)">{{ .Site.Params.authorName }}</a>. Open source under Apache 2.0.</span>
+      <span>Made with care for the open web.</span>
+    </div>
+  </div>
+</footer>

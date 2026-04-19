@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}"{{ if eq .Site.Language.Lang "fa" }} dir="rtl"{{ end }}>
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body class="{{ if .IsHome }}is-home{{ end }}{{ if .IsPage }} is-page{{ end }}">
+  {{ partial "nav.html" . }}
+  <main id="main">
+    {{ block "main" . }}{{ end }}
+  </main>
+  {{ partial "footer.html" . }}
+
+  {{- $nav := resources.Get "js/nav.js" | minify | fingerprint -}}
+  <script src="{{ $nav.RelPermalink }}" defer></script>
+  {{- $faq := resources.Get "js/faq.js" | minify | fingerprint -}}
+  <script src="{{ $faq.RelPermalink }}" defer></script>
+  {{- $pd := resources.Get "js/platform-detect.js" | minify | fingerprint -}}
+  <script src="{{ $pd.RelPermalink }}" defer></script>
+  {{- $gallery := resources.Get "js/gallery.js" | minify | fingerprint -}}
+  <script src="{{ $gallery.RelPermalink }}" defer></script>
+</body>
+</html>

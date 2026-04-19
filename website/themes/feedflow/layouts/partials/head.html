@@ -1,0 +1,70 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+{{- $title := .Title -}}
+{{- $desc  := cond (ne .Description "") .Description (.Site.Params.description | default .Site.Title) -}}
+
+<title>{{ $title }}</title>
+<meta name="description" content="{{ $desc }}">
+
+{{- /* Canonical */}}
+<link rel="canonical" href="{{ .Permalink }}">
+
+{{- /* hreflang */}}
+{{ range .AllTranslations -}}
+<link rel="alternate" hreflang="{{ .Site.Language.LanguageCode | default .Site.Language.Lang }}" href="{{ .Permalink }}">
+{{ end -}}
+<link rel="alternate" hreflang="x-default" href="{{ .Site.Home.Permalink }}">
+
+{{- /* OpenGraph */}}
+<meta property="og:title"       content="{{ $title }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:url"         content="{{ .Permalink }}">
+<meta property="og:site_name"   content="FeedFlow">
+<meta property="og:type"        content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+{{- with .Site.Params.locale }}<meta property="og:locale" content="{{ . }}">{{ end }}
+<meta property="og:image"       content="{{ .Site.BaseURL }}images/og-default.png">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+
+{{- /* Twitter card */}}
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="{{ $title }}">
+<meta name="twitter:description" content="{{ $desc }}">
+<meta name="twitter:image"       content="{{ .Site.BaseURL }}images/og-default.png">
+{{- with .Site.Params.twitterHandle }}
+<meta name="twitter:site" content="{{ . }}">
+{{ end -}}
+
+{{- /* Favicon */}}
+<link rel="icon"             href="/images/favicon/favicon.ico" sizes="any">
+<link rel="icon"             href="/images/favicon/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="/images/favicon/apple-touch-icon.png">
+<link rel="manifest"         href="/images/favicon/manifest.json">
+
+{{- /* Fonts — Google Fonts with preconnect */}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,600;1,9..144,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+{{- /* CSS */}}
+{{- $css := resources.Get "css/app.css" | minify | fingerprint -}}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}">
+
+{{- /* Schema.org JSON-LD */}}
+{{ partial "schema/organization.html" . }}
+{{- if .IsHome -}}
+  {{ partial "schema/software-application.html" . }}
+{{- end -}}
+{{- if eq .Type "faq" -}}
+  {{ partial "schema/faq-page.html" . }}
+{{- end -}}
+{{- if and (eq .Section "updates") .IsPage -}}
+  {{ partial "schema/blog-posting.html" . }}
+{{- end -}}
+
+{{- /* RSS autodiscovery */}}
+{{ range .AlternativeOutputFormats -}}
+  <link rel="{{ .Rel }}" type="{{ .MediaType.Type | html }}" href="{{ .Permalink | safeURL }}" title="{{ $.Site.Title }}">
+{{ end -}}

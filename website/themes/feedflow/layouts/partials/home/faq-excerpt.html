@@ -1,0 +1,30 @@
+{{- $faqPage := .Site.GetPage "/faq" -}}
+{{ if $faqPage -}}
+{{- $faqItems := first 3 $faqPage.Pages.ByWeight -}}
+{{ if $faqItems -}}
+<section class="section faq-excerpt" aria-labelledby="faq-excerpt-heading">
+  <div class="container container-sm">
+    <header class="faq-excerpt-header">
+      <div>
+        <span class="eyebrow">FAQ</span>
+        <h2 id="faq-excerpt-heading">Common questions.</h2>
+      </div>
+    </header>
+
+    <div class="faq-list" role="list">
+      {{ range $faqItems }}
+      <details class="faq-item" role="listitem">
+        <summary>
+          {{ .Title }}
+          <svg class="faq-arrow" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="faq-answer">
+          {{ .Content }}
+        </div>
+      </details>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{- end -}}
+{{- end }}

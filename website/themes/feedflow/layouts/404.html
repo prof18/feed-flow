@@ -1,0 +1,12 @@
+{{ define "main" }}
+<div class="not-found">
+  <div class="container">
+    <div class="not-found-inner">
+      <span class="not-found-code">404</span>
+      <h1>Page not found</h1>
+      <p>The page you're looking for doesn't exist or has been moved.</p>
+      <a href="{{ .Site.BaseURL }}" class="btn btn-primary">Go home</a>
+    </div>
+  </div>
+</div>
+{{ end }}

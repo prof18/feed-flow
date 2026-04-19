@@ -1,0 +1,58 @@
+{{ define "main" }}
+<div class="update-post-header">
+  <div class="container container-sm">
+    <div class="update-post-meta">
+      {{ with .Params.entry_kind }}
+      <span class="update-badge badge-{{ . }}">
+        {{ if eq . "release" }}{{ with $.Params.version }}v{{ . }} {{ end }}Release{{ else }}Note{{ end }}
+      </span>
+      {{ end }}
+      <time class="update-date" datetime="{{ .Date.Format "2006-01-02" }}">
+        {{ .Date.Format "January 2, 2006" }}
+      </time>
+    </div>
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.summary }}
+    <p class="lede">{{ . }}</p>
+    {{ end }}
+  </div>
+</div>
+
+<div class="container container-sm">
+  <article class="post-body prose">
+    {{ .Content }}
+  </article>
+
+  {{- with .Site.GetPage "/updates" -}}
+  {{- $rss := .OutputFormats.Get "RSS" -}}
+  {{- if $rss }}
+  <div class="rss-subscribe-card">
+    <div>
+      <strong>Subscribe to FeedFlow updates</strong>
+      <p>Add this feed to FeedFlow or any RSS reader to get notified about new releases.</p>
+    </div>
+    <a href="{{ $rss.Permalink }}" class="btn btn-primary btn-sm">
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+      Subscribe
+    </a>
+  </div>
+  {{- end -}}
+  {{- end }}
+
+  <nav class="post-nav" aria-label="Post navigation">
+    {{ with .PrevInSection }}
+    <a href="{{ .RelPermalink }}" class="post-nav-link">
+      <span class="post-nav-dir">← Older</span>
+      <span class="post-nav-title">{{ .Title }}</span>
+    </a>
+    {{ else }}<div></div>{{ end }}
+
+    {{ with .NextInSection }}
+    <a href="{{ .RelPermalink }}" class="post-nav-link" style="text-align:right">
+      <span class="post-nav-dir">Newer →</span>
+      <span class="post-nav-title">{{ .Title }}</span>
+    </a>
+    {{ end }}
+  </nav>
+</div>
+{{ end }}

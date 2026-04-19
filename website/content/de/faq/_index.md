@@ -1,9 +1,15 @@
 ---
-title: "Frequently Asked Questions | FeedFlow"
-description: "Find answers to common questions about FeedFlow RSS Reader — sync, reader mode, OPML import, and more."
+# translatable
+title: "Häufig gestellte Fragen | FeedFlow"
+
+description: "Antworten auf häufige Fragen über FeedFlow RSS Reader"
+
+heading: "Häufig gestellte Fragen"
+
+# do not translate
 type: "faq"
+
 layout: "list"
-heading: "Frequently asked questions"
 ---
 
 Willkommen im FeedFlow FAQ Bereich. Hier findest du Antworten auf die häufigsten

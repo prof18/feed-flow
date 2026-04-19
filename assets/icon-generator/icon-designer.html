@@ -1,0 +1,1096 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>F Designer — Parametric + 3D</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f12; color: #e8e8ea; display: flex; overflow: hidden;
+  }
+  .sidebar {
+    width: 320px; height: 100vh; overflow-y: auto;
+    background: #17171c; border-right: 1px solid #25252c;
+    padding: 20px 18px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .title { font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #8a8a94; }
+  .section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #4d4d58; margin-top: 4px; }
+  label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #6e6e78; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .range-row { display: flex; align-items: center; gap: 10px; }
+  input[type="range"] { flex: 1; cursor: pointer; accent-color: #7a5cff; }
+  .rv { font-size: 11px; color: #b8b8c0; font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; font-family: ui-monospace, monospace; }
+  .reset-btn { background: none; border: none; color: #3d3d4a; font-size: 13px; cursor: pointer; padding: 0 2px; line-height: 1; flex-shrink: 0; }
+  .reset-btn:hover { color: #7a5cff; }
+  .crow { display: flex; gap: 8px; }
+  input[type="color"] { width: 40px; height: 32px; border: 1px solid #2a2a32; border-radius: 6px; background: #1e1e24; cursor: pointer; padding: 2px; }
+  .chex { flex: 1; background: #1e1e24; border: 1px solid #2a2a32; border-radius: 6px; color: #e8e8ea; padding: 7px 10px; font-size: 12px; font-family: ui-monospace, monospace; outline: none; }
+  .chex:focus { border-color: #7a5cff; }
+  hr { border: none; border-top: 1px solid #22222a; margin: 4px 0; }
+  .btn { background: #7a5cff; color: #fff; border: none; border-radius: 7px; padding: 10px 0; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; width: 100%; }
+  .btn:hover { background: #8d72ff; }
+  .btn.sec { background: #1e1e24; border: 1px solid #2a2a32; color: #a0a0a8; }
+  .btn.sec:hover { background: #25252c; }
+  .btns { display: flex; flex-direction: column; gap: 6px; }
+  select { flex: 1; background: #1e1e24; border: 1px solid #2a2a32; border-radius: 6px; color: #e8e8ea; padding: 7px 10px; font-size: 12px; outline: none; cursor: pointer; }
+  .toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .toggle input { cursor: pointer; }
+  .status { font-size: 11px; color: #7a5cff; min-height: 14px; }
+  .stage { flex: 1; height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px; background: radial-gradient(circle at 30% 20%, #1a1a22, #0a0a0e 70%); }
+  .previews { display: flex; gap: 32px; align-items: flex-end; flex-wrap: wrap; justify-content: center; }
+  .pitem { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .pitem canvas { box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .pitem canvas.social-preview {
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 25%, #171a24, #08090e 74%);
+  }
+  .plabel { font-size: 10px; color: #4d4d58; letter-spacing: 0.12em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="title">F Designer</div>
+  <div class="status" id="status"></div>
+
+  <div class="section-title">Canvas</div>
+  <div class="field">
+    <label>Background Mid</label>
+    <div class="crow">
+      <input type="color" id="iBg" value="#3d4db7">
+      <input class="chex" id="hBg" value="#3d4db7" maxlength="7">
+    </div>
+  </div>
+  <div class="field">
+    <label>Corner Radius</label>
+    <div class="range-row">
+      <input type="range" id="iCorner" min="0" max="50" value="22" data-default="22">
+      <span class="rv" id="vCorner">22%</span>
+    </div>
+  </div>
+
+  <hr>
+  <div class="section-title">F Shape</div>
+
+  <div class="field">
+    <label>F Color</label>
+    <div class="crow">
+      <input type="color" id="iFill" value="#ffffff">
+      <input class="chex" id="hFill" value="#ffffff" maxlength="7">
+    </div>
+  </div>
+  <div class="field">
+    <label>Size</label>
+    <div class="range-row">
+      <input type="range" id="iFSize" min="30" max="95" value="68" step="1" data-default="68">
+      <span class="rv" id="vFSize">68%</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Aspect (W:H)</label>
+    <div class="range-row">
+      <input type="range" id="iAspect" min="50" max="120" value="80" step="1" data-default="80">
+      <span class="rv" id="vAspect">80%</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Stem Width</label>
+    <div class="range-row">
+      <input type="range" id="iStemW" min="10" max="55" value="40" step="1" data-default="40">
+      <span class="rv" id="vStemW">40%</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Top Arm Length</label>
+    <div class="range-row">
+      <input type="range" id="iTopW" min="30" max="100" value="86" step="1" data-default="86">
+      <span class="rv" id="vTopW">86%</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Top Arm Thickness</label>
+    <div class="range-row">
+      <input type="range" id="iTopH" min="10" max="40" value="28" step="1" data-default="28">
+      <span class="rv" id="vTopH">28%</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Mid Arm Length</label>
+    <div class="range-row">
+      <input type="range" id="iMidW" min="20" max="95" value="60" step="1" data-default="60">
+      <span class="rv" id="vMidW">60%</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Mid Arm Thickness</label>
+    <div class="range-row">
+      <input type="range" id="iMidH" min="8" max="35" value="27" step="1" data-default="27">
+      <span class="rv" id="vMidH">27%</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Mid Arm Position</label>
+    <div class="range-row">
+      <input type="range" id="iMidY" min="28" max="68" value="36" step="1" data-default="36">
+      <span class="rv" id="vMidY">36%</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>F Corner Radius</label>
+    <div class="range-row">
+      <input type="range" id="iFCorner" min="0" max="30" value="10" step="1" data-default="10">
+      <span class="rv" id="vFCorner">10%</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Italic Skew</label>
+    <div class="range-row">
+      <input type="range" id="iSkew" min="-30" max="30" value="-10" step="1" data-default="-10">
+      <span class="rv" id="vSkew">-10°</span>
+    </div>
+  </div>
+  <div class="field">
+    <button class="btn sec" id="btnCenter" style="margin-bottom:4px">Center F in Icon</button>
+  </div>
+  <div class="field">
+    <label>Offset X</label>
+    <div class="range-row">
+      <input type="range" id="iOffX" min="-50" max="50" value="18" step="1" data-default="18">
+      <span class="rv" id="vOffX">18%</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Offset Y</label>
+    <div class="range-row">
+      <input type="range" id="iOffY" min="-50" max="50" value="-4" step="1" data-default="-4">
+      <span class="rv" id="vOffY">-4%</span>
+    </div>
+  </div>
+
+  <hr>
+  <div class="section-title">3D Effect</div>
+  <div class="field">
+    <label>Style</label>
+    <select id="iStyle">
+      <option value="extrude">Extrude (solid depth)</option>
+      <option value="shadow">Drop shadow</option>
+      <option value="outline">Back outline</option>
+      <option value="none">None</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Depth X</label>
+    <div class="range-row">
+      <input type="range" id="iDX" min="-20" max="20" value="-6" step="1" data-default="-6">
+      <span class="rv" id="vDX">-6</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Depth Y</label>
+    <div class="range-row">
+      <input type="range" id="iDY" min="-20" max="20" value="5" step="1" data-default="5">
+      <span class="rv" id="vDY">5</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>3D Color</label>
+    <div class="crow">
+      <input type="color" id="iDColor" value="#161f52">
+      <input class="chex" id="hDColor" value="#161f52" maxlength="7">
+    </div>
+  </div>
+
+  <hr>
+  <div class="section-title">Social Export</div>
+  <div class="field">
+    <label>Social F Scale</label>
+    <div class="range-row">
+      <input type="range" id="iSocialScale" min="45" max="90" value="66" step="1" data-default="66">
+      <span class="rv" id="vSocialScale">66%</span>
+    </div>
+  </div>
+
+  <hr>
+  <div class="section-title">Export</div>
+  <div class="btns">
+    <button class="btn" id="btnSVG">Export SVG</button>
+    <button class="btn sec" id="btnPNG">Export PNG (1024px)</button>
+    <button class="btn sec" id="btnSocialPNG">Export Social PNG (1024px)</button>
+    <button class="btn sec" id="btnFlatpakPng">Export Flatpak PNG (512px)</button>
+    <button class="btn sec" id="btnFlatpakSvg">Export Flatpak SVG</button>
+    <button class="btn sec" id="btnFaviconIco">Export Favicon ICO</button>
+    <button class="btn sec" id="btnGlyphSVG">Export Glyph SVG (no bg)</button>
+    <button class="btn sec" id="btnAndroidMonoSVG">Export Android Mono SVG</button>
+    <button class="btn sec" id="btnWindowsMsixZip">Export Windows ZIP</button>
+    <button class="btn sec" id="btnWindowsStoreZip">Export Windows Store Listing ZIP</button>
+    <button class="btn sec" id="btnCopyState">Copy State JSON</button>
+    <button class="btn sec" id="btnImportState">Import State JSON</button>
+  </div>
+
+  <hr>
+  <div class="section-title">Presets</div>
+  <div class="btns">
+    <button class="btn sec" id="presetClassic">Classic FeedFlow</button>
+  </div>
+</aside>
+
+<main class="stage">
+  <div class="previews">
+    <div class="pitem"><canvas id="c512" width="512" height="512" style="width:320px;height:320px;border-radius:22.5%"></canvas><span class="plabel">512</span></div>
+    <div class="pitem"><canvas id="c128" width="128" height="128" style="width:128px;height:128px;border-radius:22.5%"></canvas><span class="plabel">128</span></div>
+    <div class="pitem"><canvas id="c64" width="64" height="64" style="width:64px;height:64px;border-radius:22.5%"></canvas><span class="plabel">64</span></div>
+    <div class="pitem"><canvas id="cSocial" class="social-preview" width="256" height="256" style="width:160px;height:160px"></canvas><span class="plabel">Social</span></div>
+  </div>
+</main>
+
+<script>
+  // --- UI wiring ---
+  function rangeCtrl(id, vid, suffix) {
+    const el = document.getElementById(id);
+    const out = document.getElementById(vid);
+    const update = () => { out.textContent = el.value + suffix; render(); };
+    el.addEventListener('input', update);
+    update();
+  }
+  function colorCtrl(cid, hid) {
+    const c = document.getElementById(cid);
+    const h = document.getElementById(hid);
+    c.addEventListener('input', () => { h.value = c.value; render(); });
+    h.addEventListener('input', () => { if (/^#[0-9a-fA-F]{6}$/.test(h.value)) { c.value = h.value; render(); } });
+  }
+
+  ['iFSize:vFSize:%','iAspect:vAspect:%','iStemW:vStemW:%','iTopW:vTopW:%','iTopH:vTopH:%',
+   'iMidW:vMidW:%','iMidH:vMidH:%','iMidY:vMidY:%','iFCorner:vFCorner:%','iSkew:vSkew:°',
+   'iOffX:vOffX:%','iOffY:vOffY:%','iCorner:vCorner:%','iDX:vDX:','iDY:vDY:','iSocialScale:vSocialScale:%']
+    .forEach(s => { const [id,vid,sfx] = s.split(':'); rangeCtrl(id, vid, sfx); });
+
+  colorCtrl('iBg','hBg');
+  colorCtrl('iFill','hFill');
+  colorCtrl('iDColor','hDColor');
+  document.getElementById('iStyle').addEventListener('change', render);
+
+  function getS() {
+    return {
+      bg: document.getElementById('iBg').value,
+      fill: document.getElementById('iFill').value,
+      fSize: +document.getElementById('iFSize').value,
+      aspect: +document.getElementById('iAspect').value,
+      stemW: +document.getElementById('iStemW').value,
+      topW: +document.getElementById('iTopW').value,
+      topH: +document.getElementById('iTopH').value,
+      midW: +document.getElementById('iMidW').value,
+      midH: +document.getElementById('iMidH').value,
+      midY: +document.getElementById('iMidY').value,
+      fCorner: +document.getElementById('iFCorner').value,
+      skew: +document.getElementById('iSkew').value,
+      offX: +document.getElementById('iOffX').value,
+      offY: +document.getElementById('iOffY').value,
+      corner: +document.getElementById('iCorner').value,
+      style: document.getElementById('iStyle').value,
+      dx: +document.getElementById('iDX').value,
+      dy: +document.getElementById('iDY').value,
+      dColor: document.getElementById('iDColor').value,
+      socialScale: +document.getElementById('iSocialScale').value,
+    };
+  }
+
+  // --- Path building ---
+  function rrPath(ctx, x, y, w, h, r) {
+    r = Math.max(0, Math.min(r, Math.min(w, h) / 2));
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  }
+
+  // F shape = 3 rounded rects drawn into same path
+  function tracePF(ctx, W, H, sW, tW, tH, mW, mH, mY, r) {
+    rrPath(ctx, 0, 0, sW, H, r);
+    rrPath(ctx, 0, 0, tW, tH, r);
+    rrPath(ctx, 0, mY, mW, mH, r);
+  }
+
+  // Round-rect clip for canvas
+  function rrClipCanvas(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    rrPath(ctx, x, y, w, h, r);
+  }
+
+  function fDims(size, s) {
+    const H = size * s.fSize / 100;
+    const W = H * s.aspect / 100;
+    return {
+      W, H,
+      sW: W * s.stemW / 100,
+      tW: W * s.topW / 100,
+      tH: H * s.topH / 100,
+      mW: W * s.midW / 100,
+      mH: H * s.midH / 100,
+      mY: H * s.midY / 100,
+      r: W * s.fCorner / 100,
+    };
+  }
+
+  function layout(size, s) {
+    const d = fDims(size, s);
+    const tanSk = Math.tan(s.skew * Math.PI / 180);
+    const skewShift = d.H * (-tanSk);
+    return {
+      d,
+      tanSk,
+      cx: (size - d.W - skewShift) / 2 + size * s.offX / 100,
+      cy: (size - d.H) / 2 + size * s.offY / 100,
+      dx: size * s.dx / 100,
+      dy: size * s.dy / 100,
+    };
+  }
+
+  function unionBounds(a, b) {
+    if (!a) return { ...b };
+    return {
+      left: Math.min(a.left, b.left),
+      top: Math.min(a.top, b.top),
+      right: Math.max(a.right, b.right),
+      bottom: Math.max(a.bottom, b.bottom),
+    };
+  }
+
+  function moveBounds(bounds, dx, dy) {
+    return {
+      left: bounds.left + dx,
+      top: bounds.top + dy,
+      right: bounds.right + dx,
+      bottom: bounds.bottom + dy,
+    };
+  }
+
+  function expandBounds(bounds, pad) {
+    return {
+      left: bounds.left - pad,
+      top: bounds.top - pad,
+      right: bounds.right + pad,
+      bottom: bounds.bottom + pad,
+    };
+  }
+
+  function skewedRectBounds(x, y, w, h, tanSk) {
+    const x1 = x + tanSk * y;
+    const x2 = x + w + tanSk * y;
+    const x3 = x + tanSk * (y + h);
+    const x4 = x + w + tanSk * (y + h);
+    return {
+      left: Math.min(x1, x2, x3, x4),
+      top: y,
+      right: Math.max(x1, x2, x3, x4),
+      bottom: y + h,
+    };
+  }
+
+  function glyphBounds(size, s, opts = {}) {
+    const includeDepth = opts.includeDepth !== false;
+    const { d, tanSk, cx, cy, dx, dy } = layout(size, s);
+    const rects = [
+      skewedRectBounds(0, 0, d.sW, d.H, tanSk),
+      skewedRectBounds(0, 0, d.tW, d.tH, tanSk),
+      skewedRectBounds(0, d.mY, d.mW, d.mH, tanSk),
+    ];
+    let bounds = rects
+      .map(b => moveBounds(b, cx, cy))
+      .reduce((acc, b) => unionBounds(acc, b), null);
+
+    if (includeDepth && (dx !== 0 || dy !== 0)) {
+      if (s.style === 'extrude' || s.style === 'shadow') {
+        bounds = unionBounds(bounds, moveBounds(bounds, dx, dy));
+      } else if (s.style === 'outline') {
+        const strokePad = Math.max(2, size * 0.01) / 2;
+        bounds = unionBounds(bounds, expandBounds(moveBounds(bounds, dx, dy), strokePad));
+      }
+    }
+
+    return {
+      ...bounds,
+      width: bounds.right - bounds.left,
+      height: bounds.bottom - bounds.top,
+    };
+  }
+
+  function getBackgroundGradientStops(s, opts = {}) {
+    if (opts.variant === 'windows-store') {
+      return [
+        { offset: 0, color: '#5367d8' },
+        { offset: 0.56, color: s.bg },
+        { offset: 1, color: '#3142a8' },
+      ];
+    }
+    return [
+      { offset: 0, color: '#5a6fe0' },
+      { offset: 0.5, color: s.bg },
+      { offset: 0.95, color: '#2a3996' },
+    ];
+  }
+
+  function makeCanvasBackgroundGradient(ctx, size, s, opts = {}) {
+    const g = ctx.createLinearGradient(0, 0, size, size);
+    getBackgroundGradientStops(s, opts).forEach(stop => g.addColorStop(stop.offset, stop.color));
+    return g;
+  }
+
+  function drawTo(ctx, size, s, opts = {}) {
+    ctx.clearRect(0, 0, size, size);
+    // bg
+    const cornerR = size * s.corner / 100;
+    ctx.save();
+    rrClipCanvas(ctx, 0, 0, size, size, cornerR);
+    ctx.fillStyle = makeCanvasBackgroundGradient(ctx, size, s, opts);
+    ctx.fill();
+    ctx.restore();
+
+    const { d, tanSk, cx, cy, dx, dy } = layout(size, s);
+
+    // Clip everything to rounded canvas
+    ctx.save();
+    rrClipCanvas(ctx, 0, 0, size, size, cornerR);
+    ctx.clip();
+
+    ctx.transform(1, 0, tanSk, 1, cx, cy);
+
+    // 3D depth (behind)
+    if (s.style === 'extrude' && (dx !== 0 || dy !== 0)) {
+      const steps = Math.max(2, Math.ceil(Math.hypot(dx, dy) * 1.5));
+      ctx.fillStyle = s.dColor;
+      for (let i = steps; i >= 1; i--) {
+        const ox = dx * i / steps;
+        const oy = dy * i / steps;
+        ctx.save();
+        ctx.translate(ox, oy);
+        ctx.beginPath();
+        tracePF(ctx, d.W, d.H, d.sW, d.tW, d.tH, d.mW, d.mH, d.mY, d.r);
+        ctx.fill('nonzero');
+        ctx.restore();
+      }
+    } else if (s.style === 'shadow' && (dx !== 0 || dy !== 0)) {
+      ctx.save();
+      ctx.translate(dx, dy);
+      ctx.beginPath();
+      tracePF(ctx, d.W, d.H, d.sW, d.tW, d.tH, d.mW, d.mH, d.mY, d.r);
+      ctx.fillStyle = s.dColor;
+      ctx.fill('nonzero');
+      ctx.restore();
+    } else if (s.style === 'outline' && (dx !== 0 || dy !== 0)) {
+      ctx.save();
+      ctx.translate(dx, dy);
+      ctx.beginPath();
+      tracePF(ctx, d.W, d.H, d.sW, d.tW, d.tH, d.mW, d.mH, d.mY, d.r);
+      ctx.strokeStyle = s.dColor;
+      ctx.lineWidth = Math.max(2, size * 0.01);
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Front F
+    ctx.beginPath();
+    tracePF(ctx, d.W, d.H, d.sW, d.tW, d.tH, d.mW, d.mH, d.mY, d.r);
+    ctx.fillStyle = s.fill;
+    ctx.fill('nonzero');
+
+    ctx.restore();
+  }
+
+  function drawSocialTo(ctx, size, s) {
+    const glyphCanvas = document.createElement('canvas');
+    glyphCanvas.width = glyphCanvas.height = size;
+    drawFittedGlyphTo(glyphCanvas.getContext('2d'), size, size, s, {
+      includeDepth: true,
+      fill: s.fill,
+      contentScale: Math.max(0.45, Math.min(0.9, s.socialScale / 100)),
+    });
+
+    ctx.clearRect(0, 0, size, size);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+    ctx.fillStyle = makeCanvasBackgroundGradient(ctx, size, s);
+    ctx.fillRect(0, 0, size, size);
+    ctx.drawImage(glyphCanvas, 0, 0);
+    ctx.restore();
+  }
+
+  function getWindowsStoreBrandState(s) {
+    return {
+      ...s,
+      corner: Math.max(16, s.corner - 5),
+      dx: Math.round(s.dx * 0.45),
+      dy: Math.round(s.dy * 0.45),
+    };
+  }
+
+  function render() {
+    const s = getS();
+    [['c512',512],['c128',128],['c64',64]].forEach(([id,sz]) => {
+      drawTo(document.getElementById(id).getContext('2d'), sz, s);
+    });
+    drawSocialTo(document.getElementById('cSocial').getContext('2d'), 256, s);
+  }
+
+  // --- SVG export ---
+  function rrSvg(x, y, w, h, r) {
+    r = Math.max(0, Math.min(r, Math.min(w, h) / 2));
+    const n = v => (Math.round(v * 100) / 100).toString();
+    return `M${n(x+r)},${n(y)} H${n(x+w-r)} A${n(r)},${n(r)} 0 0 1 ${n(x+w)},${n(y+r)} V${n(y+h-r)} A${n(r)},${n(r)} 0 0 1 ${n(x+w-r)},${n(y+h)} H${n(x+r)} A${n(r)},${n(r)} 0 0 1 ${n(x)},${n(y+h-r)} V${n(y+r)} A${n(r)},${n(r)} 0 0 1 ${n(x+r)},${n(y)} Z`;
+  }
+
+  function buildFPathD(size, s) {
+    const d = fDims(size, s);
+    return rrSvg(0,0,d.sW,d.H,d.r) + ' ' + rrSvg(0,0,d.tW,d.tH,d.r) + ' ' + rrSvg(0,d.mY,d.mW,d.mH,d.r);
+  }
+
+  function buildSVG(size, s, opts = {}) {
+    const withBg = opts.withBg !== false;
+    const { d, tanSk, cx, cy, dx, dy } = layout(size, s);
+    const cornerR = size * s.corner / 100;
+    const fPath = buildFPathD(size, s);
+    const n = v => (Math.round(v * 100) / 100).toString();
+    const xf = `matrix(1 0 ${tanSk.toFixed(6)} 1 ${n(cx)} ${n(cy)})`;
+
+    let depthLayer = '';
+    if (dx !== 0 || dy !== 0) {
+      if (s.style === 'extrude') {
+        const steps = Math.max(2, Math.ceil(Math.hypot(dx, dy) * 1.5));
+        const paths = [];
+        for (let i = steps; i >= 1; i--) {
+          const ox = dx * i / steps, oy = dy * i / steps;
+          paths.push(`<g transform="translate(${n(ox)} ${n(oy)})"><path d="${fPath}" fill="${s.dColor}"/></g>`);
+        }
+        depthLayer = paths.join('');
+      } else if (s.style === 'shadow') {
+        depthLayer = `<g transform="translate(${n(dx)} ${n(dy)})"><path d="${fPath}" fill="${s.dColor}"/></g>`;
+      } else if (s.style === 'outline') {
+        const lw = Math.max(2, size * 0.01);
+        depthLayer = `<g transform="translate(${n(dx)} ${n(dy)})"><path d="${fPath}" fill="none" stroke="${s.dColor}" stroke-width="${n(lw)}" stroke-linejoin="round"/></g>`;
+      }
+    }
+
+    const gradientStops = getBackgroundGradientStops(s, opts)
+      .map(stop => `<stop offset="${n(stop.offset * 100)}%" stop-color="${stop.color}"/>`)
+      .join('');
+    const bgRect = withBg ? `<rect x="0" y="0" width="${size}" height="${size}" rx="${n(cornerR)}" ry="${n(cornerR)}" fill="url(#bgGradient)"/>` : '';
+    const clip = withBg ? `<defs><clipPath id="clip"><rect x="0" y="0" width="${size}" height="${size}" rx="${n(cornerR)}" ry="${n(cornerR)}"/></clipPath><linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">${gradientStops}</linearGradient></defs>` : '';
+    const clipAttr = withBg ? ' clip-path="url(#clip)"' : '';
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
+${clip}${bgRect}<g${clipAttr}><g transform="${xf}">${depthLayer}<path d="${fPath}" fill="${s.fill}"/></g></g></svg>`;
+  }
+
+  function buildAndroidAdaptiveGlyphSVG(s, opts = {}) {
+    const size = 108;
+    const safeZone = 66;
+    const includeDepth = opts.includeDepth !== false;
+    const fill = opts.fill ?? s.fill;
+    const { tanSk, cx, cy, dx, dy } = layout(size, s);
+    const bounds = glyphBounds(size, s, { includeDepth });
+    // Fit the visible glyph into Android's 66x66 safe zone inside the 108x108 layer.
+    const scale = safeZone / Math.max(bounds.width, bounds.height);
+    const centerX = (bounds.left + bounds.right) / 2;
+    const centerY = (bounds.top + bounds.bottom) / 2;
+    const tx = size / 2 - scale * centerX;
+    const ty = size / 2 - scale * centerY;
+    const n = v => (Math.round(v * 100) / 100).toString();
+    const fPath = buildFPathD(size, s);
+    const xf = `matrix(1 0 ${tanSk.toFixed(6)} 1 ${n(cx)} ${n(cy)})`;
+    const fit = `matrix(${n(scale)} 0 0 ${n(scale)} ${n(tx)} ${n(ty)})`;
+
+    let depthLayer = '';
+    if (includeDepth && (dx !== 0 || dy !== 0)) {
+      if (s.style === 'extrude') {
+        const steps = Math.max(2, Math.ceil(Math.hypot(dx, dy) * 1.5));
+        const paths = [];
+        for (let i = steps; i >= 1; i--) {
+          const ox = dx * i / steps;
+          const oy = dy * i / steps;
+          paths.push(`<g transform="translate(${n(ox)} ${n(oy)})"><path d="${fPath}" fill="${s.dColor}"/></g>`);
+        }
+        depthLayer = paths.join('');
+      } else if (s.style === 'shadow') {
+        depthLayer = `<g transform="translate(${n(dx)} ${n(dy)})"><path d="${fPath}" fill="${s.dColor}"/></g>`;
+      } else if (s.style === 'outline') {
+        const lw = Math.max(2, size * 0.01);
+        depthLayer = `<g transform="translate(${n(dx)} ${n(dy)})"><path d="${fPath}" fill="none" stroke="${s.dColor}" stroke-width="${n(lw)}" stroke-linejoin="round"/></g>`;
+      }
+    }
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108">
+<g transform="${fit}"><g transform="${xf}">${depthLayer}<path d="${fPath}" fill="${fill}"/></g></g></svg>`;
+  }
+
+  function drawFittedGlyphTo(ctx, width, height, s, opts = {}) {
+    const base = Math.min(width, height);
+    const includeDepth = opts.includeDepth !== false;
+    const fill = opts.fill ?? s.fill;
+    const contentScale = opts.contentScale ?? 0.86;
+    const { d, tanSk, cx, cy, dx, dy } = layout(base, s);
+    const bounds = glyphBounds(base, s, { includeDepth });
+    const scale = Math.min(
+      width * contentScale / bounds.width,
+      height * contentScale / bounds.height
+    );
+    const centerX = (bounds.left + bounds.right) / 2;
+    const centerY = (bounds.top + bounds.bottom) / 2;
+    const tx = width / 2 - scale * centerX;
+    const ty = height / 2 - scale * centerY;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.save();
+    ctx.setTransform(scale, 0, 0, scale, tx, ty);
+    ctx.transform(1, 0, tanSk, 1, cx, cy);
+
+    if (includeDepth && (dx !== 0 || dy !== 0)) {
+      if (s.style === 'extrude') {
+        const steps = Math.max(2, Math.ceil(Math.hypot(dx, dy) * 1.5));
+        ctx.fillStyle = s.dColor;
+        for (let i = steps; i >= 1; i--) {
+          const ox = dx * i / steps;
+          const oy = dy * i / steps;
+          ctx.save();
+          ctx.translate(ox, oy);
+          ctx.beginPath();
+          tracePF(ctx, d.W, d.H, d.sW, d.tW, d.tH, d.mW, d.mH, d.mY, d.r);
+          ctx.fill('nonzero');
+          ctx.restore();
+        }
+      } else if (s.style === 'shadow') {
+        ctx.save();
+        ctx.translate(dx, dy);
+        ctx.beginPath();
+        tracePF(ctx, d.W, d.H, d.sW, d.tW, d.tH, d.mW, d.mH, d.mY, d.r);
+        ctx.fillStyle = s.dColor;
+        ctx.fill('nonzero');
+        ctx.restore();
+      } else if (s.style === 'outline') {
+        ctx.save();
+        ctx.translate(dx, dy);
+        ctx.beginPath();
+        tracePF(ctx, d.W, d.H, d.sW, d.tW, d.tH, d.mW, d.mH, d.mY, d.r);
+        ctx.strokeStyle = s.dColor;
+        ctx.lineWidth = Math.max(2, base * 0.01);
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    ctx.beginPath();
+    tracePF(ctx, d.W, d.H, d.sW, d.tW, d.tH, d.mW, d.mH, d.mY, d.r);
+    ctx.fillStyle = fill;
+    ctx.fill('nonzero');
+    ctx.restore();
+  }
+
+  function canvasToBlob(canvas, type = 'image/png') {
+    return new Promise(resolve => canvas.toBlob(resolve, type));
+  }
+
+  const WINDOWS_MAIN_SCALE = 0.86;
+  const WINDOWS_SMALL_SCALE = 0.92;
+  const WINDOWS_QUALIFIER_SCALES = [100, 125, 150, 200, 400];
+  const WINDOWS_TARGETSIZE_SIZES = [16, 20, 24, 30, 32, 36, 40, 48, 60, 64, 72, 80, 96, 256];
+  const WINDOWS_SCALE_PNGS = [
+    { name: 'Square44x44Logo.png', width: 44, height: 44, contentScale: WINDOWS_SMALL_SCALE, unplated: false },
+    ...WINDOWS_QUALIFIER_SCALES.map(scale => ({
+      name: `Square44x44Logo.scale-${scale}.png`,
+      width: Math.round(44 * scale / 100),
+      height: Math.round(44 * scale / 100),
+      contentScale: scale <= 100 ? WINDOWS_SMALL_SCALE : WINDOWS_MAIN_SCALE,
+      unplated: false,
+    })),
+    { name: 'Square150x150Logo.png', width: 150, height: 150, unplated: false },
+    ...WINDOWS_QUALIFIER_SCALES.map(scale => ({
+      name: `Square150x150Logo.scale-${scale}.png`,
+      width: Math.round(150 * scale / 100),
+      height: Math.round(150 * scale / 100),
+      unplated: false,
+    })),
+    { name: 'StoreLogo.png', width: 50, height: 50, unplated: false, variant: 'windows-store', useStoreBrandState: true },
+    ...WINDOWS_QUALIFIER_SCALES.map(scale => ({
+      name: `StoreLogo.scale-${scale}.png`,
+      width: Math.round(50 * scale / 100),
+      height: Math.round(50 * scale / 100),
+      unplated: false,
+      variant: 'windows-store',
+      useStoreBrandState: true,
+    })),
+  ];
+  // We intentionally export the same plated artwork for targetsize-* assets too.
+  // This is a branding choice rather than the default Windows recommendation: it keeps
+  // the blue FeedFlow tile visible across shell surfaces instead of allowing a glyph-only,
+  // themed treatment on taskbar/Alt+Tab-like fallbacks.
+  const WINDOWS_TARGETSIZE_PNGS = WINDOWS_TARGETSIZE_SIZES.flatMap(size => {
+    return [
+      { name: `Square44x44Logo.targetsize-${size}.png`, width: size, height: size, contentScale: size <= 48 ? WINDOWS_SMALL_SCALE : WINDOWS_MAIN_SCALE, unplated: false },
+      { name: `Square44x44Logo.targetsize-${size}_altform-unplated.png`, width: size, height: size, contentScale: size <= 48 ? WINDOWS_SMALL_SCALE : WINDOWS_MAIN_SCALE, unplated: false },
+    ];
+  });
+  const WINDOWS_REQUIRED_PNGS = [...WINDOWS_SCALE_PNGS, ...WINDOWS_TARGETSIZE_PNGS];
+  const WINDOWS_ICO_SIZES = [16, 32, 48, 64, 128, 256];
+  const FAVICON_ICO_SIZES = [16, 32, 48];
+
+  async function buildWindowsPngBlob(s, spec) {
+    const canvas = document.createElement('canvas');
+    canvas.width = spec.width;
+    canvas.height = spec.height;
+    let renderState = s;
+    if (spec.useStoreBrandState) {
+      renderState = getWindowsStoreBrandState(renderState);
+    }
+    if (spec.unplated !== false) {
+      // Unplated: transparent bg, glyph only — Windows themes/plates these itself.
+      drawFittedGlyphTo(canvas.getContext('2d'), spec.width, spec.height, renderState, {
+        includeDepth: false,
+        fill: renderState.fill,
+        contentScale: spec.contentScale,
+      });
+    } else {
+      // Plated: full icon with gradient background and rounded corners (for .ico).
+      drawTo(canvas.getContext('2d'), spec.width, renderState, { variant: spec.variant });
+    }
+    return canvasToBlob(canvas, 'image/png');
+  }
+
+  // Microsoft Store listing assets: plated full icon at store-required sizes.
+  const WINDOWS_STORE_ASSETS = [
+    { name: 'StoreLogo-300.png', size: 300 },
+    { name: 'BoxArt-1080.png', size: 1080 },
+    { name: 'BoxArt-2160.png', size: 2160 },
+  ];
+
+  async function buildWindowsStoreListingZipBlob(s) {
+    const files = [];
+    const storeState = getWindowsStoreBrandState(s);
+    for (const asset of WINDOWS_STORE_ASSETS) {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = asset.size;
+      drawTo(canvas.getContext('2d'), asset.size, storeState, { variant: 'windows-store' });
+      const blob = await canvasToBlob(canvas, 'image/png');
+      files.push({ name: asset.name, bytes: new Uint8Array(await blob.arrayBuffer()) });
+    }
+    return packZipStored(files);
+  }
+
+  async function buildWindowsMsixZipBlob(s) {
+    const files = [];
+    // MSIX PNGs (explicit qualifier families + targetsize fallbacks using the same plated style)
+    for (const spec of WINDOWS_REQUIRED_PNGS) {
+      const blob = await buildWindowsPngBlob(s, spec);
+      files.push({ name: spec.name, bytes: new Uint8Array(await blob.arrayBuffer()) });
+    }
+    // MSI/EXE icon with gradient background (for standalone installer)
+    const icoBlob = await buildWindowsIcoWithBgBlob(s);
+    files.push({ name: 'icon.ico', bytes: new Uint8Array(await icoBlob.arrayBuffer()) });
+    return packZipStored(files);
+  }
+
+  // CRC32 table + minimal store-only ZIP writer (PNG/ICO are already compressed).
+  const CRC32_TABLE = (() => {
+    const t = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) {
+      let c = i;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[i] = c >>> 0;
+    }
+    return t;
+  })();
+  function crc32(bytes) {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) c = CRC32_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  function packZipStored(files) {
+    const encoder = new TextEncoder();
+    const parts = [];
+    const central = [];
+    let offset = 0;
+    for (const f of files) {
+      const nameBytes = encoder.encode(f.name);
+      const crc = crc32(f.bytes);
+      const size = f.bytes.length;
+      const lfh = new ArrayBuffer(30);
+      const v = new DataView(lfh);
+      v.setUint32(0, 0x04034b50, true);
+      v.setUint16(4, 20, true);            // version needed
+      v.setUint16(6, 0, true);             // flags
+      v.setUint16(8, 0, true);             // method: store
+      v.setUint16(10, 0, true);            // time
+      v.setUint16(12, 0x21, true);         // date (1980-01-01)
+      v.setUint32(14, crc, true);
+      v.setUint32(18, size, true);         // compressed
+      v.setUint32(22, size, true);         // uncompressed
+      v.setUint16(26, nameBytes.length, true);
+      v.setUint16(28, 0, true);            // extra len
+      parts.push(new Uint8Array(lfh), nameBytes, f.bytes);
+
+      const cdh = new ArrayBuffer(46);
+      const c = new DataView(cdh);
+      c.setUint32(0, 0x02014b50, true);
+      c.setUint16(4, 20, true);            // version made by
+      c.setUint16(6, 20, true);            // version needed
+      c.setUint16(8, 0, true);
+      c.setUint16(10, 0, true);
+      c.setUint16(12, 0, true);
+      c.setUint16(14, 0x21, true);
+      c.setUint32(16, crc, true);
+      c.setUint32(20, size, true);
+      c.setUint32(24, size, true);
+      c.setUint16(28, nameBytes.length, true);
+      c.setUint16(30, 0, true);            // extra len
+      c.setUint16(32, 0, true);            // comment len
+      c.setUint16(34, 0, true);            // disk #
+      c.setUint16(36, 0, true);            // internal attrs
+      c.setUint32(38, 0, true);            // external attrs
+      c.setUint32(42, offset, true);       // local header offset
+      central.push(new Uint8Array(cdh), nameBytes);
+
+      offset += 30 + nameBytes.length + size;
+    }
+    const cdStart = offset;
+    let cdSize = 0;
+    for (const p of central) cdSize += p.length;
+
+    const eocd = new ArrayBuffer(22);
+    const e = new DataView(eocd);
+    e.setUint32(0, 0x06054b50, true);
+    e.setUint16(4, 0, true);
+    e.setUint16(6, 0, true);
+    e.setUint16(8, files.length, true);
+    e.setUint16(10, files.length, true);
+    e.setUint32(12, cdSize, true);
+    e.setUint32(16, cdStart, true);
+    e.setUint16(20, 0, true);
+
+    return new Blob([...parts, ...central, new Uint8Array(eocd)], { type: 'application/zip' });
+  }
+
+  // Unplated ICO (transparent, glyph only) — used inside MSIX package
+  async function buildWindowsIcoBlob(s) {
+    const pngs = [];
+    for (const size of WINDOWS_ICO_SIZES) {
+      const blob = await buildWindowsPngBlob(s, {
+        width: size,
+        height: size,
+        contentScale: size <= 48 ? WINDOWS_SMALL_SCALE : WINDOWS_MAIN_SCALE,
+        unplated: true,
+      });
+      pngs.push({ size, bytes: new Uint8Array(await blob.arrayBuffer()) });
+    }
+    return packIcoPngs(pngs);
+  }
+
+  // Plated ICO (with gradient background, square corners) — used by MSI standalone installer
+  async function buildWindowsIcoWithBgBlob(s) {
+    const pngs = [];
+    for (const size of WINDOWS_ICO_SIZES) {
+      const blob = await buildWindowsPngBlob(s, {
+        width: size,
+        height: size,
+        contentScale: size <= 48 ? WINDOWS_SMALL_SCALE : WINDOWS_MAIN_SCALE,
+        unplated: false,
+      });
+      pngs.push({ size, bytes: new Uint8Array(await blob.arrayBuffer()) });
+    }
+    return packIcoPngs(pngs);
+  }
+
+  function packIcoPngs(pngs) {
+    const headerSize = 6 + pngs.length * 16;
+    let offset = headerSize;
+    const header = new ArrayBuffer(headerSize);
+    const view = new DataView(header);
+    view.setUint16(0, 0, true);
+    view.setUint16(2, 1, true);
+    view.setUint16(4, pngs.length, true);
+
+    pngs.forEach((png, index) => {
+      const entry = 6 + index * 16;
+      view.setUint8(entry, png.size === 256 ? 0 : png.size);
+      view.setUint8(entry + 1, png.size === 256 ? 0 : png.size);
+      view.setUint8(entry + 2, 0);
+      view.setUint8(entry + 3, 0);
+      view.setUint16(entry + 4, 1, true);
+      view.setUint16(entry + 6, 32, true);
+      view.setUint32(entry + 8, png.bytes.length, true);
+      view.setUint32(entry + 12, offset, true);
+      offset += png.bytes.length;
+    });
+
+    return new Blob([header, ...pngs.map(png => png.bytes)], { type: 'image/x-icon' });
+  }
+
+  async function buildFaviconIcoBlob(s) {
+    const pngs = [];
+    for (const size of FAVICON_ICO_SIZES) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      drawTo(canvas.getContext('2d'), size, s);
+      const blob = await canvasToBlob(canvas, 'image/png');
+      pngs.push({ size, bytes: new Uint8Array(await blob.arrayBuffer()) });
+    }
+    return packIcoPngs(pngs);
+  }
+
+  function download(blob, name) {
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob), download: name,
+    });
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  document.getElementById('btnSVG').addEventListener('click', () => {
+    download(new Blob([buildSVG(1024, getS())], {type:'image/svg+xml'}), 'feedflow-f.svg');
+    status('SVG exported (1024px)');
+  });
+  document.getElementById('btnFlatpakPng').addEventListener('click', () => {
+    const c = document.createElement('canvas'); c.width = c.height = 512;
+    drawTo(c.getContext('2d'), 512, getS());
+    c.toBlob(b => { download(b, 'com.prof18.feedflow.png'); status('Flatpak PNG exported (512px)'); }, 'image/png');
+  });
+  document.getElementById('btnFlatpakSvg').addEventListener('click', () => {
+    download(new Blob([buildSVG(512, getS())], {type:'image/svg+xml'}), 'com.prof18.feedflow.svg');
+    status('Flatpak SVG exported');
+  });
+  document.getElementById('btnFaviconIco').addEventListener('click', async () => {
+    download(await buildFaviconIcoBlob(getS()), 'favicon.ico');
+    status('Favicon ICO exported');
+  });
+  document.getElementById('btnGlyphSVG').addEventListener('click', () => {
+    download(new Blob([buildSVG(1024, getS(), {withBg:false})], {type:'image/svg+xml'}), 'feedflow-f-glyph.svg');
+    status('Glyph SVG exported (no background)');
+  });
+  document.getElementById('btnAndroidMonoSVG').addEventListener('click', () => {
+    download(new Blob([buildAndroidAdaptiveGlyphSVG(getS(), {includeDepth:false, fill:'#000000'})], {type:'image/svg+xml'}), 'feedflow-android-adaptive-monochrome.svg');
+    status('Android adaptive monochrome SVG exported');
+  });
+  document.getElementById('btnWindowsMsixZip').addEventListener('click', async () => {
+    download(await buildWindowsMsixZipBlob(getS()), 'feedflow-windows-msix.zip');
+    status('Windows MSIX ZIP exported (required PNGs + feedflow.ico)');
+  });
+  document.getElementById('btnWindowsStoreZip').addEventListener('click', async () => {
+    download(await buildWindowsStoreListingZipBlob(getS()), 'feedflow-windows-store-listing.zip');
+    status('Windows Store listing ZIP exported (300px store logo + 1080/2160 box art)');
+  });
+  document.getElementById('btnPNG').addEventListener('click', () => {
+    const c = document.createElement('canvas'); c.width = c.height = 1024;
+    drawTo(c.getContext('2d'), 1024, getS());
+    c.toBlob(b => { download(b, 'feedflow-f.png'); status('PNG exported (1024px)'); }, 'image/png');
+  });
+  document.getElementById('btnSocialPNG').addEventListener('click', () => {
+    const c = document.createElement('canvas'); c.width = c.height = 1024;
+    drawSocialTo(c.getContext('2d'), 1024, getS());
+    c.toBlob(b => { download(b, 'feedflow-f-social.png'); status('Social PNG exported (1024px, padded)'); }, 'image/png');
+  });
+  document.getElementById('btnCopyState').addEventListener('click', async () => {
+    await navigator.clipboard.writeText(JSON.stringify(getS(), null, 2));
+    status('State copied to clipboard');
+  });
+
+  document.getElementById('btnImportState').addEventListener('click', async () => {
+    let json;
+    try {
+      json = await navigator.clipboard.readText();
+    } catch {
+      json = prompt('Paste state JSON:');
+    }
+    if (!json) return;
+    let p;
+    try { p = JSON.parse(json); } catch { status('Invalid JSON'); return; }
+    applyPreset(p);
+    // handle color fields not covered by applyPreset's range map
+    const colorMap = { bg: ['iBg','hBg'], fill: ['iFill','hFill'], dColor: ['iDColor','hDColor'] };
+    Object.entries(colorMap).forEach(([k,[cid,hid]]) => {
+      if (p[k]) { document.getElementById(cid).value = p[k]; document.getElementById(hid).value = p[k]; }
+    });
+    render();
+    status('State imported');
+  });
+
+  // --- Presets ---
+  const PRESETS = {
+    classic: { bg:'#3d4db7', fill:'#ffffff', dColor:'#161f52', fSize:68, aspect:80, stemW:40, topW:86, topH:28, midW:60, midH:27, midY:36, fCorner:10, skew:-10, offX:19, offY:-1, corner:22, style:'extrude', dx:-6, dy:5, socialScale:66 },
+  };
+  function applyPreset(p) {
+    Object.entries(p).forEach(([k,v]) => {
+      const map = { bg:'iBg', fill:'iFill', dColor:'iDColor', fSize:'iFSize', aspect:'iAspect',
+        stemW:'iStemW', topW:'iTopW', topH:'iTopH', midW:'iMidW', midH:'iMidH', midY:'iMidY',
+        fCorner:'iFCorner', skew:'iSkew', offX:'iOffX', offY:'iOffY', corner:'iCorner',
+        socialScale:'iSocialScale',
+        style:'iStyle', dx:'iDX', dy:'iDY' };
+      const id = map[k];
+      if (!id) return;
+      const el = document.getElementById(id);
+      el.value = v;
+      if (el.type === 'color') {
+        const hex = { iBg:'hBg', iFill:'hFill', iDColor:'hDColor' }[id];
+        if (hex) document.getElementById(hex).value = v;
+      }
+      if (el.type === 'range') {
+        const rv = id.replace(/^i/, 'v');
+        const sfx = { vSkew:'°', vDX:'', vDY:'' }[rv] ?? '%';
+        const out = document.getElementById(rv);
+        if (out) out.textContent = v + sfx;
+      }
+    });
+    render();
+  }
+  document.getElementById('presetClassic').addEventListener('click', () => { applyPreset(PRESETS.classic); status('Preset: Classic FeedFlow'); });
+
+  document.getElementById('btnCenter').addEventListener('click', () => {
+    const s = { ...getS(), offX: 0, offY: 0 };
+    const size = 512;
+    const bounds = glyphBounds(size, s);
+    const centerX = (bounds.left + bounds.right) / 2;
+    const centerY = (bounds.top + bounds.bottom) / 2;
+    const offX = Math.round((size / 2 - centerX) / size * 100);
+    const offY = Math.round((size / 2 - centerY) / size * 100);
+
+    const elX = document.getElementById('iOffX');
+    const elY = document.getElementById('iOffY');
+    elX.value = offX; elX.dispatchEvent(new Event('input'));
+    elY.value = offY; elY.dispatchEvent(new Event('input'));
+    status('F centered');
+  });
+
+  function status(msg) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 4000);
+  }
+
+  // Insert reset buttons next to every range with data-default
+  document.querySelectorAll('input[type="range"][data-default]').forEach(input => {
+    const def = input.dataset.default;
+    const btn = document.createElement('button');
+    btn.className = 'reset-btn';
+    btn.title = `Reset to ${def}`;
+    btn.textContent = '↺';
+    btn.addEventListener('click', () => {
+      input.value = def;
+      input.dispatchEvent(new Event('input'));
+    });
+    input.parentNode.insertBefore(btn, input.nextSibling);
+  });
+
+  render();
+</script>
+</body>
+</html>

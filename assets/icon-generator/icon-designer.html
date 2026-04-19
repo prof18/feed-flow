@@ -690,13 +690,13 @@ ${clip}${bgRect}<g${clipAttr}><g transform="${xf}">${depthLayer}<path d="${fPath
   const WINDOWS_QUALIFIER_SCALES = [100, 125, 150, 200, 400];
   const WINDOWS_TARGETSIZE_SIZES = [16, 20, 24, 30, 32, 36, 40, 48, 60, 64, 72, 80, 96, 256];
   const WINDOWS_SCALE_PNGS = [
-    { name: 'Square44x44Logo.png', width: 44, height: 44, contentScale: WINDOWS_SMALL_SCALE, unplated: true },
+    { name: 'Square44x44Logo.png', width: 44, height: 44, contentScale: WINDOWS_SMALL_SCALE, unplated: false },
     ...WINDOWS_QUALIFIER_SCALES.map(scale => ({
       name: `Square44x44Logo.scale-${scale}.png`,
       width: Math.round(44 * scale / 100),
       height: Math.round(44 * scale / 100),
       contentScale: scale <= 100 ? WINDOWS_SMALL_SCALE : WINDOWS_MAIN_SCALE,
-      unplated: true,
+      unplated: false,
     })),
     { name: 'Square150x150Logo.png', width: 150, height: 150, unplated: false },
     ...WINDOWS_QUALIFIER_SCALES.map(scale => ({
@@ -713,14 +713,15 @@ ${clip}${bgRect}<g${clipAttr}><g transform="${xf}">${depthLayer}<path d="${fPath
       unplated: false,
     })),
   ];
-  // Unplated targetsize-* variants: transparent glyph-only so Windows can theme them
-  // (taskbar, app list, search, Alt+Tab). These supplement the scale-based app icon
-  // family above, which gives the MSIX a complete and deterministic fallback chain.
+  // We intentionally export the same plated artwork for targetsize-* assets too.
+  // This is a branding choice rather than the default Windows recommendation: it keeps
+  // the blue FeedFlow tile visible across shell surfaces instead of allowing a glyph-only,
+  // themed treatment on taskbar/Alt+Tab-like fallbacks.
   const WINDOWS_TARGETSIZE_PNGS = WINDOWS_TARGETSIZE_SIZES.flatMap(size => {
     const contentScale = size <= 48 ? WINDOWS_SMALL_SCALE : WINDOWS_MAIN_SCALE;
     return [
-      { name: `Square44x44Logo.targetsize-${size}.png`, width: size, height: size, contentScale, unplated: true },
-      { name: `Square44x44Logo.targetsize-${size}_altform-unplated.png`, width: size, height: size, contentScale, unplated: true },
+      { name: `Square44x44Logo.targetsize-${size}.png`, width: size, height: size, contentScale, unplated: false },
+      { name: `Square44x44Logo.targetsize-${size}_altform-unplated.png`, width: size, height: size, contentScale, unplated: false },
     ];
   });
   const WINDOWS_REQUIRED_PNGS = [...WINDOWS_SCALE_PNGS, ...WINDOWS_TARGETSIZE_PNGS];
@@ -766,7 +767,7 @@ ${clip}${bgRect}<g${clipAttr}><g transform="${xf}">${depthLayer}<path d="${fPath
 
   async function buildWindowsMsixZipBlob(s) {
     const files = [];
-    // MSIX PNGs (explicit qualifier families + unplated targetsize-* assets)
+    // MSIX PNGs (explicit qualifier families + targetsize fallbacks using the same plated style)
     for (const spec of WINDOWS_REQUIRED_PNGS) {
       const blob = await buildWindowsPngBlob(s, spec);
       files.push({ name: spec.name, bytes: new Uint8Array(await blob.arrayBuffer()) });

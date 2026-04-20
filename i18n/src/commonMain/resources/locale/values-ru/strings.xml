@@ -377,4 +377,5 @@
     <string name="delete_category">Удалить категорию</string>
     <string name="settings_sync_period">Фоновая синхронизация</string>
     <string name="settings_background_sync_restrictions_title">Условия фоновой синхронизации</string>
+    <string name="widget_configuration_description"></string>
 </resources>

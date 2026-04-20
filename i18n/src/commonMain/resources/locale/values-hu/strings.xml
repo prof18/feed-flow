@@ -238,4 +238,8 @@
     <string name="confirm_button">Megerősítés</string>
     <string name="cancel_button">Mégse</string>
     <string name="reader_mode_comments_button_content_description">Megjegyzések megnyitása</string>
+    <string name="feed_add_in_progress_message"></string>
+    <string name="settings_sync_period"></string>
+    <string name="widget_configuration_description"></string>
+    <string name="about_the_app"></string>
 </resources>

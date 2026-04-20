@@ -1,40 +1,40 @@
-FeedFlow is an open source RSS reader built for desktop — a fast, minimal
-timeline for your news, blogs, and feeds. No algorithms, no clutter, no noise.
+FeedFlow — открытый RSS-читалка для десктопа — быстрая минималистичная лента для
+новостей, блогов и лент. Без алгоритмов, без лишнего, без шума.
 
-A Desktop-First Reading Experience
-- Three-pane layout: sidebar, feed list, and article view — all visible at once.
-- Switch to single-pane mode if you prefer a focused view.
-- Keyboard shortcuts for everything — refresh with F5, navigate with arrow keys,
-  mark as read with Ctrl+Shift+A.
-- The app remembers your window position and size between sessions.
-- Dark mode, light mode, and OLED black theme.
+Десктопный опыт чтения
+- Трёхпанельная компоновка: боковая панель, список лент и просмотр статей — всё
+  видно сразу.
+- Переключайтесь на однопанельный режим для сосредоточенного просмотра.
+- Горячие клавиши для всего — F5 для обновления, стрелки для навигации,
+  Ctrl+Shift+A для отметки прочитанным.
+- Приложение запоминает положение и размер окна между сессиями.
+- Тёмный, светлый режимы и OLED-чёрная тема.
 
-Read Articles Your Way
-- Open articles in your default browser, or use Reader Mode for a
-  distraction-free reading experience.
-- Adjust text size and spacing in Reader Mode for comfortable reading on any
-  screen.
-- Prefetch and cache full article content for offline reading.
+Читайте статьи по-своему
+- Открывайте в браузере по умолчанию или используйте режим чтения без
+  отвлечений.
+- Настраивайте размер и интервалы текста в режиме чтения для любого экрана.
+- Предзагружайте и кэшируйте полные статьи для оффлайн-чтения.
 
-Sync Feeds Across All Your Devices
-- Keep everything local, or sync with multiple backends.
-- Cloud storage sync with Dropbox or Google Drive.
-- Self-hosted and server sync with FreshRSS, Miniflux, Feedbin, or BazQux.
-- Your feeds, read status, and bookmarks stay in sync across Windows, Android,
-  iOS, macOS, and Linux.
+Синхронизация лент на всех устройствах
+- Храните локально или синхронизируйте с несколькими бэкендами.
+- Облачная синхронизация через Dropbox или Google Drive.
+- Self-hosted и серверная синхронизация — FreshRSS, Miniflux, Feedbin, BazQux.
+- Ленты, статус чтения и закладки синхронизированы на Windows, Android, iOS,
+  macOS и Linux.
 
-Stay Organized
-- Import and export feeds with OPML — migrate from any RSS tool.
-- Block keywords to filter out unwanted content.
-- Organize feeds into categories and bookmark articles for later.
-- Search across all your feeds to find articles quickly.
+Поддерживайте порядок
+- Импорт/экспорт лент через OPML — переход из любого RSS-инструмента.
+- Блокировка ключевых слов для фильтрации нежелательного контента.
+- Категории для лент и закладки для статей.
+- Поиск по всем лентам для быстрого нахождения статей.
 
-Built for RSS, Atom, and the Open Web
-- Supports RSS 2.0, RSS 1.0, and Atom feed formats.
-- Add feeds by URL or browse curated suggestions.
-- No account required to get started.
+Создан для RSS, Atom и открытого веба
+- Поддержка RSS 2.0, RSS 1.0 и Atom.
+- Добавляйте ленты по URL или просматривайте кураторские рекомендации.
+- Без аккаунта для старта.
 
-Open source with an active community. Available on all major platforms.
-Translated into 25+ languages.
+Открытый код, активное сообщество. На всех основных платформах. Переведён на 25+
+языков.
 
-Take back control of your reading — download FeedFlow today.
+Верните контроль над чтением — скачайте FeedFlow сегодня.

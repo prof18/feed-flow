@@ -60,10 +60,10 @@ run_ios_build_job() {
 
   step "iOS build job: build iOS app"
   if command -v xcbeautify >/dev/null 2>&1; then
-    run_shell 'cd iosApp && set -o pipefail && xcodebuild -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build | xcbeautify --renderer github-actions'
+    run_shell 'cd iosApp && set -o pipefail && xcodebuild -project FeedFlow.xcodeproj -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES -onlyUsePackageVersionsFromResolvedFile build | xcbeautify --renderer github-actions'
   else
     printf 'xcbeautify not found, falling back to raw xcodebuild output.\n'
-    run_shell 'cd iosApp && xcodebuild -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build'
+    run_shell 'cd iosApp && xcodebuild -project FeedFlow.xcodeproj -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES -onlyUsePackageVersionsFromResolvedFile build'
   fi
 }
 

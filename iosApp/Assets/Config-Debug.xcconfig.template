@@ -1,0 +1,15 @@
+//
+//  Config-Debug.xcconfig
+//  FeedFlow
+//
+//  Created by Marco Gomiero on 27/12/24.
+//  Copyright © 2024 FeedFlow. All rights reserved.
+//
+
+// Include the base config
+#include "Config.xcconfig"
+
+// Safe defaults for fresh checkouts and CI. Local development can override
+// these values in the ignored Config-Debug.xcconfig file after generation.
+GID_CLIENT_ID=YOUR_DEBUG_CLIENT_ID.apps.googleusercontent.com
+GID_REVERSED_CLIENT_ID=com.googleusercontent.apps.YOUR_DEBUG_CLIENT_ID

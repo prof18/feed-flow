@@ -1,0 +1,12 @@
+//
+//  FeedFlow.xcconfig
+//  FeedFlow
+//
+//  Created by Marco Gomiero on 24/11/24.
+//  Copyright © 2024 FeedFlow. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+PRODUCT_BUNDLE_IDENTIFIER = com.prof18.feedflow
+PROVISIONING_PROFILE_SPECIFIER = FeedFlowGHActionDevProvisioning

@@ -393,4 +393,6 @@
     <string name="delete_all_feeds_confirmation_message">Ви впевнені, що хочете видалити всі канали в цій категорії? Цю дію неможливо скасувати.</string>
     <string name="about_the_app"></string>
     <string name="widget_configuration_description"></string>
+    <string name="settings_hide_feed_source"></string>
+    <string name="widget_background_sync_description"></string>
 </resources>

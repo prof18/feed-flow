@@ -394,5 +394,4 @@
     <string name="delete_all_feeds_in_category">Hapus semua feed</string>
     <string name="delete_all_feeds_confirmation_title">Hapus semua feed dalam kategori?</string>
     <string name="delete_all_feeds_confirmation_message">Apakah Anda yakin ingin menghapus semua feed dalam kategori ini? Tindakan ini tidak dapat dibatalkan.</string>
-    <string name="about_the_app"></string>
 </resources>

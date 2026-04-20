@@ -394,5 +394,4 @@
     <string name="reader_mode_archive_button">Ouvrir dans archive.is</string>
     <string name="settings_notification_mode">Notifications groupées</string>
     <string name="settings_background_sync_restrictions_title">Paramétrage de la synchronisation en arrière-plan</string>
-    <string name="about_the_app"></string>
 </resources>

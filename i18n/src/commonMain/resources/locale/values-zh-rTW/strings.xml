@@ -312,4 +312,6 @@
     <string name="change_category">變更分類</string>
     <string name="widget_show_header_title">顯示小工具標題列</string>
     <string name="widget_background_opacity_title">背景不透明度：%s%%</string>
+    <string name="settings_sync_period"></string>
+    <string name="widget_configuration_description"></string>
 </resources>

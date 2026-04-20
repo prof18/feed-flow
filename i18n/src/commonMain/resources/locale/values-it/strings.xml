@@ -350,4 +350,7 @@
     <string name="browser_launch_error">Impossibile aprire il link. Controlla le impostazioni del browser.</string>
     <string name="open_feed_website_button">Apri sito del feed</string>
     <string name="drawer_title_library">Libreria</string>
+    <string name="settings_sync_period"></string>
+    <string name="widget_configuration_description"></string>
+    <string name="about_the_app"></string>
 </resources>

@@ -1,14 +1,11 @@
 ---
 # translatable
 title: "Frequently Asked Questions | FeedFlow"
-
-description: "Find answers to common questions about FeedFlow RSS Reader"
-
-heading: "Frequently Asked Questions"
+description: "Find answers to common questions about FeedFlow RSS Reader — sync, reader mode, OPML import, and more."
+heading: "Frequently asked questions"
 
 # do not translate
 type: "faq"
-
 layout: "list"
 ---
 

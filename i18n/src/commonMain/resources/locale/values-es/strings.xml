@@ -393,4 +393,6 @@
     <string name="import_articles_dialog_title"></string>
     <string name="widget_background_color_hex_error"></string>
     <string name="menu_view"></string>
+    <string name="settings_sync_period"></string>
+    <string name="widget_configuration_description"></string>
 </resources>

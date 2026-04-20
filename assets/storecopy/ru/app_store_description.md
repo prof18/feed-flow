@@ -1,34 +1,34 @@
-FeedFlow is a minimal RSS reader designed for one thing: keeping up with the
-open web without noise.
+FeedFlow — минимальный RSS-читалка, созданный для одной цели: следить за
+открытым веб без шума.
 
-Follow your favorite blogs and news sites in a clean, chronological timeline. No
-algorithms decide what you see — just your feeds, in the order they were
-published.
+Следите за любимыми блогами и новостными сайтами в чистой хронологической ленте.
+Никаких алгоритмов, решающих, что вы увидите — только ваши ленты в порядке
+публикации.
 
-Read Your Way
-- Open articles in your browser, or use Reader Mode for a clutter-free view.
-- Adjust text size and spacing for comfortable reading.
-- Cache full articles for offline reading — perfect for commutes, flights, or
-  anywhere without a connection.
+Читайте по-своему
+- Открывайте статьи в браузере или используйте режим чтения без лишнего.
+- Настраивайте размер и интервал текста для комфортного чтения.
+- Кэшируйте полные статьи для оффлайн-чтения — идеально для поездок, полётов или
+  мест без интернета.
 
-Sync That Fits Your Setup
-- iCloud sync keeps your feeds, read status, and bookmarks in sync across
-  iPhone, iPad, and Mac — effortlessly.
-- Or choose another backend: Dropbox, Google Drive, or self-hosted services like
-  FreshRSS, Miniflux, Feedbin, and BazQux.
-- Your reading progress follows you everywhere.
+Синхронизация под вашу систему
+- iCloud синхронизирует ленты, статус чтения и закладки между iPhone, iPad и Mac
+  — без усилий.
+- Или выберите другой бэкенд: Dropbox, Google Drive или self-hosted сервисы —
+  FreshRSS, Miniflux, Feedbin, BazQux.
+- Прогресс чтения всегда с вами.
 
-Stay Organized
-- Import and export feeds with OPML.
-- Block keywords to silence noisy topics.
-- Categories, bookmarks, and search keep everything at your fingertips.
+Поддерживайте порядок
+- Импортируйте и экспортируйте ленты через OPML.
+- Блокируйте ключевые слова, чтобы убрать шумные темы.
+- Категории, закладки и поиск держат всё под рукой.
 
-Make It Yours
-- Dark and light themes.
-- Background refresh so your feeds are always fresh.
-- Supports RSS and Atom feed formats.
+Настройте под себя
+- Тёмная и светлая темы.
+- Фоновая синхронизация — ленты всегда свежие.
+- Поддержка форматов RSS и Atom.
 
-Open source and available on all your devices. Translated into 25+ languages by
-a worldwide community.
+Открытый исходный код, работает на всех устройствах. Переведён на 25+ языков
+сообществом.
 
-Take back control of your reading — try FeedFlow today.
+Верните контроль над чтением — попробуйте FeedFlow сегодня.

@@ -50,7 +50,7 @@ koin-bom = "4.2.0"
 kotlin = "2.3.20"
 # Because of telemetry deck still using version 0.6.x
 kotlinx-date-time = "0.7.1-0.6.x-compat"
-kotlinx-serialization = "1.10.0"
+kotlinx-serialization = "1.11.0"
 ksp = "2.3.6"
 ktor = "3.4.2"
 lifecycle = "2.10.0"

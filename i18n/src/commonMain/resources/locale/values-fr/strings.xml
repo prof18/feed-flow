@@ -256,7 +256,7 @@
     <string name="reader_mode_fallback_open_browser_button">Ouvrir dans le navigateur</string>
     <string name="previous_article">Article précédent</string>
     <string name="no_miniflux_sync_yet">Données non encore synchronisées</string>
-    <string name="notification_grouped_body">Vous avez de nouveaux articles à lire !</string>
+    <string name="notification_grouped_body">Vous avez de nouveaux articles à lire !</string>
     <string name="invalid_opml_import_description">Fichier OPML invalide. Essayez d\'exporter vos feeds en OPML depuis votre agrégateur RSS et de les importer à nouveau.</string>
     <string name="drawer_title_library">Bibliothèque</string>
     <string name="import_export_articles_description">Exporter et importer vos articles au format CSV. \nL\'importation nécessite que les flux et catégories soient déjà enregistrés.</string>

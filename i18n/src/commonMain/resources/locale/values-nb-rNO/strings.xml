@@ -391,4 +391,6 @@
     <string name="settings_auto_delete_period"></string>
     <string name="widget_background_color_hex_error"></string>
     <string name="menu_view"></string>
+    <string name="search_placeholder"></string>
+    <string name="search_hint_title"></string>
 </resources>

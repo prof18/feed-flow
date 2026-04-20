@@ -352,4 +352,7 @@
     <string name="settings_hide_read_items">Peida loetuks märkimisel artiklid automaatselt</string>
     <string name="settings_show_rss_parsing_errors">Näita uudisvoo laadimisel tekkinud veateateid</string>
     <string name="exit_menu">Välju</string>
+    <string name="settings_sync_period"></string>
+    <string name="widget_configuration_description"></string>
+    <string name="about_the_app"></string>
 </resources>

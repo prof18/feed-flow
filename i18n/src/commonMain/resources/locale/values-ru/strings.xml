@@ -394,4 +394,5 @@
     <string name="widget_preview_note">Предпросмотр цветов может отличаться на реальном экране — обои, тема и фон лаунчера влияют на результат.</string>
     <string name="widget_preview_toggle_background">Переключить фон предпросмотра</string>
     <string name="widget_configuration_description">Обновления виджета следуют настройкам фоновой синхронизации из «Синхронизация и хранилище».</string>
+    <string name="settings_swipe_action_open_in_browser">Открыть в предпочитаемом браузере</string>
 </resources>

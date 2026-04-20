@@ -391,4 +391,5 @@
     <string name="delete_all_feeds_in_category">Видалити всі канали</string>
     <string name="delete_all_feeds_confirmation_title">Видалити всі канали в цій категорії?</string>
     <string name="delete_all_feeds_confirmation_message">Ви впевнені, що хочете видалити всі канали в цій категорії? Цю дію неможливо скасувати.</string>
+    <string name="about_the_app"></string>
 </resources>

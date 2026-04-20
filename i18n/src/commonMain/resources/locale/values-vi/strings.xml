@@ -352,4 +352,7 @@
     <string name="settings_hide_read_items">Ẩn các bài viết đánh dấu đã đọc</string>
     <string name="settings_show_rss_parsing_errors">Hiện thông báo lỗi tải nguồn tin</string>
     <string name="exit_menu">Thoát</string>
+    <string name="settings_sync_period"></string>
+    <string name="widget_configuration_description"></string>
+    <string name="about_the_app"></string>
 </resources>

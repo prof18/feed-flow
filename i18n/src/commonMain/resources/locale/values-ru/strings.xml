@@ -373,8 +373,24 @@
     <string name="delete_all_feeds_in_category">Удалить все ленты</string>
     <string name="delete_all_feeds_confirmation_title">Удалить все ленты в категории?</string>
     <string name="delete_all_feeds_confirmation_message">Вы уверены, что хотите удалить все ленты в этой категории? Это действие нельзя отменить.</string>
-    <string name="about_the_app">FeedFlow — минимальный RSS-ридер с чистой хронологической лентой — без алгоритмов, без лишнего. Открывайте статьи в любимом браузере или читайте без отвлечений в режиме чтения. Предзагружайте и кэшируйте полные статьи для оффлайн-чтения везде.\n\nСинхронизируйте ленты, статус чтения и закладки на Android, iOS, macOS, Windows и Linux через iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin или BazQux. Организуйте ленты по категориям, блокируйте шумные ключевые слова и импортируйте/экспортируйте всё в формате OPML.</string>
+    <string name="about_the_app">FeedFlow — минимальный RSS-ридер с чистой хронологической лентой — без алгоритмов, без лишнего. Открывайте статьи в любимом браузере или читайте без отвлечений в режиме чтения. Предзагружайте и кэшируйте полные статьи для оффлайн-чтения везде.\nСинхронизируйте ленты, статус чтения и закладки на Android, iOS, macOS, Windows и Linux через iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin или BazQux. Организуйте ленты по категориям, блокируйте шумные ключевые слова и импортируйте/экспортируйте всё в формате OPML.</string>
     <string name="delete_category">Удалить категорию</string>
     <string name="settings_sync_period">Фоновая синхронизация</string>
     <string name="settings_background_sync_restrictions_title">Условия фоновой синхронизации</string>
+    <string name="settings_background_sync_restrictions_description">Используйте одну или обе опции, чтобы ограничить, когда может выполняться фоновая синхронизация.</string>
+    <string name="settings_background_sync_wifi_only">Фоновая синхронизация только по Wi-Fi</string>
+    <string name="settings_background_sync_charging_only">Фоновая синхронизация только при зарядке</string>
+    <string name="widget_background_sync_title">Фоновая синхронизация</string>
+    <string name="widget_background_sync_description">Настройте фоновую синхронизацию в разделе «Синхронизация и хранилище», если хотите, чтобы виджет обновлялся автоматически.</string>
+    <string name="widget_background_sync_disabled_warning">Фоновая синхронизация сейчас отключена, поэтому виджет не будет обновляться автоматически.</string>
+    <string name="widget_background_color_brightness">Яркость</string>
+    <string name="widget_background_color_hex_label">Цвет в Hex</string>
+    <string name="widget_background_color_hex_hint">Используйте #RRGGBB</string>
+    <string name="widget_background_color_hex_error">Введите корректный 6-значный hex-цвет</string>
+    <string name="widget_text_color_title">Цвет основного текста</string>
+    <string name="widget_text_color_automatic">Автоматически</string>
+    <string name="widget_text_color_light">Светлая</string>
+    <string name="widget_text_color_dark">Тёмная</string>
+    <string name="widget_preview_note">Предпросмотр цветов может отличаться на реальном экране — обои, тема и фон лаунчера влияют на результат.</string>
+    <string name="widget_preview_toggle_background">Переключить фон предпросмотра</string>
 </resources>

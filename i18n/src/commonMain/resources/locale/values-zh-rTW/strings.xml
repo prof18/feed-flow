@@ -314,4 +314,5 @@
     <string name="widget_background_opacity_title">背景不透明度：%s%%</string>
     <string name="settings_sync_period"></string>
     <string name="widget_configuration_description"></string>
+    <string name="about_the_app"></string>
 </resources>

@@ -24,15 +24,15 @@
 <meta property="og:site_name"   content="FeedFlow">
 <meta property="og:type"        content="{{ if .IsPage }}article{{ else }}website{{ end }}">
 {{- with .Site.Params.locale }}<meta property="og:locale" content="{{ . }}">{{ end }}
-<meta property="og:image"       content="{{ .Site.BaseURL }}images/og-default.png">
-<meta property="og:image:width"  content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image"       content="{{ .Site.BaseURL }}images/og-default.webp">
+<meta property="og:image:width"  content="1280">
+<meta property="og:image:height" content="640">
 
 {{- /* Twitter card */}}
 <meta name="twitter:card"        content="summary_large_image">
 <meta name="twitter:title"       content="{{ $title }}">
 <meta name="twitter:description" content="{{ $desc }}">
-<meta name="twitter:image"       content="{{ .Site.BaseURL }}images/og-default.png">
+<meta name="twitter:image"       content="{{ .Site.BaseURL }}images/og-default.webp">
 {{- with .Site.Params.twitterHandle }}
 <meta name="twitter:site" content="{{ . }}">
 {{ end -}}

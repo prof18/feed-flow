@@ -391,4 +391,6 @@
     <string name="settings_auto_delete_period"></string>
     <string name="widget_background_color_hex_error"></string>
     <string name="menu_view"></string>
+    <string name="feed_add_in_progress_message"></string>
+    <string name="clear_old_articles_button"></string>
 </resources>

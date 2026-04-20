@@ -220,6 +220,7 @@
     <button class="btn sec" id="btnFlatpakPng">Export Flatpak PNG (512px)</button>
     <button class="btn sec" id="btnFlatpakSvg">Export Flatpak SVG</button>
     <button class="btn sec" id="btnFaviconIco">Export Favicon ICO</button>
+    <button class="btn sec" id="btnWebsiteFaviconsZip">Export Website Favicons ZIP</button>
     <button class="btn sec" id="btnGlyphSVG">Export Glyph SVG (no bg)</button>
     <button class="btn sec" id="btnAndroidMonoSVG">Export Android Mono SVG</button>
     <button class="btn sec" id="btnWindowsMsixZip">Export Windows ZIP</button>
@@ -948,6 +949,44 @@ ${clip}${bgRect}<g${clipAttr}><g transform="${xf}">${depthLayer}<path d="${fPath
     return packIcoPngs(pngs);
   }
 
+  // Maskable icons: full-bleed background (no corner rounding), glyph scaled down to safe zone
+  function getMaskableState(s) {
+    return { ...s, corner: 0, fSize: Math.round(s.fSize * 0.72) };
+  }
+
+  async function buildWebsiteFaviconsZipBlob(s) {
+    const files = [];
+
+    // favicon.ico (16, 32, 48)
+    const icoBlob = await buildFaviconIcoBlob(s);
+    files.push({ name: 'favicon.ico', bytes: new Uint8Array(await icoBlob.arrayBuffer()) });
+
+    // apple-touch-icon.png (180x180)
+    const atc = document.createElement('canvas');
+    atc.width = atc.height = 180;
+    drawTo(atc.getContext('2d'), 180, s);
+    files.push({ name: 'apple-touch-icon.png', bytes: new Uint8Array(await (await canvasToBlob(atc)).arrayBuffer()) });
+
+    // icon-192.png, icon-512.png (standard)
+    for (const size of [192, 512]) {
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      drawTo(c.getContext('2d'), size, s);
+      files.push({ name: `icon-${size}.png`, bytes: new Uint8Array(await (await canvasToBlob(c)).arrayBuffer()) });
+    }
+
+    // icon-192-maskable.png, icon-512-maskable.png (full-bleed, glyph in safe zone)
+    const maskState = getMaskableState(s);
+    for (const size of [192, 512]) {
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      drawTo(c.getContext('2d'), size, maskState);
+      files.push({ name: `icon-${size}-maskable.png`, bytes: new Uint8Array(await (await canvasToBlob(c)).arrayBuffer()) });
+    }
+
+    return packZipStored(files);
+  }
+
   function download(blob, name) {
     const a = Object.assign(document.createElement('a'), {
       href: URL.createObjectURL(blob), download: name,
@@ -972,6 +1011,10 @@ ${clip}${bgRect}<g${clipAttr}><g transform="${xf}">${depthLayer}<path d="${fPath
   document.getElementById('btnFaviconIco').addEventListener('click', async () => {
     download(await buildFaviconIcoBlob(getS()), 'favicon.ico');
     status('Favicon ICO exported');
+  });
+  document.getElementById('btnWebsiteFaviconsZip').addEventListener('click', async () => {
+    download(await buildWebsiteFaviconsZipBlob(getS()), 'feedflow-website-favicons.zip');
+    status('Website favicons ZIP exported (ico + apple-touch-icon + 192/512 + maskable)');
   });
   document.getElementById('btnGlyphSVG').addEventListener('click', () => {
     download(new Blob([buildSVG(1024, getS(), {withBg:false})], {type:'image/svg+xml'}), 'feedflow-f-glyph.svg');

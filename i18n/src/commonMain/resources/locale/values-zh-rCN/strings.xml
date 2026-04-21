@@ -200,7 +200,7 @@
     <string name="settings_notifications_permission_request_button">请求权限</string>
     <string name="new_articles_notification_title">有新文章</string>
     <string name="notification_channel_name">新文章</string>
-    <string name="settings_notifications_warning_reliability">通知会在您的设备上进行检查，但由于系统限制，可能无法始终可靠地发出通知。</string>
+    <string name="settings_notifications_warning_reliability">通知在您的设备上进行检查，但发送取决于系统允许的后台活动和应用使用，这是 Feedflow 无法控制的。</string>
     <string name="settings_notification_no_feed">您似乎尚未添加任何订阅源。请添加一些以开始接收通知！</string>
     <string name="settings_notification_check_period_desc">选择检查新文章通知的频率</string>
     <string name="settings_notifications_title">通知</string>

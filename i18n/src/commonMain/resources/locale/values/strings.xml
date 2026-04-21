@@ -314,7 +314,7 @@
     <string name="new_articles_notification_title">New articles available</string>
     <string name="notification_channel_name">New Articles</string>
     <string name="settings_notifications_title">Notifications</string>
-    <string name="settings_notifications_warning_reliability">Notifications are checked on your device, but may not always occur reliably due to system limitations.</string>
+    <string name="settings_notifications_warning_reliability">Notifications are checked on your device, but delivery depends on background activity allowed by the system and app usage, which FeedFlow cannot control.</string>
     <string name="marking_all_read_dialog_title">Marking all as read...</string>
     <string name="date_format_title">Date format</string>
     <string name="date_format_normal">Day/Month</string>

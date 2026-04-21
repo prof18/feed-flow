@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.search
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -46,6 +47,12 @@ internal fun SearchScreen(
     val strings = LocalFeedFlowStrings.current
 
     val snackbarHostState = remember { SnackbarHostState() }
+    val resetAndNavigateBack = {
+        viewModel.resetSearch()
+        navigateBack()
+    }
+
+    BackHandler(onBack = resetAndNavigateBack)
 
     LaunchedEffect(Unit) {
         viewModel.errorState.collect { errorState ->
@@ -95,7 +102,7 @@ internal fun SearchScreen(
         onSearchFilterSelected = { filter ->
             viewModel.updateSearchFilter(filter)
         },
-        navigateBack = navigateBack,
+        navigateBack = resetAndNavigateBack,
         onFeedItemClick = { urlInfo ->
             if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
                 navigateToReaderMode(urlInfo)

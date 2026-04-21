@@ -95,7 +95,7 @@ internal fun SearchScreen(
             viewModel.updateSearchFilter(filter)
         },
         navigateBack = {
-            viewModel.updateSearchQuery("")
+            viewModel.resetSearch()
             navigateBack()
         },
         onFeedItemClick = { urlInfo ->

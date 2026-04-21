@@ -284,6 +284,72 @@ class SearchViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `resetSearch clears query and restores current feed filter`() = runTest(testDispatcher) {
+        val feedStateRepository = getFeedStateRepository()
+        val databaseHelper = getDatabaseHelper()
+
+        val sourceA = createFeedSource(id = "source-reset-a", title = "Source Reset A")
+        val sourceB = createFeedSource(id = "source-reset-b", title = "Source Reset B")
+        insertFeedSources(databaseHelper, sourceA, sourceB)
+
+        feedStateRepository.updateFeedSourceFilter(sourceA.id)
+        val viewModel = getViewModel()
+
+        viewModel.updateSearchQuery("Query")
+        viewModel.updateSearchFilter(SearchFilter.Bookmarks)
+
+        feedStateRepository.updateFeedSourceFilter(sourceB.id)
+        viewModel.resetSearch()
+        advanceUntilIdle()
+
+        assertEquals("", viewModel.searchQueryState.value)
+        assertEquals(SearchState.EmptyState, viewModel.searchState.value)
+        assertEquals(SearchFilter.CurrentFeed, viewModel.searchFilterState.value)
+        val searchFeedFilter = viewModel.searchFeedFilterState.value
+        assertIs<FeedFilter.Source>(searchFeedFilter)
+        assertEquals(sourceB.id, searchFeedFilter.feedSource.id)
+    }
+
+    @Test
+    fun `resetSearch cancels active search updates`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        val databaseHelper = getDatabaseHelper()
+
+        val feedSource = createFeedSource(id = "source-reset-search", title = "Source Reset Search")
+        insertFeedSources(databaseHelper, feedSource)
+
+        val initialItem = createFeedItem(
+            id = "reset-item-initial",
+            title = "Reset Match",
+            feedSource = feedSource,
+            pubDateMillis = 2000,
+        )
+        databaseHelper.insertFeedItems(listOf(initialItem), lastSyncTimestamp = 0)
+
+        viewModel.updateSearchQuery("Reset")
+
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+
+        assertIs<SearchState.DataFound>(viewModel.searchState.value)
+
+        viewModel.resetSearch()
+        advanceUntilIdle()
+
+        val updatedItem = createFeedItem(
+            id = "reset-item-updated",
+            title = "Reset Match Updated",
+            feedSource = feedSource,
+            pubDateMillis = 3000,
+        )
+        databaseHelper.insertFeedItems(listOf(updatedItem), lastSyncTimestamp = 0)
+        advanceUntilIdle()
+
+        assertEquals("", viewModel.searchQueryState.value)
+        assertEquals(SearchState.EmptyState, viewModel.searchState.value)
+    }
+
+    @Test
     fun `bookmark and read actions update the database`() = runTest(testDispatcher) {
         val viewModel = getViewModel()
         val databaseHelper = getDatabaseHelper()

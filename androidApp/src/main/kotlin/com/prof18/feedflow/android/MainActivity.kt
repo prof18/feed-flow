@@ -425,7 +425,10 @@ class MainActivity : BaseThemeActivity() {
 
                 entry<Search> {
                     SearchScreen(
-                        navigateBack = navigateBack,
+                        navigateBack = {
+                            readerModeViewModel.clearSelection()
+                            navigateBack()
+                        },
                         navigateToReaderMode = { urlInfo ->
                             readerModeViewModel.getReaderModeHtml(urlInfo)
                             backStack.add(ReaderMode)

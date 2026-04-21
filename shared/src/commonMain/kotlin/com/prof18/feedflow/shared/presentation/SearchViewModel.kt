@@ -23,6 +23,7 @@ import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -54,12 +55,13 @@ class SearchViewModel internal constructor(
     private val searchQueryMutableState = MutableStateFlow("")
     val searchQueryState = searchQueryMutableState.asStateFlow()
 
-    private val initialFeedFilter: FeedFilter = feedStateRepository.getCurrentFeedFilter()
-    private val searchFilterMutableState = MutableStateFlow(getInitialSearchFilter())
+    private var currentSearchContextFeedFilter: FeedFilter = feedStateRepository.getCurrentFeedFilter()
+    private val searchFilterMutableState = MutableStateFlow(currentSearchContextFeedFilter.toSearchFilter())
     val searchFilterState: StateFlow<SearchFilter> = searchFilterMutableState.asStateFlow()
 
-    private val searchFeedFilterMutableState = MutableStateFlow(initialFeedFilter.toSearchFeedFilter())
+    private val searchFeedFilterMutableState = MutableStateFlow(currentSearchContextFeedFilter.toSearchFeedFilter())
     val searchFeedFilterState: StateFlow<FeedFilter?> = searchFeedFilterMutableState.asStateFlow()
+    private var searchJob: Job? = null
 
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState> = MutableSharedFlow()
     val errorState: SharedFlow<UIErrorState> = mutableUIErrorState.asSharedFlow()
@@ -83,18 +85,6 @@ class SearchViewModel internal constructor(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, FeedItemDisplaySettings())
 
     private val feedLayout = feedAppearanceSettingsRepository.getFeedLayout()
-
-    private fun getInitialSearchFilter(): SearchFilter {
-        return when (initialFeedFilter) {
-            is FeedFilter.Bookmarks -> SearchFilter.Bookmarks
-            is FeedFilter.Read -> SearchFilter.Read
-            is FeedFilter.Category,
-            is FeedFilter.Source,
-            FeedFilter.Uncategorized,
-            -> SearchFilter.CurrentFeed
-            FeedFilter.Timeline -> SearchFilter.All
-        }
-    }
 
     init {
         searchQueryMutableState
@@ -152,6 +142,12 @@ class SearchViewModel internal constructor(
         }
     }
 
+    fun resetSearch() {
+        refreshSearchContext()
+        searchQueryMutableState.update { "" }
+        clearSearch()
+    }
+
     fun onBookmarkClick(feedItemId: FeedItemId, bookmarked: Boolean) {
         viewModelScope.launch {
             feedActionsRepository.updateBookmarkStatus(feedItemId, bookmarked)
@@ -207,13 +203,22 @@ class SearchViewModel internal constructor(
     }
 
     private fun clearSearch() {
+        searchJob?.cancel()
+        searchJob = null
         searchMutableState.update { SearchState.EmptyState }
+    }
+
+    private fun refreshSearchContext() {
+        currentSearchContextFeedFilter = feedStateRepository.getCurrentFeedFilter()
+        searchFilterMutableState.update { currentSearchContextFeedFilter.toSearchFilter() }
+        searchFeedFilterMutableState.update { currentSearchContextFeedFilter.toSearchFeedFilter() }
     }
 
     private fun search(query: String) {
         val currentSearchFilter = searchFilterMutableState.value
         val feedFilter = currentSearchFilter.toFeedFilter()
-        feedActionsRepository
+        searchJob?.cancel()
+        searchJob = feedActionsRepository
             .search(
                 query = query,
                 feedFilter = feedFilter,
@@ -246,9 +251,21 @@ class SearchViewModel internal constructor(
     private fun SearchFilter.toFeedFilter(): FeedFilter? {
         return when (this) {
             SearchFilter.All -> null
-            SearchFilter.CurrentFeed -> initialFeedFilter
+            SearchFilter.CurrentFeed -> currentSearchContextFeedFilter
             SearchFilter.Read -> FeedFilter.Read
             SearchFilter.Bookmarks -> FeedFilter.Bookmarks
+        }
+    }
+
+    private fun FeedFilter.toSearchFilter(): SearchFilter {
+        return when (this) {
+            is FeedFilter.Bookmarks -> SearchFilter.Bookmarks
+            is FeedFilter.Read -> SearchFilter.Read
+            is FeedFilter.Category,
+            is FeedFilter.Source,
+            FeedFilter.Uncategorized,
+            -> SearchFilter.CurrentFeed
+            FeedFilter.Timeline -> SearchFilter.All
         }
     }
 

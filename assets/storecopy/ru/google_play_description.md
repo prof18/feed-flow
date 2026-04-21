@@ -1,61 +1,60 @@
-FeedFlow is a minimal RSS reader for people who want a clean, chronological
-timeline — no algorithms, no clutter, no noise. Just your feeds, in order.
+FeedFlow — минимальная RSS-читалка для тех, кто хочет чистую хронологическую
+ленту — без алгоритмов, без лишнего, без шума. Только ваши ленты, в порядке
+поступления.
 
-Whether you follow news sites, blogs, or YouTube channels via RSS, FeedFlow
-gives you a fast, distraction-free way to keep up with everything you care
-about.
+Чижете ли вы новости, блоги или YouTube-каналы через RSS — FeedFlow даёт быстрый
+способ оставаться в курсе всего важного без отвлекающих факторов.
 
-Read Articles Your Way
-- Open articles in your default browser, or pick a dedicated browser for reading
-  sessions.
-- Use Reader Mode for a distraction-free article view with adjustable text size
-  and spacing.
-- Prefetch and cache full article content for offline reading — read articles
-  anywhere, even without an internet connection.
-- View the original web page or switch to a clean, readable format — the choice
-  is yours.
+Читайте статьи по-своему
+- Открывайте статьи в браузере по умолчанию или выбирайте отдельный браузер для
+  чтения.
+- Используйте режим чтения для просмотра статьи без отвлечений с регулируемым
+  размером шрифта и интервалами.
+- Предзагружайте и кэшируйте полный текст статей для офлайн-чтения — читайте где
+  угодно, даже без интернета.
+- Просматривайте оригинальную веб-страницу или переключайтесь на чистый, удобный
+  формат — выбор за вами.
 
-Sync Feeds Across All Your Devices
-- Keep everything local, or sync feeds across devices with multiple backends.
-- Cloud storage sync with Dropbox or Google Drive.
-- Self-hosted and server sync with FreshRSS, Miniflux, Feedbin, or BazQux.
-- Your feeds, read status, and bookmarks stay in sync across Android, iOS,
-  macOS, Windows, and Linux.
-- Switch between phone, tablet, and desktop without losing your place.
+Синхронизируйте ленты на всех устройствах
+- Храните всё локально или синхронизируйте ленты между устройствами с
+  несколькими бэкендами.
+- Синхронизация через облачные хранилища: Dropbox или Google Drive.
+- Синхронизация с self-hosted серверами: FreshRSS, Miniflux, Feedbin или BazQux.
+- Ваши ленты, статус чтения и закладки синхронизируются на Android, iOS, macOS,
+  Windows и Linux.
+- Переключайтесь между телефоном, планшетом и компьютером, не теряя место.
 
-Stay Organized with Feeds and Categories
-- Import and export feeds with OPML — migrate from any other RSS reader or news
-  reader in minutes.
-- Block noisy keywords to filter out unwanted content from your feed.
-- Organize RSS feeds into categories and bookmark articles to read later.
-- Search across all your feeds and articles to quickly find the content you
-  need.
+Организуйте ленты и категории
+- Импортируйте и экспортируйте ленты через OPML — переходите с любой другой
+  RSS-читалки за минуты.
+- Блокируйте шумные ключевые слова, чтобы отфильтровывать нежелательный контент.
+- Организуйте RSS-ленты по категориям и добавляйте статьи в закладки для чтения
+  позже.
+- Ищите по всем лентам и статьям, чтобы быстро находить нужный контент.
 
-A News Reading Experience You Control
-- Dark mode, light mode, and OLED black theme for comfortable reading day and
-  night.
-- Background refresh keeps your feed list up to date with new articles and
-  posts.
+Опыт чтения новостей под вашим контролем
+- Тёмная тема, светлая тема и OLED-чёрная для комфортного чтения днём и ночью.
+- Фоновая обновление держит список лент в актуальном состоянии с новыми статьями
+  и постами.
 
-Built for RSS, Atom, and the Open Web
-- Full support for RSS 2.0, RSS 1.0, and Atom feed formats.
-- Subscribe to blogs, news sites, YouTube channels, and more.
-- No account required — add feeds directly by URL or browse curated feed
-  suggestions to get started.
-- OPML import and export means you're never locked in to any single app.
+Создано для RSS, Atom и открытого веба
+- Полная поддержка форматов RSS 2.0, RSS 1.0 и Atom.
+- Подписывайтесь на блоги, новостные сайты, YouTube-каналы и многое другое.
+- Учётная запись не требуется — добавляйте ленты по URL или просматривайте
+  готовые подборки для старта.
+- Импорт и экспорт OPML — вы не привязаны к одному приложению.
 
-Perfect For
-- News enthusiasts who want a chronological feed without algorithmic
-  recommendations.
-- Blog readers who want all their favorite sites in one clean timeline.
-- Self-hosted enthusiasts running FreshRSS, Miniflux, or similar services.
-- Anyone switching from another feed reader — OPML import makes migration
-  simple.
+Идеально для
+- Любителей новостей, желающих хронологическую ленту без алгоритмических
+  рекомендаций.
+- Читающих блоги, кто хочет все любимые сайты в одной чистой ленте.
+- Энтузиастов self-hosted решений вроде FreshRSS или Miniflux.
+- Тех, кто переходит с другой читалки — импорт OPML упрощает миграцию.
 
-Why FeedFlow?
-- No algorithmic feed — your timeline is always chronological.
-- Open source with an active community and regular updates.
-- Available on Android, iOS, macOS, Windows, and Linux.
-- Translated into 25+ languages by contributors worldwide.
+Почему FeedFlow?
+- Без алгоритмической ленты — ваша лента всегда только хронологическая.
+- Открытый исходный код с активным сообществом и регулярными обновлениями.
+- Доступно на Android, iOS, macOS, Windows и Linux.
+- Переведено на 25+ языков сообществом.
 
-Take back control of your news and reading — download FeedFlow today.
+Верните контроль над новостями и чтением — скачайте FeedFlow сегодня.

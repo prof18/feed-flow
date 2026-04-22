@@ -200,7 +200,7 @@
     <string name="settings_notifications_permission_request_button">Искане на разрешение</string>
     <string name="notification_channel_name">Нови статии</string>
     <string name="new_articles_notification_title">Налични нови статии</string>
-    <string name="settings_notifications_warning_reliability">Известията се проверяват на вашето устройство, но може не винаги да се появяват надеждно поради системни ограничения.</string>
+    <string name="settings_notifications_warning_reliability">Известията се проверяват на вашето устройство, но доставката им зависи от фоновата активност, разрешена от системата, и използването на приложението, което FeedFlow не може да контролира.</string>
     <string name="settings_notifications_enable_all_title">Активиране на всички известия</string>
     <string name="settings_notification_check_period">Честота на проверка на известията</string>
     <string name="notification_channel_description">Известия за нови статии във вашите емисии</string>

@@ -108,21 +108,30 @@ jobs:
           api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
           api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
 
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: |
+          cd iosApp
+          ./.scripts/generate-project.sh
+
       - name: build archive
         run: |
           set -o pipefail
           cd iosApp
           
           xcrun xcodebuild \
+            -project "FeedFlow.xcodeproj" \
             -scheme "FeedFlow" \
             -configuration "Release" \
             -sdk "iphoneos" \
             -showBuildTimingSummary \
-            -disableAutomaticPackageResolution \
             -derivedDataPath "${RUNNER_TEMP}/Build/DerivedData" \
             -archivePath "${RUNNER_TEMP}/Build/Archives/FeedFlow.xcarchive" \
             -resultBundlePath "${RUNNER_TEMP}/Build/Artifacts/FeedFlow.xcresult" \
             -destination "generic/platform=iOS" \
+            -onlyUsePackageVersionsFromResolvedFile \
             DEVELOPMENT_TEAM="${{ secrets.APPSTORE_TEAM_ID }}" \
             CODE_SIGN_STYLE="Manual" \
             archive | xcbeautify --renderer github-actions

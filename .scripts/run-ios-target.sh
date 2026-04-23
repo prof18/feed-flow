@@ -7,6 +7,9 @@ REPO_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)"
 PROJECT_PATH="$REPO_ROOT/iosApp/FeedFlow.xcodeproj"
 SCHEME="FeedFlow"
 BUILD_CONFIGURATION="${BUILD_CONFIGURATION:-Debug}"
+PACKAGE_FLAGS=(
+  -onlyUsePackageVersionsFromResolvedFile
+)
 RUN_AFTER_BUILD=1
 VERBOSE_BUILD=1
 USE_XCBEAUTIFY=1
@@ -130,6 +133,7 @@ resolve_app_path() {
     -project "$PROJECT_PATH" \
     -scheme "$SCHEME" \
     -configuration "$BUILD_CONFIGURATION" \
+    "${PACKAGE_FLAGS[@]}" \
     -destination "$destination" >"$settings_file"
 
   build_dir="$(awk -F ' = ' '/TARGET_BUILD_DIR = / {print $2; exit}' "$settings_file")"
@@ -249,6 +253,7 @@ build_for_simulator() {
     -project "$PROJECT_PATH" \
     -scheme "$SCHEME" \
     -configuration "$BUILD_CONFIGURATION" \
+    "${PACKAGE_FLAGS[@]}" \
     -destination "$destination" \
     build
 
@@ -290,6 +295,7 @@ build_for_device() {
     -project "$PROJECT_PATH" \
     -scheme "$SCHEME" \
     -configuration "$BUILD_CONFIGURATION" \
+    "${PACKAGE_FLAGS[@]}" \
     -destination "$destination" \
     build
 

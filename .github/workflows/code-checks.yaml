@@ -131,8 +131,16 @@ jobs:
         run: |
           cp config/dummy-config.xcconfig iosApp/Assets/Config.xcconfig
 
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: |
+          cd iosApp
+          ./.scripts/generate-project.sh
+
       - name: Build iOS Sample
         run: |
           set -o pipefail
           cd iosApp
-          xcodebuild -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build | xcbeautify --renderer github-actions
+          xcodebuild -project FeedFlow.xcodeproj -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES -onlyUsePackageVersionsFromResolvedFile build | xcbeautify --renderer github-actions

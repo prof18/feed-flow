@@ -1,0 +1,485 @@
+name: FeedFlow
+
+options:
+  bundleIdPrefix: com.prof18.feedflow
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "16.2"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+  developmentLanguage: en
+
+configs:
+  Debug: debug
+  Release: release
+
+configFiles:
+  Debug: Assets/Config-Debug.xcconfig
+  Release: Assets/Config.xcconfig
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: Q7CUB3RNAK
+    CODE_SIGN_IDENTITY: "Apple Development"
+    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    SDKROOT: iphoneos
+    FRAMEWORK_SEARCH_PATHS: "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
+    INFOPLIST_PREFIX_HEADER: Plist/Prefix
+    INFOPLIST_PREPROCESS: "YES"
+
+knownRegions:
+  - en
+  - no
+  - de
+  - fr
+  - hu
+  - it
+  - nb
+  - pl
+  - sk
+  - Base
+  - pt-BR
+  - es
+  - zh-Hans
+  - ru
+  - et
+  - gl
+  - bg
+  - vi
+  - ta
+  - he
+  - uk
+  - ja
+  - cs
+  - lv
+  - tr
+  - ca
+  - sq
+  - ar
+  - zh-Hant
+
+packages:
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    exactVersion: 12.8.0
+  SwiftyDropbox:
+    url: https://github.com/dropbox/SwiftyDropbox
+    exactVersion: 10.2.4
+  SwiftSoup:
+    url: https://github.com/scinfu/SwiftSoup
+    exactVersion: 2.11.2
+  Nuke:
+    url: https://github.com/kean/Nuke
+    exactVersion: 12.8.0
+  Collections:
+    url: https://github.com/apple/swift-collections
+    exactVersion: 1.1.4
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS
+    exactVersion: 9.1.0
+  GoogleAPIClientForREST:
+    url: https://github.com/google/google-api-objectivec-client-for-rest
+    exactVersion: 5.1.0
+  TelemetryDeck:
+    url: https://github.com/TelemetryDeck/SwiftSDK
+    exactVersion: 2.11.0
+  Reader:
+    path: Packages/Reader
+
+aggregateTargets:
+  FeedFlowKitBuilder:
+    settings:
+      base:
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_USER_SCRIPT_SANDBOXING: "NO"
+        PRODUCT_NAME: $(TARGET_NAME)
+        SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
+    buildScripts:
+      - name: Build FeedFlowKit
+        basedOnDependencyAnalysis: false
+        script: |
+          set -eu
+          if [ "YES" = "${OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED:-}" ]; then
+            echo "Skipping Gradle build task (OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED=YES)"
+            exit 0
+          fi
+          # Aggregate targets don't set FRAMEWORKS_FOLDER_PATH; KMP validates it but with isStatic=true the value is unused.
+          export FRAMEWORKS_FOLDER_PATH="${FRAMEWORKS_FOLDER_PATH:-Frameworks}"
+          cd "$SRCROOT/.."
+          ./gradlew :shared:embedAndSignAppleFrameworkForXcode < /dev/null
+
+  VersionGenerator:
+    settings:
+      base:
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: $(DEVELOPMENT_TEAM)
+        PRODUCT_NAME: $(TARGET_NAME)
+    buildScripts:
+      - name: Generate Version
+        basedOnDependencyAnalysis: false
+        outputFiles:
+          - $(SRCROOT)/Plist/Prefix
+        script: |
+          # Type a script or drag a script file from your workspace to insert its path.
+          "$SRCROOT"/.scripts/version.sh
+
+targets:
+  FeedFlow:
+    type: application
+    platform: iOS
+    configFiles:
+      Debug: Assets/FeedFlow.xcconfig
+      Release: Assets/FeedFlow.xcconfig
+    sources:
+      - path: Source
+      - path: Assets
+        excludes:
+          - AppIcon.icon
+          - AppIconDebug.icon
+      - path: Assets/AppIcon.icon
+        type: folder
+        buildPhase: resources
+      - path: Assets/AppIconDebug.icon
+        type: folder
+        buildPhase: resources
+      - path: Preview Content
+      - path: ../shared/src/commonMain
+        type: folder
+        name: commonMain
+        buildPhase: resources
+      - path: ../shared/src/iosMain
+        type: folder
+        name: iosMain
+        buildPhase: resources
+      - path: Info.plist
+        buildPhase: none
+      - path: FeedFlow.entitlements
+        buildPhase: none
+      - path: GoogleService-Info.plist
+        buildPhase: resources
+      - path: GoogleService-Info-dev.plist
+        buildPhase: resources
+      - path: PrivacyInfo.xcprivacy
+        buildPhase: resources
+      - path: WidgetExtension.entitlements
+        buildPhase: none
+    settings:
+      base:
+        PRODUCT_NAME: $(TARGET_NAME)
+        INFOPLIST_FILE: Info.plist
+        INFOPLIST_KEY_CFBundleDisplayName: FeedFlow
+        CODE_SIGN_ENTITLEMENTS: FeedFlow.entitlements
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 0.0.1
+        DEVELOPMENT_ASSET_PATHS: '"Preview Content"'
+        ENABLE_PREVIEWS: "YES"
+        SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
+        SUPPORTS_MACCATALYST: "NO"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        XROS_DEPLOYMENT_TARGET: "1.0"
+        LD_RUNPATH_SEARCH_PATHS:
+          - $(inherited)
+          - "@executable_path/Frameworks"
+        OTHER_LDFLAGS:
+          - $(inherited)
+          - "-framework"
+          - FeedFlowKit
+          - "-lsqlite3"
+      configs:
+        Debug:
+          ASSETCATALOG_COMPILER_APPICON_NAME: AppIconDebug
+          CODE_SIGN_STYLE: Automatic
+          DEVELOPMENT_TEAM: Q7CUB3RNAK
+          PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev
+          PROVISIONING_PROFILE_SPECIFIER: ""
+        Release:
+          ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+          CODE_SIGN_STYLE: Manual
+          DEVELOPMENT_TEAM: ""
+          DEVELOPMENT_TEAM[sdk=iphoneos*]: Q7CUB3RNAK
+          CODE_SIGN_IDENTITY[sdk=iphoneos*]: "Apple Development"
+          PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow
+          PROVISIONING_PROFILE_SPECIFIER: ""
+          PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]: FeedFlowGHActionDevProvisioning
+    dependencies:
+      - target: FeedFlowKitBuilder
+        embed: false
+        link: false
+      - target: VersionGenerator
+        embed: false
+        link: false
+      - target: WidgetExtension
+      - target: ShareExtension
+      - package: Firebase
+        product: FirebaseCrashlytics
+      - package: SwiftyDropbox
+      - package: SwiftSoup
+      - package: Nuke
+      - package: Nuke
+        product: NukeUI
+      - package: Collections
+      - package: Collections
+        product: OrderedCollections
+      - package: GoogleSignIn
+      - package: GoogleAPIClientForREST
+        product: GoogleAPIClientForREST_Drive
+      - package: TelemetryDeck
+      - package: Reader
+    postBuildScripts:
+      - name: Crashlytics
+        basedOnDependencyAnalysis: false
+        inputFiles:
+          - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}
+          - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}
+          - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist
+          - $(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)
+        script: |
+          # Upload dSYMs to Firebase Crashlytics
+          if [ "${CONFIGURATION}" = "Release" ]; then
+            SCRIPT_PATH="${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"
+
+            if [ ! -f "$SCRIPT_PATH" ]; then
+              echo "error: Firebase Crashlytics script not found at: $SCRIPT_PATH"
+              echo "BUILD_DIR: ${BUILD_DIR}"
+              exit 1
+            fi
+
+            echo "Running Crashlytics script from: $SCRIPT_PATH"
+            "$SCRIPT_PATH"
+          fi
+
+  WidgetExtension:
+    type: app-extension
+    platform: iOS
+    configFiles:
+      Debug: Assets/Widget.xcconfig
+      Release: Assets/Widget.xcconfig
+    sources:
+      - path: Widget
+        excludes:
+          - Info.plist
+      - path: Source/Accounts/Dropbox/Data/DropboxDataSourceIos.swift
+      - path: Source/Accounts/Dropbox/Data/DropboxErrors.swift
+      - path: Source/Accounts/GoogleDrive/Data/GoogleDrivePlatformClient.swift
+      - path: Source/Reader/FeedItemParser.swift
+      - path: Source/Reader/FeedItemParserWorkerIos.swift
+      - path: Source/UI/Style/Spacing.swift
+      - path: Source/Utils/IosHtmlParser.swift
+    settings:
+      base:
+        PRODUCT_NAME: $(TARGET_NAME)
+        INFOPLIST_FILE: Widget/Info.plist
+        INFOPLIST_KEY_CFBundleDisplayName: Widget
+        INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2025 FeedFlow. All rights reserved."
+        CODE_SIGN_ENTITLEMENTS: WidgetExtension.entitlements
+        ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: "YES"
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME: WidgetBackground
+        CLANG_CXX_LANGUAGE_STANDARD: "gnu++20"
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 1.0
+        ENABLE_USER_SCRIPT_SANDBOXING: "NO"
+        GCC_C_LANGUAGE_STANDARD: gnu17
+        GENERATE_INFOPLIST_FILE: "NO"
+        LOCALIZATION_PREFERS_STRING_CATALOGS: "YES"
+        OTHER_LDFLAGS: "-lsqlite3"
+        SKIP_INSTALL: "YES"
+        SWIFT_EMIT_LOC_STRINGS: "YES"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        LD_RUNPATH_SEARCH_PATHS:
+          - $(inherited)
+          - "@executable_path/Frameworks"
+          - "@executable_path/../../Frameworks"
+          - "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
+      configs:
+        Debug:
+          CODE_SIGN_STYLE: Automatic
+          DEBUG_INFORMATION_FORMAT: dwarf
+          DEVELOPMENT_TEAM: Q7CUB3RNAK
+          PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.Widget
+          PROVISIONING_PROFILE_SPECIFIER: ""
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: "DEBUG $(inherited) APP_EXTENSION"
+        Release:
+          CODE_SIGN_STYLE: Manual
+          DEVELOPMENT_TEAM: ""
+          DEVELOPMENT_TEAM[sdk=iphoneos*]: Q7CUB3RNAK
+          CODE_SIGN_IDENTITY[sdk=iphoneos*]: "Apple Development"
+          PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.Widget
+          PROVISIONING_PROFILE_SPECIFIER: ""
+          PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]: FeedFlowWidgetGHActionDevProvisioning
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_EXTENSION
+    dependencies:
+      - target: FeedFlowKitBuilder
+        embed: false
+        link: false
+      - target: VersionGenerator
+        embed: false
+        link: false
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+      - package: Firebase
+        product: FirebaseCrashlytics
+      - package: SwiftyDropbox
+      - package: SwiftSoup
+      - package: Nuke
+      - package: GoogleSignIn
+      - package: GoogleAPIClientForREST
+        product: GoogleAPIClientForREST_Drive
+
+  ShareExtension:
+    type: app-extension
+    platform: iOS
+    configFiles:
+      Debug: Assets/ShareExtension.xcconfig
+      Release: Assets/ShareExtension.xcconfig
+    sources:
+      - path: ShareExtension
+        excludes:
+          - Info.plist
+          - ShareExtension.entitlements
+      - path: Source/Accounts/Dropbox/Data/DropboxDataSourceIos.swift
+      - path: Source/Accounts/Dropbox/Data/DropboxErrors.swift
+      - path: Source/Accounts/GoogleDrive/Data/GoogleDrivePlatformClient.swift
+      - path: Source/DI/Koin.swift
+      - path: Source/Reader/FeedItemParser.swift
+      - path: Source/Reader/FeedItemParserWorkerIos.swift
+      - path: Source/UI/Style/Spacing.swift
+      - path: Source/Utils/IosHtmlParser.swift
+      - path: Source/Utils/TelemetryReporter.swift
+      - path: Source/Utils/VMStoreOwner.swift
+    settings:
+      base:
+        PRODUCT_NAME: $(TARGET_NAME)
+        INFOPLIST_FILE: ShareExtension/Info.plist
+        INFOPLIST_KEY_CFBundleDisplayName: ShareExtension
+        INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2025 FeedFlow. All rights reserved."
+        CODE_SIGN_ENTITLEMENTS: ShareExtension/ShareExtension.entitlements
+        ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: "YES"
+        CLANG_CXX_LANGUAGE_STANDARD: "gnu++20"
+        ENABLE_USER_SCRIPT_SANDBOXING: "NO"
+        GCC_C_LANGUAGE_STANDARD: gnu17
+        GENERATE_INFOPLIST_FILE: "NO"
+        LOCALIZATION_PREFERS_STRING_CATALOGS: "YES"
+        OTHER_LDFLAGS: "-lsqlite3"
+        SKIP_INSTALL: "YES"
+        SWIFT_EMIT_LOC_STRINGS: "YES"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        LD_RUNPATH_SEARCH_PATHS:
+          - $(inherited)
+          - "@executable_path/Frameworks"
+          - "@executable_path/../../Frameworks"
+      configs:
+        Debug:
+          CODE_SIGN_STYLE: Automatic
+          DEBUG_INFORMATION_FORMAT: dwarf
+          DEVELOPMENT_TEAM: Q7CUB3RNAK
+          PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.ShareExtension
+          PROVISIONING_PROFILE_SPECIFIER: ""
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: "APP_EXTENSION DEBUG"
+        Release:
+          CODE_SIGN_STYLE: Manual
+          DEVELOPMENT_TEAM: ""
+          DEVELOPMENT_TEAM[sdk=iphoneos*]: Q7CUB3RNAK
+          CODE_SIGN_IDENTITY[sdk=iphoneos*]: "Apple Development"
+          PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.ShareExtension
+          PROVISIONING_PROFILE_SPECIFIER: ""
+          PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]: FeedFlowShareExtensionGHActionDevProvisioning
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_EXTENSION
+    dependencies:
+      - target: FeedFlowKitBuilder
+        embed: false
+        link: false
+      - target: VersionGenerator
+        embed: false
+        link: false
+      - package: Firebase
+        product: FirebaseCrashlytics
+      - package: SwiftyDropbox
+      - package: SwiftSoup
+      - package: TelemetryDeck
+      - package: GoogleSignIn
+      - package: GoogleAPIClientForREST
+        product: GoogleAPIClientForREST_Drive
+
+schemes:
+  FeedFlow:
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        FeedFlow: all
+    run:
+      config: Debug
+      commandLineArguments:
+        "-FIRDebugEnabled": true
+    test:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true
+
+  WidgetExtension:
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        WidgetExtension: all
+        FeedFlow: all
+    run:
+      config: Debug
+      askForAppToLaunch: true
+      launchAutomaticallySubstyle: "2"
+      executable: FeedFlow
+      environmentVariables:
+        - variable: _XCWidgetKind
+          value: ""
+          isEnabled: true
+        - variable: _XCWidgetDefaultView
+          value: timeline
+          isEnabled: true
+        - variable: _XCWidgetFamily
+          value: systemMedium
+          isEnabled: true
+    test:
+      config: Debug
+    profile:
+      config: Release
+      askForAppToLaunch: true
+      launchAutomaticallySubstyle: "2"
+      executable: FeedFlow
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true
+
+  ShareExtension:
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        ShareExtension: all
+        FeedFlow: all
+    run:
+      config: Debug
+      askForAppToLaunch: true
+      launchAutomaticallySubstyle: "2"
+      executable: FeedFlow
+    test:
+      config: Debug
+    profile:
+      config: Release
+      askForAppToLaunch: true
+      launchAutomaticallySubstyle: "2"
+      executable: FeedFlow
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true

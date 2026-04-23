@@ -246,10 +246,10 @@ private fun OverflowToolbarLayout(
         } else {
             Int.MAX_VALUE
         }
-        val maxActionSlots = if (availableForActions == Int.MAX_VALUE) {
-            allActions.size
-        } else {
-            (availableForActions / itemWidth).coerceAtLeast(0)
+        val maxActionSlots = when {
+            availableForActions == Int.MAX_VALUE -> allActions.size
+            itemWidth <= 0 -> 0
+            else -> (availableForActions / itemWidth).coerceAtLeast(0)
         }
 
         val needsOverflow = allActions.size > maxActionSlots

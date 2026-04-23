@@ -62,28 +62,28 @@ knownRegions:
 packages:
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
-    exactVersion: 12.8.0
+    exactVersion: 12.12.1
   SwiftyDropbox:
     url: https://github.com/dropbox/SwiftyDropbox
     exactVersion: 10.2.4
   SwiftSoup:
     url: https://github.com/scinfu/SwiftSoup
-    exactVersion: 2.11.2
+    exactVersion: 2.13.4
   Nuke:
     url: https://github.com/kean/Nuke
-    exactVersion: 12.8.0
+    exactVersion: 12.9.0
   Collections:
     url: https://github.com/apple/swift-collections
-    exactVersion: 1.1.4
+    exactVersion: 1.4.1
   GoogleSignIn:
     url: https://github.com/google/GoogleSignIn-iOS
     exactVersion: 9.1.0
   GoogleAPIClientForREST:
     url: https://github.com/google/google-api-objectivec-client-for-rest
-    exactVersion: 5.1.0
+    exactVersion: 5.2.0
   TelemetryDeck:
     url: https://github.com/TelemetryDeck/SwiftSDK
-    exactVersion: 2.11.0
+    exactVersion: 2.12.0
   Reader:
     path: Packages/Reader
 

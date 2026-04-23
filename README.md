@@ -97,16 +97,28 @@ iOS:
 cp config/dummy-google-service.plist iosApp/GoogleService-Info-dev.plist
 cp config/dummy-google-service.plist iosApp/GoogleService-Info.plist
 cp config/dummy-config.xcconfig iosApp/Assets/Config.xcconfig
+brew install xcodegen
+cd iosApp && ./.scripts/generate-project.sh
 ```
 
 If you want to test real iOS sync providers locally, start from `iosApp/Assets/Config.xcconfig.template`
 instead of the dummy config and fill in your own keys.
+
+The iOS Xcode project is generated from `iosApp/project.yml` and is not committed, except for
+`iosApp/FeedFlow.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`.
+The generation script also creates the ignored `iosApp/Assets/Config-Debug.xcconfig` from its
+tracked template when it is missing.
+
+Regenerate the project whenever `iosApp/project.yml`, iOS source structure, xcconfig files,
+entitlements, or SwiftPM dependencies change. If SwiftPM dependencies change, resolve packages
+and commit the updated `Package.resolved` lockfile too.
 
 Optional local keys:
 
 - `keystore.properties` for Android/Desktop Dropbox keys
 - `desktopApp/src/jvmMain/resources/props.properties` for Desktop Dropbox keys
 - `iosApp/Assets/Config.xcconfig` for iOS Google Drive and Dropbox config
+- `iosApp/Assets/Config-Debug.xcconfig` for iOS debug Google Drive overrides
 
 ## Tech Stack
 

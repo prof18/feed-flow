@@ -33,7 +33,9 @@
     {
       "customType": "regex",
       "description": "XcodeGen SPM packages in iosApp/project.yml",
-      "fileMatch": ["^iosApp/project\\.yml$"],
+      "managerFilePatterns": [
+        "/^iosApp/project\\.yml$/"
+      ],
       "matchStrings": [
         "url:\\s*https?://github\\.com/(?<depName>[^/\\s]+/[^/\\s]+?)(?:\\.git)?\\s*\\n\\s*exactVersion:\\s*(?<currentValue>[^\\s]+)"
       ],
@@ -43,7 +45,9 @@
     {
       "customType": "regex",
       "description": "Mint dependencies in iosApp/Mintfile",
-      "fileMatch": ["^iosApp/Mintfile$"],
+      "managerFilePatterns": [
+        "/^iosApp/Mintfile$/"
+      ],
       "matchStrings": [
         "(?<depName>[^/\\s]+/[^/\\s@]+)@(?<currentValue>[^\\s]+)"
       ],

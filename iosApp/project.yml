@@ -68,7 +68,7 @@ packages:
     exactVersion: 10.2.4
   SwiftSoup:
     url: https://github.com/scinfu/SwiftSoup
-    exactVersion: 2.11.2
+    exactVersion: 2.13.4
   Nuke:
     url: https://github.com/kean/Nuke
     exactVersion: 13.0.2

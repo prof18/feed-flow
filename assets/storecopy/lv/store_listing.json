@@ -1,19 +1,19 @@
 {
-    "title": "",
-    "google_play_short_description": "",
-    "app_store_subtitle": "",
-    "app_store_promotional_text": "",
-    "app_store_keywords": "",
-    "microsoft_store_short_description": "",
-    "microsoft_store_keywords": "",
+    "title": "FeedFlow — RSS lasītājs",
+    "google_play_short_description": "Minimālistisks RSS lasītājs ar iespēju lasīt bezsaistē, pieejams lasītāja režīms un elastīgi sinhronizācijas varianti.",
+    "app_store_subtitle": "Lasiet bezsaistē. Sinhronizējiet, kā jums ērtāk.",
+    "app_store_promotional_text": "Atvērtā pirmkoda programmatūra ar minimālisma piegaršu. Lasiet rakstus savā pārlūkā vai iebūvētājā lasītājā, iespēja iepriekš saglabāt rakstus kešatmiņā bezsaistes lasīšanai un sinhronizēt RSS ziņu plūsmas visās savās ierīcēs. Nav algoritmisku ziņu plūsmu.",
+    "app_store_keywords": "lasīšana,režīms,opml,atlasīt,emuārs,raksts,grāmatzīme,saturs,abonēt,tīmeklis,iCloud,laikskala,kategorija",
+    "microsoft_store_short_description": "FeedFlow — atvērtā pirmkoda RSS lasītājs jūsu datoram: ātra hronoloģiska laikskala ziņām un emuāriem. Trīs rūšu, paneļu, darbvirsmas saskarnes izkārtojums ar īsinājumtaustiņiem efektīvai lasīšanai. Iespēja atvērt rakstus pārlūkā vai izmantot iebūvēto lasītāju. Iepriekš saglabāt kešatmiņā pilnu rakstu saturu, lai tiem varētu piekļūt, kad nav interneta, bezsaistē. Ievietot un izgūt ziņu plūsmas, izmantojot OPML. Sinhronizēt datus starp ierīcēm, izmantojot mākoņkrātuves (Dropbox, Google disks) vai pašmitinošus pakalpojumus (FreshRSS, Miniflux, Feedbin, BazQux).",
+    "microsoft_store_keywords": "rss lasītājs,rss ziņu plūsmas lasītājs,bezsaistes lasīšanas režīms,opml ievietošana izgūšana,ziņu lasītājs,ziņu plūsmu apkopotājs,freshrss feedbin sinhronizācija",
     "microsoft_store_product_features": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "Skaidra, hronoloģiska laikskala — bez algoritmiem, bez liekiem kaitinošiem elementiem",
+        "Pieejams lasīšanas režīms bez uzmanības novērsošiem elementiem ar regulējamu teksta lielumu",
+        "Bezsaistes lasīšana — pilni rakstu teksti tiek iepriekš ielādēti un saglabāti kešatmiņā",
+        "Trīs rūšu, paneļu, darbvirsmas saskarnes izkārtojums ar īsinājumtaustiņiem",
+        "Iespēja sinhronizēt ar Dropbox, Google disku, FreshRSS, Miniflux, Feedbin vai BazQux",
+        "Kārtojiet saturu, izmantojot kategorijas, grāmatzīmes un pilnteksta meklēšanu",
+        "Ievietot un izgūt ziņu plūsmas, izmantojot OPML",
+        "Atvērtā pirmkoda programmatūra — bez reklāmām, bez izsekošanas un nav nepieciešams konts"
     ]
 }

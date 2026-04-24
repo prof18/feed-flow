@@ -39,7 +39,7 @@
     <string name="drawer_title_feed_sources">Джерела стрічок</string>
     <string name="toggle_mark_read_when_scrolling">Позначати прочитаним під час прокрутки</string>
     <string name="action_done">Виконати</string>
-    <string name="settings_app_title">Додаток</string>
+    <string name="settings_app_title">Загальне</string>
     <string name="add_feed_category_title">Категорія</string>
     <string name="action_save">Зберегти</string>
     <string name="no_feed_modal_title">Додати нову стрічку</string>
@@ -118,7 +118,7 @@
     <string name="dropbox_sync_desktop_description">Натиснувши на кнопку Під\'єднати, ви будете перенаправлені на сайт Dropbox. Після підключення акаунта скопіюйте код авторизації та введіть його тут, у додатку</string>
     <string name="read_articles_empty_screen_message">Тут нічого немає, час починати читати!</string>
     <string name="no_feed_modal_message">Ви можете додати стрічку вручну, імпортувати підписки з іншого читача RSS або приєднати обліковий запис для синхронізації даних з іншого пристрою (ця функція знаходиться в стадії бета-тестування).</string>
-    <string name="settings_toggle_show_read_articles">Відображати прочитані статті в хронології</string>
+    <string name="settings_toggle_show_read_articles">Показувати прочитані статті у списках</string>
     <string name="menu_mark_as_read">Позначити прочитаним</string>
     <string name="in_app_browser">Вбудований переглядач</string>
     <string name="about_menu_contribute_translations">Допомогти з перекладом</string>
@@ -203,7 +203,7 @@
     <string name="settings_title_notifications">Сповіщення</string>
     <string name="settings_notification_check_period">Частота перевірки повідомлень</string>
     <string name="settings_notification_check_period_desc">Виберіть, як часто перевіряти сповіщення про нові статті</string>
-    <string name="settings_notifications_warning_reliability">Сповіщення перевіряються на вашому пристрої, але можуть не завжди надходити надійно через системні обмеження.</string>
+    <string name="settings_notifications_warning_reliability">Повідомлення перевіряються на вашому пристрої, але їх доставка залежить від фонової активності, дозволеної системою, та використання додатка, на що FeedFlow не має впливу.</string>
     <string name="date_format_american">Місяць/День</string>
     <string name="marking_all_read_dialog_title">Позначення всіх як прочитаних...</string>
     <string name="date_format_title">Формат дати</string>
@@ -391,4 +391,8 @@
     <string name="delete_all_feeds_in_category">Видалити всі канали</string>
     <string name="delete_all_feeds_confirmation_title">Видалити всі канали в цій категорії?</string>
     <string name="delete_all_feeds_confirmation_message">Ви впевнені, що хочете видалити всі канали в цій категорії? Цю дію неможливо скасувати.</string>
+    <string name="about_the_app">FeedFlow — це мінімалістичний RSS-рідер із чіткою хронологічною стрічкою новин — без алгоритмів і зайвого навантаження. Відкривайте статті у своєму улюбленому браузері або читайте їх без відволікань у режимі читання. Завантажуйте та зберігайте в кеші повні статті для читання в автономному режимі де завгодно.\nСинхронізуйте свої канали, статус читання та закладки на Android, iOS, macOS, Windows та Linux за допомогою iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin або BazQux. Сортуйте канали за категоріями, блокуйте небажані ключові слова та імпортуйте або експортуйте все за допомогою OPML.</string>
+    <string name="settings_hide_feed_source">Приховати джерело стрічки</string>
+    <string name="widget_configuration_description">Оновлення віджетів відповідають налаштуванням фонової синхронізації з розділу «Синхронізація та сховище».</string>
+    <string name="widget_background_sync_description">Налаштуйте фонову синхронізацію в розділі «Синхронізація та сховище», якщо хочете, щоб віджет оновлювався автоматично.</string>
 </resources>

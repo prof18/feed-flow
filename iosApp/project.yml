@@ -80,7 +80,7 @@ packages:
     exactVersion: 9.1.0
   GoogleAPIClientForREST:
     url: https://github.com/google/google-api-objectivec-client-for-rest
-    exactVersion: 5.1.0
+    exactVersion: 5.2.0
   TelemetryDeck:
     url: https://github.com/TelemetryDeck/SwiftSDK
     exactVersion: 2.11.0

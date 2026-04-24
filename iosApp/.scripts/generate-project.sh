@@ -1,21 +1,8 @@
 #!/bin/sh -eu
 cd "$(dirname "$0")/.."
 
-PACKAGE_RESOLVED_PATH="FeedFlow.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
 CONFIG_DEBUG_PATH="Assets/Config-Debug.xcconfig"
 CONFIG_DEBUG_TEMPLATE_PATH="Assets/Config-Debug.xcconfig.template"
-PACKAGE_RESOLVED_BACKUP=""
-cleanup() {
-  if [ -n "$PACKAGE_RESOLVED_BACKUP" ] && [ -f "$PACKAGE_RESOLVED_BACKUP" ]; then
-    rm -f "$PACKAGE_RESOLVED_BACKUP"
-  fi
-}
-trap cleanup EXIT
-
-if [ -f "$PACKAGE_RESOLVED_PATH" ]; then
-  PACKAGE_RESOLVED_BACKUP="$(mktemp)"
-  cp "$PACKAGE_RESOLVED_PATH" "$PACKAGE_RESOLVED_BACKUP"
-fi
 
 if [ ! -f "$CONFIG_DEBUG_PATH" ]; then
   cp "$CONFIG_DEBUG_TEMPLATE_PATH" "$CONFIG_DEBUG_PATH"
@@ -39,8 +26,3 @@ for scheme in WidgetExtension ShareExtension; do
       "$SCHEME"
   fi
 done
-
-if [ -n "$PACKAGE_RESOLVED_BACKUP" ]; then
-  mkdir -p "$(dirname "$PACKAGE_RESOLVED_PATH")"
-  cp "$PACKAGE_RESOLVED_BACKUP" "$PACKAGE_RESOLVED_PATH"
-fi

@@ -134,14 +134,7 @@ iosApp/.build/
 iosApp/.swiftpm/
 
 # XcodeGen-generated Xcode project (run .scripts/generate-project.sh to regenerate)
-/iosApp/FeedFlow.xcodeproj/*
-!/iosApp/FeedFlow.xcodeproj/project.xcworkspace/
-/iosApp/FeedFlow.xcodeproj/project.xcworkspace/*
-!/iosApp/FeedFlow.xcodeproj/project.xcworkspace/xcshareddata/
-/iosApp/FeedFlow.xcodeproj/project.xcworkspace/xcshareddata/*
-!/iosApp/FeedFlow.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
-/iosApp/FeedFlow.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/*
-!/iosApp/FeedFlow.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+/iosApp/FeedFlow.xcodeproj/
 
 /iosApp/Assets/Config-Debug.xcconfig
 /.junie/.onboarding_migrated

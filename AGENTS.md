@@ -48,13 +48,13 @@ Ensure an emulator or device is connected via `adb`, then run:
 
 ### iOS Project Generation
 
-The iOS Xcode project (`iosApp/FeedFlow.xcodeproj`) is generated from `iosApp/project.yml` by [XcodeGen](https://github.com/yonaskolb/XcodeGen) and is NOT committed to git, except for `iosApp/FeedFlow.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`. Regenerate it with:
+The iOS Xcode project (`iosApp/FeedFlow.xcodeproj`) is generated from `iosApp/project.yml` by [XcodeGen](https://github.com/yonaskolb/XcodeGen) and is NOT committed to git. Regenerate it with:
 
 ```bash
 cd iosApp && ./.scripts/generate-project.sh
 ```
 
-This requires XcodeGen installed (`brew install xcodegen`, or `mint bootstrap` using `iosApp/Mintfile` which pins the version). Regenerate whenever `project.yml`, iOS source folder structure, xcconfigs, entitlements, or SPM dependencies change. The wrapper script also creates `Assets/Config-Debug.xcconfig` from the tracked template when it is missing, post-fixes `lastKnownFileType` for iOS 26 `.icon` bundles, injects `wasCreatedForAppExtension="YES"` into the Widget/Share extension schemes (XcodeGen drops this when the scheme also launches the host app — yonaskolb/XcodeGen#1523), and preserves the tracked `Package.resolved` file across project regeneration. Direct package requirements stay declared in `project.yml`, while the committed `Package.resolved` locks the fully resolved SwiftPM graph used by CI and release builds.
+This requires XcodeGen installed (`brew install xcodegen`, or `mint bootstrap` using `iosApp/Mintfile` which pins the version). Regenerate whenever `project.yml`, iOS source folder structure, xcconfigs, entitlements, or SPM dependencies change. The wrapper script also creates `Assets/Config-Debug.xcconfig` from the tracked template when it is missing, post-fixes `lastKnownFileType` for iOS 26 `.icon` bundles, and injects `wasCreatedForAppExtension="YES"` into the Widget/Share extension schemes (XcodeGen drops this when the scheme also launches the host app — yonaskolb/XcodeGen#1523). SPM pins are managed via `exactVersion:` entries in `project.yml`; no `Package.resolved` is tracked.
 
 ### Building for iOS Simulator
 
@@ -93,7 +93,7 @@ Before handing off you must:
 1. Run `.scripts/refresh-translations.sh` before the Gradle checks if you changed translation resources
 2. Run `./gradlew --quiet --console=plain detekt allTests` to ensure Kotlin/shared/Android/Desktop checks pass - don't run it if you modified only swift files
 3. Run `.scripts/ios-format.sh` to format iOS code - only run if you made changes on the iOS app
-4. If you changed iOS code, run `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -onlyUsePackageVersionsFromResolvedFile build -quiet` before handoff; rerun without `-quiet` only if you need the full diagnostics
+4. If you changed iOS code, run `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet` before handoff; rerun without `-quiet` only if you need the full diagnostics
 5. Fix any issues found during the above steps
 
 ### Initial Setup (for building from scratch)
@@ -153,7 +153,7 @@ When creating commits:
 
 ### iOS Development
 - ALWAYS build with xcodebuild with -quiet flag when building for iOS. If the command returns errors you may run xcodebuild again without the -quiet flag.
-- Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -onlyUsePackageVersionsFromResolvedFile build -quiet`
+- Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet`
 - IMPORTANT: The project now supports iOS 26 SDK (June 2025) while maintaining iOS 18 as the minimum deployment target. Use #available checks when adopting iOS 26+ APIs.
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
 - Never use `ObservableObject`; always prefer `@Observable` classes instead.
@@ -177,7 +177,7 @@ When creating commits:
 ### CI/CD
 - CI config: `.github/workflows/code-checks.yaml`
 - Pipeline: `checks` (macos-26, detekt + allTests + swiftlint) -> `build-android-app` + `build-desktop-app` + `build-ios-app` (in parallel)
-- iOS CI build forces arm64 simulator architecture: `xcodebuild -project iosApp/FeedFlow.xcodeproj -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES -onlyUsePackageVersionsFromResolvedFile build | xcbeautify --renderer github-actions`
+- iOS CI build forces arm64 simulator architecture: `xcodebuild -project iosApp/FeedFlow.xcodeproj -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build | xcbeautify --renderer github-actions`
 - CI runs `.scripts/refresh-translations.sh` before checks; do this locally before pushing if translations changed
 - Debugging CI failures: `gh run list --limit=10`, then `gh run view <run-id> --log`
 - Red CI recovery loop: `gh run rerun <run-id>` (or `gh run rerun <run-id> --failed`), then fix and push until green

@@ -104,14 +104,12 @@ cd iosApp && ./.scripts/generate-project.sh
 If you want to test real iOS sync providers locally, start from `iosApp/Assets/Config.xcconfig.template`
 instead of the dummy config and fill in your own keys.
 
-The iOS Xcode project is generated from `iosApp/project.yml` and is not committed, except for
-`iosApp/FeedFlow.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`.
-The generation script also creates the ignored `iosApp/Assets/Config-Debug.xcconfig` from its
-tracked template when it is missing.
+The iOS Xcode project is generated from `iosApp/project.yml` and is not committed.
+The generation script also creates the ignored `iosApp/Assets/Config-Debug.xcconfig`
+from its tracked template when it is missing.
 
 Regenerate the project whenever `iosApp/project.yml`, iOS source structure, xcconfig files,
-entitlements, or SwiftPM dependencies change. If SwiftPM dependencies change, resolve packages
-and commit the updated `Package.resolved` lockfile too.
+entitlements, or SwiftPM dependencies change.
 
 Optional local keys:
 

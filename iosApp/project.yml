@@ -83,7 +83,7 @@ packages:
     exactVersion: 5.1.0
   TelemetryDeck:
     url: https://github.com/TelemetryDeck/SwiftSDK
-    exactVersion: 2.11.0
+    exactVersion: 2.12.0
   Reader:
     path: Packages/Reader
 

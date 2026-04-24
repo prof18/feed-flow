@@ -10,7 +10,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class HtmlRetrieverTest {
@@ -91,6 +93,27 @@ class HtmlRetrieverTest {
         val result = retrieveHtml(bytes)
         assertNotNull(result)
         assertTrue(result.contains("\u20AC"))
+    }
+
+    @Test
+    fun `non-ascii host short-circuits without hitting the engine`() = runTest(testDispatcher) {
+        var requests = 0
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        requests++
+                        respond(content = ByteArray(0), status = HttpStatusCode.OK)
+                    }
+                }
+            },
+        )
+
+        val result = retriever.retrieveHtml("https://m\u00FCnchen.example/feed")
+
+        assertNull(result)
+        assertEquals(0, requests)
     }
 
     @Test

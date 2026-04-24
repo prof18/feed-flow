@@ -6,6 +6,7 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.Url
 import io.ktor.utils.io.charsets.Charset
 import io.ktor.utils.io.charsets.Charsets
 import io.ktor.utils.io.charsets.decode
@@ -18,6 +19,14 @@ class HtmlRetriever(
     private val client: HttpClient,
 ) {
     suspend fun retrieveHtml(url: String): String? {
+        // Ktor's Darwin engine passes the parsed host straight into NSURLComponents
+        // setPercentEncodedHost:, which throws an uncatchable NSInvalidArgumentException
+        // (std::terminate) for non-ASCII hosts. Reject those early.
+        val host = runCatching { Url(url).host }.getOrNull()
+        if (host.isNullOrEmpty() || host.any { it.code >= ASCII_LIMIT }) {
+            logger.d { "Skipping URL with unparsable or non-ASCII host: $url" }
+            return null
+        }
         try {
             val response = client.get(url)
             val bytes = response.bodyAsBytes()
@@ -136,6 +145,7 @@ class HtmlRetriever(
     }
 
     private companion object {
+        private const val ASCII_LIMIT = 128
         private const val META_SNIFF_LIMIT = 4096
         private const val XML_DECLARATION_SNIFF_LIMIT = 256
         private const val BYTE_MASK = 0xFF

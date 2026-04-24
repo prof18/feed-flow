@@ -18,15 +18,15 @@ Sync That Fits Your Setup
   FreshRSS, Miniflux, Feedbin, and BazQux.
 - Your reading progress follows you everywhere.
 
-Stay Organized
-- Import and export feeds with OPML.
-- Block keywords to silence noisy topics.
+Uzturēt kārtību
+- Ievietot un izgūt ziņu plūsmas, izmantojot OPML.
+- Bloķēt atslēgvārdus, lai nerādītu traucējošās, nevēlamās, tēmas.
 - Categories, bookmarks, and search keep everything at your fingertips.
 
 Make It Yours
-- Dark and light themes.
+- Tumšs un gaišs motīvi.
 - Background refresh so your feeds are always fresh.
-- Supports RSS and Atom feed formats.
+- Atbalsta RSS un Atom ziņu plūsmas formātus.
 
 Open source and available on all your devices. Translated into 25+ languages by
 a worldwide community.

@@ -89,4 +89,36 @@ class FeedSuggestionsViewModelTest : KoinTestBase() {
         val sources = databaseHelper.getFeedSources()
         assertTrue(sources.any { it.url == suggestedFeed.url })
     }
+
+    @Test
+    fun `removing an existing suggested feed clears added state`() = runTest {
+        val suggestedFeed = suggestedFeeds.first().feeds.first()
+        val feedId = "1"
+
+        databaseHelper.insertFeedSource(
+            listOf(
+                ParsedFeedSource(
+                    id = feedId,
+                    url = suggestedFeed.url,
+                    title = suggestedFeed.name,
+                    category = null,
+                    logoUrl = null,
+                    websiteUrl = null,
+                ),
+            ),
+        )
+
+        viewModel.feedStatesMapState.test {
+            var item = awaitItem()
+            if (item[suggestedFeed.url] != FeedAddState.Added) {
+                item = awaitItem()
+            }
+            assertEquals(FeedAddState.Added, item[suggestedFeed.url])
+
+            databaseHelper.deleteFeedSource(feedId)
+
+            item = awaitItem()
+            assertFalse(item.containsKey(suggestedFeed.url))
+        }
+    }
 }

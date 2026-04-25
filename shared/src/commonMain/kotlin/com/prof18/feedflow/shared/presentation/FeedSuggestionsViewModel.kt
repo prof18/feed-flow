@@ -18,7 +18,7 @@ import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -43,7 +43,7 @@ class FeedSuggestionsViewModel internal constructor(
 
     init {
         loadSuggestedFeeds()
-        loadExistingFeeds()
+        observeExistingFeeds()
     }
 
     private fun loadSuggestedFeeds() {
@@ -53,12 +53,24 @@ class FeedSuggestionsViewModel internal constructor(
         }
     }
 
-    private fun loadExistingFeeds() {
+    private fun observeExistingFeeds() {
         viewModelScope.launch {
-            val existingFeeds = feedSourcesRepository.getFeedSources().firstOrNull() ?: emptyList()
-            val stateMap = existingFeeds.associate { it.url to FeedAddState.Added }
-            feedStatesMapMutableState.update { stateMap.toPersistentMap() }
-            isLoadingMutableState.update { false }
+            feedSourcesRepository.getFeedSources().collect { existingFeeds ->
+                val addedUrls = existingFeeds.map { it.url }.toSet()
+
+                feedStatesMapMutableState.update { currentStates ->
+                    val reconciledStates = currentStates
+                        .filterValues { it != FeedAddState.Added }
+                        .toMutableMap()
+
+                    addedUrls.forEach { feedUrl ->
+                        reconciledStates[feedUrl] = FeedAddState.Added
+                    }
+
+                    reconciledStates.toPersistentMap()
+                }
+                isLoadingMutableState.update { false }
+            }
         }
     }
 

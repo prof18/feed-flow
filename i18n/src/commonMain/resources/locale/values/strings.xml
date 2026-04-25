@@ -375,6 +375,7 @@
     <string name="settings_advanced">Advanced</string>
     <string name="settings_sync_and_storage">Sync &amp; Storage</string>
     <string name="settings_extras">Extras</string>
+    <string name="settings_appearance">Appearance</string>
     <string name="settings_about_and_support">About &amp; Support</string>
     <string name="settings_clear_downloaded_articles">Clear downloaded articles</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Clear downloaded articles?</string>

@@ -28,7 +28,7 @@ data object SyncAndStorage : NavKey
 data object WidgetSettings : NavKey
 
 @Serializable
-data object Extras : NavKey
+data object Appearance : NavKey
 
 @Serializable
 data object AboutAndSupport : NavKey

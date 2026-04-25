@@ -55,7 +55,7 @@ import com.prof18.feedflow.android.settings.SettingsScreen
 import com.prof18.feedflow.android.settings.about.AboutAndSupportScreen
 import com.prof18.feedflow.android.settings.about.subpages.AboutScreen
 import com.prof18.feedflow.android.settings.about.subpages.LicensesScreen
-import com.prof18.feedflow.android.settings.extras.ExtrasScreen
+import com.prof18.feedflow.android.settings.appearance.AppearanceScreen
 import com.prof18.feedflow.android.settings.feedlist.FeedListSettingsScreen
 import com.prof18.feedflow.android.settings.feedsandaccounts.FeedsAndAccountsScreen
 import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.BlockedWordsScreen
@@ -298,7 +298,7 @@ class MainActivity : BaseThemeActivity() {
                         navigateToReadingBehavior = { backStack.add(ReadingBehavior) },
                         navigateToSyncAndStorage = { backStack.add(SyncAndStorage) },
                         navigateToWidgetSettings = { backStack.add(WidgetSettings) },
-                        navigateToExtras = { backStack.add(Extras) },
+                        navigateToAppearance = { backStack.add(Appearance) },
                         navigateToAboutAndSupport = { backStack.add(AboutAndSupport) },
                     )
                 }
@@ -333,8 +333,8 @@ class MainActivity : BaseThemeActivity() {
                     )
                 }
 
-                entry<Extras> {
-                    ExtrasScreen(
+                entry<Appearance> {
+                    AppearanceScreen(
                         navigateBack = navigateBack,
                     )
                 }

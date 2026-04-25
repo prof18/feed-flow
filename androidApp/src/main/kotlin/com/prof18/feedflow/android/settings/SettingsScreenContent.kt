@@ -8,11 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.DarkMode
-import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.LocalLibrary
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Widgets
@@ -27,32 +26,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
-import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
-import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.shared.ui.settings.SettingItem
-import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun SettingsScreenContent(
-    themeMode: ThemeMode,
     appVersion: String,
     navigateBack: () -> Unit,
-    onThemeModeSelected: (ThemeMode) -> Unit,
+    navigateToAppearance: () -> Unit,
     navigateToFeedsAndAccounts: () -> Unit,
     navigateToFeedListSettings: () -> Unit,
     navigateToReadingBehavior: () -> Unit,
     navigateToSyncAndStorage: () -> Unit,
     navigateToWidgetSettings: () -> Unit,
-    navigateToExtras: () -> Unit,
     navigateToAboutAndSupport: () -> Unit,
     showWidgetSettings: Boolean,
-    isMultiPaneEnabled: Boolean,
-    onMultiPaneToggled: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -67,26 +57,10 @@ internal fun SettingsScreenContent(
                 .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         ) {
             item {
-                val strings = LocalFeedFlowStrings.current
-                CompactSettingDropdownRow(
-                    title = LocalFeedFlowStrings.current.settingsTheme,
-                    currentValue = themeMode,
-                    options = persistentListOf(
-                        SettingDropdownOption(ThemeMode.SYSTEM, strings.settingsThemeSystem),
-                        SettingDropdownOption(ThemeMode.LIGHT, strings.settingsThemeLight),
-                        SettingDropdownOption(ThemeMode.DARK, strings.settingsThemeDark),
-                        SettingDropdownOption(ThemeMode.OLED, strings.settingsThemeOled),
-                    ),
-                    icon = Icons.Outlined.DarkMode,
-                    onOptionSelected = onThemeModeSelected,
-                )
-            }
-
-            item {
-                SettingSwitchItem(
-                    title = LocalFeedFlowStrings.current.settingsThreePaneLayout,
-                    isChecked = isMultiPaneEnabled,
-                    onCheckedChange = onMultiPaneToggled,
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.settingsAppearance,
+                    icon = Icons.Outlined.Palette,
+                    onClick = navigateToAppearance,
                 )
             }
 
@@ -129,14 +103,6 @@ internal fun SettingsScreenContent(
                     title = LocalFeedFlowStrings.current.settingsSyncAndStorage,
                     icon = Icons.Outlined.Storage,
                     onClick = navigateToSyncAndStorage,
-                )
-            }
-
-            item {
-                SettingItem(
-                    title = LocalFeedFlowStrings.current.settingsExtras,
-                    icon = Icons.Outlined.Extension,
-                    onClick = navigateToExtras,
                 )
             }
 
@@ -196,20 +162,16 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
 private fun SettingsScreenPreview() {
     FeedFlowTheme {
         SettingsScreenContent(
-            themeMode = ThemeMode.SYSTEM,
             appVersion = "1.0.0",
             navigateBack = {},
-            onThemeModeSelected = {},
+            navigateToAppearance = {},
             navigateToFeedsAndAccounts = {},
             navigateToFeedListSettings = {},
             navigateToReadingBehavior = {},
             navigateToSyncAndStorage = {},
             navigateToWidgetSettings = {},
-            navigateToExtras = {},
             navigateToAboutAndSupport = {},
             showWidgetSettings = true,
-            isMultiPaneEnabled = true,
-            onMultiPaneToggled = {},
         )
     }
 }

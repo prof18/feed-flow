@@ -14,4 +14,16 @@ class AndroidHomeSettingsRepositoryTest {
 
         assertEquals(7, repository.getPaneExpansionIndex())
     }
+
+    @Test
+    fun `multi pane layout is disabled by default`() {
+        assertEquals(false, repository.isMultiPaneLayoutEnabled())
+    }
+
+    @Test
+    fun `multi pane layout setting is persisted`() {
+        repository.setMultiPaneLayoutEnabled(true)
+
+        assertEquals(true, repository.isMultiPaneLayoutEnabled())
+    }
 }

@@ -32,6 +32,7 @@ import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.shared.ui.settings.SettingItem
+import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
@@ -50,6 +51,8 @@ internal fun SettingsScreenContent(
     navigateToExtras: () -> Unit,
     navigateToAboutAndSupport: () -> Unit,
     showWidgetSettings: Boolean,
+    isMultiPaneEnabled: Boolean,
+    onMultiPaneToggled: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -76,6 +79,14 @@ internal fun SettingsScreenContent(
                     ),
                     icon = Icons.Outlined.DarkMode,
                     onOptionSelected = onThemeModeSelected,
+                )
+            }
+
+            item {
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsThreePaneLayout,
+                    isChecked = isMultiPaneEnabled,
+                    onCheckedChange = onMultiPaneToggled,
                 )
             }
 
@@ -197,6 +208,8 @@ private fun SettingsScreenPreview() {
             navigateToExtras = {},
             navigateToAboutAndSupport = {},
             showWidgetSettings = true,
+            isMultiPaneEnabled = true,
+            onMultiPaneToggled = {},
         )
     }
 }

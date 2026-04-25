@@ -10,7 +10,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.widget.FeedFlowWidget
+import com.prof18.feedflow.shared.data.AndroidHomeSettingsRepository
 import com.prof18.feedflow.shared.presentation.MainSettingsViewModel
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -26,6 +28,8 @@ fun SettingsScreen(
 ) {
     val settingsViewModel = koinViewModel<MainSettingsViewModel>()
     val settingState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
+    val homeSettingsRepository = koinInject<AndroidHomeSettingsRepository>()
+    val isMultiPaneEnabled by homeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -52,5 +56,7 @@ fun SettingsScreen(
         navigateToExtras = navigateToExtras,
         navigateToAboutAndSupport = navigateToAboutAndSupport,
         showWidgetSettings = hasWidget,
+        isMultiPaneEnabled = isMultiPaneEnabled,
+        onMultiPaneToggled = homeSettingsRepository::setMultiPaneLayoutEnabled,
     )
 }

@@ -24,7 +24,7 @@ import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.PaneExpansionAnchor
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
-import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
@@ -60,6 +60,7 @@ internal fun AndroidThreePaneHomeScaffold(
     themeMode: ThemeMode,
     canNavigatePrevious: Boolean,
     canNavigateNext: Boolean,
+    isMultiPaneEnabled: Boolean,
     initialPaneExpansionIndex: Int,
     onReaderClosed: () -> Unit,
     onUpdateReaderFontSize: (Int) -> Unit,
@@ -85,7 +86,7 @@ internal fun AndroidThreePaneHomeScaffold(
         initialAnchoredIndex = initialAnchorIndex,
     )
     var lastAnchorIndex by rememberSaveable { mutableIntStateOf(initialAnchorIndex) }
-    val scaffoldDirective = calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+    val scaffoldDirective = rememberScaffoldDirective(isMultiPaneEnabled)
     val navigator = rememberListDetailPaneScaffoldNavigator<String>(
         scaffoldDirective = scaffoldDirective,
     )
@@ -311,6 +312,13 @@ private fun SyncAndroidReaderPaneNavigation(
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+private fun rememberScaffoldDirective(isMultiPaneEnabled: Boolean) =
+    calculatePaneScaffoldDirective(currentWindowAdaptiveInfo()).let { base ->
+        if (isMultiPaneEnabled) base else base.copy(maxHorizontalPartitions = 1)
+    }
 
 private val detailFullscreenAnchor = PaneExpansionAnchor.Proportion(0f)
 private val listFullscreenAnchor = PaneExpansionAnchor.Proportion(1f)

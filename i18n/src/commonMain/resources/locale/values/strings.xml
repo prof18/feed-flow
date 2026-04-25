@@ -94,7 +94,7 @@
     <string name="drawer_title_read">Read</string>
     <string name="settings_toggle_show_read_articles">Show read articles in lists</string>
     <string name="settings_desktop_multi_pane_layout">Use multi-pane home layout</string>
-    <string name="settings_three_pane_layout">Use three-pane layout on large screens</string>
+    <string name="settings_three_pane_layout">Use two-pane layout on large screens</string>
     <string name="select_article_to_read">Select an article to read</string>
     <string name="settings_hide_read_items">Auto-hide articles when marked as read</string>
     <string name="menu_add_to_bookmark">Add to bookmarks</string>

@@ -213,6 +213,7 @@ internal fun HomeScreen(
     val listState = rememberLazyListState()
     val reduceMotionEnabled = LocalReduceMotion.current
     val homeSettingsRepository = koinInject<AndroidHomeSettingsRepository>()
+    val isMultiPaneEnabled by homeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsStateWithLifecycle()
 
     val shareBehavior = ShareBehavior(
         onShareClick = { titleAndUrl ->
@@ -232,6 +233,7 @@ internal fun HomeScreen(
         themeMode = themeMode,
         canNavigatePrevious = canNavigatePrevious,
         canNavigateNext = canNavigateNext,
+        isMultiPaneEnabled = isMultiPaneEnabled,
         initialPaneExpansionIndex = homeSettingsRepository.getPaneExpansionIndex(),
         onReaderClosed = closeReaderSelection,
         onUpdateReaderFontSize = readerModeViewModel::updateFontSize,

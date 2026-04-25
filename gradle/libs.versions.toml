@@ -47,7 +47,7 @@ jsystem-theme-detector = "3.9.1"
 junit = "4.13.2"
 kermit = "2.1.0"
 koin-bom = "4.2.1"
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 # Because of telemetry deck still using version 0.6.x
 kotlinx-date-time = "0.7.1-0.6.x-compat"
 kotlinx-serialization = "1.11.0"

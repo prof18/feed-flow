@@ -359,7 +359,7 @@
     <string name="invalid_opml_import_description">Това не изглежда като валиден OPML файл. Опитайте да изнесете вашите емисии като OPML от приложението си за RSS и ги внесете отново.</string>
     <string name="drawer_title_library">Библиотека</string>
     <string name="settings_desktop_multi_pane_layout">Използвайте начален екран с няколко панела</string>
-    <string name="settings_three_pane_layout">Използвайте три панелен изглед на големи екрани</string>
+    <string name="settings_three_pane_layout">Използвайте двупанелно оформление на големи екрани</string>
     <string name="select_article_to_read">Изберете статия за четене</string>
     <string name="settings_hide_unread_dot">Скриване на индикатора за непрочетени</string>
     <string name="settings_hide_feed_source">Скриване на източника на емисията</string>
@@ -395,4 +395,5 @@
     <string name="widget_preview_note">Цветовете за предварителен преглед може да изглеждат различно на действителния начален екран, тъй като тапетът, темата и фонът на стартера могат да повлияят на крайния резултат.</string>
     <string name="widget_preview_toggle_background">Превключване на фона на прегледа</string>
     <string name="about_the_app">FeedFlow е минималистичен RSS четец за чиста, хронологична времева линия — без алгоритми, без бъркотия. Отваряйте статии в любимия си браузър или ги четете без разсейване с режима за четене. Предварително извличайте и кеширайте пълните статии за четене офлайн навсякъде.\nСинхронизирайте вашите емисии, статус на четене и отметки в Android, iOS, macOS, Windows и Linux, използвайки iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin или BazQux. Организирайте емисиите в категории, блокирайте „шумни“ ключови думи и импортирайте или експортирайте всичко с OPML.</string>
+    <string name="settings_appearance">Външен вид</string>
 </resources>

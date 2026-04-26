@@ -357,11 +357,11 @@
     <string name="invalid_opml_import_title">无法导入此文件</string>
     <string name="invalid_opml_import_description">这看起来不像有效的 OPML 文件。试着从 RSS 应用将订阅源导出为 OPML 并再次导入。</string>
     <string name="drawer_title_library">库</string>
-    <string name="settings_desktop_multi_pane_layout">使用多面板首页布局</string>
-    <string name="settings_three_pane_layout">在大屏幕上使用三面板布局</string>
+    <string name="settings_desktop_multi_pane_layout">使用多窗格首页布局</string>
+    <string name="settings_three_pane_layout">在大屏幕上使用双窗格布局</string>
     <string name="select_article_to_read">选择要阅读的文章</string>
     <string name="settings_hide_unread_dot">隐藏未读指示器</string>
-    <string name="settings_hide_feed_source">隐藏源地址</string>
+    <string name="settings_hide_feed_source">隐藏订阅源名称</string>
     <string name="settings_description_max_lines">描述行</string>
     <string name="settings_description_lines_three">3 行</string>
     <string name="settings_description_lines_five">5 行</string>
@@ -395,4 +395,5 @@
     <string name="widget_preview_note">预览颜色可能在实际主屏幕上看起来不一样，因为壁纸、主题和启动器背景可能影响最终结果。</string>
     <string name="widget_preview_toggle_background">切换预览背景色</string>
     <string name="about_the_app">FeedFlow 是一款极简的 RSS 阅读器，拥有简洁的按时间排序时间线——无算法推荐，无冗余干扰。您可以在您喜爱的浏览器中打开文章，或使用阅读模式享受无干扰的阅读体验。它支持预取并缓存完整文章，随时随地离线阅读。\n使用 iCloud、Dropbox、Google Drive、FreshRSS、Miniflux、Feedbin 或 BazQux，在 Android、iOS、macOS、Windows 和 Linux 等平台同步您的订阅源、阅读状态和收藏。将订阅源归类整理，屏蔽干扰性关键词，并可通过 OPML 格式导入或导出所有内容。</string>
+    <string name="settings_appearance">外观</string>
 </resources>

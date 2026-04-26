@@ -271,7 +271,7 @@
     <string name="new_articles_notification_title">Artikel baru tersedia</string>
     <string name="notification_channel_name">Artikel Baru</string>
     <string name="settings_notifications_title">Notifikasi</string>
-    <string name="settings_notifications_warning_reliability">Notifikasi diperiksa di perangkat Anda, tetapi mungkin tidak selalu terjadi secara andal karena keterbatasan sistem.</string>
+    <string name="settings_notifications_warning_reliability">Notifikasi diperiksa di perangkat Anda, tetapi pengirimannya bergantung pada aktivitas latar belakang yang diizinkan oleh sistem dan penggunaan aplikasi, yang tidak dapat dikontrol oleh FeedFlow.</string>
     <string name="marking_all_read_dialog_title">Menandai semua sebagai sudah dibaca...</string>
     <string name="date_format_title">Format tanggal</string>
     <string name="date_format_normal">Hari/Bulan</string>
@@ -355,7 +355,7 @@
     <string name="invalid_opml_import_description">Ini tampaknya bukan file OPML yang valid. Coba ekspor feed Anda sebagai OPML dari aplikasi RSS Anda dan impor lagi.</string>
     <string name="drawer_title_library">Pustaka</string>
     <string name="settings_desktop_multi_pane_layout">Gunakan tata letak beranda multi-panel</string>
-    <string name="settings_three_pane_layout">Gunakan tata letak tiga panel di layar besar</string>
+    <string name="settings_three_pane_layout">Gunakan tata letak dua panel di layar besar</string>
     <string name="select_article_to_read">Pilih artikel untuk dibaca</string>
     <string name="settings_hide_read_items">Sembunyikan otomatis artikel saat ditandai sudah dibaca</string>
     <string name="settings_hide_unread_dot">Sembunyikan indikator belum dibaca</string>
@@ -394,4 +394,5 @@
     <string name="delete_all_feeds_in_category">Hapus semua feed</string>
     <string name="delete_all_feeds_confirmation_title">Hapus semua feed dalam kategori?</string>
     <string name="delete_all_feeds_confirmation_message">Apakah Anda yakin ingin menghapus semua feed dalam kategori ini? Tindakan ini tidak dapat dibatalkan.</string>
+    <string name="settings_appearance">Tampilan</string>
 </resources>

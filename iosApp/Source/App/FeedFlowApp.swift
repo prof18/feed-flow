@@ -218,6 +218,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         completionHandler([.banner, .sound])
     }
 
+    func applicationDidReceiveMemoryWarning(_: UIApplication) {
+        Deps.shared.getContentPrefetchManager().pauseFetching()
+    }
+
     func application(
         _: UIApplication,
         handleEventsForBackgroundURLSession identifier: String,

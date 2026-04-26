@@ -4,6 +4,7 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 
 class ContentPrefetchRepositoryFake : ContentPrefetchRepository {
     var cancelFetchingCalled = false
+    var pauseFetchingCalled = false
     var startBackgroundFetchingCalled = false
     var prefetchContentCalled = false
 
@@ -17,5 +18,9 @@ class ContentPrefetchRepositoryFake : ContentPrefetchRepository {
 
     override suspend fun cancelFetching() {
         cancelFetchingCalled = true
+    }
+
+    override fun pauseFetching() {
+        pauseFetchingCalled = true
     }
 }

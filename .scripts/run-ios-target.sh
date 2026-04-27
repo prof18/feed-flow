@@ -10,14 +10,15 @@ BUILD_CONFIGURATION="${BUILD_CONFIGURATION:-Debug}"
 RUN_AFTER_BUILD=1
 VERBOSE_BUILD=1
 USE_XCBEAUTIFY=1
+CLEAN_INSTALL=0
 TARGET_KIND=""
 TARGET_QUERY=""
 
 usage() {
   cat <<'EOF'
 Usage:
-  .scripts/run-ios-target.sh --simulator "<simulator name>" [--build-only] [--verbose-build]
-  .scripts/run-ios-target.sh --device "<device name fragment>" [--build-only] [--verbose-build]
+  .scripts/run-ios-target.sh --simulator "<simulator name>" [--build-only] [--verbose-build] [--clean-install]
+  .scripts/run-ios-target.sh --device "<device name fragment>" [--build-only] [--verbose-build] [--clean-install]
 
 Examples:
   .scripts/run-ios-target.sh --simulator "iPhone 17 Pro"
@@ -60,6 +61,10 @@ while [ "$#" -gt 0 ]; do
       ;;
     --verbose-build)
       VERBOSE_BUILD=1
+      shift
+      ;;
+    --clean-install)
+      CLEAN_INSTALL=1
       shift
       ;;
     -h|--help)
@@ -267,8 +272,12 @@ build_for_simulator() {
   xcrun simctl bootstatus "$simulator_udid" -b
   open -a Simulator --args -CurrentDeviceUDID "$simulator_udid"
 
+  if [ "$CLEAN_INSTALL" -eq 1 ]; then
+    log "Uninstalling existing simulator app"
+    xcrun simctl uninstall "$simulator_udid" "$bundle_id" >/dev/null 2>&1 || true
+  fi
+
   log "Installing app on simulator"
-  xcrun simctl uninstall "$simulator_udid" "$bundle_id" >/dev/null 2>&1 || true
   xcrun simctl install "$simulator_udid" "$app_path"
 
   log "Launching $bundle_id"
@@ -302,6 +311,11 @@ build_for_device() {
   fi
 
   bundle_id="$(get_bundle_id "$app_path")"
+
+  if [ "$CLEAN_INSTALL" -eq 1 ]; then
+    run_devicectl_step "Uninstalling existing app from device" \
+      device uninstall app --device "$device_udid" "$bundle_id" || true
+  fi
 
   run_devicectl_step "Installing app on device" \
     device install app --device "$device_udid" "$app_path"

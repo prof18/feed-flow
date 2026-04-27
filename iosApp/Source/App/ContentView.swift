@@ -13,7 +13,10 @@ struct ContentView: View {
     @StateObject private var readerModeVmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
         Deps.shared.getReaderModeViewModel())
 
+    private let homeSettingsRepository = Deps.shared.getIosHomeSettingsRepository()
+
     @State private var hasTriggeredLaunch = false
+    @State private var isMultiPaneEnabled = true
 
     @State private var selectedSidebarItem: SidebarSelection? = .timeline
     @State private var navDrawerState: NavDrawerState = .init(
@@ -28,15 +31,27 @@ struct ContentView: View {
     @State private var pendingNotificationSelection: NotificationSelectionTarget?
 
     var body: some View {
-        ThreePaneView(
-            selectedSidebarItem: $selectedSidebarItem,
-            indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
-            homeViewModel: vmStoreOwner.instance,
-            readerModeViewModel: readerModeVmStoreOwner.instance
-        )
+        Group {
+            if isMultiPaneEnabled {
+                ThreePaneView(
+                    selectedSidebarItem: $selectedSidebarItem,
+                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+                    homeViewModel: vmStoreOwner.instance,
+                    readerModeViewModel: readerModeVmStoreOwner.instance
+                )
+            } else {
+                SinglePaneView(
+                    selectedSidebarItem: $selectedSidebarItem,
+                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+                    homeViewModel: vmStoreOwner.instance,
+                    readerModeViewModel: readerModeVmStoreOwner.instance
+                )
+            }
+        }
         .onAppear {
             let savedThemeMode = vmStoreOwner.instance.getCurrentThemeMode()
             appState.updateTheme(savedThemeMode)
+            isMultiPaneEnabled = homeSettingsRepository.isMultiPaneLayoutEnabled()
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
@@ -68,6 +83,11 @@ struct ContentView: View {
                     selectedSidebarItem = sidebarSelection(for: target)
                     pendingNotificationSelection = nil
                 }
+            }
+        }
+        .task {
+            for await value in homeSettingsRepository.isMultiPaneLayoutEnabledFlow {
+                isMultiPaneEnabled = (value as? Bool) ?? true
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { notification in

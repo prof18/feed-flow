@@ -359,7 +359,7 @@
     <string name="invalid_opml_import_description">Tệp này có vẻ không phải là tệp OPML hợp lệ. Hãy thử xuất nguồn tin của bạn dưới dạng OPML từ ứng dụng RSS và nhập lại.</string>
     <string name="drawer_title_library">Thư viện</string>
     <string name="settings_desktop_multi_pane_layout">Dùng bố cục trang chủ nhiều ô</string>
-    <string name="settings_three_pane_layout">Dùng bố cục ba ngăn trên màn hình lớn</string>
+    <string name="settings_three_pane_layout">Dùng bố cục hai-ngăn trên màn hình lớn</string>
     <string name="select_article_to_read">Chọn một bài viết để đọc</string>
     <string name="settings_hide_unread_dot">Ẩn chỉ báo chưa đọc</string>
     <string name="settings_hide_feed_source">Ẩn tên nguồn tin</string>
@@ -395,4 +395,5 @@
     <string name="delete_all_feeds_in_category">Xóa tất cả nguồn tin</string>
     <string name="delete_all_feeds_confirmation_title">Xóa tất cả nguồn tin trong danh mục?</string>
     <string name="delete_all_feeds_confirmation_message">Bạn có chắc muốn xóa tất cả nguồn tin trong danh mục này? Thao tác này không thể hoàn tác.</string>
+    <string name="settings_appearance">Giao diện</string>
 </resources>

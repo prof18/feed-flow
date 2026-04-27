@@ -87,7 +87,7 @@
   </content_rating>
 
   <releases>
-      <release version="1.13.0" date="2026-04-27">
+      <release version="1.13.1" date="2026-04-27">
           <description>
               <p>Fixed a crash in the adaptive layout toolbar</p>
               <p>Search state now resets correctly when exiting search</p>

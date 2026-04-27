@@ -1,7 +1,3 @@
-• New multi-pane layout on tablets and larger Android screens
-• Refreshed reader mode with new floating toolbar and navigation bar
-• Feed list customizations: hide unread dot, feed source, or limit description lines
-• Jump to the next feed automatically with the new Pull to Next gesture
-• More widget color options, hide images in widget, improved notifications
-• Swipe to open in preferred browser, background sync restrictions
-• New app icon and many crash fixes
+• Option to disable two-pane mode on Android tablets - now two-pane mode is disabled by default
+• Fixed a crash in the adaptive layout
+• Search now resets correctly when you exit it

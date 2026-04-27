@@ -87,6 +87,14 @@
   </content_rating>
 
   <releases>
+      <release version="1.13.0" date="2026-04-27">
+          <description>
+              <p>Fixed a crash in the adaptive layout toolbar</p>
+              <p>Search state now resets correctly when exiting search</p>
+              <p>Bug fixing and improvements</p>
+          </description>
+      </release>
+
       <release version="1.12.0" date="2026-04-18">
           <description>
               <p>Refreshed reader mode with new floating toolbar and navigation bar</p>

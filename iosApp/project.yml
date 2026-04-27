@@ -71,7 +71,7 @@ packages:
     exactVersion: 2.13.4
   Nuke:
     url: https://github.com/kean/Nuke
-    exactVersion: 13.0.2
+    exactVersion: 13.0.4
   Collections:
     url: https://github.com/apple/swift-collections
     exactVersion: 1.4.1

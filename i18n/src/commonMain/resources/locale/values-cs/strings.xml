@@ -199,7 +199,7 @@
     <string name="date_format_american">Měsíc/Den</string>
     <string name="file_menu">Soubor</string>
     <string name="settings_notifications_title">Upozornění</string>
-    <string name="settings_notifications_warning_reliability">Oznámení jsou kontrolovány ve vašem zařízení, ale nemusí být vždy spolehlivě z důvodu omezení systému.</string>
+    <string name="settings_notifications_warning_reliability">Oznámení jsou kontrolovány na vašem zařízení, ale doručení závisí na činnosti na pozadí, které je povoleno systémem a užitím aplikace, které FeedFlow nemůže kontrolovat.</string>
     <string name="settings_sync_period_thirty_minutes">Každých 30 minut</string>
     <string name="settings_experimental_parsing">Použit experimentální engine pro režim čtečky</string>
     <string name="enable_notifications_for_feed">Povolit upozornění na nové články</string>
@@ -376,7 +376,7 @@
     <string name="settings_background_sync_restrictions_description">Použijte jednu nebo obě možnosti k omezení běhu synchronizace na pozadí.</string>
     <string name="settings_background_sync_wifi_only">Synchronizace na pozadí pouze přes Wi-Fi</string>
     <string name="settings_background_sync_charging_only">Synchronizovat na pozadí pouze při nabíjení</string>
-    <string name="widget_configuration_description">Widget se aktualizuje na základě nastavení synchronizace na pozadí ze Synchronizace a Úložiště</string>
+    <string name="widget_configuration_description">Widget se aktualizuje na základě nastavení synchronizace na pozadí v sekci Synchronizace a Úložiště.</string>
     <string name="widget_background_sync_title">Synchronizace na pozadí</string>
     <string name="widget_background_sync_description">Nakonfigurujte synchronizaci na pozadí ze Synchronizace a Úložiště, pokud chcete widget automaticky aktualizovat.</string>
     <string name="widget_background_sync_disabled_warning">Synchronizace na pozadí je v současné době vypnuta, takže se widget automaticky neobnoví.</string>
@@ -394,5 +394,6 @@
     <string name="delete_all_feeds_in_category">Smazat všechny krmiva</string>
     <string name="delete_all_feeds_confirmation_title">Smazat všechny zdroje v kategorii?</string>
     <string name="delete_all_feeds_confirmation_message">Přejete si skutečně odstranit všechny zdroje v této kategorii? Tuto akci nelze zrušit.</string>
-    <string name="about_the_app">"FeedFlow je minimalistická čtečka RSS pro čistou, chronologicky řazenou časovou osu - žádný algoritmus, žádný  balast. Otevírejte články v oblíbeném prohlížeči, nebo je čtěte  bez jakéhokoli rozptylování v módu čtenářově. Přednačítání celých článků umožňuje  dostupné offline čtení kdekoliv.  \nSynchronizujte své kanály,  stav přečtení a záložky přes Android, iOS, macOS, Windows a Linux pomocí iCloud, Dropbox, Disk Google, FreshRSS, Miniflux, Feedbin nebo BazQux. Organizujte zdroje do kategorií, blokujte klíčová slova a importujte nebo exportujte vše pomocí souborů OPML."</string>
+    <string name="about_the_app">FeedFlow je minimalistická čtečka RSS pro čistou, chronologicky řazenou časovou osu - žádný algoritmus, žádný balast. Otevírejte články v oblíbeném prohlížeči, nebo je čtěte bez jakéhokoli rozptylování v módu čtenářově. Přednačítání celých článků umožňuje dostupné offline čtení kdekoliv. \nSynchronizujte své kanály, stav přečtení a záložky přes Android, iOS, macOS, Windows a Linux pomocí iCloud, Dropbox, Disk Google, FreshRSS, Miniflux, Feedbin nebo BazQux. Organizujte zdroje do kategorií, blokujte klíčová slova a importujte nebo exportujte vše pomocí souborů OPML.</string>
+    <string name="settings_appearance">Vzhled</string>
 </resources>

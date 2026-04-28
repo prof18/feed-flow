@@ -21,6 +21,12 @@ internal val gamingFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=gamespot.com&sz=64",
         ),
         SuggestedFeed(
+            name = "GamingOnLinux",
+            url = "https://www.gamingonlinux.com/article_rss.php",
+            description = "Linux gaming, Steam Deck, and Proton news",
+            logoUrl = "https://www.google.com/s2/favicons?domain=gamingonlinux.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "IGN",
             url = "https://feeds.ign.com/ign/news",
             description = "Video game news, reviews, and walkthroughs",

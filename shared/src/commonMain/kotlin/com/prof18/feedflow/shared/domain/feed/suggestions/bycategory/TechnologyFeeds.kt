@@ -21,6 +21,12 @@ internal val technologyFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=9to5google.com&sz=64",
         ),
         SuggestedFeed(
+            name = "9to5Linux",
+            url = "https://9to5linux.com/feed",
+            description = "Linux news, reviews, tutorials, and more",
+            logoUrl = "https://www.google.com/s2/favicons?domain=9to5linux.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "9to5Mac",
             url = "https://9to5mac.com/feed/",
             description = "Apple news and rumors",
@@ -75,10 +81,28 @@ internal val technologyFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=ycombinator.com&sz=64",
         ),
         SuggestedFeed(
+            name = "It's FOSS",
+            url = "https://itsfoss.com/feed/",
+            description = "Linux guides, news, and open source coverage",
+            logoUrl = "https://www.google.com/s2/favicons?domain=itsfoss.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "Last Week in AI",
             url = "https://lastweekin.ai/feed",
             description = "Weekly AI news digest",
             logoUrl = "https://www.google.com/s2/favicons?domain=lastweekin.ai&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Linux.com",
+            url = "https://www.linux.com/feed/",
+            description = "Open source news for professionals",
+            logoUrl = "https://www.google.com/s2/favicons?domain=linux.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Linuxiac",
+            url = "https://linuxiac.com/feed/",
+            description = "Linux and open source news",
+            logoUrl = "https://www.google.com/s2/favicons?domain=linuxiac.com&sz=64",
         ),
         SuggestedFeed(
             name = "MacRumors",
@@ -105,10 +129,28 @@ internal val technologyFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=mit.edu&sz=64",
         ),
         SuggestedFeed(
+            name = "OMG! Ubuntu",
+            url = "https://www.omgubuntu.co.uk/feed",
+            description = "Ubuntu news, apps, tips, and desktop Linux coverage",
+            logoUrl = "https://www.google.com/s2/favicons?domain=omgubuntu.co.uk&sz=64",
+        ),
+        SuggestedFeed(
             name = "Phonearena",
             url = "https://www.phonearena.com/feed/news",
             description = "Technology news and updates from Phonearena",
             logoUrl = "https://www.google.com/s2/favicons?domain=phonearena.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Phoronix",
+            url = "https://www.phoronix.com/rss.php",
+            description = "Linux hardware, benchmarking, and open source news",
+            logoUrl = "https://www.google.com/s2/favicons?domain=phoronix.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Planet KDE",
+            url = "https://planet.kde.org/index.xml",
+            description = "Posts from KDE contributors and community blogs",
+            logoUrl = "https://www.google.com/s2/favicons?domain=planet.kde.org&sz=64",
         ),
         SuggestedFeed(
             name = "Tech Emails",

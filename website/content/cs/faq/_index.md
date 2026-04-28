@@ -9,5 +9,5 @@ type: "faq"
 layout: "list"
 ---
 
-Welcome to FeedFlow's FAQ section. Here you'll find answers to the most common
-questions about using FeedFlow.
+Vítejte v sekci Nejčastější dotazy FeedFlow. Zde najdete odpovědi na nejčastější
+otázky týkající se použití FeedFlow.

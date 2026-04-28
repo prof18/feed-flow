@@ -18,6 +18,7 @@ import com.prof18.feedflow.feedsync.icloud.ICloudDataSourceImpl
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
+import com.prof18.feedflow.shared.data.IosHomeSettingsRepository
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
@@ -162,6 +163,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     single {
+        IosHomeSettingsRepository(
+            settings = get(),
+        )
+    }
+
+    single {
         GoogleDriveDataSourceIos(
             platformClient = get(),
             googleDriveSettings = get(),
@@ -294,6 +301,7 @@ object Deps : KoinComponent {
     fun getFeedFlowStrings() = getKoin().get<FeedFlowStrings>()
     fun getStrings() = getKoin().get<FeedFlowStrings>()
     fun getSettingsRepository() = getKoin().get<SettingsRepository>()
+    fun getIosHomeSettingsRepository() = getKoin().get<IosHomeSettingsRepository>()
     fun getSearchViewModel() = getKoin().get<SearchViewModel>()
     fun getAccountsViewModel() = getKoin().get<AccountsViewModel>()
     fun getDropboxDataSource() = getKoin().get<DropboxDataSource>()

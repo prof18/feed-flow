@@ -72,6 +72,10 @@ class ContentPrefetchRepositoryIosDesktop(
         databaseHelper.clearPrefetchQueue()
     }
 
+    override fun pauseFetching() {
+        backgroundJob?.cancel()
+    }
+
     override fun startBackgroundFetching() {
         if (!settingsRepository.isPrefetchArticleContentEnabled()) {
             logger.d { "Content prefetch is disabled" }

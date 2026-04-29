@@ -11,7 +11,7 @@ import Foundation
 import Reader
 import SwiftUI
 
-struct ThreePaneView: View {
+struct RegularView: View {
     @Environment(AppState.self)
     private var appState
     @Environment(BrowserSelector.self)
@@ -40,26 +40,18 @@ struct ThreePaneView: View {
 
     @State private var showEditFeedSheet = false
     @State private var feedSourceToEdit: FeedSource?
-
-    @State private var columnVisibility: NavigationSplitViewVisibility = .all
-    @State private var preferredColumn: NavigationSplitViewColumn = .content
-    @State private var detailContent: DetailPaneContent = .empty
-    @State private var detailNavigationPath = NavigationPath()
+    @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
     var body: some View {
-        NavigationSplitView(
-            columnVisibility: $columnVisibility,
-            preferredCompactColumn: $preferredColumn
-        ) {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             SidebarDrawer(
                 selectedSidebarItem: $selectedSidebarItem,
                 navDrawerState: navDrawerState,
                 onFeedFilterSelected: { feedFilter in
                     indexHolder.clear()
                     scrollUpTrigger.toggle()
-                    detailContent = .empty
-                    detailNavigationPath = NavigationPath()
-                    preferredColumn = .content
+                    appState.currentCommonRoute = nil
+                    appState.regularNavigationPath = NavigationPath()
                     homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
                 },
                 onMarkAllReadClick: {
@@ -104,7 +96,7 @@ struct ThreePaneView: View {
             .environment(appState)
             .environment(browserSelector)
             .navigationBarTitleDisplayMode(.inline)
-        } content: {
+        } detail: {
             @Bindable var appState = appState
             NavigationStack(path: $appState.regularNavigationPath) {
                 HomeScreen(
@@ -113,13 +105,9 @@ struct ThreePaneView: View {
                     columnVisibility: $columnVisibility,
                     homeViewModel: homeViewModel,
                     readerModeViewModel: readerModeViewModel,
-                    onReaderModeNavigate: {
-                        detailContent = .readerMode
-                        detailNavigationPath = NavigationPath()
-                        preferredColumn = .detail
-                    },
+                    onReaderModeNavigate: nil,
                     openDrawer: {
-                        preferredColumn = .sidebar
+                        columnVisibility = .all
                     },
                     onSidebarSelectionChanged: { feedFilter in
                         selectedSidebarItem = sidebarSelection(from: feedFilter)
@@ -128,49 +116,14 @@ struct ThreePaneView: View {
                 .environment(indexHolder)
                 .environment(appState)
                 .environment(browserSelector)
+                .onAppear {
+                    appState.currentCommonRoute = nil
+                }
                 .navigationDestination(for: CommonViewRoute.self) { route in
-                    switch route {
-                    case .readerMode:
-                        ReaderModeScreen(viewModel: readerModeViewModel, onInAppBrowserClick: nil)
-
-                    case .search:
-                        SearchScreen(
-                            readerModeViewModel: readerModeViewModel,
-                            onReaderModeNavigate: {
-                                detailContent = .readerMode
-                                detailNavigationPath = NavigationPath()
-                                preferredColumn = .detail
-                            }
-                        )
-
-                    case .accounts:
-                        AccountsScreen()
-
-                    case let .deepLinkFeed(feedId):
-                        DeepLinkFeedScreen(feedId: feedId, readerModeViewModel: readerModeViewModel)
-
-                    case .inAppBrowser:
-                        EmptyView()
-                    }
+                    commonDestination(route)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-        } detail: {
-            NavigationStack(path: $detailNavigationPath) {
-                detailPaneView
-                    .environment(appState)
-                    .environment(browserSelector)
-                    .navigationDestination(for: CommonViewRoute.self) { route in
-                        switch route {
-                        case let .inAppBrowser(url):
-                            SFSafariView(url: url)
-                                .ignoresSafeArea()
-                                .navigationBarBackButtonHidden(true)
-                        default:
-                            EmptyView()
-                        }
-                    }
-            }
         }
         .navigationSplitViewStyle(.balanced)
         .background(Color(.systemGroupedBackground))
@@ -191,15 +144,19 @@ struct ThreePaneView: View {
         .onChange(of: appState.pendingBrowserURL) { _, newURL in
             if let url = newURL {
                 appState.pendingBrowserURL = nil
-                detailContent = .inAppBrowser(url: url)
-                detailNavigationPath = NavigationPath()
-                preferredColumn = .detail
+                appState.currentCommonRoute = CommonViewRoute.inAppBrowser(url: url)
+                appState.regularNavigationPath.append(CommonViewRoute.inAppBrowser(url: url))
             }
         }
         .onChange(of: appState.pendingExternalURL) { _, newURL in
             if let url = newURL {
                 appState.pendingExternalURL = nil
                 openURL(url)
+            }
+        }
+        .onChange(of: appState.regularNavigationPath.count) { _, newCount in
+            if newCount == 0 {
+                appState.currentCommonRoute = nil
             }
         }
         .task {
@@ -211,9 +168,41 @@ struct ThreePaneView: View {
             showAddFeedSheet = false
             showEditFeedSheet = false
             showSettings = false
-            detailContent = .empty
-            detailNavigationPath = NavigationPath()
-            preferredColumn = .content
+            appState.currentCommonRoute = nil
+            appState.regularNavigationPath = NavigationPath()
+        }
+    }
+
+    @ViewBuilder
+    private func commonDestination(_ route: CommonViewRoute) -> some View {
+        Group {
+            switch route {
+            case .readerMode:
+                ReaderModeScreen(
+                    viewModel: readerModeViewModel,
+                    onInAppBrowserClick: nil
+                )
+
+            case .search:
+                SearchScreen(
+                    readerModeViewModel: readerModeViewModel,
+                    onReaderModeNavigate: nil
+                )
+
+            case .accounts:
+                AccountsScreen()
+
+            case let .deepLinkFeed(feedId):
+                DeepLinkFeedScreen(feedId: feedId, readerModeViewModel: readerModeViewModel)
+
+            case let .inAppBrowser(url):
+                SFSafariView(url: url)
+                    .ignoresSafeArea()
+                    .navigationBarBackButtonHidden(true)
+            }
+        }
+        .onAppear {
+            appState.currentCommonRoute = route
         }
     }
 
@@ -230,31 +219,5 @@ struct ThreePaneView: View {
             return .feedSource(id: source.feedSource.id)
         }
         return nil
-    }
-
-    @ViewBuilder private var detailPaneView: some View {
-        switch detailContent {
-        case .empty:
-            EmptyDetailPane()
-        case .readerMode:
-            ReaderModeScreen(
-                viewModel: readerModeViewModel,
-                onInAppBrowserClick: { url in
-                    if url.scheme == "http" || url.scheme == "https" {
-                        detailNavigationPath.append(CommonViewRoute.inAppBrowser(url: url))
-                    } else {
-                        openURL(url)
-                    }
-                }
-            )
-        case let .inAppBrowser(url):
-            SFSafariView(url: url, onDismiss: {
-                detailContent = .empty
-                preferredColumn = .content
-            })
-            .id(url)
-            .ignoresSafeArea()
-            .toolbar(.hidden, for: .navigationBar)
-        }
     }
 }

@@ -7,12 +7,15 @@ struct ContentView: View {
     private var appState
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass: UserInterfaceSizeClass?
 
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
     @StateObject private var reviewVmStoreOwner = VMStoreOwner<ReviewViewModel>(Deps.shared.getReviewViewModel())
     @StateObject private var readerModeVmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
         Deps.shared.getReaderModeViewModel())
 
+    @State private var isAppInBackground = false
     @State private var hasTriggeredLaunch = false
 
     @State private var selectedSidebarItem: SidebarSelection? = .timeline
@@ -28,23 +31,49 @@ struct ContentView: View {
     @State private var pendingNotificationSelection: NotificationSelectionTarget?
 
     var body: some View {
-        ThreePaneView(
-            selectedSidebarItem: $selectedSidebarItem,
-            indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
-            homeViewModel: vmStoreOwner.instance,
-            readerModeViewModel: readerModeVmStoreOwner.instance
-        )
+        @Bindable var appState = appState
+        let effectiveSizeClass = appState.sizeClass ?? horizontalSizeClass
+
+        Group {
+            if effectiveSizeClass == .compact {
+                CompactView(
+                    selectedSidebarItem: $selectedSidebarItem,
+                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+                    homeViewModel: vmStoreOwner.instance,
+                    readerModeViewModel: readerModeVmStoreOwner.instance
+                )
+            } else {
+                RegularView(
+                    selectedSidebarItem: $selectedSidebarItem,
+                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+                    homeViewModel: vmStoreOwner.instance,
+                    readerModeViewModel: readerModeVmStoreOwner.instance
+                )
+            }
+        }
         .onAppear {
+            if appState.sizeClass == nil {
+                appState.sizeClass = horizontalSizeClass
+            }
             let savedThemeMode = vmStoreOwner.instance.getCurrentThemeMode()
             appState.updateTheme(savedThemeMode)
+        }
+        .onChange(of: horizontalSizeClass) {
+            if !isAppInBackground && horizontalSizeClass != appState.sizeClass {
+                preserveVisibleRoute(from: appState.sizeClass, to: horizontalSizeClass)
+                appState.sizeClass = horizontalSizeClass
+            }
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
             case .active:
+                isAppInBackground = false
                 if !hasTriggeredLaunch {
                     hasTriggeredLaunch = true
                     vmStoreOwner.instance.onAppLaunch()
                 }
+            case .background:
+                isAppInBackground = true
             default:
                 break
             }
@@ -85,7 +114,7 @@ struct ContentView: View {
         switch host {
         case "feedsourcefilter":
             if let feedSourceId = pathComponents.first {
-                appState.regularNavigationPath = NavigationPath()
+                showFeedScreen()
                 let target = NotificationSelectionTarget.feedSource(feedSourceId)
                 pendingNotificationSelection = target
                 selectedSidebarItem = sidebarSelection(for: target)
@@ -93,7 +122,7 @@ struct ContentView: View {
             }
         case "category":
             if let categoryId = pathComponents.first {
-                appState.regularNavigationPath = NavigationPath()
+                showFeedScreen()
                 let target = NotificationSelectionTarget.category(categoryId)
                 pendingNotificationSelection = target
                 selectedSidebarItem = sidebarSelection(for: target)
@@ -101,6 +130,29 @@ struct ContentView: View {
             }
         default:
             break
+        }
+    }
+
+    private func showFeedScreen() {
+        appState.currentCommonRoute = nil
+        appState.regularNavigationPath = NavigationPath()
+        appState.compactNavigationPath = NavigationPath()
+        appState.compactNavigationPath.append(CompactViewRoute.feed)
+    }
+
+    private func preserveVisibleRoute(
+        from oldSizeClass: UserInterfaceSizeClass?,
+        to newSizeClass: UserInterfaceSizeClass?
+    ) {
+        guard let currentCommonRoute = appState.currentCommonRoute else { return }
+
+        if oldSizeClass == .compact, newSizeClass != .compact {
+            appState.regularNavigationPath = NavigationPath()
+            appState.regularNavigationPath.append(currentCommonRoute)
+        } else if oldSizeClass != .compact, newSizeClass == .compact {
+            appState.compactNavigationPath = NavigationPath()
+            appState.compactNavigationPath.append(CompactViewRoute.feed)
+            appState.compactNavigationPath.append(currentCommonRoute)
         }
     }
 

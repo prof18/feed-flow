@@ -16,14 +16,32 @@ class AppState {
     var snackbarQueue: Deque<SnackbarData> = Deque()
     var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
     var regularNavigationPath = NavigationPath()
+    var compactNavigationPath = NavigationPath()
+    var currentCommonRoute: CommonViewRoute?
+    var sizeClass: UserInterfaceSizeClass?
     var colorScheme: ColorScheme?
 
     var redrawAfterFeedSourceEdit = false
     var pendingBrowserURL: URL?
     var pendingExternalURL: URL?
 
+    init() {
+        compactNavigationPath.append(CompactViewRoute.feed)
+    }
+
     func navigate(route: any Hashable) {
-        regularNavigationPath.append(route)
+        if let commonRoute = route as? CommonViewRoute {
+            currentCommonRoute = commonRoute
+        }
+
+        if sizeClass == .compact {
+            if route is CommonViewRoute, compactNavigationPath.isEmpty {
+                compactNavigationPath.append(CompactViewRoute.feed)
+            }
+            compactNavigationPath.append(route)
+        } else {
+            regularNavigationPath.append(route)
+        }
     }
 
     func openInAppBrowser(url: URL) {

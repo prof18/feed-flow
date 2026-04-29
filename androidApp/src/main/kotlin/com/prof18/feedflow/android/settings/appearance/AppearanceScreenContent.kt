@@ -27,10 +27,8 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun AppearanceScreenContent(
     navigateBack: () -> Unit,
     themeMode: ThemeMode,
-    isMultiPaneEnabled: Boolean,
     isReduceMotionEnabled: Boolean,
     onThemeModeSelected: (ThemeMode) -> Unit,
-    onMultiPaneToggled: (Boolean) -> Unit,
     onReduceMotionToggled: (Boolean) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
@@ -72,14 +70,6 @@ internal fun AppearanceScreenContent(
 
             item {
                 SettingSwitchItem(
-                    title = strings.settingsThreePaneLayout,
-                    isChecked = isMultiPaneEnabled,
-                    onCheckedChange = onMultiPaneToggled,
-                )
-            }
-
-            item {
-                SettingSwitchItem(
                     title = strings.settingsReduceMotion,
                     isChecked = isReduceMotionEnabled,
                     onCheckedChange = onReduceMotionToggled,
@@ -100,10 +90,8 @@ private fun AppearanceScreenContentPreview() {
         AppearanceScreenContent(
             navigateBack = {},
             themeMode = ThemeMode.SYSTEM,
-            isMultiPaneEnabled = true,
             isReduceMotionEnabled = false,
             onThemeModeSelected = {},
-            onMultiPaneToggled = {},
             onReduceMotionToggled = {},
         )
     }

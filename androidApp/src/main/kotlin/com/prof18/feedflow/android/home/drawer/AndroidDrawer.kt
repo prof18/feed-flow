@@ -2,10 +2,10 @@ package com.prof18.feedflow.android.home.drawer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,9 +28,8 @@ fun AndroidDrawer(
     onFeedFilterSelected: (FeedFilter) -> Unit,
     modifier: Modifier = Modifier,
     onFeedSuggestionsClick: () -> Unit = {},
+    listState: LazyListState = rememberLazyListState(),
 ) {
-    val listState = rememberLazyListState()
-
     val onFeedSourceClick: (FeedSource) -> Unit = { feedSource ->
         onFeedFilterSelected(FeedFilter.Source(feedSource))
     }
@@ -38,14 +37,9 @@ fun AndroidDrawer(
     LazyColumn(
         state = listState,
         modifier = modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(
-                start = Spacing.regular,
-                top = Spacing.medium,
-                end = Spacing.regular,
-                bottom = Spacing.regular,
-            ),
+            .fillMaxSize()
+            .padding(horizontal = Spacing.regular)
+            .padding(top = Spacing.regular),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

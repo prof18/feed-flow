@@ -99,6 +99,13 @@ class SearchViewModel internal constructor(
                 }
             }.launchIn(viewModelScope)
 
+        feedStateRepository.currentFeedFilter
+            .onEach { feedFilter ->
+                if (searchQueryMutableState.value.isBlank()) {
+                    refreshSearchContext(feedFilter)
+                }
+            }.launchIn(viewModelScope)
+
         viewModelScope.launch {
             feedStateRepository.errorState.collect { error ->
                 when (error) {
@@ -209,7 +216,11 @@ class SearchViewModel internal constructor(
     }
 
     private fun refreshSearchContext() {
-        currentSearchContextFeedFilter = feedStateRepository.getCurrentFeedFilter()
+        refreshSearchContext(feedStateRepository.getCurrentFeedFilter())
+    }
+
+    private fun refreshSearchContext(feedFilter: FeedFilter) {
+        currentSearchContextFeedFilter = feedFilter
         searchFilterMutableState.update { currentSearchContextFeedFilter.toSearchFilter() }
         searchFeedFilterMutableState.update { currentSearchContextFeedFilter.toSearchFeedFilter() }
     }

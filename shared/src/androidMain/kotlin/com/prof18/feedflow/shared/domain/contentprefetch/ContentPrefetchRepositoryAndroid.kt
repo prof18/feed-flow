@@ -131,6 +131,10 @@ class ContentPrefetchRepositoryAndroid(
         WorkManager.getInstance(appContext).cancelUniqueWork(WORKER_TAG)
     }
 
+    override fun pauseFetching() {
+        // no-op this is only for iOS
+    }
+
     private companion object {
         const val WORKER_TAG = "ContentPrefetchWorker"
     }

@@ -107,6 +107,49 @@ class SearchViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `search context follows source changes after returning to home`() = runTest(testDispatcher) {
+        val feedStateRepository = getFeedStateRepository()
+        val databaseHelper = getDatabaseHelper()
+
+        val sourceA = createFeedSource(id = "source-return-a", title = "Source Return A")
+        val sourceB = createFeedSource(id = "source-return-b", title = "Source Return B")
+        insertFeedSources(databaseHelper, sourceA, sourceB)
+
+        val itemA = createFeedItem(
+            id = "item-return-a",
+            title = "Return Match",
+            feedSource = sourceA,
+            pubDateMillis = 2000,
+        )
+        val itemB = createFeedItem(
+            id = "item-return-b",
+            title = "Return Match",
+            feedSource = sourceB,
+            pubDateMillis = 1000,
+        )
+        databaseHelper.insertFeedItems(listOf(itemA, itemB), lastSyncTimestamp = 0)
+
+        feedStateRepository.updateFeedSourceFilter(sourceA.id)
+        val viewModel = getViewModel()
+
+        viewModel.resetSearch()
+        feedStateRepository.updateFeedSourceFilter(sourceB.id)
+        advanceUntilIdle()
+
+        val searchFeedFilter = viewModel.searchFeedFilterState.value
+        assertIs<FeedFilter.Source>(searchFeedFilter)
+        assertEquals(sourceB.id, searchFeedFilter.feedSource.id)
+
+        viewModel.updateSearchQuery("Return")
+
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+
+        val state = viewModel.searchState.value as SearchState.DataFound
+        assertEquals(listOf(itemB.id), state.items.map { it.id })
+    }
+
+    @Test
     fun `updateSearchFilter does not search when query is blank`() = runTest(testDispatcher) {
         val viewModel = getViewModel()
 

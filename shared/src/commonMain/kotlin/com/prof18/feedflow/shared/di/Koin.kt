@@ -64,6 +64,7 @@ import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SyncAndStorageSettingsViewModel
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.CoroutineDispatcher
@@ -363,6 +364,11 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         HtmlRetriever(
             logger = getWith("HtmlRetriever"),
             client = HttpClient {
+                @Suppress("MagicNumber")
+                install(HttpTimeout) {
+                    requestTimeoutMillis = 30_000
+                    connectTimeoutMillis = 10_000
+                }
                 defaultRequest {
                     with(headers) {
                         val acceptHeader =

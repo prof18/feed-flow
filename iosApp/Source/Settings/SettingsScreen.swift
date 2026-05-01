@@ -6,10 +6,8 @@ struct SettingsScreen: View {
     private var appState
     @Environment(\.dismiss)
     private var dismiss
-    @StateObject private var vmStoreOwner = VMStoreOwner<MainSettingsViewModel>(Deps.shared.getMainSettingsViewModel())
     private let feedFlowStrings = Deps.shared.getStrings()
 
-    @State private var settingsState = MainSettingsState(themeMode: .system)
     let fetchFeeds: () -> Void
 
     var body: some View {
@@ -18,23 +16,8 @@ struct SettingsScreen: View {
 
             Form {
                 Section {
-                    Picker(selection: Binding(
-                        get: { settingsState.themeMode },
-                        set: { newValue in
-                            vmStoreOwner.instance.updateThemeMode(mode: newValue)
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                appState.updateTheme(newValue)
-                            }
-                        }
-                    )) {
-                        Text(feedFlowStrings.settingsThemeSystem)
-                            .tag(ThemeMode.system)
-                        Text(feedFlowStrings.settingsThemeLight)
-                            .tag(ThemeMode.light)
-                        Text(feedFlowStrings.settingsThemeDark)
-                            .tag(ThemeMode.dark)
-                    } label: {
-                        Label(feedFlowStrings.settingsTheme, systemImage: "moon")
+                    NavigationLink(destination: AppearanceScreen()) {
+                        Label(feedFlowStrings.settingsAppearance, systemImage: "paintbrush")
                     }
 
                     NavigationLink(destination: FeedsAndAccountsScreen(
@@ -77,11 +60,6 @@ struct SettingsScreen: View {
             .navigationTitle(Text(feedFlowStrings.settingsTitle))
             .navigationBarTitleDisplayMode(.inline)
             .background(Color.secondaryBackgroundColor)
-        }
-        .task {
-            for await state in vmStoreOwner.instance.settingsState {
-                self.settingsState = state
-            }
         }
     }
 }

@@ -203,7 +203,7 @@
     <string name="new_articles_notification_title">Neue Artikel sind verfügbar</string>
     <string name="notification_channel_name">Neue Artikel</string>
     <string name="settings_notifications_title">Benachrichtigungen</string>
-    <string name="settings_notifications_warning_reliability">Benachrichtigungen auf deinem Gerät werden geprüft, sind aber wegen Systembeschränkungen vielleicht nicht immer zuverlässig.</string>
+    <string name="settings_notifications_warning_reliability">Benachrichtigungen auf deinem Gerät werden geprüft, aber die Lieferung hängt von Hintergrundaktivitäten ab, die vom System und Apps erlaubt und von FeedFlow nicht beeinflusst werden können.</string>
     <string name="marking_all_read_dialog_title">Alle als gelesen markieren...</string>
     <string name="date_format_title">Datumsformat</string>
     <string name="date_format_american">Monat/Tag</string>
@@ -359,7 +359,7 @@
     <string name="invalid_opml_import_description">Das sieht nicht wie eine gültige OPML-Datei aus. Versuche, deine Feeds als OPML aus deiner RSS-App zu exportieren und neu zu importieren.</string>
     <string name="drawer_title_library">Bibliothek</string>
     <string name="settings_desktop_multi_pane_layout">Startlayout als Mehrfach-Fenster</string>
-    <string name="settings_three_pane_layout">Drei-Fenster-Layout bei grossen Bildschirmen verwenden</string>
+    <string name="settings_three_pane_layout">Zwei-Fenster-Layout bei großen Bildschirmen verwenden</string>
     <string name="select_article_to_read">Einen Artikel zum Lesen wählen</string>
     <string name="settings_hide_unread_dot">Anzeige für Ungelesen ausblenden</string>
     <string name="settings_hide_feed_source">Feed-Quelle ausblenden</string>
@@ -395,4 +395,5 @@
     <string name="widget_preview_note">Die Farben in der Vorschau können auf deinem tatsächlichen Startbildschirm anders aussehen, da Hintergrundbild, Design und Launcher-Hintergrund das endgültige Ergebnis beeinflussen können.</string>
     <string name="widget_preview_toggle_background">Vorschau-Hintergrund umschalten</string>
     <string name="about_the_app">FeedFlow ist ein minimalistischer RSS-Reader für eine übersichtliche, chronologische Zeitleiste – keine Algorithmen, kein Durcheinander. Öffne Artikel in deinem bevorzugten Browser oder lies sie ablenkungsfrei im Lesemodus. Lade ganze Artikel vorab und speichere sie im Cache, um sie überall offline lesen zu können.\nSynchronisiere deine Feeds, Lesestatus und Lesezeichen über Android, iOS, macOS, Windows und Linux hinweg mit iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin oder BazQux. Organisiere Feeds in Kategorien, blockiere störende Schlüsselwörter und importiere oder exportiere alles mit OPML.</string>
+    <string name="settings_appearance">Darstellung</string>
 </resources>

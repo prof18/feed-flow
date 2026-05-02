@@ -170,6 +170,7 @@ class MainActivity : BaseThemeActivity() {
                 state = deeplinkState,
                 deeplinkViewModel = deeplinkViewModel,
                 readerModeViewModel = readerModeViewModel,
+                backStack = backStack,
             )
         }
 
@@ -276,10 +277,13 @@ class MainActivity : BaseThemeActivity() {
 
                     HomeScreen(
                         homeViewModel = homeViewModel,
-                        readerModeViewModel = readerModeViewModel,
                         onSettingsButtonClicked = { backStack.add(Settings) },
                         onAddFeedClick = { backStack.add(AddFeed) },
                         onImportExportClick = { backStack.add(ImportExport) },
+                        navigateToReaderMode = { url ->
+                            readerModeViewModel.getReaderModeHtml(url)
+                            backStack.add(ReaderMode)
+                        },
                         onSearchClick = { backStack.add(Search) },
                         onAccountsClick = { backStack.add(Accounts) },
                         onEditFeedClick = { feedSource ->
@@ -425,10 +429,7 @@ class MainActivity : BaseThemeActivity() {
 
                 entry<Search> {
                     SearchScreen(
-                        navigateBack = {
-                            readerModeViewModel.clearSelection()
-                            navigateBack()
-                        },
+                        navigateBack = navigateBack,
                         navigateToReaderMode = { urlInfo ->
                             readerModeViewModel.getReaderModeHtml(urlInfo)
                             backStack.add(ReaderMode)
@@ -514,21 +515,23 @@ class MainActivity : BaseThemeActivity() {
         state: DeeplinkFeedState,
         deeplinkViewModel: DeeplinkFeedViewModel,
         readerModeViewModel: ReaderModeViewModel,
+        backStack: NavBackStack<NavKey>,
     ) {
         if (state is DeeplinkFeedState.Success) {
             val feedUrlInfo = state.data
             deeplinkViewModel.markAsRead(FeedItemId(feedUrlInfo.id))
-            handleLinkOpeningPreference(feedUrlInfo, readerModeViewModel)
+            handleLinkOpeningPreference(feedUrlInfo, readerModeViewModel, backStack)
         }
     }
 
     private fun handleLinkOpeningPreference(
         feedUrlInfo: FeedItemUrlInfo,
         readerModeViewModel: ReaderModeViewModel,
+        backStack: NavBackStack<NavKey>,
     ) {
         when (feedUrlInfo.linkOpeningPreference) {
             LinkOpeningPreference.READER_MODE -> {
-                navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo)
+                navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo, backStack)
             }
             LinkOpeningPreference.INTERNAL_BROWSER -> {
                 browserManager.openWithInAppBrowser(feedUrlInfo.url, this@MainActivity)
@@ -538,7 +541,7 @@ class MainActivity : BaseThemeActivity() {
             }
             LinkOpeningPreference.DEFAULT -> {
                 if (browserManager.openReaderMode() && !feedUrlInfo.shouldOpenInBrowser()) {
-                    navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo)
+                    navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo, backStack)
                 } else {
                     browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)
                 }
@@ -549,7 +552,9 @@ class MainActivity : BaseThemeActivity() {
     private fun navigateToReaderModeIfNeeded(
         readerModeViewModel: ReaderModeViewModel,
         feedUrlInfo: FeedItemUrlInfo,
+        backStack: NavBackStack<NavKey>,
     ) {
         readerModeViewModel.getReaderModeHtml(feedUrlInfo)
+        backStack.add(ReaderMode)
     }
 }

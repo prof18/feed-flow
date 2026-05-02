@@ -1,9 +1,17 @@
+//
+//  RegularView.swift
+//  FeedFlow
+//
+//  Created by Marco Gomiero on 21/10/23.
+//  Copyright © 2023 FeedFlow. All rights reserved.
+//
+
 import FeedFlowKit
 import Foundation
 import Reader
 import SwiftUI
 
-struct SinglePaneView: View {
+struct RegularView: View {
     @Environment(AppState.self)
     private var appState
     @Environment(BrowserSelector.self)
@@ -32,24 +40,18 @@ struct SinglePaneView: View {
 
     @State private var showEditFeedSheet = false
     @State private var feedSourceToEdit: FeedSource?
-
-    @State private var columnVisibility: NavigationSplitViewVisibility = .detailOnly
-    @State private var preferredColumn: NavigationSplitViewColumn = .detail
+    @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
     var body: some View {
-        NavigationSplitView(
-            columnVisibility: $columnVisibility,
-            preferredCompactColumn: $preferredColumn
-        ) {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             SidebarDrawer(
                 selectedSidebarItem: $selectedSidebarItem,
                 navDrawerState: navDrawerState,
                 onFeedFilterSelected: { feedFilter in
                     indexHolder.clear()
                     scrollUpTrigger.toggle()
+                    appState.currentCommonRoute = nil
                     appState.regularNavigationPath = NavigationPath()
-                    columnVisibility = .detailOnly
-                    preferredColumn = .detail
                     homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
                 },
                 onMarkAllReadClick: {
@@ -106,7 +108,6 @@ struct SinglePaneView: View {
                     onReaderModeNavigate: nil,
                     openDrawer: {
                         columnVisibility = .all
-                        preferredColumn = .sidebar
                     },
                     onSidebarSelectionChanged: { feedFilter in
                         selectedSidebarItem = sidebarSelection(from: feedFilter)
@@ -115,42 +116,16 @@ struct SinglePaneView: View {
                 .environment(indexHolder)
                 .environment(appState)
                 .environment(browserSelector)
+                .onAppear {
+                    appState.currentCommonRoute = nil
+                }
                 .navigationDestination(for: CommonViewRoute.self) { route in
-                    switch route {
-                    case .readerMode:
-                        ReaderModeScreen(
-                            viewModel: readerModeViewModel,
-                            onInAppBrowserClick: { url in
-                                if url.scheme == "http" || url.scheme == "https" {
-                                    appState.regularNavigationPath.append(CommonViewRoute.inAppBrowser(url: url))
-                                } else {
-                                    openURL(url)
-                                }
-                            }
-                        )
-
-                    case .search:
-                        SearchScreen(
-                            readerModeViewModel: readerModeViewModel,
-                            onReaderModeNavigate: nil
-                        )
-
-                    case .accounts:
-                        AccountsScreen()
-
-                    case let .deepLinkFeed(feedId):
-                        DeepLinkFeedScreen(feedId: feedId, readerModeViewModel: readerModeViewModel)
-
-                    case let .inAppBrowser(url):
-                        SFSafariView(url: url)
-                            .ignoresSafeArea()
-                            .navigationBarBackButtonHidden(true)
-                    }
+                    commonDestination(route)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationSplitViewStyle(.prominentDetail)
+        .navigationSplitViewStyle(.balanced)
         .background(Color(.systemGroupedBackground))
         .sheet(isPresented: $showAddFeedSheet) {
             AddFeedScreen(showCloseButton: true)
@@ -169,6 +144,7 @@ struct SinglePaneView: View {
         .onChange(of: appState.pendingBrowserURL) { _, newURL in
             if let url = newURL {
                 appState.pendingBrowserURL = nil
+                appState.currentCommonRoute = CommonViewRoute.inAppBrowser(url: url)
                 appState.regularNavigationPath.append(CommonViewRoute.inAppBrowser(url: url))
             }
         }
@@ -176,6 +152,11 @@ struct SinglePaneView: View {
             if let url = newURL {
                 appState.pendingExternalURL = nil
                 openURL(url)
+            }
+        }
+        .onChange(of: appState.regularNavigationPath.count) { _, newCount in
+            if newCount == 0 {
+                appState.currentCommonRoute = nil
             }
         }
         .task {
@@ -187,9 +168,41 @@ struct SinglePaneView: View {
             showAddFeedSheet = false
             showEditFeedSheet = false
             showSettings = false
+            appState.currentCommonRoute = nil
             appState.regularNavigationPath = NavigationPath()
-            columnVisibility = .detailOnly
-            preferredColumn = .detail
+        }
+    }
+
+    @ViewBuilder
+    private func commonDestination(_ route: CommonViewRoute) -> some View {
+        Group {
+            switch route {
+            case .readerMode:
+                ReaderModeScreen(
+                    viewModel: readerModeViewModel,
+                    onInAppBrowserClick: nil
+                )
+
+            case .search:
+                SearchScreen(
+                    readerModeViewModel: readerModeViewModel,
+                    onReaderModeNavigate: nil
+                )
+
+            case .accounts:
+                AccountsScreen()
+
+            case let .deepLinkFeed(feedId):
+                DeepLinkFeedScreen(feedId: feedId, readerModeViewModel: readerModeViewModel)
+
+            case let .inAppBrowser(url):
+                SFSafariView(url: url)
+                    .ignoresSafeArea()
+                    .navigationBarBackButtonHidden(true)
+            }
+        }
+        .onAppear {
+            appState.currentCommonRoute = route
         }
     }
 

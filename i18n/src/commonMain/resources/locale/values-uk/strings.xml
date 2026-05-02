@@ -358,7 +358,7 @@
     <string name="invalid_opml_import_description">Це не схоже на дійсний файл OPML. Спробуйте експортувати свої канали у форматі OPML зі свого RSS-додатка та імпортувати їх знову.</string>
     <string name="drawer_title_library">Бібліотека</string>
     <string name="settings_desktop_multi_pane_layout">Використовувати багатопанельний макет головної сторінки</string>
-    <string name="settings_three_pane_layout">Використовуйте трипанельний макет на великих екранах</string>
+    <string name="settings_three_pane_layout">Використовуйте двопанельний макет на великих екранах</string>
     <string name="select_article_to_read">Виберіть статтю для читання</string>
     <string name="settings_hide_unread_dot">Приховати індикатор непрочитаних повідомлень</string>
     <string name="settings_description_max_lines">Рядки опису</string>
@@ -395,4 +395,5 @@
     <string name="settings_hide_feed_source">Приховати джерело стрічки</string>
     <string name="widget_configuration_description">Оновлення віджетів відповідають налаштуванням фонової синхронізації з розділу «Синхронізація та сховище».</string>
     <string name="widget_background_sync_description">Налаштуйте фонову синхронізацію в розділі «Синхронізація та сховище», якщо хочете, щоб віджет оновлювався автоматично.</string>
+    <string name="settings_appearance">Зовнішній вигляд</string>
 </resources>

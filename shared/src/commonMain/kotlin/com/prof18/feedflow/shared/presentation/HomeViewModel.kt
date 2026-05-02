@@ -410,17 +410,21 @@ class HomeViewModel internal constructor(
 
     fun deleteFeedSource(feedSource: FeedSource) {
         viewModelScope.launch {
+            feedOperationMutableState.update { FeedOperation.Deleting }
             feedSourcesRepository.deleteFeed(feedSource)
-            feedFetcherRepository.fetchFeeds()
+            feedStateRepository.getFeeds()
+            feedOperationMutableState.update { FeedOperation.None }
         }
     }
 
     fun deleteAllFeedsInCategory(feedSources: List<FeedSource>) {
         viewModelScope.launch {
+            feedOperationMutableState.update { FeedOperation.Deleting }
             for (feedSource in feedSources) {
                 feedSourcesRepository.deleteFeed(feedSource)
             }
-            feedFetcherRepository.fetchFeeds()
+            feedStateRepository.getFeeds()
+            feedOperationMutableState.update { FeedOperation.None }
         }
     }
 
@@ -432,8 +436,10 @@ class HomeViewModel internal constructor(
 
     fun deleteCategory(categoryId: CategoryId) {
         viewModelScope.launch {
+            feedOperationMutableState.update { FeedOperation.Deleting }
             feedCategoryRepository.deleteCategory(categoryId.value)
             feedStateRepository.getFeeds()
+            feedOperationMutableState.update { FeedOperation.None }
         }
     }
 

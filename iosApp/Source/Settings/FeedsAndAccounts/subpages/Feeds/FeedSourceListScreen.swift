@@ -21,6 +21,9 @@ struct FeedSourceListScreen: View {
         feedSourcesWithCategory: []
     )
 
+    @State private var showFeedOperationDialog = false
+    @State private var feedOperationLoadingMessage: String?
+
     var body: some View {
         @Bindable var appState = appState
 
@@ -38,6 +41,21 @@ struct FeedSourceListScreen: View {
         )
         .id(appState.redrawAfterFeedSourceEdit)
         .snackbar(messageQueue: $appState.snackbarQueue)
+        .loadingDialog(isLoading: showFeedOperationDialog, message: feedOperationLoadingMessage)
+        .task {
+            for await state in vmStoreOwner.instance.feedOperationState {
+                switch onEnum(of: state) {
+                case .none:
+                    self.feedOperationLoadingMessage = nil
+                    self.showFeedOperationDialog = false
+                case .deleting:
+                    self.feedOperationLoadingMessage = feedFlowStrings.deletingFeedDialogTitle
+                    self.showFeedOperationDialog = true
+                case .markingAllRead:
+                    self.showFeedOperationDialog = false
+                }
+            }
+        }
         .task {
             for await state in vmStoreOwner.instance.feedSourcesState {
                 self.feedState = state

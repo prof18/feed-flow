@@ -42,6 +42,9 @@ struct RegularView: View {
     @State private var feedSourceToEdit: FeedSource?
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
+    @State private var showFeedOperationDialog = false
+    @State private var feedOperationLoadingMessage: String?
+
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             SidebarDrawer(
@@ -127,6 +130,22 @@ struct RegularView: View {
         }
         .navigationSplitViewStyle(.balanced)
         .background(Color(.systemGroupedBackground))
+        .loadingDialog(isLoading: showFeedOperationDialog, message: feedOperationLoadingMessage)
+        .task {
+            for await state in homeViewModel.feedOperationState {
+                switch onEnum(of: state) {
+                case .none:
+                    self.feedOperationLoadingMessage = nil
+                    self.showFeedOperationDialog = false
+                case .deleting:
+                    self.feedOperationLoadingMessage = feedFlowStrings.deletingFeedDialogTitle
+                    self.showFeedOperationDialog = true
+                case .markingAllRead:
+                    self.feedOperationLoadingMessage = feedFlowStrings.markingAllReadDialogTitle
+                    self.showFeedOperationDialog = true
+                }
+            }
+        }
         .sheet(isPresented: $showAddFeedSheet) {
             AddFeedScreen(showCloseButton: true)
                 .environment(appState)

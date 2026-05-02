@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSyncError
@@ -201,6 +202,36 @@ class FeedSourceListViewModelTest : KoinTestBase() {
         val stateAfter = viewModel.feedSourcesState.value
         val remainingIds = stateAfter.feedSourcesWithCategory.flatMap { it.feedSources.map { fs -> fs.id } }
         assertEquals(listOf("news-1"), remainingIds)
+    }
+
+    @Test
+    fun `deleteFeedSource emits loading state`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(databaseHelper, feedSource)
+        advanceUntilIdle()
+
+        viewModel.feedOperationState.test {
+            awaitItem()
+            viewModel.deleteFeedSource(feedSource)
+            assertEquals(FeedOperation.Deleting, awaitItem())
+            assertEquals(FeedOperation.None, awaitItem())
+        }
+    }
+
+    @Test
+    fun `deleteAllFeedsInCategory emits loading state`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "tech", title = "Tech")
+        val source1 = createFeedSource(id = "source-1", title = "Source 1", category = techCategory)
+        val source2 = createFeedSource(id = "source-2", title = "Source 2", category = techCategory)
+        insertFeedSources(databaseHelper, source1, source2)
+        advanceUntilIdle()
+
+        viewModel.feedOperationState.test {
+            awaitItem()
+            viewModel.deleteAllFeedsInCategory(listOf(source1, source2))
+            assertEquals(FeedOperation.Deleting, awaitItem())
+            assertEquals(FeedOperation.None, awaitItem())
+        }
     }
 
     @Test

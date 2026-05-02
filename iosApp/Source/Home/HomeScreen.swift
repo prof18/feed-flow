@@ -37,10 +37,6 @@ struct HomeScreen: View {
 
     @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 
-    @State var showFeedOperationDialog = false
-
-    @State var feedOperationLoadingMessage: String?
-
     @State var swipeActions: SwipeActions = .init(leftSwipeAction: .none, rightSwipeAction: .none)
 
     @State var feedLayout: FeedLayout = .list
@@ -198,22 +194,6 @@ struct HomeScreen: View {
                             showBanner: true
                         )
                     )
-                }
-            }
-        }
-        .loadingDialog(isLoading: showFeedOperationDialog, message: feedOperationLoadingMessage)
-        .task {
-            for await state in homeViewModel.feedOperationState {
-                switch onEnum(of: state) {
-                case .none:
-                    self.feedOperationLoadingMessage = nil
-                    self.showFeedOperationDialog = false
-                case .deleting:
-                    self.feedOperationLoadingMessage = feedFlowStrings.deletingFeedDialogTitle
-                    self.showFeedOperationDialog = true
-                case .markingAllRead:
-                    self.feedOperationLoadingMessage = feedFlowStrings.markingAllReadDialogTitle
-                    self.showFeedOperationDialog = true
                 }
             }
         }

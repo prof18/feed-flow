@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceListState
@@ -35,6 +36,9 @@ class FeedSourceListViewModel internal constructor(
 
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState> = MutableSharedFlow()
     val errorState: SharedFlow<UIErrorState> = mutableUIErrorState.asSharedFlow()
+
+    private val feedOperationMutableState = MutableStateFlow<FeedOperation>(FeedOperation.None)
+    val feedOperationState: StateFlow<FeedOperation> = feedOperationMutableState.asStateFlow()
 
     private val expandedCategories = mutableSetOf<CategoryId>()
 
@@ -125,17 +129,21 @@ class FeedSourceListViewModel internal constructor(
 
     fun deleteFeedSource(feedSource: FeedSource) {
         viewModelScope.launch {
+            feedOperationMutableState.update { FeedOperation.Deleting }
             feedSourcesRepository.deleteFeed(feedSource)
             feedStateRepository.getFeeds()
+            feedOperationMutableState.update { FeedOperation.None }
         }
     }
 
     fun deleteAllFeedsInCategory(feedSources: List<FeedSource>) {
         viewModelScope.launch {
+            feedOperationMutableState.update { FeedOperation.Deleting }
             for (feedSource in feedSources) {
                 feedSourcesRepository.deleteFeed(feedSource)
             }
             feedStateRepository.getFeeds()
+            feedOperationMutableState.update { FeedOperation.None }
         }
     }
 

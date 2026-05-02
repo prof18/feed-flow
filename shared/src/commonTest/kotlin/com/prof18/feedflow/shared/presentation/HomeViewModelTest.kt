@@ -668,6 +668,55 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `deleteFeedSource emits loading state`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.feedOperationState.test {
+            awaitItem()
+            viewModel.deleteFeedSource(feedSource)
+            assertEquals(FeedOperation.Deleting, awaitItem())
+            assertEquals(FeedOperation.None, awaitItem())
+        }
+    }
+
+    @Test
+    fun `deleteAllFeedsInCategory emits loading state`() = runTest(testDispatcher) {
+        val feedSource1 = createFeedSource(id = "source-1", title = "Source 1")
+        val feedSource2 = createFeedSource(id = "source-2", title = "Source 2")
+        insertFeedSources(feedSource1, feedSource2)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.feedOperationState.test {
+            awaitItem()
+            viewModel.deleteAllFeedsInCategory(listOf(feedSource1, feedSource2))
+            assertEquals(FeedOperation.Deleting, awaitItem())
+            assertEquals(FeedOperation.None, awaitItem())
+        }
+    }
+
+    @Test
+    fun `deleteCategory emits loading state`() = runTest(testDispatcher) {
+        val category = FeedSourceCategory(id = "category-1", title = "Tech")
+        databaseHelper.insertCategories(listOf(category))
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.feedOperationState.test {
+            awaitItem()
+            viewModel.deleteCategory(CategoryId(category.id))
+            assertEquals(FeedOperation.Deleting, awaitItem())
+            assertEquals(FeedOperation.None, awaitItem())
+        }
+    }
+
+    @Test
     fun `updateCategoryName updates category`() = runTest(testDispatcher) {
         val category = FeedSourceCategory(id = "category-1", title = "Old")
         databaseHelper.insertCategories(listOf(category))

@@ -11,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
+import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -27,11 +29,16 @@ fun FeedSourceListScreen(
 ) {
     val viewModel = koinViewModel<FeedSourceListViewModel>()
     val feedSources by viewModel.feedSourcesState.collectAsStateWithLifecycle()
+    val feedOperation by viewModel.feedOperationState.collectAsStateWithLifecycle()
 
     val strings = LocalFeedFlowStrings.current
     val snackbarHostState = remember { SnackbarHostState() }
     val browserManager = koinInject<BrowserManager>()
     val context = LocalContext.current
+
+    if (feedOperation != FeedOperation.None) {
+        LoadingOperationDialog(feedOperation)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.errorState.collect { errorState ->

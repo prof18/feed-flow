@@ -261,7 +261,7 @@
     <string name="menu_remove_from_pinned">Unpin</string>
     <string name="feed_list_appearance">Feed list appearance</string>
     <string name="category_name">Category name</string>
-voi    <string name="category_name_already_exists">A category with this name already exists</string>
+    <string name="category_name_already_exists">A category with this name already exists</string>
     <string name="edit_category">Edit category name</string>
     <string name="change_category">Change category</string>
     <string name="adding_feed">Adding feed...</string>

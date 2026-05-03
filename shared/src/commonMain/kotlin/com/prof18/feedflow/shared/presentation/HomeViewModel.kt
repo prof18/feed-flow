@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.DrawerItem.DrawerCategory
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
@@ -18,6 +19,9 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.core.model.canonical
+import com.prof18.feedflow.core.model.canonicalCategoryName
+import com.prof18.feedflow.core.model.trimmed
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
@@ -431,6 +435,27 @@ class HomeViewModel internal constructor(
     fun updateCategoryName(categoryId: CategoryId, newName: CategoryName) {
         viewModelScope.launch {
             feedCategoryRepository.updateCategoryName(categoryId, newName)
+        }
+    }
+
+    fun validateCategoryName(categoryId: CategoryId?, newName: CategoryName): CategoryNameValidationResult {
+        if (newName.trimmed().name.isBlank()) {
+            return CategoryNameValidationResult.BLANK
+        }
+
+        // The drawer can be used without initializing FeedCategoryRepository.categoriesState,
+        // so validation here uses the already loaded drawer state.
+        val isDuplicate = navDrawerState.value.categories
+            .filterIsInstance<DrawerCategory>()
+            .any { category ->
+                category.category.id != categoryId?.value &&
+                    category.category.title.canonicalCategoryName() == newName.canonical()
+            }
+
+        return if (isDuplicate) {
+            CategoryNameValidationResult.DUPLICATE
+        } else {
+            CategoryNameValidationResult.VALID
         }
     }
 

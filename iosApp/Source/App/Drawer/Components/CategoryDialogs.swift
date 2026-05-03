@@ -28,26 +28,98 @@ struct EditCategoryDialog: View {
     @Binding var isPresented: Bool
     @Binding var categoryToEdit: String?
     @Binding var editedCategoryName: String
+    let validateCategoryName: (String, CategoryName) -> CategoryNameValidationResult
     let onSave: (String, String) -> Void
 
     var body: some View {
         EmptyView()
-            .alert(feedFlowStrings.editCategory, isPresented: $isPresented) {
-                TextField(feedFlowStrings.categoryName, text: $editedCategoryName)
-
-                Button(feedFlowStrings.actionSave, role: .none) {
-                    if !editedCategoryName.isEmpty, let id = categoryToEdit {
-                        onSave(id, editedCategoryName)
+            .sheet(
+                isPresented: $isPresented,
+                onDismiss: {
+                    categoryToEdit = nil
+                    editedCategoryName = ""
+                },
+                content: {
+                    if let categoryId = categoryToEdit {
+                        EditCategoryNameSheet(
+                            categoryId: categoryId,
+                            categoryName: $editedCategoryName,
+                            validateCategoryName: validateCategoryName,
+                            onSave: { newName in
+                                onSave(categoryId, newName)
+                                isPresented = false
+                            }
+                        )
                     }
-                    categoryToEdit = nil
-                    editedCategoryName = ""
                 }
-                .disabled(editedCategoryName.isEmpty)
+            )
+    }
+}
 
-                Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) {
-                    categoryToEdit = nil
-                    editedCategoryName = ""
+private struct EditCategoryNameSheet: View {
+    @Environment(\.dismiss)
+    private var dismiss
+
+    let categoryId: String
+    @Binding var categoryName: String
+    let validateCategoryName: (String, CategoryName) -> CategoryNameValidationResult
+    let onSave: (String) -> Void
+
+    @FocusState private var isTextFieldFocused: Bool
+
+    private var validationResult: CategoryNameValidationResult {
+        validateCategoryName(categoryId, CategoryName(name: categoryName))
+    }
+
+    private var hasDuplicateName: Bool {
+        validationResult == .duplicate
+    }
+
+    private var canSave: Bool {
+        validationResult == .valid
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: Spacing.regular) {
+                TextField(feedFlowStrings.categoryName, text: $categoryName)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.words)
+                    .padding()
+                    .background(Color(UIColor.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .focused($isTextFieldFocused)
+
+                if hasDuplicateName {
+                    Text(feedFlowStrings.categoryNameAlreadyExists)
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                Button(feedFlowStrings.actionSave) {
+                    onSave(categoryName)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!canSave)
+            }
+            .padding()
+            .navigationTitle(feedFlowStrings.editCategory)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) {
+                        dismiss()
+                    }
                 }
             }
+        }
+        .presentationDetents([.height(280)])
+        .presentationDragIndicator(.visible)
+        .onAppear {
+            DispatchQueue.main.async {
+                isTextFieldFocused = true
+            }
+        }
     }
 }

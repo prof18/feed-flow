@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.shared.ui.components.AddCategoryButton
 import com.prof18.feedflow.shared.ui.components.CategoryFlowRow
 import com.prof18.feedflow.shared.ui.components.CategoryLoadingOverlay
@@ -35,6 +36,7 @@ fun EditCategoryDialog(
     onAddCategory: (CategoryName) -> Unit,
     onDeleteCategory: (CategoryId) -> Unit,
     onEditCategory: (CategoryId, CategoryName) -> Unit,
+    validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
     onDismiss: () -> Unit,
 ) {
     AlertDialog(
@@ -53,6 +55,7 @@ fun EditCategoryDialog(
                 onAddCategory = onAddCategory,
                 onDeleteCategory = onDeleteCategory,
                 onEditCategory = onEditCategory,
+                validateCategoryName = validateCategoryName,
             )
         },
         confirmButton = {
@@ -73,6 +76,7 @@ private fun EditCategoryDialogContent(
     onAddCategory: (CategoryName) -> Unit,
     onDeleteCategory: (CategoryId) -> Unit,
     onEditCategory: (CategoryId, CategoryName) -> Unit,
+    validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
 ) {
     var categoryToDelete by remember { mutableStateOf<CategoryId?>(null) }
     var categoryToEdit by remember { mutableStateOf<CategoriesState.CategoryItem?>(null) }
@@ -115,5 +119,6 @@ private fun EditCategoryDialogContent(
         onAddCategory = onAddCategory,
         onDeleteCategory = onDeleteCategory,
         onEditCategory = onEditCategory,
+        validateCategoryName = validateCategoryName,
     )
 }

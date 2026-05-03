@@ -3,12 +3,16 @@ package com.prof18.feedflow.shared.domain.feedcategories
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.model.canonical
+import com.prof18.feedflow.core.model.canonicalCategoryName
 import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.core.model.onErrorSuspend
+import com.prof18.feedflow.core.model.trimmed
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
@@ -45,8 +49,9 @@ internal class FeedCategoryRepository(
     }
 
     suspend fun addNewCategory(categoryName: CategoryName) {
-        selectedCategoryName = categoryName
-        createCategory(categoryName)
+        val trimmedName = categoryName.trimmed()
+        selectedCategoryName = trimmedName
+        createCategory(trimmedName)
     }
 
     suspend fun deleteCategory(categoryId: String) {
@@ -101,27 +106,31 @@ internal class FeedCategoryRepository(
     }
 
     suspend fun updateCategoryName(categoryId: CategoryId, newName: CategoryName) {
-        val existingCategory = databaseHelper.getCategoryByName(newName.name)
-        if (existingCategory != null && existingCategory.id != categoryId.value) {
+        val trimmedName = newName.trimmed()
+        if (trimmedName.name.isBlank()) {
+            return
+        }
+
+        if (hasCategoryWithName(trimmedName, excludedCategoryId = categoryId.value)) {
             return
         }
 
         // If the category being edited is currently selected, update selectedCategoryName
         val selectedCategory = categoriesState.value.categories.firstOrNull { it.isSelected }
         if (selectedCategory?.id == categoryId.value) {
-            selectedCategoryName = newName
+            selectedCategoryName = trimmedName
         }
 
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
-                gReaderRepository.editCategoryName(categoryId, newName)
+                gReaderRepository.editCategoryName(categoryId, trimmedName)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditCategoryNameFailed))
                     }
             }
 
             SyncAccounts.FEEDBIN -> {
-                feedbinRepository.editCategoryName(categoryId, newName)
+                feedbinRepository.editCategoryName(categoryId, trimmedName)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditCategoryNameFailed))
                     }
@@ -132,10 +141,10 @@ internal class FeedCategoryRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.updateCategoryName(categoryId.value, newName.name)
+                databaseHelper.updateCategoryName(categoryId.value, trimmedName.name)
                 val category = FeedSourceCategory(
                     id = categoryId.value,
-                    title = newName.name,
+                    title = trimmedName.name,
                 )
                 feedSyncRepository.updateCategory(category)
             }
@@ -165,26 +174,47 @@ internal class FeedCategoryRepository(
     fun observeCategoriesWithUnreadCount(): Flow<List<CategoryWithUnreadCount>> =
         databaseHelper.observeCategoriesWithUnreadCount()
 
+    fun validateCategoryName(categoryId: CategoryId?, newName: CategoryName): CategoryNameValidationResult {
+        if (newName.trimmed().name.isBlank()) {
+            return CategoryNameValidationResult.BLANK
+        }
+
+        val isDuplicate = categoriesState.value.categories.any { category ->
+            category.id != categoryId?.value &&
+                category.name?.canonicalCategoryName() == newName.canonical()
+        }
+
+        return if (isDuplicate) {
+            CategoryNameValidationResult.DUPLICATE
+        } else {
+            CategoryNameValidationResult.VALID
+        }
+    }
+
     suspend fun createCategory(categoryName: CategoryName) {
-        val existingCategory = databaseHelper.getCategoryByName(categoryName.name)
-        if (existingCategory != null) {
+        val trimmedName = categoryName.trimmed()
+        if (trimmedName.name.isBlank()) {
+            return
+        }
+
+        if (hasCategoryWithName(trimmedName, excludedCategoryId = null)) {
             return
         }
 
         val categoryId = when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX ->
-                gReaderRepository.buildCategoryId(categoryName)
-            SyncAccounts.FEEDBIN -> feedbinRepository.buildCategoryId(categoryName)
+                gReaderRepository.buildCategoryId(trimmedName)
+            SyncAccounts.FEEDBIN -> feedbinRepository.buildCategoryId(trimmedName)
             SyncAccounts.LOCAL,
             SyncAccounts.DROPBOX,
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
-            -> categoryName.name.hashCode().toString()
+            -> trimmedName.name.hashCode().toString()
         }
 
         val category = FeedSourceCategory(
             id = categoryId,
-            title = categoryName.name,
+            title = trimmedName.name,
         )
         databaseHelper.insertCategories(
             listOf(category),
@@ -219,8 +249,18 @@ internal class FeedCategoryRepository(
         CategoriesState.CategoryItem(
             id = id,
             name = title,
-            isSelected = selectedCategoryName?.name == title,
+            isSelected = selectedCategoryName?.canonical() == title.canonicalCategoryName(),
         )
+
+    private suspend fun hasCategoryWithName(
+        categoryName: CategoryName,
+        excludedCategoryId: String?,
+    ): Boolean =
+        databaseHelper.getFeedSourceCategories()
+            .any { category ->
+                category.id != excludedCategoryId &&
+                    category.title.canonicalCategoryName() == categoryName.canonical()
+            }
 
     private fun getEmptyCategory() = CategoriesState.CategoryItem(
         id = EMPTY_CATEGORY_ID,

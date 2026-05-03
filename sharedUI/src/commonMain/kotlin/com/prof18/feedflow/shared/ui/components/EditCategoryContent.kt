@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
@@ -72,10 +73,12 @@ fun EditCategoryDialogs(
     onAddCategory: (CategoryName) -> Unit,
     onDeleteCategory: (CategoryId) -> Unit,
     onEditCategory: (CategoryId, CategoryName) -> Unit,
+    validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
 ) {
     AddCategoryDialog(
         showDialog = showAddCategoryDialog,
         onDismiss = onDismissAddDialog,
+        validateCategoryName = validateCategoryName,
         onAddCategory = { categoryName ->
             onAddCategory(categoryName)
             onDismissAddDialog()
@@ -97,6 +100,7 @@ fun EditCategoryDialogs(
         categoryId = CategoryId(categoryToEdit?.id ?: ""),
         initialCategoryName = categoryToEdit?.name ?: "",
         onDismiss = onDismissEditDialog,
+        validateCategoryName = validateCategoryName,
         onEditCategory = { categoryId, newName ->
             onEditCategory(categoryId, newName)
             onDismissEditDialog()

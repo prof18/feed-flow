@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.LinkOpeningPreference
@@ -153,6 +154,9 @@ class EditFeedViewModel internal constructor(
             categoryUseCase.updateCategoryName(categoryId, newName)
         }
     }
+
+    fun validateCategoryName(categoryId: CategoryId?, newName: CategoryName): CategoryNameValidationResult =
+        categoryUseCase.validateCategoryName(categoryId, newName)
 
     fun editFeed() {
         viewModelScope.launch {

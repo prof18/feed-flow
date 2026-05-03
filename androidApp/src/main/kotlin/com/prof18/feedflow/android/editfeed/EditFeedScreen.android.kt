@@ -182,6 +182,7 @@ internal fun EditScreen(
             onEditCategory = { categoryId, newName ->
                 viewModel.editCategory(categoryId, newName)
             },
+            validateCategoryName = viewModel::validateCategoryName,
             onDismiss = {
                 scope.launch { sheetState.hide() }.invokeOnCompletion {
                     if (!sheetState.isVisible) {

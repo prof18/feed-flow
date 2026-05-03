@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
@@ -64,6 +65,7 @@ internal fun AndroidDrawerFeedSourcesByCategories(
     onPinFeedClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
     onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
@@ -111,6 +113,7 @@ internal fun AndroidDrawerFeedSourcesByCategories(
                     onChangeFeedCategoryClick = onChangeFeedCategoryClick,
                     onOpenWebsite = onOpenWebsite,
                     onEditCategoryClick = onEditCategoryClick,
+                    validateCategoryName = validateCategoryName,
                     onDeleteCategoryClick = onDeleteCategoryClick,
                 )
             }
@@ -134,6 +137,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
     onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
     onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
@@ -291,6 +295,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                 categoryId = CategoryId(category.id),
                 initialCategoryName = category.title,
                 onDismiss = { showEditDialog = false },
+                validateCategoryName = validateCategoryName,
                 onEditCategory = onEditCategoryClick,
             )
         }

@@ -52,6 +52,7 @@ struct SidebarDrawer: View {
     let onPinFeedClick: (FeedSource) -> Void
     let onDeleteCategory: (String) -> Void
     let onUpdateCategoryName: (String, String) -> Void
+    let validateCategoryName: (String, CategoryName) -> CategoryNameValidationResult
 
     var isCompactPhone: Bool {
         UIDevice.current.userInterfaceIdiom == .phone
@@ -153,6 +154,7 @@ struct SidebarDrawer: View {
                 isPresented: $showEditCategoryDialog,
                 categoryToEdit: $categoryToEdit,
                 editedCategoryName: $editedCategoryName,
+                validateCategoryName: validateCategoryName,
                 onSave: onUpdateCategoryName
             )
         )

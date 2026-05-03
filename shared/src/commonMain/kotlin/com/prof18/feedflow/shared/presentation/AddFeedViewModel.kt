@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
@@ -94,4 +95,7 @@ class AddFeedViewModel internal constructor(
             categoryRepository.updateCategoryName(categoryId, newName)
         }
     }
+
+    fun validateCategoryName(categoryId: CategoryId?, newName: CategoryName): CategoryNameValidationResult =
+        categoryRepository.validateCategoryName(categoryId, newName)
 }

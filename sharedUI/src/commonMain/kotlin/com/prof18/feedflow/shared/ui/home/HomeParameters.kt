@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.ui.home
 import androidx.compose.runtime.Stable
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -70,6 +71,7 @@ class FeedManagementActions(
     val onDeleteFeedSourceClick: (FeedSource) -> Unit,
     val onPinFeedClick: (FeedSource) -> Unit,
     val onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    val validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
     val onDeleteCategoryClick: (CategoryId) -> Unit,
     val onChangeFeedCategoryClick: (FeedSource) -> Unit,
     val onOpenWebsite: (String) -> Unit,

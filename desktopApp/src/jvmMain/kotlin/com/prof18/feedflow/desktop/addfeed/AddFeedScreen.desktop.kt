@@ -152,6 +152,7 @@ fun AddFeedScreenContent(
             onEditCategory = { categoryId, newName ->
                 viewModel.editCategory(categoryId, newName)
             },
+            validateCategoryName = viewModel::validateCategoryName,
             onDismiss = {
                 showCategoryDialog = false
             },

@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -22,22 +23,36 @@ fun EditCategoryNameDialog(
     categoryId: CategoryId,
     initialCategoryName: String,
     onDismiss: () -> Unit,
+    validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
     onEditCategory: (CategoryId, CategoryName) -> Unit,
 ) {
     if (showDialog) {
-        var editedCategoryName by remember { mutableStateOf(initialCategoryName) }
+        var editedCategoryName by remember(initialCategoryName) { mutableStateOf(initialCategoryName) }
+        val categoryName = CategoryName(editedCategoryName)
+        val validationResult = validateCategoryName(categoryId, categoryName)
+        val hasDuplicateName = validationResult == CategoryNameValidationResult.DUPLICATE
+        val canSave = validationResult == CategoryNameValidationResult.VALID
+        val strings = LocalFeedFlowStrings.current
 
         AlertDialog(
             onDismissRequest = {
                 onDismiss()
             },
-            title = { Text(LocalFeedFlowStrings.current.editCategory) },
+            title = { Text(strings.editCategory) },
             text = {
                 OutlinedTextField(
                     value = editedCategoryName,
                     onValueChange = { editedCategoryName = it },
-                    label = { Text(LocalFeedFlowStrings.current.categoryName) },
+                    label = { Text(strings.categoryName) },
                     singleLine = true,
+                    isError = hasDuplicateName,
+                    supportingText = if (hasDuplicateName) {
+                        {
+                            Text(strings.categoryNameAlreadyExists)
+                        }
+                    } else {
+                        null
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
@@ -46,15 +61,15 @@ fun EditCategoryNameDialog(
             },
             confirmButton = {
                 TextButton(
-                    enabled = editedCategoryName.isNotBlank(),
+                    enabled = canSave,
                     onClick = {
-                        if (editedCategoryName.isNotBlank()) {
-                            onEditCategory(categoryId, CategoryName(editedCategoryName))
+                        if (canSave) {
+                            onEditCategory(categoryId, categoryName)
                         }
                         onDismiss()
                     },
                 ) {
-                    Text(LocalFeedFlowStrings.current.actionSave)
+                    Text(strings.actionSave)
                 }
             },
             dismissButton = {
@@ -63,7 +78,7 @@ fun EditCategoryNameDialog(
                         onDismiss()
                     },
                 ) {
-                    Text(LocalFeedFlowStrings.current.deleteCategoryCloseButton)
+                    Text(strings.deleteCategoryCloseButton)
                 }
             },
         )

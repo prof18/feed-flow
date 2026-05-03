@@ -94,6 +94,12 @@ struct RegularView: View {
                         categoryId: CategoryId(value: categoryId),
                         newName: CategoryName(name: categoryName)
                     )
+                },
+                validateCategoryName: { categoryId, categoryName in
+                    homeViewModel.validateCategoryName(
+                        categoryId: CategoryId(value: categoryId),
+                        newName: categoryName
+                    )
                 }
             )
             .environment(appState)

@@ -208,6 +208,7 @@ fun DesktopDrawer(
                         onChangeFeedCategoryClick = feedManagementActions.onChangeFeedCategoryClick,
                         onOpenWebsite = feedManagementActions.onOpenWebsite,
                         onEditCategoryClick = feedManagementActions.onEditCategoryClick,
+                        validateCategoryName = feedManagementActions.validateCategoryName,
                         onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
                         onDeleteAllFeedsInCategoryClick = feedManagementActions.onDeleteAllFeedsInCategoryClick,
                         onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,

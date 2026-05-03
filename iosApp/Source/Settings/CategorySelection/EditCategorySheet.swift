@@ -23,6 +23,7 @@ struct EditCategorySheet: View {
     let onAddCategory: (CategoryName) -> Void
     let onDeleteCategory: (String) -> Void
     let onEditCategory: (String, CategoryName) -> Void
+    let validateCategoryName: (String?, CategoryName) -> CategoryNameValidationResult
     let onSave: () -> Void
 
     private var backgroundColor: Color {
@@ -138,6 +139,7 @@ struct EditCategorySheet: View {
             content: {
                 AddCategoryNameSheet(
                     categoryName: $newCategoryName,
+                    validateCategoryName: validateCategoryName,
                     onConfirm: { categoryName in
                         onAddCategory(CategoryName(name: categoryName))
                     }
@@ -172,7 +174,9 @@ struct EditCategorySheet: View {
         ) {
             if let category = categoryToEdit {
                 EditCategoryNameSheet(
+                    categoryId: category.id,
                     categoryName: category.name ?? "",
+                    validateCategoryName: validateCategoryName,
                     onConfirm: { newName in
                         onEditCategory(category.id, CategoryName(name: newName))
                         categoryToEdit = nil
@@ -188,12 +192,21 @@ private struct AddCategoryNameSheet: View {
     private var dismiss
 
     @Binding var categoryName: String
+    let validateCategoryName: (String?, CategoryName) -> CategoryNameValidationResult
     let onConfirm: (String) -> Void
 
     @FocusState private var isTextFieldFocused: Bool
 
-    private var trimmed: String {
-        categoryName.trimmingCharacters(in: .whitespacesAndNewlines)
+    private var validationResult: CategoryNameValidationResult {
+        validateCategoryName(nil, CategoryName(name: categoryName))
+    }
+
+    private var hasDuplicateName: Bool {
+        validationResult == .duplicate
+    }
+
+    private var canConfirm: Bool {
+        validationResult == .valid
     }
 
     var body: some View {
@@ -207,12 +220,19 @@ private struct AddCategoryNameSheet: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .focused($isTextFieldFocused)
 
+                if hasDuplicateName {
+                    Text(feedFlowStrings.categoryNameAlreadyExists)
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 Button(feedFlowStrings.confirmButton) {
-                    onConfirm(trimmed)
+                    onConfirm(categoryName)
                     dismiss()
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(trimmed.isEmpty)
+                .disabled(!canConfirm)
             }
             .padding()
             .navigationTitle(feedFlowStrings.addFeedCategoryTitle)
@@ -225,7 +245,7 @@ private struct AddCategoryNameSheet: View {
                 }
             }
         }
-        .presentationDetents([.height(240)])
+        .presentationDetents([.height(280)])
         .presentationDragIndicator(.visible)
         .onAppear {
             DispatchQueue.main.async {
@@ -239,13 +259,23 @@ private struct EditCategoryNameSheet: View {
     @Environment(\.dismiss)
     private var dismiss
 
+    let categoryId: String
     @State var categoryName: String
+    let validateCategoryName: (String?, CategoryName) -> CategoryNameValidationResult
     let onConfirm: (String) -> Void
 
     @FocusState private var isTextFieldFocused: Bool
 
-    private var trimmed: String {
-        categoryName.trimmingCharacters(in: .whitespacesAndNewlines)
+    private var validationResult: CategoryNameValidationResult {
+        validateCategoryName(categoryId, CategoryName(name: categoryName))
+    }
+
+    private var hasDuplicateName: Bool {
+        validationResult == .duplicate
+    }
+
+    private var canSave: Bool {
+        validationResult == .valid
     }
 
     var body: some View {
@@ -259,12 +289,19 @@ private struct EditCategoryNameSheet: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .focused($isTextFieldFocused)
 
+                if hasDuplicateName {
+                    Text(feedFlowStrings.categoryNameAlreadyExists)
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 Button(feedFlowStrings.actionSave) {
-                    onConfirm(trimmed)
+                    onConfirm(categoryName)
                     dismiss()
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(trimmed.isEmpty)
+                .disabled(!canSave)
             }
             .padding()
             .navigationTitle(feedFlowStrings.editCategory)
@@ -277,7 +314,7 @@ private struct EditCategoryNameSheet: View {
                 }
             }
         }
-        .presentationDetents([.height(240)])
+        .presentationDetents([.height(280)])
         .presentationDragIndicator(.visible)
         .onAppear {
             DispatchQueue.main.async {

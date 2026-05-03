@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
@@ -71,6 +72,7 @@ internal fun DesktopDrawerFeedSourcesByCategories(
     onPinFeedClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
     onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
     onDeleteAllFeedsInCategoryClick: (List<FeedSource>) -> Unit,
@@ -151,6 +153,7 @@ internal fun DesktopDrawerFeedSourcesByCategories(
                     onChangeFeedCategoryClick = onChangeFeedCategoryClick,
                     onOpenWebsite = onOpenWebsite,
                     onEditCategoryClick = onEditCategoryClick,
+                    validateCategoryName = validateCategoryName,
                     onDeleteCategoryClick = onDeleteCategoryClick,
                     onDeleteAllFeedsInCategoryClick = onDeleteAllFeedsInCategoryClick,
                     onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
@@ -211,6 +214,7 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
     onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
     onDeleteCategoryClick: (CategoryId) -> Unit,
     onDeleteAllFeedsInCategoryClick: (List<FeedSource>) -> Unit,
     onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
@@ -410,6 +414,7 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
             categoryId = CategoryId(category.id),
             initialCategoryName = category.title,
             onDismiss = { showEditDialog = false },
+            validateCategoryName = validateCategoryName,
             onEditCategory = onEditCategoryClick,
         )
     } else {

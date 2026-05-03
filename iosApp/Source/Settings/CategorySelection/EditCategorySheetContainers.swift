@@ -41,6 +41,12 @@ struct EditCategorySheetContainer: View {
             onEditCategory: { categoryId, newName in
                 viewModel.editCategory(categoryId: CategoryId(value: categoryId), newName: newName)
             },
+            validateCategoryName: { categoryId, categoryName in
+                viewModel.validateCategoryName(
+                    categoryId: categoryId.map { CategoryId(value: $0) },
+                    newName: categoryName
+                )
+            },
             onSave: onSave
         )
         .task {
@@ -85,6 +91,12 @@ struct EditCategorySheetContainerForEdit: View {
             onEditCategory: { categoryId, newName in
                 viewModel.editCategory(categoryId: CategoryId(value: categoryId), newName: newName)
             },
+            validateCategoryName: { categoryId, categoryName in
+                viewModel.validateCategoryName(
+                    categoryId: categoryId.map { CategoryId(value: $0) },
+                    newName: categoryName
+                )
+            },
             onSave: onSave
         )
         .task {
@@ -127,6 +139,12 @@ struct EditCategorySheetForChangeCategory: View {
             },
             onEditCategory: { categoryId, newName in
                 viewModel.editCategory(categoryId: CategoryId(value: categoryId), newName: newName)
+            },
+            validateCategoryName: { categoryId, categoryName in
+                viewModel.validateCategoryName(
+                    categoryId: categoryId.map { CategoryId(value: $0) },
+                    newName: categoryName
+                )
             },
             onSave: onSave
         )

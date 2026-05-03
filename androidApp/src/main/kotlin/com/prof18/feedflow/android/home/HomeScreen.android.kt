@@ -170,6 +170,7 @@ internal fun HomeScreen(
         onDeleteFeedSourceClick = { feedSource -> homeViewModel.deleteFeedSource(feedSource) },
         onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
         onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
+        validateCategoryName = homeViewModel::validateCategoryName,
         onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
         onChangeFeedCategoryClick = { feedSource ->
             changeFeedCategoryViewModel.loadFeedSource(feedSource)
@@ -229,6 +230,7 @@ internal fun HomeScreen(
             onEditCategory = { categoryId, newName ->
                 changeFeedCategoryViewModel.editCategory(categoryId, newName)
             },
+            validateCategoryName = changeFeedCategoryViewModel::validateCategoryName,
             onDismiss = {
                 changeFeedCategoryViewModel.saveCategory()
             },

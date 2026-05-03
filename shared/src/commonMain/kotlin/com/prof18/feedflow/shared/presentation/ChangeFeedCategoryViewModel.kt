@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
@@ -62,6 +63,9 @@ class ChangeFeedCategoryViewModel internal constructor(
             categoryRepository.updateCategoryName(categoryId, newName)
         }
     }
+
+    fun validateCategoryName(categoryId: CategoryId?, newName: CategoryName): CategoryNameValidationResult =
+        categoryRepository.validateCategoryName(categoryId, newName)
 
     fun saveCategory() {
         val currentFeedSource = feedSource ?: return

@@ -15,6 +15,7 @@ struct CategoriesSection: View {
     let onFeedFilterSelected: (FeedFilter) -> Void
     let onDeleteCategory: (String) -> Void
     let onUpdateCategoryName: (String, String) -> Void
+    let validateCategoryName: (String, CategoryName) -> CategoryNameValidationResult
 
     @State private var showDeleteCategoryDialog = false
     @State private var showEditCategoryDialog = false
@@ -81,6 +82,7 @@ struct CategoriesSection: View {
                     isPresented: $showEditCategoryDialog,
                     categoryToEdit: $categoryToEdit,
                     editedCategoryName: $editedCategoryName,
+                    validateCategoryName: validateCategoryName,
                     onSave: onUpdateCategoryName
                 )
             )

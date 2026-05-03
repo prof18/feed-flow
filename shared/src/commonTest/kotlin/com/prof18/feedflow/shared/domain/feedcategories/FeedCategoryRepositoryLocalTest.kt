@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.feedcategories
 
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
@@ -109,6 +110,28 @@ class FeedCategoryRepositoryLocalTest : KoinTestBase() {
     }
 
     @Test
+    fun `addNewCategory should not create duplicate category ignoring case and whitespace`() =
+        runTest(testDispatcher) {
+            setupLocalAccount()
+            val existingCategory = FeedSourceCategory(id = "1", title = "Tech")
+            databaseHelper.insertCategories(listOf(existingCategory))
+
+            val initJob = launch {
+                feedCategoryRepository.initCategories()
+            }
+            advanceUntilIdle()
+
+            feedCategoryRepository.addNewCategory(CategoryName(" tech "))
+            advanceUntilIdle()
+
+            val categories = databaseHelper.getFeedSourceCategories()
+            assertEquals(1, categories.size)
+            assertEquals("Tech", categories.single().title)
+
+            initJob.cancel()
+        }
+
+    @Test
     fun `createCategory should create category with hashCode ID for local account`() = runTest(testDispatcher) {
         setupLocalAccount()
         val categoryName = CategoryName("TestCategory")
@@ -121,6 +144,127 @@ class FeedCategoryRepositoryLocalTest : KoinTestBase() {
         assertTrue(createdCategory != null)
         assertEquals(createdCategory.id, expectedCategoryId)
         assertEquals(createdCategory.title, categoryName.name)
+    }
+
+    @Test
+    fun `createCategory should not create duplicate category ignoring case and whitespace`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val category = FeedSourceCategory(id = "1", title = "Tech")
+        databaseHelper.insertCategories(listOf(category))
+
+        feedCategoryRepository.createCategory(CategoryName(" tech "))
+        advanceUntilIdle()
+
+        val categories = databaseHelper.getFeedSourceCategories()
+        assertEquals(1, categories.size)
+        assertEquals("Tech", categories.single().title)
+    }
+
+    @Test
+    fun `updateCategoryName should trim category name before saving`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val category = FeedSourceCategory(id = "1", title = "Old")
+        databaseHelper.insertCategories(listOf(category))
+
+        feedCategoryRepository.updateCategoryName(CategoryId(category.id), CategoryName(" New "))
+        advanceUntilIdle()
+
+        val updatedCategory = databaseHelper.getFeedSourceCategory(category.id)
+        assertEquals("New", updatedCategory?.title)
+    }
+
+    @Test
+    fun `updateCategoryName should keep renamed selected category selected`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val category = FeedSourceCategory(id = "1", title = "Old")
+        databaseHelper.insertCategories(listOf(category))
+        feedCategoryRepository.setInitialSelection(CategoryName("Old"))
+
+        val initJob = launch {
+            feedCategoryRepository.initCategories()
+        }
+        advanceUntilIdle()
+
+        feedCategoryRepository.updateCategoryName(CategoryId(category.id), CategoryName(" New "))
+        advanceUntilIdle()
+
+        val updatedCategory = feedCategoryRepository.categoriesState.value.categories.first { it.id == category.id }
+        assertEquals("New", updatedCategory.name)
+        assertTrue(updatedCategory.isSelected)
+
+        initJob.cancel()
+    }
+
+    @Test
+    fun `updateCategoryName should not rename to duplicate category ignoring case and whitespace`() =
+        runTest(testDispatcher) {
+            setupLocalAccount()
+            val categoryToRename = FeedSourceCategory(id = "1", title = "Old")
+            val existingCategory = FeedSourceCategory(id = "2", title = "Tech")
+            databaseHelper.insertCategories(listOf(categoryToRename, existingCategory))
+
+            feedCategoryRepository.updateCategoryName(CategoryId(categoryToRename.id), CategoryName(" tech "))
+            advanceUntilIdle()
+
+            val unchangedCategory = databaseHelper.getFeedSourceCategory(categoryToRename.id)
+            val duplicateTarget = databaseHelper.getFeedSourceCategory(existingCategory.id)
+            assertEquals("Old", unchangedCategory?.title)
+            assertEquals("Tech", duplicateTarget?.title)
+        }
+
+    @Test
+    fun `category name validation should reject blank and duplicate names`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val categoryToRename = FeedSourceCategory(id = "1", title = "Old")
+        val existingCategory = FeedSourceCategory(id = "2", title = "Tech")
+        databaseHelper.insertCategories(listOf(categoryToRename, existingCategory))
+
+        val initJob = launch {
+            feedCategoryRepository.initCategories()
+        }
+        advanceUntilIdle()
+
+        assertEquals(
+            CategoryNameValidationResult.DUPLICATE,
+            feedCategoryRepository.validateCategoryName(CategoryId(categoryToRename.id), CategoryName(" tech ")),
+        )
+        assertEquals(
+            CategoryNameValidationResult.BLANK,
+            feedCategoryRepository.validateCategoryName(CategoryId(categoryToRename.id), CategoryName("  ")),
+        )
+        assertEquals(
+            CategoryNameValidationResult.VALID,
+            feedCategoryRepository.validateCategoryName(CategoryId(categoryToRename.id), CategoryName(" News ")),
+        )
+
+        initJob.cancel()
+    }
+
+    @Test
+    fun `category name validation should support new category names`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val existingCategory = FeedSourceCategory(id = "1", title = "Tech")
+        databaseHelper.insertCategories(listOf(existingCategory))
+
+        val initJob = launch {
+            feedCategoryRepository.initCategories()
+        }
+        advanceUntilIdle()
+
+        assertEquals(
+            CategoryNameValidationResult.DUPLICATE,
+            feedCategoryRepository.validateCategoryName(null, CategoryName(" tech ")),
+        )
+        assertEquals(
+            CategoryNameValidationResult.BLANK,
+            feedCategoryRepository.validateCategoryName(null, CategoryName("  ")),
+        )
+        assertEquals(
+            CategoryNameValidationResult.VALID,
+            feedCategoryRepository.validateCategoryName(null, CategoryName(" News ")),
+        )
+
+        initJob.cancel()
     }
 
     @Test

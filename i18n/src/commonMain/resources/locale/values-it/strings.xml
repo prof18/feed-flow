@@ -19,7 +19,6 @@
     <string name="about_button">Informazioni</string>
     <string name="report_issue_button">Segnala problema</string>
     <string name="export_started_message">Esportazione in corso</string>
-    <string name="import_export_opml">Importa ed esporta OPML</string>
     <string name="feeds_export_done_message">Esportazione effettuata</string>
     <string name="settings_title">Impostazioni</string>
     <string name="feed_url">URL del feed</string>
@@ -40,7 +39,6 @@
     <string name="new_category_hint">Nuova categoria</string>
     <string name="settings_button">Impostazioni</string>
     <string name="open_source_nav_bar">Licenze open source</string>
-    <string name="show_on_github">Mostra su Github</string>
     <string name="mark_all_read_button">Segna tutto come letto</string>
     <string name="retry_button">Riprova</string>
     <string name="generic_error_message">Mi dispiace, qualcosa è andato storto :(</string>
@@ -84,7 +82,6 @@
     <string name="link_copied_success">Link copiato!</string>
     <string name="search_placeholder">Cerca…</string>
     <string name="search_hint_title">Inizia a scrivere…</string>
-    <string name="settings_behaviour_title">Comportamento</string>
     <string name="settings_help_title">Aiuto</string>
     <string name="account_connect_button">Connetti</string>
     <string name="account_disconnect_button">Disconnetti</string>
@@ -114,7 +111,6 @@
     <string name="account_text_field_server_url">URL del server</string>
     <string name="account_text_field_username">Nome utente</string>
     <string name="account_text_field_password">Password</string>
-    <string name="account_login">Accedi</string>
     <string name="fresh_rss_account_connected">Il tuo account FreshRSS è stato collegato con successo</string>
     <string name="no_fresh_rss_sync_yet">I dati non sono ancora sincronizzati</string>
     <string name="fresh_rss_last_sync">Ultima sincronizzazione: %s</string>
@@ -138,7 +134,6 @@
     <string name="open_another_feed">Apri un altro feed</string>
     <string name="link_opening_preference_default">Predefinito</string>
     <string name="delete_category_close_button">Chiudi</string>
-    <string name="settings_auto_delete_period">Periodo di eliminazione</string>
     <string name="settings_auto_delete_period_one_week">Di una settimana</string>
     <string name="settings_auto_delete_period_two_weeks">Di due settimane</string>
     <string name="drawer_title_pinned_feeds">Iscrizioni fissate</string>
@@ -147,14 +142,12 @@
     <string name="pin_feed_source_description">Fissa questo feed</string>
     <string name="link_opening_preference_reader_mode">Modalità lettura</string>
     <string name="menu_remove_from_pinned">Sblocca</string>
-    <string name="settings_auto_delete_desc">Elimina automaticamente gli articoli precedenti al periodo selezionato</string>
     <string name="link_opening_preference">Comportamento apertura link</string>
     <string name="delete_category_confirmation_title">Eliminare la categoria?</string>
     <string name="delete_category_confirmation_message">Sei sicuro di voler eliminare questa categoria? I feed in questa categoria saranno spostati in \'Non categorizzato\'.</string>
     <string name="settings_auto_delete_period_disabled">Disabilitato</string>
     <string name="settings_auto_delete">Eliminazione automatica vecchi articoli</string>
     <string name="hide_feed_from_timeline_description">Nascondi gli articoli di questo feed dalla timeline</string>
-    <string name="feed_list_appearance">Aspetto elenco feed</string>
     <string name="link_opening_preference_preferred_browser">Browser preferito</string>
     <string name="settings_auto_delete_period_one_month">Di un mese</string>
     <string name="feed_url_help_text">Aggiungi qualsiasi link diretto a feed, siti web o canali YouTube. Il feed verrà rilevato automaticamente quando possibile</string>
@@ -171,7 +164,6 @@
     <string name="menu_copy_link">Copia link</string>
     <string name="error_feed_add">Si è verificato un errore durante l\'aggiunta del feed</string>
     <string name="adding_feed">Aggiunta feed...</string>
-    <string name="settings_sync_period_desc">Imposta la frequenza di controllo dei nuovi articoli in background</string>
     <string name="widget_check_feed_sources">Assicurati di aver aggiunto dei feed</string>
     <string name="widget_latest_items">Più recenti</string>
     <string name="settings_sync_period_never">Mai</string>
@@ -185,8 +177,6 @@
     <string name="settings_feed_layout_card">Schede</string>
     <string name="feed_layout_title">Visualizzazione feed</string>
     <string name="settings_notification_check_period">Frequenza di controllo notifiche</string>
-    <string name="settings_notification_check_period_desc">Scegli ogni quanto controllare le notifiche per i nuovi articoli</string>
-    <string name="settings_title_notifications">Notifiche</string>
     <string name="settings_notifications_enable_all_title">Abilita tutte le notifiche</string>
     <string name="notification_channel_description">Notifiche per i nuovi articoli nei tuoi feed</string>
     <string name="settings_notifications_permission_status_title">Stato dei permessi</string>
@@ -210,7 +200,6 @@
     <string name="settings_notifications_title">Notifiche</string>
     <string name="settings_feed_order_newest_first">Più recenti prima</string>
     <string name="settings_feed_order_oldest_first">Più vecchi prima</string>
-    <string name="settings_experimental_parsing">Usa il la modalità lettura sperimentale</string>
     <string name="enable_notifications_for_feed">Attiva le notifiche per i nuovi articoli</string>
     <string name="settings_sync_period_one_day">Ogni giorno</string>
     <string name="file_menu">File</string>
@@ -316,9 +305,7 @@
     <string name="settings_danger_title">Pericolo</string>
     <string name="settings_feeds_and_accounts">Feed &amp; Account</string>
     <string name="settings_reading_behavior">Comportamento di lettura</string>
-    <string name="settings_advanced">Avanzate</string>
     <string name="settings_sync_and_storage">Sincronizzazione &amp; Archiviazione</string>
-    <string name="settings_extras">Extra</string>
     <string name="settings_about_and_support">Informazioni &amp; Supporto</string>
     <string name="settings_clear_downloaded_articles">Svuota articoli scaricati</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Svuotare gli articoli scaricati?</string>
@@ -340,8 +327,6 @@
     <string name="settings_notification_mode_grouped">Tutte combinate</string>
     <string name="feed_error_message_improved">Impossibile caricare \"%s\". Potrebbe non essere disponibile o la tua connessione internet potrebbe essere interrotta.</string>
     <string name="google_drive_sync_common_description">Collega il tuo account Google Drive per sincronizzare le sottoscrizioni dei feed, le categorie, gli articoli letti e preferiti tra i tuoi dispositivi Android, iOS, iPadOS e desktop. I dati verranno salvati in una cartella specifica dell\'app; FeedFlow non avrà accesso a nessuno dei tuoi file</string>
-    <string name="google_drive_auth_code_hint">Codice di autorizzazione</string>
-    <string name="google_drive_confirm_button">Conferma</string>
     <string name="google_drive_sync_error">Si è verificato un errore durante la connessione a Google Drive. Per favore riprova</string>
     <string name="google_drive_sync_success">Il tuo account Google Drive è stato collegato correttamente</string>
     <string name="no_google_drive_sync_yet">I dati non sono ancora sincronizzati con Google Drive. Clicca sul pulsante backup per avviare la sincronizzazione</string>

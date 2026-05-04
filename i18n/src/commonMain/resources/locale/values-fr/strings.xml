@@ -15,7 +15,6 @@
     <string name="about_button">À propos</string>
     <string name="report_issue_button">Signaler un problème</string>
     <string name="export_started_message">Génération de l\'export</string>
-    <string name="import_export_opml">Importer ou exporter un fichier OPML</string>
     <string name="feeds_export_done_message">Export terminé</string>
     <string name="settings_title">Paramètres</string>
     <string name="feed_url">URL du flux</string>
@@ -34,7 +33,6 @@
     <string name="export_feeds_button">Exporter les flux vers OPML</string>
     <string name="settings_button">Paramètres</string>
     <string name="open_source_nav_bar">Licences Open Source</string>
-    <string name="show_on_github">Voir sur GitHub</string>
     <string name="mark_all_read_button">Tout marquer comme lu</string>
     <string name="retry_button">Réessayer</string>
     <string name="generic_error_message">Oups, une erreur s\'est produite :(</string>
@@ -67,7 +65,6 @@
     <string name="settings_title_feed">Flux</string>
     <string name="settings_accounts">Comptes</string>
     <string name="accounts_description">Connectez un compte pour synchroniser les abonnements de flux, catégories, état de lecture et favoris entre vos appareils.\n\nCette fonctionnalité est en bêta, des problèmes peuvent apparaître (par exemple, les articles lus peuvent ne pas complètement se synchroniser). De nouveaux services seront supportés prochainement.\n\nSeul un compte est pour l\'instant supporté.</string>
-    <string name="settings_behaviour_title">Comportement</string>
     <string name="settings_help_title">Aide</string>
     <string name="backup_button">Sauvegarde</string>
     <string name="dropbox_sync_mobile_description">En cliquant sur le bouton « connecter » vous serez redirigé vers l\'application ou le site Dropbox. Après vous être connecté à votre compte, vous pourrez revenir à FeedFlow</string>
@@ -138,8 +135,6 @@
     <string name="link_opening_preference_default">Défaut</string>
     <string name="link_opening_preference_reader_mode">Mode lecture</string>
     <string name="settings_auto_delete">Supprimer automatiquement les articles anciens</string>
-    <string name="settings_auto_delete_desc">Supprimer automatiquement les articles plus anciens que la période sélectionnée</string>
-    <string name="settings_auto_delete_period">Supprimer la période</string>
     <string name="settings_auto_delete_period_disabled">Désactivé</string>
     <string name="settings_auto_delete_period_one_week">Vieux d\'une semaine</string>
     <string name="settings_auto_delete_period_two_weeks">Vieux de deux semaines</string>
@@ -160,11 +155,9 @@
     <string name="wrong_credentials_error_message">Les informations d\'identification sont incorrects. Veuillez réessayer.</string>
     <string name="link_with_error_report_title">Les flux suivant n\'ont pas été ajoutés dû à une erreur</string>
     <string name="wrong_url_error_message">Le lien fourni est incorrect. Veuillez réessayer.</string>
-    <string name="feed_list_appearance">Apparence de la liste de flux</string>
     <string name="menu_add_to_pinned">Épingler</string>
     <string name="menu_remove_from_pinned">Désépingler</string>
     <string name="deleting_feed_dialog_title">Suppression...</string>
-    <string name="settings_sync_period_desc">Choisissez la fréquence de recherche de nouveaux articles en arrière-plan</string>
     <string name="settings_sync_period_two_hours">Toutes les deux heures</string>
     <string name="settings_sync_period_six_hours">Toutes les six heures</string>
     <string name="settings_sync_period_twelve_hours">Toutes les douze heures</string>
@@ -178,7 +171,6 @@
     <string name="delete_category_confirmation_title">Supprimer la catégorie ?</string>
     <string name="feed_url_help_text">Ajoutez un lien direct vers un flux, un site Web ou une chaîne YouTube. Le flux sera détecté automatiquement si possible</string>
     <string name="account_text_field_username">Nom d\'utilisateur</string>
-    <string name="account_login">Se connecter</string>
     <string name="category_name">Nom de la catégorie</string>
     <string name="fresh_rss_account_connected">Votre compte FreshRSS a été connecté avec succès</string>
     <string name="settings_sync_period_fifteen_minutes">Toutes les 15 minutes</string>
@@ -187,8 +179,6 @@
     <string name="file_menu">Fichier</string>
     <string name="settings_notification_no_feed">Il semble que vous n\'ayez pas encore ajouté de flux. Ajoutez-en pour commencer à recevoir des notifications !</string>
     <string name="settings_notification_check_period">Fréquence de vérification des notifications</string>
-    <string name="settings_notification_check_period_desc">Choisissez la fréquence de vérification des notifications de nouveaux articles</string>
-    <string name="settings_title_notifications">Notifications</string>
     <string name="settings_notifications_enable_all_title">Activer toutes les notifications</string>
     <string name="notification_channel_description">Notifications pour les nouveaux articles dans vos flux</string>
     <string name="settings_notifications_permission_status_granted">Accordée</string>
@@ -207,7 +197,6 @@
     <string name="settings_notifications_permission_status_title">Statut des permissions</string>
     <string name="settings_notifications_permission_request_button">Demander la permission</string>
     <string name="settings_notifications_warning_reliability">Les notifications sont activées sur votre appareil, mais pourraient ne pas apparaître avec fiabilité dû à des limitations système.</string>
-    <string name="settings_experimental_parsing">Utiliser un moteur expérimental pour le mode lecture</string>
     <string name="settings_feed_layout_list">Liste</string>
     <string name="settings_feed_order_title">Trier par date</string>
     <string name="settings_feed_order_newest_first">Plus récents d\'abord</string>
@@ -264,7 +253,6 @@
     <string name="articles_export_filter_read">Articles exportés - lus</string>
     <string name="articles_export_filter_unread">Articles exportés - à lire</string>
     <string name="articles_export_filter_bookmarked">Articles exportés - favoris</string>
-    <string name="settings_three_pane_layout">Utiliser le triple fenêtrage sur grand écran</string>
     <string name="select_article_to_read">Sélectionner un article à lire</string>
     <string name="settings_hide_read_items">Cacher automatiquement les articles marqués comme lus</string>
     <string name="menu_mark_all_above_as_read">Marquer les articles précédents comme lus</string>
@@ -277,8 +265,6 @@
     <string name="search_filter_read">Lus</string>
     <string name="search_filter_bookmarks">Favoris</string>
     <string name="google_drive_sync_common_description">Connectez votre compte Google Drive pour synchroniser les abonnements de flux, catégories, états de lecture et favoris entre vos appareils Android, IOS, iPadOS, et PC. Les données seront sauvegardées dans un dossier spécifique au sein de l\'application ; FeedFlow n\'aura aucun accès à vos fichiers</string>
-    <string name="google_drive_auth_code_hint">Code d\'authentification</string>
-    <string name="google_drive_confirm_button">Confirmer</string>
     <string name="google_drive_sync_error">Une erreur est survenue lors de la connexion à Google Drive. Veuillez réessayer</string>
     <string name="google_drive_sync_success">Connexion à votre compte Google Drive réussie</string>
     <string name="no_google_drive_sync_yet">Les données ne sont pas encore synchronisées avec Google Drive. Cliquez sur le bouton « sauvegarde » afin de déclencher une synchronisation</string>
@@ -318,9 +304,7 @@
     <string name="settings_danger_title">Attention : Zone dangereuse</string>
     <string name="settings_feeds_and_accounts">Flux et comptes</string>
     <string name="settings_reading_behavior">Comportement de lecture</string>
-    <string name="settings_advanced">Avancé</string>
     <string name="settings_sync_and_storage">Synchronisation et stockage</string>
-    <string name="settings_extras">Extra</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Effacer les articles téléchargés ?</string>
     <string name="settings_clear_downloaded_articles_dialog_message">Cette action entraînera la suppression de tous les articles téléchargés pour la lecture hors ligne. Cette action est irréversible.</string>
     <string name="settings_clear_image_cache">Effacer le cache image</string>
@@ -364,8 +348,6 @@
     <string name="settings_refresh_feeds_on_launch">Rafraîchir les flux à l\'ouverture de l\'application</string>
     <string name="settings_show_rss_parsing_errors">Montrer les messages d\'erreur de chargement de flux</string>
     <string name="change_category">Changer de catégorie</string>
-    <string name="widget_background_sync_title">Synchronisation en arrière-plan</string>
-    <string name="widget_background_sync_description">Configurez la synchronisation en arrière-plan depuis Synchronisation et Stockage si vous voulez le rafraîchissement automatique du widget.</string>
     <string name="widget_background_sync_disabled_warning">La synchronisation en arrière-plan étant actuellement désactivée, le widget ne sera pas rafraîchi automatiquement.</string>
     <string name="widget_appearance_title">Apparence</string>
     <string name="widget_show_header_title">Montrer l\'en-tête</string>

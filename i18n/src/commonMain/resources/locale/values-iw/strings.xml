@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="show_on_github">הצג ב-GitHub</string>
     <string name="app_name" translatable="false">FeedFlow</string>
     <string name="no_feeds_add_one_message">אין עדכונים, אנא הוסף אחד</string>
     <string name="export_started_message">יצירת ייצוא</string>
@@ -43,7 +42,6 @@
     <string name="open_source_nav_bar">רישיונות קוד פתוח</string>
     <string name="report_issue_button">דווח על בעיה</string>
     <string name="import_export_opml_title">ייבוא וייצוא</string>
-    <string name="import_export_opml">ייבוא וייצוא של OPML</string>
     <string name="done_button">בסדר</string>
     <string name="wrong_link_report_title">העדכונים הבאים לא נוספו כי הם לא חוקיים</string>
     <string name="dropbox_sync_desktop_description">על ידי לחיצה על כפתור החיבור תופנה לאתר דרופבוקס. לאחר חיבור החשבון, העתק את קוד ההרשאה והזן אותו כאן באפליקציה</string>
@@ -71,7 +69,6 @@
     <string name="search_placeholder">מחפש…</string>
     <string name="settings_title_feed">פיד</string>
     <string name="settings_accounts">חשבונות</string>
-    <string name="settings_behaviour_title">התנהגות</string>
     <string name="settings_help_title">עזרה</string>
     <string name="account_connect_button">חבר</string>
     <string name="dropbox_confirm_button">אימות</string>

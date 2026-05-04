@@ -29,7 +29,6 @@
     <string name="load_file_error_message">O arquivo foi incapaz de carregar</string>
     <string name="default_browser">Navegador padrão</string>
     <string name="author_label">Desenvolvido com ❤️ por</string>
-    <string name="show_on_github">Mostrar no GitHub</string>
     <string name="open_source_licenses">Licenças Open source</string>
     <string name="about_nav_bar">Sobre</string>
     <string name="open_source_nav_bar">Licenças Open source</string>
@@ -38,7 +37,6 @@
     <string name="database_error">Algo deu errado durante a recuperação dos feeds. Tente novamente ou reinicie o aplicativo - error code: %s :(</string>
     <string name="force_feed_refresh">Força recarregamento de feeds</string>
     <string name="invalid_rss_url">O link fornecido não é um feed RSS válido</string>
-    <string name="import_export_opml">Importe e exporte OPML</string>
     <string name="import_export_opml_title">Importe e exporte</string>
     <string name="retry_button">Tentar novamente</string>
     <string name="done_button">OK</string>

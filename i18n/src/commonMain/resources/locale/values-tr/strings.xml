@@ -30,7 +30,6 @@
     <string name="load_file_error_message">Dosya yüklenemedi</string>
     <string name="default_browser">Varsayılan tarayıcı</string>
     <string name="author_label">❤️ ile geliştiren</string>
-    <string name="show_on_github">GitHub\'da göster</string>
     <string name="open_source_licenses">Açık kaynak lisansları</string>
     <string name="about_nav_bar">Hakkında</string>
     <string name="open_source_nav_bar">Açık kaynak lisansları</string>
@@ -39,7 +38,6 @@
     <string name="database_error">Akışlar alınırken bir sorun oluştu. Lütfen tekrar deneyin veya uygulamayı yeniden başlatın - error code: %s :(</string>
     <string name="force_feed_refresh">Akışları yenilemeye zorla</string>
     <string name="invalid_rss_url">Sağladığınız bağlantı geçerli bir RSS akışı değil</string>
-    <string name="import_export_opml">OPML içe ve dışa aktarma</string>
     <string name="import_export_opml_title">İçe ve Dışa Aktarma</string>
     <string name="retry_button">Tekrar dene</string>
     <string name="done_button">Tamam</string>
@@ -91,7 +89,6 @@
     <string name="settings_title_feed">Akış</string>
     <string name="settings_accounts">Hesaplar</string>
     <string name="accounts_description">Cihazlarınız arasında akış aboneliklerini, kategorileri, okunmuş ve yer imlerine eklenmiş makaleleri eşitlemek için bir hesap bağlayın.\n\nBu işlevsellik Beta aşamasındadır, sorunlar ortaya çıkabilir (örneğin, okunan makaleler tam olarak eşitlenmeyebilir). Gelecekte daha fazla servis desteklenecektir.\n\nAynı anda sadece bir hesap desteklenmektedir.</string>
-    <string name="settings_behaviour_title">Davranış</string>
     <string name="settings_help_title">Yardım</string>
     <string name="settings_crash_reporting">Anonim çökme raporları gönder</string>
     <string name="account_connect_button">Bağlan</string>
@@ -139,7 +136,6 @@
     <string name="account_text_field_server_url">Sunucu URL\'si</string>
     <string name="account_text_field_username">Kullanıcı adı</string>
     <string name="account_text_field_password">Parola</string>
-    <string name="account_login">Giriş yap</string>
     <string name="fresh_rss_account_connected">FreshRss hesabınız başarıyla bağlandı</string>
     <string name="no_fresh_rss_sync_yet">Veriler henüz eşitlenmedi</string>
     <string name="fresh_rss_last_sync">Son eşitleme: %s</string>
@@ -154,13 +150,10 @@
     <string name="delete_category_confirmation_message">Bu kategoriyi silmek istediğinizden emin misiniz? Bu kategorideki akışlar \"Kategorisiz\" bölümüne taşınacaktır.</string>
     <string name="delete_category_close_button">Kapat</string>
     <string name="settings_auto_delete">Eski makaleleri otomatik sil</string>
-    <string name="settings_auto_delete_desc">Seçilen süreden daha eski makaleleri otomatik olarak sil</string>
-    <string name="settings_auto_delete_period">Silme periyodu</string>
     <string name="settings_auto_delete_period_disabled">Devre dışı</string>
     <string name="settings_auto_delete_period_one_week">Bir haftalık</string>
     <string name="settings_auto_delete_period_two_weeks">İki haftalık</string>
     <string name="settings_auto_delete_period_one_month">Bir aylık</string>
-    <string name="settings_sync_period_desc">Arka planda yeni makalelerin ne sıklıkta kontrol edileceğini seçin</string>
     <string name="settings_sync_period_never">Asla</string>
     <string name="settings_sync_period_fifteen_minutes">Her 15 dakikada bir</string>
     <string name="settings_sync_period_thirty_minutes">Her 30 dakikada bir</string>
@@ -175,7 +168,6 @@
     <string name="drawer_title_pinned_feeds">Sabitlenmiş Akış Kaynakları</string>
     <string name="menu_add_to_pinned">Sabitle</string>
     <string name="menu_remove_from_pinned">Sabitlemeyi kaldır</string>
-    <string name="feed_list_appearance">Akış listesi görünümü</string>
     <string name="category_name">Kategori adı</string>
     <string name="edit_category">Kategori adını düzenle</string>
     <string name="adding_feed">Akış ekleniyor...</string>
@@ -192,8 +184,6 @@
     <string name="settings_swipe_action_none">Devre dışı</string>
     <string name="settings_notification_no_feed">Henüz hiç akış eklememişsiniz gibi görünüyor. Bildirim almaya başlamak için birkaç tane ekleyin!</string>
     <string name="settings_notification_check_period">Bildirim kontrol sıklığı</string>
-    <string name="settings_notification_check_period_desc">Yeni makale bildirimlerinin ne sıklıkta kontrol edileceğini seçin</string>
-    <string name="settings_title_notifications">Bildirimler</string>
     <string name="settings_notifications_enable_all_title">Tüm Bildirimleri Etkinleştir</string>
     <string name="notification_channel_description">Akışlarınızdaki yeni makaleler için bildirimler</string>
     <string name="settings_notifications_permission_status_title">İzin Durumu</string>
@@ -208,7 +198,6 @@
     <string name="date_format_title">Tarih formatı</string>
     <string name="date_format_normal">Gün/Ay</string>
     <string name="date_format_american">Ay/Gün</string>
-    <string name="settings_experimental_parsing">Okuyucu modu için deneysel motoru kullan</string>
     <string name="enable_notifications_for_feed">Yeni makaleler için bildirimleri etkinleştir</string>
     <string name="settings_feed_layout_list">Liste</string>
     <string name="settings_feed_layout_card">Kart</string>

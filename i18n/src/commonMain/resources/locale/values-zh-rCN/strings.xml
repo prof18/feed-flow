@@ -6,13 +6,11 @@
     <string name="refresh_feeds">刷新订阅源</string>
     <string name="loading_feed_message">正在加载订阅源 %s</string>
     <string name="app_name" translatable="false">FeedFlow</string>
-    <string name="show_on_github">在 GitHub 查看</string>
     <string name="about_nav_bar">关于</string>
     <string name="open_source_nav_bar">开放源代码许可</string>
     <string name="report_issue_button">报告问题</string>
     <string name="open_website_button">打开网站</string>
     <string name="force_feed_refresh">强制刷新订阅源</string>
-    <string name="import_export_opml">导入和导出 OPML</string>
     <string name="import_export_opml_title">导入和导出</string>
     <string name="wrong_link_report_title">以下订阅源无效，没有添加</string>
     <string name="issue_report_title">报告 FeedFlow 的问题</string>
@@ -38,7 +36,6 @@
     <string name="search_no_data">%s 没有匹配项。</string>
     <string name="settings_title_feed">订阅源</string>
     <string name="settings_accounts">账号</string>
-    <string name="settings_behaviour_title">行为</string>
     <string name="settings_help_title">帮助</string>
     <string name="account_connect_button">连接</string>
     <string name="account_disconnect_button">断开连接</string>
@@ -134,7 +131,6 @@
     <string name="account_text_field_server_url">服务器 URL</string>
     <string name="account_text_field_username">用户名</string>
     <string name="account_text_field_password">密码</string>
-    <string name="account_login">登录</string>
     <string name="fresh_rss_account_connected">已成功连接您的 FreshRSS 账号</string>
     <string name="settings_feed_list_title">订阅源列表</string>
     <string name="settings_feed_list_scale_title">文本缩放</string>
@@ -158,8 +154,6 @@
     <string name="settings_auto_delete_period_one_week">一周前</string>
     <string name="settings_auto_delete_period_two_weeks">两周前</string>
     <string name="settings_auto_delete_period_one_month">一个月前</string>
-    <string name="settings_auto_delete_desc">自动删除超过所选时段的文章</string>
-    <string name="settings_auto_delete_period">删除时段</string>
     <string name="drawer_title_pinned_feeds">已固定的订阅源</string>
     <string name="menu_add_to_pinned">固定</string>
     <string name="menu_remove_from_pinned">取消固定</string>
@@ -170,7 +164,6 @@
     <string name="error_feed_add">添加订阅源时出了点问题</string>
     <string name="feed_url_help_text">添加任何直接订阅源、网站或 YouTube 频道链接。如果可能，将自动检测订阅源</string>
     <string name="hide_feed_from_timeline_description">从时间线隐藏此订阅源的文章</string>
-    <string name="feed_list_appearance">订阅源列表外观</string>
     <string name="settings_sync_period_one_hour">每小时</string>
     <string name="settings_sync_period_twelve_hours">每 12 小时</string>
     <string name="widget_check_feed_sources">请确保添加了一些订阅源</string>
@@ -178,7 +171,6 @@
     <string name="settings_sync_period_six_hours">每 6 小时</string>
     <string name="settings_sync_period_never">永不</string>
     <string name="settings_sync_period_two_hours">每 2 小时</string>
-    <string name="settings_sync_period_desc">选择在后台检查新文章的频率</string>
     <string name="widget_configuration_title">小组件配置</string>
     <string name="widget_configuration_confirm">添加小组件</string>
     <string name="file_menu">文件</string>
@@ -191,7 +183,6 @@
     <string name="settings_swipe_action_toggle_bookmark">切换收藏状态</string>
     <string name="settings_swipe_action_none">已禁用</string>
     <string name="settings_notification_check_period">通知检查频率</string>
-    <string name="settings_title_notifications">通知</string>
     <string name="settings_notifications_enable_all_title">启用所有通知</string>
     <string name="notification_channel_description">订阅源中新文章的通知</string>
     <string name="settings_notifications_permission_status_title">权限状态</string>
@@ -202,14 +193,12 @@
     <string name="notification_channel_name">新文章</string>
     <string name="settings_notifications_warning_reliability">通知在您的设备上进行检查，但发送取决于系统允许的后台活动和应用使用，这是 Feedflow 无法控制的。</string>
     <string name="settings_notification_no_feed">您似乎尚未添加任何订阅源。请添加一些以开始接收通知！</string>
-    <string name="settings_notification_check_period_desc">选择检查新文章通知的频率</string>
     <string name="settings_notifications_title">通知</string>
     <string name="date_format_american">月/日</string>
     <string name="date_format_title">日期格式</string>
     <string name="date_format_normal">日/月</string>
     <string name="marking_all_read_dialog_title">正在全部标记为已读…</string>
     <string name="enable_notifications_for_feed">启用新文章通知</string>
-    <string name="settings_experimental_parsing">为阅读模式使用实验性引擎</string>
     <string name="settings_feed_order_title">按日期排序</string>
     <string name="settings_feed_order_newest_first">从新到旧</string>
     <string name="settings_feed_order_oldest_first">从旧到新</string>
@@ -271,8 +260,6 @@
     <string name="scroll_to_top_button_content_description">滚动到顶部</string>
     <string name="dropbox_auth_code_expired">授权码已失效。请重试。</string>
     <string name="database_error_reset">我们加载您的数据时遇到问题，因此需要重新开始。对此我们深表歉意。</string>
-    <string name="google_drive_auth_code_hint">授权码</string>
-    <string name="google_drive_confirm_button">确认</string>
     <string name="google_drive_connect_button">连接 Google Drive</string>
     <string name="change_category">更改类别</string>
     <string name="trigger_feed_sync">触发上传至您的账号</string>
@@ -324,7 +311,6 @@
     <string name="reset_button">重置</string>
     <string name="settings_feeds_and_accounts">订阅源和账号</string>
     <string name="settings_reading_behavior">阅读行为</string>
-    <string name="settings_advanced">高级</string>
     <string name="settings_sync_and_storage">同步和存储</string>
     <string name="settings_about_and_support">关于和支持</string>
     <string name="bazqux_account_connected">已成功连接您的 BazQux 账号</string>
@@ -339,7 +325,6 @@
     <string name="search_filter_bookmarks">收藏</string>
     <string name="settings_refresh_feeds_on_launch">应用启动时刷新订阅源</string>
     <string name="settings_notification_mode">通知分组</string>
-    <string name="settings_extras">其他</string>
     <string name="settings_notification_mode_desc">按订阅源、类别分组通知，或显示单条合并通知</string>
     <string name="settings_reduce_motion">减少动态效果和动画</string>
     <string name="notification_grouped_body">您有新文章待阅读！</string>
@@ -358,7 +343,6 @@
     <string name="invalid_opml_import_description">这看起来不像有效的 OPML 文件。试着从 RSS 应用将订阅源导出为 OPML 并再次导入。</string>
     <string name="drawer_title_library">库</string>
     <string name="settings_desktop_multi_pane_layout">使用多窗格首页布局</string>
-    <string name="settings_three_pane_layout">在大屏幕上使用双窗格布局</string>
     <string name="select_article_to_read">选择要阅读的文章</string>
     <string name="settings_hide_unread_dot">隐藏未读指示器</string>
     <string name="settings_hide_feed_source">隐藏订阅源名称</string>
@@ -374,13 +358,11 @@
     <string name="delete_all_feeds_confirmation_title">删除类别中的所有订阅源？</string>
     <string name="delete_all_feeds_confirmation_message">确定要删除此类别中的所有订阅源吗？此操作无法撤销。</string>
     <string name="widget_configuration_description">小组件更新遵循“同步和存储”中的后台同步设置。</string>
-    <string name="widget_background_sync_description">如果您希望小组件自动刷新，请在“同步和存储”中配置后台同步。</string>
     <string name="settings_background_sync_wifi_only">仅在 Wi-Fi 连接时进行后台同步</string>
     <string name="widget_background_sync_disabled_warning">后台同步当前已禁用，因此小组件不会自动刷新。</string>
     <string name="settings_background_sync_restrictions_title">后台同步条件</string>
     <string name="settings_background_sync_restrictions_description">使用其中一个或两个选项来限制后台同步的运行时间。</string>
     <string name="settings_background_sync_charging_only">仅在充电时进行后台同步</string>
-    <string name="widget_background_sync_title">后台同步</string>
     <string name="settings_swipe_action_open_in_browser">在首选浏览器中打开</string>
     <string name="delete_category">删除类别</string>
     <string name="settings_sync_period">后台同步</string>

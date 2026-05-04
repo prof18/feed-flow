@@ -22,13 +22,11 @@
     <string name="generic_error_message">Извините, что-то пошло не так :(</string>
     <string name="load_file_error_message">Невозможно загрузить файл</string>
     <string name="author_label">Разработано с ❤️ от</string>
-    <string name="show_on_github">Глянуть на Гитхабе</string>
     <string name="open_source_licenses">Открытые лицензии</string>
     <string name="about_nav_bar">О приложении</string>
     <string name="report_issue_button">Сообщить о проблеме</string>
     <string name="force_feed_refresh">Обновить ленты сейчас</string>
     <string name="invalid_rss_url">Ссылка, которую вы предоставили, не является действительным RSS-каналом</string>
-    <string name="import_export_opml">Импорт и экспорт OPML</string>
     <string name="import_export_opml_title">Импорт и экспорт</string>
     <string name="retry_button">Снова</string>
     <string name="missing_title_and_link">Возникла ошибка при получении заголовка ленты</string>
@@ -54,7 +52,6 @@
     <string name="search_hint_title">Начните печатать…</string>
     <string name="search_hint_subtitle">результаты появятся автоматически</string>
     <string name="settings_accounts">Аккаунты</string>
-    <string name="settings_behaviour_title">Поведение</string>
     <string name="settings_help_title">Помощь</string>
     <string name="account_connect_button">Подключить</string>
     <string name="backup_button">Резервное копирование</string>
@@ -131,7 +128,6 @@
     <string name="account_text_field_server_url">Адрес сервера</string>
     <string name="account_text_field_username">Ваше имя</string>
     <string name="account_text_field_password">Пароль</string>
-    <string name="account_login">Вход</string>
     <string name="no_fresh_rss_sync_yet">Данные ещё не синхронизированы</string>
     <string name="fresh_rss_last_sync">Последняя синхронизация: %s</string>
     <string name="deleting_feed_dialog_title">Удаление...</string>
@@ -141,16 +137,13 @@
     <string name="link_opening_preference_default">По умолчанию</string>
     <string name="delete_category_confirmation_title">Удалить категорию?</string>
     <string name="delete_category_close_button">Закрыть</string>
-    <string name="settings_auto_delete_period">Удалить период</string>
     <string name="pin_feed_source_description">Закрепить эту ленту</string>
     <string name="drawer_title_pinned_feeds">Закрепленные источники ленты</string>
     <string name="menu_add_to_pinned">Закрепить</string>
     <string name="menu_remove_from_pinned">Открепить</string>
-    <string name="feed_list_appearance">Облик списка лент</string>
     <string name="settings_auto_delete_period_disabled">Отключено</string>
     <string name="delete_category_confirmation_message">Вы уверены, что хотите удалить эту категорию? Все материалы из неё будут отнесены к \'Без категории\'.</string>
     <string name="link_opening_preference">Поведение при открытии ссылок</string>
-    <string name="settings_auto_delete_desc">Автоматическое удаление статей старше выбранного периода</string>
     <string name="feed_url_help_text">Добавьте любую ссылку на прямую ленту, веб-сайт или канал YouTube. Лента будет автоматически обнаружена, когда это возможно</string>
     <string name="settings_auto_delete">Автоудаление старых статей</string>
     <string name="hide_feed_from_timeline_description">Скрыть статьи этой ленты из хроники</string>
@@ -171,7 +164,6 @@
     <string name="menu_copy_link_comments">Копировать ссылку на комментарии</string>
     <string name="adding_feed">Добавление ленты...</string>
     <string name="error_feed_add">Произошла ошибка при добавлении ленты</string>
-    <string name="settings_sync_period_desc">Выберите, как часто проверять наличие новых статей в фоновом режиме</string>
     <string name="settings_sync_period_never">Никогда</string>
     <string name="settings_sync_period_one_hour">Каждый час</string>
     <string name="settings_sync_period_two_hours">Каждые два часа</string>
@@ -183,7 +175,6 @@
     <string name="widget_configuration_title">Конфигурация виджета</string>
     <string name="file_menu">Файл</string>
     <string name="settings_notification_check_period">Частота проверки для уведомлений</string>
-    <string name="settings_title_notifications">Уведомления</string>
     <string name="settings_notifications_enable_all_title">Включить все уведомления</string>
     <string name="notification_channel_description">Уведомления о новых статьях в ваших лентах</string>
     <string name="settings_notifications_permission_status_title">Статус разрешения</string>
@@ -198,9 +189,7 @@
     <string name="date_format_american">Месяц/День</string>
     <string name="settings_notifications_title">Уведомления</string>
     <string name="settings_notification_no_feed">Похоже, вы еще не добавили ни одной ленты. Добавьте их, чтобы начать получать уведомления!</string>
-    <string name="settings_notification_check_period_desc">Выберите, как часто проверять наличие новых уведомлений о статьях</string>
     <string name="settings_notifications_permission_status_denied">Отклонено</string>
-    <string name="settings_experimental_parsing">Использовать экспериментальный движок для режима чтения</string>
     <string name="enable_notifications_for_feed">Включить уведомления о новых статьях</string>
     <string name="settings_sync_period_fifteen_minutes">Каждые 15 минут</string>
     <string name="settings_sync_period_thirty_minutes">Каждые 30 минут</string>
@@ -270,8 +259,6 @@
     <string name="search_filter_read">Прочитано</string>
     <string name="search_filter_bookmarks">Закладки</string>
     <string name="google_drive_sync_common_description">Подключите аккаунт Google Drive для синхронизации подписок на ленты, категорий, прочитанных и закладок между устройствами Android, iOS, iPadOS и ПК. Данные сохраняются в папке приложения; FeedFlow не имеет доступа к вашим файлам</string>
-    <string name="google_drive_auth_code_hint">Код авторизации</string>
-    <string name="google_drive_confirm_button">Подтвердить</string>
     <string name="google_drive_sync_error">Произошла ошибка при подключении к Google Drive. Попробуйте снова</string>
     <string name="google_drive_sync_success">Ваш аккаунт Google Drive успешно подключен</string>
     <string name="no_google_drive_sync_yet">Данные ещё не синхронизированы с Google Drive. Нажмите кнопку резервного копирования для запуска синхронизации</string>
@@ -324,9 +311,7 @@
     <string name="settings_danger_title">Опасно</string>
     <string name="settings_feeds_and_accounts">Ленты и аккаунты</string>
     <string name="settings_reading_behavior">Поведение чтения</string>
-    <string name="settings_advanced">Дополнительно</string>
     <string name="settings_sync_and_storage">Синхронизация и хранилище</string>
-    <string name="settings_extras">Дополнения</string>
     <string name="settings_about_and_support">О программе и поддержка</string>
     <string name="settings_clear_downloaded_articles">Очистить загруженные статьи</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Очистить загруженные статьи?</string>
@@ -358,7 +343,6 @@
     <string name="invalid_opml_import_description">Неверный формат OPML-файла. Экспортируйте ленты из RSS-приложения в OPML и попробуйте снова.</string>
     <string name="drawer_title_library">Библиотека</string>
     <string name="settings_desktop_multi_pane_layout">Использовать многооконный макет главного экрана</string>
-    <string name="settings_three_pane_layout">Использовать трёхпанельный макет на больших экранах</string>
     <string name="select_article_to_read">Выберите статью для чтения</string>
     <string name="settings_hide_unread_dot">Скрыть индикатор непрочитанных</string>
     <string name="settings_hide_feed_source">Скрыть источник ленты</string>
@@ -380,8 +364,6 @@
     <string name="settings_background_sync_restrictions_description">Используйте одну или обе опции, чтобы ограничить, когда может выполняться фоновая синхронизация.</string>
     <string name="settings_background_sync_wifi_only">Фоновая синхронизация только по Wi-Fi</string>
     <string name="settings_background_sync_charging_only">Фоновая синхронизация только при зарядке</string>
-    <string name="widget_background_sync_title">Фоновая синхронизация</string>
-    <string name="widget_background_sync_description">Настройте фоновую синхронизацию в разделе «Синхронизация и хранилище», если хотите, чтобы виджет обновлялся автоматически.</string>
     <string name="widget_background_sync_disabled_warning">Фоновая синхронизация сейчас отключена, поэтому виджет не будет обновляться автоматически.</string>
     <string name="widget_background_color_brightness">Яркость</string>
     <string name="widget_background_color_hex_label">Цвет в Hex</string>

@@ -30,7 +30,6 @@
     <string name="load_file_error_message">Nie można załadować pliku</string>
     <string name="default_browser">Domyślna przeglądarka</string>
     <string name="author_label">Stworzone z ❤️ przez</string>
-    <string name="show_on_github">Pokaż na GitHub</string>
     <string name="open_source_licenses">Licencje open source</string>
     <string name="about_nav_bar">O programie</string>
     <string name="open_source_nav_bar">Licencje open source</string>
@@ -39,7 +38,6 @@
     <string name="database_error">Wystąpił błąd podczas pobierania kanałów. Spróbuj ponownie lub uruchom ponownie aplikację - error code: %s :(</string>
     <string name="force_feed_refresh">Wymuś odświeżenie kanałów</string>
     <string name="invalid_rss_url">Podany link nie jest prawidłowym kanałem RSS</string>
-    <string name="import_export_opml">Importuj i eksportuj OPML</string>
     <string name="import_export_opml_title">Importuj i eksportuj</string>
     <string name="retry_button">Spróbuj ponownie</string>
     <string name="done_button">OK</string>
@@ -91,7 +89,6 @@
     <string name="settings_title_feed">Kanał</string>
     <string name="settings_accounts">Konta</string>
     <string name="accounts_description">Połącz konto, aby synchronizować subskrypcje kanałów, kategorie, przeczytane i dodane do zakładek artykuły między urządzeniami.\n\nFunkcja jest w fazie beta, mogą wystąpić problemy (na przykład przeczytane artykuły mogą nie być w pełni zsynchronizowane). W przyszłości obsługiwane będą kolejne usługi.\n\nObsługiwane jest tylko jedno konto jednocześnie.</string>
-    <string name="settings_behaviour_title">Zachowanie</string>
     <string name="settings_help_title">Pomoc</string>
     <string name="settings_crash_reporting">Wysyłaj anonimowe raporty o awariach</string>
     <string name="account_connect_button">Połącz</string>
@@ -139,7 +136,6 @@
     <string name="account_text_field_server_url">Adres URL serwera</string>
     <string name="account_text_field_username">Nazwa użytkownika</string>
     <string name="account_text_field_password">Hasło</string>
-    <string name="account_login">Zaloguj się</string>
     <string name="fresh_rss_account_connected">Twoje konto FreshRSS zostało pomyślnie połączone</string>
     <string name="no_fresh_rss_sync_yet">Dane nie zostały jeszcze zsynchronizowane</string>
     <string name="fresh_rss_last_sync">Ostatnia synchronizacja: %s</string>
@@ -154,13 +150,10 @@
     <string name="delete_category_confirmation_message">Czy na pewno chcesz usunąć tę kategorię? Kanały w tej kategorii zostaną przeniesione do sekcji Nieskategoryzowane.</string>
     <string name="delete_category_close_button">Zamknij</string>
     <string name="settings_auto_delete">Automatyczne usuwanie starych artykułów</string>
-    <string name="settings_auto_delete_desc">Automatycznie usuwaj artykuły starsze niż wybrany zakres czasowy</string>
-    <string name="settings_auto_delete_period">Zakres czasowy usuwania</string>
     <string name="settings_auto_delete_period_disabled">Wyłączone</string>
     <string name="settings_auto_delete_period_one_week">Sprzed jednego tygodnia</string>
     <string name="settings_auto_delete_period_two_weeks">Sprzed dwóch tygodni</string>
     <string name="settings_auto_delete_period_one_month">Sprzed miesiąca</string>
-    <string name="settings_sync_period_desc">Wybierz częstotliwość sprawdzania nowych artykułów w tle</string>
     <string name="settings_sync_period_never">Nigdy</string>
     <string name="settings_sync_period_fifteen_minutes">Co 15 minut</string>
     <string name="settings_sync_period_thirty_minutes">Co 30 minut</string>
@@ -175,7 +168,6 @@
     <string name="drawer_title_pinned_feeds">Przypięte źródła kanałów</string>
     <string name="menu_add_to_pinned">Przypnij</string>
     <string name="menu_remove_from_pinned">Odepnij</string>
-    <string name="feed_list_appearance">Wygląd listy kanałów</string>
     <string name="category_name">Nazwa kategorii</string>
     <string name="edit_category">Edytuj nazwę kategorii</string>
     <string name="adding_feed">Dodawanie kanału...</string>
@@ -192,8 +184,6 @@
     <string name="settings_swipe_action_none">Wyłączone</string>
     <string name="settings_notification_no_feed">Wygląda na to, że nie dodano jeszcze żadnych kanałów. Dodaj kilka, aby zacząć otrzymywać powiadomienia!</string>
     <string name="settings_notification_check_period">Częstotliwość sprawdzania powiadomień</string>
-    <string name="settings_notification_check_period_desc">Wybierz, jak często sprawdzać powiadomienia o nowych artykułach</string>
-    <string name="settings_title_notifications">Powiadomienia</string>
     <string name="settings_notifications_enable_all_title">Włącz wszystkie powiadomienia</string>
     <string name="notification_channel_description">Powiadomienia o nowych artykułach w Twoich kanałach</string>
     <string name="settings_notifications_permission_status_title">Status pozwoleń</string>
@@ -208,7 +198,6 @@
     <string name="date_format_title">Format daty</string>
     <string name="date_format_normal">Dzień/Miesiąc</string>
     <string name="date_format_american">Miesiąc/Dzień</string>
-    <string name="settings_experimental_parsing">Użyj silnika eksperymentalnego w trybie czytnika</string>
     <string name="enable_notifications_for_feed">Włącz powiadomienia o nowych artykułach</string>
     <string name="settings_feed_layout_list">Lista</string>
     <string name="settings_feed_layout_card">Karta</string>

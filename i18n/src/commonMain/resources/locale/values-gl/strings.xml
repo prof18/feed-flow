@@ -7,7 +7,6 @@
     <string name="browser_selection_button">Navegador</string>
     <string name="export_dialog_title">Gardar ficheiro OPML</string>
     <string name="about_nav_bar">Sobre</string>
-    <string name="settings_behaviour_title">Comportamento</string>
     <string name="accounts_description">Conecta unha conta para sincronizar entre os teus dispositivos as subscricións ás canles, categorías, artigos lidos e marcados.\n\nEsta ferramenta está en fase Beta, podería non funcionar ben (ex., os artigos lidos non se sincronicen). Vai haber máis servizos compatibles no futuro.\n\nSó se pode sincronizar unha conta ao mesmo tempo.</string>
     <string name="settings_help_title">Axuda</string>
     <string name="dropbox_sync_mobile_description">Ao premer no botón Conectar ímoste redirixir á app ou sitio web de Dropbox. Despois de acceder á conta podes volver a FeedFlow</string>
@@ -34,11 +33,9 @@
     <string name="generic_error_message">Lamentámolo, pero houbo un fallo :(</string>
     <string name="default_browser">Navegador predeterminado</string>
     <string name="author_label">Creada con ❤️ por</string>
-    <string name="show_on_github">Mostrar en GitHub</string>
     <string name="open_source_licenses">Licenzas de código aberto</string>
     <string name="open_website_button">Abrir sitio web</string>
     <string name="force_feed_refresh">Forzar a actualización das canles</string>
-    <string name="import_export_opml">Importar e exportar OPML</string>
     <string name="retry_button">Volver a intentar</string>
     <string name="done_button">OK</string>
     <string name="issue_report_title">Informa dunha incidencia con FeedFlow</string>
@@ -135,7 +132,6 @@
     <string name="fresh_rss_last_sync">Última sincr: %s</string>
     <string name="sync_error_message">Algo fallou ao sincronizar as canles - error code: %s :(Volve intentalo.</string>
     <string name="wrong_credentials_error_message">As credenciais non son correctas. Volve intentalo.</string>
-    <string name="account_login">Acceder</string>
     <string name="fresh_rss_password_hint">Contrasinal da API FreshRSS (Axustes &gt; Perfil)</string>
     <string name="fresh_rss_url_hint">Punto de acceso á API FreshRSS, ex.: %s</string>
     <string name="link_opening_preference">Comportamento apertura de ligazóns</string>
@@ -146,8 +142,6 @@
     <string name="delete_category_confirmation_title">Eliminar categoría?</string>
     <string name="delete_category_close_button">Pechar</string>
     <string name="settings_auto_delete">Borrado automático</string>
-    <string name="settings_auto_delete_desc">Elimina automaticamente os artigos anteriores ao período indicado</string>
-    <string name="settings_auto_delete_period">Período para eliminar</string>
     <string name="settings_auto_delete_period_one_week">Anterior a 1 semana</string>
     <string name="settings_auto_delete_period_one_month">Anterior a 1 mes</string>
     <string name="feed_url_help_text">Engade unha canle directa, sitiio web, ou ligazón a canle de YouTube. A canle detectarase automaticamente se é posible</string>
@@ -159,7 +153,6 @@
     <string name="drawer_title_pinned_feeds">Canles fixadas</string>
     <string name="menu_add_to_pinned">Fixar</string>
     <string name="menu_remove_from_pinned">Soltar</string>
-    <string name="feed_list_appearance">Aparencia da lista de canles</string>
     <string name="pin_feed_source_description">Fixar esta canle</string>
     <string name="hide_feed_from_timeline_description">Ocultar os artigos desta canle na cronoloxía</string>
     <string name="settings_crash_reporting">Enviar informes anónimos sobre fallos</string>
@@ -174,7 +167,6 @@
     <string name="settings_sync_period_never">Nunca</string>
     <string name="settings_sync_period_six_hours">Cada 6 horas</string>
     <string name="settings_sync_period_two_hours">Cada 2 horas</string>
-    <string name="settings_sync_period_desc">Elixir a frecuencia coa que se comproba se hai novos artigos</string>
     <string name="settings_sync_period_one_hour">Cada hora</string>
     <string name="settings_sync_period_twelve_hours">Cada 12 horas</string>
     <string name="widget_check_feed_sources">Comproba que engadiches algunhas canles</string>
@@ -192,8 +184,6 @@
     <string name="settings_swipe_action_none">Desactivado</string>
     <string name="settings_notification_no_feed">Semella que aínda non engadiches ningunha canle. Engade algunha para comezar a recibir notificacións!</string>
     <string name="settings_notification_check_period">Frecuencia para comprobar notificacións</string>
-    <string name="settings_notification_check_period_desc">Escolle con que frecuencia se comprobará se hai novos artigos</string>
-    <string name="settings_title_notifications">Notificacións</string>
     <string name="settings_notifications_enable_all_title">Activar Todas as notificacións</string>
     <string name="notification_channel_description">Notificacións para novos artigos nas túas canles</string>
     <string name="settings_notifications_permission_status_title">Estado dos permisos</string>
@@ -209,7 +199,6 @@
     <string name="date_format_normal">Día/Mes</string>
     <string name="date_format_american">Mes/Día</string>
     <string name="enable_notifications_for_feed">Activar notificación para os novos artigos</string>
-    <string name="settings_experimental_parsing">Usar motor experimental no modo lectura</string>
     <string name="settings_feed_order_title">Orde por data</string>
     <string name="settings_feed_order_newest_first">Primeiro máis recente</string>
     <string name="settings_feed_order_oldest_first">Primeiro máis antigo</string>
@@ -288,7 +277,6 @@
     <string name="articles_export_filter_unread">Artigos sen ler</string>
     <string name="articles_export_filter_bookmarked">Artigos dos marcadores</string>
     <string name="settings_desktop_multi_pane_layout">Usar pantalla de inicio con varios paneis</string>
-    <string name="settings_three_pane_layout">Usar a disposición de dous paneis en pantallas grandes</string>
     <string name="select_article_to_read">Selecciona un artigo para ler</string>
     <string name="settings_hide_read_items">Ocultar automaticamente os artigos unha vez lidos</string>
     <string name="menu_mark_all_above_as_read">Marcar todo o de arriba como lido</string>
@@ -298,8 +286,6 @@
     <string name="search_filter_read">Lido</string>
     <string name="search_filter_bookmarks">Marcadores</string>
     <string name="google_drive_sync_common_description">Conecta túa conta Google Drive para sincronizar as subscricións, categorías, estado de lectura e artigos nos mardores entre os teus dispositivos Android, iOS, iPadOS e de escritorio. Os datos gárdanse nun cartafol dedicado para a app; FeedFlow non vai ter acceso a ningún dos teus ficheiros</string>
-    <string name="google_drive_auth_code_hint">Código de autorización</string>
-    <string name="google_drive_confirm_button">Confirmar</string>
     <string name="google_drive_sync_error">Houbo un erro ao conectar con Google Drive. Inténtao outra vez</string>
     <string name="google_drive_sync_success">Accedeches correctamente á túa conta Google Drive</string>
     <string name="no_google_drive_sync_yet">Aínda non se sincronizaron os datos con Google Drive. Preme no botón de copia de apoio para realizar a sincronización</string>
@@ -338,8 +324,6 @@
     <string name="settings_refresh_feeds_on_launch">Actualizar as canles ao iniciar a app</string>
     <string name="settings_show_rss_parsing_errors">Mostrar mensaxes de erro das canles</string>
     <string name="change_category">Cambiar categoría</string>
-    <string name="widget_background_sync_title">Sincronizar en segundo plano</string>
-    <string name="widget_background_sync_description">Configura a sincronización en segundo plano desde Sincronización e Almacenaxe se queres que o widget se actualice automaticamente.</string>
     <string name="widget_configuration_description">As actualizacións do widget seguen os axustes de sincronización en segundo plano de Sincronización e Almacenaxe.</string>
     <string name="widget_background_sync_disabled_warning">Actualmente a sincronización en segundo plano está desactivada, o widget non se actualizará automaticamente.</string>
     <string name="widget_appearance_title">Aparencia</string>
@@ -381,9 +365,7 @@
     <string name="reset_button">Restablecer</string>
     <string name="settings_feeds_and_accounts">Canles e Contas</string>
     <string name="settings_reading_behavior">Modo de lectura</string>
-    <string name="settings_advanced">Avanzado</string>
     <string name="settings_sync_and_storage">Sincronización e Almacenaxe</string>
-    <string name="settings_extras">Extras</string>
     <string name="settings_appearance">Aparencia</string>
     <string name="settings_about_and_support">Sobre e Axuda</string>
     <string name="dropbox_auth_code_expired">O código de autenticación xa non é válido. Inténtao outra vez.</string>

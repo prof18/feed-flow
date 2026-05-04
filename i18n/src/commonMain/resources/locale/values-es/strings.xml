@@ -58,12 +58,10 @@
     <string name="empty_feed_message">¡Nada más que leer aquí!</string>
     <string name="settings_button">Ajustes</string>
     <string name="export_feeds_button">Exportar los feeds a OPML</string>
-    <string name="show_on_github">Mostrar en Github</string>
     <string name="open_source_licenses">Licencias de código abierto</string>
     <string name="database_error">Algo salió mal durante la recuperación de los feeds. Vuelve a intentarlo o reinicia la aplicación - error code: %s :(</string>
     <string name="open_source_nav_bar">Licencias de código abierto</string>
     <string name="invalid_rss_url">El enlace proporcionado no es una fuente RSS válida</string>
-    <string name="import_export_opml">Importar o exportar OPML</string>
     <string name="import_export_opml_title">Importar y exportar</string>
     <string name="retry_button">Reintentar</string>
     <string name="done_button">De acuerdo</string>
@@ -84,7 +82,6 @@
     <string name="search_hint_subtitle">los resultados aparecerán automáticamente</string>
     <string name="search_hint_title">Empezando a escribir…</string>
     <string name="settings_accounts">Cuentas</string>
-    <string name="settings_behaviour_title">Comportamiento</string>
     <string name="settings_help_title">Ayuda</string>
     <string name="account_disconnect_button">Desconectar</string>
     <string name="backup_button">Copia de seguridad</string>
@@ -128,13 +125,10 @@
     <string name="settings_font_scale_feed_source_example">Nombre del Feed</string>
     <string name="deleting_feed_dialog_title">Borrando…</string>
     <string name="settings_auto_delete">Auto eliminar artículos antiguos</string>
-    <string name="settings_auto_delete_desc">Eliminar automáticamente artículos más antiguos que el periodo seleccionado</string>
-    <string name="settings_auto_delete_period">Eliminar periodo</string>
     <string name="settings_auto_delete_period_disabled">Deshabilitado</string>
     <string name="settings_auto_delete_period_one_week">Una semana</string>
     <string name="settings_auto_delete_period_two_weeks">Dos semanas</string>
     <string name="settings_auto_delete_period_one_month">Un mes</string>
-    <string name="settings_sync_period_desc">Selecciona la frecuencia de actualización de artículos en segundo plano</string>
     <string name="settings_sync_period_never">Nunca</string>
     <string name="settings_sync_period_fifteen_minutes">Cada 15 minutos</string>
     <string name="settings_sync_period_thirty_minutes">Cada 30 minutos</string>
@@ -147,7 +141,6 @@
     <string name="drawer_title_pinned_feeds">Fuentes ancladas</string>
     <string name="menu_add_to_pinned">Anclar</string>
     <string name="menu_remove_from_pinned">Desanclar</string>
-    <string name="feed_list_appearance">Apariencia de la lista de fuentes</string>
     <string name="category_name">Nombre de la categoría</string>
     <string name="edit_category">Editar nombre de categoría</string>
     <string name="adding_feed">Añadiendo fuente…</string>
@@ -162,7 +155,6 @@
     <string name="settings_swipe_action_toggle_read">Alternar estado de lectura</string>
     <string name="settings_swipe_action_toggle_bookmark">Alternar marcador</string>
     <string name="settings_swipe_action_none">Deshabilitado</string>
-    <string name="settings_title_notifications">Notificaciones</string>
     <string name="settings_notifications_enable_all_title">Permitir todas las notificaciones</string>
     <string name="notification_channel_description">Notificaciones de nuevos artículos en tus fuentes</string>
     <string name="settings_notifications_permission_status_title">Estado del permiso</string>
@@ -177,7 +169,6 @@
     <string name="date_format_title">Formato de fecha</string>
     <string name="date_format_normal">Día/Mes</string>
     <string name="date_format_american">Mes/Día</string>
-    <string name="settings_experimental_parsing">Usar motor experimental del modo lectura</string>
     <string name="enable_notifications_for_feed">Habilitar notificaciones de nuevos artículos</string>
     <string name="settings_feed_layout_list">Lista</string>
     <string name="settings_feed_layout_card">Tarjeta</string>
@@ -189,7 +180,6 @@
     <string name="account_text_field_password">Contraseña</string>
     <string name="account_text_field_username">Usuario</string>
     <string name="account_text_field_server_url">URL del servidor</string>
-    <string name="account_login">Iniciar sesión</string>
     <string name="fresh_rss_account_connected">Tu cuenta FreshRSS se ha conectado con éxito</string>
     <string name="no_fresh_rss_sync_yet">Los datos no se han sincronizado aún</string>
     <string name="fresh_rss_last_sync">Última sincronización: %s</string>
@@ -214,7 +204,6 @@
     <string name="wrong_url_error_message">El enlace proporcionado no es correcto. Por favor, inténtalo de nuevo.</string>
     <string name="link_with_error_report_title">Los siguientes feeds no se han añadido por un error</string>
     <string name="settings_notification_check_period">Frecuencia de comprobación de notificaciones</string>
-    <string name="settings_notification_check_period_desc">Selecciona la frecuencia para comprobar nuevas notificaciones de artículos</string>
     <string name="icloud_sync_description">Conecta tu cuenta iCloud para sincronizar las suscripciones a los feeds, categorías, artículos leídos y marcadores entre tus dispositivos iOS, iPadOS y macOS. Los datos se guardarán en una carpeta específica de la aplicación; FeedFlow no tendrá acceso a ninguno de tus archivos</string>
     <string name="feed_error_message_improved">No se pudo cargar %s. Puede no estar disponible o que se perdiese la conexión a Internet.</string>
     <string name="open_feed_website_button">Abrir sitio web del feed</string>
@@ -257,7 +246,6 @@
     <string name="settings_prefetch_article_content">Precargar contenido del artículo, para lecturas sin conexión</string>
     <string name="settings_prefetch_article_content_warning">Activar esta opción incrementará el tiempo de sincronizado y el uso de datos, ya que todo el contenido de los artículos se descargará durante actualizaciones del feed. Si tienes un gran número de artículos, esto puede afectar al rendimiento. Activa esto solo si necesitas acceso sin conexión al contenido de los artículos.</string>
     <string name="cancel_button">Cancelar</string>
-    <string name="google_drive_confirm_button">Confirmar</string>
     <string name="delete_feed_confirmation_title">¿Eliminar feed?</string>
     <string name="delete_feed_confirmation_message">¿Seguro que quieres eliminar este feed? Esta acción no se puede deshacer.</string>
     <string name="delete_all_feeds_confirmation_title">¿Eliminar todos los feeds en la categoría?</string>
@@ -286,7 +274,6 @@
     <string name="articles_export_filter_read">Artículos leídos</string>
     <string name="articles_export_filter_unread">Artículos no leídos</string>
     <string name="articles_export_filter_bookmarked">Artículos en marcadores</string>
-    <string name="settings_three_pane_layout">Usar disposición de dos paneles en pantallas grandes</string>
     <string name="select_article_to_read">Seleccionar un artículo para leer</string>
     <string name="menu_mark_all_above_as_read">Marcar todo encima como leído</string>
     <string name="menu_mark_all_below_as_read">Marcar todo debajo como leído</string>
@@ -294,7 +281,6 @@
     <string name="search_filter_all">Todo</string>
     <string name="search_filter_read">Leídos</string>
     <string name="search_filter_bookmarks">Marcadores</string>
-    <string name="google_drive_auth_code_hint">Código de autorización</string>
     <string name="google_drive_sync_error">Hubo un error al conectarse a Google Drive. Por favor, inténtalo de nuevo</string>
     <string name="google_drive_sync_success">Tu cuenta de Google Drive se ha conectado con éxito</string>
     <string name="google_drive_connect_button">Conectar Google Drive</string>

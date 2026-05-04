@@ -17,7 +17,6 @@
     <string name="mark_all_read_button">Označiť všetko ako prečítané</string>
     <string name="settings_button">Nastavenia</string>
     <string name="feeds_import_done_message">Import hotový</string>
-    <string name="show_on_github">Zobraziť na GitHube</string>
     <string name="browser_selection_button">Prehliadač</string>
     <string name="settings_title">Nastavenia</string>
     <string name="feeds_export_done_message">Export hotový</string>
@@ -45,7 +44,6 @@
     <string name="done_button">OK</string>
     <string name="import_export_opml_title">Import a export</string>
     <string name="retry_button">Skúsiť znova</string>
-    <string name="import_export_opml">Import a export OPML</string>
     <string name="wrong_link_report_title">Nasledujúce feedy neboli pridané, pretože nie sú platné</string>
     <string name="issue_report_title">Nahlásiť problém s FeedFlow</string>
     <string name="issue_content_title">Problém s FeedFlow</string>
@@ -86,7 +84,6 @@
     <string name="settings_accounts">Účty</string>
     <string name="settings_title_feed">Feed</string>
     <string name="accounts_description">Pripoj účet pre synchronizáciu odberu feedov, kategórií, prečítaných článkov a záložiek medzi zariadeniami. \n \nFunkcia je ešte v Beta verzii a môžu sa vyskytnúť problémy (napríklad prečítané články nemusia byť úplne synchronizované). V budúcnosti pribudne podpora pre ďalšie služby. \n \nPodporovaný je iba jeden účet súčasne.</string>
-    <string name="settings_behaviour_title">Správanie</string>
     <string name="settings_help_title">Pomoc</string>
     <string name="account_disconnect_button">Odpojiť</string>
     <string name="account_connect_button">Prepojiť</string>

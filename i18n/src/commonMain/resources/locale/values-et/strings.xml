@@ -22,7 +22,6 @@
     <string name="load_file_error_message">Faili laadimine ei õnnestu</string>
     <string name="default_browser">Vaikimisi brauser</string>
     <string name="author_label">Suure ❤️\'ga arendanud</string>
-    <string name="show_on_github">Vaata GitHubis</string>
     <string name="open_source_licenses">Avatud lähtekoodiga tarkvara litsentsid</string>
     <string name="about_nav_bar">Rakenduse teave</string>
     <string name="report_issue_button">Teata veast või problemist</string>
@@ -30,7 +29,6 @@
     <string name="database_error">Midagi läks uudisvoogude laadimisel valesti. Palun proovi uuesti või taaskäivita rakendus - error code: %s :(</string>
     <string name="force_feed_refresh">Laadi uudisvood kohe</string>
     <string name="invalid_rss_url">Sinu antud link ei ole korrektne RSS-uudisvoo link</string>
-    <string name="import_export_opml">Import või eksport OPML-failist/faili</string>
     <string name="import_export_opml_title">Import ja eksport</string>
     <string name="retry_button">Proovi uuesti</string>
     <string name="done_button">Sobib</string>
@@ -93,7 +91,6 @@
     <string name="search_hint_subtitle">tulemused ilmuvad automaatselt</string>
     <string name="link_copied_success">Lingi kopeerimine õnnestus!</string>
     <string name="accounts_description">Lisa kasutajakonto ning sünkrooni uudisvoogusid, kategooriaid, lugemise olekuid ja järjehoidjatesse salvestatud artikleid oma nutiseadmete vahel. \n \nTegemist on veel beetafunktsionaalsusega ning üht-teist võib ikka juhtuda (näiteks loetud artiklite teave ei pruugi olla korralikult sünkroonis). Täiendavate teenuste tugi lisandub tulevikus. \n \nSamaaegselt saad pruukida vaid ühte kasutajakontot.</string>
-    <string name="settings_behaviour_title">Käitumine</string>
     <string name="settings_help_title">Abiteave</string>
     <string name="account_disconnect_button">Katkesta ühendus</string>
     <string name="account_connect_button">Ühenda</string>
@@ -135,7 +132,6 @@
     <string name="wrong_credentials_error_message">Salasõna ja/või kasutajanimi pole õiged. Palun proovi uuesti.</string>
     <string name="fresh_rss_account_connected">Ühenduse loomine sinu FreshRSS-i kontoga õnnestus</string>
     <string name="account_text_field_server_url">Serveri võrguaadress</string>
-    <string name="account_login">Logi sisse</string>
     <string name="fresh_rss_url_hint">FreshRSS-i API otspunkt, näiteks %s</string>
     <string name="link_opening_preference">Käitumine lingi avamisel</string>
     <string name="link_opening_preference_default">Vaikimisi</string>
@@ -143,7 +139,6 @@
     <string name="link_opening_preference_internal_browser">Rakendusesisene brauser</string>
     <string name="link_opening_preference_preferred_browser">Lemmikbrauser</string>
     <string name="delete_category_confirmation_title">Kas kustutame kategooria?</string>
-    <string name="settings_auto_delete_period">Kustutamise tingimus</string>
     <string name="settings_auto_delete_period_disabled">Pole kasutusel</string>
     <string name="settings_auto_delete_period_one_week">Ühe nädala möödumisel</string>
     <string name="settings_auto_delete_period_two_weeks">Kahe nädala möödumisel</string>
@@ -153,13 +148,11 @@
     <string name="delete_category_close_button">Sulge</string>
     <string name="settings_auto_delete">Kustuta vanad artiklid automaatselt</string>
     <string name="delete_category_confirmation_message">Kas sa oled kindel, et soovid selle kategooria kustutada? Siin leiduvad uudisvood tõstetakse kategooriasse „Kategoriseerimata“.</string>
-    <string name="settings_auto_delete_desc">Kustuta valitud ajavahemiku möödumisel vanad artiklid automaatselt</string>
     <string name="settings_hide_description">Peida artikli kirjeldus</string>
     <string name="settings_hide_images">Peida artikli pilt</string>
     <string name="hide_feed_from_timeline_description">Peida selle uudisvoo artiklid ajajoonelt</string>
     <string name="menu_add_to_pinned">Tõsta esile</string>
     <string name="menu_remove_from_pinned">Eemalda esiletõstmine</string>
-    <string name="feed_list_appearance">Uudisvoogude loendi välimus</string>
     <string name="drawer_title_pinned_feeds">Esiletõstetud uudisvoogude allikad</string>
     <string name="pin_feed_source_description">Tõsta see uudisvoog esile</string>
     <string name="settings_crash_reporting">Saada arendajale anonüümseid krahhiaruandeid</string>
@@ -171,7 +164,6 @@
     <string name="error_feed_add">Midagi läks uudisvoo lisamisel viltu</string>
     <string name="menu_share">Jaga</string>
     <string name="menu_copy_link_comments">Kopeeri kommentaaride link</string>
-    <string name="settings_sync_period_desc">Vali uute artiklite taustal kontrollimise sagedus</string>
     <string name="settings_sync_period_one_hour">Kord tunnis</string>
     <string name="settings_sync_period_two_hours">Kord kahe tunni jooksul</string>
     <string name="settings_sync_period_six_hours">Kord kuue tunni jooksul</string>
@@ -191,10 +183,8 @@
     <string name="settings_swipe_action_toggle_bookmark">Lülita järjehoidjaks märkimine sisse/välja</string>
     <string name="settings_swipe_action_none">Pole kasutusel</string>
     <string name="settings_notification_check_period">Teavituste kontrollimise sagedus</string>
-    <string name="settings_title_notifications">Teavitused</string>
     <string name="settings_notifications_enable_all_title">Võta kõik teavitused kasutusele</string>
     <string name="settings_notification_no_feed">Tundub, et sa pole veel ühtegi uudisvoogu lisanud. Teavituste saamiseks palun lisa mõni!</string>
-    <string name="settings_notification_check_period_desc">Palun vali, kui tihti soovid teavituste jaoks kontrollida uute artiklite olemasolu</string>
     <string name="notification_channel_description">Sinu uudisvoogudes leiduvate uute artiklite teavitus</string>
     <string name="settings_notifications_permission_status_title">Õiguste olek</string>
     <string name="settings_notifications_permission_status_granted">Lubatud</string>
@@ -208,7 +198,6 @@
     <string name="settings_notifications_warning_reliability">Teavitused toimivad sinu nutiseadmes, kuid süsteemi piirangute tõttu ei pruugi alati olla nähtavad.</string>
     <string name="marking_all_read_dialog_title">Märgin kõiki loetuks...</string>
     <string name="date_format_normal">Päev/Kuu</string>
-    <string name="settings_experimental_parsing">Kasuta lugemisvaates katselist renderdusmootorit</string>
     <string name="enable_notifications_for_feed">Lülita sisse teavitamine uutest artiklitest</string>
     <string name="settings_feed_order_newest_first">Esmalt uuemad</string>
     <string name="settings_feed_order_title">Järjesta kuupäeva alusel</string>
@@ -274,8 +263,6 @@
     <string name="trigger_feed_sync">Käivita üleslaadimine oma kontole</string>
     <string name="menu_mark_all_above_as_read">Märgi kõik ülaltoodu loetuks</string>
     <string name="menu_mark_all_below_as_read">Märgi kõik alltoodu loetuks</string>
-    <string name="google_drive_auth_code_hint">Tuvastuskood</string>
-    <string name="google_drive_confirm_button">Kinnita</string>
     <string name="google_drive_sync_error">Ühendamisel Google Drive\'iga tekkis viga. Palun proovi uuesti</string>
     <string name="google_drive_sync_success">Sinu Google Drive\'i konto ühendamine õnnestus</string>
     <string name="google_drive_connect_button">Ühenda Google Drive\'iga</string>
@@ -324,7 +311,6 @@
     <string name="reset_button">Lähtesta</string>
     <string name="settings_feeds_and_accounts">Uudisvood ja kasutajakontod</string>
     <string name="settings_reading_behavior">Käitumine lugemisel</string>
-    <string name="settings_advanced">Täiendavad seadistused</string>
     <string name="settings_sync_and_storage">Sünkroonimine ja andmeruum</string>
     <string name="settings_about_and_support">Rakenduse teave ja kasutajatugi</string>
     <string name="bazqux_account_connected">Sinu BazQuxi konto ühendamine õnnestus</string>
@@ -339,7 +325,6 @@
     <string name="search_filter_read">Loetud</string>
     <string name="search_filter_bookmarks">Järjehoidjad</string>
     <string name="settings_refresh_feeds_on_launch">Värskenda uudisvood rakenduse käivitamisel</string>
-    <string name="settings_extras">Lisad</string>
     <string name="notification_category_body">Sul on uusi artikleid: %s</string>
     <string name="notification_grouped_body">Sul on uusi artikleid lugemise ootel!</string>
     <string name="settings_notification_mode">Teavituste rühmitamine</string>

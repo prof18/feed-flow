@@ -12,7 +12,6 @@
     <string name="about_button">Om</string>
     <string name="report_issue_button">Rapporter feil</string>
     <string name="export_started_message">Genererer eksport …</string>
-    <string name="import_export_opml">Importer og eksporter OPML</string>
     <string name="feeds_export_done_message">Eksportert</string>
     <string name="settings_title">Innstillinger</string>
     <string name="feed_url">Informasjonkanalsnettadresse</string>
@@ -27,7 +26,6 @@
     <string name="export_feeds_button">Eksporter informasjonskanaler til OPML</string>
     <string name="settings_button">Innstillinger</string>
     <string name="open_source_nav_bar">Frie lisenser</string>
-    <string name="show_on_github">Vis på GitHub</string>
     <string name="retry_button">Prøv igjen</string>
     <string name="generic_error_message">Noe gikk galt :(</string>
     <string name="default_browser">Forvalgt nettleser</string>

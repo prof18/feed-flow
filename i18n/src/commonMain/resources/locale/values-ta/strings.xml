@@ -46,14 +46,12 @@
     <string name="load_file_error_message">கோப்பை ஏற்ற முடியவில்லை</string>
     <string name="default_browser">இயல்புநிலை உலாவி</string>
     <string name="author_label">By உடன் உருவாக்கப்பட்டது</string>
-    <string name="show_on_github">கிட்அப்பில் காட்டு</string>
     <string name="open_source_licenses">திறந்த மூல உரிமங்கள்</string>
     <string name="about_nav_bar">பற்றி</string>
     <string name="open_source_nav_bar">திறந்த மூல உரிமங்கள்</string>
     <string name="open_website_button">திறந்த வலைத்தளம்</string>
     <string name="force_feed_refresh">படை ஊட்டங்கள் புதுப்பிக்க</string>
     <string name="invalid_rss_url">நீங்கள் வழங்கிய இணைப்பு செல்லுபடியாகும் RSS ஊட்டம் அல்ல</string>
-    <string name="import_export_opml">OPML ஐ இறக்குமதி செய்து ஏற்றுமதி செய்யுங்கள்</string>
     <string name="retry_button">மீண்டும் முயற்சிக்கவும்</string>
     <string name="done_button">சரி</string>
     <string name="wrong_link_report_title">அவை செல்லுபடியாகாததால் பின்வரும் ஊட்டங்கள் சேர்க்கப்படவில்லை</string>
@@ -92,7 +90,6 @@
     <string name="search_hint_subtitle">முடிவுகள் தானாகவே தோன்றும்</string>
     <string name="link_copied_success">இணைப்பு வெற்றிகரமாக நகலெடுக்கப்பட்டது!</string>
     <string name="accounts_description">உங்கள் சாதனங்களுக்கு இடையில் தீவன சந்தாக்கள், வகைகள், படிப்பு மற்றும் புக்மார்க்கு செய்யப்பட்ட கட்டுரைகளை ஒத்திசைக்க ஒரு கணக்கை இணைக்கவும்.\n\n செயல்பாடு பீட்டாவில் உள்ளது, சிக்கல்கள் ஏற்படலாம் (எடுத்துக்காட்டாக, வாசிப்பு கட்டுரைகள் முழுமையாக ஒத்திசைக்கப்படாமல் போகலாம்). எதிர்காலத்தில் கூடுதல் சேவைகள் ஆதரிக்கப்படும்.\n\n ஒரே நேரத்தில் ஒரே ஒரு கணக்கு மட்டுமே ஆதரிக்கப்படுகிறது.</string>
-    <string name="settings_behaviour_title">நடத்தை</string>
     <string name="account_connect_button">இணை</string>
     <string name="account_disconnect_button">துண்டிக்கவும்</string>
     <string name="backup_button">காப்புப்பிரதி</string>

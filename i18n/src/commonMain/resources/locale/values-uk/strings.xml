@@ -26,7 +26,6 @@
     <string name="report_issue_button">Повідомити про проблему</string>
     <string name="open_website_button">Відкрити вебсайт</string>
     <string name="force_feed_refresh">Примусово оновити стрічки</string>
-    <string name="import_export_opml">Імпорт та експорт OPML</string>
     <string name="import_export_opml_title">Імпортування та експортування</string>
     <string name="done_button">Гаразд</string>
     <string name="issue_report_title">Повідомте про проблему з FeedFlow</string>
@@ -43,7 +42,6 @@
     <string name="add_feed_category_title">Категорія</string>
     <string name="action_save">Зберегти</string>
     <string name="no_feed_modal_title">Додати нову стрічку</string>
-    <string name="show_on_github">Показати на GitHub</string>
     <string name="add_feed">Додати стрічку</string>
     <string name="feed_added_message">Стрічку %s додано</string>
     <string name="refresh_feeds">Оновити стрічки</string>
@@ -104,7 +102,6 @@
     <string name="account_text_field_server_url">URL сервера</string>
     <string name="account_text_field_username">Ім\'я користувача</string>
     <string name="account_text_field_password">Пароль</string>
-    <string name="account_login">Логін</string>
     <string name="fresh_rss_account_connected">Ваш обліковий запис FreshRSS успішно підключено</string>
     <string name="no_fresh_rss_sync_yet">Дані ще не синхронізовано</string>
     <string name="fresh_rss_last_sync">Остання синхронізація: %s</string>
@@ -112,7 +109,6 @@
     <string name="menu_add_to_bookmark">Додати в закладки</string>
     <string name="menu_remove_from_bookmark">Вилучити з закладок</string>
     <string name="drawer_title_bookmarks">Закладки</string>
-    <string name="settings_behaviour_title">Поведінка</string>
     <string name="search_hint_subtitle">результати з\'являться автоматично</string>
     <string name="accounts_description">Увімкніть обліковий запис, щоб синхронізувати підписки на стрічки, категорії, прочитані статті та додані в закладки статті між вашими пристроями.\n\nФункціональність знаходиться в бета-версії, можуть виникати проблеми (наприклад, прочитані статті можуть не повністю синхронізуватися). У майбутньому буде підтримуватися більше послуг.\n\nОдночасно підтримується лише один обліковий запис.</string>
     <string name="dropbox_sync_desktop_description">Натиснувши на кнопку Під\'єднати, ви будете перенаправлені на сайт Dropbox. Після підключення акаунта скопіюйте код авторизації та введіть його тут, у додатку</string>
@@ -147,8 +143,6 @@
     <string name="delete_category_confirmation_title">Видалити категорію?</string>
     <string name="delete_category_close_button">Закрити</string>
     <string name="settings_auto_delete">Автоматичне видалення старих статей</string>
-    <string name="settings_auto_delete_desc">Автоматично видаляти статті, старші за вибраний період</string>
-    <string name="settings_auto_delete_period">Видалити період</string>
     <string name="settings_auto_delete_period_disabled">Вимкнено</string>
     <string name="settings_auto_delete_period_one_week">Тижневий вік</string>
     <string name="feed_url_help_text">Додайте будь-який прямий канал, веб-сайт або посилання на канал YouTube. Канал буде виявлено автоматично, коли це можливо</string>
@@ -161,7 +155,6 @@
     <string name="menu_remove_from_pinned">Відкріпити</string>
     <string name="menu_add_to_pinned">Закріпити</string>
     <string name="hide_feed_from_timeline_description">Приховати статті цієї стрічки на часовій шкалі</string>
-    <string name="feed_list_appearance">Зовнішній вигляд списку каналів</string>
     <string name="category_name">Назва категорії</string>
     <string name="settings_crash_reporting">Надсилайте анонімні звіти про збої</string>
     <string name="edit_category">Редагувати назву категорії</string>
@@ -175,7 +168,6 @@
     <string name="settings_sync_period_six_hours">Кожні 6 годин</string>
     <string name="widget_check_feed_sources">Переконайтеся, що додано кілька джерел каналів</string>
     <string name="widget_latest_items">Останні</string>
-    <string name="settings_sync_period_desc">Виберіть, як часто перевіряти нові статті у фоновому режимі</string>
     <string name="settings_sync_period_never">Ніколи</string>
     <string name="settings_sync_period_one_hour">Щогодини</string>
     <string name="settings_sync_period_twelve_hours">Кожні 12 годин</string>
@@ -200,15 +192,12 @@
     <string name="new_articles_notification_title">Доступні нові статті</string>
     <string name="notification_channel_name">Нові статті</string>
     <string name="settings_notifications_title">Сповіщення</string>
-    <string name="settings_title_notifications">Сповіщення</string>
     <string name="settings_notification_check_period">Частота перевірки повідомлень</string>
-    <string name="settings_notification_check_period_desc">Виберіть, як часто перевіряти сповіщення про нові статті</string>
     <string name="settings_notifications_warning_reliability">Повідомлення перевіряються на вашому пристрої, але їх доставка залежить від фонової активності, дозволеної системою, та використання додатка, на що FeedFlow не має впливу.</string>
     <string name="date_format_american">Місяць/День</string>
     <string name="marking_all_read_dialog_title">Позначення всіх як прочитаних...</string>
     <string name="date_format_title">Формат дати</string>
     <string name="date_format_normal">День/Місяць</string>
-    <string name="settings_experimental_parsing">Використовуйте експериментальний механізм для режиму читання</string>
     <string name="enable_notifications_for_feed">Увімкнути сповіщення про нові статті</string>
     <string name="settings_feed_order_title">Сортувати за датою</string>
     <string name="settings_feed_order_newest_first">Спочатку новіші</string>
@@ -275,8 +264,6 @@
     <string name="menu_mark_all_above_as_read">Позначити все вищезазначене як прочитане</string>
     <string name="menu_mark_all_below_as_read">Позначити все нижче як прочитане</string>
     <string name="google_drive_sync_common_description">Підключіть свій обліковий запис Google Диска, щоб синхронізувати підписки на стрічки, категорії, прочитані та додані до закладок статті між вашими пристроями Android, iOS, iPadOS та настільними комп’ютерами. Дані будуть збережені в папці, окремій для програми; FeedFlow не матиме доступу до жодного з ваших файлів</string>
-    <string name="google_drive_auth_code_hint">Код авторизації</string>
-    <string name="google_drive_confirm_button">Підтвердити</string>
     <string name="google_drive_sync_error">Під час підключення до Google Диска сталася помилка. Спробуйте ще раз</string>
     <string name="google_drive_sync_success">Ваш обліковий запис Google Диска успішно підключено</string>
     <string name="no_google_drive_sync_yet">Дані ще не синхронізовано з Google Диском. Натисніть кнопку резервного копіювання, щоб розпочати синхронізацію</string>
@@ -324,7 +311,6 @@
     <string name="reset_button">Скинути</string>
     <string name="settings_feeds_and_accounts">Стрічки та облікові записи</string>
     <string name="settings_reading_behavior">Поведінка читання</string>
-    <string name="settings_advanced">Розширений</string>
     <string name="settings_sync_and_storage">Синхронізація та сховище</string>
     <string name="settings_about_and_support">Про нас та підтримка</string>
     <string name="bazqux_account_connected">Ваш обліковий запис BazQux успішно підключено</string>
@@ -339,7 +325,6 @@
     <string name="search_filter_read">Читати</string>
     <string name="search_filter_bookmarks">Закладки</string>
     <string name="settings_refresh_feeds_on_launch">Оновлювати стрічки під час запуску програми</string>
-    <string name="settings_extras">Додатково</string>
     <string name="notification_category_body">У вас є нові статті в %s</string>
     <string name="notification_grouped_body">У вас є нові статті, готові до читання!</string>
     <string name="settings_notification_mode">Групування сповіщень</string>
@@ -358,7 +343,6 @@
     <string name="invalid_opml_import_description">Це не схоже на дійсний файл OPML. Спробуйте експортувати свої канали у форматі OPML зі свого RSS-додатка та імпортувати їх знову.</string>
     <string name="drawer_title_library">Бібліотека</string>
     <string name="settings_desktop_multi_pane_layout">Використовувати багатопанельний макет головної сторінки</string>
-    <string name="settings_three_pane_layout">Використовуйте двопанельний макет на великих екранах</string>
     <string name="select_article_to_read">Виберіть статтю для читання</string>
     <string name="settings_hide_unread_dot">Приховати індикатор непрочитаних повідомлень</string>
     <string name="settings_description_max_lines">Рядки опису</string>
@@ -371,7 +355,6 @@
     <string name="settings_background_sync_restrictions_description">Використовуйте один або обидва варіанти, щоб обмежити час виконання фонової синхронізації.</string>
     <string name="settings_background_sync_wifi_only">Синхронізація у фоновому режимі лише через Wi-Fi</string>
     <string name="settings_background_sync_charging_only">Синхронізація у фоновому режимі лише під час заряджання</string>
-    <string name="widget_background_sync_title">Фонова синхронізація</string>
     <string name="widget_background_sync_disabled_warning">Наразі фонова синхронізація вимкнена, тому віджет не оновлюватиметься автоматично.</string>
     <string name="widget_background_color_brightness">Яскравість</string>
     <string name="widget_background_color_hex_label">Шістнадцятковий колір</string>
@@ -394,6 +377,5 @@
     <string name="about_the_app">FeedFlow — це мінімалістичний RSS-рідер із чіткою хронологічною стрічкою новин — без алгоритмів і зайвого навантаження. Відкривайте статті у своєму улюбленому браузері або читайте їх без відволікань у режимі читання. Завантажуйте та зберігайте в кеші повні статті для читання в автономному режимі де завгодно.\nСинхронізуйте свої канали, статус читання та закладки на Android, iOS, macOS, Windows та Linux за допомогою iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin або BazQux. Сортуйте канали за категоріями, блокуйте небажані ключові слова та імпортуйте або експортуйте все за допомогою OPML.</string>
     <string name="settings_hide_feed_source">Приховати джерело стрічки</string>
     <string name="widget_configuration_description">Оновлення віджетів відповідають налаштуванням фонової синхронізації з розділу «Синхронізація та сховище».</string>
-    <string name="widget_background_sync_description">Налаштуйте фонову синхронізацію в розділі «Синхронізація та сховище», якщо хочете, щоб віджет оновлювався автоматично.</string>
     <string name="settings_appearance">Зовнішній вигляд</string>
 </resources>

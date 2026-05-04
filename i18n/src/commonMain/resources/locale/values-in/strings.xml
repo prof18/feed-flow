@@ -30,7 +30,6 @@
     <string name="load_file_error_message">Tidak dapat memuat berkas</string>
     <string name="default_browser">Peramban bawaan</string>
     <string name="author_label">Dikembangkan dengan ❤️ oleh</string>
-    <string name="show_on_github">Tampilkan di GitHub</string>
     <string name="about_nav_bar">Tentang</string>
     <string name="open_source_nav_bar">Lisensi open source</string>
     <string name="report_issue_button">Laporkan masalah</string>
@@ -38,7 +37,6 @@
     <string name="database_error">Terjadi kesalahan saat mengambil umpan. Silakan coba lagi atau mulai ulang aplikasi - error code: %s :(</string>
     <string name="force_feed_refresh">Paksa penyegaran umpan</string>
     <string name="invalid_rss_url">Tautan yang Anda berikan bukan umpan RSS yang valid</string>
-    <string name="import_export_opml">Impor dan ekspor OPML</string>
     <string name="import_export_opml_title">Impor dan ekspor</string>
     <string name="retry_button">Coba lagi</string>
     <string name="done_button">Oke</string>
@@ -82,7 +80,6 @@
     <string name="settings_title_feed">Umpan</string>
     <string name="settings_accounts">Akun</string>
     <string name="accounts_description">Hubungkan akun untuk menyinkronkan langganan umpan, kategori, artikel yang sudah dibaca dan bertanda markah antara perangkat Anda.\n\nFungsionalitas ini masih dalam versi Beta, masalah mungkin terjadi (misalnya, artikel yang sudah dibaca mungkin tidak sepenuhnya disinkronkan). Lebih banyak layanan akan didukung di masa mendatang.\n\nHanya satu akun yang didukung pada saat yang sama.</string>
-    <string name="settings_behaviour_title">Perilaku</string>
     <string name="settings_help_title">Bantuan</string>
     <string name="account_connect_button">Menghubungkan</string>
     <string name="account_disconnect_button">Memutuskan</string>
@@ -135,7 +132,6 @@
     <string name="link_with_error_report_title">Umpan berikut tidak ditambahkan karena terdapat kesalahan</string>
     <string name="account_text_field_server_url">URL peladen</string>
     <string name="account_text_field_username">Nama pengguna</string>
-    <string name="account_login">Masuk</string>
     <string name="trigger_feed_sync">Picu unggahan ke akun Anda</string>
     <string name="import_export_label">Impor dan ekspor</string>
     <string name="feed_add_in_progress_message">Mengimpor feed...</string>
@@ -171,8 +167,6 @@
     <string name="search_filter_bookmarks">Penanda</string>
     <string name="settings_crash_reporting">Kirim laporan kerusakan anonim</string>
     <string name="google_drive_sync_common_description">Hubungkan akun Google Drive Anda untuk menyinkronkan langganan feed, kategori, artikel yang dibaca dan yang diberi penanda di antara perangkat Android, iOS, iPadOS, dan desktop Anda. Data akan disimpan dalam folder khusus aplikasi; FeedFlow tidak akan memiliki akses apa pun ke file Anda</string>
-    <string name="google_drive_auth_code_hint">Kode otorisasi</string>
-    <string name="google_drive_confirm_button">Konfirmasi</string>
     <string name="google_drive_sync_error">Terjadi kesalahan saat menghubungkan ke Google Drive. Silakan coba lagi</string>
     <string name="google_drive_sync_success">Akun Google Drive Anda berhasil terhubung</string>
     <string name="no_google_drive_sync_yet">Data belum disinkronkan dengan Google Drive. Klik tombol cadangan untuk memicu sinkronisasi</string>
@@ -211,14 +205,11 @@
     <string name="delete_category_confirmation_message">Apakah Anda yakin ingin menghapus kategori ini? Feed dalam kategori ini akan dipindahkan ke Tanpa Kategori.</string>
     <string name="delete_category_close_button">Tutup</string>
     <string name="settings_auto_delete">Hapus otomatis artikel lama</string>
-    <string name="settings_auto_delete_desc">Hapus otomatis artikel yang lebih lama dari periode yang dipilih</string>
-    <string name="settings_auto_delete_period">Periode penghapusan</string>
     <string name="settings_auto_delete_period_disabled">Dinonaktifkan</string>
     <string name="settings_auto_delete_period_one_day">Lebih dari satu hari</string>
     <string name="settings_auto_delete_period_one_week">Lebih dari satu minggu</string>
     <string name="settings_auto_delete_period_two_weeks">Lebih dari dua minggu</string>
     <string name="settings_auto_delete_period_one_month">Lebih dari satu bulan</string>
-    <string name="settings_sync_period_desc">Pilih seberapa sering memeriksa artikel baru di latar belakang</string>
     <string name="settings_refresh_feeds_on_launch">Segarkan feed saat aplikasi dimulai</string>
     <string name="settings_sync_period_never">Tidak pernah</string>
     <string name="settings_sync_period_fifteen_minutes">Setiap 15 menit</string>
@@ -234,7 +225,6 @@
     <string name="drawer_title_pinned_feeds">Sumber Feed yang Disematkan</string>
     <string name="menu_add_to_pinned">Sematkan</string>
     <string name="menu_remove_from_pinned">Lepas sematan</string>
-    <string name="feed_list_appearance">Tampilan daftar feed</string>
     <string name="category_name">Nama kategori</string>
     <string name="edit_category">Edit nama kategori</string>
     <string name="change_category">Ubah kategori</string>
@@ -260,8 +250,6 @@
     <string name="settings_swipe_action_none">Dinonaktifkan</string>
     <string name="settings_notification_no_feed">Sepertinya Anda belum menambahkan feed apa pun. Tambahkan beberapa untuk mulai menerima notifikasi!</string>
     <string name="settings_notification_check_period">Frekuensi pemeriksaan notifikasi</string>
-    <string name="settings_notification_check_period_desc">Pilih seberapa sering memeriksa notifikasi artikel baru</string>
-    <string name="settings_title_notifications">Notifikasi</string>
     <string name="settings_notifications_enable_all_title">Aktifkan Semua Notifikasi</string>
     <string name="notification_channel_description">Notifikasi untuk artikel baru di feed Anda</string>
     <string name="settings_notifications_permission_status_title">Status Izin</string>
@@ -279,7 +267,6 @@
     <string name="time_format_title">Format waktu</string>
     <string name="time_format_hours_24">24 jam</string>
     <string name="time_format_hours_12">12 jam</string>
-    <string name="settings_experimental_parsing">Gunakan mesin eksperimental untuk mode pembaca</string>
     <string name="enable_notifications_for_feed">Aktifkan notifikasi untuk artikel baru</string>
     <string name="settings_feed_layout_list">Daftar</string>
     <string name="settings_feed_layout_card">Kartu</string>
@@ -324,9 +311,7 @@
     <string name="settings_danger_title">Berbahaya</string>
     <string name="settings_feeds_and_accounts">Feed &amp; Akun</string>
     <string name="settings_reading_behavior">Perilaku Membaca</string>
-    <string name="settings_advanced">Lanjutan</string>
     <string name="settings_sync_and_storage">Sinkronisasi &amp; Penyimpanan</string>
-    <string name="settings_extras">Ekstra</string>
     <string name="settings_about_and_support">Tentang &amp; Dukungan</string>
     <string name="settings_clear_downloaded_articles">Hapus artikel yang diunduh</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Hapus artikel yang diunduh?</string>
@@ -355,7 +340,6 @@
     <string name="invalid_opml_import_description">Ini tampaknya bukan file OPML yang valid. Coba ekspor feed Anda sebagai OPML dari aplikasi RSS Anda dan impor lagi.</string>
     <string name="drawer_title_library">Pustaka</string>
     <string name="settings_desktop_multi_pane_layout">Gunakan tata letak beranda multi-panel</string>
-    <string name="settings_three_pane_layout">Gunakan tata letak dua panel di layar besar</string>
     <string name="select_article_to_read">Pilih artikel untuk dibaca</string>
     <string name="settings_hide_read_items">Sembunyikan otomatis artikel saat ditandai sudah dibaca</string>
     <string name="settings_hide_unread_dot">Sembunyikan indikator belum dibaca</string>
@@ -372,8 +356,6 @@
     <string name="settings_background_sync_charging_only">Sinkronisasi latar belakang hanya saat mengisi daya</string>
     <string name="settings_show_rss_parsing_errors">Tampilkan pesan kesalahan pemuatan feed</string>
     <string name="widget_configuration_description">Pembaruan widget mengikuti pengaturan sinkronisasi latar belakang Anda dari Sinkronisasi &amp; Penyimpanan.</string>
-    <string name="widget_background_sync_title">Sinkronisasi latar belakang</string>
-    <string name="widget_background_sync_description">Konfigurasikan sinkronisasi latar belakang dari Sinkronisasi &amp; Penyimpanan jika Anda ingin widget diperbarui secara otomatis.</string>
     <string name="widget_background_sync_disabled_warning">Sinkronisasi latar belakang saat ini dinonaktifkan, sehingga widget tidak akan diperbarui secara otomatis.</string>
     <string name="widget_background_color_brightness">Kecerahan</string>
     <string name="widget_background_color_hex_label">Warna heks</string>

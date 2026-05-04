@@ -32,7 +32,6 @@
     <string name="search_hint_subtitle">kết quả sẽ hiện tự động</string>
     <string name="link_copied_success">Đã sao chép liên kết!</string>
     <string name="settings_accounts">Tài khoản</string>
-    <string name="settings_behaviour_title">Thao tác</string>
     <string name="settings_help_title">Trợ giúp</string>
     <string name="account_connect_button">Kết nối</string>
     <string name="account_disconnect_button">Hủy kết nối</string>
@@ -46,7 +45,6 @@
     <string name="reader_mode_font_size">Cỡ chữ</string>
     <string name="author_label">Lập trình bằng ❤️ bởi</string>
     <string name="settings_button">Cài đặt</string>
-    <string name="import_export_opml">Nhập và xuất OPML</string>
     <string name="feeds_title">Nguồn tin</string>
     <string name="feed_added_message">Đã thêm %s thành công</string>
     <string name="feed_url">URL nguồn tin</string>
@@ -58,7 +56,6 @@
     <string name="export_dialog_title">Lưu file OPML</string>
     <string name="export_started_message">Đang xuất file</string>
     <string name="open_source_licenses">Giấy phép mã nguồn mở</string>
-    <string name="show_on_github">GitHub</string>
     <string name="open_website_button">Trang chủ</string>
     <string name="database_error">Đã xảy ra lỗi trong quá trình truy xuất nguồn tin. Hãy thử lại hoặc khởi động lại ứng dụng - error code: %s :(</string>
     <string name="settings_app_title">Chung</string>
@@ -132,7 +129,6 @@
     <string name="account_text_field_server_url">URL Máy chủ</string>
     <string name="account_text_field_username">Tên người dùng</string>
     <string name="account_text_field_password">Mật khẩu</string>
-    <string name="account_login">Đăng nhập</string>
     <string name="no_fresh_rss_sync_yet">Chưa thể đồng bộ dữ liệu</string>
     <string name="fresh_rss_last_sync">Lần cuối đồng bộ: %s</string>
     <string name="fresh_rss_account_connected">Tài khoản FreshRSS của bạn đã được kết nối thành công</string>
@@ -148,8 +144,6 @@
     <string name="settings_auto_delete_period_disabled">Không</string>
     <string name="delete_category_confirmation_title">Xóa danh mục?</string>
     <string name="delete_category_confirmation_message">Bạn có chắc muốn xóa danh mục này? Các nguồn tin trong danh mục này sẽ được chuyển đến Chưa phân loại.</string>
-    <string name="settings_auto_delete_desc">Tự động xóa các bài viết sau khoảng thời gian cụ thể</string>
-    <string name="settings_auto_delete_period">Xóa tự động</string>
     <string name="settings_auto_delete_period_two_weeks">Hai tuần</string>
     <string name="feed_url_help_text">Thêm nguồn tin, trang web hoặc liên kết kênh YouTube bất kỳ. Nguồn tin sẽ được tự động phát hiện khi có thể.</string>
     <string name="settings_auto_delete_period_one_week">Một tuần</string>
@@ -160,7 +154,6 @@
     <string name="pin_feed_source_description">Ghim nguồn tin này</string>
     <string name="drawer_title_pinned_feeds">Nguồn tin đã ghim</string>
     <string name="menu_add_to_pinned">Ghim</string>
-    <string name="feed_list_appearance">Giao diện danh sách nguồn tin</string>
     <string name="menu_remove_from_pinned">Bỏ ghim</string>
     <string name="settings_crash_reporting">Gửi báo cáo crash ẩn danh</string>
     <string name="category_name">Tên danh mục</string>
@@ -175,7 +168,6 @@
     <string name="settings_sync_period_six_hours">Mỗi 6 giờ</string>
     <string name="widget_check_feed_sources">Hãy đảm bảo đã thêm nguồn tin</string>
     <string name="widget_latest_items">Gần Đây</string>
-    <string name="settings_sync_period_desc">Chọn tần suất kiểm tra các bài viết mới trong nền</string>
     <string name="settings_sync_period_one_hour">Mỗi giờ</string>
     <string name="settings_sync_period_two_hours">Mỗi 2 giờ</string>
     <string name="settings_sync_period_twelve_hours">Mỗi 12 giờ</string>
@@ -192,8 +184,6 @@
     <string name="settings_swipe_action_toggle_bookmark">Đánh dấu lưu</string>
     <string name="settings_notification_no_feed">Có vẻ như bạn chưa thêm bất kỳ nguồn tin nào. Thêm ngay để bắt đầu nhận thông báo!</string>
     <string name="settings_notification_check_period">Tần suất kiểm tra thông báo</string>
-    <string name="settings_notification_check_period_desc">Chọn tần suất kiểm tra thông báo bài viết mới</string>
-    <string name="settings_title_notifications">Thông báo</string>
     <string name="settings_notifications_enable_all_title">Bật tất cả thông báo</string>
     <string name="notification_channel_description">Thông báo bài viết mới trên bảng tin</string>
     <string name="settings_notifications_permission_status_title">Trạng thái cấp quyền</string>
@@ -208,7 +198,6 @@
     <string name="date_format_title">Định dạng ngày</string>
     <string name="date_format_normal">Ngày/Tháng</string>
     <string name="date_format_american">Tháng/Ngày</string>
-    <string name="settings_experimental_parsing">Dùng engine thử nghiệm cho chế độ đọc</string>
     <string name="enable_notifications_for_feed">Thông báo khi có bài viết mới</string>
     <string name="settings_feed_order_title">Thứ tự</string>
     <string name="settings_feed_order_newest_first">Mới nhất trước</string>
@@ -275,8 +264,6 @@
     <string name="menu_mark_all_above_as_read">Đã đọc tất cả bài viết mới hơn</string>
     <string name="menu_mark_all_below_as_read">Đã đọc tất cả bài viết cũ hơn</string>
     <string name="google_drive_sync_common_description">Kết nối tài khoản Google Drive của bạn để đồng bộ hóa các nguồn tin đăng ký, danh mục, bài viết đã đọc và đánh dấu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong thư mục dành riêng cho ứng dụng; FeedFlow sẽ không có quyền truy cập vào bất kỳ tệp nào của bạn</string>
-    <string name="google_drive_auth_code_hint">Mã xác thực</string>
-    <string name="google_drive_confirm_button">Xác nhận</string>
     <string name="google_drive_sync_error">Đã xảy ra lỗi khi kết nối với Google Drive. Vui lòng thử lại</string>
     <string name="google_drive_sync_success">Tài khoản Google Drive của bạn đã được kết nối thành công</string>
     <string name="no_google_drive_sync_yet">Dữ liệu chưa được đồng bộ hóa với Google Drive. Nhấn vào nút sao lưu để bắt đầu đồng bộ hóa</string>
@@ -324,7 +311,6 @@
     <string name="reset_button">Đặt lại</string>
     <string name="settings_feeds_and_accounts">Nguồn tin &amp; Tài khoản</string>
     <string name="settings_reading_behavior">Hành vi đọc</string>
-    <string name="settings_advanced">Nâng cao</string>
     <string name="settings_sync_and_storage">Đồng bộ &amp; Lưu trữ</string>
     <string name="settings_about_and_support">Giới thiệu &amp; Hỗ trợ</string>
     <string name="bazqux_account_connected">Tài khoản BazQux của bạn đã được kết nối thành công</string>
@@ -339,7 +325,6 @@
     <string name="search_filter_read">Đã đọc</string>
     <string name="search_filter_bookmarks">Đã lưu</string>
     <string name="settings_refresh_feeds_on_launch">Làm mới bảng tin khi mở app</string>
-    <string name="settings_extras">Khác</string>
     <string name="notification_category_body">Bạn có bài viết mới trong %s</string>
     <string name="notification_grouped_body">Bạn có các bài viết mới đã sẵn sàng để đọc!</string>
     <string name="settings_notification_mode">Nhóm thông báo</string>
@@ -359,7 +344,6 @@
     <string name="invalid_opml_import_description">Tệp này có vẻ không phải là tệp OPML hợp lệ. Hãy thử xuất nguồn tin của bạn dưới dạng OPML từ ứng dụng RSS và nhập lại.</string>
     <string name="drawer_title_library">Thư viện</string>
     <string name="settings_desktop_multi_pane_layout">Dùng bố cục trang chủ nhiều ô</string>
-    <string name="settings_three_pane_layout">Dùng bố cục hai-ngăn trên màn hình lớn</string>
     <string name="select_article_to_read">Chọn một bài viết để đọc</string>
     <string name="settings_hide_unread_dot">Ẩn chỉ báo chưa đọc</string>
     <string name="settings_hide_feed_source">Ẩn tên nguồn tin</string>
@@ -374,8 +358,6 @@
     <string name="settings_background_sync_wifi_only">Chỉ đồng bộ nền khi có Wi-Fi</string>
     <string name="settings_background_sync_charging_only">Chỉ đồng bộ nền khi sạc điện thoại</string>
     <string name="widget_configuration_description">Các bản cập nhật widget tuân theo cài đặt đồng bộ nền của bạn trong mục Đồng bộ &amp; Lưu trữ.</string>
-    <string name="widget_background_sync_title">Đồng bộ nền</string>
-    <string name="widget_background_sync_description">Cấu hình tính năng đồng bộ nền từ mục Đồng bộ &amp; Lưu trữ nếu bạn muốn widget tự động làm mới.</string>
     <string name="widget_background_sync_disabled_warning">Tính năng đồng bộ nền hiện đang bị vô hiệu hóa, do đó tiện ích sẽ không tự động làm mới.</string>
     <string name="widget_background_color_brightness">Độ sáng</string>
     <string name="widget_background_color_hex_label">Màu hex</string>

@@ -378,5 +378,4 @@
     <string name="settings_hide_feed_source">Приховати джерело стрічки</string>
     <string name="widget_configuration_description">Оновлення віджетів відповідають налаштуванням фонової синхронізації з розділу «Синхронізація та сховище».</string>
     <string name="settings_appearance">Зовнішній вигляд</string>
-    <string name="category_name_already_exists"></string>
 </resources>

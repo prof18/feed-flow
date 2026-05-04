@@ -378,5 +378,4 @@
     <string name="delete_all_feeds_confirmation_message">Přejete si skutečně odstranit všechny zdroje v této kategorii? Tuto akci nelze zrušit.</string>
     <string name="about_the_app">FeedFlow je minimalistická čtečka RSS pro čistou, chronologicky řazenou časovou osu - žádný algoritmus, žádný balast. Otevírejte články v oblíbeném prohlížeči, nebo je čtěte bez jakéhokoli rozptylování v módu čtenářově. Přednačítání celých článků umožňuje dostupné offline čtení kdekoliv. \nSynchronizujte své kanály, stav přečtení a záložky přes Android, iOS, macOS, Windows a Linux pomocí iCloud, Dropbox, Disk Google, FreshRSS, Miniflux, Feedbin nebo BazQux. Organizujte zdroje do kategorií, blokujte klíčová slova a importujte nebo exportujte vše pomocí souborů OPML.</string>
     <string name="settings_appearance">Vzhled</string>
-    <string name="category_name_already_exists"></string>
 </resources>

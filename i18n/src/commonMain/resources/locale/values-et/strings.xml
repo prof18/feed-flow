@@ -337,4 +337,13 @@
     <string name="settings_hide_read_items">Peida loetuks märkimisel artiklid automaatselt</string>
     <string name="settings_show_rss_parsing_errors">Näita uudisvoo laadimisel tekkinud veateateid</string>
     <string name="exit_menu">Välju</string>
+    <string name="delete_category">Kustuta kategooria</string>
+    <string name="settings_sync_period">Sünkroonimine taustal</string>
+    <string name="settings_appearance">Välimus</string>
+    <string name="delete_all_feeds_in_category">Kustuta kõik uudisvood</string>
+    <string name="delete_all_feeds_confirmation_title">Kas kustutad kõik selle kategooria uudisvood?</string>
+    <string name="next">Järgmine</string>
+    <string name="browser_launch_error">Lingi avamine ei õnnestu. Palun kontrolli veebibrauseri seadistusi.</string>
+    <string name="choose_another_file_button">Vali muu fail</string>
+    <string name="invalid_opml_import_title">Seda faili ei saa importida</string>
 </resources>

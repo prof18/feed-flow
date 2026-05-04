@@ -24,14 +24,12 @@
     <string name="new_category_hint">Jaunās kategorijas nosaukums</string>
     <string name="no_category">Nekategorizētie</string>
     <string name="add_feed_category_title">Kategorija</string>
-    <string name="settings_behaviour_title">Uzvedība</string>
     <string name="delete_category_confirmation_title">Dzēst kategoriju?</string>
     <string name="delete_category_close_button">Aizvērt</string>
     <string name="empty_feed_message">Šeit vairs nav ko lasīt!</string>
     <string name="import_dialog_title">Atlasiet OPML datni</string>
     <string name="generic_error_message">Piedodiet, kaut kas nogāja greizi :(</string>
     <string name="open_website_button">Atvērt mājaslapu</string>
-    <string name="import_export_opml">Ievietot un izgūt OPML datni</string>
     <string name="issue_report_title">Ziņot par FeedFlow problēmu</string>
     <string name="file_menu">Datne</string>
     <string name="feed_added_message">Pievienota %s ziņu plūsma</string>
@@ -64,7 +62,6 @@
     <string name="settings_toggle_show_read_articles">Rādīt lasītos rakstus sarakstos</string>
     <string name="open_source_licenses">Atvērtā pirmkoda licences</string>
     <string name="open_another_feed">Atvērt citu ziņu plūsmu</string>
-    <string name="show_on_github">Skatīt GitHub</string>
     <string name="open_source_nav_bar">Atvērtā pirmkoda licences</string>
     <string name="drawer_title_bookmarks">Saglabātie raksti</string>
     <string name="menu_remove_from_bookmark">Aizvākt no saglabātiem rakstiem</string>
@@ -79,7 +76,6 @@
     <string name="link_opening_preference_internal_browser">Lietotnes pārlūkā</string>
     <string name="link_opening_preference">Rakstu atvērt</string>
     <string name="link_opening_preference_preferred_browser">Iecienītākajā pārlūkā</string>
-    <string name="settings_title_notifications">Paziņojumi</string>
     <string name="settings_notifications_permission_status_denied">Liegta</string>
     <string name="settings_notifications_title">Paziņojumi</string>
     <string name="date_format_normal">Diena/Mēnesis</string>
@@ -102,7 +98,6 @@
     <string name="account_text_field_username">Lietotājvārds</string>
     <string name="account_text_field_password">Parole</string>
     <string name="account_text_field_server_url">Servera URL</string>
-    <string name="settings_auto_delete_period">Automātiski dzēst</string>
     <string name="category_name">Kategorijas nosaukums</string>
     <string name="adding_feed">Pievieno ziņu plūsmu…</string>
     <string name="menu_add_to_pinned">Piespraust</string>
@@ -111,7 +106,6 @@
     <string name="settings_auto_delete">Automātiski dzēst vecos rakstus</string>
     <string name="settings_auto_delete_period_one_week">Vecāki par nedēļu</string>
     <string name="settings_auto_delete_period_two_weeks">Vecāki par divām nedēļām</string>
-    <string name="settings_auto_delete_desc">Automātiski dzēst rakstus, kas</string>
     <string name="settings_auto_delete_period_one_month">Vecāki par mēnesi</string>
     <string name="toggle_mark_read_when_scrolling">Atzīmēt rakstu kā lasītu, to ritinot</string>
     <string name="settings_feed_order_title">Kārtot pēc datuma</string>
@@ -152,7 +146,6 @@
     <string name="settings_sync_period_fifteen_minutes">Ik pēc 15 minūtēm</string>
     <string name="settings_sync_period_thirty_minutes">Ik pēc 30 minūtēm</string>
     <string name="icloud_sync_success">Jūsu iCloud konts veiksmīgi pievienots</string>
-    <string name="settings_sync_period_desc">Atlasiet, cik bieži veikt jaunu rakstu pārbaudi ziņu plūsmās</string>
     <string name="dropbox_sync_mobile_description">Noklikšķinot \"Pievienot\", jūs tiksiet novirzīti uz Dropbox lietotni vai vietni. Pēc konta pievienošanas variet atgriezties FeedFlow</string>
     <string name="account_connect_button">Pievienot</string>
     <string name="account_disconnect_button">Atvienot</string>
@@ -175,7 +168,6 @@
     <string name="icloud_connection_error">Diemžēl neizdevās izveidot savienojumu ar iCloud. Lūdzu, pārliecinieties, ka esiet autorizējušies, iCloud Drive ir iespējots un ir brīva pietiekoša krātuves vieta. Kļūdas kods: %s.</string>
     <string name="settings_notifications_enable_all_title">Paziņot par jauniem rakstiem visās ziņu plūsmās</string>
     <string name="settings_notification_check_period">Paziņot</string>
-    <string name="settings_notification_check_period_desc">Atlasiet, cik bieži ziņot par jauniem rakstiem ziņu plūsmās</string>
     <string name="accounts_description">Pievienojiet kontu, lai sinhronizētu ziņu plūsmas abonementus, kategorijas, lasītos un saglabātos rakstus starp ierīcēm.\n\nŠī funkcija ir beta stadijā, var rasties problēmas (piemēram, lasītie raksti var nebūt pilnībā sinhronizēti). Nākotnē ir plānots atbalstīt citus pakalpojumu sniedzējus.\n\nVienlaikus var izmantot tikai vienu kontu.</string>
     <string name="settings_swipe_action_toggle_bookmark">Pievienot/aizvākt no saglabātiem rakstiem</string>
     <string name="bookmarked_articles_empty_screen_message">Pagaidām šeit nav nekā, laiks kaut ko pievienot saglabātiem rakstiem!</string>
@@ -216,11 +208,9 @@
     <string name="reader_mode_fallback_open_browser_button">Atvērt pārlūkā</string>
     <string name="confirm_button">Apstiprināt</string>
     <string name="search_button_content_description">Meklēt</string>
-    <string name="google_drive_confirm_button">Apstiprināt</string>
     <string name="widget_appearance_title">Izskats</string>
     <string name="widget_background_color_default">Sistēmas</string>
     <string name="reset_button">Atiestatīt</string>
-    <string name="settings_advanced">Papildus</string>
     <string name="settings_theme_oled">Melns</string>
     <string name="settings_feeds_and_accounts">Ziņu plūsmas &amp; konti</string>
     <string name="bazqux_account_connected">Jūsu BazQux konts veiksmīgi pievienots</string>

@@ -17,7 +17,6 @@
     <string name="about_button">Über</string>
     <string name="report_issue_button">Fehler melden</string>
     <string name="export_started_message">Export wird erzeugt</string>
-    <string name="import_export_opml">OPML importieren und exportieren</string>
     <string name="drawer_title_categories">Kategorien</string>
     <string name="settings_title">Einstellungen</string>
     <string name="feed_url">Feed-URL</string>
@@ -39,7 +38,6 @@
     <string name="new_category_hint">Neuer Kategoriename</string>
     <string name="settings_button">Einstellungen</string>
     <string name="open_source_nav_bar">Open-Source-Lizenzen</string>
-    <string name="show_on_github">Auf GitHub anzeigen</string>
     <string name="mark_all_read_button">Alle als gelesen markieren</string>
     <string name="retry_button">Erneut versuchen</string>
     <string name="generic_error_message">Sorry, irgendetwas ist schiefgelaufen :(</string>
@@ -78,7 +76,6 @@
     <string name="search_hint_subtitle">die Ergebnisse werden automatisch angezeigt</string>
     <string name="settings_title_feed">Feed</string>
     <string name="settings_accounts">Konten</string>
-    <string name="settings_behaviour_title">Verhalten</string>
     <string name="settings_help_title">Hilfe</string>
     <string name="backup_button">Sicherung</string>
     <string name="dropbox_auth_code_hint">Autorisierungscode</string>
@@ -129,7 +126,6 @@
     <string name="account_text_field_username">Benutzername</string>
     <string name="account_text_field_password">Passwort</string>
     <string name="fresh_rss_account_connected">Dein FreshRSS-Konto wurde erfolgreich verbunden</string>
-    <string name="account_login">Login</string>
     <string name="no_fresh_rss_sync_yet">Daten sind noch nicht synchronisiert</string>
     <string name="fresh_rss_last_sync">Letzte Synchronisation: %s</string>
     <string name="link_with_error_report_title">Wegen eines Fehler wurde folgende Feeds nicht hinzugefügt</string>
@@ -147,18 +143,15 @@
     <string name="delete_category_confirmation_message">Möchtest du diese Kategorie wirklich löschen? Die Feeds in dieser Kategorie werden zu \"Ohne Kategorie\" verschoben.</string>
     <string name="delete_category_close_button">Schließen</string>
     <string name="settings_auto_delete">Alte Artikel automatisch löschen</string>
-    <string name="settings_auto_delete_desc">Artikel automatisch löschen, die älter sind als die definierte Periode</string>
     <string name="settings_auto_delete_period_disabled">Deaktiviert</string>
     <string name="settings_auto_delete_period_one_week">Eine Woche alt</string>
     <string name="settings_auto_delete_period_two_weeks">Zwei Wochen alt</string>
     <string name="settings_auto_delete_period_one_month">Ein Monat alt</string>
     <string name="feed_url_help_text">Jede Feed-Adresse, Webseite oder Link zum Youtube-Kanal hinzufügen. Der Feed wird, wenn möglich, automatisch erkannt</string>
-    <string name="settings_auto_delete_period">Periode löschen</string>
     <string name="settings_hide_description">Artikelbeschreibung ausblenden</string>
     <string name="settings_hide_images">Artikelbild ausblenden</string>
     <string name="menu_remove_from_pinned">Nicht anpinnen</string>
     <string name="menu_add_to_pinned">Anpinnen</string>
-    <string name="feed_list_appearance">Aussehen der Feedliste</string>
     <string name="drawer_title_pinned_feeds">Angepinnte Feeds</string>
     <string name="hide_feed_from_timeline_description">Artikel dieses Feeds in der Zeitleiste ausblenden</string>
     <string name="pin_feed_source_description">Feed anpinnen</string>
@@ -171,7 +164,6 @@
     <string name="menu_copy_link_comments">Kommentarlink kopieren</string>
     <string name="adding_feed">Feed wird hinzugefügt...</string>
     <string name="error_feed_add">Beim Hinzufügen des Feeds gab es ein Problem</string>
-    <string name="settings_sync_period_desc">Wie oft soll im Hintergrund auf neue Nachrichten geprüft werden</string>
     <string name="settings_sync_period_never">Niemals</string>
     <string name="settings_sync_period_one_hour">Stündlich</string>
     <string name="settings_sync_period_six_hours">Alle 6 Stunden</string>
@@ -192,8 +184,6 @@
     <string name="settings_sync_period_thirty_minutes">Alle 30 Minuten</string>
     <string name="settings_notification_no_feed">Anscheinend hast du noch keine Feeds hinzugefügt. Füge ein paar hinzu, um Benachrichtigungen zu erhalten!</string>
     <string name="settings_notification_check_period">Häufigkeit der Nachrichtenprüfung</string>
-    <string name="settings_notification_check_period_desc">Wähle, wie oft auf neue Artikelbenachrichtigungen geprüft werden soll</string>
-    <string name="settings_title_notifications">Benachrichtigungen</string>
     <string name="settings_notifications_enable_all_title">Alle Benachrichtigungen aktivieren</string>
     <string name="notification_channel_description">Benachrichtigungen für neue Artikel in deinen Feeds</string>
     <string name="settings_notifications_permission_status_granted">Erteilt</string>
@@ -208,7 +198,6 @@
     <string name="date_format_title">Datumsformat</string>
     <string name="date_format_american">Monat/Tag</string>
     <string name="date_format_normal">Tag/Monat</string>
-    <string name="settings_experimental_parsing">Experimentelle Lösung für den Lesemodus verwenden</string>
     <string name="enable_notifications_for_feed">Benachrichtigungen für neue Artikel aktivieren</string>
     <string name="settings_feed_order_title">Nach Datum sortieren</string>
     <string name="settings_feed_order_newest_first">Neueste zuerst</string>
@@ -266,8 +255,6 @@
     <string name="menu_mark_all_above_as_read">Alle oberhalb als gelesen markieren</string>
     <string name="menu_mark_all_below_as_read">Alle unterhalb als gelesen markieren</string>
     <string name="google_drive_sync_common_description">Verknüpfe dein Google Drive Konto, um deine Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen Android-, iOS-, iPadOS- und Desktop-Geräten zu synchronisieren. Die Daten werden in einem App-spezifischen Ordner gespeichert; FeedFlow hat keinen Zugriff auf deine Dateien</string>
-    <string name="google_drive_auth_code_hint">Autorisierungscode</string>
-    <string name="google_drive_confirm_button">Bestätigen</string>
     <string name="google_drive_sync_error">Es gab einen Fehler bei der Verbindung mit Google Drive. Bitte erneut versuchen</string>
     <string name="google_drive_sync_success">Dein Google Drive Konto wurde erfolgreich verbunden</string>
     <string name="no_google_drive_sync_yet">Die Daten sind noch nicht mit Google Drive synchronisiert. Drücke die Sicherungstaste, um die Synchronisierung zu starten</string>
@@ -323,7 +310,6 @@
     <string name="reset_button">Zurücksetzen</string>
     <string name="settings_feeds_and_accounts">Feeds &amp; Konten</string>
     <string name="settings_reading_behavior">Leseverhalten</string>
-    <string name="settings_advanced">Fortgeschritten</string>
     <string name="settings_sync_and_storage">Synchronisation &amp; Speicher</string>
     <string name="settings_about_and_support">Über &amp; Support</string>
     <string name="import_export_opml_section_title">Abonnements (OPML)</string>
@@ -339,7 +325,6 @@
     <string name="search_filter_read">Gelesen</string>
     <string name="search_filter_bookmarks">Lesezeichen</string>
     <string name="settings_refresh_feeds_on_launch">Feeds beim App-Start aktualisieren</string>
-    <string name="settings_extras">Extras</string>
     <string name="notification_category_body">Du hast neue Artikel in %s</string>
     <string name="notification_grouped_body">Du hast neue, zum Lesen vorbereitete Artikel!</string>
     <string name="settings_notification_mode">Gruppierung der Benachrichtigungen</string>
@@ -359,7 +344,6 @@
     <string name="invalid_opml_import_description">Das sieht nicht wie eine gültige OPML-Datei aus. Versuche, deine Feeds als OPML aus deiner RSS-App zu exportieren und neu zu importieren.</string>
     <string name="drawer_title_library">Bibliothek</string>
     <string name="settings_desktop_multi_pane_layout">Startlayout als Mehrfach-Fenster</string>
-    <string name="settings_three_pane_layout">Zwei-Fenster-Layout bei großen Bildschirmen verwenden</string>
     <string name="select_article_to_read">Einen Artikel zum Lesen wählen</string>
     <string name="settings_hide_unread_dot">Anzeige für Ungelesen ausblenden</string>
     <string name="settings_hide_feed_source">Feed-Quelle ausblenden</string>
@@ -372,8 +356,6 @@
     <string name="settings_background_sync_wifi_only">Hintergrundsynchronisierung nur bei WLAN</string>
     <string name="settings_background_sync_charging_only">Hintergrundsynchronisierung nur während des Ladens</string>
     <string name="widget_configuration_description">Updates für Widgets befolgen die Einstellungen für Hintergrundsynchronisierung unter „Synchronisierung &amp; Speicherung“.</string>
-    <string name="widget_background_sync_title">Hintergrundsynchronisierung</string>
-    <string name="widget_background_sync_description">Konfiguriere die Hintergrundsynchronisierung in Synchronisierung &amp; Speicherung, wenn das Widget automatisch aktualisiert werden soll.</string>
     <string name="widget_background_sync_disabled_warning">Die Hintergrundsynchronisierung ist derzeit deaktiviert, daher wird das Widget nicht automatisch aktualisiert.</string>
     <string name="settings_swipe_action_open_in_browser">Im bevorzugten Browser öffnen</string>
     <string name="settings_notifications_permission_description">FeedFlow benötigt deine Zustimmung, um beim Eintreffen neuer Artikel in deinen Feeds Benachrichtigungen zu senden.</string>

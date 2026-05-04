@@ -30,7 +30,6 @@
     <string name="load_file_error_message">ファイルを読み込めませんでした</string>
     <string name="default_browser">デフォルトのブラウザ</string>
     <string name="author_label">❤️ によって開発されています。開発者:</string>
-    <string name="show_on_github">GitHubで表示</string>
     <string name="open_source_licenses">オープンソースライセンス</string>
     <string name="about_nav_bar">FeedFlowについて</string>
     <string name="open_source_nav_bar">オープンソースのライセンス</string>
@@ -39,7 +38,6 @@
     <string name="database_error">フィードの取得中に問題が発生しました。再試行するか、アプリを再起動してください - error code: %s :(</string>
     <string name="force_feed_refresh">フィードを強制的に再読み込み</string>
     <string name="invalid_rss_url">このリンクは正しいRSSフィードのものではありません</string>
-    <string name="import_export_opml">OPMLのインポートとエクスポート</string>
     <string name="import_export_opml_title">インポートとエクスポート</string>
     <string name="retry_button">再試行</string>
     <string name="done_button">了解</string>
@@ -91,7 +89,6 @@
     <string name="settings_title_feed">フィード</string>
     <string name="settings_accounts">アカウント</string>
     <string name="accounts_description">アカウントを接続すると、フィード購読、カテゴリ、既読、ブックマークした記事をデバイス間で同期できます。\n\nこの機能は現在ベータ版で、問題が発生する可能性があります(読んだ記事が完全には同期されないなど)。今後より多くのサービスがサポートされる予定です。\n\n同時にサポートされるアカウントは1つのみです。</string>
-    <string name="settings_behaviour_title">動作</string>
     <string name="settings_help_title">ヘルプ</string>
     <string name="settings_crash_reporting">匿名のクラッシュレポートを送信</string>
     <string name="account_connect_button">接続</string>
@@ -139,7 +136,6 @@
     <string name="account_text_field_server_url">サーバーのURL</string>
     <string name="account_text_field_username">ユーザー名</string>
     <string name="account_text_field_password">パスワード</string>
-    <string name="account_login">ログイン</string>
     <string name="fresh_rss_account_connected">FreshRssアカウントは正常に接続されました。</string>
     <string name="no_fresh_rss_sync_yet">データはまだ同期されていません</string>
     <string name="fresh_rss_last_sync">最後の同期: %s</string>
@@ -154,13 +150,10 @@
     <string name="delete_category_confirmation_message">このカテゴリを削除してもよろしいですか？このカテゴリ内のフィードは 未分類 に移動されます。</string>
     <string name="delete_category_close_button">閉じる</string>
     <string name="settings_auto_delete">古い記事を自動的に削除</string>
-    <string name="settings_auto_delete_desc">選択した間隔より古い記事を自動的に削除</string>
-    <string name="settings_auto_delete_period">削除する間隔</string>
     <string name="settings_auto_delete_period_disabled">無効</string>
     <string name="settings_auto_delete_period_one_week">1週間前</string>
     <string name="settings_auto_delete_period_two_weeks">2週間前</string>
     <string name="settings_auto_delete_period_one_month">1ヶ月前</string>
-    <string name="settings_sync_period_desc">バックグラウンドで新着記事を確認する頻度を選択</string>
     <string name="settings_sync_period_never">無効</string>
     <string name="settings_sync_period_one_hour">1時間毎</string>
     <string name="settings_sync_period_two_hours">2時間毎</string>
@@ -172,7 +165,6 @@
     <string name="drawer_title_pinned_feeds">ピン留めされたフィードのソース</string>
     <string name="menu_add_to_pinned">ピン留め</string>
     <string name="menu_remove_from_pinned">ピン留めを解除</string>
-    <string name="feed_list_appearance">フィードリストの外観</string>
     <string name="category_name">カテゴリ名</string>
     <string name="edit_category">カテゴリ名を編集</string>
     <string name="adding_feed">フィードを追加しています...</string>
@@ -187,7 +179,6 @@
     <string name="settings_auto_delete_period_one_day">1日前</string>
     <string name="settings_sync_period_one_day">毎日</string>
     <string name="file_menu">ファイル</string>
-    <string name="settings_title_notifications">通知</string>
     <string name="settings_notifications_enable_all_title">すべての通知を有効にする</string>
     <string name="notification_channel_name">新しい記事</string>
     <string name="settings_notifications_title">通知</string>

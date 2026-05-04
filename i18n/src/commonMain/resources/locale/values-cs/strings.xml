@@ -30,7 +30,6 @@
     <string name="generic_error_message">Omlouváme se, něco se pokazilo :(</string>
     <string name="load_file_error_message">Nelze načíst soubor</string>
     <string name="author_label">Vytvořeno s ❤️</string>
-    <string name="show_on_github">Zobrazit na GitHubu</string>
     <string name="open_source_licenses">Open source licence</string>
     <string name="about_nav_bar">Info</string>
     <string name="open_source_nav_bar">Licence open source</string>
@@ -38,7 +37,6 @@
     <string name="open_website_button">Otevřít webovou stránku</string>
     <string name="force_feed_refresh">Vynutit obnovení zdrojů</string>
     <string name="invalid_rss_url">Odkaz, který jste uvedli, není platný RSS kanál</string>
-    <string name="import_export_opml">Import a export OPML</string>
     <string name="import_export_opml_title">Import a export</string>
     <string name="retry_button">Znovu</string>
     <string name="done_button">Ok</string>
@@ -79,7 +77,6 @@
     <string name="search_no_data">Nebyly nalezeny žádné shody pro %s.</string>
     <string name="settings_title_feed">Zdroj</string>
     <string name="settings_accounts">Účty</string>
-    <string name="settings_behaviour_title">Chování</string>
     <string name="settings_help_title">Nápověda</string>
     <string name="settings_crash_reporting">Odeslat anonymní zprávy o havárii</string>
     <string name="account_connect_button">Připojit</string>
@@ -120,10 +117,7 @@
     <string name="fresh_rss_url_hint">Koncový bod API FreshRSS, například %s</string>
     <string name="link_opening_preference">Chování při otevírání odkazů</string>
     <string name="link_opening_preference_reader_mode">Režim čtení</string>
-    <string name="account_login">Přihlášení</string>
     <string name="delete_category_close_button">Zavřít</string>
-    <string name="settings_auto_delete_desc">Automatické odstranění článků starších než zvolené období</string>
-    <string name="settings_auto_delete_period">Odstranit období</string>
     <string name="settings_auto_delete_period_disabled">Deaktivováno</string>
     <string name="settings_auto_delete_period_two_weeks">Automatické mazání 2 týdny starých článků</string>
     <string name="settings_auto_delete_period_one_month">Automatické mazání měsíc starých článků</string>
@@ -135,7 +129,6 @@
     <string name="pin_feed_source_description">Připnout tento kanál</string>
     <string name="drawer_title_pinned_feeds">Připnuté zdroje kanálů</string>
     <string name="menu_add_to_pinned">Připnout</string>
-    <string name="feed_list_appearance">Vzhled seznamu zdrojů</string>
     <string name="category_name">Název kategorie</string>
     <string name="edit_category">Upravit název kategorie</string>
     <string name="adding_feed">Přidání zdrojů...</string>
@@ -172,7 +165,6 @@
     <string name="import_export_description">FeedFlow podporuje import a export vašich odběrů pomocí souboru OPML pro lepší interoperabilitu s ostatními čtečkami.</string>
     <string name="dropbox_sync_mobile_description">Kliknutím na tlačítko Připojit budete přesměrováni na aplikaci nebo webovou stránku Dropbox. Po připojení účtu se můžete vrátit do služby FeedFlow</string>
     <string name="menu_remove_from_bookmark">Odebrat z záložek</string>
-    <string name="settings_sync_period_desc">Zvolte, jak často se mají na pozadí kontrolovat nové články</string>
     <string name="link_opening_preference_default">Výchozí</string>
     <string name="hide_feed_from_timeline_description">Skrýt články tohoto kanálu z časové osy</string>
     <string name="settings_auto_delete">Automatické mazání starých článků</string>
@@ -183,8 +175,6 @@
     <string name="settings_reader_mode">Otevřít články v režimu čtečky</string>
     <string name="settings_notification_no_feed">Vypadá to, že jste dosud nepřidali žádné zdroje. Přidejte nějaké, abyste začali odebírat upozornění!</string>
     <string name="settings_notification_check_period">Frekvence kontroly upozornění</string>
-    <string name="settings_notification_check_period_desc">Zvolte, jak často kontrolovat upozornění na nový článek</string>
-    <string name="settings_title_notifications">Upozornění</string>
     <string name="settings_notifications_enable_all_title">Povolit všechna upozornění</string>
     <string name="notification_channel_description">Oznámení o nových článcích ve vašich zdrojích</string>
     <string name="settings_notifications_permission_status_title">Stav povolení</string>
@@ -201,7 +191,6 @@
     <string name="settings_notifications_title">Upozornění</string>
     <string name="settings_notifications_warning_reliability">Oznámení jsou kontrolovány na vašem zařízení, ale doručení závisí na činnosti na pozadí, které je povoleno systémem a užitím aplikace, které FeedFlow nemůže kontrolovat.</string>
     <string name="settings_sync_period_thirty_minutes">Každých 30 minut</string>
-    <string name="settings_experimental_parsing">Použit experimentální engine pro režim čtečky</string>
     <string name="enable_notifications_for_feed">Povolit upozornění na nové články</string>
     <string name="settings_sync_period_fifteen_minutes">Každých 15 minut</string>
     <string name="settings_left_swipe_action">Posun doleva</string>
@@ -287,8 +276,6 @@
     <string name="search_filter_read">Přečteno</string>
     <string name="search_filter_bookmarks">Záložky</string>
     <string name="google_drive_sync_common_description">Připojte se k Google Drive účet pro synchronizaci odběrů, kategorií, přečtených a založených článků mezi Android, iOS, iPadOS a stolními zařízeními. Údaje budou uloženy v příslušné složce aplikace; FeedFlow nebude mít žádný přístup k žádnému z vašich souborů</string>
-    <string name="google_drive_auth_code_hint">Autorizační kód</string>
-    <string name="google_drive_confirm_button">Potvrdit</string>
     <string name="google_drive_sync_error">Při připojení k Disku Google došlo k chybě. Prosím, zkuste to znovu</string>
     <string name="google_drive_sync_success">Váš účet Google Drive je úspěšně připojen</string>
     <string name="no_google_drive_sync_yet">Údaje nejsou synchronizovány s Diskem Google. Klepnutím na tlačítko zálohování spustíte synchronizaci</string>
@@ -334,9 +321,7 @@
     <string name="reset_button">Resetovat</string>
     <string name="settings_feeds_and_accounts">Zdroje &amp; účty</string>
     <string name="settings_reading_behavior">Chování při čtení</string>
-    <string name="settings_advanced">Rozšířená nastavení</string>
     <string name="settings_sync_and_storage">Synchronizace &amp; ukládání</string>
-    <string name="settings_extras">Doplňky</string>
     <string name="settings_about_and_support">O nás &amp; podpora</string>
     <string name="dropbox_auth_code_expired">Ověřovací kód již není platný. Prosím, zkuste to znovu.</string>
     <string name="database_error_reset">Měli jsme problém s načítáním vašich dat a museli jsme začít znovu. Omlouváme se.</string>
@@ -358,7 +343,6 @@
     <string name="invalid_opml_import_description">Toto nevypadá to jako platný soubor OPML. Zkuste ze své RSS aplikace exportovat zdroje jako OPML a opětovat import.</string>
     <string name="drawer_title_library">Knihovna</string>
     <string name="settings_desktop_multi_pane_layout">Použít rozložení ve vícero blocích</string>
-    <string name="settings_three_pane_layout">Použijte 3-blokové rozložení na velkých obrazovkách</string>
     <string name="select_article_to_read">Vyberte článek pro čtení</string>
     <string name="settings_hide_unread_dot">Skrýt indikátor nepřečtených</string>
     <string name="settings_hide_feed_source">Skrýt zdroj vlákna</string>
@@ -377,8 +361,6 @@
     <string name="settings_background_sync_wifi_only">Synchronizace na pozadí pouze přes Wi-Fi</string>
     <string name="settings_background_sync_charging_only">Synchronizovat na pozadí pouze při nabíjení</string>
     <string name="widget_configuration_description">Widget se aktualizuje na základě nastavení synchronizace na pozadí v sekci Synchronizace a Úložiště.</string>
-    <string name="widget_background_sync_title">Synchronizace na pozadí</string>
-    <string name="widget_background_sync_description">Nakonfigurujte synchronizaci na pozadí ze Synchronizace a Úložiště, pokud chcete widget automaticky aktualizovat.</string>
     <string name="widget_background_sync_disabled_warning">Synchronizace na pozadí je v současné době vypnuta, takže se widget automaticky neobnoví.</string>
     <string name="widget_background_color_brightness">Jas</string>
     <string name="widget_background_color_hex_label">Hex barva</string>

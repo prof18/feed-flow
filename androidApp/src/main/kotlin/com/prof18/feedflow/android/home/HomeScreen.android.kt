@@ -14,7 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.window.core.layout.WindowSizeClass
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.android.openShareSheet
@@ -190,12 +190,9 @@ internal fun HomeScreen(
         shareCommentsTitle = strings.menuShareComments,
     )
 
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-    val adaptiveWindowSizeClass = when (windowSizeClass.windowWidthSizeClass) {
-        WindowWidthSizeClass.COMPACT -> WindowSizeClass.Compact
-        WindowWidthSizeClass.MEDIUM -> WindowSizeClass.Medium
-        else -> WindowSizeClass.Expanded
-    }
+    val useDockedDrawer = currentWindowAdaptiveInfo()
+        .windowSizeClass
+        .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
 
     AdaptiveHomeView(
         snackbarHostState = snackbarHostState,
@@ -204,7 +201,7 @@ internal fun HomeScreen(
         displayState = homeDisplayState,
         feedListActions = feedListActions,
         feedManagementActions = feedManagementActions,
-        windowSizeClass = adaptiveWindowSizeClass,
+        useDockedDrawer = useDockedDrawer,
         shareBehavior = shareBehavior,
         onBackupClick = homeViewModel::enqueueBackup,
         onFeedSuggestionsClick = onFeedSuggestionsClick,

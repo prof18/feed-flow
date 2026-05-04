@@ -43,7 +43,7 @@ fun AdaptiveHomeView(
     feedManagementActions: FeedManagementActions,
     shareBehavior: ShareBehavior,
     listState: LazyListState = rememberLazyListState(),
-    windowSizeClass: WindowSizeClass = WindowSizeClass.Compact,
+    useDockedDrawer: Boolean = false,
     onBackupClick: () -> Unit = {},
     onFeedSuggestionsClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
@@ -95,90 +95,78 @@ fun AdaptiveHomeView(
         )
     }
 
-    when (windowSizeClass) {
-        WindowSizeClass.Compact -> {
-            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            ModalNavigationDrawer(
-                drawerState = drawerState,
-                drawerContent = {
-                    ModalDrawerSheet {
-                        DrawerInternal(
-                            onFeedFilterSelectedLambda = { feedFilter ->
-                                feedManagementActions.onFeedFilterSelected(feedFilter)
-                                scope.launch {
-                                    drawerState.close()
-                                    listState.scrollToItemConditionally(
-                                        0,
-                                        reduceMotionEnabled = reduceMotionEnabled,
-                                    )
-                                }
-                            },
-                        )
-                    }
+    if (useDockedDrawer) {
+        var isDrawerMenuFullVisible by remember { mutableStateOf(true) }
+        Row(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            Box(
+                modifier = if (isDrawerMenuFullVisible) {
+                    Modifier.weight(1f)
+                } else {
+                    Modifier
+                        .width(0.dp)
+                        .clipToBounds()
                 },
             ) {
-                HomeContentInternal(
-                    showDrawerMenu = true,
-                    onDrawerMenuClick = {
-                        scope.launch {
-                            if (drawerState.isOpen) {
-                                drawerState.close()
-                            } else {
-                                drawerState.open()
+                Scaffold { paddingValues ->
+                    DrawerInternal(
+                        modifier = Modifier.padding(paddingValues),
+                        onFeedFilterSelectedLambda = { feedFilter ->
+                            feedManagementActions.onFeedFilterSelected(feedFilter)
+                            scope.launch {
+                                listState.scrollToItemConditionally(
+                                    0,
+                                    reduceMotionEnabled = reduceMotionEnabled,
+                                )
                             }
-                        }
-                    },
-                )
-            }
-        }
-
-        WindowSizeClass.Medium,
-        WindowSizeClass.Expanded,
-        -> {
-            var isDrawerMenuFullVisible by remember { mutableStateOf(true) }
-            Row(
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                Box(
-                    modifier = if (isDrawerMenuFullVisible) {
-                        Modifier.weight(1f)
-                    } else {
-                        Modifier
-                            .width(0.dp)
-                            .clipToBounds()
-                    },
-                ) {
-                    Scaffold { paddingValues ->
-                        DrawerInternal(
-                            modifier = Modifier.padding(paddingValues),
-                            onFeedFilterSelectedLambda = { feedFilter ->
-                                feedManagementActions.onFeedFilterSelected(feedFilter)
-                                scope.launch {
-                                    listState.scrollToItemConditionally(
-                                        0,
-                                        reduceMotionEnabled = reduceMotionEnabled,
-                                    )
-                                }
-                            },
-                        )
-                    }
+                        },
+                    )
                 }
-
-                HomeContentInternal(
-                    modifier = Modifier.weight(if (isDrawerMenuFullVisible) 2f else 1f),
-                    showDrawerMenu = true,
-                    isDrawerMenuOpen = isDrawerMenuFullVisible,
-                    onDrawerMenuClick = {
-                        isDrawerMenuFullVisible = !isDrawerMenuFullVisible
-                    },
-                )
             }
+
+            HomeContentInternal(
+                modifier = Modifier.weight(if (isDrawerMenuFullVisible) 2f else 1f),
+                showDrawerMenu = true,
+                isDrawerMenuOpen = isDrawerMenuFullVisible,
+                onDrawerMenuClick = {
+                    isDrawerMenuFullVisible = !isDrawerMenuFullVisible
+                },
+            )
+        }
+    } else {
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            drawerContent = {
+                ModalDrawerSheet {
+                    DrawerInternal(
+                        onFeedFilterSelectedLambda = { feedFilter ->
+                            feedManagementActions.onFeedFilterSelected(feedFilter)
+                            scope.launch {
+                                drawerState.close()
+                                listState.scrollToItemConditionally(
+                                    0,
+                                    reduceMotionEnabled = reduceMotionEnabled,
+                                )
+                            }
+                        },
+                    )
+                }
+            },
+        ) {
+            HomeContentInternal(
+                showDrawerMenu = true,
+                onDrawerMenuClick = {
+                    scope.launch {
+                        if (drawerState.isOpen) {
+                            drawerState.close()
+                        } else {
+                            drawerState.open()
+                        }
+                    }
+                },
+            )
         }
     }
-}
-
-enum class WindowSizeClass {
-    Compact,
-    Medium,
-    Expanded,
 }

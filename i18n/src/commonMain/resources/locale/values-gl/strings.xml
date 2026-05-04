@@ -378,5 +378,4 @@
     <string name="settings_notification_mode_feed_source">Por canle</string>
     <string name="settings_notification_mode_category">Por categoría</string>
     <string name="settings_notification_mode_grouped">Todo xunto</string>
-    <string name="category_name_already_exists"></string>
 </resources>

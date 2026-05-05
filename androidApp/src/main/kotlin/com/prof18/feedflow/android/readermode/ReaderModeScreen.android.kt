@@ -292,9 +292,15 @@ private fun ReaderMode(
     val latestExpand by rememberUpdatedState(onExpandToolbar)
     val latestCollapse by rememberUpdatedState(onCollapseToolbar)
 
+    @Suppress("MagicNumber")
+    val spacerHeightDp = (contentPadding.calculateTopPadding().value - 40f).toInt().coerceAtLeast(0)
+
     val content = getReaderModeStyledHtml(
         colors = colors,
-        content = readerModeState.readerModeData.content,
+        content = """
+            <div id="__feedflow_top_spacer" style="height: ${spacerHeightDp}px;"></div>
+            ${readerModeState.readerModeData.content}
+        """.trimIndent(),
         fontSize = readerModeState.readerModeData.fontSize,
     )
 
@@ -341,33 +347,10 @@ private fun ReaderMode(
     val density = LocalDensity.current
     val thresholdPx = with(density) { 6.dp.toPx() }
 
-    @Suppress("MagicNumber")
-    val spacerHeightDp = (contentPadding.calculateTopPadding().value - 40f).toInt().coerceAtLeast(0)
-
     var scrollY by remember { mutableIntStateOf(0) }
     var scrollRange by remember { mutableIntStateOf(0) }
     var scrollExtent by remember { mutableIntStateOf(0) }
     var scrollEventCount by remember { mutableIntStateOf(0) }
-
-    LaunchedEffect(state.loadingState, spacerHeightDp) {
-        if (state.loadingState is com.multiplatform.webview.web.LoadingState.Finished) {
-            navigator.evaluateJavaScript(
-                """
-                (function() {
-                    var spacer = document.getElementById('__feedflow_top_spacer');
-                    if (!spacer) {
-                        spacer = document.createElement('div');
-                        spacer.id = '__feedflow_top_spacer';
-                        spacer.style.width = '100%';
-                        spacer.style.flexShrink = '0';
-                        document.body.insertBefore(spacer, document.body.firstChild);
-                    }
-                    spacer.style.height = '${spacerHeightDp}px';
-                })();
-                """.trimIndent(),
-            )
-        }
-    }
 
     val layoutDir = LocalLayoutDirection.current
     Box(modifier = modifier.fillMaxSize()) {

@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.shared.ui.components.DeleteFeedSourceDialog
 import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -58,6 +59,7 @@ internal fun AndroidFeedSourceDrawerItem(
     modifier: Modifier = Modifier,
 ) {
     var showFeedMenu by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     val itemShape = drawerItemVisualStyle.itemShape
     val itemColors = drawerItemColors(drawerItemVisualStyle)
 
@@ -149,8 +151,8 @@ internal fun AndroidFeedSourceDrawerItem(
                 DropdownMenuItem(
                     text = { Text(strings.deleteFeed) },
                     onClick = {
-                        onDeleteFeedSourceClick(feedSource)
                         showFeedMenu = false
+                        showDeleteDialog = true
                     },
                 )
 
@@ -197,6 +199,16 @@ internal fun AndroidFeedSourceDrawerItem(
                     },
                 )
             }
+
+            DeleteFeedSourceDialog(
+                showDialog = showDeleteDialog,
+                feedSource = feedSource,
+                onDismiss = { showDeleteDialog = false },
+                onDeleteFeedSource = { source ->
+                    onDeleteFeedSourceClick(source)
+                    showDeleteDialog = false
+                },
+            )
         }
     }
 }

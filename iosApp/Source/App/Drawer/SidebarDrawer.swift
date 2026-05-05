@@ -38,6 +38,8 @@ struct SidebarDrawer: View {
     @State var showChangeCategorySheet = false
     @State var selectedFeedForCategoryChange: FeedSource?
     @State var showFeedSuggestionsSheet = false
+    @State var showDeleteFeedDialog = false
+    @State var feedToDelete: FeedSource?
 
     let navDrawerState: NavDrawerState
     let onFeedFilterSelected: (FeedFilter) -> Void
@@ -147,6 +149,13 @@ struct SidebarDrawer: View {
                 isPresented: $showDeleteCategoryDialog,
                 categoryToDelete: $categoryToDelete,
                 onDelete: onDeleteCategory
+            )
+        )
+        .background(
+            DeleteFeedSourceDialog(
+                isPresented: $showDeleteFeedDialog,
+                feedToDelete: $feedToDelete,
+                onDelete: onDeleteFeedClick
             )
         )
         .background(

@@ -57,7 +57,10 @@ extension SidebarDrawer {
                 categoryVMStoreOwner.instance.loadFeedSource(feedSource: feedSource)
                 showChangeCategorySheet = true
             },
-            onDelete: onDeleteFeedClick,
+            onDelete: { feedSource in
+                feedToDelete = feedSource
+                showDeleteFeedDialog = true
+            },
             onOpenWebsite: { url in
                 if browserSelector.openInAppBrowser() {
                     guard let url = URL(string: url) else { return }

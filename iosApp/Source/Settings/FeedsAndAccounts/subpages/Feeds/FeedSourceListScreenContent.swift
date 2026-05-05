@@ -25,6 +25,9 @@ struct FeedSourceListScreenContent: View {
     @State private var showDeleteAllFeedsDialog = false
     @State private var feedSourcesToDelete: [FeedSource]?
 
+    @State private var showDeleteFeedDialog = false
+    @State private var feedToDelete: FeedSource?
+
     @Binding var feedState: FeedSourceListState
 
     let deleteFeedSource: (FeedSource) -> Void
@@ -88,7 +91,10 @@ struct FeedSourceListScreenContent: View {
                         FeedSourceListItem(
                             feedSource: feedSource,
                             feedSourceTitle: feedSource.title,
-                            deleteFeedSource: deleteFeedSource,
+                            deleteFeedSource: { source in
+                                feedToDelete = source
+                                showDeleteFeedDialog = true
+                            },
                             renameFeedSource: renameFeedSource
                         )
                         .id(feedSource.id)
@@ -121,7 +127,10 @@ struct FeedSourceListScreenContent: View {
                             FeedSourceListItem(
                                 feedSource: feedSource,
                                 feedSourceTitle: feedSource.title,
-                                deleteFeedSource: deleteFeedSource,
+                                deleteFeedSource: { source in
+                                    feedToDelete = source
+                                    showDeleteFeedDialog = true
+                                },
                                 renameFeedSource: renameFeedSource
                             )
                             .id(feedSource.id)
@@ -170,6 +179,22 @@ struct FeedSourceListScreenContent: View {
             }
         } message: {
             Text(feedFlowStrings.deleteAllFeedsConfirmationMessage)
+        }
+        .alert(
+            feedFlowStrings.deleteFeedConfirmationTitle,
+            isPresented: $showDeleteFeedDialog
+        ) {
+            Button(feedFlowStrings.cancelButton, role: .cancel) {
+                feedToDelete = nil
+            }
+            Button(feedFlowStrings.deleteFeedButton, role: .destructive) {
+                if let feed = feedToDelete {
+                    deleteFeedSource(feed)
+                }
+                feedToDelete = nil
+            }
+        } message: {
+            Text(feedFlowStrings.deleteFeedConfirmationMessage)
         }
     }
 }

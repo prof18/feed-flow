@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.shared.ui.components.DeleteFeedSourceDialog
 import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenu
 import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenuEntry
 import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
@@ -62,6 +63,7 @@ internal fun DesktopFeedSourceDrawerItem(
 ) {
     var showFeedMenu by remember { mutableStateOf(false) }
     var menuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     val itemShape = drawerItemVisualStyle.itemShape
     val itemColors = drawerItemColors(drawerItemVisualStyle)
 
@@ -163,8 +165,8 @@ internal fun DesktopFeedSourceDrawerItem(
                     DesktopPopupMenuEntry.Action(
                         text = strings.deleteFeed,
                         onClick = {
-                            onDeleteFeedSourceClick(feedSource)
                             showFeedMenu = false
+                            showDeleteDialog = true
                         },
                     ),
                 )
@@ -224,6 +226,16 @@ internal fun DesktopFeedSourceDrawerItem(
                 closeMenu = {
                     showFeedMenu = false
                     menuPositionInWindow = null
+                },
+            )
+
+            DeleteFeedSourceDialog(
+                showDialog = showDeleteDialog,
+                feedSource = feedSource,
+                onDismiss = { showDeleteDialog = false },
+                onDeleteFeedSource = { source ->
+                    onDeleteFeedSourceClick(source)
+                    showDeleteDialog = false
                 },
             )
         }

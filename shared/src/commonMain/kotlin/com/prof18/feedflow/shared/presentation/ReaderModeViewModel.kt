@@ -109,6 +109,7 @@ class ReaderModeViewModel internal constructor(
                             fontSize = settingsRepository.getReaderModeFontSize(),
                             isBookmarked = urlInfo.isBookmarked,
                             commentsUrl = urlInfo.commentsUrl,
+                            imageUrl = urlInfo.imageUrl,
                         ),
                     ),
                 )
@@ -134,6 +135,7 @@ class ReaderModeViewModel internal constructor(
                         fontSize = settingsRepository.getReaderModeFontSize(),
                         isBookmarked = urlInfo.isBookmarked,
                         commentsUrl = urlInfo.commentsUrl,
+                        imageUrl = urlInfo.imageUrl,
                     ),
                 )
             } else {

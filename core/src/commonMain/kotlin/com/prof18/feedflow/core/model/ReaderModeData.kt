@@ -9,4 +9,5 @@ data class ReaderModeData(
     val fontSize: Int,
     val isBookmarked: Boolean,
     val commentsUrl: String? = null,
+    val imageUrl: String? = null,
 )

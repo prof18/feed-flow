@@ -26,6 +26,7 @@ struct ReaderModeScreen: View {
     @State private var feedItemId: String?
     @State private var feedItemTitle: String?
     @State private var commentsUrl: String?
+    @State private var currentImageUrl: String?
     @State private var imageViewerUrl: URL?
     @State private var canNavigatePrevious = false
     @State private var canNavigateNext = false
@@ -189,6 +190,7 @@ struct ReaderModeScreen: View {
                     self.commentsUrl = readerModeData.commentsUrl
                     self.currentContent = readerModeData.content
                     self.currentBaseUrl = readerModeData.baseUrl
+                    self.currentImageUrl = readerModeData.imageUrl
                     let url = URL(string: readerModeData.url) ?? URL(fileURLWithPath: "")
                     self.articleUrl = url
 
@@ -240,7 +242,8 @@ struct ReaderModeScreen: View {
             ),
             content: content,
             fontSize: Int32(fontSize),
-            title: nil
+            title: nil,
+            imageUrl: currentImageUrl
         )
 
         self.readerStatus = .extractedContent(

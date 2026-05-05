@@ -6,11 +6,25 @@ fun getReaderModeStyledHtml(
     content: String,
     fontSize: Int,
     title: String? = null, // This is added only on desktop
+    imageUrl: String? = null,
 ): String {
     val titleTag = if (title != null) {
         "<h1>$title</h1>"
     } else {
         ""
+    }
+
+    val processedContent = if (imageUrl != null && !hasLeadingImage(content)) {
+        val heroTag = "<img class=\"__hero\" src=\"$imageUrl\" alt=\"\" />"
+        val h4CloseIndex = content.indexOf("</h4>", ignoreCase = true)
+        if (h4CloseIndex >= 0) {
+            val insertAt = h4CloseIndex + "</h4>".length
+            content.substring(0, insertAt) + heroTag + content.substring(insertAt)
+        } else {
+            heroTag + content
+        }
+    } else {
+        content
     }
 
     // language=html
@@ -26,7 +40,7 @@ fun getReaderModeStyledHtml(
     $titleTag
     <div id="container">
         <div id="__content">
-            $content
+            $processedContent
         </div>
     </div>
     <script>
@@ -102,6 +116,17 @@ fun getReaderModeStyledHtml(
     </html>
         """
         .trimIndent()
+}
+
+private const val LEADING_IMAGE_SCAN_WINDOW = 1000
+
+private fun hasLeadingImage(content: String): Boolean {
+    val window = if (content.length > LEADING_IMAGE_SCAN_WINDOW) {
+        content.substring(0, LEADING_IMAGE_SCAN_WINDOW)
+    } else {
+        content
+    }
+    return window.indexOf("<img", ignoreCase = true) >= 0
 }
 
 internal fun readerModeCss(colors: ReaderColors?, fontSize: Int): String {

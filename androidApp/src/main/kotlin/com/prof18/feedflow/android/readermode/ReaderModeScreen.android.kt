@@ -327,6 +327,7 @@ private fun ReaderMode(
             ${readerModeState.readerModeData.content}
         """.trimIndent(),
         fontSize = readerModeState.readerModeData.fontSize,
+        imageUrl = readerModeState.readerModeData.imageUrl,
     )
 
     val jsBridge = rememberWebViewJsBridge()

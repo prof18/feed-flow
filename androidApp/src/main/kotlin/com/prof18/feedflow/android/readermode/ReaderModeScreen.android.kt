@@ -1,13 +1,12 @@
 package com.prof18.feedflow.android.readermode
 
 import android.webkit.CookieManager
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,18 +15,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
-import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -40,14 +37,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.composables.core.ScrollArea
-import com.composables.core.Thumb
-import com.composables.core.ThumbVisibility
-import com.composables.core.VerticalScrollbar
-import com.composables.core.rememberScrollAreaState
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
@@ -65,8 +58,8 @@ import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
+import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
-import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun ReaderModeScreen(
@@ -89,14 +82,6 @@ internal fun ReaderModeScreen(
     val navigator = rememberWebViewNavigator()
     var fullscreenImageUrl by remember { mutableStateOf<String?>(null) }
     var toolbarExpanded by rememberSaveable { mutableStateOf(true) }
-    val scrollState = rememberScrollState()
-    val isAtBottom by remember {
-        derivedStateOf {
-            scrollState.value >= scrollState.maxValue && scrollState.maxValue > 0
-        }
-    }
-
-    LaunchedEffect(isAtBottom) { if (isAtBottom) toolbarExpanded = true }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -211,12 +196,6 @@ internal fun ReaderModeScreen(
 
                     is ReaderModeState.Success -> {
                         ReaderMode(
-                            modifier = Modifier.floatingToolbarVerticalNestedScroll(
-                                expanded = toolbarExpanded,
-                                onExpand = { toolbarExpanded = true },
-                                onCollapse = { toolbarExpanded = false },
-                            ),
-                            scrollState = scrollState,
                             readerModeState = readerModeState,
                             openInBrowser = { url ->
                                 if (isValidUrl(url)) {
@@ -231,6 +210,8 @@ internal fun ReaderModeScreen(
                             contentPadding = contentPadding,
                             navigator = navigator,
                             themeMode = themeMode,
+                            onExpandToolbar = { toolbarExpanded = true },
+                            onCollapseToolbar = { toolbarExpanded = false },
                         )
                     }
                 }
@@ -270,8 +251,9 @@ private fun ReaderMode(
     onImageClick: (String) -> Unit,
     contentPadding: PaddingValues,
     navigator: WebViewNavigator,
+    onExpandToolbar: () -> Unit,
+    onCollapseToolbar: () -> Unit,
     modifier: Modifier = Modifier,
-    scrollState: ScrollState = rememberScrollState(),
 ) {
     val bodyColor = MaterialTheme.colorScheme.onSurface.toArgb().toHexString().substring(2)
     val linkColor = MaterialTheme.colorScheme.primary.toArgb().toHexString().substring(2)
@@ -307,6 +289,8 @@ private fun ReaderMode(
 
     val latestOpenInBrowser by rememberUpdatedState(openInBrowser)
     val latestOpenImage by rememberUpdatedState(onImageClick)
+    val latestExpand by rememberUpdatedState(onExpandToolbar)
+    val latestCollapse by rememberUpdatedState(onCollapseToolbar)
 
     val content = getReaderModeStyledHtml(
         colors = colors,
@@ -354,16 +338,42 @@ private fun ReaderMode(
         baseUrl = readerModeState.readerModeData.baseUrl,
     )
 
+    val density = LocalDensity.current
+    val thresholdPx = with(density) { 6.dp.toPx() }
+
+    @Suppress("MagicNumber")
+    val spacerHeightDp = (contentPadding.calculateTopPadding().value - 40f).toInt().coerceAtLeast(0)
+
+    var scrollY by remember { mutableIntStateOf(0) }
+    var scrollRange by remember { mutableIntStateOf(0) }
+    var scrollExtent by remember { mutableIntStateOf(0) }
+    var scrollEventCount by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(state.loadingState, spacerHeightDp) {
+        if (state.loadingState is com.multiplatform.webview.web.LoadingState.Finished) {
+            navigator.evaluateJavaScript(
+                """
+                (function() {
+                    var spacer = document.getElementById('__feedflow_top_spacer');
+                    if (!spacer) {
+                        spacer = document.createElement('div');
+                        spacer.id = '__feedflow_top_spacer';
+                        spacer.style.width = '100%';
+                        spacer.style.flexShrink = '0';
+                        document.body.insertBefore(spacer, document.body.firstChild);
+                    }
+                    spacer.style.height = '${spacerHeightDp}px';
+                })();
+                """.trimIndent(),
+            )
+        }
+    }
+
     val layoutDir = LocalLayoutDirection.current
-    ScrollArea(
-        state = rememberScrollAreaState(scrollState),
-        modifier = modifier.fillMaxSize(),
-    ) {
+    Box(modifier = modifier.fillMaxSize()) {
         WebView(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(top = contentPadding.calculateTopPadding())
                 .padding(start = contentPadding.calculateLeftPadding(layoutDir))
                 .padding(end = contentPadding.calculateRightPadding(layoutDir)),
             state = state,
@@ -373,27 +383,77 @@ private fun ReaderMode(
                 CookieManager.getInstance().setAcceptCookie(true)
                 CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
                 webView.isVerticalScrollBarEnabled = false
+                webView.setOnScrollChangeListener { _, _, newScrollY, _, oldScrollY ->
+                    val delta = newScrollY - oldScrollY
+                    when {
+                        delta.toFloat() > thresholdPx -> latestCollapse()
+                        delta.toFloat() < -thresholdPx -> latestExpand()
+                    }
+                    scrollY = newScrollY
+                    @Suppress("DEPRECATION")
+                    val contentHeightPx = (webView.contentHeight * webView.scale).toInt()
+                    val viewportHeightPx = webView.height
+                    scrollRange = contentHeightPx
+                    scrollExtent = viewportHeightPx
+                    if (!webView.canScrollVertically(1)) {
+                        latestExpand()
+                    }
+                    scrollEventCount++
+                }
             },
         )
 
-        VerticalScrollbar(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .fillMaxHeight()
-                .width(8.dp)
-                .padding(end = 2.dp),
-        ) {
-            Thumb(
+        if (scrollRange > scrollExtent) {
+            ScrollbarOverlay(
+                scrollY = scrollY,
+                scrollRange = scrollRange,
+                scrollExtent = scrollExtent,
+                scrollEventCount = scrollEventCount,
                 modifier = Modifier
-                    .clip(RoundedCornerShape(3.dp))
-                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)),
-                thumbVisibility = ThumbVisibility.HideWhileIdle(
-                    hideDelay = 1500.milliseconds,
-                    enter = fadeIn(tween(durationMillis = 200)),
-                    exit = fadeOut(tween(durationMillis = 300)),
-                ),
+                    .align(Alignment.TopEnd)
+                    .fillMaxHeight()
+                    .width(8.dp)
+                    .padding(end = 2.dp),
             )
         }
+    }
+}
+
+@Suppress("MagicNumber")
+@Composable
+private fun ScrollbarOverlay(
+    scrollY: Int,
+    scrollRange: Int,
+    scrollExtent: Int,
+    scrollEventCount: Int,
+    modifier: Modifier = Modifier,
+) {
+    val thumbAlpha = remember { Animatable(0f) }
+    LaunchedEffect(scrollEventCount) {
+        if (scrollEventCount == 0) return@LaunchedEffect
+        thumbAlpha.snapTo(1f)
+        delay(1500)
+        thumbAlpha.animateTo(0f, tween(durationMillis = 300))
+    }
+
+    BoxWithConstraints(modifier = modifier) {
+        val containerHeightPx = with(LocalDensity.current) { maxHeight.toPx() }
+        val scrollableRange = (scrollRange - scrollExtent).toFloat().coerceAtLeast(1f)
+        val thumbHeightPx = (scrollExtent.toFloat() / scrollRange.toFloat()) * containerHeightPx
+        val thumbMaxOffset = containerHeightPx - thumbHeightPx
+        val thumbOffsetPx = (scrollY.toFloat() / scrollableRange) * thumbMaxOffset
+
+        val thumbHeightDp = with(LocalDensity.current) { thumbHeightPx.toDp() }
+        val thumbOffsetDp = with(LocalDensity.current) { thumbOffsetPx.toDp() }
+
+        Box(
+            modifier = Modifier
+                .offset(y = thumbOffsetDp)
+                .fillMaxWidth()
+                .height(thumbHeightDp)
+                .clip(RoundedCornerShape(3.dp))
+                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f * thumbAlpha.value)),
+        )
     }
 }
 

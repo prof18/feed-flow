@@ -7,6 +7,7 @@ import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.Url
+import io.ktor.http.isSuccess
 import io.ktor.utils.io.charsets.Charset
 import io.ktor.utils.io.charsets.Charsets
 import io.ktor.utils.io.charsets.decode
@@ -31,6 +32,10 @@ class HtmlRetriever(
         }
         return try {
             client.prepareGet(url).execute { response ->
+                if (!response.status.isSuccess()) {
+                    logger.d { "Unable to retrieve HTML, HTTP status: ${response.status}" }
+                    return@execute null
+                }
                 val declaredLength = response.headers[HttpHeaders.ContentLength]?.toLongOrNull()
                 if (declaredLength != null && declaredLength > MAX_RESPONSE_BYTES) {
                     return@execute null

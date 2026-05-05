@@ -118,6 +118,22 @@ class HtmlRetrieverTest {
     }
 
     @Test
+    fun `non-success statuses are skipped`() = runTest(testDispatcher) {
+        listOf(
+            HttpStatusCode.MovedPermanently,
+            HttpStatusCode.NotFound,
+            HttpStatusCode.InternalServerError,
+        ).forEach { status ->
+            val result = retrieveHtml(
+                bytes = "<html><body>Error page</body></html>".encodeToByteArray(),
+                status = status,
+            )
+
+            assertNull(result)
+        }
+    }
+
+    @Test
     fun `oversized response via content-length header is skipped`() = runTest(testDispatcher) {
         val retriever = HtmlRetriever(
             logger = testLogger,
@@ -186,6 +202,7 @@ class HtmlRetrieverTest {
     private suspend fun retrieveHtml(
         bytes: ByteArray,
         contentType: String? = null,
+        status: HttpStatusCode = HttpStatusCode.OK,
     ): String? {
         val headers = Headers.build {
             if (contentType != null) append(HttpHeaders.ContentType, contentType)
@@ -197,7 +214,7 @@ class HtmlRetrieverTest {
                     addHandler {
                         respond(
                             content = bytes,
-                            status = HttpStatusCode.OK,
+                            status = status,
                             headers = headers,
                         )
                     }

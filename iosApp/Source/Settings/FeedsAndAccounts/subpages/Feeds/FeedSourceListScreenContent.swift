@@ -290,11 +290,13 @@ private struct FeedSourceListItem: View {
         )
         .if(!isRenameEnabled) { view in
             view.contextMenu {
-                Label(
-                    feedFlowStrings.feedFetchFailedTooltipShort,
-                    systemImage: "exclamationmark.triangle.fill"
-                )
-                
+                if feedSource.fetchFailed {
+                    Label(
+                        feedFlowStrings.feedFetchFailedTooltipShort,
+                        systemImage: "exclamationmark.triangle.fill"
+                    )
+                }
+
                 NavigationLink(
                     destination: EditFeedScreen(
                         feedSource: feedSource

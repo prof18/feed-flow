@@ -8,7 +8,9 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
-import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 internal class AndroidFeedItemParserWorker(
     private val htmlRetriever: HtmlRetriever,
@@ -17,21 +19,25 @@ internal class AndroidFeedItemParserWorker(
     private val dispatcherProvider: DispatcherProvider,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val settingsRepository: SettingsRepository,
-) : FeedItemParserWorker {
+) : FeedItemParserWorker, ReaderModeParserWarmer {
+    private val parserScope = CoroutineScope(SupervisorJob() + dispatcherProvider.main)
+    private val foregroundParser = FeedItemParser(
+        htmlRetriever = htmlRetriever,
+        appContext = appContext,
+        logger = logger,
+        dispatcherProvider = dispatcherProvider,
+    )
+
+    override fun warmUp() {
+        parserScope.launch {
+            foregroundParser.warmUp()
+        }
+    }
+
     override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
         logger.d { "Triggering immediate parsing for: $url (feedItemId: $feedItemId)" }
 
-        val deferredResult = CompletableDeferred<ParsingResult>()
-        FeedItemParser(
-            htmlRetriever = htmlRetriever,
-            appContext = appContext,
-            logger = logger,
-            dispatcherProvider = dispatcherProvider,
-        ).parseFeedItem(url) { result ->
-            deferredResult.complete(result)
-        }
-        val result = deferredResult.await()
-
+        val result = foregroundParser.parseFeedItem(url)
         if (result is ParsingResult.Success) {
             val content = result.htmlContent
             if (content != null && settingsRepository.isSaveItemContentOnOpenEnabled()) {

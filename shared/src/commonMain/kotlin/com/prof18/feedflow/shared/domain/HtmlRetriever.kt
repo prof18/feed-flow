@@ -2,8 +2,8 @@ package com.prof18.feedflow.shared.domain
 
 import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsBytes
+import io.ktor.client.request.prepareGet
+import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.Url
@@ -12,7 +12,9 @@ import io.ktor.utils.io.charsets.Charsets
 import io.ktor.utils.io.charsets.decode
 import io.ktor.utils.io.charsets.forName
 import io.ktor.utils.io.charsets.isSupported
+import io.ktor.utils.io.readBuffer
 import kotlinx.io.Buffer
+import kotlinx.io.readByteArray
 
 class HtmlRetriever(
     private val logger: Logger,
@@ -27,17 +29,26 @@ class HtmlRetriever(
             logger.d { "Skipping URL with unparsable or non-ASCII host: $url" }
             return null
         }
-        try {
-            val response = client.get(url)
-            val bytes = response.bodyAsBytes()
-            val charset = resolveCharset(
-                contentTypeHeader = response.headers[HttpHeaders.ContentType],
-                bodyBytes = bytes,
-            )
-            return decodeBytes(bytes, charset)
+        return try {
+            client.prepareGet(url).execute { response ->
+                val declaredLength = response.headers[HttpHeaders.ContentLength]?.toLongOrNull()
+                if (declaredLength != null && declaredLength > MAX_RESPONSE_BYTES) {
+                    return@execute null
+                }
+                val buffer = response.bodyAsChannel().readBuffer(MAX_RESPONSE_BYTES + 1)
+                if (buffer.size > MAX_RESPONSE_BYTES) {
+                    return@execute null
+                }
+                val bytes = buffer.readByteArray()
+                val charset = resolveCharset(
+                    contentTypeHeader = response.headers[HttpHeaders.ContentType],
+                    bodyBytes = bytes,
+                )
+                decodeBytes(bytes, charset)
+            }
         } catch (e: Throwable) {
             logger.d(e) { "Unable to retrieve HTML, skipping" }
-            return null
+            null
         }
     }
 
@@ -48,7 +59,8 @@ class HtmlRetriever(
         val bomCharset = detectBomCharset(bodyBytes)
         if (bomCharset != null) return bomCharset
 
-        val sniffedText = decodeBytes(bodyBytes, Charsets.ISO_8859_1)
+        val sniffWindow = bodyBytes.copyOf(minOf(bodyBytes.size, META_SNIFF_LIMIT))
+        val sniffedText = decodeBytes(sniffWindow, Charsets.ISO_8859_1)
         val xmlCharset = parseXmlDeclarationCharset(sniffedText)?.let { charsetFromName(it) }
         if (xmlCharset != null) return xmlCharset
 
@@ -146,8 +158,9 @@ class HtmlRetriever(
 
     private companion object {
         private const val ASCII_LIMIT = 128
-        private const val META_SNIFF_LIMIT = 4096
-        private const val XML_DECLARATION_SNIFF_LIMIT = 256
+        private const val MAX_RESPONSE_BYTES = 5 * 1024 * 1024 // 5 MB
+        private const val META_SNIFF_LIMIT = 4096 // 4 KB
+        private const val XML_DECLARATION_SNIFF_LIMIT = 256 // 256 B
         private const val BYTE_MASK = 0xFF
         private const val UTF8_BOM_LENGTH = 3
         private const val UTF8_BOM_FIRST = 0xEF

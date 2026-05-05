@@ -32,6 +32,7 @@ import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerAndroid
 import com.prof18.feedflow.shared.domain.parser.AndroidFeedItemParserWorker
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerAndroid
+import com.prof18.feedflow.shared.domain.parser.ReaderModeParserWarmer
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
@@ -102,7 +103,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single<FeedItemParserWorker> {
+    single {
         AndroidFeedItemParserWorker(
             htmlRetriever = get(),
             appContext = get(),
@@ -111,6 +112,14 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedItemContentFileHandler = get(),
             settingsRepository = get(),
         )
+    }
+
+    single<FeedItemParserWorker> {
+        get<AndroidFeedItemParserWorker>()
+    }
+
+    single<ReaderModeParserWarmer> {
+        get<AndroidFeedItemParserWorker>()
     }
 
     viewModel {

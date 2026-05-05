@@ -5,6 +5,7 @@ import com.prof18.feedflow.shared.test.testLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
@@ -117,6 +118,45 @@ class HtmlRetrieverTest {
     }
 
     @Test
+    fun `oversized response via content-length header is skipped`() = runTest(testDispatcher) {
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        respond(
+                            content = ByteArray(100),
+                            status = HttpStatusCode.OK,
+                            headers = headersOf(HttpHeaders.ContentLength, "${6 * 1024 * 1024}"),
+                        )
+                    }
+                }
+            },
+        )
+        val result = retriever.retrieveHtml("https://example.com")
+        assertNull(result)
+    }
+
+    @Test
+    fun `oversized response body without content-length is skipped`() = runTest(testDispatcher) {
+        val oversizedBody = ByteArray(5 * 1024 * 1024 + 1)
+        val result = retrieveHtml(oversizedBody)
+        assertNull(result)
+    }
+
+    @Test
+    fun `large body within cap still sniffs charset from head`() = runTest(testDispatcher) {
+        val metaHead = encodeWindows1252(
+            "<html><head><meta charset=\"windows-1252\" /></head><body>Hürden",
+        )
+        val padding = ByteArray(50 * 1024) { 'A'.code.toByte() }
+        val bytes = metaHead + padding
+        val result = retrieveHtml(bytes)
+        assertNotNull(result)
+        assertTrue(result.contains("Hürden"))
+    }
+
+    @Test
     fun `invalid utf8 without hints defaults to iso-8859-1`() = runTest(testDispatcher) {
         val prefix = "<html><body>".encodeToByteArray()
         val suffix = "</body></html>".encodeToByteArray()
@@ -147,10 +187,8 @@ class HtmlRetrieverTest {
         bytes: ByteArray,
         contentType: String? = null,
     ): String? {
-        val headers = if (contentType == null) {
-            headersOf()
-        } else {
-            headersOf(HttpHeaders.ContentType, contentType)
+        val headers = Headers.build {
+            if (contentType != null) append(HttpHeaders.ContentType, contentType)
         }
         val retriever = HtmlRetriever(
             logger = testLogger,

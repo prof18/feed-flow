@@ -12,7 +12,7 @@
     <string name="no_feeds_add_one_message">Nenhum feed, favor adicionar um</string>
     <string name="loading_feed_message">Carregando feeds %s</string>
     <string name="app_name" translatable="false">FeedFlow</string>
-    <string name="mark_all_read_button">Marca todos como lido</string>
+    <string name="mark_all_read_button">Marca todos como lidos</string>
     <string name="settings_button">Configurações</string>
     <string name="feeds_importing_message">Importando feed</string>
     <string name="feeds_import_done_message">Importação concluída</string>
@@ -48,7 +48,7 @@
     <string name="new_category_hint">Nome da nova categoria</string>
     <string name="no_category">Não categorizado</string>
     <string name="no_category_selected_header">Sem categoria</string>
-    <string name="drawer_title_timeline">Timeline</string>
+    <string name="drawer_title_timeline">Linha do tempo</string>
     <string name="drawer_title_categories">Categorias</string>
     <string name="drawer_title_feed_sources">Fonte do feed</string>
     <string name="toggle_mark_read_when_scrolling">Marcar como lido enquanto navega</string>
@@ -76,4 +76,12 @@
     <string name="rename_feed_source_name_button">Renomear</string>
     <string name="in_app_browser">Navegador interno</string>
     <string name="settings_reader_mode">Abrir artigos no modo leitor</string>
+    <string name="clear_old_articles_button">Apague notícias com publicadas há mais de sete dias</string>
+    <string name="browser_launch_error">Não foi possível abrir o link. Por favor, verifique as configurações do seu navegador.</string>
+    <string name="feed_error_message_improved">Não foi possível carregar %s. Talvez esteja indisponível, ou você esteja desconectado.</string>
+    <string name="open_feed_website_button">Abra o website</string>
+    <string name="trigger_feed_sync">Inicie o envio para sua conta</string>
+    <string name="import_export_label">Importe e exporte</string>
+    <string name="choose_another_file_button">Escolha outro arquivo</string>
+    <string name="invalid_opml_import_title">Não foi possível importar este arquivo</string>
 </resources>

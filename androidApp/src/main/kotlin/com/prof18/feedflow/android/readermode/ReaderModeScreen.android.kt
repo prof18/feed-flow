@@ -44,6 +44,7 @@ import androidx.compose.ui.zIndex
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
+import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.WebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewNavigator
@@ -234,13 +235,37 @@ private fun FallbackWebView(
     navigator: WebViewNavigator,
 ) {
     val state = rememberWebViewState(url)
-    WebView(
+    var showPageLoader by remember { mutableStateOf(true) }
+
+    LaunchedEffect(url) {
+        showPageLoader = true
+    }
+    LaunchedEffect(state.loadingState) {
+        showPageLoader = state.loadingState !is LoadingState.Finished
+    }
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(contentPadding),
-        state = state,
-        navigator = navigator,
-    )
+    ) {
+        WebView(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            navigator = navigator,
+        )
+
+        if (showPageLoader) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface),
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+    }
 }
 
 @Composable

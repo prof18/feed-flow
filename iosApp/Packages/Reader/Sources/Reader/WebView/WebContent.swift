@@ -10,6 +10,8 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     private var waitingForRepopulationAfterTermination = false
 
     var shouldBlockNavigation: ((WKNavigationAction) -> Bool)?
+    var onLoadingStateChanged: ((Bool) -> Void)?
+    var onContentReady: (() -> Void)?
     var view: UIView { webview }
     var transparent: Bool = false {
         didSet(old) {
@@ -65,7 +67,9 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
 
         observers.append(
             webview.observe(\.isLoading) { [weak self] _, val in
-                self?.info.isLoading = val.newValue ?? false
+                let isLoading = val.newValue ?? false
+                self?.info.isLoading = isLoading
+                self?.onLoadingStateChanged?(isLoading)
             }
         )
 
@@ -90,10 +94,12 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     }
 
     func load(url: URL) {
+        onLoadingStateChanged?(true)
         webview.load(.init(url: url))
     }
 
     func load(html: String, baseURL: URL?) {
+        onLoadingStateChanged?(true)
         webview.loadHTMLString(html, baseURL: baseURL)
     }
 
@@ -135,10 +141,26 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     }
 
     func webView(_: WKWebView, didCommit _: WKNavigation!) {
+        onLoadingStateChanged?(true)
+        onContentReady?()
         needsMetadataRefresh()
     }
 
     func webView(_: WKWebView, didFinish _: WKNavigation!) {
+        onLoadingStateChanged?(false)
+        onContentReady?()
+        needsMetadataRefresh()
+    }
+
+    func webView(_: WKWebView, didFail _: WKNavigation!, withError _: Error) {
+        onLoadingStateChanged?(false)
+        onContentReady?()
+        needsMetadataRefresh()
+    }
+
+    func webView(_: WKWebView, didFailProvisionalNavigation _: WKNavigation!, withError _: Error) {
+        onLoadingStateChanged?(false)
+        onContentReady?()
         needsMetadataRefresh()
     }
 
@@ -184,7 +206,8 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
             url: webview.url,
             title: webview.title,
             canGoBack: webview.canGoBack,
-            canGoForward: webview.canGoForward
+            canGoForward: webview.canGoForward,
+            isLoading: webview.isLoading
         )
     }
     

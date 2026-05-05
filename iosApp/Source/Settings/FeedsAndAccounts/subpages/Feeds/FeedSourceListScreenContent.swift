@@ -15,6 +15,10 @@ import SwiftUI
 struct FeedSourceListScreenContent: View {
     @Environment(\.presentationMode)
     private var presentationMode
+    @Environment(AppState.self)
+    private var appState
+    @Environment(BrowserSelector.self)
+    private var browserSelector
 
     @State private var showAddFeed = false
 
@@ -42,6 +46,8 @@ struct FeedSourceListScreenContent: View {
         .navigationTitle(Text(feedFlowStrings.feedsTitle))
         .sheet(isPresented: $showAddFeed) {
             AddFeedScreen()
+                .environment(appState)
+                .environment(browserSelector)
                 .toggleStyle(BlueToggleStyle())
         }
         .toolbar {
@@ -172,6 +178,8 @@ struct FeedSourceListScreenContent: View {
 private struct FeedSourceListItem: View {
     @Environment(AppState.self)
     private var appState
+    @Environment(BrowserSelector.self)
+    private var browserSelector
 
     @State var feedSource: FeedSource
     @State var feedSourceTitle: String
@@ -266,6 +274,8 @@ private struct FeedSourceListItem: View {
                     destination: EditFeedScreen(
                         feedSource: feedSource
                     )
+                    .environment(appState)
+                    .environment(browserSelector)
                 ) {
                     Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
                 }

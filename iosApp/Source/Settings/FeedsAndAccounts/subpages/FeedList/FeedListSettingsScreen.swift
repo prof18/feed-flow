@@ -28,8 +28,6 @@ struct FeedListSettingsScreen: View {
     )
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor: Double = 0.0
-    @State private var imageUrl: String? = "https://lipsum.app/200x200"
-    @State private var articleDescription: String?
 
     var body: some View {
         @Bindable var appState = appState
@@ -37,29 +35,19 @@ struct FeedListSettingsScreen: View {
         FeedListSettingsScreenContent(
             settingsState: settingsState,
             feedFontSizes: feedFontSizes,
-            imageUrl: imageUrl,
-            articleDescription: articleDescription,
+            imageUrl: previewImageUrl,
+            articleDescription: previewArticleDescription,
             scaleFactor: $scaleFactor,
             isHideDescriptionEnabled: Binding(
                 get: { settingsState.isHideDescriptionEnabled },
                 set: { newValue in
                     vmStoreOwner.instance.updateHideDescription(value: newValue)
-                    if newValue {
-                        articleDescription = nil
-                    } else {
-                        articleDescription = feedFlowStrings.settingsFontScaleSubtitleExample
-                    }
                 }
             ),
             isHideImagesEnabled: Binding(
                 get: { settingsState.isHideImagesEnabled },
                 set: { newValue in
                     vmStoreOwner.instance.updateHideImages(value: newValue)
-                    if newValue {
-                        imageUrl = nil
-                    } else {
-                        imageUrl = "https://lipsum.app/200x200"
-                    }
                 }
             ),
             isHideDateEnabled: Binding(
@@ -114,10 +102,9 @@ struct FeedListSettingsScreen: View {
         .navigationBarTitleDisplayMode(.inline)
         .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
-            articleDescription = feedFlowStrings.settingsFontScaleSubtitleExample
-
             for await state in vmStoreOwner.instance.state {
                 self.settingsState = state
+                self.scaleFactor = Double(state.fontScale)
             }
         }
         .task {
@@ -125,8 +112,13 @@ struct FeedListSettingsScreen: View {
                 self.feedFontSizes = fontSizes
             }
         }
-        .onAppear {
-            scaleFactor = Double(settingsState.fontScale)
-        }
+    }
+
+    private var previewImageUrl: String? {
+        settingsState.isHideImagesEnabled ? nil : "https://lipsum.app/200x200"
+    }
+
+    private var previewArticleDescription: String? {
+        settingsState.isHideDescriptionEnabled ? nil : feedFlowStrings.settingsFontScaleSubtitleExample
     }
 }

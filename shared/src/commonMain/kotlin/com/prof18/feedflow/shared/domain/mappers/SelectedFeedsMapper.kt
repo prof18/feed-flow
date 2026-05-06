@@ -1,37 +1,30 @@
 package com.prof18.feedflow.shared.domain.mappers
 
 import com.prof18.feedflow.core.domain.DateFormatter
-import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.LinkOpeningPreference
-import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 
 internal fun SelectFeeds.toFeedItem(
     dateFormatter: DateFormatter,
-    removeTitleFromDesc: Boolean,
-    hideDescription: Boolean,
-    hideImages: Boolean,
-    hideDate: Boolean,
-    dateFormat: DateFormat,
-    timeFormat: TimeFormat,
+    settings: FeedItemMappingSettings,
 ) = FeedItem(
     id = url_hash,
     url = sanitizeUrl(url),
     title = title,
     subtitle = subtitle?.let { desc ->
         val title = title
-        if (removeTitleFromDesc && title != null) {
+        if (settings.removeTitleFromDescription && title != null) {
             desc.replace(title, "").replace("  ", "").trim()
         } else {
             desc
         }
-    }.takeIf { !hideDescription },
+    }.takeIf { !settings.hideDescription },
     content = null,
-    imageUrl = image_url.takeIf { !hideImages },
+    imageUrl = image_url.takeIf { !settings.hideImages },
     feedSource = FeedSource(
         id = feed_source_id,
         url = feed_source_url,
@@ -56,11 +49,11 @@ internal fun SelectFeeds.toFeedItem(
         fetchFailed = feed_source_fetch_failed,
     ),
     pubDateMillis = pub_date,
-    dateString = if (pub_date != null && !hideDate) {
+    dateString = if (pub_date != null && !settings.hideDate) {
         dateFormatter.formatDateForFeed(
             millis = requireNotNull(pub_date),
-            dateFormat = dateFormat,
-            timeFormat = timeFormat,
+            dateFormat = settings.dateFormat,
+            timeFormat = settings.timeFormat,
         )
     } else {
         null

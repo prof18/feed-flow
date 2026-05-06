@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
+import com.prof18.feedflow.shared.domain.mappers.FeedItemMappingSettings
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -18,21 +19,15 @@ class FeedWidgetRepository internal constructor(
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
 ) {
     fun getFeeds(): Flow<ImmutableList<FeedItem>> {
-        val dateFormat = feedAppearanceSettingsRepository.getDateFormat()
-        val hideDate = feedAppearanceSettingsRepository.getHideDate()
-        val timeFormat = feedAppearanceSettingsRepository.getTimeFormat()
+        val settings = FeedItemMappingSettings(
+            hideDate = feedAppearanceSettingsRepository.getHideDate(),
+            dateFormat = feedAppearanceSettingsRepository.getDateFormat(),
+            timeFormat = feedAppearanceSettingsRepository.getTimeFormat(),
+        )
         return databaseHelper.getFeedWidgetItems(pageSize = 15)
             .map { items ->
                 items.map { item ->
-                    item.toFeedItem(
-                        dateFormatter,
-                        removeTitleFromDesc = false,
-                        hideDescription = false,
-                        hideImages = false,
-                        hideDate = hideDate,
-                        dateFormat = dateFormat,
-                        timeFormat = timeFormat,
-                    )
+                    item.toFeedItem(dateFormatter, settings = settings)
                 }.toImmutableList()
             }
     }

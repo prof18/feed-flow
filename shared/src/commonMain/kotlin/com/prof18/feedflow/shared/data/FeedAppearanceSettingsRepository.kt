@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
+import com.prof18.feedflow.shared.domain.mappers.FeedItemMappingSettings
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -133,6 +134,15 @@ class FeedAppearanceSettingsRepository(
 
     fun setTimeFormat(format: TimeFormat) =
         settings.set(FeedAppearanceSettingsFields.TIME_FORMAT.name, format.name)
+
+    internal fun getFeedItemMappingSettings(): FeedItemMappingSettings = FeedItemMappingSettings(
+        removeTitleFromDescription = getRemoveTitleFromDescription(),
+        hideDescription = getHideDescription(),
+        hideImages = getHideImages(),
+        hideDate = getHideDate(),
+        dateFormat = getDateFormat(),
+        timeFormat = getTimeFormat(),
+    )
 
     fun getFeedOrder(): FeedOrder =
         settings.getString(FeedAppearanceSettingsFields.FEED_ORDER.name, FeedOrder.NEWEST_FIRST.name)

@@ -4,14 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
-import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
-import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
@@ -66,11 +64,7 @@ class SearchViewModel internal constructor(
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState> = MutableSharedFlow()
     val errorState: SharedFlow<UIErrorState> = mutableUIErrorState.asSharedFlow()
 
-    private val isRemoveTitleFromDescriptionEnabled: Boolean =
-        feedAppearanceSettingsRepository.getRemoveTitleFromDescription()
-    private val hideDate: Boolean = feedAppearanceSettingsRepository.getHideDate()
-    private val dateFormat: DateFormat = feedAppearanceSettingsRepository.getDateFormat()
-    private val timeFormat: TimeFormat = feedAppearanceSettingsRepository.getTimeFormat()
+    private val mappingSettings = feedAppearanceSettingsRepository.getFeedItemMappingSettings()
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
     val feedItemDisplaySettings: StateFlow<FeedItemDisplaySettings> = combine(
         feedAppearanceSettingsRepository.hideUnreadDot,
@@ -246,10 +240,7 @@ class SearchViewModel internal constructor(
                             items = foundFeed.map { feedItem ->
                                 feedItem.toFeedItem(
                                     dateFormatter = dateFormatter,
-                                    removeTitleFromDesc = isRemoveTitleFromDescriptionEnabled,
-                                    hideDate = hideDate,
-                                    dateFormat = dateFormat,
-                                    timeFormat = timeFormat,
+                                    settings = mappingSettings,
                                 )
                             }.toImmutableList(),
                         )

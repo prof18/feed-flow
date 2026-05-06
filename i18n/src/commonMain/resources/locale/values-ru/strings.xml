@@ -182,7 +182,7 @@
     <string name="settings_notifications_permission_request_button">Запросить разрешение</string>
     <string name="new_articles_notification_title">Доступны новые статьи</string>
     <string name="notification_channel_name">Новые статьи</string>
-    <string name="settings_notifications_warning_reliability">Уведомления проверяются на вашем устройстве, но могут не всегда срабатывать стабильно из-за ограничений системы.</string>
+    <string name="settings_notifications_warning_reliability">Уведомления проверяются на вашем устройстве, но их доставка зависит от фоновой активности, разрешённой системой, и от того, как используется приложение, на что FeedFlow не может влиять.</string>
     <string name="marking_all_read_dialog_title">Отметить все как прочитанное...</string>
     <string name="date_format_title">Формат даты</string>
     <string name="date_format_normal">День/Месяц</string>
@@ -377,4 +377,6 @@
     <string name="widget_preview_toggle_background">Переключить фон предпросмотра</string>
     <string name="widget_configuration_description">Обновления виджета следуют настройкам фоновой синхронизации из «Синхронизация и хранилище».</string>
     <string name="settings_swipe_action_open_in_browser">Открыть в предпочитаемом браузере</string>
+    <string name="category_name_already_exists">Категория с таким названием уже существует</string>
+    <string name="settings_appearance">Оформление</string>
 </resources>

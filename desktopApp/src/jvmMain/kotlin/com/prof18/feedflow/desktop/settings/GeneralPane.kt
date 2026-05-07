@@ -23,6 +23,8 @@ internal fun GeneralPane(
     onMultiPaneToggled: (Boolean) -> Unit,
     isReduceMotionEnabled: Boolean,
     onReduceMotionToggled: (Boolean) -> Unit,
+    isHideUnreadCountEnabled: Boolean,
+    onHideUnreadCountToggled: (Boolean) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
 
@@ -50,6 +52,12 @@ internal fun GeneralPane(
         )
 
         SettingSwitchItem(
+            title = strings.settingsHideUnreadCount,
+            isChecked = isHideUnreadCountEnabled,
+            onCheckedChange = onHideUnreadCountToggled,
+        )
+
+        SettingSwitchItem(
             title = strings.settingsReduceMotion,
             isChecked = isReduceMotionEnabled,
             onCheckedChange = onReduceMotionToggled,
@@ -68,6 +76,8 @@ private fun GeneralPanePreview() {
             onMultiPaneToggled = {},
             isReduceMotionEnabled = false,
             onReduceMotionToggled = {},
+            isHideUnreadCountEnabled = false,
+            onHideUnreadCountToggled = {},
         )
     }
 }

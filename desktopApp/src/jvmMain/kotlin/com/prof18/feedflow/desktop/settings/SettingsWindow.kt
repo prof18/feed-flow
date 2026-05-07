@@ -161,6 +161,8 @@ internal fun SettingsWindow(
                         onMultiPaneToggled = desktopHomeSettingsRepository::setMultiPaneLayoutEnabled,
                         isReduceMotionEnabled = settingsState.isReduceMotionEnabled,
                         onReduceMotionToggled = menuBarViewModel::updateReduceMotionEnabled,
+                        isHideUnreadCountEnabled = settingsState.isHideUnreadCountEnabled,
+                        onHideUnreadCountToggled = menuBarViewModel::updateHideUnreadCount,
                     )
 
                     DesktopSettingsCategory.ACCOUNTS -> AccountsPane()

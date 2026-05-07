@@ -7,6 +7,7 @@ import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class MainSettingsViewModelTest : KoinTestBase() {
 
@@ -36,5 +37,11 @@ class MainSettingsViewModelTest : KoinTestBase() {
             viewModel.updateThemeMode(ThemeMode.SYSTEM)
             assertEquals(ThemeMode.SYSTEM, awaitItem().themeMode)
         }
+    }
+
+    @Test
+    fun `updateHideUnreadCount updates state`() = runTest {
+        viewModel.updateHideUnreadCount(true)
+        assertTrue(viewModel.settingsState.value.isHideUnreadCountEnabled)
     }
 }

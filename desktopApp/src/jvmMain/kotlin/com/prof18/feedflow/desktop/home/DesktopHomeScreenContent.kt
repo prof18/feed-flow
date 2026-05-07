@@ -77,6 +77,7 @@ fun DesktopHomeScreenContent(
             DesktopHomeAppBar(
                 currentFeedFilter = displayState.currentFeedFilter,
                 unReadCount = displayState.unReadCount,
+                isUnreadCountHidden = displayState.isUnreadCountHidden,
                 showDrawerMenu = showDrawerMenu,
                 isDrawerOpen = isDrawerOpen,
                 onDrawerMenuClick = onDrawerMenuClick,

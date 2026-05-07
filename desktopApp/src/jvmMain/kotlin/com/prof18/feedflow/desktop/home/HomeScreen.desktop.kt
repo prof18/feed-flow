@@ -67,6 +67,7 @@ internal fun HomeScreen(
     val navDrawerState by homeViewModel.navDrawerState.collectAsState()
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
     val unReadCount by homeViewModel.unreadCountFlow.collectAsState(initial = 0)
+    val isUnreadCountHidden by homeViewModel.isUnreadCountHidden.collectAsState()
     val feedFontSizes by homeViewModel.feedFontSizeState.collectAsState()
     val swipeActions by homeViewModel.swipeActions.collectAsState()
     val feedOperation by homeViewModel.feedOperationState.collectAsState()
@@ -134,6 +135,7 @@ internal fun HomeScreen(
         feedItems = feedState,
         navDrawerState = navDrawerState,
         unReadCount = unReadCount,
+        isUnreadCountHidden = isUnreadCountHidden,
         feedUpdateStatus = loadingState,
         feedFontSizes = feedFontSizes,
         currentFeedFilter = currentFeedFilter,

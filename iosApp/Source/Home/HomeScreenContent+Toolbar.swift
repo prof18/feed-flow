@@ -106,7 +106,9 @@ extension HomeContent {
     }
 
     private var shouldShowUnreadCount: Bool {
-        !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks)
+        !isUnreadCountHidden &&
+            !(currentFeedFilter is FeedFilter.Read) &&
+            !(currentFeedFilter is FeedFilter.Bookmarks)
     }
 
     func makeCompactPhoneHeaderText() -> some View {
@@ -134,7 +136,7 @@ extension HomeContent {
                 Text(getNavBarName(feedFilter: currentFeedFilter))
                     .font(.title2)
 
-                if !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks) {
+                if shouldShowUnreadCount {
                     Text("(\(unreadCount))")
                         .font(.title2)
                 }
@@ -226,7 +228,9 @@ extension HomeContent {
     func getNavBarTitleWithCount(feedFilter: FeedFilter, unreadCount: Int) -> String {
         let baseName = getNavBarName(feedFilter: feedFilter)
 
-        if !(feedFilter is FeedFilter.Read) && !(feedFilter is FeedFilter.Bookmarks) {
+        if !isUnreadCountHidden &&
+            !(feedFilter is FeedFilter.Read) &&
+            !(feedFilter is FeedFilter.Bookmarks) {
             return "\(baseName) (\(unreadCount))"
         } else {
             return baseName

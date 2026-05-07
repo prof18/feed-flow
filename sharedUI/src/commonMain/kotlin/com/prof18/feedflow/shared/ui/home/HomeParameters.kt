@@ -24,6 +24,7 @@ class HomeDisplayState(
     val feedItems: ImmutableList<FeedItem>,
     val navDrawerState: NavDrawerState,
     val unReadCount: Long,
+    val isUnreadCountHidden: Boolean,
     val feedUpdateStatus: FeedUpdateStatus,
     val feedFontSizes: FeedFontSizes,
     val currentFeedFilter: FeedFilter,

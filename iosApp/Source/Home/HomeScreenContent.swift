@@ -28,6 +28,7 @@ struct HomeContent: View {
     @Binding var feedState: [FeedItem]
     @Binding var showLoading: Bool
     @Binding var unreadCount: Int
+    @Binding var isUnreadCountHidden: Bool
     @Binding var sheetToShow: HomeSheetToShow?
     @Binding var toggleListScroll: Bool
     @Binding var currentFeedFilter: FeedFilter

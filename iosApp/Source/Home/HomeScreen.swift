@@ -31,6 +31,8 @@ struct HomeScreen: View {
 
     @State var unreadCount = 0
 
+    @State var isUnreadCountHidden = false
+
     @State var currentFeedFilter: FeedFilter = .Timeline()
 
     @State var showFeedSyncButton = false
@@ -70,6 +72,7 @@ struct HomeScreen: View {
             feedState: $feedState,
             showLoading: $showLoading,
             unreadCount: $unreadCount,
+            isUnreadCountHidden: $isUnreadCountHidden,
             sheetToShow: $sheetToShow,
             toggleListScroll: $toggleListScroll,
             currentFeedFilter: $currentFeedFilter,
@@ -205,6 +208,11 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.unreadCountFlow {
                 self.unreadCount = Int(truncating: state)
+            }
+        }
+        .task {
+            for await state in homeViewModel.isUnreadCountHidden {
+                self.isUnreadCountHidden = state as? Bool ?? false
             }
         }
         .task {

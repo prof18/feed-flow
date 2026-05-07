@@ -43,6 +43,7 @@ class MenuBarViewModel internal constructor(
         val isRefreshFeedsOnLaunchEnabled = settingsRepository.getRefreshFeedsOnLaunch()
         val isShowRssParsingErrorsEnabled = settingsRepository.getShowRssParsingErrors()
         val isReduceMotionEnabled = settingsRepository.getReduceMotionEnabled()
+        val isHideUnreadCountEnabled = feedAppearanceSettingsRepository.getHideUnreadCount()
         val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
         val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
         val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
@@ -59,6 +60,7 @@ class MenuBarViewModel internal constructor(
                 isRefreshFeedsOnLaunchEnabled = isRefreshFeedsOnLaunchEnabled,
                 isShowRssParsingErrorsEnabled = isShowRssParsingErrorsEnabled,
                 isReduceMotionEnabled = isReduceMotionEnabled,
+                isHideUnreadCountEnabled = isHideUnreadCountEnabled,
                 autoDeletePeriod = autoDeletePeriod,
                 isCrashReportingEnabled = isCrashReportingEnabled,
                 feedOrder = feedOrder,
@@ -155,6 +157,15 @@ class MenuBarViewModel internal constructor(
             settingsRepository.setReduceMotionEnabled(value)
             stateMutableFlow.update {
                 it.copy(isReduceMotionEnabled = value)
+            }
+        }
+    }
+
+    fun updateHideUnreadCount(value: Boolean) {
+        viewModelScope.launch {
+            feedAppearanceSettingsRepository.setHideUnreadCount(value)
+            stateMutableFlow.update {
+                it.copy(isHideUnreadCountEnabled = value)
             }
         }
     }

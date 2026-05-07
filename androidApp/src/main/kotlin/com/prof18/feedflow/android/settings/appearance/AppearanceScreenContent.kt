@@ -28,8 +28,10 @@ internal fun AppearanceScreenContent(
     navigateBack: () -> Unit,
     themeMode: ThemeMode,
     isReduceMotionEnabled: Boolean,
+    isHideUnreadCountEnabled: Boolean,
     onThemeModeSelected: (ThemeMode) -> Unit,
     onReduceMotionToggled: (Boolean) -> Unit,
+    onHideUnreadCountToggled: (Boolean) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
     Scaffold(
@@ -70,6 +72,14 @@ internal fun AppearanceScreenContent(
 
             item {
                 SettingSwitchItem(
+                    title = strings.settingsHideUnreadCount,
+                    isChecked = isHideUnreadCountEnabled,
+                    onCheckedChange = onHideUnreadCountToggled,
+                )
+            }
+
+            item {
+                SettingSwitchItem(
                     title = strings.settingsReduceMotion,
                     isChecked = isReduceMotionEnabled,
                     onCheckedChange = onReduceMotionToggled,
@@ -91,8 +101,10 @@ private fun AppearanceScreenContentPreview() {
             navigateBack = {},
             themeMode = ThemeMode.SYSTEM,
             isReduceMotionEnabled = false,
+            isHideUnreadCountEnabled = false,
             onThemeModeSelected = {},
             onReduceMotionToggled = {},
+            onHideUnreadCountToggled = {},
         )
     }
 }

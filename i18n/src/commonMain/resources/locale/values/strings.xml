@@ -162,6 +162,7 @@
     <string name="settings_hide_images">Hide article image</string>
     <string name="settings_hide_date">Hide article date</string>
     <string name="settings_hide_unread_dot">Hide unread indicator</string>
+    <string name="settings_hide_unread_count">Hide unread counts</string>
     <string name="settings_hide_feed_source">Hide feed source</string>
     <string name="settings_description_max_lines">Description lines</string>
     <string name="settings_description_lines_three">3 lines</string>

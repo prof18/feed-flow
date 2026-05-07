@@ -273,6 +273,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         MainSettingsViewModel(
             settingsRepository = get(),
+            feedAppearanceSettingsRepository = get(),
         )
     }
 

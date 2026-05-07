@@ -34,6 +34,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun AndroidHomeAppBar(
     currentFeedFilter: FeedFilter,
     unReadCount: Long,
+    isUnreadCountHidden: Boolean,
     showDrawerMenu: Boolean,
     isDrawerOpen: Boolean,
     onDrawerMenuClick: () -> Unit,
@@ -72,7 +73,8 @@ fun AndroidHomeAppBar(
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                if (currentFeedFilter !is FeedFilter.Read &&
+                if (!isUnreadCountHidden &&
+                    currentFeedFilter !is FeedFilter.Read &&
                     currentFeedFilter !is FeedFilter.Bookmarks
                 ) {
                     Spacer(modifier = Modifier.width(4.dp))

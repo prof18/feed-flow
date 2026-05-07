@@ -11,7 +11,7 @@ struct AppearanceScreen: View {
 
     private let feedFlowStrings = Deps.shared.getStrings()
 
-    @State private var settingsState = MainSettingsState(themeMode: .system)
+    @State private var settingsState = MainSettingsState(themeMode: .system, isHideUnreadCountEnabled: false)
 
     var body: some View {
         @Bindable var appState = appState
@@ -35,6 +35,13 @@ struct AppearanceScreen: View {
                         .tag(ThemeMode.dark)
                 } label: {
                     Label(feedFlowStrings.settingsTheme, systemImage: "moon")
+                }
+
+                Toggle(isOn: Binding(
+                    get: { settingsState.isHideUnreadCountEnabled },
+                    set: { vmStoreOwner.instance.updateHideUnreadCount(value: $0) }
+                )) {
+                    Text(feedFlowStrings.settingsHideUnreadCount)
                 }
             }
         }

@@ -16,6 +16,7 @@ data class MenuBarSettingsState(
     val isRefreshFeedsOnLaunchEnabled: Boolean = true,
     val isShowRssParsingErrorsEnabled: Boolean = true,
     val isReduceMotionEnabled: Boolean = false,
+    val isHideUnreadCountEnabled: Boolean = false,
     val autoDeletePeriod: AutoDeletePeriod = AutoDeletePeriod.DISABLED,
     val isCrashReportingEnabled: Boolean = true,
     val feedOrder: FeedOrder = FeedOrder.NEWEST_FIRST,

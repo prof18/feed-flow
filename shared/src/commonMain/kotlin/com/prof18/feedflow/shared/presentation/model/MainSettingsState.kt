@@ -4,4 +4,5 @@ import com.prof18.feedflow.core.model.ThemeMode
 
 data class MainSettingsState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    val isHideUnreadCountEnabled: Boolean = false,
 )

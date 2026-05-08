@@ -102,7 +102,10 @@ internal fun FeedSourcesWithCategoryList(
             )
         }
 
-        items(feedSourceState.feedSourcesWithCategory) { feedSourceState ->
+        items(
+            feedSourceState.feedSourcesWithCategory,
+            key = { it.categoryId?.value ?: it.categoryName ?: "no-category" },
+        ) { feedSourceState ->
             Column {
                 var showCategoryMenu by remember { mutableStateOf(false) }
 

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -66,10 +67,10 @@ fun BlockedWordsContent(
             )
         } else {
             LazyColumn {
-                items(keywords.size) { index ->
+                itemsIndexed(keywords, key = { _, word -> word }) { index, word ->
                     WordItem(
-                        word = keywords[index],
-                        onRemove = { onRemoveWord(keywords[index]) },
+                        word = word,
+                        onRemove = { onRemoveWord(word) },
                         showDivider = index < keywords.size - 1,
                     )
                 }

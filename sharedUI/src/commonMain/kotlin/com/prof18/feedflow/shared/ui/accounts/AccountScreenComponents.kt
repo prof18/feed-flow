@@ -65,7 +65,7 @@ fun AccountsContent(
             modifier = Modifier
                 .padding(top = Spacing.medium),
         ) {
-            items(accounts.filter { it != SyncAccounts.LOCAL }) { account ->
+            items(accounts.filter { it != SyncAccounts.LOCAL }, key = { it.name }) { account ->
                 val isEnabled = syncAccount == SyncAccounts.LOCAL || syncAccount == account
                 val onClick: () -> Unit = when (account) {
                     SyncAccounts.DROPBOX -> onDropboxCLick

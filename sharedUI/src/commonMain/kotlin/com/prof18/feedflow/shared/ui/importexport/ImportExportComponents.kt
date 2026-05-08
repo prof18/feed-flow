@@ -563,7 +563,7 @@ private fun FeedsNotAddedList(
     LazyColumn(
         modifier = modifier,
     ) {
-        items(feedSources) { feedSource ->
+        items(feedSources, key = { it.id }) { feedSource ->
             Column(
                 modifier = Modifier.fillMaxWidth(),
             ) {

@@ -27,6 +27,7 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -171,32 +172,34 @@ internal fun DesktopDrawerFeedSourcesByCategories(
             )
 
             for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
-                var isCategoryExpanded by rememberSaveable { mutableStateOf(false) }
+                key(categoryWrapper.feedSourceCategory?.id ?: "no-category") {
+                    var isCategoryExpanded by rememberSaveable { mutableStateOf(false) }
 
-                DesktopDrawerFeedSourceByCategoryItem(
-                    feedSourceCategoryWrapper = categoryWrapper,
-                    drawerFeedSources = drawerFeedSources
-                        .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
-                    currentFeedFilter = currentFeedFilter,
-                    drawerItemVisualStyle = drawerItemVisualStyle,
-                    isCategoryExpanded = isCategoryExpanded,
-                    onCategoryExpand = { isCategoryExpanded = !isCategoryExpanded },
-                    onFeedFilterSelected = onFeedFilterSelected,
-                    selectedFeedSourceIds = selectedFeedSourceIds,
-                    onFeedSourceClick = onFeedSourceClick,
-                    selectedFeedSourcesProvider = selectedFeedSourcesProvider,
-                    onEditFeedClick = onEditFeedClick,
-                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                    onPinFeedClick = onPinFeedClick,
-                    onChangeFeedCategoryClick = onChangeFeedCategoryClick,
-                    onOpenWebsite = onOpenWebsite,
-                    onEditCategoryClick = onEditCategoryClick,
-                    validateCategoryName = validateCategoryName,
-                    onDeleteCategoryClick = onDeleteCategoryClick,
-                    onDeleteAllFeedsInCategoryClick = onDeleteAllFeedsInCategoryClick,
-                    onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
-                    dragState = dragState,
-                )
+                    DesktopDrawerFeedSourceByCategoryItem(
+                        feedSourceCategoryWrapper = categoryWrapper,
+                        drawerFeedSources = drawerFeedSources
+                            .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
+                        currentFeedFilter = currentFeedFilter,
+                        drawerItemVisualStyle = drawerItemVisualStyle,
+                        isCategoryExpanded = isCategoryExpanded,
+                        onCategoryExpand = { isCategoryExpanded = !isCategoryExpanded },
+                        onFeedFilterSelected = onFeedFilterSelected,
+                        selectedFeedSourceIds = selectedFeedSourceIds,
+                        onFeedSourceClick = onFeedSourceClick,
+                        selectedFeedSourcesProvider = selectedFeedSourcesProvider,
+                        onEditFeedClick = onEditFeedClick,
+                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                        onPinFeedClick = onPinFeedClick,
+                        onChangeFeedCategoryClick = onChangeFeedCategoryClick,
+                        onOpenWebsite = onOpenWebsite,
+                        onEditCategoryClick = onEditCategoryClick,
+                        validateCategoryName = validateCategoryName,
+                        onDeleteCategoryClick = onDeleteCategoryClick,
+                        onDeleteAllFeedsInCategoryClick = onDeleteAllFeedsInCategoryClick,
+                        onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                        dragState = dragState,
+                    )
+                }
             }
         }
     }

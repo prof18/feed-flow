@@ -24,6 +24,7 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -98,30 +99,32 @@ internal fun AndroidDrawerFeedSourcesByCategories(
             )
 
             for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
-                var isCategoryExpanded by rememberSaveable { mutableStateOf(false) }
+                key(categoryWrapper.feedSourceCategory?.id ?: "no-category") {
+                    var isCategoryExpanded by rememberSaveable { mutableStateOf(false) }
 
-                val drawerFeedSourceItems = remember(drawerFeedSources) {
-                    drawerFeedSources
-                        .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
+                    val drawerFeedSourceItems = remember(drawerFeedSources) {
+                        drawerFeedSources
+                            .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
+                    }
+                    AndroidDrawerFeedSourceByCategoryItem(
+                        feedSourceCategoryWrapper = categoryWrapper,
+                        drawerFeedSources = drawerFeedSourceItems,
+                        currentFeedFilter = currentFeedFilter,
+                        drawerItemVisualStyle = drawerItemVisualStyle,
+                        isCategoryExpanded = isCategoryExpanded,
+                        onCategoryExpand = { isCategoryExpanded = !isCategoryExpanded },
+                        onFeedFilterSelected = onFeedFilterSelected,
+                        onFeedSourceClick = onFeedSourceClick,
+                        onEditFeedClick = onEditFeedClick,
+                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                        onPinFeedClick = onPinFeedClick,
+                        onChangeFeedCategoryClick = onChangeFeedCategoryClick,
+                        onOpenWebsite = onOpenWebsite,
+                        onEditCategoryClick = onEditCategoryClick,
+                        validateCategoryName = validateCategoryName,
+                        onDeleteCategoryClick = onDeleteCategoryClick,
+                    )
                 }
-                AndroidDrawerFeedSourceByCategoryItem(
-                    feedSourceCategoryWrapper = categoryWrapper,
-                    drawerFeedSources = drawerFeedSourceItems,
-                    currentFeedFilter = currentFeedFilter,
-                    drawerItemVisualStyle = drawerItemVisualStyle,
-                    isCategoryExpanded = isCategoryExpanded,
-                    onCategoryExpand = { isCategoryExpanded = !isCategoryExpanded },
-                    onFeedFilterSelected = onFeedFilterSelected,
-                    onFeedSourceClick = onFeedSourceClick,
-                    onEditFeedClick = onEditFeedClick,
-                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                    onPinFeedClick = onPinFeedClick,
-                    onChangeFeedCategoryClick = onChangeFeedCategoryClick,
-                    onOpenWebsite = onOpenWebsite,
-                    onEditCategoryClick = onEditCategoryClick,
-                    validateCategoryName = validateCategoryName,
-                    onDeleteCategoryClick = onDeleteCategoryClick,
-                )
             }
         }
     }

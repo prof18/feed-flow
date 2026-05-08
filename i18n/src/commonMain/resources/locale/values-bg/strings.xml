@@ -379,4 +379,5 @@
     <string name="about_the_app">FeedFlow е минималистичен RSS четец за чиста, хронологична времева линия — без алгоритми, без бъркотия. Отваряйте статии в любимия си браузър или ги четете без разсейване с режима за четене. Предварително извличайте и кеширайте пълните статии за четене офлайн навсякъде.\nСинхронизирайте вашите емисии, статус на четене и отметки в Android, iOS, macOS, Windows и Linux, използвайки iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin или BazQux. Организирайте емисиите в категории, блокирайте „шумни“ ключови думи и импортирайте или експортирайте всичко с OPML.</string>
     <string name="settings_appearance">Външен вид</string>
     <string name="category_name_already_exists">Категория с това име вече съществува</string>
+    <string name="settings_hide_unread_count">Скриване на броя непрочетени</string>
 </resources>

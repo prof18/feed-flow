@@ -289,17 +289,17 @@ private fun NavigateNextButton(
     }
 }
 
-@Suppress("ModifierMissing")
 @Composable
 fun FeedItemContainer(
     feedLayout: FeedLayout,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     when (feedLayout) {
         FeedLayout.LIST -> content()
         FeedLayout.CARD -> {
             Card(
-                modifier = Modifier.padding(Spacing.small),
+                modifier = modifier.padding(Spacing.small),
                 shape = RoundedCornerShape(16.dp),
             ) {
                 content()

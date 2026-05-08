@@ -32,7 +32,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
 
-@Suppress("MultipleEmitters", "ModifierMissing")
+@Suppress("MultipleEmitters")
 @Composable
 fun AdaptiveHomeView(
     snackbarHostState: SnackbarHostState,
@@ -42,6 +42,7 @@ fun AdaptiveHomeView(
     feedListActions: FeedListActions,
     feedManagementActions: FeedManagementActions,
     shareBehavior: ShareBehavior,
+    modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     useDockedDrawer: Boolean = false,
     onBackupClick: () -> Unit = {},
@@ -104,7 +105,7 @@ fun AdaptiveHomeView(
     if (useDockedDrawer) {
         var isDrawerMenuFullVisible by remember { mutableStateOf(true) }
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
         ) {
             Box(
                 modifier = if (isDrawerMenuFullVisible) {
@@ -146,6 +147,7 @@ fun AdaptiveHomeView(
     } else {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         ModalNavigationDrawer(
+            modifier = modifier,
             drawerState = drawerState,
             drawerContent = {
                 ModalDrawerSheet {

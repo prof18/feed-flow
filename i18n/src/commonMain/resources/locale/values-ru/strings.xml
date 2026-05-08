@@ -379,4 +379,5 @@
     <string name="settings_swipe_action_open_in_browser">Открыть в предпочитаемом браузере</string>
     <string name="category_name_already_exists">Категория с таким названием уже существует</string>
     <string name="settings_appearance">Оформление</string>
+    <string name="settings_hide_unread_count">Скрыть количество непрочитанных</string>
 </resources>

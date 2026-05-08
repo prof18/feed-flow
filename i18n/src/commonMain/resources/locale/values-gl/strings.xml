@@ -379,4 +379,5 @@
     <string name="settings_notification_mode_category">Por categoría</string>
     <string name="settings_notification_mode_grouped">Todo xunto</string>
     <string name="category_name_already_exists">Xa existe unha categoría con este nome</string>
+    <string name="settings_hide_unread_count">Ocultar o número de non lidos</string>
 </resources>

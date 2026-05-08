@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil3.imageLoader
 import com.prof18.feedflow.android.settings.components.BackgroundSyncRestrictionsSection
 import com.prof18.feedflow.core.model.AutoDeletePeriod
-import com.prof18.feedflow.shared.domain.model.BackgroundSyncRestrictions
+import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.shared.ui.settings.ConfirmationSettingItem

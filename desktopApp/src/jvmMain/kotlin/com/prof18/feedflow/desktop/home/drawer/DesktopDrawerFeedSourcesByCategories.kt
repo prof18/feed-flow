@@ -175,10 +175,13 @@ internal fun DesktopDrawerFeedSourcesByCategories(
                 key(categoryWrapper.feedSourceCategory?.id ?: "no-category") {
                     var isCategoryExpanded by rememberSaveable { mutableStateOf(false) }
 
+                    val drawerFeedSourceItems = remember(drawerFeedSources) {
+                        drawerFeedSources
+                            .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
+                    }
                     DesktopDrawerFeedSourceByCategoryItem(
                         feedSourceCategoryWrapper = categoryWrapper,
-                        drawerFeedSources = drawerFeedSources
-                            .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
+                        drawerFeedSources = drawerFeedSourceItems,
                         currentFeedFilter = currentFeedFilter,
                         drawerItemVisualStyle = drawerItemVisualStyle,
                         isCategoryExpanded = isCategoryExpanded,

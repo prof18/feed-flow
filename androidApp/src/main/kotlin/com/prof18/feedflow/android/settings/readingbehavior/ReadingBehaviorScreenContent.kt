@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.settings.components.BrowserSelector
-import com.prof18.feedflow.shared.domain.model.Browser
-import com.prof18.feedflow.shared.presentation.model.ReadingBehaviorState
+import com.prof18.feedflow.core.model.Browser
+import com.prof18.feedflow.core.model.ReadingBehaviorState
 import com.prof18.feedflow.shared.ui.settings.ConfirmationDialogConfig
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme

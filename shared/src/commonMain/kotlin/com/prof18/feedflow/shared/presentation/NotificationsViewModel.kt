@@ -2,13 +2,13 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.FeedSourceNotificationPreference
 import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.NotificationSettingState
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
-import com.prof18.feedflow.shared.domain.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList

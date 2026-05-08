@@ -47,10 +47,10 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.android.settings.components.BackgroundSyncRestrictionsSection
+import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.NotificationSettingState
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
-import com.prof18.feedflow.shared.domain.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.NotificationsViewModel
 import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow

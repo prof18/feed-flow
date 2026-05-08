@@ -129,9 +129,12 @@ fun AndroidDrawer(
                             style = MaterialTheme.typography.labelLarge,
                         )
 
+                        val pinnedFeedSourceItems = remember(displayState.navDrawerState.pinnedFeedSources) {
+                            displayState.navDrawerState.pinnedFeedSources
+                                .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
+                        }
                         AndroidDrawerFeedSourcesList(
-                            drawerFeedSources = displayState.navDrawerState.pinnedFeedSources
-                                .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
+                            drawerFeedSources = pinnedFeedSourceItems,
                             currentFeedFilter = displayState.currentFeedFilter,
                             drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
                             onFeedSourceClick = onFeedSourceClick,

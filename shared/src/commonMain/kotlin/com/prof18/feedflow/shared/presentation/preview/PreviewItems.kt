@@ -2,6 +2,7 @@
 
 package com.prof18.feedflow.shared.presentation.preview
 
+import com.prof18.feedflow.core.model.Browser
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoriesState.CategoryItem
 import com.prof18.feedflow.core.model.CategoryId
@@ -12,7 +13,6 @@ import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.core.model.ImportExportContentType
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
-import com.prof18.feedflow.shared.domain.model.Browser
 import kotlinx.collections.immutable.persistentListOf
 
 val browsersForPreview = persistentListOf(

@@ -2,8 +2,8 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.ReadingBehaviorState
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.presentation.model.ReadingBehaviorState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

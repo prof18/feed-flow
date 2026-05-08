@@ -1,12 +1,8 @@
-package com.prof18.feedflow.shared.presentation.model
+package com.prof18.feedflow.core.model
 
-import com.prof18.feedflow.core.model.DateFormat
-import com.prof18.feedflow.core.model.DescriptionLineLimit
-import com.prof18.feedflow.core.model.FeedLayout
-import com.prof18.feedflow.core.model.FeedOrder
-import com.prof18.feedflow.core.model.SwipeActionType
-import com.prof18.feedflow.core.model.TimeFormat
+import androidx.compose.runtime.Immutable
 
+@Immutable
 data class FeedListSettingsState(
     val isHideDescriptionEnabled: Boolean = false,
     val isHideImagesEnabled: Boolean = false,

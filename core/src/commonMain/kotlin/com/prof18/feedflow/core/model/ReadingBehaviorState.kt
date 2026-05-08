@@ -1,5 +1,8 @@
-package com.prof18.feedflow.shared.presentation.model
+package com.prof18.feedflow.core.model
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class ReadingBehaviorState(
     val isReaderModeEnabled: Boolean = false,
     val isSaveReaderModeContentEnabled: Boolean = false,

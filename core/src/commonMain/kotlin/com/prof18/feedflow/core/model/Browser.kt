@@ -1,5 +1,8 @@
-package com.prof18.feedflow.shared.domain.model
+package com.prof18.feedflow.core.model
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class Browser(
     val id: String,
     val name: String,

@@ -1,5 +1,8 @@
 package com.prof18.feedflow.core.model
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 sealed interface ReaderModeState {
     data object Loading : ReaderModeState
     data class Success(val readerModeData: ReaderModeData) : ReaderModeState

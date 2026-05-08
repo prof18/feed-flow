@@ -9,19 +9,19 @@ import android.os.Build
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.Browser
 import com.prof18.feedflow.core.utils.BrowserIds
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.model.Browser
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.util.*
+import java.util.Locale
 
 class BrowserManager(
     private val context: Context,

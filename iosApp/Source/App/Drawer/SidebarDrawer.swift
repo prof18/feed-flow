@@ -37,7 +37,7 @@ struct SidebarDrawer: View {
     @State var editedCategoryName: String = ""
     @State var showChangeCategorySheet = false
     @State var selectedFeedForCategoryChange: FeedSource?
-    @State var showFeedSuggestionsSheet = false
+    @State private var showFeedSuggestionsSheet = false
     @State var showDeleteFeedDialog = false
     @State var feedToDelete: FeedSource?
 
@@ -49,6 +49,7 @@ struct SidebarDrawer: View {
     let deleteAllFeeds: () -> Void
     let onShowSettingsClick: () -> Void
     let onAddFeedClick: () -> Void
+    let onImportExportClick: () -> Void
     let onEditFeedClick: (FeedSource) -> Void
     let onDeleteFeedClick: (FeedSource) -> Void
     let onPinFeedClick: (FeedSource) -> Void
@@ -97,11 +98,6 @@ struct SidebarDrawer: View {
                     onSelect: { self.selectedSidebarItem = .bookmarks },
                     onFeedFilterSelected: self.onFeedFilterSelected
                 )
-
-                FeedSuggestionsSection(
-                    isCompact: isCompactPhone,
-                    onFeedSuggestionsClick: { showFeedSuggestionsSheet = true }
-                )
             }
 
             if !navDrawerState.pinnedFeedSources.isEmpty {
@@ -123,9 +119,23 @@ struct SidebarDrawer: View {
             .toolbar {
             ToolbarItemGroup(placement: .bottomBar) {
                 Spacer()
-                Button(action: onAddFeedClick) {
-                    Image(systemName: "plus")
-                }
+                Menu(
+                    content: {
+                        Button(
+                            action: onAddFeedClick,
+                            label: { Label(feedFlowStrings.addFeed, systemImage: "plus.circle") }
+                        )
+                        Button(
+                            action: { showFeedSuggestionsSheet = true },
+                            label: { Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb") }
+                        )
+                        Button(
+                            action: onImportExportClick,
+                            label: { Label(feedFlowStrings.importFeedButton, systemImage: "square.and.arrow.down") }
+                        )
+                    },
+                    label: { Image(systemName: "plus") }
+                )
             }
             }
         .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {

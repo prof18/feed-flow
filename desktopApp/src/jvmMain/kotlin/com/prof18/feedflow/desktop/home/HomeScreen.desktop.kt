@@ -275,6 +275,7 @@ internal fun HomeScreen(
             snackbarHostState = snackbarHostState,
             shareBehavior = shareBehavior,
             onFeedSuggestionsClick = onFeedSuggestionsClick,
+            onImportExportClick = onImportExportClick,
             currentReaderArticle = currentReaderArticle,
             onReaderClosed = { readerModeViewModel.resetState() },
             onEmptyStateClick = {
@@ -291,6 +292,7 @@ internal fun HomeScreen(
             snackbarHostState = snackbarHostState,
             shareBehavior = shareBehavior,
             onFeedSuggestionsClick = onFeedSuggestionsClick,
+            onImportExportClick = onImportExportClick,
             onEmptyStateClick = {
                 showNoFeedsBottomSheet = true
             },

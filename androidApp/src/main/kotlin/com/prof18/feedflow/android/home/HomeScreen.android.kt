@@ -207,6 +207,7 @@ internal fun HomeScreen(
         shareBehavior = shareBehavior,
         onBackupClick = homeViewModel::enqueueBackup,
         onFeedSuggestionsClick = onFeedSuggestionsClick,
+        onImportExportClick = onImportExportClick,
         onEmptyStateClick = {
             showNoFeedsBottomSheet = true
         },

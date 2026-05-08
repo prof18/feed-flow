@@ -51,6 +51,7 @@ internal fun DesktopSinglePaneHomeScaffold(
     onSearchClick: () -> Unit,
     onFeedSuggestionsClick: () -> Unit,
     onEmptyStateClick: () -> Unit,
+    onImportExportClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -92,6 +93,14 @@ internal fun DesktopSinglePaneHomeScaffold(
                         }
                     }
                     onFeedSuggestionsClick()
+                },
+                onImportExportClick = {
+                    scope.launch {
+                        if (drawerState.isOpen) {
+                            drawerState.close()
+                        }
+                    }
+                    onImportExportClick()
                 },
             )
         }

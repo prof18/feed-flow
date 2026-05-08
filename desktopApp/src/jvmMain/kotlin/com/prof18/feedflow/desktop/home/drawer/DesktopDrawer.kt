@@ -3,7 +3,7 @@ package com.prof18.feedflow.desktop.home.drawer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -36,6 +36,7 @@ fun DesktopDrawer(
     onFeedFilterSelected: (FeedFilter) -> Unit,
     modifier: Modifier = Modifier,
     onFeedSuggestionsClick: () -> Unit = {},
+    onImportExportClick: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
     val dragState = rememberFeedSourceDragState(listState)
@@ -95,16 +96,16 @@ fun DesktopDrawer(
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(Spacing.regular)
             .onGloballyPositioned { drawerCoordinates = it },
     ) {
         LazyColumn(
             state = listState,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .onGloballyPositioned { dragState.updateListBounds(it) },
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
@@ -137,20 +138,6 @@ fun DesktopDrawer(
                         .filterIsInstance<DrawerItem.Bookmarks>()
                         .firstOrNull()
                         ?: DrawerItem.Bookmarks(unreadCount = 0),
-                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
-                )
-            }
-
-            item {
-                DrawerFeedSuggestionsItem(
-                    onFeedSuggestionsClick = onFeedSuggestionsClick,
-                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
-                )
-            }
-
-            item {
-                DrawerAddItem(
-                    onAddFeedClicked = feedManagementActions.onAddFeedClick,
                     drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
                 )
             }
@@ -190,31 +177,30 @@ fun DesktopDrawer(
                 }
             }
 
-            if (displayState.navDrawerState.feedSourcesByCategory.isNotEmpty() ||
-                displayState.navDrawerState.feedSourcesWithoutCategory.isNotEmpty()
-            ) {
-                item {
-                    DesktopDrawerFeedSourcesByCategories(
-                        navDrawerState = displayState.navDrawerState,
-                        currentFeedFilter = displayState.currentFeedFilter,
-                        drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
-                        onFeedFilterSelected = onFeedFilterSelectedWithClear,
-                        selectedFeedSourceIds = selectedFeedSourceIds,
-                        onFeedSourceClick = onFeedSourceClick,
-                        selectedFeedSourcesProvider = { selectedFeedSourceIds.mapNotNull { allFeedSources[it] } },
-                        onEditFeedClick = feedManagementActions.onEditFeedClick,
-                        onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
-                        onPinFeedClick = feedManagementActions.onPinFeedClick,
-                        onChangeFeedCategoryClick = feedManagementActions.onChangeFeedCategoryClick,
-                        onOpenWebsite = feedManagementActions.onOpenWebsite,
-                        onEditCategoryClick = feedManagementActions.onEditCategoryClick,
-                        validateCategoryName = feedManagementActions.validateCategoryName,
-                        onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
-                        onDeleteAllFeedsInCategoryClick = feedManagementActions.onDeleteAllFeedsInCategoryClick,
-                        onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
-                        dragState = dragState,
-                    )
-                }
+            item {
+                DesktopDrawerFeedSourcesByCategories(
+                    navDrawerState = displayState.navDrawerState,
+                    currentFeedFilter = displayState.currentFeedFilter,
+                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
+                    onFeedFilterSelected = onFeedFilterSelectedWithClear,
+                    selectedFeedSourceIds = selectedFeedSourceIds,
+                    onFeedSourceClick = onFeedSourceClick,
+                    selectedFeedSourcesProvider = { selectedFeedSourceIds.mapNotNull { allFeedSources[it] } },
+                    onEditFeedClick = feedManagementActions.onEditFeedClick,
+                    onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
+                    onPinFeedClick = feedManagementActions.onPinFeedClick,
+                    onChangeFeedCategoryClick = feedManagementActions.onChangeFeedCategoryClick,
+                    onOpenWebsite = feedManagementActions.onOpenWebsite,
+                    onEditCategoryClick = feedManagementActions.onEditCategoryClick,
+                    validateCategoryName = feedManagementActions.validateCategoryName,
+                    onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
+                    onDeleteAllFeedsInCategoryClick = feedManagementActions.onDeleteAllFeedsInCategoryClick,
+                    onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                    dragState = dragState,
+                    onAddFeedClick = feedManagementActions.onAddFeedClick,
+                    onFeedSuggestionsClick = onFeedSuggestionsClick,
+                    onImportExportClick = onImportExportClick,
+                )
             }
         }
 

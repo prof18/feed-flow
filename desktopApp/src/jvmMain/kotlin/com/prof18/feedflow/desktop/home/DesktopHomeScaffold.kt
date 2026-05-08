@@ -91,6 +91,7 @@ internal fun DesktopHomeScaffold(
     currentReaderArticle: FeedItemUrlInfo?,
     onReaderClosed: () -> Unit,
     onEmptyStateClick: () -> Unit,
+    onImportExportClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -173,6 +174,14 @@ internal fun DesktopHomeScaffold(
                         }
                     }
                     onFeedSuggestionsClick()
+                },
+                onImportExportClick = {
+                    scope.launch {
+                        if (drawerState.isOpen) {
+                            drawerState.close()
+                        }
+                    }
+                    onImportExportClick()
                 },
             )
         }

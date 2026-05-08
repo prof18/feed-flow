@@ -33,6 +33,7 @@ struct RegularView: View {
     @State var scrollUpTrigger = false
     @State var showSettings = false
     @State var showAddFeedSheet = false
+    @State private var showImportExportSheet = false
 
     @State var indexHolder: HomeListIndexHolder
     let homeViewModel: HomeViewModel
@@ -75,6 +76,9 @@ struct RegularView: View {
                 },
                 onAddFeedClick: {
                     showAddFeedSheet.toggle()
+                },
+                onImportExportClick: {
+                    showImportExportSheet.toggle()
                 },
                 onEditFeedClick: { feedSource in
                     feedSourceToEdit = feedSource
@@ -157,6 +161,10 @@ struct RegularView: View {
                 .environment(appState)
                 .environment(browserSelector)
                 .toggleStyle(BlueToggleStyle())
+        }
+        .sheet(isPresented: $showImportExportSheet) {
+            ImportExportScreen(showCloseButton: true, fetchFeeds: { homeViewModel.forceFeedRefresh() })
+                .environment(appState)
         }
         .sheet(isPresented: $showEditFeedSheet) {
             if let feedSource = feedSourceToEdit {

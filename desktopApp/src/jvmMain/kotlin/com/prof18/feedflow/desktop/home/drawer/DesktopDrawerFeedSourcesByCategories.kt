@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +36,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -78,10 +85,15 @@ internal fun DesktopDrawerFeedSourcesByCategories(
     onDeleteAllFeedsInCategoryClick: (List<FeedSource>) -> Unit,
     onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
     dragState: FeedSourceDragState,
+    onAddFeedClick: () -> Unit,
+    onFeedSuggestionsClick: () -> Unit,
+    onImportExportClick: () -> Unit,
 ) {
     var showUncategorizedMenu by rememberSaveable { mutableStateOf(false) }
     var uncategorizedMenuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
     var showDeleteAllUncategorizedDialog by remember { mutableStateOf(false) }
+    var showAddFeedsMenu by remember { mutableStateOf(false) }
+    var addMenuButtonCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     val uncategorizedFeedSources = navDrawerState.feedSourcesWithoutCategory
         .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
     val showStandaloneUncategorizedMenu = uncategorizedFeedSources.isNotEmpty() &&
@@ -107,14 +119,40 @@ internal fun DesktopDrawerFeedSourcesByCategories(
                 Modifier
             }
 
-            Text(
+            Row(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .padding(start = Spacing.regular)
-                    .padding(bottom = Spacing.regular)
-                    .then(headerMenuModifier),
-                text = LocalFeedFlowStrings.current.drawerTitleFeedSources,
-                style = MaterialTheme.typography.labelLarge,
-            )
+                    .padding(bottom = Spacing.regular),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .then(headerMenuModifier),
+                    text = LocalFeedFlowStrings.current.drawerTitleFeedSources,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+
+                Box(
+                    modifier = Modifier
+                        .onGloballyPositioned { addMenuButtonCoordinates = it }
+                        .clip(CircleShape)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = ripple(),
+                        ) { showAddFeedsMenu = true }
+                        .padding(12.dp)
+                        .semantics { role = Role.Button },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = LocalFeedFlowStrings.current.addFeed,
+                    )
+                }
+            }
 
             DesktopDrawerFeedSourcesList(
                 drawerFeedSources = uncategorizedFeedSources,
@@ -194,6 +232,42 @@ internal fun DesktopDrawerFeedSourcesByCategories(
             },
         )
     }
+
+    val strings = LocalFeedFlowStrings.current
+    DesktopPopupMenu(
+        showMenu = showAddFeedsMenu,
+        menuPositionInWindow = addMenuButtonCoordinates?.let { coords ->
+            val bounds = coords.boundsInWindow()
+            Offset(bounds.left, bounds.bottom)
+        },
+        menuEntries = persistentListOf(
+            DesktopPopupMenuEntry.Action(
+                text = strings.addFeed,
+                icon = Icons.Default.AddCircleOutline,
+                onClick = {
+                    showAddFeedsMenu = false
+                    onAddFeedClick()
+                },
+            ),
+            DesktopPopupMenuEntry.Action(
+                text = strings.feedSuggestionsTitle,
+                icon = Icons.Outlined.Lightbulb,
+                onClick = {
+                    showAddFeedsMenu = false
+                    onFeedSuggestionsClick()
+                },
+            ),
+            DesktopPopupMenuEntry.Action(
+                text = strings.importFeedButton,
+                icon = Icons.Default.FileDownload,
+                onClick = {
+                    showAddFeedsMenu = false
+                    onImportExportClick()
+                },
+            ),
+        ),
+        closeMenu = { showAddFeedsMenu = false },
+    )
 }
 
 @Composable

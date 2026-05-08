@@ -46,6 +46,7 @@ fun AdaptiveHomeView(
     useDockedDrawer: Boolean = false,
     onBackupClick: () -> Unit = {},
     onFeedSuggestionsClick: () -> Unit = {},
+    onImportExportClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
     onNavigateToNextFeed: (() -> Unit) = {},
 ) {
@@ -83,6 +84,9 @@ fun AdaptiveHomeView(
     @Composable
     fun DrawerInternal(
         onFeedFilterSelectedLambda: (FeedFilter) -> Unit,
+        onAddFeedClick: () -> Unit,
+        onFeedSuggestionsClick: () -> Unit,
+        onImportExportClick: () -> Unit,
         modifier: Modifier = Modifier,
     ) {
         AndroidDrawer(
@@ -90,7 +94,9 @@ fun AdaptiveHomeView(
             displayState = displayState,
             feedManagementActions = feedManagementActions,
             onFeedFilterSelected = onFeedFilterSelectedLambda,
+            onAddFeedClick = onAddFeedClick,
             onFeedSuggestionsClick = onFeedSuggestionsClick,
+            onImportExportClick = onImportExportClick,
             listState = drawerListState,
         )
     }
@@ -121,6 +127,9 @@ fun AdaptiveHomeView(
                                 )
                             }
                         },
+                        onAddFeedClick = feedManagementActions.onAddFeedClick,
+                        onFeedSuggestionsClick = onFeedSuggestionsClick,
+                        onImportExportClick = onImportExportClick,
                     )
                 }
             }
@@ -149,6 +158,24 @@ fun AdaptiveHomeView(
                                     0,
                                     reduceMotionEnabled = reduceMotionEnabled,
                                 )
+                            }
+                        },
+                        onAddFeedClick = {
+                            scope.launch {
+                                drawerState.close()
+                                feedManagementActions.onAddFeedClick()
+                            }
+                        },
+                        onFeedSuggestionsClick = {
+                            scope.launch {
+                                drawerState.close()
+                                onFeedSuggestionsClick()
+                            }
+                        },
+                        onImportExportClick = {
+                            scope.launch {
+                                drawerState.close()
+                                onImportExportClick()
                             }
                         },
                     )

@@ -19,6 +19,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -75,10 +76,12 @@ fun AndroidDrawer(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
-                val timelineItem = displayState.navDrawerState.timeline
-                    .filterIsInstance<DrawerItem.Timeline>()
-                    .firstOrNull()
-                    ?: DrawerItem.Timeline(unreadCount = 0)
+                val timelineItem = remember(displayState.navDrawerState.timeline) {
+                    displayState.navDrawerState.timeline
+                        .filterIsInstance<DrawerItem.Timeline>()
+                        .firstOrNull()
+                        ?: DrawerItem.Timeline(unreadCount = 0)
+                }
 
                 DrawerTimelineItem(
                     currentFeedFilter = displayState.currentFeedFilter,
@@ -97,13 +100,16 @@ fun AndroidDrawer(
             }
 
             item {
+                val bookmarksItem = remember(displayState.navDrawerState.bookmarks) {
+                    displayState.navDrawerState.bookmarks
+                        .filterIsInstance<DrawerItem.Bookmarks>()
+                        .firstOrNull()
+                        ?: DrawerItem.Bookmarks(unreadCount = 0)
+                }
                 DrawerBookmarksItem(
                     currentFeedFilter = displayState.currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
-                    drawerItem = displayState.navDrawerState.bookmarks
-                        .filterIsInstance<DrawerItem.Bookmarks>()
-                        .firstOrNull()
-                        ?: DrawerItem.Bookmarks(unreadCount = 0),
+                    drawerItem = bookmarksItem,
                     drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
                 )
             }

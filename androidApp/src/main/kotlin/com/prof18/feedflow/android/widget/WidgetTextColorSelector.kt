@@ -1,6 +1,7 @@
 package com.prof18.feedflow.android.widget
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
@@ -18,12 +19,16 @@ internal fun WidgetTextColorSelector(
 ) {
     val strings = LocalFeedFlowStrings.current
 
+    val options = remember(strings) {
+        WidgetTextColorMode.entries
+            .map { mode -> SettingDropdownOption(mode, mode.toLabel(strings)) }
+            .toImmutableList()
+    }
+
     CompactSettingDropdownRow(
         title = strings.widgetTextColorTitle,
         currentValue = currentMode,
-        options = WidgetTextColorMode.entries
-            .map { mode -> SettingDropdownOption(mode, mode.toLabel(strings)) }
-            .toImmutableList(),
+        options = options,
         onOptionSelected = onModeSelected,
         modifier = modifier,
     )

@@ -81,9 +81,12 @@ internal fun AndroidDrawerFeedSourcesByCategories(
                 style = MaterialTheme.typography.labelLarge,
             )
 
+            val feedSourcesWithoutCategory = remember(navDrawerState.feedSourcesWithoutCategory) {
+                navDrawerState.feedSourcesWithoutCategory
+                    .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
+            }
             AndroidDrawerFeedSourcesList(
-                drawerFeedSources = navDrawerState.feedSourcesWithoutCategory
-                    .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
+                drawerFeedSources = feedSourcesWithoutCategory,
                 currentFeedFilter = currentFeedFilter,
                 drawerItemVisualStyle = drawerItemVisualStyle,
                 onFeedSourceClick = onFeedSourceClick,
@@ -97,10 +100,13 @@ internal fun AndroidDrawerFeedSourcesByCategories(
             for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
                 var isCategoryExpanded by rememberSaveable { mutableStateOf(false) }
 
+                val drawerFeedSourceItems = remember(drawerFeedSources) {
+                    drawerFeedSources
+                        .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
+                }
                 AndroidDrawerFeedSourceByCategoryItem(
                     feedSourceCategoryWrapper = categoryWrapper,
-                    drawerFeedSources = drawerFeedSources
-                        .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
+                    drawerFeedSources = drawerFeedSourceItems,
                     currentFeedFilter = currentFeedFilter,
                     drawerItemVisualStyle = drawerItemVisualStyle,
                     isCategoryExpanded = isCategoryExpanded,

@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -61,11 +62,13 @@ fun AccountsContent(
             style = MaterialTheme.typography.bodyMedium,
         )
 
+        val filteredAccounts = remember(accounts) { accounts.filter { it != SyncAccounts.LOCAL } }
+
         LazyColumn(
             modifier = Modifier
                 .padding(top = Spacing.medium),
         ) {
-            items(accounts.filter { it != SyncAccounts.LOCAL }, key = { it.name }) { account ->
+            items(filteredAccounts, key = { it.name }) { account ->
                 val isEnabled = syncAccount == SyncAccounts.LOCAL || syncAccount == account
                 val onClick: () -> Unit = when (account) {
                     SyncAccounts.DROPBOX -> onDropboxCLick

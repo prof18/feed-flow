@@ -1,6 +1,7 @@
 package com.prof18.feedflow.android.settings.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import com.prof18.feedflow.shared.domain.model.Browser
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
@@ -18,12 +19,16 @@ internal fun BrowserSelector(
 ) {
     val currentBrowserId = browsers.firstOrNull { it.isFavourite }?.id.orEmpty()
 
+    val options = remember(browsers) {
+        browsers
+            .map { browser -> SettingDropdownOption(browser.id, browser.name) }
+            .toImmutableList()
+    }
+
     CompactSettingDropdownRow(
         title = LocalFeedFlowStrings.current.browserSelectionButton,
         currentValue = currentBrowserId,
-        options = browsers
-            .map { browser -> SettingDropdownOption(browser.id, browser.name) }
-            .toImmutableList(),
+        options = options,
         onOptionSelected = { browserId ->
             browsers.firstOrNull { it.id == browserId }?.let(onBrowserSelected)
         },

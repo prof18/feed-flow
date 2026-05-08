@@ -20,7 +20,7 @@ import com.prof18.feedflow.core.model.SwipeActions
 import kotlinx.collections.immutable.ImmutableList
 
 @Stable
-class HomeDisplayState(
+data class HomeDisplayState(
     val feedItems: ImmutableList<FeedItem>,
     val navDrawerState: NavDrawerState,
     val unReadCount: Long,
@@ -45,7 +45,7 @@ sealed class NextFeedDisplayState {
 }
 
 @Stable
-class FeedListActions(
+data class FeedListActions(
     val onClearOldArticlesClicked: () -> Unit,
     val onDeleteDatabaseClick: () -> Unit,
     val refreshData: () -> Unit,
@@ -65,7 +65,7 @@ class FeedListActions(
 )
 
 @Stable
-class FeedManagementActions(
+data class FeedManagementActions(
     val onAddFeedClick: () -> Unit,
     val onFeedFilterSelected: (FeedFilter) -> Unit,
     val onEditFeedClick: (FeedSource) -> Unit,
@@ -81,7 +81,7 @@ class FeedManagementActions(
 )
 
 @Stable
-class ShareBehavior(
+data class ShareBehavior(
     val onShareClick: (FeedItemUrlTitle) -> Unit,
     val shareLinkTitle: String,
     val shareCommentsTitle: String,

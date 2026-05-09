@@ -130,20 +130,44 @@ fun FeedList(
                     FeedLayout.CARD -> MaterialTheme.colorScheme.surfaceContainer
                 }
 
-                val swipeToRight = swipeActions.rightSwipeAction.toSwipeAction(
-                    feedItem = item,
-                    swipeBackgroundColor = swipeBackgroundColor,
-                    onOpenInBrowser = onOpenInBrowser,
-                    onBookmarkClick = onBookmarkClick,
-                    onReadStatusClick = onReadStatusClick,
-                )
-                val swipeToLeft = swipeActions.leftSwipeAction.toSwipeAction(
-                    feedItem = item,
-                    swipeBackgroundColor = swipeBackgroundColor,
-                    onOpenInBrowser = onOpenInBrowser,
-                    onBookmarkClick = onBookmarkClick,
-                    onReadStatusClick = onReadStatusClick,
-                )
+                val swipeToRight = remember(
+                    item,
+                    swipeActions.rightSwipeAction,
+                    swipeBackgroundColor,
+                    onOpenInBrowser,
+                    onBookmarkClick,
+                    onReadStatusClick,
+                ) {
+                    swipeActions.rightSwipeAction.toSwipeAction(
+                        feedItem = item,
+                        swipeBackgroundColor = swipeBackgroundColor,
+                        onOpenInBrowser = onOpenInBrowser,
+                        onBookmarkClick = onBookmarkClick,
+                        onReadStatusClick = onReadStatusClick,
+                    )
+                }
+                val swipeToLeft = remember(
+                    item,
+                    swipeActions.leftSwipeAction,
+                    swipeBackgroundColor,
+                    onOpenInBrowser,
+                    onBookmarkClick,
+                    onReadStatusClick,
+                ) {
+                    swipeActions.leftSwipeAction.toSwipeAction(
+                        feedItem = item,
+                        swipeBackgroundColor = swipeBackgroundColor,
+                        onOpenInBrowser = onOpenInBrowser,
+                        onBookmarkClick = onBookmarkClick,
+                        onReadStatusClick = onReadStatusClick,
+                    )
+                }
+                val startSwipeActions = remember(swipeToRight) {
+                    swipeToRight?.let { listOf(it) }.orEmpty()
+                }
+                val endSwipeActions = remember(swipeToLeft) {
+                    swipeToLeft?.let { listOf(it) }.orEmpty()
+                }
 
                 FeedItemContainer(feedLayout = feedLayout) { itemModifier ->
                     if (swipeToRight == null && swipeToLeft == null) {
@@ -170,8 +194,8 @@ fun FeedList(
                         SwipeableActionsBox(
                             modifier = itemModifier,
                             backgroundUntilSwipeThreshold = swipeBackgroundColor,
-                            startActions = swipeToRight?.let { listOf(it) }.orEmpty(),
-                            endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
+                            startActions = startSwipeActions,
+                            endActions = endSwipeActions,
                         ) {
                             FeedItemView(
                                 feedItem = item,
@@ -310,7 +334,6 @@ fun FeedItemContainer(
     }
 }
 
-@Composable
 private fun SwipeActionType.toSwipeAction(
     feedItem: FeedItem,
     swipeBackgroundColor: Color,

@@ -27,6 +27,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.shared.ui.home.components.FeedItemImage
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun FeedSourceAndUnreadDotRow(
@@ -84,7 +85,7 @@ internal fun FeedSourceAndUnreadDotRow(
                     .padding(bottom = Spacing.small),
                 tint = MaterialTheme.colorScheme.primary,
                 imageVector = Icons.Filled.Bookmark,
-                contentDescription = null,
+                contentDescription = LocalFeedFlowStrings.current.articleBookmarkedContentDescription,
             )
         }
     }

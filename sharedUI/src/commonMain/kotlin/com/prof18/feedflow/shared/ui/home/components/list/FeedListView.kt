@@ -350,7 +350,11 @@ private fun SwipeActionType.toSwipeAction(
                     } else {
                         Icons.Default.MarkEmailRead
                     },
-                    contentDescription = null,
+                    contentDescription = if (feedItem.isRead) {
+                        LocalFeedFlowStrings.current.menuMarkAsUnread
+                    } else {
+                        LocalFeedFlowStrings.current.menuMarkAsRead
+                    },
                     tint = MaterialTheme.colorScheme.primary,
                 )
             },
@@ -372,7 +376,11 @@ private fun SwipeActionType.toSwipeAction(
                     } else {
                         Icons.Default.BookmarkAdd
                     },
-                    contentDescription = null,
+                    contentDescription = if (feedItem.isBookmarked) {
+                        LocalFeedFlowStrings.current.menuRemoveFromBookmark
+                    } else {
+                        LocalFeedFlowStrings.current.menuAddToBookmark
+                    },
                     tint = MaterialTheme.colorScheme.primary,
                 )
             },
@@ -390,7 +398,7 @@ private fun SwipeActionType.toSwipeAction(
                 Icon(
                     modifier = Modifier.padding(Spacing.regular),
                     imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                    contentDescription = null,
+                    contentDescription = LocalFeedFlowStrings.current.readerModeBrowserButtonContentDescription,
                     tint = MaterialTheme.colorScheme.primary,
                 )
             },

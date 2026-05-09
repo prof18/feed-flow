@@ -38,6 +38,7 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.toBitmap
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -104,7 +105,7 @@ internal fun FullScreenImageOverlay(
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = null,
+                contentDescription = LocalFeedFlowStrings.current.closeButtonContentDescription,
                 tint = Color.Black,
                 modifier = Modifier.size(18.dp),
             )
@@ -131,7 +132,7 @@ internal fun FullScreenImageOverlay(
         ) {
             Icon(
                 imageVector = Icons.Default.Share,
-                contentDescription = null,
+                contentDescription = LocalFeedFlowStrings.current.menuShare,
                 tint = Color.Black,
                 modifier = Modifier.size(18.dp),
             )

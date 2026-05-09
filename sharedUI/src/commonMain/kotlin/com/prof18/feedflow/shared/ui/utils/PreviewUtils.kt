@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.shared.ui.style.DarkColorScheme
+import com.prof18.feedflow.shared.ui.style.FeedFlowShapes
 import com.prof18.feedflow.shared.ui.style.LightColorScheme
 import com.prof18.feedflow.shared.ui.style.Spacing
 
@@ -59,6 +60,7 @@ fun PreviewTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        shapes = FeedFlowShapes,
         content = content,
     )
 }

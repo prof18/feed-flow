@@ -8,6 +8,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.prof18.feedflow.shared.ui.style.DarkColorScheme
+import com.prof18.feedflow.shared.ui.style.FeedFlowShapes
 import com.prof18.feedflow.shared.ui.style.LightColorScheme
 import com.prof18.feedflow.shared.ui.style.OledColorScheme
 
@@ -30,6 +31,7 @@ fun FeedFlowTheme(
     }
     MaterialExpressiveTheme(
         colorScheme = colorScheme,
+        shapes = FeedFlowShapes,
         content = content,
     )
 }

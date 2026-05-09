@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
@@ -326,7 +325,7 @@ fun FeedItemContainer(
         FeedLayout.CARD -> {
             Card(
                 modifier = modifier.padding(Spacing.small),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.large,
             ) {
                 content(Modifier)
             }

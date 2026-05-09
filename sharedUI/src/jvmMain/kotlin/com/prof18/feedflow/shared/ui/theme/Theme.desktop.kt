@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.jthemedetecor.OsThemeDetector
 import com.prof18.feedflow.shared.ui.style.DarkColorScheme
+import com.prof18.feedflow.shared.ui.style.FeedFlowShapes
 import com.prof18.feedflow.shared.ui.style.LightColorScheme
 import com.prof18.feedflow.shared.ui.style.OledColorScheme
 import java.util.function.Consumer
@@ -27,6 +28,7 @@ fun FeedFlowTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        shapes = FeedFlowShapes,
         content = content,
     )
 }

@@ -131,25 +131,43 @@ internal fun HomeScreen(
         }
     }
 
-    val homeDisplayState = HomeDisplayState(
-        feedItems = feedState,
-        navDrawerState = navDrawerState,
-        unReadCount = unReadCount,
-        isUnreadCountHidden = isUnreadCountHidden,
-        feedUpdateStatus = loadingState,
-        feedFontSizes = feedFontSizes,
-        currentFeedFilter = currentFeedFilter,
-        swipeActions = swipeActions,
-        feedLayout = feedLayout,
-        nextFeedDisplayState = nextFeedPreviewState.asDisplayState(),
-        feedItemDisplaySettings = feedItemDisplaySettings,
-    )
-
-    val openReaderArticle: (FeedItemUrlInfo) -> Unit = { article ->
-        readerModeViewModel.getReaderModeHtml(article)
+    val homeDisplayState = remember(
+        feedState,
+        navDrawerState,
+        unReadCount,
+        isUnreadCountHidden,
+        loadingState,
+        feedFontSizes,
+        currentFeedFilter,
+        swipeActions,
+        feedLayout,
+        nextFeedPreviewState,
+        feedItemDisplaySettings,
+    ) {
+        HomeDisplayState(
+            feedItems = feedState,
+            navDrawerState = navDrawerState,
+            unReadCount = unReadCount,
+            isUnreadCountHidden = isUnreadCountHidden,
+            feedUpdateStatus = loadingState,
+            feedFontSizes = feedFontSizes,
+            currentFeedFilter = currentFeedFilter,
+            swipeActions = swipeActions,
+            feedLayout = feedLayout,
+            nextFeedDisplayState = nextFeedPreviewState.asDisplayState(),
+            feedItemDisplaySettings = feedItemDisplaySettings,
+        )
     }
-    val resetReaderArticle: () -> Unit = {
-        readerModeViewModel.resetState()
+
+    val openReaderArticle: (FeedItemUrlInfo) -> Unit = remember(readerModeViewModel) {
+        { article ->
+            readerModeViewModel.getReaderModeHtml(article)
+        }
+    }
+    val resetReaderArticle: () -> Unit = remember(readerModeViewModel) {
+        {
+            readerModeViewModel.resetState()
+        }
     }
 
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -163,108 +181,135 @@ internal fun HomeScreen(
         }
     }
 
-    val feedListActions = FeedListActions(
-        onClearOldArticlesClicked = { homeViewModel.deleteOldFeedItems() },
-        onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
-        refreshData = { homeViewModel.refreshFeeds() },
-        requestNewData = { homeViewModel.requestNewFeedsPage() },
-        forceRefreshData = { homeViewModel.forceRefreshFeeds() },
-        markAllRead = { homeViewModel.markAllRead() },
-        onBackToTimelineClick = {
-            resetReaderArticle()
-            homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
-        },
-        markAsReadOnScroll = { lastVisibleIndex -> homeViewModel.markAsReadOnScroll(lastVisibleIndex) },
-        markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
-        openUrl = { feedItemUrlInfo ->
-            handleOpenUrlForDesktop(
-                feedItemUrlInfo = feedItemUrlInfo,
-                browserManager = browserManager,
-                uriHandler = uriHandler,
-                onOpenReaderArticle = if (isMultiPaneLayoutEnabled) {
-                    openReaderArticle
-                } else {
-                    navigateToReaderMode
-                },
-                onBrowserError = {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            strings.browserLaunchError,
-                            duration = SnackbarDuration.Short,
-                        )
+    val feedListActions = remember(
+        homeViewModel,
+        resetReaderArticle,
+        browserManager,
+        uriHandler,
+        isMultiPaneLayoutEnabled,
+        openReaderArticle,
+        navigateToReaderMode,
+        scope,
+        snackbarHostState,
+        strings,
+        listState,
+    ) {
+        FeedListActions(
+            onClearOldArticlesClicked = { homeViewModel.deleteOldFeedItems() },
+            onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
+            refreshData = { homeViewModel.refreshFeeds() },
+            requestNewData = { homeViewModel.requestNewFeedsPage() },
+            forceRefreshData = { homeViewModel.forceRefreshFeeds() },
+            markAllRead = { homeViewModel.markAllRead() },
+            onBackToTimelineClick = {
+                resetReaderArticle()
+                homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
+            },
+            markAsReadOnScroll = { lastVisibleIndex -> homeViewModel.markAsReadOnScroll(lastVisibleIndex) },
+            markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
+            openUrl = { feedItemUrlInfo ->
+                handleOpenUrlForDesktop(
+                    feedItemUrlInfo = feedItemUrlInfo,
+                    browserManager = browserManager,
+                    uriHandler = uriHandler,
+                    onOpenReaderArticle = if (isMultiPaneLayoutEnabled) {
+                        openReaderArticle
+                    } else {
+                        navigateToReaderMode
+                    },
+                    onBrowserError = {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                strings.browserLaunchError,
+                                duration = SnackbarDuration.Short,
+                            )
+                        }
+                    },
+                )
+            },
+            openInBrowser = { feedItemUrlInfo ->
+                runCatching { uriHandler.openUri(feedItemUrlInfo.url.sanitizeUrl()) }
+                    .onFailure {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                strings.browserLaunchError,
+                                duration = SnackbarDuration.Short,
+                            )
+                        }
                     }
-                },
-            )
-        },
-        openInBrowser = { feedItemUrlInfo ->
-            runCatching { uriHandler.openUri(feedItemUrlInfo.url.sanitizeUrl()) }
-                .onFailure {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            strings.browserLaunchError,
-                            duration = SnackbarDuration.Short,
-                        )
-                    }
-                }
-        },
-        updateBookmarkStatus = { feedItemId, isBookmarked ->
-            homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
-        },
-        updateReadStatus = { feedItemId, isRead -> homeViewModel.updateReadStatus(feedItemId, isRead) },
-        markAllAboveAsRead = { feedItemId -> homeViewModel.markAllAboveAsRead(feedItemId) },
-        markAllBelowAsRead = { feedItemId -> homeViewModel.markAllBelowAsRead(feedItemId) },
-        onNavigateNext = {
-            scope.launch { listState.scrollToItem(0) }
-            homeViewModel.onNavigateToNextFeed()
-        },
-    )
+            },
+            updateBookmarkStatus = { feedItemId, isBookmarked ->
+                homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+            },
+            updateReadStatus = { feedItemId, isRead -> homeViewModel.updateReadStatus(feedItemId, isRead) },
+            markAllAboveAsRead = { feedItemId -> homeViewModel.markAllAboveAsRead(feedItemId) },
+            markAllBelowAsRead = { feedItemId -> homeViewModel.markAllBelowAsRead(feedItemId) },
+            onNavigateNext = {
+                scope.launch { listState.scrollToItem(0) }
+                homeViewModel.onNavigateToNextFeed()
+            },
+        )
+    }
 
-    val feedManagementActions = FeedManagementActions(
-        onAddFeedClick = onAddFeedClick,
-        onFeedFilterSelected = { feedFilter ->
-            resetReaderArticle()
-            homeViewModel.onFeedFilterSelected(feedFilter)
-        },
-        onEditFeedClick = onEditFeedClick,
-        onDeleteFeedSourceClick = { feedSource -> homeViewModel.deleteFeedSource(feedSource) },
-        onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
-        onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
-        validateCategoryName = homeViewModel::validateCategoryName,
-        onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
-        onChangeFeedCategoryClick = { feedSource ->
-            changeFeedCategoryViewModel.loadFeedSource(feedSource)
-            showChangeCategorySheet = true
-        },
-        onOpenWebsite = { url ->
-            runCatching { uriHandler.openUri(url.sanitizeUrl()) }
-                .onFailure {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            strings.browserLaunchError,
-                            duration = SnackbarDuration.Short,
-                        )
+    val feedManagementActions = remember(
+        homeViewModel,
+        resetReaderArticle,
+        onAddFeedClick,
+        onEditFeedClick,
+        changeFeedCategoryViewModel,
+        uriHandler,
+        scope,
+        snackbarHostState,
+        strings,
+    ) {
+        FeedManagementActions(
+            onAddFeedClick = onAddFeedClick,
+            onFeedFilterSelected = { feedFilter ->
+                resetReaderArticle()
+                homeViewModel.onFeedFilterSelected(feedFilter)
+            },
+            onEditFeedClick = onEditFeedClick,
+            onDeleteFeedSourceClick = { feedSource -> homeViewModel.deleteFeedSource(feedSource) },
+            onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
+            onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
+            validateCategoryName = homeViewModel::validateCategoryName,
+            onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
+            onChangeFeedCategoryClick = { feedSource ->
+                changeFeedCategoryViewModel.loadFeedSource(feedSource)
+                showChangeCategorySheet = true
+            },
+            onOpenWebsite = { url ->
+                runCatching { uriHandler.openUri(url.sanitizeUrl()) }
+                    .onFailure {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                strings.browserLaunchError,
+                                duration = SnackbarDuration.Short,
+                            )
+                        }
                     }
-                }
-        },
-        onMoveFeedSourcesToCategory = { feedSources, category ->
-            changeFeedCategoryViewModel.moveFeedSourcesToCategory(feedSources, category)
-        },
-        onDeleteAllFeedsInCategoryClick = { feedSources ->
-            homeViewModel.deleteAllFeedsInCategory(feedSources)
-        },
-    )
+            },
+            onMoveFeedSourcesToCategory = { feedSources, category ->
+                changeFeedCategoryViewModel.moveFeedSourcesToCategory(feedSources, category)
+            },
+            onDeleteAllFeedsInCategoryClick = { feedSources ->
+                homeViewModel.deleteAllFeedsInCategory(feedSources)
+            },
+        )
+    }
 
-    val linkCopiedSuccess = LocalFeedFlowStrings.current.linkCopiedSuccess
-    val shareBehavior = ShareBehavior(
-        onShareClick = { urlTitle ->
-            copyToClipboard(urlTitle.url)
-            scope.launch {
-                snackbarHostState.showSnackbar(message = linkCopiedSuccess)
-            }
-        },
-        shareLinkTitle = LocalFeedFlowStrings.current.menuCopyLink,
-        shareCommentsTitle = LocalFeedFlowStrings.current.menuCopyLinkComments,
-    )
+    val shareBehavior = remember(scope, snackbarHostState, strings) {
+        ShareBehavior(
+            onShareClick = { urlTitle ->
+                copyToClipboard(urlTitle.url)
+                scope.launch {
+                    snackbarHostState.showSnackbar(message = strings.linkCopiedSuccess)
+                }
+            },
+            shareLinkTitle = strings.menuCopyLink,
+            shareCommentsTitle = strings.menuCopyLinkComments,
+        )
+    }
     if (isMultiPaneLayoutEnabled) {
         DesktopHomeScaffold(
             listState = listState,

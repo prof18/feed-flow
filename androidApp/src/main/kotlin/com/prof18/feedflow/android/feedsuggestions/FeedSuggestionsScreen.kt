@@ -9,9 +9,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsContent
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -23,10 +23,10 @@ fun FeedSuggestionsScreen(
     modifier: Modifier = Modifier,
     viewModel: FeedSuggestionsViewModel = koinViewModel(),
 ) {
-    val categories by viewModel.suggestedCategoriesState.collectAsState()
-    val selectedCategoryId by viewModel.selectedCategoryIdState.collectAsState()
-    val feedStatesMap by viewModel.feedStatesMapState.collectAsState()
-    val isLoading by viewModel.isLoadingState.collectAsState()
+    val categories by viewModel.suggestedCategoriesState.collectAsStateWithLifecycle()
+    val selectedCategoryId by viewModel.selectedCategoryIdState.collectAsStateWithLifecycle()
+    val feedStatesMap by viewModel.feedStatesMapState.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoadingState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {

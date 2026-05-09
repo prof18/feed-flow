@@ -8,11 +8,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.core.model.GoogleDriveSynMessages
@@ -51,7 +51,7 @@ class GoogleDriveSyncActivity : BaseThemeActivity() {
 
     @Composable
     override fun Content() {
-        val uiState by viewModel.googleDriveConnectionUiState.collectAsState()
+        val uiState by viewModel.googleDriveConnectionUiState.collectAsStateWithLifecycle()
         val snackbarHostState = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()
         val strings = LocalFeedFlowStrings.current

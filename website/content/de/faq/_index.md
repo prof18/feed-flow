@@ -1,8 +1,8 @@
 ---
 # translatable
-title: "Frequently Asked Questions | FeedFlow"
-description: "Antworten zu häufigen Fragen über FeedFlow RSS Reader — Synchronisation, Lesemodus, OPML-Import und mehr."
-heading: "Frequently asked questions"
+title: "Häufig gestellte Fragen | FeedFlow"
+description: "Antworten auf häufige Fragen zum FeedFlow RSS-Reader — Synchronisation, Lesemodus, OPML-Import und mehr."
+heading: "Häufig gestellte Fragen"
 
 # do not translate
 type: "faq"

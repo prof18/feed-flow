@@ -296,7 +296,11 @@ fun FeedItemContainer(
     content: @Composable () -> Unit,
 ) {
     when (feedLayout) {
-        FeedLayout.LIST -> content()
+        FeedLayout.LIST -> {
+            Box(modifier = modifier) {
+                content()
+            }
+        }
         FeedLayout.CARD -> {
             Card(
                 modifier = modifier.padding(Spacing.small),

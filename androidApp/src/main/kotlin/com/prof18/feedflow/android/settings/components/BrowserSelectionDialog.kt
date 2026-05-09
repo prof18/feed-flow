@@ -2,6 +2,7 @@ package com.prof18.feedflow.android.settings.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.Browser
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
@@ -16,6 +17,7 @@ import kotlinx.collections.immutable.toImmutableList
 internal fun BrowserSelector(
     browsers: ImmutableList<Browser>,
     onBrowserSelected: (Browser) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val currentBrowserId = browsers.firstOrNull { it.isFavourite }?.id.orEmpty()
 
@@ -26,6 +28,7 @@ internal fun BrowserSelector(
     }
 
     CompactSettingDropdownRow(
+        modifier = modifier,
         title = LocalFeedFlowStrings.current.browserSelectionButton,
         currentValue = currentBrowserId,
         options = options,

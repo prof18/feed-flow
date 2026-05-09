@@ -290,6 +290,7 @@ private fun OverflowToolbarLayout(
                                 Icon(
                                     imageVector = action.icon,
                                     contentDescription = action.label,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                 )
                             }
                         }
@@ -309,6 +310,7 @@ private fun OverflowToolbarLayout(
                                 Icon(
                                     imageVector = action.icon,
                                     contentDescription = action.label,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                 )
                             }
                         }
@@ -336,6 +338,7 @@ private fun OverflowToolbarLayout(
                                                 Icon(
                                                     imageVector = action.icon,
                                                     contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                                 )
                                             },
                                         )

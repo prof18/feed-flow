@@ -156,6 +156,7 @@ private fun AccountsItem(
         Icon(
             icon,
             contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
             text = title,

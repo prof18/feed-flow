@@ -560,6 +560,7 @@ private fun ReaderModeToolbar(
                                 Icon(
                                     imageVector = hammerIcon,
                                     contentDescription = LocalFeedFlowStrings.current.readerModeArchiveButton,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                 )
                             }
                         }

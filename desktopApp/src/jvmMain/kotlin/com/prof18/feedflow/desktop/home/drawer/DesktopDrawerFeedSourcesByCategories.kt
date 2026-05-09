@@ -95,8 +95,10 @@ internal fun DesktopDrawerFeedSourcesByCategories(
     var showDeleteAllUncategorizedDialog by remember { mutableStateOf(false) }
     var showAddFeedsMenu by remember { mutableStateOf(false) }
     var addMenuButtonCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
-    val uncategorizedFeedSources = navDrawerState.feedSourcesWithoutCategory
-        .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
+    val uncategorizedFeedSources = remember(navDrawerState.feedSourcesWithoutCategory) {
+        navDrawerState.feedSourcesWithoutCategory
+            .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
+    }
     val showStandaloneUncategorizedMenu = uncategorizedFeedSources.isNotEmpty() &&
         navDrawerState.feedSourcesByCategory.isEmpty()
 

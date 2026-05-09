@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.ui.feed
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.LinkOpeningPreference
@@ -22,15 +23,18 @@ fun LinkOpeningPreferenceSelector(
     modifier: Modifier = Modifier,
 ) {
     val strings = LocalFeedFlowStrings.current
+    val options = remember(strings) {
+        LinkOpeningPreference.entries
+            .map { preference ->
+                SettingDropdownOption(preference, preference.toLabel(strings))
+            }
+            .toImmutableList()
+    }
 
     CompactSettingDropdownRow(
         title = strings.linkOpeningPreference,
         currentValue = currentPreference,
-        options = LinkOpeningPreference.entries
-            .map { preference ->
-                SettingDropdownOption(preference, preference.toLabel(strings))
-            }
-            .toImmutableList(),
+        options = options,
         onOptionSelected = onPreferenceSelected,
         contentPadding = PaddingValues(0.dp),
         modifier = modifier,

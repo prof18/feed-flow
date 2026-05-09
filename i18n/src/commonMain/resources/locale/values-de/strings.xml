@@ -113,7 +113,7 @@
     <string name="feed_name">Name des Feeds</string>
     <string name="feed_edited_message">Feed %s aktualisiert</string>
     <string name="settings_feed_list_title">Feed-Liste</string>
-    <string name="settings_feed_list_scale_title">Textgröße</string>
+    <string name="settings_feed_list_scale_title">Titel-Größe</string>
     <string name="settings_font_scale_title_example">Titel des Artikels</string>
     <string name="settings_font_scale_subtitle_example">Artikelbeschreibung</string>
     <string name="settings_font_scale_feed_source_example">Name des Feeds</string>
@@ -170,7 +170,7 @@
     <string name="settings_sync_period_two_hours">Alle 2 Stunden</string>
     <string name="settings_sync_period_twelve_hours">Alle 12 Stunden</string>
     <string name="widget_check_feed_sources">Stelle sicher, dass Feed-Quellen hinzugefügt wurden</string>
-    <string name="widget_latest_items">Aktuellesten</string>
+    <string name="widget_latest_items">Aktuellste</string>
     <string name="widget_configuration_title">Widget-Konfiguration</string>
     <string name="widget_configuration_confirm">Widget hinzufügen</string>
     <string name="file_menu">Datei</string>
@@ -215,8 +215,8 @@
     <string name="delete_feed_confirmation_title">Feed löschen?</string>
     <string name="delete_feed_confirmation_message">Möchtest du diesen Feed wirklich löschen? Das kann nicht mehr rückgängig gemacht werden.</string>
     <string name="delete_feed_button">Feed löschen</string>
-    <string name="feed_fetch_failed_tooltip">Aktualisierung des Feeds ist fehlgeschlagen. Bitte überprüfe, ob die Webseite funktioniert</string>
-    <string name="feed_fetch_failed_tooltip_short">Aktualisierung des Feeds ist fehlgeschlagen</string>
+    <string name="feed_fetch_failed_tooltip">Feed-Aktualisierung fehlgeschlagen. Bitte überprüfe, ob die Webseite funktioniert</string>
+    <string name="feed_fetch_failed_tooltip_short">Feed-Aktualisierung fehlgeschlagen</string>
     <string name="blocked_words_description">Artikel mit diesen Wörtern im Titel oder in der Beschreibung werden ausgeblendet.</string>
     <string name="support_the_project">Das Projekt unterstützen</string>
     <string name="settings_blocked_words">Blockierte Wörter</string>
@@ -356,7 +356,7 @@
     <string name="settings_background_sync_wifi_only">Hintergrundsynchronisierung nur bei WLAN</string>
     <string name="settings_background_sync_charging_only">Hintergrundsynchronisierung nur während des Ladens</string>
     <string name="widget_configuration_description">Updates für Widgets befolgen die Einstellungen für Hintergrundsynchronisierung unter „Synchronisierung &amp; Speicherung“.</string>
-    <string name="widget_background_sync_disabled_warning">Die Hintergrundsynchronisierung ist derzeit deaktiviert, daher wird das Widget nicht automatisch aktualisiert.</string>
+    <string name="widget_background_sync_disabled_warning">Hintergrundsynchronisierung ist derzeit deaktiviert, daher wird das Widget nicht automatisch aktualisiert.</string>
     <string name="settings_swipe_action_open_in_browser">Im bevorzugten Browser öffnen</string>
     <string name="settings_notifications_permission_description">FeedFlow benötigt deine Zustimmung, um beim Eintreffen neuer Artikel in deinen Feeds Benachrichtigungen zu senden.</string>
     <string name="settings_notifications_open_settings_button">Einstellungen öffnen</string>
@@ -379,4 +379,5 @@
     <string name="about_the_app">FeedFlow ist ein minimalistischer RSS-Reader für eine übersichtliche, chronologische Zeitleiste – keine Algorithmen, kein Durcheinander. Öffne Artikel in deinem bevorzugten Browser oder lies sie ablenkungsfrei im Lesemodus. Lade ganze Artikel vorab und speichere sie im Cache, um sie überall offline lesen zu können.\nSynchronisiere deine Feeds, Lesestatus und Lesezeichen über Android, iOS, macOS, Windows und Linux hinweg mit iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin oder BazQux. Organisiere Feeds in Kategorien, blockiere störende Schlüsselwörter und importiere oder exportiere alles mit OPML.</string>
     <string name="settings_appearance">Darstellung</string>
     <string name="category_name_already_exists">Eine Kategorie dieses Namens existiert bereits</string>
+    <string name="settings_hide_unread_count">Ungelesen-Zähler ausblenden</string>
 </resources>

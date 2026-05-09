@@ -160,14 +160,10 @@ internal fun HomeScreen(
     }
 
     val openReaderArticle: (FeedItemUrlInfo) -> Unit = remember(readerModeViewModel) {
-        { article ->
-            readerModeViewModel.getReaderModeHtml(article)
-        }
+        readerModeViewModel::getReaderModeHtml
     }
     val resetReaderArticle: () -> Unit = remember(readerModeViewModel) {
-        {
-            readerModeViewModel.resetState()
-        }
+        readerModeViewModel::resetState
     }
 
     val reduceMotionEnabled = LocalReduceMotion.current

@@ -58,13 +58,16 @@ fun DesktopPopupMenu(
     menuPositionInWindow: Offset?,
     menuEntries: ImmutableList<DesktopPopupMenuEntry>,
     closeMenu: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     if (!showMenu || menuPositionInWindow == null) return
 
     val menuShape = MaterialTheme.shapes.medium
     val menuBackgroundColor = MaterialTheme.colorScheme.surface
     val menuBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.65f)
-    val actionEntries = menuEntries.filterIsInstance<DesktopPopupMenuEntry.Action>()
+    val actionEntries = remember(menuEntries) {
+        menuEntries.filterIsInstance<DesktopPopupMenuEntry.Action>()
+    }
     val focusRequesters = remember(actionEntries.size) {
         List(actionEntries.size) { FocusRequester() }
     }
@@ -81,7 +84,7 @@ fun DesktopPopupMenu(
         ),
     ) {
         Surface(
-            modifier = Modifier.widthIn(min = 240.dp, max = 280.dp),
+            modifier = modifier.widthIn(min = 240.dp, max = 280.dp),
             shape = menuShape,
             color = menuBackgroundColor,
             shadowElevation = 16.dp,

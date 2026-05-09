@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -12,9 +13,11 @@ fun DeleteAllFeedsInCategoryDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
     onDeleteAllFeeds: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     if (showDialog) {
         AlertDialog(
+            modifier = modifier,
             onDismissRequest = onDismiss,
             title = { Text(LocalFeedFlowStrings.current.deleteAllFeedsConfirmationTitle) },
             text = { Text(LocalFeedFlowStrings.current.deleteAllFeedsConfirmationMessage) },

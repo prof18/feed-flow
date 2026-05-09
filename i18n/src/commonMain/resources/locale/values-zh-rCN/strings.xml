@@ -380,4 +380,6 @@
     <string name="settings_appearance">外观</string>
     <string name="category_name_already_exists">具有此名称的类别已存在</string>
     <string name="settings_hide_unread_count">隐藏未读计数</string>
+    <string name="close_button_content_description">关闭</string>
+    <string name="article_bookmarked_content_description">已收藏</string>
 </resources>

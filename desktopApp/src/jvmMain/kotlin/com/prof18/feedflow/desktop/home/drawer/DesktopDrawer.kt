@@ -109,10 +109,12 @@ fun DesktopDrawer(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
-                val timelineItem = displayState.navDrawerState.timeline
-                    .filterIsInstance<DrawerItem.Timeline>()
-                    .firstOrNull()
-                    ?: DrawerItem.Timeline(unreadCount = 0)
+                val timelineItem = remember(displayState.navDrawerState.timeline) {
+                    displayState.navDrawerState.timeline
+                        .filterIsInstance<DrawerItem.Timeline>()
+                        .firstOrNull()
+                        ?: DrawerItem.Timeline(unreadCount = 0)
+                }
 
                 DrawerTimelineItem(
                     currentFeedFilter = displayState.currentFeedFilter,
@@ -131,13 +133,16 @@ fun DesktopDrawer(
             }
 
             item {
+                val bookmarksItem = remember(displayState.navDrawerState.bookmarks) {
+                    displayState.navDrawerState.bookmarks
+                        .filterIsInstance<DrawerItem.Bookmarks>()
+                        .firstOrNull()
+                        ?: DrawerItem.Bookmarks(unreadCount = 0)
+                }
                 DrawerBookmarksItem(
                     currentFeedFilter = displayState.currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelectedWithClear,
-                    drawerItem = displayState.navDrawerState.bookmarks
-                        .filterIsInstance<DrawerItem.Bookmarks>()
-                        .firstOrNull()
-                        ?: DrawerItem.Bookmarks(unreadCount = 0),
+                    drawerItem = bookmarksItem,
                     drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
                 )
             }
@@ -157,9 +162,12 @@ fun DesktopDrawer(
                             style = MaterialTheme.typography.labelLarge,
                         )
 
+                        val pinnedFeedSourceItems = remember(displayState.navDrawerState.pinnedFeedSources) {
+                            displayState.navDrawerState.pinnedFeedSources
+                                .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
+                        }
                         DesktopDrawerFeedSourcesList(
-                            drawerFeedSources = displayState.navDrawerState.pinnedFeedSources
-                                .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
+                            drawerFeedSources = pinnedFeedSourceItems,
                             currentFeedFilter = displayState.currentFeedFilter,
                             drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
                             selectedFeedSourceIds = selectedFeedSourceIds,

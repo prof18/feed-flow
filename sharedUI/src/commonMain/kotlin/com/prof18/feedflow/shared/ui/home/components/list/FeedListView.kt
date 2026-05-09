@@ -145,9 +145,10 @@ fun FeedList(
                     onReadStatusClick = onReadStatusClick,
                 )
 
-                FeedItemContainer(feedLayout = feedLayout) {
+                FeedItemContainer(feedLayout = feedLayout) { itemModifier ->
                     if (swipeToRight == null && swipeToLeft == null) {
                         FeedItemView(
+                            modifier = itemModifier,
                             feedItem = item,
                             shareMenuLabel = shareMenuLabel,
                             shareCommentsMenuLabel = shareCommentsMenuLabel,
@@ -167,6 +168,7 @@ fun FeedList(
                         )
                     } else {
                         SwipeableActionsBox(
+                            modifier = itemModifier,
                             backgroundUntilSwipeThreshold = swipeBackgroundColor,
                             startActions = swipeToRight?.let { listOf(it) }.orEmpty(),
                             endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
@@ -293,20 +295,16 @@ private fun NavigateNextButton(
 fun FeedItemContainer(
     feedLayout: FeedLayout,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    content: @Composable (Modifier) -> Unit,
 ) {
     when (feedLayout) {
-        FeedLayout.LIST -> {
-            Box(modifier = modifier) {
-                content()
-            }
-        }
+        FeedLayout.LIST -> content(modifier)
         FeedLayout.CARD -> {
             Card(
                 modifier = modifier.padding(Spacing.small),
                 shape = RoundedCornerShape(16.dp),
             ) {
-                content()
+                content(Modifier)
             }
         }
     }

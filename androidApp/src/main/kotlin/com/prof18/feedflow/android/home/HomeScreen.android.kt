@@ -123,74 +123,107 @@ internal fun HomeScreen(
         }
     }
 
-    val homeDisplayState = HomeDisplayState(
-        feedItems = feedState,
-        navDrawerState = navDrawerState,
-        unReadCount = unReadCount,
-        isUnreadCountHidden = isUnreadCountHidden,
-        feedUpdateStatus = loadingState,
-        feedFontSizes = feedFontSizes,
-        currentFeedFilter = currentFeedFilter,
-        swipeActions = swipeActions,
-        feedLayout = feedLayout,
-        isSyncUploadRequired = isSyncUploadRequired,
-        nextFeedDisplayState = nextFeedPreviewState.asDisplayState(),
-        feedItemDisplaySettings = feedItemDisplaySettings,
-    )
+    val homeDisplayState = remember(
+        feedState,
+        navDrawerState,
+        unReadCount,
+        isUnreadCountHidden,
+        loadingState,
+        feedFontSizes,
+        currentFeedFilter,
+        swipeActions,
+        feedLayout,
+        isSyncUploadRequired,
+        nextFeedPreviewState,
+        feedItemDisplaySettings,
+    ) {
+        HomeDisplayState(
+            feedItems = feedState,
+            navDrawerState = navDrawerState,
+            unReadCount = unReadCount,
+            isUnreadCountHidden = isUnreadCountHidden,
+            feedUpdateStatus = loadingState,
+            feedFontSizes = feedFontSizes,
+            currentFeedFilter = currentFeedFilter,
+            swipeActions = swipeActions,
+            feedLayout = feedLayout,
+            isSyncUploadRequired = isSyncUploadRequired,
+            nextFeedDisplayState = nextFeedPreviewState.asDisplayState(),
+            feedItemDisplaySettings = feedItemDisplaySettings,
+        )
+    }
 
-    val feedListActions = FeedListActions(
-        onClearOldArticlesClicked = { homeViewModel.deleteOldFeedItems() },
-        onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
-        refreshData = { homeViewModel.getNewFeeds() },
-        requestNewData = { homeViewModel.requestNewFeedsPage() },
-        forceRefreshData = { homeViewModel.forceFeedRefresh() },
-        markAllRead = { homeViewModel.markAllRead() },
-        onBackToTimelineClick = { homeViewModel.onFeedFilterSelected(FeedFilter.Timeline) },
-        markAsReadOnScroll = { lastVisibleIndex -> homeViewModel.markAsReadOnScroll(lastVisibleIndex) },
-        markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
-        openUrl = { urlInfo ->
-            openUrl(
-                urlInfo = urlInfo,
-                navigateToReaderMode = navigateToReaderMode,
-                browserManager = browserManager,
-                context = context,
-            )
-        },
-        openInBrowser = { urlInfo -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context) },
-        updateBookmarkStatus = { feedItemId, isBookmarked ->
-            homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
-        },
-        updateReadStatus = { feedItemId, isRead -> homeViewModel.updateReadStatus(feedItemId, isRead) },
-        markAllAboveAsRead = { feedItemId -> homeViewModel.markAllAboveAsRead(feedItemId) },
-        markAllBelowAsRead = { feedItemId -> homeViewModel.markAllBelowAsRead(feedItemId) },
-    )
+    val feedListActions = remember(
+        homeViewModel,
+        navigateToReaderMode,
+        browserManager,
+        context,
+    ) {
+        FeedListActions(
+            onClearOldArticlesClicked = { homeViewModel.deleteOldFeedItems() },
+            onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
+            refreshData = { homeViewModel.getNewFeeds() },
+            requestNewData = { homeViewModel.requestNewFeedsPage() },
+            forceRefreshData = { homeViewModel.forceFeedRefresh() },
+            markAllRead = { homeViewModel.markAllRead() },
+            onBackToTimelineClick = { homeViewModel.onFeedFilterSelected(FeedFilter.Timeline) },
+            markAsReadOnScroll = { lastVisibleIndex -> homeViewModel.markAsReadOnScroll(lastVisibleIndex) },
+            markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
+            openUrl = { urlInfo ->
+                openUrl(
+                    urlInfo = urlInfo,
+                    navigateToReaderMode = navigateToReaderMode,
+                    browserManager = browserManager,
+                    context = context,
+                )
+            },
+            openInBrowser = { urlInfo -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context) },
+            updateBookmarkStatus = { feedItemId, isBookmarked ->
+                homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+            },
+            updateReadStatus = { feedItemId, isRead -> homeViewModel.updateReadStatus(feedItemId, isRead) },
+            markAllAboveAsRead = { feedItemId -> homeViewModel.markAllAboveAsRead(feedItemId) },
+            markAllBelowAsRead = { feedItemId -> homeViewModel.markAllBelowAsRead(feedItemId) },
+        )
+    }
 
-    val feedManagementActions = FeedManagementActions(
-        onAddFeedClick = onAddFeedClick,
-        onFeedFilterSelected = { feedFilter -> homeViewModel.onFeedFilterSelected(feedFilter) },
-        onEditFeedClick = onEditFeedClick,
-        onDeleteFeedSourceClick = { feedSource -> homeViewModel.deleteFeedSource(feedSource) },
-        onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
-        onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
-        validateCategoryName = homeViewModel::validateCategoryName,
-        onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
-        onChangeFeedCategoryClick = { feedSource ->
-            changeFeedCategoryViewModel.loadFeedSource(feedSource)
-            showChangeCategorySheet = true
-        },
-        onOpenWebsite = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
-    )
+    val feedManagementActions = remember(
+        homeViewModel,
+        changeFeedCategoryViewModel,
+        onAddFeedClick,
+        onEditFeedClick,
+        browserManager,
+        context,
+    ) {
+        FeedManagementActions(
+            onAddFeedClick = onAddFeedClick,
+            onFeedFilterSelected = { feedFilter -> homeViewModel.onFeedFilterSelected(feedFilter) },
+            onEditFeedClick = onEditFeedClick,
+            onDeleteFeedSourceClick = { feedSource -> homeViewModel.deleteFeedSource(feedSource) },
+            onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
+            onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
+            validateCategoryName = homeViewModel::validateCategoryName,
+            onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
+            onChangeFeedCategoryClick = { feedSource ->
+                changeFeedCategoryViewModel.loadFeedSource(feedSource)
+                showChangeCategorySheet = true
+            },
+            onOpenWebsite = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
+        )
+    }
 
-    val shareBehavior = ShareBehavior(
-        onShareClick = { titleAndUrl ->
-            context.openShareSheet(
-                title = titleAndUrl.title,
-                url = titleAndUrl.url,
-            )
-        },
-        shareLinkTitle = strings.menuShare,
-        shareCommentsTitle = strings.menuShareComments,
-    )
+    val shareBehavior = remember(context, strings) {
+        ShareBehavior(
+            onShareClick = { titleAndUrl ->
+                context.openShareSheet(
+                    title = titleAndUrl.title,
+                    url = titleAndUrl.url,
+                )
+            },
+            shareLinkTitle = strings.menuShare,
+            shareCommentsTitle = strings.menuShareComments,
+        )
+    }
 
     val useDockedDrawer = currentWindowAdaptiveInfo()
         .windowSizeClass

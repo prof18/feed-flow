@@ -23,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.FeedSourceSettings
@@ -217,7 +216,7 @@ fun EditFeedContent(
             ) {
                 if (showLoading) {
                     CircularProgressIndicator(
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(ButtonDefaults.IconSize),
                     )
                 } else {

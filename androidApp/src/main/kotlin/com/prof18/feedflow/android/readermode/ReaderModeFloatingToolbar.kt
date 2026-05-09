@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -76,6 +77,11 @@ fun ReaderModeFloatingToolbar(
 
     val url = readerModeState.getUrl
     val id = readerModeState.getId
+    val latestOpenInBrowser by rememberUpdatedState(openInBrowser)
+    val latestOnShareClick by rememberUpdatedState(onShareClick)
+    val latestOnBookmarkClick by rememberUpdatedState(onBookmarkClick)
+    val latestOnArchiveClick by rememberUpdatedState(onArchiveClick)
+    val latestOnCommentsClick by rememberUpdatedState(onCommentsClick)
     var isBookmarked by remember(readerModeState) {
         mutableStateOf(readerModeState.getIsBookmarked)
     }
@@ -84,81 +90,88 @@ fun ReaderModeFloatingToolbar(
 
     // Build action lists regardless of isContentVisible so AnimatedVisibility can animate exit
     // Order: Browser, Share | < > | Bookmark, Comments, Archive, Font Size
-    val leadingActions = buildList {
-        if (readerModeState !is ReaderModeState.Loading && url != null) {
-            add(
-                ToolbarAction(
-                    icon = Icons.Default.Language,
-                    label = strings.readerModeBrowserButtonContentDescription,
-                    onClick = { openInBrowser(url) },
-                ),
-            )
-            add(
-                ToolbarAction(
-                    icon = Icons.Default.Share,
-                    label = strings.menuShare,
-                    onClick = {
-                        val title = (readerModeState as? ReaderModeState.Success)?.readerModeData?.title
-                        onShareClick(url, title)
-                    },
-                ),
-            )
-        }
-    }.toImmutableList()
-
-    val trailingActions = buildList {
-        if (id != null) {
-            val bookmarkLabel = if (isBookmarked) {
-                strings.menuRemoveFromBookmark
-            } else {
-                strings.menuAddToBookmark
-            }
-            val bookmarkIcon = if (isBookmarked) {
-                Icons.Default.BookmarkRemove
-            } else {
-                Icons.Default.BookmarkAdd
-            }
-            add(
-                ToolbarAction(
-                    icon = bookmarkIcon,
-                    label = bookmarkLabel,
-                    onClick = {
-                        isBookmarked = !isBookmarked
-                        onBookmarkClick(FeedItemId(id), isBookmarked)
-                    },
-                ),
-            )
-        }
-        if (readerModeState is ReaderModeState.Success) {
-            readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
+    val leadingActions = remember(readerModeState, strings, url) {
+        buildList {
+            if (readerModeState !is ReaderModeState.Loading && url != null) {
                 add(
                     ToolbarAction(
-                        icon = Icons.AutoMirrored.Filled.Comment,
-                        label = strings.readerModeCommentsButtonContentDescription,
-                        onClick = { onCommentsClick(commentsUrl) },
+                        icon = Icons.Default.Language,
+                        label = strings.readerModeBrowserButtonContentDescription,
+                        onClick = { latestOpenInBrowser(url) },
+                    ),
+                )
+                add(
+                    ToolbarAction(
+                        icon = Icons.Default.Share,
+                        label = strings.menuShare,
+                        onClick = {
+                            val title = (readerModeState as? ReaderModeState.Success)?.readerModeData?.title
+                            latestOnShareClick(url, title)
+                        },
                     ),
                 )
             }
         }
-        if (url != null) {
-            add(
-                ToolbarAction(
-                    icon = hammerIcon,
-                    label = strings.readerModeArchiveButton,
-                    onClick = { onArchiveClick(url) },
-                ),
-            )
+            .toImmutableList()
+    }
+
+    val trailingActions = remember(readerModeState, strings, url, id, isBookmarked) {
+        buildList {
+            if (id != null) {
+                val bookmarkLabel = if (isBookmarked) {
+                    strings.menuRemoveFromBookmark
+                } else {
+                    strings.menuAddToBookmark
+                }
+                val bookmarkIcon = if (isBookmarked) {
+                    Icons.Default.BookmarkRemove
+                } else {
+                    Icons.Default.BookmarkAdd
+                }
+                add(
+                    ToolbarAction(
+                        icon = bookmarkIcon,
+                        label = bookmarkLabel,
+                        onClick = {
+                            val newIsBookmarked = !isBookmarked
+                            isBookmarked = newIsBookmarked
+                            latestOnBookmarkClick(FeedItemId(id), newIsBookmarked)
+                        },
+                    ),
+                )
+            }
+            if (readerModeState is ReaderModeState.Success) {
+                readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
+                    add(
+                        ToolbarAction(
+                            icon = Icons.AutoMirrored.Filled.Comment,
+                            label = strings.readerModeCommentsButtonContentDescription,
+                            onClick = { latestOnCommentsClick(commentsUrl) },
+                        ),
+                    )
+                }
+            }
+            if (url != null) {
+                add(
+                    ToolbarAction(
+                        icon = hammerIcon,
+                        label = strings.readerModeArchiveButton,
+                        onClick = { latestOnArchiveClick(url) },
+                    ),
+                )
+            }
+            if (readerModeState is ReaderModeState.Success) {
+                add(
+                    ToolbarAction(
+                        icon = Icons.Outlined.TextFields,
+                        label = strings.readerModeFontSize,
+                        onClick = { showFontSizeMenu = true },
+                    ),
+                )
+            }
         }
-        if (readerModeState is ReaderModeState.Success) {
-            add(
-                ToolbarAction(
-                    icon = Icons.Outlined.TextFields,
-                    label = strings.readerModeFontSize,
-                    onClick = { showFontSizeMenu = true },
-                ),
-            )
-        }
-    }.toImmutableList()
+            .toImmutableList()
+    }
 
     Surface(
         modifier = modifier,

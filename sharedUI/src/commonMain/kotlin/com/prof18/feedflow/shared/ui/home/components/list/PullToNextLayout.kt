@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.shared.ui.style.MotionDurations
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 
@@ -98,7 +99,7 @@ fun PullToNextLayout(
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     popScale.animateTo(
                         targetValue = 1.3f,
-                        animationSpec = tween(durationMillis = 100),
+                        animationSpec = tween(durationMillis = MotionDurations.Fast),
                     )
 
                     onNavigateNext()

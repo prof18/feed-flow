@@ -26,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -225,7 +224,6 @@ class MainActivity : BaseThemeActivity() {
         readerModeViewModel: ReaderModeViewModel,
     ) {
         val reduceMotionEnabled = LocalReduceMotion.current
-        val motionScheme = MaterialTheme.motionScheme
         val navigateBack: () -> Unit = { popBackStackOrFinish(backStack) }
 
         NavDisplay(
@@ -235,19 +233,8 @@ class MainActivity : BaseThemeActivity() {
                 if (reduceMotionEnabled) {
                     EnterTransition.None togetherWith ExitTransition.None
                 } else {
-                    (
-                        fadeIn(animationSpec = motionScheme.defaultEffectsSpec<Float>()) +
-                            slideIntoContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                                animationSpec = motionScheme.defaultSpatialSpec<IntOffset>(),
-                            )
-                        ) togetherWith (
-                        fadeOut(animationSpec = motionScheme.defaultEffectsSpec<Float>()) +
-                            slideOutOfContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                                animationSpec = motionScheme.defaultSpatialSpec<IntOffset>(),
-                            )
-                        )
+                    (fadeIn() + slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start)) togetherWith
+                        (fadeOut() + slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start))
                 }
             },
             popTransitionSpec = {
@@ -258,7 +245,6 @@ class MainActivity : BaseThemeActivity() {
                     EnterTransition.None togetherWith scaleOut(
                         targetScale = 0.9f,
                         transformOrigin = rightEdgeOrigin,
-                        animationSpec = motionScheme.defaultSpatialSpec<Float>(),
                     )
                 }
             },
@@ -274,7 +260,6 @@ class MainActivity : BaseThemeActivity() {
                     EnterTransition.None togetherWith scaleOut(
                         targetScale = 0.9f,
                         transformOrigin = origin,
-                        animationSpec = motionScheme.defaultSpatialSpec<Float>(),
                     )
                 }
             },

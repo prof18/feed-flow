@@ -380,4 +380,6 @@
     <string name="settings_appearance">Външен вид</string>
     <string name="category_name_already_exists">Категория с това име вече съществува</string>
     <string name="settings_hide_unread_count">Скриване на броя непрочетени</string>
+    <string name="close_button_content_description">Затваряне</string>
+    <string name="article_bookmarked_content_description">Запазено в отметки</string>
 </resources>

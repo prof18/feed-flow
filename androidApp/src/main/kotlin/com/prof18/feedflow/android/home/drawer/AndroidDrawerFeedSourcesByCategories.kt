@@ -154,7 +154,9 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     val category = feedSourceCategoryWrapper.feedSourceCategory
-    val unreadCount: Long = drawerFeedSources.sumOf { it.unreadCount }
+    val unreadCount: Long = remember(drawerFeedSources) {
+        drawerFeedSources.sumOf { it.unreadCount }
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),

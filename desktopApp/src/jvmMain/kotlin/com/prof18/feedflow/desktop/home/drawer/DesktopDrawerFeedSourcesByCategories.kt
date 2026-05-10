@@ -210,16 +210,19 @@ internal fun DesktopDrawerFeedSourcesByCategories(
     }
 
     if (showStandaloneUncategorizedMenu) {
-        val menuEntries = persistentListOf(
-            DesktopPopupMenuEntry.Action(
-                text = LocalFeedFlowStrings.current.deleteAllFeedsInCategory,
-                onClick = {
-                    showUncategorizedMenu = false
-                    uncategorizedMenuPositionInWindow = null
-                    showDeleteAllUncategorizedDialog = true
-                },
-            ),
-        )
+        val strings = LocalFeedFlowStrings.current
+        val menuEntries = remember(strings) {
+            persistentListOf(
+                DesktopPopupMenuEntry.Action(
+                    text = strings.deleteAllFeedsInCategory,
+                    onClick = {
+                        showUncategorizedMenu = false
+                        uncategorizedMenuPositionInWindow = null
+                        showDeleteAllUncategorizedDialog = true
+                    },
+                ),
+            )
+        }
 
         DesktopPopupMenu(
             showMenu = showUncategorizedMenu,
@@ -242,13 +245,13 @@ internal fun DesktopDrawerFeedSourcesByCategories(
     }
 
     val strings = LocalFeedFlowStrings.current
-    DesktopPopupMenu(
-        showMenu = showAddFeedsMenu,
-        menuPositionInWindow = addMenuButtonCoordinates?.let { coords ->
-            val bounds = coords.boundsInWindow()
-            Offset(bounds.left, bounds.bottom)
-        },
-        menuEntries = persistentListOf(
+    val addFeedMenuEntries = remember(
+        strings,
+        onAddFeedClick,
+        onFeedSuggestionsClick,
+        onImportExportClick,
+    ) {
+        persistentListOf(
             DesktopPopupMenuEntry.Action(
                 text = strings.addFeed,
                 icon = Icons.Default.AddCircleOutline,
@@ -273,7 +276,15 @@ internal fun DesktopDrawerFeedSourcesByCategories(
                     onImportExportClick()
                 },
             ),
-        ),
+        )
+    }
+    DesktopPopupMenu(
+        showMenu = showAddFeedsMenu,
+        menuPositionInWindow = addMenuButtonCoordinates?.let { coords ->
+            val bounds = coords.boundsInWindow()
+            Offset(bounds.left, bounds.bottom)
+        },
+        menuEntries = addFeedMenuEntries,
         closeMenu = { showAddFeedsMenu = false },
     )
 }
@@ -309,7 +320,9 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
     var showDeleteAllFeedsDialog by remember { mutableStateOf(false) }
 
     val category = feedSourceCategoryWrapper.feedSourceCategory
-    val unreadCount = drawerFeedSources.sumOf { it.unreadCount }
+    val unreadCount = remember(drawerFeedSources) {
+        drawerFeedSources.sumOf { it.unreadCount }
+    }
     val isDropTargetActive = dragState.isDragOver(category)
 
     FeedSourceDropTargetCleanup(
@@ -441,35 +454,39 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
     }
 
     val strings = LocalFeedFlowStrings.current
-    val deleteAllFeedsEntry = DesktopPopupMenuEntry.Action(
-        text = strings.deleteAllFeedsInCategory,
-        onClick = {
-            showMenu = false
-            menuPositionInWindow = null
-            showDeleteAllFeedsDialog = true
-        },
-    )
+    val deleteAllFeedsEntry = remember(strings) {
+        DesktopPopupMenuEntry.Action(
+            text = strings.deleteAllFeedsInCategory,
+            onClick = {
+                showMenu = false
+                menuPositionInWindow = null
+                showDeleteAllFeedsDialog = true
+            },
+        )
+    }
 
     if (category != null) {
-        val menuEntries = persistentListOf(
-            DesktopPopupMenuEntry.Action(
-                text = strings.editFeedSourceNameButton,
-                onClick = {
-                    showMenu = false
-                    menuPositionInWindow = null
-                    showEditDialog = true
-                },
-            ),
-            deleteAllFeedsEntry,
-            DesktopPopupMenuEntry.Action(
-                text = strings.deleteCategory,
-                onClick = {
-                    showMenu = false
-                    menuPositionInWindow = null
-                    showDeleteDialog = true
-                },
-            ),
-        )
+        val menuEntries = remember(strings, deleteAllFeedsEntry) {
+            persistentListOf(
+                DesktopPopupMenuEntry.Action(
+                    text = strings.editFeedSourceNameButton,
+                    onClick = {
+                        showMenu = false
+                        menuPositionInWindow = null
+                        showEditDialog = true
+                    },
+                ),
+                deleteAllFeedsEntry,
+                DesktopPopupMenuEntry.Action(
+                    text = strings.deleteCategory,
+                    onClick = {
+                        showMenu = false
+                        menuPositionInWindow = null
+                        showDeleteDialog = true
+                    },
+                ),
+            )
+        }
 
         DesktopPopupMenu(
             showMenu = showMenu,
@@ -500,7 +517,9 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
             onEditCategory = onEditCategoryClick,
         )
     } else {
-        val menuEntries = persistentListOf(deleteAllFeedsEntry)
+        val menuEntries = remember(deleteAllFeedsEntry) {
+            persistentListOf(deleteAllFeedsEntry)
+        }
 
         DesktopPopupMenu(
             showMenu = showMenu,

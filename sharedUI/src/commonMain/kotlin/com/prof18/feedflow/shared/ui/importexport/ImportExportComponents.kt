@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -585,7 +586,7 @@ private fun FeedsNotAddedList(
                 HorizontalDivider(
                     modifier = Modifier,
                     thickness = 0.2.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant,
+                    color = Color.Gray,
                 )
             }
         }

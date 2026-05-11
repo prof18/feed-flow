@@ -2,12 +2,14 @@ package com.prof18.feedflow.android.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -70,7 +72,6 @@ fun AdaptiveHomeView(
             listState = listState,
             snackbarHostState = snackbarHostState,
             onSearchClick = onSearchClick,
-            onSettingsButtonClicked = onSettingsButtonClicked,
             showDrawerMenu = showDrawerMenu,
             isDrawerOpen = isDrawerMenuOpen,
             onDrawerMenuClick = onDrawerMenuClick,
@@ -95,6 +96,7 @@ fun AdaptiveHomeView(
             displayState = displayState,
             feedManagementActions = feedManagementActions,
             onFeedFilterSelected = onFeedFilterSelectedLambda,
+            onSettingsClick = onSettingsButtonClicked,
             onAddFeedClick = onAddFeedClick,
             onFeedSuggestionsClick = onFeedSuggestionsClick,
             onImportExportClick = onImportExportClick,
@@ -116,23 +118,20 @@ fun AdaptiveHomeView(
                         .clipToBounds()
                 },
             ) {
-                Scaffold { paddingValues ->
-                    DrawerInternal(
-                        modifier = Modifier.padding(paddingValues),
-                        onFeedFilterSelectedLambda = { feedFilter ->
-                            feedManagementActions.onFeedFilterSelected(feedFilter)
-                            scope.launch {
-                                listState.scrollToItemConditionally(
-                                    0,
-                                    reduceMotionEnabled = reduceMotionEnabled,
-                                )
-                            }
-                        },
-                        onAddFeedClick = feedManagementActions.onAddFeedClick,
-                        onFeedSuggestionsClick = onFeedSuggestionsClick,
-                        onImportExportClick = onImportExportClick,
-                    )
-                }
+                DrawerInternal(
+                    onFeedFilterSelectedLambda = { feedFilter ->
+                        feedManagementActions.onFeedFilterSelected(feedFilter)
+                        scope.launch {
+                            listState.scrollToItemConditionally(
+                                0,
+                                reduceMotionEnabled = reduceMotionEnabled,
+                            )
+                        }
+                    },
+                    onAddFeedClick = feedManagementActions.onAddFeedClick,
+                    onFeedSuggestionsClick = onFeedSuggestionsClick,
+                    onImportExportClick = onImportExportClick,
+                )
             }
 
             HomeContentInternal(
@@ -150,7 +149,10 @@ fun AdaptiveHomeView(
             modifier = modifier,
             drawerState = drawerState,
             drawerContent = {
-                ModalDrawerSheet {
+                ModalDrawerSheet(
+                    drawerContainerColor = MaterialTheme.colorScheme.background,
+                    windowInsets = WindowInsets(0),
+                ) {
                     DrawerInternal(
                         onFeedFilterSelectedLambda = { feedFilter ->
                             feedManagementActions.onFeedFilterSelected(feedFilter)

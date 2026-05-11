@@ -40,7 +40,6 @@ fun AndroidHomeAppBar(
     isDrawerOpen: Boolean,
     onDrawerMenuClick: () -> Unit,
     onMarkAllReadClicked: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
     onClick: () -> Unit,
     onDoubleClick: () -> Unit,
@@ -106,10 +105,6 @@ fun AndroidHomeAppBar(
                 closeMenu = { showMenu = false },
                 onMarkAllReadClicked = onMarkAllReadClicked,
                 onClearOldArticlesClicked = onClearOldArticlesClicked,
-                onSettingsButtonClicked = {
-                    showMenu = false
-                    onSettingsButtonClicked()
-                },
                 onForceRefreshClick = onForceRefreshClick,
                 onEditFeedClick = { feedSource ->
                     showMenu = false

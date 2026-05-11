@@ -54,7 +54,6 @@ fun AndroidHomeScreenContent(
     listState: LazyListState,
     snackbarHostState: SnackbarHostState,
     onSearchClick: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
     showDrawerMenu: Boolean = false,
     isDrawerOpen: Boolean = false,
@@ -87,7 +86,6 @@ fun AndroidHomeScreenContent(
                 onSearchClick = onSearchClick,
                 onMarkAllReadClicked = feedListActions.markAllRead,
                 onClearOldArticlesClicked = feedListActions.onClearOldArticlesClicked,
-                onSettingsButtonClicked = onSettingsButtonClicked,
                 onForceRefreshClick = {
                     scope.launch {
                         listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)

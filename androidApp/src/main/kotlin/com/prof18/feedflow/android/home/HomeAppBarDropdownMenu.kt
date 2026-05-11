@@ -5,7 +5,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
@@ -31,7 +30,6 @@ fun HomeAppBarDropdownMenu(
     closeMenu: () -> Unit,
     onMarkAllReadClicked: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
     onForceRefreshClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     isSyncUploadRequired: Boolean,
@@ -183,20 +181,5 @@ fun HomeAppBarDropdownMenu(
                 },
             )
         }
-
-        DropdownMenuItem(
-            onClick = {
-                onSettingsButtonClicked()
-            },
-            text = {
-                Text(LocalFeedFlowStrings.current.settingsButton)
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = null,
-                )
-            },
-        )
     }
 }

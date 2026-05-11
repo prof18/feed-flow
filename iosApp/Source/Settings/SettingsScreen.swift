@@ -61,5 +61,6 @@ struct SettingsScreen: View {
             .navigationBarTitleDisplayMode(.inline)
             .background(Color.secondaryBackgroundColor)
         }
+        .toggleStyle(BlueToggleStyle())
     }
 }

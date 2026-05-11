@@ -210,12 +210,6 @@ extension HomeContent {
             }
         }
 
-        Button {
-            self.sheetToShow = .settings
-        } label: {
-            Label(feedFlowStrings.settingsButton, systemImage: "gear")
-        }
-
         #if DEBUG
             Button {
                 deleteAllFeeds()

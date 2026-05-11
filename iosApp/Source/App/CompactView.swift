@@ -32,6 +32,7 @@ struct CompactView: View {
     )
     @State var scrollUpTrigger = false
     @State var showSettings = false
+    @State private var showSidebarSettingsSheet = false
     @State var showAddFeedSheet = false
     @State var showEditFeedSheet = false
     @State private var showImportExportSheet = false
@@ -83,6 +84,11 @@ struct CompactView: View {
                 .environment(browserSelector)
                 .toggleStyle(BlueToggleStyle())
         }
+        .sheet(isPresented: $showSidebarSettingsSheet) {
+            SettingsScreen(fetchFeeds: { homeViewModel.forceFeedRefresh() })
+                .environment(appState)
+                .preferredColorScheme(appState.colorScheme)
+        }
         .sheet(isPresented: $showImportExportSheet) {
             ImportExportScreen(showCloseButton: true, fetchFeeds: { homeViewModel.forceFeedRefresh() })
                 .environment(appState)
@@ -122,6 +128,7 @@ struct CompactView: View {
             showAddFeedSheet = false
             showEditFeedSheet = false
             showSettings = false
+            showSidebarSettingsSheet = false
             resetCompactNavigationToFeed()
         }
     }
@@ -177,8 +184,7 @@ struct CompactView: View {
                 homeViewModel.deleteAllFeeds()
             },
             onShowSettingsClick: {
-                resetCompactNavigationToFeed()
-                showSettings.toggle()
+                showSidebarSettingsSheet.toggle()
             },
             onAddFeedClick: {
                 showAddFeedSheet.toggle()

@@ -32,6 +32,7 @@ struct RegularView: View {
     )
     @State var scrollUpTrigger = false
     @State var showSettings = false
+    @State private var showSidebarSettingsSheet = false
     @State var showAddFeedSheet = false
     @State private var showImportExportSheet = false
 
@@ -72,7 +73,7 @@ struct RegularView: View {
                     homeViewModel.deleteAllFeeds()
                 },
                 onShowSettingsClick: {
-                    showSettings.toggle()
+                    showSidebarSettingsSheet.toggle()
                 },
                 onAddFeedClick: {
                     showAddFeedSheet.toggle()
@@ -162,6 +163,11 @@ struct RegularView: View {
                 .environment(browserSelector)
                 .toggleStyle(BlueToggleStyle())
         }
+        .sheet(isPresented: $showSidebarSettingsSheet) {
+            SettingsScreen(fetchFeeds: { homeViewModel.forceFeedRefresh() })
+                .environment(appState)
+                .preferredColorScheme(appState.colorScheme)
+        }
         .sheet(isPresented: $showImportExportSheet) {
             ImportExportScreen(showCloseButton: true, fetchFeeds: { homeViewModel.forceFeedRefresh() })
                 .environment(appState)
@@ -201,6 +207,7 @@ struct RegularView: View {
             showAddFeedSheet = false
             showEditFeedSheet = false
             showSettings = false
+            showSidebarSettingsSheet = false
             appState.currentCommonRoute = nil
             appState.regularNavigationPath = NavigationPath()
         }

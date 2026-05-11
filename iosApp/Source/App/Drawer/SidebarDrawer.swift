@@ -117,26 +117,32 @@ struct SidebarDrawer: View {
     var body: some View {
         styledList
             .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
-                Spacer()
-                Menu(
-                    content: {
-                        Button(
-                            action: onAddFeedClick,
-                            label: { Label(feedFlowStrings.addFeed, systemImage: "plus.circle") }
-                        )
-                        Button(
-                            action: { showFeedSuggestionsSheet = true },
-                            label: { Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb") }
-                        )
-                        Button(
-                            action: onImportExportClick,
-                            label: { Label(feedFlowStrings.importFeedButton, systemImage: "square.and.arrow.down") }
-                        )
-                    },
-                    label: { Image(systemName: "plus") }
-                )
-            }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(
+                        action: onShowSettingsClick,
+                        label: { Image(systemName: "gear") }
+                    )
+                }
+
+                ToolbarItem(placement: .primaryAction) {
+                    Menu(
+                        content: {
+                            Button(
+                                action: onAddFeedClick,
+                                label: { Label(feedFlowStrings.addFeed, systemImage: "plus.circle") }
+                            )
+                            Button(
+                                action: { showFeedSuggestionsSheet = true },
+                                label: { Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb") }
+                            )
+                            Button(
+                                action: onImportExportClick,
+                                label: { Label(feedFlowStrings.importFeedButton, systemImage: "square.and.arrow.down") }
+                            )
+                        },
+                        label: { Image(systemName: "plus") }
+                    )
+                }
             }
         .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {
             Button(feedFlowStrings.cancelButton, role: .cancel) {}

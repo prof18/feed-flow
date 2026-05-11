@@ -7,6 +7,7 @@ import co.touchlab.kermit.MessageStringFormatter
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Tag
 import com.prof18.feedflow.shared.utils.isTemporaryNetworkError
+import com.prof18.feedflow.shared.utils.skipLogging
 import io.sentry.Sentry
 
 class SentryLogWriter(
@@ -30,7 +31,7 @@ class SentryLogWriter(
     override fun isLoggable(tag: String, severity: Severity): Boolean = severity >= minSeverity
 
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
-        if (throwable?.isTemporaryNetworkError() == true) {
+        if (throwable?.shouldSkipSentryCapture() == true) {
             return
         }
 
@@ -52,4 +53,7 @@ class SentryLogWriter(
             messageStringFormatter.formatMessage(severity, Tag(tag), Message(message)),
         )
     }
+
+    private fun Throwable.shouldSkipSentryCapture(): Boolean =
+        skipLogging() || isTemporaryNetworkError()
 }

@@ -238,6 +238,8 @@ private fun DrawerTopFade(
     } else {
         0f
     }
+
+    @Suppress("MagicNumber")
     val midFraction = opaqueFraction + (1f - opaqueFraction) * 0.5f
     Box(
         modifier = modifier

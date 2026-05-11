@@ -380,4 +380,6 @@
     <string name="settings_appearance">Darstellung</string>
     <string name="category_name_already_exists">Eine Kategorie dieses Namens existiert bereits</string>
     <string name="settings_hide_unread_count">Ungelesen-Zähler ausblenden</string>
+    <string name="close_button_content_description">Schließen</string>
+    <string name="article_bookmarked_content_description">Mit Lesezeichen</string>
 </resources>

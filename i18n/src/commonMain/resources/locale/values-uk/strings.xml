@@ -378,4 +378,8 @@
     <string name="settings_hide_feed_source">Приховати джерело стрічки</string>
     <string name="widget_configuration_description">Оновлення віджетів відповідають налаштуванням фонової синхронізації з розділу «Синхронізація та сховище».</string>
     <string name="settings_appearance">Зовнішній вигляд</string>
+    <string name="close_button_content_description">Закрити</string>
+    <string name="category_name_already_exists">Категорія з такою назвою вже існує</string>
+    <string name="article_bookmarked_content_description">Додано до закладок</string>
+    <string name="settings_hide_unread_count">Приховати кількість непрочитаних</string>
 </resources>

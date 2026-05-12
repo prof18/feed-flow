@@ -8,6 +8,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.UtcOffset
+import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.DateTimeComponents.Companion.Format
 import kotlinx.datetime.format.DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET
 import kotlinx.datetime.format.DateTimeComponents.Formats.RFC_1123
@@ -739,12 +740,7 @@ class DateFormatterImpl(
             return null
         }
 
-        val basicNormalized = normalizeBasic(dateString)
-
-        // First pass: try all formats with cheap normalization only
-        val parsed = tryParse(basicNormalized)
-            // Second pass (fallback): apply expensive locale normalization for non-English dates
-            ?: tryParse(normalizeLocale(basicNormalized))
+        val parsed = tryParse(dateString) ?: tryParseWithFallbackNormalization(dateString)
 
         if (parsed == null) {
             logger.e {
@@ -847,37 +843,39 @@ class DateFormatterImpl(
 
     private fun normalizeBasic(dateString: String): String {
         var normalized = dateString
-        // Replace timezone abbreviations with numeric offsets
-        timezoneReplacements.forEach { (abbrev, offset) ->
-            val regex = Regex("\\b$abbrev\\b")
-            normalized = regex.replace(normalized, offset)
+        normalized = gmtOffsetRegex.replace(normalized) { matchResult ->
+            val sign = matchResult.groupValues[GMT_OFFSET_SIGN_GROUP_INDEX]
+            val hours = matchResult.groupValues[GMT_OFFSET_HOURS_GROUP_INDEX].padStart(OFFSET_HOURS_LENGTH, '0')
+            val minutes = matchResult.groupValues[GMT_OFFSET_MINUTES_GROUP_INDEX].ifEmpty { "00" }
+            "$sign$hours$minutes"
         }
 
-        uppercaseEnglishDateTokenReplacements.forEach { (uppercaseToken, normalizedToken) ->
-            val regex = Regex("(?<![A-Za-z])$uppercaseToken(?![A-Za-z])")
-            normalized = regex.replace(normalized, normalizedToken)
+        normalized = timezoneReplacementRegex.replace(normalized) { matchResult ->
+            timezoneReplacements.getValue(matchResult.value)
+        }
+
+        normalized = uppercaseEnglishDateTokenRegex.replace(normalized) { matchResult ->
+            uppercaseEnglishDateTokenReplacements.getValue(matchResult.value)
         }
 
         // Normalize non-standard month abbreviation "Sept" -> "Sep" (case-insensitive)
         // This helps parse inputs like: "Fri, 18 Sept 2020 10:30:00 -0600"
-        normalized = Regex("\\bsept\\b", RegexOption.IGNORE_CASE)
-            .replace(normalized, "Sep")
+        normalized = septRegex.replace(normalized, "Sep")
 
         // Handle double spaces
         normalized = normalized.replace("  ", " ")
 
         // Handle missing space after day-of-week comma (e.g., "Wed,28" -> "Wed, 28")
-        normalized = Regex("([A-Za-z]{3}),(\\d)")
-            .replace(normalized) { matchResult ->
-                "${matchResult.groupValues[1]}, ${matchResult.groupValues[2]}"
-            }
+        normalized = missingSpaceAfterWeekdayCommaRegex.replace(normalized) { matchResult ->
+            "${matchResult.groupValues[1]}, ${matchResult.groupValues[2]}"
+        }
 
         // Handle extra hyphen before T in ISO format (e.g., "2026-02-04-T08:00:00" -> "2026-02-04T08:00:00")
         normalized = normalized.replace("-T", "T")
 
         // Remove appended timestamp (garbage)
         // e.g. "Mar, 09 Dic 2025 13:46:55 +0000 2025-12-09 13:46:55"
-        normalized = normalized.replace(Regex("\\s\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}$"), "")
+        normalized = normalized.replace(appendedTimestampRegex, "")
 
         return normalized
     }
@@ -894,7 +892,7 @@ class DateFormatterImpl(
         // Strip non-English day-of-week prefix from RFC-822 style dates.
         // e.g. "lun, 16 Mar 2026 ..." -> "16 Mar 2026 ..."
         // e.g. "Σάβ, 21 Μαρ 2026 ..." -> "21 Μαρ 2026 ..."
-        val dayOfWeekMatch = Regex("^(\\p{L}+),\\s+").find(normalized)
+        val dayOfWeekMatch = localeDayOfWeekPrefixRegex.find(normalized)
         if (dayOfWeekMatch != null) {
             val dayName = dayOfWeekMatch.groupValues[1]
             if (dayName !in englishDayAbbreviations) {
@@ -905,15 +903,21 @@ class DateFormatterImpl(
         // Replace non-English month abbreviations with English equivalents.
         // e.g. "21 Μαρ 2026" -> "21 Mar 2026", "09 Dic 2025" -> "09 Dec 2025"
         // Uses Unicode-aware boundaries (\p{L}, \d) instead of \b which is ASCII-only in Java.
-        monthReplacements.forEach { (localized, english) ->
-            val regex = Regex(
-                "(?<![\\p{L}\\d])${Regex.escape(localized)}(?![\\p{L}\\d])",
-                RegexOption.IGNORE_CASE,
-            )
-            normalized = regex.replace(normalized, english)
+        normalized = localizedMonthReplacementRegex.replace(normalized) { matchResult ->
+            monthReplacementsByLowercaseKey.getValue(matchResult.value.lowercase())
         }
 
         return normalized
+    }
+
+    private fun tryParseWithFallbackNormalization(dateString: String): DateTimeComponents? {
+        val basicNormalized = normalizeBasic(dateString)
+        val localeNormalized = normalizeLocale(basicNormalized)
+
+        return listOf(
+            basicNormalized,
+            localeNormalized,
+        ).distinct().firstNotNullOfOrNull(::tryParse)
     }
 
     private fun tryParse(dateString: String) = formats.firstNotNullOfOrNull { format ->
@@ -1051,5 +1055,31 @@ class DateFormatterImpl(
         "CET" to "+0100", // Central European Time
         "CEST" to "+0200", // Central European Summer Time
         "EEST" to "+0300", // Eastern European Summer Time
+        "AEST" to "+1000", // Australian Eastern Standard Time
+        "AEDT" to "+1100", // Australian Eastern Daylight Time
+    )
+
+    private fun Iterable<String>.escapedAlternation(): String =
+        joinToString(separator = "|") { Regex.escape(it) }
+
+    private val gmtOffsetRegex = Regex("\\bGMT([+-])(\\d{1,2})(?::?(\\d{2}))?\\b")
+    private val timezoneReplacementPattern = timezoneReplacements.keys.escapedAlternation()
+    private val timezoneReplacementRegex = Regex("\\b($timezoneReplacementPattern)\\b")
+    private val uppercaseEnglishDateTokenPattern = uppercaseEnglishDateTokenReplacements.keys.escapedAlternation()
+    private val uppercaseEnglishDateTokenRegex = Regex("(?<![A-Za-z])($uppercaseEnglishDateTokenPattern)(?![A-Za-z])")
+    private val septRegex = Regex("\\bsept\\b", RegexOption.IGNORE_CASE)
+    private val missingSpaceAfterWeekdayCommaRegex = Regex("([A-Za-z]{3}),(\\d)")
+    private val appendedTimestampRegex = Regex("\\s\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}$")
+    private val localeDayOfWeekPrefixRegex = Regex("^(\\p{L}+),\\s+")
+    private val monthReplacementsByLowercaseKey = monthReplacements.mapKeys { (localized, _) -> localized.lowercase() }
+    private val localizedMonthReplacementPattern = monthReplacements.keys.escapedAlternation()
+    private val localizedMonthReplacementRegex = Regex(
+        pattern = "(?<![\\p{L}\\d])($localizedMonthReplacementPattern)(?![\\p{L}\\d])",
+        option = RegexOption.IGNORE_CASE,
     )
 }
+
+private const val OFFSET_HOURS_LENGTH = 2
+private const val GMT_OFFSET_SIGN_GROUP_INDEX = 1
+private const val GMT_OFFSET_HOURS_GROUP_INDEX = 2
+private const val GMT_OFFSET_MINUTES_GROUP_INDEX = 3

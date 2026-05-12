@@ -79,4 +79,38 @@ class DateFormatterTimezoneTest {
         assertEquals(14, utcDateTime.hour, "Hour should be 14 in UTC")
         assertEquals(44, utcDateTime.minute)
     }
+
+    @Test
+    fun `getDateMillisFromString interprets Australian timezone abbreviations correctly`() {
+        val inputs = listOf(
+            "Tue, 05 May 2026 19:05:00 AEST" to 9,
+            "Tue, 05 May 2026 19:05:00 AEDT" to 8,
+        )
+
+        for ((dateString, expectedUtcHour) in inputs) {
+            val millis = dateFormatter.getDateMillisFromString(dateString)
+
+            assertNotNull(millis)
+
+            val instant = Instant.fromEpochMilliseconds(millis)
+            val utcDateTime = instant.toLocalDateTime(TimeZone.UTC)
+
+            assertEquals(expectedUtcHour, utcDateTime.hour, dateString)
+            assertEquals(5, utcDateTime.minute, dateString)
+        }
+    }
+
+    @Test
+    fun `getDateMillisFromString interprets GMT offset suffixes correctly`() {
+        val dateString = "Tue, 05 May 2026 19:05:00 GMT-3"
+        val millis = dateFormatter.getDateMillisFromString(dateString)
+
+        assertNotNull(millis)
+
+        val instant = Instant.fromEpochMilliseconds(millis)
+        val utcDateTime = instant.toLocalDateTime(TimeZone.UTC)
+
+        assertEquals(22, utcDateTime.hour)
+        assertEquals(5, utcDateTime.minute)
+    }
 }

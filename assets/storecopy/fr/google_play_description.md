@@ -1,61 +1,73 @@
-FeedFlow is a minimal RSS reader for people who want a clean, chronological
-timeline — no algorithms, no clutter, no noise. Just your feeds, in order.
+FeedFlow est un lecteur RSS minimaliste pour ceux qui veulent un fil d’actualité
+épuré et chronologique — sans algorithmes, sans désordre, sans distractions.
+Juste vos flux, dans l’ordre.
 
-Whether you follow news sites, blogs, or YouTube channels via RSS, FeedFlow
-gives you a fast, distraction-free way to keep up with everything you care
-about.
+Que vous suiviez des sites d’actualités, des blogs ou des chaînes YouTube via
+RSS, FeedFlow vous offre une manière rapide et sans distraction de rester à jour
+sur tout ce qui vous intéresse.
 
-Read Articles Your Way
-- Open articles in your default browser, or pick a dedicated browser for reading
-  sessions.
-- Use Reader Mode for a distraction-free article view with adjustable text size
-  and spacing.
-- Prefetch and cache full article content for offline reading — read articles
-  anywhere, even without an internet connection.
-- View the original web page or switch to a clean, readable format — the choice
-  is yours.
+Lisez les articles à votre manière
+- Ouvrez les articles dans votre navigateur par défaut, ou choisissez le
+  navigateur intégré pour vos sessions de lecture.
+- Activez le Mode Lecture pour une expérience sans distraction, avec une taille
+  de texte et un espacement ajustables.
+- Préchargez et mettez en cache le contenu intégral des articles pour une
+  lecture hors ligne — lisez vos articles n’importe où, même sans connexion
+  internet.
+- Afficher la page web originale ou basculer vers un format épuré et lisible — à
+  vous de choisir.
 
-Sync Feeds Across All Your Devices
-- Keep everything local, or sync feeds across devices with multiple backends.
-- Cloud storage sync with Dropbox or Google Drive.
-- Self-hosted and server sync with FreshRSS, Miniflux, Feedbin, or BazQux.
-- Your feeds, read status, and bookmarks stay in sync across Android, iOS,
-  macOS, Windows, and Linux.
-- Switch between phone, tablet, and desktop without losing your place.
+Synchronisez les flux sur tous vos appareils
+- Gardez tout en local, ou synchronisez les flux sur plusieurs appareils avec
+  différents services de stockage.
+- Synchronisation avec Dropbox ou Google Drive.
+- Synchronisation auto-hébergée ou avec un serveur FreshRSS, Miniflux, Feedbin
+  ou BazQux.
+- Vos flux, votre état de lecture et vos favoris restent synchronisés sur
+  Android, iOS, macOS, Windows et Linux.
+- Passez de votre téléphone à votre tablette ou à votre ordinateur sans perdre
+  votre progression.
 
-Stay Organized with Feeds and Categories
-- Import and export feeds with OPML — migrate from any other RSS reader or news
-  reader in minutes.
-- Block noisy keywords to filter out unwanted content from your feed.
-- Organize RSS feeds into categories and bookmark articles to read later.
-- Search across all your feeds and articles to quickly find the content you
-  need.
+Restez organisé avec les Flux et les Catégories
+- Importez et exportez des flux au format OPML — migrez depuis n’importe quel
+  autre lecteur RSS ou lecteur d’actualités en quelques minutes.
+- Bloquez des mots-clés indésirables pour filtrer le contenu non souhaité dans
+  votre flux.
+- Organisez vos flux RSS par catégories et ajoutez des articles en favoris pour
+  les lire plus tard.
+- Recherchez dans tous vos flux et articles pour trouver rapidement le contenu
+  dont vous avez besoin.
 
-A News Reading Experience You Control
-- Dark mode, light mode, and OLED black theme for comfortable reading day and
-  night.
-- Background refresh keeps your feed list up to date with new articles and
-  posts.
+Une expérience de lecture d'actualités que vous maîtrisez
+- Mode sombre, mode clair et thème noir OLED pour un confort de lecture jour et
+  nuit.
+- L'actualisation en arrière-plan maintient votre liste de flux à jour avec les
+  nouveaux articles et publications.
 
-Built for RSS, Atom, and the Open Web
-- Full support for RSS 2.0, RSS 1.0, and Atom feed formats.
-- Subscribe to blogs, news sites, YouTube channels, and more.
-- No account required — add feeds directly by URL or browse curated feed
-  suggestions to get started.
-- OPML import and export means you're never locked in to any single app.
+Conçu pour les flux RSS, Atom et le Web ouvert
+- Prise en charge complète des formats de flux RSS 2.0, RSS 1.0 et Atom.
+- Abonnez-vous à des blogs, des sites d'actualités, des chaînes YouTube, et bien
+  plus.
+- Aucun compte nécessaire — ajoutez des flux directement par URL ou explorez nos
+  suggestions de flux sélectionnés pour commencer.
+- L'import et l'export au format OPML signifie que vous n'êtes jamais enfermé
+  dans une seule application.
 
-Perfect For
-- News enthusiasts who want a chronological feed without algorithmic
-  recommendations.
-- Blog readers who want all their favorite sites in one clean timeline.
-- Self-hosted enthusiasts running FreshRSS, Miniflux, or similar services.
-- Anyone switching from another feed reader — OPML import makes migration
-  simple.
+Idéal pour
+- Pour les passionnés d'actualités qui veulent un fil chronologique, sans
+  recommandations algorithmiques.
+- Pour les lecteurs de blogs qui veulent retrouver tous leurs sites préférés
+  dans un seul fil d’actualité épuré.
+- Pour les passionnés d’auto-hébergement utilisant FreshRSS, Miniflux ou des
+  services similaires.
+- Pour ceux qui changent de lecteur de flux — l'import au format OPML simplifie
+  la migration.
 
-Why FeedFlow?
-- No algorithmic feed — your timeline is always chronological.
-- Open source with an active community and regular updates.
-- Available on Android, iOS, macOS, Windows, and Linux.
-- Translated into 25+ languages by contributors worldwide.
+Pourquoi FeedFlow ?
+- Pas de fil algorithmique — votre timeline reste toujours chronologique.
+- Open source avec une communauté active et des mises à jour régulières.
+- Disponible sur Android, iOS, macOS, Windows et Linux.
+- Traduite en plus de 25 langues grâce à des contributeurs du monde entier.
 
-Take back control of your news and reading — download FeedFlow today.
+Reprenez le contrôle de vos actualités et de vos lectures — téléchargez FeedFlow
+dès aujourd'hui.

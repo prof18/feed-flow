@@ -234,11 +234,11 @@ internal class FeedSourcesRepository(
             }
 
             AddFeedResponse.EmptyFeed -> {
-                FeedAddedState.Error.InvalidTitleLink
+                FeedAddedState.Error.InvalidTitleLink(canForceAdd = true)
             }
 
             AddFeedResponse.NotRssFeed -> {
-                FeedAddedState.Error.InvalidUrl
+                FeedAddedState.Error.InvalidUrl(canForceAdd = true)
             }
         }
     }
@@ -263,7 +263,8 @@ internal class FeedSourcesRepository(
         }
 
         logger.d { "Trying to get: $originalUrl" }
-        val url = feedUrlRetriever.getFeedUrl(originalUrl) ?: return FeedAddedState.Error.InvalidUrl
+        val url = feedUrlRetriever.getFeedUrl(originalUrl)
+            ?: return FeedAddedState.Error.InvalidUrl(canForceAdd = false)
         logger.d { "Found url: $url" }
 
         val addResult = gReaderRepository.addFeedSource(
@@ -272,7 +273,7 @@ internal class FeedSourcesRepository(
             isNotificationEnabled = isNotificationEnabled,
         )
         if (addResult.isError()) {
-            return FeedAddedState.Error.GenericError
+            return FeedAddedState.Error.GenericError(canForceAdd = false)
         }
 
         feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
@@ -393,7 +394,8 @@ internal class FeedSourcesRepository(
         }
 
         logger.d { "Trying to get: $originalUrl" }
-        val url = feedUrlRetriever.getFeedUrl(originalUrl) ?: return FeedAddedState.Error.InvalidUrl
+        val url = feedUrlRetriever.getFeedUrl(originalUrl)
+            ?: return FeedAddedState.Error.InvalidUrl(canForceAdd = false)
         logger.d { "Found url: $url" }
 
         val addResult = feedbinRepository.addFeedSource(
@@ -402,7 +404,7 @@ internal class FeedSourcesRepository(
             isNotificationEnabled = isNotificationEnabled,
         )
         if (addResult.isError()) {
-            return FeedAddedState.Error.GenericError
+            return FeedAddedState.Error.GenericError(canForceAdd = false)
         }
 
         return FeedAddedState.FeedAdded()
@@ -519,13 +521,14 @@ internal class FeedSourcesRepository(
         feedTitle: String,
         category: FeedSourceCategory?,
         logoUrl: String?,
+        isNotificationEnabled: Boolean = false,
     ) = withContext(dispatcherProvider.io) {
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
                 gReaderRepository.addFeedSource(
                     url = feedUrl,
                     categoryName = category,
-                    isNotificationEnabled = false,
+                    isNotificationEnabled = isNotificationEnabled,
                 )
             }
 
@@ -533,7 +536,7 @@ internal class FeedSourcesRepository(
                 feedbinRepository.addFeedSource(
                     url = feedUrl,
                     categoryName = category,
-                    isNotificationEnabled = false,
+                    isNotificationEnabled = isNotificationEnabled,
                 )
             }
 
@@ -556,6 +559,7 @@ internal class FeedSourcesRepository(
                 }
 
                 databaseHelper.insertFeedSource(listOf(parsedFeedSource))
+                databaseHelper.updateNotificationEnabledStatus(parsedFeedSource.id, isNotificationEnabled)
 
                 feedSyncRepository.addSourceAndCategories(
                     listOf(parsedFeedSource.toFeedSource()),

@@ -68,9 +68,9 @@ class AddFeedExtensionActivity : BaseThemeActivity() {
                     is FeedAddedState.Error -> {
                         showLoading = false
                         message = when (feedAddedState) {
-                            FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
-                            FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
-                            FeedAddedState.Error.GenericError -> strings.addFeedGenericError
+                            is FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
+                            is FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+                            is FeedAddedState.Error.GenericError -> strings.addFeedGenericError
                         }
                         delay(2.seconds)
                         finish()

@@ -43,6 +43,9 @@
     <string name="force_feed_refresh">Force feeds refresh</string>
     <string name="trigger_feed_sync">Trigger upload to your account</string>
     <string name="invalid_rss_url">The link you provided is not a valid RSS feed</string>
+    <string name="invalid_rss_url_with_retry_hint">Couldn&#39;t validate this feed. It might not be a valid RSS feed, or the server could be temporarily unavailable.</string>
+    <string name="add_feed_anyway_acknowledgement">This feed hasn&#39;t been verified. Fetching will still be attempted, and it can be removed later if it doesn&#39;t work.</string>
+    <string name="add_feed_anyway_button">Add anyway</string>
     <string name="import_export_label">Import and export</string>
     <string name="import_export_opml_title">Import and export</string>
     <string name="retry_button">Retry</string>

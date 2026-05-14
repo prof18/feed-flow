@@ -22,6 +22,8 @@ struct AddFeedScreenContent: View {
     @Binding var isAddingFeed: Bool
     var showNotificationToggle: Bool
     @Binding var isNotificationEnabled: Bool
+    @Binding var canForceAdd: Bool
+    @State private var acknowledged: Bool = false
 
     var categorySelectorObserver: CategorySelectorObserver
     let viewModel: AddFeedViewModel
@@ -30,6 +32,7 @@ struct AddFeedScreenContent: View {
     let updateFeedUrlTextFieldValue: (String) -> Void
     let onNotificationToggled: (Bool) -> Void
     let addFeed: () -> Void
+    let forceAddFeed: () -> Void
 
     var body: some View {
         Form {
@@ -102,6 +105,41 @@ struct AddFeedScreenContent: View {
                     }
                 }
             }
+
+            if showError && canForceAdd {
+                Section {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Toggle(isOn: $acknowledged) {
+                            Text(feedFlowStrings.addFeedAnywayAcknowledgement)
+                                .font(.subheadline)
+                        }
+
+                        Button(
+                            action: {
+                                isAddingFeed = true
+                                forceAddFeed()
+                            },
+                            label: {
+                                if isAddingFeed {
+                                    ProgressView()
+                                        .frame(maxWidth: .infinity)
+                                } else {
+                                    Text(feedFlowStrings.addFeedAnywayButton)
+                                        .frame(maxWidth: .infinity)
+                                }
+                            }
+                        )
+                        .buttonStyle(.bordered)
+                        .disabled(!acknowledged || isAddingFeed)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
+        .onChange(of: showError) { _, newValue in
+            if !newValue {
+                acknowledged = false
+            }
         }
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
@@ -135,7 +173,9 @@ struct AddFeedScreenContent: View {
             }
 
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                saveButton
+                if !(showError && canForceAdd) {
+                    saveButton
+                }
             }
         }
     }

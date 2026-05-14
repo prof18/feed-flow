@@ -7,8 +7,11 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
+import com.prof18.feedflow.shared.utils.sanitizeUrl
+import io.ktor.http.Url
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -20,6 +23,7 @@ class AddFeedViewModel internal constructor(
     private val categoryRepository: FeedCategoryRepository,
     private val feedSourcesRepository: FeedSourcesRepository,
     private val databaseHelper: DatabaseHelper,
+    private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
 
     private var feedUrl: String = ""
@@ -70,6 +74,28 @@ class AddFeedViewModel internal constructor(
                 if (feedAddedState is FeedAddedState.FeedAdded) {
                     isNotificationEnabledMutableStateFlow.update { false }
                 }
+            }
+        }
+    }
+
+    fun forceAddFeed() {
+        viewModelScope.launch {
+            feedAddedMutableState.emit(FeedAddedState.Loading)
+            try {
+                val categoryName = categoryRepository.getSelectedCategory()
+                val feedTitle = runCatching { Url(sanitizeUrl(feedUrl)).host }.getOrNull() ?: feedUrl
+                feedSourcesRepository.addFeedSourceWithoutFetching(
+                    feedUrl = sanitizeUrl(feedUrl),
+                    feedTitle = feedTitle,
+                    category = categoryName,
+                    logoUrl = null,
+                    isNotificationEnabled = isNotificationEnabledMutableStateFlow.value,
+                )
+                feedStateRepository.getFeeds()
+                isNotificationEnabledMutableStateFlow.update { false }
+                feedAddedMutableState.emit(FeedAddedState.FeedAdded(feedTitle))
+            } catch (_: Exception) {
+                feedAddedMutableState.emit(FeedAddedState.Error.GenericError(canForceAdd = false))
             }
         }
     }

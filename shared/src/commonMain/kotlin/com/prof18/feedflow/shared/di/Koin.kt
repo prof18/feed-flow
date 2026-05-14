@@ -210,6 +210,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSourcesRepository = get(),
             categoryRepository = get(),
             databaseHelper = get(),
+            feedStateRepository = get(),
         )
     }
 

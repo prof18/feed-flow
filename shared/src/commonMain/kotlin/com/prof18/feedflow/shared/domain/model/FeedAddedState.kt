@@ -8,8 +8,10 @@ sealed class FeedAddedState {
     ) : FeedAddedState()
 
     sealed class Error : FeedAddedState() {
-        data object InvalidUrl : Error()
-        data object InvalidTitleLink : Error()
-        data object GenericError : Error()
+        abstract val canForceAdd: Boolean
+
+        data class InvalidUrl(override val canForceAdd: Boolean) : Error()
+        data class InvalidTitleLink(override val canForceAdd: Boolean) : Error()
+        data class GenericError(override val canForceAdd: Boolean) : Error()
     }
 }

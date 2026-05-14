@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.ui.feed.addfeed
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,12 +11,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -36,6 +43,8 @@ fun AddFeedContent(
     addFeed: () -> Unit,
     onCategorySelectorClick: () -> Unit,
     isNotificationEnabled: Boolean,
+    canForceAdd: Boolean,
+    onForceAddFeed: () -> Unit,
     modifier: Modifier = Modifier,
     showNotificationToggle: Boolean = false,
     onNotificationToggleChanged: (Boolean) -> Unit = {},
@@ -107,21 +116,60 @@ fun AddFeedContent(
             }
 
             item {
-                Button(
-                    modifier = Modifier
-                        .padding(top = Spacing.small)
-                        .padding(bottom = Spacing.regular)
-                        .fillMaxWidth(),
-                    enabled = feedUrl.isNotBlank() && !showLoading,
-                    onClick = addFeed,
-                ) {
-                    if (showLoading) {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                        )
-                    } else {
-                        Text(LocalFeedFlowStrings.current.addFeed)
+                if (!(showError && canForceAdd)) {
+                    Button(
+                        modifier = Modifier
+                            .padding(top = Spacing.small)
+                            .padding(bottom = Spacing.regular)
+                            .fillMaxWidth(),
+                        enabled = feedUrl.isNotBlank() && !showLoading,
+                        onClick = addFeed,
+                    ) {
+                        if (showLoading) {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                            )
+                        } else {
+                            Text(LocalFeedFlowStrings.current.addFeed)
+                        }
+                    }
+                }
+            }
+
+            item {
+                if (showError && canForceAdd) {
+                    var acknowledged by rememberSaveable(showError) { mutableStateOf(false) }
+
+                    Column(
+                        modifier = Modifier
+                            .padding(vertical = Spacing.regular)
+                            .fillMaxWidth(),
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Checkbox(
+                                checked = acknowledged,
+                                onCheckedChange = { acknowledged = it },
+                            )
+                            Text(
+                                text = LocalFeedFlowStrings.current.addFeedAnywayAcknowledgement,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                        OutlinedButton(
+                            modifier = Modifier
+                                .padding(top = Spacing.small)
+                                .fillMaxWidth(),
+                            enabled = acknowledged && !showLoading,
+                            onClick = onForceAddFeed,
+                        ) {
+                            Text(LocalFeedFlowStrings.current.addFeedAnywayButton)
+                        }
                     }
                 }
             }

@@ -54,6 +54,7 @@ fun AddFeedScreenContent(
     var showError by remember { mutableStateOf(false) }
     var showLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
+    var canForceAdd by remember { mutableStateOf(false) }
 
     val viewModel = koinViewModel<AddFeedViewModel>()
 
@@ -67,10 +68,11 @@ fun AddFeedScreenContent(
                 is FeedAddedState.Error -> {
                     showLoading = false
                     showError = true
+                    canForceAdd = feedAddedState.canForceAdd
                     errorMessage = when (feedAddedState) {
-                        FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
-                        FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
-                        FeedAddedState.Error.GenericError -> strings.addFeedGenericError
+                        is FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrlWithRetryHint
+                        is FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+                        is FeedAddedState.Error.GenericError -> strings.addFeedGenericError
                     }
                 }
 
@@ -89,6 +91,9 @@ fun AddFeedScreenContent(
 
                     showLoading = false
                     feedUrl = ""
+                    showError = false
+                    errorMessage = ""
+                    canForceAdd = false
                     latestOnFeedAdded()
                 }
 
@@ -96,6 +101,7 @@ fun AddFeedScreenContent(
                     showLoading = false
                     showError = false
                     errorMessage = ""
+                    canForceAdd = false
                 }
 
                 FeedAddedState.Loading -> {
@@ -132,6 +138,10 @@ fun AddFeedScreenContent(
         isNotificationEnabled = isNotificationEnabled,
         onNotificationToggleChanged = { enabled ->
             viewModel.updateNotificationStatus(enabled)
+        },
+        canForceAdd = canForceAdd,
+        onForceAddFeed = {
+            viewModel.forceAddFeed()
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topAppBar = topAppBar,
@@ -177,6 +187,8 @@ private fun AddScreenContentPreview() {
             showNotificationToggle = true,
             isNotificationEnabled = false,
             onNotificationToggleChanged = {},
+            canForceAdd = false,
+            onForceAddFeed = {},
         )
     }
 }

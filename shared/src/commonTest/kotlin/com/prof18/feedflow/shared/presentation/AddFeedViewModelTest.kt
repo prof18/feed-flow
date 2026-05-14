@@ -2,6 +2,8 @@ package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
 import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.HtmlRetriever
@@ -127,6 +129,101 @@ class AddFeedViewModelTest : KoinTestBase() {
         val feedSources = databaseHelper.getFeedSources()
         assertEquals(1, feedSources.size)
         assertEquals(rssUrl, feedSources.first().url)
+    }
+
+    @Test
+    fun `forceAddFeed inserts feed and emits FeedAdded with host as title`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+
+        viewModel.feedAddedState.test {
+            viewModel.updateFeedUrlTextFieldValue("https://ilpost.net/feed")
+            assertEquals(FeedAddedState.FeedNotAdded, awaitItem())
+
+            viewModel.forceAddFeed()
+
+            assertEquals(FeedAddedState.Loading, awaitItem())
+            val added = awaitItem()
+            assertIs<FeedAddedState.FeedAdded>(added)
+            assertEquals("ilpost.net", added.feedName)
+        }
+
+        advanceUntilIdle()
+
+        val feedSources = databaseHelper.getFeedSources()
+        assertEquals(1, feedSources.size)
+        assertEquals("https://ilpost.net/feed", feedSources.first().url)
+        assertEquals("ilpost.net", feedSources.first().title)
+    }
+
+    @Test
+    fun `forceAddFeed prepends https when URL has no scheme`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+
+        viewModel.feedAddedState.test {
+            viewModel.updateFeedUrlTextFieldValue("ilpost.net")
+            assertEquals(FeedAddedState.FeedNotAdded, awaitItem())
+
+            viewModel.forceAddFeed()
+
+            assertEquals(FeedAddedState.Loading, awaitItem())
+            assertIs<FeedAddedState.FeedAdded>(awaitItem())
+        }
+
+        advanceUntilIdle()
+
+        val feedSources = databaseHelper.getFeedSources()
+        assertEquals(1, feedSources.size)
+        assertEquals("https://ilpost.net", feedSources.first().url)
+    }
+
+    @Test
+    fun `forceAddFeed applies notification toggle and resets it after success`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+
+        viewModel.feedAddedState.test {
+            viewModel.updateFeedUrlTextFieldValue("https://ilpost.net")
+            assertEquals(FeedAddedState.FeedNotAdded, awaitItem())
+
+            viewModel.updateNotificationStatus(true)
+            viewModel.forceAddFeed()
+
+            assertEquals(FeedAddedState.Loading, awaitItem())
+            assertIs<FeedAddedState.FeedAdded>(awaitItem())
+        }
+
+        advanceUntilIdle()
+
+        assertEquals(false, viewModel.isNotificationEnabledState.value)
+
+        val feedSources = databaseHelper.getFeedSources()
+        assertEquals(1, feedSources.size)
+        assertTrue(feedSources.first().isNotificationEnabled)
+    }
+
+    @Test
+    fun `forceAddFeed selects the currently selected category`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        viewModel.addNewCategory(CategoryName("Tech"))
+        advanceUntilIdle()
+
+        val techCategory = viewModel.categoriesState.value.categories.first { it.name == "Tech" }
+        viewModel.onCategorySelected(CategoryId(techCategory.id))
+
+        viewModel.feedAddedState.test {
+            viewModel.updateFeedUrlTextFieldValue("https://ilpost.net/feed")
+            assertEquals(FeedAddedState.FeedNotAdded, awaitItem())
+
+            viewModel.forceAddFeed()
+
+            assertEquals(FeedAddedState.Loading, awaitItem())
+            assertIs<FeedAddedState.FeedAdded>(awaitItem())
+        }
+
+        advanceUntilIdle()
+
+        val feedSources = databaseHelper.getFeedSources()
+        assertEquals(1, feedSources.size)
+        assertEquals("Tech", feedSources.first().category?.title)
     }
 
     @Test

@@ -23,6 +23,7 @@ struct AddFeedScreen: View {
     @State var feedURL = ""
     @State private var showNotificationToggle = false
     @State private var isNotificationEnabled = false
+    @State private var canForceAdd = false
 
     var showCloseButton: Bool
 
@@ -41,6 +42,7 @@ struct AddFeedScreen: View {
                 isAddingFeed: $isAddingFeed,
                 showNotificationToggle: showNotificationToggle,
                 isNotificationEnabled: $isNotificationEnabled,
+                canForceAdd: $canForceAdd,
                 categorySelectorObserver: categorySelectorObserver,
                 viewModel: vmStoreOwner.instance,
                 showCloseButton: showCloseButton,
@@ -52,6 +54,9 @@ struct AddFeedScreen: View {
                 },
                 addFeed: {
                     vmStoreOwner.instance.addFeed()
+                },
+                forceAddFeed: {
+                    vmStoreOwner.instance.forceAddFeed()
                 }
             )
             .snackbar(messageQueue: $appState.snackbarQueue)
@@ -81,15 +86,20 @@ struct AddFeedScreen: View {
                     )
                     self.feedURL = ""
                     self.isAddingFeed = false
+                    self.showError = false
+                    self.errorMessage = ""
+                    self.canForceAdd = false
 
                 case .feedNotAdded:
                     errorMessage = ""
                     showError = false
+                    canForceAdd = false
 
                 case let .error(errorState):
+                    canForceAdd = errorState.canForceAdd
                     switch onEnum(of: errorState) {
                     case .invalidUrl:
-                        errorMessage = feedFlowStrings.invalidRssUrl
+                        errorMessage = feedFlowStrings.invalidRssUrlWithRetryHint
 
                     case .invalidTitleLink:
                         errorMessage = feedFlowStrings.missingTitleAndLink

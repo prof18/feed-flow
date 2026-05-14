@@ -382,4 +382,7 @@
     <string name="settings_hide_unread_count">Ocultar o número de non lidos</string>
     <string name="close_button_content_description">Fechar</string>
     <string name="article_bookmarked_content_description">Marcado</string>
+    <string name="invalid_rss_url_with_retry_hint">Non se puido validar esta canle. Pode que non sexa unha canle RSS válida, ou que o servidor non estea dispoñible temporalmente.</string>
+    <string name="add_feed_anyway_acknowledgement">Non se verificou esta canle. Vaise seguir intentando a obtención, pero poderalo retirar cando queiras se non funciona.</string>
+    <string name="add_feed_anyway_button">Engadir igualmente</string>
 </resources>

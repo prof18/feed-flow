@@ -379,4 +379,7 @@
     <string name="delete_all_feeds_confirmation_message">Bạn có chắc muốn xóa tất cả nguồn tin trong danh mục này? Thao tác này không thể hoàn tác.</string>
     <string name="settings_appearance">Giao diện</string>
     <string name="category_name_already_exists">Tên danh mục đã tồn tại</string>
+    <string name="settings_hide_unread_count">Ẩn số lượng chưa đọc</string>
+    <string name="close_button_content_description">Đóng</string>
+    <string name="article_bookmarked_content_description">Đã lưu</string>
 </resources>

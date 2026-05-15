@@ -382,4 +382,7 @@
     <string name="settings_hide_unread_count">Скриване на броя непрочетени</string>
     <string name="close_button_content_description">Затваряне</string>
     <string name="article_bookmarked_content_description">Запазено в отметки</string>
+    <string name="invalid_rss_url_with_retry_hint">Не можах да проверя тази емисия. Възможно е да не е валидна RSS емисия или сървърът да е временно недостъпен.</string>
+    <string name="add_feed_anyway_acknowledgement">Тази емисия не е проверена. Ще бъде направен опит за извличане и може да бъде премахната по-късно, ако не се получи.</string>
+    <string name="add_feed_anyway_button">Добави въпреки това</string>
 </resources>

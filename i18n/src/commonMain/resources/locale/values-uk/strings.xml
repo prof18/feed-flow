@@ -382,4 +382,7 @@
     <string name="category_name_already_exists">Категорія з такою назвою вже існує</string>
     <string name="article_bookmarked_content_description">Додано до закладок</string>
     <string name="settings_hide_unread_count">Приховати кількість непрочитаних</string>
+    <string name="invalid_rss_url_with_retry_hint">Не вдалося перевірити цей канал. Можливо, це недійсний RSS-канал, або сервер тимчасово недоступний.</string>
+    <string name="add_feed_anyway_acknowledgement">Цей канал не пройшов перевірку. Система все одно спробує завантажити його, і якщо це не вдасться, його можна буде видалити пізніше.</string>
+    <string name="add_feed_anyway_button">Додати все одно</string>
 </resources>

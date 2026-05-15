@@ -382,4 +382,7 @@
     <string name="settings_hide_unread_count">Ungelesen-Zähler ausblenden</string>
     <string name="close_button_content_description">Schließen</string>
     <string name="article_bookmarked_content_description">Mit Lesezeichen</string>
+    <string name="invalid_rss_url_with_retry_hint">Dieser Feed konnte nicht validiert werden. Entweder ist es ein ungültiger RSS-Feed oder der Server steht momentan nicht zur Verfügung.</string>
+    <string name="add_feed_anyway_acknowledgement">Dieser Feed ist nicht verifiziert. Der Abruf wird weiterhin versucht, und wenn es nicht funktioniert kann er später gelöscht werden.</string>
+    <string name="add_feed_anyway_button">Dennoch hinzufügen</string>
 </resources>

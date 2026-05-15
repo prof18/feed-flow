@@ -64,7 +64,7 @@
     <string name="search_hint_subtitle">Les résultats apparaîtront automatiquement</string>
     <string name="settings_title_feed">Flux</string>
     <string name="settings_accounts">Comptes</string>
-    <string name="accounts_description">Connectez un compte pour synchroniser les abonnements de flux, catégories, état de lecture et favoris entre vos appareils.\n\nCette fonctionnalité est en bêta, des problèmes peuvent apparaître (par exemple, les articles lus peuvent ne pas complètement se synchroniser). De nouveaux services seront supportés prochainement.\n\nSeul un compte est pour l\'instant supporté.</string>
+    <string name="accounts_description">Connectez un compte pour synchroniser les abonnements des flux, catégories, l\'état des lectures et favoris entre vos appareils.\n\nCette fonctionnalité est en bêta, des problèmes peuvent apparaître (par exemple, les articles lus peuvent ne pas complètement se synchroniser). De nouveaux services seront supportés prochainement.\n\nSeul un compte est pour l\'instant supporté.</string>
     <string name="settings_help_title">Aide</string>
     <string name="backup_button">Sauvegarde</string>
     <string name="dropbox_sync_mobile_description">En cliquant sur le bouton « connecter » vous serez redirigé vers l\'application ou le site Dropbox. Après vous être connecté à votre compte, vous pourrez revenir à FeedFlow</string>
@@ -246,7 +246,7 @@
     <string name="previous_article">Article précédent</string>
     <string name="no_miniflux_sync_yet">Les données ne sont pas encore synchronisées</string>
     <string name="notification_grouped_body">Vous avez de nouveaux articles à lire !</string>
-    <string name="invalid_opml_import_description">Fichier OPML invalide. Essayez d\'exporter vos feeds en OPML depuis votre agrégateur RSS et de les importer à nouveau.</string>
+    <string name="invalid_opml_import_description">Fichier OPML invalide. Essayez d\'exporter vos flux au format OPML depuis votre agrégateur RSS et de les importer à nouveau.</string>
     <string name="drawer_title_library">Bibliothèque</string>
     <string name="import_export_articles_description">Exporter et importer vos articles au format CSV. \nL\'importation nécessite que les flux et catégories soient déjà enregistrés.</string>
     <string name="articles_export_filter_all">Articles exportés - tout</string>
@@ -376,7 +376,7 @@
     <string name="reader_mode_archive_button">Ouvrir dans archive.is</string>
     <string name="settings_notification_mode">Notifications groupées</string>
     <string name="settings_background_sync_restrictions_title">Paramétrage de la synchronisation en arrière-plan</string>
-    <string name="about_the_app">FeedFlow est un lecteur RSS minimal pour une chronologie propre — pas d’algorithmes, pas de désordre. Ouvrez les articles dans votre navigateur préféré, ou lisez-les sans distraction avec le Mode Lecture. Préchargez et mettez en cache les articles complets pour une lecture hors ligne partout.\nSynchronisez vos flux, votre statut de lecture et vos signets sur Android, iOS, macOS, Windows et Linux en utilisant iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin ou BazQux. Organisez les flux en catégories, bloquez les mots-clés indésirables, et importez ou exportez tout en OPML.</string>
+    <string name="about_the_app">FeedFlow est un lecteur RSS minimal pour une chronologie propre — pas d’algorithmes, pas de désordre. Ouvrez les articles dans votre navigateur préféré, ou lisez-les sans distraction avec le Mode Lecture. Préchargez et mettez en cache les articles complets pour une lecture hors ligne partout.\nSynchronisez vos flux, votre statut de lecture et vos favoris sur Android, iOS, macOS, Windows et Linux en utilisant iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin ou BazQux. Organisez les flux en catégories, bloquez les mots-clés indésirables, et importez ou exportez tout au format OPML.</string>
     <string name="settings_hide_unread_count">Masquer les comptes \"non lus\"</string>
     <string name="close_button_content_description">Fermer</string>
     <string name="category_name_already_exists">Une catégorie avec ce nom existe déjà</string>

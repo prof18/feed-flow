@@ -122,7 +122,6 @@ fun FeedList(
         ) {
             itemsIndexed(
                 items = feedItems,
-                key = { _, item -> item.id },
             ) { index, item ->
                 val swipeBackgroundColor = when (feedLayout) {
                     FeedLayout.LIST -> MaterialTheme.colorScheme.surfaceContainerHighest

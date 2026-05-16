@@ -385,4 +385,5 @@
     <string name="invalid_rss_url_with_retry_hint">无法验证此订阅源。它可能不是有效的 RSS 订阅源，或者服务器暂时不可用。</string>
     <string name="add_feed_anyway_acknowledgement">此订阅源尚未验证。仍将尝试获取，如果不起作用，稍后可以将其移除。</string>
     <string name="add_feed_anyway_button">仍要添加</string>
+    <string name="sort_and_filter_button">排序和筛选</string>
 </resources>

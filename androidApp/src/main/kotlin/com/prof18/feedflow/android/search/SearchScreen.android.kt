@@ -15,6 +15,7 @@ import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
@@ -104,11 +105,12 @@ internal fun SearchScreen(
         },
         navigateBack = resetAndNavigateBack,
         onFeedItemClick = { urlInfo ->
-            if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
-                navigateToReaderMode(urlInfo)
-            } else {
-                browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
-            }
+            openSearchResult(
+                urlInfo = urlInfo,
+                navigateToReaderMode = navigateToReaderMode,
+                browserManager = browserManager,
+                context = context,
+            )
             viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
         },
         onBookmarkClick = { feedItemId, isBookmarked ->
@@ -142,6 +144,26 @@ internal fun SearchScreen(
         },
         feedItemDisplaySettings = feedItemDisplaySettings,
     )
+}
+
+private fun openSearchResult(
+    urlInfo: FeedItemUrlInfo,
+    navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
+    browserManager: BrowserManager,
+    context: android.content.Context,
+) {
+    when (urlInfo.linkOpeningPreference) {
+        LinkOpeningPreference.READER_MODE -> navigateToReaderMode(urlInfo)
+        LinkOpeningPreference.INTERNAL_BROWSER -> browserManager.openWithInAppBrowser(urlInfo.url, context)
+        LinkOpeningPreference.PREFERRED_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+        LinkOpeningPreference.DEFAULT -> {
+            if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
+                navigateToReaderMode(urlInfo)
+            } else {
+                browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+            }
+        }
+    }
 }
 
 @PreviewPhone

@@ -1,6 +1,7 @@
 package com.prof18.feedflow.android.home
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Edit
@@ -34,6 +35,7 @@ fun HomeAppBarDropdownMenu(
     onEditFeedClick: (FeedSource) -> Unit,
     isSyncUploadRequired: Boolean,
     onBackupClick: () -> Unit,
+    onViewOptionsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showMarkAllReadDialog by remember { mutableStateOf(false) }
@@ -160,6 +162,22 @@ fun HomeAppBarDropdownMenu(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Refresh,
+                    contentDescription = null,
+                )
+            },
+        )
+
+        DropdownMenuItem(
+            onClick = {
+                closeMenu()
+                onViewOptionsClick()
+            },
+            text = {
+                Text(LocalFeedFlowStrings.current.sortAndFilterButton)
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.Sort,
                     contentDescription = null,
                 )
             },

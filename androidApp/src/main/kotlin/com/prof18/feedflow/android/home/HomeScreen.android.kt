@@ -68,6 +68,7 @@ internal fun HomeScreen(
     val feedLayout by homeViewModel.feedLayout.collectAsStateWithLifecycle()
     val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsStateWithLifecycle()
     val feedItemDisplaySettings by homeViewModel.feedItemDisplaySettings.collectAsStateWithLifecycle()
+    val viewMenuState by homeViewModel.viewMenuState.collectAsStateWithLifecycle()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsStateWithLifecycle()
 
@@ -245,6 +246,9 @@ internal fun HomeScreen(
             showNoFeedsBottomSheet = true
         },
         onNavigateToNextFeed = onNavigateToNextFeed,
+        viewMenuState = viewMenuState,
+        onFeedOrderChange = homeViewModel::updateFeedOrder,
+        onShowReadArticlesTimelineChange = homeViewModel::updateShowReadArticlesTimeline,
     )
 
     if (showChangeCategorySheet) {

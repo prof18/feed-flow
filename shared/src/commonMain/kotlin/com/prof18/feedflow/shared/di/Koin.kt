@@ -305,6 +305,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         ReadingBehaviorSettingsViewModel(
             settingsRepository = get(),
+            feedStateRepository = get(),
         )
     }
 

@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOperation
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.LinkOpeningPreference
@@ -781,6 +782,44 @@ class HomeViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         assertEquals(ThemeMode.DARK, viewModel.getCurrentThemeMode())
+    }
+
+    @Test
+    fun `viewMenuState initial value matches repository defaults`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        val state = viewModel.viewMenuState.value
+        assertEquals(FeedOrder.NEWEST_FIRST, state.feedOrder)
+        assertEquals(false, state.showReadArticlesTimeline)
+    }
+
+    @Test
+    fun `updateFeedOrder propagates to viewMenuState`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.viewMenuState.test {
+            assertEquals(FeedOrder.NEWEST_FIRST, awaitItem().feedOrder)
+
+            viewModel.updateFeedOrder(FeedOrder.OLDEST_FIRST)
+            advanceUntilIdle()
+            assertEquals(FeedOrder.OLDEST_FIRST, awaitItem().feedOrder)
+        }
+    }
+
+    @Test
+    fun `updateShowReadArticlesTimeline propagates to viewMenuState`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.viewMenuState.test {
+            assertEquals(false, awaitItem().showReadArticlesTimeline)
+
+            viewModel.updateShowReadArticlesTimeline(true)
+            advanceUntilIdle()
+            assertEquals(true, awaitItem().showReadArticlesTimeline)
+        }
     }
 
     private fun getViewModel(): HomeViewModel = get()

@@ -385,4 +385,5 @@
     <string name="settings_notification_mode_feed_source">By feed</string>
     <string name="settings_notification_mode_category">By category</string>
     <string name="settings_notification_mode_grouped">All combined</string>
+    <string name="sort_and_filter_button">Sort &amp; filter</string>
 </resources>

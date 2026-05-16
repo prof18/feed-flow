@@ -34,6 +34,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
+import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
@@ -122,6 +123,19 @@ class HomeViewModel internal constructor(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, FeedItemDisplaySettings())
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
+
+    val viewMenuState: StateFlow<HomeViewMenuState> = combine(
+        feedAppearanceSettingsRepository.feedOrder,
+        settingsRepository.showReadArticlesTimelineFlow,
+    ) { order, showRead -> HomeViewMenuState(order, showRead) }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            HomeViewMenuState(
+                feedOrder = feedAppearanceSettingsRepository.getFeedOrder(),
+                showReadArticlesTimeline = settingsRepository.getShowReadArticlesTimeline(),
+            ),
+        )
 
     init {
         observeErrorState()
@@ -489,4 +503,18 @@ class HomeViewModel internal constructor(
     }
 
     fun getCurrentThemeMode() = settingsRepository.getThemeMode()
+
+    fun updateFeedOrder(order: com.prof18.feedflow.core.model.FeedOrder) {
+        viewModelScope.launch {
+            feedAppearanceSettingsRepository.setFeedOrder(order)
+            feedStateRepository.getFeeds()
+        }
+    }
+
+    fun updateShowReadArticlesTimeline(value: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setShowReadArticlesTimeline(value)
+            feedStateRepository.getFeeds()
+        }
+    }
 }

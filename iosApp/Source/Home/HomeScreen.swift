@@ -51,6 +51,11 @@ struct HomeScreen: View {
         descriptionLineLimit: .three
     )
 
+    @State var viewMenuState = HomeViewMenuState(
+        feedOrder: .newestFirst,
+        showReadArticlesTimeline: false
+    )
+
     @Binding var toggleListScroll: Bool
 
     @Binding var showSettings: Bool
@@ -84,6 +89,7 @@ struct HomeScreen: View {
             feedLayout: $feedLayout,
             nextFeedPreviewState: $nextFeedPreviewState,
             feedItemDisplaySettings: $feedItemDisplaySettings,
+            viewMenuState: $viewMenuState,
             onRefresh: {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
@@ -142,7 +148,13 @@ struct HomeScreen: View {
             onFeedSyncClick: {
                 homeViewModel.enqueueBackup()
             },
-            openDrawer: openDrawer
+            openDrawer: openDrawer,
+            onFeedOrderChange: { order in
+                homeViewModel.updateFeedOrder(order: order)
+            },
+            onShowReadArticlesTimelineChange: { value in
+                homeViewModel.updateShowReadArticlesTimeline(value: value)
+            }
         )
         .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
@@ -248,6 +260,11 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.feedItemDisplaySettings {
                 self.feedItemDisplaySettings = state
+            }
+        }
+        .task {
+            for await state in homeViewModel.viewMenuState {
+                self.viewMenuState = state
             }
         }
         .onChange(of: scenePhase) {

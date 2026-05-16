@@ -40,11 +40,13 @@ struct HomeContent: View {
     @Binding var feedLayout: FeedLayout
     @Binding var nextFeedPreviewState: NextFeedPreviewState
     @Binding var feedItemDisplaySettings: FeedItemDisplaySettings
+    @Binding var viewMenuState: HomeViewMenuState
 
     @State var isToolbarVisible = true
     @State var showScrollToTop = false
     @State var showMarkAllReadDialog = false
     @State var showClearOldArticlesDialog = false
+    @State var showViewOptionsSheet = false
 
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
@@ -63,6 +65,8 @@ struct HomeContent: View {
     let onNavigateToNextFeed: () -> Void
     let onFeedSyncClick: () -> Void
     let openDrawer: () -> Void
+    let onFeedOrderChange: (FeedOrder) -> Void
+    let onShowReadArticlesTimelineChange: (Bool) -> Void
 
     var isCompactPhone: Bool {
         horizontalSizeClass == .compact && UIDevice.current.userInterfaceIdiom == .phone
@@ -109,6 +113,13 @@ struct HomeContent: View {
         }
         .sheet(item: $sheetToShow) { item in
             sheetContent(item)
+        }
+        .sheet(isPresented: $showViewOptionsSheet) {
+            HomeViewOptionsSheet(
+                state: viewMenuState,
+                onFeedOrderChange: onFeedOrderChange,
+                onShowReadArticlesTimelineChange: onShowReadArticlesTimelineChange
+            )
         }
         .onReceive(NotificationCenter.default.publisher(for: .feedFlowRefreshFeeds)) { _ in
             onRefresh()

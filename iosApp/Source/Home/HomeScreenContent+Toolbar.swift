@@ -202,6 +202,12 @@ extension HomeContent {
             Label(feedFlowStrings.forceFeedRefresh, systemImage: "arrow.clockwise")
         }
 
+        Button {
+            showViewOptionsSheet = true
+        } label: {
+            Label(feedFlowStrings.sortAndFilterButton, systemImage: "line.3.horizontal.decrease")
+        }
+
         if let source = (currentFeedFilter as? FeedFilter.Source)?.feedSource {
             Button {
                 self.sheetToShow = .editFeed(source)

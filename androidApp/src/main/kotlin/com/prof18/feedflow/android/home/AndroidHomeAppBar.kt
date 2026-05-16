@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,13 +26,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
 import com.prof18.feedflow.shared.ui.icons.CloseSidebar
 import com.prof18.feedflow.shared.ui.icons.CloseSidebarReversed
 import com.prof18.feedflow.shared.ui.icons.OpenSidebar
 import com.prof18.feedflow.shared.ui.icons.OpenSidebarReversed
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AndroidHomeAppBar(
     currentFeedFilter: FeedFilter,
@@ -48,9 +53,14 @@ fun AndroidHomeAppBar(
     onEditFeedClick: (FeedSource) -> Unit,
     isSyncUploadRequired: Boolean,
     onBackupClick: () -> Unit,
+    viewMenuState: HomeViewMenuState,
+    onFeedOrderChange: (FeedOrder) -> Unit,
+    onShowReadArticlesTimelineChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showMenu by remember { mutableStateOf(false) }
+    var showViewOptionsSheet by remember { mutableStateOf(false) }
+    val viewOptionsSheetState = rememberModalBottomSheetState()
 
     TopAppBar(
         navigationIcon = if (showDrawerMenu) {
@@ -115,7 +125,18 @@ fun AndroidHomeAppBar(
                     showMenu = false
                     onBackupClick()
                 },
+                onViewOptionsClick = { showViewOptionsSheet = true },
             )
+
+            if (showViewOptionsSheet) {
+                HomeViewOptionsBottomSheet(
+                    state = viewMenuState,
+                    onFeedOrderChange = onFeedOrderChange,
+                    onShowReadArticlesTimelineChange = onShowReadArticlesTimelineChange,
+                    onDismiss = { showViewOptionsSheet = false },
+                    sheetState = viewOptionsSheetState,
+                )
+            }
         },
         modifier = modifier
             .pointerInput(Unit) {

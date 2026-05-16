@@ -1,7 +1,11 @@
 package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
+import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
+import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -11,6 +15,8 @@ import kotlin.test.assertTrue
 class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
 
     private val viewModel: ReadingBehaviorSettingsViewModel by inject()
+    private val feedStateRepository: FeedStateRepository by inject()
+    private val databaseHelper: DatabaseHelper by inject()
 
     @Test
     fun `state is loaded from settings repository on init`() = runTest {
@@ -102,5 +108,33 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
             viewModel.updateHideReadItems(false)
             assertFalse(awaitItem().isHideReadItemsEnabled)
         }
+    }
+
+    @Test
+    fun `updateShowReadItemsOnTimeline triggers getFeeds`() = runTest {
+        populateDatabase()
+
+        feedStateRepository.feedState.test {
+            awaitItem()
+            viewModel.updateShowReadItemsOnTimeline(true)
+            awaitItem()
+        }
+    }
+
+    private suspend fun populateDatabase() {
+        val feedItem = FeedItemGenerator.unreadFeedItem()
+        databaseHelper.insertFeedSource(
+            listOf(
+                ParsedFeedSource(
+                    id = feedItem.feedSource.id,
+                    url = feedItem.feedSource.url,
+                    title = feedItem.feedSource.title,
+                    category = feedItem.feedSource.category,
+                    logoUrl = feedItem.feedSource.logoUrl,
+                    websiteUrl = feedItem.feedSource.websiteUrl,
+                ),
+            ),
+        )
+        databaseHelper.insertFeedItems(listOf(feedItem), lastSyncTimestamp = 0)
     }
 }

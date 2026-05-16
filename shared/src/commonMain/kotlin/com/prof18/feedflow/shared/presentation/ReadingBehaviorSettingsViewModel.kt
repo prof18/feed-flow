@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.ReadingBehaviorState
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +13,7 @@ import kotlinx.coroutines.launch
 
 class ReadingBehaviorSettingsViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
+    private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
 
     private val stateMutableFlow = MutableStateFlow(ReadingBehaviorState())
@@ -83,6 +85,7 @@ class ReadingBehaviorSettingsViewModel internal constructor(
             stateMutableFlow.update {
                 it.copy(isShowReadItemsEnabled = value)
             }
+            feedStateRepository.getFeeds()
         }
     }
 

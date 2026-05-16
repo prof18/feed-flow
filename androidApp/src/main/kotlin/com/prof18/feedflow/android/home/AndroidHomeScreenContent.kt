@@ -27,7 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
+import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
 import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
@@ -54,6 +56,9 @@ fun AndroidHomeScreenContent(
     listState: LazyListState,
     snackbarHostState: SnackbarHostState,
     onSearchClick: () -> Unit,
+    viewMenuState: HomeViewMenuState,
+    onFeedOrderChange: (FeedOrder) -> Unit,
+    onShowReadArticlesTimelineChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     showDrawerMenu: Boolean = false,
     isDrawerOpen: Boolean = false,
@@ -106,6 +111,9 @@ fun AndroidHomeScreenContent(
                 },
                 isSyncUploadRequired = displayState.isSyncUploadRequired,
                 onBackupClick = onBackupClick,
+                viewMenuState = viewMenuState,
+                onFeedOrderChange = onFeedOrderChange,
+                onShowReadArticlesTimelineChange = onShowReadArticlesTimelineChange,
             )
         },
         snackbarHost = {

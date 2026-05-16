@@ -24,6 +24,8 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.home.drawer.AndroidDrawer
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedOrder
+import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
@@ -42,6 +44,9 @@ fun AdaptiveHomeView(
     feedListActions: FeedListActions,
     feedManagementActions: FeedManagementActions,
     shareBehavior: ShareBehavior,
+    viewMenuState: HomeViewMenuState,
+    onFeedOrderChange: (FeedOrder) -> Unit,
+    onShowReadArticlesTimelineChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     useDockedDrawer: Boolean = false,
@@ -78,6 +83,9 @@ fun AdaptiveHomeView(
             onBackupClick = onBackupClick,
             onEmptyStateClick = onEmptyStateClick,
             onNavigateToNextFeed = onNavigateToNextFeed,
+            viewMenuState = viewMenuState,
+            onFeedOrderChange = onFeedOrderChange,
+            onShowReadArticlesTimelineChange = onShowReadArticlesTimelineChange,
         )
     }
 

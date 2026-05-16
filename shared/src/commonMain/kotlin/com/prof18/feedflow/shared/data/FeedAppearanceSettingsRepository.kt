@@ -42,6 +42,9 @@ class FeedAppearanceSettingsRepository(
     private val descriptionLineLimitMutableFlow = MutableStateFlow(getDescriptionLineLimit())
     val descriptionLineLimit: StateFlow<DescriptionLineLimit> = descriptionLineLimitMutableFlow.asStateFlow()
 
+    private val feedOrderMutableFlow = MutableStateFlow(getFeedOrder())
+    val feedOrder: StateFlow<FeedOrder> = feedOrderMutableFlow.asStateFlow()
+
     fun getHideUnreadDot(): Boolean =
         settings.getBoolean(FeedAppearanceSettingsFields.HIDE_UNREAD_DOT.name, false)
 
@@ -161,6 +164,7 @@ class FeedAppearanceSettingsRepository(
 
     fun setFeedOrder(order: FeedOrder) {
         settings[FeedAppearanceSettingsFields.FEED_ORDER.name] = order.name
+        feedOrderMutableFlow.update { order }
     }
 
     fun getFeedLayout(): FeedLayout =

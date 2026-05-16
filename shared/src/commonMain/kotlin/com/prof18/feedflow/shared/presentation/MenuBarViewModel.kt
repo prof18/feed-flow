@@ -14,6 +14,7 @@ import com.prof18.feedflow.shared.presentation.model.MenuBarSettingsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -30,6 +31,16 @@ class MenuBarViewModel internal constructor(
 
     init {
         loadSettings()
+        viewModelScope.launch {
+            feedAppearanceSettingsRepository.feedOrder.collect { order ->
+                stateMutableFlow.update { it.copy(feedOrder = order) }
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.showReadArticlesTimelineFlow.collect { value ->
+                stateMutableFlow.update { it.copy(isShowReadItemsEnabled = value) }
+            }
+        }
     }
 
     private fun loadSettings() {

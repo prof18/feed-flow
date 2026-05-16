@@ -309,7 +309,7 @@ private fun openUrl(
 ) {
     when (urlInfo.linkOpeningPreference) {
         LinkOpeningPreference.READER_MODE -> navigateToReaderMode(urlInfo)
-        LinkOpeningPreference.INTERNAL_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+        LinkOpeningPreference.INTERNAL_BROWSER -> browserManager.openWithInAppBrowser(urlInfo.url, context)
         LinkOpeningPreference.PREFERRED_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
         LinkOpeningPreference.DEFAULT -> {
             if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {

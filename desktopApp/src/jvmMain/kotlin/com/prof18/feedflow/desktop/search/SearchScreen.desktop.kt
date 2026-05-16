@@ -14,11 +14,14 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
+import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
+import com.prof18.feedflow.desktop.utils.sanitizeUrl
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.search.SearchScreenContent
@@ -99,11 +102,12 @@ internal fun SearchScreen(
             navigateBack()
         },
         onFeedItemClick = { urlInfo ->
-            if (browserManager.openReaderMode()) {
-                navigateToReaderMode(urlInfo)
-            } else {
-                uriHandler.openUri(urlInfo.url)
-            }
+            openSearchResult(
+                urlInfo = urlInfo,
+                browserManager = browserManager,
+                openUri = uriHandler::openUri,
+                navigateToReaderMode = navigateToReaderMode,
+            )
             viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
         },
         onBookmarkClick = { feedItemId, isBookmarked ->
@@ -136,6 +140,27 @@ internal fun SearchScreen(
         },
         feedItemDisplaySettings = feedItemDisplaySettings,
     )
+}
+
+private fun openSearchResult(
+    urlInfo: FeedItemUrlInfo,
+    browserManager: BrowserManager,
+    openUri: (String) -> Unit,
+    navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
+) {
+    when (urlInfo.linkOpeningPreference) {
+        LinkOpeningPreference.READER_MODE -> navigateToReaderMode(urlInfo)
+        LinkOpeningPreference.INTERNAL_BROWSER,
+        LinkOpeningPreference.PREFERRED_BROWSER,
+        -> openUri(urlInfo.url.sanitizeUrl())
+        LinkOpeningPreference.DEFAULT -> {
+            if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
+                navigateToReaderMode(urlInfo)
+            } else {
+                openUri(urlInfo.url.sanitizeUrl())
+            }
+        }
+    }
 }
 
 @Preview

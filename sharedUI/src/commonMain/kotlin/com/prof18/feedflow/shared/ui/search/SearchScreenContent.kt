@@ -149,7 +149,7 @@ fun SearchScreenContent(
                     }
 
                     is SearchState.DataFound -> {
-                        itemsIndexed(searchState.items, key = { _, item -> item.id }) { index, item ->
+                        itemsIndexed(searchState.items) { index, item ->
                             FeedItemContainer(feedLayout = searchState.feedLayout) {
                                 FeedItemView(
                                     feedItem = item,

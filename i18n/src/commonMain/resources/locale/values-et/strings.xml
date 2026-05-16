@@ -385,4 +385,5 @@
     <string name="date_format_iso">Aasta-Kuu-Päev</string>
     <string name="article_bookmarked_content_description">Lisatud järjehoidjaks</string>
     <string name="delete_all_feeds_confirmation_message">Kas oled kindel, et soovid kõik selle kategooria uudisvood kustutada? Seda tegevust ei saa tagasi pöörata.</string>
+    <string name="sort_and_filter_button">Järjestus ja filtreerimine</string>
 </resources>

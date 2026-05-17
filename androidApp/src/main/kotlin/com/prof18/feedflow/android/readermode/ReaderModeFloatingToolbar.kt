@@ -176,9 +176,9 @@ fun ReaderModeFloatingToolbar(
     Surface(
         modifier = modifier,
         shape = FloatingToolbarDefaults.ContainerShape,
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        shadowElevation = 3.dp,
+        shadowElevation = 6.dp,
     ) {
         Box {
             OverflowToolbarLayout(

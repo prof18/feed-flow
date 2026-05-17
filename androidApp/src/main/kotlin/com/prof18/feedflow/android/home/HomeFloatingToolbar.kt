@@ -94,9 +94,9 @@ fun HomeFloatingToolbar(
                     )
                 },
             shape = FloatingToolbarDefaults.ContainerShape,
-            color = MaterialTheme.colorScheme.surfaceContainer,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
             contentColor = MaterialTheme.colorScheme.onSurface,
-            shadowElevation = 3.dp,
+            shadowElevation = 6.dp,
         ) {
             Row(
                 modifier = Modifier.padding(end = 16.dp),
@@ -154,9 +154,9 @@ fun HomeFloatingToolbar(
 
         Surface(
             shape = FloatingToolbarDefaults.ContainerShape,
-            color = MaterialTheme.colorScheme.surfaceContainer,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
             contentColor = MaterialTheme.colorScheme.onSurface,
-            shadowElevation = 3.dp,
+            shadowElevation = 6.dp,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onSearchClick) {

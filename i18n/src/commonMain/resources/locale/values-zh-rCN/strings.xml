@@ -10,7 +10,7 @@
     <string name="open_source_nav_bar">开放源代码许可</string>
     <string name="report_issue_button">报告问题</string>
     <string name="open_website_button">打开网站</string>
-    <string name="force_feed_refresh">强制刷新订阅源</string>
+    <string name="force_feed_refresh">强制刷新</string>
     <string name="import_export_opml_title">导入和导出</string>
     <string name="wrong_link_report_title">以下订阅源无效，没有添加</string>
     <string name="issue_report_title">报告 FeedFlow 的问题</string>
@@ -262,7 +262,7 @@
     <string name="database_error_reset">我们加载您的数据时遇到问题，因此需要重新开始。对此我们深表歉意。</string>
     <string name="google_drive_connect_button">连接 Google Drive</string>
     <string name="change_category">更改类别</string>
-    <string name="trigger_feed_sync">触发上传至您的账号</string>
+    <string name="trigger_feed_sync">上传更改</string>
     <string name="menu_mark_all_above_as_read">将以上所有内容标记为已读</string>
     <string name="menu_mark_all_below_as_read">将以下所有内容标记为已读</string>
     <string name="google_drive_sync_common_description">连接您的 Google Drive 账号，在 Android、iOS、iPadOS 和桌面设备之间同步订阅内容、类别、已读和收藏的文章。数据将保存在应用特定文件夹中，FeedFlow 不会访问您的任何文件</string>

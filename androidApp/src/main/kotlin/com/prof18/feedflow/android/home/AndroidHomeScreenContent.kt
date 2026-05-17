@@ -166,20 +166,16 @@ fun AndroidHomeScreenContent(
                         },
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = topInset),
                         ) {
                             FeedLoader(
                                 loadingState = displayState.feedUpdateStatus,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = topInset + Spacing.small),
+                                    .padding(top = Spacing.small),
                             )
-
-                            val listTopPadding = if (isRefreshing) {
-                                listTopContentPadding
-                            } else {
-                                topInset + listTopContentPadding
-                            }
 
                             if (displayState.feedItems.isEmpty() && isRefreshing) {
                                 Box(
@@ -195,7 +191,7 @@ fun AndroidHomeScreenContent(
                                     modifier = Modifier.weight(1f),
                                     feedItems = displayState.feedItems,
                                     listState = listState,
-                                    contentPadding = PaddingValues(top = listTopPadding),
+                                    contentPadding = PaddingValues(top = listTopContentPadding),
                                     feedFontSize = displayState.feedFontSizes,
                                     nextFeedState = displayState.nextFeedDisplayState,
                                     shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,

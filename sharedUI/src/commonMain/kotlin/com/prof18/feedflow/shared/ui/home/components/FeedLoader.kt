@@ -1,5 +1,9 @@
 package com.prof18.feedflow.shared.ui.home.components
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,14 +25,14 @@ fun FeedLoader(
 ) {
     ConditionalAnimatedVisibility(
         visible = loadingState.isLoading(),
-        enter = slideInVertically {
-            // Enters from the top (negative initial offset)
-            -it
-        },
-        exit = slideOutVertically {
-            // Exits towards the top (negative target offset)
-            -it
-        },
+        enter = fadeIn(animationSpec = tween(durationMillis = 350)) +
+            slideInVertically(
+                animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing),
+            ) { -it / 2 },
+        exit = fadeOut(animationSpec = tween(durationMillis = 350)) +
+            slideOutVertically(
+                animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing),
+            ) { -it / 2 },
     ) {
         val feedRefreshCounter = if (loadingState.refreshedFeedCount > 0 && loadingState.totalFeedCount > 0) {
             "${loadingState.refreshedFeedCount}/${loadingState.totalFeedCount}"

@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.core.model.FeedFilter
@@ -103,6 +104,7 @@ fun HomeAppBarDropdownMenu(
         modifier = modifier,
         expanded = showMenu,
         onDismissRequest = closeMenu,
+        offset = DpOffset(x = 0.dp, y = -(96.dp)),
         shape = MaterialTheme.shapes.large,
         properties = PopupProperties(
             focusable = true,
@@ -193,7 +195,7 @@ fun HomeAppBarDropdownMenu(
         }
 
         HorizontalDivider(
-            modifier = Modifier.padding(vertical = Spacing.xsmall),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = Spacing.xsmall),
             thickness = 0.2.dp,
             color = Color.Gray,
         )

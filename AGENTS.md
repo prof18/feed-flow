@@ -31,7 +31,7 @@ All Gradle commands in this section should be run with `--quiet --console=plain`
 - `.scripts/ios-format.sh` -> Format iOS code through swiftformat and swiftlint
 - `./gradlew --quiet --console=plain test` -> Run all tests for Shared code, Android and Desktop
 - `.scripts/refresh-translations.sh` -> Regenerate i18n translation code after adding new translations
-- `./gradlew --quiet --console=plain :androidApp:assembleGooglePlayDebug` -> Build Android debug
+- `./gradlew --quiet --console=plain :androidApp:assembleGooglePlayDebug` -> Build the Android debug APK (then deploy/run with the `android` CLI, see "Running & validating the Android app")
 - `./gradlew --quiet --console=plain :androidApp:compileGooglePlayDebugKotlin` -> Quick compile check for Android (no APK assembly)
 - `.scripts/run-android.sh` -> Install and launch Android Google Play debug (wraps `:androidApp:installGooglePlayDebug`)
 - `./gradlew --quiet --console=plain desktopApp:run` -> Run Desktop app
@@ -42,9 +42,20 @@ All Gradle commands in this section should be run with `--quiet --console=plain`
 - `./gradlew --quiet --console=plain :feedSync:feedbin:build` -> Build a specific feedSync sub-module (pattern: `:feedSync:<module>:build`)
 - `./gradlew --quiet --console=plain :desktopApp:packageDistributionForCurrentOS` -> Package desktop app distribution for the current OS
 
-### Running Android App
-Ensure an emulator or device is connected via `adb`, then run:
-- `.scripts/run-android.sh` -> Install and launch the debug app on device/emulator
+### Running & validating the Android app
+
+Use the [Android CLI](https://developer.android.com/tools/agents/android-cli) (`android`, installed globally; SDK at `~/Library/Android/sdk`) as the default tool to deploy, run, and validate Android. Run `android update` occasionally to keep it current.
+
+Precondition: a device/emulator must be running — `adb devices` to check; `android emulator list` then `android emulator start <name>` to boot one.
+
+Validate a UI change end to end:
+1. Build + deploy: `./gradlew --quiet --console=plain :androidApp:assembleGooglePlayDebug`, then `android run --apks=androidApp/build/outputs/apk/googlePlay/debug/androidApp-googlePlay-debug.apk` (`--device=<serial>` to pick a device; `.scripts/run-android.sh` covers the routine install+launch loop).
+2. Inspect structure/text/state with `android layout --pretty`. To confirm a specific change, capture the layout before and after the change, then use `android layout --diff` to see only what moved.
+3. For purely visual changes the layout tree can't show (color, spacing, fonts), use `android screen capture --output=ui.png --annotate`. Use `android screen resolve --screenshot=ui.png --string="input tap #<n>"` to turn a labeled element into tap coordinates when you need to drive the UI to the screen under test.
+
+For Android API/library questions, `android docs search '<query>'` before falling back to web search.
+
+For anything deeper — SDK package management (`android sdk ...`), device interaction, or journey/UI tests — consult the globally-installed `android-cli` skill instead of expanding this section.
 
 ### iOS Project Generation
 

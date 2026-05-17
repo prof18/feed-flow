@@ -46,7 +46,7 @@ All Gradle commands in this section should be run with `--quiet --console=plain`
 
 Use the [Android CLI](https://developer.android.com/tools/agents/android-cli) (`android`, installed globally; SDK at `~/Library/Android/sdk`) as the default tool to deploy, run, and validate Android. Run `android update` occasionally to keep it current.
 
-Precondition: a device/emulator must be running — `adb devices` to check; `android emulator list` then `android emulator start <name>` to boot one.
+Precondition: a device/emulator must be running — `adb devices` to check. Default to the resizable emulator: `android emulator start Resizable_Experimental` (verify the exact AVD name with `android emulator list` if it fails).
 
 Validate a UI change end to end:
 1. Build + deploy: `./gradlew --quiet --console=plain :androidApp:assembleGooglePlayDebug`, then `android run --apks=androidApp/build/outputs/apk/googlePlay/debug/androidApp-googlePlay-debug.apk` (`--device=<serial>` to pick a device; `.scripts/run-android.sh` covers the routine install+launch loop).

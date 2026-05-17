@@ -49,6 +49,7 @@ internal actual fun FeedItemContextMenu(
     DropdownMenu(
         expanded = showMenu,
         onDismissRequest = closeMenu,
+        shape = MaterialTheme.shapes.large,
         properties = PopupProperties(
             focusable = true,
             dismissOnBackPress = true,

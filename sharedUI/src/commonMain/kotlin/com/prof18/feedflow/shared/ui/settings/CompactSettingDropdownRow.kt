@@ -106,7 +106,7 @@ fun <T> CompactSettingDropdownRow(
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                shape = RoundedMenuShape,
+                shape = MaterialTheme.shapes.large,
                 containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 0.dp,
                 shadowElevation = 3.dp,
@@ -151,7 +151,6 @@ fun <T> CompactSettingDropdownRow(
 }
 
 private val RoundedDropdownShape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
-private val RoundedMenuShape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp)
 
 @Preview
 @Composable

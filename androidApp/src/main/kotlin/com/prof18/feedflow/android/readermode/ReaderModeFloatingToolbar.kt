@@ -215,6 +215,7 @@ fun ReaderModeFloatingToolbar(
             DropdownMenu(
                 expanded = showFontSizeMenu,
                 onDismissRequest = { showFontSizeMenu = false },
+                shape = MaterialTheme.shapes.large,
             ) {
                 Column(modifier = Modifier.padding(Spacing.regular)) {
                     Text(
@@ -326,6 +327,7 @@ private fun OverflowToolbarLayout(
                                 DropdownMenu(
                                     expanded = showOverflowMenu,
                                     onDismissRequest = { onShowOverflowMenu(false) },
+                                    shape = MaterialTheme.shapes.large,
                                 ) {
                                     overflowActions.forEach { action ->
                                         DropdownMenuItem(

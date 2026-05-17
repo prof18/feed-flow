@@ -121,6 +121,7 @@ private fun CategoryChipContextMenu(
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
+        shape = MaterialTheme.shapes.large,
     ) {
         if (onEditClick != null) {
             DropdownMenuItem(

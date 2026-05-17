@@ -643,6 +643,7 @@ private fun ReaderModeToolbar(
                             onDismissRequest = {
                                 showMenu = false
                             },
+                            shape = MaterialTheme.shapes.large,
                         ) {
                             Column(
                                 modifier = Modifier.padding(Spacing.regular),

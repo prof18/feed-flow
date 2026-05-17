@@ -140,6 +140,7 @@ internal fun AndroidFeedSourceDrawerItem(
             DropdownMenu(
                 expanded = showFeedMenu,
                 onDismissRequest = { showFeedMenu = false },
+                shape = MaterialTheme.shapes.large,
                 properties = PopupProperties(
                     focusable = true,
                     dismissOnBackPress = true,

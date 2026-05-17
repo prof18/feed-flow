@@ -268,6 +268,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
             DropdownMenu(
                 expanded = showMenu,
                 onDismissRequest = { showMenu = false },
+                shape = MaterialTheme.shapes.large,
                 properties = PopupProperties(
                     focusable = true,
                     dismissOnBackPress = true,

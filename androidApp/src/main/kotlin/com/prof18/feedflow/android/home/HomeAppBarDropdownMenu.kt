@@ -11,6 +11,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -97,6 +98,7 @@ fun HomeAppBarDropdownMenu(
         modifier = modifier,
         expanded = showMenu,
         onDismissRequest = closeMenu,
+        shape = MaterialTheme.shapes.large,
         properties = PopupProperties(
             focusable = true,
             dismissOnBackPress = true,

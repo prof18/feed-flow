@@ -179,20 +179,14 @@ extension HomeContent {
             Button {
                 self.onFeedSyncClick()
             } label: {
-                Label(feedFlowStrings.triggerFeedSync, systemImage: "arrow.uturn.up")
+                Label(feedFlowStrings.triggerFeedSync, systemImage: "square.and.arrow.up")
             }
         }
 
         Button {
             showMarkAllReadDialog = true
         } label: {
-            Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark")
-        }
-
-        Button {
-            showClearOldArticlesDialog = true
-        } label: {
-            Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
+            Label(feedFlowStrings.markAllReadButton, systemImage: "text.badge.checkmark")
         }
 
         Button {
@@ -216,7 +210,17 @@ extension HomeContent {
             }
         }
 
+        Divider()
+
+        Button {
+            showClearOldArticlesDialog = true
+        } label: {
+            Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
+        }
+
         #if DEBUG
+            Divider()
+
             Button {
                 deleteAllFeeds()
             } label: {

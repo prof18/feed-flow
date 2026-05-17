@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.home
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.filled.Delete
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,9 +22,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -140,21 +145,6 @@ fun HomeAppBarDropdownMenu(
 
         DropdownMenuItem(
             onClick = {
-                showClearOldArticlesDialog = true
-            },
-            text = {
-                Text(LocalFeedFlowStrings.current.clearOldArticlesButton)
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                )
-            },
-        )
-
-        DropdownMenuItem(
-            onClick = {
                 onForceRefreshClick()
                 closeMenu()
             },
@@ -201,5 +191,26 @@ fun HomeAppBarDropdownMenu(
                 },
             )
         }
+
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = Spacing.xsmall),
+            thickness = 0.2.dp,
+            color = Color.Gray,
+        )
+
+        DropdownMenuItem(
+            onClick = {
+                showClearOldArticlesDialog = true
+            },
+            text = {
+                Text(LocalFeedFlowStrings.current.clearOldArticlesButton)
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                )
+            },
+        )
     }
 }

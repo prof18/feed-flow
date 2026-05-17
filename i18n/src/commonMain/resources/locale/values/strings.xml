@@ -13,7 +13,7 @@
     <string name="loading_feed_message">Loading feeds %s</string>
     <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">Mark all as read</string>
-    <string name="clear_old_articles_button">Delete week-old posts</string>
+    <string name="clear_old_articles_button">Delete week-old articles</string>
     <string name="settings_button">Settings</string>
     <string name="feeds_importing_message">Importing feed</string>
     <string name="feeds_import_done_message">Import done</string>
@@ -40,8 +40,8 @@
     <string name="open_website_button">Open website</string>
     <string name="open_feed_website_button">Open feed website</string>
     <string name="database_error">Something went wrong during the retrieval of the feeds. Please retry or restart the app  - error code: %s :(</string>
-    <string name="force_feed_refresh">Force feeds refresh</string>
-    <string name="trigger_feed_sync">Trigger upload to your account</string>
+    <string name="force_feed_refresh">Force refresh</string>
+    <string name="trigger_feed_sync">Upload changes</string>
     <string name="invalid_rss_url">The link you provided is not a valid RSS feed</string>
     <string name="invalid_rss_url_with_retry_hint">Couldn&#39;t validate this feed. It might not be a valid RSS feed, or the server could be temporarily unavailable.</string>
     <string name="add_feed_anyway_acknowledgement">This feed hasn&#39;t been verified. Fetching will still be attempted, and it can be removed later if it doesn&#39;t work.</string>

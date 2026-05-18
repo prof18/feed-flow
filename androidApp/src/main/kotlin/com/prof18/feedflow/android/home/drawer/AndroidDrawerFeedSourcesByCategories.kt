@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -44,7 +46,9 @@ import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.shared.ui.components.DeleteAllFeedsInCategoryDialog
 import com.prof18.feedflow.shared.ui.components.DeleteCategoryDialog
 import com.prof18.feedflow.shared.ui.components.EditCategoryNameDialog
 import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
@@ -69,6 +73,9 @@ internal fun AndroidDrawerFeedSourcesByCategories(
     validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
     onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
+    onMarkAllReadForCategoryClick: (FeedSourceCategory) -> Unit,
+    onDeleteAllFeedsInCategoryByIdClick: (CategoryId) -> Unit,
 ) {
     Column {
         Column {
@@ -96,6 +103,7 @@ internal fun AndroidDrawerFeedSourcesByCategories(
                 onPinFeedClick = onPinFeedClick,
                 onChangeFeedCategoryClick = onChangeFeedCategoryClick,
                 onOpenWebsite = onOpenWebsite,
+                onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
             )
 
             for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
@@ -123,6 +131,9 @@ internal fun AndroidDrawerFeedSourcesByCategories(
                         onEditCategoryClick = onEditCategoryClick,
                         validateCategoryName = validateCategoryName,
                         onDeleteCategoryClick = onDeleteCategoryClick,
+                        onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
+                        onMarkAllReadForCategoryClick = onMarkAllReadForCategoryClick,
+                        onDeleteAllFeedsInCategoryByIdClick = onDeleteAllFeedsInCategoryByIdClick,
                     )
                 }
             }
@@ -148,10 +159,14 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
+    onMarkAllReadForCategoryClick: (FeedSourceCategory) -> Unit,
+    onDeleteAllFeedsInCategoryByIdClick: (CategoryId) -> Unit,
 ) {
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
     var showMenu by rememberSaveable { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showDeleteAllFeedsDialog by remember { mutableStateOf(false) }
 
     val category = feedSourceCategoryWrapper.feedSourceCategory
     val unreadCount: Long = remember(drawerFeedSources) {
@@ -262,9 +277,11 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
             onPinFeedClick = onPinFeedClick,
             onChangeFeedCategoryClick = onChangeFeedCategoryClick,
             onOpenWebsite = onOpenWebsite,
+            onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
         )
 
         if (category != null) {
+            val strings = LocalFeedFlowStrings.current
             DropdownMenu(
                 expanded = showMenu,
                 onDismissRequest = { showMenu = false },
@@ -276,15 +293,39 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                 ),
             ) {
                 DropdownMenuItem(
-                    text = { Text(LocalFeedFlowStrings.current.editFeedSourceNameButton) },
+                    text = { Text(strings.renameCategory) },
                     onClick = {
                         showMenu = false
                         showEditDialog = true
                     },
                 )
 
+                if (unreadCount > 0) {
+                    DropdownMenuItem(
+                        text = { Text(strings.markAllReadButton) },
+                        onClick = {
+                            showMenu = false
+                            onMarkAllReadForCategoryClick(category)
+                        },
+                    )
+                }
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = Spacing.xsmall),
+                    thickness = 0.2.dp,
+                    color = Color.Gray,
+                )
+
                 DropdownMenuItem(
-                    text = { Text(LocalFeedFlowStrings.current.deleteFeed) },
+                    text = { Text(strings.deleteAllFeedsInCategory) },
+                    onClick = {
+                        showMenu = false
+                        showDeleteAllFeedsDialog = true
+                    },
+                )
+
+                DropdownMenuItem(
+                    text = { Text(strings.deleteCategory) },
                     onClick = {
                         showMenu = false
                         showDeleteDialog = true
@@ -299,6 +340,15 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                 onDeleteCategory = { id ->
                     onDeleteCategoryClick(id)
                     showDeleteDialog = false
+                },
+            )
+
+            DeleteAllFeedsInCategoryDialog(
+                showDialog = showDeleteAllFeedsDialog,
+                onDismiss = { showDeleteAllFeedsDialog = false },
+                onDeleteAllFeeds = {
+                    onDeleteAllFeedsInCategoryByIdClick(CategoryId(category.id))
+                    showDeleteAllFeedsDialog = false
                 },
             )
 

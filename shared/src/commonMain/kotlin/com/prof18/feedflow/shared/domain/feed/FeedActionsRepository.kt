@@ -156,17 +156,20 @@ internal class FeedActionsRepository(
     }
 
     suspend fun markAllCurrentFeedAsRead() {
-        val currentFilter = feedStateRepository.getCurrentFeedFilter()
+        markAllFeedAsRead(feedStateRepository.getCurrentFeedFilter())
+    }
+
+    suspend fun markAllFeedAsRead(feedFilter: FeedFilter) {
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
-                gReaderRepository.markAllFeedAsRead(currentFilter)
+                gReaderRepository.markAllFeedAsRead(feedFilter)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkAllFeedsAsReadFailed))
                     }
             }
 
             SyncAccounts.FEEDBIN -> {
-                feedbinRepository.markAllFeedAsRead(currentFilter)
+                feedbinRepository.markAllFeedAsRead(feedFilter)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkAllFeedsAsReadFailed))
                     }
@@ -177,7 +180,7 @@ internal class FeedActionsRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.markAllFeedAsRead(currentFilter)
+                databaseHelper.markAllFeedAsRead(feedFilter)
                 feedSyncRepository.setIsSyncUploadRequired()
             }
         }

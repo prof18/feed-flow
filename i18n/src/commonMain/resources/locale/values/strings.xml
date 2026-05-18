@@ -257,6 +257,7 @@
     <string name="category_name">Category name</string>
     <string name="category_name_already_exists">A category with this name already exists</string>
     <string name="edit_category">Edit category name</string>
+    <string name="rename_category">Rename category</string>
     <string name="change_category">Change category</string>
     <string name="adding_feed">Adding feed...</string>
     <string name="error_feed_add">Something went wrong while adding the feed</string>

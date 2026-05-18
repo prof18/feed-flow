@@ -84,6 +84,8 @@ internal fun DesktopDrawerFeedSourcesByCategories(
     onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
     onDeleteAllFeedsInCategoryClick: (List<FeedSource>) -> Unit,
+    onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
+    onMarkAllReadForCategoryClick: (FeedSourceCategory) -> Unit,
     onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
     dragState: FeedSourceDragState,
     onAddFeedClick: () -> Unit,
@@ -169,6 +171,7 @@ internal fun DesktopDrawerFeedSourcesByCategories(
                 onPinFeedClick = onPinFeedClick,
                 onChangeFeedCategoryClick = onChangeFeedCategoryClick,
                 onOpenWebsite = onOpenWebsite,
+                onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
                 onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
                 dragState = dragState,
             )
@@ -201,6 +204,8 @@ internal fun DesktopDrawerFeedSourcesByCategories(
                         validateCategoryName = validateCategoryName,
                         onDeleteCategoryClick = onDeleteCategoryClick,
                         onDeleteAllFeedsInCategoryClick = onDeleteAllFeedsInCategoryClick,
+                        onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
+                        onMarkAllReadForCategoryClick = onMarkAllReadForCategoryClick,
                         onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
                         dragState = dragState,
                     )
@@ -310,6 +315,8 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
     validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
     onDeleteCategoryClick: (CategoryId) -> Unit,
     onDeleteAllFeedsInCategoryClick: (List<FeedSource>) -> Unit,
+    onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
+    onMarkAllReadForCategoryClick: (FeedSourceCategory) -> Unit,
     onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
     dragState: FeedSourceDragState,
 ) {
@@ -448,6 +455,7 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
             onPinFeedClick = onPinFeedClick,
             onChangeFeedCategoryClick = onChangeFeedCategoryClick,
             onOpenWebsite = onOpenWebsite,
+            onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
             onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
             dragState = dragState,
         )
@@ -466,17 +474,34 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
     }
 
     if (category != null) {
-        val menuEntries = remember(strings, deleteAllFeedsEntry) {
-            persistentListOf(
+        val menuEntries = buildList {
+            add(
                 DesktopPopupMenuEntry.Action(
-                    text = strings.editFeedSourceNameButton,
+                    text = strings.renameCategory,
                     onClick = {
                         showMenu = false
                         menuPositionInWindow = null
                         showEditDialog = true
                     },
                 ),
-                deleteAllFeedsEntry,
+            )
+
+            if (unreadCount > 0) {
+                add(
+                    DesktopPopupMenuEntry.Action(
+                        text = strings.markAllReadButton,
+                        onClick = {
+                            showMenu = false
+                            menuPositionInWindow = null
+                            onMarkAllReadForCategoryClick(category)
+                        },
+                    ),
+                )
+            }
+
+            add(DesktopPopupMenuEntry.Divider)
+            add(deleteAllFeedsEntry)
+            add(
                 DesktopPopupMenuEntry.Action(
                     text = strings.deleteCategory,
                     onClick = {
@@ -486,7 +511,7 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
                     },
                 ),
             )
-        }
+        }.toImmutableList()
 
         DesktopPopupMenu(
             showMenu = showMenu,

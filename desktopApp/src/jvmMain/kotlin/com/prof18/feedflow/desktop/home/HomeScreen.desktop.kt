@@ -291,6 +291,15 @@ internal fun HomeScreen(
             onDeleteAllFeedsInCategoryClick = { feedSources ->
                 homeViewModel.deleteAllFeedsInCategory(feedSources)
             },
+            onDeleteAllFeedsInCategoryByIdClick = { categoryId ->
+                homeViewModel.deleteAllFeedsInCategory(categoryId)
+            },
+            onMarkAllReadForFeedSourceClick = { feedSource ->
+                homeViewModel.markAllReadForFeedSource(feedSource)
+            },
+            onMarkAllReadForCategoryClick = { category ->
+                homeViewModel.markAllReadForCategory(category)
+            },
         )
     }
 

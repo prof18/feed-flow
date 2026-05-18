@@ -16,6 +16,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActions
@@ -53,6 +54,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
@@ -310,6 +312,24 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun markAllReadForFeedSource(feedSource: FeedSource) {
+        viewModelScope.launch {
+            feedOperationMutableState.update { FeedOperation.MarkingAllRead }
+            feedActionsRepository.markAllFeedAsRead(FeedFilter.Source(feedSource))
+            feedOperationMutableState.update { FeedOperation.None }
+            feedStateRepository.getFeeds()
+        }
+    }
+
+    fun markAllReadForCategory(category: FeedSourceCategory) {
+        viewModelScope.launch {
+            feedOperationMutableState.update { FeedOperation.MarkingAllRead }
+            feedActionsRepository.markAllFeedAsRead(FeedFilter.Category(category))
+            feedOperationMutableState.update { FeedOperation.None }
+            feedStateRepository.getFeeds()
+        }
+    }
+
     fun markAsRead(feedItemId: String) {
         viewModelScope.launch {
             feedActionsRepository.markAsRead(
@@ -449,6 +469,20 @@ class HomeViewModel internal constructor(
     fun deleteAllFeedsInCategory(feedSources: List<FeedSource>) {
         viewModelScope.launch {
             feedOperationMutableState.update { FeedOperation.Deleting }
+            for (feedSource in feedSources) {
+                feedSourcesRepository.deleteFeed(feedSource)
+            }
+            feedStateRepository.getFeeds()
+            feedOperationMutableState.update { FeedOperation.None }
+        }
+    }
+
+    fun deleteAllFeedsInCategory(categoryId: CategoryId) {
+        viewModelScope.launch {
+            feedOperationMutableState.update { FeedOperation.Deleting }
+            val feedSources = feedSourcesRepository.getFeedSources()
+                .first()
+                .filter { it.category?.id == categoryId.value }
             for (feedSource in feedSources) {
                 feedSourcesRepository.deleteFeed(feedSource)
             }

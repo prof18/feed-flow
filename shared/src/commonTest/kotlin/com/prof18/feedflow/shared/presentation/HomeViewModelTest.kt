@@ -325,6 +325,87 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `markAllReadForFeedSource marks only that source as read`() = runTest(testDispatcher) {
+        val sourceOne = createFeedSource(id = "source-1", title = "Source 1")
+        val sourceTwo = createFeedSource(id = "source-2", title = "Source 2")
+        insertFeedSources(sourceOne, sourceTwo)
+        databaseHelper.insertFeedItems(
+            listOf(
+                buildFeedItem(id = "item-1", title = "Item 1", pubDateMillis = 2000, source = sourceOne),
+                buildFeedItem(id = "item-2", title = "Item 2", pubDateMillis = 1000, source = sourceTwo),
+            ),
+            lastSyncTimestamp = 0,
+        )
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.feedOperationState.test {
+            assertEquals(FeedOperation.None, awaitItem())
+
+            viewModel.markAllReadForFeedSource(sourceOne)
+            assertEquals(FeedOperation.MarkingAllRead, awaitItem())
+            assertEquals(FeedOperation.None, awaitItem())
+        }
+
+        assertTrue(getDbItems(FeedFilter.Source(sourceOne)).all { it.is_read })
+        assertTrue(getDbItems(FeedFilter.Source(sourceTwo)).none { it.is_read })
+    }
+
+    @Test
+    fun `markAllReadForCategory marks only that category as read`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "category-1", title = "Tech")
+        val newsCategory = FeedSourceCategory(id = "category-2", title = "News")
+        val techSource = createFeedSource(id = "source-1", title = "Source 1", category = techCategory)
+        val newsSource = createFeedSource(id = "source-2", title = "Source 2", category = newsCategory)
+        insertFeedSources(techSource, newsSource)
+        databaseHelper.insertFeedItems(
+            listOf(
+                buildFeedItem(id = "item-1", title = "Item 1", pubDateMillis = 2000, source = techSource),
+                buildFeedItem(id = "item-2", title = "Item 2", pubDateMillis = 1000, source = newsSource),
+            ),
+            lastSyncTimestamp = 0,
+        )
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.feedOperationState.test {
+            assertEquals(FeedOperation.None, awaitItem())
+
+            viewModel.markAllReadForCategory(techCategory)
+            assertEquals(FeedOperation.MarkingAllRead, awaitItem())
+            assertEquals(FeedOperation.None, awaitItem())
+        }
+
+        assertTrue(getDbItems(FeedFilter.Category(techCategory)).all { it.is_read })
+        assertTrue(getDbItems(FeedFilter.Category(newsCategory)).none { it.is_read })
+    }
+
+    @Test
+    fun `deleteAllFeedsInCategory by id deletes only that category feeds`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "category-1", title = "Tech")
+        val newsCategory = FeedSourceCategory(id = "category-2", title = "News")
+        val techSource = createFeedSource(id = "source-1", title = "Source 1", category = techCategory)
+        val newsSource = createFeedSource(id = "source-2", title = "Source 2", category = newsCategory)
+        insertFeedSources(techSource, newsSource)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.feedOperationState.test {
+            assertEquals(FeedOperation.None, awaitItem())
+
+            viewModel.deleteAllFeedsInCategory(CategoryId(techCategory.id))
+            assertEquals(FeedOperation.Deleting, awaitItem())
+            assertEquals(FeedOperation.None, awaitItem())
+        }
+
+        val remainingSources = databaseHelper.getFeedSources()
+        assertEquals(listOf("source-2"), remainingSources.map { it.id })
+    }
+
+    @Test
     fun `markAsRead updates database`() = runTest(testDispatcher) {
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)
@@ -871,8 +952,8 @@ class HomeViewModelTest : KoinTestBase() {
         commentsUrl = null,
     )
 
-    private suspend fun getDbItems() = databaseHelper.getFeedItems(
-        feedFilter = FeedFilter.Timeline,
+    private suspend fun getDbItems(feedFilter: FeedFilter = FeedFilter.Timeline) = databaseHelper.getFeedItems(
+        feedFilter = feedFilter,
         pageSize = 100,
         offset = 0,
         showReadItems = true,

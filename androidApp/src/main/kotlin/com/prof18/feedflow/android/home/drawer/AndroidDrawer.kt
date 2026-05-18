@@ -177,6 +177,7 @@ fun AndroidDrawer(
                             onPinFeedClick = feedManagementActions.onPinFeedClick,
                             onChangeFeedCategoryClick = feedManagementActions.onChangeFeedCategoryClick,
                             onOpenWebsite = feedManagementActions.onOpenWebsite,
+                            onMarkAllReadForFeedSourceClick = feedManagementActions.onMarkAllReadForFeedSourceClick,
                         )
                     }
                 }
@@ -200,6 +201,9 @@ fun AndroidDrawer(
                         onEditCategoryClick = feedManagementActions.onEditCategoryClick,
                         validateCategoryName = feedManagementActions.validateCategoryName,
                         onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
+                        onMarkAllReadForFeedSourceClick = feedManagementActions.onMarkAllReadForFeedSourceClick,
+                        onMarkAllReadForCategoryClick = feedManagementActions.onMarkAllReadForCategoryClick,
+                        onDeleteAllFeedsInCategoryByIdClick = feedManagementActions.onDeleteAllFeedsInCategoryByIdClick,
                     )
                 }
             }

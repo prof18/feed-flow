@@ -178,6 +178,7 @@ fun DesktopDrawer(
                             onPinFeedClick = feedManagementActions.onPinFeedClick,
                             onChangeFeedCategoryClick = feedManagementActions.onChangeFeedCategoryClick,
                             onOpenWebsite = feedManagementActions.onOpenWebsite,
+                            onMarkAllReadForFeedSourceClick = feedManagementActions.onMarkAllReadForFeedSourceClick,
                             onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
                             dragState = dragState,
                         )
@@ -203,6 +204,8 @@ fun DesktopDrawer(
                     validateCategoryName = feedManagementActions.validateCategoryName,
                     onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
                     onDeleteAllFeedsInCategoryClick = feedManagementActions.onDeleteAllFeedsInCategoryClick,
+                    onMarkAllReadForFeedSourceClick = feedManagementActions.onMarkAllReadForFeedSourceClick,
+                    onMarkAllReadForCategoryClick = feedManagementActions.onMarkAllReadForCategoryClick,
                     onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
                     dragState = dragState,
                     onAddFeedClick = feedManagementActions.onAddFeedClick,

@@ -58,6 +58,7 @@ internal fun DesktopFeedSourceDrawerItem(
     onPinFeedClick: (FeedSource) -> Unit,
     onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
+    onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
     unreadCount: Long,
     modifier: Modifier = Modifier,
 ) {
@@ -161,15 +162,17 @@ internal fun DesktopFeedSourceDrawerItem(
 
             val strings = LocalFeedFlowStrings.current
             val menuEntries = buildList {
-                add(
-                    DesktopPopupMenuEntry.Action(
-                        text = strings.deleteFeed,
-                        onClick = {
-                            showFeedMenu = false
-                            showDeleteDialog = true
-                        },
-                    ),
-                )
+                if (unreadCount > 0) {
+                    add(
+                        DesktopPopupMenuEntry.Action(
+                            text = strings.markAllReadButton,
+                            onClick = {
+                                onMarkAllReadForFeedSourceClick(feedSource)
+                                showFeedMenu = false
+                            },
+                        ),
+                    )
+                }
 
                 val websiteUrl = feedSource.websiteUrlFallback()
                 if (websiteUrl != null) {
@@ -186,7 +189,7 @@ internal fun DesktopFeedSourceDrawerItem(
 
                 add(
                     DesktopPopupMenuEntry.Action(
-                        text = strings.editFeedSourceNameButton,
+                        text = strings.editFeed,
                         onClick = {
                             onEditFeedClick(feedSource)
                             showFeedMenu = false
@@ -214,6 +217,18 @@ internal fun DesktopFeedSourceDrawerItem(
                         onClick = {
                             onPinFeedClick(feedSource)
                             showFeedMenu = false
+                        },
+                    ),
+                )
+
+                add(DesktopPopupMenuEntry.Divider)
+
+                add(
+                    DesktopPopupMenuEntry.Action(
+                        text = strings.deleteFeed,
+                        onClick = {
+                            showFeedMenu = false
+                            showDeleteDialog = true
                         },
                     ),
                 )

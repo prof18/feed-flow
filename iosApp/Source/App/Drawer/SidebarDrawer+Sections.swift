@@ -68,7 +68,8 @@ extension SidebarDrawer {
                 } else {
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url))
                 }
-            }
+            },
+            onMarkAllRead: onMarkAllReadForFeedSource
         )
         .tag(SidebarSelection.feedSource(id: drawerItem.feedSource.id))
         .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))
@@ -233,7 +234,24 @@ extension SidebarDrawer {
             categoryToEdit = categoryItem.category.id
             showEditCategoryDialog = true
         } label: {
-            Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
+            Label(feedFlowStrings.renameCategory, systemImage: "pencil")
+        }
+
+        if categoryItem.unreadCount > 0 {
+            Button {
+                onMarkAllReadForCategory(categoryItem.category)
+            } label: {
+                Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark.circle")
+            }
+        }
+
+        Divider()
+
+        Button(role: .destructive) {
+            categoryToDeleteAllFeeds = categoryItem.category.id
+            showDeleteAllFeedsDialog = true
+        } label: {
+            Label(feedFlowStrings.deleteAllFeedsInCategory, systemImage: "trash")
         }
 
         Button(role: .destructive) {

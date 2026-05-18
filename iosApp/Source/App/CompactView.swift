@@ -202,6 +202,15 @@ struct CompactView: View {
             onPinFeedClick: { feedSource in
                 homeViewModel.toggleFeedPin(feedSource: feedSource)
             },
+            onMarkAllReadForFeedSource: { feedSource in
+                homeViewModel.markAllReadForFeedSource(feedSource: feedSource)
+            },
+            onMarkAllReadForCategory: { category in
+                homeViewModel.markAllReadForCategory(category: category)
+            },
+            onDeleteAllFeedsInCategory: { categoryId in
+                homeViewModel.deleteAllFeedsInCategory(categoryId: CategoryId(value: categoryId))
+            },
             onDeleteCategory: { categoryId in
                 homeViewModel.deleteCategory(categoryId: CategoryId(value: categoryId))
             },

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +56,7 @@ internal fun AndroidFeedSourceDrawerItem(
     onPinFeedClick: (FeedSource) -> Unit,
     onChangeFeedCategoryClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
+    onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
     unreadCount: Long,
     modifier: Modifier = Modifier,
 ) {
@@ -149,13 +151,15 @@ internal fun AndroidFeedSourceDrawerItem(
             ) {
                 val strings = LocalFeedFlowStrings.current
 
-                DropdownMenuItem(
-                    text = { Text(strings.deleteFeed) },
-                    onClick = {
-                        showFeedMenu = false
-                        showDeleteDialog = true
-                    },
-                )
+                if (unreadCount > 0) {
+                    DropdownMenuItem(
+                        text = { Text(strings.markAllReadButton) },
+                        onClick = {
+                            onMarkAllReadForFeedSourceClick(feedSource)
+                            showFeedMenu = false
+                        },
+                    )
+                }
 
                 val websiteUrl = feedSource.websiteUrlFallback()
                 if (websiteUrl != null) {
@@ -169,7 +173,7 @@ internal fun AndroidFeedSourceDrawerItem(
                 }
 
                 DropdownMenuItem(
-                    text = { Text(strings.editFeedSourceNameButton) },
+                    text = { Text(strings.editFeed) },
                     onClick = {
                         onEditFeedClick(feedSource)
                         showFeedMenu = false
@@ -197,6 +201,20 @@ internal fun AndroidFeedSourceDrawerItem(
                     onClick = {
                         onPinFeedClick(feedSource)
                         showFeedMenu = false
+                    },
+                )
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = Spacing.xsmall),
+                    thickness = 0.2.dp,
+                    color = Color.Gray,
+                )
+
+                DropdownMenuItem(
+                    text = { Text(strings.deleteFeed) },
+                    onClick = {
+                        showFeedMenu = false
+                        showDeleteDialog = true
                     },
                 )
             }

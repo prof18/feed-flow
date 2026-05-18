@@ -210,6 +210,15 @@ internal fun HomeScreen(
                 showChangeCategorySheet = true
             },
             onOpenWebsite = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
+            onDeleteAllFeedsInCategoryByIdClick = { categoryId ->
+                homeViewModel.deleteAllFeedsInCategory(categoryId)
+            },
+            onMarkAllReadForFeedSourceClick = { feedSource ->
+                homeViewModel.markAllReadForFeedSource(feedSource)
+            },
+            onMarkAllReadForCategoryClick = { category ->
+                homeViewModel.markAllReadForCategory(category)
+            },
         )
     }
 

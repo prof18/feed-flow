@@ -19,6 +19,7 @@ struct FeedSourceDrawerItem: View {
     let onChangeCategory: (FeedSource) -> Void
     let onDelete: (FeedSource) -> Void
     let onOpenWebsite: (String) -> Void
+    let onMarkAllRead: (FeedSource) -> Void
 
     var body: some View {
         HStack {
@@ -99,14 +100,14 @@ struct FeedSourceDrawerItem: View {
             )
         }
 
-        // 1. Delete (least frequent + destructive - keep far from accidental taps)
-        Button {
-            onDelete(feedSource)
-        } label: {
-            Label(feedFlowStrings.deleteFeed, systemImage: "trash")
+        if drawerItem.unreadCount > 0 {
+            Button {
+                onMarkAllRead(feedSource)
+            } label: {
+                Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark.circle")
+            }
         }
 
-        // 2. Open website (rare - only for checking if feed/website is still alive)
         if let websiteUrl = feedSource.websiteUrlFallback() {
             Button {
                 onOpenWebsite(websiteUrl)
@@ -115,21 +116,18 @@ struct FeedSourceDrawerItem: View {
             }
         }
 
-        // 3. Edit feed (medium frequency - occasional settings adjustment)
         Button {
             onEdit(feedSource)
         } label: {
-            Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
+            Label(feedFlowStrings.editFeed, systemImage: "pencil")
         }
 
-        // 4. Change category (frequent - organizing feeds)
         Button {
             onChangeCategory(feedSource)
         } label: {
             Label(feedFlowStrings.changeCategory, systemImage: "folder")
         }
 
-        // 5. Pin (most frequent - at bottom for easy thumb reach)
         Button {
             onPin(feedSource)
         } label: {
@@ -137,6 +135,14 @@ struct FeedSourceDrawerItem: View {
                 feedSource.isPinned ? feedFlowStrings.menuRemoveFromPinned : feedFlowStrings.menuAddToPinned,
                 systemImage: feedSource.isPinned ? "pin.slash" : "pin"
             )
+        }
+
+        Divider()
+
+        Button(role: .destructive) {
+            onDelete(feedSource)
+        } label: {
+            Label(feedFlowStrings.deleteFeed, systemImage: "trash")
         }
     }
 }

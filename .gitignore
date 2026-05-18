@@ -136,6 +136,9 @@ iosApp/.swiftpm/
 # XcodeGen-generated Xcode project (run .scripts/generate-project.sh to regenerate)
 /iosApp/FeedFlow.xcodeproj/
 
+# SPM pins are managed via project.yml exactVersion:, never tracked
+**/Package.resolved
+
 /iosApp/Assets/Config-Debug.xcconfig
 /.junie/.onboarding_migrated
 /.junie/memory/errors.md

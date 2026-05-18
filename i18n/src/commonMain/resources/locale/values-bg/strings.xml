@@ -72,7 +72,7 @@
     <string name="load_file_error_message">Файлът не може да се зареди</string>
     <string name="generic_error_message">Съжаляваме, нещо се обърка :(</string>
     <string name="database_error">Нещо се обърка по време на извличането на емисиите. Моля, опитайте отново или рестартирайте приложението - error code: %s :(</string>
-    <string name="force_feed_refresh">Принудително обновяване на емисии</string>
+    <string name="force_feed_refresh">Принудително обновяване</string>
     <string name="drawer_title_feed_sources">Източници на емисия</string>
     <string name="issue_content_template">Моля, опишете проблема, посочете платформата, която използвате, версията на приложението и предоставете връзка към RSS емисията, която причинява проблемите. Ако е възможно, моля, прикачете екранна снимка и OPML файла.</string>
     <string name="invalid_rss_url">Предоставената от вас връзка е невалидна RSS емисия</string>
@@ -111,7 +111,7 @@
     <string name="feed_name">Име на емисия</string>
     <string name="feed_edited_message">Емисията %s е актуализирана</string>
     <string name="icloud_sync_description">Свържете своя iCloud профил, за да синхронизирате абонаменти за емисии, категории, прочетени и маркирани статии между вашите iOS, iPadOS и macOS устройства. Данните ще бъдат запазени в папка, специфична за приложението; FeedFlow няма да има достъп до нито един от вашите файлове</string>
-    <string name="clear_old_articles_button">Изтриване на седмични публикации</string>
+    <string name="clear_old_articles_button">Изтриване на статии отпреди една седмица</string>
     <string name="open_another_feed">Отваряне на друга емисия</string>
     <string name="settings_feed_list_title">Списък с емисии</string>
     <string name="settings_feed_list_scale_title">Размер на текста</string>
@@ -260,7 +260,7 @@
     <string name="scroll_to_top_button_content_description">Превъртете до горе</string>
     <string name="dropbox_auth_code_expired">Кодът за удостоверяване вече не е валиден. Моля, опитайте отново.</string>
     <string name="database_error_reset">Имахме проблеми със зареждането на данните ви и трябваше да започнем отначало. Извиняваме се за това.</string>
-    <string name="trigger_feed_sync">Задействане на качване в профила ви</string>
+    <string name="trigger_feed_sync">Качване на промени</string>
     <string name="menu_mark_all_above_as_read">Маркиране на всичко по-горе като прочетено</string>
     <string name="menu_mark_all_below_as_read">Маркиране на всички по-долу като прочетени</string>
     <string name="google_drive_sync_common_description">Свържете акаунта си в Google Drive, за да синхронизирате абонаменти за емисии, категории, прочетени и маркирани статии между вашите устройства с Android, iOS, iPadOS и настолни компютри. Данните ще бъдат запазени в папка, специфична за приложението; FeedFlow няма да има достъп до нито един от вашите файлове</string>
@@ -385,4 +385,6 @@
     <string name="invalid_rss_url_with_retry_hint">Не можах да проверя тази емисия. Възможно е да не е валидна RSS емисия или сървърът да е временно недостъпен.</string>
     <string name="add_feed_anyway_acknowledgement">Тази емисия не е проверена. Ще бъде направен опит за извличане и може да бъде премахната по-късно, ако не се получи.</string>
     <string name="add_feed_anyway_button">Добави въпреки това</string>
+    <string name="rename_category">Преименуване на категория</string>
+    <string name="sort_and_filter_button">Сортиране и филтриране</string>
 </resources>

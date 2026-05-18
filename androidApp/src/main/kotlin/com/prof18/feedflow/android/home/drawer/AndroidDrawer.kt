@@ -1,6 +1,7 @@
 package com.prof18.feedflow.android.home.drawer
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -303,10 +304,15 @@ private fun DrawerActionButton(
     onClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
+    val containerColor = if (isSystemInDarkTheme()) {
+        MaterialTheme.colorScheme.surfaceContainerHighest
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    }
     FilledIconButton(
         onClick = onClick,
         colors = IconButtonDefaults.filledIconButtonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            containerColor = containerColor,
             contentColor = MaterialTheme.colorScheme.onSurface,
         ),
         content = content,

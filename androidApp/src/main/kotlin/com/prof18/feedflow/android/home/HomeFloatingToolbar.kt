@@ -1,7 +1,9 @@
 package com.prof18.feedflow.android.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -74,6 +76,17 @@ fun HomeFloatingToolbar(
     val viewOptionsSheetState = rememberModalBottomSheetState()
     val strings = LocalFeedFlowStrings.current
     val currentFeedFilter = displayState.currentFeedFilter
+    val isDarkTheme = isSystemInDarkTheme()
+    val toolbarContainerColor = if (isDarkTheme) {
+        MaterialTheme.colorScheme.surfaceContainerHighest
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    }
+    val toolbarBorder = if (isDarkTheme) {
+        BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    } else {
+        null
+    }
 
     Row(
         modifier = modifier
@@ -94,9 +107,10 @@ fun HomeFloatingToolbar(
                     )
                 },
             shape = FloatingToolbarDefaults.ContainerShape,
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            color = toolbarContainerColor,
             contentColor = MaterialTheme.colorScheme.onSurface,
             shadowElevation = 6.dp,
+            border = toolbarBorder,
         ) {
             Row(
                 modifier = Modifier.padding(end = 16.dp),
@@ -154,9 +168,10 @@ fun HomeFloatingToolbar(
 
         Surface(
             shape = FloatingToolbarDefaults.ContainerShape,
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            color = toolbarContainerColor,
             contentColor = MaterialTheme.colorScheme.onSurface,
             shadowElevation = 6.dp,
+            border = toolbarBorder,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onSearchClick) {

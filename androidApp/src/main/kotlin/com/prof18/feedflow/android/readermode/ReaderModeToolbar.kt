@@ -1,6 +1,7 @@
 package com.prof18.feedflow.android.readermode
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,6 +27,11 @@ internal fun ReaderModeToolbar(
     isDetailFullscreen: Boolean = false,
     onToggleDetailFullscreen: (() -> Unit)? = null,
 ) {
+    val backButtonColor = if (isSystemInDarkTheme()) {
+        MaterialTheme.colorScheme.surfaceContainerHighest
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    }
     Box {
         Box(
             modifier = Modifier
@@ -48,7 +54,7 @@ internal fun ReaderModeToolbar(
                     onClick = onToggleDetailFullscreen ?: navigateBack,
                     modifier = Modifier.padding(start = 8.dp),
                     colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        containerColor = backButtonColor,
                         contentColor = MaterialTheme.colorScheme.onSurface,
                     ),
                 ) {

@@ -1,8 +1,11 @@
 package com.prof18.feedflow.android.home
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -56,6 +59,7 @@ import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
 
 private val listTopContentPadding = 4.dp
+private val feedLoaderReservedHeight = 48.dp
 private val floatingToolbarHeight = 64.dp
 private val scrimFeather = 24.dp
 
@@ -165,33 +169,33 @@ fun AndroidHomeScreenContent(
                             )
                         },
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(top = topInset),
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
                         ) {
-                            FeedLoader(
-                                loadingState = displayState.feedUpdateStatus,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = Spacing.small),
+                            val feedListTopPadding by animateDpAsState(
+                                targetValue = topInset + listTopContentPadding +
+                                    if (isRefreshing) feedLoaderReservedHeight else 0.dp,
+                                animationSpec = if (reduceMotionEnabled) {
+                                    snap()
+                                } else {
+                                    tween(durationMillis = 350, easing = FastOutSlowInEasing)
+                                },
+                                label = "feedListTopPadding",
                             )
 
                             if (displayState.feedItems.isEmpty() && isRefreshing) {
                                 Box(
                                     contentAlignment = Alignment.Center,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f),
+                                    modifier = Modifier.fillMaxSize(),
                                 ) {
                                     CircularProgressIndicator()
                                 }
                             } else {
                                 FeedList(
-                                    modifier = Modifier.weight(1f),
+                                    modifier = Modifier.fillMaxSize(),
                                     feedItems = displayState.feedItems,
                                     listState = listState,
-                                    contentPadding = PaddingValues(top = listTopContentPadding),
+                                    contentPadding = PaddingValues(top = feedListTopPadding),
                                     feedFontSize = displayState.feedFontSizes,
                                     nextFeedState = displayState.nextFeedDisplayState,
                                     shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
@@ -243,6 +247,16 @@ fun AndroidHomeScreenContent(
                         ),
                     ),
             )
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth()
+                    .zIndex(zIndex = 0.75f)
+                    .padding(top = topInset + Spacing.small),
+            ) {
+                FeedLoader(loadingState = displayState.feedUpdateStatus)
+            }
 
             HomeFloatingToolbar(
                 modifier = Modifier

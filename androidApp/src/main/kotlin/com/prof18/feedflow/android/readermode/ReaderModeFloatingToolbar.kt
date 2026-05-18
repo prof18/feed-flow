@@ -5,6 +5,8 @@ import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -74,6 +76,17 @@ fun ReaderModeFloatingToolbar(
     var showFontSizeMenu by remember { mutableStateOf(false) }
     var showOverflowMenu by remember { mutableStateOf(false) }
     val strings = LocalFeedFlowStrings.current
+    val isDarkTheme = isSystemInDarkTheme()
+    val toolbarContainerColor = if (isDarkTheme) {
+        MaterialTheme.colorScheme.surfaceContainerHighest
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    }
+    val toolbarBorder = if (isDarkTheme) {
+        BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    } else {
+        null
+    }
 
     val url = readerModeState.getUrl
     val id = readerModeState.getId
@@ -176,9 +189,10 @@ fun ReaderModeFloatingToolbar(
     Surface(
         modifier = modifier,
         shape = FloatingToolbarDefaults.ContainerShape,
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        color = toolbarContainerColor,
         contentColor = MaterialTheme.colorScheme.onSurface,
         shadowElevation = 6.dp,
+        border = toolbarBorder,
     ) {
         Box {
             OverflowToolbarLayout(

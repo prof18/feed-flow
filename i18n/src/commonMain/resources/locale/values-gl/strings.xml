@@ -35,7 +35,7 @@
     <string name="author_label">Creada con ❤️ por</string>
     <string name="open_source_licenses">Licenzas de código aberto</string>
     <string name="open_website_button">Abrir sitio web</string>
-    <string name="force_feed_refresh">Forzar a actualización das canles</string>
+    <string name="force_feed_refresh">Forzar a actualización</string>
     <string name="retry_button">Volver a intentar</string>
     <string name="done_button">OK</string>
     <string name="issue_report_title">Informa dunha incidencia con FeedFlow</string>
@@ -253,7 +253,7 @@
     <string name="browser_launch_error">Non se puido abrir a ligazón. Comproba os axustes do navegador.</string>
     <string name="about_the_app">FeedFlow é un lector RSS minimalista cunha cronoloxía temporal directa e clara ― sen algoritmos ou borralla. Abre os artigos no teu navegador favorito, ou leos sen distraccións no Modo Lector. Obtén previamente e almacena os artigos completos para ler sen conexión cando queiras.\nSincroniza as túas canles, estado de lectura e marcadores entre Android, iOS, macOS, Windows e Linux utilizando iCloud, Dropbox, Google Drive, FreshRss, Miniflux, Feedbin ou BazQux. Organiza as canles en categorías, bloquea palabras que molesten, e importa ou exporta as mesmas con OPML.</string>
     <string name="open_feed_website_button">Abrir páxina web da canle</string>
-    <string name="trigger_feed_sync">Realiza a subida á túa conta</string>
+    <string name="trigger_feed_sync">Subir os cambios</string>
     <string name="import_export_label">Importar e exportar</string>
     <string name="choose_another_file_button">Elixe outro ficheiro</string>
     <string name="invalid_opml_import_title">Non se puido importar este ficheiro</string>
@@ -385,4 +385,5 @@
     <string name="invalid_rss_url_with_retry_hint">Non se puido validar esta canle. Pode que non sexa unha canle RSS válida, ou que o servidor non estea dispoñible temporalmente.</string>
     <string name="add_feed_anyway_acknowledgement">Non se verificou esta canle. Vaise seguir intentando a obtención, pero poderalo retirar cando queiras se non funciona.</string>
     <string name="add_feed_anyway_button">Engadir igualmente</string>
+    <string name="sort_and_filter_button">Orde e filtros</string>
 </resources>

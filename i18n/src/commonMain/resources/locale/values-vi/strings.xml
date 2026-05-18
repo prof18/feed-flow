@@ -386,4 +386,5 @@
     <string name="add_feed_anyway_acknowledgement">Nguồn tin này chưa được xác minh. Hệ thống vẫn sẽ cố gắng tải về, và nếu không thành công, nó có thể bị xóa sau này.</string>
     <string name="add_feed_anyway_button">Vẫn cứ thêm</string>
     <string name="sort_and_filter_button">Sắp xếp &amp; lọc</string>
+    <string name="rename_category">Đổi tên danh mục</string>
 </resources>

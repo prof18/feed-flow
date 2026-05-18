@@ -386,4 +386,5 @@
     <string name="add_feed_anyway_acknowledgement">此订阅源尚未验证。仍将尝试获取，如果不起作用，稍后可以将其移除。</string>
     <string name="add_feed_anyway_button">仍要添加</string>
     <string name="sort_and_filter_button">排序和筛选</string>
+    <string name="rename_category">重命名类别</string>
 </resources>

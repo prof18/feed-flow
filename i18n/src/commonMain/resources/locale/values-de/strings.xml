@@ -3,7 +3,7 @@
     <string name="feed_added_message">Feed %s hinzugefügt</string>
     <string name="feed_url_placeholder">https://meinwunschblog.com/feed</string>
     <string name="drawer_title_timeline">Zeitleiste</string>
-    <string name="force_feed_refresh">Feeds auffrischen erzwingen</string>
+    <string name="force_feed_refresh">Neuladen erzwingen</string>
     <string name="database_error">Beim Abrufen der Feeds gab es ein Problem. Bitte versuche es erneut oder starte die App neu - Fehlercode: %s :(</string>
     <string name="no_category">Ohne Kategorie</string>
     <string name="import_dialog_title">OPML-Datei auswählen</string>
@@ -107,7 +107,7 @@
     <string name="no_icloud_sync_yet">Deine Daten sind noch nicht mit iCloud synchronisiert. Drücke die Sicherungstaste, um die Synchronisierung zu starten</string>
     <string name="account_refresh_progress">Aktualisierung läuft</string>
     <string name="edit_feed_source_name_button">Bearbeiten</string>
-    <string name="clear_old_articles_button">1 Woche alte Einträge löschen</string>
+    <string name="clear_old_articles_button">1 Woche alte Artikel löschen</string>
     <string name="deleting_feed_dialog_title">Löschvorgang läuft...</string>
     <string name="edit_feed">Feed bearbeiten</string>
     <string name="feed_name">Name des Feeds</string>
@@ -250,7 +250,7 @@
     <string name="reader_mode_fallback_title">Artikel kann nicht analysiert werden</string>
     <string name="reader_mode_fallback_message">Der Inhalt dieser Seite kann nicht für den Lesemodus verwendet werden. Du kannst die Seite direkt in deinem Browser öffnen.</string>
     <string name="reader_mode_fallback_open_browser_button">Im Browser öffnen</string>
-    <string name="trigger_feed_sync">Upload zum Konto auslösen</string>
+    <string name="trigger_feed_sync">Änderungen hochladen</string>
     <string name="feed_add_in_progress_message">Feed wird importiert...</string>
     <string name="menu_mark_all_above_as_read">Alle oberhalb als gelesen markieren</string>
     <string name="menu_mark_all_below_as_read">Alle unterhalb als gelesen markieren</string>
@@ -385,4 +385,5 @@
     <string name="invalid_rss_url_with_retry_hint">Dieser Feed konnte nicht validiert werden. Entweder ist es ein ungültiger RSS-Feed oder der Server steht momentan nicht zur Verfügung.</string>
     <string name="add_feed_anyway_acknowledgement">Dieser Feed ist nicht verifiziert. Der Abruf wird weiterhin versucht, und wenn es nicht funktioniert kann er später gelöscht werden.</string>
     <string name="add_feed_anyway_button">Dennoch hinzufügen</string>
+    <string name="sort_and_filter_button">Sortieren &amp; filtern</string>
 </resources>

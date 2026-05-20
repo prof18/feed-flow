@@ -7,7 +7,7 @@
     <string name="no_feeds_found_message">Поки немає стрічок. Будь ласка, додайте нову стрічку!</string>
     <string name="loading_feed_message">Завантаження стрічок %s</string>
     <string name="mark_all_read_button">Позначити все прочитаним</string>
-    <string name="clear_old_articles_button">Видалити дописи тижневої давності</string>
+    <string name="clear_old_articles_button">Видалити статті тижневої давності</string>
     <string name="settings_button">Налаштування</string>
     <string name="feeds_importing_message">Імпортування стрічки</string>
     <string name="feeds_import_done_message">Імпортування виконано</string>
@@ -25,7 +25,7 @@
     <string name="about_nav_bar">Про</string>
     <string name="report_issue_button">Повідомити про проблему</string>
     <string name="open_website_button">Відкрити вебсайт</string>
-    <string name="force_feed_refresh">Примусово оновити стрічки</string>
+    <string name="force_feed_refresh">Примусове оновлення</string>
     <string name="import_export_opml_title">Імпортування та експортування</string>
     <string name="done_button">Гаразд</string>
     <string name="issue_report_title">Повідомте про проблему з FeedFlow</string>
@@ -260,7 +260,7 @@
     <string name="scroll_to_top_button_content_description">Прокрутити вгору</string>
     <string name="dropbox_auth_code_expired">Код автентифікації більше недійсний. Спробуйте ще раз.</string>
     <string name="database_error_reset">Виникли проблеми із завантаженням ваших даних і довелося починати все спочатку. Вибачте.</string>
-    <string name="trigger_feed_sync">Активувати завантаження у ваш обліковий запис</string>
+    <string name="trigger_feed_sync">Завантажити зміни</string>
     <string name="menu_mark_all_above_as_read">Позначити все вищезазначене як прочитане</string>
     <string name="menu_mark_all_below_as_read">Позначити все нижче як прочитане</string>
     <string name="google_drive_sync_common_description">Підключіть свій обліковий запис Google Диска, щоб синхронізувати підписки на стрічки, категорії, прочитані та додані до закладок статті між вашими пристроями Android, iOS, iPadOS та настільними комп’ютерами. Дані будуть збережені в папці, окремій для програми; FeedFlow не матиме доступу до жодного з ваших файлів</string>
@@ -385,4 +385,6 @@
     <string name="invalid_rss_url_with_retry_hint">Не вдалося перевірити цей канал. Можливо, це недійсний RSS-канал, або сервер тимчасово недоступний.</string>
     <string name="add_feed_anyway_acknowledgement">Цей канал не пройшов перевірку. Система все одно спробує завантажити його, і якщо це не вдасться, його можна буде видалити пізніше.</string>
     <string name="add_feed_anyway_button">Додати все одно</string>
+    <string name="rename_category">Перейменувати категорію</string>
+    <string name="sort_and_filter_button">Сортувати та фільтрувати</string>
 </resources>

@@ -168,7 +168,7 @@ internal fun HomeScreen(
             forceRefreshData = { homeViewModel.forceFeedRefresh() },
             markAllRead = { homeViewModel.markAllRead() },
             onBackToTimelineClick = { homeViewModel.onFeedFilterSelected(FeedFilter.Timeline) },
-            markAsReadOnScroll = { lastVisibleIndex -> homeViewModel.markAsReadOnScroll(lastVisibleIndex) },
+            onVisibleFeedItemsChanged = homeViewModel::onVisibleFeedItemsChanged,
             markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
             openUrl = { urlInfo ->
                 openUrl(

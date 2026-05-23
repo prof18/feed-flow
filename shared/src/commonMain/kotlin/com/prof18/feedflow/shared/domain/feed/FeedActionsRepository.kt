@@ -1,10 +1,12 @@
 package com.prof18.feedflow.shared.domain.feed
 
+import com.prof18.feedflow.core.model.DataResult
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.model.isSuccess
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.Search
@@ -31,19 +33,53 @@ internal class FeedActionsRepository(
 ) {
     suspend fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
         feedStateRepository.markAsRead(itemsToUpdates)
-        when (accountsRepository.getCurrentSyncAccount()) {
+        updateReadStatus(
+            feedItemIds = itemsToUpdates.toList(),
+            isRead = true,
+        )
+    }
+
+    suspend fun retryPendingReadStatusActions() {
+        val currentAccount = accountsRepository.getCurrentSyncAccount()
+        if (!currentAccount.isRemoteReadStatusAccount()) {
+            return
+        }
+
+        databaseHelper.getReadStatusPendingActions(currentAccount.name)
+            .groupBy { it.is_read }
+            .forEach { (isRead, pendingActions) ->
+                val feedItemIds = pendingActions.map { FeedItemId(it.feed_item_id) }
+                sendRemoteReadStatus(
+                    account = currentAccount,
+                    feedItemIds = feedItemIds,
+                    isRead = isRead,
+                ).handleRemoteReadStatusResult(
+                    account = currentAccount,
+                    feedItemIds = feedItemIds,
+                    isRead = isRead,
+                )
+            }
+    }
+
+    private suspend fun updateReadStatus(
+        feedItemIds: List<FeedItemId>,
+        isRead: Boolean,
+    ) {
+        if (feedItemIds.isEmpty()) {
+            return
+        }
+
+        when (val currentAccount = accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
-                gReaderRepository.updateReadStatus(itemsToUpdates.toList(), isRead = true)
-                    .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
-                    }
+                persistPendingRemoteReadStatus(feedItemIds, isRead, currentAccount)
+                sendRemoteReadStatus(currentAccount, feedItemIds, isRead)
+                    .handleRemoteReadStatusResult(currentAccount, feedItemIds, isRead)
             }
 
             SyncAccounts.FEEDBIN -> {
-                feedbinRepository.updateReadStatus(itemsToUpdates.toList(), isRead = true)
-                    .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
-                    }
+                persistPendingRemoteReadStatus(feedItemIds, isRead, currentAccount)
+                sendRemoteReadStatus(currentAccount, feedItemIds, isRead)
+                    .handleRemoteReadStatusResult(currentAccount, feedItemIds, isRead)
             }
 
             SyncAccounts.LOCAL,
@@ -51,9 +87,53 @@ internal class FeedActionsRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.markAsRead(itemsToUpdates.toList())
+                databaseHelper.updateReadStatus(feedItemIds, isRead)
                 feedSyncRepository.setIsSyncUploadRequired()
             }
+        }
+    }
+
+    private suspend fun persistPendingRemoteReadStatus(
+        feedItemIds: List<FeedItemId>,
+        isRead: Boolean,
+        currentAccount: SyncAccounts,
+    ) {
+        databaseHelper.updateReadStatus(feedItemIds, isRead)
+        databaseHelper.upsertReadStatusPendingActions(
+            feedItemIds = feedItemIds,
+            isRead = isRead,
+            syncAccount = currentAccount.name,
+        )
+    }
+
+    private suspend fun sendRemoteReadStatus(
+        account: SyncAccounts,
+        feedItemIds: List<FeedItemId>,
+        isRead: Boolean,
+    ): DataResult<Unit> =
+        when (account) {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX ->
+                gReaderRepository.updateReadStatus(feedItemIds, isRead)
+            SyncAccounts.FEEDBIN ->
+                feedbinRepository.updateReadStatus(feedItemIds, isRead)
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> DataResult.Success(Unit)
+        }
+
+    private suspend fun DataResult<Unit>.handleRemoteReadStatusResult(
+        account: SyncAccounts,
+        feedItemIds: List<FeedItemId>,
+        isRead: Boolean,
+    ) {
+        if (isSuccess()) {
+            databaseHelper.deleteReadStatusPendingActions(
+                feedItemIds = feedItemIds,
+                isRead = isRead,
+                syncAccount = account.name,
+            )
         }
     }
 
@@ -69,10 +149,7 @@ internal class FeedActionsRepository(
                 }
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
-                    gReaderRepository.updateReadStatus(feedItemIds, isRead = true)
-                        .onErrorSuspend {
-                            feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
-                        }
+                    updateReadStatus(feedItemIds, isRead = true)
                 }
             }
 
@@ -83,10 +160,7 @@ internal class FeedActionsRepository(
                 }
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
-                    feedbinRepository.updateReadStatus(feedItemIds, isRead = true)
-                        .onErrorSuspend {
-                            feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
-                        }
+                    updateReadStatus(feedItemIds, isRead = true)
                 }
             }
 
@@ -118,10 +192,7 @@ internal class FeedActionsRepository(
                 }
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
-                    gReaderRepository.updateReadStatus(feedItemIds, isRead = true)
-                        .onErrorSuspend {
-                            feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
-                        }
+                    updateReadStatus(feedItemIds, isRead = true)
                 }
             }
 
@@ -132,10 +203,7 @@ internal class FeedActionsRepository(
                 }
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
-                    feedbinRepository.updateReadStatus(feedItemIds, isRead = true)
-                        .onErrorSuspend {
-                            feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
-                        }
+                    updateReadStatus(feedItemIds, isRead = true)
                 }
             }
 
@@ -235,32 +303,17 @@ internal class FeedActionsRepository(
 
     suspend fun updateReadStatus(feedItemId: FeedItemId, isRead: Boolean) {
         feedStateRepository.updateReadStatus(feedItemId, isRead)
-
-        when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
-                gReaderRepository.updateReadStatus(listOf(feedItemId), isRead)
-                    .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateReadStatusFailed))
-                    }
-            }
-
-            SyncAccounts.FEEDBIN -> {
-                feedbinRepository.updateReadStatus(listOf(feedItemId), isRead)
-                    .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateReadStatusFailed))
-                    }
-            }
-
-            SyncAccounts.LOCAL,
-            SyncAccounts.DROPBOX,
-            SyncAccounts.GOOGLE_DRIVE,
-            SyncAccounts.ICLOUD,
-            -> {
-                databaseHelper.updateReadStatus(feedItemId, isRead)
-                feedSyncRepository.setIsSyncUploadRequired()
-            }
-        }
+        updateReadStatus(
+            feedItemIds = listOf(feedItemId),
+            isRead = isRead,
+        )
     }
+
+    private fun SyncAccounts.isRemoteReadStatusAccount(): Boolean =
+        this == SyncAccounts.FRESH_RSS ||
+            this == SyncAccounts.MINIFLUX ||
+            this == SyncAccounts.BAZQUX ||
+            this == SyncAccounts.FEEDBIN
 
     fun search(
         query: String,

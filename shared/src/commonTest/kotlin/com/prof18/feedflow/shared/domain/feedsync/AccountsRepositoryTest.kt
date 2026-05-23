@@ -1,9 +1,11 @@
 package com.prof18.feedflow.shared.domain.feedsync
 
 import app.cash.turbine.test
+import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
@@ -26,6 +28,7 @@ class AccountsRepositoryTest : KoinTestBase() {
     private val googleDriveSettings: GoogleDriveSettings by inject()
     private val icloudSettings: ICloudSettings by inject()
     private val networkSettings: NetworkSettings by inject()
+    private val databaseHelper: DatabaseHelper by inject()
 
     private var currentOS: CurrentOS = CurrentOS.Android
     private var isDropboxSyncEnabled = true
@@ -56,6 +59,7 @@ class AccountsRepositoryTest : KoinTestBase() {
                 gReaderRepository = get(),
                 networkSettings = get(),
                 feedbinRepository = get(),
+                databaseHelper = get(),
             )
         }
     }
@@ -289,6 +293,20 @@ class AccountsRepositoryTest : KoinTestBase() {
         accountsRepository.currentAccountState.test {
             assertEquals(SyncAccounts.LOCAL, awaitItem())
         }
+    }
+
+    @Test
+    fun `clearAccount deletes pending read status actions`() = runTest {
+        accountsRepository.setFeedbinAccount()
+        databaseHelper.upsertReadStatusPendingActions(
+            feedItemIds = listOf(FeedItemId("item-1")),
+            isRead = true,
+            syncAccount = SyncAccounts.FEEDBIN.name,
+        )
+
+        accountsRepository.clearAccount()
+
+        assertEquals(0, databaseHelper.countReadStatusPendingActions())
     }
 
     @Test

@@ -1,0 +1,49 @@
+import kotlin.Boolean;
+
+CREATE TABLE read_status_pending_action (
+    feed_item_id TEXT NOT NULL,
+    sync_account TEXT NOT NULL,
+    is_read INTEGER AS Boolean NOT NULL,
+    PRIMARY KEY (feed_item_id, sync_account)
+);
+
+upsertReadStatusPendingAction:
+INSERT OR REPLACE INTO read_status_pending_action(
+    feed_item_id,
+    sync_account,
+    is_read
+)
+VALUES (?, ?, ?);
+
+selectReadStatusPendingActions:
+SELECT * FROM read_status_pending_action
+WHERE sync_account = :syncAccount
+ORDER BY feed_item_id ASC;
+
+deleteReadStatusPendingActions:
+DELETE FROM read_status_pending_action
+WHERE sync_account = :syncAccount
+AND is_read = :isRead
+AND feed_item_id IN :feedItemIds;
+
+deleteReadStatusPendingActionsForFeedItems:
+DELETE FROM read_status_pending_action
+WHERE feed_item_id IN :feedItemIds;
+
+deleteReadStatusPendingActionsForFeedSource:
+DELETE FROM read_status_pending_action
+WHERE feed_item_id IN (
+    SELECT url_hash FROM feed_item WHERE feed_source_id = :feedSourceId
+);
+
+deleteReadStatusPendingActionsForFeedSourcesExcept:
+DELETE FROM read_status_pending_action
+WHERE feed_item_id IN (
+    SELECT url_hash FROM feed_item WHERE feed_source_id NOT IN :feedSourceIds
+);
+
+deleteAllReadStatusPendingActions:
+DELETE FROM read_status_pending_action;
+
+countReadStatusPendingActions:
+SELECT COUNT(*) FROM read_status_pending_action;

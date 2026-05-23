@@ -39,6 +39,13 @@ class SettingsRepository(
     private val showReadArticlesTimelineMutableFlow = MutableStateFlow(getShowReadArticlesTimeline())
     internal val showReadArticlesTimelineFlow: StateFlow<Boolean> = showReadArticlesTimelineMutableFlow.asStateFlow()
 
+    private val markFeedAsReadWhenScrollingMutableFlow = MutableStateFlow(getMarkFeedAsReadWhenScrolling())
+    internal val markFeedAsReadWhenScrollingFlow: StateFlow<Boolean> =
+        markFeedAsReadWhenScrollingMutableFlow.asStateFlow()
+
+    private val hideReadItemsMutableFlow = MutableStateFlow(getHideReadItems())
+    internal val hideReadItemsFlow: StateFlow<Boolean> = hideReadItemsMutableFlow.asStateFlow()
+
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
 
@@ -48,8 +55,10 @@ class SettingsRepository(
     internal fun getMarkFeedAsReadWhenScrolling(): Boolean =
         settings.getBoolean(SettingsFields.MARK_FEED_AS_READ_WHEN_SCROLLING.name, true)
 
-    internal fun setMarkFeedAsReadWhenScrolling(value: Boolean) =
+    internal fun setMarkFeedAsReadWhenScrolling(value: Boolean) {
         settings.set(SettingsFields.MARK_FEED_AS_READ_WHEN_SCROLLING.name, value)
+        markFeedAsReadWhenScrollingMutableFlow.update { value }
+    }
 
     internal fun getShowReadArticlesTimeline(): Boolean =
         settings.getBoolean(SettingsFields.SHOW_READ_ARTICLES_TIMELINE.name, false)
@@ -62,8 +71,10 @@ class SettingsRepository(
     internal fun getHideReadItems(): Boolean =
         settings.getBoolean(SettingsFields.HIDE_READ_ITEMS.name, false)
 
-    internal fun setHideReadItems(value: Boolean) =
+    internal fun setHideReadItems(value: Boolean) {
         settings.set(SettingsFields.HIDE_READ_ITEMS.name, value)
+        hideReadItemsMutableFlow.update { value }
+    }
 
     fun isUseReaderModeEnabled(): Boolean {
         if (isReaderModeEnabled != null) {

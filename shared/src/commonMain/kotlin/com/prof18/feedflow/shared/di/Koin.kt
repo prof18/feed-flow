@@ -31,6 +31,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
+import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -180,6 +181,12 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedAppearanceSettingsRepository = get(),
             feedStateRepository = get(),
             feedItemParserWorker = get(),
+        )
+    }
+
+    single {
+        PendingReadStatusActionRetrier(
+            feedActionsRepository = get(),
         )
     }
 
@@ -441,6 +448,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             gReaderRepository = get(),
             networkSettings = get(),
             feedbinRepository = get(),
+            databaseHelper = get(),
         )
     }
 

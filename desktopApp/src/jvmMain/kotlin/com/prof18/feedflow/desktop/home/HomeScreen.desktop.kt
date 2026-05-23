@@ -201,7 +201,7 @@ internal fun HomeScreen(
                 resetReaderArticle()
                 homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
             },
-            markAsReadOnScroll = { lastVisibleIndex -> homeViewModel.markAsReadOnScroll(lastVisibleIndex) },
+            onVisibleFeedItemsChanged = homeViewModel::onVisibleFeedItemsChanged,
             markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
             openUrl = { feedItemUrlInfo ->
                 handleOpenUrlForDesktop(

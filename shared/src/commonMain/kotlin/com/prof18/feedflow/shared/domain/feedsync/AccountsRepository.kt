@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.feedsync
 
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.utils.AppConfig
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
@@ -22,6 +23,7 @@ internal class AccountsRepository(
     private val gReaderRepository: GReaderRepository,
     private val networkSettings: NetworkSettings,
     private val feedbinRepository: FeedbinRepository,
+    private val databaseHelper: DatabaseHelper,
 ) {
     private val currentAccountMutableState = MutableStateFlow(SyncAccounts.LOCAL)
     val currentAccountState = currentAccountMutableState.asStateFlow()
@@ -165,7 +167,8 @@ internal class AccountsRepository(
         currentAccountMutableState.value = SyncAccounts.BAZQUX
     }
 
-    fun clearAccount() {
+    suspend fun clearAccount() {
+        databaseHelper.deleteAllReadStatusPendingActions()
         currentAccountMutableState.value = SyncAccounts.LOCAL
     }
 

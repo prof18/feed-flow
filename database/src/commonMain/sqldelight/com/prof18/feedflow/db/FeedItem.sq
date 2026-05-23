@@ -62,7 +62,11 @@ AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCateg
 AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source.category_id IS NULL))
 AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
 AND is_blocked = 0
-ORDER BY CASE WHEN :sortOrder = 'ASC' THEN pub_date END ASC, CASE WHEN :sortOrder = 'DESC' THEN pub_date END DESC
+ORDER BY
+    CASE WHEN :sortOrder = 'ASC' THEN pub_date END ASC,
+    CASE WHEN :sortOrder = 'ASC' THEN feed_item.url_hash END ASC,
+    CASE WHEN :sortOrder = 'DESC' THEN pub_date END DESC,
+    CASE WHEN :sortOrder = 'DESC' THEN feed_item.url_hash END DESC
 LIMIT :pageSize OFFSET :offset;
 
 selectFeedUrlsForFilter:
@@ -216,8 +220,26 @@ WHERE url_hash IN :urlHash;
 selectNewerItems:
 SELECT url_hash FROM feed_item
 WHERE is_read = 0
-AND pub_date >= (
-    SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId
+AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
+AND (
+    (
+        (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NULL
+        AND (
+            pub_date IS NOT NULL
+            OR (pub_date IS NULL AND url_hash >= :targetItemId)
+        )
+    )
+    OR (
+        (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NOT NULL
+        AND pub_date IS NOT NULL
+        AND (
+            pub_date > (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
+            OR (
+                pub_date = (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
+                AND url_hash >= :targetItemId
+            )
+        )
+    )
 )
 AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_id IN (
@@ -230,8 +252,24 @@ AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
 selectOlderItems:
 SELECT url_hash FROM feed_item
 WHERE is_read = 0
-AND pub_date <= (
-    SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId
+AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
+AND (
+    (
+        (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NULL
+        AND pub_date IS NULL
+        AND url_hash <= :targetItemId
+    )
+    OR (
+        (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NOT NULL
+        AND (
+            pub_date IS NULL
+            OR pub_date < (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
+            OR (
+                pub_date = (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
+                AND url_hash <= :targetItemId
+            )
+        )
+    )
 )
 AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_id IN (
@@ -245,8 +283,26 @@ markAllNewerAsRead:
 UPDATE feed_item
 SET is_read = 1, notification_sent = 1
 WHERE is_read = 0
-AND pub_date >= (
-    SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId
+AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
+AND (
+    (
+        (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NULL
+        AND (
+            pub_date IS NOT NULL
+            OR (pub_date IS NULL AND url_hash >= :targetItemId)
+        )
+    )
+    OR (
+        (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NOT NULL
+        AND pub_date IS NOT NULL
+        AND (
+            pub_date > (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
+            OR (
+                pub_date = (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
+                AND url_hash >= :targetItemId
+            )
+        )
+    )
 )
 AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_id IN (
@@ -260,8 +316,24 @@ markAllOlderAsRead:
 UPDATE feed_item
 SET is_read = 1, notification_sent = 1
 WHERE is_read = 0
-AND pub_date <= (
-    SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId
+AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
+AND (
+    (
+        (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NULL
+        AND pub_date IS NULL
+        AND url_hash <= :targetItemId
+    )
+    OR (
+        (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NOT NULL
+        AND (
+            pub_date IS NULL
+            OR pub_date < (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
+            OR (
+                pub_date = (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
+                AND url_hash <= :targetItemId
+            )
+        )
+    )
 )
 AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_id IN (

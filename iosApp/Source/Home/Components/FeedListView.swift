@@ -145,7 +145,11 @@ struct FeedListView: View {
                         .listRowSeparator(feedLayout == .card ? .hidden : .automatic)
                         .listRowInsets(EdgeInsets())
                         .onAppear {
-                            indexHolder.lastAppearedIndex = index
+                            indexHolder.itemAppeared(
+                                id: feedItem.id,
+                                index: index,
+                                isRead: feedItem.isRead
+                            )
                             if index == feedState.count - 15 {
                                 requestNewPage()
                             }
@@ -154,7 +158,7 @@ struct FeedListView: View {
                         }
                         .onDisappear {
                             guard loadingState?.isLoading() != true else { return }
-                            self.indexHolder.updateReadIndex(index: index)
+                            self.indexHolder.itemDisappeared(id: feedItem.id)
                         }
                         if index == feedState.count - 1 {
                             if !(currentFeedFilter is FeedFilter.Read) {

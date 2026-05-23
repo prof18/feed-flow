@@ -49,7 +49,6 @@ struct HomeContent: View {
     @State var showViewOptionsSheet = false
 
     let onRefresh: () -> Void
-    let updateReadStatus: (Int32) -> Void
     let onMarkAllReadClick: () -> Void
     let onDeleteOldFeedClick: () -> Void
     let onForceRefreshClick: () -> Void

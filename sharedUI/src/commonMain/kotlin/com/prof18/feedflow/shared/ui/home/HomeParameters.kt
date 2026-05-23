@@ -17,6 +17,7 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.core.model.VisibleFeedItem
 import kotlinx.collections.immutable.ImmutableList
 
 @Stable
@@ -53,7 +54,7 @@ data class FeedListActions(
     val forceRefreshData: () -> Unit,
     val markAllRead: () -> Unit,
     val onBackToTimelineClick: () -> Unit,
-    val markAsReadOnScroll: (Int) -> Unit,
+    val onVisibleFeedItemsChanged: (List<VisibleFeedItem>) -> Unit,
     val markAsRead: (FeedItemId) -> Unit,
     val openUrl: (FeedItemUrlInfo) -> Unit,
     val openInBrowser: (FeedItemUrlInfo) -> Unit,

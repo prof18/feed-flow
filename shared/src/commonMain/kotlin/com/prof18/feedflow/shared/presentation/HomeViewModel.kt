@@ -20,6 +20,7 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.core.model.VisibleFeedItem
 import com.prof18.feedflow.core.model.canonical
 import com.prof18.feedflow.core.model.canonicalCategoryName
 import com.prof18.feedflow.core.model.trimmed
@@ -45,6 +46,8 @@ import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,6 +63,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 class HomeViewModel internal constructor(
     private val feedActionsRepository: FeedActionsRepository,
@@ -105,7 +109,10 @@ class HomeViewModel internal constructor(
     )
     val nextFeedPreviewState: StateFlow<NextFeedPreviewState> = nextFeedPreviewMutableState.asStateFlow()
 
-    private var lastUpdateIndex = 0
+    private val scrollReadTracker = ScrollReadTracker()
+    private val pendingScrollReadIds = mutableSetOf<FeedItemId>()
+    private var scrollReadDebounceJob: Job? = null
+    private var pendingScrollReadFeedListVersion: Long? = null
     private var hasTriggeredAppLaunch = false
 
     val currentFeedFilter = feedStateRepository.currentFeedFilter
@@ -263,38 +270,40 @@ class HomeViewModel internal constructor(
         if (isFirstLaunch && !settingsRepository.getRefreshFeedsOnLaunch()) {
             return
         }
-        lastUpdateIndex = 0
+        resetScrollReadState()
         viewModelScope.launch {
+            retryPendingReadStatusActionsNow()
             feedFetcherRepository.fetchFeeds(isFirstLaunch = isFirstLaunch)
         }
     }
 
-    fun markAsReadOnScroll(lastVisibleIndex: Int) {
-        if (settingsRepository.getMarkFeedAsReadWhenScrolling()) {
-            // To avoid issues
-            if (loadingState.value.isLoading()) {
-                return
-            }
-
-            viewModelScope.launch {
-                val urlToUpdates = hashSetOf<FeedItemId>()
-                val items = feedState.value.toMutableList()
-                if (lastVisibleIndex <= lastUpdateIndex) {
-                    return@launch
-                }
-                for (index in lastUpdateIndex..lastVisibleIndex) {
-                    items.getOrNull(index)?.let { item ->
-                        urlToUpdates.add(
-                            FeedItemId(
-                                id = item.id,
-                            ),
-                        )
-                    }
-                }
-                feedActionsRepository.markAsRead(urlToUpdates)
-                lastUpdateIndex = lastVisibleIndex
-            }
+    fun onVisibleFeedItemsChanged(visibleItems: List<VisibleFeedItem>) {
+        if (!settingsRepository.markFeedAsReadWhenScrollingFlow.value) {
+            resetScrollReadState()
+            return
         }
+        if (loadingState.value.isLoading()) {
+            resetScrollReadState()
+            return
+        }
+
+        val currentFeedListVersion = feedStateRepository.feedListVersion.value
+        val idsToMark = scrollReadTracker.onVisibleItemsChanged(
+            visibleItems = visibleItems,
+            feedListVersion = currentFeedListVersion,
+            listShapeKey = ScrollReadListShapeKey(
+                showReadArticlesTimeline = settingsRepository.showReadArticlesTimelineFlow.value,
+                hideReadItems = settingsRepository.hideReadItemsFlow.value,
+            ),
+        )
+        if (idsToMark.isEmpty()) {
+            return
+        }
+
+        enqueueScrollReadIds(
+            idsToMark = idsToMark,
+            feedListVersion = currentFeedListVersion,
+        )
     }
 
     fun requestNewFeedsPage() {
@@ -304,6 +313,7 @@ class HomeViewModel internal constructor(
     }
 
     fun markAllRead() {
+        resetScrollReadState()
         viewModelScope.launch {
             feedOperationMutableState.update { FeedOperation.MarkingAllRead }
             feedActionsRepository.markAllCurrentFeedAsRead()
@@ -331,6 +341,7 @@ class HomeViewModel internal constructor(
     }
 
     fun markAsRead(feedItemId: String) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedActionsRepository.markAsRead(
                 hashSetOf(
@@ -341,18 +352,21 @@ class HomeViewModel internal constructor(
     }
 
     fun markAllAboveAsRead(feedItemId: String) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedActionsRepository.markAllAboveAsRead(feedItemId)
         }
     }
 
     fun markAllBelowAsRead(feedItemId: String) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedActionsRepository.markAllBelowAsRead(feedItemId)
         }
     }
 
     fun deleteOldFeedItems() {
+        resetScrollReadState()
         viewModelScope.launch {
             feedOperationMutableState.update { FeedOperation.Deleting }
             feedActionsRepository.deleteOldFeeds()
@@ -361,8 +375,9 @@ class HomeViewModel internal constructor(
     }
 
     fun forceFeedRefresh() {
-        lastUpdateIndex = 0
+        resetScrollReadState()
         viewModelScope.launch {
+            retryPendingReadStatusActionsNow()
             feedFetcherRepository.fetchFeeds(forceRefresh = true)
         }
     }
@@ -378,29 +393,30 @@ class HomeViewModel internal constructor(
     }
 
     fun deleteAllFeeds() {
+        resetScrollReadState()
         viewModelScope.launch {
             feedSourcesRepository.deleteAllFeeds()
         }
     }
 
     fun updateFeedSourceFilter(feedSourceId: String) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedStateRepository.updateFeedSourceFilter(feedSourceId)
-            lastUpdateIndex = 0
         }
     }
 
     fun updateCategoryFilter(categoryId: String) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedStateRepository.updateCategoryFilter(categoryId)
-            lastUpdateIndex = 0
         }
     }
 
     fun onFeedFilterSelected(selectedFeedFilter: FeedFilter) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedStateRepository.updateFeedFilter(selectedFeedFilter)
-            lastUpdateIndex = 0
         }
 
         updateNextFeedPreview(selectedFeedFilter)
@@ -427,12 +443,14 @@ class HomeViewModel internal constructor(
     }
 
     fun updateReadStatus(feedItemId: FeedItemId, read: Boolean) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedActionsRepository.updateReadStatus(feedItemId, read)
         }
     }
 
     fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedActionsRepository.updateBookmarkStatus(feedItemId, bookmarked)
         }
@@ -453,11 +471,13 @@ class HomeViewModel internal constructor(
     // Used on iOS
     fun enqueueBackup() {
         viewModelScope.launch {
+            retryPendingReadStatusActionsNow()
             feedSyncRepository.enqueueBackup()
         }
     }
 
     fun deleteFeedSource(feedSource: FeedSource) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedOperationMutableState.update { FeedOperation.Deleting }
             feedSourcesRepository.deleteFeed(feedSource)
@@ -467,6 +487,7 @@ class HomeViewModel internal constructor(
     }
 
     fun deleteAllFeedsInCategory(feedSources: List<FeedSource>) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedOperationMutableState.update { FeedOperation.Deleting }
             for (feedSource in feedSources) {
@@ -519,6 +540,7 @@ class HomeViewModel internal constructor(
     }
 
     fun deleteCategory(categoryId: CategoryId) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedOperationMutableState.update { FeedOperation.Deleting }
             feedCategoryRepository.deleteCategory(categoryId.value)
@@ -530,6 +552,7 @@ class HomeViewModel internal constructor(
     fun onNavigateToNextFeed() {
         when (val nextFeed = nextFeedPreviewState.value) {
             is NextFeedPreviewState.NextFeedPreviewEnabledState -> {
+                resetScrollReadState()
                 onFeedFilterSelected(selectedFeedFilter = nextFeed.feedFilter)
             }
             is NextFeedPreviewState.NextFeedPreviewDisabledState -> {}
@@ -539,6 +562,7 @@ class HomeViewModel internal constructor(
     fun getCurrentThemeMode() = settingsRepository.getThemeMode()
 
     fun updateFeedOrder(order: com.prof18.feedflow.core.model.FeedOrder) {
+        resetScrollReadState()
         viewModelScope.launch {
             feedAppearanceSettingsRepository.setFeedOrder(order)
             feedStateRepository.getFeeds()
@@ -546,9 +570,49 @@ class HomeViewModel internal constructor(
     }
 
     fun updateShowReadArticlesTimeline(value: Boolean) {
+        resetScrollReadState()
         viewModelScope.launch {
             settingsRepository.setShowReadArticlesTimeline(value)
             feedStateRepository.getFeeds()
         }
+    }
+
+    private fun enqueueScrollReadIds(
+        idsToMark: Set<FeedItemId>,
+        feedListVersion: Long,
+    ) {
+        if (pendingScrollReadFeedListVersion != feedListVersion) {
+            pendingScrollReadIds.clear()
+            pendingScrollReadFeedListVersion = feedListVersion
+        }
+        pendingScrollReadIds.addAll(idsToMark)
+        scrollReadDebounceJob?.cancel()
+        scrollReadDebounceJob = viewModelScope.launch {
+            delay(SCROLL_READ_DEBOUNCE)
+            val ids = pendingScrollReadIds.toHashSet()
+            val feedListVersion = pendingScrollReadFeedListVersion
+            pendingScrollReadIds.clear()
+            pendingScrollReadFeedListVersion = null
+            scrollReadDebounceJob = null
+            if (ids.isNotEmpty() && feedListVersion == feedStateRepository.feedListVersion.value) {
+                feedActionsRepository.markAsRead(ids)
+            }
+        }
+    }
+
+    private fun resetScrollReadState() {
+        scrollReadTracker.reset()
+        pendingScrollReadIds.clear()
+        pendingScrollReadFeedListVersion = null
+        scrollReadDebounceJob?.cancel()
+        scrollReadDebounceJob = null
+    }
+
+    private suspend fun retryPendingReadStatusActionsNow() {
+        feedActionsRepository.retryPendingReadStatusActions()
+    }
+
+    private companion object {
+        val SCROLL_READ_DEBOUNCE = 2.seconds
     }
 }

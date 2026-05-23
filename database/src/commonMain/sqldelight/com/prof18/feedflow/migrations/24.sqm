@@ -1,0 +1,6 @@
+CREATE TABLE read_status_pending_action (
+    feed_item_id TEXT NOT NULL,
+    sync_account TEXT NOT NULL,
+    is_read INTEGER AS kotlin.Boolean NOT NULL,
+    PRIMARY KEY (feed_item_id, sync_account)
+);

@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
@@ -16,6 +17,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -26,6 +28,66 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
     private val databaseHelper: DatabaseHelper by inject()
     private val feedStateRepository: FeedStateRepository by inject()
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository by inject()
+
+    @Test
+    fun `deleteFeedSource removes pending read status actions for deleted source`() = runTest(testDispatcher) {
+        val deletedSource = createFeedSource("source-1", "Deleted Feed")
+        val keptSource = createFeedSource("source-2", "Kept Feed")
+        databaseHelper.insertFeedSourceWithCategory(deletedSource)
+        databaseHelper.insertFeedSourceWithCategory(keptSource)
+        val deletedItem = buildFeedItem("item-1", "Article 1", 10000L, deletedSource)
+        val keptItem = buildFeedItem("item-2", "Article 2", 9000L, keptSource)
+        databaseHelper.insertFeedItems(listOf(deletedItem, keptItem), lastSyncTimestamp = 0)
+        databaseHelper.upsertReadStatusPendingActions(
+            feedItemIds = listOf(FeedItemId(deletedItem.id), FeedItemId(keptItem.id)),
+            isRead = true,
+            syncAccount = SyncAccounts.FEEDBIN.name,
+        )
+
+        databaseHelper.deleteFeedSource(deletedSource.id)
+
+        val pendingActions = databaseHelper.getReadStatusPendingActions(SyncAccounts.FEEDBIN.name)
+        assertEquals(listOf(keptItem.id), pendingActions.map { it.feed_item_id })
+    }
+
+    @Test
+    fun `deleteOldFeedItems removes pending read status actions for deleted items`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource("source-1", "Test Feed")
+        databaseHelper.insertFeedSourceWithCategory(feedSource)
+        val oldItem = buildFeedItem("item-1", "Old Article", 1000L, feedSource)
+        val recentItem = buildFeedItem("item-2", "Recent Article", 10000L, feedSource)
+        databaseHelper.insertFeedItems(listOf(oldItem, recentItem), lastSyncTimestamp = 0)
+        databaseHelper.upsertReadStatusPendingActions(
+            feedItemIds = listOf(FeedItemId(oldItem.id), FeedItemId(recentItem.id)),
+            isRead = true,
+            syncAccount = SyncAccounts.FEEDBIN.name,
+        )
+
+        databaseHelper.deleteOldFeedItems(
+            timeThreshold = 5000L,
+            feedFilter = FeedFilter.Timeline,
+        )
+
+        val pendingActions = databaseHelper.getReadStatusPendingActions(SyncAccounts.FEEDBIN.name)
+        assertEquals(listOf(recentItem.id), pendingActions.map { it.feed_item_id })
+    }
+
+    @Test
+    fun `deleteAll removes pending read status actions`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource("source-1", "Test Feed")
+        databaseHelper.insertFeedSourceWithCategory(feedSource)
+        val feedItem = buildFeedItem("item-1", "Article 1", 10000L, feedSource)
+        databaseHelper.insertFeedItems(listOf(feedItem), lastSyncTimestamp = 0)
+        databaseHelper.upsertReadStatusPendingActions(
+            feedItemIds = listOf(FeedItemId(feedItem.id)),
+            isRead = true,
+            syncAccount = SyncAccounts.FEEDBIN.name,
+        )
+
+        databaseHelper.deleteAll()
+
+        assertEquals(0, databaseHelper.countReadStatusPendingActions())
+    }
 
     @Test
     fun `markAsRead marks pending notifications as sent`() = runTest(testDispatcher) {
@@ -52,6 +114,97 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
         assertTrue(updatedItem.is_read)
         assertTrue(updatedItem.notification_sent)
         assertTrue(databaseHelper.getFeedSourceToNotify().isEmpty())
+    }
+
+    @Test
+    fun `markAllAboveAsRead with NEWEST_FIRST uses url hash tie breaker for same pub date`() =
+        runTest(testDispatcher) {
+            val feedSource = createFeedSource("source-1", "Test Feed")
+            databaseHelper.insertFeedSourceWithCategory(feedSource)
+            val feedItems = listOf(
+                buildFeedItem("a", "Article A", 10000L, feedSource),
+                buildFeedItem("b", "Article B", 10000L, feedSource),
+                buildFeedItem("c", "Article C", 10000L, feedSource),
+                buildFeedItem("d", "Article D", 9000L, feedSource),
+            )
+            databaseHelper.insertFeedItems(feedItems, lastSyncTimestamp = 0)
+
+            feedAppearanceSettingsRepository.setFeedOrder(FeedOrder.NEWEST_FIRST)
+            feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
+            advanceUntilIdle()
+
+            feedActionsRepository.markAllAboveAsRead("b")
+            advanceUntilIdle()
+
+            val readIds = databaseHelper.getFeedItems(
+                feedFilter = FeedFilter.Timeline,
+                pageSize = 10,
+                offset = 0,
+                showReadItems = true,
+                sortOrder = FeedOrder.NEWEST_FIRST,
+            ).filter { it.is_read }.map { it.url_hash }.toSet()
+
+            assertEquals(setOf("b", "c"), readIds)
+        }
+
+    @Test
+    fun `markAllAboveAsRead with OLDEST_FIRST uses url hash tie breaker for same pub date`() =
+        runTest(testDispatcher) {
+            val feedSource = createFeedSource("source-1", "Test Feed")
+            databaseHelper.insertFeedSourceWithCategory(feedSource)
+            val feedItems = listOf(
+                buildFeedItem("a", "Article A", 10000L, feedSource),
+                buildFeedItem("b", "Article B", 10000L, feedSource),
+                buildFeedItem("c", "Article C", 10000L, feedSource),
+                buildFeedItem("d", "Article D", 11000L, feedSource),
+            )
+            databaseHelper.insertFeedItems(feedItems, lastSyncTimestamp = 0)
+
+            feedAppearanceSettingsRepository.setFeedOrder(FeedOrder.OLDEST_FIRST)
+            feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
+            advanceUntilIdle()
+
+            feedActionsRepository.markAllAboveAsRead("b")
+            advanceUntilIdle()
+
+            val readIds = databaseHelper.getFeedItems(
+                feedFilter = FeedFilter.Timeline,
+                pageSize = 10,
+                offset = 0,
+                showReadItems = true,
+                sortOrder = FeedOrder.OLDEST_FIRST,
+            ).filter { it.is_read }.map { it.url_hash }.toSet()
+
+            assertEquals(setOf("a", "b"), readIds)
+        }
+
+    @Test
+    fun `markAllAboveAndBelowAsRead ignore missing target item`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource("source-1", "Test Feed")
+        databaseHelper.insertFeedSourceWithCategory(feedSource)
+        val feedItems = listOf(
+            buildFeedItem("item1", "Article 1", 10000L, feedSource),
+            buildFeedItem("item2", "Article 2", 9000L, feedSource),
+        )
+        databaseHelper.insertFeedItems(feedItems, lastSyncTimestamp = 0)
+
+        feedAppearanceSettingsRepository.setFeedOrder(FeedOrder.NEWEST_FIRST)
+        feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
+        advanceUntilIdle()
+
+        feedActionsRepository.markAllAboveAsRead("missing-item")
+        feedActionsRepository.markAllBelowAsRead("missing-item")
+        advanceUntilIdle()
+
+        val readIds = databaseHelper.getFeedItems(
+            feedFilter = FeedFilter.Timeline,
+            pageSize = 10,
+            offset = 0,
+            showReadItems = true,
+            sortOrder = FeedOrder.NEWEST_FIRST,
+        ).filter { it.is_read }.map { it.url_hash }.toSet()
+
+        assertEquals(emptySet(), readIds)
     }
 
     @Test

@@ -93,9 +93,6 @@ struct HomeScreen: View {
             onRefresh: {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
-            updateReadStatus: { index in
-                homeViewModel.markAsReadOnScroll(lastVisibleIndex: index)
-            },
             onMarkAllReadClick: {
                 homeViewModel.markAllRead()
             },

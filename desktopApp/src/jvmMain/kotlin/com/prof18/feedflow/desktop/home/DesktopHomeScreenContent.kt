@@ -204,7 +204,7 @@ fun DesktopHomeScreenContent(
                                             feedListActions.openUrl(feedInfo)
                                             feedListActions.markAsRead(FeedItemId(feedInfo.id))
                                         },
-                                        updateReadStatus = feedListActions.markAsReadOnScroll,
+                                        onVisibleFeedItemsChanged = feedListActions.onVisibleFeedItemsChanged,
                                         markAllAsRead = feedListActions.markAllRead,
                                         onShareClick = shareBehavior.onShareClick,
                                         onOpenFeedSettings = feedManagementActions.onEditFeedClick,

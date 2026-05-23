@@ -20,6 +20,7 @@ import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.test.inject
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -80,6 +81,26 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
             assertTrue(item.notification_sent, "Item ${itemId.id} should be marked as notified")
         }
         assertTrue(databaseHelper.getFeedSourceToNotify().isEmpty())
+        assertEquals(0, databaseHelper.countReadStatusPendingActions())
+    }
+
+    @Test
+    fun `retryPendingReadStatusActions deletes pending action after success`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
+        val feedSource = createFeedSource("source-1", "Test Feed")
+        databaseHelper.insertFeedSourceWithCategory(feedSource)
+        val feedItem = buildFeedItem("5031084432", "Article 1", 10000L, feedSource)
+        databaseHelper.insertFeedItems(listOf(feedItem), lastSyncTimestamp = 0)
+        databaseHelper.upsertReadStatusPendingActions(
+            feedItemIds = listOf(FeedItemId(feedItem.id)),
+            isRead = true,
+            syncAccount = SyncAccounts.FEEDBIN.name,
+        )
+
+        feedActionsRepository.retryPendingReadStatusActions()
+        advanceUntilIdle()
+
+        assertEquals(0, databaseHelper.countReadStatusPendingActions())
     }
 
     @Test

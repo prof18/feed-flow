@@ -45,6 +45,9 @@ internal class FeedStateRepository(
     private val mutableFeedState: MutableStateFlow<ImmutableList<FeedItem>> = MutableStateFlow(persistentListOf())
     val feedState = mutableFeedState.asStateFlow()
 
+    private val mutableFeedListVersion: MutableStateFlow<Long> = MutableStateFlow(0L)
+    val feedListVersion = mutableFeedListVersion.asStateFlow()
+
     private val currentFeedFilterMutableState: MutableStateFlow<FeedFilter> = MutableStateFlow(FeedFilter.Timeline)
     val currentFeedFilter: StateFlow<FeedFilter> = currentFeedFilterMutableState.asStateFlow()
 
@@ -69,7 +72,7 @@ internal class FeedStateRepository(
             if (feeds.isNotEmpty()) {
                 updateMutableState.update { FinishedFeedUpdateStatus }
             }
-            mutableFeedState.update {
+            updateFeedState {
                 feeds.map {
                     it.toFeedItem(
                         dateFormatter = dateFormatter,
@@ -101,7 +104,7 @@ internal class FeedStateRepository(
             }
             currentPage += 1
             val settings = feedAppearanceSettingsRepository.getFeedItemMappingSettings()
-            mutableFeedState.update { currentItems ->
+            updateFeedState(incrementListVersion = false) { currentItems ->
                 val newList = feeds.map {
                     it.toFeedItem(
                         dateFormatter = dateFormatter,
@@ -186,7 +189,7 @@ internal class FeedStateRepository(
     fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
         val hideReadItems = settingsRepository.getHideReadItems()
         val currentFilter = currentFeedFilter.value
-        mutableFeedState.update { currentItems ->
+        updateFeedState { currentItems ->
             currentItems.mapNotNull { feedItem ->
                 if (FeedItemId(feedItem.id) in itemsToUpdates) {
                     val updatedItem = feedItem.copy(isRead = true)
@@ -228,7 +231,7 @@ internal class FeedStateRepository(
         currentFeedFilter.value
 
     fun updateBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) {
-        mutableFeedState.update { currentItems ->
+        updateFeedState { currentItems ->
             currentItems.mapNotNull { feedItem ->
                 if (feedItem.id == feedItemId.id) {
                     if (currentFeedFilter.value == FeedFilter.Bookmarks && !isBookmarked) {
@@ -246,7 +249,7 @@ internal class FeedStateRepository(
     fun updateReadStatus(feedItemId: FeedItemId, isRead: Boolean) {
         val hideReadItems = settingsRepository.getHideReadItems()
         val currentFilter = currentFeedFilter.value
-        mutableFeedState.update { currentItems ->
+        updateFeedState { currentItems ->
             currentItems.mapNotNull { feedItem ->
                 if (feedItem.id == feedItemId.id) {
                     if (currentFilter == FeedFilter.Read && !isRead) {
@@ -269,7 +272,7 @@ internal class FeedStateRepository(
     fun markItemsAboveAsRead(targetItemId: String) {
         val hideReadItems = settingsRepository.getHideReadItems()
         val currentFilter = currentFeedFilter.value
-        mutableFeedState.update { currentItems ->
+        updateFeedState { currentItems ->
             val targetIndex = currentItems.indexOfFirst { it.id == targetItemId }
             if (targetIndex == -1) {
                 currentItems
@@ -293,7 +296,7 @@ internal class FeedStateRepository(
     fun markItemsBelowAsRead(targetItemId: String) {
         val hideReadItems = settingsRepository.getHideReadItems()
         val currentFilter = currentFeedFilter.value
-        mutableFeedState.update { currentItems ->
+        updateFeedState { currentItems ->
             val targetIndex = currentItems.indexOfFirst { it.id == targetItemId }
             if (targetIndex == -1) {
                 currentItems
@@ -355,6 +358,18 @@ internal class FeedStateRepository(
             currentPosition = currentIndex + 1,
             totalArticles = currentList.size,
         )
+    }
+
+    private fun updateFeedState(
+        incrementListVersion: Boolean = true,
+        transform: (ImmutableList<FeedItem>) -> ImmutableList<FeedItem>,
+    ) {
+        mutableFeedState.update { currentItems ->
+            transform(currentItems)
+        }
+        if (incrementListVersion) {
+            mutableFeedListVersion.update { it + 1 }
+        }
     }
 
     data class ArticlePosition(

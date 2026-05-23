@@ -24,6 +24,7 @@ import com.prof18.feedflow.shared.di.initKoin
 import com.prof18.feedflow.shared.domain.AppForegroundState
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
+import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
@@ -44,6 +45,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
     private val feedDownloadWorkerEnqueuer by inject<FeedDownloadWorkerEnqueuer>()
     private val appForegroundState by inject<AppForegroundState>()
     private val browserManager by inject<BrowserManager>()
+    private val pendingReadStatusActionRetrier by inject<PendingReadStatusActionRetrier>()
 
     override fun onCreate() {
         super.onCreate()
@@ -148,6 +150,9 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                     override fun onStop(owner: LifecycleOwner) {
                         super.onStop(owner)
                         appForegroundState.onAppBackgrounded()
+                        lifecycle.coroutineScope.launch {
+                            pendingReadStatusActionRetrier.retryPendingReadStatusActions()
+                        }
                         feedSyncRepo.enqueueBackup()
                         lifecycle.coroutineScope.launch {
                             GlanceAppWidgetManager(

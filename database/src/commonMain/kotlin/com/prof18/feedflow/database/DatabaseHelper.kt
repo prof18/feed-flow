@@ -29,6 +29,7 @@ import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item_status
 import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.db.GetFeedSourcesWithUnreadCount
+import com.prof18.feedflow.db.Read_status_pending_action
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.db.SelectFeedSourceById
 import com.prof18.feedflow.db.SelectFeedUrls
@@ -245,6 +246,49 @@ class DatabaseHelper(
             dbRef.feedItemQueries.updateAllReadStatus(urlHash = feedItemId.map { it.id }, isRead = isRead)
         }
 
+    suspend fun upsertReadStatusPendingActions(
+        feedItemIds: List<FeedItemId>,
+        isRead: Boolean,
+        syncAccount: String,
+    ) = dbRef.transactionWithContext(backgroundDispatcher) {
+        feedItemIds.forEach { feedItemId ->
+            dbRef.readStatusPendingActionQueries.upsertReadStatusPendingAction(
+                feed_item_id = feedItemId.id,
+                sync_account = syncAccount,
+                is_read = isRead,
+            )
+        }
+    }
+
+    suspend fun getReadStatusPendingActions(syncAccount: String): List<Read_status_pending_action> =
+        withContext(backgroundDispatcher) {
+            dbRef.readStatusPendingActionQueries
+                .selectReadStatusPendingActions(syncAccount)
+                .executeAsList()
+        }
+
+    suspend fun deleteReadStatusPendingActions(
+        feedItemIds: List<FeedItemId>,
+        isRead: Boolean,
+        syncAccount: String,
+    ) = dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.readStatusPendingActionQueries.deleteReadStatusPendingActions(
+            syncAccount = syncAccount,
+            isRead = isRead,
+            feedItemIds = feedItemIds.map { it.id },
+        )
+    }
+
+    suspend fun deleteAllReadStatusPendingActions() =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.readStatusPendingActionQueries.deleteAllReadStatusPendingActions()
+        }
+
+    suspend fun countReadStatusPendingActions(): Long =
+        withContext(backgroundDispatcher) {
+            dbRef.readStatusPendingActionQueries.countReadStatusPendingActions().executeAsOne()
+        }
+
     suspend fun markAllFeedAsRead(feedFilter: FeedFilter) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             when (feedFilter) {
@@ -329,6 +373,11 @@ class DatabaseHelper(
                         deleted_at = currentTimestamp,
                     )
                 }
+                if (oldItems.isNotEmpty()) {
+                    dbRef.readStatusPendingActionQueries.deleteReadStatusPendingActionsForFeedItems(
+                        oldItems.map { it.url_hash },
+                    )
+                }
 
                 dbRef.feedItemQueries.clearOldItems(
                     threshold = timeThreshold,
@@ -367,12 +416,14 @@ class DatabaseHelper(
 
     suspend fun deleteFeedSource(feedSourceId: String) =
         dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.readStatusPendingActionQueries.deleteReadStatusPendingActionsForFeedSource(feedSourceId)
             dbRef.feedItemQueries.deleteAllWithFeedSource(feedSourceId)
             dbRef.feedSourceQueries.deleteFeedSource(feedSourceId)
         }
 
     suspend fun deleteFeedSourceExcept(feedSourceIds: List<String>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.readStatusPendingActionQueries.deleteReadStatusPendingActionsForFeedSourcesExcept(feedSourceIds)
             dbRef.feedSourceQueries.deleteAllExcept(feedSourceIds)
             dbRef.feedItemQueries.deleteAllExcept(feedSourceIds)
         }
@@ -690,6 +741,7 @@ class DatabaseHelper(
         }
 
     suspend fun deleteAll() = dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.readStatusPendingActionQueries.deleteAllReadStatusPendingActions()
         dbRef.feedItemQueries.deleteAll()
         dbRef.feedSourceCategoryQueries.deleteAll()
         dbRef.feedSourceQueries.deleteAll()

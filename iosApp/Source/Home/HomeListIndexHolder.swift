@@ -13,10 +13,7 @@ import Foundation
 class HomeListIndexHolder {
     @ObservationIgnored let homeViewModel: HomeViewModel?
 
-    @ObservationIgnored var lastAppearedIndex = 0
-
-    private var lastReadIndex = 0
-    private var timer: Timer?
+    private var visibleItems: [String: VisibleFeedItem] = [:]
     private var updatesBlocked = false
 
     init(homeViewModel: HomeViewModel) {
@@ -29,12 +26,12 @@ class HomeListIndexHolder {
     }
 
     func getLastReadIndex() -> Int {
-        return lastReadIndex
+        return visibleItems.values.map { Int($0.index) }.min() ?? 0
     }
 
     func pauseUpdates() {
         updatesBlocked = true
-        timer?.invalidate()
+        visibleItems.removeAll()
     }
 
     func resumeUpdates() {
@@ -42,31 +39,28 @@ class HomeListIndexHolder {
     }
 
     func refresh() {
-        timer?.invalidate()
-        lastReadIndex = 0
+        visibleItems.removeAll()
     }
 
     func clear() {
-        lastReadIndex = 0
-        timer?.invalidate()
-        pauseUpdates()
+        visibleItems.removeAll()
     }
 
-    func updateReadIndex(index: Int) {
-        guard !updatesBlocked, shouldUpdateReadIndex(index: index) else { return }
-        lastReadIndex = index
-        scheduleReadMark()
+    func itemAppeared(id: String, index: Int, isRead: Bool) {
+        guard !updatesBlocked else { return }
+        visibleItems[id] = VisibleFeedItem(id: id, index: Int32(index), isRead: isRead)
+        sendVisibleSnapshot()
     }
 
-    private func shouldUpdateReadIndex(index: Int) -> Bool {
-        index < lastAppearedIndex && index > lastReadIndex
+    func itemDisappeared(id: String) {
+        guard !updatesBlocked else { return }
+        visibleItems.removeValue(forKey: id)
+        guard !visibleItems.isEmpty else { return }
+        sendVisibleSnapshot()
     }
 
-    private func scheduleReadMark() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in
-            guard let self else { return }
-            self.homeViewModel?.markAsReadOnScroll(lastVisibleIndex: Int32(self.getLastReadIndex()))
-        }
+    private func sendVisibleSnapshot() {
+        let snapshot = visibleItems.values.sorted { $0.index < $1.index }
+        homeViewModel?.onVisibleFeedItemsChanged(visibleItems: snapshot)
     }
 }

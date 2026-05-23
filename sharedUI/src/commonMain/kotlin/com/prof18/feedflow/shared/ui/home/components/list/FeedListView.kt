@@ -51,6 +51,7 @@ import com.prof18.feedflow.core.model.SwipeActionType.OPEN_IN_BROWSER
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_BOOKMARK_STATUS
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_READ_STATUS
 import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.core.model.VisibleFeedItem
 import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
 import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState.NextFeedDisplayEnabledState
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
@@ -59,7 +60,6 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.PreviewColumn
 import com.prof18.feedflow.shared.ui.utils.PreviewHelper
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
@@ -75,7 +75,7 @@ fun FeedList(
     shareMenuLabel: String,
     shareCommentsMenuLabel: String,
     swipeActions: SwipeActions,
-    updateReadStatus: (Int) -> Unit,
+    onVisibleFeedItemsChanged: (List<VisibleFeedItem>) -> Unit,
     requestMoreItems: () -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onOpenInBrowser: (FeedItemUrlInfo) -> Unit,
@@ -233,23 +233,43 @@ fun FeedList(
         }
     }
 
-    val latestUpdateReadStatus by rememberUpdatedState(updateReadStatus)
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemIndex }
-            .distinctUntilChanged()
-            .debounce(timeoutMillis = 2000)
-            .collect { index ->
-                if (index > 1) {
-                    latestUpdateReadStatus(index - 1)
-                }
-            }
-    }
+    ObserveVisibleFeedItems(
+        feedItems = feedItems,
+        listState = listState,
+        onVisibleFeedItemsChanged = onVisibleFeedItemsChanged,
+    )
 
     val latestRequestMoreItems by rememberUpdatedState(requestMoreItems)
     LaunchedEffect(key1 = shouldStartPaginate.value) {
         if (shouldStartPaginate.value) {
             latestRequestMoreItems()
         }
+    }
+}
+
+@Composable
+private fun ObserveVisibleFeedItems(
+    feedItems: ImmutableList<FeedItem>,
+    listState: LazyListState,
+    onVisibleFeedItemsChanged: (List<VisibleFeedItem>) -> Unit,
+) {
+    val latestFeedItems by rememberUpdatedState(feedItems)
+    val latestOnVisibleFeedItemsChanged by rememberUpdatedState(onVisibleFeedItemsChanged)
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            listState.layoutInfo.visibleItemsInfo.mapNotNull { visibleItem ->
+                val feedItem = latestFeedItems.getOrNull(visibleItem.index) ?: return@mapNotNull null
+                VisibleFeedItem(
+                    id = feedItem.id,
+                    index = visibleItem.index,
+                    isRead = feedItem.isRead,
+                )
+            }
+        }
+            .distinctUntilChanged()
+            .collect { visibleItems ->
+                latestOnVisibleFeedItemsChanged(visibleItems)
+            }
     }
 }
 
@@ -445,7 +465,7 @@ internal fun FeedListPreview() {
                     leftSwipeAction = TOGGLE_READ_STATUS,
                     rightSwipeAction = TOGGLE_BOOKMARK_STATUS,
                 ),
-                updateReadStatus = {},
+                onVisibleFeedItemsChanged = {},
                 requestMoreItems = {},
                 onFeedItemClick = {},
                 onOpenInBrowser = {},
@@ -471,7 +491,7 @@ internal fun FeedListPreview() {
                     leftSwipeAction = TOGGLE_READ_STATUS,
                     rightSwipeAction = TOGGLE_BOOKMARK_STATUS,
                 ),
-                updateReadStatus = {},
+                onVisibleFeedItemsChanged = {},
                 requestMoreItems = {},
                 onFeedItemClick = {},
                 onOpenInBrowser = {},

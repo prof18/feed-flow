@@ -157,7 +157,6 @@ struct FeedListView: View {
                             onScrollPositionChanged(index > 3)
                         }
                         .onDisappear {
-                            guard loadingState?.isLoading() != true else { return }
                             self.indexHolder.itemDisappeared(id: feedItem.id)
                         }
                         if index == feedState.count - 1 {

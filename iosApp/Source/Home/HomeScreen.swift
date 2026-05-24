@@ -160,11 +160,6 @@ struct HomeScreen: View {
                 withAnimation {
                     self.showLoading = isLoading
                 }
-                if isLoading {
-                    indexHolder.pauseUpdates()
-                } else {
-                    indexHolder.resumeUpdates()
-                }
                 self.loadingState = state
             }
         }

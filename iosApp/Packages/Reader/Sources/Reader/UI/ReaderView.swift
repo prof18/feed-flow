@@ -211,6 +211,7 @@ public struct ReaderView: View {
                         systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
                     )
                 }
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.bookmarkButton)
 
                 Button {
                     actions.onArchive()
@@ -236,6 +237,7 @@ public struct ReaderView: View {
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
+                    .accessibilityIdentifier(ReaderAccessibilityIdentifiers.moreMenuButton)
             }
         }
     }
@@ -266,6 +268,7 @@ public struct ReaderView: View {
                         systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
                     )
                 }
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.bookmarkButton)
 
                 Button {
                     actions.onArchive()
@@ -291,6 +294,7 @@ public struct ReaderView: View {
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
+                    .accessibilityIdentifier(ReaderAccessibilityIdentifiers.moreMenuButton)
             }
         }
     }
@@ -399,4 +403,9 @@ public struct ReaderView: View {
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
     }
+}
+
+private enum ReaderAccessibilityIdentifiers {
+    static let bookmarkButton = "reader_bookmark_button"
+    static let moreMenuButton = "reader_more_menu_button"
 }

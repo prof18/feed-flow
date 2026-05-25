@@ -87,6 +87,7 @@ struct FeedItemRowView: View {
       }
     )
     .buttonStyle(.plain)
+    .accessibilityIdentifier(FeedItemAccessibilityIdentifiers.row(feedItem.id))
     .id(feedItem.id)
     .listRowInsets(EdgeInsets())
     .hoverEffect()
@@ -202,5 +203,21 @@ struct FeedItemRowView: View {
     if !feedItem.isRead {
       onReadStatusClick(FeedItemId(id: feedItem.id), true)
     }
+  }
+}
+
+private enum FeedItemAccessibilityIdentifiers {
+  static func row(_ feedItemId: String) -> String {
+    "article_row_\(feedItemId.e2eIdSuffix)"
+  }
+}
+
+private extension String {
+  var e2eIdSuffix: String {
+    map { character in
+      character.isLetter || character.isNumber || character == "_" ? character : "_"
+    }
+    .map(String.init)
+    .joined()
   }
 }

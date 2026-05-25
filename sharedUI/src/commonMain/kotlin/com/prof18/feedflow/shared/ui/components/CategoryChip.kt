@@ -21,8 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.shared.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -63,14 +65,16 @@ internal fun CategoryChip(
 
     Box(modifier = modifier) {
         Surface(
-            modifier = Modifier.singleAndLongClickModifier(
-                onClick = onCategoryClick,
-                onLongClick = if (hasContextMenu) {
-                    { showContextMenu = true }
-                } else {
-                    null
-                },
-            ),
+            modifier = Modifier
+                .testTag(FeedFormE2eIds.categoryChip(label))
+                .singleAndLongClickModifier(
+                    onClick = onCategoryClick,
+                    onLongClick = if (hasContextMenu) {
+                        { showContextMenu = true }
+                    } else {
+                        null
+                    },
+                ),
             shape = MaterialTheme.shapes.small,
             color = containerColor,
             border = BorderStroke(

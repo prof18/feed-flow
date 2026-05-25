@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoriesState
@@ -61,6 +62,7 @@ private fun CategorySelectorChip(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag(FeedFormE2eIds.CATEGORY_SELECTOR)
                 .clip(MaterialTheme.shapes.medium)
                 .background(
                     if (hasCategory) {

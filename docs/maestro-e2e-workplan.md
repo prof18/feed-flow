@@ -88,7 +88,7 @@ Implement these first. The initial target is all release-gate tests passing on A
 | RG-005 | Mark All Read | `content-rich` | Passing | Passing | Passing | Android and iOS `005-mark-all-read.yaml` passed on 2026-05-25; `e2e/scripts/run-ios.sh` passed on 2026-05-25; Android wrapper passed RG-005 then stopped in existing RG-010 final hide-read assertion |
 | RG-006 | Search Core | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25; iOS split into search result and bookmark-filter flows |
 | RG-007 | Reader Mode Core | `reader-mode` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
-| RG-008 | Feed Edit Core | `content-rich` | Not started | Not started | Not started | Needs feed settings/edit targeting |
+| RG-008 | Feed Edit Core | `content-rich` | Passing | Passing | Passing | Android and iOS `008-feed-edit-core.yaml` passed on 2026-05-25 |
 | RG-009 | Feed List Settings Persist | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
 | RG-010 | Reading Behavior Settings Persist | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
 | RG-011 | Import Export Smoke | `empty` + fixtures | Blocked | Blocked | Blocked | Needs OPML/CSV fixtures and file-picker strategy |

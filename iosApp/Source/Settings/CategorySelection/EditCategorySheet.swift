@@ -98,6 +98,7 @@ struct EditCategorySheet: View {
                             }
                         )
                         .buttonStyle(.borderedProminent)
+                        .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.saveButton)
                     }
                     .padding(.horizontal, Spacing.regular)
                     .padding(.bottom, Spacing.medium)
@@ -414,6 +415,7 @@ struct CategoryChip: View {
         .onTapGesture {
             onTap()
         }
+        .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.categoryChip(label))
         .contextMenu {
             if let onEditTap = onEditTap {
                 Button(action: onEditTap) {
@@ -446,5 +448,24 @@ struct CategoryChip: View {
         } else {
             return Color(UIColor.separator)
         }
+    }
+}
+
+private enum EditCategoryAccessibilityIdentifiers {
+    static let saveButton = "edit_feed_category_sheet_save"
+
+    static func categoryChip(_ label: String) -> String {
+        "edit_feed_category_\(label.e2eIdSuffix)"
+    }
+}
+
+private extension String {
+    var e2eIdSuffix: String {
+        lowercased()
+            .map { character in
+                character.isLetter || character.isNumber || character == "_" ? character : "_"
+            }
+            .map(String.init)
+            .joined()
     }
 }

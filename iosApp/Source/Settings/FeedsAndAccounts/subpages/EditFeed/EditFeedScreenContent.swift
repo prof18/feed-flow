@@ -50,8 +50,21 @@ struct EditFeedScreenContent: View {
                         text: $feedName
                     )
                     .disableAutocorrection(true)
+                    .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.nameInput)
                     .hoverEffect()
                     .focused($isTextFieldFocused)
+
+                    #if DEBUG
+                    Button {
+                        let e2eName = "E2E Renamed Android Feed"
+                        feedName = e2eName
+                        updateFeedNameTextFieldValue(e2eName)
+                    } label: {
+                        Image(systemName: "textformat")
+                    }
+                    .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.applyE2eNameButton)
+                    .hoverEffect()
+                    #endif
                 },
                 header: {
                     Text(feedFlowStrings.feedName)
@@ -102,6 +115,7 @@ struct EditFeedScreenContent: View {
                 Toggle(isOn: $isHidden) {
                     Text(feedFlowStrings.hideFeedFromTimelineDescription)
                 }
+                .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.hiddenToggle)
                 .onChange(of: isHidden) {
                     onHiddenToggled(isHidden)
                 }
@@ -109,6 +123,7 @@ struct EditFeedScreenContent: View {
                 Toggle(isOn: $isPinned) {
                     Text(feedFlowStrings.pinFeedSourceDescription)
                 }
+                .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.pinnedToggle)
                 .onChange(of: isPinned) {
                     onPinnedToggled(isPinned)
                 }
@@ -152,6 +167,7 @@ struct EditFeedScreenContent: View {
                         .contentShape(Rectangle())
                     }
                 )
+                .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.categorySelector)
                 .buttonStyle(.plain)
             }
 
@@ -214,6 +230,16 @@ struct EditFeedScreenContent: View {
                 Text(feedFlowStrings.actionSave).bold()
             }
         }
+        .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.saveButton)
         .disabled(feedURL.isEmpty)
     }
+}
+
+private enum EditFeedAccessibilityIdentifiers {
+    static let nameInput = "edit_feed_name"
+    static let hiddenToggle = "edit_feed_hidden_toggle"
+    static let pinnedToggle = "edit_feed_pinned_toggle"
+    static let categorySelector = "edit_feed_category_selector"
+    static let saveButton = "edit_feed_save"
+    static let applyE2eNameButton = "edit_feed_apply_e2e_name"
 }

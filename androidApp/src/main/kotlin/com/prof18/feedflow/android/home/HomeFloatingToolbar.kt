@@ -187,7 +187,10 @@ fun HomeFloatingToolbar(
                 }
 
                 Box {
-                    IconButton(onClick = { showMenu = !showMenu }) {
+                    IconButton(
+                        modifier = Modifier.testTag(HomeToolbarE2eIds.MORE_MENU_BUTTON),
+                        onClick = { showMenu = !showMenu },
+                    ) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
                             contentDescription = strings.moreOptionsButtonContentDescription,

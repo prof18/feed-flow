@@ -1,0 +1,24 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    text: "E2E Newest Unread Article.*"
+- tapOn:
+    id: home_more_menu_button
+- tapOn: "Mark all as read"
+- assertVisible: "Are you sure you want to mark all articles as read?"
+- tapOn: "Confirm"
+- assertVisible: "Nothing else to read here!"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_read
+- scrollUntilVisible:
+    element:
+      text: "E2E Newest Unread Article.*"
+    direction: DOWN
+    timeout: 10000

@@ -84,6 +84,7 @@ struct HomeContent: View {
             Button(feedFlowStrings.confirmButton) {
                 onMarkAllReadClick()
             }
+            .accessibilityIdentifier(HomeAlertAccessibilityIdentifiers.markAllReadConfirmButton)
         } message: {
             Text(feedFlowStrings.markAllReadDialogMessage)
         }
@@ -151,6 +152,10 @@ struct HomeContent: View {
             sheetToShow = .settings
         }
     }
+}
+
+private enum HomeAlertAccessibilityIdentifiers {
+    static let markAllReadConfirmButton = "home_mark_all_read_confirm_button"
 }
 
 // MARK: - HomeContent Toolbar Extension

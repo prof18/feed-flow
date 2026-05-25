@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
@@ -55,6 +56,7 @@ fun HomeAppBarDropdownMenu(
             text = { Text(LocalFeedFlowStrings.current.markAllReadDialogMessage) },
             confirmButton = {
                 TextButton(
+                    modifier = Modifier.testTag(HomeToolbarE2eIds.MARK_ALL_READ_CONFIRM_BUTTON),
                     onClick = {
                         onMarkAllReadClicked()
                         showMarkAllReadDialog = false
@@ -131,6 +133,7 @@ fun HomeAppBarDropdownMenu(
         }
 
         DropdownMenuItem(
+            modifier = Modifier.testTag(HomeToolbarE2eIds.MARK_ALL_READ_MENU_ITEM),
             onClick = {
                 showMarkAllReadDialog = true
             },

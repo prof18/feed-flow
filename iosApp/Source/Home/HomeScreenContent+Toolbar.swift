@@ -185,6 +185,7 @@ extension HomeContent {
                     Image(systemName: "ellipsis.circle")
                 }
             }
+            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.moreMenuButton)
         }
     }
 
@@ -203,6 +204,7 @@ extension HomeContent {
         } label: {
             Label(feedFlowStrings.markAllReadButton, systemImage: "text.badge.checkmark")
         }
+        .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.markAllReadMenuItem)
 
         Button {
             proxy.scrollTo(feedState.first?.id)
@@ -304,5 +306,7 @@ extension HomeContent {
 }
 
 private enum HomeToolbarAccessibilityIdentifiers {
+    static let markAllReadMenuItem = "home_mark_all_read_menu_item"
+    static let moreMenuButton = "home_more_menu_button"
     static let searchButton = "home_search_button"
 }

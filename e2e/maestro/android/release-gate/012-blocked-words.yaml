@@ -1,0 +1,78 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible: "E2E seed complete"
+    timeout: 10000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_blocked_words
+- tapOn:
+    id: blocked_words_input
+- inputText: Pixel
+- tapOn:
+    id: blocked_words_add_button
+- assertVisible:
+    id: blocked_word_pixel
+- hideKeyboard
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: drawer_timeline
+    optional: true
+- tapOn:
+    id: home_search_button
+- tapOn:
+    id: search_query_field
+- inputText: Pixel
+- assertNotVisible:
+    text: "E2E Bookmarked Unread Article: Pixel battery debate"
+- assertNotVisible:
+    text: "E2E Article With Comments: Pixel Glow"
+- tapOn:
+    id: search_back_button
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_blocked_words
+- tapOn:
+    id: blocked_word_delete_pixel
+- assertNotVisible:
+    id: blocked_word_pixel
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: drawer_timeline
+    optional: true
+- tapOn:
+    id: home_search_button
+- tapOn:
+    id: search_clear_button
+    optional: true
+- tapOn:
+    id: search_query_field
+- inputText: Pixel
+- assertVisible:
+    text: "E2E Bookmarked Unread Article: Pixel battery debate"
+- assertVisible:
+    text: "E2E Article With Comments: Pixel Glow"

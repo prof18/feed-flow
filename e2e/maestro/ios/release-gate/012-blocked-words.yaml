@@ -1,0 +1,48 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich&query=Pixel
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 10000
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_blocked_words
+- tapOn:
+    id: blocked_words_add_pixel_e2e
+- assertVisible:
+    id: blocked_word_pixel
+- tapOn:
+    id: BackButton
+- tapOn:
+    id: BackButton
+- tapOn:
+    id: settings_done_button
+- tapOn:
+    id: drawer_menu_button
+    optional: true
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_blocked_words
+- tapOn:
+    id: blocked_word_delete_pixel
+- assertNotVisible:
+    id: blocked_word_pixel
+- tapOn:
+    id: BackButton
+- tapOn:
+    id: BackButton
+- tapOn:
+    id: settings_done_button

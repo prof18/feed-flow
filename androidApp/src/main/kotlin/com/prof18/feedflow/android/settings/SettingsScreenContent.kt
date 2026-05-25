@@ -67,6 +67,7 @@ internal fun SettingsScreenContent(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.FEEDS_AND_ACCOUNTS_ROW),
                     title = LocalFeedFlowStrings.current.settingsFeedsAndAccounts,
                     icon = Icons.Outlined.Sync,
                     onClick = navigateToFeedsAndAccounts,

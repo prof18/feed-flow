@@ -20,6 +20,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
@@ -40,7 +42,10 @@ internal fun FeedsAndAccountsScreen(
             TopAppBar(
                 title = { Text(LocalFeedFlowStrings.current.settingsFeedsAndAccounts) },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(
+                        modifier = Modifier.testTag(SettingsE2eIds.BACK_BUTTON),
+                        onClick = navigateBack,
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = null,
@@ -99,6 +104,7 @@ internal fun FeedsAndAccountsScreen(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.BLOCKED_WORDS_ROW),
                     title = LocalFeedFlowStrings.current.settingsBlockedWords,
                     icon = Icons.Outlined.Report,
                     onClick = navigateToBlockedWords,

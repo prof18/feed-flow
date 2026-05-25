@@ -36,6 +36,7 @@ struct FeedsAndAccountsScreen: View {
                 NavigationLink(destination: BlockedWordsScreen()) {
                     Label(feedFlowStrings.settingsBlockedWords, systemImage: "exclamationmark.triangle")
                 }
+                .accessibilityIdentifier(FeedsAndAccountsAccessibilityIdentifiers.blockedWordsRow)
             }
         }
         .scrollContentBackground(.hidden)
@@ -44,4 +45,8 @@ struct FeedsAndAccountsScreen: View {
         .navigationBarTitleDisplayMode(.inline)
         .snackbar(messageQueue: $appState.snackbarQueue)
     }
+}
+
+private enum FeedsAndAccountsAccessibilityIdentifiers {
+    static let blockedWordsRow = "settings_blocked_words"
 }

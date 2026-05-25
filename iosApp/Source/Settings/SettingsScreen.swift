@@ -25,6 +25,7 @@ struct SettingsScreen: View {
                     )) {
                         Label(feedFlowStrings.settingsFeedsAndAccounts, systemImage: "arrow.triangle.2.circlepath")
                     }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.feedsAndAccountsRow)
 
                     NavigationLink(destination: FeedListSettingsScreen()) {
                         Label(feedFlowStrings.settingsFeedListTitle, systemImage: "list.bullet.rectangle.portrait")
@@ -70,6 +71,7 @@ struct SettingsScreen: View {
 
 private enum SettingsAccessibilityIdentifiers {
     static let doneButton = "settings_done_button"
+    static let feedsAndAccountsRow = "settings_feeds_accounts"
     static let feedListRow = "settings_feed_list"
     static let readingBehaviorRow = "settings_reading_behavior"
 }

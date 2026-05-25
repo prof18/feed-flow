@@ -129,6 +129,7 @@ struct SidebarDrawer: View {
                         action: onShowSettingsClick,
                         label: { Image(systemName: "gear") }
                     )
+                    .accessibilityIdentifier(DrawerAccessibilityIdentifiers.settingsButton)
                 }
 
                 ToolbarItem(placement: .primaryAction) {

@@ -210,6 +210,10 @@ enum FeedItemAccessibilityIdentifiers {
   static func row(_ feedItemId: String) -> String {
     "article_row_\(feedItemId.e2eIdSuffix)"
   }
+
+  static func image(_ feedItemId: String) -> String {
+    "article_image_\(feedItemId.e2eIdSuffix)"
+  }
 }
 
 private extension String {

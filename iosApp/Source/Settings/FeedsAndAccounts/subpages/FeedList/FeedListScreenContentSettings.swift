@@ -109,6 +109,7 @@ struct FeedListSettingsScreenContent: View {
                     } label: {
                         Text(feedFlowStrings.feedLayoutTitle)
                     }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.layoutPicker)
 
                     Toggle(isOn: $isHideDescriptionEnabled) {
                         Text(feedFlowStrings.settingsHideDescription)
@@ -121,6 +122,7 @@ struct FeedListSettingsScreenContent: View {
                     }.onTapGesture {
                         isHideImagesEnabled.toggle()
                     }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideImagesToggle)
 
                     Toggle(isOn: $isHideDateEnabled) {
                         Text(feedFlowStrings.settingsHideDate)
@@ -195,6 +197,7 @@ struct FeedListSettingsScreenContent: View {
                     } label: {
                         Text(feedFlowStrings.settingsFeedOrderTitle)
                     }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.orderPicker)
                 }
             })
             .scrollContentBackground(.hidden)
@@ -214,4 +217,10 @@ private func formatDateTimeExample(dateFormat: DateFormat, timeFormat: TimeForma
     }
     let timePart = timeFormat == .hours24 ? "14:30" : "2:30 PM"
     return "\(datePart) - \(timePart)"
+}
+
+private enum FeedListSettingsAccessibilityIdentifiers {
+    static let hideImagesToggle = "feed_list_settings_hide_images"
+    static let layoutPicker = "feed_list_settings_layout"
+    static let orderPicker = "feed_list_settings_order"
 }

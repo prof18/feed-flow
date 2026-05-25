@@ -29,6 +29,7 @@ struct SettingsScreen: View {
                     NavigationLink(destination: FeedListSettingsScreen()) {
                         Label(feedFlowStrings.settingsFeedListTitle, systemImage: "list.bullet.rectangle.portrait")
                     }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.feedListRow)
 
                     NavigationLink(destination: ReadingBehaviorScreen()) {
                         Label(feedFlowStrings.settingsReadingBehavior, systemImage: "book")
@@ -56,6 +57,7 @@ struct SettingsScreen: View {
                 } label: {
                     Text(feedFlowStrings.actionDone).bold()
                 }
+                .accessibilityIdentifier(SettingsAccessibilityIdentifiers.doneButton)
             }
             .navigationTitle(Text(feedFlowStrings.settingsTitle))
             .navigationBarTitleDisplayMode(.inline)
@@ -63,4 +65,9 @@ struct SettingsScreen: View {
         }
         .toggleStyle(BlueToggleStyle())
     }
+}
+
+private enum SettingsAccessibilityIdentifiers {
+    static let doneButton = "settings_done_button"
+    static let feedListRow = "settings_feed_list"
 }

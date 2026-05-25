@@ -8,6 +8,7 @@
 
 enum DrawerAccessibilityIdentifiers {
     static let menuButton = "drawer_menu_button"
+    static let settingsButton = "drawer_settings_button"
     static let timeline = "drawer_timeline"
     static let read = "drawer_read"
     static let bookmarks = "drawer_bookmarks"

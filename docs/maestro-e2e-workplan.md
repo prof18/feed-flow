@@ -59,10 +59,10 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F004 | `content-rich` profile | Passing | most release-gate/regression flows | Uses deterministic public feed/article/image data |
 | F005 | Android/iOS release-gate wrapper scripts | Passing | release-gate verification | `e2e/scripts/run-android.sh`, `e2e/scripts/run-ios.sh`; flows run sequentially to avoid seed reset races |
 | F006 | Stable seed completion marker | Passing | all seeded flows | `E2E seed complete`, `e2e_seed_complete` |
-| F007 | Stable ids for navigation buttons | In progress | RG-006, settings flows | Drawer menu id added for RG-003; home search button id added for RG-006; add remaining ids as flows need them |
+| F007 | Stable ids for navigation buttons | In progress | RG-006, settings flows | Drawer menu/settings ids added; home search button id added for RG-006; add remaining ids as flows need them |
 | F008 | Stable ids for drawer/library entries | Passing | REG-104, REG-105 | Added stable ids for timeline/read/bookmarks/categories/feed sources |
 | F009 | Stable ids for article rows/actions | In progress | RG-004, RG-005, REG-106, REG-107 | Article row ids added for RG-004; add context and swipe action ids as flows need them |
-| F010 | Stable ids for settings rows/actions | Not started | RG-009, RG-010, REG-113-115 | Add as flows need them |
+| F010 | Stable ids for settings rows/actions | In progress | RG-009, RG-010, REG-113-115 | Feed-list settings ids added for RG-009; add reading behavior and other settings ids as flows need them |
 | F011 | Stable ids for reader toolbar/actions | Passing | RG-007, REG-110, REG-111 | Reader article, bookmark, browser, font menu, overflow, back, and navigation ids added for RG-007; image viewer ids still deferred to REG-111 |
 | F012 | OPML fixture files | Not started | RG-011, REG-119 | Put under `e2e/fixtures/opml/` |
 | F013 | CSV fixture files | Not started | RG-011, REG-120 | Put under `e2e/fixtures/csv/` |
@@ -89,7 +89,7 @@ Implement these first. The initial target is all release-gate tests passing on A
 | RG-006 | Search Core | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25; iOS split into search result and bookmark-filter flows |
 | RG-007 | Reader Mode Core | `reader-mode` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
 | RG-008 | Feed Edit Core | `content-rich` | Not started | Not started | Not started | Needs feed settings/edit targeting |
-| RG-009 | Feed List Settings Persist | `content-rich` | Not started | Not started | Not started | Needs settings row targeting |
+| RG-009 | Feed List Settings Persist | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
 | RG-010 | Reading Behavior Settings Persist | `content-rich` | Not started | Not started | Not started | Needs settings row targeting |
 | RG-011 | Import Export Smoke | `empty` + fixtures | Blocked | Blocked | Blocked | Needs OPML/CSV fixtures and file-picker strategy |
 | RG-012 | Blocked Words | `content-rich` | Not started | Not started | Not started | Needs blocked-word screen targeting |

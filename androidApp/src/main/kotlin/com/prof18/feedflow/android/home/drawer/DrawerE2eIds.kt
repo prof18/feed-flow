@@ -2,6 +2,7 @@ package com.prof18.feedflow.android.home.drawer
 
 internal object DrawerE2eIds {
     const val MENU_BUTTON = "drawer_menu_button"
+    const val SETTINGS_BUTTON = "drawer_settings_button"
     const val TIMELINE = "drawer_timeline"
     const val READ = "drawer_read"
     const val BOOKMARKS = "drawer_bookmarks"

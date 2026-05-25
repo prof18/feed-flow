@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.settings.SettingItem
@@ -74,6 +75,7 @@ internal fun SettingsScreenContent(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.FEED_LIST_ROW),
                     title = LocalFeedFlowStrings.current.settingsFeedListTitle,
                     icon = Icons.Outlined.Layers,
                     onClick = navigateToFeedListSettings,
@@ -144,6 +146,7 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
         },
         navigationIcon = {
             IconButton(
+                modifier = Modifier.testTag(SettingsE2eIds.BACK_BUTTON),
                 onClick = {
                     navigateBack()
                 },

@@ -1,0 +1,12 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- assertVisible:
+    text: "E2E Newest Unread Article.*"
+- assertNotVisible: "E2E Hidden Feed Article"

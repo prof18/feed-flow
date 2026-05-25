@@ -9,3 +9,6 @@ VALUES (?,?);
 
 selectLastChangeTimestamp:
 SELECT last_change_timestamp FROM sync_metadata WHERE table_name = ?;
+
+deleteAllMetadata:
+DELETE FROM sync_metadata;

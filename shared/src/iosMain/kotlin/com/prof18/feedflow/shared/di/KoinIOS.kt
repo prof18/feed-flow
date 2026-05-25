@@ -39,6 +39,7 @@ import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerIos
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
+import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
@@ -318,4 +319,6 @@ object Deps : KoinComponent {
     fun getChangeFeedCategoryViewModel() = getKoin().get<ChangeFeedCategoryViewModel>()
     fun getFeedSuggestionsViewModel() = getKoin().get<FeedSuggestionsViewModel>()
     fun getFeedbinSyncViewModel() = getKoin().get<FeedbinSyncViewModel>()
+    suspend fun runE2eSeed(action: String, profileName: String?) =
+        getKoin().get<E2eSeedRunner>().run(action = action, profileName = profileName)
 }

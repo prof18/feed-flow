@@ -105,6 +105,21 @@ struct ContentView: View {
                   url.scheme == "feedflow" else { return }
             handleFeedFlowNotificationURL(url)
         }
+        #if DEBUG
+            .overlay(alignment: .bottom) {
+                if let e2eSeedMessage = appState.e2eSeedMessage {
+                    Text(e2eSeedMessage)
+                        .font(.headline)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(.regularMaterial, in: Capsule())
+                        .padding(.bottom, 18)
+                        .accessibilityIdentifier(
+                            e2eSeedMessage == "E2E seed complete" ? "e2e_seed_complete" : "e2e_seed_error"
+                        )
+                }
+            }
+        #endif
     }
 
     private func handleFeedFlowNotificationURL(_ url: URL) {

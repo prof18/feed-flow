@@ -747,6 +747,20 @@ class DatabaseHelper(
         dbRef.feedSourceQueries.deleteAll()
     }
 
+    suspend fun deleteAllE2eData() = dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.readStatusPendingActionQueries.deleteAllReadStatusPendingActions()
+        dbRef.contentPrefetchQueueQueries.clearQueue()
+        dbRef.feedItemStatusQueries.deleteAllStatuses()
+        dbRef.feedItemTempQueries.clearTempFeedItemIds()
+        dbRef.deletedFeedItemsQueries.deleteAllDeletedFeedItems()
+        dbRef.feedItemQueries.deleteAll()
+        dbRef.feedSourcePreferencesQueries.deleteAllPreferences()
+        dbRef.feedSourceCategoryQueries.deleteAll()
+        dbRef.feedSourceQueries.deleteAll()
+        dbRef.blockedWordQueries.deleteAllBlockedKeywords()
+        dbRef.syncMetadataQueries.deleteAllMetadata()
+    }
+
     suspend fun insertFeedSourcePreference(
         feedSourceId: String,
         preference: LinkOpeningPreference,
@@ -824,6 +838,14 @@ class DatabaseHelper(
                     enabled = enabled,
                 )
             }
+        }
+
+    suspend fun updateFeedSourceFetchFailed(feedSourceId: String, fetchFailed: Boolean) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.setFetchFailed(
+                urlHash = feedSourceId,
+                fetchFailed = fetchFailed,
+            )
         }
 
     suspend fun updateAllNotificationsEnabledStatus(enabled: Boolean) =

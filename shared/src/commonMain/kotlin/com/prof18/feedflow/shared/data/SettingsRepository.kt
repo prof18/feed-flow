@@ -52,6 +52,9 @@ class SettingsRepository(
     fun saveFavouriteBrowserId(browserId: String) =
         settings.set(SettingsFields.FAVOURITE_BROWSER_ID.name, browserId)
 
+    fun clearFavouriteBrowserId() =
+        settings.remove(SettingsFields.FAVOURITE_BROWSER_ID.name)
+
     internal fun getMarkFeedAsReadWhenScrolling(): Boolean =
         settings.getBoolean(SettingsFields.MARK_FEED_AS_READ_WHEN_SCROLLING.name, true)
 

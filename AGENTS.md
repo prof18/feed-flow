@@ -57,6 +57,16 @@ For Android API/library questions, `android docs search '<query>'` before fallin
 
 For anything deeper — SDK package management (`android sdk ...`), device interaction, or journey/UI tests — consult the globally-installed `android-cli` skill instead of expanding this section.
 
+### Maestro E2E tests
+
+When writing or running Maestro E2E tests, follow `docs/maestro-e2e-guide.md`.
+
+Quick local P0 gates:
+- `e2e/scripts/run-android.sh`
+- `e2e/scripts/run-ios.sh`
+
+Use the debug seeding deep links documented in that guide. Do not depend on live feeds, OAuth, or previous app state in release-gate flows.
+
 ### iOS Project Generation
 
 The iOS Xcode project (`iosApp/FeedFlow.xcodeproj`) is generated from `iosApp/project.yml` by [XcodeGen](https://github.com/yonaskolb/XcodeGen) and is NOT committed to git. Regenerate it with:

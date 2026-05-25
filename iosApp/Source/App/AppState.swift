@@ -25,6 +25,10 @@ class AppState {
     var pendingBrowserURL: URL?
     var pendingExternalURL: URL?
 
+    #if DEBUG
+        var e2eSeedMessage: String?
+    #endif
+
     init() {
         compactNavigationPath.append(CompactViewRoute.feed)
     }

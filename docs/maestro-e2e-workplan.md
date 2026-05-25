@@ -117,7 +117,7 @@ Start these after the release gate is stable.
 
 | ID | Test | Profile | Platforms | Status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| REG-101 | Add Feed Form Validation | `empty` | Android, iOS | Not started | Prefer local fixture URL, not live RSS |
+| REG-101 | Add Feed Form Validation | `empty` | Android, iOS | Passing | Android and iOS `101-add-feed-form-validation.yaml` passed via Maestro CLI on 2026-05-26 using deterministic fixture URL validation |
 | REG-102 | Force Add Feed | `empty` | Android, iOS | Not started | Needs failed feed validation fixture/state |
 | REG-103 | Feed Suggestions | `empty` | Android, iOS | Not started | May depend on app-provided suggestions |
 | REG-104 | Feed Source List Management | `content-rich` | Android, iOS | Not started | Needs category/feed management ids |

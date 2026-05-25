@@ -44,6 +44,19 @@ struct AddFeedScreenContent: View {
                         .disableAutocorrection(true)
                         .hoverEffect()
                         .focused($isTextFieldFocused)
+                        .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.urlInput)
+
+                    #if DEBUG
+                        Button {
+                            let e2eURL = "https://e2e.feedflow.local/feed.xml"
+                            feedURL = e2eURL
+                            updateFeedUrlTextFieldValue(e2eURL)
+                        } label: {
+                            Image(systemName: "textformat")
+                        }
+                        .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.applyE2eUrlButton)
+                        .hoverEffect()
+                    #endif
                 },
                 header: {
                     Text(feedFlowStrings.feedUrl)
@@ -93,6 +106,7 @@ struct AddFeedScreenContent: View {
                     }
                 )
                 .buttonStyle(.plain)
+                .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.categorySelector)
             }
 
             if showNotificationToggle {
@@ -193,7 +207,15 @@ struct AddFeedScreenContent: View {
             }
         }
         .disabled(feedURL.isEmpty)
+        .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.saveButton)
     }
+}
+
+private enum AddFeedAccessibilityIdentifiers {
+    static let urlInput = "add_feed_url_input"
+    static let saveButton = "add_feed_save_button"
+    static let categorySelector = "edit_feed_category_selector"
+    static let applyE2eUrlButton = "add_feed_apply_e2e_url"
 }
 
 // Previews disabled - require AddFeedViewModel instance

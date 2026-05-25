@@ -93,7 +93,7 @@ Implement these first. The initial target is all release-gate tests passing on A
 | RG-010 | Reading Behavior Settings Persist | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
 | RG-011 | Import Export Smoke | `empty` + fixtures | Blocked | Blocked | Blocked | Needs OPML/CSV fixtures and file-picker strategy |
 | RG-012 | Blocked Words | `content-rich` | Not started | Not started | Not started | Needs blocked-word screen targeting |
-| RG-013 | Relaunch Persistence | `content-rich` | Not started | Not started | Not started | Should reuse helpers from RG-004/RG-009 |
+| RG-013 | Relaunch Persistence | `content-rich` | Passing | Passing | Passing | Android and iOS `013-relaunch-persistence.yaml` passed via Maestro MCP on 2026-05-25 |
 
 ## Recommended Release-Gate Order
 

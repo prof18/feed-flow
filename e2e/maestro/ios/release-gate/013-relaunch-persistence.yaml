@@ -1,0 +1,45 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader_bookmark_button
+- swipe:
+    start: "2%, 50%"
+    end: "90%, 50%"
+    duration: 500
+- launchApp
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_bookmarks
+- scrollUntilVisible:
+    element:
+      text: "E2E Reader Mode Success Article.*"
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_read
+- scrollUntilVisible:
+    element:
+      text: "E2E Reader Mode Success Article.*"
+    direction: DOWN
+    timeout: 10000

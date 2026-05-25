@@ -1,0 +1,30 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- longPressOn:
+    id: article_row_e2e_article_newest_unread
+- tapOn:
+    text: "Add to bookmarks"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_bookmarks
+- assertVisible:
+    id: article_row_e2e_article_newest_unread
+- longPressOn:
+    id: article_row_e2e_article_newest_unread
+- tapOn:
+    text: "Mark as read"
+- tapOn:
+    id: drawer_menu_button
+    optional: true
+- tapOn:
+    id: drawer_read
+- assertVisible:
+    id: article_row_e2e_article_newest_unread

@@ -122,7 +122,7 @@ Start these after the release gate is stable.
 | REG-103 | Feed Suggestions | `empty` | Android, iOS | Not started | May depend on app-provided suggestions |
 | REG-104 | Feed Source List Management | `content-rich` | Android, iOS | Not started | Needs category/feed management ids |
 | REG-105 | Category Management | `content-rich` | Android, iOS | Not started | Needs category CRUD ids |
-| REG-106 | Article Context Menu | `content-rich` | Android, iOS | Not started | Reuse article action ids from release-gate flows |
+| REG-106 | Article Context Menu | `content-rich` | Android, iOS | Passing | Android and iOS `106-article-context-menu.yaml` passed via Maestro CLI on 2026-05-26 |
 | REG-107 | Swipe Actions | profile TBD | Android, iOS | Blocked | Needs seeded swipe settings profile or flow setup |
 | REG-108 | Feed Layout Matrix | `card-layout`, `compact-list` | Android, iOS | Passing | Android and iOS `108-feed-layout-matrix-card.yaml` and `108-feed-layout-matrix-compact.yaml` passed via Maestro CLI on 2026-05-25 |
 | REG-109 | Feed Order And Mark Above Below | `oldest-first` | Android, iOS | Not started | Needs mark-above/below action targeting |

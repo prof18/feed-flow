@@ -101,6 +101,14 @@ appId: com.prof18.feedflow.dev
     id: e2e_seed_complete
 ```
 
+iOS can also provide an initial search query after seeding. Use this for OS-owned controls that are flaky to type into through Maestro, such as the SwiftUI search field:
+
+```text
+feedflow://e2e/reset-and-seed?profile=content-rich&query=Pixel
+```
+
+For iOS search filter coverage, add `filter=bookmarks` or `filter=read` to the same link.
+
 ## Writing A New Flow
 
 1. Pick the smallest seed profile that covers the scenario.

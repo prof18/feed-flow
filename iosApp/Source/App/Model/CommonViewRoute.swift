@@ -11,7 +11,7 @@ import Foundation
 
 enum CommonViewRoute: Hashable {
     case readerMode
-    case search
+    case search(initialQuery: String?, initialFilter: String?)
     case accounts
     case deepLinkFeed(String)
     case inAppBrowser(url: URL)

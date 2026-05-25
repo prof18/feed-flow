@@ -176,7 +176,10 @@ fun HomeFloatingToolbar(
             border = toolbarBorder,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onSearchClick) {
+                IconButton(
+                    modifier = Modifier.testTag(HomeToolbarE2eIds.SEARCH_BUTTON),
+                    onClick = onSearchClick,
+                ) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = strings.searchButtonContentDescription,

@@ -59,7 +59,7 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F004 | `content-rich` profile | Passing | most release-gate/regression flows | Uses deterministic public feed/article/image data |
 | F005 | Android/iOS release-gate wrapper scripts | Passing | release-gate verification | `e2e/scripts/run-android.sh`, `e2e/scripts/run-ios.sh`; flows run sequentially to avoid seed reset races |
 | F006 | Stable seed completion marker | Passing | all seeded flows | `E2E seed complete`, `e2e_seed_complete` |
-| F007 | Stable ids for navigation buttons | In progress | RG-006, settings flows | Drawer menu id added for RG-003; add remaining ids as flows need them |
+| F007 | Stable ids for navigation buttons | In progress | RG-006, settings flows | Drawer menu id added for RG-003; home search button id added for RG-006; add remaining ids as flows need them |
 | F008 | Stable ids for drawer/library entries | Passing | REG-104, REG-105 | Added stable ids for timeline/read/bookmarks/categories/feed sources |
 | F009 | Stable ids for article rows/actions | In progress | RG-004, RG-005, REG-106, REG-107 | Article row ids added for RG-004; add context and swipe action ids as flows need them |
 | F010 | Stable ids for settings rows/actions | Not started | RG-009, RG-010, REG-113-115 | Add as flows need them |
@@ -73,6 +73,7 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F018 | `android-widget` profile validation flow | Not started | MAN-201, MAN-202 | Android-only |
 | F019 | Mock account seed state | Blocked | REG-116, REG-118 | `sync-linked-mock` name exists; provider-specific mock state still needs implementation |
 | F020 | `large-content` profile | Blocked | MAN-206 | Not implemented yet |
+| F021 | Stable ids and hooks for search controls | Passing | RG-006 | Android search field/filter ids added; iOS uses seeded query/filter hooks because SwiftUI `.searchable` is OS-owned and flaky to type into with Maestro |
 
 ## Release Gate
 
@@ -85,7 +86,7 @@ Implement these first. The initial target is all release-gate tests passing on A
 | RG-003 | Library Filters | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
 | RG-004 | Article Read And Bookmark State | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
 | RG-005 | Mark All Read | `content-rich` | Not started | Not started | Not started | Needs timeline menu/confirm dialog targeting |
-| RG-006 | Search Core | `content-rich` | Not started | Not started | Not started | Needs search field/filter targeting |
+| RG-006 | Search Core | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25; iOS split into search result and bookmark-filter flows |
 | RG-007 | Reader Mode Core | `reader-mode` | Not started | Not started | Not started | Needs reader toolbar/action targeting |
 | RG-008 | Feed Edit Core | `content-rich` | Not started | Not started | Not started | Needs feed settings/edit targeting |
 | RG-009 | Feed List Settings Persist | `content-rich` | Not started | Not started | Not started | Needs settings row targeting |

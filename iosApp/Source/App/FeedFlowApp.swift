@@ -179,6 +179,12 @@ struct FeedFlowApp: App {
             let profileName = components?.queryItems?
                 .first { $0.name == "profile" }?
                 .value
+            let initialSearchQuery = components?.queryItems?
+                .first { $0.name == "query" }?
+                .value
+            let initialSearchFilter = components?.queryItems?
+                .first { $0.name == "filter" }?
+                .value
 
             appState.e2eSeedMessage = nil
             Task {
@@ -190,6 +196,8 @@ struct FeedFlowApp: App {
                         appState.compactNavigationPath = NavigationPath()
                         appState.compactNavigationPath.append(CompactViewRoute.feed)
                         appState.e2eSeedMessage = "E2E seed complete"
+                        appState.e2eInitialSearchQuery = initialSearchQuery
+                        appState.e2eInitialSearchFilter = initialSearchFilter
                     }
                 } catch {
                     await MainActor.run {

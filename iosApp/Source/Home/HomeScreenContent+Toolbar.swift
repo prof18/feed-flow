@@ -19,11 +19,12 @@ extension HomeContent {
         ToolbarItem {
             Button {
                 self.appState.navigate(
-                    route: CommonViewRoute.search
+                    route: searchRoute
                 )
             } label: {
                 Image(systemName: "magnifyingglass")
             }
+            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
         }
 
         if #available(iOS 26.0, *) {
@@ -45,11 +46,12 @@ extension HomeContent {
             ToolbarItem {
                 Button {
                     self.appState.navigate(
-                        route: CommonViewRoute.search
+                        route: searchRoute
                     )
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
+                .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
             }
 
             if #available(iOS 26.0, *) {
@@ -106,6 +108,17 @@ extension HomeContent {
         }
     }
 
+    private var searchRoute: CommonViewRoute {
+        #if DEBUG
+            CommonViewRoute.search(
+                initialQuery: appState.e2eInitialSearchQuery,
+                initialFilter: appState.e2eInitialSearchFilter
+            )
+        #else
+            CommonViewRoute.search(initialQuery: nil, initialFilter: nil)
+        #endif
+    }
+
     private var shouldShowUnreadCount: Bool {
         !isUnreadCountHidden &&
             !(currentFeedFilter is FeedFilter.Read) &&
@@ -151,11 +164,12 @@ extension HomeContent {
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
                 self.appState.navigate(
-                    route: CommonViewRoute.search
+                    route: searchRoute
                 )
             } label: {
                 Image(systemName: "magnifyingglass")
             }
+            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
         }
     }
 
@@ -287,4 +301,8 @@ extension HomeContent {
             return feedFlowStrings.appName
         }
     }
+}
+
+private enum HomeToolbarAccessibilityIdentifiers {
+    static let searchButton = "home_search_button"
 }

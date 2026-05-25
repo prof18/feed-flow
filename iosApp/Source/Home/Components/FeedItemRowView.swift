@@ -206,7 +206,7 @@ struct FeedItemRowView: View {
   }
 }
 
-private enum FeedItemAccessibilityIdentifiers {
+enum FeedItemAccessibilityIdentifiers {
   static func row(_ feedItemId: String) -> String {
     "article_row_\(feedItemId.e2eIdSuffix)"
   }

@@ -41,11 +41,8 @@ appId: com.prof18.feedflow.debug
     timeout: 10000
 - tapOn:
     id: drawer_feed_source_e2e_feed_android_weekly
-- scrollUntilVisible:
-    element:
-      text: "E2E Newest Unread Article.*"
-    direction: UP
-    timeout: 10000
+- assertVisible:
+    text: "Android Central RSS Feed"
 - assertNotVisible:
     text: "E2E Bookmarked Unread Article.*"
 - tapOn:

@@ -1,6 +1,9 @@
 package com.prof18.feedflow.shared.presentation
 
+import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.VisibleFeedItem
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -61,7 +64,7 @@ class ScrollReadTrackerTest {
     }
 
     @Test
-    fun `fast fling marks only observed items`() {
+    fun `fast fling marks all loaded unread items passed by first visible id`() {
         onVisibleItemsChanged(
             listOf(
                 visibleItem(id = "item-1", index = 0),
@@ -76,7 +79,65 @@ class ScrollReadTrackerTest {
             ),
         )
 
-        assertEquals(setOf(FeedItemId("item-1"), FeedItemId("item-2")), result)
+        assertEquals((1..19).map { FeedItemId("item-$it") }.toSet(), result)
+    }
+
+    @Test
+    fun `snapshot indices do not decide passed range`() {
+        onVisibleItemsChanged(
+            listOf(
+                visibleItem(id = "item-1", index = 100),
+                visibleItem(id = "item-2", index = 101),
+            ),
+        )
+
+        val result = onVisibleItemsChanged(
+            listOf(
+                visibleItem(id = "item-4", index = 0),
+                visibleItem(id = "item-5", index = 1),
+            ),
+        )
+
+        assertEquals((1..3).map { FeedItemId("item-$it") }.toSet(), result)
+    }
+
+    @Test
+    fun `unresolved visible ids seed without marking`() {
+        onVisibleItemsChanged(
+            listOf(
+                visibleItem(id = "stale-item", index = 0),
+            ),
+        )
+
+        val result = onVisibleItemsChanged(
+            listOf(
+                visibleItem(id = "item-3", index = 2),
+            ),
+        )
+
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `transient empty snapshot keeps previous boundary`() {
+        onVisibleItemsChanged(
+            listOf(
+                visibleItem(id = "item-1", index = 0),
+                visibleItem(id = "item-2", index = 1),
+            ),
+        )
+
+        val emptyResult = onVisibleItemsChanged(emptyList())
+
+        val result = onVisibleItemsChanged(
+            listOf(
+                visibleItem(id = "item-4", index = 3),
+                visibleItem(id = "item-5", index = 4),
+            ),
+        )
+
+        assertTrue(emptyResult.isEmpty())
+        assertEquals((1..3).map { FeedItemId("item-$it") }.toSet(), result)
     }
 
     @Test
@@ -106,12 +167,14 @@ class ScrollReadTrackerTest {
                 visibleItem(id = "item-1", index = 0, isRead = true),
                 visibleItem(id = "item-2", index = 1),
             ),
+            readIds = setOf("item-1"),
         )
 
         val result = onVisibleItemsChanged(
             listOf(
                 visibleItem(id = "item-3", index = 2),
             ),
+            readIds = setOf("item-1"),
         )
 
         assertEquals(setOf(FeedItemId("item-2")), result)
@@ -158,11 +221,14 @@ class ScrollReadTrackerTest {
 
     private fun onVisibleItemsChanged(
         visibleItems: List<VisibleFeedItem>,
+        readIds: Set<String> = emptySet(),
+        feedItems: List<FeedItem> = feedItems(readIds = readIds),
         feedListVersion: Long = 0,
         listShapeKey: ScrollReadListShapeKey = defaultListShapeKey,
     ): Set<FeedItemId> =
         tracker.onVisibleItemsChanged(
             visibleItems = visibleItems,
+            feedItems = feedItems,
             feedListVersion = feedListVersion,
             listShapeKey = listShapeKey,
         )
@@ -178,7 +244,44 @@ class ScrollReadTrackerTest {
             isRead = isRead,
         )
 
+    private fun feedItems(
+        count: Int = 25,
+        readIds: Set<String> = emptySet(),
+    ): List<FeedItem> =
+        (1..count).map { index ->
+            val id = "item-$index"
+            FeedItem(
+                id = id,
+                url = "https://example.com/$id",
+                title = id,
+                subtitle = null,
+                content = null,
+                imageUrl = null,
+                feedSource = feedSource,
+                pubDateMillis = index.toLong(),
+                isRead = id in readIds,
+                dateString = null,
+                commentsUrl = null,
+                isBookmarked = false,
+            )
+        }
+
     private companion object {
+        val feedSource = FeedSource(
+            id = "source-1",
+            url = "https://example.com/feed",
+            title = "Source",
+            category = null,
+            lastSyncTimestamp = null,
+            logoUrl = null,
+            websiteUrl = null,
+            fetchFailed = false,
+            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+            isHiddenFromTimeline = false,
+            isPinned = false,
+            isNotificationEnabled = false,
+        )
+
         val defaultListShapeKey = ScrollReadListShapeKey(
             showReadArticlesTimeline = false,
             hideReadItems = false,

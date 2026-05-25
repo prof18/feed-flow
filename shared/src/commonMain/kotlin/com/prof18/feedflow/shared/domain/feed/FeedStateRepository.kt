@@ -189,11 +189,12 @@ internal class FeedStateRepository(
     fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
         val hideReadItems = settingsRepository.getHideReadItems()
         val currentFilter = currentFeedFilter.value
-        updateFeedState { currentItems ->
+        val shouldRemoveReadItems = hideReadItems && currentFilter != FeedFilter.Read
+        updateFeedState(incrementListVersion = shouldRemoveReadItems) { currentItems ->
             currentItems.mapNotNull { feedItem ->
                 if (FeedItemId(feedItem.id) in itemsToUpdates) {
                     val updatedItem = feedItem.copy(isRead = true)
-                    if (hideReadItems && currentFilter != FeedFilter.Read) {
+                    if (shouldRemoveReadItems) {
                         null
                     } else {
                         updatedItem

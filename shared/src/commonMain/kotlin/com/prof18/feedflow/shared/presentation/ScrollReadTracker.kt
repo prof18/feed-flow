@@ -1,12 +1,12 @@
 package com.prof18.feedflow.shared.presentation
 
+import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.VisibleFeedItem
 
 internal class ScrollReadTracker {
 
-    private var previousVisibleItems: Map<String, VisibleFeedItem> = emptyMap()
-    private var previousFirstVisibleIndex: Int? = null
+    private var previousFirstVisibleId: String? = null
 
     // A visible snapshot is valid only for the list version and settings that produced it.
     // If either changes, indices may no longer describe the same visual list.
@@ -15,6 +15,7 @@ internal class ScrollReadTracker {
 
     fun onVisibleItemsChanged(
         visibleItems: List<VisibleFeedItem>,
+        feedItems: List<FeedItem>,
         feedListVersion: Long,
         listShapeKey: ScrollReadListShapeKey,
     ): Set<FeedItemId> {
@@ -27,38 +28,49 @@ internal class ScrollReadTracker {
             observedListShapeKey = listShapeKey
         }
 
-        // Empty snapshots happen during list teardown/reload. Keep them from becoming a
-        // synthetic scroll event that marks the previous viewport as read.
+        // Empty snapshots can happen transiently while a virtualized list is relayouting.
+        // Keep the previous boundary; explicit resets and list version changes handle real
+        // teardown/reload cases.
         if (visibleItems.isEmpty()) {
-            resetVisibleItems()
             return emptySet()
         }
 
-        val currentVisibleItems = visibleItems.associateBy { it.id }
-        val currentFirstVisibleIndex = visibleItems.minOf { it.index }
-        val previousFirstIndex = previousFirstVisibleIndex
+        val currentFirstVisibleId = visibleItems.first().id
+        val previousFirstId = previousFirstVisibleId
 
         // Only forward scrolling can mark items. The first snapshot just seeds the tracker,
         // and backward/stationary movement must not mark anything.
-        if (previousFirstIndex == null || currentFirstVisibleIndex <= previousFirstIndex) {
-            previousVisibleItems = currentVisibleItems
-            previousFirstVisibleIndex = currentFirstVisibleIndex
+        if (previousFirstId == null) {
+            previousFirstVisibleId = currentFirstVisibleId
             return emptySet()
         }
 
-        // Be conservative: mark only unread items that were actually visible before and are
-        // now gone above the viewport. Fast flings never mark unobserved rows in the gap.
-        val idsToMark = previousVisibleItems.values
-            .filter { previousItem ->
-                !previousItem.isRead &&
-                    previousItem.id !in currentVisibleItems &&
-                    previousItem.index < currentFirstVisibleIndex
-            }
-            .map { FeedItemId(it.id) }
-            .toSet()
+        val previousFirstPosition = feedItems.indexOfFirst { it.id == previousFirstId }
+        val currentFirstPosition = feedItems.indexOfFirst { it.id == currentFirstVisibleId }
+        if (previousFirstPosition == -1 || currentFirstPosition == -1) {
+            previousFirstVisibleId = currentFirstVisibleId
+            return emptySet()
+        }
 
-        previousVisibleItems = currentVisibleItems
-        previousFirstVisibleIndex = currentFirstVisibleIndex
+        if (currentFirstPosition <= previousFirstPosition) {
+            previousFirstVisibleId = currentFirstVisibleId
+            return emptySet()
+        }
+
+        // Once the first visible article moves forward in the loaded list, every loaded
+        // unread item before the current first visible article has been passed. The range
+        // is resolved by stable article IDs, so snapshot row indices are not used as identity.
+        val idsToMark = if (previousFirstPosition < currentFirstPosition) {
+            feedItems
+                .subList(previousFirstPosition, currentFirstPosition)
+                .filter { !it.isRead }
+                .map { FeedItemId(it.id) }
+                .toSet()
+        } else {
+            emptySet()
+        }
+
+        previousFirstVisibleId = currentFirstVisibleId
 
         return idsToMark
     }
@@ -70,8 +82,7 @@ internal class ScrollReadTracker {
     }
 
     private fun resetVisibleItems() {
-        previousVisibleItems = emptyMap()
-        previousFirstVisibleIndex = null
+        previousFirstVisibleId = null
     }
 }
 

@@ -257,14 +257,16 @@ private fun ObserveVisibleFeedItems(
     val latestOnVisibleFeedItemsChanged by rememberUpdatedState(onVisibleFeedItemsChanged)
     LaunchedEffect(listState) {
         snapshotFlow {
-            listState.layoutInfo.visibleItemsInfo.mapNotNull { visibleItem ->
-                val feedItem = latestFeedItems.getOrNull(visibleItem.index) ?: return@mapNotNull null
-                VisibleFeedItem(
-                    id = feedItem.id,
-                    index = visibleItem.index,
-                    isRead = feedItem.isRead,
-                )
-            }
+            listState.layoutInfo.visibleItemsInfo
+                .sortedBy { it.offset }
+                .mapNotNull { visibleItem ->
+                    val feedItem = latestFeedItems.getOrNull(visibleItem.index) ?: return@mapNotNull null
+                    VisibleFeedItem(
+                        id = feedItem.id,
+                        index = visibleItem.index,
+                        isRead = feedItem.isRead,
+                    )
+                }
         }
             .distinctUntilChanged()
             .collect { visibleItems ->

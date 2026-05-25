@@ -3,8 +3,6 @@ import Foundation
 import SwiftUI
 
 struct FeedItemRowView: View {
-  @Environment(HomeListIndexHolder.self)
-  private var indexHolder
   @Environment(\.openURL)
   private var openURL
   @Environment(BrowserSelector.self)
@@ -31,7 +29,6 @@ struct FeedItemRowView: View {
   var body: some View {
     Button(
       action: {
-        indexHolder.pauseUpdates()
         let urlInfo = FeedItemUrlInfo(
           id: feedItem.id,
           url: feedItem.url,

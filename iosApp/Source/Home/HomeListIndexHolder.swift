@@ -13,8 +13,7 @@ import Foundation
 class HomeListIndexHolder {
     @ObservationIgnored let homeViewModel: HomeViewModel?
 
-    private var visibleItems: [String: VisibleFeedItem] = [:]
-    private var updatesBlocked = false
+    private var visibleSnapshotKey: [VisibleFeedItemSnapshotKey] = []
 
     init(homeViewModel: HomeViewModel) {
         self.homeViewModel = homeViewModel
@@ -26,41 +25,33 @@ class HomeListIndexHolder {
     }
 
     func getLastReadIndex() -> Int {
-        return visibleItems.values.map { Int($0.index) }.min() ?? 0
-    }
-
-    func pauseUpdates() {
-        updatesBlocked = true
-        visibleItems.removeAll()
-    }
-
-    func resumeUpdates() {
-        updatesBlocked = false
+        return visibleSnapshotKey.map(\.index).min() ?? 0
     }
 
     func refresh() {
-        visibleItems.removeAll()
+        visibleSnapshotKey.removeAll()
     }
 
     func clear() {
-        visibleItems.removeAll()
+        visibleSnapshotKey.removeAll()
     }
 
-    func itemAppeared(id: String, index: Int, isRead: Bool) {
-        guard !updatesBlocked else { return }
-        visibleItems[id] = VisibleFeedItem(id: id, index: Int32(index), isRead: isRead)
-        sendVisibleSnapshot()
+    func visibleItemsChanged(_ visibleItems: [VisibleFeedItem]) {
+        let snapshotKey = visibleItems.map { item in
+            VisibleFeedItemSnapshotKey(
+                id: item.id,
+                index: Int(item.index),
+                isRead: item.isRead
+            )
+        }
+        guard snapshotKey != visibleSnapshotKey else { return }
+        visibleSnapshotKey = snapshotKey
+        homeViewModel?.onVisibleFeedItemsChanged(visibleItems: visibleItems)
     }
+}
 
-    func itemDisappeared(id: String) {
-        guard !updatesBlocked else { return }
-        visibleItems.removeValue(forKey: id)
-        guard !visibleItems.isEmpty else { return }
-        sendVisibleSnapshot()
-    }
-
-    private func sendVisibleSnapshot() {
-        let snapshot = visibleItems.values.sorted { $0.index < $1.index }
-        homeViewModel?.onVisibleFeedItemsChanged(visibleItems: snapshot)
-    }
+private struct VisibleFeedItemSnapshotKey: Equatable {
+    let id: String
+    let index: Int
+    let isRead: Bool
 }

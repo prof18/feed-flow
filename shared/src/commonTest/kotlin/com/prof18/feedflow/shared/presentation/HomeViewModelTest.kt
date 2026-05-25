@@ -389,6 +389,8 @@ class HomeViewModelTest : KoinTestBase() {
         advanceTimeBy(1.seconds)
 
         assertTrue(getDbItems().all { it.is_read.not() })
+        assertTrue(viewModel.feedState.value.first { it.id == "item-1" }.isRead)
+        assertTrue(viewModel.feedState.value.first { it.id == "item-2" }.isRead.not())
 
         viewModel.onVisibleFeedItemsChanged(
             listOf(
@@ -441,6 +443,229 @@ class HomeViewModelTest : KoinTestBase() {
         val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
         assertEquals(setOf("item-1", "item-3"), readIds)
     }
+
+    @Test
+    fun `markAsRead flushes pending scroll read items after list version changes`() = runTest(testDispatcher) {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+        settingsRepository.setShowReadArticlesTimeline(true)
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        val items = (1..4).map { index ->
+            buildFeedItem(
+                id = "item-$index",
+                title = "Item $index",
+                pubDateMillis = (5000 - index).toLong(),
+                source = feedSource,
+            )
+        }
+        databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.onVisibleFeedItemsChanged(
+            listOf(
+                VisibleFeedItem(id = "item-1", index = 0, isRead = false),
+                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+            ),
+        )
+        viewModel.onVisibleFeedItemsChanged(
+            listOf(
+                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+            ),
+        )
+
+        databaseHelper.updateReadStatus(FeedItemId("item-4"), isRead = true)
+        feedStateRepository.getFeeds()
+        advanceUntilIdle()
+
+        viewModel.markAsRead(feedItemId = "item-3")
+        advanceUntilIdle()
+
+        val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
+        assertEquals(setOf("item-1", "item-3", "item-4"), readIds)
+    }
+
+    @Test
+    fun `markAsRead keeps pending scroll ids after new items are inserted without marking new items`() =
+        runTest(testDispatcher) {
+            settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+            val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+            insertFeedSources(feedSource)
+            val items = (1..4).map { index ->
+                buildFeedItem(
+                    id = "item-$index",
+                    title = "Item $index",
+                    pubDateMillis = (5000 - index).toLong(),
+                    source = feedSource,
+                )
+            }
+            databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+
+            val viewModel = getViewModel()
+            advanceUntilIdle()
+
+            viewModel.onVisibleFeedItemsChanged(
+                listOf(
+                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
+                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                ),
+            )
+            viewModel.onVisibleFeedItemsChanged(
+                listOf(
+                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                ),
+            )
+
+            databaseHelper.insertFeedItems(
+                listOf(
+                    buildFeedItem(
+                        id = "new-item",
+                        title = "New Item",
+                        pubDateMillis = 6000,
+                        source = feedSource,
+                    ),
+                ),
+                lastSyncTimestamp = 0,
+            )
+            feedStateRepository.getFeeds()
+            advanceUntilIdle()
+
+            viewModel.markAsRead(feedItemId = "item-3")
+            advanceUntilIdle()
+
+            val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
+            assertEquals(setOf("item-1", "item-3"), readIds)
+        }
+
+    @Test
+    fun `markAsRead flushes passed items but not current visible row before opening article`() =
+        runTest(testDispatcher) {
+            settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+            val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+            insertFeedSources(feedSource)
+            val items = (1..6).map { index ->
+                buildFeedItem(
+                    id = "item-$index",
+                    title = "Item $index",
+                    pubDateMillis = (7000 - index).toLong(),
+                    source = feedSource,
+                )
+            }
+            databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+
+            val viewModel = getViewModel()
+            advanceUntilIdle()
+
+            viewModel.onVisibleFeedItemsChanged(
+                listOf(
+                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
+                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                ),
+            )
+            viewModel.onVisibleFeedItemsChanged(
+                listOf(
+                    VisibleFeedItem(id = "item-4", index = 3, isRead = false),
+                    VisibleFeedItem(id = "item-5", index = 4, isRead = false),
+                ),
+            )
+
+            viewModel.markAsRead(feedItemId = "item-5")
+            advanceUntilIdle()
+
+            val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
+            assertEquals(setOf("item-1", "item-2", "item-3", "item-5"), readIds)
+        }
+
+    @Test
+    fun `forceFeedRefresh flushes pending scroll read items before resetting tracker`() =
+        runTest(testDispatcher) {
+            settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+            val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+            insertFeedSources(feedSource)
+            val items = (1..4).map { index ->
+                buildFeedItem(
+                    id = "item-$index",
+                    title = "Item $index",
+                    pubDateMillis = (5000 - index).toLong(),
+                    source = feedSource,
+                )
+            }
+            databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+            fakeRssParser.setChannel(
+                feedSource.url,
+                createChannel(title = "Feed", link = "https://example.com"),
+            )
+
+            val viewModel = getViewModel()
+            advanceUntilIdle()
+
+            viewModel.onVisibleFeedItemsChanged(
+                listOf(
+                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
+                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                ),
+            )
+            viewModel.onVisibleFeedItemsChanged(
+                listOf(
+                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                ),
+            )
+            advanceTimeBy(1.seconds)
+
+            assertTrue(getDbItems().all { it.is_read.not() })
+
+            viewModel.forceFeedRefresh()
+            advanceUntilIdle()
+
+            val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
+            assertEquals(setOf("item-1"), readIds)
+        }
+
+    @Test
+    fun `onFeedFilterSelected flushes pending scroll read items before resetting tracker`() =
+        runTest(testDispatcher) {
+            settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+            val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+            insertFeedSources(feedSource)
+            val items = (1..4).map { index ->
+                buildFeedItem(
+                    id = "item-$index",
+                    title = "Item $index",
+                    pubDateMillis = (5000 - index).toLong(),
+                    source = feedSource,
+                )
+            }
+            databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+
+            val viewModel = getViewModel()
+            advanceUntilIdle()
+
+            viewModel.onVisibleFeedItemsChanged(
+                listOf(
+                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
+                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                ),
+            )
+            viewModel.onVisibleFeedItemsChanged(
+                listOf(
+                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                ),
+            )
+            advanceTimeBy(1.seconds)
+
+            assertTrue(getDbItems().all { it.is_read.not() })
+
+            viewModel.onFeedFilterSelected(FeedFilter.Bookmarks)
+            advanceUntilIdle()
+
+            val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
+            assertEquals(setOf("item-1"), readIds)
+        }
 
     @Test
     fun `markAsReadOnScroll keeps extending debounce and marks all accumulated observed items`() =
@@ -499,7 +724,7 @@ class HomeViewModelTest : KoinTestBase() {
         }
 
     @Test
-    fun `markAsReadOnScroll discards pending batch when list version changes before debounce fires`() =
+    fun `markAsReadOnScroll keeps pending batch when list version changes before debounce fires`() =
         runTest(testDispatcher) {
             settingsRepository.setMarkFeedAsReadWhenScrolling(true)
             settingsRepository.setShowReadArticlesTimeline(true)
@@ -539,7 +764,7 @@ class HomeViewModelTest : KoinTestBase() {
             advanceUntilIdle()
 
             val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
-            assertEquals(setOf("item-4"), readIds)
+            assertEquals(setOf("item-1", "item-4"), readIds)
         }
 
     @Test

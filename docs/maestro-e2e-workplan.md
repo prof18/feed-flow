@@ -69,7 +69,7 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F014 | `reader-mode` profile validation flow | Passing | RG-007, REG-110, REG-111 | Covered by RG-007 reader-mode flow |
 | F015 | `card-layout` and `compact-list` profile validation flows | Passing | REG-108 | Android and iOS card/compact profile flows passed on 2026-05-25 |
 | F016 | `external-browser` profile validation flow | Not started | REG-112 | Profile exists; may need platform-specific handling |
-| F017 | `notifications` profile validation flow | Not started | REG-115 | Profile exists; OS permission state still separate |
+| F017 | `notifications` profile validation flow | Passing | REG-115 | Android and iOS notifications profile flows passed on 2026-05-25; iOS requests notification permission when the simulator is unset |
 | F018 | `android-widget` profile validation flow | Not started | MAN-201, MAN-202 | Android-only |
 | F019 | Mock account seed state | Blocked | REG-116, REG-118 | `sync-linked-mock` name exists; provider-specific mock state still needs implementation |
 | F020 | `large-content` profile | Blocked | MAN-206 | Not implemented yet |
@@ -131,7 +131,7 @@ Start these after the release gate is stable.
 | REG-112 | Link Opening Preferences | `external-browser` | Android, iOS | Not started | Likely platform-specific assertions |
 | REG-113 | Sync And Storage Settings | `content-rich` | Android, iOS | Not started | Android has extra settings |
 | REG-114 | Appearance Settings | `content-rich` | Android, iOS | Not started | Android OLED/reduce-motion platform-specific |
-| REG-115 | Notifications Settings | `notifications` | Android, iOS | Not started | OS permission state must be controlled |
+| REG-115 | Notifications Settings | `notifications` | Android, iOS | Passing | Android and iOS `115-notifications-profile.yaml` passed via Maestro CLI on 2026-05-25 |
 | REG-116 | Account List One-Account Constraint | `sync-linked-mock` | Android, iOS | Blocked | Needs mock linked provider state |
 | REG-117 | GReader Provider Forms | `empty` | Android, iOS | Blocked | Needs mocked success/error auth path |
 | REG-118 | Cloud Provider Mock States | `sync-linked-mock` | Android, iOS | Blocked | Needs mock linked cloud provider state |

@@ -80,6 +80,7 @@ internal fun FeedsAndAccountsScreen(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.IMPORT_EXPORT_ROW),
                     title = LocalFeedFlowStrings.current.importExportLabel,
                     icon = Icons.Outlined.SwapVert,
                     onClick = navigateToImportExport,

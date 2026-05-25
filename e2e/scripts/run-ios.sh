@@ -29,6 +29,8 @@ xcodebuild \
   -quiet
 
 xcrun simctl install "$SIMULATOR_UDID" "$APP_PATH"
+"$REPO_ROOT/e2e/scripts/push-ios-fixtures.sh"
+
 while IFS= read -r flow_file; do
   maestro --platform ios --device "$SIMULATOR_UDID" test "$flow_file"
 done < <(find "$REPO_ROOT/e2e/maestro/ios/release-gate" -name '*.yaml' | sort)

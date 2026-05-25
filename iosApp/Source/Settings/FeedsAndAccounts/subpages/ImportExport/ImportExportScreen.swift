@@ -114,7 +114,10 @@ struct ImportExportScreen: View {
             .sheet(item: $sheetToShow) { item in
                 switch item {
                 case .opmlFilePicker:
-                    FilePickerController(supportedTypes: opmlImportContentTypes) { url in
+                    FilePickerController(
+                        supportedTypes: opmlImportContentTypes,
+                        initialDirectoryURL: e2eImportDirectoryURL
+                    ) { url in
                         do {
                             let data = try Data(contentsOf: url)
                             vmStoreOwner.instance.importFeed(opmlInput: OpmlInput(opmlData: data))
@@ -130,7 +133,10 @@ struct ImportExportScreen: View {
                         }
                     }
                 case .csvFilePicker:
-                    FilePickerController(supportedTypes: [.commaSeparatedText]) { url in
+                    FilePickerController(
+                        supportedTypes: [.commaSeparatedText],
+                        initialDirectoryURL: e2eImportDirectoryURL
+                    ) { url in
                         do {
                             let data = try Data(contentsOf: url)
                             vmStoreOwner.instance.importArticles(csvInput: CsvInput(csvData: data))
@@ -231,5 +237,14 @@ struct ImportExportScreen: View {
 
     private var opmlImportContentTypes: [UTType] {
         [.item]
+    }
+
+    private var e2eImportDirectoryURL: URL? {
+        #if DEBUG
+            FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
+                .appendingPathComponent("e2e-import", isDirectory: true)
+        #else
+            nil
+        #endif
     }
 }

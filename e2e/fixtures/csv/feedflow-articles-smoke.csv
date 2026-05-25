@@ -1,0 +1,2 @@
+url_hash,url,title,subtitle,image_url,feed_source_id,is_read,is_bookmarked,pub_date,comments_url,notification_sent,is_blocked
+e2e-imported-csv-article,https://e2e.feedflow.local/import/articles/csv,E2E Imported CSV Article,Imported from the E2E CSV fixture,,892471760,false,false,1767225600000,,false,false

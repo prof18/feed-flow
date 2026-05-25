@@ -64,8 +64,8 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F009 | Stable ids for article rows/actions | In progress | RG-004, RG-005, REG-106, REG-107 | Article row ids added for RG-004; add context and swipe action ids as flows need them |
 | F010 | Stable ids for settings rows/actions | In progress | RG-009, RG-010, REG-113-115 | Feed-list and reading behavior settings ids added for RG-009/RG-010; add other settings ids as flows need them |
 | F011 | Stable ids for reader toolbar/actions | Passing | RG-007, REG-110, REG-111 | Reader article, bookmark, browser, font menu, overflow, back, and navigation ids added for RG-007; image viewer ids still deferred to REG-111 |
-| F012 | OPML fixture files | Not started | RG-011, REG-119 | Put under `e2e/fixtures/opml/` |
-| F013 | CSV fixture files | Not started | RG-011, REG-120 | Put under `e2e/fixtures/csv/` |
+| F012 | OPML fixture files | Passing | RG-011, REG-119 | `e2e/fixtures/opml/feedflow-valid-opml-smoke.xml`; OPML content uses `.xml` extension so Android DocumentsUI shows it as a document |
+| F013 | CSV fixture files | Passing | RG-011, REG-120 | `e2e/fixtures/csv/feedflow-articles-smoke.csv`; `feed_source_id` matches the OPML-imported feed URL hash |
 | F014 | `reader-mode` profile validation flow | Passing | RG-007, REG-110, REG-111 | Covered by RG-007 reader-mode flow |
 | F015 | `card-layout` and `compact-list` profile validation flows | Not started | REG-108 | Profiles exist; needs flow coverage |
 | F016 | `external-browser` profile validation flow | Not started | REG-112 | Profile exists; may need platform-specific handling |
@@ -91,7 +91,7 @@ Implement these first. The initial target is all release-gate tests passing on A
 | RG-008 | Feed Edit Core | `content-rich` | Passing | Passing | Passing | Android and iOS `008-feed-edit-core.yaml` passed on 2026-05-25 |
 | RG-009 | Feed List Settings Persist | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
 | RG-010 | Reading Behavior Settings Persist | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
-| RG-011 | Import Export Smoke | `empty` + fixtures | Blocked | Blocked | Blocked | Needs OPML/CSV fixtures and file-picker strategy |
+| RG-011 | Import Export Smoke | `empty` + fixtures | Passing | Passing | Passing | Android and iOS `011-import-export-smoke.yaml` passed on 2026-05-25; Android uses pushed Downloads fixtures, iOS uses pushed Files-provider fixtures and the system picker |
 | RG-012 | Blocked Words | `content-rich` | Passing | Passing | Passing | Android `012-blocked-words.yaml` passed via Maestro MCP on 2026-05-25; iOS `012-blocked-words.yaml` passed via Maestro CLI on 2026-05-25. Android covers filtering/restoration; iOS covers deterministic add/delete settings coverage |
 | RG-013 | Relaunch Persistence | `content-rich` | Passing | Passing | Passing | Android and iOS `013-relaunch-persistence.yaml` passed via Maestro MCP on 2026-05-25 |
 

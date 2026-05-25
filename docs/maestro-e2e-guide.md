@@ -109,6 +109,17 @@ feedflow://e2e/reset-and-seed?profile=content-rich&query=Pixel
 
 For iOS search filter coverage, add `filter=bookmarks` or `filter=read` to the same link.
 
+## Fixture Files
+
+Import/export flows use deterministic files under `e2e/fixtures/`.
+
+- Android fixtures are pushed to `/sdcard/Download/feedflow-e2e` by `e2e/scripts/push-android-fixtures.sh`.
+- iOS fixtures are copied into the app Documents directory and the simulator Files provider by `e2e/scripts/push-ios-fixtures.sh`.
+- The OPML fixture is named `feedflow-valid-opml-smoke.xml` so Android DocumentsUI exposes it through the Documents filter, but its contents are OPML.
+- iOS Files may focus a grid item on the first tap; RG-011 deliberately double taps fixture thumbnails.
+
+The release-gate wrapper scripts push fixtures after installing the app and before running Maestro flows.
+
 ## Writing A New Flow
 
 1. Pick the smallest seed profile that covers the scenario.

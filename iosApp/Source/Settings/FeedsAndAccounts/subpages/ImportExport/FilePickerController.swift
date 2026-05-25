@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 
 struct FilePickerController: UIViewControllerRepresentable {
     let supportedTypes: [UTType]
+    var initialDirectoryURL: URL?
     var callback: (URL) -> Void
 
     func makeCoordinator() -> Coordinator {
@@ -17,6 +18,7 @@ struct FilePickerController: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
         let controller = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
+        controller.directoryURL = initialDirectoryURL
         controller.delegate = context.coordinator
         return controller
     }

@@ -24,6 +24,7 @@ struct FeedsAndAccountsScreen: View {
                 NavigationLink(destination: ImportExportScreen(fetchFeeds: fetchFeeds)) {
                     Label(feedFlowStrings.importExportLabel, systemImage: "arrow.up.arrow.down")
                 }
+                .accessibilityIdentifier(FeedsAndAccountsAccessibilityIdentifiers.importExportRow)
 
                 NavigationLink(destination: AccountsScreen()) {
                     Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
@@ -48,5 +49,6 @@ struct FeedsAndAccountsScreen: View {
 }
 
 private enum FeedsAndAccountsAccessibilityIdentifiers {
+    static let importExportRow = "settings_import_export"
     static let blockedWordsRow = "settings_blocked_words"
 }

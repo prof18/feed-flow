@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -194,6 +195,7 @@ private fun ImportExportIdleView(
 
         item {
             SettingItem(
+                modifier = Modifier.testTag(ImportExportE2eIds.IMPORT_FEEDS),
                 title = LocalFeedFlowStrings.current.importFeedButton,
                 icon = Icons.Default.FileDownload,
                 onClick = onImportClick,
@@ -202,6 +204,7 @@ private fun ImportExportIdleView(
 
         item {
             SettingItem(
+                modifier = Modifier.testTag(ImportExportE2eIds.EXPORT_FEEDS),
                 title = LocalFeedFlowStrings.current.exportFeedsButton,
                 icon = Icons.Default.FileUpload,
                 onClick = onExportClick,
@@ -236,6 +239,7 @@ private fun ImportExportIdleView(
 
         item {
             SettingItem(
+                modifier = Modifier.testTag(ImportExportE2eIds.IMPORT_ARTICLES),
                 title = LocalFeedFlowStrings.current.importArticlesButton,
                 icon = Icons.Default.FileDownload,
                 onClick = onImportArticlesClick,
@@ -244,6 +248,7 @@ private fun ImportExportIdleView(
 
         item {
             SettingItem(
+                modifier = Modifier.testTag(ImportExportE2eIds.EXPORT_ARTICLES),
                 title = LocalFeedFlowStrings.current.exportArticlesButton,
                 icon = Icons.Default.FileUpload,
                 onClick = onExportArticlesClick,
@@ -327,6 +332,7 @@ private fun ImportExportErrorView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
+            modifier = Modifier.testTag(ImportExportE2eIds.ERROR),
             text = LocalFeedFlowStrings.current.genericErrorMessage,
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -384,11 +390,13 @@ private fun ExportDoneView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
+            modifier = Modifier.testTag(ImportExportE2eIds.FEED_EXPORT_SUCCESS),
             text = LocalFeedFlowStrings.current.feedsExportDoneMessage,
             style = MaterialTheme.typography.bodyMedium,
         )
         Button(
             modifier = Modifier
+                .testTag(ImportExportE2eIds.DONE)
                 .padding(top = Spacing.regular),
             onClick = onDoneClick,
         ) {
@@ -409,11 +417,13 @@ private fun ArticleExportDoneView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
+            modifier = Modifier.testTag(ImportExportE2eIds.ARTICLE_EXPORT_SUCCESS),
             text = LocalFeedFlowStrings.current.articlesExportDoneMessage,
             style = MaterialTheme.typography.bodyMedium,
         )
         Button(
             modifier = Modifier
+                .testTag(ImportExportE2eIds.DONE)
                 .padding(top = Spacing.regular),
             onClick = onDoneClick,
         ) {
@@ -434,12 +444,14 @@ private fun ArticleImportDoneView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
+            modifier = Modifier.testTag(ImportExportE2eIds.ARTICLE_IMPORT_SUCCESS),
             text = LocalFeedFlowStrings.current.articlesImportDoneMessage,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
         )
         Button(
             modifier = Modifier
+                .testTag(ImportExportE2eIds.DONE)
                 .padding(top = Spacing.regular),
             onClick = onDoneClick,
         ) {
@@ -516,11 +528,13 @@ private fun ImportDoneView(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
+                    modifier = Modifier.testTag(ImportExportE2eIds.FEED_IMPORT_SUCCESS),
                     text = LocalFeedFlowStrings.current.feedsImportDoneMessage,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Button(
                     modifier = Modifier
+                        .testTag(ImportExportE2eIds.DONE)
                         .padding(top = Spacing.regular),
                     onClick = onDoneClick,
                 ) {
@@ -545,6 +559,7 @@ private fun ImportDoneView(
 
             Button(
                 modifier = Modifier
+                    .testTag(ImportExportE2eIds.DONE)
                     .fillMaxWidth()
                     .padding(Spacing.regular),
                 onClick = onDoneClick,
@@ -553,6 +568,19 @@ private fun ImportDoneView(
             }
         }
     }
+}
+
+private object ImportExportE2eIds {
+    const val IMPORT_FEEDS = "import_export_import_feeds"
+    const val EXPORT_FEEDS = "import_export_export_feeds"
+    const val IMPORT_ARTICLES = "import_export_import_articles"
+    const val EXPORT_ARTICLES = "import_export_export_articles"
+    const val FEED_IMPORT_SUCCESS = "import_export_feed_import_success"
+    const val FEED_EXPORT_SUCCESS = "import_export_feed_export_success"
+    const val ARTICLE_IMPORT_SUCCESS = "import_export_article_import_success"
+    const val ARTICLE_EXPORT_SUCCESS = "import_export_article_export_success"
+    const val DONE = "import_export_done"
+    const val ERROR = "import_export_error"
 }
 
 @Composable

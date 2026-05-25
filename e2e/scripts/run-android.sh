@@ -16,6 +16,8 @@ else
   adb shell monkey -p com.prof18.feedflow.debug 1
 fi
 
+"$REPO_ROOT/e2e/scripts/push-android-fixtures.sh"
+
 while IFS= read -r flow_file; do
   maestro --platform android test "$flow_file"
 done < <(find "$REPO_ROOT/e2e/maestro/android/release-gate" -name '*.yaml' | sort)

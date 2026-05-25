@@ -27,11 +27,11 @@ import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
-import com.prof18.feedflow.shared.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.shared.ui.components.AddCategoryButton
 import com.prof18.feedflow.shared.ui.components.CategoryFlowRow
 import com.prof18.feedflow.shared.ui.components.CategoryLoadingOverlay
 import com.prof18.feedflow.shared.ui.components.EditCategoryDialogs
+import com.prof18.feedflow.shared.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 

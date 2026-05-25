@@ -6,4 +6,8 @@ internal object SettingsE2eIds {
     const val FEED_LIST_LAYOUT = "feed_list_settings_layout"
     const val FEED_LIST_HIDE_IMAGES = "feed_list_settings_hide_images"
     const val FEED_LIST_ORDER = "feed_list_settings_order"
+    const val READING_BEHAVIOR_ROW = "settings_reading_behavior"
+    const val READING_BEHAVIOR_READER_MODE = "reading_behavior_reader_mode"
+    const val READING_BEHAVIOR_SHOW_READ = "reading_behavior_show_read"
+    const val READING_BEHAVIOR_HIDE_READ = "reading_behavior_hide_read"
 }

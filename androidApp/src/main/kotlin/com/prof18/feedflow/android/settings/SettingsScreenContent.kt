@@ -94,6 +94,7 @@ internal fun SettingsScreenContent(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_ROW),
                     title = LocalFeedFlowStrings.current.settingsReadingBehavior,
                     icon = Icons.Outlined.LocalLibrary,
                     onClick = navigateToReadingBehavior,

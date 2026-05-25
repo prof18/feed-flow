@@ -32,6 +32,7 @@ struct ReadingBehaviorScreenContent: View {
                 }.onTapGesture {
                     isReaderModeEnabled.toggle()
                 }
+                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.readerModeToggle)
 
                 Toggle(isOn: $isSaveReaderModeContentEnabled) {
                     Text(feedFlowStrings.settingsSaveReaderModeContent)
@@ -59,15 +60,23 @@ struct ReadingBehaviorScreenContent: View {
                 }.onTapGesture {
                     isShowReadItemEnabled.toggle()
                 }
+                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.showReadToggle)
 
                 Toggle(isOn: $isHideReadItemsEnabled) {
                     Text(feedFlowStrings.settingsHideReadItems)
                 }.onTapGesture {
                     isHideReadItemsEnabled.toggle()
                 }
+                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.hideReadToggle)
             }
         }
         .scrollContentBackground(.hidden)
         .background(Color.secondaryBackgroundColor)
     }
+}
+
+private enum ReadingBehaviorAccessibilityIdentifiers {
+    static let hideReadToggle = "reading_behavior_hide_read"
+    static let readerModeToggle = "reading_behavior_reader_mode"
+    static let showReadToggle = "reading_behavior_show_read"
 }

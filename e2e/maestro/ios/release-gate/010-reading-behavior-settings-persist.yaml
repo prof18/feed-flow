@@ -1,0 +1,72 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_reading_behavior
+- tapOn:
+    text: "Open articles on reader mode"
+- tapOn:
+    text: "Open articles on reader mode"
+- tapOn:
+    text: "Show read articles in lists"
+- scrollUntilVisible:
+    element:
+      text: "Auto-hide articles when marked as read"
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    text: "Auto-hide articles when marked as read"
+- tapOn:
+    id: BackButton
+- tapOn:
+    id: settings_done_button
+- tapOn:
+    id: drawer_timeline
+    optional: true
+- assertVisible:
+    text: "E2E Read Article.*"
+- launchApp
+- assertVisible:
+    text: "E2E Read Article.*"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_reading_behavior
+- tapOn:
+    text: "Show read articles in lists"
+- tapOn:
+    id: BackButton
+- tapOn:
+    id: settings_done_button
+- tapOn:
+    id: drawer_timeline
+    optional: true
+- assertNotVisible:
+    text: "E2E Read Article.*"
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: reader_browser_button
+- swipe:
+    start: 2%,50%
+    end: 90%,50%
+    duration: 500
+- assertNotVisible:
+    id: article_row_e2e_article_reader_success

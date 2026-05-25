@@ -34,6 +34,7 @@ struct SettingsScreen: View {
                     NavigationLink(destination: ReadingBehaviorScreen()) {
                         Label(feedFlowStrings.settingsReadingBehavior, systemImage: "book")
                     }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.readingBehaviorRow)
 
                     NavigationLink(destination: SyncAndStorageScreen()) {
                         Label(feedFlowStrings.settingsSyncAndStorage, systemImage: "externaldrive")
@@ -70,4 +71,5 @@ struct SettingsScreen: View {
 private enum SettingsAccessibilityIdentifiers {
     static let doneButton = "settings_done_button"
     static let feedListRow = "settings_feed_list"
+    static let readingBehaviorRow = "settings_reading_behavior"
 }

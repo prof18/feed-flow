@@ -1,14 +1,22 @@
 # Maestro E2E Guide
 
-This guide explains how to write and run FeedFlow Maestro tests. Use it together with `docs/maestro-e2e-preparation-plan.md` and `docs/maestro-e2e-test-catalog.md`.
+This guide explains how to write and run FeedFlow Maestro tests. Use it together with:
+
+- `docs/maestro-e2e-preparation-plan.md`
+- `docs/maestro-e2e-test-catalog.md`
+- `docs/maestro-e2e-workplan.md`
 
 ## Structure
 
 ```text
 e2e/
   maestro/
-    android/p0/
-    ios/p0/
+    android/release-gate/
+    android/regression/
+    android/manual-supported/
+    ios/release-gate/
+    ios/regression/
+    ios/manual-supported/
     shared/
   fixtures/
     articles/
@@ -96,7 +104,7 @@ appId: com.prof18.feedflow.dev
 ## Writing A New Flow
 
 1. Pick the smallest seed profile that covers the scenario.
-2. Put the flow under the right platform and priority folder, for example `e2e/maestro/android/p0/003-library-filters.yaml`.
+2. Put the flow under the right platform and suite folder, for example `e2e/maestro/android/release-gate/003-library-filters.yaml`.
 3. Start with `launchApp`, then reset and seed through the E2E deep link.
 4. Prefer stable accessibility ids over visible text when ids exist.
 5. Use visible text for seeded article/feed assertions only when the text is intentionally stable.
@@ -108,7 +116,7 @@ appId: com.prof18.feedflow.dev
 ```
 
 7. Keep each flow focused on one behavior. Do not make one long flow cover unrelated settings, reading, search, and import behavior.
-8. Avoid live network dependencies, OAuth, real provider auth, and OS-owned state in P0 tests.
+8. Avoid live network dependencies, OAuth, real provider auth, and OS-owned state in release-gate tests.
 
 ## Common Commands
 
@@ -167,29 +175,29 @@ Preconditions:
 - For Android, a device or emulator is running. Default local target: `Resizable_Experimental`.
 - For iOS, the `iPhone 17 Pro` simulator is booted and `iosApp/FeedFlow.xcodeproj` exists.
 
-Run the full local P0 wrappers:
+Run the full local release-gate wrappers:
 
 ```bash
 e2e/scripts/run-android.sh
 e2e/scripts/run-ios.sh
 ```
 
-The wrappers build, install, and run the current P0 directory:
+The wrappers build, install, and run the current release-gate flows sequentially:
 
-- Android: `e2e/maestro/android/p0`
-- iOS: `e2e/maestro/ios/p0`
+- Android: `e2e/maestro/android/release-gate`
+- iOS: `e2e/maestro/ios/release-gate`
 
 Run one Android flow against an already installed build:
 
 ```bash
-maestro --platform android test e2e/maestro/android/p0/002-seeded-timeline-loads.yaml
+maestro --platform android test e2e/maestro/android/release-gate/002-seeded-timeline-loads.yaml
 ```
 
 Run one iOS flow against an already installed build:
 
 ```bash
 SIMULATOR_UDID=$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 17 Pro/ {print $2; exit}')
-maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/p0/002-seeded-timeline-loads.yaml
+maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-gate/002-seeded-timeline-loads.yaml
 ```
 
 Pin the platform when both Android and iOS devices are running. Otherwise Maestro may choose the wrong target.
@@ -214,8 +222,8 @@ Useful checks:
 ```bash
 adb devices
 xcrun simctl list devices booted
-maestro --platform android test e2e/maestro/android/p0/001-first-launch-empty.yaml
-maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/p0/001-first-launch-empty.yaml
+maestro --platform android test e2e/maestro/android/release-gate/001-first-launch-empty.yaml
+maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-gate/001-first-launch-empty.yaml
 ```
 
 When iterating as an agent, use the Maestro MCP if available:
@@ -236,5 +244,7 @@ Run the relevant Maestro flow when:
 - changing a seeded profile used by flows
 
 Run both wrapper scripts before handing off changes that affect shared E2E setup, app launch, seeded content, or cross-platform UI behavior.
+
+Update `docs/maestro-e2e-workplan.md` whenever a flow moves to passing, blocked, or in progress.
 
 For non-E2E code changes, keep following the normal project gates in `AGENTS.md`.

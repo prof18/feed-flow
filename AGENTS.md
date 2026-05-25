@@ -60,8 +60,9 @@ For anything deeper — SDK package management (`android sdk ...`), device inter
 ### Maestro E2E tests
 
 When writing or running Maestro E2E tests, follow `docs/maestro-e2e-guide.md`.
+Track step-by-step progress in `docs/maestro-e2e-workplan.md`; do not mark a test done until the required Maestro flow passes.
 
-Quick local P0 gates:
+Quick local release-gate checks:
 - `e2e/scripts/run-android.sh`
 - `e2e/scripts/run-ios.sh`
 

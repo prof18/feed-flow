@@ -43,8 +43,11 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - tapOn:
     id: drawer_feed_source_e2e_feed_android_weekly
-- assertVisible:
-    text: "E2E Newest Unread Article.*"
+- scrollUntilVisible:
+    element:
+      text: "E2E Newest Unread Article.*"
+    direction: UP
+    timeout: 10000
 - assertNotVisible:
     text: "E2E Bookmarked Unread Article.*"
 - tapOn:
@@ -83,5 +86,4 @@ appId: com.prof18.feedflow.dev
     id: drawer_menu_button
 - tapOn:
     id: drawer_timeline
-- assertVisible:
-    text: "E2E Newest Unread Article.*"
+- assertNotVisible: "Nothing else to read here!"

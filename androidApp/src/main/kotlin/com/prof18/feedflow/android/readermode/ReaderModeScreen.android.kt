@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
@@ -213,6 +214,9 @@ internal fun ReaderModeScreen(
                             themeMode = themeMode,
                             onExpandToolbar = { toolbarExpanded = true },
                             onCollapseToolbar = { toolbarExpanded = false },
+                            modifier = Modifier.testTag(
+                                ReaderModeE2eIds.article(readerModeState.readerModeData.id.id),
+                            ),
                         )
                     }
                 }

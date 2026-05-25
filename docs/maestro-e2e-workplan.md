@@ -63,10 +63,10 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F008 | Stable ids for drawer/library entries | Passing | REG-104, REG-105 | Added stable ids for timeline/read/bookmarks/categories/feed sources |
 | F009 | Stable ids for article rows/actions | In progress | RG-004, RG-005, REG-106, REG-107 | Article row ids added for RG-004; add context and swipe action ids as flows need them |
 | F010 | Stable ids for settings rows/actions | Not started | RG-009, RG-010, REG-113-115 | Add as flows need them |
-| F011 | Stable ids for reader toolbar/actions | In progress | RG-007, REG-110, REG-111 | Reader bookmark/menu/back/navigation ids added for RG-004; add browser/font/image ids as reader flows need them |
+| F011 | Stable ids for reader toolbar/actions | Passing | RG-007, REG-110, REG-111 | Reader article, bookmark, browser, font menu, overflow, back, and navigation ids added for RG-007; image viewer ids still deferred to REG-111 |
 | F012 | OPML fixture files | Not started | RG-011, REG-119 | Put under `e2e/fixtures/opml/` |
 | F013 | CSV fixture files | Not started | RG-011, REG-120 | Put under `e2e/fixtures/csv/` |
-| F014 | `reader-mode` profile validation flow | Not started | RG-007, REG-110, REG-111 | Profile exists; needs flow coverage |
+| F014 | `reader-mode` profile validation flow | Passing | RG-007, REG-110, REG-111 | Covered by RG-007 reader-mode flow |
 | F015 | `card-layout` and `compact-list` profile validation flows | Not started | REG-108 | Profiles exist; needs flow coverage |
 | F016 | `external-browser` profile validation flow | Not started | REG-112 | Profile exists; may need platform-specific handling |
 | F017 | `notifications` profile validation flow | Not started | REG-115 | Profile exists; OS permission state still separate |
@@ -87,7 +87,7 @@ Implement these first. The initial target is all release-gate tests passing on A
 | RG-004 | Article Read And Bookmark State | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
 | RG-005 | Mark All Read | `content-rich` | Not started | Not started | Not started | Needs timeline menu/confirm dialog targeting |
 | RG-006 | Search Core | `content-rich` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25; iOS split into search result and bookmark-filter flows |
-| RG-007 | Reader Mode Core | `reader-mode` | Not started | Not started | Not started | Needs reader toolbar/action targeting |
+| RG-007 | Reader Mode Core | `reader-mode` | Passing | Passing | Passing | `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh` passed on 2026-05-25 |
 | RG-008 | Feed Edit Core | `content-rich` | Not started | Not started | Not started | Needs feed settings/edit targeting |
 | RG-009 | Feed List Settings Persist | `content-rich` | Not started | Not started | Not started | Needs settings row targeting |
 | RG-010 | Reading Behavior Settings Persist | `content-rich` | Not started | Not started | Not started | Needs settings row targeting |

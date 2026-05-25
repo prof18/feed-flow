@@ -112,6 +112,7 @@ fun ReaderModeFloatingToolbar(
                     ToolbarAction(
                         icon = Icons.Default.Language,
                         label = strings.readerModeBrowserButtonContentDescription,
+                        testTag = ReaderModeE2eIds.BROWSER_BUTTON,
                         onClick = { latestOpenInBrowser(url) },
                     ),
                 )
@@ -181,6 +182,7 @@ fun ReaderModeFloatingToolbar(
                     ToolbarAction(
                         icon = Icons.Outlined.TextFields,
                         label = strings.readerModeFontSize,
+                        testTag = ReaderModeE2eIds.FONT_SIZE_BUTTON,
                         onClick = { showFontSizeMenu = true },
                     ),
                 )
@@ -236,6 +238,7 @@ fun ReaderModeFloatingToolbar(
             DropdownMenu(
                 expanded = showFontSizeMenu,
                 onDismissRequest = { showFontSizeMenu = false },
+                modifier = Modifier.testTag(ReaderModeE2eIds.FONT_SIZE_MENU),
                 shape = MaterialTheme.shapes.large,
             ) {
                 Column(modifier = Modifier.padding(Spacing.regular)) {
@@ -327,7 +330,10 @@ private fun OverflowToolbarLayout(
 
                         if (needsOverflow) {
                             Box {
-                                IconButton(onClick = { onShowOverflowMenu(true) }) {
+                                IconButton(
+                                    modifier = Modifier.testTag(ReaderModeE2eIds.MORE_MENU_BUTTON),
+                                    onClick = { onShowOverflowMenu(true) },
+                                ) {
                                     Icon(
                                         imageVector = Icons.Default.MoreVert,
                                         contentDescription = null,

@@ -157,6 +157,7 @@ public struct ReaderView: View {
                 } label: {
                     Image(systemName: "globe")
                 }
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.browserButton)
             }
         }
 
@@ -170,6 +171,7 @@ public struct ReaderView: View {
                 Image(systemName: "chevron.left")
             }
             .disabled(actions.onNavigateToPrevious == nil)
+            .accessibilityIdentifier(ReaderAccessibilityIdentifiers.previousButton)
 
             Button {
                 actions.onNavigateToNext?()
@@ -177,6 +179,7 @@ public struct ReaderView: View {
                 Image(systemName: "chevron.right")
             }
             .disabled(actions.onNavigateToNext == nil)
+            .accessibilityIdentifier(ReaderAccessibilityIdentifiers.nextButton)
         }
 
         // Top bar: Share button
@@ -234,6 +237,7 @@ public struct ReaderView: View {
                     } label: {
                         Label(actions.strings.fontSize, systemImage: "textformat.size")
                     }
+                    .accessibilityIdentifier(ReaderAccessibilityIdentifiers.fontSizeButton)
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
@@ -291,6 +295,7 @@ public struct ReaderView: View {
                     } label: {
                         Label(actions.strings.fontSize, systemImage: "textformat.size")
                     }
+                    .accessibilityIdentifier(ReaderAccessibilityIdentifiers.fontSizeButton)
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
@@ -343,6 +348,7 @@ public struct ReaderView: View {
                 .foregroundStyle(.secondary)
         }
         .padding()
+        .accessibilityIdentifier(ReaderAccessibilityIdentifiers.fontSizeSheet)
     }
 
     private func updateFontSizeWithJS(_ newFontSize: Double) {
@@ -370,6 +376,7 @@ public struct ReaderView: View {
                 .background(.regularMaterial)
                 .clipShape(Capsule())
                 .shadow(radius: 8)
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.browserButton)
             }
 
             Spacer()
@@ -385,6 +392,7 @@ public struct ReaderView: View {
                         .frame(width: 50, height: 44)
                 }
                 .disabled(actions.onNavigateToPrevious == nil)
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.previousButton)
 
                 Button {
                     actions.onNavigateToNext?()
@@ -395,6 +403,7 @@ public struct ReaderView: View {
                         .frame(width: 50, height: 44)
                 }
                 .disabled(actions.onNavigateToNext == nil)
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.nextButton)
             }
             .background(.regularMaterial)
             .clipShape(Capsule())
@@ -407,5 +416,10 @@ public struct ReaderView: View {
 
 private enum ReaderAccessibilityIdentifiers {
     static let bookmarkButton = "reader_bookmark_button"
+    static let browserButton = "reader_browser_button"
+    static let fontSizeButton = "reader_font_size_button"
+    static let fontSizeSheet = "reader_font_size_sheet"
     static let moreMenuButton = "reader_more_menu_button"
+    static let nextButton = "reader_next_button"
+    static let previousButton = "reader_previous_button"
 }

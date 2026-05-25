@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feed_url_placeholder">https://monblogfavori.com/flux</string>
-    <string name="force_feed_refresh">Forcer l\'actualisation du flux</string>
+    <string name="force_feed_refresh">Forcer l\'actualisation</string>
     <string name="database_error">Une erreur s\'est produite lors de la récupération des flux. Veuillez réessayer ou relancer l\'application - Code erreur : %s :(</string>
     <string name="import_dialog_title">Sélectionner un fichier OPML</string>
     <string name="feeds_import_done_message">Import terminé</string>
@@ -53,7 +53,7 @@
     <string name="about_app_version">Version de l\'application : %s</string>
     <string name="add_feed_categories_title">Catégories</string>
     <string name="in_app_browser">Navigateur de l\'application</string>
-    <string name="clear_old_articles_button">Supprimer les posts de plus d\'une semaine</string>
+    <string name="clear_old_articles_button">Supprimer les articles de plus d\'une semaine</string>
     <string name="import_export_description">FeedFlow supporte l\'importation et l\'exportation de vos abonnements depuis / vers un fichier OPML, pour une meilleure interopérabilité avec les autres lecteurs de flux RSS.</string>
     <string name="account_disconnect_button">Déconnecter</string>
     <string name="no_feed_modal_message">Vous pouvez ajouter un nouveau flux manuellement, vous pouvez importer vos abonnements depuis un agrégateur RSS, ou vous pouvez connecter un compte pour synchroniser les données depuis un autre appareil (cette fonctionnalité est en bêta).</string>
@@ -228,7 +228,7 @@
     <string name="confirm_button">Confirmer</string>
     <string name="cancel_button">Annuler</string>
     <string name="feed_error_message_improved">Erreur lors du chargement de %s. Ce flux est inaccessible, ou votre connexion est défaillante.</string>
-    <string name="trigger_feed_sync">Déclencher le téléversement vers votre compte</string>
+    <string name="trigger_feed_sync">Tléverser les changements</string>
     <string name="import_export_label">Imports et exports</string>
     <string name="feed_add_in_progress_message">Importation du flux...</string>
     <string name="import_export_opml_section_title">Abonnements (OPML)</string>
@@ -249,10 +249,10 @@
     <string name="invalid_opml_import_description">Fichier OPML invalide. Essayez d\'exporter vos flux au format OPML depuis votre agrégateur RSS et de les importer à nouveau.</string>
     <string name="drawer_title_library">Bibliothèque</string>
     <string name="import_export_articles_description">Exporter et importer vos articles au format CSV. \nL\'importation nécessite que les flux et catégories soient déjà enregistrés.</string>
-    <string name="articles_export_filter_all">Articles exportés - tout</string>
-    <string name="articles_export_filter_read">Articles exportés - lus</string>
-    <string name="articles_export_filter_unread">Articles exportés - à lire</string>
-    <string name="articles_export_filter_bookmarked">Articles exportés - favoris</string>
+    <string name="articles_export_filter_all">Tous les articles</string>
+    <string name="articles_export_filter_read">Articles lus</string>
+    <string name="articles_export_filter_unread">Articles non lus</string>
+    <string name="articles_export_filter_bookmarked">Articles favoris</string>
     <string name="select_article_to_read">Sélectionner un article à lire</string>
     <string name="settings_hide_read_items">Cacher automatiquement les articles marqués comme lus</string>
     <string name="menu_mark_all_above_as_read">Marquer les articles précédents comme lus</string>
@@ -382,4 +382,9 @@
     <string name="category_name_already_exists">Une catégorie avec ce nom existe déjà</string>
     <string name="article_bookmarked_content_description">Enregistré</string>
     <string name="settings_appearance">Apparence</string>
+    <string name="rename_category">Renommer la catégorie</string>
+    <string name="invalid_rss_url_with_retry_hint">Impossible de valider ce flux. Il se peut qu\'il ne s\'agisse pas d\'un flux RSS valide ou que le serveur soit temporairement indisponible.</string>
+    <string name="add_feed_anyway_acknowledgement">Ce flux n\'a pas été vérifié. Le système tentera tout de même de le récupérer, et il pourra être supprimé ultérieurement s\'il ne fonctionne pas.</string>
+    <string name="add_feed_anyway_button">Ajouter quand même</string>
+    <string name="sort_and_filter_button">Trier &amp; filtrer</string>
 </resources>

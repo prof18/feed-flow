@@ -184,7 +184,8 @@ fun AndroidDrawer(
             }
 
             if (displayState.navDrawerState.feedSourcesByCategory.isNotEmpty() ||
-                displayState.navDrawerState.feedSourcesWithoutCategory.isNotEmpty()
+                displayState.navDrawerState.feedSourcesWithoutCategory.isNotEmpty() ||
+                displayState.navDrawerState.categories.isNotEmpty()
             ) {
                 item {
                     AndroidDrawerFeedSourcesByCategories(

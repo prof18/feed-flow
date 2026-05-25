@@ -12,7 +12,9 @@ extension SidebarDrawer {
     }
 
     @ViewBuilder var feedSourcesContent: some View {
-        if !navDrawerState.feedSourcesByCategory.isEmpty || !navDrawerState.feedSourcesWithoutCategory.isEmpty {
+        if !navDrawerState.feedSourcesByCategory.isEmpty ||
+            !navDrawerState.feedSourcesWithoutCategory.isEmpty ||
+            !navDrawerState.categories.isEmpty {
             let uncategorizedFromMap = navDrawerState.feedSourcesByCategory
                 .filter { $0.key.feedSourceCategory == nil }
                 .flatMap { $0.value }
@@ -37,6 +39,24 @@ extension SidebarDrawer {
                         categoryWrapper: categoryWrapper
                     )
                 }
+            }
+
+            let categoryIdsWithFeedSources = Set(
+                navDrawerState.feedSourcesByCategory.keys.compactMap { $0.feedSourceCategory?.id }
+            )
+            let emptyCategories = navDrawerState.categories
+                .compactMap { $0 as? DrawerItem.DrawerCategory }
+                .filter { !categoryIdsWithFeedSources.contains($0.category.id) }
+            ForEach(emptyCategories, id: \.category.id) { categoryItem in
+                let categoryId = categoryItem.category.id
+                let isSelected = selectedSidebarItem == .category(id: categoryId)
+
+                categoryHeader(
+                    categoryItem: categoryItem,
+                    categoryId: categoryId,
+                    isExpanded: false,
+                    isSelected: isSelected
+                )
             }
         }
     }
@@ -140,10 +160,12 @@ extension SidebarDrawer {
                         self.onFeedFilterSelected(FeedFilter.Uncategorized())
                     }
                     .foregroundStyle(Color.primary)
+                    .accessibilityIdentifier(DrawerAccessibilityIdentifiers.category(nil))
 
                     expansionToggle(isExpanded: isExpanded) {
                         toggleCategoryExpansion(for: categoryId)
                     }
+                    .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryExpand(nil))
                 }
                 .tag(SidebarSelection.category(id: categoryId))
                 .listRowBackground(categorySelectionBackground(isSelected: isSelected, isCompact: isCompact))
@@ -187,10 +209,12 @@ extension SidebarDrawer {
             .contextMenu {
                 categoryContextMenu(categoryItem: categoryItem)
             }
+            .accessibilityIdentifier(DrawerAccessibilityIdentifiers.category(categoryId))
 
             expansionToggle(isExpanded: isExpanded) {
                 toggleCategoryExpansion(for: categoryId)
             }
+            .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryExpand(categoryId))
         }
         .tag(SidebarSelection.category(id: categoryItem.category.id))
         .listRowBackground(categorySelectionBackground(isSelected: isSelected, isCompact: isCompact))

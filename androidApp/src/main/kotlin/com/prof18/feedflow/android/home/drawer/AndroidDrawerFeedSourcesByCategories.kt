@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -137,6 +138,44 @@ internal fun AndroidDrawerFeedSourcesByCategories(
                     )
                 }
             }
+
+            val categoryIdsWithFeedSources = remember(navDrawerState.feedSourcesByCategory) {
+                navDrawerState.feedSourcesByCategory.keys
+                    .mapNotNull { it.feedSourceCategory?.id }
+                    .toSet()
+            }
+            val emptyCategoryItems = remember(navDrawerState.categories, categoryIdsWithFeedSources) {
+                navDrawerState.categories
+                    .filterIsInstance<DrawerItem.DrawerCategory>()
+                    .filter { it.category.id !in categoryIdsWithFeedSources }
+            }
+            emptyCategoryItems.forEach { categoryItem ->
+                key(categoryItem.category.id) {
+                    AndroidDrawerFeedSourceByCategoryItem(
+                        feedSourceCategoryWrapper = DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(
+                            feedSourceCategory = categoryItem.category,
+                        ),
+                        drawerFeedSources = emptyList<DrawerItem.DrawerFeedSource>().toImmutableList(),
+                        currentFeedFilter = currentFeedFilter,
+                        drawerItemVisualStyle = drawerItemVisualStyle,
+                        isCategoryExpanded = false,
+                        onCategoryExpand = {},
+                        onFeedFilterSelected = onFeedFilterSelected,
+                        onFeedSourceClick = onFeedSourceClick,
+                        onEditFeedClick = onEditFeedClick,
+                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                        onPinFeedClick = onPinFeedClick,
+                        onChangeFeedCategoryClick = onChangeFeedCategoryClick,
+                        onOpenWebsite = onOpenWebsite,
+                        onEditCategoryClick = onEditCategoryClick,
+                        validateCategoryName = validateCategoryName,
+                        onDeleteCategoryClick = onDeleteCategoryClick,
+                        onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
+                        onMarkAllReadForCategoryClick = onMarkAllReadForCategoryClick,
+                        onDeleteAllFeedsInCategoryByIdClick = onDeleteAllFeedsInCategoryByIdClick,
+                    )
+                }
+            }
         }
     }
 }
@@ -211,6 +250,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                 color = navItemColors.containerColor(isSelected).value,
                 modifier = Modifier
                     .weight(1f)
+                    .testTag(DrawerE2eIds.category(category?.id))
                     .semantics { role = Role.Tab }
                     .heightIn(min = drawerItemVisualStyle.itemMinHeight),
             ) {
@@ -249,6 +289,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
 
             Box(
                 modifier = Modifier
+                    .testTag(DrawerE2eIds.categoryExpand(category?.id))
                     .clip(CircleShape)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },

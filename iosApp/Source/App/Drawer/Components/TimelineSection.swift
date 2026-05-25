@@ -37,6 +37,7 @@ struct TimelineSection: View {
                 onFeedFilterSelected(FeedFilter.Timeline())
             }
             .tag(SidebarSelection.timeline)
+            .accessibilityIdentifier(DrawerAccessibilityIdentifiers.timeline)
             .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))
         }
     }

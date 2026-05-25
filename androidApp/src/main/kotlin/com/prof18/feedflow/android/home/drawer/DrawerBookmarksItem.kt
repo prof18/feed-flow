@@ -10,6 +10,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
@@ -25,6 +26,7 @@ internal fun DrawerBookmarksItem(
 ) {
     NavigationDrawerItem(
         modifier = Modifier
+            .testTag(DrawerE2eIds.BOOKMARKS)
             .padding(vertical = drawerItemVisualStyle.itemVerticalPadding)
             .height(drawerItemVisualStyle.itemMinHeight),
         selected = currentFeedFilter is FeedFilter.Bookmarks,

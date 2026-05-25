@@ -111,7 +111,9 @@ struct SidebarDrawer: View {
                 }
             }
 
-            if !navDrawerState.feedSourcesByCategory.isEmpty || !navDrawerState.feedSourcesWithoutCategory.isEmpty {
+            if !navDrawerState.feedSourcesByCategory.isEmpty ||
+                !navDrawerState.feedSourcesWithoutCategory.isEmpty ||
+                !navDrawerState.categories.isEmpty {
                 Section(feedFlowStrings.feedsTitle) {
                     feedSourcesContent
                 }

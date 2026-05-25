@@ -79,6 +79,7 @@ extension HomeContent {
                 } label: {
                     Image(systemName: "sidebar.leading")
                 }
+                .accessibilityIdentifier(DrawerAccessibilityIdentifiers.menuButton)
 
                 Rectangle()
                     .fill(Color.secondary.opacity(0.35))

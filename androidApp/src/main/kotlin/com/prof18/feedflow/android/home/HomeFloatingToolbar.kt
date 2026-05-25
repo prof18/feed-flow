@@ -37,9 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.android.home.drawer.DrawerE2eIds
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
@@ -237,7 +239,10 @@ private fun FeedFilter.getTitle(): String =
 @Composable
 private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    IconButton(onClick = onDrawerMenuClick) {
+    IconButton(
+        modifier = Modifier.testTag(DrawerE2eIds.MENU_BUTTON),
+        onClick = onDrawerMenuClick,
+    ) {
         val icon = when {
             isDrawerOpen && isRtl -> CloseSidebarReversed
             isDrawerOpen -> CloseSidebar

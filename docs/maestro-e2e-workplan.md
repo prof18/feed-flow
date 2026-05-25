@@ -67,7 +67,7 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F012 | OPML fixture files | Passing | RG-011, REG-119 | `e2e/fixtures/opml/feedflow-valid-opml-smoke.xml`; OPML content uses `.xml` extension so Android DocumentsUI shows it as a document |
 | F013 | CSV fixture files | Passing | RG-011, REG-120 | `e2e/fixtures/csv/feedflow-articles-smoke.csv`; `feed_source_id` matches the OPML-imported feed URL hash |
 | F014 | `reader-mode` profile validation flow | Passing | RG-007, REG-110, REG-111 | Covered by RG-007 reader-mode flow |
-| F015 | `card-layout` and `compact-list` profile validation flows | Not started | REG-108 | Profiles exist; needs flow coverage |
+| F015 | `card-layout` and `compact-list` profile validation flows | Passing | REG-108 | Android and iOS card/compact profile flows passed on 2026-05-25 |
 | F016 | `external-browser` profile validation flow | Not started | REG-112 | Profile exists; may need platform-specific handling |
 | F017 | `notifications` profile validation flow | Not started | REG-115 | Profile exists; OS permission state still separate |
 | F018 | `android-widget` profile validation flow | Not started | MAN-201, MAN-202 | Android-only |
@@ -124,7 +124,7 @@ Start these after the release gate is stable.
 | REG-105 | Category Management | `content-rich` | Android, iOS | Not started | Needs category CRUD ids |
 | REG-106 | Article Context Menu | `content-rich` | Android, iOS | Not started | Reuse article action ids from release-gate flows |
 | REG-107 | Swipe Actions | profile TBD | Android, iOS | Blocked | Needs seeded swipe settings profile or flow setup |
-| REG-108 | Feed Layout Matrix | `card-layout`, `compact-list` | Android, iOS | Not started | Good candidate for visual screenshots |
+| REG-108 | Feed Layout Matrix | `card-layout`, `compact-list` | Android, iOS | Passing | Android and iOS `108-feed-layout-matrix-card.yaml` and `108-feed-layout-matrix-compact.yaml` passed via Maestro CLI on 2026-05-25 |
 | REG-109 | Feed Order And Mark Above Below | `oldest-first` | Android, iOS | Not started | Needs mark-above/below action targeting |
 | REG-110 | Reader Fallback | `reader-mode` | Android, iOS | Not started | Reuse reader ids from RG-007 |
 | REG-111 | Reader Image Viewer | `reader-mode` | Android, iOS | Not started | May need screenshot/assertion strategy |

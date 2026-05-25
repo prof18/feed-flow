@@ -68,7 +68,7 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F013 | CSV fixture files | Passing | RG-011, REG-120 | `e2e/fixtures/csv/feedflow-articles-smoke.csv`; `feed_source_id` matches the OPML-imported feed URL hash |
 | F014 | `reader-mode` profile validation flow | Passing | RG-007, REG-110, REG-111 | Covered by RG-007 reader-mode flow |
 | F015 | `card-layout` and `compact-list` profile validation flows | Passing | REG-108 | Android and iOS card/compact profile flows passed on 2026-05-25 |
-| F016 | `external-browser` profile validation flow | Not started | REG-112 | Profile exists; may need platform-specific handling |
+| F016 | `external-browser` profile validation flow | Passing | REG-112 | Android and iOS reader-mode override flow passed on 2026-05-25; external OS/browser branches remain in REG-112 |
 | F017 | `notifications` profile validation flow | Passing | REG-115 | Android and iOS notifications profile flows passed on 2026-05-25; iOS requests notification permission when the simulator is unset |
 | F018 | `android-widget` profile validation flow | Not started | MAN-201, MAN-202 | Android-only |
 | F019 | Mock account seed state | Blocked | REG-116, REG-118 | `sync-linked-mock` name exists; provider-specific mock state still needs implementation |
@@ -128,7 +128,7 @@ Start these after the release gate is stable.
 | REG-109 | Feed Order And Mark Above Below | `oldest-first` | Android, iOS | Not started | Needs mark-above/below action targeting |
 | REG-110 | Reader Fallback | `reader-mode` | Android, iOS | Not started | Reuse reader ids from RG-007 |
 | REG-111 | Reader Image Viewer | `reader-mode` | Android, iOS | Not started | May need screenshot/assertion strategy |
-| REG-112 | Link Opening Preferences | `external-browser` | Android, iOS | Not started | Likely platform-specific assertions |
+| REG-112 | Link Opening Preferences | `external-browser` | Android, iOS | In progress | Android and iOS `112-link-opening-preferences.yaml` passed via Maestro CLI on 2026-05-25 for the deterministic per-feed Reader Mode override; preferred/external browser branch assertions still need a stable strategy |
 | REG-113 | Sync And Storage Settings | `content-rich` | Android, iOS | Not started | Android has extra settings |
 | REG-114 | Appearance Settings | `content-rich` | Android, iOS | Not started | Android OLED/reduce-motion platform-specific |
 | REG-115 | Notifications Settings | `notifications` | Android, iOS | Passing | Android and iOS `115-notifications-profile.yaml` passed via Maestro CLI on 2026-05-25 |

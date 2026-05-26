@@ -75,6 +75,24 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `restoreAccount returns Linked for seeded debug account`() = runTest {
+        googleDriveSettings.setGoogleDriveLinked(true)
+        googleDriveSettings.setLastUploadTimestamp(1234567890L)
+        googleDriveSettings.setLastDownloadTimestamp(1234567800L)
+
+        val linkedViewModel: GoogleDriveSyncViewModel = getKoin().get()
+
+        linkedViewModel.googleDriveConnectionUiState.test {
+            val state = awaitItem()
+            assertTrue(state is AccountConnectionUiState.Linked)
+            val syncState = state.syncState
+            assertTrue(syncState is AccountSyncUIState.Synced)
+            assertNotNull(syncState.lastUploadDate)
+            assertNotNull(syncState.lastDownloadDate)
+        }
+    }
+
+    @Test
     fun `onAuthorizationSuccess updates state and settings`() = runTest {
         viewModel.onAuthorizationSuccess()
 

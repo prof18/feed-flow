@@ -142,6 +142,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             googleDriveDataSource = get(),
             feedSyncRepository = get(),
             dateFormatter = get(),
+            appConfig = get(),
             feedFetcherRepository = get(),
             feedSyncMessageQueue = get(),
             accountsRepository = get(),

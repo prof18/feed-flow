@@ -15,9 +15,12 @@ A test is done only when:
 - the flow starts from a deterministic seed state
 - the flow does not depend on live feeds, real OAuth, or previous app state
 - any required stable accessibility ids or seed data are committed with the flow
+- the flow does not require production UI or production behavior changes solely for E2E enablement
 - the pass evidence is recorded in this document
 
 Use the Maestro CLI and Maestro MCP as needed. Prefer the CLI for repeatable final verification and the MCP for inspection, screenshots, quick iteration, and debugging.
+
+Do not add visible controls, debug-gated production behavior, or provider mock branches to production code solely to make a Maestro flow pass. If a branch cannot be covered with existing app behavior, existing seed/deep-link support, fixtures, launch arguments, or non-production test files, leave it unimplemented and document the blocker here.
 
 ## Status Legend
 
@@ -59,10 +62,10 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F004 | `content-rich` profile | Passing | most release-gate/regression flows | Uses deterministic public feed/article/image data |
 | F005 | Android/iOS release-gate wrapper scripts | Passing | release-gate verification | `e2e/scripts/run-android.sh`, `e2e/scripts/run-ios.sh`; flows run sequentially to avoid seed reset races |
 | F006 | Stable seed completion marker | Passing | all seeded flows | `E2E seed complete`, `e2e_seed_complete` |
-| F007 | Stable ids for navigation buttons | In progress | RG-006, settings flows | Drawer menu/settings ids added; home search and overflow button ids added for RG-006/RG-005; add remaining ids as flows need them |
+| F007 | Stable ids for navigation buttons | In progress | RG-006, settings flows | Drawer menu/settings ids added; home search and overflow button ids added for RG-006/RG-005; do not add new production ids solely for currently blocked E2E branches |
 | F008 | Stable ids for drawer/library entries | Passing | REG-104, REG-105 | Added stable ids for timeline/read/bookmarks/categories/feed sources |
-| F009 | Stable ids for article rows/actions | In progress | RG-004, RG-005, REG-106, REG-107 | Article row ids added for RG-004; add context and swipe action ids as flows need them |
-| F010 | Stable ids for settings rows/actions | In progress | RG-009, RG-010, REG-113-115, REG-117 | Feed-list, reading behavior, appearance, sync/storage, notifications, and accounts settings ids added; add other settings ids as flows need them |
+| F009 | Stable ids for article rows/actions | In progress | RG-004, RG-005, REG-106, REG-107 | Article row ids added for RG-004; do not add new production ids solely for currently blocked E2E branches |
+| F010 | Stable ids for settings rows/actions | In progress | RG-009, RG-010, REG-113-115, REG-117 | Feed-list, reading behavior, appearance, sync/storage, notifications, and accounts settings ids added; do not add new production ids solely for currently blocked E2E branches |
 | F011 | Stable ids for reader toolbar/actions | Passing | RG-007, REG-110, REG-111 | Reader article, bookmark, browser, font menu, overflow, back, navigation, and image viewer ids added |
 | F012 | OPML fixture files | Passing | RG-011, REG-119 | `e2e/fixtures/opml/feedflow-valid-opml-smoke.xml` and `e2e/fixtures/opml/zz-feedflow-invalid-opml.xml`; OPML content uses `.xml` extension so Android DocumentsUI shows it as a document |
 | F013 | CSV fixture files | Passing | RG-011, REG-120 | `e2e/fixtures/csv/feedflow-articles-smoke.csv`; `feed_source_id` matches the OPML-imported feed URL hash and rows cover unread, read, bookmarked unread, and bookmarked read states |
@@ -70,9 +73,9 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F015 | `card-layout` and `compact-list` profile validation flows | Passing | REG-108 | Android and iOS card/compact profile flows passed on 2026-05-25 |
 | F016 | `external-browser` profile validation flow | Passing | REG-112 | Android and iOS reader-mode override flow passed on 2026-05-25; external OS/browser branches remain in REG-112 |
 | F017 | `notifications` profile validation flow | Passing | REG-115 | Android and iOS notifications profile flows passed on 2026-05-25; iOS requests notification permission when the simulator is unset |
-| F018 | `android-widget` profile validation flow | Not started | MAN-201, MAN-202 | Android-only |
-| F019 | Mock account seed state | In progress | REG-116, REG-118 | `sync-linked-mock` can seed a linked account via `account=fresh_rss`, `miniflux`, `bazqux`, `feedbin`, `dropbox`, or `icloud`; Google Drive mock auth still needs implementation |
-| F020 | `large-content` profile | Blocked | MAN-206 | Not implemented yet |
+| F018 | `android-widget` profile validation flow | Not started | MAN-201, MAN-202 | Android-only; requires a stable widget-host automation strategy without production UI changes |
+| F019 | Mock account seed state | In progress | REG-116, REG-118 | `sync-linked-mock` can seed a linked account via `account=fresh_rss`, `miniflux`, `bazqux`, `feedbin`, `dropbox`, or `icloud`; Google Drive mock auth is not testable without production provider/mock behavior changes |
+| F020 | `large-content` profile | Blocked | MAN-206 | Not implemented; leave blocked unless a non-production seed profile is added |
 | F021 | Stable ids and hooks for search controls | Passing | RG-006 | Android search field/filter ids added; iOS uses seeded query/filter hooks because SwiftUI `.searchable` is OS-owned and flaky to type into with Maestro |
 
 ## Release Gate
@@ -123,20 +126,20 @@ Start these after the release gate is stable.
 | REG-104 | Feed Source List Management | `content-rich` | Android, iOS | Passing | Android and iOS `104-feed-source-list-management.yaml` passed via Maestro CLI on 2026-05-26; Android covers inline rename, both cover expand/collapse, delete confirmation, and fetch-failed warning |
 | REG-105 | Category Management | `content-rich` | Android, iOS | Passing | Android `105-category-management.yaml`, iOS `105-category-add-validation.yaml`, and iOS `105-category-management.yaml` passed via Maestro CLI on 2026-05-26 |
 | REG-106 | Article Context Menu | `content-rich` | Android, iOS | Passing | Android and iOS `106-article-context-menu.yaml` passed via Maestro CLI on 2026-05-26 |
-| REG-107 | Swipe Actions | `swipe-actions`, `swipe-disabled` | Android, iOS | In progress | Android and iOS `107-swipe-actions.yaml` passed via Maestro CLI on 2026-05-26 for left read and right bookmark swipes; Android also covers disabled swipes. iOS disabled and open-in-browser swipe branches still need a stable strategy because full-width disabled gestures open the row instead of exposing a no-op action |
+| REG-107 | Swipe Actions | `swipe-actions`, `swipe-disabled` | Android, iOS | In progress | Android and iOS `107-swipe-actions.yaml` passed via Maestro CLI on 2026-05-26 for left read and right bookmark swipes; Android also covers disabled swipes. iOS disabled and open-in-browser swipe branches are not currently testable without a stable gesture/OS-browser strategy; disabled full-width gestures open the row instead of exposing a no-op action |
 | REG-108 | Feed Layout Matrix | `card-layout`, `compact-list` | Android, iOS | Passing | Android and iOS `108-feed-layout-matrix-card.yaml` and `108-feed-layout-matrix-compact.yaml` passed via Maestro CLI on 2026-05-25 |
 | REG-109 | Feed Order And Mark Above Below | `oldest-first` | Android, iOS | Passing | Android and iOS `109-feed-order-mark-above-below.yaml` passed via Maestro CLI on 2026-05-26 |
 | REG-110 | Reader Fallback | `reader-mode` | Android, iOS | Passing | Android and iOS `110-reader-fallback.yaml` passed via Maestro CLI on 2026-05-26 |
 | REG-111 | Reader Image Viewer | `reader-mode` | Android, iOS | Passing | Android and iOS `111-reader-image-viewer.yaml` passed via Maestro CLI on 2026-05-26 |
-| REG-112 | Link Opening Preferences | `external-browser` | Android, iOS | In progress | Android and iOS `112-link-opening-preferences.yaml` passed via Maestro CLI on 2026-05-25 for the deterministic per-feed Reader Mode override; preferred/external browser branch assertions still need a stable strategy |
+| REG-112 | Link Opening Preferences | `external-browser` | Android, iOS | In progress | Android and iOS `112-link-opening-preferences.yaml` passed via Maestro CLI on 2026-05-25 for the deterministic per-feed Reader Mode override; preferred/external browser branch assertions remain unimplemented until they can be verified through existing app behavior and stable OS/browser automation |
 | REG-113 | Sync And Storage Settings | `content-rich` | Android, iOS | Passing | Android and iOS `113-sync-storage-settings.yaml` passed via Maestro CLI on 2026-05-26; Android covers the extra sync-period dropdown |
 | REG-114 | Appearance Settings | `content-rich` | Android, iOS | Passing | Android and iOS `114-appearance-settings.yaml` passed via Maestro CLI on 2026-05-26; Android covers Black theme and reduce motion |
 | REG-115 | Notifications Settings | `notifications` | Android, iOS | Passing | Android and iOS `115-notifications-profile.yaml` passed via Maestro CLI on 2026-05-25 |
 | REG-116 | Account List One-Account Constraint | `sync-linked-mock` | Android, iOS | Passing | Android and iOS `116-account-list-one-account-constraint.yaml` passed via Maestro CLI on 2026-05-26 using `account=fresh_rss`; covers one-account list constraint, linked FreshRSS state, disconnect, and unlocked provider list |
-| REG-117 | GReader Provider Forms | `empty` | Android, iOS | In progress | Android and iOS `117-greader-provider-form-validation.yaml` passed via Maestro CLI on 2026-05-26 for provider navigation and required-field disabled states; Android also covers filled FreshRSS connect enablement and password reveal. Mocked success/error auth paths and the iOS filled-form branch still need stable hooks/input strategy |
-| REG-118 | Cloud Provider Mock States | `sync-linked-mock` | Android, iOS | In progress | Android and iOS `118-cloud-provider-mock-states.yaml` passed via Maestro CLI on 2026-05-26 for seeded Dropbox linked state; iOS also covers seeded iCloud linked state. Google Drive and cloud unlink/backup actions still need stable provider-specific mock hooks |
+| REG-117 | GReader Provider Forms | `empty` | Android, iOS | In progress | Android and iOS `117-greader-provider-form-validation.yaml` passed via Maestro CLI on 2026-05-26 for provider navigation and required-field disabled states; Android also covers filled FreshRSS connect enablement and password reveal. Mocked success/error auth paths are not testable without live provider auth or production mock behavior changes; the iOS filled-form branch remains blocked by input instability |
+| REG-118 | Cloud Provider Mock States | `sync-linked-mock` | Android, iOS | In progress | Android and iOS `118-cloud-provider-mock-states.yaml` passed via Maestro CLI on 2026-05-26 for seeded Dropbox linked state; iOS also covers seeded iCloud linked state. Google Drive, cloud unlink, and backup actions are not testable without live provider auth, existing provider mock support, or stable provider-specific non-production hooks |
 | REG-119 | OPML Import Error States | `empty` + fixtures | Android, iOS | In progress | Android and iOS `119-opml-import-error-states.yaml` passed via Maestro CLI on 2026-05-26 for invalid OPML and choose-another-file recovery; partial failed-feed reporting remains blocked because local OPML imports do not produce `feedSourceWithError` or `notValidFeedSources` entries |
-| REG-120 | CSV Import Export Filters | `empty` + fixtures | Android, iOS | In progress | Android and iOS `120-csv-import-article-states.yaml` passed via Maestro CLI on 2026-05-26 for CSV import plus read/bookmark state assertions; export filter paths still need a stable OS document-save strategy |
+| REG-120 | CSV Import Export Filters | `empty` + fixtures | Android, iOS | In progress | Android and iOS `120-csv-import-article-states.yaml` passed via Maestro CLI on 2026-05-26 for CSV import plus read/bookmark state assertions; export filter paths remain unimplemented until Android and iOS document-save automation is stable without app changes |
 
 ## Manual-Supported Suite
 
@@ -144,9 +147,9 @@ These should not block the normal release gate until they are reliable.
 
 | ID | Test | Profile | Platforms | Status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| MAN-201 | Android Widget Configuration | `android-widget` | Android | Not started | Android-only |
+| MAN-201 | Android Widget Configuration | `android-widget` | Android | Not started | Android-only; requires stable launcher/widget-host automation without production UI changes |
 | MAN-202 | Android Widget Launcher Smoke | `android-widget` | Android | Deferred | Needs widget host/launcher automation strategy |
-| MAN-203 | iOS Widget Deep Link | `content-rich` | iOS | Not started | iOS-only |
+| MAN-203 | iOS Widget Deep Link | `content-rich` | iOS | Not started | iOS-only; requires stable SpringBoard/widget automation without production UI changes |
 | MAN-204 | Share Extension Smoke | `empty` | Android, iOS | Deferred | OS share surfaces can be unstable |
 | MAN-205 | Tablet And Split Layout | `content-rich` | Android tablet, iPad | Deferred | Requires dedicated devices/simulators |
 | MAN-206 | Large Dataset Pagination | `large-content` | Android, iOS | Blocked | Needs `large-content` seed profile |

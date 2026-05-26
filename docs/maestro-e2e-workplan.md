@@ -151,6 +151,7 @@ Start these after the release gate is stable.
 | REG-129 | Edit Feed Secondary Options | `notifications` | Android, iOS | Passing | Android and iOS `129-edit-feed-secondary-options.yaml` passed via Maestro CLI on 2026-05-26; covers the article context-menu route to feed settings, edit-feed link-opening preference mutation, notification toggle mutation, and save. |
 | REG-130 | Add Feed Secondary Options | `notifications` | Android, iOS | Passing | Android and iOS `130-add-feed-secondary-options.yaml` passed via Maestro CLI on 2026-05-26; covers selecting an existing seeded category and toggling feed notifications on the add-feed form without depending on live feed validation. |
 | REG-131 | Home Source Filter Edit Entry | `content-rich` | Android, iOS | Passing | Android and iOS `131-home-source-filter-edit-entry.yaml` passed via Maestro CLI on 2026-05-26; covers selecting a feed-source filter from the drawer and opening that source's edit screen from the Home overflow menu. |
+| REG-132 | About Support Secondary Options | `content-rich` | Android, iOS | Passing | Android and iOS `132-about-support-secondary-options.yaml` passed via Maestro CLI on 2026-05-26; covers crash-reporting toggle mutation and support-link visibility without opening external email/browser surfaces. |
 
 ## Manual-Supported Suite
 
@@ -189,7 +190,7 @@ Last audited: 2026-05-26. This section tracks user-facing Android/iOS features t
 | App deep links from notifications/widgets | Android, iOS | REG-126 covers iOS `feedflow://feed/<id>` article routing into reader mode | Android notification deep links, feed-source filter links, category links, and widget deep links remain uncovered. Android notification routing uses explicit `MainActivity` intents, and iOS feed-source/category routing is handled through notification delegate events rather than direct `openLink`, so keep these blocked unless they can be driven through existing OS notification/widget surfaces. |
 | Tablet, iPad, split layout, rotation | Android tablet, iPad | MAN-205 is deferred | Sidebar/split navigation, settings presentation, reader presentation, and rotation remain uncovered on dedicated large-screen devices. |
 | Large dataset behavior | Android, iOS | MAN-206 is blocked | Pagination and large-search coverage require a non-production `large-content` seed profile. |
-| About and support | Android, iOS | REG-125 covers About & Support navigation, About screen content, and open-source licenses | Crash-reporting toggle, report issue, and FAQ links are uncovered. External email/browser actions should stay manual unless assertable through existing in-app state. |
+| About and support | Android, iOS | REG-125 covers About & Support navigation, About screen content, and open-source licenses; REG-132 covers crash-reporting toggle mutation and report-issue visibility | FAQ is feature-flagged off, and external email/browser actions should stay manual unless assertable through existing in-app state. |
 | Background sync and notification delivery | Android, iOS | MAN-208 is deferred | WorkManager scheduling, iOS background refresh, notification delivery, and notification deep-link routing remain manual/nightly candidates. |
 
 ## Per-Test Work Template

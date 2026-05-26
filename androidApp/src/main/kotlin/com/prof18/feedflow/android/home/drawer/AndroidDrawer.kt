@@ -45,6 +45,7 @@ import com.prof18.feedflow.android.home.AddFeedOptionsBottomSheet
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsE2eIds
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -299,7 +300,10 @@ private fun DrawerTopActions(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        DrawerActionButton(onClick = onAddClick) {
+        DrawerActionButton(
+            modifier = Modifier.testTag(FeedSuggestionsE2eIds.ADD_OPTIONS_BUTTON),
+            onClick = onAddClick,
+        ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = LocalFeedFlowStrings.current.addFeed,

@@ -72,6 +72,7 @@ struct FeedSuggestionsContent: View {
                         }
                     }
                 }
+                .accessibilityIdentifier(FeedSuggestionsIds.screen)
             }
         }
         .navigationTitle(feedFlowStrings.feedSuggestionsTitle)
@@ -157,6 +158,10 @@ private struct CategoryFilterChip: View {
         }
         .buttonStyle(.plain)
         .foregroundColor(isSelected ? .accentColor : .primary)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(category.name)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier(FeedSuggestionsIds.category(category.id))
     }
 }
 
@@ -200,10 +205,15 @@ private struct SuggestedFeedRow: View {
 
             Spacer()
 
-            AddButton(feedState: feedState, onTap: onAddFeed)
+            AddButton(
+                feedState: feedState,
+                accessibilityIdentifier: FeedSuggestionsIds.addButton(feed.url),
+                onTap: onAddFeed
+            )
         }
         .padding(.horizontal, Spacing.regular)
         .padding(.vertical, Spacing.small)
+        .accessibilityIdentifier(FeedSuggestionsIds.row(feed.url))
     }
 }
 
@@ -218,8 +228,35 @@ private struct FeedPlaceholderIcon: View {
     }
 }
 
+enum FeedSuggestionsIds {
+    static let drawerItem = "feed_suggestions_drawer_item"
+    static let menuButton = "feed_suggestions_menu_button"
+    static let screen = "feed_suggestions_screen"
+
+    static func category(_ categoryId: String) -> String {
+        "feed_suggestions_category_\(categoryId.e2eIdSuffix)"
+    }
+
+    static func row(_ feedUrl: String) -> String {
+        "feed_suggestions_row_\(feedUrl.e2eIdSuffix)"
+    }
+
+    static func addButton(_ feedUrl: String) -> String {
+        "feed_suggestions_add_\(feedUrl.e2eIdSuffix)"
+    }
+}
+
+private extension String {
+    var e2eIdSuffix: String {
+        map { char in
+            char.isLetter || char.isNumber || char == "_" ? String(char) : "_"
+        }.joined()
+    }
+}
+
 private struct AddButton: View {
     let feedState: FeedAddState
+    let accessibilityIdentifier: String
     let onTap: () -> Void
 
     var body: some View {
@@ -247,6 +284,7 @@ private struct AddButton: View {
             .buttonStyle(.plain)
             .foregroundColor(.secondary)
             .disabled(true)
+            .accessibilityIdentifier(accessibilityIdentifier)
 
         case .adding:
             Button {} label: {
@@ -265,6 +303,7 @@ private struct AddButton: View {
             }
             .buttonStyle(.plain)
             .disabled(true)
+            .accessibilityIdentifier(accessibilityIdentifier)
 
         case .notAdded:
             Button(action: onTap) {
@@ -288,6 +327,7 @@ private struct AddButton: View {
             }
             .buttonStyle(.plain)
             .foregroundColor(.primary)
+            .accessibilityIdentifier(accessibilityIdentifier)
         }
     }
 }

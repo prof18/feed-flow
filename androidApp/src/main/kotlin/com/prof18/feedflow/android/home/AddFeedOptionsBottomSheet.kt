@@ -14,6 +14,9 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsE2eIds
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import md_theme_dark_background
 import md_theme_light_background
@@ -54,10 +57,12 @@ internal fun AddFeedOptionsBottomSheet(
         )
 
         ListItem(
-            modifier = androidx.compose.ui.Modifier.clickable {
-                onFeedSuggestionsClick()
-                onDismiss()
-            },
+            modifier = Modifier
+                .testTag(FeedSuggestionsE2eIds.ADD_OPTIONS_ITEM)
+                .clickable {
+                    onFeedSuggestionsClick()
+                    onDismiss()
+                },
             leadingContent = {
                 Icon(
                     imageVector = Icons.Outlined.Lightbulb,

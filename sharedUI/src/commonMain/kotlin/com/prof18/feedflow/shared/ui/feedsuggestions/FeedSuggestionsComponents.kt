@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -74,6 +75,7 @@ fun FeedSuggestionsContent(
         Column(
             modifier = modifier
                 .fillMaxSize()
+                .testTag(FeedSuggestionsE2eIds.SCREEN)
                 .padding(contentPadding),
         ) {
             Text(
@@ -158,7 +160,7 @@ private fun CategoryFilterChip(
         selected = isSelected,
         onClick = onClick,
         label = { Text(text = category.name) },
-        modifier = modifier,
+        modifier = modifier.testTag(FeedSuggestionsE2eIds.category(category.id)),
         leadingIcon = {
             Text(
                 text = category.icon,
@@ -178,6 +180,7 @@ private fun SuggestedFeedListItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .testTag(FeedSuggestionsE2eIds.row(feed.url))
             .padding(horizontal = Spacing.regular, vertical = Spacing.small),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
@@ -223,6 +226,7 @@ private fun SuggestedFeedListItem(
         AddButton(
             feedState = feedState,
             onClick = onAddFeed,
+            modifier = Modifier.testTag(FeedSuggestionsE2eIds.addButton(feed.url)),
         )
     }
 }

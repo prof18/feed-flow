@@ -8,6 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsE2eIds
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -82,6 +84,7 @@ fun NoFeedsInfoContent(
         Button(
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag(FeedSuggestionsE2eIds.EMPTY_STATE_BUTTON)
                 .padding(top = Spacing.regular)
                 .padding(bottom = Spacing.medium)
                 .padding(horizontal = Spacing.regular),

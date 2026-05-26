@@ -143,6 +143,7 @@ struct SidebarDrawer: View {
                                 action: { showFeedSuggestionsSheet = true },
                                 label: { Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb") }
                             )
+                            .accessibilityIdentifier(FeedSuggestionsIds.drawerItem)
                             Button(
                                 action: onImportExportClick,
                                 label: { Label(feedFlowStrings.importFeedButton, systemImage: "square.and.arrow.down") }
@@ -150,6 +151,7 @@ struct SidebarDrawer: View {
                         },
                         label: { Image(systemName: "plus") }
                     )
+                    .accessibilityIdentifier(FeedSuggestionsIds.menuButton)
                 }
             }
         .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {

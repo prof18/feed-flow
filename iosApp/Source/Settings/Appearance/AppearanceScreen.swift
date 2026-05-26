@@ -36,6 +36,7 @@ struct AppearanceScreen: View {
                 } label: {
                     Label(feedFlowStrings.settingsTheme, systemImage: "moon")
                 }
+                .accessibilityIdentifier(AppearanceAccessibilityIdentifiers.themePicker)
 
                 Toggle(isOn: Binding(
                     get: { settingsState.isHideUnreadCountEnabled },
@@ -43,6 +44,7 @@ struct AppearanceScreen: View {
                 )) {
                     Text(feedFlowStrings.settingsHideUnreadCount)
                 }
+                .accessibilityIdentifier(AppearanceAccessibilityIdentifiers.hideUnreadCountToggle)
             }
         }
         .scrollContentBackground(.hidden)
@@ -55,4 +57,9 @@ struct AppearanceScreen: View {
             }
         }
     }
+}
+
+private enum AppearanceAccessibilityIdentifiers {
+    static let themePicker = "appearance_theme"
+    static let hideUnreadCountToggle = "appearance_hide_unread_count"
 }

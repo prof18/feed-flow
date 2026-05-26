@@ -59,6 +59,7 @@ internal fun SettingsScreenContent(
         ) {
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.APPEARANCE_ROW),
                     title = LocalFeedFlowStrings.current.settingsAppearance,
                     icon = Icons.Outlined.Palette,
                     onClick = navigateToAppearance,

@@ -19,6 +19,7 @@ struct SettingsScreen: View {
                     NavigationLink(destination: AppearanceScreen()) {
                         Label(feedFlowStrings.settingsAppearance, systemImage: "paintbrush")
                     }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.appearanceRow)
 
                     NavigationLink(destination: FeedsAndAccountsScreen(
                         fetchFeeds: fetchFeeds
@@ -72,6 +73,7 @@ struct SettingsScreen: View {
 
 private enum SettingsAccessibilityIdentifiers {
     static let doneButton = "settings_done_button"
+    static let appearanceRow = "settings_appearance"
     static let feedsAndAccountsRow = "settings_feeds_accounts"
     static let feedListRow = "settings_feed_list"
     static let readingBehaviorRow = "settings_reading_behavior"

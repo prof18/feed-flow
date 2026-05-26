@@ -14,7 +14,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
@@ -39,7 +41,10 @@ internal fun AppearanceScreenContent(
             TopAppBar(
                 title = { Text(strings.settingsAppearance) },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(
+                        modifier = Modifier.testTag(SettingsE2eIds.BACK_BUTTON),
+                        onClick = navigateBack,
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = null,
@@ -58,6 +63,7 @@ internal fun AppearanceScreenContent(
         ) {
             item {
                 CompactSettingDropdownRow(
+                    modifier = Modifier.testTag(SettingsE2eIds.APPEARANCE_THEME),
                     title = strings.settingsTheme,
                     currentValue = themeMode,
                     options = persistentListOf(
@@ -72,6 +78,7 @@ internal fun AppearanceScreenContent(
 
             item {
                 SettingSwitchItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.APPEARANCE_HIDE_UNREAD_COUNT),
                     title = strings.settingsHideUnreadCount,
                     isChecked = isHideUnreadCountEnabled,
                     onCheckedChange = onHideUnreadCountToggled,
@@ -80,6 +87,7 @@ internal fun AppearanceScreenContent(
 
             item {
                 SettingSwitchItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.APPEARANCE_REDUCE_MOTION),
                     title = strings.settingsReduceMotion,
                     isChecked = isReduceMotionEnabled,
                     onCheckedChange = onReduceMotionToggled,

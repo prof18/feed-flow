@@ -104,6 +104,7 @@ internal fun SettingsScreenContent(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_AND_STORAGE_ROW),
                     title = LocalFeedFlowStrings.current.settingsSyncAndStorage,
                     icon = Icons.Outlined.Storage,
                     onClick = navigateToSyncAndStorage,

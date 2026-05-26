@@ -13,4 +13,10 @@ internal object SettingsE2eIds {
     const val READING_BEHAVIOR_READER_MODE = "reading_behavior_reader_mode"
     const val READING_BEHAVIOR_SHOW_READ = "reading_behavior_show_read"
     const val READING_BEHAVIOR_HIDE_READ = "reading_behavior_hide_read"
+    const val SYNC_AND_STORAGE_ROW = "settings_sync_storage"
+    const val SYNC_REFRESH_ON_LAUNCH = "sync_storage_refresh_on_launch"
+    const val SYNC_SHOW_RSS_ERRORS = "sync_storage_show_rss_errors"
+    const val SYNC_PERIOD = "sync_storage_sync_period"
+    const val SYNC_AUTO_DELETE = "sync_storage_auto_delete"
+    const val SYNC_CLEAR_DOWNLOADED = "sync_storage_clear_downloaded"
 }

@@ -40,6 +40,7 @@ struct SettingsScreen: View {
                     NavigationLink(destination: SyncAndStorageScreen()) {
                         Label(feedFlowStrings.settingsSyncAndStorage, systemImage: "externaldrive")
                     }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.syncAndStorageRow)
 
                     NavigationLink(destination: AboutAndSupportScreen()) {
                         Label(feedFlowStrings.settingsAboutAndSupport, systemImage: "info.circle")
@@ -74,4 +75,5 @@ private enum SettingsAccessibilityIdentifiers {
     static let feedsAndAccountsRow = "settings_feeds_accounts"
     static let feedListRow = "settings_feed_list"
     static let readingBehaviorRow = "settings_reading_behavior"
+    static let syncAndStorageRow = "settings_sync_storage"
 }

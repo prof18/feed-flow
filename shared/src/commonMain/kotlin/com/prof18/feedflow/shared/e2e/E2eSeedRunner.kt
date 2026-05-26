@@ -212,19 +212,63 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.CONTENT_RICH,
             -> Unit
 
+            E2eSeedProfile.CARD_LAYOUT,
+            E2eSeedProfile.COMPACT_LIST,
+            E2eSeedProfile.READER_MODE,
+            E2eSeedProfile.EXTERNAL_BROWSER,
+            E2eSeedProfile.READ_BEHAVIOR,
+            E2eSeedProfile.OLDEST_FIRST,
+            -> applyDisplayProfileSettings(profile)
+
+            E2eSeedProfile.SWIPE_ACTIONS,
+            E2eSeedProfile.SWIPE_DISABLED,
+            -> applySwipeProfileSettings(profile)
+
+            E2eSeedProfile.NOTIFICATIONS,
+            E2eSeedProfile.ANDROID_WIDGET,
+            E2eSeedProfile.SYNC_LINKED_MOCK,
+            E2eSeedProfile.SYNC_UPLOAD_REQUIRED,
+            E2eSeedProfile.LARGE_CONTENT,
+            -> applyFeatureProfileSettings(profile, account)
+        }
+    }
+
+    private suspend fun applyDisplayProfileSettings(profile: E2eSeedProfile) {
+        when (profile) {
             E2eSeedProfile.CARD_LAYOUT -> applyCardLayoutSettings()
             E2eSeedProfile.COMPACT_LIST -> applyCompactListSettings()
             E2eSeedProfile.READER_MODE -> applyReaderModeSettings()
             E2eSeedProfile.EXTERNAL_BROWSER -> applyExternalBrowserSettings()
             E2eSeedProfile.READ_BEHAVIOR -> applyReadBehaviorSettings()
             E2eSeedProfile.OLDEST_FIRST -> feedAppearanceSettingsRepository.setFeedOrder(FeedOrder.OLDEST_FIRST)
+            else -> Unit
+        }
+    }
+
+    private fun applySwipeProfileSettings(profile: E2eSeedProfile) {
+        when (profile) {
             E2eSeedProfile.SWIPE_ACTIONS -> applySwipeActionSettings()
             E2eSeedProfile.SWIPE_DISABLED -> applySwipeDisabledSettings()
+            else -> Unit
+        }
+    }
+
+    private suspend fun applyFeatureProfileSettings(
+        profile: E2eSeedProfile,
+        account: E2eSeedAccount?,
+    ) {
+        when (profile) {
             E2eSeedProfile.NOTIFICATIONS -> applyNotificationSettings()
             E2eSeedProfile.ANDROID_WIDGET -> applyCardLayoutSettings()
             E2eSeedProfile.SYNC_LINKED_MOCK -> applyMockLinkedAccount(account ?: E2eSeedAccount.FRESH_RSS)
             E2eSeedProfile.SYNC_UPLOAD_REQUIRED -> applySyncUploadRequiredSettings(account ?: E2eSeedAccount.FRESH_RSS)
+            E2eSeedProfile.LARGE_CONTENT -> applyLargeContentSettings()
+            else -> Unit
         }
+    }
+
+    private suspend fun applyLargeContentSettings() {
+        databaseHelper.insertFeedItems(largeFeedItems, lastSyncTimestamp = SEED_NOW_MILLIS)
     }
 
     private fun applySyncUploadRequiredSettings(account: E2eSeedAccount) {
@@ -661,6 +705,23 @@ class E2eSeedRunner internal constructor(
                 pubDateMillis = SEED_NOW_MILLIS - (ONE_HOUR_MILLIS * 12),
             ),
         )
+
+        private val largeFeedItems = (1..55).map { index ->
+            val formattedIndex = index.toString().padStart(length = 3, padChar = '0')
+            val title = if (index == 45) {
+                "E2E Large Article $formattedIndex: Pagination Needle"
+            } else {
+                "E2E Large Article $formattedIndex"
+            }
+            feedItem(
+                id = "e2e-large-article-$formattedIndex",
+                title = title,
+                subtitle = "Large seeded pagination item $formattedIndex",
+                feedSource = androidWeekly,
+                url = "https://e2e.feedflow.local/large/$formattedIndex",
+                pubDateMillis = SEED_NOW_MILLIS + ONE_HOUR_MILLIS - index,
+            )
+        }
 
         private const val READER_SUCCESS_HTML = """
             <article>

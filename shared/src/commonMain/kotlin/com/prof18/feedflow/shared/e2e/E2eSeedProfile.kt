@@ -17,6 +17,7 @@ enum class E2eSeedProfile(val queryValue: String) {
     ANDROID_WIDGET("android-widget"),
     SYNC_LINKED_MOCK("sync-linked-mock"),
     SYNC_UPLOAD_REQUIRED("sync-upload-required"),
+    LARGE_CONTENT("large-content"),
     ;
 
     companion object {

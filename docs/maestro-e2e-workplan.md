@@ -75,7 +75,7 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F017 | `notifications` profile validation flow | Passing | REG-115 | Android and iOS notifications profile flows passed on 2026-05-25; iOS requests notification permission when the simulator is unset |
 | F018 | `android-widget` profile validation flow | Not started | MAN-201, MAN-202 | Android-only; requires a stable widget-host automation strategy without production UI changes |
 | F019 | Mock account seed state | In progress | REG-116, REG-118 | `sync-linked-mock` can seed a linked account via `account=fresh_rss`, `miniflux`, `bazqux`, `feedbin`, `dropbox`, or `icloud`; Google Drive mock auth is not testable without production provider/mock behavior changes |
-| F020 | `large-content` profile | Blocked | MAN-206 | Not implemented; leave blocked unless a non-production seed profile is added |
+| F020 | `large-content` profile | Passing | REG-134, MAN-206 | Seeds 55 additional unread articles for pagination beyond the first 40-item page and large-dataset search coverage |
 | F021 | Stable ids and hooks for search controls | Passing | RG-006 | Android search field/filter ids added; iOS uses seeded query/filter hooks because SwiftUI `.searchable` is OS-owned and flaky to type into with Maestro |
 | F022 | `sync-upload-required` profile | Passing | REG-133 | Seeds content-rich data, a linked mock sync account, and pending upload state so the Home backup action is visible without live credentials |
 
@@ -154,6 +154,7 @@ Start these after the release gate is stable.
 | REG-131 | Home Source Filter Edit Entry | `content-rich` | Android, iOS | Passing | Android and iOS `131-home-source-filter-edit-entry.yaml` passed via Maestro CLI on 2026-05-26; covers selecting a feed-source filter from the drawer and opening that source's edit screen from the Home overflow menu. |
 | REG-132 | About Support Secondary Options | `content-rich` | Android, iOS | Passing | Android and iOS `132-about-support-secondary-options.yaml` passed via Maestro CLI on 2026-05-26; covers crash-reporting toggle mutation and support-link visibility without opening external email/browser surfaces. |
 | REG-133 | Home Sync Backup Action | `sync-upload-required` | Android, iOS | Passing | Android and iOS `133-home-sync-backup-action.yaml` passed via Maestro CLI on 2026-05-26; covers the pending-upload Home overflow action with a linked mock sync account and no live provider credentials. |
+| REG-134 | Large Content Pagination And Search | `large-content` | Android, iOS | In progress | Android `134-large-content-pagination-search.yaml` passed via Maestro CLI on 2026-05-26 for pagination beyond the first 40-item page plus large-seed search. iOS `134-large-content-pagination.yaml` passed via Maestro CLI on 2026-05-26 for pagination; iOS large-search assertion remains blocked because XCTest hierarchy retrieval times out after opening the large search result screen. |
 
 ## Manual-Supported Suite
 
@@ -166,7 +167,7 @@ These should not block the normal release gate until they are reliable.
 | MAN-203 | iOS Widget Deep Link | `content-rich` | iOS | Not started | iOS-only; requires stable SpringBoard/widget automation without production UI changes |
 | MAN-204 | Share Extension Smoke | `empty` | Android, iOS | Deferred | OS share surfaces can be unstable |
 | MAN-205 | Tablet And Split Layout | `content-rich` | Android tablet, iPad | Deferred | Requires dedicated devices/simulators |
-| MAN-206 | Large Dataset Pagination | `large-content` | Android, iOS | Blocked | Needs `large-content` seed profile |
+| MAN-206 | Large Dataset Pagination | `large-content` | Android, iOS | Passing | Covered by REG-134 with the non-production `large-content` seed profile |
 | MAN-207 | Real Provider Smoke | real providers | Android, iOS | Deferred | Manual/nightly only with staging credentials |
 | MAN-208 | Background Sync Timing | profile TBD | Android, iOS | Deferred | OS timing makes this manual/nightly |
 
@@ -191,7 +192,7 @@ Last audited: 2026-05-26. This section tracks user-facing Android/iOS features t
 | Share extension / share intent | Android, iOS | MAN-204 is deferred | Android `ACTION_SEND` add-feed activity and iOS Share Extension receive/add-feed flows are uncovered because OS share surfaces are unstable. |
 | App deep links from notifications/widgets | Android, iOS | REG-126 covers iOS `feedflow://feed/<id>` article routing into reader mode | Android notification deep links, feed-source filter links, category links, and widget deep links remain uncovered. Android notification routing uses explicit `MainActivity` intents, and iOS feed-source/category routing is handled through notification delegate events rather than direct `openLink`, so keep these blocked unless they can be driven through existing OS notification/widget surfaces. |
 | Tablet, iPad, split layout, rotation | Android tablet, iPad | MAN-205 is deferred | Sidebar/split navigation, settings presentation, reader presentation, and rotation remain uncovered on dedicated large-screen devices. |
-| Large dataset behavior | Android, iOS | MAN-206 is blocked | Pagination and large-search coverage require a non-production `large-content` seed profile. |
+| Large dataset behavior | Android, iOS | REG-134/MAN-206 cover feed pagination beyond the first 40-item page on Android and iOS; REG-134 covers large-dataset search on Android | iOS large-dataset search remains uncovered because Maestro/XCTest hierarchy retrieval times out after opening the large search result screen. Broader performance profiling stays outside Maestro release-gate coverage. |
 | About and support | Android, iOS | REG-125 covers About & Support navigation, About screen content, and open-source licenses; REG-132 covers crash-reporting toggle mutation and report-issue visibility | FAQ is feature-flagged off, and external email/browser actions should stay manual unless assertable through existing in-app state. |
 | Background sync and notification delivery | Android, iOS | MAN-208 is deferred | WorkManager scheduling, iOS background refresh, notification delivery, and notification deep-link routing remain manual/nightly candidates. |
 

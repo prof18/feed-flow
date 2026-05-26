@@ -1,0 +1,37 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible: "E2E seed complete"
+    timeout: 10000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_import_export
+- tapOn:
+    id: import_export_export_articles
+- tapOn: "Bookmarked articles"
+- tapOn: "Confirm"
+- tapOn:
+    text: "SAVE"
+    optional: true
+- tapOn:
+    text: "Save"
+    optional: true
+- tapOn:
+    text: "REPLACE"
+    optional: true
+- tapOn:
+    text: "Replace"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: import_export_article_export_success
+    timeout: 10000

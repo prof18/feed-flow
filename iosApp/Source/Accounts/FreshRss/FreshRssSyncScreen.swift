@@ -39,12 +39,6 @@ struct FreshRssSyncScreen: View {
                     password: password,
                     url: serverUrl
                 )
-            },
-            onE2eLoginSuccess: {
-                vmStoreOwner.instance.applyE2eLoginSuccess()
-            },
-            onE2eLoginError: {
-                vmStoreOwner.instance.applyE2eLoginError()
             }
         )
         .snackbar(messageQueue: $appState.snackbarQueue)

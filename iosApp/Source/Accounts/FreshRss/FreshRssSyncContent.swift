@@ -19,24 +19,6 @@ struct FreshRssSyncContent: View {
     let isLoginLoading: Bool
     let onDisconnectClick: () -> Void
     let onLoginClick: (String, String, String) -> Void
-    let onE2eLoginSuccess: (() -> Void)?
-    let onE2eLoginError: (() -> Void)?
-
-    init(
-        uiState: AccountConnectionUiState,
-        isLoginLoading: Bool,
-        onDisconnectClick: @escaping () -> Void,
-        onLoginClick: @escaping (String, String, String) -> Void,
-        onE2eLoginSuccess: (() -> Void)? = nil,
-        onE2eLoginError: (() -> Void)? = nil
-    ) {
-        self.uiState = uiState
-        self.isLoginLoading = isLoginLoading
-        self.onDisconnectClick = onDisconnectClick
-        self.onLoginClick = onLoginClick
-        self.onE2eLoginSuccess = onE2eLoginSuccess
-        self.onE2eLoginError = onE2eLoginError
-    }
 
     var body: some View {
         content
@@ -152,31 +134,12 @@ struct FreshRssSyncContent: View {
         }
     }
 
-    #if DEBUG
-        private func e2eLoginSection() -> some View {
-            Section {
-                if let onE2eLoginError {
-                    Button("E2E login error", action: onE2eLoginError)
-                        .accessibilityIdentifier(AccountAccessibilityIdentifiers.e2eLoginErrorButton)
-                }
-
-                if let onE2eLoginSuccess {
-                    Button("E2E login success", action: onE2eLoginSuccess)
-                        .accessibilityIdentifier(AccountAccessibilityIdentifiers.e2eLoginSuccessButton)
-                }
-            }
-        }
-    #endif
-
     private func disconnectedView() -> some View {
         Form {
             serverUrlSection()
             usernameSection()
             passwordSection()
             loginButton()
-            #if DEBUG
-                e2eLoginSection()
-            #endif
         }
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)

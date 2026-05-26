@@ -82,6 +82,7 @@ struct GoogleDriveSyncScreenContent: View {
                     }
                 )
                 .disabled(state.syncState is AccountSyncUIState.Loading)
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.disconnectButton)
             }
         }
     }
@@ -93,6 +94,7 @@ struct GoogleDriveSyncScreenContent: View {
                 Text(feedFlowStrings.googleDriveSyncSuccess)
                     .font(.body)
                     .multilineTextAlignment(.leading)
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.connectedMessage)
 
                 if let syncedState = state.syncState as? AccountSyncUIState.Synced {
                     VStack(alignment: .leading) {
@@ -108,6 +110,7 @@ struct GoogleDriveSyncScreenContent: View {
                         }
                     }
                     .padding(.top, Spacing.regular)
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.lastSyncLabel)
                 }
             }
         }
@@ -131,6 +134,7 @@ struct GoogleDriveSyncScreenContent: View {
                         Label(feedFlowStrings.accountConnectButton, systemImage: "link")
                     }
                 )
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.connectButton)
             }
         }
     }

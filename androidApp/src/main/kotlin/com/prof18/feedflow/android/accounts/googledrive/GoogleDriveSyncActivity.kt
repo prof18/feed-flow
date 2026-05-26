@@ -12,12 +12,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.core.model.GoogleDriveSynMessages
 import com.prof18.feedflow.feedsync.googledrive.AuthorizationValidationResult
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
+import com.prof18.feedflow.shared.ui.accounts.AccountE2eIds
 import com.prof18.feedflow.shared.ui.accounts.googledrive.GoogleDriveSyncContent
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -78,7 +80,8 @@ class GoogleDriveSyncActivity : BaseThemeActivity() {
             customPlatformUI = {
                 SettingItem(
                     modifier = Modifier
-                        .padding(top = Spacing.regular),
+                        .padding(top = Spacing.regular)
+                        .testTag(AccountE2eIds.CONNECT_BUTTON),
                     title = strings.googleDriveConnectButton,
                     icon = Icons.Default.Link,
                     onClick = { startSignIn() },

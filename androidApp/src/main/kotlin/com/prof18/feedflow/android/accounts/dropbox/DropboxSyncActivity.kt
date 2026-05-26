@@ -15,12 +15,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.core.model.DropboxSynMessages
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.startDropboxAuth
+import com.prof18.feedflow.shared.ui.accounts.AccountE2eIds
 import com.prof18.feedflow.shared.ui.accounts.dropbox.DropboxSyncContent
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -88,7 +90,9 @@ class DropboxSyncActivity : BaseThemeActivity() {
                     )
 
                     SettingItem(
-                        modifier = Modifier.padding(top = Spacing.regular),
+                        modifier = Modifier
+                            .padding(top = Spacing.regular)
+                            .testTag(AccountE2eIds.CONNECT_BUTTON),
                         title = LocalFeedFlowStrings.current.accountConnectButton,
                         icon = Icons.Default.Link,
                         onClick = {

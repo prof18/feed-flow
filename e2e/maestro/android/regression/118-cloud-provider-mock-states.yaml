@@ -1,0 +1,35 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=sync-linked-mock&account=dropbox
+- extendedWaitUntil:
+    visible: "E2E seed complete"
+    timeout: 10000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_accounts
+- assertVisible:
+    id: accounts_provider_dropbox
+    enabled: true
+- assertVisible:
+    id: accounts_provider_google_drive
+    enabled: false
+- assertVisible:
+    id: accounts_provider_fresh_rss
+    enabled: false
+- tapOn:
+    id: accounts_provider_dropbox
+- assertVisible: "Dropbox"
+- assertVisible:
+    id: account_connected_message
+- assertVisible:
+    id: account_last_sync_label
+- assertVisible:
+    id: account_disconnect_button

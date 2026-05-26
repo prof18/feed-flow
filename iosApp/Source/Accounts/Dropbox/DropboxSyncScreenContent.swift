@@ -106,6 +106,7 @@ struct DropboxSyncScreenContent: View {
                     }
                 )
                 .disabled(state.syncState is AccountSyncUIState.Loading)
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.disconnectButton)
             }
         }
     }
@@ -117,6 +118,7 @@ struct DropboxSyncScreenContent: View {
                 Text(feedFlowStrings.dropboxSyncSuccess)
                     .font(.body)
                     .multilineTextAlignment(.leading)
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.connectedMessage)
 
                 if let syncedState = state.syncState as? AccountSyncUIState.Synced {
                     VStack(alignment: .leading) {
@@ -132,6 +134,7 @@ struct DropboxSyncScreenContent: View {
                         }
                     }
                     .padding(.top, Spacing.regular)
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.lastSyncLabel)
                 }
             }
         }
@@ -159,6 +162,7 @@ struct DropboxSyncScreenContent: View {
                         Label(feedFlowStrings.accountConnectButton, systemImage: "link")
                     }
                 )
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.connectButton)
             }
         }
     }

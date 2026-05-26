@@ -91,6 +91,7 @@ internal fun FeedsAndAccountsScreen(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.ACCOUNTS_ROW),
                     title = LocalFeedFlowStrings.current.settingsAccounts,
                     icon = Icons.Outlined.Sync,
                     onClick = navigateToAccounts,

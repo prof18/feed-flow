@@ -1,0 +1,76 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- extendedWaitUntil:
+    visible: "E2E seed complete"
+    timeout: 10000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_accounts
+- assertVisible:
+    id: accounts_provider_fresh_rss
+- assertVisible:
+    id: accounts_provider_miniflux
+- assertVisible:
+    id: accounts_provider_bazqux
+- assertVisible:
+    id: accounts_provider_feedbin
+- tapOn:
+    id: accounts_provider_fresh_rss
+- assertVisible: "FreshRSS"
+- assertVisible:
+    id: account_connect_button
+    enabled: false
+- tapOn:
+    id: account_server_url_input
+- inputText: "https://e2e.example.com"
+- tapOn:
+    id: account_username_input
+- inputText: "e2e-user"
+- tapOn:
+    id: account_password_input
+- inputText: "e2e-pass"
+- hideKeyboard
+- tapOn:
+    id: account_password_visibility
+- assertVisible: "e2e-pass"
+- assertVisible:
+    id: account_connect_button
+    enabled: true
+- back
+- tapOn:
+    id: accounts_provider_miniflux
+- assertVisible: "Miniflux"
+- assertVisible:
+    id: account_connect_button
+    enabled: false
+- back
+- tapOn:
+    id: accounts_provider_bazqux
+- assertVisible: "BazQux"
+- assertVisible:
+    id: account_username_input
+- assertVisible:
+    id: account_password_input
+- assertVisible:
+    id: account_connect_button
+    enabled: false
+- back
+- tapOn:
+    id: accounts_provider_feedbin
+- assertVisible: "Feedbin"
+- assertVisible:
+    id: account_username_input
+- assertVisible:
+    id: account_password_input
+- assertVisible:
+    id: account_connect_button
+    enabled: false

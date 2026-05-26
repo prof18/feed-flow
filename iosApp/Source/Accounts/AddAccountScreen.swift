@@ -34,6 +34,7 @@ struct AddAccountScreen: View {
                                         .foregroundStyle(.blue)
                                 }
                             }
+                            .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("dropbox"))
 
                         case .icloud:
                             NavigationLink(destination: ICloudSyncScreen(isFromAddAccount: true)) {
@@ -45,6 +46,7 @@ struct AddAccountScreen: View {
                                         .foregroundStyle(.blue)
                                 }
                             }
+                            .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("icloud"))
 
                         case .freshRss:
                             NavigationLink(destination: FreshRssSyncScreen(isFromAddAccount: true)) {
@@ -59,6 +61,7 @@ struct AddAccountScreen: View {
                                         .foregroundStyle(.blue)
                                 }
                             }
+                            .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("fresh_rss"))
 
                         case .miniflux:
                             NavigationLink(destination: MinifluxSyncScreen(isFromAddAccount: true)) {
@@ -73,6 +76,7 @@ struct AddAccountScreen: View {
                                         .foregroundStyle(.blue)
                                 }
                             }
+                            .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("miniflux"))
 
                         case .bazqux:
                             NavigationLink(destination: BazquxSyncScreen(isFromAddAccount: true)) {
@@ -87,6 +91,7 @@ struct AddAccountScreen: View {
                                         .foregroundStyle(.blue)
                                 }
                             }
+                            .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("bazqux"))
 
                         case .googleDrive:
                             NavigationLink(destination: GoogleDriveSyncScreen()) {
@@ -101,6 +106,7 @@ struct AddAccountScreen: View {
                                         .foregroundStyle(.blue)
                                 }
                             }
+                            .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("google_drive"))
 
                         case .feedbin:
                             NavigationLink(destination: FeedbinSyncScreen(isFromAddAccount: true)) {
@@ -115,6 +121,7 @@ struct AddAccountScreen: View {
                                         .foregroundStyle(.blue)
                                 }
                             }
+                            .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("feedbin"))
 
                         case .local:
                             EmptyView()

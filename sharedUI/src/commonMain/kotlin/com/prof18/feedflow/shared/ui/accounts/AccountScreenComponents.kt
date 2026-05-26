@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.shared.ui.accounts.icons.Bazqux
@@ -82,6 +83,7 @@ fun AccountsContent(
                 }
                 Row(
                     modifier = Modifier
+                        .testTag(AccountE2eIds.providerRow(account))
                         .padding(horizontal = Spacing.regular)
                         .clip(RoundedCornerShape(size = 8.dp))
                         .background(
@@ -113,6 +115,17 @@ fun AccountsContent(
             }
         }
     }
+}
+
+object AccountE2eIds {
+    const val SERVER_URL_INPUT = "account_server_url_input"
+    const val USERNAME_INPUT = "account_username_input"
+    const val PASSWORD_INPUT = "account_password_input"
+    const val PASSWORD_VISIBILITY = "account_password_visibility"
+    const val CONNECT_BUTTON = "account_connect_button"
+
+    fun providerRow(account: SyncAccounts): String =
+        "accounts_provider_${account.name.lowercase()}"
 }
 
 private fun SyncAccounts.getTitle() =

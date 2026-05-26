@@ -141,7 +141,9 @@ struct AccountsScreenContent: View {
                 self.showAddAccountSheet.toggle()
             } label: {
                 Label(feedFlowStrings.addAccountButton, systemImage: "plus.app")
-            }.disabled(syncAccount != SyncAccounts.local)
+            }
+            .disabled(syncAccount != SyncAccounts.local)
+            .accessibilityIdentifier(AccountAccessibilityIdentifiers.addAccount)
         }
         .sheet(isPresented: $showAddAccountSheet) {
             AddAccountScreen(

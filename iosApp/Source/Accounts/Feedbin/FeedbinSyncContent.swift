@@ -52,6 +52,7 @@ struct FeedbinSyncContent: View {
                     .textContentType(.username)
                     .keyboardType(.emailAddress)
                     .disableAutocorrection(true)
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.usernameInput)
             },
             header: {
                 Text(feedFlowStrings.accountTextFieldUsername)
@@ -71,9 +72,11 @@ struct FeedbinSyncContent: View {
                     if isPasswordVisible {
                         TextField(feedFlowStrings.accountTextFieldPassword, text: $password)
                             .textContentType(.password)
+                            .accessibilityIdentifier(AccountAccessibilityIdentifiers.passwordInput)
                     } else {
                         SecureField(feedFlowStrings.accountTextFieldPassword, text: $password)
                             .textContentType(.password)
+                            .accessibilityIdentifier(AccountAccessibilityIdentifiers.passwordInput)
                     }
 
                     Button(
@@ -83,6 +86,7 @@ struct FeedbinSyncContent: View {
                                 .foregroundColor(.gray)
                         }
                     )
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.passwordVisibility)
                 }
             },
             header: {
@@ -111,6 +115,7 @@ struct FeedbinSyncContent: View {
                 }
             )
             .disabled(isLoginLoading || username.isEmpty || password.isEmpty)
+            .accessibilityIdentifier(AccountAccessibilityIdentifiers.connectButton)
         }
     }
 

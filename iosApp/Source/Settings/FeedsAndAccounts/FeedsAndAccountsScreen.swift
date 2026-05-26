@@ -30,6 +30,7 @@ struct FeedsAndAccountsScreen: View {
                 NavigationLink(destination: AccountsScreen()) {
                     Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
                 }
+                .accessibilityIdentifier(FeedsAndAccountsAccessibilityIdentifiers.accountsRow)
 
                 NavigationLink(destination: NotificationsSettingsScreen()) {
                     Label(feedFlowStrings.settingsNotificationsTitle, systemImage: "bell")
@@ -50,6 +51,7 @@ struct FeedsAndAccountsScreen: View {
 }
 
 private enum FeedsAndAccountsAccessibilityIdentifiers {
+    static let accountsRow = "settings_accounts"
     static let importExportRow = "settings_import_export"
     static let blockedWordsRow = "settings_blocked_words"
 }

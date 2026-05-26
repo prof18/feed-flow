@@ -63,7 +63,7 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F008 | Stable ids for drawer/library entries | Passing | REG-104, REG-105 | Added stable ids for timeline/read/bookmarks/categories/feed sources |
 | F009 | Stable ids for article rows/actions | In progress | RG-004, RG-005, REG-106, REG-107 | Article row ids added for RG-004; add context and swipe action ids as flows need them |
 | F010 | Stable ids for settings rows/actions | In progress | RG-009, RG-010, REG-113-115 | Feed-list, reading behavior, appearance, sync/storage, and notifications settings ids added; add other settings ids as flows need them |
-| F011 | Stable ids for reader toolbar/actions | Passing | RG-007, REG-110, REG-111 | Reader article, bookmark, browser, font menu, overflow, back, and navigation ids added for RG-007; image viewer ids still deferred to REG-111 |
+| F011 | Stable ids for reader toolbar/actions | Passing | RG-007, REG-110, REG-111 | Reader article, bookmark, browser, font menu, overflow, back, navigation, and image viewer ids added |
 | F012 | OPML fixture files | Passing | RG-011, REG-119 | `e2e/fixtures/opml/feedflow-valid-opml-smoke.xml`; OPML content uses `.xml` extension so Android DocumentsUI shows it as a document |
 | F013 | CSV fixture files | Passing | RG-011, REG-120 | `e2e/fixtures/csv/feedflow-articles-smoke.csv`; `feed_source_id` matches the OPML-imported feed URL hash |
 | F014 | `reader-mode` profile validation flow | Passing | RG-007, REG-110, REG-111 | Covered by RG-007 reader-mode flow |
@@ -127,7 +127,7 @@ Start these after the release gate is stable.
 | REG-108 | Feed Layout Matrix | `card-layout`, `compact-list` | Android, iOS | Passing | Android and iOS `108-feed-layout-matrix-card.yaml` and `108-feed-layout-matrix-compact.yaml` passed via Maestro CLI on 2026-05-25 |
 | REG-109 | Feed Order And Mark Above Below | `oldest-first` | Android, iOS | Not started | Needs mark-above/below action targeting |
 | REG-110 | Reader Fallback | `reader-mode` | Android, iOS | Passing | Android and iOS `110-reader-fallback.yaml` passed via Maestro CLI on 2026-05-26 |
-| REG-111 | Reader Image Viewer | `reader-mode` | Android, iOS | Not started | May need screenshot/assertion strategy |
+| REG-111 | Reader Image Viewer | `reader-mode` | Android, iOS | Passing | Android and iOS `111-reader-image-viewer.yaml` passed via Maestro CLI on 2026-05-26 |
 | REG-112 | Link Opening Preferences | `external-browser` | Android, iOS | In progress | Android and iOS `112-link-opening-preferences.yaml` passed via Maestro CLI on 2026-05-25 for the deterministic per-feed Reader Mode override; preferred/external browser branch assertions still need a stable strategy |
 | REG-113 | Sync And Storage Settings | `content-rich` | Android, iOS | Passing | Android and iOS `113-sync-storage-settings.yaml` passed via Maestro CLI on 2026-05-26; Android covers the extra sync-period dropdown |
 | REG-114 | Appearance Settings | `content-rich` | Android, iOS | Passing | Android and iOS `114-appearance-settings.yaml` passed via Maestro CLI on 2026-05-26; Android covers Black theme and reduce motion |

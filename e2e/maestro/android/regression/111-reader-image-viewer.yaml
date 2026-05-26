@@ -1,0 +1,30 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=reader-mode
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: reader_article_e2e_article_reader_success
+- assertVisible:
+    id: reader_open_image_button
+- tapOn:
+    id: reader_open_image_button
+- assertVisible:
+    id: reader_image_viewer
+- assertVisible:
+    id: reader_image_viewer_close_button
+- assertVisible:
+    id: reader_image_viewer_share_button
+- tapOn:
+    id: reader_image_viewer_close_button
+- assertVisible:
+    id: reader_article_e2e_article_reader_success

@@ -70,6 +70,12 @@ Run the Android deep-link regression flow:
 e2e/scripts/run-android-deep-links.sh
 ```
 
+Run the Android tablet layout manual-supported flow:
+
+```bash
+e2e/scripts/run-android-tablet-layout.sh
+```
+
 ## Foundation Work
 
 | ID | Work | Status | Blocks | Notes |
@@ -192,7 +198,7 @@ These should not block the normal release gate until they are reliable.
 | MAN-202 | Android Widget Launcher Smoke | `android-widget` | Android | Deferred | Needs widget host/launcher automation strategy |
 | MAN-203 | iOS Widget Deep Link | `content-rich` | iOS | Passing | Covered by iOS `126-deep-link-routing.yaml`, which passed via Maestro CLI on 2026-05-26 for the `feedflow://feed/<id>` route used by widget links. Real SpringBoard widget tap automation remains out of scope for this row. |
 | MAN-204 | Share Extension Smoke | `empty` | Android, iOS | Blocked | Android `e2e/scripts/run-android-share-intent.sh` passed on 2026-05-26; covers the real `ACTION_SEND` entry point with a local RSS fixture served through `10.0.2.2`, and verifies the shared feed/article are added. iOS Share Extension receive/add-feed remains blocked by OS share-sheet automation. |
-| MAN-205 | Tablet And Split Layout | `content-rich` | Android tablet, iPad | Deferred | Requires dedicated devices/simulators |
+| MAN-205 | Tablet And Split Layout | `content-rich` | Android tablet, iPad | Blocked | Android `e2e/scripts/run-android-tablet-layout.sh` passed on 2026-05-26 by temporarily setting the emulator to tablet width and verifying the docked drawer plus feed list remain visible while switching library filters. iPad split-layout coverage remains blocked until a reliable iPad simulator install/run lane is added. |
 | MAN-206 | Large Dataset Pagination | `large-content` | Android, iOS | Passing | Covered by REG-134 with the non-production `large-content` seed profile |
 | MAN-207 | Real Provider Smoke | real providers | Android, iOS | Deferred | Manual/nightly only with staging credentials |
 | MAN-208 | Background Sync Timing | profile TBD | Android, iOS | Deferred | OS timing makes this manual/nightly |
@@ -217,7 +223,7 @@ Last audited: 2026-05-26. This section tracks user-facing Android/iOS features t
 | Widgets | Android, iOS | MAN-201 covers Android widget configuration; MAN-203/REG-126 cover the iOS widget feed-link route; MAN-202 is not passing | Android widget launcher smoke and real iOS SpringBoard widget tap automation remain uncovered; both need stable widget-host/SpringBoard automation. |
 | Share extension / share intent | Android, iOS | MAN-204 covers Android `ACTION_SEND` with a local RSS fixture | iOS Share Extension receive/add-feed remains uncovered because it requires stable OS share-sheet automation. |
 | App deep links from notifications/widgets | Android, iOS | REG-126 covers Android article, feed-source filter, and category routes plus iOS `feedflow://feed/<id>` article routing; MAN-203 covers the iOS widget feed-link route | Real Android/iOS notification delivery taps and real widget-tap surfaces remain uncovered because they require stable OS notification/widget automation. iOS feed-source/category routing is handled through notification delegate events rather than direct `openLink`, so keep that OS-notification surface blocked unless it can be driven reliably. |
-| Tablet, iPad, split layout, rotation | Android tablet, iPad | MAN-205 is deferred | Sidebar/split navigation, settings presentation, reader presentation, and rotation remain uncovered on dedicated large-screen devices. |
+| Tablet, iPad, split layout, rotation | Android tablet, iPad | MAN-205 covers Android tablet-width docked drawer plus feed-list filter switching | iPad split navigation, large-screen settings presentation, large-screen reader presentation, and rotation remain uncovered on dedicated large-screen devices. |
 | Large dataset behavior | Android, iOS | REG-134/MAN-206 cover feed pagination beyond the first 40-item page on Android and iOS; REG-134 covers large-dataset search on Android | iOS large-dataset search remains uncovered because Maestro/XCTest hierarchy retrieval times out after opening the large search result screen. Broader performance profiling stays outside Maestro release-gate coverage. |
 | About and support | Android, iOS | REG-125 covers About & Support navigation, About screen content, and open-source licenses; REG-132 covers crash-reporting toggle mutation and report-issue visibility | FAQ is feature-flagged off, and external email/browser actions should stay manual unless assertable through existing in-app state. |
 | Background sync and notification delivery | Android, iOS | MAN-208 is deferred | WorkManager scheduling, iOS background refresh, notification delivery, and notification deep-link routing remain manual/nightly candidates. |

@@ -156,6 +156,31 @@ These should not block the normal release gate until they are reliable.
 | MAN-207 | Real Provider Smoke | real providers | Android, iOS | Deferred | Manual/nightly only with staging credentials |
 | MAN-208 | Background Sync Timing | profile TBD | Android, iOS | Deferred | OS timing makes this manual/nightly |
 
+## Coverage Audit
+
+Last audited: 2026-05-26. This section tracks user-facing Android/iOS features that are uncovered or only partially covered by the current Maestro plan. Do not solve these by adding production UI, visible debug controls, provider mock branches, or debug-gated production behavior solely for E2E. Use existing behavior, fixtures, seed profiles, deep links, launch arguments, or non-production test files.
+
+| Area | Platforms | Current Coverage | Gap / Constraint |
+| --- | --- | --- | --- |
+| Article context menu full action set | Android, iOS | REG-106 covers bookmark and mark-read mutations only | Share, share comments, open comments, open feed settings, and open feed website are not asserted. These touch OS share/browser surfaces, so keep the reliable mutation checks separate from any manual/OS-owned checks. |
+| Home overflow menu | Android, iOS | RG-005 covers mark-all-read | Force refresh, sort/view-options sheet, source-filter edit entry point, clear-old-articles confirmation, and sync backup action are not covered. Backup depends on seeded sync-upload-required state or a linked sync profile. |
+| Reading behavior settings | Android, iOS | RG-010 covers reader mode, show-read, and auto-hide read | Browser selector, save reader content, prefetch article content confirmation, and mark-read-when-scrolling are not covered. Browser assertions may stay blocked by OS/browser automation. |
+| Feed list settings detail matrix | Android, iOS | RG-009/REG-108 cover layout, image visibility, order, and seeded compact/card profiles | Font scale, hide date, hide unread dot, hide feed source, remove duplicated title from description, description line limit variants, date format, time format, and swipe-action picker persistence are not directly exercised. |
+| Sync and storage settings destructive/platform actions | Android, iOS | REG-113 covers refresh-on-launch, RSS parsing errors, auto-delete picker, Android sync period, and clear-downloaded cancel path | Confirming clear downloaded articles, Android clear image cache, Android Wi-Fi-only and charging-only restrictions, and persisted relaunch assertions are not covered. |
+| Notifications settings mutations | Android, iOS | REG-115 asserts seeded notification profile and grouping picker | Enable-all mutation, per-feed toggle mutation, empty/no-feeds notification state, denied-permission/open-settings path, Android check-period mutation, and Android sync restrictions from the notifications screen are not covered. |
+| Add/edit feed secondary options | Android, iOS | RG-008 covers edit title/category/pin/hide; REG-101-103 cover add/feed suggestions basics | Add-feed category selection, add/edit notification toggle, and every edit-feed link-opening preference option are not fully covered. Keep live feed validation/OAuth out of release-gate flows. |
+| Link opening preferences | Android, iOS | REG-112 covers deterministic reader-mode override only | Default/internal/preferred browser paths and OS external-browser assertions remain unimplemented because they require stable browser or OS-level automation. |
+| Swipe actions | Android, iOS | REG-107 covers read/bookmark swipes; Android covers disabled swipes | iOS disabled-swipe and open-in-browser swipe branches remain uncovered because the gesture currently opens the row or escapes to OS/browser surfaces. |
+| Account provider auth and cloud actions | Android, iOS | REG-116 covers one-account constraint; REG-117 covers required-field validation; REG-118 covers seeded Dropbox and iOS iCloud linked screens | Mocked success/error auth, Google Drive mock state, cloud unlink, backup/upload actions, and real provider sync remain uncovered without live credentials or existing provider-side mock support. |
+| Import/export advanced paths | Android, iOS | RG-011 covers import smoke; REG-119 covers invalid OPML; REG-120 covers CSV import/read/bookmark state | OPML partial-failure reporting and CSV/OPML export filter/save paths remain uncovered until fixture/provider data and document-save automation are stable without app changes. |
+| Widgets | Android, iOS | MAN-201-203 are not passing | Android widget settings/configuration/launcher and iOS widget deep links are uncovered; both need stable widget-host/SpringBoard automation. |
+| Share extension / share intent | Android, iOS | MAN-204 is deferred | Android `ACTION_SEND` add-feed activity and iOS Share Extension receive/add-feed flows are uncovered because OS share surfaces are unstable. |
+| App deep links from notifications/widgets | Android, iOS | Reader deep-link behavior is indirectly used by widgets/manual plan only | `feedflow://feed/<id>`, feed-source filter, and category deep links are not covered as standalone E2E flows. These can be tested with seed deep links/openLink if the platform routes are stable. |
+| Tablet, iPad, split layout, rotation | Android tablet, iPad | MAN-205 is deferred | Sidebar/split navigation, settings presentation, reader presentation, and rotation remain uncovered on dedicated large-screen devices. |
+| Large dataset behavior | Android, iOS | MAN-206 is blocked | Pagination and large-search coverage require a non-production `large-content` seed profile. |
+| About and support | Android, iOS | Not listed in release/regression/manual suites | About screen, open-source licenses, crash-reporting toggle, report issue, and FAQ links are uncovered. External email/browser actions should stay manual unless assertable through existing in-app state. |
+| Background sync and notification delivery | Android, iOS | MAN-208 is deferred | WorkManager scheduling, iOS background refresh, notification delivery, and notification deep-link routing remain manual/nightly candidates. |
+
 ## Per-Test Work Template
 
 Use this checklist when implementing a test:

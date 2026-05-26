@@ -55,6 +55,13 @@ class AddFeedViewModel internal constructor(
         }
     }
 
+    fun prepareE2eForceAddFailure() {
+        feedUrl = E2E_FORCE_ADD_FEED_URL
+        viewModelScope.launch {
+            feedAddedMutableState.emit(FeedAddedState.Error.InvalidUrl(canForceAdd = true))
+        }
+    }
+
     fun updateNotificationStatus(status: Boolean) {
         isNotificationEnabledMutableStateFlow.update { status }
     }
@@ -124,4 +131,8 @@ class AddFeedViewModel internal constructor(
 
     fun validateCategoryName(categoryId: CategoryId?, newName: CategoryName): CategoryNameValidationResult =
         categoryRepository.validateCategoryName(categoryId, newName)
+
+    private companion object {
+        const val E2E_FORCE_ADD_FEED_URL = "https://e2e-force-add.local/feed.xml"
+    }
 }

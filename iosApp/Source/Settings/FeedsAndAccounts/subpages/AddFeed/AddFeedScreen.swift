@@ -57,6 +57,11 @@ struct AddFeedScreen: View {
                 },
                 forceAddFeed: {
                     vmStoreOwner.instance.forceAddFeed()
+                },
+                prepareE2eForceAddFailure: {
+                    let e2eURL = "https://e2e-force-add.local/feed.xml"
+                    feedURL = e2eURL
+                    vmStoreOwner.instance.prepareE2eForceAddFailure()
                 }
             )
             .snackbar(messageQueue: $appState.snackbarQueue)

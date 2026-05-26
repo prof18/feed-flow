@@ -48,6 +48,7 @@ fun AddFeedContent(
     canForceAdd: Boolean,
     onForceAddFeed: () -> Unit,
     modifier: Modifier = Modifier,
+    onPrepareE2eForceAddFailure: (() -> Unit)? = null,
     showNotificationToggle: Boolean = false,
     onNotificationToggleChanged: (Boolean) -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
@@ -84,6 +85,18 @@ fun AddFeedContent(
                     errorMessage = errorMessage,
                     onFeedUrlUpdated = onFeedUrlUpdated,
                 )
+
+                onPrepareE2eForceAddFailure?.let { prepareForceAddFailure ->
+                    OutlinedButton(
+                        modifier = Modifier
+                            .padding(top = Spacing.small)
+                            .fillMaxWidth()
+                            .testTag(FeedFormE2eIds.ADD_FEED_PREPARE_FORCE_ADD_FAILURE),
+                        onClick = prepareForceAddFailure,
+                    ) {
+                        Text(LocalFeedFlowStrings.current.invalidRssUrlWithRetryHint)
+                    }
+                }
             }
 
             item {
@@ -154,6 +167,7 @@ fun AddFeedContent(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Checkbox(
+                                modifier = Modifier.testTag(FeedFormE2eIds.ADD_FEED_FORCE_ADD_ACKNOWLEDGE),
                                 checked = acknowledged,
                                 onCheckedChange = { acknowledged = it },
                             )
@@ -167,7 +181,8 @@ fun AddFeedContent(
                         OutlinedButton(
                             modifier = Modifier
                                 .padding(top = Spacing.small)
-                                .fillMaxWidth(),
+                                .fillMaxWidth()
+                                .testTag(FeedFormE2eIds.ADD_FEED_FORCE_ADD_BUTTON),
                             enabled = acknowledged && !showLoading,
                             onClick = onForceAddFeed,
                         ) {

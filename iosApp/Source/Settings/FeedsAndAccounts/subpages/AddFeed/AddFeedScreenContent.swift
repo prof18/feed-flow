@@ -24,6 +24,7 @@ struct AddFeedScreenContent: View {
     @Binding var isNotificationEnabled: Bool
     @Binding var canForceAdd: Bool
     @State private var acknowledged: Bool = false
+    @State private var showE2eForceAdd = false
 
     var categorySelectorObserver: CategorySelectorObserver
     let viewModel: AddFeedViewModel
@@ -33,6 +34,7 @@ struct AddFeedScreenContent: View {
     let onNotificationToggled: (Bool) -> Void
     let addFeed: () -> Void
     let forceAddFeed: () -> Void
+    let prepareE2eForceAddFailure: () -> Void
 
     var body: some View {
         Form {
@@ -55,6 +57,16 @@ struct AddFeedScreenContent: View {
                             Image(systemName: "textformat")
                         }
                         .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.applyE2eUrlButton)
+                        .hoverEffect()
+
+                        Button {
+                            prepareE2eForceAddFailure()
+                            acknowledged = false
+                            showE2eForceAdd = true
+                        } label: {
+                            Image(systemName: "exclamationmark.triangle")
+                        }
+                        .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.prepareForceAddFailureButton)
                         .hoverEffect()
                     #endif
                 },
@@ -120,17 +132,33 @@ struct AddFeedScreenContent: View {
                 }
             }
 
-            if showError && canForceAdd {
+            if (showError && canForceAdd) || showE2eForceAdd {
                 Section {
                     VStack(alignment: .leading, spacing: 20) {
+                        if showE2eForceAdd {
+                            Text(feedFlowStrings.invalidRssUrlWithRetryHint)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+
                         Toggle(isOn: $acknowledged) {
                             Text(feedFlowStrings.addFeedAnywayAcknowledgement)
                                 .font(.subheadline)
                         }
 
+                        #if DEBUG
+                            Button {
+                                acknowledged = true
+                            } label: {
+                                Image(systemName: "checkmark.circle")
+                            }
+                            .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.forceAddAcknowledgeToggle)
+                        #endif
+
                         Button(
                             action: {
                                 isAddingFeed = true
+                                showE2eForceAdd = false
                                 forceAddFeed()
                             },
                             label: {
@@ -145,6 +173,7 @@ struct AddFeedScreenContent: View {
                         )
                         .buttonStyle(.bordered)
                         .disabled(!acknowledged || isAddingFeed)
+                        .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.forceAddButton)
                     }
                     .padding(.vertical, 4)
                 }
@@ -187,7 +216,7 @@ struct AddFeedScreenContent: View {
             }
 
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if !(showError && canForceAdd) {
+                if !((showError && canForceAdd) || showE2eForceAdd) {
                     saveButton
                 }
             }
@@ -216,6 +245,9 @@ private enum AddFeedAccessibilityIdentifiers {
     static let saveButton = "add_feed_save_button"
     static let categorySelector = "edit_feed_category_selector"
     static let applyE2eUrlButton = "add_feed_apply_e2e_url"
+    static let prepareForceAddFailureButton = "add_feed_prepare_force_add_failure"
+    static let forceAddAcknowledgeToggle = "add_feed_force_add_acknowledge"
+    static let forceAddButton = "add_feed_force_add_button"
 }
 
 // Previews disabled - require AddFeedViewModel instance

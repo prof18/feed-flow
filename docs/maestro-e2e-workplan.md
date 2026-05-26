@@ -118,7 +118,7 @@ Start these after the release gate is stable.
 | ID | Test | Profile | Platforms | Status | Notes |
 | --- | --- | --- | --- | --- | --- |
 | REG-101 | Add Feed Form Validation | `empty` | Android, iOS | Passing | Android and iOS `101-add-feed-form-validation.yaml` passed via Maestro CLI on 2026-05-26 using deterministic fixture URL validation |
-| REG-102 | Force Add Feed | `empty` | Android, iOS | Not started | Needs failed feed validation fixture/state |
+| REG-102 | Force Add Feed | `empty` | Android, iOS | Passing | Android and iOS `102-force-add-feed.yaml` passed via Maestro CLI on 2026-05-26 using DEBUG deterministic force-add failure state |
 | REG-103 | Feed Suggestions | `empty` | Android, iOS | Passing | Android and iOS `103-feed-suggestions.yaml` passed via Maestro CLI on 2026-05-26 using app-provided Business suggestions |
 | REG-104 | Feed Source List Management | `content-rich` | Android, iOS | Passing | Android and iOS `104-feed-source-list-management.yaml` passed via Maestro CLI on 2026-05-26; Android covers inline rename, both cover expand/collapse, delete confirmation, and fetch-failed warning |
 | REG-105 | Category Management | `content-rich` | Android, iOS | Passing | Android `105-category-management.yaml`, iOS `105-category-add-validation.yaml`, and iOS `105-category-management.yaml` passed via Maestro CLI on 2026-05-26 |

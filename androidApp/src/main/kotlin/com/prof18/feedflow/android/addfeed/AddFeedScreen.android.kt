@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
@@ -124,6 +125,14 @@ fun AddFeedScreen(
         onForceAddFeed = {
             viewModel.forceAddFeed()
         },
+        onPrepareE2eForceAddFailure = if (BuildConfig.DEBUG) {
+            {
+                feedUrl = E2E_FORCE_ADD_FEED_URL
+                viewModel.prepareE2eForceAddFailure()
+            }
+        } else {
+            null
+        },
         topAppBar = {
             TopAppBar(
                 title = {
@@ -172,6 +181,8 @@ fun AddFeedScreen(
         )
     }
 }
+
+private const val E2E_FORCE_ADD_FEED_URL = "https://e2e-force-add.local/feed.xml"
 
 @PreviewPhone
 @Composable

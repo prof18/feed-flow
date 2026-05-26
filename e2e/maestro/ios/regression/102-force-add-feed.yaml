@@ -1,0 +1,43 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    text: "Add feed"
+- tapOn:
+    id: add_feed_prepare_force_add_failure
+- scrollUntilVisible:
+    element:
+      id: add_feed_force_add_button
+    direction: DOWN
+- assertVisible: "This feed hasn't been verified. Fetching will still be attempted, and it can be removed later if it doesn't work."
+- assertVisible:
+    id: add_feed_force_add_button
+    enabled: false
+- tapOn:
+    id: add_feed_force_add_acknowledge
+- assertVisible:
+    id: add_feed_force_add_button
+    enabled: true
+- tapOn:
+    id: add_feed_force_add_button
+- tapOn:
+    text: "Feeds & Accounts"
+- tapOn:
+    point: 9%,12%
+- tapOn:
+    id: settings_done_button
+- tapOn:
+    id: drawer_category_expand_uncategorized
+- assertVisible: "e2e-force-add.local"

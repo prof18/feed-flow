@@ -1,0 +1,34 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_reading_behavior
+- assertVisible: "In-app browser"
+- tapOn: "Browser"
+- tapOn: "Default browser"
+- assertVisible: "Default browser"
+- tapOn:
+    id: BackButton
+- tapOn:
+    id: settings_done_button
+- tapOn:
+    id: drawer_timeline
+    optional: true
+- launchApp
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_reading_behavior
+- assertVisible: "Default browser"

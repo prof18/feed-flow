@@ -1,0 +1,34 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=sync-linked-mock&account=icloud
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 10000
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_accounts
+- tapOn:
+    id: accounts_provider_icloud
+- assertVisible:
+    id: account_disconnect_button
+- tapOn:
+    id: account_disconnect_button
+- extendedWaitUntil:
+    visible:
+      id: account_connect_button
+    timeout: 10000
+- tapOn:
+    id: BackButton
+- assertVisible:
+    id: accounts_add_account
+    enabled: true

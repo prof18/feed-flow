@@ -125,7 +125,7 @@ Start these after the release gate is stable.
 | REG-106 | Article Context Menu | `content-rich` | Android, iOS | Passing | Android and iOS `106-article-context-menu.yaml` passed via Maestro CLI on 2026-05-26 |
 | REG-107 | Swipe Actions | profile TBD | Android, iOS | Blocked | Needs seeded swipe settings profile or flow setup |
 | REG-108 | Feed Layout Matrix | `card-layout`, `compact-list` | Android, iOS | Passing | Android and iOS `108-feed-layout-matrix-card.yaml` and `108-feed-layout-matrix-compact.yaml` passed via Maestro CLI on 2026-05-25 |
-| REG-109 | Feed Order And Mark Above Below | `oldest-first` | Android, iOS | Not started | Needs mark-above/below action targeting |
+| REG-109 | Feed Order And Mark Above Below | `oldest-first` | Android, iOS | Passing | Android and iOS `109-feed-order-mark-above-below.yaml` passed via Maestro CLI on 2026-05-26 |
 | REG-110 | Reader Fallback | `reader-mode` | Android, iOS | Passing | Android and iOS `110-reader-fallback.yaml` passed via Maestro CLI on 2026-05-26 |
 | REG-111 | Reader Image Viewer | `reader-mode` | Android, iOS | Passing | Android and iOS `111-reader-image-viewer.yaml` passed via Maestro CLI on 2026-05-26 |
 | REG-112 | Link Opening Preferences | `external-browser` | Android, iOS | In progress | Android and iOS `112-link-opening-preferences.yaml` passed via Maestro CLI on 2026-05-25 for the deterministic per-feed Reader Mode override; preferred/external browser branch assertions still need a stable strategy |

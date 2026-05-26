@@ -1,0 +1,14 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- openLink: feedflow://feed/e2e-article-reader-success
+- extendedWaitUntil:
+    visible: "E2E Reader Mode Success Article.*"
+    timeout: 10000
+- assertVisible: "E2E cached reader content loaded from the seed fixture."

@@ -1,0 +1,23 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp:
+    permissions:
+      notifications: allow
+- openLink: feedflow://e2e/reset-and-seed?profile=notifications
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn: "Notifications"
+- tapOn: "Notification check frequency"
+- tapOn: "Every 6 hours"
+- assertVisible: "Every 6 hours"
+- tapOn: "Background sync only on Wi-Fi"
+- tapOn: "Background sync only while charging"
+- tapOn: "Enable All Notifications"
+- tapOn: "Android Central RSS Feed"

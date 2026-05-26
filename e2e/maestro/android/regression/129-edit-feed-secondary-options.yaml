@@ -1,0 +1,27 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp:
+    permissions:
+      notifications: allow
+- openLink: feedflow://e2e/reset-and-seed?profile=notifications
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- longPressOn:
+    id: article_row_e2e_article_newest_unread
+- tapOn: "Open feed settings"
+- assertVisible: "Edit feed"
+- assertVisible: "Link opening behaviour"
+- tapOn: "Link opening behaviour"
+- tapOn: "Reader mode"
+- assertVisible: "Reader mode"
+- scrollUntilVisible:
+    element: "Enable notifications for new articles"
+    direction: DOWN
+    timeout: 10000
+- tapOn: "Enable notifications for new articles"
+- tapOn:
+    id: edit_feed_save
+- extendedWaitUntil:
+    visible: "E2E Newest Unread Article: Motorola Razr deals"
+    timeout: 10000

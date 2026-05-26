@@ -223,7 +223,13 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.NOTIFICATIONS -> applyNotificationSettings()
             E2eSeedProfile.ANDROID_WIDGET -> applyCardLayoutSettings()
             E2eSeedProfile.SYNC_LINKED_MOCK -> applyMockLinkedAccount(account ?: E2eSeedAccount.FRESH_RSS)
+            E2eSeedProfile.SYNC_UPLOAD_REQUIRED -> applySyncUploadRequiredSettings(account ?: E2eSeedAccount.FRESH_RSS)
         }
+    }
+
+    private fun applySyncUploadRequiredSettings(account: E2eSeedAccount) {
+        applyMockLinkedAccount(account)
+        settingsRepository.setIsSyncUploadRequired(true)
     }
 
     private fun applyMockLinkedAccount(account: E2eSeedAccount) {

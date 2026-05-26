@@ -77,6 +77,7 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F019 | Mock account seed state | In progress | REG-116, REG-118 | `sync-linked-mock` can seed a linked account via `account=fresh_rss`, `miniflux`, `bazqux`, `feedbin`, `dropbox`, or `icloud`; Google Drive mock auth is not testable without production provider/mock behavior changes |
 | F020 | `large-content` profile | Blocked | MAN-206 | Not implemented; leave blocked unless a non-production seed profile is added |
 | F021 | Stable ids and hooks for search controls | Passing | RG-006 | Android search field/filter ids added; iOS uses seeded query/filter hooks because SwiftUI `.searchable` is OS-owned and flaky to type into with Maestro |
+| F022 | `sync-upload-required` profile | Passing | REG-133 | Seeds content-rich data, a linked mock sync account, and pending upload state so the Home backup action is visible without live credentials |
 
 ## Release Gate
 
@@ -152,6 +153,7 @@ Start these after the release gate is stable.
 | REG-130 | Add Feed Secondary Options | `notifications` | Android, iOS | Passing | Android and iOS `130-add-feed-secondary-options.yaml` passed via Maestro CLI on 2026-05-26; covers selecting an existing seeded category and toggling feed notifications on the add-feed form without depending on live feed validation. |
 | REG-131 | Home Source Filter Edit Entry | `content-rich` | Android, iOS | Passing | Android and iOS `131-home-source-filter-edit-entry.yaml` passed via Maestro CLI on 2026-05-26; covers selecting a feed-source filter from the drawer and opening that source's edit screen from the Home overflow menu. |
 | REG-132 | About Support Secondary Options | `content-rich` | Android, iOS | Passing | Android and iOS `132-about-support-secondary-options.yaml` passed via Maestro CLI on 2026-05-26; covers crash-reporting toggle mutation and support-link visibility without opening external email/browser surfaces. |
+| REG-133 | Home Sync Backup Action | `sync-upload-required` | Android, iOS | Passing | Android and iOS `133-home-sync-backup-action.yaml` passed via Maestro CLI on 2026-05-26; covers the pending-upload Home overflow action with a linked mock sync account and no live provider credentials. |
 
 ## Manual-Supported Suite
 
@@ -175,7 +177,7 @@ Last audited: 2026-05-26. This section tracks user-facing Android/iOS features t
 | Area | Platforms | Current Coverage | Gap / Constraint |
 | --- | --- | --- | --- |
 | Article context menu full action set | Android, iOS | REG-106 covers bookmark and mark-read mutations; REG-109 covers mark-all-above/below; REG-129 covers open feed settings | Share, share comments, open comments, and open feed website are not asserted. These touch OS share/browser surfaces, so keep the reliable mutation checks separate from any manual/OS-owned checks. |
-| Home overflow menu | Android, iOS | RG-005 covers mark-all-read; REG-124 covers force-refresh visibility, sort/view-options sheet controls, and clear-old-articles confirmation; REG-131 covers the source-filter edit entry point | Sync backup action is not covered. Backup depends on seeded sync-upload-required state or a linked sync profile. |
+| Home overflow menu | Android, iOS | RG-005 covers mark-all-read; REG-124 covers force-refresh visibility, sort/view-options sheet controls, and clear-old-articles confirmation; REG-131 covers the source-filter edit entry point; REG-133 covers the pending-upload backup action | No remaining app-owned Home overflow menu gaps are known. |
 | Reading behavior settings | Android, iOS | RG-010 covers reader mode, show-read, and auto-hide read; REG-121 covers browser row visibility, save reader content, prefetch article content confirmation, and mark-read-when-scrolling | Browser selector mutation and OS browser assertions may stay blocked by OS/browser automation. |
 | Feed list settings detail matrix | Android, iOS | RG-009/REG-108 cover layout, image visibility, order, and seeded compact/card profiles; REG-122 covers font scale visibility, hide date, hide unread dot, hide feed source, remove duplicated title from description, description line limit, date format, time format, and swipe-action pickers | Persisted relaunch assertions for every secondary option are not directly exercised. |
 | Sync and storage settings destructive/platform actions | Android, iOS | REG-113 covers refresh-on-launch, RSS parsing errors, auto-delete picker, Android sync period, and clear-downloaded cancel path; REG-123 covers clear-downloaded confirmation, Android clear image cache, and Android Wi-Fi-only and charging-only restrictions | Persisted relaunch assertions for every secondary option are not covered. |

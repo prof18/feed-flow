@@ -1,0 +1,6 @@
+appId: com.prof18.feedflow.debug
+---
+- extendedWaitUntil:
+    visible: "E2E Shared Feed"
+    timeout: 15000
+- assertVisible: "E2E Shared Feed Article"

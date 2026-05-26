@@ -58,6 +58,12 @@ Run the Android widget configuration manual-supported flow:
 e2e/scripts/run-android-widget-config.sh
 ```
 
+Run the Android share-intent manual-supported flow:
+
+```bash
+e2e/scripts/run-android-share-intent.sh
+```
+
 ## Foundation Work
 
 | ID | Work | Status | Blocks | Notes |
@@ -179,7 +185,7 @@ These should not block the normal release gate until they are reliable.
 | MAN-201 | Android Widget Configuration | `android-widget` | Android | Passing | `e2e/scripts/run-android-widget-config.sh` passed on 2026-05-26; covers seeded widget preview/settings, header toggle preview mutation, background color picker invalid-value validation, text color mode mutation, and the Add Widget confirmation path using the existing configuration activity |
 | MAN-202 | Android Widget Launcher Smoke | `android-widget` | Android | Deferred | Needs widget host/launcher automation strategy |
 | MAN-203 | iOS Widget Deep Link | `content-rich` | iOS | Not started | iOS-only; requires stable SpringBoard/widget automation without production UI changes |
-| MAN-204 | Share Extension Smoke | `empty` | Android, iOS | Deferred | OS share surfaces can be unstable |
+| MAN-204 | Share Extension Smoke | `empty` | Android, iOS | Blocked | Android `e2e/scripts/run-android-share-intent.sh` passed on 2026-05-26; covers the real `ACTION_SEND` entry point with a local RSS fixture served through `10.0.2.2`, and verifies the shared feed/article are added. iOS Share Extension receive/add-feed remains blocked by OS share-sheet automation. |
 | MAN-205 | Tablet And Split Layout | `content-rich` | Android tablet, iPad | Deferred | Requires dedicated devices/simulators |
 | MAN-206 | Large Dataset Pagination | `large-content` | Android, iOS | Passing | Covered by REG-134 with the non-production `large-content` seed profile |
 | MAN-207 | Real Provider Smoke | real providers | Android, iOS | Deferred | Manual/nightly only with staging credentials |
@@ -203,7 +209,7 @@ Last audited: 2026-05-26. This section tracks user-facing Android/iOS features t
 | Account provider auth and cloud actions | Android, iOS | REG-116 covers one-account constraint; REG-117 covers required-field validation; REG-118 covers seeded Dropbox and iOS iCloud linked screens; REG-138 covers iOS iCloud unlink; REG-142 covers iOS iCloud backup | Mocked success/error auth, Google Drive mock state, Android/Dropbox cloud unlink, Dropbox/Google Drive backup actions, and real provider sync remain uncovered without live credentials or existing provider-side mock support. |
 | Import/export advanced paths | Android, iOS | RG-011 covers import smoke; REG-119 covers invalid OPML; REG-120 covers CSV import/read/bookmark state; REG-139 and REG-141 cover all article export filter choices reaching export success; REG-140 covers OPML export success | OPML partial-failure reporting and deeper saved-file content validation remain uncovered until fixture/provider data and document-save automation are stable without app changes. |
 | Widgets | Android, iOS | MAN-201 covers Android widget configuration; MAN-202-203 are not passing | Android widget launcher smoke and iOS widget deep links remain uncovered; both need stable widget-host/SpringBoard automation. |
-| Share extension / share intent | Android, iOS | MAN-204 is deferred | Android `ACTION_SEND` add-feed activity and iOS Share Extension receive/add-feed flows are uncovered because OS share surfaces are unstable. |
+| Share extension / share intent | Android, iOS | MAN-204 covers Android `ACTION_SEND` with a local RSS fixture | iOS Share Extension receive/add-feed remains uncovered because it requires stable OS share-sheet automation. |
 | App deep links from notifications/widgets | Android, iOS | REG-126 covers iOS `feedflow://feed/<id>` article routing into reader mode | Android notification deep links, feed-source filter links, category links, and widget deep links remain uncovered. Android notification routing uses explicit `MainActivity` intents, and iOS feed-source/category routing is handled through notification delegate events rather than direct `openLink`, so keep these blocked unless they can be driven through existing OS notification/widget surfaces. |
 | Tablet, iPad, split layout, rotation | Android tablet, iPad | MAN-205 is deferred | Sidebar/split navigation, settings presentation, reader presentation, and rotation remain uncovered on dedicated large-screen devices. |
 | Large dataset behavior | Android, iOS | REG-134/MAN-206 cover feed pagination beyond the first 40-item page on Android and iOS; REG-134 covers large-dataset search on Android | iOS large-dataset search remains uncovered because Maestro/XCTest hierarchy retrieval times out after opening the large search result screen. Broader performance profiling stays outside Maestro release-gate coverage. |

@@ -7,7 +7,6 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.GoogleDriveSynMessages
-import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceIos
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
@@ -29,7 +28,6 @@ class GoogleDriveSyncViewModel internal constructor(
     private val googleDriveDataSource: GoogleDriveDataSourceIos,
     private val feedSyncRepository: FeedSyncRepository,
     private val dateFormatter: DateFormatter,
-    private val appConfig: AppConfig,
     private val accountsRepository: AccountsRepository,
     private val feedFetcherRepository: FeedFetcherRepository,
     feedSyncMessageQueue: FeedSyncMessageQueue,
@@ -61,13 +59,6 @@ class GoogleDriveSyncViewModel internal constructor(
 
     private fun restoreAccount() {
         googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
-        if (hasSeededDebugAccount()) {
-            googleDriveSyncUiMutableState.update {
-                AccountConnectionUiState.Linked(syncState = getSyncState())
-            }
-            return
-        }
-
         googleDriveDataSource.restorePreviousSignIn { success ->
             if (success) {
                 googleDriveSettings.setGoogleDriveLinked(true)
@@ -79,9 +70,6 @@ class GoogleDriveSyncViewModel internal constructor(
             }
         }
     }
-
-    private fun hasSeededDebugAccount(): Boolean =
-        appConfig.appEnvironment.isDebug() && googleDriveSettings.isGoogleDriveLinked()
 
     fun onAuthorizationSuccess() {
         viewModelScope.launch {

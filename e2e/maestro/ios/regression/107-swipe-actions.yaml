@@ -1,0 +1,43 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=swipe-actions
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- stopApp
+- launchApp
+- assertVisible:
+    id: article_row_e2e_article_newest_unread
+- swipe:
+    start: "90%, 28%"
+    end: "5%, 28%"
+    duration: 1000
+- waitForAnimationToEnd
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_read
+- assertVisible: "E2E Newest Unread Article.*"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_timeline
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_image
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
+- swipe:
+    start: "10%, 50%"
+    end: "95%, 50%"
+    duration: 1000
+- waitForAnimationToEnd
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_bookmarks
+- assertVisible: "E2E Article With Image.*"

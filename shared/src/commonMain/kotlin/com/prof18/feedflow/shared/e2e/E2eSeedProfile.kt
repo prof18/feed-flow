@@ -9,6 +9,8 @@ enum class E2eSeedProfile(val queryValue: String) {
     EXTERNAL_BROWSER("external-browser"),
     READ_BEHAVIOR("read-behavior"),
     OLDEST_FIRST("oldest-first"),
+    SWIPE_ACTIONS("swipe-actions"),
+    SWIPE_DISABLED("swipe-disabled"),
     NOTIFICATIONS("notifications"),
     ANDROID_WIDGET("android-widget"),
     SYNC_LINKED_MOCK("sync-linked-mock"),

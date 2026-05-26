@@ -20,6 +20,8 @@ The stable completion marker is `E2E seed complete` with accessibility identifie
 - `external-browser`
 - `read-behavior`
 - `oldest-first`
+- `swipe-actions`
+- `swipe-disabled`
 - `notifications`
 - `android-widget`
 - `sync-linked-mock`

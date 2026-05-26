@@ -196,6 +196,8 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.EXTERNAL_BROWSER -> applyExternalBrowserSettings()
             E2eSeedProfile.READ_BEHAVIOR -> applyReadBehaviorSettings()
             E2eSeedProfile.OLDEST_FIRST -> feedAppearanceSettingsRepository.setFeedOrder(FeedOrder.OLDEST_FIRST)
+            E2eSeedProfile.SWIPE_ACTIONS -> applySwipeActionSettings()
+            E2eSeedProfile.SWIPE_DISABLED -> applySwipeDisabledSettings()
             E2eSeedProfile.NOTIFICATIONS -> applyNotificationSettings()
             E2eSeedProfile.ANDROID_WIDGET -> applyCardLayoutSettings()
         }
@@ -250,6 +252,30 @@ class E2eSeedRunner internal constructor(
         settingsRepository.setShowReadArticlesTimeline(true)
         settingsRepository.setMarkFeedAsReadWhenScrolling(true)
         settingsRepository.setHideReadItems(true)
+    }
+
+    private fun applySwipeActionSettings() {
+        applySwipeDisabledSettings()
+        feedAppearanceSettingsRepository.setSwipeAction(
+            SwipeDirection.LEFT,
+            SwipeActionType.TOGGLE_READ_STATUS,
+        )
+        feedAppearanceSettingsRepository.setSwipeAction(
+            SwipeDirection.RIGHT,
+            SwipeActionType.TOGGLE_BOOKMARK_STATUS,
+        )
+    }
+
+    private fun applySwipeDisabledSettings() {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
+        feedAppearanceSettingsRepository.setSwipeAction(
+            SwipeDirection.LEFT,
+            SwipeActionType.NONE,
+        )
+        feedAppearanceSettingsRepository.setSwipeAction(
+            SwipeDirection.RIGHT,
+            SwipeActionType.NONE,
+        )
     }
 
     private suspend fun applyNotificationSettings() {

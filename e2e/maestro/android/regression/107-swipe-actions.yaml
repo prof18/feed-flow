@@ -1,0 +1,68 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=swipe-actions
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    id: article_row_e2e_article_newest_unread
+- swipe:
+    from:
+      id: article_row_e2e_article_newest_unread
+    direction: LEFT
+    duration: 700
+- waitForAnimationToEnd
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_read
+- assertVisible: "E2E Newest Unread Article.*"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_timeline
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_image
+    direction: DOWN
+    timeout: 10000
+- swipe:
+    from:
+      id: article_row_e2e_article_image
+    direction: RIGHT
+    duration: 700
+- waitForAnimationToEnd
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_bookmarks
+- assertVisible: "E2E Article With Image.*"
+- openLink: feedflow://e2e/reset-and-seed?profile=swipe-disabled
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    id: article_row_e2e_article_newest_unread
+- swipe:
+    from:
+      id: article_row_e2e_article_newest_unread
+    direction: LEFT
+    duration: 700
+- waitForAnimationToEnd
+- swipe:
+    from:
+      id: article_row_e2e_article_newest_unread
+    direction: RIGHT
+    duration: 700
+- waitForAnimationToEnd
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_read
+- assertNotVisible: "E2E Newest Unread Article.*"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_bookmarks
+- assertNotVisible: "E2E Newest Unread Article.*"

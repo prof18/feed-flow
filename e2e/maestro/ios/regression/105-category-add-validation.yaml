@@ -1,0 +1,37 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    text: "Add feed"
+- tapOn:
+    id: edit_feed_category_selector
+- assertVisible: "Categories"
+- tapOn:
+    id: edit_feed_category_sheet_add
+- tapOn:
+    id: edit_feed_category_apply_duplicate_name
+- assertVisible: "A category with this name already exists"
+- assertVisible:
+    id: edit_feed_category_add_confirm
+    enabled: false
+- tapOn:
+    text: "Close"
+- tapOn:
+    id: edit_feed_category_sheet_add
+- tapOn:
+    id: edit_feed_category_apply_e2e_name
+- tapOn:
+    id: edit_feed_category_add_confirm
+- assertVisible: "E2E Created Category"

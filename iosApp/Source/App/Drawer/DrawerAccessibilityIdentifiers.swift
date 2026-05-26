@@ -12,6 +12,9 @@ enum DrawerAccessibilityIdentifiers {
     static let timeline = "drawer_timeline"
     static let read = "drawer_read"
     static let bookmarks = "drawer_bookmarks"
+    static let categoryMenuRename = "drawer_category_menu_rename"
+    static let categoryMenuDeleteAllFeeds = "drawer_category_menu_delete_all_feeds"
+    static let categoryMenuDeleteCategory = "drawer_category_menu_delete_category"
 
     static func category(_ categoryId: String?) -> String {
         "drawer_category_\(categoryId?.e2eIdSuffix ?? "uncategorized")"

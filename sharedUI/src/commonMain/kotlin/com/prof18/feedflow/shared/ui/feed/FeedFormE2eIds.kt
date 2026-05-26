@@ -8,6 +8,11 @@ object FeedFormE2eIds {
     const val PINNED_TOGGLE = "edit_feed_pinned_toggle"
     const val CATEGORY_SELECTOR = "edit_feed_category_selector"
     const val CATEGORY_SHEET_SAVE = "edit_feed_category_sheet_save"
+    const val CATEGORY_SHEET_ADD = "edit_feed_category_sheet_add"
+    const val CATEGORY_ADD_INPUT = "edit_feed_category_add_input"
+    const val CATEGORY_ADD_CONFIRM = "edit_feed_category_add_confirm"
+    const val CATEGORY_RENAME_INPUT = "edit_feed_category_rename_input"
+    const val CATEGORY_RENAME_SAVE = "edit_feed_category_rename_save"
     const val SAVE_BUTTON = "edit_feed_save"
 
     fun categoryChip(label: String): String =

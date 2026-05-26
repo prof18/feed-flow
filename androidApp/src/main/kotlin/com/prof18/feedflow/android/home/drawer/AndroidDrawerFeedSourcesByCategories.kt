@@ -334,6 +334,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                 ),
             ) {
                 DropdownMenuItem(
+                    modifier = Modifier.testTag(DrawerE2eIds.CATEGORY_MENU_RENAME),
                     text = { Text(strings.renameCategory) },
                     onClick = {
                         showMenu = false
@@ -358,6 +359,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                 )
 
                 DropdownMenuItem(
+                    modifier = Modifier.testTag(DrawerE2eIds.CATEGORY_MENU_DELETE_ALL_FEEDS),
                     text = { Text(strings.deleteAllFeedsInCategory) },
                     onClick = {
                         showMenu = false
@@ -366,6 +368,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                 )
 
                 DropdownMenuItem(
+                    modifier = Modifier.testTag(DrawerE2eIds.CATEGORY_MENU_DELETE_CATEGORY),
                     text = { Text(strings.deleteCategory) },
                     onClick = {
                         showMenu = false

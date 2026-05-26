@@ -1,0 +1,43 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- longPressOn:
+    id: drawer_category_e2e_category_technology
+- tapOn:
+    id: drawer_category_menu_rename
+- tapOn:
+    id: edit_feed_category_apply_e2e_rename
+- tapOn:
+    id: edit_feed_category_rename_save
+- assertVisible: "E2E Renamed Category"
+- longPressOn:
+    id: drawer_category_e2e_category_technology
+- tapOn:
+    id: drawer_category_menu_delete_all_feeds
+- tapOn:
+    text: "Confirm"
+- assertNotVisible: "Android Central RSS Feed"
+- longPressOn:
+    id: drawer_category_e2e_category_empty
+- tapOn:
+    id: drawer_category_menu_delete_category
+- tapOn:
+    text: "Close"
+- assertVisible:
+    id: drawer_category_e2e_category_empty
+- longPressOn:
+    id: drawer_category_e2e_category_empty
+- tapOn:
+    id: drawer_category_menu_delete_category
+- tapOn:
+    text: "Delete category"
+- assertNotVisible:
+    id: drawer_category_e2e_category_empty

@@ -121,7 +121,7 @@ Start these after the release gate is stable.
 | REG-102 | Force Add Feed | `empty` | Android, iOS | Not started | Needs failed feed validation fixture/state |
 | REG-103 | Feed Suggestions | `empty` | Android, iOS | Passing | Android and iOS `103-feed-suggestions.yaml` passed via Maestro CLI on 2026-05-26 using app-provided Business suggestions |
 | REG-104 | Feed Source List Management | `content-rich` | Android, iOS | Passing | Android and iOS `104-feed-source-list-management.yaml` passed via Maestro CLI on 2026-05-26; Android covers inline rename, both cover expand/collapse, delete confirmation, and fetch-failed warning |
-| REG-105 | Category Management | `content-rich` | Android, iOS | Not started | Needs category CRUD ids |
+| REG-105 | Category Management | `content-rich` | Android, iOS | Passing | Android `105-category-management.yaml`, iOS `105-category-add-validation.yaml`, and iOS `105-category-management.yaml` passed via Maestro CLI on 2026-05-26 |
 | REG-106 | Article Context Menu | `content-rich` | Android, iOS | Passing | Android and iOS `106-article-context-menu.yaml` passed via Maestro CLI on 2026-05-26 |
 | REG-107 | Swipe Actions | profile TBD | Android, iOS | Blocked | Needs seeded swipe settings profile or flow setup |
 | REG-108 | Feed Layout Matrix | `card-layout`, `compact-list` | Android, iOS | Passing | Android and iOS `108-feed-layout-matrix-card.yaml` and `108-feed-layout-matrix-compact.yaml` passed via Maestro CLI on 2026-05-25 |

@@ -89,6 +89,17 @@ private struct EditCategoryNameSheet: View {
                     .background(Color(UIColor.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .focused($isTextFieldFocused)
+                    .accessibilityIdentifier(CategoryDialogAccessibilityIdentifiers.renameCategoryInput)
+
+                #if DEBUG
+                    Button {
+                        categoryName = "E2E Renamed Category"
+                    } label: {
+                        Image(systemName: "textformat")
+                    }
+                    .buttonStyle(.bordered)
+                    .accessibilityIdentifier(CategoryDialogAccessibilityIdentifiers.applyRenameCategoryNameButton)
+                #endif
 
                 if hasDuplicateName {
                     Text(feedFlowStrings.categoryNameAlreadyExists)
@@ -102,6 +113,7 @@ private struct EditCategoryNameSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!canSave)
+                .accessibilityIdentifier(CategoryDialogAccessibilityIdentifiers.renameCategorySaveButton)
             }
             .padding()
             .navigationTitle(feedFlowStrings.editCategory)
@@ -117,9 +129,17 @@ private struct EditCategoryNameSheet: View {
         .presentationDetents([.height(280)])
         .presentationDragIndicator(.visible)
         .onAppear {
+            #if !DEBUG
             DispatchQueue.main.async {
                 isTextFieldFocused = true
             }
+            #endif
         }
     }
+}
+
+private enum CategoryDialogAccessibilityIdentifiers {
+    static let renameCategoryInput = "edit_feed_category_rename_input"
+    static let renameCategorySaveButton = "edit_feed_category_rename_save"
+    static let applyRenameCategoryNameButton = "edit_feed_category_apply_e2e_rename"
 }

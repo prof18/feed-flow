@@ -84,6 +84,7 @@ struct EditCategorySheet: View {
                             }
                         )
                         .buttonStyle(.plain)
+                        .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.addCategoryButton)
 
                         Button(
                             action: {
@@ -220,6 +221,26 @@ private struct AddCategoryNameSheet: View {
                     .background(Color(UIColor.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .focused($isTextFieldFocused)
+                    .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.addCategoryInput)
+
+                #if DEBUG
+                    HStack {
+                        Button {
+                            categoryName = "Technology"
+                        } label: {
+                            Image(systemName: "textformat")
+                        }
+                        .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.applyDuplicateCategoryNameButton)
+
+                        Button {
+                            categoryName = "E2E Created Category"
+                        } label: {
+                            Image(systemName: "textformat.alt")
+                        }
+                        .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.applyNewCategoryNameButton)
+                    }
+                    .buttonStyle(.bordered)
+                #endif
 
                 if hasDuplicateName {
                     Text(feedFlowStrings.categoryNameAlreadyExists)
@@ -234,6 +255,7 @@ private struct AddCategoryNameSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!canConfirm)
+                .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.addCategoryConfirmButton)
             }
             .padding()
             .navigationTitle(feedFlowStrings.addFeedCategoryTitle)
@@ -249,9 +271,11 @@ private struct AddCategoryNameSheet: View {
         .presentationDetents([.height(280)])
         .presentationDragIndicator(.visible)
         .onAppear {
+            #if !DEBUG
             DispatchQueue.main.async {
                 isTextFieldFocused = true
             }
+            #endif
         }
     }
 }
@@ -289,6 +313,17 @@ private struct EditCategoryNameSheet: View {
                     .background(Color(UIColor.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .focused($isTextFieldFocused)
+                    .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.renameCategoryInput)
+
+                #if DEBUG
+                    Button {
+                        categoryName = "E2E Renamed Category"
+                    } label: {
+                        Image(systemName: "textformat")
+                    }
+                    .buttonStyle(.bordered)
+                    .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.applyRenameCategoryNameButton)
+                #endif
 
                 if hasDuplicateName {
                     Text(feedFlowStrings.categoryNameAlreadyExists)
@@ -303,6 +338,7 @@ private struct EditCategoryNameSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!canSave)
+                .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.renameCategorySaveButton)
             }
             .padding()
             .navigationTitle(feedFlowStrings.editCategory)
@@ -318,9 +354,11 @@ private struct EditCategoryNameSheet: View {
         .presentationDetents([.height(280)])
         .presentationDragIndicator(.visible)
         .onAppear {
+            #if !DEBUG
             DispatchQueue.main.async {
                 isTextFieldFocused = true
             }
+            #endif
         }
     }
 }
@@ -453,6 +491,14 @@ struct CategoryChip: View {
 
 private enum EditCategoryAccessibilityIdentifiers {
     static let saveButton = "edit_feed_category_sheet_save"
+    static let addCategoryButton = "edit_feed_category_sheet_add"
+    static let addCategoryInput = "edit_feed_category_add_input"
+    static let addCategoryConfirmButton = "edit_feed_category_add_confirm"
+    static let applyDuplicateCategoryNameButton = "edit_feed_category_apply_duplicate_name"
+    static let applyNewCategoryNameButton = "edit_feed_category_apply_e2e_name"
+    static let renameCategoryInput = "edit_feed_category_rename_input"
+    static let renameCategorySaveButton = "edit_feed_category_rename_save"
+    static let applyRenameCategoryNameButton = "edit_feed_category_apply_e2e_rename"
 
     static func categoryChip(_ label: String) -> String {
         "edit_feed_category_\(label.e2eIdSuffix)"

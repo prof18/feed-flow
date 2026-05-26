@@ -1,0 +1,77 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    text: "Add feed"
+- tapOn:
+    id: edit_feed_category_selector
+- assertVisible: "Categories"
+- tapOn:
+    text: "Category"
+- tapOn:
+    text: "New category name"
+- inputText: "Technology"
+- assertVisible: "A category with this name already exists"
+- tapOn:
+    text: "Close"
+- tapOn:
+    text: "Category"
+- tapOn:
+    text: "New category name"
+- inputText: "E2E Created Category"
+- tapOn:
+    text: "Confirm"
+- assertVisible: "E2E Created Category"
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- longPressOn:
+    id: drawer_category_e2e_category_technology
+- tapOn:
+    text: "Rename category"
+- tapOn:
+    text: "Category name"
+- eraseText: 100
+- inputText: "E2E Renamed Category"
+- hideKeyboard
+- tapOn:
+    text: "Save"
+- assertVisible:
+    text: "E2E Renamed Category.*"
+- longPressOn:
+    id: drawer_category_e2e_category_technology
+- tapOn:
+    text: "Delete all feeds"
+- tapOn:
+    text: "Confirm"
+- assertNotVisible:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- longPressOn:
+    id: drawer_category_e2e_category_empty
+- tapOn:
+    text: "Delete category"
+- tapOn:
+    text: "Close"
+- assertVisible:
+    id: drawer_category_e2e_category_empty
+- longPressOn:
+    id: drawer_category_e2e_category_empty
+- tapOn:
+    text: "Delete category"
+- tapOn:
+    text: "Confirm"
+- assertNotVisible:
+    id: drawer_category_e2e_category_empty

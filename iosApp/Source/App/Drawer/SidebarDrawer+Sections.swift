@@ -260,6 +260,7 @@ extension SidebarDrawer {
         } label: {
             Label(feedFlowStrings.renameCategory, systemImage: "pencil")
         }
+        .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryMenuRename)
 
         if categoryItem.unreadCount > 0 {
             Button {
@@ -277,6 +278,7 @@ extension SidebarDrawer {
         } label: {
             Label(feedFlowStrings.deleteAllFeedsInCategory, systemImage: "trash")
         }
+        .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryMenuDeleteAllFeeds)
 
         Button(role: .destructive) {
             categoryToDelete = categoryItem.category.id
@@ -284,6 +286,7 @@ extension SidebarDrawer {
         } label: {
             Label(feedFlowStrings.deleteCategory, systemImage: "trash")
         }
+        .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryMenuDeleteCategory)
     }
 
     func toggleCategoryExpansion(for categoryId: String) {

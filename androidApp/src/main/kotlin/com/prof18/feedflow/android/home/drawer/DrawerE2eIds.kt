@@ -6,6 +6,9 @@ internal object DrawerE2eIds {
     const val TIMELINE = "drawer_timeline"
     const val READ = "drawer_read"
     const val BOOKMARKS = "drawer_bookmarks"
+    const val CATEGORY_MENU_RENAME = "drawer_category_menu_rename"
+    const val CATEGORY_MENU_DELETE_ALL_FEEDS = "drawer_category_menu_delete_all_feeds"
+    const val CATEGORY_MENU_DELETE_CATEGORY = "drawer_category_menu_delete_category"
 
     fun category(categoryId: String?): String =
         "drawer_category_${categoryId?.toE2eIdSuffix() ?: "uncategorized"}"

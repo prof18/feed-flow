@@ -61,6 +61,8 @@ Supported profiles:
 - `notifications`
 - `android-widget`
 - `sync-linked-mock`
+- `sync-upload-required`
+- `large-content`
 
 Seed deep links:
 
@@ -68,7 +70,10 @@ Seed deep links:
 feedflow://e2e/reset
 feedflow://e2e/seed?profile=content-rich
 feedflow://e2e/reset-and-seed?profile=content-rich
+feedflow://e2e/reset-and-seed?profile=sync-linked-mock&account=fresh_rss
 ```
+
+`sync-linked-mock` and `sync-upload-required` can select a seeded account with `account=fresh_rss`, `miniflux`, `bazqux`, `feedbin`, `dropbox`, or `icloud`.
 
 The stable completion marker is:
 

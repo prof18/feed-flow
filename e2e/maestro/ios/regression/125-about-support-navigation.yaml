@@ -1,0 +1,25 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- scrollUntilVisible:
+    element: "About & Support"
+    direction: DOWN
+    timeout: 10000
+- tapOn: "About & Support"
+- assertVisible: "Report issue"
+- assertVisible: "About"
+- tapOn: "About"
+- assertVisible: "FeedFlow is a minimal RSS reader.*"
+- assertVisible: "Open source licenses"
+- tapOn: "Open source licenses"
+- assertVisible: "Acknowledgements"

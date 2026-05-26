@@ -1,0 +1,22 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_reading_behavior
+- assertVisible: "Browser"
+- assertVisible: "Save article content on open for offline reading"
+- assertVisible: "Prefetch article content for offline reading"
+- assertVisible: "Mark as read when scrolling"
+- tapOn: "Save article content on open for offline reading"
+- tapOn: "Mark as read when scrolling"
+- tapOn: "Prefetch article content for offline reading"
+- assertVisible: "Enabling this option will increase synchronization time and data usage.*"
+- tapOn: "Confirm"

@@ -1,0 +1,51 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feed_list
+- assertVisible: "Text scale"
+- assertVisible: "Hide article date"
+- tapOn: "Hide article date"
+- assertVisible: "Hide unread indicator"
+- tapOn: "Hide unread indicator"
+- assertVisible: "Hide feed source"
+- tapOn: "Hide feed source"
+- scrollUntilVisible:
+    element: "Description lines"
+    direction: DOWN
+    timeout: 10000
+- tapOn: "Description lines"
+- tapOn: "No limit"
+- assertVisible: "No limit"
+- assertVisible: "Hide title from article description"
+- tapOn: "Hide title from article description"
+- scrollUntilVisible:
+    element: "Date format"
+    direction: DOWN
+    timeout: 10000
+- tapOn: "Date format"
+- tapOn: "Year-Month-Day"
+- assertVisible: "Year-Month-Day"
+- tapOn: "Time format"
+- tapOn: "12 hours"
+- assertVisible: "12 hours"
+- scrollUntilVisible:
+    element: "Left swipe"
+    direction: DOWN
+    timeout: 10000
+- tapOn: "Left swipe"
+- tapOn: "Toggle read"
+- assertVisible: "Toggle read"
+- tapOn: "Right swipe"
+- tapOn: "Toggle bookmark"
+- assertVisible: "Toggle bookmark"

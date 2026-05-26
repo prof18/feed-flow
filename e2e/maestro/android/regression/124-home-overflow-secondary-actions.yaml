@@ -1,0 +1,23 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: home_more_menu_button
+- assertVisible: "Force refresh"
+- assertVisible: "Sort & filter"
+- assertVisible: "Delete week-old articles"
+- tapOn: "Sort & filter"
+- assertVisible: "Sort by Date"
+- assertVisible: "Show read articles in lists"
+- tapOn: "Oldest First"
+- tapOn: "Show read articles in lists"
+- back
+- tapOn:
+    id: home_more_menu_button
+- tapOn: "Delete week-old articles"
+- assertVisible: "Are you sure you want to delete old articles?"
+- tapOn: "Cancel"

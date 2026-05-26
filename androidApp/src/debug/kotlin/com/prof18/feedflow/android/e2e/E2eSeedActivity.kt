@@ -117,6 +117,7 @@ class E2eSeedActivity : BaseThemeActivity() {
         val uri = intent?.data
         val action = uri?.pathSegments?.firstOrNull()
         val profileName = uri?.getQueryParameter("profile")
+        val accountName = uri?.getQueryParameter("account")
 
         if (action == null) {
             uiState = E2eSeedUiState.Error("Missing E2E seed action")
@@ -130,7 +131,7 @@ class E2eSeedActivity : BaseThemeActivity() {
         lifecycleScope.launch {
             try {
                 resetWidgetSettings()
-                seedRunner.run(action = action, profileName = profileName)
+                seedRunner.run(action = action, profileName = profileName, accountName = accountName)
                 if (action != E2eSeedRunner.ACTION_RESET && profile == E2eSeedProfile.ANDROID_WIDGET) {
                     applyAndroidWidgetProfile()
                 }

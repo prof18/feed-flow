@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.e2e
 
+import com.prof18.feedflow.core.model.SyncAccounts
+
 enum class E2eSeedProfile(val queryValue: String) {
     EMPTY("empty"),
     CONTENT_RICH("content-rich"),
@@ -20,6 +22,27 @@ enum class E2eSeedProfile(val queryValue: String) {
         fun fromQueryValue(value: String?): E2eSeedProfile? =
             entries.firstOrNull { profile ->
                 profile.queryValue == value
+            }
+    }
+}
+
+enum class E2eSeedAccount(
+    val queryValue: String,
+    val syncAccount: SyncAccounts,
+) {
+    DROPBOX("dropbox", SyncAccounts.DROPBOX),
+    GOOGLE_DRIVE("google_drive", SyncAccounts.GOOGLE_DRIVE),
+    ICLOUD("icloud", SyncAccounts.ICLOUD),
+    FRESH_RSS("fresh_rss", SyncAccounts.FRESH_RSS),
+    MINIFLUX("miniflux", SyncAccounts.MINIFLUX),
+    FEEDBIN("feedbin", SyncAccounts.FEEDBIN),
+    BAZQUX("bazqux", SyncAccounts.BAZQUX),
+    ;
+
+    companion object {
+        fun fromQueryValue(value: String?): E2eSeedAccount? =
+            entries.firstOrNull { account ->
+                account.queryValue == value
             }
     }
 }

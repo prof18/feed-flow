@@ -6,10 +6,13 @@ import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -27,6 +30,8 @@ class E2eSeedRunnerTest : KoinTestBase() {
     private val settingsRepository: SettingsRepository by inject()
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository by inject()
     private val feedItemContentFileHandler: FeedItemContentFileHandler by inject()
+    private val accountsRepository: AccountsRepository by inject()
+    private val networkSettings: NetworkSettings by inject()
 
     @Test
     fun `content-rich profile seeds deterministic content and settings`() = runTest {
@@ -96,6 +101,18 @@ class E2eSeedRunnerTest : KoinTestBase() {
         assertTrue(
             feedItemContentFileHandler.isContentAvailable(E2eSeedRunner.READER_FALLBACK_ARTICLE_ID),
         )
+    }
+
+    @Test
+    fun `sync-linked-mock profile seeds selected network account`() = runTest {
+        seedRunner.resetAndSeed(E2eSeedProfile.SYNC_LINKED_MOCK, E2eSeedAccount.FRESH_RSS)
+
+        assertEquals(SyncAccounts.FRESH_RSS, accountsRepository.getCurrentSyncAccount())
+        assertEquals(SyncAccounts.FRESH_RSS, networkSettings.getSyncAccountType())
+        assertEquals("https://e2e.feedflow.local/greader", networkSettings.getSyncUrl())
+        assertEquals("e2e-user", networkSettings.getSyncUsername())
+        assertEquals("e2e-pass", networkSettings.getSyncPwd())
+        assertNotNull(networkSettings.getLastSyncDate())
     }
 
     @Test

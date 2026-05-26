@@ -5,6 +5,9 @@ enum AccountAccessibilityIdentifiers {
     static let passwordInput = "account_password_input"
     static let passwordVisibility = "account_password_visibility"
     static let connectButton = "account_connect_button"
+    static let connectedMessage = "account_connected_message"
+    static let lastSyncLabel = "account_last_sync_label"
+    static let disconnectButton = "account_disconnect_button"
 
     static func provider(_ id: String) -> String {
         "accounts_provider_\(id)"

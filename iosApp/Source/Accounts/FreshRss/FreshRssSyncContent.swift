@@ -182,6 +182,7 @@ struct FreshRssSyncContent: View {
                     }
                 )
                 .disabled(state.syncState is AccountSyncUIState.Loading)
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.disconnectButton)
             }
         }
     }
@@ -193,12 +194,14 @@ struct FreshRssSyncContent: View {
                 Text(feedFlowStrings.freshRssAccountConnected)
                     .font(.body)
                     .multilineTextAlignment(.leading)
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.connectedMessage)
 
                 if let syncedState = state.syncState as? AccountSyncUIState.Synced {
                     VStack(alignment: .leading) {
                         if let lastDownloadDate = syncedState.lastDownloadDate {
                             Text(feedFlowStrings.freshRssLastSync(lastDownloadDate))
                                 .font(.footnote)
+                                .accessibilityIdentifier(AccountAccessibilityIdentifiers.lastSyncLabel)
                         }
                     }
                     .padding(.top, Spacing.regular)

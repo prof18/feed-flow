@@ -179,6 +179,9 @@ struct FeedFlowApp: App {
             let profileName = components?.queryItems?
                 .first { $0.name == "profile" }?
                 .value
+            let accountName = components?.queryItems?
+                .first { $0.name == "account" }?
+                .value
             let initialSearchQuery = components?.queryItems?
                 .first { $0.name == "query" }?
                 .value
@@ -189,19 +192,27 @@ struct FeedFlowApp: App {
             appState.e2eSeedMessage = nil
             Task {
                 do {
-                    try await Deps.shared.runE2eSeed(action: action, profileName: profileName)
+                    let seedError = try await Deps.shared.runE2eSeed(
+                        action: action,
+                        profileName: profileName,
+                        accountName: accountName
+                    )
                     await MainActor.run {
-                        appState.currentCommonRoute = nil
-                        appState.regularNavigationPath = NavigationPath()
-                        appState.compactNavigationPath = NavigationPath()
-                        appState.compactNavigationPath.append(CompactViewRoute.feed)
-                        appState.e2eSeedMessage = "E2E seed complete"
-                        appState.e2eInitialSearchQuery = initialSearchQuery
-                        appState.e2eInitialSearchFilter = initialSearchFilter
+                        if let seedError {
+                            appState.e2eSeedMessage = "E2E seed failed: \(seedError)"
+                        } else {
+                            appState.currentCommonRoute = nil
+                            appState.regularNavigationPath = NavigationPath()
+                            appState.compactNavigationPath = NavigationPath()
+                            appState.compactNavigationPath.append(CompactViewRoute.feed)
+                            appState.e2eSeedMessage = "E2E seed complete"
+                            appState.e2eInitialSearchQuery = initialSearchQuery
+                            appState.e2eInitialSearchFilter = initialSearchFilter
+                        }
                     }
                 } catch {
                     await MainActor.run {
-                        appState.e2eSeedMessage = "E2E seed failed"
+                        appState.e2eSeedMessage = "E2E seed failed: \(error.localizedDescription)"
                     }
                 }
             }

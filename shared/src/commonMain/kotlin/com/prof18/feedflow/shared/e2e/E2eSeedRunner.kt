@@ -17,8 +17,13 @@ import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
+import com.prof18.feedflow.feedsync.icloud.ICloudSettings
+import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -35,6 +40,10 @@ class E2eSeedRunner internal constructor(
     private val accountsRepository: AccountsRepository,
     private val feedSyncRepository: FeedSyncRepository,
     private val feedStateRepository: FeedStateRepository,
+    private val dropboxSettings: DropboxSettings,
+    private val googleDriveSettings: GoogleDriveSettings,
+    private val icloudSettings: ICloudSettings,
+    private val networkSettings: NetworkSettings,
 ) {
     suspend fun reset() {
         databaseHelper.deleteAllE2eData()
@@ -45,7 +54,10 @@ class E2eSeedRunner internal constructor(
         feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
     }
 
-    suspend fun seed(profile: E2eSeedProfile) {
+    suspend fun seed(
+        profile: E2eSeedProfile,
+        account: E2eSeedAccount? = null,
+    ) {
         applyBaseSettings()
         if (profile == E2eSeedProfile.EMPTY) {
             feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
@@ -53,22 +65,30 @@ class E2eSeedRunner internal constructor(
         }
 
         seedContentRichData()
-        applyProfileSettings(profile)
+        applyProfileSettings(profile, account)
         feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
     }
 
-    suspend fun resetAndSeed(profile: E2eSeedProfile) {
+    suspend fun resetAndSeed(
+        profile: E2eSeedProfile,
+        account: E2eSeedAccount? = null,
+    ) {
         reset()
-        seed(profile)
+        seed(profile, account)
     }
 
-    suspend fun run(action: String, profileName: String?) {
+    suspend fun run(
+        action: String,
+        profileName: String?,
+        accountName: String? = null,
+    ) {
         val profile = E2eSeedProfile.fromQueryValue(profileName)
             ?: E2eSeedProfile.CONTENT_RICH
+        val account = E2eSeedAccount.fromQueryValue(accountName)
         when (action) {
             ACTION_RESET -> reset()
-            ACTION_SEED -> seed(profile)
-            ACTION_RESET_AND_SEED -> resetAndSeed(profile)
+            ACTION_SEED -> seed(profile, account)
+            ACTION_RESET_AND_SEED -> resetAndSeed(profile, account)
             else -> error("Unsupported E2E seed action: $action")
         }
     }
@@ -183,11 +203,13 @@ class E2eSeedRunner internal constructor(
         )
     }
 
-    private suspend fun applyProfileSettings(profile: E2eSeedProfile) {
+    private suspend fun applyProfileSettings(
+        profile: E2eSeedProfile,
+        account: E2eSeedAccount?,
+    ) {
         when (profile) {
             E2eSeedProfile.EMPTY,
             E2eSeedProfile.CONTENT_RICH,
-            E2eSeedProfile.SYNC_LINKED_MOCK,
             -> Unit
 
             E2eSeedProfile.CARD_LAYOUT -> applyCardLayoutSettings()
@@ -200,7 +222,63 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.SWIPE_DISABLED -> applySwipeDisabledSettings()
             E2eSeedProfile.NOTIFICATIONS -> applyNotificationSettings()
             E2eSeedProfile.ANDROID_WIDGET -> applyCardLayoutSettings()
+            E2eSeedProfile.SYNC_LINKED_MOCK -> applyMockLinkedAccount(account ?: E2eSeedAccount.FRESH_RSS)
         }
+    }
+
+    private fun applyMockLinkedAccount(account: E2eSeedAccount) {
+        when (account) {
+            E2eSeedAccount.DROPBOX -> {
+                accountsRepository.setDropboxAccount()
+                dropboxSettings.setDropboxData(DROPBOX_MOCK_CREDENTIALS)
+                dropboxSettings.setLastUploadTimestamp(SEED_NOW_MILLIS)
+                dropboxSettings.setLastDownloadTimestamp(SEED_NOW_MILLIS)
+            }
+
+            E2eSeedAccount.GOOGLE_DRIVE -> {
+                accountsRepository.setGoogleDriveAccount()
+                googleDriveSettings.setGoogleDriveLinked(true)
+                googleDriveSettings.setLastUploadTimestamp(SEED_NOW_MILLIS)
+                googleDriveSettings.setLastDownloadTimestamp(SEED_NOW_MILLIS)
+                googleDriveSettings.setBackupFileId("e2e-google-drive-backup")
+            }
+
+            E2eSeedAccount.ICLOUD -> {
+                accountsRepository.setICloudAccount()
+                icloudSettings.setUseICloud(true)
+                icloudSettings.setLastUploadTimestamp(SEED_NOW_MILLIS)
+                icloudSettings.setLastDownloadTimestamp(SEED_NOW_MILLIS)
+            }
+
+            E2eSeedAccount.FRESH_RSS -> seedGReaderAccount(SyncAccounts.FRESH_RSS)
+            E2eSeedAccount.MINIFLUX -> seedGReaderAccount(SyncAccounts.MINIFLUX)
+            E2eSeedAccount.FEEDBIN -> seedFeedbinAccount()
+            E2eSeedAccount.BAZQUX -> seedGReaderAccount(SyncAccounts.BAZQUX)
+        }
+    }
+
+    private fun seedGReaderAccount(account: SyncAccounts) {
+        when (account) {
+            SyncAccounts.FRESH_RSS -> accountsRepository.setFreshRssAccount()
+            SyncAccounts.MINIFLUX -> accountsRepository.setMinifluxAccount()
+            SyncAccounts.BAZQUX -> accountsRepository.setBazquxAccount()
+            else -> error("Unsupported GReader E2E account: $account")
+        }
+        seedNetworkAccount(account)
+        networkSettings.setSyncUrl("https://e2e.feedflow.local/greader")
+        networkSettings.setLastSyncDate(SEED_NOW_MILLIS)
+    }
+
+    private fun seedFeedbinAccount() {
+        accountsRepository.setFeedbinAccount()
+        seedNetworkAccount(SyncAccounts.FEEDBIN)
+        networkSettings.setLastSyncDate(SEED_NOW_MILLIS)
+    }
+
+    private fun seedNetworkAccount(account: SyncAccounts) {
+        networkSettings.setSyncAccountType(account)
+        networkSettings.setSyncUsername("e2e-user")
+        networkSettings.setSyncPwd("e2e-pass")
     }
 
     private fun applyCardLayoutSettings() {
@@ -327,6 +405,7 @@ class E2eSeedRunner internal constructor(
         private const val BLOCKED_ARTICLE_ID = "e2e-article-blocked"
         private const val HIDDEN_ARTICLE_ID = "e2e-article-hidden"
         private const val PINNED_ARTICLE_ID = "e2e-article-pinned"
+        private const val DROPBOX_MOCK_CREDENTIALS = """{"access_token":"e2e-dropbox-token"}"""
 
         private const val SEED_NOW_MILLIS = 1_765_152_000_000L
         private const val ONE_HOUR_MILLIS = 3_600_000L

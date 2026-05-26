@@ -319,6 +319,16 @@ object Deps : KoinComponent {
     fun getChangeFeedCategoryViewModel() = getKoin().get<ChangeFeedCategoryViewModel>()
     fun getFeedSuggestionsViewModel() = getKoin().get<FeedSuggestionsViewModel>()
     fun getFeedbinSyncViewModel() = getKoin().get<FeedbinSyncViewModel>()
-    suspend fun runE2eSeed(action: String, profileName: String?) =
-        getKoin().get<E2eSeedRunner>().run(action = action, profileName = profileName)
+    suspend fun runE2eSeed(
+        action: String,
+        profileName: String?,
+        accountName: String?,
+    ): String? =
+        runCatching {
+            getKoin().get<E2eSeedRunner>().run(
+                action = action,
+                profileName = profileName,
+                accountName = accountName,
+            )
+        }.exceptionOrNull()?.message
 }

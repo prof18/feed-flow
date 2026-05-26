@@ -567,6 +567,10 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             accountsRepository = get(),
             feedSyncRepository = get(),
             feedStateRepository = get(),
+            dropboxSettings = get(),
+            googleDriveSettings = get(),
+            icloudSettings = get(),
+            networkSettings = get(),
         )
     }
 

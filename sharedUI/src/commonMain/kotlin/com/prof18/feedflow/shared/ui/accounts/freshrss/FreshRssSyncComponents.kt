@@ -217,7 +217,9 @@ private fun ConnectedView(
         Text(
             text = LocalFeedFlowStrings.current.freshRssAccountConnected,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = Spacing.regular),
+            modifier = Modifier
+                .testTag(AccountE2eIds.CONNECTED_MESSAGE)
+                .padding(horizontal = Spacing.regular),
         )
 
         when (val syncState = uiState.syncState) {
@@ -255,6 +257,7 @@ private fun ConnectedView(
                 if (lastDownload != null) {
                     Text(
                         modifier = Modifier
+                            .testTag(AccountE2eIds.LAST_SYNC_LABEL)
                             .padding(horizontal = Spacing.regular)
                             .padding(top = Spacing.small),
                         text = LocalFeedFlowStrings.current.freshRssLastSync(lastDownload),
@@ -265,7 +268,9 @@ private fun ConnectedView(
         }
 
         SettingItem(
-            modifier = Modifier.padding(top = Spacing.regular),
+            modifier = Modifier
+                .testTag(AccountE2eIds.DISCONNECT_BUTTON)
+                .padding(top = Spacing.regular),
             title = LocalFeedFlowStrings.current.accountDisconnectButton,
             isEnabled = uiState.syncState !is AccountSyncUIState.Loading,
             icon = Icons.Default.LinkOff,

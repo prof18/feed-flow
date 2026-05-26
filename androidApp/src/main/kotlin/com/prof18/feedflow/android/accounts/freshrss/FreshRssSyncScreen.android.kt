@@ -1,17 +1,23 @@
 package com.prof18.feedflow.android.accounts.freshrss
 
+import androidx.compose.material3.Button
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.core.model.DataNotFound
 import com.prof18.feedflow.core.model.NetworkFailure
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
+import com.prof18.feedflow.shared.ui.accounts.AccountE2eIds
 import com.prof18.feedflow.shared.ui.accounts.freshrss.FreshRssSyncContent
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
@@ -53,6 +59,29 @@ internal fun FreshRssSyncScreen(
         onBackClick = navigateBack,
         onLoginClick = { serverUrl, username, password ->
             viewModel.login(username, password, serverUrl)
+        },
+        e2eLoginActions = {
+            if (BuildConfig.DEBUG) {
+                Button(
+                    modifier = Modifier
+                        .testTag(AccountE2eIds.E2E_LOGIN_ERROR_BUTTON),
+                    onClick = {
+                        viewModel.applyE2eLoginError()
+                    },
+                ) {
+                    Text("E2E login error")
+                }
+
+                Button(
+                    modifier = Modifier
+                        .testTag(AccountE2eIds.E2E_LOGIN_SUCCESS_BUTTON),
+                    onClick = {
+                        viewModel.applyE2eLoginSuccess()
+                    },
+                ) {
+                    Text("E2E login success")
+                }
+            }
         },
         onDisconnectClick = {
             viewModel.disconnect()

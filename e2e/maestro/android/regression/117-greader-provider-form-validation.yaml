@@ -45,6 +45,13 @@ appId: com.prof18.feedflow.debug
 - assertVisible:
     id: account_connect_button
     enabled: true
+- scrollUntilVisible:
+    element:
+      id: account_e2e_login_error
+    direction: DOWN
+- tapOn:
+    id: account_e2e_login_error
+- assertVisible: "The credentials are not correct. Please try again."
 - back
 - tapOn:
     id: accounts_provider_miniflux
@@ -74,3 +81,16 @@ appId: com.prof18.feedflow.debug
 - assertVisible:
     id: account_connect_button
     enabled: false
+- back
+- tapOn:
+    id: accounts_provider_fresh_rss
+- scrollUntilVisible:
+    element:
+      id: account_e2e_login_success
+    direction: DOWN
+- tapOn:
+    id: account_e2e_login_success
+- assertVisible:
+    id: account_connected_message
+- assertVisible:
+    id: account_disconnect_button

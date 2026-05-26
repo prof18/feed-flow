@@ -41,3 +41,22 @@ appId: com.prof18.feedflow.dev
     id: account_password_input
 - assertVisible:
     id: account_password_visibility
+- scrollUntilVisible:
+    element:
+      id: account_e2e_login_error
+    direction: DOWN
+- tapOn:
+    id: account_e2e_login_error
+- assertVisible: "The credentials are not correct. Please try again."
+- tapOn:
+    id: account_e2e_login_success
+- extendedWaitUntil:
+    visible:
+      id: accounts_provider_fresh_rss
+    timeout: 5000
+- tapOn:
+    id: accounts_provider_fresh_rss
+- assertVisible:
+    id: account_connected_message
+- assertVisible:
+    id: account_disconnect_button

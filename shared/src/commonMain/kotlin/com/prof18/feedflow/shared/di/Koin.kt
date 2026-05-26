@@ -485,6 +485,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         FreshRssSyncViewModel(
             gReaderRepository = get(),
             accountsRepository = get(),
+            networkSettings = get(),
             dateFormatter = get(),
             feedStateRepository = get(),
         )

@@ -51,6 +51,7 @@ fun FreshRssSyncContent(
     onDisconnectClick: () -> Unit,
     onLoginClick: (serverUrl: String, username: String, password: String) -> Unit,
     modifier: Modifier = Modifier,
+    e2eLoginActions: @Composable () -> Unit = {},
     snackbarHost: @Composable () -> Unit = {
     },
     showNavigateBack: Boolean = true,
@@ -95,6 +96,7 @@ fun FreshRssSyncContent(
                 AccountConnectionUiState.Unlinked -> DisconnectedView(
                     isLoginLoading = isLoginLoading,
                     onLoginClick = onLoginClick,
+                    e2eLoginActions = e2eLoginActions,
                 )
             }
 
@@ -118,6 +120,7 @@ private fun LoadingView() {
 fun DisconnectedView(
     isLoginLoading: Boolean,
     modifier: Modifier = Modifier,
+    e2eLoginActions: @Composable () -> Unit = {},
     onLoginClick: (serverUrl: String, username: String, password: String) -> Unit,
 ) {
     var serverUrl by remember { mutableStateOf("") }
@@ -202,6 +205,8 @@ fun DisconnectedView(
                 Text(LocalFeedFlowStrings.current.accountConnectButton)
             }
         }
+
+        e2eLoginActions()
     }
 }
 

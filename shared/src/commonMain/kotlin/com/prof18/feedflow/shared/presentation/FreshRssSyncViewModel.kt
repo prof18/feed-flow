@@ -6,8 +6,10 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.Failure
+import com.prof18.feedflow.core.model.NetworkFailure
 import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
+import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 class FreshRssSyncViewModel internal constructor(
     private val gReaderRepository: GReaderRepository,
     private val accountsRepository: AccountsRepository,
+    private val networkSettings: NetworkSettings,
     private val dateFormatter: DateFormatter,
     private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
@@ -119,5 +122,29 @@ class FreshRssSyncViewModel internal constructor(
             feedStateRepository.getFeeds()
             uiMutableState.update { AccountConnectionUiState.Unlinked }
         }
+    }
+
+    fun applyE2eLoginSuccess() {
+        networkSettings.setSyncUrl(E2E_FRESH_RSS_URL)
+        networkSettings.setSyncUsername(E2E_FRESH_RSS_USERNAME)
+        networkSettings.setSyncPwd(E2E_FRESH_RSS_TOKEN)
+        accountsRepository.setFreshRssAccount()
+        uiMutableState.update {
+            AccountConnectionUiState.Linked(
+                syncState = AccountSyncUIState.None,
+            )
+        }
+    }
+
+    fun applyE2eLoginError() {
+        viewModelScope.launch {
+            errorMutableState.emit(NetworkFailure.Unauthorised)
+        }
+    }
+
+    private companion object {
+        const val E2E_FRESH_RSS_URL = "https://e2e.example.com/api/greader.php"
+        const val E2E_FRESH_RSS_USERNAME = "e2e-user"
+        const val E2E_FRESH_RSS_TOKEN = "e2e-token"
     }
 }

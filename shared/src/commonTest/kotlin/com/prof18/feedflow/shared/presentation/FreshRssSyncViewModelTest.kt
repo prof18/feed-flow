@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.presentation
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
+import com.prof18.feedflow.core.model.NetworkFailure
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
@@ -222,6 +223,33 @@ class FreshRssSyncViewModelTest : KoinTestBase() {
             assertEquals(SyncAccounts.FRESH_RSS, accountType)
             assertEquals("testuser", networkSettings.getSyncUsername())
             assertEquals("https://freshrss.example.com/api/greader.php", networkSettings.getSyncUrl())
+        }
+    }
+
+    @Test
+    fun `e2e login success marks FreshRSS account as linked`() = runTest(testDispatcher) {
+        viewModel.uiState.test(timeout = uiTimeout) {
+            val unlinkedState = awaitItem()
+            assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
+
+            viewModel.applyE2eLoginSuccess()
+
+            val linkedState = awaitItem()
+            assertIs<AccountConnectionUiState.Linked>(linkedState)
+            assertEquals(AccountSyncUIState.None, linkedState.syncState)
+            assertEquals(SyncAccounts.FRESH_RSS, networkSettings.getSyncAccountType())
+            assertEquals("https://e2e.example.com/api/greader.php", networkSettings.getSyncUrl())
+            assertEquals("e2e-user", networkSettings.getSyncUsername())
+            assertEquals("e2e-token", networkSettings.getSyncPwd())
+        }
+    }
+
+    @Test
+    fun `e2e login error emits unauthorised failure`() = runTest(testDispatcher) {
+        viewModel.errorState.test(timeout = uiTimeout) {
+            viewModel.applyE2eLoginError()
+
+            assertEquals(NetworkFailure.Unauthorised, awaitItem())
         }
     }
 

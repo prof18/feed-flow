@@ -64,7 +64,7 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F009 | Stable ids for article rows/actions | In progress | RG-004, RG-005, REG-106, REG-107 | Article row ids added for RG-004; add context and swipe action ids as flows need them |
 | F010 | Stable ids for settings rows/actions | In progress | RG-009, RG-010, REG-113-115 | Feed-list, reading behavior, appearance, sync/storage, and notifications settings ids added; add other settings ids as flows need them |
 | F011 | Stable ids for reader toolbar/actions | Passing | RG-007, REG-110, REG-111 | Reader article, bookmark, browser, font menu, overflow, back, navigation, and image viewer ids added |
-| F012 | OPML fixture files | Passing | RG-011, REG-119 | `e2e/fixtures/opml/feedflow-valid-opml-smoke.xml`; OPML content uses `.xml` extension so Android DocumentsUI shows it as a document |
+| F012 | OPML fixture files | Passing | RG-011, REG-119 | `e2e/fixtures/opml/feedflow-valid-opml-smoke.xml` and `e2e/fixtures/opml/zz-feedflow-invalid-opml.xml`; OPML content uses `.xml` extension so Android DocumentsUI shows it as a document |
 | F013 | CSV fixture files | Passing | RG-011, REG-120 | `e2e/fixtures/csv/feedflow-articles-smoke.csv`; `feed_source_id` matches the OPML-imported feed URL hash |
 | F014 | `reader-mode` profile validation flow | Passing | RG-007, REG-110, REG-111 | Covered by RG-007 reader-mode flow |
 | F015 | `card-layout` and `compact-list` profile validation flows | Passing | REG-108 | Android and iOS card/compact profile flows passed on 2026-05-25 |
@@ -135,7 +135,7 @@ Start these after the release gate is stable.
 | REG-116 | Account List One-Account Constraint | `sync-linked-mock` | Android, iOS | Blocked | Needs mock linked provider state |
 | REG-117 | GReader Provider Forms | `empty` | Android, iOS | Blocked | Needs mocked success/error auth path |
 | REG-118 | Cloud Provider Mock States | `sync-linked-mock` | Android, iOS | Blocked | Needs mock linked cloud provider state |
-| REG-119 | OPML Import Error States | `empty` + fixtures | Android, iOS | Blocked | Needs invalid/partial OPML fixtures |
+| REG-119 | OPML Import Error States | `empty` + fixtures | Android, iOS | In progress | Android and iOS `119-opml-import-error-states.yaml` passed via Maestro CLI on 2026-05-26 for invalid OPML and choose-another-file recovery; partial failed-feed reporting remains blocked because local OPML imports do not produce `feedSourceWithError` or `notValidFeedSources` entries |
 | REG-120 | CSV Import Export Filters | `content-rich` + fixtures | Android, iOS | Blocked | Needs CSV fixtures and file-picker strategy |
 
 ## Manual-Supported Suite

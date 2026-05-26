@@ -1,0 +1,42 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 10000
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_import_export
+- tapOn:
+    id: import_export_import_feeds
+- tapOn:
+    point: "82%,34%"
+- tapOn:
+    point: "82%,30%"
+- extendedWaitUntil:
+    visible:
+      id: import_export_invalid_opml
+    timeout: 10000
+- tapOn:
+    id: import_export_choose_another_file
+- tapOn:
+    point: "50%,34%"
+- tapOn:
+    point: "50%,30%"
+- extendedWaitUntil:
+    visible:
+      id: import_export_feed_import_success
+    timeout: 10000
+- tapOn:
+    id: import_export_done
+    optional: true

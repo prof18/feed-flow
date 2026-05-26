@@ -190,6 +190,7 @@ private extension ImportExportContent {
                 .font(.headline)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, Spacing.medium)
+                .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.invalidOpml)
 
             Text(feedFlowStrings.invalidOpmlImportDescription)
                 .font(.body)
@@ -202,6 +203,7 @@ private extension ImportExportContent {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
+            .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.chooseAnotherFile)
             .padding(.top, Spacing.regular)
             .padding(.horizontal, Spacing.medium)
 
@@ -433,6 +435,8 @@ private enum ImportExportAccessibilityIdentifiers {
     static let articleExportSuccess = "import_export_article_export_success"
     static let done = "import_export_done"
     static let error = "import_export_error"
+    static let invalidOpml = "import_export_invalid_opml"
+    static let chooseAnotherFile = "import_export_choose_another_file"
 }
 
 private extension ImportExportContent {

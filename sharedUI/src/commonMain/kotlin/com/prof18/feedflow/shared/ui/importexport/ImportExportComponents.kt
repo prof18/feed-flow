@@ -359,6 +359,7 @@ private fun InvalidOpmlImportView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
+            modifier = Modifier.testTag(ImportExportE2eIds.INVALID_OPML),
             text = LocalFeedFlowStrings.current.invalidOpmlImportTitle,
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
@@ -370,7 +371,9 @@ private fun InvalidOpmlImportView(
             textAlign = TextAlign.Center,
         )
         Button(
-            modifier = Modifier.padding(top = Spacing.regular),
+            modifier = Modifier
+                .testTag(ImportExportE2eIds.CHOOSE_ANOTHER_FILE)
+                .padding(top = Spacing.regular),
             onClick = onChooseAnotherFileClick,
         ) {
             Text(LocalFeedFlowStrings.current.chooseAnotherFileButton)
@@ -581,6 +584,8 @@ private object ImportExportE2eIds {
     const val ARTICLE_EXPORT_SUCCESS = "import_export_article_export_success"
     const val DONE = "import_export_done"
     const val ERROR = "import_export_error"
+    const val INVALID_OPML = "import_export_invalid_opml"
+    const val CHOOSE_ANOTHER_FILE = "import_export_choose_another_file"
 }
 
 @Composable

@@ -54,6 +54,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.IntSize
@@ -86,6 +87,7 @@ internal fun FeedSourcesWithCategoryList(
     val layoutDir = LocalLayoutDirection.current
     LazyColumn(
         modifier = modifier
+            .testTag(FeedSourceListE2eIds.SCREEN)
             .padding(top = paddingValues.calculateTopPadding())
             .padding(start = paddingValues.calculateLeftPadding(layoutDir))
             .padding(end = paddingValues.calculateRightPadding(layoutDir)),
@@ -120,6 +122,7 @@ internal fun FeedSourcesWithCategoryList(
                 )
                 Row(
                     modifier = Modifier
+                        .testTag(FeedSourceListE2eIds.category(feedSourceState.categoryId?.value))
                         .clip(MaterialTheme.shapes.medium)
                         .singleAndLongClickModifier(
                             onClick = {
@@ -286,6 +289,7 @@ private fun FeedSourceItem(
                 Icon(
                     imageVector = Icons.Default.Warning,
                     contentDescription = tooltipText,
+                    modifier = Modifier.testTag(FeedSourceListE2eIds.warning(feedSource.id)),
                     tint = Color(color = 0xFFFF8F00),
                 )
             }
@@ -296,6 +300,7 @@ private fun FeedSourceItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag(FeedSourceListE2eIds.row(feedSource.id))
                 .singleAndLongClickModifier(
                     onLongClick = if (isEditEnabled) {
                         null
@@ -337,6 +342,7 @@ private fun FeedSourceItem(
 
                 ConditionalAnimatedVisibility(isEditEnabled) {
                     FeedSourceTitleEdit(
+                        feedSourceId = feedSource.id,
                         focusRequester = focusRequester,
                         feedTitleInput = feedTitleInput,
                         isEditEnabled = isEditEnabled,
@@ -381,6 +387,7 @@ private fun FeedSourceItem(
 
 @Composable
 private fun FeedSourceTitleEdit(
+    feedSourceId: String,
     focusRequester: FocusRequester,
     feedTitleInput: TextFieldValue,
     isEditEnabled: Boolean,
@@ -394,6 +401,7 @@ private fun FeedSourceTitleEdit(
         TextField(
             modifier = Modifier
                 .weight(1f)
+                .testTag(FeedSourceListE2eIds.renameInput(feedSourceId))
                 .focusRequester(focusRequester)
                 .padding(top = Spacing.small),
             value = feedTitleInput,
@@ -417,6 +425,7 @@ private fun FeedSourceTitleEdit(
         )
 
         IconButton(
+            modifier = Modifier.testTag(FeedSourceListE2eIds.renameSave(feedSourceId)),
             onClick = {
                 onRenameFeedSourceClick()
             },

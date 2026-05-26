@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
+import com.prof18.feedflow.android.feedsourcelist.FeedSourceListE2eIds
 import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.settings.SettingItem
@@ -64,6 +65,7 @@ internal fun FeedsAndAccountsScreen(
         ) {
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(FeedSourceListE2eIds.SETTINGS_ROW),
                     title = LocalFeedFlowStrings.current.feedsTitle,
                     icon = Icons.AutoMirrored.Default.Feed,
                     onClick = onFeedListClick,

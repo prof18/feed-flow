@@ -16,6 +16,7 @@ struct FeedsAndAccountsScreen: View {
                 NavigationLink(destination: FeedSourceListScreen()) {
                     Label(feedFlowStrings.feedsTitle, systemImage: "list.bullet.rectangle.portrait")
                 }
+                .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.settingsRow)
 
                 NavigationLink(destination: AddFeedScreen()) {
                     Label(feedFlowStrings.addFeed, systemImage: "plus.circle")

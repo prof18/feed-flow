@@ -44,6 +44,7 @@ struct FeedSourceListScreenContent: View {
             }
             Spacer()
         }
+        .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.screen)
         .scrollContentBackground(.hidden)
         .background(Color.secondaryBackgroundColor)
         .navigationTitle(Text(feedFlowStrings.feedsTitle))
@@ -154,6 +155,9 @@ struct FeedSourceListScreenContent: View {
                             }
                     }
                 )
+                .accessibilityIdentifier(
+                    FeedSourceListAccessibilityIdentifiers.category(feedSourceState.categoryId?.value)
+                )
                 .listRowInsets(
                     EdgeInsets(
                         top: .zero,
@@ -220,6 +224,9 @@ private struct FeedSourceListItem: View {
         HStack {
             if feedSource.fetchFailed {
                 makeFeedFailureIcon()
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(feedFlowStrings.feedFetchFailedTooltipShort)
+                    .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.warning(feedSource.id))
             }
 
             if let imageUrl = feedSource.logoUrl {
@@ -251,6 +258,7 @@ private struct FeedSourceListItem: View {
                     TextField("", text: $feedSourceTitle)
                         .focused($isTextFieldFocused, equals: true)
                         .disabled(!isRenameEnabled)
+                        .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.renameInput(feedSource.id))
                         .font(.system(size: 16))
                         .padding(.top, Spacing.regular)
                         .padding(.bottom, 2)
@@ -266,6 +274,7 @@ private struct FeedSourceListItem: View {
                             Image(systemName: "checkmark.circle.fill")
                                 .tint(.green)
                         }
+                        .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.renameSave(feedSource.id))
                         .padding(.top, Spacing.regular)
                     }
                 }
@@ -278,6 +287,8 @@ private struct FeedSourceListItem: View {
             .padding(.leading, Spacing.small)
         }
         .padding(.trailing, Spacing.small)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.row(feedSource.id))
         .contentShape(Rectangle())
         .hoverEffect()
         .listRowInsets(

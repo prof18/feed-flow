@@ -1,0 +1,31 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_category_expand_e2e_category_technology
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_expand_e2e_category_technology
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_e2e_feed_android_weekly
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- assertVisible:
+    text: "Android Central RSS Feed"
+- tapOn:
+    id: home_more_menu_button
+- assertVisible: "Edit feed"
+- tapOn: "Edit feed"
+- assertVisible: "Edit feed"
+- assertVisible: "Link opening behaviour"

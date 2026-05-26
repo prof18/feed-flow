@@ -1,0 +1,21 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=notifications
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- setPermissions:
+    permissions:
+      notifications: deny
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn: "Notifications"
+- assertVisible: "FeedFlow needs your permission to send notifications.*"
+- assertNotVisible: "Enable All Notifications"

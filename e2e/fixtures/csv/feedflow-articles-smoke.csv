@@ -1,2 +1,5 @@
 url_hash,url,title,subtitle,image_url,feed_source_id,is_read,is_bookmarked,pub_date,comments_url,notification_sent,is_blocked
-e2e-imported-csv-article,https://e2e.feedflow.local/import/articles/csv,E2E Imported CSV Article,Imported from the E2E CSV fixture,,892471760,false,false,1767225600000,,false,false
+e2e-imported-csv-unread,https://e2e.feedflow.local/import/articles/unread,E2E Imported CSV Unread Article,Imported unread from the E2E CSV fixture,,892471760,false,false,1767225600000,,false,false
+e2e-imported-csv-read,https://e2e.feedflow.local/import/articles/read,E2E Imported CSV Read Article,Imported read from the E2E CSV fixture,,892471760,true,false,1767225660000,,false,false
+e2e-imported-csv-bookmarked-unread,https://e2e.feedflow.local/import/articles/bookmarked-unread,E2E Imported CSV Bookmarked Unread Article,Imported bookmarked unread from the E2E CSV fixture,,892471760,false,true,1767225720000,,false,false
+e2e-imported-csv-bookmarked-read,https://e2e.feedflow.local/import/articles/bookmarked-read,E2E Imported CSV Bookmarked Read Article,Imported bookmarked read from the E2E CSV fixture,,892471760,true,true,1767225780000,,false,false

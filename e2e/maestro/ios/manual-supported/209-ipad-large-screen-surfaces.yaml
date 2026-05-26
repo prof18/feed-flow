@@ -1,0 +1,61 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- setOrientation: PORTRAIT
+- openLink: feedflow://e2e/reset-and-seed?profile=reader-mode
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    text: "Show Sidebar"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: drawer_timeline
+    timeout: 10000
+- tapOn:
+    id: drawer_settings_button
+- assertVisible: "Settings"
+- assertVisible:
+    id: settings_feeds_accounts
+- assertVisible:
+    id: settings_appearance
+- assertVisible:
+    id: settings_done_button
+- tapOn:
+    id: settings_done_button
+- assertVisible:
+    id: drawer_timeline
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: reader_browser_button
+- assertVisible:
+    id: drawer_timeline
+- setOrientation: LANDSCAPE_LEFT
+- assertVisible:
+    id: reader_browser_button
+- tapOn:
+    text: "Show Sidebar"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: drawer_timeline
+    timeout: 10000
+- setOrientation: PORTRAIT
+- assertVisible:
+    id: reader_browser_button
+- tapOn:
+    text: "Show Sidebar"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: drawer_timeline
+    timeout: 10000

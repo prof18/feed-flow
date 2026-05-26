@@ -52,6 +52,12 @@ SIMULATOR_UDID=$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 17 Pr
 maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-gate/<flow>.yaml
 ```
 
+Run the Android widget configuration manual-supported flow:
+
+```bash
+e2e/scripts/run-android-widget-config.sh
+```
+
 ## Foundation Work
 
 | ID | Work | Status | Blocks | Notes |
@@ -73,7 +79,7 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-g
 | F015 | `card-layout` and `compact-list` profile validation flows | Passing | REG-108 | Android and iOS card/compact profile flows passed on 2026-05-25 |
 | F016 | `external-browser` profile validation flow | Passing | REG-112 | Android and iOS reader-mode override flow passed on 2026-05-25; external OS/browser branches remain in REG-112 |
 | F017 | `notifications` profile validation flow | Passing | REG-115 | Android and iOS notifications profile flows passed on 2026-05-25; iOS requests notification permission when the simulator is unset |
-| F018 | `android-widget` profile validation flow | Not started | MAN-201, MAN-202 | Android-only; requires a stable widget-host automation strategy without production UI changes |
+| F018 | `android-widget` profile validation flow | Passing | MAN-201 | Android-only; `e2e/scripts/run-android-widget-config.sh` seeds the `android-widget` profile, launches the existing widget configuration activity with a standard widget id extra, and verifies the configuration UI without launcher/widget-host automation |
 | F019 | Mock account seed state | In progress | REG-116, REG-118 | `sync-linked-mock` can seed a linked account via `account=fresh_rss`, `miniflux`, `bazqux`, `feedbin`, `dropbox`, or `icloud`; Google Drive mock auth is not testable without production provider/mock behavior changes |
 | F020 | `large-content` profile | Passing | REG-134, MAN-206 | Seeds 55 additional unread articles for pagination beyond the first 40-item page and large-dataset search coverage |
 | F021 | Stable ids and hooks for search controls | Passing | RG-006 | Android search field/filter ids added; iOS uses seeded query/filter hooks because SwiftUI `.searchable` is OS-owned and flaky to type into with Maestro |
@@ -170,7 +176,7 @@ These should not block the normal release gate until they are reliable.
 
 | ID | Test | Profile | Platforms | Status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| MAN-201 | Android Widget Configuration | `android-widget` | Android | Not started | Android-only; requires stable launcher/widget-host automation without production UI changes |
+| MAN-201 | Android Widget Configuration | `android-widget` | Android | Passing | `e2e/scripts/run-android-widget-config.sh` passed on 2026-05-26; covers seeded widget preview/settings, header toggle preview mutation, background color picker invalid-value validation, text color mode mutation, and the Add Widget confirmation path using the existing configuration activity |
 | MAN-202 | Android Widget Launcher Smoke | `android-widget` | Android | Deferred | Needs widget host/launcher automation strategy |
 | MAN-203 | iOS Widget Deep Link | `content-rich` | iOS | Not started | iOS-only; requires stable SpringBoard/widget automation without production UI changes |
 | MAN-204 | Share Extension Smoke | `empty` | Android, iOS | Deferred | OS share surfaces can be unstable |
@@ -196,7 +202,7 @@ Last audited: 2026-05-26. This section tracks user-facing Android/iOS features t
 | Swipe actions | Android, iOS | REG-107 covers read/bookmark swipes; Android covers disabled swipes | iOS disabled-swipe and open-in-browser swipe branches remain uncovered because the gesture currently opens the row or escapes to OS/browser surfaces. |
 | Account provider auth and cloud actions | Android, iOS | REG-116 covers one-account constraint; REG-117 covers required-field validation; REG-118 covers seeded Dropbox and iOS iCloud linked screens; REG-138 covers iOS iCloud unlink; REG-142 covers iOS iCloud backup | Mocked success/error auth, Google Drive mock state, Android/Dropbox cloud unlink, Dropbox/Google Drive backup actions, and real provider sync remain uncovered without live credentials or existing provider-side mock support. |
 | Import/export advanced paths | Android, iOS | RG-011 covers import smoke; REG-119 covers invalid OPML; REG-120 covers CSV import/read/bookmark state; REG-139 and REG-141 cover all article export filter choices reaching export success; REG-140 covers OPML export success | OPML partial-failure reporting and deeper saved-file content validation remain uncovered until fixture/provider data and document-save automation are stable without app changes. |
-| Widgets | Android, iOS | MAN-201-203 are not passing | Android widget settings/configuration/launcher and iOS widget deep links are uncovered; both need stable widget-host/SpringBoard automation. |
+| Widgets | Android, iOS | MAN-201 covers Android widget configuration; MAN-202-203 are not passing | Android widget launcher smoke and iOS widget deep links remain uncovered; both need stable widget-host/SpringBoard automation. |
 | Share extension / share intent | Android, iOS | MAN-204 is deferred | Android `ACTION_SEND` add-feed activity and iOS Share Extension receive/add-feed flows are uncovered because OS share surfaces are unstable. |
 | App deep links from notifications/widgets | Android, iOS | REG-126 covers iOS `feedflow://feed/<id>` article routing into reader mode | Android notification deep links, feed-source filter links, category links, and widget deep links remain uncovered. Android notification routing uses explicit `MainActivity` intents, and iOS feed-source/category routing is handled through notification delegate events rather than direct `openLink`, so keep these blocked unless they can be driven through existing OS notification/widget surfaces. |
 | Tablet, iPad, split layout, rotation | Android tablet, iPad | MAN-205 is deferred | Sidebar/split navigation, settings presentation, reader presentation, and rotation remain uncovered on dedicated large-screen devices. |

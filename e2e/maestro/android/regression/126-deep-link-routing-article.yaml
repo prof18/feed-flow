@@ -1,0 +1,6 @@
+appId: com.prof18.feedflow.debug
+---
+- extendedWaitUntil:
+    visible: "E2E Reader Mode Success Article.*"
+    timeout: 10000
+- assertVisible: "E2E cached reader content loaded from the seed fixture."

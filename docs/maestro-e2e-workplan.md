@@ -64,6 +64,12 @@ Run the Android share-intent manual-supported flow:
 e2e/scripts/run-android-share-intent.sh
 ```
 
+Run the Android deep-link regression flow:
+
+```bash
+e2e/scripts/run-android-deep-links.sh
+```
+
 ## Foundation Work
 
 | ID | Work | Status | Blocks | Notes |
@@ -158,7 +164,7 @@ Start these after the release gate is stable.
 | REG-123 | Sync Storage Advanced Settings | `content-rich` | Android, iOS | Passing | Android and iOS `123-sync-storage-advanced-settings.yaml` passed via Maestro CLI on 2026-05-26; covers clear-downloaded confirmation on both platforms plus Android Wi-Fi/charging restrictions and clear image cache confirmation. |
 | REG-124 | Home Overflow Secondary Actions | `content-rich` | Android, iOS | Passing | Android and iOS `124-home-overflow-secondary-actions.yaml` passed via Maestro CLI on 2026-05-26; covers force-refresh item visibility, sort/filter sheet controls, and clear-old-articles confirmation. |
 | REG-125 | About And Support Navigation | `content-rich` | Android, iOS | Passing | Android and iOS `125-about-support-navigation.yaml` passed via Maestro CLI on 2026-05-26; covers About & Support, About screen, and open-source licenses navigation without external email/browser actions. |
-| REG-126 | Deep Link Routing | `content-rich` | iOS | Passing | iOS `126-deep-link-routing.yaml` passed via Maestro CLI on 2026-05-26 for `feedflow://feed/<id>` article routing into reader mode. Android notification deep links remain blocked from reliable Maestro coverage because production notification routing uses explicit `MainActivity` intents and category/filter links are not exposed through a stable `openLink` path. |
+| REG-126 | Deep Link Routing | `content-rich` | Android, iOS | Passing | Android `e2e/scripts/run-android-deep-links.sh` passed on 2026-05-26 for article reader, feed-source filter, and category filter routes using the existing explicit `MainActivity` intent shape used by notifications. iOS `126-deep-link-routing.yaml` passed via Maestro CLI on 2026-05-26 for `feedflow://feed/<id>` article routing into reader mode. |
 | REG-127 | Notifications Secondary Settings | `notifications` | Android, iOS | Passing | Android and iOS `127-notifications-secondary-settings.yaml` passed via Maestro CLI on 2026-05-26; covers enable-all mutation, per-feed toggle mutation, grouping picker mutation, and Android check-period plus Wi-Fi/charging restrictions from the notifications screen. |
 | REG-128 | Notifications Empty State | `empty` | Android, iOS | Passing | Android and iOS `128-notifications-empty-state.yaml` passed via Maestro CLI on 2026-05-26; covers the no-feeds notification settings state. |
 | REG-129 | Edit Feed Secondary Options | `notifications` | Android, iOS | Passing | Android and iOS `129-edit-feed-secondary-options.yaml` passed via Maestro CLI on 2026-05-26; covers the article context-menu route to feed settings, edit-feed link-opening preference mutation, notification toggle mutation, and save. |
@@ -210,7 +216,7 @@ Last audited: 2026-05-26. This section tracks user-facing Android/iOS features t
 | Import/export advanced paths | Android, iOS | RG-011 covers import smoke; REG-119 covers invalid OPML; REG-120 covers CSV import/read/bookmark state; REG-139 and REG-141 cover all article export filter choices reaching export success; REG-140 covers OPML export success | OPML partial-failure reporting and deeper saved-file content validation remain uncovered until fixture/provider data and document-save automation are stable without app changes. |
 | Widgets | Android, iOS | MAN-201 covers Android widget configuration; MAN-203/REG-126 cover the iOS widget feed-link route; MAN-202 is not passing | Android widget launcher smoke and real iOS SpringBoard widget tap automation remain uncovered; both need stable widget-host/SpringBoard automation. |
 | Share extension / share intent | Android, iOS | MAN-204 covers Android `ACTION_SEND` with a local RSS fixture | iOS Share Extension receive/add-feed remains uncovered because it requires stable OS share-sheet automation. |
-| App deep links from notifications/widgets | Android, iOS | REG-126/MAN-203 cover iOS `feedflow://feed/<id>` article routing into reader mode | Android notification deep links, feed-source filter links, category links, and real widget-tap surfaces remain uncovered. Android notification routing uses explicit `MainActivity` intents, and iOS feed-source/category routing is handled through notification delegate events rather than direct `openLink`, so keep these blocked unless they can be driven through existing OS notification/widget surfaces. |
+| App deep links from notifications/widgets | Android, iOS | REG-126 covers Android article, feed-source filter, and category routes plus iOS `feedflow://feed/<id>` article routing; MAN-203 covers the iOS widget feed-link route | Real Android/iOS notification delivery taps and real widget-tap surfaces remain uncovered because they require stable OS notification/widget automation. iOS feed-source/category routing is handled through notification delegate events rather than direct `openLink`, so keep that OS-notification surface blocked unless it can be driven reliably. |
 | Tablet, iPad, split layout, rotation | Android tablet, iPad | MAN-205 is deferred | Sidebar/split navigation, settings presentation, reader presentation, and rotation remain uncovered on dedicated large-screen devices. |
 | Large dataset behavior | Android, iOS | REG-134/MAN-206 cover feed pagination beyond the first 40-item page on Android and iOS; REG-134 covers large-dataset search on Android | iOS large-dataset search remains uncovered because Maestro/XCTest hierarchy retrieval times out after opening the large search result screen. Broader performance profiling stays outside Maestro release-gate coverage. |
 | About and support | Android, iOS | REG-125 covers About & Support navigation, About screen content, and open-source licenses; REG-132 covers crash-reporting toggle mutation and report-issue visibility | FAQ is feature-flagged off, and external email/browser actions should stay manual unless assertable through existing in-app state. |

@@ -4,7 +4,7 @@ This guide explains how to write and run FeedFlow Maestro tests. Use it together
 
 - `docs/maestro-e2e-preparation-plan.md`
 - `docs/maestro-e2e-test-catalog.md`
-- `docs/maestro-e2e-workplan.md`
+- `docs/maestro-e2e-tests.md`
 
 ## Structure
 
@@ -271,6 +271,6 @@ Run the relevant Maestro flow when:
 
 Run both wrapper scripts before handing off changes that affect shared E2E setup, app launch, seeded content, or cross-platform UI behavior.
 
-Update `docs/maestro-e2e-workplan.md` whenever a flow moves to passing, blocked, or in progress.
+Update `docs/maestro-e2e-tests.md` whenever you add, remove, or significantly reshape a flow.
 
 For non-E2E code changes, keep following the normal project gates in `AGENTS.md`.

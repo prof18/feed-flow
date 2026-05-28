@@ -22,11 +22,6 @@ appId: com.prof18.feedflow.dev
     id: add_feed_save_button
     enabled: false
 - tapOn:
-    id: add_feed_apply_e2e_url
-- assertVisible:
-    id: add_feed_save_button
-    enabled: true
-- tapOn:
     id: edit_feed_category_selector
 - assertVisible:
     text: "Categories"

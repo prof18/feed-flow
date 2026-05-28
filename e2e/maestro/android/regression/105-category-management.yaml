@@ -59,19 +59,3 @@ appId: com.prof18.feedflow.debug
     text: "Confirm"
 - assertNotVisible:
     id: drawer_feed_source_e2e_feed_android_weekly
-- longPressOn:
-    id: drawer_category_e2e_category_empty
-- tapOn:
-    text: "Delete category"
-- tapOn:
-    text: "Close"
-- assertVisible:
-    id: drawer_category_e2e_category_empty
-- longPressOn:
-    id: drawer_category_e2e_category_empty
-- tapOn:
-    text: "Delete category"
-- tapOn:
-    text: "Confirm"
-- assertNotVisible:
-    id: drawer_category_e2e_category_empty

@@ -3,7 +3,6 @@ package com.prof18.feedflow.shared.ui.feed
 object FeedFormE2eIds {
     const val ADD_FEED_URL_INPUT = "add_feed_url_input"
     const val ADD_FEED_SAVE_BUTTON = "add_feed_save_button"
-    const val ADD_FEED_PREPARE_FORCE_ADD_FAILURE = "add_feed_prepare_force_add_failure"
     const val ADD_FEED_FORCE_ADD_ACKNOWLEDGE = "add_feed_force_add_acknowledge"
     const val ADD_FEED_FORCE_ADD_BUTTON = "add_feed_force_add_button"
     const val NAME_INPUT = "edit_feed_name"

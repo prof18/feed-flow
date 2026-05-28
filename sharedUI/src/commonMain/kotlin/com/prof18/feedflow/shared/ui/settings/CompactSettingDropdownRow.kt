@@ -59,7 +59,6 @@ fun <T> CompactSettingDropdownRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { expanded = true }
             .padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),

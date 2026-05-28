@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md).
 
 - **Release Gate** — 13 flows, both platforms, run before every release (`e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`)
-- **Regression Suite** — 55 flows, both platforms, run for broader local/CI validation
+- **Regression Suite** — 54 flows, both platforms, run for broader local/CI validation
 - **Manual-Supported** — 10 flows, run from dedicated wrapper scripts; not part of the release gate
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -50,11 +50,10 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 
 | ID | Flow | Profile | Platforms | Coverage |
 | --- | --- | --- | --- | --- |
-| REG-101 | `101-add-feed-form-validation.yaml` | `empty` | Android, iOS | Add Feed URL field validation, Save button enabled/disabled states. |
-| REG-102 | `102-force-add-feed.yaml` | `empty` | Android, iOS | DEBUG deterministic force-add failure state, force-add acknowledge toggle, force-add button. |
+| REG-101 | `101-add-feed-form-validation.yaml` | `empty` | Android, iOS | Add Feed URL field validation, Save button starts disabled, category selector opens the Categories sheet. Android additionally types a URL via `inputText` and asserts the Save button becomes enabled. |
 | REG-103 | `103-feed-suggestions.yaml` | `empty` | Android, iOS | Drawer → Feed Suggestions screen, Business category, add suggestion → "Added" confirmation. |
 | REG-104 | `104-feed-source-list-management.yaml` | `content-rich` | Android, iOS | Settings → Feeds: expand/collapse category, inline rename (Android), delete confirmation, fetch-failed warning. |
-| REG-105 | `105-category-management.yaml` (+ iOS `105-category-add-validation.yaml`) | `content-rich` | Android, iOS | Add Feed category sheet: create new category, duplicate-name validation. Drawer category menu: rename, delete all feeds, delete category. |
+| REG-105 | `105-category-management.yaml` (+ iOS `105-category-add-validation.yaml`) | `content-rich` | Android, iOS | Add Feed category sheet: create new category, duplicate-name validation. Drawer category menu: rename, delete all feeds. Drawer "Delete category" path is iOS-only because Android only renders categories that still own a feed source. |
 | REG-106 | `106-article-context-menu.yaml` | `content-rich` | Android, iOS | Article long-press: Mark as read/unread, Add/Remove bookmark mutations. |
 | REG-107 | `107-swipe-actions.yaml` | `swipe-actions`, `swipe-disabled` | Android, iOS | Left = toggle read, right = toggle bookmark swipes. Android also covers the disabled-swipe variant. |
 | REG-108 | `108-feed-layout-matrix-card.yaml`, `108-feed-layout-matrix-compact.yaml` | `card-layout`, `compact-list` | Android, iOS | Card and Compact feed-list layouts render the seeded items. |
@@ -142,3 +141,5 @@ These are features intentionally not covered, with the reason recorded so they a
 - **iPad / macOS menu commands and keyboard shortcuts** — Cmd-R, Cmd-Shift-A, Cmd-N, etc. from `FeedFlowApp+Menu.swift`. Maestro can drive iPad keyboard chords, but no flow added yet.
 - **Android in-app Widget Settings screen** — Settings → Widget Settings exposes the same controls as MAN-201 but reached from the main settings tree. Same surfaces, different entry; not exercised separately.
 - **Background sync / notification delivery (MAN-208)** — WorkManager scheduling, iOS background refresh, notification delivery, and notification deep-link routing remain manual / nightly candidates.
+- **Force Add feed (formerly REG-102)** — dropped: required a DEBUG-only "trigger force-add failure" hook in production to deterministically reach the force-add UI without depending on network errors.
+- **Android delete-category from drawer (formerly part of REG-105)** — dropped: the production drawer only lists categories that still own at least one feed source, so an empty category can't be long-pressed. iOS still covers this branch because its drawer lists categories independently.

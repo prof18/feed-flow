@@ -138,44 +138,6 @@ internal fun AndroidDrawerFeedSourcesByCategories(
                     )
                 }
             }
-
-            val categoryIdsWithFeedSources = remember(navDrawerState.feedSourcesByCategory) {
-                navDrawerState.feedSourcesByCategory.keys
-                    .mapNotNull { it.feedSourceCategory?.id }
-                    .toSet()
-            }
-            val emptyCategoryItems = remember(navDrawerState.categories, categoryIdsWithFeedSources) {
-                navDrawerState.categories
-                    .filterIsInstance<DrawerItem.DrawerCategory>()
-                    .filter { it.category.id !in categoryIdsWithFeedSources }
-            }
-            emptyCategoryItems.forEach { categoryItem ->
-                key(categoryItem.category.id) {
-                    AndroidDrawerFeedSourceByCategoryItem(
-                        feedSourceCategoryWrapper = DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(
-                            feedSourceCategory = categoryItem.category,
-                        ),
-                        drawerFeedSources = emptyList<DrawerItem.DrawerFeedSource>().toImmutableList(),
-                        currentFeedFilter = currentFeedFilter,
-                        drawerItemVisualStyle = drawerItemVisualStyle,
-                        isCategoryExpanded = false,
-                        onCategoryExpand = {},
-                        onFeedFilterSelected = onFeedFilterSelected,
-                        onFeedSourceClick = onFeedSourceClick,
-                        onEditFeedClick = onEditFeedClick,
-                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                        onPinFeedClick = onPinFeedClick,
-                        onChangeFeedCategoryClick = onChangeFeedCategoryClick,
-                        onOpenWebsite = onOpenWebsite,
-                        onEditCategoryClick = onEditCategoryClick,
-                        validateCategoryName = validateCategoryName,
-                        onDeleteCategoryClick = onDeleteCategoryClick,
-                        onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
-                        onMarkAllReadForCategoryClick = onMarkAllReadForCategoryClick,
-                        onDeleteAllFeedsInCategoryByIdClick = onDeleteAllFeedsInCategoryByIdClick,
-                    )
-                }
-            }
         }
     }
 }

@@ -48,7 +48,6 @@ fun AddFeedContent(
     canForceAdd: Boolean,
     onForceAddFeed: () -> Unit,
     modifier: Modifier = Modifier,
-    onPrepareE2eForceAddFailure: (() -> Unit)? = null,
     showNotificationToggle: Boolean = false,
     onNotificationToggleChanged: (Boolean) -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
@@ -85,18 +84,6 @@ fun AddFeedContent(
                     errorMessage = errorMessage,
                     onFeedUrlUpdated = onFeedUrlUpdated,
                 )
-
-                onPrepareE2eForceAddFailure?.let { prepareForceAddFailure ->
-                    OutlinedButton(
-                        modifier = Modifier
-                            .padding(top = Spacing.small)
-                            .fillMaxWidth()
-                            .testTag(FeedFormE2eIds.ADD_FEED_PREPARE_FORCE_ADD_FAILURE),
-                        onClick = prepareForceAddFailure,
-                    ) {
-                        Text(LocalFeedFlowStrings.current.invalidRssUrlWithRetryHint)
-                    }
-                }
             }
 
             item {

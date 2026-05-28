@@ -24,7 +24,6 @@ struct AddFeedScreenContent: View {
     @Binding var isNotificationEnabled: Bool
     @Binding var canForceAdd: Bool
     @State private var acknowledged: Bool = false
-    @State private var showE2eForceAdd = false
 
     var categorySelectorObserver: CategorySelectorObserver
     let viewModel: AddFeedViewModel
@@ -34,7 +33,6 @@ struct AddFeedScreenContent: View {
     let onNotificationToggled: (Bool) -> Void
     let addFeed: () -> Void
     let forceAddFeed: () -> Void
-    let prepareE2eForceAddFailure: () -> Void
 
     var body: some View {
         Form {
@@ -47,28 +45,6 @@ struct AddFeedScreenContent: View {
                         .hoverEffect()
                         .focused($isTextFieldFocused)
                         .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.urlInput)
-
-                    #if DEBUG
-                        Button {
-                            let e2eURL = "https://e2e.feedflow.local/feed.xml"
-                            feedURL = e2eURL
-                            updateFeedUrlTextFieldValue(e2eURL)
-                        } label: {
-                            Image(systemName: "textformat")
-                        }
-                        .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.applyE2eUrlButton)
-                        .hoverEffect()
-
-                        Button {
-                            prepareE2eForceAddFailure()
-                            acknowledged = false
-                            showE2eForceAdd = true
-                        } label: {
-                            Image(systemName: "exclamationmark.triangle")
-                        }
-                        .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.prepareForceAddFailureButton)
-                        .hoverEffect()
-                    #endif
                 },
                 header: {
                     Text(feedFlowStrings.feedUrl)
@@ -132,33 +108,17 @@ struct AddFeedScreenContent: View {
                 }
             }
 
-            if (showError && canForceAdd) || showE2eForceAdd {
+            if showError && canForceAdd {
                 Section {
                     VStack(alignment: .leading, spacing: 20) {
-                        if showE2eForceAdd {
-                            Text(feedFlowStrings.invalidRssUrlWithRetryHint)
-                                .font(.caption)
-                                .foregroundColor(.red)
-                        }
-
                         Toggle(isOn: $acknowledged) {
                             Text(feedFlowStrings.addFeedAnywayAcknowledgement)
                                 .font(.subheadline)
                         }
 
-                        #if DEBUG
-                            Button {
-                                acknowledged = true
-                            } label: {
-                                Image(systemName: "checkmark.circle")
-                            }
-                            .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.forceAddAcknowledgeToggle)
-                        #endif
-
                         Button(
                             action: {
                                 isAddingFeed = true
-                                showE2eForceAdd = false
                                 forceAddFeed()
                             },
                             label: {
@@ -216,7 +176,7 @@ struct AddFeedScreenContent: View {
             }
 
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if !((showError && canForceAdd) || showE2eForceAdd) {
+                if !(showError && canForceAdd) {
                     saveButton
                 }
             }
@@ -244,9 +204,6 @@ private enum AddFeedAccessibilityIdentifiers {
     static let urlInput = "add_feed_url_input"
     static let saveButton = "add_feed_save_button"
     static let categorySelector = "edit_feed_category_selector"
-    static let applyE2eUrlButton = "add_feed_apply_e2e_url"
-    static let prepareForceAddFailureButton = "add_feed_prepare_force_add_failure"
-    static let forceAddAcknowledgeToggle = "add_feed_force_add_acknowledge"
     static let forceAddButton = "add_feed_force_add_button"
 }
 

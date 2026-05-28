@@ -1,0 +1,83 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_category_expand_e2e_category_technology
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_expand_e2e_category_technology
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_e2e_feed_android_weekly
+    direction: DOWN
+    timeout: 10000
+
+# Open context menu and assert the app-owned action set
+- longPressOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- assertVisible: "Mark all as read"
+- assertVisible: "Open website"
+- assertVisible: "Edit feed"
+- assertVisible: "Change category"
+- assertVisible: "Pin"
+- assertVisible: "Delete"
+
+# Pin moves the feed into the Pinned Feed Sources section
+- tapOn: "Pin"
+- assertVisible: "Pinned Feed Sources"
+- assertVisible:
+    id: drawer_feed_source_e2e_feed_android_weekly
+
+# Unpin via long-press on the same source
+- longPressOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- assertVisible: "Unpin"
+- tapOn: "Unpin"
+
+# Confirm the menu now shows Pin again. The content-rich seed includes Ars
+# Technica as a pre-pinned source, so the Pinned Feed Sources header stays.
+- longPressOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- assertVisible: "Pin"
+- assertNotVisible: "Unpin"
+
+# Change category opens the category selector sheet
+- tapOn: "Change category"
+- assertVisible: "Categories"
+- swipe:
+    start: 50%,40%
+    end: 50%,95%
+    duration: 400
+
+# Mark all as read on a single feed source
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_e2e_feed_android_weekly
+    direction: DOWN
+    timeout: 10000
+- longPressOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- tapOn: "Mark all as read"
+- assertVisible:
+    id: drawer_feed_source_e2e_feed_android_weekly
+
+# Delete removes the feed source from the drawer
+- longPressOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- tapOn: "Delete"
+- assertVisible: "Delete feed?"
+- tapOn: "Delete feed"
+- assertNotVisible:
+    id: drawer_feed_source_e2e_feed_android_weekly

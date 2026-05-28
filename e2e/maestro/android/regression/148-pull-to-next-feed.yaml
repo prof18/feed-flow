@@ -1,0 +1,42 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+
+# Filter on Android Central. With a single-source filter and remaining unread
+# sources in the same category, the pull-to-next gesture becomes active.
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_category_expand_e2e_category_technology
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_expand_e2e_category_technology
+- tapOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_duplicate_title
+    timeout: 10000
+
+# Pull-to-next is triggered by overscrolling upwards past the last item. The
+# trigger threshold is 164dp after a 0.4 drag resistance, so we use one long
+# fast swipe from near the bottom of the screen to near the top.
+- swipe:
+    start: 50%,90%
+    end: 50%,15%
+    duration: 250
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_reader_success
+    timeout: 10000
+- assertNotVisible:
+    id: article_row_e2e_article_duplicate_title

@@ -1,0 +1,24 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+# Seed the search query via the e2e deeplink. iOS SwiftUI .searchable is
+# OS-owned and Maestro stalls when typing into it directly (see RG-006).
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich&query=Pixel
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+# iOS-only limitation: any interaction on a row inside SwiftUI .searchable
+# beyond the first assert (long-press, repeated snapshots) blows past
+# Maestro's 30s main-thread budget — the searchable hierarchy is too deep.
+# We only assert the seeded comments article surfaces here; the context-menu
+# mutations are covered by Android REG-152.
+- tapOn:
+    id: home_search_button
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_comments
+    timeout: 10000

@@ -1,0 +1,46 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=reader-mode
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+
+# Open the reader success article and navigate forwards then back via the
+# floating toolbar's Next/Previous buttons.
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: reader_article_e2e_article_reader_success
+- tapOn:
+    id: reader_next_button
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_article_reader_fallback
+    timeout: 5000
+- tapOn:
+    id: reader_previous_button
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_article_reader_success
+    timeout: 5000
+
+# Open the font size menu and exercise the Increase / Decrease buttons. The
+# DropdownMenu container does not expose its testTag to uiautomator on
+# Android, so we anchor on the visible "Font Size" header instead.
+- tapOn:
+    id: reader_more_menu_button
+- tapOn: "Font Size"
+- assertVisible: "Font Size"
+- tapOn:
+    text: "Increase font size"
+- tapOn:
+    text: "Decrease font size"

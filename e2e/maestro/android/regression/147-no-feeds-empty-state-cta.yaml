@@ -1,0 +1,63 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+
+# After first launch with no feeds the home shows EmptyFeedView. Tapping
+# "Refresh feeds" forces a fetch attempt which then surfaces NoFeedsSourceView.
+- assertVisible: "Nothing else to read here!"
+- tapOn: "Refresh feeds"
+- extendedWaitUntil:
+    visible: "No feeds found. Please add a new feed!"
+    timeout: 10000
+
+# Open the no-feeds bottom sheet from the empty-state CTA
+- tapOn: "Add feed"
+- assertVisible: "Add a new feed"
+- assertVisible: "Add feed"
+- assertVisible: "Import and export"
+- assertVisible: "Accounts"
+- assertVisible: "Feed Suggestions"
+
+# Feed Suggestions destination
+- tapOn: "Feed Suggestions"
+- assertVisible:
+    id: feed_suggestions_screen
+- back
+
+# Re-open sheet and check Import and export destination
+- tapOn: "Add feed"
+- extendedWaitUntil:
+    visible: "Add a new feed"
+    timeout: 10000
+- tapOn: "Import and export"
+- assertVisible: "Subscriptions (OPML)"
+- assertVisible: "Articles (CSV)"
+- back
+
+# Re-open sheet and check Accounts destination
+- tapOn: "Add feed"
+- extendedWaitUntil:
+    visible: "Add a new feed"
+    timeout: 10000
+- tapOn: "Accounts"
+- assertVisible:
+    id: accounts_provider_dropbox
+- back
+
+# Re-open sheet and check the Add feed destination via the sheet button.
+# The empty-state Add feed button is hidden behind the bottom sheet so the
+# only matching "Add feed" text on screen is the sheet button itself.
+- tapOn: "Add feed"
+- extendedWaitUntil:
+    visible: "Add a new feed"
+    timeout: 10000
+- tapOn: "Add feed"
+- assertVisible:
+    id: add_feed_url_input

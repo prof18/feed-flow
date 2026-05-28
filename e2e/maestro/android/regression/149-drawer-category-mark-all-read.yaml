@@ -1,0 +1,32 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+
+# Long-press the Technology category in the drawer and Mark all as read for
+# every feed in that category.
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_category_e2e_category_technology
+    direction: DOWN
+    timeout: 10000
+- longPressOn:
+    id: drawer_category_e2e_category_technology
+- assertVisible: "Mark all as read"
+- tapOn: "Mark all as read"
+
+# Tap the Technology category to filter on it. With every article now read,
+# the unread timeline for the category is empty.
+- tapOn:
+    id: drawer_category_e2e_category_technology
+- extendedWaitUntil:
+    visible: "Nothing else to read here!"
+    timeout: 10000

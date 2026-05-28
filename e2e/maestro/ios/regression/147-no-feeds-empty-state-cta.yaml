@@ -1,0 +1,72 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+
+# After first launch with no feeds the iOS home shows EmptyFeedView. Tapping
+# "Refresh feeds" forces a fetch attempt which then surfaces NoFeedsSourceView.
+- assertVisible: "Nothing else to read here!"
+- tapOn: "Refresh feeds"
+- extendedWaitUntil:
+    visible: "No feeds found. Please add a new feed!"
+    timeout: 10000
+
+# Open the no-feeds bottom sheet from the empty-state CTA
+- tapOn: "Add feed"
+- assertVisible: "Add a new feed"
+- assertVisible: "Add feed"
+- assertVisible: "Import and export"
+- assertVisible: "Accounts"
+- assertVisible: "Feed Suggestions"
+
+# Add feed destination (sheet button). The destination is a fullscreen modal
+# whose only dismiss control is the toolbar Close (xmark) button.
+- tapOn: "Add feed"
+- assertVisible:
+    id: add_feed_url_input
+- tapOn: "Close"
+- extendedWaitUntil:
+    visible: "No feeds found. Please add a new feed!"
+    timeout: 10000
+
+# Import and export destination
+- tapOn: "Add feed"
+- extendedWaitUntil:
+    visible: "Add a new feed"
+    timeout: 10000
+- tapOn: "Import and export"
+- assertVisible: "Subscriptions (OPML)"
+- assertVisible: "Articles (CSV)"
+- tapOn: "Close"
+- extendedWaitUntil:
+    visible: "No feeds found. Please add a new feed!"
+    timeout: 10000
+
+# Feed Suggestions destination
+- tapOn: "Add feed"
+- extendedWaitUntil:
+    visible: "Add a new feed"
+    timeout: 10000
+- tapOn: "Feed Suggestions"
+- assertVisible:
+    id: feed_suggestions_screen
+- tapOn: "Close"
+- extendedWaitUntil:
+    visible: "No feeds found. Please add a new feed!"
+    timeout: 10000
+
+# Accounts destination — uses appState.navigate, not a sheet. Just assert.
+- tapOn: "Add feed"
+- extendedWaitUntil:
+    visible: "Add a new feed"
+    timeout: 10000
+- tapOn: "Accounts"
+- assertVisible:
+    id: accounts_add_account

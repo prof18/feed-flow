@@ -1,0 +1,36 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+
+# Open the drawer and tap the add-options "+" button. The bottom sheet shows
+# Add feed, Feed Suggestions, and Import feed destinations.
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: feed_suggestions_add_options_button
+- assertVisible: "Add feed"
+- assertVisible: "Feed Suggestions"
+- assertVisible: "Import feed from OPML"
+
+# Add feed destination from the drawer entry (not Settings → Feeds & Accounts).
+- tapOn: "Add feed"
+- assertVisible:
+    id: add_feed_url_input
+- back
+
+# Re-open the drawer add-options sheet and verify the Import feed entry takes
+# us to the OPML/CSV import/export screen.
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: feed_suggestions_add_options_button
+- tapOn: "Import feed from OPML"
+- assertVisible: "Subscriptions (OPML)"
+- assertVisible: "Articles (CSV)"

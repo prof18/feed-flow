@@ -1,0 +1,32 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: feed_source_list_settings_row
+- assertVisible:
+    id: feed_source_list_screen
+- assertVisible:
+    id: feed_source_list_category_e2e_category_technology
+
+# Long-press the Technology category header. The dropdown menu shows the
+# single Delete all feeds action which opens a confirmation dialog.
+- longPressOn:
+    id: feed_source_list_category_e2e_category_technology
+- tapOn: "Delete all feeds"
+- assertVisible: "Delete all feeds in category?"
+- tapOn: "Confirm"
+- assertNotVisible:
+    id: feed_source_list_category_e2e_category_technology

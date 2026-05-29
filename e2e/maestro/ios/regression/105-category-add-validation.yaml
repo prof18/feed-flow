@@ -21,7 +21,8 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: edit_feed_category_sheet_add
 - tapOn:
-    id: edit_feed_category_apply_duplicate_name
+    id: edit_feed_category_add_input
+- inputText: "Technology"
 - assertVisible: "A category with this name already exists"
 - assertVisible:
     id: edit_feed_category_add_confirm
@@ -31,7 +32,8 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: edit_feed_category_sheet_add
 - tapOn:
-    id: edit_feed_category_apply_e2e_name
+    id: edit_feed_category_add_input
+- inputText: "E2E Created Category"
 - tapOn:
     id: edit_feed_category_add_confirm
 - assertVisible: "E2E Created Category"

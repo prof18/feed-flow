@@ -53,18 +53,6 @@ struct EditFeedScreenContent: View {
                     .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.nameInput)
                     .hoverEffect()
                     .focused($isTextFieldFocused)
-
-                    #if DEBUG
-                    Button {
-                        let e2eName = "E2E Renamed Android Feed"
-                        feedName = e2eName
-                        updateFeedNameTextFieldValue(e2eName)
-                    } label: {
-                        Image(systemName: "textformat")
-                    }
-                    .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.applyE2eNameButton)
-                    .hoverEffect()
-                    #endif
                 },
                 header: {
                     Text(feedFlowStrings.feedName)
@@ -241,5 +229,4 @@ private enum EditFeedAccessibilityIdentifiers {
     static let pinnedToggle = "edit_feed_pinned_toggle"
     static let categorySelector = "edit_feed_category_selector"
     static let saveButton = "edit_feed_save"
-    static let applyE2eNameButton = "edit_feed_apply_e2e_name"
 }

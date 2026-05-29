@@ -13,8 +13,7 @@ extension SidebarDrawer {
 
     @ViewBuilder var feedSourcesContent: some View {
         if !navDrawerState.feedSourcesByCategory.isEmpty ||
-            !navDrawerState.feedSourcesWithoutCategory.isEmpty ||
-            !navDrawerState.categories.isEmpty {
+            !navDrawerState.feedSourcesWithoutCategory.isEmpty {
             let uncategorizedFromMap = navDrawerState.feedSourcesByCategory
                 .filter { $0.key.feedSourceCategory == nil }
                 .flatMap { $0.value }
@@ -39,24 +38,6 @@ extension SidebarDrawer {
                         categoryWrapper: categoryWrapper
                     )
                 }
-            }
-
-            let categoryIdsWithFeedSources = Set(
-                navDrawerState.feedSourcesByCategory.keys.compactMap { $0.feedSourceCategory?.id }
-            )
-            let emptyCategories = navDrawerState.categories
-                .compactMap { $0 as? DrawerItem.DrawerCategory }
-                .filter { !categoryIdsWithFeedSources.contains($0.category.id) }
-            ForEach(emptyCategories, id: \.category.id) { categoryItem in
-                let categoryId = categoryItem.category.id
-                let isSelected = selectedSidebarItem == .category(id: categoryId)
-
-                categoryHeader(
-                    categoryItem: categoryItem,
-                    categoryId: categoryId,
-                    isExpanded: false,
-                    isSelected: isSelected
-                )
             }
         }
     }

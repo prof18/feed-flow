@@ -133,7 +133,6 @@ struct AddFeedScreenContent: View {
                         )
                         .buttonStyle(.bordered)
                         .disabled(!acknowledged || isAddingFeed)
-                        .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.forceAddButton)
                     }
                     .padding(.vertical, 4)
                 }
@@ -204,7 +203,6 @@ private enum AddFeedAccessibilityIdentifiers {
     static let urlInput = "add_feed_url_input"
     static let saveButton = "add_feed_save_button"
     static let categorySelector = "edit_feed_category_selector"
-    static let forceAddButton = "add_feed_force_add_button"
 }
 
 // Previews disabled - require AddFeedViewModel instance

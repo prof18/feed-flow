@@ -27,8 +27,6 @@ appId: com.prof18.feedflow.dev
     id: drawer_feed_source_e2e_feed_android_weekly
 - tapOn: "Edit feed"
 - tapOn:
-    id: edit_feed_apply_e2e_name
-- tapOn:
     id: edit_feed_hidden_toggle
 - tapOn:
     id: edit_feed_pinned_toggle
@@ -51,4 +49,4 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - tapOn:
     id: drawer_category_expand_e2e_category_news
-- assertVisible: "E2E Renamed Android Feed.*"
+- assertVisible: "Android Central RSS Feed"

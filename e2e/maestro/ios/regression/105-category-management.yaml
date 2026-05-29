@@ -14,7 +14,9 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: drawer_category_menu_rename
 - tapOn:
-    id: edit_feed_category_apply_e2e_rename
+    id: edit_feed_category_rename_input
+- eraseText: 100
+- inputText: "E2E Renamed Category"
 - tapOn:
     id: edit_feed_category_rename_save
 - assertVisible: "E2E Renamed Category"
@@ -25,19 +27,3 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     text: "Confirm"
 - assertNotVisible: "Android Central RSS Feed"
-- longPressOn:
-    id: drawer_category_e2e_category_empty
-- tapOn:
-    id: drawer_category_menu_delete_category
-- tapOn:
-    text: "Close"
-- assertVisible:
-    id: drawer_category_e2e_category_empty
-- longPressOn:
-    id: drawer_category_e2e_category_empty
-- tapOn:
-    id: drawer_category_menu_delete_category
-- tapOn:
-    text: "Delete category"
-- assertNotVisible:
-    id: drawer_category_e2e_category_empty

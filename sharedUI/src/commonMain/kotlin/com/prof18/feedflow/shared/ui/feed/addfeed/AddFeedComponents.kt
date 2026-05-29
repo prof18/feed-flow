@@ -154,7 +154,6 @@ fun AddFeedContent(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Checkbox(
-                                modifier = Modifier.testTag(FeedFormE2eIds.ADD_FEED_FORCE_ADD_ACKNOWLEDGE),
                                 checked = acknowledged,
                                 onCheckedChange = { acknowledged = it },
                             )
@@ -168,8 +167,7 @@ fun AddFeedContent(
                         OutlinedButton(
                             modifier = Modifier
                                 .padding(top = Spacing.small)
-                                .fillMaxWidth()
-                                .testTag(FeedFormE2eIds.ADD_FEED_FORCE_ADD_BUTTON),
+                                .fillMaxWidth(),
                             enabled = acknowledged && !showLoading,
                             onClick = onForceAddFeed,
                         ) {

@@ -1,3 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="feed_added_message">Feed %s tilføjet</string>
+    <string name="feed_url">Feed-url</string>
+    <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
+    <string name="add_feed">Tilføj feed</string>
+    <string name="feeds_title">Feeds</string>
+    <string name="no_feeds_add_one_message">Ingen feeds, tilføj venligst en</string>
+    <string name="delete_feed">Slet</string>
+    <string name="empty_feed_message">Intet at læse her!</string>
+    <string name="refresh_feeds">Opdater feeds</string>
+    <string name="no_feeds_found_message">Ingen feeds blev fundet. Tilføj venligst et nyt feed!</string>
+    <string name="loading_feed_message">Henter feeds %s</string>
+    <string name="mark_all_read_button">Marker som læst</string>
+    <string name="clear_old_articles_button">Slet ugegamle artikler</string>
+    <string name="settings_button">Indstillinger</string>
+    <string name="feeds_importing_message">Importer feed</string>
+    <string name="feeds_import_done_message">Import gennemført</string>
+    <string name="feeds_export_done_message">Eksport gennemført</string>
+    <string name="settings_title">Indstillinger</string>
+    <string name="browser_selection_button">Browser</string>
+    <string name="import_feed_button">Importer feed fra OPML</string>
+    <string name="export_feeds_button">Eksporter feed til OPML</string>
+    <string name="about_button">Om</string>
+    <string name="import_dialog_title">Vælg OPML fil</string>
+    <string name="export_dialog_title">Gem OPML fil</string>
+    <string name="export_started_message">Generer ekstort</string>
+    <string name="generic_error_message">Beklager, men noget gik galt :(</string>
+    <string name="browser_launch_error">Kunne ikke åbne linket. Kontroller venligst din browsers indstillinger.</string>
+    <string name="load_file_error_message">Kunne ikke hente fil</string>
+    <string name="default_browser">Standard browser</string>
 </resources>

@@ -193,7 +193,11 @@ dependencies {
 
 play {
     // The play_config.json file will be provided on CI
-    serviceAccountCredentials.set(file("../play_config.json"))
+    serviceAccountCredentials.fileProvider(
+        providers.environmentVariable("FEEDFLOW_PLAY_CONFIG_JSON")
+            .map { file(it) }
+            .orElse(provider { file("../play_config.json") }),
+    )
     track.set("internal")
 }
 

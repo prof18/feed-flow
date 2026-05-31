@@ -14,10 +14,8 @@ appId: com.prof18.feedflow.debug
     id: article_row_e2e_article_reader_success
 - assertVisible:
     id: reader_article_e2e_article_reader_success
-- assertVisible:
-    id: reader_open_image_button
 - tapOn:
-    id: reader_open_image_button
+    point: 50%,36%
 - assertVisible:
     id: reader_image_viewer
 - assertVisible:

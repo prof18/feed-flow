@@ -12,8 +12,7 @@ extension SidebarDrawer {
     }
 
     @ViewBuilder var feedSourcesContent: some View {
-        if !navDrawerState.feedSourcesByCategory.isEmpty ||
-            !navDrawerState.feedSourcesWithoutCategory.isEmpty {
+        if !navDrawerState.feedSourcesByCategory.isEmpty || !navDrawerState.feedSourcesWithoutCategory.isEmpty {
             let uncategorizedFromMap = navDrawerState.feedSourcesByCategory
                 .filter { $0.key.feedSourceCategory == nil }
                 .flatMap { $0.value }

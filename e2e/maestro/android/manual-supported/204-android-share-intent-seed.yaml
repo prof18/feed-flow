@@ -1,9 +1,0 @@
-appId: com.prof18.feedflow.debug
----
-- launchApp
-- openLink: feedflow://e2e/reset-and-seed?profile=empty
-- extendedWaitUntil:
-    visible: "E2E seed complete"
-    timeout: 10000
-- tapOn:
-    id: e2e_open_app

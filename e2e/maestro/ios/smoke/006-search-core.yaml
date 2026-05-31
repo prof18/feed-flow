@@ -1,7 +1,7 @@
 appId: com.prof18.feedflow.dev
 ---
 - launchApp
-- openLink: feedflow://e2e/reset-and-seed?profile=content-rich&query=Glow
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
 - tapOn:
     text: "^Open$"
     optional: true
@@ -9,5 +9,6 @@ appId: com.prof18.feedflow.dev
     id: e2e_seed_complete
 - tapOn:
     id: home_search_button
+- inputText: "Glow"
 - assertVisible:
     text: "E2E Article With Comments: Pixel Glow"

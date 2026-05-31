@@ -59,14 +59,19 @@ For anything deeper — SDK package management (`android sdk ...`), device inter
 
 ### Maestro E2E tests
 
-When writing or running Maestro E2E tests, follow `docs/maestro-e2e-guide.md`.
-The full catalog of existing flows lives in `docs/maestro-e2e-tests.md`; do not mark a test done until the required Maestro flow passes.
+When writing or running Maestro E2E tests, follow `e2e/maestro/maestro-e2e-guide.md`.
+The full catalog of existing flows lives in `e2e/maestro/maestro-e2e-tests.md`; do not mark a test done until the required Maestro flow passes.
+When changing a user-visible feature, add or update Maestro coverage if the behavior can be exercised with existing app UI, debug seed deep links, fixtures, or test tooling without adding production-only code paths. If Maestro coverage is not feasible, document the limitation in `e2e/maestro/maestro-e2e-tests.md`.
 
-Quick local release-gate checks:
+Quick local smoke checks:
+- `e2e/scripts/run-android-smoke.sh`
+- `e2e/scripts/run-ios-smoke.sh`
+
+Full automated E2E checks before release:
 - `e2e/scripts/run-android.sh`
 - `e2e/scripts/run-ios.sh`
 
-Use the debug seeding deep links documented in that guide. Do not depend on live feeds, OAuth, or previous app state in release-gate flows.
+Use the debug seeding deep links documented in that guide. Do not depend on live feeds, OAuth, or previous app state in smoke or regression flows.
 
 ### iOS Project Generation
 
@@ -180,6 +185,7 @@ When creating commits:
 - Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet`
 - IMPORTANT: The project now supports iOS 26 SDK (June 2025) while maintaining iOS 18 as the minimum deployment target. Use #available checks when adopting iOS 26+ APIs.
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
+- Keep accessibility identifier enums in separate `*AccessibilityIdentifiers.swift` files, not appended to view files.
 - Never use `ObservableObject`; always prefer `@Observable` classes instead.
 - Never use `Task.sleep(nanoseconds:)`; always use `Task.sleep(for:)` instead.
 - Avoid `AnyView` unless it is absolutely required.

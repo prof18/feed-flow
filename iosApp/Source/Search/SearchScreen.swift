@@ -23,23 +23,15 @@ struct SearchScreen: View {
         descriptionLineLimit: .three
     )
 
-    private let initialSearchText: String?
-    private let initialSearchFilterKey: String?
     let readerModeViewModel: ReaderModeViewModel
     let onReaderModeNavigate: (() -> Void)?
 
     init(
-        initialSearchText: String? = nil,
-        initialSearchFilter: String? = nil,
         readerModeViewModel: ReaderModeViewModel,
         onReaderModeNavigate: (() -> Void)?
     ) {
-        self.initialSearchText = initialSearchText
-        initialSearchFilterKey = initialSearchFilter
         self.readerModeViewModel = readerModeViewModel
         self.onReaderModeNavigate = onReaderModeNavigate
-        _searchText = State(initialValue: initialSearchText ?? "")
-        _searchFilter = State(initialValue: Self.searchFilter(from: initialSearchFilter) ?? .all)
     }
 
     var body: some View {
@@ -75,18 +67,7 @@ struct SearchScreen: View {
             vmStoreOwner.instance.updateSearchQuery(query: searchText)
         }
         .task {
-            var shouldIgnoreFirstEmptyQuery = false
-            if let initialSearchText, !initialSearchText.isEmpty {
-                self.searchText = initialSearchText
-                vmStoreOwner.instance.updateSearchQuery(query: initialSearchText)
-                shouldIgnoreFirstEmptyQuery = true
-            }
             for await state in vmStoreOwner.instance.searchQueryState {
-                if shouldIgnoreFirstEmptyQuery, state.isEmpty {
-                    shouldIgnoreFirstEmptyQuery = false
-                    continue
-                }
-                shouldIgnoreFirstEmptyQuery = false
                 self.searchText = state
             }
         }
@@ -101,18 +82,7 @@ struct SearchScreen: View {
             }
         }
         .task {
-            var shouldIgnoreFirstDefaultFilter = false
-            if let initialSearchFilter = Self.searchFilter(from: initialSearchFilterKey) {
-                self.searchFilter = initialSearchFilter
-                vmStoreOwner.instance.updateSearchFilter(filter: initialSearchFilter)
-                shouldIgnoreFirstDefaultFilter = true
-            }
             for await state in vmStoreOwner.instance.searchFilterState {
-                if shouldIgnoreFirstDefaultFilter, state == .all {
-                    shouldIgnoreFirstDefaultFilter = false
-                    continue
-                }
-                shouldIgnoreFirstDefaultFilter = false
                 self.searchFilter = state
             }
         }
@@ -166,17 +136,6 @@ struct SearchScreen: View {
                     )
                 }
             }
-        }
-    }
-
-    private static func searchFilter(from key: String?) -> SearchFilter? {
-        switch key {
-        case "read":
-            return .read
-        case "bookmarks":
-            return .bookmarks
-        default:
-            return nil
         }
     }
 }

@@ -4,7 +4,6 @@ import android.webkit.CookieManager
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -54,7 +52,6 @@ import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.prof18.feedflow.android.BrowserManager
-import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
@@ -220,25 +217,6 @@ internal fun ReaderModeScreen(
                             modifier = Modifier.testTag(
                                 ReaderModeE2eIds.article(readerModeState.readerModeData.id.id),
                             ),
-                        )
-                    }
-                }
-
-                if (BuildConfig.DEBUG && readerModeState is ReaderModeState.Success) {
-                    val imageUrl = readerModeState.readerModeData.imageUrl
-                    if (!imageUrl.isNullOrBlank()) {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(
-                                    top = contentPadding.calculateTopPadding() + 12.dp,
-                                    end = 12.dp,
-                                )
-                                .size(48.dp)
-                                .clip(RoundedCornerShape(24.dp))
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
-                                .testTag(ReaderModeE2eIds.OPEN_IMAGE_BUTTON)
-                                .clickable { fullscreenImageUrl = imageUrl },
                         )
                     }
                 }

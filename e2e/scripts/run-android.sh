@@ -18,6 +18,10 @@ fi
 
 "$REPO_ROOT/e2e/scripts/push-android-fixtures.sh"
 
-while IFS= read -r flow_file; do
-  maestro --platform android test "$flow_file"
-done < <(find "$REPO_ROOT/e2e/maestro/android/release-gate" -name '*.yaml' | sort)
+E2E_ANDROID_SUITES="${E2E_ANDROID_SUITES:-smoke regression}"
+
+for suite in $E2E_ANDROID_SUITES; do
+  while IFS= read -r flow_file; do
+    maestro --platform android test "$flow_file"
+  done < <(find "$REPO_ROOT/e2e/maestro/android/$suite" -name '*.yaml' | sort)
+done

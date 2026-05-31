@@ -1,9 +1,0 @@
-appId: com.prof18.feedflow.debug
----
-- extendedWaitUntil:
-    visible: "Android Central RSS Feed"
-    timeout: 10000
-- assertVisible:
-    text: "E2E Newest Unread Article.*"
-- assertNotVisible:
-    text: "E2E Article With Image.*"

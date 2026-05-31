@@ -109,14 +109,7 @@ extension HomeContent {
     }
 
     private var searchRoute: CommonViewRoute {
-        #if DEBUG
-            CommonViewRoute.search(
-                initialQuery: appState.e2eInitialSearchQuery,
-                initialFilter: appState.e2eInitialSearchFilter
-            )
-        #else
-            CommonViewRoute.search(initialQuery: nil, initialFilter: nil)
-        #endif
+        .search
     }
 
     private var shouldShowUnreadCount: Bool {
@@ -303,10 +296,4 @@ extension HomeContent {
             return feedFlowStrings.appName
         }
     }
-}
-
-private enum HomeToolbarAccessibilityIdentifiers {
-    static let markAllReadMenuItem = "home_mark_all_read_menu_item"
-    static let moreMenuButton = "home_more_menu_button"
-    static let searchButton = "home_search_button"
 }

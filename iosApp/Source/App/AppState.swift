@@ -27,8 +27,6 @@ class AppState {
 
     #if DEBUG
         var e2eSeedMessage: String?
-        var e2eInitialSearchQuery: String?
-        var e2eInitialSearchFilter: String?
     #endif
 
     init() {

@@ -218,9 +218,3 @@ private func formatDateTimeExample(dateFormat: DateFormat, timeFormat: TimeForma
     let timePart = timeFormat == .hours24 ? "14:30" : "2:30 PM"
     return "\(datePart) - \(timePart)"
 }
-
-private enum FeedListSettingsAccessibilityIdentifiers {
-    static let hideImagesToggle = "feed_list_settings_hide_images"
-    static let layoutPicker = "feed_list_settings_layout"
-    static let orderPicker = "feed_list_settings_order"
-}

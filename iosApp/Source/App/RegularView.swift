@@ -232,10 +232,8 @@ struct RegularView: View {
                     onInAppBrowserClick: nil
                 )
 
-            case let .search(initialQuery, initialFilter):
+            case .search:
                 SearchScreen(
-                    initialSearchText: initialQuery,
-                    initialSearchFilter: initialFilter,
                     readerModeViewModel: readerModeViewModel,
                     onReaderModeNavigate: nil
                 )

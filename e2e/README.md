@@ -29,6 +29,11 @@ The stable completion marker is `E2E seed complete` with accessibility identifie
 ## Run
 
 ```bash
+# Full automated Android and iOS suites.
 e2e/scripts/run-android.sh
 e2e/scripts/run-ios.sh
+
+# Fast smoke subsets.
+e2e/scripts/run-android-smoke.sh
+e2e/scripts/run-ios-smoke.sh
 ```

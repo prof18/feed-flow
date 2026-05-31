@@ -31,6 +31,10 @@ xcodebuild \
 xcrun simctl install "$SIMULATOR_UDID" "$APP_PATH"
 "$REPO_ROOT/e2e/scripts/push-ios-fixtures.sh"
 
-while IFS= read -r flow_file; do
-  maestro --platform ios --device "$SIMULATOR_UDID" test "$flow_file"
-done < <(find "$REPO_ROOT/e2e/maestro/ios/release-gate" -name '*.yaml' | sort)
+E2E_IOS_SUITES="${E2E_IOS_SUITES:-smoke regression}"
+
+for suite in $E2E_IOS_SUITES; do
+  while IFS= read -r flow_file; do
+    maestro --platform ios --device "$SIMULATOR_UDID" test "$flow_file"
+  done < <(find "$REPO_ROOT/e2e/maestro/ios/$suite" -name '*.yaml' | sort)
+done

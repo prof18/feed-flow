@@ -2,21 +2,18 @@
 
 This guide explains how to write and run FeedFlow Maestro tests. Use it together with:
 
-- `docs/maestro-e2e-preparation-plan.md`
-- `docs/maestro-e2e-test-catalog.md`
-- `docs/maestro-e2e-tests.md`
+- `e2e/maestro/maestro-e2e-tests.md`
+- `e2e/maestro/maestro-e2e-tests.html`
 
 ## Structure
 
 ```text
 e2e/
   maestro/
-    android/release-gate/
+    android/smoke/
     android/regression/
-    android/manual-supported/
-    ios/release-gate/
+    ios/smoke/
     ios/regression/
-    ios/manual-supported/
     shared/
   fixtures/
     articles/
@@ -24,7 +21,9 @@ e2e/
     csv/
   scripts/
     run-android.sh
+    run-android-smoke.sh
     run-ios.sh
+    run-ios-smoke.sh
 ```
 
 Use platform-specific flow files when the setup or UI differs between Android and iOS. Shared flows are fine only for commands that are identical on both platforms.
@@ -108,14 +107,6 @@ appId: com.prof18.feedflow.dev
     id: e2e_seed_complete
 ```
 
-iOS can also provide an initial search query after seeding. Use this for OS-owned controls that are flaky to type into through Maestro, such as the SwiftUI search field:
-
-```text
-feedflow://e2e/reset-and-seed?profile=content-rich&query=Pixel
-```
-
-For iOS search filter coverage, add `filter=bookmarks` or `filter=read` to the same link.
-
 ## Fixture Files
 
 Import/export flows use deterministic files under `e2e/fixtures/`.
@@ -123,14 +114,14 @@ Import/export flows use deterministic files under `e2e/fixtures/`.
 - Android fixtures are pushed to `/sdcard/Download/feedflow-e2e` by `e2e/scripts/push-android-fixtures.sh`.
 - iOS fixtures are copied into the app Documents directory and the simulator Files provider by `e2e/scripts/push-ios-fixtures.sh`.
 - The OPML fixture is named `feedflow-valid-opml-smoke.xml` so Android DocumentsUI exposes it through the Documents filter, but its contents are OPML.
-- iOS Files may focus a grid item on the first tap; RG-011 deliberately double taps fixture thumbnails.
+- iOS Files may focus a grid item on the first tap; SM-011 deliberately double taps fixture thumbnails.
 
-The release-gate wrapper scripts push fixtures after installing the app and before running Maestro flows.
+The wrapper scripts push fixtures after installing the app and before running Maestro flows.
 
 ## Writing A New Flow
 
 1. Pick the smallest seed profile that covers the scenario.
-2. Put the flow under the right platform and suite folder, for example `e2e/maestro/android/release-gate/003-library-filters.yaml`.
+2. Put the flow under the right platform and suite folder, for example `e2e/maestro/android/smoke/003-library-filters.yaml`.
 3. Start with `launchApp`, then reset and seed through the E2E deep link.
 4. Prefer stable accessibility ids over visible text when ids exist.
 5. Use visible text for seeded article/feed assertions only when the text is intentionally stable.
@@ -142,7 +133,7 @@ The release-gate wrapper scripts push fixtures after installing the app and befo
 ```
 
 7. Keep each flow focused on one behavior. Do not make one long flow cover unrelated settings, reading, search, and import behavior.
-8. Avoid live network dependencies, OAuth, real provider auth, and OS-owned state in release-gate tests.
+8. Avoid live network dependencies, OAuth, real provider auth, and OS-owned state in smoke and regression tests.
 
 ## Common Commands
 
@@ -201,29 +192,36 @@ Preconditions:
 - For Android, a device or emulator is running. Default local target: `Resizable_Experimental`.
 - For iOS, the `iPhone 17 Pro` simulator is booted and `iosApp/FeedFlow.xcodeproj` exists.
 
-Run the full local release-gate wrappers:
+Run the full local automated wrappers before a release. These build, install, push fixtures, and run `smoke` followed by `regression`:
 
 ```bash
 e2e/scripts/run-android.sh
 e2e/scripts/run-ios.sh
 ```
 
-The wrappers build, install, and run the current release-gate flows sequentially:
+Run the fast smoke subset while iterating:
 
-- Android: `e2e/maestro/android/release-gate`
-- iOS: `e2e/maestro/ios/release-gate`
+```bash
+e2e/scripts/run-android-smoke.sh
+e2e/scripts/run-ios-smoke.sh
+```
+
+The smoke-only wrappers build, install, and run the current smoke flows sequentially:
+
+- Android: `e2e/maestro/android/smoke`
+- iOS: `e2e/maestro/ios/smoke`
 
 Run one Android flow against an already installed build:
 
 ```bash
-maestro --platform android test e2e/maestro/android/release-gate/002-seeded-timeline-loads.yaml
+maestro --platform android test e2e/maestro/android/smoke/002-seeded-timeline-loads.yaml
 ```
 
 Run one iOS flow against an already installed build:
 
 ```bash
 SIMULATOR_UDID=$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 17 Pro/ {print $2; exit}')
-maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-gate/002-seeded-timeline-loads.yaml
+maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/smoke/002-seeded-timeline-loads.yaml
 ```
 
 Pin the platform when both Android and iOS devices are running. Otherwise Maestro may choose the wrong target.
@@ -248,8 +246,8 @@ Useful checks:
 ```bash
 adb devices
 xcrun simctl list devices booted
-maestro --platform android test e2e/maestro/android/release-gate/001-first-launch-empty.yaml
-maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/release-gate/001-first-launch-empty.yaml
+maestro --platform android test e2e/maestro/android/smoke/001-first-launch-empty.yaml
+maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/smoke/001-first-launch-empty.yaml
 ```
 
 When iterating as an agent, use the Maestro MCP if available:
@@ -264,6 +262,7 @@ Maestro Viewer is available locally at `http://127.0.0.1:10003/` when the MCP se
 
 Run the relevant Maestro flow when:
 
+- adding or changing a user-visible feature that can be covered through existing app UI, debug seed deep links, fixtures, or test tooling without adding production-only code paths
 - adding or changing an E2E flow
 - changing debug seed setup
 - changing navigation or visible UI covered by existing flows
@@ -271,6 +270,6 @@ Run the relevant Maestro flow when:
 
 Run both wrapper scripts before handing off changes that affect shared E2E setup, app launch, seeded content, or cross-platform UI behavior.
 
-Update `docs/maestro-e2e-tests.md` whenever you add, remove, or significantly reshape a flow.
+Update `e2e/maestro/maestro-e2e-tests.md` whenever you add, remove, or significantly reshape a flow. If a feature cannot be covered by Maestro without production-only code changes or unstable OS/provider dependencies, record the reason in the Known Limitations section. If the physical flow inventory changes, update `e2e/maestro/maestro-e2e-tests.html` as well.
 
 For non-E2E code changes, keep following the normal project gates in `AGENTS.md`.

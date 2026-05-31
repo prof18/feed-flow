@@ -151,27 +151,6 @@ struct ReaderModeScreen: View {
                 openInBrowser(url: url)
             }
         )
-        .overlay(alignment: .topTrailing) {
-            #if DEBUG
-                if currentImageUrl != nil {
-                    Button {
-                        if let currentImageUrl,
-                           let imageUrl = URL(string: currentImageUrl) {
-                            imageViewerUrl = imageUrl
-                        }
-                    } label: {
-                        Image(systemName: "photo")
-                            .font(.title3)
-                            .frame(width: 48, height: 48)
-                    }
-                    .background(.regularMaterial, in: Circle())
-                    .contentShape(Circle())
-                    .padding(.top, 160)
-                    .padding(.trailing, 16)
-                    .accessibilityIdentifier(ReaderModeAccessibilityIdentifiers.openImageButton)
-                }
-            #endif
-        }
         .if(isiOS26OrLater()) { view in
             view.ignoresSafeArea()
         }
@@ -287,8 +266,4 @@ struct ReaderModeScreen: View {
     private var currentIsDarkMode: Bool {
         return colorScheme == .dark
     }
-}
-
-private enum ReaderModeAccessibilityIdentifiers {
-    static let openImageButton = "reader_open_image_button"
 }

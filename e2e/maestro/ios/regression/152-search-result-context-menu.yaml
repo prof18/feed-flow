@@ -1,9 +1,7 @@
 appId: com.prof18.feedflow.dev
 ---
 - launchApp
-# Seed the search query via the e2e deeplink. iOS SwiftUI .searchable is
-# OS-owned and Maestro stalls when typing into it directly (see RG-006).
-- openLink: feedflow://e2e/reset-and-seed?profile=content-rich&query=Pixel
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
 - tapOn:
     text: "^Open$"
     optional: true
@@ -18,6 +16,7 @@ appId: com.prof18.feedflow.dev
 # mutations are covered by Android REG-152.
 - tapOn:
     id: home_search_button
+- inputText: "Pixel"
 - extendedWaitUntil:
     visible:
       id: article_row_e2e_article_comments

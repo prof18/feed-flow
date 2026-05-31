@@ -1,7 +1,7 @@
 appId: com.prof18.feedflow.dev
 ---
 - launchApp
-- openLink: feedflow://e2e/reset-and-seed?profile=content-rich&query=Pixel
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
 - tapOn:
     text: "^Open$"
     optional: true

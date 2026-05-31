@@ -8,7 +8,6 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -35,7 +33,6 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import androidx.navigationevent.NavigationEvent
 import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.accounts.bazqux.BazquxSyncScreen
 import com.prof18.feedflow.android.accounts.feedbin.FeedbinSyncScreen
@@ -241,27 +238,12 @@ class MainActivity : BaseThemeActivity() {
                 if (reduceMotionEnabled) {
                     EnterTransition.None togetherWith ExitTransition.None
                 } else {
-                    val rightEdgeOrigin = TransformOrigin(pivotFractionX = 1f, pivotFractionY = 0.5f)
-                    EnterTransition.None togetherWith scaleOut(
-                        targetScale = 0.9f,
-                        transformOrigin = rightEdgeOrigin,
-                    )
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End) togetherWith
+                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End)
                 }
             },
-            predictivePopTransitionSpec = { swipeEdge: Int ->
-                if (reduceMotionEnabled) {
-                    EnterTransition.None togetherWith ExitTransition.None
-                } else {
-                    val origin = when (swipeEdge) {
-                        NavigationEvent.EDGE_LEFT -> TransformOrigin(pivotFractionX = 1f, pivotFractionY = 0.5f)
-                        NavigationEvent.EDGE_RIGHT -> TransformOrigin(pivotFractionX = 0f, pivotFractionY = 0.5f)
-                        else -> TransformOrigin(pivotFractionX = 1f, pivotFractionY = 0.5f)
-                    }
-                    EnterTransition.None togetherWith scaleOut(
-                        targetScale = 0.9f,
-                        transformOrigin = origin,
-                    )
-                }
+            predictivePopTransitionSpec = {
+                EnterTransition.None togetherWith ExitTransition.None
             },
             entryProvider = entryProvider {
                 entry<FeedSuggestions> {

@@ -224,13 +224,13 @@ class HomeViewModelTest : KoinTestBase() {
 
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                VisibleFeedItem(id = "item-1", index = 0),
+                VisibleFeedItem(id = "item-2", index = 1),
             ),
         )
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                VisibleFeedItem(id = "item-2", index = 1),
             ),
         )
         advanceUntilIdle()
@@ -257,22 +257,22 @@ class HomeViewModelTest : KoinTestBase() {
 
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                VisibleFeedItem(id = "item-1", index = 0),
+                VisibleFeedItem(id = "item-2", index = 1),
             ),
         )
 
         settingsRepository.setMarkFeedAsReadWhenScrolling(false)
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                VisibleFeedItem(id = "item-3", index = 2),
             ),
         )
 
         settingsRepository.setMarkFeedAsReadWhenScrolling(true)
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-4", index = 3, isRead = false),
+                VisibleFeedItem(id = "item-4", index = 3),
             ),
         )
         advanceUntilIdle()
@@ -299,13 +299,13 @@ class HomeViewModelTest : KoinTestBase() {
 
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                VisibleFeedItem(id = "item-1", index = 0),
+                VisibleFeedItem(id = "item-2", index = 1),
             ),
         )
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                VisibleFeedItem(id = "item-2", index = 1),
             ),
         )
         advanceTimeBy(2.seconds)
@@ -333,20 +333,20 @@ class HomeViewModelTest : KoinTestBase() {
 
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                VisibleFeedItem(id = "item-1", index = 0),
+                VisibleFeedItem(id = "item-2", index = 1),
             ),
         )
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                VisibleFeedItem(id = "item-3", index = 2),
             ),
         )
         advanceUntilIdle()
 
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-1", index = 0, isRead = false),
+                VisibleFeedItem(id = "item-1", index = 0),
             ),
         )
         advanceUntilIdle()
@@ -376,14 +376,14 @@ class HomeViewModelTest : KoinTestBase() {
 
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                VisibleFeedItem(id = "item-1", index = 0),
+                VisibleFeedItem(id = "item-2", index = 1),
             ),
         )
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
-                VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                VisibleFeedItem(id = "item-2", index = 1),
+                VisibleFeedItem(id = "item-3", index = 2),
             ),
         )
         advanceTimeBy(1.seconds)
@@ -394,8 +394,8 @@ class HomeViewModelTest : KoinTestBase() {
 
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-3", index = 2, isRead = false),
-                VisibleFeedItem(id = "item-4", index = 3, isRead = false),
+                VisibleFeedItem(id = "item-3", index = 2),
+                VisibleFeedItem(id = "item-4", index = 3),
             ),
         )
         advanceTimeBy(2.seconds)
@@ -425,14 +425,14 @@ class HomeViewModelTest : KoinTestBase() {
 
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                VisibleFeedItem(id = "item-1", index = 0),
+                VisibleFeedItem(id = "item-2", index = 1),
             ),
         )
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
-                VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                VisibleFeedItem(id = "item-2", index = 1),
+                VisibleFeedItem(id = "item-3", index = 2),
             ),
         )
         advanceTimeBy(1.seconds)
@@ -465,14 +465,14 @@ class HomeViewModelTest : KoinTestBase() {
 
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                VisibleFeedItem(id = "item-1", index = 0),
+                VisibleFeedItem(id = "item-2", index = 1),
             ),
         )
         viewModel.onVisibleFeedItemsChanged(
             listOf(
-                VisibleFeedItem(id = "item-2", index = 1, isRead = false),
-                VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                VisibleFeedItem(id = "item-2", index = 1),
+                VisibleFeedItem(id = "item-3", index = 2),
             ),
         )
 
@@ -508,14 +508,14 @@ class HomeViewModelTest : KoinTestBase() {
 
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-1", index = 0),
+                    VisibleFeedItem(id = "item-2", index = 1),
                 ),
             )
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
-                    VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                    VisibleFeedItem(id = "item-2", index = 1),
+                    VisibleFeedItem(id = "item-3", index = 2),
                 ),
             )
 
@@ -561,14 +561,14 @@ class HomeViewModelTest : KoinTestBase() {
 
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-1", index = 0),
+                    VisibleFeedItem(id = "item-2", index = 1),
                 ),
             )
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-4", index = 3, isRead = false),
-                    VisibleFeedItem(id = "item-5", index = 4, isRead = false),
+                    VisibleFeedItem(id = "item-4", index = 3),
+                    VisibleFeedItem(id = "item-5", index = 4),
                 ),
             )
 
@@ -604,14 +604,14 @@ class HomeViewModelTest : KoinTestBase() {
 
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-1", index = 0),
+                    VisibleFeedItem(id = "item-2", index = 1),
                 ),
             )
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
-                    VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                    VisibleFeedItem(id = "item-2", index = 1),
+                    VisibleFeedItem(id = "item-3", index = 2),
                 ),
             )
             advanceTimeBy(1.seconds)
@@ -646,14 +646,14 @@ class HomeViewModelTest : KoinTestBase() {
 
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-1", index = 0),
+                    VisibleFeedItem(id = "item-2", index = 1),
                 ),
             )
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
-                    VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                    VisibleFeedItem(id = "item-2", index = 1),
+                    VisibleFeedItem(id = "item-3", index = 2),
                 ),
             )
             advanceTimeBy(1.seconds)
@@ -688,28 +688,28 @@ class HomeViewModelTest : KoinTestBase() {
 
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-1", index = 0),
+                    VisibleFeedItem(id = "item-2", index = 1),
                 ),
             )
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
-                    VisibleFeedItem(id = "item-3", index = 2, isRead = false),
-                ),
-            )
-            advanceTimeBy(1.seconds)
-            viewModel.onVisibleFeedItemsChanged(
-                listOf(
-                    VisibleFeedItem(id = "item-3", index = 2, isRead = false),
-                    VisibleFeedItem(id = "item-4", index = 3, isRead = false),
+                    VisibleFeedItem(id = "item-2", index = 1),
+                    VisibleFeedItem(id = "item-3", index = 2),
                 ),
             )
             advanceTimeBy(1.seconds)
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-4", index = 3, isRead = false),
-                    VisibleFeedItem(id = "item-5", index = 4, isRead = false),
+                    VisibleFeedItem(id = "item-3", index = 2),
+                    VisibleFeedItem(id = "item-4", index = 3),
+                ),
+            )
+            advanceTimeBy(1.seconds)
+            viewModel.onVisibleFeedItemsChanged(
+                listOf(
+                    VisibleFeedItem(id = "item-4", index = 3),
+                    VisibleFeedItem(id = "item-5", index = 4),
                 ),
             )
             advanceTimeBy(1.seconds)
@@ -745,14 +745,14 @@ class HomeViewModelTest : KoinTestBase() {
 
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-1", index = 0),
+                    VisibleFeedItem(id = "item-2", index = 1),
                 ),
             )
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
-                    VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                    VisibleFeedItem(id = "item-2", index = 1),
+                    VisibleFeedItem(id = "item-3", index = 2),
                 ),
             )
             advanceTimeBy(1.seconds)
@@ -788,14 +788,14 @@ class HomeViewModelTest : KoinTestBase() {
 
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-1", index = 0),
+                    VisibleFeedItem(id = "item-2", index = 1),
                 ),
             )
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
-                    VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                    VisibleFeedItem(id = "item-2", index = 1),
+                    VisibleFeedItem(id = "item-3", index = 2),
                 ),
             )
             advanceTimeBy(1.seconds)
@@ -831,19 +831,19 @@ class HomeViewModelTest : KoinTestBase() {
 
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-1", index = 0),
+                    VisibleFeedItem(id = "item-2", index = 1),
                 ),
             )
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-3", index = 2, isRead = false),
+                    VisibleFeedItem(id = "item-3", index = 2),
                 ),
             )
             advanceUntilIdle()
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-3", index = 0, isRead = false),
+                    VisibleFeedItem(id = "item-3", index = 0),
                 ),
             )
             advanceUntilIdle()
@@ -873,8 +873,8 @@ class HomeViewModelTest : KoinTestBase() {
 
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-1", index = 0, isRead = false),
-                    VisibleFeedItem(id = "item-2", index = 1, isRead = false),
+                    VisibleFeedItem(id = "item-1", index = 0),
+                    VisibleFeedItem(id = "item-2", index = 1),
                 ),
             )
 
@@ -884,8 +884,8 @@ class HomeViewModelTest : KoinTestBase() {
 
             viewModel.onVisibleFeedItemsChanged(
                 listOf(
-                    VisibleFeedItem(id = "item-3", index = 2, isRead = true),
-                    VisibleFeedItem(id = "item-4", index = 3, isRead = false),
+                    VisibleFeedItem(id = "item-3", index = 2),
+                    VisibleFeedItem(id = "item-4", index = 3),
                 ),
             )
             advanceUntilIdle()

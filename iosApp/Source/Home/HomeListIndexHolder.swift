@@ -40,8 +40,7 @@ class HomeListIndexHolder {
         let snapshotKey = visibleItems.map { item in
             VisibleFeedItemSnapshotKey(
                 id: item.id,
-                index: Int(item.index),
-                isRead: item.isRead
+                index: Int(item.index)
             )
         }
         guard snapshotKey != visibleSnapshotKey else { return }
@@ -53,5 +52,4 @@ class HomeListIndexHolder {
 private struct VisibleFeedItemSnapshotKey: Equatable {
     let id: String
     let index: Int
-    let isRead: Bool
 }

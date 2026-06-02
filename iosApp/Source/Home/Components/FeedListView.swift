@@ -152,7 +152,6 @@ struct FeedListView: View {
                                 FeedItemVisibilityReader(
                                     id: feedItem.id,
                                     index: index,
-                                    isRead: feedItem.isRead,
                                     coordinateSpaceName: coordinateSpaceName
                                 )
                             )
@@ -199,7 +198,7 @@ struct FeedListView: View {
                             }
                             .sorted { $0.minY < $1.minY }
                             .map {
-                                VisibleFeedItem(id: $0.id, index: Int32($0.index), isRead: $0.isRead)
+                                VisibleFeedItem(id: $0.id, index: Int32($0.index))
                             }
                         indexHolder.visibleItemsChanged(visibleItems)
                     }
@@ -215,7 +214,6 @@ struct FeedListView: View {
 private struct FeedItemVisibilityPreference: Equatable {
     let id: String
     let index: Int
-    let isRead: Bool
     let minY: CGFloat
     let maxY: CGFloat
 }
@@ -234,7 +232,6 @@ private struct FeedItemVisibilityPreferenceKey: PreferenceKey {
 private struct FeedItemVisibilityReader: View {
     let id: String
     let index: Int
-    let isRead: Bool
     let coordinateSpaceName: String
 
     var body: some View {
@@ -246,7 +243,6 @@ private struct FeedItemVisibilityReader: View {
                     FeedItemVisibilityPreference(
                         id: id,
                         index: index,
-                        isRead: isRead,
                         minY: frame.minY,
                         maxY: frame.maxY
                     )

@@ -164,7 +164,7 @@ class ScrollReadTrackerTest {
     fun `read items are not marked again`() {
         onVisibleItemsChanged(
             listOf(
-                visibleItem(id = "item-1", index = 0, isRead = true),
+                visibleItem(id = "item-1", index = 0),
                 visibleItem(id = "item-2", index = 1),
             ),
             readIds = setOf("item-1"),
@@ -236,12 +236,10 @@ class ScrollReadTrackerTest {
     private fun visibleItem(
         id: String,
         index: Int,
-        isRead: Boolean = false,
     ): VisibleFeedItem =
         VisibleFeedItem(
             id = id,
             index = index,
-            isRead = isRead,
         )
 
     private fun feedItems(

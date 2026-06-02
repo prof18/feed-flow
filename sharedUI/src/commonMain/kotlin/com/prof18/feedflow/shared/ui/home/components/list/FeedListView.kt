@@ -264,7 +264,6 @@ private fun ObserveVisibleFeedItems(
                     VisibleFeedItem(
                         id = feedItem.id,
                         index = visibleItem.index,
-                        isRead = feedItem.isRead,
                     )
                 }
         }

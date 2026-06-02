@@ -95,56 +95,17 @@ struct FeedListView: View {
                                 onBookmarkClick: onBookmarkClick,
                                 onReadStatusClick: onReadStatusClick
                             )
-                            .if(feedLayout == .card) { view in
-                                view
-                                    .contextMenu {
-                                        FeedItemContextMenu(
-                                            feedItem: feedItem,
-                                            onBookmarkClick: onBookmarkClick,
-                                            onReadStatusClick: onReadStatusClick,
-                                            onMarkAllAboveAsRead: onMarkAllAboveAsRead,
-                                            onMarkAllBelowAsRead: onMarkAllBelowAsRead,
-                                            onOpenFeedSettings: onOpenFeedSettings
-                                        )
-                                        .environment(browserSelector)
-                                        .environment(appState)
-                                    } preview: {
-                                        FeedItemView(
-                                            feedItem: feedItem,
-                                            index: index,
-                                            feedFontSizes: feedFontSizes,
-                                            feedLayout: feedLayout,
-                                            currentFeedFilter: currentFeedFilter,
-                                            feedItemDisplaySettings: feedItemDisplaySettings
-                                        )
-                                        .fixedSize(horizontal: false, vertical: true)
-                                        .frame(width: 350)
-                                        .background(Color(.secondarySystemBackground))
-                                    }
-                            }
-                            .if(feedLayout == .list) { view in
-                                view
-                                    .contextMenu {
-                                        FeedItemContextMenu(
-                                            feedItem: feedItem,
-                                            onBookmarkClick: onBookmarkClick,
-                                            onReadStatusClick: onReadStatusClick,
-                                            onMarkAllAboveAsRead: onMarkAllAboveAsRead,
-                                            onMarkAllBelowAsRead: onMarkAllBelowAsRead,
-                                            onOpenFeedSettings: onOpenFeedSettings
-                                        )
-                                        .environment(browserSelector)
-                                        .environment(appState)
-                                    } preview: {
-                                        FeedItemView(
-                                            feedItem: feedItem,
-                                            index: index,
-                                            feedFontSizes: feedFontSizes,
-                                            feedLayout: feedLayout,
-                                            currentFeedFilter: currentFeedFilter
-                                        )
-                                        .frame(width: 350, alignment: .leading)
-                                    }
+                            .contextMenu {
+                                FeedItemContextMenu(
+                                    feedItem: feedItem,
+                                    onBookmarkClick: onBookmarkClick,
+                                    onReadStatusClick: onReadStatusClick,
+                                    onMarkAllAboveAsRead: onMarkAllAboveAsRead,
+                                    onMarkAllBelowAsRead: onMarkAllBelowAsRead,
+                                    onOpenFeedSettings: onOpenFeedSettings
+                                )
+                                .environment(browserSelector)
+                                .environment(appState)
                             }
                             .listRowSeparator(feedLayout == .card ? .hidden : .automatic)
                             .listRowInsets(EdgeInsets())

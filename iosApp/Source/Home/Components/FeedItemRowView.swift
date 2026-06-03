@@ -84,6 +84,7 @@ struct FeedItemRowView: View {
       }
     )
     .buttonStyle(.plain)
+    .accessibilityIdentifier(FeedItemAccessibilityIdentifiers.row(feedItem.id))
     .id(feedItem.id)
     .listRowInsets(EdgeInsets())
     .hoverEffect()

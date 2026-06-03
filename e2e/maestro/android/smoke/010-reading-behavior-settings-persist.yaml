@@ -1,0 +1,68 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_reading_behavior
+- tapOn:
+    id: reading_behavior_reader_mode
+- tapOn:
+    id: reading_behavior_reader_mode
+- tapOn:
+    id: reading_behavior_show_read
+- scrollUntilVisible:
+    element:
+      id: reading_behavior_hide_read
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: reading_behavior_hide_read
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: drawer_timeline
+    optional: true
+- assertVisible:
+    text: "E2E Read Article.*"
+- launchApp
+- assertVisible:
+    text: "E2E Read Article.*"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_reading_behavior
+- tapOn:
+    id: reading_behavior_show_read
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: drawer_timeline
+    optional: true
+- assertNotVisible:
+    text: "E2E Read Article.*"
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: reader_browser_button
+- tapOn:
+    id: reader_back_button
+- assertNotVisible:
+    id: article_row_e2e_article_reader_success

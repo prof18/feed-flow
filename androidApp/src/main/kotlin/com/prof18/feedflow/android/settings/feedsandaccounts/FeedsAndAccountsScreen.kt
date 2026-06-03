@@ -20,6 +20,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
+import com.prof18.feedflow.android.feedsourcelist.FeedSourceListE2eIds
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
@@ -40,7 +43,10 @@ internal fun FeedsAndAccountsScreen(
             TopAppBar(
                 title = { Text(LocalFeedFlowStrings.current.settingsFeedsAndAccounts) },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(
+                        modifier = Modifier.testTag(SettingsE2eIds.BACK_BUTTON),
+                        onClick = navigateBack,
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = null,
@@ -59,6 +65,7 @@ internal fun FeedsAndAccountsScreen(
         ) {
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(FeedSourceListE2eIds.SETTINGS_ROW),
                     title = LocalFeedFlowStrings.current.feedsTitle,
                     icon = Icons.AutoMirrored.Default.Feed,
                     onClick = onFeedListClick,
@@ -75,6 +82,7 @@ internal fun FeedsAndAccountsScreen(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.IMPORT_EXPORT_ROW),
                     title = LocalFeedFlowStrings.current.importExportLabel,
                     icon = Icons.Outlined.SwapVert,
                     onClick = navigateToImportExport,
@@ -83,6 +91,7 @@ internal fun FeedsAndAccountsScreen(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.ACCOUNTS_ROW),
                     title = LocalFeedFlowStrings.current.settingsAccounts,
                     icon = Icons.Outlined.Sync,
                     onClick = navigateToAccounts,
@@ -99,6 +108,7 @@ internal fun FeedsAndAccountsScreen(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.BLOCKED_WORDS_ROW),
                     title = LocalFeedFlowStrings.current.settingsBlockedWords,
                     icon = Icons.Outlined.Report,
                     onClick = navigateToBlockedWords,

@@ -1,0 +1,22 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: home_search_button
+- tapOn:
+    id: search_query_field
+- inputText: Pixel
+- assertVisible:
+    text: "E2E Bookmarked Unread Article: Pixel battery debate"
+- assertVisible:
+    text: "E2E Article With Comments: Pixel Glow"
+- tapOn:
+    id: search_filter_bookmarks
+- assertVisible:
+    text: "E2E Bookmarked Unread Article: Pixel battery debate"
+- assertNotVisible:
+    text: "E2E Article With Comments: Pixel Glow"

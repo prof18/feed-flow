@@ -16,6 +16,7 @@ struct ReaderImageViewer: View {
                 imageToShare = image
             })
             .ignoresSafeArea()
+            .accessibilityIdentifier(ReaderImageViewerIds.viewer)
 
             VStack {
                 HStack {
@@ -27,6 +28,7 @@ struct ReaderImageViewer: View {
                                 .foregroundStyle(.white)
                         }
                     )
+                    .accessibilityIdentifier(ReaderImageViewerIds.closeButton)
                     .padding()
 
                     Spacer()
@@ -41,6 +43,7 @@ struct ReaderImageViewer: View {
                                 .foregroundStyle(.white)
                         }
                     )
+                    .accessibilityIdentifier(ReaderImageViewerIds.shareButton)
                     .padding()
                 }
                 Spacer()

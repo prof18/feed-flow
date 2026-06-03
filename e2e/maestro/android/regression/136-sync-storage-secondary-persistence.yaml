@@ -1,0 +1,53 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_sync_storage
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: settings_sync_storage
+- tapOn:
+    id: sync_storage_sync_period
+- tapOn: "Every hour"
+- scrollUntilVisible:
+    element:
+      id: sync_storage_auto_delete
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: sync_storage_auto_delete
+- tapOn: "One week old"
+- back
+- back
+- tapOn:
+    id: drawer_timeline
+    optional: true
+- launchApp
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_sync_storage
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: settings_sync_storage
+- assertVisible: "Every hour"
+- scrollUntilVisible:
+    element:
+      id: sync_storage_auto_delete
+    direction: DOWN
+    timeout: 10000
+- assertVisible: "One week old"

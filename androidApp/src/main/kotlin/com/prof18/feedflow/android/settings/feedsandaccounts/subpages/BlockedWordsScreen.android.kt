@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.ui.settings.BlockedWordsContent
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -35,7 +37,10 @@ fun BlockedWordsScreen(
                     Text(text = LocalFeedFlowStrings.current.settingsBlockedWords)
                 },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(
+                        modifier = Modifier.testTag(SettingsE2eIds.BACK_BUTTON),
+                        onClick = navigateBack,
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null,

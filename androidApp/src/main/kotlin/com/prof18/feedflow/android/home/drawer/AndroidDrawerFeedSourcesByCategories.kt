@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -211,6 +212,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                 color = navItemColors.containerColor(isSelected).value,
                 modifier = Modifier
                     .weight(1f)
+                    .testTag(DrawerE2eIds.category(category?.id))
                     .semantics { role = Role.Tab }
                     .heightIn(min = drawerItemVisualStyle.itemMinHeight),
             ) {
@@ -249,6 +251,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
 
             Box(
                 modifier = Modifier
+                    .testTag(DrawerE2eIds.categoryExpand(category?.id))
                     .clip(CircleShape)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
@@ -293,6 +296,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                 ),
             ) {
                 DropdownMenuItem(
+                    modifier = Modifier.testTag(DrawerE2eIds.CATEGORY_MENU_RENAME),
                     text = { Text(strings.renameCategory) },
                     onClick = {
                         showMenu = false
@@ -317,6 +321,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                 )
 
                 DropdownMenuItem(
+                    modifier = Modifier.testTag(DrawerE2eIds.CATEGORY_MENU_DELETE_ALL_FEEDS),
                     text = { Text(strings.deleteAllFeedsInCategory) },
                     onClick = {
                         showMenu = false
@@ -325,6 +330,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                 )
 
                 DropdownMenuItem(
+                    modifier = Modifier.testTag(DrawerE2eIds.CATEGORY_MENU_DELETE_CATEGORY),
                     text = { Text(strings.deleteCategory) },
                     onClick = {
                         showMenu = false

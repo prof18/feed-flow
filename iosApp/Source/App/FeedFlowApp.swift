@@ -157,12 +157,58 @@ struct FeedFlowApp: App {
     }
 
     private func handleFeedFlowURL(_ url: URL) {
+        #if DEBUG
+            if url.host == "e2e" {
+                handleE2eURL(url)
+                return
+            }
+        #endif
+
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         let path = components?.path ?? ""
 
         let feedId = path.replacing("/", with: "")
         appState.navigate(route: CommonViewRoute.deepLinkFeed(feedId))
     }
+
+    #if DEBUG
+        private func handleE2eURL(_ url: URL) {
+            let action = url.pathComponents
+                .first { $0 != "/" } ?? "reset-and-seed"
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            let profileName = components?.queryItems?
+                .first { $0.name == "profile" }?
+                .value
+            let accountName = components?.queryItems?
+                .first { $0.name == "account" }?
+                .value
+            appState.e2eSeedMessage = nil
+            Task {
+                do {
+                    let seedError = try await Deps.shared.runE2eSeed(
+                        action: action,
+                        profileName: profileName,
+                        accountName: accountName
+                    )
+                    await MainActor.run {
+                        if let seedError {
+                            appState.e2eSeedMessage = "E2E seed failed: \(seedError)"
+                        } else {
+                            appState.currentCommonRoute = nil
+                            appState.regularNavigationPath = NavigationPath()
+                            appState.compactNavigationPath = NavigationPath()
+                            appState.compactNavigationPath.append(CompactViewRoute.feed)
+                            appState.e2eSeedMessage = "E2E seed complete"
+                        }
+                    }
+                } catch {
+                    await MainActor.run {
+                        appState.e2eSeedMessage = "E2E seed failed: \(error.localizedDescription)"
+                    }
+                }
+            }
+        }
+    #endif
 }
 
 func scheduleAppRefresh() {

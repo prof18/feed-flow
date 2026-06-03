@@ -19,24 +19,29 @@ struct SettingsScreen: View {
                     NavigationLink(destination: AppearanceScreen()) {
                         Label(feedFlowStrings.settingsAppearance, systemImage: "paintbrush")
                     }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.appearanceRow)
 
                     NavigationLink(destination: FeedsAndAccountsScreen(
                         fetchFeeds: fetchFeeds
                     )) {
                         Label(feedFlowStrings.settingsFeedsAndAccounts, systemImage: "arrow.triangle.2.circlepath")
                     }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.feedsAndAccountsRow)
 
                     NavigationLink(destination: FeedListSettingsScreen()) {
                         Label(feedFlowStrings.settingsFeedListTitle, systemImage: "list.bullet.rectangle.portrait")
                     }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.feedListRow)
 
                     NavigationLink(destination: ReadingBehaviorScreen()) {
                         Label(feedFlowStrings.settingsReadingBehavior, systemImage: "book")
                     }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.readingBehaviorRow)
 
                     NavigationLink(destination: SyncAndStorageScreen()) {
                         Label(feedFlowStrings.settingsSyncAndStorage, systemImage: "externaldrive")
                     }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.syncAndStorageRow)
 
                     NavigationLink(destination: AboutAndSupportScreen()) {
                         Label(feedFlowStrings.settingsAboutAndSupport, systemImage: "info.circle")
@@ -56,6 +61,7 @@ struct SettingsScreen: View {
                 } label: {
                     Text(feedFlowStrings.actionDone).bold()
                 }
+                .accessibilityIdentifier(SettingsAccessibilityIdentifiers.doneButton)
             }
             .navigationTitle(Text(feedFlowStrings.settingsTitle))
             .navigationBarTitleDisplayMode(.inline)

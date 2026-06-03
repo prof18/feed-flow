@@ -53,6 +53,7 @@ struct MinifluxSyncContent: View {
                     .textContentType(.URL)
                     .keyboardType(.URL)
                     .disableAutocorrection(true)
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.serverUrlInput)
             },
             header: {
                 Text(feedFlowStrings.accountTextFieldServerUrl)
@@ -71,6 +72,7 @@ struct MinifluxSyncContent: View {
                 TextField(feedFlowStrings.accountTextFieldUsername, text: $username)
                     .textContentType(.username)
                     .disableAutocorrection(true)
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.usernameInput)
             },
             header: {
                 Text(feedFlowStrings.accountTextFieldUsername)
@@ -85,9 +87,11 @@ struct MinifluxSyncContent: View {
                     if isPasswordVisible {
                         TextField(feedFlowStrings.accountTextFieldPassword, text: $password)
                             .textContentType(.password)
+                            .accessibilityIdentifier(AccountAccessibilityIdentifiers.passwordInput)
                     } else {
                         SecureField(feedFlowStrings.accountTextFieldPassword, text: $password)
                             .textContentType(.password)
+                            .accessibilityIdentifier(AccountAccessibilityIdentifiers.passwordInput)
                     }
 
                     Button(
@@ -97,6 +101,7 @@ struct MinifluxSyncContent: View {
                                 .foregroundColor(.gray)
                         }
                     )
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.passwordVisibility)
                 }
             },
             header: {
@@ -125,6 +130,7 @@ struct MinifluxSyncContent: View {
                 }
             )
             .disabled(isLoginLoading || serverUrl.isEmpty || username.isEmpty || password.isEmpty)
+            .accessibilityIdentifier(AccountAccessibilityIdentifiers.connectButton)
         }
     }
 

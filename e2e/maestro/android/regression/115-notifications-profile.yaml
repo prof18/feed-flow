@@ -1,0 +1,52 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp:
+    permissions:
+      notifications: allow
+- openLink: feedflow://e2e/reset-and-seed?profile=notifications
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    text: "Notifications"
+- assertVisible:
+    text: "Notifications"
+- assertVisible:
+    text: "Every 30 minutes"
+- assertVisible:
+    text: "By feed"
+- assertVisible:
+    text: "Enable All Notifications"
+- assertVisible:
+    text: "Android Central RSS Feed"
+- scrollUntilVisible:
+    element:
+      text: "Bloomberg Politics"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    text: "Bloomberg Politics"
+- scrollUntilVisible:
+    element:
+      text: "Ars Technica"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    text: "Ars Technica"
+- scrollUntilVisible:
+    element:
+      text: "Notification grouping"
+    direction: UP
+    timeout: 10000
+- tapOn:
+    text: "Notification grouping"
+- tapOn:
+    text: "By category"
+- assertVisible:
+    text: "By category"

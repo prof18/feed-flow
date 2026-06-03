@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+    <head>
+        <title>FeedFlow E2E OPML Fixture</title>
+    </head>
+    <body>
+        <outline text="E2E Import Category" title="E2E Import Category">
+            <outline
+                type="rss"
+                text="E2E Imported Feed"
+                title="E2E Imported Feed"
+                xmlUrl="https://e2e.feedflow.local/import/feed.xml"
+                htmlUrl="https://e2e.feedflow.local/import"/>
+        </outline>
+    </body>
+</opml>

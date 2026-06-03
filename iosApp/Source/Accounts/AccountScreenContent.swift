@@ -38,6 +38,7 @@ struct AccountsScreenContent: View {
                         Image(systemName: "checkmark")
                     }
                 }
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("dropbox"))
 
             case .googleDrive:
                 NavigationLink(destination: GoogleDriveSyncScreen()) {
@@ -54,6 +55,7 @@ struct AccountsScreenContent: View {
                         Image(systemName: "checkmark")
                     }
                 }
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("google_drive"))
 
             case .icloud:
                 NavigationLink(destination: ICloudSyncScreen(isFromAddAccount: false)) {
@@ -67,6 +69,7 @@ struct AccountsScreenContent: View {
                         Image(systemName: "checkmark")
                     }
                 }
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("icloud"))
 
             case .freshRss:
                 NavigationLink(destination: FreshRssSyncScreen(isFromAddAccount: false)) {
@@ -83,6 +86,7 @@ struct AccountsScreenContent: View {
                         Image(systemName: "checkmark")
                     }
                 }
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("fresh_rss"))
 
             case .miniflux:
                 NavigationLink(destination: MinifluxSyncScreen(isFromAddAccount: false)) {
@@ -99,6 +103,7 @@ struct AccountsScreenContent: View {
                         Image(systemName: "checkmark")
                     }
                 }
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("miniflux"))
 
             case .bazqux:
                 NavigationLink(destination: BazquxSyncScreen(isFromAddAccount: false)) {
@@ -116,6 +121,7 @@ struct AccountsScreenContent: View {
                         Image(systemName: "checkmark")
                     }
                 }
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("bazqux"))
 
             case .feedbin:
                 NavigationLink(destination: FeedbinSyncScreen(isFromAddAccount: false)) {
@@ -132,6 +138,7 @@ struct AccountsScreenContent: View {
                         Image(systemName: "checkmark")
                     }
                 }    
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("feedbin"))
 
             case .local:
                 EmptyView()
@@ -141,7 +148,9 @@ struct AccountsScreenContent: View {
                 self.showAddAccountSheet.toggle()
             } label: {
                 Label(feedFlowStrings.addAccountButton, systemImage: "plus.app")
-            }.disabled(syncAccount != SyncAccounts.local)
+            }
+            .disabled(syncAccount != SyncAccounts.local)
+            .accessibilityIdentifier(AccountAccessibilityIdentifiers.addAccount)
         }
         .sheet(isPresented: $showAddAccountSheet) {
             AddAccountScreen(

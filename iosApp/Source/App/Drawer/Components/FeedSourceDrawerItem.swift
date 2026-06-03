@@ -35,6 +35,7 @@ struct FeedSourceDrawerItem: View {
         .onTapGesture {
             onSelect(drawerItem)
         }
+        .accessibilityIdentifier(DrawerAccessibilityIdentifiers.feedSource(drawerItem.feedSource.id))
         .contextMenu {
             makeFeedSourceContextMenu(feedSource: drawerItem.feedSource)
         }

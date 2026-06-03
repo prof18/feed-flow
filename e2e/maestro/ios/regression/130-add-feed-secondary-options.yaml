@@ -1,0 +1,28 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp:
+    permissions:
+      notifications: allow
+- openLink: feedflow://e2e/reset-and-seed?profile=notifications
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn: "Add feed"
+- assertVisible:
+    id: add_feed_url_input
+- tapOn:
+    id: edit_feed_category_selector
+- assertVisible: "Categories"
+- tapOn: "News"
+- tapOn: "Save"
+- assertVisible: "News"
+- assertVisible: "Enable notifications for new articles"
+- tapOn: "Enable notifications for new articles"

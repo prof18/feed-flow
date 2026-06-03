@@ -1,0 +1,71 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- assertVisible:
+    text: "E2E Newest Unread Article.*"
+- tapOn:
+    id: drawer_menu_button
+- assertVisible:
+    id: drawer_timeline
+- tapOn:
+    id: drawer_read
+- assertVisible:
+    text: "E2E Read Article.*"
+- assertNotVisible:
+    text: "E2E Newest Unread Article.*"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_bookmarks
+- assertVisible:
+    text: "E2E Bookmarked Unread Article.*"
+- assertVisible:
+    text: "E2E Bookmarked Read Article.*"
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_category_expand_e2e_category_technology
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_expand_e2e_category_technology
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_e2e_feed_android_weekly
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- assertVisible:
+    text: "Android Central RSS Feed"
+- assertNotVisible:
+    text: "E2E Bookmarked Unread Article.*"
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_category_e2e_category_news
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_e2e_category_news
+- assertVisible:
+    text: "E2E Article With Image.*"
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_category_uncategorized
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_uncategorized
+- assertVisible:
+    text: "E2E Article Without Image.*"

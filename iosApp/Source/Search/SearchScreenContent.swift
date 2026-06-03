@@ -86,6 +86,7 @@ struct SearchScreenContent: View {
             FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes, feedItemDisplaySettings: feedItemDisplaySettings)
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier(FeedItemAccessibilityIdentifiers.row(feedItem.id))
         .id(feedItem.id)
         .contentShape(Rectangle())
         .listRowInsets(EdgeInsets())
@@ -255,6 +256,7 @@ private struct SearchFilterChipsRow: View {
                     SearchFilterChip(
                         label: filter.label(currentFeedLabel: currentFeedLabel),
                         isSelected: filter == selectedFilter,
+                        accessibilityIdentifier: SearchAccessibilityIdentifiers.filter(filter),
                         onTap: {
                             onFilterSelected(filter)
                         }
@@ -270,6 +272,7 @@ private struct SearchFilterChipsRow: View {
 private struct SearchFilterChip: View {
     let label: String
     let isSelected: Bool
+    let accessibilityIdentifier: String
     let onTap: () -> Void
 
     var body: some View {
@@ -292,6 +295,10 @@ private struct SearchFilterChip: View {
                 )
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier(accessibilityIdentifier)
     }
 }
 

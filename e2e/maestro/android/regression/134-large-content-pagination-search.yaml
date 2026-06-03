@@ -1,0 +1,28 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=large-content
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    text: "E2E Large Article 001"
+- scrollUntilVisible:
+    element:
+      text: "E2E Large Article 045: Pagination Needle"
+    direction: DOWN
+    timeout: 60000
+    speed: 50
+    visibilityPercentage: 30
+    waitToSettleTimeoutMs: 500
+- openLink: feedflow://e2e/reset-and-seed?profile=large-content
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: home_search_button
+- tapOn:
+    id: search_query_field
+- inputText: "Pagination Needle"
+- assertVisible:
+    text: "E2E Large Article 045: Pagination Needle"

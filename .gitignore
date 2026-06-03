@@ -148,5 +148,7 @@ iosApp/.swiftpm/
 tmp
 .claude/worktrees
 .claude/settings.local.json
-/.xcodebuildmcp/
+/.xcodebuildmcp/*
+!/.xcodebuildmcp/
+!/.xcodebuildmcp/config.yaml
 /.ai/plan/

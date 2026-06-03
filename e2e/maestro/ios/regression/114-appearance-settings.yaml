@@ -1,0 +1,39 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_appearance
+- assertVisible:
+    id: appearance_theme
+- tapOn:
+    id: appearance_theme
+- tapOn: "Dark"
+- assertVisible:
+    id: appearance_hide_unread_count
+- tapOn:
+    id: appearance_hide_unread_count
+- tapOn:
+    id: BackButton
+- tapOn:
+    id: settings_done_button
+- launchApp
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_appearance
+- assertVisible:
+    text: "Dark"
+- assertVisible:
+    id: appearance_hide_unread_count

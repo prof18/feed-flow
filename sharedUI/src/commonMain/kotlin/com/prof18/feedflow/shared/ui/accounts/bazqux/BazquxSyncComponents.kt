@@ -33,10 +33,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
+import com.prof18.feedflow.shared.ui.accounts.AccountE2eIds
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -138,6 +140,7 @@ private fun DisconnectedView(
                 Text(LocalFeedFlowStrings.current.bazquxUsernameHint)
             },
             modifier = Modifier
+                .testTag(AccountE2eIds.USERNAME_INPUT)
                 .fillMaxWidth()
                 .padding(bottom = Spacing.regular),
             singleLine = true,
@@ -150,6 +153,7 @@ private fun DisconnectedView(
             onValueChange = { password = it },
             label = { Text(LocalFeedFlowStrings.current.accountTextFieldPassword) },
             modifier = Modifier
+                .testTag(AccountE2eIds.PASSWORD_INPUT)
                 .fillMaxWidth()
                 .padding(bottom = Spacing.medium),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -158,7 +162,10 @@ private fun DisconnectedView(
             },
             trailingIcon = {
                 val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                IconButton(
+                    modifier = Modifier.testTag(AccountE2eIds.PASSWORD_VISIBILITY),
+                    onClick = { passwordVisible = !passwordVisible },
+                ) {
                     Icon(imageVector = image, contentDescription = null)
                 }
             },
@@ -171,6 +178,7 @@ private fun DisconnectedView(
                 onLoginClick(username, password)
             },
             modifier = Modifier
+                .testTag(AccountE2eIds.CONNECT_BUTTON)
                 .fillMaxWidth(),
             enabled = !isLoginLoading && username.isNotBlank() && password.isNotBlank(),
         ) {

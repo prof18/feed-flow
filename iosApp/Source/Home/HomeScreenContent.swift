@@ -84,6 +84,7 @@ struct HomeContent: View {
             Button(feedFlowStrings.confirmButton) {
                 onMarkAllReadClick()
             }
+            .accessibilityIdentifier(HomeAlertAccessibilityIdentifiers.markAllReadConfirmButton)
         } message: {
             Text(feedFlowStrings.markAllReadDialogMessage)
         }

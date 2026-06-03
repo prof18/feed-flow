@@ -1,0 +1,40 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_appearance
+- assertVisible:
+    id: appearance_theme
+- tapOn:
+    id: appearance_theme
+- tapOn: "Black"
+- assertVisible:
+    id: appearance_hide_unread_count
+- tapOn:
+    id: appearance_hide_unread_count
+- assertVisible:
+    id: appearance_reduce_motion
+- tapOn:
+    id: appearance_reduce_motion
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: settings_back_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_appearance
+- assertVisible:
+    text: "Black"
+- assertVisible:
+    id: appearance_hide_unread_count
+- assertVisible:
+    id: appearance_reduce_motion

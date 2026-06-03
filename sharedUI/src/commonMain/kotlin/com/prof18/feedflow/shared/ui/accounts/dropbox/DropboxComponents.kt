@@ -19,8 +19,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
+import com.prof18.feedflow.shared.ui.accounts.AccountE2eIds
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -99,7 +101,9 @@ private fun ConnectedView(
         Text(
             text = LocalFeedFlowStrings.current.dropboxSyncSuccess,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = Spacing.regular),
+            modifier = Modifier
+                .padding(horizontal = Spacing.regular)
+                .testTag(AccountE2eIds.CONNECTED_MESSAGE),
         )
 
         when (val syncState = uiState.syncState) {
@@ -138,7 +142,8 @@ private fun ConnectedView(
                     Text(
                         modifier = Modifier
                             .padding(horizontal = Spacing.regular)
-                            .padding(top = Spacing.small),
+                            .padding(top = Spacing.small)
+                            .testTag(AccountE2eIds.LAST_SYNC_LABEL),
                         text = LocalFeedFlowStrings.current.lastUpload(lastUpload),
                         style = MaterialTheme.typography.bodySmall,
                     )
@@ -149,7 +154,8 @@ private fun ConnectedView(
                     Text(
                         modifier = Modifier
                             .padding(horizontal = Spacing.regular)
-                            .padding(top = Spacing.small),
+                            .padding(top = Spacing.small)
+                            .testTag(AccountE2eIds.LAST_SYNC_LABEL),
                         text = LocalFeedFlowStrings.current.lastDownload(lastDownload),
                         style = MaterialTheme.typography.bodySmall,
                     )
@@ -167,6 +173,7 @@ private fun ConnectedView(
         )
 
         SettingItem(
+            modifier = Modifier.testTag(AccountE2eIds.DISCONNECT_BUTTON),
             title = LocalFeedFlowStrings.current.accountDisconnectButton,
             isEnabled = uiState.syncState !is AccountSyncUIState.Loading,
             icon = Icons.Default.LinkOff,

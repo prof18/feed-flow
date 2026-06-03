@@ -111,7 +111,9 @@ struct SidebarDrawer: View {
                 }
             }
 
-            if !navDrawerState.feedSourcesByCategory.isEmpty || !navDrawerState.feedSourcesWithoutCategory.isEmpty {
+            if !navDrawerState.feedSourcesByCategory.isEmpty ||
+                !navDrawerState.feedSourcesWithoutCategory.isEmpty ||
+                !navDrawerState.categories.isEmpty {
                 Section(feedFlowStrings.feedsTitle) {
                     feedSourcesContent
                 }
@@ -127,6 +129,7 @@ struct SidebarDrawer: View {
                         action: onShowSettingsClick,
                         label: { Image(systemName: "gear") }
                     )
+                    .accessibilityIdentifier(DrawerAccessibilityIdentifiers.settingsButton)
                 }
 
                 ToolbarItem(placement: .primaryAction) {
@@ -140,6 +143,7 @@ struct SidebarDrawer: View {
                                 action: { showFeedSuggestionsSheet = true },
                                 label: { Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb") }
                             )
+                            .accessibilityIdentifier(FeedSuggestionsIds.drawerItem)
                             Button(
                                 action: onImportExportClick,
                                 label: { Label(feedFlowStrings.importFeedButton, systemImage: "square.and.arrow.down") }
@@ -147,6 +151,7 @@ struct SidebarDrawer: View {
                         },
                         label: { Image(systemName: "plus") }
                     )
+                    .accessibilityIdentifier(FeedSuggestionsIds.menuButton)
                 }
             }
         .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {

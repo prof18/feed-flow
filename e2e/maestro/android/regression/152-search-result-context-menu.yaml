@@ -1,0 +1,39 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+
+# Open search and surface the seeded "Article With Comments" result. This row
+# has a commentsUrl, which makes the per-result Comments item appear in the
+# context menu alongside the bookmark/read/mark-all-above/below actions.
+- tapOn:
+    id: home_search_button
+- tapOn:
+    id: search_query_field
+- inputText: "Pixel"
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_comments
+    timeout: 10000
+
+# Long-press the comments result and verify the full app-owned action set.
+- longPressOn:
+    id: article_row_e2e_article_comments
+- assertVisible: "Mark all above as read"
+- assertVisible: "Mark all below as read"
+- assertVisible: "Open comments"
+- assertVisible: "Add to bookmarks"
+- assertVisible: "Mark as read"
+- tapOn: "Add to bookmarks"
+
+# The newly bookmarked article should now appear in the Bookmarks filter.
+- tapOn:
+    id: search_filter_bookmarks
+- assertVisible:
+    id: article_row_e2e_article_comments

@@ -37,9 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.android.home.drawer.DrawerE2eIds
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
@@ -174,7 +176,10 @@ fun HomeFloatingToolbar(
             border = toolbarBorder,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onSearchClick) {
+                IconButton(
+                    modifier = Modifier.testTag(HomeToolbarE2eIds.SEARCH_BUTTON),
+                    onClick = onSearchClick,
+                ) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = strings.searchButtonContentDescription,
@@ -182,7 +187,10 @@ fun HomeFloatingToolbar(
                 }
 
                 Box {
-                    IconButton(onClick = { showMenu = !showMenu }) {
+                    IconButton(
+                        modifier = Modifier.testTag(HomeToolbarE2eIds.MORE_MENU_BUTTON),
+                        onClick = { showMenu = !showMenu },
+                    ) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
                             contentDescription = strings.moreOptionsButtonContentDescription,
@@ -237,7 +245,10 @@ private fun FeedFilter.getTitle(): String =
 @Composable
 private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    IconButton(onClick = onDrawerMenuClick) {
+    IconButton(
+        modifier = Modifier.testTag(DrawerE2eIds.MENU_BUTTON),
+        onClick = onDrawerMenuClick,
+    ) {
         val icon = when {
             isDrawerOpen && isRtl -> CloseSidebarReversed
             isDrawerOpen -> CloseSidebar

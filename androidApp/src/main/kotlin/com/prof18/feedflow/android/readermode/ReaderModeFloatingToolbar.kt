@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
@@ -53,6 +54,7 @@ import kotlinx.collections.immutable.toImmutableList
 private data class ToolbarAction(
     val icon: ImageVector,
     val label: String,
+    val testTag: String? = null,
     val onClick: () -> Unit,
 )
 
@@ -110,6 +112,7 @@ fun ReaderModeFloatingToolbar(
                     ToolbarAction(
                         icon = Icons.Default.Language,
                         label = strings.readerModeBrowserButtonContentDescription,
+                        testTag = ReaderModeE2eIds.BROWSER_BUTTON,
                         onClick = { latestOpenInBrowser(url) },
                     ),
                 )
@@ -145,6 +148,7 @@ fun ReaderModeFloatingToolbar(
                     ToolbarAction(
                         icon = bookmarkIcon,
                         label = bookmarkLabel,
+                        testTag = ReaderModeE2eIds.BOOKMARK_BUTTON,
                         onClick = {
                             val newIsBookmarked = !isBookmarked
                             isBookmarked = newIsBookmarked
@@ -178,6 +182,7 @@ fun ReaderModeFloatingToolbar(
                     ToolbarAction(
                         icon = Icons.Outlined.TextFields,
                         label = strings.readerModeFontSize,
+                        testTag = ReaderModeE2eIds.FONT_SIZE_BUTTON,
                         onClick = { showFontSizeMenu = true },
                     ),
                 )
@@ -204,7 +209,9 @@ fun ReaderModeFloatingToolbar(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
             ) {
                 IconButton(
-                    modifier = Modifier.focusProperties { canFocus = expanded },
+                    modifier = Modifier
+                        .focusProperties { canFocus = expanded }
+                        .testTag(ReaderModeE2eIds.PREVIOUS_BUTTON),
                     enabled = canNavigatePrevious,
                     onClick = onNavigateToPrevious,
                 ) {
@@ -215,7 +222,9 @@ fun ReaderModeFloatingToolbar(
                 }
 
                 IconButton(
-                    modifier = Modifier.focusProperties { canFocus = expanded },
+                    modifier = Modifier
+                        .focusProperties { canFocus = expanded }
+                        .testTag(ReaderModeE2eIds.NEXT_BUTTON),
                     enabled = canNavigateNext,
                     onClick = onNavigateToNext,
                 ) {
@@ -229,6 +238,7 @@ fun ReaderModeFloatingToolbar(
             DropdownMenu(
                 expanded = showFontSizeMenu,
                 onDismissRequest = { showFontSizeMenu = false },
+                modifier = Modifier.testTag(ReaderModeE2eIds.FONT_SIZE_MENU),
                 shape = MaterialTheme.shapes.large,
             ) {
                 Column(modifier = Modifier.padding(Spacing.regular)) {
@@ -301,13 +311,7 @@ private fun OverflowToolbarLayout(
                 ) {
                     Row {
                         leadingActions.take(visibleLeading).forEach { action ->
-                            IconButton(onClick = action.onClick) {
-                                Icon(
-                                    imageVector = action.icon,
-                                    contentDescription = action.label,
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                )
-                            }
+                            ToolbarActionButton(action)
                         }
                     }
                 }
@@ -321,18 +325,15 @@ private fun OverflowToolbarLayout(
                 ) {
                     Row {
                         trailingActions.take(visibleTrailing).forEach { action ->
-                            IconButton(onClick = action.onClick) {
-                                Icon(
-                                    imageVector = action.icon,
-                                    contentDescription = action.label,
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                )
-                            }
+                            ToolbarActionButton(action)
                         }
 
                         if (needsOverflow) {
                             Box {
-                                IconButton(onClick = { onShowOverflowMenu(true) }) {
+                                IconButton(
+                                    modifier = Modifier.testTag(ReaderModeE2eIds.MORE_MENU_BUTTON),
+                                    onClick = { onShowOverflowMenu(true) },
+                                ) {
                                     Icon(
                                         imageVector = Icons.Default.MoreVert,
                                         contentDescription = null,
@@ -344,18 +345,11 @@ private fun OverflowToolbarLayout(
                                     shape = MaterialTheme.shapes.large,
                                 ) {
                                     overflowActions.forEach { action ->
-                                        DropdownMenuItem(
-                                            text = { Text(action.label) },
+                                        ToolbarActionMenuItem(
+                                            action = action,
                                             onClick = {
                                                 action.onClick()
                                                 onShowOverflowMenu(false)
-                                            },
-                                            leadingIcon = {
-                                                Icon(
-                                                    imageVector = action.icon,
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                )
                                             },
                                         )
                                     }
@@ -372,3 +366,39 @@ private fun OverflowToolbarLayout(
         }
     }
 }
+
+@Composable
+private fun ToolbarActionButton(action: ToolbarAction) {
+    IconButton(
+        modifier = action.testTagModifier(),
+        onClick = action.onClick,
+    ) {
+        Icon(
+            imageVector = action.icon,
+            contentDescription = action.label,
+            tint = MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+@Composable
+private fun ToolbarActionMenuItem(
+    action: ToolbarAction,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(
+        modifier = action.testTagModifier(),
+        text = { Text(action.label) },
+        onClick = onClick,
+        leadingIcon = {
+            Icon(
+                imageVector = action.icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        },
+    )
+}
+
+private fun ToolbarAction.testTagModifier(): Modifier =
+    testTag?.let { Modifier.testTag(it) } ?: Modifier

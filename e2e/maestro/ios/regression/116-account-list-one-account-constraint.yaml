@@ -1,0 +1,53 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=sync-linked-mock&account=fresh_rss
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 10000
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_accounts
+- assertVisible:
+    id: accounts_provider_fresh_rss
+- assertVisible:
+    id: accounts_add_account
+    enabled: false
+- tapOn:
+    id: accounts_provider_fresh_rss
+- assertVisible: "FreshRSS"
+- assertVisible:
+    id: account_connected_message
+- assertVisible:
+    id: account_last_sync_label
+- tapOn:
+    id: account_disconnect_button
+- assertVisible:
+    id: account_connect_button
+    enabled: false
+- tapOn:
+    point: 9%,12%
+- extendedWaitUntil:
+    visible:
+      id: accounts_add_account
+    timeout: 5000
+- assertVisible:
+    id: accounts_add_account
+    enabled: true
+- tapOn:
+    id: accounts_add_account
+- assertVisible:
+    id: accounts_provider_miniflux
+- assertVisible:
+    id: accounts_provider_bazqux
+- assertVisible:
+    id: accounts_provider_feedbin

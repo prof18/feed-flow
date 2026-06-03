@@ -29,6 +29,7 @@ struct BlockedWordsScreenContent: View {
                     TextField(feedFlowStrings.addWordPlaceholder, text: $newWord)
                         .disableAutocorrection(true)
                         .textInputAutocapitalization(.never)
+                        .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.input)
                         .onSubmit {
                             addWord()
                         }
@@ -41,8 +42,19 @@ struct BlockedWordsScreenContent: View {
                             Image(systemName: "checkmark.circle.fill")
                                 .tint(.green)
                         }
+                        .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.addButton)
                         .hoverEffect()
                     }
+
+                    #if DEBUG
+                    Button {
+                        onAddWord("pixel")
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                    }
+                    .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.addPixelButton)
+                    .hoverEffect()
+                    #endif
                 }
                 }
 
@@ -58,6 +70,7 @@ struct BlockedWordsScreenContent: View {
                             HStack {
                                 Text(word)
                                     .frame(maxWidth: .infinity, alignment: .leading)
+                                    .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.row(word))
 
                                 Button {
                                     onRemoveWord(word)
@@ -66,6 +79,7 @@ struct BlockedWordsScreenContent: View {
                                         .foregroundColor(.red)
                                 }
                                 .buttonStyle(.borderless)
+                                .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.deleteButton(word))
                             }
                         }
                     }

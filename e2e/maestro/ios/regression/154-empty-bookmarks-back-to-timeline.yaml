@@ -1,0 +1,40 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+
+# Filter on Bookmarks. content-rich seeds two bookmarked articles, so unbookmark
+# both via the context menu to reach the empty Bookmarks state.
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_bookmarks
+- assertVisible:
+    id: article_row_e2e_article_bookmarked_unread
+- longPressOn:
+    id: article_row_e2e_article_bookmarked_unread
+- tapOn: "Remove from bookmarks"
+- assertVisible:
+    id: article_row_e2e_article_bookmarked_read
+- longPressOn:
+    id: article_row_e2e_article_bookmarked_read
+- tapOn: "Remove from bookmarks"
+
+# Empty Bookmarks state shows the bookmark-specific message and the
+# Back to timeline shortcut.
+- assertVisible: "Nothing here, time to bookmark something!"
+- assertVisible: "Back to timeline"
+- tapOn: "Back to timeline"
+
+# Back on the Timeline filter the seeded top articles are visible again.
+- extendedWaitUntil:
+    visible:
+      text: "E2E Newest Unread Article.*"
+    timeout: 10000

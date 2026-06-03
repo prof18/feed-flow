@@ -1,0 +1,4 @@
+interface:
+  display_name: "Run Maestro Release Tests"
+  short_description: "Run all FeedFlow Maestro E2E tests."
+  default_prompt: "Use $run-maestro-release-tests to run the full FeedFlow Maestro release suite and report failures."

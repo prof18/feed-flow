@@ -14,11 +14,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
+import com.prof18.feedflow.shared.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -44,7 +46,9 @@ internal fun AddCategoryDialog(
             },
             text = {
                 OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .testTag(FeedFormE2eIds.CATEGORY_ADD_INPUT)
+                        .fillMaxWidth(),
                     value = categoryName,
                     onValueChange = { categoryName = it },
                     singleLine = true,
@@ -74,6 +78,7 @@ internal fun AddCategoryDialog(
             },
             confirmButton = {
                 TextButton(
+                    modifier = Modifier.testTag(FeedFormE2eIds.CATEGORY_ADD_CONFIRM),
                     onClick = {
                         if (isAddAllowed) {
                             onAddCategory(CategoryName(name = categoryName.trim()))

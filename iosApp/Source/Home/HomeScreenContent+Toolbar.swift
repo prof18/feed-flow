@@ -19,11 +19,12 @@ extension HomeContent {
         ToolbarItem {
             Button {
                 self.appState.navigate(
-                    route: CommonViewRoute.search
+                    route: searchRoute
                 )
             } label: {
                 Image(systemName: "magnifyingglass")
             }
+            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
         }
 
         if #available(iOS 26.0, *) {
@@ -45,11 +46,12 @@ extension HomeContent {
             ToolbarItem {
                 Button {
                     self.appState.navigate(
-                        route: CommonViewRoute.search
+                        route: searchRoute
                     )
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
+                .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
             }
 
             if #available(iOS 26.0, *) {
@@ -79,6 +81,7 @@ extension HomeContent {
                 } label: {
                     Image(systemName: "sidebar.leading")
                 }
+                .accessibilityIdentifier(DrawerAccessibilityIdentifiers.menuButton)
 
                 Rectangle()
                     .fill(Color.secondary.opacity(0.35))
@@ -103,6 +106,10 @@ extension HomeContent {
         case .ipad:
             return 220
         }
+    }
+
+    private var searchRoute: CommonViewRoute {
+        .search
     }
 
     private var shouldShowUnreadCount: Bool {
@@ -150,11 +157,12 @@ extension HomeContent {
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
                 self.appState.navigate(
-                    route: CommonViewRoute.search
+                    route: searchRoute
                 )
             } label: {
                 Image(systemName: "magnifyingglass")
             }
+            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
         }
     }
 
@@ -170,6 +178,7 @@ extension HomeContent {
                     Image(systemName: "ellipsis.circle")
                 }
             }
+            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.moreMenuButton)
         }
     }
 
@@ -188,6 +197,7 @@ extension HomeContent {
         } label: {
             Label(feedFlowStrings.markAllReadButton, systemImage: "text.badge.checkmark")
         }
+        .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.markAllReadMenuItem)
 
         Button {
             proxy.scrollTo(feedState.first?.id)

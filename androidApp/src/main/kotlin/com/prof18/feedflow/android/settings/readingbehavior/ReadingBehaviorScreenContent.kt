@@ -14,7 +14,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.settings.components.BrowserSelector
 import com.prof18.feedflow.core.model.Browser
 import com.prof18.feedflow.core.model.ReadingBehaviorState
@@ -43,7 +45,10 @@ internal fun ReadingBehaviorScreenContent(
             TopAppBar(
                 title = { Text(LocalFeedFlowStrings.current.settingsReadingBehavior) },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(
+                        modifier = Modifier.testTag(SettingsE2eIds.BACK_BUTTON),
+                        onClick = navigateBack,
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = null,
@@ -69,6 +74,7 @@ internal fun ReadingBehaviorScreenContent(
 
             item {
                 SettingSwitchItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_READER_MODE),
                     title = LocalFeedFlowStrings.current.settingsReaderMode,
                     isChecked = state.isReaderModeEnabled,
                     onCheckedChange = setReaderMode,
@@ -105,6 +111,7 @@ internal fun ReadingBehaviorScreenContent(
 
             item {
                 SettingSwitchItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_SHOW_READ),
                     title = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
                     isChecked = state.isShowReadItemsEnabled,
                     onCheckedChange = setShowReadItem,
@@ -113,6 +120,7 @@ internal fun ReadingBehaviorScreenContent(
 
             item {
                 SettingSwitchItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_HIDE_READ),
                     title = LocalFeedFlowStrings.current.settingsHideReadItems,
                     isChecked = state.isHideReadItemsEnabled,
                     onCheckedChange = setHideReadItems,

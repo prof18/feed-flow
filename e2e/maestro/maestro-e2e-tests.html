@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FeedFlow Maestro E2E Tests</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f7f3ea;
+      --ink: #1c2430;
+      --muted: #667085;
+      --line: #d8cdbf;
+      --panel: #fffaf2;
+      --accent: #0b6b61;
+      --accent-ink: #ffffff;
+      --chip: #e7ded1;
+      --shadow: 0 18px 40px rgb(55 45 32 / 12%);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #151917;
+        --ink: #f3efe5;
+        --muted: #a9b2aa;
+        --line: #33403b;
+        --panel: #1f2724;
+        --accent: #5ec4b6;
+        --accent-ink: #06201d;
+        --chip: #2b3632;
+        --shadow: none;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(135deg, rgb(11 107 97 / 12%), transparent 36rem),
+        radial-gradient(circle at 90% 8%, rgb(194 92 62 / 18%), transparent 28rem),
+        var(--bg);
+      color: var(--ink);
+      font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    header {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 48px 24px 24px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .lede {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 16px 24px 64px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .metric,
+    .section {
+      background: color-mix(in srgb, var(--panel) 94%, transparent);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .metric {
+      padding: 18px;
+      border-radius: 8px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin: 28px 0 14px;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 38px;
+      align-items: center;
+      border-radius: 6px;
+      background: var(--accent);
+      color: var(--accent-ink);
+      padding: 8px 12px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .button.secondary {
+      background: var(--chip);
+      color: var(--ink);
+    }
+
+    input {
+      width: min(100%, 360px);
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 8px 12px;
+      font: inherit;
+    }
+
+    .section {
+      margin: 14px 0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .section h2 {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: baseline;
+      justify-content: space-between;
+      margin: 0;
+      border-bottom: 1px solid var(--line);
+      padding: 14px 16px;
+      font-size: 1.08rem;
+      letter-spacing: 0;
+    }
+
+    .count {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 9px 16px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    .coverage {
+      max-width: 44rem;
+      color: var(--muted);
+    }
+
+    .tag {
+      display: inline-flex;
+      border-radius: 999px;
+      background: var(--chip);
+      padding: 2px 8px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .empty {
+      display: none;
+      margin: 24px 0;
+      color: var(--muted);
+    }
+
+    @media (max-width: 720px) {
+      header {
+        padding-top: 32px;
+      }
+
+      th:nth-child(4),
+      td:nth-child(4) {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FeedFlow Maestro E2E Tests</h1>
+    <p class="lede">Renderable list of user-facing tasks covered by automated Maestro flows. The Markdown catalogue remains the source for known limitations and run instructions.</p>
+  </header>
+
+  <main>
+    <section class="summary" aria-label="Summary">
+      <div class="metric"><strong id="total-count">0</strong><span>automated flow files</span></div>
+      <div class="metric"><strong>13</strong><span>smoke coverage IDs</span></div>
+      <div class="metric"><strong>54</strong><span>regression coverage IDs</span></div>
+    </section>
+
+    <div class="toolbar">
+      <input id="filter" type="search" placeholder="Filter flows by name, feature, suite, or platform" aria-label="Filter flows">
+      <div class="links">
+        <a class="button" href="./maestro-e2e-tests.md">Coverage catalogue</a>
+        <a class="button secondary" href="./maestro-e2e-guide.md">Authoring guide</a>
+      </div>
+    </div>
+
+    <p id="empty" class="empty">No flows match this filter.</p>
+    <div id="sections"></div>
+  </main>
+
+  <script>
+    const flows = [
+      "android/regression/101-add-feed-form-validation.yaml",
+      "android/regression/103-feed-suggestions.yaml",
+      "android/regression/104-feed-source-list-management.yaml",
+      "android/regression/105-category-management.yaml",
+      "android/regression/106-article-context-menu.yaml",
+      "android/regression/107-swipe-actions.yaml",
+      "android/regression/108-feed-layout-matrix-card.yaml",
+      "android/regression/108-feed-layout-matrix-compact.yaml",
+      "android/regression/109-feed-order-mark-above-below.yaml",
+      "android/regression/110-reader-fallback.yaml",
+      "android/regression/111-reader-image-viewer.yaml",
+      "android/regression/112-link-opening-preferences.yaml",
+      "android/regression/113-sync-storage-settings.yaml",
+      "android/regression/114-appearance-settings.yaml",
+      "android/regression/115-notifications-profile.yaml",
+      "android/regression/116-account-list-one-account-constraint.yaml",
+      "android/regression/117-greader-provider-form-validation.yaml",
+      "android/regression/118-cloud-provider-mock-states.yaml",
+      "android/regression/119-opml-import-error-states.yaml",
+      "android/regression/120-csv-import-article-states.yaml",
+      "android/regression/121-reading-behavior-secondary-settings.yaml",
+      "android/regression/122-feed-list-settings-detail-controls.yaml",
+      "android/regression/123-sync-storage-advanced-settings.yaml",
+      "android/regression/124-home-overflow-secondary-actions.yaml",
+      "android/regression/125-about-support-navigation.yaml",
+      "android/regression/126-deep-link-routing-article.yaml",
+      "android/regression/126-deep-link-routing-category.yaml",
+      "android/regression/126-deep-link-routing-feed-source.yaml",
+      "android/regression/126-deep-link-routing-seed.yaml",
+      "android/regression/127-notifications-secondary-settings.yaml",
+      "android/regression/128-notifications-empty-state.yaml",
+      "android/regression/129-edit-feed-secondary-options.yaml",
+      "android/regression/130-add-feed-secondary-options.yaml",
+      "android/regression/131-home-source-filter-edit-entry.yaml",
+      "android/regression/132-about-support-secondary-options.yaml",
+      "android/regression/133-home-sync-backup-action.yaml",
+      "android/regression/134-large-content-pagination-search.yaml",
+      "android/regression/135-feed-list-secondary-persistence.yaml",
+      "android/regression/136-sync-storage-secondary-persistence.yaml",
+      "android/regression/137-reading-behavior-browser-selector-persistence.yaml",
+      "android/regression/139-article-export-filter.yaml",
+      "android/regression/140-opml-export-success.yaml",
+      "android/regression/141-article-export-filter-matrix.yaml",
+      "android/regression/143-article-context-menu-action-set.yaml",
+      "android/regression/145-network-provider-linked-states.yaml",
+      "android/regression/146-drawer-feed-source-context-menu.yaml",
+      "android/regression/147-no-feeds-empty-state-cta.yaml",
+      "android/regression/148-pull-to-next-feed.yaml",
+      "android/regression/149-drawer-category-mark-all-read.yaml",
+      "android/regression/150-reader-previous-and-font-menu.yaml",
+      "android/regression/151-feed-source-list-delete-all-in-category.yaml",
+      "android/regression/152-search-result-context-menu.yaml",
+      "android/regression/153-drawer-add-import-feed-entries.yaml",
+      "android/regression/154-empty-bookmarks-back-to-timeline.yaml",
+      "android/regression/155-empty-home-open-another-feed.yaml",
+      "android/smoke/001-first-launch-empty.yaml",
+      "android/smoke/002-seeded-timeline-loads.yaml",
+      "android/smoke/003-library-filters.yaml",
+      "android/smoke/004-article-read-bookmark-state.yaml",
+      "android/smoke/005-mark-all-read.yaml",
+      "android/smoke/006-search-core.yaml",
+      "android/smoke/007-reader-mode-core.yaml",
+      "android/smoke/008-feed-edit-core.yaml",
+      "android/smoke/009-feed-list-settings-persist.yaml",
+      "android/smoke/010-reading-behavior-settings-persist.yaml",
+      "android/smoke/011-import-export-smoke.yaml",
+      "android/smoke/012-blocked-words.yaml",
+      "android/smoke/013-relaunch-persistence.yaml",
+      "ios/regression/101-add-feed-form-validation.yaml",
+      "ios/regression/103-feed-suggestions.yaml",
+      "ios/regression/104-feed-source-list-management.yaml",
+      "ios/regression/105-category-add-validation.yaml",
+      "ios/regression/105-category-management.yaml",
+      "ios/regression/106-article-context-menu.yaml",
+      "ios/regression/107-swipe-actions.yaml",
+      "ios/regression/108-feed-layout-matrix-card.yaml",
+      "ios/regression/108-feed-layout-matrix-compact.yaml",
+      "ios/regression/109-feed-order-mark-above-below.yaml",
+      "ios/regression/110-reader-fallback.yaml",
+      "ios/regression/111-reader-image-viewer.yaml",
+      "ios/regression/112-link-opening-preferences.yaml",
+      "ios/regression/113-sync-storage-settings.yaml",
+      "ios/regression/114-appearance-settings.yaml",
+      "ios/regression/115-notifications-profile.yaml",
+      "ios/regression/116-account-list-one-account-constraint.yaml",
+      "ios/regression/117-greader-provider-form-validation.yaml",
+      "ios/regression/118-cloud-provider-mock-states.yaml",
+      "ios/regression/119-opml-import-error-states.yaml",
+      "ios/regression/120-csv-import-article-states.yaml",
+      "ios/regression/121-reading-behavior-secondary-settings.yaml",
+      "ios/regression/122-feed-list-settings-detail-controls.yaml",
+      "ios/regression/123-sync-storage-advanced-settings.yaml",
+      "ios/regression/124-home-overflow-secondary-actions.yaml",
+      "ios/regression/125-about-support-navigation.yaml",
+      "ios/regression/126-deep-link-routing.yaml",
+      "ios/regression/127-notifications-secondary-settings.yaml",
+      "ios/regression/128-notifications-empty-state.yaml",
+      "ios/regression/129-edit-feed-secondary-options.yaml",
+      "ios/regression/130-add-feed-secondary-options.yaml",
+      "ios/regression/131-home-source-filter-edit-entry.yaml",
+      "ios/regression/132-about-support-secondary-options.yaml",
+      "ios/regression/133-home-sync-backup-action.yaml",
+      "ios/regression/134-large-content-pagination.yaml",
+      "ios/regression/135-feed-list-secondary-persistence.yaml",
+      "ios/regression/136-sync-storage-secondary-persistence.yaml",
+      "ios/regression/137-reading-behavior-browser-selector-persistence.yaml",
+      "ios/regression/138-cloud-provider-disconnect.yaml",
+      "ios/regression/139-ios-article-export-filter.yaml",
+      "ios/regression/140-opml-export-success.yaml",
+      "ios/regression/141-article-export-filter-matrix.yaml",
+      "ios/regression/142-icloud-provider-backup.yaml",
+      "ios/regression/143-article-context-menu-action-set.yaml",
+      "ios/regression/145-network-provider-linked-states.yaml",
+      "ios/regression/146-drawer-feed-source-context-menu.yaml",
+      "ios/regression/147-no-feeds-empty-state-cta.yaml",
+      "ios/regression/148-pull-to-next-feed.yaml",
+      "ios/regression/149-drawer-category-mark-all-read.yaml",
+      "ios/regression/150-reader-previous-and-font-menu.yaml",
+      "ios/regression/151-feed-source-list-delete-all-in-category.yaml",
+      "ios/regression/152-search-result-context-menu.yaml",
+      "ios/regression/153-drawer-add-import-feed-entries.yaml",
+      "ios/regression/154-empty-bookmarks-back-to-timeline.yaml",
+      "ios/regression/155-empty-home-open-another-feed.yaml",
+      "ios/smoke/001-first-launch-empty.yaml",
+      "ios/smoke/002-seeded-timeline-loads.yaml",
+      "ios/smoke/003-library-filters.yaml",
+      "ios/smoke/004-article-read-bookmark-state.yaml",
+      "ios/smoke/005-mark-all-read.yaml",
+      "ios/smoke/006-search-bookmark-filter.yaml",
+      "ios/smoke/006-search-core.yaml",
+      "ios/smoke/007-reader-mode-core.yaml",
+      "ios/smoke/008-feed-edit-core.yaml",
+      "ios/smoke/009-feed-list-settings-persist.yaml",
+      "ios/smoke/010-reading-behavior-settings-persist.yaml",
+      "ios/smoke/011-import-export-smoke.yaml",
+      "ios/smoke/012-blocked-words.yaml",
+      "ios/smoke/013-relaunch-persistence.yaml"
+    ];
+
+    const sectionOrder = [
+      "android/smoke",
+      "ios/smoke",
+      "android/regression",
+      "ios/regression"
+    ];
+
+    const sectionNames = {
+      "android/smoke": "Android smoke",
+      "ios/smoke": "iOS smoke",
+      "android/regression": "Android regression",
+      "ios/regression": "iOS regression"
+    };
+
+    const coverageByKey = {
+      "smoke/001": "First launch, empty timeline, and seed completion marker.",
+      "smoke/002": "Seeded timeline load, unread count, and hidden-feed exclusion.",
+      "smoke/003": "Drawer filters for timeline, read, bookmarks, feeds, categories, and uncategorized.",
+      "smoke/004": "Article open, read state, bookmark state, and filtered lists.",
+      "smoke/005": "Mark all as read confirmation and movement into the Read filter.",
+      "smoke/006": "Core search plus All, Read, and Bookmarks filters.",
+      "smoke/007": "Reader mode open, next article, more menu, and font-size entry.",
+      "smoke/008": "Edit feed, hide, pin, category change, and save behavior.",
+      "smoke/009": "Feed list layout, image visibility, and ordering persistence.",
+      "smoke/010": "Reader mode, show-read, and auto-hide-read settings persistence.",
+      "smoke/011": "OPML import, CSV import, fixture picker flow, and success states.",
+      "smoke/012": "Blocked-word creation and timeline filtering.",
+      "smoke/013": "Relaunch persistence for reader-mode and bookmark mutations.",
+      "regression/101": "Add-feed validation, disabled save state, category sheet, and URL enablement.",
+      "regression/103": "Feed Suggestions navigation, category browsing, and add confirmation.",
+      "regression/104": "Feed-source list category expand/collapse, rename, delete, and warning state.",
+      "regression/105": "Category create, duplicate validation, rename, and delete-all-feeds paths.",
+      "regression/106": "Article context menu read/unread and bookmark/unbookmark mutations.",
+      "regression/107": "Swipe actions for read and bookmark, plus disabled-swipe coverage where supported.",
+      "regression/108": "Card and compact feed-list layout rendering.",
+      "regression/109": "Oldest-first order plus mark-all-above and mark-all-below actions.",
+      "regression/110": "Reader extraction failure fallback and Open in browser visibility.",
+      "regression/111": "Reader image viewer open, share action visibility, and close behavior.",
+      "regression/112": "Per-feed link-opening override against global external-browser preference.",
+      "regression/113": "Sync/storage settings including refresh, parsing errors, auto-delete, and clear-downloaded.",
+      "regression/114": "Appearance settings for theme, unread count, black theme, and reduce motion.",
+      "regression/115": "Seeded notifications profile, per-feed toggle, and grouping picker.",
+      "regression/116": "One-account sync constraint, disabled providers, and disconnect unlock.",
+      "regression/117": "GReader provider form validation across FreshRSS, Miniflux, BazQux, and Feedbin.",
+      "regression/118": "Mock cloud-provider linked states for Dropbox and iCloud where available.",
+      "regression/119": "Invalid OPML import error and choose-another-file recovery.",
+      "regression/120": "CSV article import and read/bookmarked state assertions.",
+      "regression/121": "Secondary reading behavior settings: browser, saved content, prefetch, and scroll marking.",
+      "regression/122": "Feed-list detail controls: font scale, hidden fields, date/time, and swipe pickers.",
+      "regression/123": "Advanced sync/storage confirmations, Wi-Fi/charging restrictions, and image cache clearing.",
+      "regression/124": "Home overflow actions: force refresh, sort/filter, show read, and old-article cleanup.",
+      "regression/125": "About and Support navigation plus open-source licenses.",
+      "regression/126": "Deep-link routing to article reader, feed-source filters, and category filters.",
+      "regression/127": "Notification enable-all, per-feed toggle, grouping, and platform restrictions.",
+      "regression/128": "Notifications empty/no-feeds state.",
+      "regression/129": "Edit feed secondary options from article context menu.",
+      "regression/130": "Add-feed secondary options for category selection and notifications.",
+      "regression/131": "Source-filter selection and edit entry from Home overflow.",
+      "regression/132": "About/support secondary options, crash reporting, and support links.",
+      "regression/133": "Pending sync upload backup action with linked mock account.",
+      "regression/134": "Large-content pagination and Android large-dataset search.",
+      "regression/135": "Feed-list secondary settings persistence across relaunch.",
+      "regression/136": "Sync/storage secondary settings persistence across relaunch.",
+      "regression/137": "Browser selector persistence across relaunch.",
+      "regression/138": "iCloud disconnect and return to add-account state.",
+      "regression/139": "Bookmarked article export filter and export-success state.",
+      "regression/140": "OPML export success flow.",
+      "regression/141": "All, Read, and Unread article export filter matrix.",
+      "regression/142": "Seeded iCloud account backup action.",
+      "regression/143": "Full app-owned article context-menu action set.",
+      "regression/145": "Network provider linked states for Miniflux, BazQux, and Feedbin.",
+      "regression/146": "Drawer feed-source context menu actions and confirmations.",
+      "regression/147": "No-feeds empty-state CTAs to add, import, suggestions, and accounts.",
+      "regression/148": "Pull or next-feed control moves to another feed source.",
+      "regression/149": "Drawer category mark-all-read action.",
+      "regression/150": "Reader previous/next controls and font menu.",
+      "regression/151": "Delete all feeds in a category from Settings > Feeds.",
+      "regression/152": "Search-result context menu on Android and result visibility on iOS.",
+      "regression/153": "Drawer add/import entries to Add feed, Suggestions, and OPML import.",
+      "regression/154": "Empty Bookmarks state and Back to timeline shortcut.",
+      "regression/155": "Empty home Open another feed action opens the drawer."
+    };
+
+    const sections = document.querySelector("#sections");
+    const empty = document.querySelector("#empty");
+    const filter = document.querySelector("#filter");
+    document.querySelector("#total-count").textContent = flows.length;
+
+    function suiteOf(path) {
+      const parts = path.split("/");
+      return `${parts[0]}/${parts[1]}`;
+    }
+
+    function coverageKeyOf(path) {
+      const parts = path.split("/");
+      const id = parts[2].match(/^\d+/)?.[0];
+      return `${parts[1]}/${id}`;
+    }
+
+    function coverageOf(path) {
+      return coverageByKey[coverageKeyOf(path)] ?? "Coverage note missing; update this HTML inventory.";
+    }
+
+    function render() {
+      const query = filter.value.trim().toLowerCase();
+      const grouped = new Map(sectionOrder.map((section) => [section, []]));
+
+      flows
+        .filter((path) => `${path} ${coverageOf(path)}`.toLowerCase().includes(query))
+        .forEach((path) => grouped.get(suiteOf(path)).push(path));
+
+      sections.innerHTML = "";
+      let visible = 0;
+
+      for (const section of sectionOrder) {
+        const items = grouped.get(section);
+        if (!items.length) continue;
+        visible += items.length;
+
+        const shell = document.createElement("section");
+        shell.className = "section";
+        shell.innerHTML = `
+          <h2>${sectionNames[section]} <span class="count">${items.length} files</span></h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Platform</th>
+                <th>Suite</th>
+                <th>Coverage</th>
+                <th>Flow</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        `;
+
+          const tbody = shell.querySelector("tbody");
+        for (const path of items) {
+          const parts = path.split("/");
+          const platform = parts[0];
+          const suite = parts[1];
+          const filename = parts[parts.length - 1];
+          const coverage = coverageOf(path);
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td><span class="tag">${platform}</span></td>
+            <td><code>${suite}</code></td>
+            <td class="coverage">${coverage}</td>
+            <td><a href="./${path}"><code>${filename}</code></a></td>
+          `;
+          tbody.append(row);
+        }
+
+        sections.append(shell);
+      }
+
+      empty.style.display = visible ? "none" : "block";
+    }
+
+    filter.addEventListener("input", render);
+    render();
+  </script>
+</body>
+</html>

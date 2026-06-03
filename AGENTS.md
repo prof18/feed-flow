@@ -57,6 +57,22 @@ For Android API/library questions, `android docs search '<query>'` before fallin
 
 For anything deeper — SDK package management (`android sdk ...`), device interaction, or journey/UI tests — consult the globally-installed `android-cli` skill instead of expanding this section.
 
+### Maestro E2E tests
+
+When writing or running Maestro E2E tests, follow `e2e/maestro/maestro-e2e-guide.md`.
+The full catalog of existing flows lives in `e2e/maestro/maestro-e2e-tests.md`; do not mark a test done until the required Maestro flow passes.
+When changing a user-visible feature, add or update Maestro coverage if the behavior can be exercised with existing app UI, debug seed deep links, fixtures, or test tooling without adding production-only code paths. If Maestro coverage is not feasible, document the limitation in `e2e/maestro/maestro-e2e-tests.md`.
+
+Quick local smoke checks:
+- `e2e/scripts/run-android-smoke.sh`
+- `e2e/scripts/run-ios-smoke.sh`
+
+Full automated E2E checks before release:
+- `e2e/scripts/run-android.sh`
+- `e2e/scripts/run-ios.sh`
+
+Use the debug seeding deep links documented in that guide. Do not depend on live feeds, OAuth, or previous app state in smoke or regression flows.
+
 ### iOS Project Generation
 
 The iOS Xcode project (`iosApp/FeedFlow.xcodeproj`) is generated from `iosApp/project.yml` by [XcodeGen](https://github.com/yonaskolb/XcodeGen) and is NOT committed to git. Regenerate it with:
@@ -71,19 +87,19 @@ This requires XcodeGen installed (`brew install xcodegen`, or `mint bootstrap` u
 
 - If using XcodeBuildMCP, use the installed XcodeBuildMCP skill before calling XcodeBuildMCP tools.
 - The xcodeproj must exist locally. Run `cd iosApp && ./.scripts/generate-project.sh` first if it's missing.
-
-To build FeedFlow for iPhone 17 Pro simulator:
-```bash
-mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/mg/Workspace/feedflow/feed-flow/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"
-```
-There could be different project path son your machine. Always use the first one. The alternative paths will be:
-```bash
-mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/mg/Workspace/feedflow/feed-flow-2/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"
-```
+- XcodeBuildMCP has repo-local defaults in `.xcodebuildmcp/config.yaml`; prefer the current CLI shape:
 
 ```bash
-mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/marco.gomiero/Workspace/tmp/feed-flow/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"
+xcodebuildmcp simulator build
 ```
+
+To build and launch in one step:
+```bash
+xcodebuildmcp simulator build-and-run
+```
+
+If the MCP server is registered in the current agent session, use the equivalent `simulator/build` or `simulator/build-and-run` tool; do not use the old `build_sim_name_proj` tool name.
+Do not set `derivedDataPath` in `.xcodebuildmcp/config.yaml` by default. Leaving it unset lets XcodeBuildMCP use its external per-workspace DerivedData path, which avoids branch-local artifacts and avoids sharing mutable Xcode build products across concurrent worktrees. Set it only for a temporary cache investigation or an explicit reproducibility test.
 
 
 ### Running Specific Tests
@@ -169,6 +185,7 @@ When creating commits:
 - Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet`
 - IMPORTANT: The project now supports iOS 26 SDK (June 2025) while maintaining iOS 18 as the minimum deployment target. Use #available checks when adopting iOS 26+ APIs.
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
+- Keep accessibility identifier enums in separate `*AccessibilityIdentifiers.swift` files, not appended to view files.
 - Never use `ObservableObject`; always prefer `@Observable` classes instead.
 - Never use `Task.sleep(nanoseconds:)`; always use `Task.sleep(for:)` instead.
 - Avoid `AnyView` unless it is absolutely required.

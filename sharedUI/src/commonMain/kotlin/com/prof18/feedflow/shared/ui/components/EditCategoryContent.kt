@@ -18,12 +18,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
+import com.prof18.feedflow.shared.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
@@ -115,7 +117,9 @@ fun AddCategoryButton(
 ) {
     TextButton(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .testTag(FeedFormE2eIds.CATEGORY_SHEET_ADD)
+            .fillMaxWidth(),
     ) {
         Icon(
             imageVector = Icons.Filled.Add,

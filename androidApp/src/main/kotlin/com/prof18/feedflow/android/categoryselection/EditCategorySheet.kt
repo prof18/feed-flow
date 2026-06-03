@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
@@ -30,6 +31,7 @@ import com.prof18.feedflow.shared.ui.components.AddCategoryButton
 import com.prof18.feedflow.shared.ui.components.CategoryFlowRow
 import com.prof18.feedflow.shared.ui.components.CategoryLoadingOverlay
 import com.prof18.feedflow.shared.ui.components.EditCategoryDialogs
+import com.prof18.feedflow.shared.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -112,7 +114,9 @@ private fun EditCategorySheetContent(
 
                 Button(
                     onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .testTag(FeedFormE2eIds.CATEGORY_SHEET_SAVE)
+                        .fillMaxWidth(),
                 ) {
                     Text(
                         text = LocalFeedFlowStrings.current.actionSave,

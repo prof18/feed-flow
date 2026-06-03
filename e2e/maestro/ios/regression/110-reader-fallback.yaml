@@ -1,0 +1,26 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=reader-mode
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_fallback
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_fallback
+- assertVisible:
+    text: "E2E Reader Mode Fallback[\\s\\S]*"
+- assertVisible:
+    id: reader_browser_button
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    text: "Font Size"
+- assertVisible:
+    text: "Font Size"

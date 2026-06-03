@@ -16,6 +16,7 @@ struct FeedsAndAccountsScreen: View {
                 NavigationLink(destination: FeedSourceListScreen()) {
                     Label(feedFlowStrings.feedsTitle, systemImage: "list.bullet.rectangle.portrait")
                 }
+                .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.settingsRow)
 
                 NavigationLink(destination: AddFeedScreen()) {
                     Label(feedFlowStrings.addFeed, systemImage: "plus.circle")
@@ -24,10 +25,12 @@ struct FeedsAndAccountsScreen: View {
                 NavigationLink(destination: ImportExportScreen(fetchFeeds: fetchFeeds)) {
                     Label(feedFlowStrings.importExportLabel, systemImage: "arrow.up.arrow.down")
                 }
+                .accessibilityIdentifier(FeedsAndAccountsAccessibilityIdentifiers.importExportRow)
 
                 NavigationLink(destination: AccountsScreen()) {
                     Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
                 }
+                .accessibilityIdentifier(FeedsAndAccountsAccessibilityIdentifiers.accountsRow)
 
                 NavigationLink(destination: NotificationsSettingsScreen()) {
                     Label(feedFlowStrings.settingsNotificationsTitle, systemImage: "bell")
@@ -36,6 +39,7 @@ struct FeedsAndAccountsScreen: View {
                 NavigationLink(destination: BlockedWordsScreen()) {
                     Label(feedFlowStrings.settingsBlockedWords, systemImage: "exclamationmark.triangle")
                 }
+                .accessibilityIdentifier(FeedsAndAccountsAccessibilityIdentifiers.blockedWordsRow)
             }
         }
         .scrollContentBackground(.hidden)

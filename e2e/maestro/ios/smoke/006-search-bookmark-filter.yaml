@@ -1,0 +1,16 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: home_search_button
+- inputText: "Pixel"
+- tapOn:
+    id: search_filter_bookmarks
+- assertVisible:
+    text: "E2E Bookmarked Unread Article: Pixel battery debate"

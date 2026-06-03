@@ -1,0 +1,27 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- assertVisible: "Nothing else to read here!"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    text: "Add feed"
+- assertVisible:
+    id: add_feed_url_input
+- assertVisible:
+    id: add_feed_save_button
+    enabled: false
+- tapOn:
+    id: edit_feed_category_selector
+- assertVisible:
+    text: "Categories"

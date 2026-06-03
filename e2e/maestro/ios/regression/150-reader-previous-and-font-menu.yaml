@@ -1,0 +1,45 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=reader-mode
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+
+# Open the reader success article and navigate forwards then back via the
+# floating toolbar's Next/Previous buttons. iOS reader content is rendered
+# in a WebView, so the article is identified by its visible title text.
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    text: "E2E Reader Mode Success[\\s\\S]*"
+- tapOn:
+    id: reader_next_button
+- extendedWaitUntil:
+    visible:
+      text: "E2E Reader Mode Fallback[\\s\\S]*"
+    timeout: 5000
+- tapOn:
+    id: reader_previous_button
+- extendedWaitUntil:
+    visible:
+      text: "E2E Reader Mode Success[\\s\\S]*"
+    timeout: 5000
+
+# Open the font size sheet from the reader more menu. The +/- buttons inside
+# are SF Symbols without dedicated accessibility identifiers, so we only
+# verify the sheet appears.
+- tapOn:
+    id: reader_more_menu_button
+- tapOn: "Font Size"
+- assertVisible:
+    id: reader_font_size_sheet

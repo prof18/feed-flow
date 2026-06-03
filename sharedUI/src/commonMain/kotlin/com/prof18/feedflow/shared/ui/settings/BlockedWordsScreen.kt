@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -109,7 +110,10 @@ private fun AddWordInput(
         },
         trailingIcon = {
             if (wordText.trim().isNotEmpty()) {
-                IconButton(onClick = addWord) {
+                IconButton(
+                    modifier = Modifier.testTag(BlockedWordsE2eIds.ADD_BUTTON),
+                    onClick = addWord,
+                ) {
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = null,
@@ -127,7 +131,9 @@ private fun AddWordInput(
             onDone = { addWord() },
         ),
         singleLine = true,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .testTag(BlockedWordsE2eIds.INPUT)
+            .fillMaxWidth(),
     )
 }
 
@@ -143,6 +149,7 @@ private fun WordItem(
     ) {
         Row(
             modifier = Modifier
+                .testTag(BlockedWordsE2eIds.row(word))
                 .fillMaxWidth()
                 .padding(vertical = Spacing.small),
             verticalAlignment = Alignment.CenterVertically,
@@ -153,7 +160,10 @@ private fun WordItem(
                 modifier = Modifier.weight(1f),
             )
 
-            IconButton(onClick = onRemove) {
+            IconButton(
+                modifier = Modifier.testTag(BlockedWordsE2eIds.deleteButton(word)),
+                onClick = onRemove,
+            ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = null,

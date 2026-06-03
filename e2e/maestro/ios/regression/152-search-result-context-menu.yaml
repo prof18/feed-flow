@@ -1,0 +1,23 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+# iOS-only limitation: any interaction on a row inside SwiftUI .searchable
+# beyond the first assert (long-press, repeated snapshots) blows past
+# Maestro's 30s main-thread budget — the searchable hierarchy is too deep.
+# We only assert the seeded comments article surfaces here; the context-menu
+# mutations are covered by Android REG-152.
+- tapOn:
+    id: home_search_button
+- inputText: "Pixel"
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_comments
+    timeout: 10000

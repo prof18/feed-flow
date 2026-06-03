@@ -89,6 +89,7 @@ private struct EditCategoryNameSheet: View {
                     .background(Color(UIColor.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .focused($isTextFieldFocused)
+                    .accessibilityIdentifier(CategoryDialogAccessibilityIdentifiers.renameCategoryInput)
 
                 if hasDuplicateName {
                     Text(feedFlowStrings.categoryNameAlreadyExists)
@@ -102,6 +103,7 @@ private struct EditCategoryNameSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!canSave)
+                .accessibilityIdentifier(CategoryDialogAccessibilityIdentifiers.renameCategorySaveButton)
             }
             .padding()
             .navigationTitle(feedFlowStrings.editCategory)

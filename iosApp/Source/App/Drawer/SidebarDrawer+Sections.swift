@@ -140,10 +140,12 @@ extension SidebarDrawer {
                         self.onFeedFilterSelected(FeedFilter.Uncategorized())
                     }
                     .foregroundStyle(Color.primary)
+                    .accessibilityIdentifier(DrawerAccessibilityIdentifiers.category(nil))
 
                     expansionToggle(isExpanded: isExpanded) {
                         toggleCategoryExpansion(for: categoryId)
                     }
+                    .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryExpand(nil))
                 }
                 .tag(SidebarSelection.category(id: categoryId))
                 .listRowBackground(categorySelectionBackground(isSelected: isSelected, isCompact: isCompact))
@@ -187,10 +189,12 @@ extension SidebarDrawer {
             .contextMenu {
                 categoryContextMenu(categoryItem: categoryItem)
             }
+            .accessibilityIdentifier(DrawerAccessibilityIdentifiers.category(categoryId))
 
             expansionToggle(isExpanded: isExpanded) {
                 toggleCategoryExpansion(for: categoryId)
             }
+            .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryExpand(categoryId))
         }
         .tag(SidebarSelection.category(id: categoryItem.category.id))
         .listRowBackground(categorySelectionBackground(isSelected: isSelected, isCompact: isCompact))
@@ -236,6 +240,7 @@ extension SidebarDrawer {
         } label: {
             Label(feedFlowStrings.renameCategory, systemImage: "pencil")
         }
+        .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryMenuRename)
 
         if categoryItem.unreadCount > 0 {
             Button {
@@ -253,6 +258,7 @@ extension SidebarDrawer {
         } label: {
             Label(feedFlowStrings.deleteAllFeedsInCategory, systemImage: "trash")
         }
+        .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryMenuDeleteAllFeeds)
 
         Button(role: .destructive) {
             categoryToDelete = categoryItem.category.id
@@ -260,6 +266,7 @@ extension SidebarDrawer {
         } label: {
             Label(feedFlowStrings.deleteCategory, systemImage: "trash")
         }
+        .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryMenuDeleteCategory)
     }
 
     func toggleCategoryExpansion(for categoryId: String) {

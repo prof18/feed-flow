@@ -1,0 +1,23 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_comments
+    direction: DOWN
+    timeout: 10000
+- longPressOn:
+    id: article_row_e2e_article_comments
+- assertVisible: "Open feed settings"
+- assertVisible: "Open feed website"
+- assertVisible: "Mark all above as read"
+- assertVisible: "Mark all below as read"
+- assertVisible: "Share comments"
+- assertVisible: "Open comments"
+- assertVisible: "Share"
+- assertVisible: "Add to bookmarks"
+- assertVisible: "Mark as read"

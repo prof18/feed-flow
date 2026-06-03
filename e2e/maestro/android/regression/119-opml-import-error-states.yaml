@@ -1,0 +1,85 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- extendedWaitUntil:
+    visible: "E2E seed complete"
+    timeout: 10000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_import_export
+- tapOn:
+    id: import_export_import_feeds
+- tapOn:
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- tapOn:
+    id: com.google.android.documentsui:id/item_root
+    containsDescendants:
+      - text: "feedflow-e2e"
+    optional: true
+- extendedWaitUntil:
+    visible: "No items"
+    timeout: 5000
+    optional: true
+- tapOn:
+    text: "Documents"
+    optional: true
+- tapOn:
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- scrollUntilVisible:
+    element:
+      text: "zz-feedflow-invalid-opml\\.xml"
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    text: "zz-feedflow-invalid-opml\\.xml"
+- extendedWaitUntil:
+    visible:
+      id: import_export_invalid_opml
+    timeout: 10000
+- tapOn:
+    id: import_export_choose_another_file
+- tapOn:
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- tapOn:
+    id: com.google.android.documentsui:id/item_root
+    containsDescendants:
+      - text: "feedflow-e2e"
+    optional: true
+- extendedWaitUntil:
+    visible: "No items"
+    timeout: 5000
+    optional: true
+- tapOn:
+    text: "Documents"
+    optional: true
+- tapOn:
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- scrollUntilVisible:
+    element:
+      text: "feedflow-valid-opml-smoke\\.xml"
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    text: "feedflow-valid-opml-smoke\\.xml"
+- extendedWaitUntil:
+    visible:
+      id: import_export_feed_import_success
+    timeout: 10000
+- tapOn:
+    id: import_export_done
+- back
+- back
+- back
+- assertVisible: "E2E Import Category"

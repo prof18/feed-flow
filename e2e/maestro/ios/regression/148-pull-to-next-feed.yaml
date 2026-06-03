@@ -1,0 +1,48 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+
+# Filter the home on Android Central. With a single-source filter the
+# nextFeedPreview state becomes enabled and the iOS feed list renders a
+# trailing NextFeedButton labelled with the next unread feed's title.
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_category_expand_e2e_category_technology
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_expand_e2e_category_technology
+- tapOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_duplicate_title
+    timeout: 10000
+
+# The trailing NextFeedButton renders below the feed items with the next
+# unread source's title as its label.
+- scrollUntilVisible:
+    element:
+      text: "Android Police"
+    direction: DOWN
+    timeout: 10000
+
+# Tap the next-feed button. After navigation the filter switches to Android
+# Police and that source's unread reader-success article is visible.
+- tapOn: "Android Police"
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_reader_success
+    timeout: 10000
+- assertNotVisible:
+    id: article_row_e2e_article_duplicate_title

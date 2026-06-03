@@ -50,6 +50,7 @@ struct EditFeedScreenContent: View {
                         text: $feedName
                     )
                     .disableAutocorrection(true)
+                    .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.nameInput)
                     .hoverEffect()
                     .focused($isTextFieldFocused)
                 },
@@ -102,6 +103,7 @@ struct EditFeedScreenContent: View {
                 Toggle(isOn: $isHidden) {
                     Text(feedFlowStrings.hideFeedFromTimelineDescription)
                 }
+                .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.hiddenToggle)
                 .onChange(of: isHidden) {
                     onHiddenToggled(isHidden)
                 }
@@ -109,6 +111,7 @@ struct EditFeedScreenContent: View {
                 Toggle(isOn: $isPinned) {
                     Text(feedFlowStrings.pinFeedSourceDescription)
                 }
+                .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.pinnedToggle)
                 .onChange(of: isPinned) {
                     onPinnedToggled(isPinned)
                 }
@@ -152,6 +155,7 @@ struct EditFeedScreenContent: View {
                         .contentShape(Rectangle())
                     }
                 )
+                .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.categorySelector)
                 .buttonStyle(.plain)
             }
 
@@ -214,6 +218,7 @@ struct EditFeedScreenContent: View {
                 Text(feedFlowStrings.actionSave).bold()
             }
         }
+        .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.saveButton)
         .disabled(feedURL.isEmpty)
     }
 }

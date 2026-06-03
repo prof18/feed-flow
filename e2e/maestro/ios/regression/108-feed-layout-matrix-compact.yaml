@@ -1,0 +1,26 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=compact-list
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- assertVisible:
+    text: "E2E Newest Unread Article.*"
+- assertNotVisible:
+    text: "A realistic seeded item using Android Central image metadata"
+- assertNotVisible:
+    text: "Android Central RSS Feed"
+- assertNotVisible:
+    id: article_image_e2e_article_newest_unread
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_no_image
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    text: "E2E Article Without Image.*"
+- assertNotVisible:
+    text: "Seeded item without media"

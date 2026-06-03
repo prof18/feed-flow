@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.settings.SettingItem
@@ -58,6 +59,7 @@ internal fun SettingsScreenContent(
         ) {
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.APPEARANCE_ROW),
                     title = LocalFeedFlowStrings.current.settingsAppearance,
                     icon = Icons.Outlined.Palette,
                     onClick = navigateToAppearance,
@@ -66,6 +68,7 @@ internal fun SettingsScreenContent(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.FEEDS_AND_ACCOUNTS_ROW),
                     title = LocalFeedFlowStrings.current.settingsFeedsAndAccounts,
                     icon = Icons.Outlined.Sync,
                     onClick = navigateToFeedsAndAccounts,
@@ -74,6 +77,7 @@ internal fun SettingsScreenContent(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.FEED_LIST_ROW),
                     title = LocalFeedFlowStrings.current.settingsFeedListTitle,
                     icon = Icons.Outlined.Layers,
                     onClick = navigateToFeedListSettings,
@@ -92,6 +96,7 @@ internal fun SettingsScreenContent(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_ROW),
                     title = LocalFeedFlowStrings.current.settingsReadingBehavior,
                     icon = Icons.Outlined.LocalLibrary,
                     onClick = navigateToReadingBehavior,
@@ -100,6 +105,7 @@ internal fun SettingsScreenContent(
 
             item {
                 SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_AND_STORAGE_ROW),
                     title = LocalFeedFlowStrings.current.settingsSyncAndStorage,
                     icon = Icons.Outlined.Storage,
                     onClick = navigateToSyncAndStorage,
@@ -144,6 +150,7 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
         },
         navigationIcon = {
             IconButton(
+                modifier = Modifier.testTag(SettingsE2eIds.BACK_BUTTON),
                 onClick = {
                     navigateBack()
                 },

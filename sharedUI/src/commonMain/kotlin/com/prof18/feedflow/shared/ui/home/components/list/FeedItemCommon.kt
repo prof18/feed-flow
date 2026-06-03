@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -157,6 +158,7 @@ internal fun TitleSubtitleAndImageRow(
         feedItem.imageUrl?.let { url ->
             FeedItemImage(
                 modifier = Modifier
+                    .testTag(FeedItemE2eIds.image(feedItem.id))
                     .padding(start = Spacing.regular),
                 url = url,
                 width = 96.dp,

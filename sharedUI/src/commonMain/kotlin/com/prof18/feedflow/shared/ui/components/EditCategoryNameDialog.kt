@@ -10,11 +10,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
+import com.prof18.feedflow.shared.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -41,6 +44,7 @@ fun EditCategoryNameDialog(
             title = { Text(strings.editCategory) },
             text = {
                 OutlinedTextField(
+                    modifier = Modifier.testTag(FeedFormE2eIds.CATEGORY_RENAME_INPUT),
                     value = editedCategoryName,
                     onValueChange = { editedCategoryName = it },
                     label = { Text(strings.categoryName) },
@@ -61,6 +65,7 @@ fun EditCategoryNameDialog(
             },
             confirmButton = {
                 TextButton(
+                    modifier = Modifier.testTag(FeedFormE2eIds.CATEGORY_RENAME_SAVE),
                     enabled = canSave,
                     onClick = {
                         if (canSave) {

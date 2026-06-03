@@ -8,6 +8,9 @@ INSERT OR IGNORE INTO blocked_word(keyword) VALUES (?);
 deleteBlockedKeyword:
 DELETE FROM blocked_word WHERE keyword = ?;
 
+deleteAllBlockedKeywords:
+DELETE FROM blocked_word;
+
 selectBlockedKeywords:
 SELECT keyword FROM blocked_word ORDER BY rowid DESC;
 
@@ -41,4 +44,3 @@ BEGIN
     ELSE 0
   END;
 END;
-

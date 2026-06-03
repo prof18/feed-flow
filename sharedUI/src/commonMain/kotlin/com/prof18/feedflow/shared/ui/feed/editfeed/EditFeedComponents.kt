@@ -24,10 +24,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.shared.ui.feed.CategoriesSelector
+import com.prof18.feedflow.shared.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.shared.ui.feed.FeedNameTextField
 import com.prof18.feedflow.shared.ui.feed.FeedUrlTextField
 import com.prof18.feedflow.shared.ui.feed.LinkOpeningPreferenceSelector
@@ -107,6 +109,7 @@ fun EditFeedContent(
             FeedNameTextField(
                 modifier = Modifier
                     .padding(top = Spacing.regular)
+                    .testTag(FeedFormE2eIds.NAME_INPUT)
                     .fillMaxWidth(),
                 feedName = feedName,
                 onFeedNameUpdated = onFeedNameUpdated,
@@ -151,7 +154,9 @@ fun EditFeedContent(
                 Switch(
                     checked = feedSourceSettings.isHiddenFromTimeline,
                     onCheckedChange = onHiddenToggled,
-                    modifier = Modifier.padding(start = Spacing.regular),
+                    modifier = Modifier
+                        .testTag(FeedFormE2eIds.HIDDEN_TOGGLE)
+                        .padding(start = Spacing.regular),
                 )
             }
         }
@@ -170,7 +175,9 @@ fun EditFeedContent(
                 Switch(
                     checked = feedSourceSettings.isPinned,
                     onCheckedChange = onPinnedToggled,
-                    modifier = Modifier.padding(start = Spacing.regular),
+                    modifier = Modifier
+                        .testTag(FeedFormE2eIds.PINNED_TOGGLE)
+                        .padding(start = Spacing.regular),
                 )
             }
         }
@@ -210,6 +217,7 @@ fun EditFeedContent(
                 modifier = Modifier
                     .padding(top = Spacing.small)
                     .padding(bottom = Spacing.regular)
+                    .testTag(FeedFormE2eIds.SAVE_BUTTON)
                     .fillMaxWidth(),
                 enabled = feedUrl.isNotBlank() && !showLoading,
                 onClick = editFeed,

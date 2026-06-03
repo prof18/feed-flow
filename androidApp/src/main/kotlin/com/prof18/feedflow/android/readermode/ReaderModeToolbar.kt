@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -52,7 +53,9 @@ internal fun ReaderModeToolbar(
             navigationIcon = {
                 FilledIconButton(
                     onClick = onToggleDetailFullscreen ?: navigateBack,
-                    modifier = Modifier.padding(start = 8.dp),
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .testTag(ReaderModeE2eIds.BACK_BUTTON),
                     colors = IconButtonDefaults.filledIconButtonColors(
                         containerColor = backButtonColor,
                         contentColor = MaterialTheme.colorScheme.onSurface,

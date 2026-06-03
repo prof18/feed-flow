@@ -37,6 +37,7 @@ struct BookmarksSection: View {
                 onFeedFilterSelected(FeedFilter.Bookmarks())
             }
             .tag(SidebarSelection.bookmarks)
+            .accessibilityIdentifier(DrawerAccessibilityIdentifiers.bookmarks)
             .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))
         }
     }

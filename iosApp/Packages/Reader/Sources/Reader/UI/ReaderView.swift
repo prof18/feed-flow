@@ -157,6 +157,7 @@ public struct ReaderView: View {
                 } label: {
                     Image(systemName: "globe")
                 }
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.browserButton)
             }
         }
 
@@ -170,6 +171,7 @@ public struct ReaderView: View {
                 Image(systemName: "chevron.left")
             }
             .disabled(actions.onNavigateToPrevious == nil)
+            .accessibilityIdentifier(ReaderAccessibilityIdentifiers.previousButton)
 
             Button {
                 actions.onNavigateToNext?()
@@ -177,6 +179,7 @@ public struct ReaderView: View {
                 Image(systemName: "chevron.right")
             }
             .disabled(actions.onNavigateToNext == nil)
+            .accessibilityIdentifier(ReaderAccessibilityIdentifiers.nextButton)
         }
 
         // Top bar: Share button
@@ -211,6 +214,7 @@ public struct ReaderView: View {
                         systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
                     )
                 }
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.bookmarkButton)
 
                 Button {
                     actions.onArchive()
@@ -233,9 +237,11 @@ public struct ReaderView: View {
                     } label: {
                         Label(actions.strings.fontSize, systemImage: "textformat.size")
                     }
+                    .accessibilityIdentifier(ReaderAccessibilityIdentifiers.fontSizeButton)
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
+                    .accessibilityIdentifier(ReaderAccessibilityIdentifiers.moreMenuButton)
             }
         }
     }
@@ -266,6 +272,7 @@ public struct ReaderView: View {
                         systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
                     )
                 }
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.bookmarkButton)
 
                 Button {
                     actions.onArchive()
@@ -288,9 +295,11 @@ public struct ReaderView: View {
                     } label: {
                         Label(actions.strings.fontSize, systemImage: "textformat.size")
                     }
+                    .accessibilityIdentifier(ReaderAccessibilityIdentifiers.fontSizeButton)
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
+                    .accessibilityIdentifier(ReaderAccessibilityIdentifiers.moreMenuButton)
             }
         }
     }
@@ -339,6 +348,7 @@ public struct ReaderView: View {
                 .foregroundStyle(.secondary)
         }
         .padding()
+        .accessibilityIdentifier(ReaderAccessibilityIdentifiers.fontSizeSheet)
     }
 
     private func updateFontSizeWithJS(_ newFontSize: Double) {
@@ -366,6 +376,7 @@ public struct ReaderView: View {
                 .background(.regularMaterial)
                 .clipShape(Capsule())
                 .shadow(radius: 8)
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.browserButton)
             }
 
             Spacer()
@@ -381,6 +392,7 @@ public struct ReaderView: View {
                         .frame(width: 50, height: 44)
                 }
                 .disabled(actions.onNavigateToPrevious == nil)
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.previousButton)
 
                 Button {
                     actions.onNavigateToNext?()
@@ -391,6 +403,7 @@ public struct ReaderView: View {
                         .frame(width: 50, height: 44)
                 }
                 .disabled(actions.onNavigateToNext == nil)
+                .accessibilityIdentifier(ReaderAccessibilityIdentifiers.nextButton)
             }
             .background(.regularMaterial)
             .clipShape(Capsule())

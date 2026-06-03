@@ -1,0 +1,86 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=sync-linked-mock&account=miniflux
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 10000
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_accounts
+- assertVisible:
+    id: accounts_provider_miniflux
+- assertVisible:
+    id: accounts_add_account
+    enabled: false
+- tapOn:
+    id: accounts_provider_miniflux
+- assertVisible: "Miniflux"
+- assertVisible: "Your Miniflux account is successfully connected"
+- assertVisible: "Last sync:.*"
+- assertVisible: "Disconnect"
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=sync-linked-mock&account=bazqux
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 10000
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_accounts
+- assertVisible:
+    id: accounts_provider_bazqux
+- assertVisible:
+    id: accounts_add_account
+    enabled: false
+- tapOn:
+    id: accounts_provider_bazqux
+- assertVisible: "BazQux"
+- assertVisible: "Your BazQux account is successfully connected"
+- assertVisible: "Last sync:.*"
+- assertVisible: "Disconnect"
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=sync-linked-mock&account=feedbin
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 10000
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_accounts
+- assertVisible:
+    id: accounts_provider_feedbin
+- assertVisible:
+    id: accounts_add_account
+    enabled: false
+- tapOn:
+    id: accounts_provider_feedbin
+- assertVisible: "Feedbin"
+- assertVisible: "Your Feedbin account is successfully connected"
+- assertVisible: "Last sync:.*"
+- assertVisible: "Disconnect"

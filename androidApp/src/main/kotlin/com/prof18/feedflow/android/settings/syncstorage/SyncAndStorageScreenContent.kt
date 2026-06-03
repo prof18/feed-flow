@@ -16,8 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.imageLoader
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.settings.components.BackgroundSyncRestrictionsSection
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
@@ -73,6 +75,7 @@ internal fun SyncAndStorageScreenContent(
         ) {
             item {
                 SettingSwitchItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_REFRESH_ON_LAUNCH),
                     title = LocalFeedFlowStrings.current.settingsRefreshFeedsOnLaunch,
                     isChecked = refreshFeedsOnLaunch,
                     onCheckedChange = onRefreshFeedsOnLaunchToggle,
@@ -81,6 +84,7 @@ internal fun SyncAndStorageScreenContent(
 
             item {
                 SettingSwitchItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_SHOW_RSS_ERRORS),
                     title = LocalFeedFlowStrings.current.settingsShowRssParsingErrors,
                     isChecked = showRssParsingErrors,
                     onCheckedChange = onShowRssParsingErrorsToggle,
@@ -90,6 +94,7 @@ internal fun SyncAndStorageScreenContent(
             item {
                 val strings = LocalFeedFlowStrings.current
                 CompactSettingDropdownRow(
+                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_PERIOD),
                     title = strings.settingsSyncPeriod,
                     currentValue = syncPeriod,
                     options = persistentListOf(
@@ -119,6 +124,7 @@ internal fun SyncAndStorageScreenContent(
             item {
                 val strings = LocalFeedFlowStrings.current
                 CompactSettingDropdownRow(
+                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_AUTO_DELETE),
                     title = strings.settingsAutoDelete,
                     currentValue = autoDeletePeriod,
                     options = persistentListOf(
@@ -143,6 +149,7 @@ internal fun SyncAndStorageScreenContent(
 
             item {
                 ConfirmationSettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_CLEAR_DOWNLOADED),
                     title = LocalFeedFlowStrings.current.settingsClearDownloadedArticles,
                     dialogTitle = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogTitle,
                     dialogMessage = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogMessage,

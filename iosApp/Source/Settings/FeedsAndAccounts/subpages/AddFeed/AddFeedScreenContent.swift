@@ -44,6 +44,7 @@ struct AddFeedScreenContent: View {
                         .disableAutocorrection(true)
                         .hoverEffect()
                         .focused($isTextFieldFocused)
+                        .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.urlInput)
                 },
                 header: {
                     Text(feedFlowStrings.feedUrl)
@@ -93,6 +94,7 @@ struct AddFeedScreenContent: View {
                     }
                 )
                 .buttonStyle(.plain)
+                .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.categorySelector)
             }
 
             if showNotificationToggle {
@@ -193,6 +195,7 @@ struct AddFeedScreenContent: View {
             }
         }
         .disabled(feedURL.isEmpty)
+        .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.saveButton)
     }
 }
 

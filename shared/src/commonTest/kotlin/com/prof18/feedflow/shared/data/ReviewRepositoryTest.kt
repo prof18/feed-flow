@@ -2,8 +2,10 @@ package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.test.KoinTestBase
+import com.prof18.feedflow.shared.test.koin.TestModules
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 import kotlinx.coroutines.test.runTest
@@ -15,9 +17,17 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 
 class ReviewRepositoryTest : KoinTestBase() {
-    private val repository: ReviewRepository by inject()
+    private val repository: ReviewRepository
+        get() = createRepository()
     private val settings: Settings by inject()
     private val databaseHelper: DatabaseHelper by inject()
+
+    @Test
+    fun `shouldShowReview returns false in debug`() = runTest {
+        addFeed()
+
+        assertFalse(createRepository(AppEnvironment.Debug).shouldShowReview())
+    }
 
     @Test
     fun `shouldShowReview returns false when there are no feeds`() = runTest {
@@ -127,6 +137,13 @@ class ReviewRepositoryTest : KoinTestBase() {
 
         assertFalse(repository.shouldShowReview())
     }
+
+    private fun createRepository(appEnvironment: AppEnvironment = AppEnvironment.Release): ReviewRepository =
+        ReviewRepository(
+            settings = settings,
+            databaseHelper = databaseHelper,
+            appConfig = TestModules.testAppConfig.copy(appEnvironment = appEnvironment),
+        )
 
     private suspend fun addFeed() {
         val category = FeedSourceCategory("1", "Cat")

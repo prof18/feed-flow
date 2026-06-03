@@ -1,0 +1,25 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp:
+    permissions:
+      notifications: allow
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn: "Notifications"
+- tapOn:
+    text: "Request Permission"
+    optional: true
+- tapOn:
+    text: "Allow"
+    optional: true
+- assertVisible: "Looks like you haven't added any feeds yet.*"

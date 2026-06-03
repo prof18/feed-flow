@@ -1,0 +1,62 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=oldest-first
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    id: article_row_e2e_article_old
+- assertVisible:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: article_row_e2e_article_duplicate_title
+- tapOn:
+    id: home_more_menu_button
+- tapOn:
+    text: "Sort & filter"
+- tapOn:
+    text: "Newest First"
+- back
+- assertVisible:
+    id: article_row_e2e_article_newest_unread
+- openLink: feedflow://e2e/reset-and-seed?profile=oldest-first
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    id: article_row_e2e_article_old
+- assertVisible:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: article_row_e2e_article_duplicate_title
+- longPressOn:
+    id: article_row_e2e_article_reader_success
+- tapOn:
+    text: "Mark all below as read"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_read
+- assertVisible:
+    id: article_row_e2e_article_duplicate_title
+- openLink: feedflow://e2e/reset-and-seed?profile=oldest-first
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    id: article_row_e2e_article_old
+- assertVisible:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: article_row_e2e_article_duplicate_title
+- longPressOn:
+    id: article_row_e2e_article_reader_success
+- tapOn:
+    text: "Mark all above as read"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_read
+- assertVisible:
+    id: article_row_e2e_article_old

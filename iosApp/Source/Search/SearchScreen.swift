@@ -26,6 +26,14 @@ struct SearchScreen: View {
     let readerModeViewModel: ReaderModeViewModel
     let onReaderModeNavigate: (() -> Void)?
 
+    init(
+        readerModeViewModel: ReaderModeViewModel,
+        onReaderModeNavigate: (() -> Void)?
+    ) {
+        self.readerModeViewModel = readerModeViewModel
+        self.onReaderModeNavigate = onReaderModeNavigate
+    }
+
     var body: some View {
         @Bindable var appState = appState
         

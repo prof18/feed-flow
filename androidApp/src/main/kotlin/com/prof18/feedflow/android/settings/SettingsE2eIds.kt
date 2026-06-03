@@ -1,0 +1,27 @@
+package com.prof18.feedflow.android.settings
+
+internal object SettingsE2eIds {
+    const val BACK_BUTTON = "settings_back_button"
+    const val APPEARANCE_ROW = "settings_appearance"
+    const val FEEDS_AND_ACCOUNTS_ROW = "settings_feeds_accounts"
+    const val ACCOUNTS_ROW = "settings_accounts"
+    const val IMPORT_EXPORT_ROW = "settings_import_export"
+    const val BLOCKED_WORDS_ROW = "settings_blocked_words"
+    const val FEED_LIST_ROW = "settings_feed_list"
+    const val FEED_LIST_LAYOUT = "feed_list_settings_layout"
+    const val FEED_LIST_HIDE_IMAGES = "feed_list_settings_hide_images"
+    const val FEED_LIST_ORDER = "feed_list_settings_order"
+    const val READING_BEHAVIOR_ROW = "settings_reading_behavior"
+    const val READING_BEHAVIOR_READER_MODE = "reading_behavior_reader_mode"
+    const val READING_BEHAVIOR_SHOW_READ = "reading_behavior_show_read"
+    const val READING_BEHAVIOR_HIDE_READ = "reading_behavior_hide_read"
+    const val SYNC_AND_STORAGE_ROW = "settings_sync_storage"
+    const val SYNC_REFRESH_ON_LAUNCH = "sync_storage_refresh_on_launch"
+    const val SYNC_SHOW_RSS_ERRORS = "sync_storage_show_rss_errors"
+    const val SYNC_PERIOD = "sync_storage_sync_period"
+    const val SYNC_AUTO_DELETE = "sync_storage_auto_delete"
+    const val SYNC_CLEAR_DOWNLOADED = "sync_storage_clear_downloaded"
+    const val APPEARANCE_THEME = "appearance_theme"
+    const val APPEARANCE_HIDE_UNREAD_COUNT = "appearance_hide_unread_count"
+    const val APPEARANCE_REDUCE_MOTION = "appearance_reduce_motion"
+}

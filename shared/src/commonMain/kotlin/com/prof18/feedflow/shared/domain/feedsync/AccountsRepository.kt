@@ -172,6 +172,12 @@ internal class AccountsRepository(
         currentAccountMutableState.value = SyncAccounts.LOCAL
     }
 
+    suspend fun clearAllAccounts() {
+        databaseHelper.deleteAllReadStatusPendingActions()
+        clearOtherSyncCredentials(except = SyncAccounts.LOCAL)
+        currentAccountMutableState.value = SyncAccounts.LOCAL
+    }
+
     private fun clearOtherSyncCredentials(except: SyncAccounts) {
         if (except != SyncAccounts.DROPBOX) {
             dropboxSettings.clearDropboxData()

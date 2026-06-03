@@ -1,0 +1,47 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp:
+    permissions:
+      notifications: allow
+- openLink: feedflow://e2e/reset-and-seed?profile=notifications
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    text: "Notifications"
+- assertVisible:
+    text: "Notifications"
+- tapOn:
+    text: "Request Permission"
+    optional: true
+- tapOn:
+    text: "Allow"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      text: "Enable All Notifications"
+    timeout: 10000
+- assertVisible:
+    text: "By feed"
+- assertVisible:
+    text: "Enable All Notifications"
+- assertVisible:
+    text: "Android Central RSS Feed"
+- assertVisible:
+    text: "Bloomberg Technology"
+- assertVisible:
+    text: "Ars Technica"
+- tapOn:
+    text: "Notification grouping"
+- tapOn:
+    text: "By category"
+- assertVisible:
+    text: "By category"

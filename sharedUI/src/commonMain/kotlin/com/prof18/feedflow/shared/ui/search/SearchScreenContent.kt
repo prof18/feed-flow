@@ -42,6 +42,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -216,6 +217,7 @@ private fun SearchBar(
                     navigateBack()
                 },
                 modifier = Modifier
+                    .testTag(SearchE2eIds.BACK_BUTTON)
                     .minimumInteractiveComponentSize(),
             ) {
                 Icon(
@@ -225,6 +227,7 @@ private fun SearchBar(
             }
         },
         modifier = modifier
+            .testTag(SearchE2eIds.SEARCH_FIELD)
             .focusRequester(focusRequester)
             .fillMaxWidth(),
         value = searchQuery,
@@ -245,7 +248,10 @@ private fun SearchBar(
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
-                IconButton(onClick = { onSearchQueryChange(TextFieldValue("")) }) {
+                IconButton(
+                    modifier = Modifier.testTag(SearchE2eIds.CLEAR_BUTTON),
+                    onClick = { onSearchQueryChange(TextFieldValue("")) },
+                ) {
                     Icon(
                         imageVector = Icons.Rounded.Clear,
                         contentDescription = null,
@@ -292,6 +298,7 @@ private fun SearchFilterChipsRow(
                 label = filter.getLabel(strings, currentFeedLabel),
                 isSelected = filter == selectedFilter,
                 onClick = { onFilterSelected(filter) },
+                modifier = Modifier.testTag(SearchE2eIds.filter(filter)),
             )
         }
     }

@@ -16,7 +16,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFontSizes
@@ -64,7 +66,10 @@ internal fun FeedListSettingsScreenContent(
             TopAppBar(
                 title = { Text(strings.settingsFeedListTitle) },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(
+                        modifier = Modifier.testTag(SettingsE2eIds.BACK_BUTTON),
+                        onClick = navigateBack,
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = null,
@@ -118,6 +123,7 @@ internal fun FeedListSettingsScreenContent(
                 item {
                     Spacer(modifier = Modifier.padding(top = Spacing.regular))
                     CompactSettingDropdownRow(
+                        modifier = Modifier.testTag(SettingsE2eIds.FEED_LIST_LAYOUT),
                         title = strings.feedLayoutTitle,
                         currentValue = state.feedLayout,
                         options = persistentListOf(
@@ -138,6 +144,7 @@ internal fun FeedListSettingsScreenContent(
 
                 item {
                     SettingSwitchItem(
+                        modifier = Modifier.testTag(SettingsE2eIds.FEED_LIST_HIDE_IMAGES),
                         title = strings.settingsHideImages,
                         isChecked = state.isHideImagesEnabled,
                         onCheckedChange = setHideImages,
@@ -225,6 +232,7 @@ internal fun FeedListSettingsScreenContent(
 
                 item {
                     CompactSettingDropdownRow(
+                        modifier = Modifier.testTag(SettingsE2eIds.FEED_LIST_ORDER),
                         title = strings.settingsFeedOrderTitle,
                         currentValue = state.feedOrder,
                         options = persistentListOf(

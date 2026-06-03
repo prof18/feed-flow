@@ -1,0 +1,21 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+
+# Empty profile lands on EmptyFeedView with the default Timeline filter. It
+# shows Refresh feeds + Open another feed buttons. REG-147 exercises Refresh
+# feeds; here we exercise Open another feed and verify it opens the drawer.
+- assertVisible: "Nothing else to read here!"
+- assertVisible: "Refresh feeds"
+- tapOn: "Open another feed"
+- assertVisible:
+    id: drawer_settings_button
+- assertVisible:
+    id: drawer_timeline

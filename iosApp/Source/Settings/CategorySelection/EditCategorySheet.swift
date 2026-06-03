@@ -84,6 +84,7 @@ struct EditCategorySheet: View {
                             }
                         )
                         .buttonStyle(.plain)
+                        .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.addCategoryButton)
 
                         Button(
                             action: {
@@ -98,6 +99,7 @@ struct EditCategorySheet: View {
                             }
                         )
                         .buttonStyle(.borderedProminent)
+                        .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.saveButton)
                     }
                     .padding(.horizontal, Spacing.regular)
                     .padding(.bottom, Spacing.medium)
@@ -219,6 +221,7 @@ private struct AddCategoryNameSheet: View {
                     .background(Color(UIColor.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .focused($isTextFieldFocused)
+                    .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.addCategoryInput)
 
                 if hasDuplicateName {
                     Text(feedFlowStrings.categoryNameAlreadyExists)
@@ -233,6 +236,7 @@ private struct AddCategoryNameSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!canConfirm)
+                .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.addCategoryConfirmButton)
             }
             .padding()
             .navigationTitle(feedFlowStrings.addFeedCategoryTitle)
@@ -288,6 +292,7 @@ private struct EditCategoryNameSheet: View {
                     .background(Color(UIColor.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .focused($isTextFieldFocused)
+                    .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.renameCategoryInput)
 
                 if hasDuplicateName {
                     Text(feedFlowStrings.categoryNameAlreadyExists)
@@ -302,6 +307,7 @@ private struct EditCategoryNameSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!canSave)
+                .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.renameCategorySaveButton)
             }
             .padding()
             .navigationTitle(feedFlowStrings.editCategory)
@@ -414,6 +420,7 @@ struct CategoryChip: View {
         .onTapGesture {
             onTap()
         }
+        .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.categoryChip(label))
         .contextMenu {
             if let onEditTap = onEditTap {
                 Button(action: onEditTap) {

@@ -87,10 +87,12 @@ private extension ImportExportContent {
                             Label(feedFlowStrings.importFeedButton, systemImage: "arrow.down.doc")
                         }
                     )
+                    .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.importFeeds)
 
                     Button(action: onExportClick) {
                         Label(feedFlowStrings.exportFeedsButton, systemImage: "arrow.up.doc")
                     }
+                    .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.exportFeeds)
                 }
 
                 Section(header: Text(feedFlowStrings.importExportArticlesSectionTitle)) {
@@ -104,6 +106,7 @@ private extension ImportExportContent {
                             Label(feedFlowStrings.importArticlesButton, systemImage: "arrow.down.doc")
                         }
                     )
+                    .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.importArticles)
 
                     Button(
                         action: {
@@ -114,6 +117,7 @@ private extension ImportExportContent {
                             Label(feedFlowStrings.exportArticlesButton, systemImage: "arrow.up.doc")
                         }
                     )
+                    .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.exportArticles)
                 }
             }
             Spacer()
@@ -164,6 +168,7 @@ private extension ImportExportContent {
 
             Text(feedFlowStrings.genericErrorMessage)
                 .font(.body)
+                .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.error)
 
             Button(action: onRetryClick) {
                 Text(feedFlowStrings.retryButton)
@@ -185,6 +190,7 @@ private extension ImportExportContent {
                 .font(.headline)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, Spacing.medium)
+                .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.invalidOpml)
 
             Text(feedFlowStrings.invalidOpmlImportDescription)
                 .font(.body)
@@ -197,6 +203,7 @@ private extension ImportExportContent {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
+            .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.chooseAnotherFile)
             .padding(.top, Spacing.regular)
             .padding(.horizontal, Spacing.medium)
 
@@ -227,6 +234,7 @@ private extension ImportExportContent {
             Text(feedFlowStrings.feedsExportDoneMessage)
                 .font(.body)
                 .multilineTextAlignment(.center)
+                .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.feedExportSuccess)
 
             Button(
                 action: {
@@ -239,6 +247,7 @@ private extension ImportExportContent {
                 }
             )
             .buttonStyle(.bordered)
+            .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.done)
             .padding(.top, Spacing.regular)
             .padding(.horizontal, Spacing.medium)
 
@@ -253,6 +262,7 @@ private extension ImportExportContent {
             Text(feedFlowStrings.articlesExportDoneMessage)
                 .font(.body)
                 .multilineTextAlignment(.center)
+                .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.articleExportSuccess)
 
             Button(
                 action: {
@@ -265,6 +275,7 @@ private extension ImportExportContent {
                 }
             )
             .buttonStyle(.bordered)
+            .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.done)
             .padding(.top, Spacing.regular)
             .padding(.horizontal, Spacing.medium)
 
@@ -293,6 +304,7 @@ private extension ImportExportContent {
             Text(feedFlowStrings.articlesImportDoneMessage)
                 .font(.body)
                 .multilineTextAlignment(.center)
+                .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.articleImportSuccess)
 
             Button(
                 action: {
@@ -305,6 +317,7 @@ private extension ImportExportContent {
                 }
             )
             .buttonStyle(.bordered)
+            .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.done)
             .padding(.top, Spacing.regular)
             .padding(.horizontal, Spacing.medium)
 
@@ -318,6 +331,7 @@ private extension ImportExportContent {
         Text(feedFlowStrings.feedsImportDoneMessage)
             .font(.body)
             .multilineTextAlignment(.center)
+            .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.feedImportSuccess)
 
         Button(
             action: {
@@ -330,6 +344,7 @@ private extension ImportExportContent {
             }
         )
         .buttonStyle(.bordered)
+        .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.done)
         .padding(.top, Spacing.regular)
         .padding(.horizontal, Spacing.medium)
 
@@ -368,6 +383,7 @@ private extension ImportExportContent {
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)
+        .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.done)
         .padding(Spacing.regular)
     }
 
@@ -403,6 +419,7 @@ private extension ImportExportContent {
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)
+        .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.done)
         .padding(Spacing.regular)
     }
 }

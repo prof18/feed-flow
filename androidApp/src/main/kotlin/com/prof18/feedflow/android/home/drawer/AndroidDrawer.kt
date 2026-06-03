@@ -39,11 +39,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.home.AddFeedOptionsBottomSheet
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsE2eIds
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -285,7 +287,10 @@ private fun DrawerTopActions(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        DrawerActionButton(onClick = onSettingsClick) {
+        DrawerActionButton(
+            modifier = Modifier.testTag(DrawerE2eIds.SETTINGS_BUTTON),
+            onClick = onSettingsClick,
+        ) {
             Icon(
                 imageVector = Icons.Default.Settings,
                 contentDescription = LocalFeedFlowStrings.current.settingsButton,
@@ -294,7 +299,10 @@ private fun DrawerTopActions(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        DrawerActionButton(onClick = onAddClick) {
+        DrawerActionButton(
+            modifier = Modifier.testTag(FeedSuggestionsE2eIds.ADD_OPTIONS_BUTTON),
+            onClick = onAddClick,
+        ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = LocalFeedFlowStrings.current.addFeed,
@@ -306,6 +314,7 @@ private fun DrawerTopActions(
 @Composable
 private fun DrawerActionButton(
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     val containerColor = if (isSystemInDarkTheme()) {
@@ -314,6 +323,7 @@ private fun DrawerActionButton(
         MaterialTheme.colorScheme.surfaceContainerHigh
     }
     FilledIconButton(
+        modifier = modifier,
         onClick = onClick,
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = containerColor,

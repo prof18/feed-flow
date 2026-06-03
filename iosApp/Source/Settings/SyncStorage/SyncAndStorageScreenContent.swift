@@ -15,10 +15,12 @@ struct SyncAndStorageScreenContent: View {
                 Toggle(isOn: $refreshFeedsOnLaunch) {
                     Text(feedFlowStrings.settingsRefreshFeedsOnLaunch)
                 }
+                .accessibilityIdentifier(SyncAndStorageAccessibilityIdentifiers.refreshOnLaunch)
 
                 Toggle(isOn: $showRssParsingErrors) {
                     Text(feedFlowStrings.settingsShowRssParsingErrors)
                 }
+                .accessibilityIdentifier(SyncAndStorageAccessibilityIdentifiers.showRssErrors)
 
                 Picker(selection: $autoDeletePeriod) {
                     Text(feedFlowStrings.settingsAutoDeletePeriodDisabled)
@@ -34,6 +36,7 @@ struct SyncAndStorageScreenContent: View {
                 } label: {
                     Text(feedFlowStrings.settingsAutoDelete)
                 }
+                .accessibilityIdentifier(SyncAndStorageAccessibilityIdentifiers.autoDelete)
 
                 ConfirmationButton(
                     title: feedFlowStrings.settingsClearDownloadedArticles,
@@ -41,6 +44,7 @@ struct SyncAndStorageScreenContent: View {
                     dialogMessage: feedFlowStrings.settingsClearDownloadedArticlesDialogMessage,
                     onConfirm: onClearDownloadedArticles
                 )
+                .accessibilityIdentifier(SyncAndStorageAccessibilityIdentifiers.clearDownloaded)
             }
         }
         .scrollContentBackground(.hidden)

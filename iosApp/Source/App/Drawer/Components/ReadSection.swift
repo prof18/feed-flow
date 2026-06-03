@@ -28,6 +28,7 @@ struct ReadSection: View {
                 onFeedFilterSelected(FeedFilter.Read())
             }
             .tag(SidebarSelection.read)
+            .accessibilityIdentifier(DrawerAccessibilityIdentifiers.read)
             .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))
         }
     }

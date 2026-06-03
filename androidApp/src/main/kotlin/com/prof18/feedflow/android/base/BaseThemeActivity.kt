@@ -5,11 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -98,7 +103,13 @@ abstract class BaseThemeActivity : ComponentActivity() {
                 val lyricist = rememberFeedFlowStrings()
                 ProvideFeedFlowStrings(lyricist) {
                     CompositionLocalProvider(LocalReduceMotion provides reduceMotionEnabled) {
-                        Content()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .semantics { testTagsAsResourceId = true },
+                        ) {
+                            Content()
+                        }
                     }
                 }
             }

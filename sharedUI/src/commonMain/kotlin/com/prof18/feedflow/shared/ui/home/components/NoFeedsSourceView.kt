@@ -10,6 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsE2eIds
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -30,6 +32,7 @@ fun NoFeedsSourceView(
         )
         Button(
             modifier = Modifier
+                .testTag(FeedSuggestionsE2eIds.EMPTY_STATE_OPTIONS_BUTTON)
                 .padding(top = Spacing.regular),
             onClick = {
                 onAddFeedClick()

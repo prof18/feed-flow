@@ -86,6 +86,7 @@ struct ICloudSyncScreenContent: View {
                     }
                 )
                 .disabled(state.syncState is AccountSyncUIState.Loading)
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.disconnectButton)
             }
         }
     }
@@ -97,6 +98,7 @@ struct ICloudSyncScreenContent: View {
                 Text(feedFlowStrings.icloudSyncSuccess)
                     .font(.body)
                     .multilineTextAlignment(.leading)
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.connectedMessage)
 
                 if let syncedState = state.syncState as? AccountSyncUIState.Synced {
                     VStack(alignment: .leading) {
@@ -112,6 +114,7 @@ struct ICloudSyncScreenContent: View {
                         }
                     }
                     .padding(.top, Spacing.regular)
+                    .accessibilityIdentifier(AccountAccessibilityIdentifiers.lastSyncLabel)
                 }
             }
         }
@@ -133,6 +136,7 @@ struct ICloudSyncScreenContent: View {
                         Label(feedFlowStrings.accountConnectButton, systemImage: "link")
                     }
                 )
+                .accessibilityIdentifier(AccountAccessibilityIdentifiers.connectButton)
             }
         }
     }

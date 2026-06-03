@@ -1,0 +1,39 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: feed_source_list_settings_row
+- assertVisible:
+    id: feed_source_list_screen
+- tapOn:
+    id: feed_source_list_category_e2e_category_technology
+- assertVisible: "Android Central RSS Feed"
+- tapOn:
+    id: feed_source_list_category_e2e_category_technology
+- assertNotVisible: "Android Central RSS Feed"
+- tapOn:
+    id: feed_source_list_category_e2e_category_technology
+- assertVisible: "Android Central RSS Feed"
+- longPressOn:
+    text: "Android Central RSS Feed"
+- tapOn:
+    text: "Delete"
+- tapOn:
+    text: "Delete feed"
+- assertNotVisible: "Android Central RSS Feed"
+- tapOn:
+    id: feed_source_list_category_e2e_category_news
+- assertVisible:
+    id: feed_source_list_warning_e2e_feed_fetch_failed

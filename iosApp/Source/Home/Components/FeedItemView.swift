@@ -146,6 +146,7 @@ struct FeedItemView: View {
                 }
             }
             .padding(.leading, Spacing.regular)
+            .accessibilityIdentifier(FeedItemAccessibilityIdentifiers.image(feedItem.id))
         } else {
             Spacer()
         }

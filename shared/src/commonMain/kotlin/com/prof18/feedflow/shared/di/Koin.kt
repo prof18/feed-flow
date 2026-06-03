@@ -37,6 +37,7 @@ import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
+import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
@@ -554,6 +555,22 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedAppearanceSettingsRepository = get(),
             dateFormatter = get(),
             logger = getWith("FeedStateRepository"),
+        )
+    }
+
+    single {
+        E2eSeedRunner(
+            databaseHelper = get(),
+            settingsRepository = get(),
+            feedAppearanceSettingsRepository = get(),
+            feedItemContentFileHandler = get(),
+            accountsRepository = get(),
+            feedSyncRepository = get(),
+            feedStateRepository = get(),
+            dropboxSettings = get(),
+            googleDriveSettings = get(),
+            icloudSettings = get(),
+            networkSettings = get(),
         )
     }
 

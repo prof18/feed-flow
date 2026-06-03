@@ -1,0 +1,52 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 10000
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_category_expand_e2e_category_technology
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_expand_e2e_category_technology
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_e2e_feed_android_weekly
+    direction: DOWN
+    timeout: 10000
+- longPressOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- tapOn: "Edit feed"
+- tapOn:
+    id: edit_feed_hidden_toggle
+- tapOn:
+    id: edit_feed_pinned_toggle
+- scrollUntilVisible:
+    element:
+      id: edit_feed_category_selector
+    direction: DOWN
+- tapOn:
+    id: edit_feed_category_selector
+- tapOn:
+    text: "News"
+- tapOn:
+    text: "Save"
+- tapOn:
+    id: edit_feed_save
+- scrollUntilVisible:
+    element:
+      id: drawer_category_expand_e2e_category_news
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_expand_e2e_category_news
+- assertVisible: "Android Central RSS Feed"

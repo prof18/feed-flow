@@ -109,6 +109,7 @@ struct FeedListSettingsScreenContent: View {
                     } label: {
                         Text(feedFlowStrings.feedLayoutTitle)
                     }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.layoutPicker)
 
                     Toggle(isOn: $isHideDescriptionEnabled) {
                         Text(feedFlowStrings.settingsHideDescription)
@@ -121,6 +122,7 @@ struct FeedListSettingsScreenContent: View {
                     }.onTapGesture {
                         isHideImagesEnabled.toggle()
                     }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideImagesToggle)
 
                     Toggle(isOn: $isHideDateEnabled) {
                         Text(feedFlowStrings.settingsHideDate)
@@ -195,6 +197,7 @@ struct FeedListSettingsScreenContent: View {
                     } label: {
                         Text(feedFlowStrings.settingsFeedOrderTitle)
                     }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.orderPicker)
                 }
             })
             .scrollContentBackground(.hidden)

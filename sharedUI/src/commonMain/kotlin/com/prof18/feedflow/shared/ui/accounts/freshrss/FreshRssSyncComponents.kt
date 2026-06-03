@@ -33,10 +33,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
+import com.prof18.feedflow.shared.ui.accounts.AccountE2eIds
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -140,6 +142,7 @@ fun DisconnectedView(
             onValueChange = { serverUrl = it },
             label = { Text(LocalFeedFlowStrings.current.accountTextFieldServerUrl) },
             modifier = Modifier
+                .testTag(AccountE2eIds.SERVER_URL_INPUT)
                 .fillMaxWidth()
                 .padding(bottom = Spacing.regular),
             singleLine = true,
@@ -150,6 +153,7 @@ fun DisconnectedView(
             onValueChange = { username = it },
             label = { Text(LocalFeedFlowStrings.current.accountTextFieldUsername) },
             modifier = Modifier
+                .testTag(AccountE2eIds.USERNAME_INPUT)
                 .fillMaxWidth()
                 .padding(bottom = Spacing.regular),
             singleLine = true,
@@ -162,6 +166,7 @@ fun DisconnectedView(
             onValueChange = { password = it },
             label = { Text(LocalFeedFlowStrings.current.accountTextFieldPassword) },
             modifier = Modifier
+                .testTag(AccountE2eIds.PASSWORD_INPUT)
                 .fillMaxWidth()
                 .padding(bottom = Spacing.medium),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -170,7 +175,10 @@ fun DisconnectedView(
             },
             trailingIcon = {
                 val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                IconButton(
+                    modifier = Modifier.testTag(AccountE2eIds.PASSWORD_VISIBILITY),
+                    onClick = { passwordVisible = !passwordVisible },
+                ) {
                     Icon(imageVector = image, contentDescription = null)
                 }
             },
@@ -183,6 +191,7 @@ fun DisconnectedView(
                 onLoginClick(serverUrl, username, password)
             },
             modifier = Modifier
+                .testTag(AccountE2eIds.CONNECT_BUTTON)
                 .fillMaxWidth(),
             enabled = !isLoginLoading && serverUrl.isNotBlank() &&
                 username.isNotBlank() && password.isNotBlank(),
@@ -208,7 +217,9 @@ private fun ConnectedView(
         Text(
             text = LocalFeedFlowStrings.current.freshRssAccountConnected,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = Spacing.regular),
+            modifier = Modifier
+                .testTag(AccountE2eIds.CONNECTED_MESSAGE)
+                .padding(horizontal = Spacing.regular),
         )
 
         when (val syncState = uiState.syncState) {
@@ -246,6 +257,7 @@ private fun ConnectedView(
                 if (lastDownload != null) {
                     Text(
                         modifier = Modifier
+                            .testTag(AccountE2eIds.LAST_SYNC_LABEL)
                             .padding(horizontal = Spacing.regular)
                             .padding(top = Spacing.small),
                         text = LocalFeedFlowStrings.current.freshRssLastSync(lastDownload),
@@ -256,7 +268,9 @@ private fun ConnectedView(
         }
 
         SettingItem(
-            modifier = Modifier.padding(top = Spacing.regular),
+            modifier = Modifier
+                .testTag(AccountE2eIds.DISCONNECT_BUTTON)
+                .padding(top = Spacing.regular),
             title = LocalFeedFlowStrings.current.accountDisconnectButton,
             isEnabled = uiState.syncState !is AccountSyncUIState.Loading,
             icon = Icons.Default.LinkOff,

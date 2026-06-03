@@ -14,6 +14,10 @@ internal class ReviewRepository(
 ) {
     @Suppress("ReturnCount", "MagicNumber")
     suspend fun shouldShowReview(): Boolean {
+        if (appConfig.appEnvironment.isDebug()) {
+            return false
+        }
+
         val reviewCount = getReviewRequestCount()
         if (reviewCount > MAX_REVIEW_REQUESTS) {
             return false

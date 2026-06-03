@@ -1,0 +1,39 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+
+# Open the drawer and tap the "+" toolbar menu. The menu shows Add feed,
+# Feed Suggestions, and Import feed destinations.
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: feed_suggestions_menu_button
+- assertVisible: "Add feed"
+- assertVisible: "Feed Suggestions"
+- assertVisible: "Import feed from OPML"
+
+# Add feed destination from the drawer entry. The destination is a fullscreen
+# modal whose only dismiss control is the toolbar Close (xmark) button.
+- tapOn: "Add feed"
+- assertVisible:
+    id: add_feed_url_input
+- tapOn: "Close"
+
+# Re-open the drawer "+" menu and verify the Import feed entry takes us to
+# the OPML/CSV import/export screen.
+- tapOn:
+    id: drawer_menu_button
+    optional: true
+- tapOn:
+    id: feed_suggestions_menu_button
+- tapOn: "Import feed from OPML"
+- assertVisible: "Subscriptions (OPML)"
+- assertVisible: "Articles (CSV)"

@@ -118,9 +118,15 @@ class E2eSeedActivity : BaseThemeActivity() {
         val action = uri?.pathSegments?.firstOrNull()
         val profileName = uri?.getQueryParameter("profile")
         val accountName = uri?.getQueryParameter("account")
+        val deepLinkUrl = uri?.getQueryParameter("url")
 
         if (action == null) {
             uiState = E2eSeedUiState.Error("Missing E2E seed action")
+            return
+        }
+
+        if (action == ACTION_OPEN_DEEP_LINK) {
+            openMainActivity(deepLinkUrl)
             return
         }
 
@@ -164,11 +170,19 @@ class E2eSeedActivity : BaseThemeActivity() {
         widgetSettingsRepository.setWidgetHideImages(false)
     }
 
-    private fun openMainActivity() {
+    private fun openMainActivity(deepLinkUrl: String? = null) {
         val intent = Intent(this, MainActivity::class.java)
+            .setAction(Intent.ACTION_VIEW)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        deepLinkUrl?.let { url ->
+            intent.data = android.net.Uri.parse(url)
+        }
         startActivity(intent)
         finish()
+    }
+
+    private companion object {
+        const val ACTION_OPEN_DEEP_LINK = "open-deep-link"
     }
 }
 

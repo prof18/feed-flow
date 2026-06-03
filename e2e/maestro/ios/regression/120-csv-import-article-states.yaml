@@ -20,11 +20,18 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: import_export_import_feeds
 - tapOn:
-    point: "50%,34%"
+    text: "Search"
 - tapOn:
-    point: "50%,30%"
+    text: "Search"
+    optional: true
+- inputText: "feedflow-valid-opml-smoke"
 - tapOn:
-    point: "50%,30%"
+    text: "Continue"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- tapOn:
+    point: "18%,43%"
 - extendedWaitUntil:
     visible:
       id: import_export_feed_import_success
@@ -36,9 +43,18 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: import_export_import_articles
 - tapOn:
-    point: "18%,30%"
+    text: "Search"
 - tapOn:
-    point: "18%,30%"
+    text: "Search"
+    optional: true
+- inputText: "feedflow-articles-smoke"
+- tapOn:
+    text: "Continue"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- tapOn:
+    point: "18%,43%"
 - extendedWaitUntil:
     visible:
       id: import_export_article_import_success

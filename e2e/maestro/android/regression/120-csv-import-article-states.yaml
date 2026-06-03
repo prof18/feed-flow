@@ -18,11 +18,28 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: import_export_import_feeds
 - tapOn:
-    text: "feedflow-e2e"
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- tapOn:
+    id: com.google.android.documentsui:id/item_root
+    containsDescendants:
+      - text: "feedflow-e2e"
+    optional: true
+- extendedWaitUntil:
+    visible: "No items"
+    timeout: 5000
     optional: true
 - tapOn:
     text: "Documents"
     optional: true
+- tapOn:
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- scrollUntilVisible:
+    element:
+      text: "feedflow-valid-opml-smoke\\.xml"
+    direction: DOWN
+    timeout: 10000
 - tapOn:
     text: "feedflow-valid-opml-smoke\\.xml"
 - extendedWaitUntil:
@@ -34,13 +51,30 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: import_export_import_articles
 - tapOn:
-    text: "feedflow-e2e"
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- tapOn:
+    id: com.google.android.documentsui:id/item_root
+    containsDescendants:
+      - text: "feedflow-e2e"
+    optional: true
+- extendedWaitUntil:
+    visible: "No items"
+    timeout: 5000
     optional: true
 - tapOn:
     text: "Documents"
     optional: true
 - tapOn:
-    text: "feedflow-articles-smoke.*"
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- scrollUntilVisible:
+    element:
+      text: "feedflow-articles-smoke\\.csv"
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    text: "feedflow-articles-smoke\\.csv"
 - extendedWaitUntil:
     visible:
       id: import_export_article_import_success

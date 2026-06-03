@@ -32,6 +32,7 @@ Run FeedFlow's full local Maestro release gate across Android and iOS, then repo
 4. Open or read the generated `report.html` first. Use `report.md` as a terminal-friendly fallback. Summarize:
    - total pass/fail counts by platform and suite
    - failed flow filenames
+   - each failed flow's report classification, brief analysis, and evidence line
    - setup failures, if any
    - HTML report path and log directory
 
@@ -44,7 +45,7 @@ Run FeedFlow's full local Maestro release gate across Android and iOS, then repo
 
 ## Behavior
 
-The script builds and installs each selected platform once, pushes fixtures, then runs every YAML flow in sorted order from:
+When both platforms are selected, the script runs Android and iOS in parallel. Each platform still builds and installs once, pushes fixtures, then runs every YAML flow for that platform in sorted order from:
 
 - `e2e/maestro/android/smoke`
 - `e2e/maestro/android/regression`
@@ -59,6 +60,6 @@ Reports and logs are written under:
 .tmp/maestro-release-tests/<timestamp>/
 ```
 
-The main visual report is `report.html`. It contains run metadata, setup/build steps, suite summaries, failed flows, and every selected test with links to per-flow logs. The script also writes `report.md` for quick terminal review.
+The main visual report is `report.html`. It contains run metadata, setup/build steps, suite summaries, failed flows, brief failure classifications, evidence lines from logs, and every selected test with links to per-flow logs. The script also writes `report.md` for quick terminal review.
 
-Use the per-flow logs in that directory together with Maestro artifacts under `~/.maestro/tests/` when debugging failures.
+Use the per-flow logs in that directory together with Maestro artifacts under `~/.maestro/tests/` when debugging failures. Treat the report classification as a first-pass diagnosis, then verify ambiguous cases against screenshots and UI hierarchies before calling a failure a product regression.

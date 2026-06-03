@@ -15,7 +15,7 @@ appId: com.prof18.feedflow.debug
 - assertVisible:
     id: reader_article_e2e_article_reader_success
 - tapOn:
-    point: 50%,36%
+    point: 50%,20%
 - assertVisible:
     id: reader_image_viewer
 - assertVisible:

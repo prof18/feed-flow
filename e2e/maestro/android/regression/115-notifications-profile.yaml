@@ -25,10 +25,25 @@ appId: com.prof18.feedflow.debug
     text: "Enable All Notifications"
 - assertVisible:
     text: "Android Central RSS Feed"
+- scrollUntilVisible:
+    element:
+      text: "Bloomberg Politics"
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
-    text: "Bloomberg Technology"
+    text: "Bloomberg Politics"
+- scrollUntilVisible:
+    element:
+      text: "Ars Technica"
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     text: "Ars Technica"
+- scrollUntilVisible:
+    element:
+      text: "Notification grouping"
+    direction: UP
+    timeout: 10000
 - tapOn:
     text: "Notification grouping"
 - tapOn:

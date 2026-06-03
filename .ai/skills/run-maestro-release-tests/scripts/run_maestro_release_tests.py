@@ -4,12 +4,14 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import html
 import os
 import re
 import shutil
 import subprocess
 import sys
+import threading
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -19,6 +21,8 @@ from pathlib import Path
 ANDROID_APP_ID = "com.prof18.feedflow.debug"
 IOS_SIMULATOR_NAME = "iPhone 17 Pro"
 SUITES = ("smoke", "regression")
+PRINT_LOCK = threading.Lock()
+ANSI_PATTERN = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 
 
 @dataclass
@@ -37,6 +41,20 @@ class FlowResult:
     returncode: int
     seconds: float
     log_path: Path
+
+
+@dataclass
+class FailureAnalysis:
+    classification: str
+    reason: str
+    evidence: str
+
+
+@dataclass
+class PlatformRunResult:
+    platform: str
+    setup_results: list[CommandResult]
+    flow_results: list[FlowResult]
 
 
 def parse_args() -> argparse.Namespace:
@@ -84,8 +102,8 @@ def run_command(
 ) -> CommandResult:
     log_path.parent.mkdir(parents=True, exist_ok=True)
     start = time.monotonic()
-    print(f"\n==> {name}")
-    print(f"    log: {log_path}")
+    print_line(f"\n==> {name}")
+    print_line(f"    log: {log_path}")
     with log_path.open("w", encoding="utf-8") as log_file:
         log_file.write(f"$ {' '.join(args)}\n\n")
         process = subprocess.Popen(
@@ -99,12 +117,22 @@ def run_command(
         )
         assert process.stdout is not None
         for line in process.stdout:
-            print(line, end="")
+            print_text(line)
             log_file.write(line)
         returncode = process.wait()
     seconds = time.monotonic() - start
-    print(f"<== {name}: exit {returncode} in {seconds:.1f}s")
+    print_line(f"<== {name}: exit {returncode} in {seconds:.1f}s")
     return CommandResult(name=name, returncode=returncode, seconds=seconds, log_path=log_path)
+
+
+def print_line(message: str) -> None:
+    with PRINT_LOCK:
+        print(message)
+
+
+def print_text(message: str) -> None:
+    with PRINT_LOCK:
+        print(message, end="")
 
 
 def selected_platforms(platform_arg: str) -> tuple[str, ...]:
@@ -331,9 +359,201 @@ def setup_failed(results: list[CommandResult]) -> bool:
     return any(result.returncode != 0 for result in results)
 
 
+def update_ios_simulator_udid(env: dict[str, str], setup_results: list[CommandResult]) -> None:
+    if "SIMULATOR_UDID" in env:
+        return
+    lookup_logs = [
+        result.log_path
+        for result in setup_results
+        if result.name == "ios simulator lookup"
+    ]
+    if not lookup_logs:
+        return
+    text = lookup_logs[-1].read_text(encoding="utf-8", errors="replace")
+    for line in text.splitlines():
+        if IOS_SIMULATOR_NAME in line:
+            match = re.search(r"\(([A-Fa-f0-9-]{36})\)", line)
+            if match:
+                env["SIMULATOR_UDID"] = match.group(1)
+                return
+
+
+def run_platform_tests(
+    repo_root: Path,
+    output_dir: Path,
+    platform: str,
+    suites: tuple[str, ...],
+    base_env: dict[str, str],
+) -> PlatformRunResult:
+    env = base_env.copy()
+    if platform == "android":
+        setup_results = setup_android(repo_root, output_dir)
+    else:
+        setup_results = setup_ios(repo_root, output_dir, env)
+        update_ios_simulator_udid(env, setup_results)
+
+    if setup_failed(setup_results):
+        print_line(f"Skipping {platform} flows because setup failed.")
+        return PlatformRunResult(platform, setup_results, [])
+
+    return PlatformRunResult(
+        platform,
+        setup_results,
+        run_flows(repo_root, output_dir, platform, suites, env),
+    )
+
+
 def report_link(report_path: Path, target_path: Path) -> str:
     relative = os.path.relpath(target_path, start=report_path.parent)
     return html.escape(relative)
+
+
+def short_text(value: str, max_length: int = 220) -> str:
+    compact = " ".join(value.split())
+    if len(compact) <= max_length:
+        return compact
+    return compact[: max_length - 1].rstrip() + "..."
+
+
+def markdown_cell(value: str) -> str:
+    return short_text(value).replace("|", "\\|").replace("\n", "<br>")
+
+
+def clean_log_line(line: str) -> str:
+    return ANSI_PATTERN.sub("", line).strip()
+
+
+def read_log_text(log_path: Path) -> str:
+    return log_path.read_text(encoding="utf-8", errors="replace")
+
+
+def first_matching_line(text: str, patterns: tuple[str, ...]) -> str:
+    for line in text.splitlines():
+        clean_line = clean_log_line(line)
+        lower_line = clean_line.lower()
+        if clean_line and any(pattern in lower_line for pattern in patterns):
+            return clean_line
+    return ""
+
+
+def last_meaningful_line(text: str) -> str:
+    ignored_prefixes = ("$", "====")
+    for line in reversed(text.splitlines()):
+        clean_line = clean_log_line(line)
+        if clean_line and not clean_line.startswith(ignored_prefixes):
+            return clean_line
+    return ""
+
+
+def failure_evidence(text: str) -> str:
+    salient_patterns = (
+        "assertion is false",
+        "assertion '",
+        "element selector",
+        "failed to",
+        "timed out",
+        "timeout",
+        "no devices",
+        "device not found",
+        "unable to",
+        "not installed",
+        "crashed",
+        "fatal exception",
+        "permission",
+        "no such file",
+    )
+    return first_matching_line(text, salient_patterns) or last_meaningful_line(text)
+
+
+def analyze_failure(log_path: Path, returncode: int, context: str) -> FailureAnalysis:
+    if returncode == 0:
+        return FailureAnalysis("Passed", "No failure detected.", "")
+
+    text = read_log_text(log_path)
+    lower = text.lower()
+    evidence = failure_evidence(text)
+
+    if any(token in lower for token in ("fatal exception", "process crashed", "sigabrt", "anr in ")):
+        return FailureAnalysis(
+            "App crash / likely app issue",
+            "The app process crashed or became unresponsive while the flow was running.",
+            evidence,
+        )
+
+    if any(
+        token in lower
+        for token in (
+            "no devices",
+            "device not found",
+            "could not find device",
+            "no booted",
+            "adb server",
+            "xcrun",
+        )
+    ):
+        return FailureAnalysis(
+            "Environment / device setup",
+            "The failure points to the test device, simulator, or host tooling instead of app behavior.",
+            evidence,
+        )
+
+    if any(
+        token in lower
+        for token in (
+            "not installed",
+            "unable to launch app",
+            "could not launch",
+            "activity not started",
+            "install_failed",
+            "app id",
+        )
+    ):
+        return FailureAnalysis(
+            "Install / launch misconfiguration",
+            "The app could not be installed or launched with the expected package, scheme, or activity.",
+            evidence,
+        )
+
+    if any(token in lower for token in ("permission", "allow notifications", "access photos", "access files")):
+        return FailureAnalysis(
+            "System permission dialog",
+            "A platform permission or system dialog likely interrupted the scripted path.",
+            evidence,
+        )
+
+    if any(token in lower for token in ("documentsui", "file picker", "fixture", "no such file", "does not exist")):
+        return FailureAnalysis(
+            "Fixture / picker setup",
+            "The flow likely missed a seeded fixture, file picker item, or expected document-provider state.",
+            evidence,
+        )
+
+    if any(token in lower for token in ("scrolluntilvisible", "scrolling", "timed out", "timeout", "wait")):
+        return FailureAnalysis(
+            "Timing or scroll target",
+            "The flow waited for an element or scroll position that was not reached in time; check for flakiness, test data drift, or a real missing row.",
+            evidence,
+        )
+
+    if any(token in lower for token in ("assertion is false", "assertion '", "element selector may be incorrect")):
+        return FailureAnalysis(
+            "Expected UI state missing",
+            "The flow reached an assertion but the expected text or selector was not visible; this is either app regression or test drift, depending on the screenshot state.",
+            evidence,
+        )
+
+    if any(token in lower for token in ("tap on", "failed to tap", "element not found")):
+        return FailureAnalysis(
+            "Interaction target missing",
+            "Maestro could not interact with the requested control; the selector may be stale or the UI may have changed.",
+            evidence,
+        )
+
+    return FailureAnalysis(
+        "Unknown / needs artifact review",
+        f"The {context} exited non-zero, but the log did not match a known failure pattern.",
+        evidence,
+    )
 
 
 def write_report(
@@ -383,35 +603,43 @@ def write_report(
     if failed_setup:
         lines.append("## Setup Failures")
         lines.append("")
-        lines.append("| Platform | Step | Exit | Log |")
-        lines.append("| --- | --- | ---: | --- |")
+        lines.append("| Platform | Step | Exit | Classification | Brief analysis | Evidence | Log |")
+        lines.append("| --- | --- | ---: | --- | --- | --- | --- |")
         for platform, result in failed_setup:
+            analysis = analyze_failure(result.log_path, result.returncode, result.name)
             lines.append(
-                f"| {platform} | {result.name} | {result.returncode} | `{result.log_path}` |"
+                f"| {platform} | {result.name} | {result.returncode} | "
+                f"{markdown_cell(analysis.classification)} | {markdown_cell(analysis.reason)} | "
+                f"{markdown_cell(analysis.evidence)} | `{result.log_path}` |"
             )
         lines.append("")
 
     if failed_flows:
         lines.append("## Failed Flows")
         lines.append("")
-        lines.append("| Platform | Suite | Flow | Exit | Seconds | Log |")
-        lines.append("| --- | --- | --- | ---: | ---: | --- |")
+        lines.append("| Platform | Suite | Flow | Exit | Seconds | Classification | Brief analysis | Evidence | Log |")
+        lines.append("| --- | --- | --- | ---: | ---: | --- | --- | --- | --- |")
         for result in failed_flows:
+            analysis = analyze_failure(result.log_path, result.returncode, str(result.flow_path))
             lines.append(
                 f"| {result.platform} | {result.suite} | `{result.flow_path}` | "
-                f"{result.returncode} | {result.seconds:.1f} | `{result.log_path}` |"
+                f"{result.returncode} | {result.seconds:.1f} | "
+                f"{markdown_cell(analysis.classification)} | {markdown_cell(analysis.reason)} | "
+                f"{markdown_cell(analysis.evidence)} | `{result.log_path}` |"
             )
         lines.append("")
 
     lines.append("## All Flow Results")
     lines.append("")
-    lines.append("| Platform | Suite | Flow | Result | Seconds | Log |")
-    lines.append("| --- | --- | --- | --- | ---: | --- |")
+    lines.append("| Platform | Suite | Flow | Result | Seconds | Analysis | Log |")
+    lines.append("| --- | --- | --- | --- | ---: | --- | --- |")
     for result in flow_results:
         outcome = "PASS" if result.returncode == 0 else "FAIL"
+        analysis = analyze_failure(result.log_path, result.returncode, str(result.flow_path))
+        analysis_text = "-" if result.returncode == 0 else analysis.classification
         lines.append(
             f"| {result.platform} | {result.suite} | `{result.flow_path}` | {outcome} | "
-            f"{result.seconds:.1f} | `{result.log_path}` |"
+            f"{result.seconds:.1f} | {markdown_cell(analysis_text)} | `{result.log_path}` |"
         )
     lines.append("")
 
@@ -533,6 +761,8 @@ def write_html_report(
         ".badge.passed { color: var(--pass); background: var(--pass-bg); }",
         ".badge.failed { color: var(--fail); background: var(--fail-bg); }",
         ".badge.not-run { color: var(--skip); background: var(--skip-bg); }",
+        ".analysis { max-width: 340px; }",
+        ".evidence { color: var(--muted); max-width: 360px; }",
         ".empty { color: var(--muted); background: var(--paper); border: 1px dashed var(--line); border-radius: 8px; padding: 16px; }",
         "details { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; margin: 10px 0; overflow: hidden; }",
         "summary { cursor: pointer; padding: 12px 14px; font-weight: 700; }",
@@ -588,18 +818,28 @@ def write_html_report(
             f'<span class="badge {result_class(0 if platform_status == "passed" else None if platform_status == "not run" else 1)}">'
             f"{html.escape(platform_status.upper())}</span></summary>"
         )
-        lines.append("<table><thead><tr><th>Step</th><th>Exit</th><th>Seconds</th><th>Log</th></tr></thead><tbody>")
+        lines.append(
+            "<table><thead><tr><th>Step</th><th>Exit</th><th>Seconds</th>"
+            "<th>Classification</th><th>Brief analysis</th><th>Evidence</th><th>Log</th></tr></thead><tbody>"
+        )
         for result in setup_results.get(platform, []):
+            analysis = analyze_failure(result.log_path, result.returncode, result.name)
+            classification = "-" if result.returncode == 0 else html.escape(short_text(analysis.classification))
+            reason = "-" if result.returncode == 0 else html.escape(short_text(analysis.reason))
+            evidence = "-" if result.returncode == 0 else html.escape(short_text(analysis.evidence))
             lines.append(
                 "<tr>"
                 f"<td>{html.escape(result.name)}</td>"
                 f'<td><span class="badge {result_class(result.returncode)}">{result.returncode}</span></td>'
                 f"<td>{result.seconds:.1f}</td>"
+                f'<td class="analysis">{classification}</td>'
+                f'<td class="analysis">{reason}</td>'
+                f'<td class="evidence"><code>{evidence}</code></td>'
                 f'<td><a href="{report_link(report_path, result.log_path)}">log</a></td>'
                 "</tr>"
             )
         if not setup_results.get(platform):
-            lines.append('<tr><td colspan="4" class="empty">Setup did not run.</td></tr>')
+            lines.append('<tr><td colspan="7" class="empty">Setup did not run.</td></tr>')
         lines.extend(["</tbody></table>", "</details>"])
     lines.extend(["</div>", "</section>"])
 
@@ -607,9 +847,13 @@ def write_html_report(
     lines.append("<h2>Failed Flows</h2>")
     if failed_flows:
         lines.append("<table>")
-        lines.append("<thead><tr><th>Platform</th><th>Suite</th><th>Flow</th><th>Exit</th><th>Seconds</th><th>Log</th></tr></thead>")
+        lines.append(
+            "<thead><tr><th>Platform</th><th>Suite</th><th>Flow</th><th>Exit</th><th>Seconds</th>"
+            "<th>Classification</th><th>Brief analysis</th><th>Evidence</th><th>Log</th></tr></thead>"
+        )
         lines.append("<tbody>")
         for result in failed_flows:
+            analysis = analyze_failure(result.log_path, result.returncode, str(result.flow_path))
             lines.append(
                 "<tr>"
                 f"<td>{html.escape(result.platform)}</td>"
@@ -617,6 +861,9 @@ def write_html_report(
                 f"<td><code>{html.escape(str(result.flow_path))}</code></td>"
                 f'<td><span class="badge failed">{result.returncode}</span></td>'
                 f"<td>{result.seconds:.1f}</td>"
+                f'<td class="analysis">{html.escape(short_text(analysis.classification))}</td>'
+                f'<td class="analysis">{html.escape(short_text(analysis.reason))}</td>'
+                f'<td class="evidence"><code>{html.escape(short_text(analysis.evidence))}</code></td>'
                 f'<td><a href="{report_link(report_path, result.log_path)}">log</a></td>'
                 "</tr>"
             )
@@ -635,7 +882,7 @@ def write_html_report(
                 f"({len(planned_flows)} tests)</summary>"
             )
             lines.append("<table>")
-            lines.append("<thead><tr><th>Result</th><th>Flow</th><th>Seconds</th><th>Log</th></tr></thead>")
+            lines.append("<thead><tr><th>Result</th><th>Flow</th><th>Seconds</th><th>Analysis</th><th>Log</th></tr></thead>")
             lines.append("<tbody>")
             for flow_path in planned_flows:
                 relative_flow = flow_path.relative_to(repo_root)
@@ -643,6 +890,17 @@ def write_html_report(
                 status_class = result_class(result.returncode if result else None)
                 label = result_label(result.returncode if result else None)
                 seconds = f"{result.seconds:.1f}" if result else "-"
+                analysis_cell = "-"
+                if result and result.returncode != 0:
+                    analysis_cell = html.escape(
+                        short_text(
+                            analyze_failure(
+                                result.log_path,
+                                result.returncode,
+                                str(result.flow_path),
+                            ).classification
+                        )
+                    )
                 log_cell = (
                     f'<a href="{report_link(report_path, result.log_path)}">log</a>'
                     if result
@@ -653,6 +911,7 @@ def write_html_report(
                     f'<td><span class="badge {status_class}">{label}</span></td>'
                     f"<td><code>{html.escape(str(relative_flow))}</code></td>"
                     f"<td>{seconds}</td>"
+                    f'<td class="analysis">{analysis_cell}</td>'
                     f"<td>{log_cell}</td>"
                     "</tr>"
                 )
@@ -674,8 +933,8 @@ def main() -> int:
     suites = selected_suites(args.suite)
     env = os.environ.copy()
 
-    print(f"Repo root: {repo_root}")
-    print(f"Report directory: {output_dir}")
+    print_line(f"Repo root: {repo_root}")
+    print_line(f"Report directory: {output_dir}")
 
     missing_tools = [tool for tool in ("maestro",) if not command_exists(tool)]
     if "android" in platforms and not command_exists("android") and not command_exists("adb"):
@@ -691,31 +950,31 @@ def main() -> int:
     setup_results: dict[str, list[CommandResult]] = {}
     flow_results: list[FlowResult] = []
 
+    if len(platforms) > 1:
+        print_line("Running platform suites in parallel.")
+        with ThreadPoolExecutor(max_workers=len(platforms)) as executor:
+            futures = {
+                platform: executor.submit(
+                    run_platform_tests,
+                    repo_root,
+                    output_dir,
+                    platform,
+                    suites,
+                    env,
+                )
+                for platform in platforms
+            }
+            platform_results = {platform: futures[platform].result() for platform in platforms}
+    else:
+        platform_results = {
+            platform: run_platform_tests(repo_root, output_dir, platform, suites, env)
+            for platform in platforms
+        }
+
     for platform in platforms:
-        if platform == "android":
-            setup_results[platform] = setup_android(repo_root, output_dir)
-        else:
-            setup_results[platform] = setup_ios(repo_root, output_dir, env)
-            if setup_results[platform]:
-                lookup_logs = [
-                    result.log_path
-                    for result in setup_results[platform]
-                    if result.name == "ios simulator lookup"
-                ]
-                if lookup_logs and "SIMULATOR_UDID" not in env:
-                    text = lookup_logs[-1].read_text(encoding="utf-8", errors="replace")
-                    for line in text.splitlines():
-                        if IOS_SIMULATOR_NAME in line:
-                            match = re.search(r"\(([A-Fa-f0-9-]{36})\)", line)
-                            if match:
-                                env["SIMULATOR_UDID"] = match.group(1)
-                                break
-
-        if setup_failed(setup_results[platform]):
-            print(f"Skipping {platform} flows because setup failed.")
-            continue
-
-        flow_results.extend(run_flows(repo_root, output_dir, platform, suites, env))
+        result = platform_results[platform]
+        setup_results[platform] = result.setup_results
+        flow_results.extend(result.flow_results)
 
     markdown_report_path = output_dir / "report.md"
     html_report_path = output_dir / "report.html"
@@ -733,9 +992,9 @@ def main() -> int:
     )
     failed_flow_count = sum(1 for result in flow_results if result.returncode != 0)
 
-    print(f"\nHTML report written: {html_report_path}")
-    print(f"Markdown report written: {markdown_report_path}")
-    print(f"Failures: {failed_setup_count} setup, {failed_flow_count} flows")
+    print_line(f"\nHTML report written: {html_report_path}")
+    print_line(f"Markdown report written: {markdown_report_path}")
+    print_line(f"Failures: {failed_setup_count} setup, {failed_flow_count} flows")
     return 1 if failed_setup_count or failed_flow_count else 0
 
 

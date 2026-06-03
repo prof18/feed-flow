@@ -18,11 +18,28 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: import_export_import_feeds
 - tapOn:
-    text: "feedflow-e2e"
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- tapOn:
+    id: com.google.android.documentsui:id/item_root
+    containsDescendants:
+      - text: "feedflow-e2e"
+    optional: true
+- extendedWaitUntil:
+    visible: "No items"
+    timeout: 5000
     optional: true
 - tapOn:
     text: "Documents"
     optional: true
+- tapOn:
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- scrollUntilVisible:
+    element:
+      text: "zz-feedflow-invalid-opml\\.xml"
+    direction: DOWN
+    timeout: 10000
 - tapOn:
     text: "zz-feedflow-invalid-opml\\.xml"
 - extendedWaitUntil:
@@ -32,11 +49,28 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: import_export_choose_another_file
 - tapOn:
-    text: "feedflow-e2e"
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- tapOn:
+    id: com.google.android.documentsui:id/item_root
+    containsDescendants:
+      - text: "feedflow-e2e"
+    optional: true
+- extendedWaitUntil:
+    visible: "No items"
+    timeout: 5000
     optional: true
 - tapOn:
     text: "Documents"
     optional: true
+- tapOn:
+    id: com.google.android.documentsui:id/sub_menu_list
+    optional: true
+- scrollUntilVisible:
+    element:
+      text: "feedflow-valid-opml-smoke\\.xml"
+    direction: DOWN
+    timeout: 10000
 - tapOn:
     text: "feedflow-valid-opml-smoke\\.xml"
 - extendedWaitUntil:

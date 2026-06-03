@@ -94,7 +94,6 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-141 | `141-article-export-filter-matrix.yaml` | `content-rich` | Android, iOS | All / Read / Unread article export filters reach export-success state. |
 | REG-142 | `142-icloud-provider-backup.yaml` | `sync-linked-mock` | iOS | Seeded iCloud account Backup action returns to linked sync state. |
 | REG-143 | `143-article-context-menu-action-set.yaml` | `content-rich` | Android, iOS | App-owned context-menu action set for an article with comments + feed website metadata. |
-| REG-144 | `144-notification-permission-denied.yaml` | `notifications` | iOS | Permission-blocked notification settings UI, notification toggles stay hidden. |
 | REG-145 | `145-network-provider-linked-states.yaml` | `sync-linked-mock` | Android, iOS | Seeded Miniflux / BazQux / Feedbin linked screens, disabled state of unlinked providers, connected/last-sync/disconnect UI. |
 | REG-146 | `146-drawer-feed-source-context-menu.yaml` | `content-rich` | Android, iOS | Drawer long-press: Mark all as read, Open website visibility, Edit feed, Change category sheet, Pin/Unpin toggle, Delete confirmation. |
 | REG-147 | `147-no-feeds-empty-state-cta.yaml` | `empty` | Android, iOS | NoFeedsBottomSheet fan-out: Add feed, Import and export, Feed Suggestions, Accounts destinations. |
@@ -119,7 +118,7 @@ These are features intentionally not covered, with the reason recorded so they a
 - **iOS swipe actions for disabled and open-in-browser (REG-107)** — full-width gestures open the row or escape to OS/browser surfaces.
 - **OPML partial-failure reporting (REG-119)** — local OPML imports don't produce `feedSourceWithError` / `notValidFeedSources` entries; only invalid-OPML rejection is exercised.
 - **Real Cloud provider auth and most cloud mutations** — Mocked success/error auth, Google Drive mock state, Android/Dropbox unlink, Dropbox/Google Drive backup, and real provider sync need live credentials or provider-side mock support. Seeded linked screens, iOS iCloud unlink (REG-138), iOS iCloud backup (REG-142), and the pending-upload action (REG-133) are covered.
-- **Android non-FreshRSS denied-notification path** — Revoking permission before the seeded flow didn't produce a stable local runner state. iOS denied-permission UI is covered by REG-144.
+- **Denied-notification permission UI** — Revoking notification permission before seeded flows doesn't produce a stable local runner state across Android/iOS, so permission-denied notification UI remains manual coverage.
 - **Android widget launcher smoke and real iOS SpringBoard widget tap** — Need stable widget-host / SpringBoard automation. The app-owned widget feed-link route is covered by REG-126.
 - **Real OS notification taps and feed-source/category notification delegate routes** — Need OS notification automation. The app-owned deep-link routing is covered by REG-126.
 - **In-app review prompt** — `ReviewViewModel` request flow is OS/timing-driven; not exercised.

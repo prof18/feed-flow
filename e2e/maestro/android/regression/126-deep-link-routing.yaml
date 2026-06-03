@@ -5,12 +5,12 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "E2E seed complete"
 - tapOn:
     id: e2e_open_app
-- openLink: feedflow://feed/e2e-article-reader-success
+- openLink: feedflow://e2e/open-deep-link?url=feedflow%3A%2F%2Ffeed%2Fe2e-article-reader-success
 - extendedWaitUntil:
     visible: "E2E Reader Mode Success Article.*"
     timeout: 10000
 - assertVisible: "E2E cached reader content loaded from the seed fixture."
-- openLink: feedflow://feedsourcefilter/e2e-feed-android-weekly
+- openLink: feedflow://e2e/open-deep-link?url=feedflow%3A%2F%2Ffeedsourcefilter%2Fe2e-feed-android-weekly
 - extendedWaitUntil:
     visible: "Android Central RSS Feed"
     timeout: 10000
@@ -18,7 +18,7 @@ appId: com.prof18.feedflow.debug
     text: "E2E Newest Unread Article.*"
 - assertNotVisible:
     text: "E2E Article With Image.*"
-- openLink: feedflow://category/e2e-category-news
+- openLink: feedflow://e2e/open-deep-link?url=feedflow%3A%2F%2Fcategory%2Fe2e-category-news
 - extendedWaitUntil:
     visible: "E2E Article With Image.*"
     timeout: 10000

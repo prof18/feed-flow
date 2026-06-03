@@ -87,19 +87,19 @@ This requires XcodeGen installed (`brew install xcodegen`, or `mint bootstrap` u
 
 - If using XcodeBuildMCP, use the installed XcodeBuildMCP skill before calling XcodeBuildMCP tools.
 - The xcodeproj must exist locally. Run `cd iosApp && ./.scripts/generate-project.sh` first if it's missing.
-
-To build FeedFlow for iPhone 17 Pro simulator:
-```bash
-mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/mg/Workspace/feedflow/feed-flow/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"
-```
-There could be different project path son your machine. Always use the first one. The alternative paths will be:
-```bash
-mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/mg/Workspace/feedflow/feed-flow-2/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"
-```
+- XcodeBuildMCP has repo-local defaults in `.xcodebuildmcp/config.yaml`; prefer the current CLI shape:
 
 ```bash
-mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/marco.gomiero/Workspace/tmp/feed-flow/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"
+xcodebuildmcp simulator build
 ```
+
+To build and launch in one step:
+```bash
+xcodebuildmcp simulator build-and-run
+```
+
+If the MCP server is registered in the current agent session, use the equivalent `simulator/build` or `simulator/build-and-run` tool; do not use the old `build_sim_name_proj` tool name.
+Do not set `derivedDataPath` in `.xcodebuildmcp/config.yaml` by default. Leaving it unset lets XcodeBuildMCP use its external per-workspace DerivedData path, which avoids branch-local artifacts and avoids sharing mutable Xcode build products across concurrent worktrees. Set it only for a temporary cache investigation or an explicit reproducibility test.
 
 
 ### Running Specific Tests

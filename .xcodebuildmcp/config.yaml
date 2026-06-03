@@ -1,0 +1,14 @@
+schemaVersion: 1
+enabledWorkflows:
+  - simulator
+  - ui-automation
+  - debugging
+  - xcode-ide
+sentryDisabled: true
+sessionDefaults:
+  projectPath: iosApp/FeedFlow.xcodeproj
+  scheme: FeedFlow
+  configuration: Debug
+  simulatorName: iPhone 17 Pro
+  useLatestOS: true
+  platform: iOS

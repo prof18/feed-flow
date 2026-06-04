@@ -33,6 +33,10 @@ gradlePlugin {
             id = "com.feedflow.detekt"
             implementationClass = "DetektConventionPlugin"
         }
+        register("versioning") {
+            id = "com.feedflow.versioning"
+            implementationClass = "VersioningConventionPlugin"
+        }
     }
 }
 

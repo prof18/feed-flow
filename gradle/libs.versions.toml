@@ -2,7 +2,7 @@
 about-libraries = "14.2.0"
 activity-compose = "1.13.0"
 android-compile-sdk = "36"
-android-gradle-plugin = "8.13.2"
+android-gradle-plugin = "9.2.1"
 android-min-sdk = "26"
 android-target-sdk = "36"
 androidx-browser = "1.10.0"
@@ -74,7 +74,7 @@ slf4jNop = "2.0.18"
 # https://github.com/xerial/sqlite-jdbc/tree/master/src/main/resources/org/sqlite/native/Mac/aarch64
 sql-delight = "2.3.2"
 stately-concurrency = "2.1.0"
-triplet-play = "3.13.0"
+triplet-play = "4.0.0"
 turbine = "1.2.1"
 workmanager = "2.11.2"
 flatpack-gradle-generator = "1.8.0"
@@ -211,8 +211,8 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 feedflow-detekt = { id = "com.feedflow.detekt", version = "unspecified" }
 feedflow-library = { id = "com.feedflow.library", version = "unspecified" }
+feedflow-versioning = { id = "com.feedflow.versioning", version = "unspecified" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

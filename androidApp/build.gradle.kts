@@ -3,7 +3,6 @@ import java.util.*
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.triplet.play)
@@ -11,10 +10,9 @@ plugins {
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.google.services)
     alias(libs.plugins.feedflow.detekt)
+    alias(libs.plugins.feedflow.versioning)
     alias(libs.plugins.kotlin.serialization)
 }
-
-apply(from = "../versioning.gradle.kts")
 
 val appVersionCode: () -> Int by extra
 val appVersionName: () -> String by extra
@@ -201,10 +199,14 @@ play {
     track.set("internal")
 }
 
-android.applicationVariants.configureEach {
-    val name = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-    val googleTask = tasks.findByName("process${name}GoogleServices")
-    val uploadTask = tasks.findByName("uploadCrashlyticsMappingFile$name")
-    googleTask?.enabled = !name.contains("Fdroid")
-    uploadTask?.enabled = !name.contains("Fdroid")
+androidComponents {
+    onVariants { variant ->
+        val name = variant.name.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+        }
+        val googleTask = tasks.findByName("process${name}GoogleServices")
+        val uploadTask = tasks.findByName("uploadCrashlyticsMappingFile$name")
+        googleTask?.enabled = !name.contains("Fdroid")
+        uploadTask?.enabled = !name.contains("Fdroid")
+    }
 }

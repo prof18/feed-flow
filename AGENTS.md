@@ -27,6 +27,7 @@ All the business logic is shared via Kotlin Multiplatform.
 All Gradle commands in this section should be run with `--quiet --console=plain`.
 
 - `./gradlew --quiet --console=plain detekt allTests` -> Run all checks including tests and linting for Shared code, Android and Desktop
+- `.scripts/ci.sh` -> Run the local equivalent of `.github/workflows/code-checks.yaml` (translation refresh, SwiftLint, Gradle checks, Android/Desktop/iOS builds)
 - `./gradlew --quiet --console=plain detekt` -> Run static analysis with Detekt for Shared code, Android and Desktop
 - `.scripts/ios-format.sh` -> Format iOS code through swiftformat and swiftlint
 - `./gradlew --quiet --console=plain test` -> Run all tests for Shared code, Android and Desktop
@@ -70,6 +71,8 @@ Quick local smoke checks:
 Full automated E2E checks before release:
 - `e2e/scripts/run-android.sh`
 - `e2e/scripts/run-ios.sh`
+
+When the user asks for the full Maestro release gate or a failure summary, use the repo-local `run-maestro-release-tests` skill. Its runner builds/installs both platforms, runs smoke + regression flows, continues after failures, and writes `report.html`, `report.md`, and logs under `.tmp/maestro-release-tests/<timestamp>/`.
 
 Use the debug seeding deep links documented in that guide. Do not depend on live feeds, OAuth, or previous app state in smoke or regression flows.
 
@@ -139,6 +142,8 @@ cp iosApp/Assets/Config.xcconfig.template iosApp/Assets/Config.xcconfig
 
 For compile-only local/CI iOS builds without real sync credentials, you can use `cp config/dummy-config.xcconfig iosApp/Assets/Config.xcconfig` instead.
 
+For Google Play listing/bootstrap checks, prefer `FEEDFLOW_PLAY_CONFIG_JSON=/path/to/play_config.json ./gradlew --quiet --console=plain :androidApp:bootstrapGooglePlayReleaseListing`. Do not assume an uncommitted repo-root `play_config.json` exists in automation worktrees.
+
 ## Testing
 
 When writing tests, follow the comprehensive testing guide at **`.ai/TESTING.md`**.
@@ -157,6 +162,7 @@ Key points:
 - If you touch or create any business logic, ensure it's thoroughly tested with unit tests.
 - DO NOT excessively use try/catch blocks for every function. Use them only for the top caller or the bottom callers, depending on the cases.
 - ALWAYS run gradle tasks with the following flag: `--quiet --console=plain`
+- Android app modules use AGP 9's built-in Kotlin support; do not re-add `org.jetbrains.kotlin.android`. Android and Desktop app version values come from the `com.feedflow.versioning` convention plugin, not `versioning.gradle.kts`.
 - Detekt's `MagicNumber` rule has `ignoreNamedArgument: true`. Do NOT extract a literal into a private constant when it is passed as a named argument (e.g. `Modifier.widthIn(max = 180.dp)`, `shadowElevation = 3.dp`, `.copy(alpha = 0.8f)`) — inline it. Only extract a named constant when the literal is a positional argument that Detekt would flag (e.g. `.zIndex(0.5f)`, `.height(28.dp)`); values in `ignoreNumbers` (`-1, 0, 1, 2`) never need one.
 - Every `DropdownMenu` (Android, shared, and Desktop) must pass `shape = MaterialTheme.shapes.large` so menus stay coherent with the rounded toolbars. There is no shared wrapper — set it explicitly on each new `DropdownMenu`.
 
@@ -194,6 +200,7 @@ When creating commits:
 ### Internationalization
 - String resources are located in `i18n/src/commonMain/resources/locale/values-[language]/`
 - Run .scripts/refresh-translations.sh after adding a new translation, to re-generate the kotlin code
+- Use the repo-local `translation-release-audit` skill for weekly or release checks of app translations, store copy, generated Play listing files, live store metadata, and screenshot copy/assets. Do not upload store metadata/screenshots unless the user explicitly asks.
 - NEVER add hardcoded strings in the code. Always use the i18n resources.
 - NEVER try to translate other languages by yourself. Add only the English strings. The translations will be handled by professionals later.
 

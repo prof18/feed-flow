@@ -1,3 +1,5 @@
-• Option to disable two-pane mode on Android tablets - now two-pane mode is disabled by default
-• Fixed a crash in the adaptive layout
-• Search now resets correctly when you exit it
+• Redesigned home toolbar and refreshed drawer menus
+• Sort your articles and optionally hide unread counts directly from the timeline
+• Improved mark-as-read while scrolling
+• Reader Mode now shows a leading image when an article doesn't include one.
+• Your feed customization and opening preferences now apply to search results too.

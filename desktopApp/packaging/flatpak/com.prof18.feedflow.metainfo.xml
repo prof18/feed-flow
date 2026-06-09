@@ -87,6 +87,16 @@
   </content_rating>
 
   <releases>
+      <release version="1.14.0" date="2026-06-09">
+          <description>
+              <p>Added a confirmation step before deleting a feed.</p>
+              <p>Polished toolbar, menus, and drawer for a cleaner desktop interface.</p>
+              <p>Refined window and dialog handling across the app.</p>
+              <p>Feed customization and opening preferences now apply to search results too.</p>
+              <p>Bug fixing and improvements</p>
+          </description>
+      </release>
+
       <release version="1.13.1" date="2026-04-27">
           <description>
               <p>Fixed a crash in the adaptive layout toolbar</p>

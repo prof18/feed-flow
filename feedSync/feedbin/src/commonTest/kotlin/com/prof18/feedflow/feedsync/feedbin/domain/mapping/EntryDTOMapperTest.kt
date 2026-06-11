@@ -141,6 +141,7 @@ class EntryDTOMapperTest {
         override fun getTextFromHTML(html: String): String? = "Parsed Summary"
         override fun getFaviconUrl(html: String): String? = null
         override fun getRssUrl(html: String): String? = null
+        override fun extractCommentsUrl(html: String): String? = null
     }
 
     private class FakeDateFormatter : DateFormatter {

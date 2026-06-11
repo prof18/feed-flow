@@ -192,6 +192,43 @@ class ItemContentDTOMapperTest {
         assertEquals("0000000deadbeef", result?.id)
     }
 
+    @Test
+    fun `mapToFeedItem extracts commentsUrl from content HTML`() {
+        val itemContentDTO = createItemContentDTO(
+            canonicalHref = "https://example.com/article",
+            contentText = """<p>Article body</p><a href="https://example.com/article#comments">Comments</a>""",
+        )
+
+        val result = mapper.mapToFeedItem(itemContentDTO, testFeedSource)
+
+        assertEquals("https://example.com/article#comments", result?.commentsUrl)
+    }
+
+    @Test
+    fun `mapToFeedItem sets commentsUrl to null when content has no comments anchor`() {
+        val itemContentDTO = createItemContentDTO(
+            canonicalHref = "https://example.com/article",
+            contentText = "<p>Article body with no comments link</p>",
+        )
+
+        val result = mapper.mapToFeedItem(itemContentDTO, testFeedSource)
+
+        assertNull(result?.commentsUrl)
+    }
+
+    @Test
+    fun `mapToFeedItem sets commentsUrl to null when content is null`() {
+        val itemContentDTO = createItemContentDTO(
+            canonicalHref = "https://example.com/article",
+            contentText = null,
+            summaryText = null,
+        )
+
+        val result = mapper.mapToFeedItem(itemContentDTO, testFeedSource)
+
+        assertNull(result?.commentsUrl)
+    }
+
     private fun createItemContentDTO(
         id: String = "tag:google.com,2005:reader/item/default123",
         published: Long = 1700000000L,
@@ -225,6 +262,10 @@ class ItemContentDTOMapperTest {
         override fun getTextFromHTML(html: String): String? = html
         override fun getFaviconUrl(html: String): String? = null
         override fun getRssUrl(html: String): String? = null
+        override fun extractCommentsUrl(html: String): String? {
+            val regex = Regex("""<a\s[^>]*href="([^"]*)"[^>]*>\s*[Cc]omments\s*</a>""")
+            return regex.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
+        }
     }
 
     private class FakeDateFormatter : DateFormatter {

@@ -35,7 +35,7 @@ internal class ItemContentDTOMapper(
                 dateFormat = DateFormat.NORMAL,
                 timeFormat = TimeFormat.HOURS_24,
             ),
-            commentsUrl = null,
+            commentsUrl = content?.let { htmlParser.extractCommentsUrl(it) },
             isBookmarked = itemContentDTO.starred,
         )
     }

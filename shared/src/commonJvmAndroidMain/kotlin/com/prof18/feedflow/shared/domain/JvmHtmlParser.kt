@@ -42,4 +42,17 @@ internal class JvmHtmlParser(
         }
         return null
     }
+
+    override fun extractCommentsUrl(html: String): String? {
+        return try {
+            val doc = Jsoup.parse(html)
+            doc.select("a")
+                .firstOrNull { it.text().trim().equals("comments", ignoreCase = true) }
+                ?.attr("href")
+                ?.takeIf { it.isNotBlank() }
+        } catch (e: Throwable) {
+            logger.d(e) { "Unable to extract comments URL from HTML, skipping" }
+            null
+        }
+    }
 }

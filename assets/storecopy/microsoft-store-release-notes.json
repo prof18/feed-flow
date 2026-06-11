@@ -1,0 +1,179 @@
+{
+  "notes": {
+    "bg": [
+      "• Добавена е стъпка за потвърждение преди изтриване на емисия.",
+      "• Полирани са лентата с инструменти, менютата и чекмеджето за по-изчистен десктоп интерфейс.",
+      "• Подобрена е обработката на прозорци и диалогови прозорци в цялото приложение.",
+      "• Персонализирането на емисиите и предпочитанията за отваряне вече се прилагат и към резултатите от търсенето.",
+      "• Поправки на грешки и подобрения."
+    ],
+    "cs": [
+      "• Přidán potvrzovací krok před odstraněním kanálu.",
+      "• Vyladěna lišta nástrojů, nabídky a boční panel pro čistší desktopové rozhraní.",
+      "• Vylepšeno chování oken a dialogů napříč aplikací.",
+      "• Přizpůsobení kanálů a předvolby otevírání se nyní vztahují také na výsledky vyhledávání.",
+      "• Opravy chyb a vylepšení."
+    ],
+    "de": [
+      "• Vor dem Löschen eines Feeds wurde ein Bestätigungsschritt hinzugefügt.",
+      "• Symbolleiste, Menüs und Seitenleiste wurden für eine übersichtlichere Desktop-Oberfläche überarbeitet.",
+      "• Fenster- und Dialogverhalten wurden in der gesamten App verfeinert.",
+      "• Feed-Anpassungen und Öffnungseinstellungen gelten jetzt auch für Suchergebnisse.",
+      "• Fehlerbehebungen und Verbesserungen."
+    ],
+    "de-de": [
+      "• Vor dem Löschen eines Feeds wurde ein Bestätigungsschritt hinzugefügt.",
+      "• Symbolleiste, Menüs und Seitenleiste wurden für eine übersichtlichere Desktop-Oberfläche überarbeitet.",
+      "• Fenster- und Dialogverhalten wurden in der gesamten App verfeinert.",
+      "• Feed-Anpassungen und Öffnungseinstellungen gelten jetzt auch für Suchergebnisse.",
+      "• Fehlerbehebungen und Verbesserungen."
+    ],
+    "en-us": [
+      "• Added a confirmation step before deleting a feed.",
+      "• Polished toolbar, menus, and drawer for a cleaner desktop interface.",
+      "• Refined window and dialog handling across the app.",
+      "• Feed customization and opening preferences now apply to search results too.",
+      "• Bug fixes and improvements."
+    ],
+    "es": [
+      "• Se añadió un paso de confirmación antes de eliminar un feed.",
+      "• Se pulieron la barra de herramientas, los menús y el panel lateral para una interfaz de escritorio más limpia.",
+      "• Se refinó la gestión de ventanas y diálogos en toda la aplicación.",
+      "• La personalización de feeds y las preferencias de apertura ahora también se aplican a los resultados de búsqueda.",
+      "• Correcciones de errores y mejoras."
+    ],
+    "es-es": [
+      "• Se añadió un paso de confirmación antes de eliminar un feed.",
+      "• Se pulieron la barra de herramientas, los menús y el panel lateral para una interfaz de escritorio más limpia.",
+      "• Se refinó la gestión de ventanas y diálogos en toda la aplicación.",
+      "• La personalización de feeds y las preferencias de apertura ahora también se aplican a los resultados de búsqueda.",
+      "• Correcciones de errores y mejoras."
+    ],
+    "et": [
+      "• Enne voo kustutamist lisati kinnitusetapp.",
+      "• Tööriistariba, menüüd ja sahtel on viimistletud puhtama töölaualiidese jaoks.",
+      "• Akende ja dialoogide käsitlust on kogu rakenduses täiustatud.",
+      "• Voo kohandamine ja avamise eelistused rakenduvad nüüd ka otsingutulemustele.",
+      "• Veaparandused ja täiustused."
+    ],
+    "fr": [
+      "• Ajout d’une étape de confirmation avant la suppression d’un flux.",
+      "• Barre d’outils, menus et volet latéral peaufinés pour une interface de bureau plus claire.",
+      "• Gestion des fenêtres et des boîtes de dialogue affinée dans toute l’application.",
+      "• La personnalisation des flux et les préférences d’ouverture s’appliquent désormais aussi aux résultats de recherche.",
+      "• Corrections de bugs et améliorations."
+    ],
+    "gl": [
+      "• Engadiuse un paso de confirmación antes de eliminar unha fonte.",
+      "• Pulíronse a barra de ferramentas, os menús e o panel lateral para unha interface de escritorio máis limpa.",
+      "• Mellorouse a xestión de xanelas e diálogos en toda a aplicación.",
+      "• A personalización das fontes e as preferencias de apertura agora tamén se aplican aos resultados da busca.",
+      "• Correccións de erros e melloras."
+    ],
+    "gl-es": [
+      "• Engadiuse un paso de confirmación antes de eliminar unha fonte.",
+      "• Pulíronse a barra de ferramentas, os menús e o panel lateral para unha interface de escritorio máis limpa.",
+      "• Mellorouse a xestión de xanelas e diálogos en toda a aplicación.",
+      "• A personalización das fontes e as preferencias de apertura agora tamén se aplican aos resultados da busca.",
+      "• Correccións de erros e melloras."
+    ],
+    "he": [
+      "• נוסף שלב אישור לפני מחיקת פיד.",
+      "• סרגל הכלים, התפריטים והמגירה לוטשו לממשק שולחני נקי יותר.",
+      "• שופר הטיפול בחלונות ובתיבות דו-שיח ברחבי האפליקציה.",
+      "• התאמות אישיות של פידים והעדפות פתיחה חלות כעת גם על תוצאות חיפוש.",
+      "• תיקוני באגים ושיפורים."
+    ],
+    "hu": [
+      "• Megerősítési lépés került hozzáadásra hírforrás törlése előtt.",
+      "• Letisztultabb asztali felületet kapott az eszköztár, a menük és az oldalsó fiók.",
+      "• Finomhangoltuk az ablakok és párbeszédpanelek kezelését az alkalmazásban.",
+      "• A hírforrások testreszabása és a megnyitási beállítások mostantól a keresési találatokra is érvényesek.",
+      "• Hibajavítások és fejlesztések."
+    ],
+    "it": [
+      "• Aggiunto un passaggio di conferma prima di eliminare un feed.",
+      "• Rifiniti barra degli strumenti, menu e pannello laterale per un'interfaccia desktop più pulita.",
+      "• Migliorata la gestione di finestre e finestre di dialogo in tutta l'app.",
+      "• Le personalizzazioni dei feed e le preferenze di apertura ora si applicano anche ai risultati di ricerca.",
+      "• Correzioni di bug e miglioramenti."
+    ],
+    "ja": [
+      "• フィードを削除する前に確認ステップを追加しました。",
+      "• よりすっきりしたデスクトップインターフェイスにするため、ツールバー、メニュー、ドロワーを調整しました。",
+      "• アプリ全体でウィンドウとダイアログの処理を改善しました。",
+      "• フィードのカスタマイズと開き方の設定が検索結果にも適用されるようになりました。",
+      "• バグ修正と改善。"
+    ],
+    "pl": [
+      "• Dodano krok potwierdzenia przed usunięciem kanału.",
+      "• Dopracowano pasek narzędzi, menu i panel boczny, aby interfejs desktopowy był bardziej przejrzysty.",
+      "• Usprawniono obsługę okien i okien dialogowych w całej aplikacji.",
+      "• Dostosowanie kanałów i preferencje otwierania są teraz stosowane także do wyników wyszukiwania.",
+      "• Poprawki błędów i ulepszenia."
+    ],
+    "pt-br": [
+      "• Adicionada uma etapa de confirmação antes de excluir um feed.",
+      "• Barra de ferramentas, menus e gaveta foram refinados para uma interface de desktop mais limpa.",
+      "• Melhorado o comportamento de janelas e caixas de diálogo em todo o app.",
+      "• A personalização de feeds e as preferências de abertura agora também se aplicam aos resultados de pesquisa.",
+      "• Correções de bugs e melhorias."
+    ],
+    "ru": [
+      "• Добавлен шаг подтверждения перед удалением ленты.",
+      "• Панель инструментов, меню и боковая панель доработаны для более чистого интерфейса на рабочем столе.",
+      "• Улучшена работа с окнами и диалогами во всем приложении.",
+      "• Настройки лент и предпочтения открытия теперь применяются и к результатам поиска.",
+      "• Исправления ошибок и улучшения."
+    ],
+    "sk": [
+      "• Pred odstránením kanála bol pridaný krok potvrdenia.",
+      "• Panel nástrojov, ponuky a bočný panel boli vyladené pre čistejšie desktopové rozhranie.",
+      "• Vylepšené spracovanie okien a dialógov v celej aplikácii.",
+      "• Prispôsobenie kanálov a predvoľby otvárania sa teraz vzťahujú aj na výsledky vyhľadávania.",
+      "• Opravy chýb a vylepšenia."
+    ],
+    "ta": [
+      "• ஒரு ஊட்டத்தை நீக்கும் முன் உறுதிப்படுத்தும் படி சேர்க்கப்பட்டது.",
+      "• மேலும் சுத்தமான டெஸ்க்டாப் இடைமுகத்திற்காக கருவிப்பட்டி, மெனுக்கள் மற்றும் டிராயர் மேம்படுத்தப்பட்டன.",
+      "• பயன்பாடு முழுவதும் சாளரங்கள் மற்றும் உரையாடல்களின் கையாளுதல் மேம்படுத்தப்பட்டது.",
+      "• ஊட்ட தனிப்பயனாக்கமும் திறக்கும் விருப்பங்களும் இப்போது தேடல் முடிவுகளுக்கும் பொருந்தும்.",
+      "• பிழை திருத்தங்கள் மற்றும் மேம்பாடுகள்."
+    ],
+    "tr": [
+      "• Bir akışı silmeden önce onay adımı eklendi.",
+      "• Daha temiz bir masaüstü arayüzü için araç çubuğu, menüler ve çekmece elden geçirildi.",
+      "• Uygulama genelinde pencere ve iletişim kutusu davranışları iyileştirildi.",
+      "• Akış özelleştirme ve açma tercihleri artık arama sonuçlarına da uygulanıyor.",
+      "• Hata düzeltmeleri ve iyileştirmeler."
+    ],
+    "uk": [
+      "• Додано крок підтвердження перед видаленням стрічки.",
+      "• Панель інструментів, меню та бічну панель відшліфовано для чистішого інтерфейсу на робочому столі.",
+      "• Покращено обробку вікон і діалогів у всьому застосунку.",
+      "• Налаштування стрічок і параметри відкриття тепер застосовуються також до результатів пошуку.",
+      "• Виправлення помилок і покращення."
+    ],
+    "vi": [
+      "• Đã thêm bước xác nhận trước khi xóa một nguồn cấp.",
+      "• Thanh công cụ, menu và ngăn kéo được trau chuốt để giao diện desktop gọn gàng hơn.",
+      "• Cải thiện cách xử lý cửa sổ và hộp thoại trong toàn bộ ứng dụng.",
+      "• Tùy chỉnh nguồn cấp và tùy chọn mở giờ cũng áp dụng cho kết quả tìm kiếm.",
+      "• Sửa lỗi và cải tiến."
+    ],
+    "zh-cn": [
+      "• 删除订阅源前新增确认步骤。",
+      "• 优化了工具栏、菜单和抽屉，让桌面界面更清爽。",
+      "• 改进了整个应用中的窗口和对话框处理。",
+      "• 订阅源自定义和打开偏好现在也会应用到搜索结果。",
+      "• 错误修复和改进。"
+    ],
+    "zh-hans": [
+      "• 删除订阅源前新增确认步骤。",
+      "• 优化了工具栏、菜单和抽屉，让桌面界面更清爽。",
+      "• 改进了整个应用中的窗口和对话框处理。",
+      "• 订阅源自定义和打开偏好现在也会应用到搜索结果。",
+      "• 错误修复和改进。"
+    ]
+  }
+}

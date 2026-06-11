@@ -17,6 +17,14 @@ on:
         required: true
       GOOGLE_CREDENTIALS_JSON:
         required: true
+      MS_STORE_TENANT_ID:
+        required: true
+      MS_STORE_CLIENT_ID:
+        required: true
+      MS_STORE_CLIENT_SECRET:
+        required: true
+      MS_STORE_APP_ID:
+        required: true
 
 jobs:
   deploy:
@@ -428,3 +436,21 @@ jobs:
           path: ${{ env.RELEASE_PATH_MSIX }}
           name: ${{ env.NAME_MSIX }}
           retention-days: 7 
+
+      - name: Publish MSIX to Microsoft Store
+        shell: pwsh
+        env:
+          MS_STORE_TENANT_ID: ${{ secrets.MS_STORE_TENANT_ID }}
+          MS_STORE_CLIENT_ID: ${{ secrets.MS_STORE_CLIENT_ID }}
+          MS_STORE_CLIENT_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
+          MS_STORE_APP_ID: ${{ secrets.MS_STORE_APP_ID }}
+        run: |
+          .github/scripts/publish-msix-to-store.ps1 `
+            -TenantId $env:MS_STORE_TENANT_ID `
+            -ClientId $env:MS_STORE_CLIENT_ID `
+            -ClientSecret $env:MS_STORE_CLIENT_SECRET `
+            -ApplicationId $env:MS_STORE_APP_ID `
+            -MsixPath "${{ env.RELEASE_PATH_MSIX }}" `
+            -ReleaseNotesPath "assets/storecopy/microsoft-store-release-notes.json" `
+            -RolloutPercentage 90 `
+            -TargetPublishMode "Immediate"

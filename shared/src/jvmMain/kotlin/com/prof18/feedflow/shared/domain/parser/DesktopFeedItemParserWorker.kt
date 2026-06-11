@@ -34,16 +34,14 @@ internal class DesktopFeedItemParserWorker(
             ?: error("Could not load $name")
 
     private val htmlShell: String by lazy {
-        val readabilityJs = loadResource("readability-es5.js")
-        val turndownJs = loadResource("turndown-es5.js")
-        val readerContentParserJs = loadResource("reader-content-parser.js")
+        val defuddleJs = loadResource("defuddle-full-es5.js")
+        val readerContentParserJs = loadResource("defuddle-content-parser.js")
         // language=HTML
         """
         <html dir='auto'>
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <script>$readabilityJs</script>
-          <script>$turndownJs</script>
+          <script>$defuddleJs</script>
           <script>$readerContentParserJs</script>
         </head>
         <body></body>
@@ -61,31 +59,16 @@ internal class DesktopFeedItemParserWorker(
                     logger.d { "Failed to retrieve HTML for: $url" }
                     return@withContext ParsingResult.Error
                 }
-                val cleanedHtml = html
-                    .replace(Regex("https?://.*?placeholder\\.png"), "")
-                    // HtmlUnit's DOMParser crashes on <iframe>/<frame> elements because the
-                    // parsed document has no parent WebWindow. Strip them before parsing.
-                    .replace(
-                        Regex(
-                            "<iframe\\b[^>]*>.*?</iframe>",
-                            setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL),
-                        ),
-                        "",
-                    )
-                    .replace(Regex("<iframe\\b[^>]*/>", RegexOption.IGNORE_CASE), "")
-                    .replace(
-                        Regex(
-                            "<frameset\\b[^>]*>.*?</frameset>",
-                            setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL),
-                        ),
-                        "",
-                    )
-                    .replace(Regex("<frame\\b[^>]*>", RegexOption.IGNORE_CASE), "")
+                val cleanedHtml = html.replace(Regex("https?://.*?placeholder\\.png"), "")
 
-                val parseResult = runReadability(cleanedHtml, url, imageUrl)
+                val parseResult = runDefuddle(cleanedHtml, url, imageUrl)
                 if (parseResult == null) {
-                    logger.d { "Readability returned no result for: $url" }
+                    logger.d { "Defuddle returned no result for: $url" }
                     return@withContext ParsingResult.Error
+                }
+                logger.d {
+                    "Defuddle parsed \"${parseResult.title}\" (${parseResult.content.length} chars): " +
+                        parseResult.content.take(CONTENT_LOG_SNIPPET_LENGTH)
                 }
 
                 if (parseResult.content.length < MIN_CONTENT_LENGTH) {
@@ -130,13 +113,13 @@ internal class DesktopFeedItemParserWorker(
         }
     }
 
-    private data class ReadabilityResult(
+    private data class DefuddleResult(
         val content: String,
         val title: String?,
         val siteName: String?,
     )
 
-    private fun runReadability(html: String, url: String, imageUrl: String?): ReadabilityResult? {
+    private fun runDefuddle(html: String, url: String, imageUrl: String?): DefuddleResult? {
         val htmlEscaped = Json.encodeToString(html)
         val urlEscaped = Json.encodeToString(url)
         val imageUrlEscaped = imageUrl?.let { Json.encodeToString(it) } ?: "null"
@@ -173,13 +156,13 @@ internal class DesktopFeedItemParserWorker(
             try {
                 page.executeJavaScript(script)
             } catch (e: Exception) {
-                logger.d(e) { "JS error in Readability parse script" }
+                logger.d(e) { "JS error in Defuddle parse script" }
                 return null
             }
 
             val errorObj = page.executeJavaScript("parsingError").javaScriptResult
             if (errorObj != null && errorObj != Undefined.instance) {
-                logger.d { "Readability JS error: $errorObj" }
+                logger.d { "Defuddle JS error: $errorObj" }
                 return null
             }
 
@@ -187,25 +170,26 @@ internal class DesktopFeedItemParserWorker(
             val resultJson = if (resultObj != null && resultObj != Undefined.instance) {
                 resultObj.toString()
             } else {
-                logger.d { "Readability returned no result" }
+                logger.d { "Defuddle returned no result" }
                 return null
             }
 
             val jsObject = Json.parseToJsonElement(resultJson).jsonObject
             val content = jsObject["content"]?.jsonPrimitive?.content
             if (content.isNullOrBlank()) {
-                logger.d { "Readability returned empty content" }
+                logger.d { "Defuddle returned empty content" }
                 return null
             }
             val title = jsObject["title"]?.jsonPrimitive?.takeIf { it.isString }?.content
             val siteName = jsObject["siteName"]?.jsonPrimitive?.takeIf { it.isString }?.content
 
-            return ReadabilityResult(content, title, siteName)
+            return DefuddleResult(content, title, siteName)
         }
     }
 
     private companion object {
         private const val MIN_CONTENT_LENGTH = 200
+        private const val CONTENT_LOG_SNIPPET_LENGTH = 500
 
         init {
             JLogger.getLogger("org.htmlunit").level = Level.OFF

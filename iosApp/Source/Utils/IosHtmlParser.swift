@@ -71,6 +71,30 @@ class IosHtmlParser: HtmlParser {
         }
     }
 
+    func extractCommentsUrl(html: String) -> String? {
+        guard !html.isEmpty else { return nil }
+        let sanitizedHtml = sanitizeHtml(html)
+
+        do {
+            let doc: Document = try SwiftSoup.parse(sanitizedHtml)
+            let anchors = try doc.select("a")
+            for anchor in anchors {
+                let text = try anchor.text().trimmingCharacters(in: .whitespaces)
+                if text.caseInsensitiveCompare("comments") == .orderedSame {
+                    let href = try anchor.attr("href")
+                    if !href.isEmpty {
+                        return href
+                    }
+                }
+            }
+            return nil
+        } catch {
+            Deps.shared.getLogger(tag: "IosHtmlParser")
+                .e(messageString: "Error during extracting comments URL: \(error)")
+            return nil
+        }
+    }
+
     // Without this, SwiftSoup will still crash on some htmls
     private func sanitizeHtml(_ html: String) -> String {
         var sanitized = html

@@ -71,6 +71,8 @@ class FeedSourceLogoRetrieverImplTest {
                 override fun getFaviconUrl(html: String): String? = faviconUrl
 
                 override fun getRssUrl(html: String): String? = null
+
+                override fun extractCommentsUrl(html: String): String? = null
             },
         )
 }

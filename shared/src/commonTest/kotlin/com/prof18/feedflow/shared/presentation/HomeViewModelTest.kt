@@ -1600,5 +1600,6 @@ class HomeViewModelTest : KoinTestBase() {
         override fun getTextFromHTML(html: String): String? = html
         override fun getFaviconUrl(html: String): String? = null
         override fun getRssUrl(html: String): String? = null
+        override fun extractCommentsUrl(html: String): String? = null
     }
 }

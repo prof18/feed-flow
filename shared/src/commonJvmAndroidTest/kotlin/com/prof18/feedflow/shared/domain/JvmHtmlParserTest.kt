@@ -147,4 +147,48 @@ class JvmHtmlParserTest {
         val text = parser.getTextFromHTML("")
         assertEquals("", text)
     }
+
+    @Test
+    fun `extractCommentsUrl returns href when anchor text is Comments`() {
+        val html = """
+            <p>Some content</p>
+            <p><a href="https://example.com/article#comments">Comments</a></p>
+        """.trimIndent()
+
+        val url = parser.extractCommentsUrl(html)
+        assertEquals("https://example.com/article#comments", url)
+    }
+
+    @Test
+    fun `extractCommentsUrl is case insensitive`() {
+        val html = """<a href="https://example.com/article#comments">COMMENTS</a>"""
+
+        val url = parser.extractCommentsUrl(html)
+        assertEquals("https://example.com/article#comments", url)
+    }
+
+    @Test
+    fun `extractCommentsUrl returns null when no comments anchor present`() {
+        val html = """
+            <p>Some content without a comments link</p>
+            <a href="https://example.com/article">Read more</a>
+        """.trimIndent()
+
+        val url = parser.extractCommentsUrl(html)
+        assertNull(url)
+    }
+
+    @Test
+    fun `extractCommentsUrl returns null for empty html`() {
+        val url = parser.extractCommentsUrl("")
+        assertNull(url)
+    }
+
+    @Test
+    fun `extractCommentsUrl returns null when comments anchor has no href`() {
+        val html = """<a>Comments</a>"""
+
+        val url = parser.extractCommentsUrl(html)
+        assertNull(url)
+    }
 }

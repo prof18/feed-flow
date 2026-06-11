@@ -17,11 +17,19 @@ on:
         required: true
       GOOGLE_CREDENTIALS_JSON:
         required: true
+      MS_STORE_TENANT_ID:
+        required: true
+      MS_STORE_CLIENT_ID:
+        required: true
+      MS_STORE_CLIENT_SECRET:
+        required: true
+      MS_STORE_APP_ID:
+        required: true
 
 jobs:
   deploy:
     runs-on: windows-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     outputs:
       release_path: ${{ steps.path_variables.outputs.release_path }}
       artifact_name: ${{ steps.path_variables.outputs.artifact_name }}
@@ -428,3 +436,30 @@ jobs:
           path: ${{ env.RELEASE_PATH_MSIX }}
           name: ${{ env.NAME_MSIX }}
           retention-days: 7 
+
+      # Tag pushes publish the submission; manual dispatches only prepare an
+      # uncommitted draft in Partner Center and keep the old version live.
+      - name: Publish MSIX to Microsoft Store
+        shell: pwsh
+        env:
+          MS_STORE_TENANT_ID: ${{ secrets.MS_STORE_TENANT_ID }}
+          MS_STORE_CLIENT_ID: ${{ secrets.MS_STORE_CLIENT_ID }}
+          MS_STORE_CLIENT_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
+          MS_STORE_APP_ID: ${{ secrets.MS_STORE_APP_ID }}
+          IS_TAG_RELEASE: ${{ github.event_name == 'push' }}
+        run: |
+          $skipCommit = $env:IS_TAG_RELEASE -ne 'true'
+          if ($skipCommit) {
+            Write-Host "Manual dispatch: preparing the Store submission as a draft without publishing."
+          }
+          .github/scripts/publish-msix-to-store.ps1 `
+            -TenantId $env:MS_STORE_TENANT_ID `
+            -ClientId $env:MS_STORE_CLIENT_ID `
+            -ClientSecret $env:MS_STORE_CLIENT_SECRET `
+            -ApplicationId $env:MS_STORE_APP_ID `
+            -MsixPath "${{ env.RELEASE_PATH_MSIX }}" `
+            -ReleaseNotesPath "assets/storecopy/microsoft-store-release-notes.json" `
+            -RolloutPercentage 90 `
+            -TargetPublishMode "Immediate" `
+            -ReplacePendingSubmission `
+            -SkipCommit:$skipCommit

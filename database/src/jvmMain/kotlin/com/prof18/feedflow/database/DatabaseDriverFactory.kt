@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DesktopDatabaseErrorState
 import com.prof18.feedflow.db.FeedFlowDB
 import java.io.File
+import java.sql.SQLException
 import java.util.Properties
 
 fun createDatabaseDriver(
@@ -33,7 +34,7 @@ fun createDatabaseDriver(
 
     try {
         return initDatabase(driver, logger)
-    } catch (_: java.sql.SQLException) {
+    } catch (_: SQLException) {
         DesktopDatabaseErrorState.setError(true)
         driver.close()
         deleteDatabaseFiles(databasePath, logger)
@@ -74,6 +75,7 @@ private fun initDatabase(driver: SqlDriver, logger: Logger): SqlDriver {
             logger.d("init with existing database")
         }
     }
+    validateRequiredSchemaObjects(driver)
     return driver
 }
 
@@ -93,6 +95,56 @@ private fun hasAnyUserTables(driver: SqlDriver): Boolean {
     )
     return (cursor.value ?: 0L) > 0L
 }
+
+internal fun validateRequiredSchemaObjects(driver: SqlDriver) {
+    val missingObjects = buildList {
+        requiredTables.filterNot { driver.hasSchemaObject(type = "table", name = it) }
+            .mapTo(this) { "table:$it" }
+        requiredViews.filterNot { driver.hasSchemaObject(type = "view", name = it) }
+            .mapTo(this) { "view:$it" }
+    }
+
+    if (missingObjects.isNotEmpty()) {
+        throw SQLException("Missing required database schema objects: ${missingObjects.joinToString()}")
+    }
+}
+
+private fun SqlDriver.hasSchemaObject(
+    type: String,
+    name: String,
+): Boolean {
+    val cursor = executeQuery(
+        null,
+        "SELECT count(*) FROM sqlite_master WHERE type = ? AND name = ?;",
+        { QueryResult.Value(it.getLong(0)) },
+        2,
+        {
+            bindString(0, type)
+            bindString(1, name)
+        },
+    )
+    return (cursor.value ?: 0L) > 0L
+}
+
+private val requiredTables = listOf(
+    "blocked_word",
+    "content_prefetch_queue",
+    "deleted_feed_items",
+    "feed_item_ids_for_checks",
+    "feed_item_status",
+    "feed_source",
+    "feed_item",
+    "feed_search",
+    "feed_source_category",
+    "feed_source_preferences",
+    "read_status_pending_action",
+    "sync_metadata",
+)
+
+private val requiredViews = listOf(
+    "feed_source_unread_count",
+    "category_with_unread",
+)
 
 private fun dropAllUserObjects(driver: SqlDriver) {
     val viewsCursor = driver.executeQuery(

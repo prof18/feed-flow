@@ -66,8 +66,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composables.core.ScrollArea
-import com.composables.core.rememberScrollAreaState
+import com.composeunstyled.rememberScrollbarState
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
@@ -224,9 +223,9 @@ internal fun ReaderModeScreen(
 
                     is ReaderModeState.Success -> {
                         val scrollState = rememberScrollState()
+                        val scrollbarState = rememberScrollbarState(scrollState)
 
-                        ScrollArea(
-                            state = rememberScrollAreaState(scrollState),
+                        Box(
                             modifier = Modifier.fillMaxSize(),
                         ) {
                             Box(
@@ -311,7 +310,7 @@ internal fun ReaderModeScreen(
                                 }
                             }
 
-                            FeedFlowVerticalScrollbar()
+                            FeedFlowVerticalScrollbar(scrollbarState)
                         }
                     }
                 }

@@ -26,8 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
-import com.composables.core.ScrollArea
-import com.composables.core.rememberScrollAreaState
+import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
@@ -148,10 +147,11 @@ fun DesktopHomeScreenContent(
                 )
 
                 else -> {
-                    ScrollArea(
-                        state = rememberScrollAreaState(listState),
+                    Box(
                         modifier = Modifier.fillMaxSize(),
                     ) {
+                        val scrollbarState = rememberScrollbarState(listState)
+
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.TopCenter,
@@ -220,7 +220,7 @@ fun DesktopHomeScreenContent(
                             }
                         }
 
-                        FeedFlowVerticalScrollbar()
+                        FeedFlowVerticalScrollbar(scrollbarState)
 
                         TopToolbarContentFade(
                             modifier = Modifier.align(Alignment.TopCenter),

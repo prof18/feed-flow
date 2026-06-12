@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sentry Note Crash Fix"
+  short_description: "Investigate and fix Sentry crashes from notes"
+  default_prompt: "Use $sentry-note-crash-fix to investigate and fix the crash described in this note."

@@ -23,7 +23,7 @@ import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
-import com.prof18.feedflow.desktop.utils.sanitizeUrl
+import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -86,6 +86,14 @@ internal fun HomeScreen(
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
     val uriHandler = LocalUriHandler.current
+    fun showBrowserLaunchError() {
+        scope.launch {
+            snackbarHostState.showSnackbar(
+                strings.browserLaunchError,
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
 
     if (feedOperation != FeedOperation.None) {
         LoadingOperationDialog(feedOperation)
@@ -213,26 +221,13 @@ internal fun HomeScreen(
                     } else {
                         navigateToReaderMode
                     },
-                    onBrowserError = {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                strings.browserLaunchError,
-                                duration = SnackbarDuration.Short,
-                            )
-                        }
-                    },
+                    onBrowserError = ::showBrowserLaunchError,
                 )
             },
             openInBrowser = { feedItemUrlInfo ->
-                runCatching { uriHandler.openUri(feedItemUrlInfo.url.sanitizeUrl()) }
-                    .onFailure {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                strings.browserLaunchError,
-                                duration = SnackbarDuration.Short,
-                            )
-                        }
-                    }
+                if (!uriHandler.openUriSafely(feedItemUrlInfo.url)) {
+                    showBrowserLaunchError()
+                }
             },
             updateBookmarkStatus = { feedItemId, isBookmarked ->
                 homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
@@ -275,15 +270,9 @@ internal fun HomeScreen(
                 showChangeCategorySheet = true
             },
             onOpenWebsite = { url ->
-                runCatching { uriHandler.openUri(url.sanitizeUrl()) }
-                    .onFailure {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                strings.browserLaunchError,
-                                duration = SnackbarDuration.Short,
-                            )
-                        }
-                    }
+                if (!uriHandler.openUriSafely(url)) {
+                    showBrowserLaunchError()
+                }
             },
             onMoveFeedSourcesToCategory = { feedSources, category ->
                 changeFeedCategoryViewModel.moveFeedSourcesToCategory(feedSources, category)
@@ -404,8 +393,9 @@ private fun handleOpenUrlForDesktop(
     onBrowserError: () -> Unit,
 ) {
     fun openUri(url: String) {
-        runCatching { uriHandler.openUri(url) }
-            .onFailure { onBrowserError() }
+        if (!uriHandler.openUriSafely(url)) {
+            onBrowserError()
+        }
     }
 
     when (feedItemUrlInfo.linkOpeningPreference) {
@@ -425,7 +415,7 @@ private fun handleOpenUrlForDesktop(
             if (browserManager.openReaderMode() && !feedItemUrlInfo.shouldOpenInBrowser()) {
                 onOpenReaderArticle(feedItemUrlInfo)
             } else {
-                openUri(feedItemUrlInfo.url.sanitizeUrl())
+                openUri(feedItemUrlInfo.url)
             }
         }
     }

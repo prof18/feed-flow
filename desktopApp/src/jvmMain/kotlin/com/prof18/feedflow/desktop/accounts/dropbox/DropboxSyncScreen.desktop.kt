@@ -9,6 +9,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import com.prof18.feedflow.core.model.DropboxSynMessages
+import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.ui.accounts.dropbox.DropboxSyncContent
 import com.prof18.feedflow.shared.ui.settings.SettingItem
@@ -46,6 +48,7 @@ internal fun DropboxSyncScreen(
 
     val errorMessage = LocalFeedFlowStrings.current.dropboxSyncError
     val codeExpiredMessage = LocalFeedFlowStrings.current.dropboxAuthCodeExpired
+    val browserLaunchErrorMessage = LocalFeedFlowStrings.current.browserLaunchError
 
     LaunchedEffect(Unit) {
         viewModel.dropboxSyncMessageState.collect { event ->
@@ -69,7 +72,14 @@ internal fun DropboxSyncScreen(
                 }
 
                 is DropboxSynMessages.ProceedToAuth -> {
-                    uriHandler.openUri(event.authorizeUrl)
+                    if (!uriHandler.openUriSafely(event.authorizeUrl)) {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = browserLaunchErrorMessage,
+                                duration = SnackbarDuration.Short,
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -85,6 +95,7 @@ internal fun DropboxSyncScreen(
         onDisconnectClick = {
             viewModel.disconnect()
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         customPlatformUI = {
             Column(
                 modifier = Modifier.padding(top = Spacing.regular),

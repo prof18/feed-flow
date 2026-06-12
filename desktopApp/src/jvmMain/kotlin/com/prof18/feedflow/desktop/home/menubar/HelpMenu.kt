@@ -5,9 +5,8 @@ import androidx.compose.ui.window.MenuBarScope
 import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isLinux
+import com.prof18.feedflow.desktop.utils.openDesktopUriSafely
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import java.awt.Desktop
-import java.net.URI
 
 @Composable
 internal fun MenuBarScope.HelpMenu(
@@ -18,11 +17,8 @@ internal fun MenuBarScope.HelpMenu(
             Item(
                 text = LocalFeedFlowStrings.current.aboutMenuFaq,
                 onClick = {
-                    runCatching {
-                        val languageCode = java.util.Locale.getDefault().language
-                        val faqUrl = "https://feedflow.dev/$languageCode/faq"
-                        Desktop.getDesktop().browse(URI(faqUrl))
-                    }
+                    val languageCode = java.util.Locale.getDefault().language
+                    openDesktopUriSafely("https://feedflow.dev/$languageCode/faq")
                 },
             )
         }
@@ -38,9 +34,7 @@ internal fun MenuBarScope.HelpMenu(
             Item(
                 text = LocalFeedFlowStrings.current.supportTheProject,
                 onClick = {
-                    runCatching {
-                        Desktop.getDesktop().browse(URI("https://www.paypal.me/MarcoGomiero"))
-                    }
+                    openDesktopUriSafely("https://www.paypal.me/MarcoGomiero")
                 },
             )
         }

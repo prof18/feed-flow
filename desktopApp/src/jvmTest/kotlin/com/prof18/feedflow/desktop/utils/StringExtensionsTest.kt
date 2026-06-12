@@ -2,6 +2,7 @@ package com.prof18.feedflow.desktop.utils
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class StringExtensionsTest {
 
@@ -45,5 +46,92 @@ class StringExtensionsTest {
         """.trimIndent()
         val sanitized = url.sanitizeUrl()
         assertEquals(expected, sanitized)
+    }
+
+    @Test
+    fun `toOpenableDesktopUri adds https scheme when missing`() {
+        val url = "example.com/rss"
+
+        val sanitized = url.toOpenableDesktopUri()
+
+        assertEquals("https://example.com/rss", sanitized)
+    }
+
+    @Test
+    fun `toOpenableDesktopUri adds https scheme when missing on url with port`() {
+        val url = "example.com:8443/rss"
+
+        val sanitized = url.toOpenableDesktopUri()
+
+        assertEquals("https://example.com:8443/rss", sanitized)
+    }
+
+    @Test
+    fun `toOpenableDesktopUri adds https scheme when missing on localhost url with port`() {
+        val url = "localhost:8080/feed"
+
+        val sanitized = url.toOpenableDesktopUri()
+
+        assertEquals("https://localhost:8080/feed", sanitized)
+    }
+
+    @Test
+    fun `toOpenableDesktopUri trims and encodes url`() {
+        val url = "  https://example.com/path with spaces  "
+
+        val sanitized = url.toOpenableDesktopUri()
+
+        assertEquals("https://example.com/path%20with%20spaces", sanitized)
+    }
+
+    @Test
+    fun `toOpenableDesktopUri keeps magnet links`() {
+        val url = "magnet:?xt=urn:btih:foo&dn=bar baz"
+
+        val sanitized = url.toOpenableDesktopUri()
+
+        assertEquals("magnet:?xt=urn:btih:foo&dn=bar%20baz", sanitized)
+    }
+
+    @Test
+    fun `toOpenableDesktopUri rejects blank urls`() {
+        val sanitized = "   ".toOpenableDesktopUri()
+
+        assertNull(sanitized)
+    }
+
+    @Test
+    fun `toOpenableDesktopUri rejects plain text with spaces`() {
+        val sanitized = "not a url".toOpenableDesktopUri()
+
+        assertNull(sanitized)
+    }
+
+    @Test
+    fun `toOpenableDesktopUri rejects web urls with spaces in authority`() {
+        val sanitized = "https://exa mple.com/article".toOpenableDesktopUri()
+
+        assertNull(sanitized)
+    }
+
+    @Test
+    fun `toOpenableDesktopUri rejects web urls without authority`() {
+        val sanitized = "https://".toOpenableDesktopUri()
+
+        assertNull(sanitized)
+    }
+
+    @Test
+    fun `toOpenableDesktopUri rejects unsupported schemes`() {
+        val sanitized = "javascript:alert(1)".toOpenableDesktopUri()
+
+        assertNull(sanitized)
+    }
+
+    @Test
+    fun `toOpenableDesktopUri rejects unsupported schemes with numeric content`() {
+        val sanitized = "tel:123".toOpenableDesktopUri()
+
+        assertNull(sanitized)
     }
 }

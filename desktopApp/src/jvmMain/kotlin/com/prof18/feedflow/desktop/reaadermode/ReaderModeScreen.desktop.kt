@@ -76,6 +76,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.desktop.utils.copyToClipboard
+import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
@@ -83,7 +84,6 @@ import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
-import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -109,8 +109,18 @@ internal fun ReaderModeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val message = LocalFeedFlowStrings.current.linkCopiedSuccess
+    val strings = LocalFeedFlowStrings.current
     val uriHandler = LocalUriHandler.current
+    fun openExternalUrl(url: String) {
+        if (!uriHandler.openUriSafely(url)) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = strings.browserLaunchError,
+                    duration = SnackbarDuration.Short,
+                )
+            }
+        }
+    }
 
     val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsState()
     val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsState()
@@ -152,17 +162,13 @@ internal fun ReaderModeScreen(
                         showBackButton = showBackButton,
                         onToggleDetailFullscreen = onToggleDetailFullscreen,
                         isDetailFullscreen = isDetailFullscreen,
-                        openInBrowser = { url ->
-                            if (isValidUrl(url)) {
-                                uriHandler.openUri(url)
-                            }
-                        },
+                        openInBrowser = ::openExternalUrl,
                         onShareClick = { url ->
                             val result = copyToClipboard(url)
                             if (result) {
                                 scope.launch {
                                     snackbarHostState.showSnackbar(
-                                        message = message,
+                                        message = strings.linkCopiedSuccess,
                                         duration = SnackbarDuration.Short,
                                     )
                                 }
@@ -170,15 +176,9 @@ internal fun ReaderModeScreen(
                         },
                         onArchiveClick = { articleUrl ->
                             val archiveUrl = getArchiveISUrl(articleUrl)
-                            if (isValidUrl(archiveUrl)) {
-                                uriHandler.openUri(archiveUrl)
-                            }
+                            openExternalUrl(archiveUrl)
                         },
-                        onCommentsClick = { commentsUrl ->
-                            if (isValidUrl(commentsUrl)) {
-                                uriHandler.openUri(commentsUrl)
-                            }
-                        },
+                        onCommentsClick = ::openExternalUrl,
                         onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
                         onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
                             readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
@@ -204,9 +204,7 @@ internal fun ReaderModeScreen(
                             modifier = contentModifier
                                 .fillMaxHeight(),
                             onOpenInBrowser = {
-                                if (isValidUrl(s.url)) {
-                                    uriHandler.openUri(s.url)
-                                }
+                                openExternalUrl(s.url)
                             },
                         )
                     }

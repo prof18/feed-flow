@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.core.model.FeedFontSizes
@@ -21,12 +22,13 @@ import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
-import com.prof18.feedflow.desktop.utils.sanitizeUrl
+import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.search.SearchScreenContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -48,6 +50,19 @@ internal fun SearchScreen(
     val uriHandler = LocalUriHandler.current
 
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    fun openExternalUrl(url: String): Boolean {
+        val opened = uriHandler.openUriSafely(url)
+        if (!opened) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    strings.browserLaunchError,
+                    duration = SnackbarDuration.Short,
+                )
+            }
+        }
+        return opened
+    }
 
     LaunchedEffect(Unit) {
         viewModel.errorState.collect { errorState ->
@@ -105,7 +120,7 @@ internal fun SearchScreen(
             openSearchResult(
                 urlInfo = urlInfo,
                 browserManager = browserManager,
-                openUri = uriHandler::openUri,
+                openUri = ::openExternalUrl,
                 navigateToReaderMode = navigateToReaderMode,
             )
             viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
@@ -123,7 +138,7 @@ internal fun SearchScreen(
             viewModel.markAllBelowAsRead(feedItemId)
         },
         onCommentClick = { urlInfo ->
-            uriHandler.openUri(urlInfo.url)
+            openExternalUrl(urlInfo.url)
             viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
         },
         snackbarHost = {
@@ -135,9 +150,7 @@ internal fun SearchScreen(
         onOpenFeedSettings = { feedSource ->
             navigateToEditFeed(feedSource)
         },
-        onOpenFeedWebsite = { url ->
-            uriHandler.openUri(url)
-        },
+        onOpenFeedWebsite = ::openExternalUrl,
         feedItemDisplaySettings = feedItemDisplaySettings,
     )
 }
@@ -145,19 +158,19 @@ internal fun SearchScreen(
 private fun openSearchResult(
     urlInfo: FeedItemUrlInfo,
     browserManager: BrowserManager,
-    openUri: (String) -> Unit,
+    openUri: (String) -> Boolean,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
 ) {
     when (urlInfo.linkOpeningPreference) {
         LinkOpeningPreference.READER_MODE -> navigateToReaderMode(urlInfo)
         LinkOpeningPreference.INTERNAL_BROWSER,
         LinkOpeningPreference.PREFERRED_BROWSER,
-        -> openUri(urlInfo.url.sanitizeUrl())
+        -> openUri(urlInfo.url)
         LinkOpeningPreference.DEFAULT -> {
             if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
                 navigateToReaderMode(urlInfo)
             } else {
-                openUri(urlInfo.url.sanitizeUrl())
+                openUri(urlInfo.url)
             }
         }
     }

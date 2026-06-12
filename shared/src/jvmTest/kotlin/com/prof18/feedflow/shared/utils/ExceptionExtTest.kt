@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.utils
 import com.dropbox.core.NetworkIOException
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadException
 import java.io.IOException
+import java.net.SocketException
 import java.net.SocketTimeoutException
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -24,6 +25,21 @@ class ExceptionExtTest {
         val exception = IllegalStateException(
             "wrapper",
             RuntimeException(SocketTimeoutException("timeout")),
+        )
+
+        assertTrue(exception.isTemporaryNetworkError())
+    }
+
+    @Test
+    fun `isTemporaryNetworkError returns true for socket connection resets`() {
+        assertTrue(SocketException("Connection reset").isTemporaryNetworkError())
+    }
+
+    @Test
+    fun `isTemporaryNetworkError returns true for nested socket failures`() {
+        val exception = IllegalStateException(
+            "wrapper",
+            RuntimeException(SocketException("Connection reset")),
         )
 
         assertTrue(exception.isTemporaryNetworkError())

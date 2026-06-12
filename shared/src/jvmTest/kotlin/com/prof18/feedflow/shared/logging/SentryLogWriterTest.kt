@@ -5,6 +5,7 @@ import com.dropbox.core.NetworkIOException
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadException
 import kotlinx.coroutines.CancellationException
 import java.io.IOException
+import java.net.SocketException
 import java.net.SocketTimeoutException
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -165,6 +166,28 @@ class SentryLogWriterTest {
             message = "timeout",
             tag = "Test",
             throwable = SocketTimeoutException("Connect timed out"),
+        )
+
+        assertEquals(0, capturedMessages.size)
+        assertEquals(0, capturedExceptions.size)
+    }
+
+    @Test
+    fun `it skips socket exceptions`() {
+        val capturedMessages = mutableListOf<String>()
+        val capturedExceptions = mutableListOf<Throwable>()
+
+        val logWriter = SentryLogWriter(
+            isSentryEnabled = { true },
+            captureMessage = { capturedMessages.add(it) },
+            captureException = { capturedExceptions.add(it) },
+        )
+
+        logWriter.log(
+            severity = Severity.Error,
+            message = "connection reset",
+            tag = "Test",
+            throwable = SocketException("Connection reset"),
         )
 
         assertEquals(0, capturedMessages.size)

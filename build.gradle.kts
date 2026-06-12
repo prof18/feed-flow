@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.triplet.play) apply false
     alias(libs.plugins.compose.multiplatform) apply false
+    alias(libs.plugins.compose.hot.reload) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.about.libraries) apply false
     alias(libs.plugins.about.libraries.android) apply false

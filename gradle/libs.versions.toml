@@ -9,6 +9,7 @@ androidx-browser = "1.10.0"
 androidx-core-ktx = "1.7.0"
 arrow = "2.2.2.1"
 compose-material3 = "1.5.0-alpha18"
+compose-hot-reload = "1.2.0-alpha02"
 compose-multiplatform = "1.11.0"
 compose-multiplatform-material3-adaptive = "1.9.0"
 compose-multiplatform-material3-adaptive-layout = "1.3.0-beta01"
@@ -206,6 +207,7 @@ about-libraries-android = { id = "com.mikepenz.aboutlibraries.plugin.android", v
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
 android-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "android-gradle-plugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version.ref = "compose-hot-reload" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-plugin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

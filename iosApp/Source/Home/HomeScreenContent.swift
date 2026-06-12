@@ -16,8 +16,6 @@ struct HomeContent: View {
     var appState
     @Environment(BrowserSelector.self)
     private var browserSelector
-    @Environment(\.scenePhase)
-    private var scenePhase: ScenePhase
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass
 
@@ -44,7 +42,6 @@ struct HomeContent: View {
     @Binding var feedItemDisplaySettings: FeedItemDisplaySettings
     @Binding var viewMenuState: HomeViewMenuState
 
-    @State var isToolbarVisible = true
     @State var showScrollToTop = false
     @State var showMarkAllReadDialog = false
     @State var showClearOldArticlesDialog = false
@@ -100,18 +97,6 @@ struct HomeContent: View {
         }
         .onChange(of: appState.redrawAfterFeedSourceEdit) {
             onRefresh()
-        }
-        .onChange(of: scenePhase) {
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                switch scenePhase {
-                case .active:
-                    isToolbarVisible = true
-                case .background:
-                    isToolbarVisible = false
-                default:
-                    break
-                }
-            }
         }
         .sheet(item: $sheetToShow) { item in
             sheetContent(item)
@@ -211,14 +196,12 @@ private extension HomeContent {
                 view.navigationTitle(getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount))
             }
             .toolbar {
-                if isToolbarVisible {
-                    if isCompactPhone {
-                        makeCompactPhoneToolbarContent(proxy: proxy)
-                    } else if isiOS26OrLater() {
-                        makeIOS26ToolbarContent(proxy: proxy)
-                    } else {
-                        makeLegacyToolbarContent(proxy: proxy)
-                    }
+                if isCompactPhone {
+                    makeCompactPhoneToolbarContent(proxy: proxy)
+                } else if isiOS26OrLater() {
+                    makeIOS26ToolbarContent(proxy: proxy)
+                } else {
+                    makeLegacyToolbarContent(proxy: proxy)
                 }
             }
             .showsScrollToTop(isVisible: showScrollToTop, onScrollToTop: {

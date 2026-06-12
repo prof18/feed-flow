@@ -5,6 +5,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowState
 import coil3.ImageLoader
@@ -16,8 +18,10 @@ import com.formdev.flatlaf.FlatPropertiesLaf
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isNotMacOs
+import com.prof18.feedflow.core.utils.isWindows
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.main.MainWindow
+import com.prof18.feedflow.desktop.utils.SafeAwtClipboard
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
@@ -67,16 +71,28 @@ internal fun FrameWindowScope.AppContent(
 
         val lyricist = rememberFeedFlowStrings()
         ProvideFeedFlowStrings(lyricist) {
-            CompositionLocalProvider(LocalReduceMotion provides reduceMotionEnabled) {
-                this.MainWindow(
-                    showBackupLoader = showBackupLoader,
-                    isDarkTheme = isDarkTheme,
-                    useOledTheme = useOledTheme,
-                    windowState = windowState,
-                    appConfig = appConfig,
-                )
+            WindowsSafeClipboardProvider {
+                CompositionLocalProvider(LocalReduceMotion provides reduceMotionEnabled) {
+                    this.MainWindow(
+                        showBackupLoader = showBackupLoader,
+                        isDarkTheme = isDarkTheme,
+                        useOledTheme = useOledTheme,
+                        windowState = windowState,
+                        appConfig = appConfig,
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun WindowsSafeClipboardProvider(content: @Composable () -> Unit) {
+    if (getDesktopOS().isWindows()) {
+        val safeClipboard = remember { SafeAwtClipboard() }
+        CompositionLocalProvider(LocalClipboard provides safeClipboard, content = content)
+    } else {
+        content()
     }
 }
 

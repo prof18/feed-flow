@@ -277,7 +277,7 @@
     <string name="no_miniflux_sync_yet">Andmed on veel sünkroonimata</string>
     <string name="miniflux_last_sync">Viimane sünkroonimine: %s</string>
     <string name="miniflux_password_hint">Minifluxi API salasõna (Seadistused &gt; Lõimingud &gt; Google Reader)</string>
-    <string name="miniflux_url_hint">Minifluxi server võrguaadress, näiteks %s</string>
+    <string name="miniflux_url_hint">Minifluxi serveri võrguaadress, näiteks %s</string>
     <string name="menu_view">Vaata</string>
     <string name="import_export_label">Import ja eksport</string>
     <string name="import_export_opml_section_title">Tellimused (OPML)</string>
@@ -387,4 +387,6 @@
     <string name="delete_all_feeds_confirmation_message">Kas oled kindel, et soovid kõik selle kategooria uudisvood kustutada? Seda tegevust ei saa tagasi pöörata.</string>
     <string name="sort_and_filter_button">Järjestus ja filtreerimine</string>
     <string name="rename_category">Muuda kategooria nime</string>
+    <string name="greader_bad_token_sync_error_message">Antud server keeldus sinu sünkroonimise tunnusloast. Kui sinu Google Readeriga ühilduv teenus on pöördproksi taga, siis palun kontrolli, et ta suudab edastada „Authorization“ päisekirjet.</string>
+    <string name="miniflux_bad_token_error_message">Sisselogimine õnnestus, kuid Miniflux lükkas sinu sünkroonimise tunnusloa tagasi. Kui Miniflux on pöördproksi taga, siis palun kontrolli, et ta suudab edastada „Authorization“ päisekirjet.</string>
 </resources>

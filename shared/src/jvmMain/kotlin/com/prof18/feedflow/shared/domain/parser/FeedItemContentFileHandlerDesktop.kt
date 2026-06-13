@@ -31,7 +31,7 @@ internal class FeedItemContentFileHandlerDesktop(
         withContext(dispatcherProvider.io) {
             try {
                 val file = getArticleFile(feedItemId)
-                file.writeText(content)
+                file.writeText("$CACHE_VERSION_MARKER\n$content")
                 logger.d { "Saved content for feed item: $feedItemId (${content.length} bytes)" }
             } catch (e: Exception) {
                 logger.e(e) { "Failed to save content for feed item: $feedItemId" }
@@ -45,8 +45,15 @@ internal class FeedItemContentFileHandlerDesktop(
                 val file = getArticleFile(feedItemId)
                 if (file.exists()) {
                     val content = file.readText()
+                    if (!content.startsWith(CACHE_VERSION_MARKER)) {
+                        logger.d { "Ignoring stale cached content for feed item: $feedItemId" }
+                        return@withContext null
+                    }
+                    val cachedContent = content
+                        .removePrefix(CACHE_VERSION_MARKER)
+                        .trimStart('\r', '\n')
                     logger.d { "Loaded content for feed item: $feedItemId (${content.length} bytes)" }
-                    content
+                    cachedContent
                 } else {
                     logger.d { "No cached content for feed item: $feedItemId" }
                     null
@@ -62,7 +69,9 @@ internal class FeedItemContentFileHandlerDesktop(
         return withContext(dispatcherProvider.io) {
             try {
                 val file = getArticleFile(feedItemId)
-                file.exists()
+                file.exists() && file.useLines { lines ->
+                    lines.firstOrNull() == CACHE_VERSION_MARKER
+                }
             } catch (e: Exception) {
                 logger.e(e) { "Failed to check content availability for feed item: $feedItemId" }
                 false
@@ -98,5 +107,6 @@ internal class FeedItemContentFileHandlerDesktop(
 
     companion object {
         private const val ARTICLES_DIR = "articles"
+        private const val CACHE_VERSION_MARKER = "<!-- FeedFlow desktop reader cache: mercury-v4 -->"
     }
 }

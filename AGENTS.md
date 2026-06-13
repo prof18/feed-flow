@@ -58,6 +58,18 @@ For Android API/library questions, `android docs search '<query>'` before fallin
 
 For anything deeper — SDK package management (`android sdk ...`), device interaction, or journey/UI tests — consult the globally-installed `android-cli` skill instead of expanding this section.
 
+### Running & validating the Desktop app
+
+When you need to run the Desktop app for testing, UI iteration, or user-visible validation, prefer the Compose Hot Reload MCP server configured in `.mcp.json`:
+
+```bash
+./gradlew --quiet --console=plain :desktopApp:hotMcpServerJvm
+```
+
+Use the Gradle daemon for manual local runs so repeated desktop iterations stay fast. The checked-in `.mcp.json` may still pass `--no-daemon` because JetBrains' AI-agent example does that for MCP client-managed server processes.
+
+Use the MCP tools when you need to interact with the running Desktop app: check status, reload code changes, list windows, capture screenshots, inspect the semantic tree, click/type/scroll, or resize windows. The MCP server is experimental in Compose Hot Reload; if it is unavailable or not connected, fall back to `./gradlew --quiet --console=plain desktopApp:run` and note the limitation in handoff.
+
 ### Maestro E2E tests
 
 When writing or running Maestro E2E tests, follow `e2e/maestro/maestro-e2e-guide.md`.
@@ -156,6 +168,8 @@ Key points:
 - For sync service tests, use the `feedSync/test-utils` module (provides mock HTTP engines and Koin modules for GReader/Feedbin)
 - Run specific test classes with `--tests "fully.qualified.ClassName"` to iterate quickly
 
+For Sentry crash notes, Sentry issue URLs, or event IDs, use the repo-local `sentry-note-crash-fix` skill. Confirm the live Sentry event when possible, identify the first relevant first-party frame, inspect dependency versions and affected platform code, then validate the narrow fix with the affected platform build before the full gate.
+
 ## General rules:
 
 - DO NOT write comments for every function or class. Only write comments when the code is not self-explanatory.
@@ -172,6 +186,9 @@ Key points:
 - Use `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/main/DesktopDialogWindowNavigator.kt` to open/close windows from `MainWindow` (add destinations to the enum and keep visibility state there).
 - Keep the screen body content as a composable content block and avoid duplicating content calls; apply platform conditionals only to wrapper chrome (for example, toolbar/title handling).
 - On macOS, keep transparent title bar handling inside the reusable desktop window wrapper; on other desktop platforms avoid adding duplicate custom title UI.
+
+### Desktop OS integration
+- Use `openUriSafely` for desktop link opening so unsupported or malformed URLs can fall back to copying instead of crashing the app.
 
 ### Git Commit Messages
 When creating commits:

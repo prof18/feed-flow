@@ -23,8 +23,10 @@ jobs:
     outputs:
       release_path_deb: ${{ steps.path_variables.outputs.release_path_deb }}
       release_path_rpm: ${{ steps.path_variables.outputs.release_path_rpm }}
+      release_path_appimage: ${{ steps.path_variables.outputs.release_path_appimage }}
       deb_name: ${{ steps.path_variables.outputs.deb_name }}
       rpm_name: ${{ steps.path_variables.outputs.rpm_name }}
+      appimage_name: ${{ steps.path_variables.outputs.appimage_name }}
 
     steps:
       - uses: actions/checkout@v7
@@ -48,7 +50,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Update Licenses file
-        run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
+        run: ./gradlew --quiet --console=plain desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
 
       - name: Create path variables
         id: path_variables
@@ -57,14 +59,20 @@ jobs:
           path_deb="desktopApp/build/release/main-release/deb/${name_deb}"
           name_rpm="feedflow-${VERSION}-1.x86_64.rpm"
           path_rpm="desktopApp/build/release/main-release/rpm/${name_rpm}"
+          name_appimage="FeedFlow-${VERSION}-x86_64.AppImage"
+          path_appimage="dist/${name_appimage}"
           echo "release_path_deb=$path_deb" >> $GITHUB_OUTPUT
           echo "release_path_rpm=$path_rpm" >> $GITHUB_OUTPUT
+          echo "release_path_appimage=$path_appimage" >> $GITHUB_OUTPUT
           echo "deb_name=$name_deb" >> $GITHUB_OUTPUT
           echo "rpm_name=$name_rpm" >> $GITHUB_OUTPUT
+          echo "appimage_name=$name_appimage" >> $GITHUB_OUTPUT
           echo "RELEASE_PATH_DEB=$path_deb" >> $GITHUB_ENV
           echo "RELEASE_PATH_RPM=$path_rpm" >> $GITHUB_ENV
+          echo "RELEASE_PATH_APPIMAGE=$path_appimage" >> $GITHUB_ENV
           echo "DEB_NAME=$name_deb" >> $GITHUB_ENV
           echo "RPM_NAME=$name_rpm" >> $GITHUB_ENV
+          echo "APPIMAGE_NAME=$name_appimage" >> $GITHUB_ENV
         env:
           VERSION: ${{ steps.version.outputs.version }}
 
@@ -91,8 +99,20 @@ jobs:
           TDECK_SALT: ${{ secrets.TDECK_SALT }}
           TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
 
-      - name: Create RPM & DEB
-        run: ./gradlew packageReleaseDeb packageReleaseRpm
+      - name: Create RPM, DEB & staged AppImage
+        run: ./gradlew --quiet --console=plain packageReleaseDeb packageReleaseRpm :desktopApp:packageReleaseAppImage
+
+      - name: Create AppImage
+        run: .scripts/package-appimage.sh
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Verify AppImage contents
+        run: |
+          chmod +x "$RELEASE_PATH_APPIMAGE"
+          "$RELEASE_PATH_APPIMAGE" --appimage-extract >/dev/null
+          test -x squashfs-root/AppRun
+          test -n "$(find squashfs-root/usr/bin -maxdepth 1 -type f -perm -111 -print -quit)"
 
       - name: Upload reports
         if: failure()
@@ -114,4 +134,13 @@ jobs:
         with:
           path: ${{ env.RELEASE_PATH_DEB }}
           name: ${{ env.DEB_NAME }}
+          retention-days: 1 
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v7
+        with:
+          path: |
+            ${{ env.RELEASE_PATH_APPIMAGE }}
+            ${{ env.RELEASE_PATH_APPIMAGE }}.sha256
+          name: ${{ env.APPIMAGE_NAME }}
           retention-days: 1 

@@ -87,6 +87,7 @@ kotlin {
 
 val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
 val isMacOS = System.getProperty("os.name").lowercase().contains("mac")
+val isLinux = System.getProperty("os.name").lowercase().contains("linux")
 val macSigningIdentity = "Marco Gomiero"
 // Full identity name for codesign. Compose's MacSigner derives this same form
 // internally (see ValidatedMacOSSigningSettings.fullDeveloperID).
@@ -139,7 +140,7 @@ compose {
 
                 modules("java.instrument", "java.sql", "jdk.unsupported", "jdk.httpserver")
 
-                targetFormats(
+                val distributionFormats = mutableListOf(
                     TargetFormat.Dmg,
                     TargetFormat.Pkg,
                     TargetFormat.Msi,
@@ -147,6 +148,10 @@ compose {
                     TargetFormat.Deb,
                     TargetFormat.Rpm,
                 )
+                if (isLinux) {
+                    distributionFormats += TargetFormat.AppImage
+                }
+                targetFormats(*distributionFormats.toTypedArray())
                 packageName = "FeedFlow"
                 packageVersion = appVersionName()
 

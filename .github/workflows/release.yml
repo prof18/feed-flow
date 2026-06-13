@@ -187,6 +187,8 @@ jobs:
             *.msi
             *.rpm
             *.deb
+            *.AppImage
+            *.AppImage.sha256
           draft: true
           tag_name: ${{ github.ref_name }}
         env:

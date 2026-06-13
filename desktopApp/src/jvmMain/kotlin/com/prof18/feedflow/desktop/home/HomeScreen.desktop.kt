@@ -18,7 +18,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
-import com.prof18.feedflow.core.model.shouldOpenInBrowser
+import com.prof18.feedflow.core.model.canOpenReaderMode
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.di.DI
@@ -400,7 +400,11 @@ private fun handleOpenUrlForDesktop(
 
     when (feedItemUrlInfo.linkOpeningPreference) {
         LinkOpeningPreference.READER_MODE -> {
-            onOpenReaderArticle(feedItemUrlInfo)
+            if (feedItemUrlInfo.canOpenReaderMode()) {
+                onOpenReaderArticle(feedItemUrlInfo)
+            } else {
+                openUri(feedItemUrlInfo.url)
+            }
         }
 
         LinkOpeningPreference.INTERNAL_BROWSER -> {
@@ -412,7 +416,7 @@ private fun handleOpenUrlForDesktop(
         }
 
         LinkOpeningPreference.DEFAULT -> {
-            if (browserManager.openReaderMode() && !feedItemUrlInfo.shouldOpenInBrowser()) {
+            if (browserManager.openReaderMode() && feedItemUrlInfo.canOpenReaderMode()) {
                 onOpenReaderArticle(feedItemUrlInfo)
             } else {
                 openUri(feedItemUrlInfo.url)

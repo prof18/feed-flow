@@ -18,7 +18,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
-import com.prof18.feedflow.core.model.shouldOpenInBrowser
+import com.prof18.feedflow.core.model.canOpenReaderMode
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
@@ -162,12 +162,18 @@ private fun openSearchResult(
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
 ) {
     when (urlInfo.linkOpeningPreference) {
-        LinkOpeningPreference.READER_MODE -> navigateToReaderMode(urlInfo)
+        LinkOpeningPreference.READER_MODE -> {
+            if (urlInfo.canOpenReaderMode()) {
+                navigateToReaderMode(urlInfo)
+            } else {
+                openUri(urlInfo.url)
+            }
+        }
         LinkOpeningPreference.INTERNAL_BROWSER,
         LinkOpeningPreference.PREFERRED_BROWSER,
         -> openUri(urlInfo.url)
         LinkOpeningPreference.DEFAULT -> {
-            if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
+            if (browserManager.openReaderMode() && urlInfo.canOpenReaderMode()) {
                 navigateToReaderMode(urlInfo)
             } else {
                 openUri(urlInfo.url)

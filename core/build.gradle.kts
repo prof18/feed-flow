@@ -22,6 +22,7 @@ kotlin {
                 implementation(libs.touchlab.kermit)
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.com.prof18.rss.parser)
+                implementation(libs.ktor.http)
             }
         }
 

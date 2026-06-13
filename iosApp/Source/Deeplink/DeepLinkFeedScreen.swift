@@ -30,7 +30,12 @@ struct DeepLinkFeedScreen: View {
                 if let urlInfo = (state as? DeeplinkFeedState.Success)?.data {
                     switch urlInfo.linkOpeningPreference {
                     case .readerMode:
-                        readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                        if browserSelector.isReaderModeEligible(link: urlInfo.url) {
+                            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                        } else {
+                            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
+                            self.dismiss()
+                        }
                     case .internalBrowser:
                         if let url = URL(string: urlInfo.url) {
                             if browserSelector.isValidForInAppBrowser(url) {
@@ -44,7 +49,7 @@ struct DeepLinkFeedScreen: View {
                         openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
                         self.dismiss()
                     case .default:
-                        if browserSelector.openReaderMode(link: urlInfo.url) {
+                        if browserSelector.shouldOpenInReaderMode(link: urlInfo.url) {
                             readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
                         } else if browserSelector.openInAppBrowser() {
                             if let url = URL(string: urlInfo.url) {

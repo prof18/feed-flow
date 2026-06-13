@@ -117,8 +117,12 @@ struct SearchScreenContent: View {
 
         switch urlInfo.linkOpeningPreference {
         case .readerMode:
-            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
-            navigateToReaderMode()
+            if browserSelector.isReaderModeEligible(link: feedItem.url) {
+                readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                navigateToReaderMode()
+            } else {
+                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+            }
         case .internalBrowser:
             if browserSelector.isValidForInAppBrowser(url) {
                 appState.openInAppBrowser(url: url)
@@ -128,7 +132,7 @@ struct SearchScreenContent: View {
         case .preferredBrowser:
             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
         case .default:
-            if browserSelector.openReaderMode(link: feedItem.url) {
+            if browserSelector.shouldOpenInReaderMode(link: feedItem.url) {
                 readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
                 navigateToReaderMode()
             } else if browserSelector.openInAppBrowser() {

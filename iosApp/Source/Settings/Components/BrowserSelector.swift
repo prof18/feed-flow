@@ -131,9 +131,12 @@ class BrowserSelector {
         return currentSelectedBrowserId() == BrowserIds.shared.IN_APP_BROWSER
     }
 
-    func openReaderMode(link: String) -> Bool {
-        return settingsRepository.isUseReaderModeEnabled() && !link.contains("type=pdf")
-            && !link.contains("youtube.com")
+    func shouldOpenInReaderMode(link: String) -> Bool {
+        return settingsRepository.isUseReaderModeEnabled() && isReaderModeEligible(link: link)
+    }
+
+    func isReaderModeEligible(link: String) -> Bool {
+        return ReaderModeEligibility.shared.canOpenReaderMode(url: link)
     }
 
     func getUrlForDefaultBrowser(stringUrl: String) -> URL {

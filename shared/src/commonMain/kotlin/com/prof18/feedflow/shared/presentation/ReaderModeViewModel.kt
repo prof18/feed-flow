@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.core.model.canOpenReaderMode
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -59,10 +60,7 @@ class ReaderModeViewModel internal constructor(
     }
 
     fun getReaderModeHtml(urlInfo: FeedItemUrlInfo) {
-        val isSameArticle = currentArticleId == urlInfo.id && readerModeMutableState.value.isForArticle(urlInfo.id)
-        currentArticleId = urlInfo.id
-        currentArticleMutableState.value = urlInfo
-        updateNavigationFlags()
+        val isSameArticle = selectArticle(urlInfo)
         if (!isSameArticle) {
             loadArticleContent(urlInfo)
         }
@@ -166,6 +164,24 @@ class ReaderModeViewModel internal constructor(
         }
     }
 
+    private fun selectArticle(urlInfo: FeedItemUrlInfo): Boolean {
+        val isSameArticle = currentArticleId == urlInfo.id && readerModeMutableState.value.isForArticle(urlInfo.id)
+        currentArticleId = urlInfo.id
+        currentArticleMutableState.value = urlInfo
+        updateNavigationFlags()
+        return isSameArticle
+    }
+
+    private fun showFallbackForArticle(urlInfo: FeedItemUrlInfo) {
+        loadReaderModeJob?.cancel()
+        selectArticle(urlInfo)
+        readerModeMutableState.value = ReaderModeState.HtmlNotAvailable(
+            url = urlInfo.url,
+            id = urlInfo.id,
+            isBookmarked = urlInfo.isBookmarked,
+        )
+    }
+
     private fun FeedItemUrlInfo.getBaseUrl(): String = try {
         val url = Url(url)
         "${url.protocol.name}://${url.host}"
@@ -182,7 +198,11 @@ class ReaderModeViewModel internal constructor(
             val nextArticle = feedStateRepository.getNextArticle(articleId)?.toFeedItemUrlInfo()
             if (nextArticle != null) {
                 feedActionsRepository.markAsRead(hashSetOf(FeedItemId(nextArticle.id)))
-                getReaderModeHtml(nextArticle)
+                if (nextArticle.canOpenReaderMode()) {
+                    getReaderModeHtml(nextArticle)
+                } else {
+                    showFallbackForArticle(nextArticle)
+                }
             } else {
                 canNavigateToNextMutableState.value = false
             }
@@ -199,7 +219,11 @@ class ReaderModeViewModel internal constructor(
             viewModelScope.launch {
                 feedActionsRepository.markAsRead(hashSetOf(FeedItemId(prevArticle.id)))
             }
-            getReaderModeHtml(prevArticle)
+            if (prevArticle.canOpenReaderMode()) {
+                getReaderModeHtml(prevArticle)
+            } else {
+                showFallbackForArticle(prevArticle)
+            }
         } else {
             canNavigateToPreviousMutableState.value = false
         }

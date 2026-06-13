@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain
 
 import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient
+import io.ktor.client.request.header
 import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
@@ -31,9 +32,16 @@ class HtmlRetriever(
             return null
         }
         return try {
-            client.prepareGet(url).execute { response ->
+            client.prepareGet(url) {
+                header(HttpHeaders.Accept, READABLE_CONTENT_ACCEPT_HEADER)
+            }.execute { response ->
                 if (!response.status.isSuccess()) {
                     logger.d { "Unable to retrieve HTML, HTTP status: ${response.status}" }
+                    return@execute null
+                }
+                val contentTypeHeader = response.headers[HttpHeaders.ContentType]
+                if (!isReadableContentType(contentTypeHeader)) {
+                    logger.d { "Skipping non-readable content type: $contentTypeHeader for $url" }
                     return@execute null
                 }
                 val declaredLength = response.headers[HttpHeaders.ContentLength]?.toLongOrNull()
@@ -46,7 +54,7 @@ class HtmlRetriever(
                 }
                 val bytes = buffer.readByteArray()
                 val charset = resolveCharset(
-                    contentTypeHeader = response.headers[HttpHeaders.ContentType],
+                    contentTypeHeader = contentTypeHeader,
                     bodyBytes = bytes,
                 )
                 decodeBytes(bytes, charset)
@@ -78,6 +86,12 @@ class HtmlRetriever(
     private fun parseCharsetFromContentType(contentTypeHeader: String?): String? {
         if (contentTypeHeader.isNullOrBlank()) return null
         return runCatching { ContentType.parse(contentTypeHeader).parameter("charset") }.getOrNull()
+    }
+
+    private fun isReadableContentType(contentTypeHeader: String?): Boolean {
+        if (contentTypeHeader.isNullOrBlank()) return true
+        val mediaType = contentTypeHeader.substringBefore(';').trim().lowercase()
+        return mediaType in readableContentTypes
     }
 
     private fun parseMetaCharset(html: String): String? {
@@ -166,6 +180,9 @@ class HtmlRetriever(
         private const val MAX_RESPONSE_BYTES = 5 * 1024 * 1024 // 5 MB
         private const val META_SNIFF_LIMIT = 4096 // 4 KB
         private const val XML_DECLARATION_SNIFF_LIMIT = 256 // 256 B
+        private const val READABLE_CONTENT_ACCEPT_HEADER =
+            "text/html, application/xhtml+xml, application/xml;q=0.9, text/xml;q=0.9, " +
+                "application/rss+xml;q=0.8, application/atom+xml;q=0.8, */*;q=0.1"
         private const val BYTE_MASK = 0xFF
         private const val UTF8_BOM_LENGTH = 3
         private const val UTF8_BOM_FIRST = 0xEF
@@ -200,6 +217,14 @@ class HtmlRetriever(
             Regex("charset\\s*=\\s*([^\\s;]+)", RegexOption.IGNORE_CASE)
         private val XML_DECLARATION_REGEX =
             Regex("<\\?xml[^>]*encoding\\s*=\\s*['\\\"]([^\"']+)['\\\"]", RegexOption.IGNORE_CASE)
+        private val readableContentTypes = setOf(
+            "text/html",
+            "application/xhtml+xml",
+            "application/xml",
+            "text/xml",
+            "application/rss+xml",
+            "application/atom+xml",
+        )
     }
 
     private fun utf8SequenceLength(leadingByte: Int): Int? =

@@ -334,6 +334,48 @@ class ReaderModeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `navigation shows fallback for next article when URL is not eligible for reader mode`() = runTest {
+        val feedItems = seedFeedItems(item3Url = "https://example.com/audio/episode.mp3")
+        val middleItem = feedItems[1]
+        val nextItem = feedItems[2]
+
+        viewModel.getReaderModeHtml(middleItem.toUrlInfo())
+        assertTrue(viewModel.canNavigateToNextState.value)
+
+        viewModel.navigateToNextArticle()
+        advanceUntilIdle()
+
+        val state = viewModel.readerModeState.value
+        assertIs<ReaderModeState.HtmlNotAvailable>(state)
+        assertEquals(nextItem.id, state.id)
+        assertEquals(nextItem.url, state.url)
+        assertEquals(nextItem.id, viewModel.currentArticleState.value?.id)
+        assertFalse(viewModel.canNavigateToNextState.value)
+        assertTrue(viewModel.canNavigateToPreviousState.value)
+    }
+
+    @Test
+    fun `navigation shows fallback for previous article when URL is not eligible for reader mode`() = runTest {
+        val feedItems = seedFeedItems(item1Url = "https://www.youtube.com/watch?v=abc")
+        val previousItem = feedItems[0]
+        val middleItem = feedItems[1]
+
+        viewModel.getReaderModeHtml(middleItem.toUrlInfo())
+        assertTrue(viewModel.canNavigateToPreviousState.value)
+
+        viewModel.navigateToPreviousArticle()
+        advanceUntilIdle()
+
+        val state = viewModel.readerModeState.value
+        assertIs<ReaderModeState.HtmlNotAvailable>(state)
+        assertEquals(previousItem.id, state.id)
+        assertEquals(previousItem.url, state.url)
+        assertEquals(previousItem.id, viewModel.currentArticleState.value?.id)
+        assertFalse(viewModel.canNavigateToPreviousState.value)
+        assertTrue(viewModel.canNavigateToNextState.value)
+    }
+
+    @Test
     fun `navigation fails gracefully when feed list changes externally`() = runTest {
         val feedItems = seedFeedItems()
         val middleItem = feedItems[1]
@@ -352,7 +394,11 @@ class ReaderModeViewModelTest : KoinTestBase() {
         assertIs<ReaderModeState.Success>(viewModel.readerModeState.value)
     }
 
-    private suspend fun seedFeedItems(): List<FeedItem> {
+    private suspend fun seedFeedItems(
+        item1Url: String = "https://example.com/articles/1",
+        item2Url: String = "https://example.com/articles/2",
+        item3Url: String = "https://example.com/articles/3",
+    ): List<FeedItem> {
         val feedSource = FeedSource(
             id = "source-1",
             url = "https://example.com/feed.xml",
@@ -384,21 +430,21 @@ class ReaderModeViewModelTest : KoinTestBase() {
         val feedItems = listOf(
             createFeedItem(
                 id = "item-1",
-                url = "https://example.com/articles/1",
+                url = item1Url,
                 title = "Article 1",
                 pubDateMillis = 3000,
                 feedSource = feedSource,
             ),
             createFeedItem(
                 id = "item-2",
-                url = "https://example.com/articles/2",
+                url = item2Url,
                 title = "Article 2",
                 pubDateMillis = 2000,
                 feedSource = feedSource,
             ),
             createFeedItem(
                 id = "item-3",
-                url = "https://example.com/articles/3",
+                url = item3Url,
                 title = "Article 3",
                 pubDateMillis = 1000,
                 feedSource = feedSource,

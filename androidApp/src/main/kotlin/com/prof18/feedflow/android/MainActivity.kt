@@ -66,7 +66,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncResult
-import com.prof18.feedflow.core.model.shouldOpenInBrowser
+import com.prof18.feedflow.core.model.canOpenReaderMode
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.parser.ReaderModeParserWarmer
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
@@ -521,7 +521,11 @@ class MainActivity : BaseThemeActivity() {
     ) {
         when (feedUrlInfo.linkOpeningPreference) {
             LinkOpeningPreference.READER_MODE -> {
-                navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo, backStack)
+                if (feedUrlInfo.canOpenReaderMode()) {
+                    navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo, backStack)
+                } else {
+                    browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)
+                }
             }
             LinkOpeningPreference.INTERNAL_BROWSER -> {
                 browserManager.openWithInAppBrowser(feedUrlInfo.url, this@MainActivity)
@@ -530,7 +534,7 @@ class MainActivity : BaseThemeActivity() {
                 browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)
             }
             LinkOpeningPreference.DEFAULT -> {
-                if (browserManager.openReaderMode() && !feedUrlInfo.shouldOpenInBrowser()) {
+                if (browserManager.openReaderMode() && feedUrlInfo.canOpenReaderMode()) {
                     navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo, backStack)
                 } else {
                     browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)

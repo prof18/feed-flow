@@ -23,7 +23,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
-import com.prof18.feedflow.core.model.shouldOpenInBrowser
+import com.prof18.feedflow.core.model.canOpenReaderMode
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
@@ -317,11 +317,17 @@ private fun openUrl(
     context: Context,
 ) {
     when (urlInfo.linkOpeningPreference) {
-        LinkOpeningPreference.READER_MODE -> navigateToReaderMode(urlInfo)
+        LinkOpeningPreference.READER_MODE -> {
+            if (urlInfo.canOpenReaderMode()) {
+                navigateToReaderMode(urlInfo)
+            } else {
+                browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+            }
+        }
         LinkOpeningPreference.INTERNAL_BROWSER -> browserManager.openWithInAppBrowser(urlInfo.url, context)
         LinkOpeningPreference.PREFERRED_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
         LinkOpeningPreference.DEFAULT -> {
-            if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
+            if (browserManager.openReaderMode() && urlInfo.canOpenReaderMode()) {
                 navigateToReaderMode(urlInfo)
             } else {
                 browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)

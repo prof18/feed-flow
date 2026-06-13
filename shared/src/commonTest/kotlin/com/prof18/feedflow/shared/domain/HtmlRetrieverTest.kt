@@ -12,6 +12,7 @@ import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -131,6 +132,70 @@ class HtmlRetrieverTest {
 
             assertNull(result)
         }
+    }
+
+    @Test
+    fun `non-readable content types are skipped`() = runTest(testDispatcher) {
+        listOf(
+            "audio/mpeg",
+            "video/mp4",
+            "image/jpeg",
+            "application/pdf",
+            "application/octet-stream",
+        ).forEach { contentType ->
+            val result = retrieveHtml(
+                bytes = "<html><body>Not really read</body></html>".encodeToByteArray(),
+                contentType = contentType,
+            )
+
+            assertNull(result)
+        }
+    }
+
+    @Test
+    fun `readable content types are accepted`() = runTest(testDispatcher) {
+        listOf(
+            "text/html; charset=utf-8",
+            "application/xhtml+xml",
+            "application/xml",
+            "text/xml",
+            "application/rss+xml",
+            "application/atom+xml",
+        ).forEach { contentType ->
+            val result = retrieveHtml(
+                bytes = "<html><body>Readable</body></html>".encodeToByteArray(),
+                contentType = contentType,
+            )
+
+            assertNotNull(result)
+        }
+    }
+
+    @Test
+    fun `request sends readable content accept header`() = runTest(testDispatcher) {
+        var acceptHeader: String? = null
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler { request ->
+                        acceptHeader = request.headers[HttpHeaders.Accept]
+                        respond(
+                            content = "<html><body>Readable</body></html>".encodeToByteArray(),
+                            status = HttpStatusCode.OK,
+                            headers = headersOf(HttpHeaders.ContentType, "text/html"),
+                        )
+                    }
+                }
+            },
+        )
+
+        val result = retriever.retrieveHtml("https://example.com")
+
+        assertNotNull(result)
+        assertNotNull(acceptHeader)
+        assertTrue(requireNotNull(acceptHeader).contains("text/html"))
+        assertFalse(requireNotNull(acceptHeader).contains("audio/"))
     }
 
     @Test

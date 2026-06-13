@@ -112,11 +112,19 @@ struct HomeScreen: View {
                 homeViewModel.markAsRead(feedItemId: feedItemClickedInfo.id)
             },
             onReaderModeClick: { feedItemUrlInfo in
-                readerModeViewModel.getReaderModeHtml(urlInfo: feedItemUrlInfo)
-                if let navigate = onReaderModeNavigate {
-                    navigate()
+                if browserSelector.isReaderModeEligible(link: feedItemUrlInfo.url) {
+                    readerModeViewModel.getReaderModeHtml(urlInfo: feedItemUrlInfo)
+                    if let navigate = onReaderModeNavigate {
+                        navigate()
+                    } else {
+                        appState.navigate(route: CommonViewRoute.readerMode)
+                    }
+                } else if let url = URL(string: feedItemUrlInfo.url),
+                          browserSelector.openInAppBrowser(),
+                          browserSelector.isValidForInAppBrowser(url) {
+                    appState.openInAppBrowser(url: url)
                 } else {
-                    appState.navigate(route: CommonViewRoute.readerMode)
+                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItemUrlInfo.url))
                 }
             },
             onBookmarkClick: { feedItemId, isBookmarked in

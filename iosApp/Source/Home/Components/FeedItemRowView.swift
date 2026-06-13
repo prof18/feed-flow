@@ -47,7 +47,11 @@ struct FeedItemRowView: View {
 
         switch urlInfo.linkOpeningPreference {
         case .readerMode:
-          onReaderModeClick(urlInfo)
+          if browserSelector.isReaderModeEligible(link: feedItem.url) {
+            onReaderModeClick(urlInfo)
+          } else {
+            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+          }
         case .internalBrowser:
           if browserSelector.isValidForInAppBrowser(url) {
             self.appState.openInAppBrowser(url: url)
@@ -57,7 +61,7 @@ struct FeedItemRowView: View {
         case .preferredBrowser:
           openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
         case .default:
-          if browserSelector.openReaderMode(link: feedItem.url) {
+          if browserSelector.shouldOpenInReaderMode(link: feedItem.url) {
             onReaderModeClick(urlInfo)
           } else if browserSelector.openInAppBrowser() {
             if browserSelector.isValidForInAppBrowser(url) {

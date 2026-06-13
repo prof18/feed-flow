@@ -37,6 +37,7 @@ import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.syncErrorMessage
 import org.koin.compose.koinInject
 
 @Composable
@@ -109,7 +110,7 @@ internal fun HomeScreen(
 
                 is UIErrorState.SyncError -> {
                     snackbarHostState.showSnackbar(
-                        strings.syncErrorMessage(errorState.errorCode.code),
+                        strings.syncErrorMessage(errorState.errorCode),
                         duration = SnackbarDuration.Short,
                     )
                 }

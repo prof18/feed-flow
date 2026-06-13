@@ -4,12 +4,14 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.core.model.Failure
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.core.model.InProgressFeedUpdateStatus
+import com.prof18.feedflow.core.model.NetworkFailure
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
 import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.core.model.onErrorSuspend
@@ -85,8 +87,8 @@ class FeedFetcherRepository internal constructor(
             feedStateRepository.emitUpdateStatus(NoFeedSourcesStatus)
         } else {
             gReaderRepository.sync()
-                .onErrorSuspend {
-                    feedStateRepository.emitErrorState(SyncError(FeedSyncError.SyncFeedsFailed))
+                .onErrorSuspend { failure ->
+                    feedStateRepository.emitErrorState(SyncError(failure.toGReaderSyncErrorCode()))
                 }
         }
         // If the sync is skipped quickly, sometimes the loading spinner stays out
@@ -305,3 +307,9 @@ class FeedFetcherRepository internal constructor(
         }
     }
 }
+
+private fun Failure.toGReaderSyncErrorCode(): FeedSyncError =
+    when (this) {
+        NetworkFailure.BadToken -> FeedSyncError.GReaderBadToken
+        else -> FeedSyncError.SyncFeedsFailed
+    }

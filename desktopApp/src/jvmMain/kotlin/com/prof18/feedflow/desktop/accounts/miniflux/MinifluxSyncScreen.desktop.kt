@@ -35,6 +35,7 @@ internal fun MinifluxSyncScreen(
         viewModel.errorState.collect { failure ->
             val errorMessage = when (failure) {
                 is NetworkFailure.Unauthorised -> strings.wrongCredentialsErrorMessage
+                NetworkFailure.BadToken -> strings.minifluxBadTokenErrorMessage
                 is DataNotFound -> strings.wrongUrlErrorMessage
                 else -> strings.genericErrorMessage
             }

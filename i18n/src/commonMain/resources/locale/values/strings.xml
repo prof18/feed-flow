@@ -188,6 +188,7 @@
     <string name="open_feed_settings">Open feed settings</string>
     <string name="feed_added_message_without_name">Feed added</string>
     <string name="sync_error_message">There was an error while syncing the feeds - error code: %s :(. Please retry.</string>
+    <string name="greader_bad_token_sync_error_message">The server rejected the sync token. If your Google Reader-compatible service is behind a reverse proxy, make sure it forwards the Authorization header.</string>
     <string name="delete_feed_source_error">Couldn\'t delete the feed. Please try again.</string>
     <string name="wrong_credentials_error_message">The credentials are not correct. Please try again.</string>
     <string name="wrong_url_error_message">The provided link is not correct. Please try again.</string>
@@ -205,6 +206,7 @@
     <string name="miniflux_last_sync">Last sync: %s</string>
     <string name="miniflux_password_hint">The Miniflux API password (Settings &gt; Integrations &gt; Google Reader)</string>
     <string name="miniflux_url_hint">The Miniflux server URL, for example %s</string>
+    <string name="miniflux_bad_token_error_message">Login succeeded, but Miniflux rejected the sync token. If Miniflux is behind a reverse proxy, make sure it forwards the Authorization header.</string>
     <string name="bazqux_account_connected">Your BazQux account is successfully connected</string>
     <string name="no_bazqux_sync_yet">Data are not synced yet</string>
     <string name="bazqux_last_sync">Last sync: %s</string>

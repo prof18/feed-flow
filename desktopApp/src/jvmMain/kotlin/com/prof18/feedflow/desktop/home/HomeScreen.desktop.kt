@@ -41,6 +41,7 @@ import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
+import com.prof18.feedflow.shared.ui.utils.syncErrorMessage
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -124,7 +125,7 @@ internal fun HomeScreen(
 
                 is UIErrorState.SyncError -> {
                     snackbarHostState.showSnackbar(
-                        strings.syncErrorMessage(errorState.errorCode.code),
+                        strings.syncErrorMessage(errorState.errorCode),
                         duration = SnackbarDuration.Short,
                     )
                 }

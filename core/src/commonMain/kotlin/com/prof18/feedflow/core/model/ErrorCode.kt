@@ -62,4 +62,5 @@ sealed class FeedSyncError(override val code: String) : ErrorCode {
     data object EditCategoryNameFailed : FeedSyncError("FS9")
     data object DeleteCategoryFailed : FeedSyncError("FS9")
     data object SyncFeedsFailed : FeedSyncError("FS10")
+    data object GReaderBadToken : FeedSyncError("FS11")
 }

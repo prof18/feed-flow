@@ -25,6 +25,7 @@ import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.search.SearchScreenContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.syncErrorMessage
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -74,7 +75,7 @@ internal fun SearchScreen(
 
                 is UIErrorState.SyncError -> {
                     snackbarHostState.showSnackbar(
-                        strings.syncErrorMessage(errorState.errorCode.code),
+                        strings.syncErrorMessage(errorState.errorCode),
                         duration = SnackbarDuration.Short,
                     )
                 }

@@ -145,3 +145,24 @@ fun GReaderMockEngineBuilder.configureMinifluxMocksWithSyncFailure() {
         responseContent = """{"error": "Internal Server Error"}""",
     )
 }
+
+/**
+ * Configures Miniflux mocks with successful login but a rejected sync token.
+ */
+fun GReaderMockEngineBuilder.configureMinifluxMocksWithBadTokenSyncFailure() {
+    addMockResponse(
+        urlPattern = "/accounts/ClientLogin",
+        method = "POST",
+        responseFile = "login_success.txt",
+        statusCode = HttpStatusCode.OK,
+        headers = mapOf(HttpHeaders.ContentType to "text/plain"),
+    )
+
+    addMockResponse(
+        urlPattern = "/reader/api/0/subscription/list",
+        method = "GET",
+        statusCode = HttpStatusCode.Unauthorized,
+        headers = mapOf("X-Reader-Google-Bad-Token" to "true"),
+        responseContent = "Unauthorized",
+    )
+}

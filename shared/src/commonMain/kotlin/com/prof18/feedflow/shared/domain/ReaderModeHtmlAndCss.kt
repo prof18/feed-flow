@@ -61,6 +61,21 @@ fun getReaderModeStyledHtml(
                 });
             }
 
+          function hideBrokenImage(image) {
+              image.classList.add("__feedflow_image_load_failed");
+              image.setAttribute("aria-hidden", "true");
+          }
+
+          document.querySelectorAll("img").forEach(function(image) {
+              image.addEventListener("error", function() {
+                  hideBrokenImage(image);
+              });
+
+              if (image.complete && image.naturalWidth === 0) {
+                  hideBrokenImage(image);
+              }
+          });
+
           document.body.addEventListener("click", function(event) {
               let anchor = event.target.closest("a");
               if (anchor) {
@@ -194,6 +209,10 @@ img, iframe, object, video {
     max-width: 100%;
     height: auto;
     border-radius: 7px;
+}
+
+img.__feedflow_image_load_failed {
+    display: none !important;
 }
 
 pre {

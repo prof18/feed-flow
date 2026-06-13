@@ -28,6 +28,7 @@ import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.utils.initSentry
+import com.prof18.feedflow.desktop.utils.integrateAppImageIfNeeded
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
@@ -49,6 +50,7 @@ private const val LIGHT_THEME_BACKGROUND = 0xFAFAFA
 private const val OLED_THEME_BACKGROUND = 0x000000
 
 fun main() {
+    integrateAppImageIfNeeded()
     setupSandboxEnvironment()
 
     application {

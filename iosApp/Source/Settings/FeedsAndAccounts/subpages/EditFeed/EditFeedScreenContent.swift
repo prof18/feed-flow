@@ -129,6 +129,7 @@ struct EditFeedScreenContent: View {
             Section {
                 Button(
                     action: {
+                        isTextFieldFocused = false
                         showCategorySheet = true
                     },
                     label: {

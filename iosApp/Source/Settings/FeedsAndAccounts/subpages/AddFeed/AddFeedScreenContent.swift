@@ -67,6 +67,7 @@ struct AddFeedScreenContent: View {
             Section {
                 Button(
                     action: {
+                        isTextFieldFocused = false
                         showCategorySheet = true
                     },
                     label: {

@@ -387,4 +387,6 @@
     <string name="add_feed_anyway_button">仍要添加</string>
     <string name="sort_and_filter_button">排序和筛选</string>
     <string name="rename_category">重命名类别</string>
+    <string name="greader_bad_token_sync_error_message">服务器拒绝了同步令牌。如果您的 Google Reader 兼容服务位于反向代理之后，请确保其转发了授权标头。</string>
+    <string name="miniflux_bad_token_error_message">登录成功，但 Miniflux 拒绝了同步令牌。如果 Miniflux 位于反向代理之后，请确保其转发了授权标头。</string>
 </resources>

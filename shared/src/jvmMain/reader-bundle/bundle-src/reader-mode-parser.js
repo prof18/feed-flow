@@ -119,46 +119,62 @@ function deduplicateImages(doc, baseUrl) {
 }
 
 function removeNoisyElements(doc) {
-  var noisyElements = doc.querySelectorAll('script, style, iframe, frame, frameset, canvas');
+  var noisyElements = doc.querySelectorAll(
+    'script:not([type="application/ld+json" i]):not([type^="math/" i]), style, frame, frameset, noscript, canvas, object, embed, applet, base'
+  );
   for (var i = 0; i < noisyElements.length; i++) {
     noisyElements[i].remove();
   }
 }
 
-function stripKnownNonContent(htmlContent) {
-  return String(htmlContent || '')
-    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
-    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
-    .replace(/<iframe\b[^>]*>[\s\S]*?<\/iframe>/gi, '')
-    .replace(/<iframe\b[^>]*\/>/gi, '')
-    .replace(/<frameset\b[^>]*>[\s\S]*?<\/frameset>/gi, '')
-    .replace(/<frame\b[^>]*>/gi, '');
+function nowMillis() {
+  return Date.now();
 }
 
 globalThis.parseReaderContent = function parseReaderContent(htmlContent, url, imageUrl) {
-  try {
-    var win = parseHTML(stripKnownNonContent(htmlContent));
-    var doc = win.document;
+  var totalStart = nowMillis();
+  var timings = {
+    inputChars: String(htmlContent || '').length,
+    domMillis: null,
+    cleanupMillis: null,
+    defuddleMillis: null,
+    totalMillis: null,
+  };
 
+  try {
+    var domStart = nowMillis();
+    var win = parseHTML(String(htmlContent || ''));
+    var doc = win.document;
+    timings.domMillis = nowMillis() - domStart;
+
+    var cleanupStart = nowMillis();
     installNeutralComputedStyle(win);
     removeNoisyElements(doc);
     absolutizeUrls(doc, url);
     removeMatchingImage(doc, imageUrl, url);
     deduplicateImages(doc, url);
+    timings.cleanupMillis = nowMillis() - cleanupStart;
 
+    var defuddleStart = nowMillis();
     var result = new Defuddle(doc, { url: url, markdown: true, useAsync: false }).parse();
+    timings.defuddleMillis = nowMillis() - defuddleStart;
+    timings.totalMillis = nowMillis() - totalStart;
+
     if (!result || !result.content) {
-      return JSON.stringify({ error: 'Defuddle returned no content' });
+      return JSON.stringify({ error: 'Defuddle returned no content', timings: timings });
     }
 
     return JSON.stringify({
       content: result.content,
       title: result.title || null,
       siteName: result.site || null,
+      timings: timings,
     });
   } catch (error) {
+    timings.totalMillis = nowMillis() - totalStart;
     return JSON.stringify({
       error: String(error) + (error && error.stack ? '\n' + error.stack : ''),
+      timings: timings,
     });
   }
 };

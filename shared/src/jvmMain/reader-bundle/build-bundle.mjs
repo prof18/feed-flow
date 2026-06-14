@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const resources = path.resolve(here, '../resources');
 const prelude = fs.readFileSync(path.join(here, 'bundle-src/prelude.js'), 'utf8');
+const readerBundle = path.join(resources, 'reader-mode-parser.js');
 
 const common = {
   bundle: true,
@@ -23,8 +24,13 @@ const common = {
 await esbuild.build({
   ...common,
   entryPoints: [path.join(here, 'bundle-src/reader-mode-parser.js')],
-  outfile: path.join(resources, 'reader-mode-parser.js'),
+  outfile: readerBundle,
   banner: { js: prelude },
 });
+
+fs.writeFileSync(
+  readerBundle,
+  fs.readFileSync(readerBundle, 'utf8').replace(/[ \t]+$/gm, ''),
+);
 
 console.log('reader bundle built ->', resources);

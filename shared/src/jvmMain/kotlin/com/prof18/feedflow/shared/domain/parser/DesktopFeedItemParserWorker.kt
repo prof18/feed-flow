@@ -62,13 +62,16 @@ internal class DesktopFeedItemParserWorker(
                 }
                 val cleanupMark = TimeSource.Monotonic.markNow()
                 val cleanedHtml = cleanPlaceholderImages(html)
+                val preparedHtml = ReaderModeHtmlPreprocessor.prepare(cleanedHtml)
                 logger.d {
-                    "Reader HTML cleaned in ${cleanupMark.elapsedNow().inWholeMilliseconds}ms for: $url"
+                    "Reader HTML prepared in ${cleanupMark.elapsedNow().inWholeMilliseconds}ms " +
+                        "(input=${html.length} chars, output=${preparedHtml.html.length} chars, " +
+                        "removed=${preparedHtml.removedChars} chars, truncated=${preparedHtml.truncated}) for: $url"
                 }
 
                 val parseMark = TimeSource.Monotonic.markNow()
                 val parseResult = runInterruptible {
-                    runReaderParser(cleanedHtml, url, imageUrl)
+                    runReaderParser(preparedHtml.html, url, imageUrl)
                 }
                 val parseMillis = parseMark.elapsedNow().inWholeMilliseconds
                 if (parseResult == null) {
@@ -77,7 +80,7 @@ internal class DesktopFeedItemParserWorker(
                 }
                 logger.d {
                     "Reader parser completed in ${parseMillis}ms \"${parseResult.title}\" " +
-                        "(${parseResult.content.length} chars) for: $url"
+                        "(${parseResult.content.length} chars, ${parseResult.timings.toLogString()}) for: $url"
                 }
 
                 if (parseResult.content.length < MIN_CONTENT_LENGTH) {
@@ -108,6 +111,12 @@ internal class DesktopFeedItemParserWorker(
                     append(parseResult.content)
                 }
 
+                val successResult = ParsingResult.Success(
+                    htmlContent = markdown,
+                    title = parseResult.title,
+                    siteName = parseResult.siteName,
+                )
+
                 if (settingsRepository.isSaveItemContentOnOpenEnabled()) {
                     val saveMark = TimeSource.Monotonic.markNow()
                     feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, markdown)
@@ -119,11 +128,7 @@ internal class DesktopFeedItemParserWorker(
                         "(html=${html.length} chars, content=${parseResult.content.length} chars) for: $url"
                 }
 
-                ParsingResult.Success(
-                    htmlContent = markdown,
-                    title = parseResult.title,
-                    siteName = parseResult.siteName,
-                )
+                successResult
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Throwable) {
@@ -135,6 +140,16 @@ internal class DesktopFeedItemParserWorker(
 
     private fun runReaderParser(html: String, url: String, imageUrl: String?): ReaderModeParseResult? =
         readerRuntime.parse(html, url, imageUrl)
+
+    private fun ReaderModeParseTimings?.toLogString(): String {
+        if (this == null) return "js timings unavailable"
+
+        return "js total=${totalMillis ?: "?"}ms, " +
+            "dom=${domMillis ?: "?"}ms, " +
+            "cleanup=${cleanupMillis ?: "?"}ms, " +
+            "defuddle=${defuddleMillis ?: "?"}ms, " +
+            "input=${inputChars ?: "?"} chars"
+    }
 
     private fun cleanPlaceholderImages(html: String): String {
         if (!html.contains(PLACEHOLDER_IMAGE_MARKER)) return html

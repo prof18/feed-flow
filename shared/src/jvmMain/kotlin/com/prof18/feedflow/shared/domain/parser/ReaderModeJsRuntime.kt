@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.parser
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.graalvm.polyglot.Context
@@ -55,9 +56,17 @@ internal class ReaderModeJsRuntime(
     )
 
     fun warmUp() {
-        val context = createContext()
-        if (!contextPool.offer(context)) {
-            context.close()
+        repeat(contextPool.remainingCapacity()) {
+            val context = createContext()
+            try {
+                executeReaderContent(context, WARM_UP_HTML, WARM_UP_URL, null)
+                if (!contextPool.offer(context)) {
+                    context.close()
+                }
+            } catch (e: Throwable) {
+                closeContextQuietly(context)
+                throw e
+            }
         }
     }
 
@@ -82,10 +91,7 @@ internal class ReaderModeJsRuntime(
                 try {
                     context = acquireContext()
                     activeContext.set(context)
-                    val result = context.getBindings("js")
-                        .getMember(PARSE_READER_CONTENT_FUNCTION)
-                        .execute(html, url, imageUrl)
-                        .asString()
+                    val result = executeReaderContent(context, html, url, imageUrl)
                     reusable.set(true)
                     result
                 } finally {
@@ -142,6 +148,17 @@ internal class ReaderModeJsRuntime(
                 readerSources.forEach(context::eval)
             }
 
+    private fun executeReaderContent(
+        context: Context,
+        html: String,
+        url: String,
+        imageUrl: String?,
+    ): String =
+        context.getBindings("js")
+            .getMember(PARSE_READER_CONTENT_FUNCTION)
+            .execute(html, url, imageUrl)
+            .asString()
+
     private fun parseResultJson(resultJson: String): ReaderModeParseResult? {
         val jsObject = Json.parseToJsonElement(resultJson).jsonObject
         jsObject["error"]?.jsonPrimitive?.takeIf { it.isString }?.let {
@@ -157,8 +174,20 @@ internal class ReaderModeJsRuntime(
 
         val title = jsObject["title"]?.jsonPrimitive?.takeIf { it.isString }?.content
         val siteName = jsObject["siteName"]?.jsonPrimitive?.takeIf { it.isString }?.content
-        return ReaderModeParseResult(content, title, siteName)
+        val timings = jsObject["timings"]?.jsonObject?.let { timingObject ->
+            ReaderModeParseTimings(
+                totalMillis = timingObject.longValue("totalMillis"),
+                domMillis = timingObject.longValue("domMillis"),
+                cleanupMillis = timingObject.longValue("cleanupMillis"),
+                defuddleMillis = timingObject.longValue("defuddleMillis"),
+                inputChars = timingObject.longValue("inputChars"),
+            )
+        }
+        return ReaderModeParseResult(content, title, siteName, timings)
     }
+
+    private fun Map<String, JsonElement>.longValue(name: String): Long? =
+        this[name]?.jsonPrimitive?.content?.toLongOrNull()
 
     private fun cancelActiveParse(context: Context?, future: Future<String>) {
         if (context != null) {
@@ -205,13 +234,26 @@ internal class ReaderModeJsRuntime(
     }
 
     private companion object {
-        private const val MAX_IDLE_CONTEXTS = 1
+        private const val MAX_IDLE_CONTEXTS = 2
         private const val MAX_PARSE_THREADS = 2
         private const val THREAD_KEEP_ALIVE_SECONDS = 30L
         private const val PARSE_READER_CONTENT_FUNCTION = "parseReaderContent"
+        private const val WARM_UP_URL = "https://feedflow.local/reader-warm-up"
+        private const val WARM_UP_PARAGRAPH_COUNT = 8
 
         private val DEFAULT_PARSE_TIMEOUT = 10.seconds
         private val CONTEXT_INTERRUPT_GRACE: JavaDuration = JavaDuration.ofMillis(250)
         private val threadCounter = AtomicInteger()
+
+        private val WARM_UP_HTML = buildString {
+            append("<html><head><title>Reader warm up</title></head><body><article>")
+            append("<h1>Reader warm up</h1>")
+            repeat(WARM_UP_PARAGRAPH_COUNT) { index ->
+                append("<p>Warm up paragraph ")
+                append(index)
+                append(" with enough readable text for the parser to exercise extraction and Markdown output.</p>")
+            }
+            append("</article></body></html>")
+        }
     }
 }

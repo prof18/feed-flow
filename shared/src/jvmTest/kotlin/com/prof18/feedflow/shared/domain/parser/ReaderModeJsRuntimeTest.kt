@@ -39,6 +39,11 @@ class ReaderModeJsRuntimeTest {
             val content = result.content
             assertEquals("Test Article Title", result.title)
             assertEquals("Test Site", result.siteName)
+            assertNotNull(result.timings, "reader runtime should report JS phase timings")
+            assertTrue(
+                result.timings.totalMillis != null && result.timings.totalMillis >= 0,
+                "reader runtime should report total JS parse time",
+            )
             assertTrue(content.contains("paragraph number 0"), "article body should be kept")
             assertTrue(content.contains("paragraph number 9"), "article body should be kept")
             assertTrue(!content.contains("localStorage"), "script body should be stripped")

@@ -4,6 +4,9 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.graalvm.polyglot.Context
@@ -181,13 +184,33 @@ internal class ReaderModeJsRuntime(
                 cleanupMillis = timingObject.longValue("cleanupMillis"),
                 defuddleMillis = timingObject.longValue("defuddleMillis"),
                 inputChars = timingObject.longValue("inputChars"),
+                defuddleProfiles = timingObject["defuddleProfiles"]
+                    ?.jsonArray
+                    ?.mapNotNull { profileElement ->
+                        runCatching {
+                            profileElement.jsonObject.toDefuddleProfile()
+                        }.getOrNull()
+                    }
+                    .orEmpty(),
             )
         }
         return ReaderModeParseResult(content, title, siteName, timings)
     }
 
+    private fun JsonObject.toDefuddleProfile(): ReaderModeDefuddleProfile =
+        ReaderModeDefuddleProfile(
+            elapsedMillis = longValue("elapsedMillis"),
+            options = stringValue("options"),
+            wordCount = longValue("wordCount"),
+            contentChars = longValue("contentChars"),
+            steps = stringValue("steps"),
+        )
+
     private fun Map<String, JsonElement>.longValue(name: String): Long? =
         this[name]?.jsonPrimitive?.content?.toLongOrNull()
+
+    private fun Map<String, JsonElement>.stringValue(name: String): String? =
+        this[name]?.jsonPrimitive?.contentOrNull
 
     private fun cancelActiveParse(context: Context?, future: Future<String>) {
         if (context != null) {

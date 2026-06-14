@@ -44,6 +44,10 @@ class ReaderModeJsRuntimeTest {
                 result.timings.totalMillis != null && result.timings.totalMillis >= 0,
                 "reader runtime should report total JS parse time",
             )
+            assertTrue(
+                result.timings.defuddleProfiles.isNotEmpty(),
+                "reader runtime should report Defuddle pass timings",
+            )
             assertTrue(content.contains("paragraph number 0"), "article body should be kept")
             assertTrue(content.contains("paragraph number 9"), "article body should be kept")
             assertTrue(!content.contains("localStorage"), "script body should be stripped")

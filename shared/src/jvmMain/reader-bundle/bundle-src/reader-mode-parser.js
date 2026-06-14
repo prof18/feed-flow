@@ -131,6 +131,65 @@ function nowMillis() {
   return Date.now();
 }
 
+function installPerformanceClock(win) {
+  if (!globalThis.performance) {
+    globalThis.performance = {};
+  }
+  if (typeof globalThis.performance.now !== 'function') {
+    globalThis.performance.now = nowMillis;
+  }
+  if (win && !win.performance) {
+    win.performance = globalThis.performance;
+  }
+}
+
+function summarizeOptions(options) {
+  if (!options) return 'default';
+
+  var keys = Object.keys(options);
+  if (keys.length === 0) return 'default';
+
+  return keys.map(function (key) {
+    return key + '=' + String(options[key]);
+  }).join(',');
+}
+
+function summarizeProfile(profile) {
+  if (!profile) return null;
+
+  var keys = Object.keys(profile);
+  keys.sort(function (left, right) {
+    return Number(profile[right] || 0) - Number(profile[left] || 0);
+  });
+
+  return keys.slice(0, 6).map(function (key) {
+    return key + '=' + profile[key] + 'ms';
+  }).join(',');
+}
+
+function installDefuddleProfiler(parser, timings) {
+  var profiledParser = parser && parser.defuddle ? parser.defuddle : parser;
+  if (!profiledParser || typeof profiledParser.parseInternal !== 'function') return;
+
+  var originalParseInternal = profiledParser.parseInternal;
+  profiledParser.parseInternal = function (overrideOptions) {
+    var passStart = nowMillis();
+    var result = null;
+    try {
+      result = originalParseInternal.call(this, overrideOptions || {});
+      return result;
+    } finally {
+      timings.defuddleProfiles.push({
+        elapsedMillis: nowMillis() - passStart,
+        options: summarizeOptions(overrideOptions),
+        wordCount: result && typeof result.wordCount === 'number' ? result.wordCount : null,
+        contentChars: result && result.content ? String(result.content).length : null,
+        steps: summarizeProfile(result && result.profile),
+      });
+    }
+  };
+}
+
 globalThis.parseReaderContent = function parseReaderContent(htmlContent, url, imageUrl) {
   var totalStart = nowMillis();
   var timings = {
@@ -139,6 +198,7 @@ globalThis.parseReaderContent = function parseReaderContent(htmlContent, url, im
     cleanupMillis: null,
     defuddleMillis: null,
     totalMillis: null,
+    defuddleProfiles: [],
   };
 
   try {
@@ -148,6 +208,7 @@ globalThis.parseReaderContent = function parseReaderContent(htmlContent, url, im
     timings.domMillis = nowMillis() - domStart;
 
     var cleanupStart = nowMillis();
+    installPerformanceClock(win);
     installNeutralComputedStyle(win);
     removeNoisyElements(doc);
     absolutizeUrls(doc, url);
@@ -156,7 +217,9 @@ globalThis.parseReaderContent = function parseReaderContent(htmlContent, url, im
     timings.cleanupMillis = nowMillis() - cleanupStart;
 
     var defuddleStart = nowMillis();
-    var result = new Defuddle(doc, { url: url, markdown: true, useAsync: false }).parse();
+    var parser = new Defuddle(doc, { url: url, markdown: true, useAsync: false, profile: true });
+    installDefuddleProfiler(parser, timings);
+    var result = parser.parse();
     timings.defuddleMillis = nowMillis() - defuddleStart;
     timings.totalMillis = nowMillis() - totalStart;
 

@@ -148,7 +148,33 @@ internal class DesktopFeedItemParserWorker(
             "dom=${domMillis ?: "?"}ms, " +
             "cleanup=${cleanupMillis ?: "?"}ms, " +
             "defuddle=${defuddleMillis ?: "?"}ms, " +
-            "input=${inputChars ?: "?"} chars"
+            "input=${inputChars ?: "?"} chars" +
+            defuddleProfiles.toLogString()
+    }
+
+    private fun List<ReaderModeDefuddleProfile>.toLogString(): String {
+        if (isEmpty()) return ""
+
+        return joinToString(
+            separator = "; ",
+            prefix = ", defuddle passes=[",
+            postfix = "]",
+        ) { profile ->
+            buildString {
+                append(profile.options ?: "unknown")
+                append(": total=")
+                append(profile.elapsedMillis ?: "?")
+                append("ms")
+                append(", words=")
+                append(profile.wordCount ?: "?")
+                append(", chars=")
+                append(profile.contentChars ?: "?")
+                profile.steps?.takeIf { it.isNotBlank() }?.let { steps ->
+                    append(", top=")
+                    append(steps)
+                }
+            }
+        }
     }
 
     private fun cleanPlaceholderImages(html: String): String {

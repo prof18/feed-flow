@@ -13,4 +13,13 @@ internal data class ReaderModeParseTimings(
     val cleanupMillis: Long?,
     val defuddleMillis: Long?,
     val inputChars: Long?,
+    val defuddleProfiles: List<ReaderModeDefuddleProfile>,
+)
+
+internal data class ReaderModeDefuddleProfile(
+    val elapsedMillis: Long?,
+    val options: String?,
+    val wordCount: Long?,
+    val contentChars: Long?,
+    val steps: String?,
 )

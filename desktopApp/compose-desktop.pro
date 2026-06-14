@@ -159,7 +159,7 @@
 }
 
 # @Serializable and @Polymorphic are used at runtime for polymorphic serialization.
--keepattributes RuntimeVisibleAnnotations,AnnotationDefault
+-keepattributes RuntimeVisibleAnnotations,RuntimeInvisibleAnnotations,AnnotationDefault
 
 # Don't print notes about potential mistakes or omissions in the configuration for kotlinx-serialization classes
 # See also https://github.com/Kotlin/kotlinx.serialization/issues/1900
@@ -197,7 +197,7 @@
 -keep class kotlinx.serialization.internal.PluginGeneratedSerialDescriptor { *; }
 
 # Preserve important attributes for nested classes/annotations to avoid verifier confusion
--keepattributes InnerClasses,EnclosingMethod,Signature
+-keepattributes InnerClasses,EnclosingMethod,Signature,RuntimeVisibleAnnotations,RuntimeInvisibleAnnotations,AnnotationDefault
 
 # Disable only the risky optimization that can remove required checkcasts on annotation proxies
 # This keeps other optimizations enabled
@@ -218,6 +218,14 @@
 
 # Keep GenericData and GenericJson for JSON serialization
 -keep class com.google.api.client.json.GenericJson { *; }
+
+# GraalJS / Truffle
+# Graal loads providers, generated library exports, and internal accessors via
+# ServiceLoader/reflection. Let ProGuard shrink the rest of the app, but keep the
+# Graal stack intact to avoid release-only reader failures.
+-keep class com.oracle.truffle.** { *; }
+-keep class com.oracle.js.** { *; }
+-keep class org.graalvm.** { *; }
 -keep class com.google.api.client.util.GenericData { *; }
 
 # Keep StoredCredential for serialization compatibility

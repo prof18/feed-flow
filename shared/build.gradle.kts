@@ -174,7 +174,8 @@ kotlin {
 
             dependencies {
                 implementation(libs.kotlinx.coroutines.swing)
-                implementation(libs.htmlunit)
+                implementation(libs.graaljs.polyglot)
+                implementation(libs.graaljs.js)
                 implementation(libs.kotlinx.serialization.json)
                 api(libs.sentry)
             }

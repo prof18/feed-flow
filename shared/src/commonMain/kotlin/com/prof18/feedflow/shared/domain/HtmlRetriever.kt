@@ -15,6 +15,7 @@ import io.ktor.utils.io.charsets.decode
 import io.ktor.utils.io.charsets.forName
 import io.ktor.utils.io.charsets.isSupported
 import io.ktor.utils.io.readBuffer
+import kotlinx.coroutines.CancellationException
 import kotlinx.io.Buffer
 import kotlinx.io.readByteArray
 
@@ -59,6 +60,8 @@ class HtmlRetriever(
                 )
                 decodeBytes(bytes, charset)
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Throwable) {
             logger.d(e) { "Unable to retrieve HTML, skipping" }
             null

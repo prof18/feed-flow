@@ -7,16 +7,14 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import org.htmlunit.BrowserVersion
-import org.htmlunit.WebClient
-import org.htmlunit.corejs.javascript.Undefined
-import org.htmlunit.html.HtmlPage
-import java.util.logging.Level
-import java.util.logging.Logger as JLogger
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.time.TimeSource
 
 internal class DesktopFeedItemParserWorker(
     private val htmlRetriever: HtmlRetriever,
@@ -24,55 +22,69 @@ internal class DesktopFeedItemParserWorker(
     private val dispatcherProvider: DispatcherProvider,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val settingsRepository: SettingsRepository,
-) : FeedItemParserWorker {
+) : FeedItemParserWorker, ReaderModeParserWarmer {
 
-    private fun loadResource(name: String): String =
-        DesktopFeedItemParserWorker::class.java
-            .getResourceAsStream("/$name")
-            ?.bufferedReader()
-            ?.readText()
-            ?: error("Could not load $name")
+    private val readerRuntime = ReaderModeJsRuntime(logger)
+    private val warmUpScope = CoroutineScope(SupervisorJob() + dispatcherProvider.io)
+    private val warmUpStarted = AtomicBoolean(false)
 
-    private val htmlShell: String by lazy {
-        val defuddleJs = loadResource("defuddle-full-es5.js")
-        val readerContentParserJs = loadResource("defuddle-content-parser.js")
-        // language=HTML
-        """
-        <html dir='auto'>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <script>$defuddleJs</script>
-          <script>$readerContentParserJs</script>
-        </head>
-        <body></body>
-        </html>
-        """.trimIndent()
+    override fun warmUp() {
+        if (!warmUpStarted.compareAndSet(false, true)) return
+        warmUpScope.launch {
+            try {
+                readerRuntime.warmUp()
+                logger.d { "GraalJS reader context warmed up" }
+            } catch (e: Throwable) {
+                warmUpStarted.set(false)
+                logger.d(e) { "GraalJS reader warm-up failed" }
+            }
+        }
     }
 
     override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
-        logger.d { "Triggering immediate parsing for: $url (feedItemId: $feedItemId)" }
+        val totalMark = TimeSource.Monotonic.markNow()
+        logger.d { "Reader parse started for: $url (feedItemId: $feedItemId)" }
 
         return withContext(dispatcherProvider.io) {
             try {
-                val html = htmlRetriever.retrieveHtml(url)
-                if (html == null) {
-                    logger.d { "Failed to retrieve HTML for: $url" }
-                    return@withContext ParsingResult.Error
-                }
-                val cleanedHtml = html.replace(Regex("https?://.*?placeholder\\.png"), "")
+                val dispatchDelayMillis = totalMark.elapsedNow().inWholeMilliseconds
+                logger.d { "Reader parser IO dispatch started after ${dispatchDelayMillis}ms for: $url" }
 
-                val parseResult = runDefuddle(cleanedHtml, url, imageUrl)
-                if (parseResult == null) {
-                    logger.d { "Defuddle returned no result for: $url" }
+                val retrieveMark = TimeSource.Monotonic.markNow()
+                val html = htmlRetriever.retrieveHtml(url)
+                val retrieveMillis = retrieveMark.elapsedNow().inWholeMilliseconds
+                if (html == null) {
+                    logger.d { "Reader HTML retrieval failed after ${retrieveMillis}ms for: $url" }
                     return@withContext ParsingResult.Error
                 }
                 logger.d {
-                    "Defuddle parsed \"${parseResult.title}\" (${parseResult.content.length} chars): " +
-                        parseResult.content.take(CONTENT_LOG_SNIPPET_LENGTH)
+                    "Reader HTML retrieved in ${retrieveMillis}ms (${html.length} chars) for: $url"
+                }
+                val cleanupMark = TimeSource.Monotonic.markNow()
+                val cleanedHtml = cleanPlaceholderImages(html)
+                logger.d {
+                    "Reader HTML cleaned in ${cleanupMark.elapsedNow().inWholeMilliseconds}ms for: $url"
+                }
+
+                val parseMark = TimeSource.Monotonic.markNow()
+                val parseResult = runInterruptible {
+                    runReaderParser(cleanedHtml, url, imageUrl)
+                }
+                val parseMillis = parseMark.elapsedNow().inWholeMilliseconds
+                if (parseResult == null) {
+                    logger.d { "Reader parser returned no result after ${parseMillis}ms for: $url" }
+                    return@withContext ParsingResult.Error
+                }
+                logger.d {
+                    "Reader parser completed in ${parseMillis}ms \"${parseResult.title}\" " +
+                        "(${parseResult.content.length} chars) for: $url"
                 }
 
                 if (parseResult.content.length < MIN_CONTENT_LENGTH) {
-                    logger.d { "Content too short (${parseResult.content.length} chars), rejecting: $url" }
+                    logger.d {
+                        "Content too short (${parseResult.content.length} chars), rejecting after " +
+                            "${totalMark.elapsedNow().inWholeMilliseconds}ms: $url"
+                    }
                     return@withContext ParsingResult.Error
                 }
 
@@ -97,8 +109,14 @@ internal class DesktopFeedItemParserWorker(
                 }
 
                 if (settingsRepository.isSaveItemContentOnOpenEnabled()) {
+                    val saveMark = TimeSource.Monotonic.markNow()
                     feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, markdown)
-                    logger.d { "Successfully parsed and cached: $url" }
+                    logger.d { "Reader content cached in ${saveMark.elapsedNow().inWholeMilliseconds}ms for: $url" }
+                }
+
+                logger.d {
+                    "Reader parse completed in ${totalMark.elapsedNow().inWholeMilliseconds}ms " +
+                        "(html=${html.length} chars, content=${parseResult.content.length} chars) for: $url"
                 }
 
                 ParsingResult.Success(
@@ -106,6 +124,8 @@ internal class DesktopFeedItemParserWorker(
                     title = parseResult.title,
                     siteName = parseResult.siteName,
                 )
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Throwable) {
                 logger.d(e) { "Error parsing content for: $url" }
                 ParsingResult.Error
@@ -113,89 +133,19 @@ internal class DesktopFeedItemParserWorker(
         }
     }
 
-    private data class DefuddleResult(
-        val content: String,
-        val title: String?,
-        val siteName: String?,
-    )
+    private fun runReaderParser(html: String, url: String, imageUrl: String?): ReaderModeParseResult? =
+        readerRuntime.parse(html, url, imageUrl)
 
-    private fun runDefuddle(html: String, url: String, imageUrl: String?): DefuddleResult? {
-        val htmlEscaped = Json.encodeToString(html)
-        val urlEscaped = Json.encodeToString(url)
-        val imageUrlEscaped = imageUrl?.let { Json.encodeToString(it) } ?: "null"
+    private fun cleanPlaceholderImages(html: String): String {
+        if (!html.contains(PLACEHOLDER_IMAGE_MARKER)) return html
 
-        WebClient(BrowserVersion.CHROME).use { webClient ->
-            webClient.options.apply {
-                isCssEnabled = false
-                isDownloadImages = false
-                isThrowExceptionOnFailingStatusCode = false
-                isThrowExceptionOnScriptError = true
-            }
-
-            val page: HtmlPage = webClient.loadHtmlCodeIntoCurrentWindow(htmlShell)
-
-            val script = """
-                var parsingResult = null;
-                var parsingError = null;
-
-                try {
-                    var htmlContent = $htmlEscaped;
-                    var link = $urlEscaped;
-                    var bannerImage = $imageUrlEscaped;
-                    parsingResult = parseReaderContent(htmlContent, link, bannerImage);
-                    var parsed = JSON.parse(parsingResult);
-                    if (parsed.error) {
-                        parsingError = parsed.error;
-                        parsingResult = null;
-                    }
-                } catch(e) {
-                    parsingError = e.toString();
-                }
-            """.trimIndent()
-
-            try {
-                page.executeJavaScript(script)
-            } catch (e: Exception) {
-                logger.d(e) { "JS error in Defuddle parse script" }
-                return null
-            }
-
-            val errorObj = page.executeJavaScript("parsingError").javaScriptResult
-            if (errorObj != null && errorObj != Undefined.instance) {
-                logger.d { "Defuddle JS error: $errorObj" }
-                return null
-            }
-
-            val resultObj = page.executeJavaScript("parsingResult").javaScriptResult
-            val resultJson = if (resultObj != null && resultObj != Undefined.instance) {
-                resultObj.toString()
-            } else {
-                logger.d { "Defuddle returned no result" }
-                return null
-            }
-
-            val jsObject = Json.parseToJsonElement(resultJson).jsonObject
-            val content = jsObject["content"]?.jsonPrimitive?.content
-            if (content.isNullOrBlank()) {
-                logger.d { "Defuddle returned empty content" }
-                return null
-            }
-            val title = jsObject["title"]?.jsonPrimitive?.takeIf { it.isString }?.content
-            val siteName = jsObject["siteName"]?.jsonPrimitive?.takeIf { it.isString }?.content
-
-            return DefuddleResult(content, title, siteName)
-        }
+        return PLACEHOLDER_IMAGE_URL_REGEX.replace(html, "")
     }
 
     private companion object {
         private const val MIN_CONTENT_LENGTH = 200
-        private const val CONTENT_LOG_SNIPPET_LENGTH = 500
+        private const val PLACEHOLDER_IMAGE_MARKER = "placeholder.png"
 
-        init {
-            JLogger.getLogger("org.htmlunit").level = Level.OFF
-            JLogger.getLogger("org.htmlunit.javascript").level = Level.OFF
-            JLogger.getLogger("org.htmlunit.css").level = Level.OFF
-            JLogger.getLogger("org.htmlunit.html").level = Level.OFF
-        }
+        private val PLACEHOLDER_IMAGE_URL_REGEX = Regex("""https?://[^\s"'<>)]*placeholder\.png""")
     }
 }

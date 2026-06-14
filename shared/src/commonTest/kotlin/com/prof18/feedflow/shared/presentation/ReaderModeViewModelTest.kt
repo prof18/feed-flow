@@ -45,11 +45,13 @@ class ReaderModeViewModelTest : KoinTestBase() {
     private val feedStateRepository: FeedStateRepository by inject()
     private val feedItemContentFileHandler: FeedItemContentFileHandler by inject()
     private var parserBehavior: ParserBehavior = ParserBehavior.Success
+    private val parseCallCounts = mutableMapOf<String, Int>()
 
     override fun getTestModules(): List<Module> = super.getTestModules() + module {
         single<FeedItemParserWorker> {
             object : FeedItemParserWorker {
                 override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
+                    parseCallCounts[feedItemId] = (parseCallCounts[feedItemId] ?: 0) + 1
                     val currentParserBehavior = parserBehavior
                     return when (currentParserBehavior) {
                         ParserBehavior.Success -> ParsingResult.Success(
@@ -81,6 +83,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
     @BeforeTest
     fun resetParserBehavior() {
         parserBehavior = ParserBehavior.Success
+        parseCallCounts.clear()
     }
 
     @Test
@@ -187,6 +190,30 @@ class ReaderModeViewModelTest : KoinTestBase() {
             assertEquals("Title", successState.readerModeData.title)
             assertEquals(urlInfo.id, successState.readerModeData.id.id)
         }
+    }
+
+    @Test
+    fun `getReaderModeHtml ignores duplicate request while same article is loading`() = runTest {
+        parserBehavior = ParserBehavior.DelayedSuccessById(
+            delaysByArticleId = mapOf("duplicate-loading-1" to 300),
+        )
+        val urlInfo = FeedItemUrlInfo(
+            id = "duplicate-loading-1",
+            url = "https://example.com/articles/duplicate-loading",
+            title = "Duplicate Loading Article",
+            isBookmarked = false,
+            linkOpeningPreference = LinkOpeningPreference.READER_MODE,
+            commentsUrl = null,
+        )
+
+        viewModel.getReaderModeHtml(urlInfo)
+        viewModel.getReaderModeHtml(urlInfo)
+        advanceUntilIdle()
+
+        assertEquals(1, parseCallCounts[urlInfo.id])
+        val state = viewModel.readerModeState.value
+        assertIs<ReaderModeState.Success>(state)
+        assertEquals(urlInfo.id, state.readerModeData.id.id)
     }
 
     @Test

@@ -165,7 +165,8 @@ class ReaderModeViewModel internal constructor(
     }
 
     private fun selectArticle(urlInfo: FeedItemUrlInfo): Boolean {
-        val isSameArticle = currentArticleId == urlInfo.id && readerModeMutableState.value.isForArticle(urlInfo.id)
+        val isSameArticle = currentArticleId == urlInfo.id &&
+            (loadReaderModeJob?.isActive == true || readerModeMutableState.value.isForArticle(urlInfo.id))
         currentArticleId = urlInfo.id
         currentArticleMutableState.value = urlInfo
         updateNavigationFlags()

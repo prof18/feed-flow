@@ -32,6 +32,7 @@ import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.domain.parser.ReaderModeParserWarmer
 import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -231,6 +232,7 @@ private fun initializeDependencies(appConfig: DesktopConfig) {
     DI.initKoin(
         appConfig = appConfig,
     )
+    DI.koin.get<ReaderModeParserWarmer>().warmUp()
 }
 
 private fun setupTelemetryAndCrashReporting(appConfig: DesktopConfig) {

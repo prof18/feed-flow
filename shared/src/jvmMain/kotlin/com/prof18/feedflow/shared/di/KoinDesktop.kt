@@ -29,6 +29,7 @@ import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerJvm
 import com.prof18.feedflow.shared.domain.parser.DesktopFeedItemParserWorker
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerDesktop
+import com.prof18.feedflow.shared.domain.parser.ReaderModeParserWarmer
 import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
@@ -42,6 +43,7 @@ import org.koin.core.KoinApplication
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.binds
 import org.koin.dsl.module
 import java.util.prefs.Preferences
 
@@ -138,7 +140,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single<FeedItemParserWorker> {
+    single {
         DesktopFeedItemParserWorker(
             htmlRetriever = get(),
             logger = getWith("FeedItemParserWorker"),
@@ -146,7 +148,10 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedItemContentFileHandler = get(),
             settingsRepository = get(),
         )
-    }
+    } binds arrayOf(
+        FeedItemParserWorker::class,
+        ReaderModeParserWarmer::class,
+    )
 
     viewModel {
         DropboxSyncViewModel(

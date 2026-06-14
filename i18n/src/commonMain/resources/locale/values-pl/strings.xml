@@ -387,4 +387,6 @@
     <string name="settings_notification_mode_category">Według kategorii</string>
     <string name="settings_notification_mode_grouped">Wszystko razem</string>
     <string name="sort_and_filter_button">Sortuj i filtruj</string>
+    <string name="greader_bad_token_sync_error_message">Serwer odrzucił token synchronizacji. Jeśli usługa zgodna z Google Readerem znajduje się za serwerem reverse proxy , upewnij się, że przekazuje on nagłówek „Authorization”.</string>
+    <string name="miniflux_bad_token_error_message">Logowanie przebiegło pomyślnie, ale Miniflux odrzucił token synchronizacji. Jeśli Miniflux znajduje się za serwerem reverse proxy, upewnij się, że przekazuje on nagłówek „Authorization”.</string>
 </resources>

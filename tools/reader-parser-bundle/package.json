@@ -1,0 +1,19 @@
+{
+  "name": "reader-parser-bundle",
+  "private": true,
+  "type": "module",
+  "description": "Regenerates the ES5 reader-mode JS bundles (readability-es5.js, turndown-es5.js) used by the desktop HtmlUnit parser.",
+  "scripts": {
+    "build": "node build.mjs",
+    "verify": "node build.mjs --check"
+  },
+  "dependencies": {
+    "@mozilla/readability": "0.6.0",
+    "turndown": "github:mixmark-io/turndown#6bc99188006a9c2b413cd3229adcb7d73cb00394"
+  },
+  "devDependencies": {
+    "@babel/core": "7.26.0",
+    "@babel/preset-env": "7.26.0",
+    "esbuild": "0.24.0"
+  }
+}

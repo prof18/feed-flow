@@ -25,7 +25,7 @@
     <string name="open_source_licenses">Открытые лицензии</string>
     <string name="about_nav_bar">О приложении</string>
     <string name="report_issue_button">Сообщить о проблеме</string>
-    <string name="force_feed_refresh">Обновить ленты сейчас</string>
+    <string name="force_feed_refresh">Обновить сейчас</string>
     <string name="invalid_rss_url">Ссылка, которую вы предоставили, не является действительным RSS-каналом</string>
     <string name="import_export_opml_title">Импорт и экспорт</string>
     <string name="retry_button">Снова</string>
@@ -110,7 +110,7 @@
     <string name="feed_edited_message">Лента %s обновлена</string>
     <string name="settings_feed_list_scale_title">Масштаб текста</string>
     <string name="settings_font_scale_feed_source_example">Название ленты</string>
-    <string name="clear_old_articles_button">Удалить посты старше недели</string>
+    <string name="clear_old_articles_button">Удалить статьи старше недели</string>
     <string name="edit_feed_source_name_button">Изменить</string>
     <string name="edit_feed">Изменить ленту</string>
     <string name="feed_name">Название ленты</string>
@@ -231,7 +231,7 @@
     <string name="settings_prefetch_article_content">Заранее сохранить содержание статьи для ситуаций, когда нет доступа к интернету</string>
     <string name="reader_mode_fallback_open_browser_button">Открыть в браузере</string>
     <string name="feed_error_message_improved">Не удалось загрузить %s. Возможно, недоступно или нет сети.</string>
-    <string name="trigger_feed_sync">Загрузить в аккаунт</string>
+    <string name="trigger_feed_sync">­Загрузить изменения</string>
     <string name="import_export_label">Импорт/экспорт</string>
     <string name="feed_add_in_progress_message">Импорт ленты...</string>
     <string name="import_export_opml_section_title">Подписки (OPML)</string>
@@ -380,4 +380,13 @@
     <string name="category_name_already_exists">Категория с таким названием уже существует</string>
     <string name="settings_appearance">Оформление</string>
     <string name="settings_hide_unread_count">Скрыть количество непрочитанных</string>
+    <string name="invalid_rss_url_with_retry_hint">Не удалось проверить ленту. Возможно, это некорректная RSS-лента или сервер временно недоступен.</string>
+    <string name="add_feed_anyway_acknowledgement">Эта лента ещё не проверена. Приложение попытается получить данные, и если лента не будет работать, вы можете удалить её позже.</string>
+    <string name="add_feed_anyway_button">Добавить всё равно</string>
+    <string name="greader_bad_token_sync_error_message">Сервер отверг токен синхронизации. Если ваш сервис, совместимый с Google Reader, находится за reverse proxy, убедитесь, что прокси передаёт заголовок Authorization.</string>
+    <string name="miniflux_bad_token_error_message">­Вход выполнен успешно, но Miniflux отклонил токен синхронизации. Если Miniflux находится за reverse proxy, убедитесь, что прокси передаёт заголовок Authorization.</string>
+    <string name="close_button_content_description">Закрыть</string>
+    <string name="rename_category">Переименовать категорию</string>
+    <string name="article_bookmarked_content_description">В закладках</string>
+    <string name="sort_and_filter_button">Сортировка и фильтрация</string>
 </resources>

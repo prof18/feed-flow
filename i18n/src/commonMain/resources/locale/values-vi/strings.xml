@@ -387,4 +387,6 @@
     <string name="add_feed_anyway_button">Vẫn cứ thêm</string>
     <string name="sort_and_filter_button">Sắp xếp &amp; lọc</string>
     <string name="rename_category">Đổi tên danh mục</string>
+    <string name="greader_bad_token_sync_error_message">Máy chủ đã từ chối token đồng bộ. Nếu dịch vụ tương thích với Google Reader của bạn nằm sau máy chủ proxy ngược, hãy đảm bảo rằng nó chuyển tiếp header Authorization.</string>
+    <string name="miniflux_bad_token_error_message">Đăng nhập thành công, nhưng Miniflux đã từ chối token đồng bộ. Nếu Miniflux nằm sau máy chủ proxy ngược, hãy đảm bảo rằng máy chủ đó chuyển tiếp header Authorization.</string>
 </resources>

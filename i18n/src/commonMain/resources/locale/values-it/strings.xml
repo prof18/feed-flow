@@ -335,4 +335,8 @@
     <string name="browser_launch_error">Impossibile aprire il link. Controlla le impostazioni del browser.</string>
     <string name="open_feed_website_button">Apri sito del feed</string>
     <string name="drawer_title_library">Libreria</string>
+    <string name="add_feed_anyway_acknowledgement">Questo feed non è stato verificato. Il recupero verrà comunque tentato, e può essere rimosso successivamente se non funziona.</string>
+    <string name="add_feed_anyway_button">Aggiungi comunque</string>
+    <string name="choose_another_file_button">Scegli un altro file</string>
+    <string name="invalid_opml_import_title">Impossibile importare questo file</string>
 </resources>

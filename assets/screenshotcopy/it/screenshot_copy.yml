@@ -7,51 +7,71 @@
 # Keys intentionally mirror the Figma variable structure:
 # screenshot_copy_<platform>_<slot>_<field>
 
-screenshot_copy_android_phone_01_headline: ""
-screenshot_copy_android_phone_01_subheadline: ""
-screenshot_copy_android_phone_02_headline: ""
-screenshot_copy_android_phone_02_subheadline: ""
-screenshot_copy_android_phone_03_headline: ""
-screenshot_copy_android_phone_03_subheadline: ""
-screenshot_copy_android_phone_04_headline: ""
-screenshot_copy_android_phone_04_subheadline: ""
-screenshot_copy_android_phone_05_headline: ""
-screenshot_copy_android_phone_05_subheadline: ""
-screenshot_copy_android_phone_05_compact_label: ""
-screenshot_copy_android_phone_05_rich_cards_label: ""
-screenshot_copy_android_phone_feature_graphic_headline: |
+screenshot_copy_android_phone_01_headline: "Semplicemente un elenco."
+screenshot_copy_android_phone_01_subheadline: "Un lettore RSS essenziale per leggere
+  senza distrazioni."
+screenshot_copy_android_phone_02_headline: "Leggi a modo tuo"
+screenshot_copy_android_phone_02_subheadline: "Utilizza la Modalità lettura esperienza
+  più pulita e senza distrazioni."
+screenshot_copy_android_phone_03_headline: "Resta organizzato"
+screenshot_copy_android_phone_03_subheadline: "Articoli non letti, segnalibri e categorie
+  sempre a portata di mano."
+screenshot_copy_android_phone_04_headline: "Sincronizza a modo tuo"
+screenshot_copy_android_phone_04_subheadline: "Sincronizzazione con Dropbox, Drive,
+  FreshRSS, Feedbin e molti altri."
+screenshot_copy_android_phone_05_headline: "Rendi l'elenco tuo"
+screenshot_copy_android_phone_05_subheadline: "Cambia layout e nascondi i dettagli
+  che non ti servono."
+screenshot_copy_android_phone_05_compact_label: "Elenco compatto"
+screenshot_copy_android_phone_05_rich_cards_label: "Schede dettagliate"
+screenshot_copy_android_phone_feature_graphic_headline: |-
+  Leggi i tuoi
+  feed,
+  non le
+  distrazioni
 
-screenshot_copy_android_tablet_01_headline: ""
-screenshot_copy_android_tablet_01_subheadline: ""
-screenshot_copy_android_tablet_02_headline: ""
-screenshot_copy_android_tablet_02_subheadline: ""
-screenshot_copy_android_tablet_03_headline: ""
-screenshot_copy_android_tablet_03_subheadline: ""
-screenshot_copy_android_tablet_04_headline: ""
-screenshot_copy_android_tablet_04_subheadline: ""
-screenshot_copy_android_tablet_05_headline: ""
-screenshot_copy_android_tablet_05_subheadline: ""
-screenshot_copy_android_tablet_05_compact_label: ""
-screenshot_copy_android_tablet_05_rich_cards_label: ""
+screenshot_copy_android_tablet_01_headline: "Semplicemente un elenco."
+screenshot_copy_android_tablet_01_subheadline: "Un lettore RSS essenziale per leggere
+  senza distrazioni."
+screenshot_copy_android_tablet_02_headline: "Leggi a modo tuo"
+screenshot_copy_android_tablet_02_subheadline: "Utilizza la Modalità lettura esperienza
+  più pulita e senza distrazioni."
+screenshot_copy_android_tablet_03_headline: "Resta organizzato"
+screenshot_copy_android_tablet_03_subheadline: "Articoli non letti, segnalibri e categorie
+  sempre a portata di mano."
+screenshot_copy_android_tablet_04_headline: "Sincronizza a modo tuo"
+screenshot_copy_android_tablet_04_subheadline: "Sincronizzazione con Dropbox, Drive,
+  FreshRSS, Feedbin e molti altri."
+screenshot_copy_android_tablet_05_headline: "Rendi l'elenco tuo"
+screenshot_copy_android_tablet_05_subheadline: "Cambia layout e nascondi i dettagli
+  che non ti servono."
+screenshot_copy_android_tablet_05_compact_label: "Elenco compatto"
+screenshot_copy_android_tablet_05_rich_cards_label: "Schede dettagliate"
 
-screenshot_copy_iphone_01_headline: ""
-screenshot_copy_iphone_01_subheadline: ""
-screenshot_copy_iphone_02_headline: ""
-screenshot_copy_iphone_02_subheadline: ""
-screenshot_copy_iphone_03_headline: ""
-screenshot_copy_iphone_03_subheadline: ""
-screenshot_copy_iphone_04_headline: ""
+screenshot_copy_iphone_01_headline: "Semplicemente un elenco."
+screenshot_copy_iphone_01_subheadline: "Un lettore RSS essenziale per leggere senza
+  distrazioni."
+screenshot_copy_iphone_02_headline: "Leggi a modo tuo"
+screenshot_copy_iphone_02_subheadline: "Utilizza la Modalità lettura esperienza più
+  pulita e senza distrazioni."
+screenshot_copy_iphone_03_headline: "Resta organizzato"
+screenshot_copy_iphone_03_subheadline: "Articoli non letti, segnalibri e categorie
+  sempre a portata di mano."
+screenshot_copy_iphone_04_headline: "Sincronizza a modo tuo"
 screenshot_copy_iphone_04_subheadline: ""
-screenshot_copy_iphone_05_headline: ""
-screenshot_copy_iphone_05_subheadline: ""
-screenshot_copy_iphone_05_compact_label: ""
-screenshot_copy_iphone_05_rich_cards_label: ""
+screenshot_copy_iphone_05_headline: "Rendi l'elenco tuo"
+screenshot_copy_iphone_05_subheadline: "Cambia layout e nascondi i dettagli che non
+  ti servono."
+screenshot_copy_iphone_05_compact_label: "Elenco compatto"
+screenshot_copy_iphone_05_rich_cards_label: "Schede dettagliate"
 
-screenshot_copy_ipad_01_headline: ""
-screenshot_copy_ipad_01_subheadline: ""
-screenshot_copy_ipad_02_headline: ""
-screenshot_copy_ipad_02_subheadline: ""
-screenshot_copy_ipad_03_headline: ""
+screenshot_copy_ipad_01_headline: "Semplicemente un elenco."
+screenshot_copy_ipad_01_subheadline: "Un lettore RSS essenziale per leggere senza
+  distrazioni."
+screenshot_copy_ipad_02_headline: "Leggi a modo tuo"
+screenshot_copy_ipad_02_subheadline: "Utilizza la Modalità lettura esperienza più
+  pulita e senza distrazioni."
+screenshot_copy_ipad_03_headline: "Resta organizzato"
 screenshot_copy_ipad_03_subheadline: ""
 screenshot_copy_ipad_04_headline: ""
 screenshot_copy_ipad_04_subheadline: ""

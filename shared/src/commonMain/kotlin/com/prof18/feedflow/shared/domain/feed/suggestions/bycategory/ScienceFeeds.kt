@@ -63,12 +63,6 @@ internal val scienceFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=esa.int&sz=64",
         ),
         SuggestedFeed(
-            name = "Follow",
-            url = "https://follow.it/centauri-dreams-imagining-and-planning-interstellar-exploration/rss",
-            description = "Science news and updates from Follow",
-            logoUrl = "https://www.google.com/s2/favicons?domain=follow.it&sz=64",
-        ),
-        SuggestedFeed(
             name = "Futurity",
             url = "http://www.futurity.org/feed/",
             description = "Science news and updates from Futurity",
@@ -105,12 +99,6 @@ internal val scienceFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=newscientist.com&sz=64",
         ),
         SuggestedFeed(
-            name = "NPR Science",
-            url = "https://feeds.npr.org/1007/rss.xml",
-            description = "Science reporting and analysis from NPR",
-            logoUrl = "https://www.google.com/s2/favicons?domain=npr.org&sz=64",
-        ),
-        SuggestedFeed(
             name = "Popular Science",
             url = "https://www.popsci.com/feed/",
             description = "Science and technology news",
@@ -127,12 +115,6 @@ internal val scienceFeeds = SuggestedFeedCategory(
             url = "https://www.space.com/feeds/all",
             description = "Space and astronomy news",
             logoUrl = "https://www.google.com/s2/favicons?domain=space.com&sz=64",
-        ),
-        SuggestedFeed(
-            name = "The Economist - Science & Technology",
-            url = "https://www.economist.com/science-and-technology/rss.xml",
-            description = "Science and technology policy analysis",
-            logoUrl = "https://www.google.com/s2/favicons?domain=economist.com&sz=64",
         ),
         SuggestedFeed(
             name = "Universe Today",

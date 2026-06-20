@@ -104,11 +104,5 @@ internal val newsFeeds = SuggestedFeedCategory(
             description = "Global news and current affairs",
             logoUrl = "https://www.google.com/s2/favicons?domain=time.com&sz=64",
         ),
-        SuggestedFeed(
-            name = "Wall Street Journal",
-            url = "https://feeds.a.dj.com/rss/RSSMarketsMain.xml",
-            description = "Real-time updates on the stock market",
-            logoUrl = "https://www.google.com/s2/favicons?domain=wsj.com&sz=64",
-        ),
     ),
 )

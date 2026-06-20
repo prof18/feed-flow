@@ -39,12 +39,6 @@ internal val sportsFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=espn.com&sz=64",
         ),
         SuggestedFeed(
-            name = "FiveThirtyEight - Sports",
-            url = "https://fivethirtyeight.com/sports/feed/",
-            description = "Data-driven analysis of sports trends and outcomes",
-            logoUrl = "https://www.google.com/s2/favicons?domain=fivethirtyeight.com&sz=64",
-        ),
-        SuggestedFeed(
             name = "Motorsport",
             url = "https://www.motorsport.com/rss/all/news/",
             description = "Racing and motorsport coverage",

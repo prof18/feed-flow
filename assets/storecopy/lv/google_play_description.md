@@ -15,7 +15,7 @@ Read Articles Your Way
 - View the original web page or switch to a clean, readable format — the choice
   is yours.
 
-Sync Feeds Across All Your Devices
+Sinhronizēt ziņu plūsmas visās savās ierīcēs
 - Keep everything local, or sync feeds across devices with multiple backends.
 - Cloud storage sync with Dropbox or Google Drive.
 - Self-hosted and server sync with FreshRSS, Miniflux, Feedbin, or BazQux.
@@ -44,7 +44,7 @@ Built for RSS, Atom, and the Open Web
   suggestions to get started.
 - OPML import and export means you're never locked in to any single app.
 
-Perfect For
+Ideāli piemērots
 - News enthusiasts who want a chronological feed without algorithmic
   recommendations.
 - Blog readers who want all their favorite sites in one clean timeline.
@@ -52,7 +52,7 @@ Perfect For
 - Anyone switching from another feed reader — OPML import makes migration
   simple.
 
-Why FeedFlow?
+Kāpēc FeedFlow?
 - No algorithmic feed — your timeline is always chronological.
 - Open source with an active community and regular updates.
 - Available on Android, iOS, macOS, Windows, and Linux.

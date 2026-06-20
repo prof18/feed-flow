@@ -56,7 +56,9 @@ struct FeedSourceListScreenContent: View {
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                NavigationLink(destination: AddFeedScreen()) {
+                NavigationLink(destination: AddFeedScreen()
+                    .environment(appState)
+                    .environment(browserSelector)) {
                     Image(systemName: "plus")
                         .foregroundStyle(.primary)
                 }
@@ -71,7 +73,9 @@ struct FeedSourceListScreenContent: View {
             Text(feedFlowStrings.noFeedsFoundMessage)
                 .font(.body)
 
-            NavigationLink(destination: AddFeedScreen()) {
+            NavigationLink(destination: AddFeedScreen()
+                .environment(appState)
+                .environment(browserSelector)) {
                 Text(feedFlowStrings.addFeed)
                     .frame(maxWidth: .infinity)
             }

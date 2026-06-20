@@ -14,6 +14,8 @@ struct HomeContent: View {
     var indexHolder
     @Environment(AppState.self)
     var appState
+    @Environment(BrowserSelector.self)
+    private var browserSelector
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
     @Environment(\.horizontalSizeClass)
@@ -233,6 +235,7 @@ private extension HomeContent {
         case .settings:
             SettingsScreen(fetchFeeds: onRefresh)
                 .environment(appState)
+                .environment(browserSelector)
                 .preferredColorScheme(appState.colorScheme)
 
         case .noFeedSource:
@@ -248,10 +251,12 @@ private extension HomeContent {
                 }
             )
             .environment(appState)
+            .environment(browserSelector)
 
         case .addFeed:
             AddFeedScreen(showCloseButton: true)
                 .environment(appState)
+                .environment(browserSelector)
                 .toggleStyle(BlueToggleStyle())
 
         case .importExport:
@@ -261,10 +266,12 @@ private extension HomeContent {
         case let .editFeed(source):
             EditFeedScreen(feedSource: source)
                 .environment(appState)
+                .environment(browserSelector)
                 .toggleStyle(BlueToggleStyle())
 
         case .feedSuggestions:
             FeedSuggestionsScreen()
+                .environment(browserSelector)
         }
     }
 }

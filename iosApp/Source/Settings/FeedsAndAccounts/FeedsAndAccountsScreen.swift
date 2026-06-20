@@ -4,6 +4,8 @@ import SwiftUI
 struct FeedsAndAccountsScreen: View {
     @Environment(AppState.self)
     private var appState
+    @Environment(BrowserSelector.self)
+    private var browserSelector
 
     private let feedFlowStrings = Deps.shared.getStrings()
     let fetchFeeds: () -> Void
@@ -13,12 +15,14 @@ struct FeedsAndAccountsScreen: View {
 
         Form {
             Section {
-                NavigationLink(destination: FeedSourceListScreen()) {
+                NavigationLink(destination: FeedSourceListScreen()
+                    .environment(browserSelector)) {
                     Label(feedFlowStrings.feedsTitle, systemImage: "list.bullet.rectangle.portrait")
                 }
                 .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.settingsRow)
 
-                NavigationLink(destination: AddFeedScreen()) {
+                NavigationLink(destination: AddFeedScreen()
+                    .environment(browserSelector)) {
                     Label(feedFlowStrings.addFeed, systemImage: "plus.circle")
                 }
 

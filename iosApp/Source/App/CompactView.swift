@@ -87,6 +87,7 @@ struct CompactView: View {
         .sheet(isPresented: $showSidebarSettingsSheet) {
             SettingsScreen(fetchFeeds: { homeViewModel.forceFeedRefresh() })
                 .environment(appState)
+                .environment(browserSelector)
                 .preferredColorScheme(appState.colorScheme)
         }
         .sheet(isPresented: $showImportExportSheet) {

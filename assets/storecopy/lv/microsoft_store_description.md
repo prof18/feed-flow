@@ -7,7 +7,7 @@ A Desktop-First Reading Experience
 - Keyboard shortcuts for everything — refresh with F5, navigate with arrow keys,
   mark as read with Ctrl+Shift+A.
 - The app remembers your window position and size between sessions.
-- Dark mode, light mode, and OLED black theme.
+- Tumšais, gaišais un OLED melnais motīvs.
 
 Read Articles Your Way
 - Open articles in your default browser, or use Reader Mode for a
@@ -16,10 +16,11 @@ Read Articles Your Way
   screen.
 - Prefetch and cache full article content for offline reading.
 
-Sync Feeds Across All Your Devices
+Ziņu plūsmu sinhronizācija visās jūsu ierīcēs
 - Keep everything local, or sync with multiple backends.
-- Cloud storage sync with Dropbox or Google Drive.
-- Self-hosted and server sync with FreshRSS, Miniflux, Feedbin, or BazQux.
+- Mākoņkrātuves sinhronizācija ar Dropbox vai Google disku.
+- Pašizmitināta pakalpojuma un servera sinhronizācijas iespējas ar FreshRSS,
+  Miniflux, Feedbin vai BazQux.
 - Your feeds, read status, and bookmarks stay in sync across Windows, Android,
   iOS, macOS, and Linux.
 
@@ -30,7 +31,7 @@ Stay Organized
 - Search across all your feeds to find articles quickly.
 
 Built for RSS, Atom, and the Open Web
-- Supports RSS 2.0, RSS 1.0, and Atom feed formats.
+- Atbalsta RSS 2.0, RSS 1.0 un Atom formātus.
 - Add feeds by URL or browse curated suggestions.
 - No account required to get started.
 

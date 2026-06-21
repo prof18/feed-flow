@@ -15,10 +15,11 @@ Read Articles Your Way
 - View the original web page or switch to a clean, readable format — the choice
   is yours.
 
-Sinhronizēt ziņu plūsmas visās savās ierīcēs
+Ziņu plūsmu sinhronizācija visās jūsu ierīcēs
 - Keep everything local, or sync feeds across devices with multiple backends.
-- Cloud storage sync with Dropbox or Google Drive.
-- Self-hosted and server sync with FreshRSS, Miniflux, Feedbin, or BazQux.
+- Mākoņkrātuves sinhronizācija ar Dropbox vai Google disku.
+- Pašizmitināta pakalpojuma un servera sinhronizācijas iespējas ar FreshRSS,
+  Miniflux, Feedbin vai BazQux.
 - Your feeds, read status, and bookmarks stay in sync across Android, iOS,
   macOS, Windows, and Linux.
 - Switch between phone, tablet, and desktop without losing your place.
@@ -48,14 +49,15 @@ Ideāli piemērots
 - News enthusiasts who want a chronological feed without algorithmic
   recommendations.
 - Blog readers who want all their favorite sites in one clean timeline.
-- Self-hosted enthusiasts running FreshRSS, Miniflux, or similar services.
+- Entuziastiem, kuri izmanto pašizmitinātus FreshRSS, Miniflux vai līdzīgus
+  pakalpojumus.
 - Anyone switching from another feed reader — OPML import makes migration
   simple.
 
 Kāpēc FeedFlow?
 - No algorithmic feed — your timeline is always chronological.
 - Open source with an active community and regular updates.
-- Available on Android, iOS, macOS, Windows, and Linux.
-- Translated into 25+ languages by contributors worldwide.
+- Pieejama Android, iOS, macOS, Windows un Linux operētājsistēmās.
+- Iztulkota vairāk nekā 25 valodās, pateicoties cilvēkiem visā pasaulē.
 
 Take back control of your news and reading — download FeedFlow today.

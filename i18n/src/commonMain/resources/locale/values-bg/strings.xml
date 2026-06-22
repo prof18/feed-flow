@@ -72,7 +72,6 @@
     <string name="load_file_error_message">Файлът не може да се зареди</string>
     <string name="generic_error_message">Съжаляваме, нещо се обърка :(</string>
     <string name="database_error">Нещо се обърка по време на извличането на емисиите. Моля, опитайте отново или рестартирайте приложението - error code: %s :(</string>
-    <string name="force_feed_refresh">Принудително обновяване</string>
     <string name="drawer_title_feed_sources">Източници на емисия</string>
     <string name="issue_content_template">Моля, опишете проблема, посочете платформата, която използвате, версията на приложението и предоставете връзка към RSS емисията, която причинява проблемите. Ако е възможно, моля, прикачете екранна снимка и OPML файла.</string>
     <string name="invalid_rss_url">Предоставената от вас връзка е невалидна RSS емисия</string>

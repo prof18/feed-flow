@@ -64,7 +64,6 @@ fun HomeFloatingToolbar(
     onClearOldArticlesClicked: () -> Unit,
     onClick: () -> Unit,
     onDoubleClick: () -> Unit,
-    onForceRefreshClick: () -> Unit,
     onSearchClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onBackupClick: () -> Unit,
@@ -203,7 +202,6 @@ fun HomeFloatingToolbar(
                         closeMenu = { showMenu = false },
                         onMarkAllReadClicked = onMarkAllReadClicked,
                         onClearOldArticlesClicked = onClearOldArticlesClicked,
-                        onForceRefreshClick = onForceRefreshClick,
                         onEditFeedClick = { feedSource ->
                             showMenu = false
                             onEditFeedClick(feedSource)

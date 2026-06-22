@@ -61,10 +61,7 @@ class FeedFetcherRepository internal constructor(
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
 
-    suspend fun fetchFeeds(
-        forceRefresh: Boolean = false,
-        isFirstLaunch: Boolean = false,
-    ) {
+    suspend fun fetchFeeds(isFirstLaunch: Boolean = false) {
         return withContext(dispatcherProvider.io) {
             feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
             when {
@@ -75,7 +72,7 @@ class FeedFetcherRepository internal constructor(
                     fetchFeedsWithFeedbin()
                 }
                 else -> {
-                    fetchFeedsWithRssParser(forceRefresh, isFirstLaunch)
+                    fetchFeedsWithRssParser(isFirstLaunch)
                 }
             }
         }
@@ -128,10 +125,7 @@ class FeedFetcherRepository internal constructor(
         feedStateRepository.getFeeds()
     }
 
-    private suspend fun fetchFeedsWithRssParser(
-        forceRefresh: Boolean = false,
-        isFirstLaunch: Boolean = false,
-    ) {
+    private suspend fun fetchFeedsWithRssParser(isFirstLaunch: Boolean = false) {
         feedSyncRepository.syncFeedSources()
 
         val feedSourceUrls = databaseHelper.getFeedSources()
@@ -153,7 +147,6 @@ class FeedFetcherRepository internal constructor(
             isFeedSyncDone = false
             parseFeeds(
                 feedSourceUrls = feedSourceUrls,
-                forceRefresh = forceRefresh,
             )
 
             feedSyncRepository.syncFeedItems()
@@ -211,7 +204,6 @@ class FeedFetcherRepository internal constructor(
 
     private fun shouldRefreshFeed(
         feedSource: FeedSource,
-        forceRefresh: Boolean,
         cacheInfo: FeedSourceCacheInfo?,
         currentTime: Long,
     ): Boolean {
@@ -222,11 +214,6 @@ class FeedFetcherRepository internal constructor(
                 "Skipping ${feedSource.url}: Retry-After backoff active for another $minutes min"
             }
             return false
-        }
-
-        val isOpenRssFeed = feedSource.url.contains("openrss.org", ignoreCase = true)
-        if (forceRefresh && !isOpenRssFeed) {
-            return true
         }
 
         val nextFetchTimestamp = cacheInfo?.nextFetchTimestamp
@@ -260,7 +247,6 @@ class FeedFetcherRepository internal constructor(
     @Suppress("LongMethod")
     private suspend fun parseFeeds(
         feedSourceUrls: List<FeedSource>,
-        forceRefresh: Boolean,
     ) {
         val allFeedItems = mutableListOf<FeedItem>()
         val notModifiedFeedSourceIds = mutableListOf<String>()
@@ -273,6 +259,13 @@ class FeedFetcherRepository internal constructor(
             feedSourceUrls.mapNotNull { feedSource ->
                 val cacheInfo = cacheInfoById[feedSource.id] ?: return@mapNotNull null
                 if (cacheInfo.etag == null && cacheInfo.lastModified == null) {
+                    null
+                } else if (!FeedRefreshScheduler.shouldUseValidators(
+                        now = currentTime,
+                        validatorsTimestamp = cacheInfo.validatorsTimestamp,
+                    )
+                ) {
+                    logger.d { "Dropping stale conditional GET validators for ${feedSource.url}" }
                     null
                 } else {
                     feedSource.url to FeedHttpValidators(
@@ -287,7 +280,6 @@ class FeedFetcherRepository internal constructor(
             .mapNotNull { feedSource ->
                 val shouldRefresh = shouldRefreshFeed(
                     feedSource = feedSource,
-                    forceRefresh = forceRefresh,
                     cacheInfo = cacheInfoById[feedSource.id],
                     currentTime = currentTime,
                 )
@@ -416,6 +408,7 @@ class FeedFetcherRepository internal constructor(
         feedSourceId = result.feedSource.id,
         feedUrl = result.feedSource.url,
         fetchSucceeded = result !is FeedFetchResult.Failure,
+        refreshValidatorsTimestamp = result is FeedFetchResult.Success,
         previousCacheInfo = previousCacheInfo,
         now = dateFormatter.currentTimeMillis(),
         logger = logger,

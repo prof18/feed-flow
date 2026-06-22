@@ -18,11 +18,6 @@ extension FeedFlowApp {
             }
             .keyboardShortcut("r", modifiers: [.command])
 
-            Button(feedFlowStrings.forceFeedRefresh) {
-                NotificationCenter.default.post(name: .feedFlowForceRefreshFeeds, object: nil)
-            }
-            .keyboardShortcut("r", modifiers: [.command, .shift])
-
             Divider()
 
             Button(feedFlowStrings.markAllReadButton) {

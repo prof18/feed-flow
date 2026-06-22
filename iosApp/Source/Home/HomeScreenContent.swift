@@ -50,7 +50,6 @@ struct HomeContent: View {
     let onRefresh: () -> Void
     let onMarkAllReadClick: () -> Void
     let onDeleteOldFeedClick: () -> Void
-    let onForceRefreshClick: () -> Void
     let deleteAllFeeds: () -> Void
     let requestNewPage: () -> Void
     let onItemClick: (FeedItemUrlInfo) -> Void
@@ -110,10 +109,6 @@ struct HomeContent: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .feedFlowRefreshFeeds)) { _ in
             onRefresh()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .feedFlowForceRefreshFeeds)) { _ in
-            toggleListScroll.toggle()
-            onForceRefreshClick()
         }
         .onReceive(NotificationCenter.default.publisher(for: .feedFlowMarkAllRead)) { _ in
             showMarkAllReadDialog = true

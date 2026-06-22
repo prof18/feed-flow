@@ -26,16 +26,6 @@ internal fun MenuBarScope.FileMenu(
             },
         )
 
-        Item(
-            text = LocalFeedFlowStrings.current.forceFeedRefresh,
-            onClick = { actions.onForceRefreshClick() },
-            shortcut = if (isMacOS) {
-                KeyShortcut(Key.R, meta = true, shift = true)
-            } else {
-                KeyShortcut(Key.F5, shift = true)
-            },
-        )
-
         if (state.isSyncUploadRequired) {
             Separator()
             Item(

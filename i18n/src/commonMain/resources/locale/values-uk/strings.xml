@@ -25,7 +25,6 @@
     <string name="about_nav_bar">Про</string>
     <string name="report_issue_button">Повідомити про проблему</string>
     <string name="open_website_button">Відкрити вебсайт</string>
-    <string name="force_feed_refresh">Примусове оновлення</string>
     <string name="import_export_opml_title">Імпортування та експортування</string>
     <string name="done_button">Гаразд</string>
     <string name="issue_report_title">Повідомте про проблему з FeedFlow</string>

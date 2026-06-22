@@ -7,7 +7,6 @@ appId: com.prof18.feedflow.debug
     id: e2e_open_app
 - tapOn:
     id: home_more_menu_button
-- assertVisible: "Force refresh"
 - assertVisible: "Sort & filter"
 - assertVisible: "Delete week-old articles"
 - tapOn: "Sort & filter"

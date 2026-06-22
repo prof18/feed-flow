@@ -35,7 +35,6 @@
     <string name="report_issue_button">Laporkan masalah</string>
     <string name="open_website_button">Buka website</string>
     <string name="database_error">Terjadi kesalahan saat mengambil umpan. Silakan coba lagi atau mulai ulang aplikasi - error code: %s :(</string>
-    <string name="force_feed_refresh">Paksa penyegaran umpan</string>
     <string name="invalid_rss_url">Tautan yang Anda berikan bukan umpan RSS yang valid</string>
     <string name="import_export_opml_title">Impor dan ekspor</string>
     <string name="retry_button">Coba lagi</string>

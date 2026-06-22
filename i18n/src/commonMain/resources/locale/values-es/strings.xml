@@ -28,7 +28,6 @@
     <string name="about_nav_bar">Acerca de</string>
     <string name="report_issue_button">Informar de un error</string>
     <string name="open_website_button">Abrir página web</string>
-    <string name="force_feed_refresh">Forzar las actualizaciones de los feeds</string>
     <string name="issue_report_title">Informar de un error con FeedFlow</string>
     <string name="issue_content_title">Error con FeedFlow</string>
     <string name="missing_title_and_link">Se produjo un error al recuperar el título del feed</string>

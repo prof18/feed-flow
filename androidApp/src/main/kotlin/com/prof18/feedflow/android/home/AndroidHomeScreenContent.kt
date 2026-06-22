@@ -269,12 +269,6 @@ fun AndroidHomeScreenContent(
                 onSearchClick = onSearchClick,
                 onMarkAllReadClicked = feedListActions.markAllRead,
                 onClearOldArticlesClicked = feedListActions.onClearOldArticlesClicked,
-                onForceRefreshClick = {
-                    scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                        feedListActions.forceRefreshData()
-                    }
-                },
                 onEditFeedClick = feedManagementActions.onEditFeedClick,
                 onClick = {
                     scope.launch {

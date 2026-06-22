@@ -17,6 +17,7 @@ import com.prof18.feedflow.shared.di.getAllModulesModules
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
+import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
@@ -27,6 +28,7 @@ import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.createInMemoryDriver
 import com.prof18.feedflow.shared.test.createInMemorySyncDriver
 import com.prof18.feedflow.shared.test.testLogger
+import com.prof18.rssparser.model.RssChannel
 import com.russhwolf.settings.MapSettings
 import com.russhwolf.settings.Settings
 import io.ktor.client.HttpClient
@@ -122,6 +124,12 @@ object TestModules {
                     }
                 },
             )
+        }
+        single<RssParserWrapper> {
+            object : RssParserWrapper {
+                override suspend fun getRssChannel(url: String): RssChannel =
+                    error("No test RSS parser configured for $url")
+            }
         }
         single<ContentPrefetchRepository> { ContentPrefetchRepositoryFake() }
         single<FeedbinHistorySyncScheduler> {

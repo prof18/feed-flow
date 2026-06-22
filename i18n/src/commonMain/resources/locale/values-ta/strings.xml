@@ -50,7 +50,6 @@
     <string name="about_nav_bar">பற்றி</string>
     <string name="open_source_nav_bar">திறந்த மூல உரிமங்கள்</string>
     <string name="open_website_button">திறந்த வலைத்தளம்</string>
-    <string name="force_feed_refresh">படை ஊட்டங்கள் புதுப்பிக்க</string>
     <string name="invalid_rss_url">நீங்கள் வழங்கிய இணைப்பு செல்லுபடியாகும் RSS ஊட்டம் அல்ல</string>
     <string name="retry_button">மீண்டும் முயற்சிக்கவும்</string>
     <string name="done_button">சரி</string>

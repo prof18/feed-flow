@@ -3,7 +3,6 @@
     <string name="feed_added_message">Feed %s hinzugefügt</string>
     <string name="feed_url_placeholder">https://meinwunschblog.com/feed</string>
     <string name="drawer_title_timeline">Zeitleiste</string>
-    <string name="force_feed_refresh">Neuladen erzwingen</string>
     <string name="database_error">Beim Abrufen der Feeds gab es ein Problem. Bitte versuche es erneut oder starte die App neu - Fehlercode: %s :(</string>
     <string name="no_category">Ohne Kategorie</string>
     <string name="import_dialog_title">OPML-Datei auswählen</string>

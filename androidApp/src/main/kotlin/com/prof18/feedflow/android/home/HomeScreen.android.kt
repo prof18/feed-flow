@@ -166,7 +166,6 @@ internal fun HomeScreen(
             onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
             refreshData = { homeViewModel.getNewFeeds() },
             requestNewData = { homeViewModel.requestNewFeedsPage() },
-            forceRefreshData = { homeViewModel.forceFeedRefresh() },
             markAllRead = { homeViewModel.markAllRead() },
             onBackToTimelineClick = { homeViewModel.onFeedFilterSelected(FeedFilter.Timeline) },
             onVisibleFeedItemsChanged = homeViewModel::onVisibleFeedItemsChanged,

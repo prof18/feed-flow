@@ -2,17 +2,25 @@ CREATE TABLE feed_source_cache_info (
     url_hash TEXT NOT NULL PRIMARY KEY,
     etag TEXT,
     last_modified TEXT,
+    validators_timestamp INTEGER,
     next_fetch_timestamp INTEGER,
     backoff_timestamp INTEGER
 );
 
 selectAll:
-SELECT url_hash, etag, last_modified, next_fetch_timestamp, backoff_timestamp
+SELECT url_hash, etag, last_modified, validators_timestamp, next_fetch_timestamp, backoff_timestamp
 FROM feed_source_cache_info;
 
 upsertCacheInfo:
-INSERT OR REPLACE INTO feed_source_cache_info(url_hash, etag, last_modified, next_fetch_timestamp, backoff_timestamp)
-VALUES (?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO feed_source_cache_info(
+    url_hash,
+    etag,
+    last_modified,
+    validators_timestamp,
+    next_fetch_timestamp,
+    backoff_timestamp
+)
+VALUES (?, ?, ?, ?, ?, ?);
 
 deleteCacheInfo:
 DELETE FROM feed_source_cache_info WHERE url_hash = :urlHash;

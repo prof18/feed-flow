@@ -39,7 +39,6 @@
     <string name="open_source_nav_bar">Open Source licencie</string>
     <string name="open_website_button">Otvoriť webovú stránku</string>
     <string name="database_error">Počas načítavania feedov sa vyskytla chyba. Skús to znova alebo reštartuj aplikáciu - error code: %s :(</string>
-    <string name="force_feed_refresh">Vynútiť obnovenie feedov</string>
     <string name="invalid_rss_url">Zadaný odkaz nie je platným RSS feedom</string>
     <string name="done_button">OK</string>
     <string name="import_export_opml_title">Import a export</string>

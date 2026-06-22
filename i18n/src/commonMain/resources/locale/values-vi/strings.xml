@@ -59,7 +59,6 @@
     <string name="open_website_button">Trang chủ</string>
     <string name="database_error">Đã xảy ra lỗi trong quá trình truy xuất nguồn tin. Hãy thử lại hoặc khởi động lại ứng dụng - error code: %s :(</string>
     <string name="settings_app_title">Chung</string>
-    <string name="force_feed_refresh">Làm mới nguồn tin ngay</string>
     <string name="menu_mark_as_read">Đánh dấu là đã đọc</string>
     <string name="menu_open_comments">Đọc bình luận</string>
     <string name="dropbox_confirm_button">Xác nhận</string>

@@ -12,6 +12,7 @@ internal object FeedSourceCacheInfoFactory {
         feedSourceId: String,
         feedUrl: String,
         fetchSucceeded: Boolean,
+        refreshValidatorsTimestamp: Boolean,
         previousCacheInfo: FeedSourceCacheInfo?,
         now: Long,
         logger: Logger,
@@ -34,6 +35,11 @@ internal object FeedSourceCacheInfoFactory {
                 feedSourceId = feedSourceId,
                 etag = validators?.etag,
                 lastModified = validators?.lastModified,
+                validatorsTimestamp = validators.timestamp(
+                    refreshValidatorsTimestamp = refreshValidatorsTimestamp,
+                    previousCacheInfo = previousCacheInfo,
+                    now = now,
+                ),
                 nextFetchTimestamp = nextFetchTimestamp,
                 backoffTimestamp = null,
             )
@@ -53,9 +59,25 @@ internal object FeedSourceCacheInfoFactory {
                 feedSourceId = feedSourceId,
                 etag = previousCacheInfo?.etag,
                 lastModified = previousCacheInfo?.lastModified,
+                validatorsTimestamp = previousCacheInfo?.validatorsTimestamp,
                 nextFetchTimestamp = previousCacheInfo?.nextFetchTimestamp,
                 backoffTimestamp = backoffTimestamp,
             )
+        }
+    }
+
+    private fun FeedHttpValidators?.timestamp(
+        refreshValidatorsTimestamp: Boolean,
+        previousCacheInfo: FeedSourceCacheInfo?,
+        now: Long,
+    ): Long? {
+        if (this?.etag == null && this?.lastModified == null) {
+            return null
+        }
+        return if (refreshValidatorsTimestamp) {
+            now
+        } else {
+            previousCacheInfo?.validatorsTimestamp
         }
     }
 }

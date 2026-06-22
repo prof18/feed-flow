@@ -35,7 +35,6 @@
     <string name="report_issue_button">الإبلاغ عن مشكلة</string>
     <string name="open_website_button">فتح الموقع</string>
     <string name="database_error">حدث خطأ ما أثناء جلب الخلاصات. يرجى إعادة المحاولة أو إعادة تشغيل التطبيق - رمز الخطأ: %s :(</string>
-    <string name="force_feed_refresh">فرض تحديث إجباري للخلاصات</string>
     <string name="invalid_rss_url">الرابط الذي أدخلته ليس رابط خلاصة RSS صالح</string>
     <string name="import_export_opml_title">استيراد وتصدير</string>
     <string name="retry_button">إعادة المحاولة</string>

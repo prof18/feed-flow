@@ -74,7 +74,6 @@
     <string name="about_menu_contribute_translations">Ajude com traduções</string>
     <string name="rename_feed_source_name_button">Renomear</string>
     <string name="in_app_browser">Navegador interno</string>
-    <string name="force_feed_refresh">Forçar atualização</string>
     <string name="trigger_feed_sync">Enviar alterações</string>
     <string name="add_feed_anyway_button">Adicionar na mesma</string>
     <string name="feed_add_in_progress_message">A importar feed...</string>

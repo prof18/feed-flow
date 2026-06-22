@@ -2,7 +2,6 @@ import Foundation
 
 extension Notification.Name {
     static let feedFlowRefreshFeeds = Notification.Name("feedflow.menu.refresh-feeds")
-    static let feedFlowForceRefreshFeeds = Notification.Name("feedflow.menu.force-refresh-feeds")
     static let feedFlowMarkAllRead = Notification.Name("feedflow.menu.mark-all-read")
     static let feedFlowClearOldArticles = Notification.Name("feedflow.menu.clear-old-articles")
     static let feedFlowAddFeed = Notification.Name("feedflow.menu.add-feed")

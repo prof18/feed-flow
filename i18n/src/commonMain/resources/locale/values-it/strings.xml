@@ -3,7 +3,6 @@
     <string name="delete_feed">Cancella</string>
     <string name="feed_added_message">Feed %s aggiunto</string>
     <string name="feed_url_placeholder">https://ilmioblogpreferito.it/feed</string>
-    <string name="force_feed_refresh">Forza l\'aggiornamento dei feed</string>
     <string name="database_error">Qualcosa è andato storto durante lo scaricamento dei feed. Riprova o riavvia l\'applicazione - error code: %s :(</string>
     <string name="no_category">Non categorizzato</string>
     <string name="import_dialog_title">Seleziona file OPML</string>

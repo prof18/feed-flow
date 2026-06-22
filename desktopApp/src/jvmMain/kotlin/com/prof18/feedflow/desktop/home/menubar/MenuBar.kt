@@ -80,7 +80,6 @@ data class MenuBarActions(
     val onMarkAllReadClick: () -> Unit,
     val onImportExportClick: () -> Unit,
     val onClearOldFeedClick: () -> Unit,
-    val onForceRefreshClick: () -> Unit,
     val onSettingsClick: () -> Unit,
     val deleteFeeds: () -> Unit,
     val onBackupClick: () -> Unit,

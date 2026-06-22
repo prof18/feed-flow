@@ -25,7 +25,6 @@
     <string name="open_source_licenses">Открытые лицензии</string>
     <string name="about_nav_bar">О приложении</string>
     <string name="report_issue_button">Сообщить о проблеме</string>
-    <string name="force_feed_refresh">Обновить сейчас</string>
     <string name="invalid_rss_url">Ссылка, которую вы предоставили, не является действительным RSS-каналом</string>
     <string name="import_export_opml_title">Импорт и экспорт</string>
     <string name="retry_button">Снова</string>

@@ -99,9 +99,6 @@ struct HomeScreen: View {
             onDeleteOldFeedClick: {
                 homeViewModel.deleteOldFeedItems()
             },
-            onForceRefreshClick: {
-                homeViewModel.forceFeedRefresh()
-            },
             deleteAllFeeds: {
                 homeViewModel.deleteAllFeeds()
             },

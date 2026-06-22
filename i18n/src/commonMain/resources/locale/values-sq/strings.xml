@@ -35,7 +35,6 @@
     <string name="report_issue_button">Raporto problem</string>
     <string name="open_website_button">Hap faqen web</string>
     <string name="database_error">Diçka shkoi keq gjatë marrjes së prurjeve. Provo përsëri ose rinise aplikacionin – kodi i gabimit: %s :(</string>
-    <string name="force_feed_refresh">Detyro rifreskimin e prurjeve</string>
     <string name="invalid_rss_url">Lidhja që shtove nuk është një prurje RSS e vlefshme</string>
     <string name="import_export_opml_title">Importo dhe eksporto</string>
     <string name="retry_button">Provo sërish</string>

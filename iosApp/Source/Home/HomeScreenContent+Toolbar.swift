@@ -200,13 +200,6 @@ extension HomeContent {
         .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.markAllReadMenuItem)
 
         Button {
-            proxy.scrollTo(feedState.first?.id)
-            onForceRefreshClick()
-        } label: {
-            Label(feedFlowStrings.forceFeedRefresh, systemImage: "arrow.clockwise")
-        }
-
-        Button {
             showViewOptionsSheet = true
         } label: {
             Label(feedFlowStrings.sortAndFilterButton, systemImage: "line.3.horizontal.decrease")

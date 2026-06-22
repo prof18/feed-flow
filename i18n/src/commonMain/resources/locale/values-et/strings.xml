@@ -27,7 +27,6 @@
     <string name="report_issue_button">Teata veast või problemist</string>
     <string name="open_website_button">Vaata veebis</string>
     <string name="database_error">Midagi läks uudisvoogude laadimisel valesti. Palun proovi uuesti või taaskäivita rakendus - error code: %s :(</string>
-    <string name="force_feed_refresh">Laadi kohe</string>
     <string name="invalid_rss_url">Sinu antud link ei ole korrektne RSS-uudisvoo link</string>
     <string name="import_export_opml_title">Import ja eksport</string>
     <string name="retry_button">Proovi uuesti</string>

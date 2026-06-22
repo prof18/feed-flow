@@ -36,7 +36,6 @@
     <string name="report_issue_button">Sorun bildir</string>
     <string name="open_website_button">Web sitesini aç</string>
     <string name="database_error">Akışlar alınırken bir sorun oluştu. Lütfen tekrar deneyin veya uygulamayı yeniden başlatın - error code: %s :(</string>
-    <string name="force_feed_refresh">Akışları yenilemeye zorla</string>
     <string name="invalid_rss_url">Sağladığınız bağlantı geçerli bir RSS akışı değil</string>
     <string name="import_export_opml_title">İçe ve Dışa Aktarma</string>
     <string name="retry_button">Tekrar dene</string>

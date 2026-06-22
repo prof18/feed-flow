@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feed_url_placeholder">https://monblogfavori.com/flux</string>
-    <string name="force_feed_refresh">Forcer l\'actualisation</string>
     <string name="database_error">Une erreur s\'est produite lors de la récupération des flux. Veuillez réessayer ou relancer l\'application - Code erreur : %s :(</string>
     <string name="import_dialog_title">Sélectionner un fichier OPML</string>
     <string name="feeds_import_done_message">Import terminé</string>

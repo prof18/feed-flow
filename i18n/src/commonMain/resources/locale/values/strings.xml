@@ -40,7 +40,6 @@
     <string name="open_website_button">Open website</string>
     <string name="open_feed_website_button">Open feed website</string>
     <string name="database_error">Something went wrong during the retrieval of the feeds. Please retry or restart the app  - error code: %s :(</string>
-    <string name="force_feed_refresh">Force refresh</string>
     <string name="trigger_feed_sync">Upload changes</string>
     <string name="invalid_rss_url">The link you provided is not a valid RSS feed</string>
     <string name="invalid_rss_url_with_retry_hint">Couldn&#39;t validate this feed. It might not be a valid RSS feed, or the server could be temporarily unavailable.</string>

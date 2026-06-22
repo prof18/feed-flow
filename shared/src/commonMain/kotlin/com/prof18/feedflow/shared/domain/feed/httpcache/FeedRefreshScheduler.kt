@@ -51,6 +51,11 @@ internal object FeedRefreshScheduler {
         return now + until.coerceAtMost(MAX_INTERVAL).inWholeMilliseconds
     }
 
+    fun shouldUseValidators(now: Long, validatorsTimestamp: Long?): Boolean {
+        val timestamp = validatorsTimestamp ?: return false
+        return (now - timestamp).milliseconds <= VALIDATOR_MAX_AGE
+    }
+
     private fun explicitFreshness(info: FeedHttpResponseInfo, now: Long): Duration? {
         val maxAgeSeconds = parseMaxAgeSeconds(info.cacheControl)
         if (maxAgeSeconds != null) {
@@ -92,6 +97,7 @@ internal object FeedRefreshScheduler {
     }
 
     val MIN_INTERVAL = 1.hours
+    val VALIDATOR_MAX_AGE = 8.days
     private val MAX_INTERVAL = 1.days
     private const val HEURISTIC_FRESHNESS_DIVIDER = 10
     private val MAX_AGE_REGEX = Regex("""(?:^|[,\s])max-age\s*=\s*"?(\d+)""")

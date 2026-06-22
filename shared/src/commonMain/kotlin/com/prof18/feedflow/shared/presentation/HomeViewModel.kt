@@ -360,21 +360,9 @@ class HomeViewModel internal constructor(
         }
     }
 
-    fun forceFeedRefresh() {
-        launchAfterFlushingScrollReadState {
-            retryPendingReadStatusActionsNow()
-            feedFetcherRepository.fetchFeeds(forceRefresh = true)
-        }
-    }
-
     fun refreshFeeds() {
         refreshTriggerMutableState.update { it + 1 }
         getNewFeeds()
-    }
-
-    fun forceRefreshFeeds() {
-        refreshTriggerMutableState.update { it + 1 }
-        forceFeedRefresh()
     }
 
     fun deleteAllFeeds() {

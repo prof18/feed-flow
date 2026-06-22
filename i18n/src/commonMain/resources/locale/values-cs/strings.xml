@@ -35,7 +35,6 @@
     <string name="open_source_nav_bar">Licence open source</string>
     <string name="report_issue_button">Nahlásit chybu</string>
     <string name="open_website_button">Otevřít webovou stránku</string>
-    <string name="force_feed_refresh">Vynutit obnovení zdrojů</string>
     <string name="invalid_rss_url">Odkaz, který jste uvedli, není platný RSS kanál</string>
     <string name="import_export_opml_title">Import a export</string>
     <string name="retry_button">Znovu</string>

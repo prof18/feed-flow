@@ -414,9 +414,6 @@ private fun FrameWindowScope.MainWindowContent(
                     onClearOldFeedClick = {
                         showClearOldArticlesDialog = true
                     },
-                    onForceRefreshClick = {
-                        homeViewModel.forceRefreshFeeds()
-                    },
                     onSettingsClick = {
                         initialSettingsCategory = DesktopSettingsCategory.GENERAL
                         dialogWindowNavigator.open(DesktopDialogWindowDestination.Settings)

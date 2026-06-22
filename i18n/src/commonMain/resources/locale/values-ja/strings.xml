@@ -36,7 +36,6 @@
     <string name="report_issue_button">問題を報告</string>
     <string name="open_website_button">Webサイトを開く</string>
     <string name="database_error">フィードの取得中に問題が発生しました。再試行するか、アプリを再起動してください - error code: %s :(</string>
-    <string name="force_feed_refresh">フィードを強制的に再読み込み</string>
     <string name="invalid_rss_url">このリンクは正しいRSSフィードのものではありません</string>
     <string name="import_export_opml_title">インポートとエクスポート</string>
     <string name="retry_button">再試行</string>

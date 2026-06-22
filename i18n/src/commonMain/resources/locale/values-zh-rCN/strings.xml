@@ -10,7 +10,6 @@
     <string name="open_source_nav_bar">开放源代码许可</string>
     <string name="report_issue_button">报告问题</string>
     <string name="open_website_button">打开网站</string>
-    <string name="force_feed_refresh">强制刷新</string>
     <string name="import_export_opml_title">导入和导出</string>
     <string name="wrong_link_report_title">以下订阅源无效，没有添加</string>
     <string name="issue_report_title">报告 FeedFlow 的问题</string>

@@ -433,6 +433,7 @@ class DatabaseHelper(
                     feedSourceId = cacheInfo.url_hash,
                     etag = cacheInfo.etag,
                     lastModified = cacheInfo.last_modified,
+                    validatorsTimestamp = cacheInfo.validators_timestamp,
                     nextFetchTimestamp = cacheInfo.next_fetch_timestamp,
                     backoffTimestamp = cacheInfo.backoff_timestamp,
                 )
@@ -446,6 +447,7 @@ class DatabaseHelper(
                     url_hash = cacheInfo.feedSourceId,
                     etag = cacheInfo.etag,
                     last_modified = cacheInfo.lastModified,
+                    validators_timestamp = cacheInfo.validatorsTimestamp,
                     next_fetch_timestamp = cacheInfo.nextFetchTimestamp,
                     backoff_timestamp = cacheInfo.backoffTimestamp,
                 )

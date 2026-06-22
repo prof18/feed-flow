@@ -35,7 +35,6 @@
     <string name="author_label">Creada con ❤️ por</string>
     <string name="open_source_licenses">Licenzas de código aberto</string>
     <string name="open_website_button">Abrir sitio web</string>
-    <string name="force_feed_refresh">Forzar a actualización</string>
     <string name="retry_button">Volver a intentar</string>
     <string name="done_button">OK</string>
     <string name="issue_report_title">Informa dunha incidencia con FeedFlow</string>

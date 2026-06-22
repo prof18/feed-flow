@@ -6,7 +6,6 @@ import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
@@ -39,7 +38,6 @@ fun HomeAppBarDropdownMenu(
     closeMenu: () -> Unit,
     onMarkAllReadClicked: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
-    onForceRefreshClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     isSyncUploadRequired: Boolean,
     onBackupClick: () -> Unit,
@@ -143,22 +141,6 @@ fun HomeAppBarDropdownMenu(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.DoneAll,
-                    contentDescription = null,
-                )
-            },
-        )
-
-        DropdownMenuItem(
-            onClick = {
-                onForceRefreshClick()
-                closeMenu()
-            },
-            text = {
-                Text(LocalFeedFlowStrings.current.forceFeedRefresh)
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
                     contentDescription = null,
                 )
             },

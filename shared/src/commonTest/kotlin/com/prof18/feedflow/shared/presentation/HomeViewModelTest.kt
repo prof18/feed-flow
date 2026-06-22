@@ -580,7 +580,7 @@ class HomeViewModelTest : KoinTestBase() {
         }
 
     @Test
-    fun `forceFeedRefresh flushes pending scroll read items before resetting tracker`() =
+    fun `refreshFeeds flushes pending scroll read items before resetting tracker`() =
         runTest(testDispatcher) {
             settingsRepository.setMarkFeedAsReadWhenScrolling(true)
             val feedSource = createFeedSource(id = "source-1", title = "Source 1")
@@ -618,7 +618,7 @@ class HomeViewModelTest : KoinTestBase() {
 
             assertTrue(getDbItems().all { it.is_read.not() })
 
-            viewModel.forceFeedRefresh()
+            viewModel.refreshFeeds()
             advanceUntilIdle()
 
             val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
@@ -1218,14 +1218,14 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `forceFeedRefresh triggers fetch`() = runTest(testDispatcher) {
+    fun `refreshFeeds triggers fetch`() = runTest(testDispatcher) {
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)
         fakeRssParser.setChannel(feedSource.url, createChannel(title = "Feed", link = "https://example.com"))
 
         val viewModel = getViewModel()
 
-        viewModel.forceFeedRefresh()
+        viewModel.refreshFeeds()
         advanceUntilIdle()
 
         assertEquals(1, fakeRssParser.callCount)

@@ -47,7 +47,6 @@ struct SidebarDrawer: View {
     let onFeedFilterSelected: (FeedFilter) -> Void
     let onMarkAllReadClick: () -> Void
     let onDeleteOldFeedClick: () -> Void
-    let onForceRefreshClick: () -> Void
     let deleteAllFeeds: () -> Void
     let onShowSettingsClick: () -> Void
     let onAddFeedClick: () -> Void

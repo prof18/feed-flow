@@ -121,6 +121,13 @@ class SerialFeedFetcherRepository internal constructor(
                 val cacheInfo = cacheInfoById[feedSource.id] ?: return@mapNotNull null
                 if (cacheInfo.etag == null && cacheInfo.lastModified == null) {
                     null
+                } else if (!FeedRefreshScheduler.shouldUseValidators(
+                        now = currentTime,
+                        validatorsTimestamp = cacheInfo.validatorsTimestamp,
+                    )
+                ) {
+                    logger.d { "Dropping stale conditional GET validators for ${feedSource.url}" }
+                    null
                 } else {
                     feedSource.url to FeedHttpValidators(
                         etag = cacheInfo.etag,
@@ -149,9 +156,11 @@ class SerialFeedFetcherRepository internal constructor(
         for (feedSource in feedsToProcess) {
             logger.d { "-> Getting ${feedSource.url}" }
             var fetchSucceeded = false
+            var receivedFullResponse = false
             try {
                 val rssChannel = rssParserWrapper.getRssChannel(feedSource.url)
                 fetchSucceeded = true
+                receivedFullResponse = true
                 val feedItems = rssChannelMapper.getFeedItems(
                     rssChannel = rssChannel,
                     feedSource = feedSource,
@@ -181,6 +190,7 @@ class SerialFeedFetcherRepository internal constructor(
                     feedSourceId = feedSource.id,
                     feedUrl = feedSource.url,
                     fetchSucceeded = fetchSucceeded,
+                    refreshValidatorsTimestamp = receivedFullResponse,
                     previousCacheInfo = cacheInfoById[feedSource.id],
                     now = dateFormatter.currentTimeMillis(),
                     logger = logger,

@@ -118,7 +118,6 @@
     <string name="settings_swipe_action_toggle_read">Atzīmēt kā lasītu/nelasītu</string>
     <string name="settings_swipe_action_none">Nedarīt neko</string>
     <string name="dropbox_sync_success">Jūsu Dropbox konts veiksmīgi pievienots</string>
-    <string name="force_feed_refresh">Piespiest atsvaidzināt ziņu plūsmas</string>
     <string name="account_refresh_progress">Notiek atsvaidzināšana</string>
     <string name="drawer_title_timeline">Rakstu hronika</string>
     <string name="empty_screen_back_to_timeline">Atpakaļ uz rakstu hroniku</string>

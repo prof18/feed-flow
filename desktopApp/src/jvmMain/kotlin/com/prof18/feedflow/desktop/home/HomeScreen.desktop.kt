@@ -204,7 +204,6 @@ internal fun HomeScreen(
             onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
             refreshData = { homeViewModel.refreshFeeds() },
             requestNewData = { homeViewModel.requestNewFeedsPage() },
-            forceRefreshData = { homeViewModel.forceRefreshFeeds() },
             markAllRead = { homeViewModel.markAllRead() },
             onBackToTimelineClick = {
                 resetReaderArticle()

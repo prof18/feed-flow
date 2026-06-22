@@ -51,7 +51,6 @@ data class FeedListActions(
     val onDeleteDatabaseClick: () -> Unit,
     val refreshData: () -> Unit,
     val requestNewData: () -> Unit,
-    val forceRefreshData: () -> Unit,
     val markAllRead: () -> Unit,
     val onBackToTimelineClick: () -> Unit,
     val onVisibleFeedItemsChanged: (List<VisibleFeedItem>) -> Unit,

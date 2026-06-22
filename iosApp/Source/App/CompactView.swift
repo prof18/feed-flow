@@ -85,13 +85,13 @@ struct CompactView: View {
                 .toggleStyle(BlueToggleStyle())
         }
         .sheet(isPresented: $showSidebarSettingsSheet) {
-            SettingsScreen(fetchFeeds: { homeViewModel.forceFeedRefresh() })
+            SettingsScreen(fetchFeeds: { homeViewModel.getNewFeeds(isFirstLaunch: false) })
                 .environment(appState)
                 .environment(browserSelector)
                 .preferredColorScheme(appState.colorScheme)
         }
         .sheet(isPresented: $showImportExportSheet) {
-            ImportExportScreen(showCloseButton: true, fetchFeeds: { homeViewModel.forceFeedRefresh() })
+            ImportExportScreen(showCloseButton: true, fetchFeeds: { homeViewModel.getNewFeeds(isFirstLaunch: false) })
                 .environment(appState)
         }
         .sheet(isPresented: $showEditFeedSheet) {
@@ -176,10 +176,6 @@ struct CompactView: View {
             },
             onDeleteOldFeedClick: {
                 homeViewModel.deleteOldFeedItems()
-            },
-            onForceRefreshClick: {
-                scrollUpTrigger.toggle()
-                homeViewModel.forceFeedRefresh()
             },
             deleteAllFeeds: {
                 homeViewModel.deleteAllFeeds()

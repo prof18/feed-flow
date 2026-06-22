@@ -11,8 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.desktop.di.DI
@@ -68,7 +67,7 @@ internal fun DesktopSinglePaneHomeScaffold(
     var isDockedDrawerVisible by remember { mutableStateOf(homeSettingsRepository.isDrawerVisible()) }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val usesDockedDrawer = calculateWindowSizeClass().widthSizeClass != WindowWidthSizeClass.Compact
+        val usesDockedDrawer = usesDockedDrawerForWidth(maxWidth)
         val drawerState = key(usesDockedDrawer) {
             rememberDrawerState(initialValue = DrawerValue.Closed)
         }
@@ -161,3 +160,7 @@ internal fun DesktopSinglePaneHomeScaffold(
         }
     }
 }
+
+internal fun usesDockedDrawerForWidth(width: Dp): Boolean = width >= dockedDrawerMinWidth
+
+private val dockedDrawerMinWidth = 600.dp

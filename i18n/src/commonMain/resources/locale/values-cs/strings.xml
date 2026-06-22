@@ -18,7 +18,7 @@
     <string name="no_feeds_found_message">Nebyly nalezeny žádné zdroje. Přidejte nový zdroj!</string>
     <string name="feed_added_message">Zdroj %s přidán</string>
     <string name="app_name" translatable="false">FeedFlow</string>
-    <string name="clear_old_articles_button">Odstranit příspěvky týdenního stáří</string>
+    <string name="clear_old_articles_button">Odstranit články týdenního stáří</string>
     <string name="settings_button">Možnosti</string>
     <string name="feeds_importing_message">Importování zdroje</string>
     <string name="feeds_import_done_message">Import dokončen</string>
@@ -249,7 +249,7 @@
     <string name="reader_mode_fallback_title">Nelze analyzovat článek</string>
     <string name="reader_mode_fallback_message">Obsah této stránky nemohl být extrahován v režimu čtečky. Můžete otevřít stránku přímo v prohlížeči.</string>
     <string name="reader_mode_fallback_open_browser_button">Otevřít v prohlížeči</string>
-    <string name="trigger_feed_sync">Spustit nahrávání do vašeho účtu</string>
+    <string name="trigger_feed_sync">Nahrát změny</string>
     <string name="import_export_label">Import a export</string>
     <string name="feed_add_in_progress_message">Importování zdroje...</string>
     <string name="import_export_opml_section_title">Odběry (OPML)</string>
@@ -377,4 +377,15 @@
     <string name="delete_all_feeds_confirmation_message">Přejete si skutečně odstranit všechny zdroje v této kategorii? Tuto akci nelze zrušit.</string>
     <string name="about_the_app">FeedFlow je minimalistická čtečka RSS pro čistou, chronologicky řazenou časovou osu - žádný algoritmus, žádný balast. Otevírejte články v oblíbeném prohlížeči, nebo je čtěte bez jakéhokoli rozptylování v módu čtenářově. Přednačítání celých článků umožňuje dostupné offline čtení kdekoliv. \nSynchronizujte své kanály, stav přečtení a záložky přes Android, iOS, macOS, Windows a Linux pomocí iCloud, Dropbox, Disk Google, FreshRSS, Miniflux, Feedbin nebo BazQux. Organizujte zdroje do kategorií, blokujte klíčová slova a importujte nebo exportujte vše pomocí souborů OPML.</string>
     <string name="settings_appearance">Vzhled</string>
+    <string name="invalid_rss_url_with_retry_hint">Nelze ověřit tento zdroj. Možná není platným RSS kanálem, nebo server může být dočasně nedostupný.</string>
+    <string name="add_feed_anyway_acknowledgement">Tento zdroj nebyl ověřen. Systém se nadále bude pokoušet získat údaje, a pokud se to nepodaří, později může být odstraněn.</string>
+    <string name="add_feed_anyway_button">Přesto přidat</string>
+    <string name="settings_hide_unread_count">Skrýt počet nepřečtených</string>
+    <string name="greader_bad_token_sync_error_message">Server odmítl synchronizační token. Pokud je vaše služba kompatibilní s Google Reader za reverzní proxy, ujistěte se, že předá Autorizační hlavičku.</string>
+    <string name="miniflux_bad_token_error_message">Přihlášení se podařilo, ale Miniflux odmítl synchronizační token. Pokud je Miniflux za reverzní proxy, ujistěte se, že předá Autorizační hlavičku.</string>
+    <string name="close_button_content_description">Zavřít</string>
+    <string name="category_name_already_exists">Kategorie s tímto jménem již existuje</string>
+    <string name="rename_category">Přejmenovat kategorii</string>
+    <string name="article_bookmarked_content_description">Uloženo do záložek</string>
+    <string name="sort_and_filter_button">Řazení a filtrování</string>
 </resources>

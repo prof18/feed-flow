@@ -31,6 +31,7 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
 
 class ImportExportViewModelTest : KoinTestBase() {
 
@@ -268,7 +269,7 @@ class ImportExportViewModelTest : KoinTestBase() {
         }
 
         private suspend fun simulateWork() {
-            delay(1)
+            delay(1.milliseconds)
         }
     }
 

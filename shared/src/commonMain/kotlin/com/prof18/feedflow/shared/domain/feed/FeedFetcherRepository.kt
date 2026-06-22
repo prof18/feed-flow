@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.Failure
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
@@ -21,11 +22,16 @@ import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
+import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
+import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpValidators
+import com.prof18.feedflow.shared.domain.feed.httpcache.FeedRefreshScheduler
+import com.prof18.feedflow.shared.domain.feed.httpcache.FeedSourceCacheInfoFactory
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
+import com.prof18.rssparser.exception.HttpException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
@@ -33,6 +39,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
 class FeedFetcherRepository internal constructor(
@@ -49,6 +56,7 @@ class FeedFetcherRepository internal constructor(
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
     private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
+    private val feedHttpCacheStore: FeedHttpCacheStore,
 ) {
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
@@ -92,7 +100,7 @@ class FeedFetcherRepository internal constructor(
                 }
         }
         // If the sync is skipped quickly, sometimes the loading spinner stays out
-        delay(timeMillis = 50)
+        delay(50.milliseconds)
         contentPrefetchRepository.prefetchContent()
         isFeedSyncDone = true
         updateRefreshCount()
@@ -112,7 +120,7 @@ class FeedFetcherRepository internal constructor(
                 }
         }
         // If the sync is skipped quickly, sometimes the loading spinner stays out
-        delay(timeMillis = 50)
+        delay(50.milliseconds)
         isFeedSyncDone = true
         updateRefreshCount()
         // After fetching new feeds, delete old ones based on user settings
@@ -150,7 +158,7 @@ class FeedFetcherRepository internal constructor(
 
             feedSyncRepository.syncFeedItems()
             // If the sync is skipped quickly, sometimes the loading spinner stays out
-            delay(timeMillis = 50)
+            delay(50.milliseconds)
             contentPrefetchRepository.prefetchContent()
             isFeedSyncDone = true
             // After fetching new feeds, delete old ones based on user settings
@@ -201,47 +209,92 @@ class FeedFetcherRepository internal constructor(
         feedStateRepository.getFeeds()
     }
 
-    @Suppress("MagicNumber")
     private fun shouldRefreshFeed(
         feedSource: FeedSource,
         forceRefresh: Boolean,
+        cacheInfo: FeedSourceCacheInfo?,
+        currentTime: Long,
     ): Boolean {
-        val isOpenRssFeed = feedSource.url.contains("openrss.org", ignoreCase = true)
+        val backoffTimestamp = cacheInfo?.backoffTimestamp
+        if (backoffTimestamp != null && currentTime < backoffTimestamp) {
+            logger.d {
+                val minutes = (backoffTimestamp - currentTime).milliseconds.inWholeMinutes
+                "Skipping ${feedSource.url}: Retry-After backoff active for another $minutes min"
+            }
+            return false
+        }
 
+        val isOpenRssFeed = feedSource.url.contains("openrss.org", ignoreCase = true)
         if (forceRefresh && !isOpenRssFeed) {
             return true
         }
 
-        val lastSyncTimestamp = feedSource.lastSyncTimestamp ?: return true
-
-        val currentTime = dateFormatter.currentTimeMillis()
-        val timeDifference = currentTime - lastSyncTimestamp
-
-        val refreshThresholdInMillis = if (isOpenRssFeed) {
-            // 6 hours for openrss.org feeds
-            (6 * 60 * 60) * 1000L
-        } else {
-            // 1 hour for other feeds
-            (60 * 60) * 1000L
+        val nextFetchTimestamp = cacheInfo?.nextFetchTimestamp
+        if (nextFetchTimestamp != null) {
+            val shouldRefresh = currentTime >= nextFetchTimestamp
+            if (!shouldRefresh) {
+                logger.d {
+                    val minutes = (nextFetchTimestamp - currentTime).milliseconds.inWholeMinutes
+                    "Skipping ${feedSource.url}: refresh window expires in $minutes min"
+                }
+            }
+            return shouldRefresh
         }
 
-        return timeDifference >= refreshThresholdInMillis
+        val lastSyncTimestamp = feedSource.lastSyncTimestamp ?: return true
+        return (currentTime - lastSyncTimestamp).milliseconds >= FeedRefreshScheduler.MIN_INTERVAL
     }
 
+    private sealed interface FeedFetchResult {
+        val feedSource: FeedSource
+
+        data class Success(
+            override val feedSource: FeedSource,
+            val feedItems: List<FeedItem>,
+        ) : FeedFetchResult
+
+        data class NotModified(override val feedSource: FeedSource) : FeedFetchResult
+        data class Failure(override val feedSource: FeedSource) : FeedFetchResult
+    }
+
+    @Suppress("LongMethod")
     private suspend fun parseFeeds(
         feedSourceUrls: List<FeedSource>,
         forceRefresh: Boolean,
     ) {
         val allFeedItems = mutableListOf<FeedItem>()
+        val notModifiedFeedSourceIds = mutableListOf<String>()
+        val updatedCacheInfo = mutableListOf<FeedSourceCacheInfo>()
         val shouldShowParsingErrors = settingsRepository.getShowRssParsingErrors()
+
+        val currentTime = dateFormatter.currentTimeMillis()
+        val cacheInfoById = databaseHelper.getFeedSourcesCacheInfo().associateBy { it.feedSourceId }
+        feedHttpCacheStore.seedValidators(
+            feedSourceUrls.mapNotNull { feedSource ->
+                val cacheInfo = cacheInfoById[feedSource.id] ?: return@mapNotNull null
+                if (cacheInfo.etag == null && cacheInfo.lastModified == null) {
+                    null
+                } else {
+                    feedSource.url to FeedHttpValidators(
+                        etag = cacheInfo.etag,
+                        lastModified = cacheInfo.lastModified,
+                    )
+                }
+            }.toMap(),
+        )
 
         feedSourceUrls
             .mapNotNull { feedSource ->
-                val shouldRefresh = shouldRefreshFeed(feedSource, forceRefresh)
+                val shouldRefresh = shouldRefreshFeed(
+                    feedSource = feedSource,
+                    forceRefresh = forceRefresh,
+                    cacheInfo = cacheInfoById[feedSource.id],
+                    currentTime = currentTime,
+                )
                 if (shouldRefresh) {
                     feedSource
                 } else {
-                    logger.d { "One hour is not passed, skipping: ${feedSource.url}}" }
+                    logger.d { "Refresh window not expired, skipping: ${feedSource.url}" }
                     feedToUpdate.remove(feedSource.url)
                     updateRefreshCount()
                     null
@@ -268,30 +321,45 @@ class FeedFetcherRepository internal constructor(
                                 websiteUrl = rssChannel.link,
                             )
                         }
-                        rssChannelMapper.getFeedItems(
-                            rssChannel = rssChannel,
+                        FeedFetchResult.Success(
                             feedSource = feedSource,
+                            feedItems = rssChannelMapper.getFeedItems(
+                                rssChannel = rssChannel,
+                                feedSource = feedSource,
+                            ),
                         )
                     } catch (e: Throwable) {
-                        logger.d { "Error, skip: ${feedSource.url}}. Error: $e" }
-                        // Mark failure flag on error
-                        databaseHelper.setFeedFetchFailed(feedSource.id, true)
-                        if (shouldShowParsingErrors) {
-                            feedStateRepository.emitErrorState(
-                                FeedErrorState(
-                                    failingSourceName = feedSource.title,
-                                ),
-                            )
-                        }
                         feedToUpdate.remove(feedSource.url)
                         updateRefreshCount()
-                        null
+                        handleFetchError(
+                            feedSource = feedSource,
+                            error = e,
+                            shouldShowParsingErrors = shouldShowParsingErrors,
+                        )
                     }
                 }.asFlow()
             }
-            .collect { items ->
-                logger.d { "Collected ${items?.size} items" }
-                items?.let { feedItems -> allFeedItems.addAll(feedItems) }
+            .collect { result ->
+                when (result) {
+                    is FeedFetchResult.Success -> {
+                        logger.d { "Collected ${result.feedItems.size} items" }
+                        allFeedItems.addAll(result.feedItems)
+                    }
+
+                    is FeedFetchResult.NotModified -> {
+                        notModifiedFeedSourceIds.add(result.feedSource.id)
+                    }
+
+                    is FeedFetchResult.Failure -> {
+                        // Failure flag already persisted above
+                    }
+                }
+                updatedCacheInfo.add(
+                    buildUpdatedCacheInfo(
+                        result = result,
+                        previousCacheInfo = cacheInfoById[result.feedSource.id],
+                    ),
+                )
             }
 
         if (allFeedItems.isNotEmpty()) {
@@ -305,6 +373,56 @@ class FeedFetcherRepository internal constructor(
                 logger.d(e) { "Failed to insert feed items into database" }
             }
         }
+
+        if (notModifiedFeedSourceIds.isNotEmpty()) {
+            databaseHelper.updateLastSyncTimestamps(
+                feedSourceIds = notModifiedFeedSourceIds,
+                lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+            )
+        }
+
+        if (updatedCacheInfo.isNotEmpty()) {
+            databaseHelper.updateFeedSourcesCacheInfo(updatedCacheInfo)
+        }
+    }
+
+    private suspend fun handleFetchError(
+        feedSource: FeedSource,
+        error: Throwable,
+        shouldShowParsingErrors: Boolean,
+    ): FeedFetchResult {
+        if ((error as? HttpException)?.code == HTTP_NOT_MODIFIED) {
+            logger.d { "Feed not modified, skipping parsing: ${feedSource.url}" }
+            return FeedFetchResult.NotModified(feedSource)
+        }
+        logger.d { "Error, skip: ${feedSource.url}}. Error: $error" }
+        // Mark failure flag on error
+        databaseHelper.setFeedFetchFailed(feedSource.id, true)
+        if (shouldShowParsingErrors) {
+            feedStateRepository.emitErrorState(
+                FeedErrorState(
+                    failingSourceName = feedSource.title,
+                ),
+            )
+        }
+        return FeedFetchResult.Failure(feedSource)
+    }
+
+    private fun buildUpdatedCacheInfo(
+        result: FeedFetchResult,
+        previousCacheInfo: FeedSourceCacheInfo?,
+    ): FeedSourceCacheInfo = FeedSourceCacheInfoFactory.create(
+        store = feedHttpCacheStore,
+        feedSourceId = result.feedSource.id,
+        feedUrl = result.feedSource.url,
+        fetchSucceeded = result !is FeedFetchResult.Failure,
+        previousCacheInfo = previousCacheInfo,
+        now = dateFormatter.currentTimeMillis(),
+        logger = logger,
+    )
+
+    private companion object {
+        const val HTTP_NOT_MODIFIED = 304
     }
 }
 

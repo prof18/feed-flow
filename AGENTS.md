@@ -183,6 +183,7 @@ For Miniflux/GReader sync failures, compare FeedFlow's exact requests and header
 - If you touch or create any business logic, ensure it's thoroughly tested with unit tests.
 - DO NOT excessively use try/catch blocks for every function. Use them only for the top caller or the bottom callers, depending on the cases.
 - ALWAYS run gradle tasks with the following flag: `--quiet --console=plain`
+- Prefer keeping data classes and other simple model types at the bottom of a file, or in a dedicated model file when they are shared by multiple classes.
 - Android app modules use AGP 9's built-in Kotlin support; do not re-add `org.jetbrains.kotlin.android`. Android and Desktop app version values come from the `com.feedflow.versioning` convention plugin, not `versioning.gradle.kts`.
 - Detekt's `MagicNumber` rule has `ignoreNamedArgument: true`. Do NOT extract a literal into a private constant when it is passed as a named argument (e.g. `Modifier.widthIn(max = 180.dp)`, `shadowElevation = 3.dp`, `.copy(alpha = 0.8f)`) — inline it. Only extract a named constant when the literal is a positional argument that Detekt would flag (e.g. `.zIndex(0.5f)`, `.height(28.dp)`); values in `ignoreNumbers` (`-1, 0, 1, 2`) never need one.
 - Every `DropdownMenu` (Android, shared, and Desktop) must pass `shape = MaterialTheme.shapes.large` so menus stay coherent with the rounded toolbars. There is no shared wrapper — set it explicitly on each new `DropdownMenu`.

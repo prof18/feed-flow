@@ -18,6 +18,7 @@ import com.prof18.feedflow.core.model.FeedItemToPrefetch
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
@@ -414,16 +415,55 @@ class DatabaseHelper(
             logger.d { "Error while cleaning up old deleted items" }
         }
 
+    suspend fun updateLastSyncTimestamps(feedSourceIds: List<String>, lastSyncTimestamp: Long) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            for (feedSourceId in feedSourceIds) {
+                dbRef.feedSourceQueries.updateLastSyncTimestamp(
+                    lastSyncTimestamp,
+                    feedSourceId,
+                )
+            }
+        }
+
+    suspend fun getFeedSourcesCacheInfo(): List<FeedSourceCacheInfo> = withContext(backgroundDispatcher) {
+        dbRef.feedSourceCacheInfoQueries.selectAll()
+            .executeAsList()
+            .map { cacheInfo ->
+                FeedSourceCacheInfo(
+                    feedSourceId = cacheInfo.url_hash,
+                    etag = cacheInfo.etag,
+                    lastModified = cacheInfo.last_modified,
+                    nextFetchTimestamp = cacheInfo.next_fetch_timestamp,
+                    backoffTimestamp = cacheInfo.backoff_timestamp,
+                )
+            }
+    }
+
+    suspend fun updateFeedSourcesCacheInfo(cacheInfoList: List<FeedSourceCacheInfo>) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            for (cacheInfo in cacheInfoList) {
+                dbRef.feedSourceCacheInfoQueries.upsertCacheInfo(
+                    url_hash = cacheInfo.feedSourceId,
+                    etag = cacheInfo.etag,
+                    last_modified = cacheInfo.lastModified,
+                    next_fetch_timestamp = cacheInfo.nextFetchTimestamp,
+                    backoff_timestamp = cacheInfo.backoffTimestamp,
+                )
+            }
+        }
+
     suspend fun deleteFeedSource(feedSourceId: String) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.readStatusPendingActionQueries.deleteReadStatusPendingActionsForFeedSource(feedSourceId)
             dbRef.feedItemQueries.deleteAllWithFeedSource(feedSourceId)
+            dbRef.feedSourceCacheInfoQueries.deleteCacheInfo(feedSourceId)
             dbRef.feedSourceQueries.deleteFeedSource(feedSourceId)
         }
 
     suspend fun deleteFeedSourceExcept(feedSourceIds: List<String>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.readStatusPendingActionQueries.deleteReadStatusPendingActionsForFeedSourcesExcept(feedSourceIds)
+            dbRef.feedSourceCacheInfoQueries.deleteAllExcept(feedSourceIds)
             dbRef.feedSourceQueries.deleteAllExcept(feedSourceIds)
             dbRef.feedItemQueries.deleteAllExcept(feedSourceIds)
         }
@@ -560,6 +600,13 @@ class DatabaseHelper(
 
     suspend fun updateFeedSource(feedSource: FeedSource) =
         dbRef.transactionWithContext(backgroundDispatcher) {
+            val oldUrl = dbRef.feedSourceQueries.selectFeedSourceById(feedSource.id)
+                .executeAsOneOrNull()
+                ?.url
+            if (oldUrl != null && oldUrl != feedSource.url) {
+                // Stale validators must not be sent to the new URL
+                dbRef.feedSourceCacheInfoQueries.deleteCacheInfo(feedSource.id)
+            }
             dbRef.feedSourceQueries.updateFeedSource(
                 urlHash = feedSource.id,
                 url = feedSource.url,
@@ -744,6 +791,7 @@ class DatabaseHelper(
         dbRef.readStatusPendingActionQueries.deleteAllReadStatusPendingActions()
         dbRef.feedItemQueries.deleteAll()
         dbRef.feedSourceCategoryQueries.deleteAll()
+        dbRef.feedSourceCacheInfoQueries.deleteAll()
         dbRef.feedSourceQueries.deleteAll()
     }
 
@@ -756,6 +804,7 @@ class DatabaseHelper(
         dbRef.feedItemQueries.deleteAll()
         dbRef.feedSourcePreferencesQueries.deleteAllPreferences()
         dbRef.feedSourceCategoryQueries.deleteAll()
+        dbRef.feedSourceCacheInfoQueries.deleteAll()
         dbRef.feedSourceQueries.deleteAll()
         dbRef.blockedWordQueries.deleteAllBlockedKeywords()
         dbRef.syncMetadataQueries.deleteAllMetadata()

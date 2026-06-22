@@ -1,0 +1,7 @@
+CREATE TABLE feed_source_cache_info (
+    url_hash TEXT NOT NULL PRIMARY KEY,
+    etag TEXT,
+    last_modified TEXT,
+    next_fetch_timestamp INTEGER,
+    backoff_timestamp INTEGER
+);

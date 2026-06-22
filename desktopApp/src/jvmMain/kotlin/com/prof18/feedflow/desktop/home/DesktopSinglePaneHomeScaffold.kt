@@ -38,6 +38,7 @@ import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun DesktopSinglePaneHomeScaffold(
@@ -58,7 +59,7 @@ internal fun DesktopSinglePaneHomeScaffold(
     val homeSettingsRepository = DI.koin.get<DesktopHomeSettingsRepository>()
 
     LaunchedEffect(Unit) {
-        delay(timeMillis = 100)
+        delay(100.milliseconds)
         focusManager.clearFocus()
     }
 

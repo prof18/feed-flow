@@ -89,6 +89,7 @@ kotlin {
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.ktor.client.core)
                 implementation(libs.skie.annotation)
+                implementation(libs.stately.concurrency)
 
                 api(project(":core"))
                 api(project(":i18n"))

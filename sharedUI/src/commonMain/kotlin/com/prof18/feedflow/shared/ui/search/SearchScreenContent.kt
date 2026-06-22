@@ -62,6 +62,7 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun SearchScreenContent(
@@ -96,7 +97,7 @@ fun SearchScreenContent(
 
     LaunchedEffect(Unit) {
         // Sometimes is crashing because the focusRequester is done too ealy
-        delay(timeMillis = 100)
+        delay(100.milliseconds)
         focusRequester.requestFocus()
     }
 

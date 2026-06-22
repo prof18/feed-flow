@@ -35,7 +35,8 @@ func startKoin(notifier: (any Notifier)? = nil) {
         appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
         telemetry: TelemetryReporter(),
         feedItemParserWorker: FeedItemParserWorkerIos(),
-        notifier: notifier ?? NoOpNotifier()
+        notifier: notifier ?? NoOpNotifier(),
+        feedUrlProtocolClasses: [FeedConditionalGetURLProtocol.self]
     )
     _feedFlowStrings = Deps.shared.getFeedFlowStrings()
 }

@@ -77,6 +77,7 @@ import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.awt.Cursor
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun DesktopHomeScaffold(
@@ -100,7 +101,7 @@ internal fun DesktopHomeScaffold(
 
     @Suppress("MagicNumber")
     LaunchedEffect(Unit) {
-        delay(100)
+        delay(100.milliseconds)
         focusManager.clearFocus()
     }
     val hazeState = rememberHazeState()

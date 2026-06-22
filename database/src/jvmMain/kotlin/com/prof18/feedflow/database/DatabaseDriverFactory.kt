@@ -133,6 +133,7 @@ private val requiredTables = listOf(
     "feed_item_ids_for_checks",
     "feed_item_status",
     "feed_source",
+    "feed_source_cache_info",
     "feed_item",
     "feed_search",
     "feed_source_category",

@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
@@ -18,6 +19,7 @@ import com.prof18.feedflow.shared.test.buildFeedItem
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
 import com.prof18.feedflow.shared.test.generators.RssItemGenerator
 import com.prof18.feedflow.shared.test.toParsedFeedSource
+import com.prof18.rssparser.exception.HttpException
 import com.prof18.rssparser.model.RssChannel
 import com.prof18.rssparser.model.RssItem
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -32,6 +34,8 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
 
@@ -114,7 +118,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     fun `fetchFeeds skips refresh when feed is too recent`() = runTest(testDispatcher) {
         setupLocalAccount()
 
-        val lastSyncTimestamp = dateFormatter.currentTimeMillis() - (30 * 60 * 1000)
+        val lastSyncTimestamp = dateFormatter.currentTimeMillis() - 30.minutes.inWholeMilliseconds
         val feedSource = createFeedSource(
             id = "source-1",
             title = "Test Feed",
@@ -151,7 +155,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     fun `fetchFeeds forces refresh for non-openrss feeds`() = runTest(testDispatcher) {
         setupLocalAccount()
 
-        val lastSyncTimestamp = dateFormatter.currentTimeMillis() - (10 * 60 * 1000)
+        val lastSyncTimestamp = dateFormatter.currentTimeMillis() - 10.minutes.inWholeMilliseconds
         val feedSource = createFeedSource(
             id = "source-1",
             title = "Test Feed",
@@ -217,26 +221,26 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     }
 
     @Test
-    fun `fetchFeeds respects openrss threshold even with forceRefresh`() = runTest(testDispatcher) {
+    fun `fetchFeeds respects openrss refresh window even with forceRefresh`() = runTest(testDispatcher) {
         setupLocalAccount()
 
-        val lastSyncTimestamp = dateFormatter.currentTimeMillis() - (60 * 60 * 1000)
+        val now = dateFormatter.currentTimeMillis()
         val feedSource = createFeedSource(
             id = "source-1",
             title = "OpenRSS Feed",
             url = "https://openrss.org/example.xml",
         )
         databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
-        databaseHelper.insertFeedItems(
+        databaseHelper.updateFeedSourcesCacheInfo(
             listOf(
-                buildFeedItem(
-                    id = "existing-item",
-                    title = "Existing Item",
-                    pubDateMillis = lastSyncTimestamp,
-                    source = feedSource,
+                FeedSourceCacheInfo(
+                    feedSourceId = feedSource.id,
+                    etag = null,
+                    lastModified = null,
+                    nextFetchTimestamp = now + 30.minutes.inWholeMilliseconds,
+                    backoffTimestamp = null,
                 ),
             ),
-            lastSyncTimestamp = lastSyncTimestamp,
         )
 
         val rssChannel = createRssChannel(
@@ -250,6 +254,164 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         advanceUntilIdle()
 
         assertEquals(0, fakeRssParserWrapper.callCount)
+    }
+
+    @Test
+    fun `fetchFeeds bypasses refresh window with forceRefresh for regular feeds`() = runTest(testDispatcher) {
+        setupLocalAccount()
+
+        val now = dateFormatter.currentTimeMillis()
+        val feedSource = createFeedSource(
+            id = "source-1",
+            title = "Test Feed",
+        )
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.updateFeedSourcesCacheInfo(
+            listOf(
+                FeedSourceCacheInfo(
+                    feedSourceId = feedSource.id,
+                    etag = null,
+                    lastModified = null,
+                    nextFetchTimestamp = now + 30.minutes.inWholeMilliseconds,
+                    backoffTimestamp = null,
+                ),
+            ),
+        )
+
+        val rssChannel = createRssChannel(
+            title = "Test Feed",
+            link = "https://example.com",
+            items = emptyList(),
+        )
+        fakeRssParserWrapper.setChannel(feedSource.url, rssChannel)
+
+        feedFetcherRepository.fetchFeeds(forceRefresh = true)
+        advanceUntilIdle()
+
+        assertEquals(1, fakeRssParserWrapper.callCount)
+    }
+
+    @Test
+    fun `fetchFeeds skips refresh when next fetch timestamp is in the future`() = runTest(testDispatcher) {
+        setupLocalAccount()
+
+        val now = dateFormatter.currentTimeMillis()
+        val feedSource = createFeedSource(
+            id = "source-1",
+            title = "Test Feed",
+        )
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.updateFeedSourcesCacheInfo(
+            listOf(
+                FeedSourceCacheInfo(
+                    feedSourceId = feedSource.id,
+                    etag = null,
+                    lastModified = null,
+                    nextFetchTimestamp = now + 4.hours.inWholeMilliseconds,
+                    backoffTimestamp = null,
+                ),
+            ),
+        )
+
+        val rssChannel = createRssChannel(
+            title = "Test Feed",
+            link = "https://example.com",
+            items = emptyList(),
+        )
+        fakeRssParserWrapper.setChannel(feedSource.url, rssChannel)
+
+        feedFetcherRepository.fetchFeeds()
+        advanceUntilIdle()
+
+        assertEquals(0, fakeRssParserWrapper.callCount)
+    }
+
+    @Test
+    fun `fetchFeeds honors backoff even with forceRefresh`() = runTest(testDispatcher) {
+        setupLocalAccount()
+
+        val now = dateFormatter.currentTimeMillis()
+        val feedSource = createFeedSource(
+            id = "source-1",
+            title = "Test Feed",
+        )
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.updateFeedSourcesCacheInfo(
+            listOf(
+                FeedSourceCacheInfo(
+                    feedSourceId = feedSource.id,
+                    etag = null,
+                    lastModified = null,
+                    nextFetchTimestamp = null,
+                    backoffTimestamp = now + 1.hours.inWholeMilliseconds,
+                ),
+            ),
+        )
+
+        val rssChannel = createRssChannel(
+            title = "Test Feed",
+            link = "https://example.com",
+            items = emptyList(),
+        )
+        fakeRssParserWrapper.setChannel(feedSource.url, rssChannel)
+
+        feedFetcherRepository.fetchFeeds(forceRefresh = true)
+        advanceUntilIdle()
+
+        assertEquals(0, fakeRssParserWrapper.callCount)
+    }
+
+    @Test
+    fun `fetchFeeds treats 304 as unchanged feed without error`() = runTest(testDispatcher) {
+        setupLocalAccount()
+
+        val feedSource = createFeedSource(
+            id = "source-1",
+            title = "Unchanged Feed",
+        )
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        fakeRssParserWrapper.setNotModified(feedSource.url)
+
+        feedStateRepository.errorState.test {
+            feedFetcherRepository.fetchFeeds()
+            advanceUntilIdle()
+
+            expectNoEvents()
+        }
+
+        val updatedFeedSource = databaseHelper.getFeedSource(feedSource.id)
+        assertNotNull(updatedFeedSource)
+        assertTrue(!updatedFeedSource.fetchFailed)
+        assertNotNull(updatedFeedSource.lastSyncTimestamp)
+        assertEquals(FinishedFeedUpdateStatus, feedStateRepository.updateState.value)
+    }
+
+    @Test
+    fun `fetchFeeds persists cache info after a fetch`() = runTest(testDispatcher) {
+        setupLocalAccount()
+
+        val feedSource = createFeedSource(
+            id = "source-1",
+            title = "Test Feed",
+            websiteUrl = null,
+            logoUrl = null,
+        )
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+
+        val rssChannel = createRssChannel(
+            title = "Test Feed",
+            link = "https://example.com",
+            items = emptyList(),
+        )
+        fakeRssParserWrapper.setChannel(feedSource.url, rssChannel)
+
+        feedFetcherRepository.fetchFeeds()
+        advanceUntilIdle()
+
+        val cacheInfo = databaseHelper.getFeedSourcesCacheInfo().single()
+        assertEquals(feedSource.id, cacheInfo.feedSourceId)
+        val nextFetchTimestamp = assertNotNull(cacheInfo.nextFetchTimestamp)
+        assertTrue(nextFetchTimestamp > dateFormatter.currentTimeMillis())
     }
 
     @Test
@@ -467,12 +629,14 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     private class FakeRssParserWrapper : RssParserWrapper {
         private val channelByUrl = mutableMapOf<String, RssChannel>()
         private val errorUrls = mutableSetOf<String>()
+        private val notModifiedUrls = mutableSetOf<String>()
         var callCount: Int = 0
             private set
 
         fun reset() {
             channelByUrl.clear()
             errorUrls.clear()
+            notModifiedUrls.clear()
             callCount = 0
         }
 
@@ -484,8 +648,15 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
             errorUrls.add(url)
         }
 
+        fun setNotModified(url: String) {
+            notModifiedUrls.add(url)
+        }
+
         override suspend fun getRssChannel(url: String): RssChannel {
             callCount += 1
+            if (notModifiedUrls.contains(url)) {
+                throw HttpException(code = 304, message = "Not Modified")
+            }
             if (errorUrls.contains(url)) {
                 error("Failure for $url")
             }

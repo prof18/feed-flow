@@ -36,6 +36,7 @@ import com.prof18.feedflow.shared.domain.parser.ReaderModeParserWarmer
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
+import com.prof18.feedflow.shared.utils.ConditionalGetInterceptor
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
 import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.Settings
@@ -54,6 +55,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             callFactory = OkHttpClient
                 .Builder()
                 .addInterceptor(UserAgentInterceptor(get<AppConfig>().appVersion))
+                .addInterceptor(ConditionalGetInterceptor(get()))
                 .build(),
         ).build()
     }

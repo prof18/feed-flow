@@ -32,6 +32,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
+import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -195,6 +196,14 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         DateFormatterImpl(
             logger = getWith("DateFormatter"),
             clock = get(),
+        )
+    }
+
+    single {
+        val dateFormatter = get<DateFormatter>()
+        FeedHttpCacheStore(
+            currentTimeMillis = dateFormatter::currentTimeMillis,
+            logger = getWith("FeedHttpCacheStore"),
         )
     }
 
@@ -589,6 +598,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             dateFormatter = get(),
             feedSourceLogoRetriever = get(),
             contentPrefetchRepository = get(),
+            feedHttpCacheStore = get(),
         )
     }
 

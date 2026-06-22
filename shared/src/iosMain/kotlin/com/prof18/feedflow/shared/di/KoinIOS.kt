@@ -27,6 +27,7 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
+import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
@@ -92,6 +93,7 @@ fun initKoinIos(
     telemetry: Telemetry,
     feedItemParserWorker: FeedItemParserWorker,
     notifier: Notifier,
+    feedUrlProtocolClasses: List<*>,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
         appEnvironment = appEnvironment,
@@ -112,6 +114,18 @@ fun initKoinIos(
             single { telemetry }
             single { feedItemParserWorker }
             single<Notifier> { notifier }
+            single {
+                RssParserBuilder(
+                    nsUrlSession = NSURLSession.sessionWithConfiguration(
+                        NSURLSessionConfiguration.defaultSessionConfiguration().apply {
+                            HTTPAdditionalHeaders = mapOf(
+                                "User-Agent" to feedFlowUserAgent(get<AppConfig>().appVersion),
+                            )
+                            protocolClasses = feedUrlProtocolClasses
+                        },
+                    ),
+                ).build()
+            }
             single<FeedFlowStrings> {
                 when {
                     languageCode == null -> EnFeedFlowStrings
@@ -127,17 +141,6 @@ fun initKoinIos(
 )
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
-    single {
-        RssParserBuilder(
-            nsUrlSession = NSURLSession.sessionWithConfiguration(
-                NSURLSessionConfiguration.defaultSessionConfiguration().apply {
-                    HTTPAdditionalHeaders = mapOf(
-                        "User-Agent" to feedFlowUserAgent(get<AppConfig>().appVersion),
-                    )
-                },
-            ),
-        ).build()
-    }
     single<RssParserWrapper> { RssParserWrapperImpl(get()) }
 
     single<SqlDriver> {
@@ -242,6 +245,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             rssParserWrapper = get(),
             rssChannelMapper = get(),
             dateFormatter = get(),
+            feedHttpCacheStore = get(),
         )
     }
 
@@ -310,6 +314,7 @@ object Deps : KoinComponent {
     fun getDeeplinkFeedViewModel() = getKoin().get<DeeplinkFeedViewModel>()
     fun getReviewViewModel() = getKoin().get<ReviewViewModel>()
     fun getSerialFeedFetcherRepository() = getKoin().get<SerialFeedFetcherRepository>()
+    fun getFeedHttpCacheStore() = getKoin().get<FeedHttpCacheStore>()
     fun getNotificationsViewModel() = getKoin().get<NotificationsViewModel>()
     fun getNotifier() = getKoin().get<Notifier>()
     fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()

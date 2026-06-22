@@ -62,6 +62,7 @@ import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun ReaderModeScreen(
@@ -445,7 +446,7 @@ private fun ScrollbarOverlay(
     LaunchedEffect(scrollEventCount) {
         if (scrollEventCount == 0) return@LaunchedEffect
         thumbAlpha.snapTo(1f)
-        delay(1500)
+        delay(1500.milliseconds)
         thumbAlpha.animateTo(0f, tween(durationMillis = 300))
     }
 

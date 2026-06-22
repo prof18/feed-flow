@@ -42,6 +42,7 @@ import java.awt.Toolkit
 import java.io.File
 import java.io.InputStream
 import java.util.Properties
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val DARK_THEME_BACKGROUND = 0x1A1B1F
 private const val LIGHT_THEME_BACKGROUND = 0xFAFAFA
@@ -60,7 +61,7 @@ fun main() {
 
         @Suppress("MagicNumber")
         LaunchedEffect(Unit) {
-            delay(100)
+            delay(100.milliseconds)
             initProgress = 0.2f
             launch(Dispatchers.IO) {
                 initializeDependencies(appConfig)
@@ -155,7 +156,7 @@ fun main() {
 
                 LaunchedEffect(Unit) {
                     initProgress = 1f
-                    delay(timeMillis = 100)
+                    delay(100.milliseconds)
                     showMainWindow = true
                 }
 

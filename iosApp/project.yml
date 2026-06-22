@@ -346,6 +346,7 @@ targets:
       - path: Source/Reader/FeedItemParser.swift
       - path: Source/Reader/FeedItemParserWorkerIos.swift
       - path: Source/UI/Style/Spacing.swift
+      - path: Source/Utils/FeedConditionalGetURLProtocol.swift
       - path: Source/Utils/IosHtmlParser.swift
       - path: Source/Utils/TelemetryReporter.swift
       - path: Source/Utils/VMStoreOwner.swift

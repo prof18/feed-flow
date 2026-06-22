@@ -1,6 +1,5 @@
 package com.prof18.feedflow.desktop.home
 
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -48,6 +47,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun HomeScreen(
     homeViewModel: HomeViewModel,
+    listStateStore: DesktopHomeListStateStore,
     snackbarHostState: SnackbarHostState,
     onImportExportClick: () -> Unit,
     onSearchClick: () -> Unit,
@@ -61,7 +61,7 @@ internal fun HomeScreen(
     val changeFeedCategoryViewModel = koinViewModel<ChangeFeedCategoryViewModel>()
     val homeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
     val isMultiPaneLayoutEnabled by homeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
-    val listState = remember(isMultiPaneLayoutEnabled) { LazyListState() }
+    val listState = listStateStore.getListState(isMultiPaneLayoutEnabled)
 
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()

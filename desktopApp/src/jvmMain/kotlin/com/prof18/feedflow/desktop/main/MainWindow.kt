@@ -60,10 +60,12 @@ import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsuggestions.FeedSuggestionsScreen
+import com.prof18.feedflow.desktop.home.DesktopHomeListStateStore
 import com.prof18.feedflow.desktop.home.HomeScreen
 import com.prof18.feedflow.desktop.home.menubar.FeedFlowMenuBar
 import com.prof18.feedflow.desktop.home.menubar.MenuBarActions
 import com.prof18.feedflow.desktop.home.menubar.MenuBarState
+import com.prof18.feedflow.desktop.home.rememberDesktopHomeListStateStore
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.settings.DesktopSettingsCategory
@@ -235,6 +237,7 @@ private fun FrameWindowScope.MainWindowContent(
     appConfig: DesktopConfig,
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
+    val homeListStateStore = rememberDesktopHomeListStateStore()
 
     LaunchedEffect(Unit) {
         homeViewModel.onAppLaunch()
@@ -362,6 +365,7 @@ private fun FrameWindowScope.MainWindowContent(
                                 backStack = backStack,
                                 navigateBack = navigateBack,
                                 homeViewModel = homeViewModel,
+                                homeListStateStore = homeListStateStore,
                                 snackbarHostState = snackbarHostState,
                                 dialogWindowNavigator = dialogWindowNavigator,
                                 onAccountsRequested = {
@@ -489,6 +493,7 @@ private fun EntryProviderScope<NavKey>.screens(
     backStack: MutableList<NavKey>,
     navigateBack: () -> Unit,
     homeViewModel: HomeViewModel,
+    homeListStateStore: DesktopHomeListStateStore,
     snackbarHostState: SnackbarHostState,
     dialogWindowNavigator: DesktopDialogWindowNavigator,
     onAccountsRequested: () -> Unit,
@@ -497,6 +502,7 @@ private fun EntryProviderScope<NavKey>.screens(
     entry<Home> {
         HomeScreen(
             homeViewModel = homeViewModel,
+            listStateStore = homeListStateStore,
             snackbarHostState = snackbarHostState,
             onImportExportClick = {
                 dialogWindowNavigator.open(DesktopDialogWindowDestination.ImportExport)

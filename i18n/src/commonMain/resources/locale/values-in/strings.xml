@@ -376,16 +376,4 @@
     <string name="delete_all_feeds_confirmation_title">Hapus semua feed dalam kategori?</string>
     <string name="delete_all_feeds_confirmation_message">Apakah Anda yakin ingin menghapus semua feed dalam kategori ini? Tindakan ini tidak dapat dibatalkan.</string>
     <string name="settings_appearance">Tampilan</string>
-    <string name="about_the_app"></string>
-    <string name="invalid_rss_url_with_retry_hint"></string>
-    <string name="article_bookmarked_content_description"></string>
-    <string name="miniflux_bad_token_error_message"></string>
-    <string name="rename_category"></string>
-    <string name="settings_hide_unread_count"></string>
-    <string name="add_feed_anyway_button"></string>
-    <string name="add_feed_anyway_acknowledgement"></string>
-    <string name="greader_bad_token_sync_error_message"></string>
-    <string name="close_button_content_description"></string>
-    <string name="category_name_already_exists"></string>
-    <string name="sort_and_filter_button"></string>
 </resources>

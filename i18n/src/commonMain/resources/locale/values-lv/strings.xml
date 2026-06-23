@@ -296,4 +296,5 @@
     <string name="import_export_label">Ievietot un izgūt</string>
     <string name="choose_another_file_button">Atlasīt citu datni</string>
     <string name="invalid_opml_import_description">Nederīga OPML datne. Mēģiniet izgūt savas ziņu plūsmas kā OPML datni savā RSS lietotnē un ievietot to vēlreiz.</string>
+    <string name="about_the_app"></string>
 </resources>

@@ -88,7 +88,7 @@
     <string name="rename_feed_source_name_button">Renommer</string>
     <string name="link_copied_success">Lien copié avec succès !</string>
     <string name="reader_mode_font_size">Taille de police</string>
-    <string name="icloud_sync_description">Connectez votre compte iCloud pour synchroniser les abonnements aux flux, les catégories, les articles lus et marqués entre vos appareils iOS, iPadOS et macOS. Les données seront enregistrées dans un dossier spécifique à l’application ; FeedFlow n’aura aucun accès à vos autres fichiers</string>
+    <string name="icloud_sync_description">Connectez votre compte iCloud pour synchroniser les abonnements aux flux, les catégories, les articles lus et marqués entre vos appareils iOS, iPadOS et macOS. Les données seront enregistrées dans un dossier spécifique à l’application ; FeedFlow n’aura aucun accès à vos autres fichiers</string>
     <string name="dropbox_sync_desktop_description">En cliquant sur le bouton « connecter » vous serez redirigé sur le site de Dropbox. Après vous être connecté à votre compte, copiez le code d\'autorisation et collez le ici dans l\'application</string>
     <string name="dropbox_auth_code_hint">Code d\'autorisation</string>
     <string name="dropbox_confirm_button">Confirmer</string>
@@ -167,7 +167,7 @@
     <string name="settings_font_scale_subtitle_example">Ceci est le sous-titre de l\'article</string>
     <string name="link_opening_preference_internal_browser">Navigateur intégré</string>
     <string name="link_opening_preference_preferred_browser">Navigateur préféré</string>
-    <string name="delete_category_confirmation_title">Supprimer la catégorie ?</string>
+    <string name="delete_category_confirmation_title">Supprimer la catégorie ?</string>
     <string name="feed_url_help_text">Ajoutez le lien direct d’un flux, d’un site web ou d’une chaîne YouTube. Le flux sera détecté automatiquement lorsque cela est possible</string>
     <string name="account_text_field_username">Nom d\'utilisateur</string>
     <string name="category_name">Nom de la catégorie</string>
@@ -285,7 +285,7 @@
     <string name="bazqux_last_sync">Dernière synchronisation : %s</string>
     <string name="bazqux_username_hint">L\'adresse mail de votre compte BazQux</string>
     <string name="bazqux_password_hint">Le mot de passe de votre compte BazQux</string>
-    <string name="bazqux_login_subscription_expired">Échec de la connexion : votre abonnement a expiré</string>
+    <string name="bazqux_login_subscription_expired">Échec de la connexion : votre abonnement a expiré</string>
     <string name="more_options_button_content_description">Plus d\'options</string>
     <string name="drawer_menu_button_content_description">Ouvrir le menu de navigation</string>
     <string name="increase_font_size_button_content_description">Augmenter la taille de la police</string>
@@ -332,7 +332,7 @@
     <string name="articles_export_filter_description">Choisissez le type d\'articles que vous voulez exporter.</string>
     <string name="settings_desktop_multi_pane_layout">Utiliser l\'affichage multi-fenêtre du menu principal</string>
     <string name="settings_save_reader_mode_content">Enregistrer le contenu de l’article en cours pour la lecture hors ligne</string>
-    <string name="bazqux_login_free_trial_expired">Échec de la connexion : votre essai gratuit a expiré</string>
+    <string name="bazqux_login_free_trial_expired">Échec de la connexion : votre essai gratuit a expiré</string>
     <string name="feedbin_account_connected">Votre compte Feedbin a été connecté avec succès</string>
     <string name="feedbin_last_sync">Dernière synchronisation : %s</string>
     <string name="feedbin_username_hint">L\'adresse mail de votre compte Feedbin</string>

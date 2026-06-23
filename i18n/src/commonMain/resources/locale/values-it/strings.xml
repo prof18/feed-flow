@@ -338,4 +338,7 @@
     <string name="add_feed_anyway_button">Aggiungi comunque</string>
     <string name="choose_another_file_button">Scegli un altro file</string>
     <string name="invalid_opml_import_title">Impossibile importare questo file</string>
+    <string name="settings_sync_period"></string>
+    <string name="widget_configuration_description"></string>
+    <string name="about_the_app"></string>
 </resources>

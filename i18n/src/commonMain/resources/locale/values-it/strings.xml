@@ -10,7 +10,7 @@
     <string name="feeds_importing_message">Importazione dei feed in corso</string>
     <string name="invalid_rss_url">Il link che hai fornito non è un valido feed RSS</string>
     <string name="no_feeds_found_message">Nessun feed trovato. Aggiungi un nuovo feed!</string>
-    <string name="clear_old_articles_button">Elimina post vecchi di 7 giorni</string>
+    <string name="clear_old_articles_button">Elimina articoli vecchi di 7 giorni</string>
     <string name="no_feeds_add_one_message">Nessun feed, per favore aggiungine uno</string>
     <string name="refresh_feeds">Ricarica feed</string>
     <string name="done_button">OK</string>

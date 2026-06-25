@@ -28,7 +28,6 @@
     <string name="generic_error_message">抱歉，出了點問題 :(</string>
     <string name="load_file_error_message">無法載入檔案</string>
     <string name="default_browser">預設瀏覽器</string>
-    <string name="feed_error_message_improved">無法載入「%s」。其可能無法使用，或你尚未連線至網際網路。</string>
     <string name="author_label">用❤️打造的開發者：</string>
     <string name="open_source_licenses">開放原始碼授權</string>
     <string name="about_nav_bar">關於</string>

@@ -108,15 +108,6 @@ struct SearchScreen: View {
                         )
                     )
                     
-                case let .feedErrorState(feedError):
-                    self.appState.snackbarQueue.append(
-                        SnackbarData(
-                            title: feedFlowStrings.feedErrorMessageImproved(feedError.feedName),
-                            subtitle: nil,
-                            showBanner: true
-                        )
-                    )
-                    
                 case let .syncError(errorState):
                     self.appState.snackbarQueue.append(
                         SnackbarData(

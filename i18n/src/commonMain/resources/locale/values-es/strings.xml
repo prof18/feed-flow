@@ -204,7 +204,6 @@
     <string name="link_with_error_report_title">Los siguientes feeds no se han añadido por un error</string>
     <string name="settings_notification_check_period">Frecuencia de comprobación de notificaciones</string>
     <string name="icloud_sync_description">Conecta tu cuenta iCloud para sincronizar las suscripciones a los feeds, categorías, artículos leídos y marcadores entre tus dispositivos iOS, iPadOS y macOS. Los datos se guardarán en una carpeta específica de la aplicación; FeedFlow no tendrá acceso a ninguno de tus archivos</string>
-    <string name="feed_error_message_improved">No se pudo cargar %s. Puede no estar disponible o que se perdiese la conexión a Internet.</string>
     <string name="open_feed_website_button">Abrir sitio web del feed</string>
     <string name="import_export_label">Importar y exportar</string>
     <string name="choose_another_file_button">Elegir otro archivo</string>
@@ -253,7 +252,6 @@
     <string name="settings_hide_read_items">Ocultar artículos automáticamente al marcar como leídos</string>
     <string name="settings_about_and_support">Información &amp; Soporte</string>
     <string name="settings_refresh_feeds_on_launch">Refrescar feeds al iniciar la aplicación</string>
-    <string name="settings_show_rss_parsing_errors">Mostrar mensajes de error de carga de feeds</string>
     <string name="settings_danger_title">Peligro</string>
     <string name="settings_clear_downloaded_articles">Borrar artículos descargados</string>
     <string name="settings_clear_downloaded_articles_dialog_title">¿Borrar artículos descargados?</string>

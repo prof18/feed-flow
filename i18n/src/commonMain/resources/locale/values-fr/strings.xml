@@ -226,7 +226,6 @@
     <string name="clear_old_articles_dialog_message">Voulez-vous vraiment supprimer les articles anciens ?</string>
     <string name="confirm_button">Confirmer</string>
     <string name="cancel_button">Annuler</string>
-    <string name="feed_error_message_improved">Erreur lors du chargement de %s. Ce flux est inaccessible, ou votre connexion est défaillante.</string>
     <string name="trigger_feed_sync">Tléverser les changements</string>
     <string name="import_export_label">Imports et exports</string>
     <string name="feed_add_in_progress_message">Importation du flux...</string>
@@ -345,7 +344,6 @@
     <string name="settings_background_sync_wifi_only">Synchronisation en arrière-plan uniquement en Wi-Fi</string>
     <string name="settings_background_sync_charging_only">Synchronisation en arrière-plan uniquement pendant la charge</string>
     <string name="settings_refresh_feeds_on_launch">Rafraîchir les flux à l\'ouverture de l\'application</string>
-    <string name="settings_show_rss_parsing_errors">Afficher les messages d\'erreur de chargement du flux</string>
     <string name="change_category">Changer de catégorie</string>
     <string name="widget_background_sync_disabled_warning">La synchronisation en arrière-plan étant actuellement désactivée, le widget ne sera pas rafraîchi automatiquement.</string>
     <string name="widget_appearance_title">Apparence</string>

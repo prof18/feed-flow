@@ -28,7 +28,6 @@
     <string name="browser_launch_error">Não foi possível abrir a ligação. Por favor, verifique as configurações do seu navegador.</string>
     <string name="load_file_error_message">O ficheiro foi incapaz de carregar</string>
     <string name="default_browser">Navegador padrão</string>
-    <string name="feed_error_message_improved">Não foi possível carregar %s. Talvez esteja indisponível, ou esteja desconectado.</string>
     <string name="author_label">Desenvolvido com ❤️ por</string>
     <string name="open_source_licenses">Licenças Open source</string>
     <string name="about_nav_bar">Sobre</string>

@@ -77,7 +77,6 @@
     <string name="settings_reader_mode">Abrir artigos no modo leitor</string>
     <string name="clear_old_articles_button">Apague notícias com publicadas há mais de sete dias</string>
     <string name="browser_launch_error">Não foi possível abrir o link. Por favor, verifique as configurações do seu navegador.</string>
-    <string name="feed_error_message_improved">Não foi possível carregar %s. Talvez esteja indisponível, ou você esteja desconectado.</string>
     <string name="open_feed_website_button">Abra o website</string>
     <string name="trigger_feed_sync">Inicie o envio para sua conta</string>
     <string name="import_export_label">Importe e exporte</string>

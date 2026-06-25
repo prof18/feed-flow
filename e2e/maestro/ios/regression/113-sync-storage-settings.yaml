@@ -20,12 +20,8 @@ appId: com.prof18.feedflow.dev
     id: settings_sync_storage
 - assertVisible:
     id: sync_storage_refresh_on_launch
-- assertVisible:
-    id: sync_storage_show_rss_errors
 - tapOn:
     id: sync_storage_refresh_on_launch
-- tapOn:
-    id: sync_storage_show_rss_errors
 - tapOn:
     id: sync_storage_auto_delete
 - tapOn: "One week old"

@@ -232,7 +232,6 @@
     <string name="reader_mode_archive_button">Ava teenuses archive.is</string>
     <string name="previous_article">Näita eelmist artiklit</string>
     <string name="next_article">Näita järgmist artiklit</string>
-    <string name="feed_error_message_improved">„%s“ uudisvoo laadimine ei õnnestunud. Võis juhtuda, et uudisvoog pole enam saadaval või sinu nutiseadme internetiühendus on katkenud.</string>
     <string name="about_menu_faq">KKK</string>
     <string name="settings_hide_date">Peida artikli kuupäev</string>
     <string name="settings_auto_delete_period_one_day">Ühe päeva möödumisel</string>
@@ -334,7 +333,6 @@
     <string name="settings_theme_oled">Süsimust kujundus</string>
     <string name="open_feed_website_button">Ava uudisvoo veebisait</string>
     <string name="settings_hide_read_items">Peida loetuks märkimisel artiklid automaatselt</string>
-    <string name="settings_show_rss_parsing_errors">Näita uudisvoo laadimisel tekkinud veateateid</string>
     <string name="exit_menu">Välju</string>
     <string name="delete_category">Kustuta kategooria</string>
     <string name="settings_sync_period">Sünkroonimine taustal</string>

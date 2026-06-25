@@ -209,7 +209,6 @@
     <string name="settings_theme_light">Açık</string>
     <string name="settings_theme_dark">Koyu</string>
     <string name="icloud_connection_error">Üzgünüz, iCloud\'a bağlanılamıyor. Lütfen oturum açıp açmadığınızı, iCloud Drive\'ın açık olup olmadığını ve yeterli alanınızın olup olmadığını kontrol edin - error code: %s.</string>
-    <string name="feed_error_message_improved">%s yüklenemedi. Erişilemiyor olabilir veya internet bağlantınız kesilmiş olabilir.</string>
     <string name="trigger_feed_sync">Hesabınıza yüklemeyi başlat</string>
     <string name="import_export_label">İçe ve dışa aktar</string>
     <string name="feed_add_in_progress_message">Feed içe aktarılıyor...</string>

@@ -16,7 +16,6 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
-import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.test.KoinTestBase
@@ -528,13 +527,6 @@ class SearchViewModelTest : KoinTestBase() {
         val feedStateRepository = getFeedStateRepository()
 
         viewModel.errorState.test {
-            val feedJob = launch {
-                feedStateRepository.emitErrorState(FeedErrorState(failingSourceName = "Feed"))
-            }
-            advanceUntilIdle()
-            assertEquals(UIErrorState.FeedErrorState(feedName = "Feed"), awaitItem())
-            feedJob.cancel()
-
             val dbJob = launch {
                 feedStateRepository.emitErrorState(DatabaseError(DatabaseErrorCode.PaginationFailed))
             }

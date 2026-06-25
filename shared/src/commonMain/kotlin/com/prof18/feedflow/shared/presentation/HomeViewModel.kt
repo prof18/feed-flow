@@ -35,7 +35,6 @@ import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
-import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
 import com.prof18.feedflow.shared.presentation.model.SyncError
@@ -233,14 +232,6 @@ class HomeViewModel internal constructor(
             feedStateRepository.errorState
                 .collect { error ->
                     when (error) {
-                        is FeedErrorState -> {
-                            mutableUIErrorState.emit(
-                                UIErrorState.FeedErrorState(
-                                    feedName = error.failingSourceName,
-                                ),
-                            )
-                        }
-
                         is DatabaseError -> {
                             mutableUIErrorState.emit(
                                 UIErrorState.DatabaseError(

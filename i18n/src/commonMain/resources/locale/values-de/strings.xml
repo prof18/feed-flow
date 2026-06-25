@@ -232,7 +232,6 @@
     <string name="settings_save_reader_mode_content">Artikelinhalt sofort beim Öffnen speichern</string>
     <string name="settings_prefetch_article_content">Artikelinhalt zum Offline-Lesen vorab laden</string>
     <string name="settings_prefetch_article_content_warning">Die Aktivierung dieser Option wird die Synchronisationsdauer und den Datenverbrauch erhöhen, weil der vollständige Artikelinhalt beim Updaten der Feeds heruntergeladen wird. Bei einer großen Artikelanzahl kann auch die Leistung betroffen sein. Nutze diese Funktion nur, wenn du einen Offline-Zugang zum Artikelinhalt benötigst.</string>
-    <string name="feed_error_message_improved">%s konnte nicht geladen werden. Möglicherweise ist es nicht verfügbar oder deine Internetverbindung ist unterbrochen.</string>
     <string name="about_menu_faq">FAQ</string>
     <string name="settings_hide_date">Artikeldatum ausblenden</string>
     <string name="settings_auto_delete_period_one_day">Einen Tag alt</string>
@@ -334,7 +333,6 @@
     <string name="settings_theme_oled">Schwarz</string>
     <string name="open_feed_website_button">Webseite des Feeds öffnen</string>
     <string name="settings_hide_read_items">Artikel automatisch ausblenden, wenn sie als gelesen markiert werden</string>
-    <string name="settings_show_rss_parsing_errors">Fehlermeldungen beim Laden der Feeds anzeigen</string>
     <string name="exit_menu">Beenden</string>
     <string name="delete_all_feeds_confirmation_message">Möchtest du wirklich alle Feeds in dieser Kategorie löschen? Das kann nicht mehr rückgängig gemacht werden.</string>
     <string name="browser_launch_error">Der Link kann nicht geöffnet werden. Bitte prüfe deine Browser-Einstellungen.</string>

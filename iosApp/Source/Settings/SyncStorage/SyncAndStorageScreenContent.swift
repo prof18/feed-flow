@@ -4,7 +4,6 @@ import SwiftUI
 struct SyncAndStorageScreenContent: View {
     @Binding var autoDeletePeriod: AutoDeletePeriod
     @Binding var refreshFeedsOnLaunch: Bool
-    @Binding var showRssParsingErrors: Bool
     let onClearDownloadedArticles: () -> Void
 
     private let feedFlowStrings = Deps.shared.getStrings()
@@ -16,11 +15,6 @@ struct SyncAndStorageScreenContent: View {
                     Text(feedFlowStrings.settingsRefreshFeedsOnLaunch)
                 }
                 .accessibilityIdentifier(SyncAndStorageAccessibilityIdentifiers.refreshOnLaunch)
-
-                Toggle(isOn: $showRssParsingErrors) {
-                    Text(feedFlowStrings.settingsShowRssParsingErrors)
-                }
-                .accessibilityIdentifier(SyncAndStorageAccessibilityIdentifiers.showRssErrors)
 
                 Picker(selection: $autoDeletePeriod) {
                     Text(feedFlowStrings.settingsAutoDeletePeriodDisabled)

@@ -26,7 +26,6 @@ class SyncAndStorageSettingsViewModelTest : KoinTestBase() {
             assertFalse(initialState.backgroundSyncRestrictions.syncOnlyOnWifi)
             assertFalse(initialState.backgroundSyncRestrictions.syncOnlyWhenCharging)
             assertTrue(initialState.refreshFeedsOnLaunch)
-            assertTrue(initialState.showRssParsingErrors)
         }
     }
 
@@ -90,19 +89,6 @@ class SyncAndStorageSettingsViewModelTest : KoinTestBase() {
 
             viewModel.updateRefreshFeedsOnLaunch(true)
             assertTrue(awaitItem().refreshFeedsOnLaunch)
-        }
-    }
-
-    @Test
-    fun `updateShowRssParsingErrors updates state`() = runTest {
-        viewModel.state.test {
-            awaitItem()
-
-            viewModel.updateShowRssParsingErrors(false)
-            assertFalse(awaitItem().showRssParsingErrors)
-
-            viewModel.updateShowRssParsingErrors(true)
-            assertTrue(awaitItem().showRssParsingErrors)
         }
     }
 

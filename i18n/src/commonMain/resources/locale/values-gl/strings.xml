@@ -232,7 +232,6 @@
     <string name="reader_mode_archive_button">Abrir en archive.is</string>
     <string name="previous_article">Artigo anterior</string>
     <string name="next_article">Artigo seguinte</string>
-    <string name="feed_error_message_improved">Non se puido cargar %s. Pode non estar dispoñible ou que se perdese a conexión a internet.</string>
     <string name="about_menu_faq">PMF</string>
     <string name="settings_hide_date">Ocultar data do artigo</string>
     <string name="settings_auto_delete_period_one_day">Un día de antigüidade</string>
@@ -321,7 +320,6 @@
     <string name="settings_background_sync_wifi_only">Sincronizar en segundo plano só con Wi-Fi</string>
     <string name="settings_background_sync_charging_only">Sincronizar en segundo plano mentras se carga</string>
     <string name="settings_refresh_feeds_on_launch">Actualizar as canles ao iniciar a app</string>
-    <string name="settings_show_rss_parsing_errors">Mostrar mensaxes de erro das canles</string>
     <string name="change_category">Cambiar categoría</string>
     <string name="widget_configuration_description">As actualizacións do widget seguen os axustes de sincronización en segundo plano de Sincronización e Almacenaxe.</string>
     <string name="widget_background_sync_disabled_warning">Actualmente a sincronización en segundo plano está desactivada, o widget non se actualizará automaticamente.</string>

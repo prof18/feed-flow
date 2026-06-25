@@ -101,13 +101,6 @@ internal fun HomeScreen(
                     )
                 }
 
-                is UIErrorState.FeedErrorState -> {
-                    snackbarHostState.showSnackbar(
-                        strings.feedErrorMessageImproved(errorState.feedName),
-                        duration = SnackbarDuration.Short,
-                    )
-                }
-
                 is UIErrorState.SyncError -> {
                     snackbarHostState.showSnackbar(
                         strings.syncErrorMessage(errorState.errorCode),

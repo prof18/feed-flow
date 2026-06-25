@@ -115,7 +115,6 @@ class E2eSeedRunner internal constructor(
         settingsRepository.setThemeMode(ThemeMode.SYSTEM)
         settingsRepository.setReduceMotionEnabled(true)
         settingsRepository.setRefreshFeedsOnLaunch(false)
-        settingsRepository.setShowRssParsingErrors(false)
         settingsRepository.setNotificationMode(NotificationMode.FEED_SOURCE)
 
         feedAppearanceSettingsRepository.setFeedOrder(FeedOrder.NEWEST_FIRST)

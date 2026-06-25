@@ -18,12 +18,8 @@ appId: com.prof18.feedflow.debug
     id: settings_sync_storage
 - assertVisible:
     id: sync_storage_refresh_on_launch
-- assertVisible:
-    id: sync_storage_show_rss_errors
 - tapOn:
     id: sync_storage_refresh_on_launch
-- tapOn:
-    id: sync_storage_show_rss_errors
 - assertVisible:
     id: sync_storage_sync_period
 - tapOn:

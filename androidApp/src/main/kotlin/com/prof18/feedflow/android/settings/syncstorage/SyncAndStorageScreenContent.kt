@@ -39,14 +39,12 @@ internal fun SyncAndStorageScreenContent(
     backgroundSyncRestrictions: BackgroundSyncRestrictions,
     autoDeletePeriod: AutoDeletePeriod,
     refreshFeedsOnLaunch: Boolean,
-    showRssParsingErrors: Boolean,
     navigateBack: () -> Unit,
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     onSyncOnlyOnWifiToggle: (Boolean) -> Unit,
     onSyncOnlyWhenChargingToggle: (Boolean) -> Unit,
     onRefreshFeedsOnLaunchToggle: (Boolean) -> Unit,
-    onShowRssParsingErrorsToggle: (Boolean) -> Unit,
     onClearDownloadedArticles: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -79,15 +77,6 @@ internal fun SyncAndStorageScreenContent(
                     title = LocalFeedFlowStrings.current.settingsRefreshFeedsOnLaunch,
                     isChecked = refreshFeedsOnLaunch,
                     onCheckedChange = onRefreshFeedsOnLaunchToggle,
-                )
-            }
-
-            item {
-                SettingSwitchItem(
-                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_SHOW_RSS_ERRORS),
-                    title = LocalFeedFlowStrings.current.settingsShowRssParsingErrors,
-                    isChecked = showRssParsingErrors,
-                    onCheckedChange = onShowRssParsingErrorsToggle,
                 )
             }
 
@@ -192,8 +181,6 @@ private fun SyncAndStorageScreenContentPreview() {
             onSyncOnlyOnWifiToggle = {},
             onSyncOnlyWhenChargingToggle = {},
             onRefreshFeedsOnLaunchToggle = {},
-            showRssParsingErrors = true,
-            onShowRssParsingErrorsToggle = {},
             onClearDownloadedArticles = {},
         )
     }

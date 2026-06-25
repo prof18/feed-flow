@@ -14,8 +14,7 @@ struct SyncAndStorageScreen: View {
         syncPeriod: .oneHour,
         backgroundSyncRestrictions: BackgroundSyncRestrictions(syncOnlyOnWifi: false, syncOnlyWhenCharging: false),
         autoDeletePeriod: .disabled,
-        refreshFeedsOnLaunch: true,
-        showRssParsingErrors: true
+        refreshFeedsOnLaunch: true
     )
 
     var body: some View {
@@ -29,10 +28,6 @@ struct SyncAndStorageScreen: View {
             refreshFeedsOnLaunch: Binding(
                 get: { settingsState.refreshFeedsOnLaunch },
                 set: { vmStoreOwner.instance.updateRefreshFeedsOnLaunch(enabled: $0) }
-            ),
-            showRssParsingErrors: Binding(
-                get: { settingsState.showRssParsingErrors },
-                set: { vmStoreOwner.instance.updateShowRssParsingErrors(enabled: $0) }
             ),
             onClearDownloadedArticles: {
                 vmStoreOwner.instance.clearDownloadedArticleContent()

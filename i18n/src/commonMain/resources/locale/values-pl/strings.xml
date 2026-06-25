@@ -209,7 +209,6 @@
     <string name="settings_theme_light">Jasny</string>
     <string name="settings_theme_dark">Ciemny</string>
     <string name="browser_launch_error">Nie można otworzyć linku. Sprawdź ustawienia przeglądarki.</string>
-    <string name="feed_error_message_improved">Nie udało się załadować %s. Być może strona jest niedostępna lub masz przerwę w połączeniu internetowym.</string>
     <string name="about_the_app">FeedFlow to minimalistyczny czytnik RSS zapewniający przejrzystą, chronologiczną oś czasu — bez algorytmów i zbędnych elementów. Otwieraj artykuły w swojej ulubionej przeglądarce lub czytaj je bez rozpraszania uwagi w trybie czytnika. Pobieraj i zapisuj w pamięci podręcznej pełne artykuły, aby móc je czytać w trybie offline w dowolnym miejscu.\nSynchronizuj swoje kanały, status czytania i zakładki na urządzeniach z systemami Android, iOS, macOS, Windows i Linux za pomocą iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin lub BazQux. Organizuj kanały w kategorie, blokuj niepotrzebne słowa kluczowe oraz importuj lub eksportuj wszystko za pomocą OPML.</string>
     <string name="open_feed_website_button">Otwórz stronę internetową serwisu</string>
     <string name="trigger_feed_sync">Prześlij zmiany</string>
@@ -293,7 +292,6 @@
     <string name="settings_background_sync_wifi_only">Synchronizacja w tle tylko przez Wi-Fi</string>
     <string name="settings_background_sync_charging_only">Synchronizacja w tle tylko podczas ładowania</string>
     <string name="settings_refresh_feeds_on_launch">Odśwież kanały przy uruchomieniu aplikacji</string>
-    <string name="settings_show_rss_parsing_errors">Wyświetlaj komunikaty o błędach podczas ładowania kanału</string>
     <string name="category_name_already_exists">Kategoria o tej nazwie już istnieje</string>
     <string name="rename_category">Zmień nazwę kategorii</string>
     <string name="change_category">Zmień kategorię</string>

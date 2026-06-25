@@ -225,7 +225,6 @@
     <string name="clear_old_articles_dialog_message">Přejete si skutečně odstranit staré články?</string>
     <string name="confirm_button">Potvrdit</string>
     <string name="cancel_button">Zrušit</string>
-    <string name="feed_error_message_improved">Nelze načíst %s. Buď není k dispozici, nebo nejste připojeni k internetu.</string>
     <string name="about_menu_faq">FAQ (často kladené dotazy)</string>
     <string name="settings_save_reader_mode_content">Po otevření programu uložit obsah článku pro offline čtení</string>
     <string name="settings_prefetch_article_content">Přednačítat obsah článku pro offline čtení</string>
@@ -334,7 +333,6 @@
     <string name="settings_notification_mode_grouped">Vše dohromady</string>
     <string name="open_feed_website_button">Otevřít webovou stránku zdroje</string>
     <string name="settings_hide_read_items">Automaticky skrývat články označené jako přečtené</string>
-    <string name="settings_show_rss_parsing_errors">Zobrazit chybové zprávy při načítání zdroje</string>
     <string name="exit_menu">Ukončit</string>
     <string name="browser_launch_error">Nelze otevřít odkaz. Zkontrolujte nastavení prohlížeče.</string>
     <string name="choose_another_file_button">Vyberte jiný soubor</string>

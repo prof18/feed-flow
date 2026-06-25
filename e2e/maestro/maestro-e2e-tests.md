@@ -63,7 +63,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-110 | `110-reader-fallback.yaml` | `reader-mode` | Android, iOS | Reader fallback path: article fails extraction, fallback web view + Open in browser button visible. |
 | REG-111 | `111-reader-image-viewer.yaml` | `reader-mode` | Android, iOS | Reader image viewer: open image, share button visible, close. |
 | REG-112 | `112-link-opening-preferences.yaml` | `external-browser` | Android, iOS | Per-feed Reader Mode override forces the article into reader mode despite the global external-browser preference. |
-| REG-113 | `113-sync-storage-settings.yaml` | `content-rich` | Android, iOS | Refresh-on-launch, RSS parsing errors, auto-delete picker, Android sync-period, clear-downloaded cancel path. |
+| REG-113 | `113-sync-storage-settings.yaml` | `content-rich` | Android, iOS | Refresh-on-launch, auto-delete picker, Android sync-period, clear-downloaded cancel path. |
 | REG-114 | `114-appearance-settings.yaml` | `content-rich` | Android, iOS | Theme picker (Dark), hide unread count, Android Black theme + reduce motion. |
 | REG-115 | `115-notifications-profile.yaml` | `notifications` | Android, iOS | Seeded notifications settings: per-feed toggle and grouping picker visibility. |
 | REG-116 | `116-account-list-one-account-constraint.yaml` | `sync-linked-mock` | Android, iOS | One-account constraint: with FreshRSS linked, other providers are disabled; disconnect unlocks them. |

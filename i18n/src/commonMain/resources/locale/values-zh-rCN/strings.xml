@@ -232,7 +232,6 @@
     <string name="reader_mode_archive_button">在 archive.is 中打开</string>
     <string name="previous_article">上一篇文章</string>
     <string name="next_article">下一篇文章</string>
-    <string name="feed_error_message_improved">无法加载 %s。它可能不可用，或者您的互联网连接可能已中断。</string>
     <string name="about_menu_faq">常见问题</string>
     <string name="settings_hide_date">隐藏文章日期</string>
     <string name="settings_auto_delete_period_one_day">一天前</string>
@@ -334,7 +333,6 @@
     <string name="settings_theme_oled">黑色</string>
     <string name="open_feed_website_button">打开订阅源网站</string>
     <string name="settings_hide_read_items">标记为已读时自动隐藏文章</string>
-    <string name="settings_show_rss_parsing_errors">显示订阅源加载错误消息</string>
     <string name="exit_menu">退出</string>
     <string name="browser_launch_error">无法打开链接。请检查浏览器设置。</string>
     <string name="choose_another_file_button">选择另一个文件</string>

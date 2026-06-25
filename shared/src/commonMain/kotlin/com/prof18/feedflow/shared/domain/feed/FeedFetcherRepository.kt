@@ -28,7 +28,6 @@ import com.prof18.feedflow.shared.domain.feed.httpcache.FeedRefreshScheduler
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedSourceCacheInfoFactory
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
-import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.exception.HttpException
@@ -249,9 +248,10 @@ class FeedFetcherRepository internal constructor(
         feedSourceUrls: List<FeedSource>,
     ) {
         val allFeedItems = mutableListOf<FeedItem>()
-        val notModifiedFeedSourceIds = mutableListOf<String>()
+        // Every source that fetched successfully (with or without new items, including 304s).
+        // Used to clear the fetch-failed flag and refresh the last-sync timestamp.
+        val syncedFeedSourceIds = mutableListOf<String>()
         val updatedCacheInfo = mutableListOf<FeedSourceCacheInfo>()
-        val shouldShowParsingErrors = settingsRepository.getShowRssParsingErrors()
 
         val currentTime = dateFormatter.currentTimeMillis()
         val cacheInfoById = databaseHelper.getFeedSourcesCacheInfo().associateBy { it.feedSourceId }
@@ -326,7 +326,6 @@ class FeedFetcherRepository internal constructor(
                         handleFetchError(
                             feedSource = feedSource,
                             error = e,
-                            shouldShowParsingErrors = shouldShowParsingErrors,
                         )
                     }
                 }.asFlow()
@@ -336,10 +335,11 @@ class FeedFetcherRepository internal constructor(
                     is FeedFetchResult.Success -> {
                         logger.d { "Collected ${result.feedItems.size} items" }
                         allFeedItems.addAll(result.feedItems)
+                        syncedFeedSourceIds.add(result.feedSource.id)
                     }
 
                     is FeedFetchResult.NotModified -> {
-                        notModifiedFeedSourceIds.add(result.feedSource.id)
+                        syncedFeedSourceIds.add(result.feedSource.id)
                     }
 
                     is FeedFetchResult.Failure -> {
@@ -354,22 +354,26 @@ class FeedFetcherRepository internal constructor(
                 )
             }
 
+        val syncTimestamp = dateFormatter.currentTimeMillis()
+
         if (allFeedItems.isNotEmpty()) {
             logger.d { "Inserting ${allFeedItems.size} items into database" }
             try {
                 databaseHelper.insertFeedItems(
                     feedItems = allFeedItems,
-                    lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+                    lastSyncTimestamp = syncTimestamp,
                 )
             } catch (e: Throwable) {
                 logger.d(e) { "Failed to insert feed items into database" }
             }
         }
 
-        if (notModifiedFeedSourceIds.isNotEmpty()) {
+        // Clear the fetch-failed flag and refresh the timestamp for every successful source,
+        // even those that returned no new items (e.g. an empty or unchanged feed).
+        if (syncedFeedSourceIds.isNotEmpty()) {
             databaseHelper.updateLastSyncTimestamps(
-                feedSourceIds = notModifiedFeedSourceIds,
-                lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+                feedSourceIds = syncedFeedSourceIds,
+                lastSyncTimestamp = syncTimestamp,
             )
         }
 
@@ -381,22 +385,14 @@ class FeedFetcherRepository internal constructor(
     private suspend fun handleFetchError(
         feedSource: FeedSource,
         error: Throwable,
-        shouldShowParsingErrors: Boolean,
     ): FeedFetchResult {
         if ((error as? HttpException)?.code == HTTP_NOT_MODIFIED) {
             logger.d { "Feed not modified, skipping parsing: ${feedSource.url}" }
             return FeedFetchResult.NotModified(feedSource)
         }
         logger.d { "Error, skip: ${feedSource.url}}. Error: $error" }
-        // Mark failure flag on error
+        // Mark failure flag on error; surfaced as a per-feed indicator instead of a toast.
         databaseHelper.setFeedFetchFailed(feedSource.id, true)
-        if (shouldShowParsingErrors) {
-            feedStateRepository.emitErrorState(
-                FeedErrorState(
-                    failingSourceName = feedSource.title,
-                ),
-            )
-        }
         return FeedFetchResult.Failure(feedSource)
     }
 

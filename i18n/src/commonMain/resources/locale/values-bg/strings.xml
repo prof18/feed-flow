@@ -232,7 +232,6 @@
     <string name="reader_mode_archive_button">Отваряне в archive.is</string>
     <string name="previous_article">Предишна статия</string>
     <string name="next_article">Следваща статия</string>
-    <string name="feed_error_message_improved">Не можа да се зареди %s. Възможно е да не е наличен или интернет връзката ви да е прекъсната.</string>
     <string name="about_menu_faq">ЧЗВ</string>
     <string name="settings_hide_date">Скриване на датата на статията</string>
     <string name="settings_auto_delete_period_one_day">На един ден</string>
@@ -334,7 +333,6 @@
     <string name="settings_theme_oled">Черна</string>
     <string name="open_feed_website_button">Отвори уебсайта на емисията</string>
     <string name="settings_hide_read_items">Автоматично скриване на статии, когато са маркирани като прочетени</string>
-    <string name="settings_show_rss_parsing_errors">Показване на съобщения за грешки при зареждане на емисията</string>
     <string name="exit_menu">Изход</string>
     <string name="widget_configuration_description">Актуализациите на джаджите следват настройките за синхронизация на фона от Синхронизация и Съхранение.</string>
     <string name="browser_launch_error">Връзката не може да бъде отворена. Моля, проверете настройките на браузъра си.</string>

@@ -232,7 +232,6 @@
     <string name="reader_mode_archive_button">Mở trong archive.is</string>
     <string name="previous_article">Bài viết trước</string>
     <string name="next_article">Bài viết tiếp</string>
-    <string name="feed_error_message_improved">Không thể tải %s. Có thể trang web không khả dụng hoặc do kết nối internet của bạn.</string>
     <string name="about_menu_faq">FAQ</string>
     <string name="settings_hide_date">Ẩn ngày bài viết</string>
     <string name="settings_auto_delete_period_one_day">Một ngày</string>
@@ -334,7 +333,6 @@
     <string name="settings_theme_oled">Đen</string>
     <string name="open_feed_website_button">Mở trang web nguồn tin</string>
     <string name="settings_hide_read_items">Ẩn các bài viết đánh dấu đã đọc</string>
-    <string name="settings_show_rss_parsing_errors">Hiện thông báo lỗi tải nguồn tin</string>
     <string name="exit_menu">Thoát</string>
     <string name="browser_launch_error">Không thể mở liên kết. Vui lòng kiểm tra cài đặt trình duyệt của bạn.</string>
     <string name="about_the_app">FeedFlow là trình đọc RSS tối giản với giao diện gọn gàng, theo trình tự thời gian — không thuật toán, không rườm rà. Mở bài viết trong trình duyệt yêu thích của bạn hoặc đọc chúng mà không bị phân tâm với Chế độ Đọc. Tải trước và lưu vào bộ nhớ đệm toàn bộ bài viết để đọc ngoại tuyến mọi lúc mọi nơi.\nĐồng bộ hóa nguồn tin, trạng thái đọc và dấu trang của bạn trên Android, iOS, macOS, Windows và Linux bằng iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin hoặc BazQux. Sắp xếp nguồn tin theo danh mục, chặn các từ khóa gây nhiễu và nhập hoặc xuất mọi thứ với OPML.</string>

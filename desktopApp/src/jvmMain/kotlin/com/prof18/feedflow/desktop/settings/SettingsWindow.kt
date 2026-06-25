@@ -203,10 +203,8 @@ internal fun SettingsWindow(
 
                     DesktopSettingsCategory.SYNC_STORAGE -> SyncStoragePane(
                         isRefreshFeedsOnLaunchEnabled = settingsState.isRefreshFeedsOnLaunchEnabled,
-                        isShowRssParsingErrorsEnabled = settingsState.isShowRssParsingErrorsEnabled,
                         autoDeletePeriod = settingsState.autoDeletePeriod,
                         onRefreshFeedsOnLaunchToggled = menuBarViewModel::updateRefreshFeedsOnLaunch,
-                        onShowRssParsingErrorsToggled = menuBarViewModel::updateShowRssParsingErrors,
                         onAutoDeletePeriodSelected = menuBarViewModel::updateAutoDeletePeriod,
                         onClearDownloadedArticles = menuBarViewModel::clearDownloadedArticleContent,
                     )

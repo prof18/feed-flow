@@ -28,10 +28,8 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun SyncStoragePane(
     isRefreshFeedsOnLaunchEnabled: Boolean,
-    isShowRssParsingErrorsEnabled: Boolean,
     autoDeletePeriod: AutoDeletePeriod,
     onRefreshFeedsOnLaunchToggled: (Boolean) -> Unit,
-    onShowRssParsingErrorsToggled: (Boolean) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     onClearDownloadedArticles: () -> Unit,
 ) {
@@ -48,12 +46,6 @@ internal fun SyncStoragePane(
             title = strings.settingsRefreshFeedsOnLaunch,
             isChecked = isRefreshFeedsOnLaunchEnabled,
             onCheckedChange = onRefreshFeedsOnLaunchToggled,
-        )
-
-        SettingSwitchItem(
-            title = strings.settingsShowRssParsingErrors,
-            isChecked = isShowRssParsingErrorsEnabled,
-            onCheckedChange = onShowRssParsingErrorsToggled,
         )
 
         CompactSettingDropdownRow(
@@ -106,10 +98,8 @@ private fun SyncStoragePanePreview() {
     FeedFlowTheme {
         SyncStoragePane(
             isRefreshFeedsOnLaunchEnabled = false,
-            isShowRssParsingErrorsEnabled = false,
             autoDeletePeriod = AutoDeletePeriod.DISABLED,
             onRefreshFeedsOnLaunchToggled = {},
-            onShowRssParsingErrorsToggled = {},
             onAutoDeletePeriodSelected = {},
             onClearDownloadedArticles = {},
         )

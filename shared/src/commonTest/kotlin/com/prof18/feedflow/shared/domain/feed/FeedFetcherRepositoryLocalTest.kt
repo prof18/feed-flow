@@ -16,7 +16,6 @@ import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpValidators
-import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.test.buildFeedItem
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
 import com.prof18.feedflow.shared.test.generators.RssItemGenerator
@@ -558,35 +557,9 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     }
 
     @Test
-    fun `fetchFeeds marks feed as failed and emits error on parser failure`() = runTest(testDispatcher) {
-        setupLocalAccount()
-
-        val feedSource = createFeedSource(
-            id = "source-1",
-            title = "Broken Feed",
-        )
-        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
-        fakeRssParserWrapper.setError(feedSource.url)
-
-        feedStateRepository.errorState.test {
-            feedFetcherRepository.fetchFeeds()
-            advanceUntilIdle()
-
-            val error = awaitItem()
-            assertTrue(error is FeedErrorState)
-            assertEquals(feedSource.title, error.failingSourceName)
-        }
-
-        val updatedFeedSource = databaseHelper.getFeedSource(feedSource.id)
-        assertNotNull(updatedFeedSource)
-        assertTrue(updatedFeedSource.fetchFailed)
-    }
-
-    @Test
-    fun `fetchFeeds marks feed as failed without emitting error when parsing errors are hidden`() =
+    fun `fetchFeeds marks feed as failed without emitting error on parser failure`() =
         runTest(testDispatcher) {
             setupLocalAccount()
-            settingsRepository.setShowRssParsingErrors(false)
 
             val feedSource = createFeedSource(
                 id = "source-1",
@@ -605,6 +578,31 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
             val updatedFeedSource = databaseHelper.getFeedSource(feedSource.id)
             assertNotNull(updatedFeedSource)
             assertTrue(updatedFeedSource.fetchFailed)
+        }
+
+    @Test
+    fun `fetchFeeds clears fetch-failed flag on success even when the feed has no items`() =
+        runTest(testDispatcher) {
+            setupLocalAccount()
+
+            val feedSource = createFeedSource(
+                id = "source-1",
+                title = "Recovered Feed",
+            )
+            databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+            databaseHelper.setFeedFetchFailed(feedSource.id, true)
+            fakeRssParserWrapper.setChannel(
+                feedSource.url,
+                createRssChannel(title = "Recovered Feed", link = "https://example.com", items = emptyList()),
+            )
+
+            feedFetcherRepository.fetchFeeds()
+            advanceUntilIdle()
+
+            val updatedFeedSource = databaseHelper.getFeedSource(feedSource.id)
+            assertNotNull(updatedFeedSource)
+            assertTrue(!updatedFeedSource.fetchFailed)
+            assertNotNull(updatedFeedSource.lastSyncTimestamp)
         }
 
     @Test

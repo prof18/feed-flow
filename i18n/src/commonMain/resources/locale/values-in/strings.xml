@@ -331,7 +331,6 @@
     <string name="settings_notification_mode_feed_source">Berdasarkan feed</string>
     <string name="settings_notification_mode_category">Berdasarkan kategori</string>
     <string name="settings_notification_mode_grouped">Semua digabungkan</string>
-    <string name="feed_error_message_improved">Tidak dapat memuat %s. Mungkin tidak tersedia, atau koneksi internet Anda mungkin sedang terputus.</string>
     <string name="browser_launch_error">Tidak dapat membuka tautan. Periksa pengaturan browser Anda.</string>
     <string name="open_feed_website_button">Buka situs web feed</string>
     <string name="choose_another_file_button">Pilih file lain</string>
@@ -353,7 +352,6 @@
     <string name="settings_background_sync_restrictions_description">Gunakan satu atau kedua opsi untuk membatasi kapan sinkronisasi latar belakang dapat berjalan.</string>
     <string name="settings_background_sync_wifi_only">Sinkronisasi latar belakang hanya saat Wi-Fi</string>
     <string name="settings_background_sync_charging_only">Sinkronisasi latar belakang hanya saat mengisi daya</string>
-    <string name="settings_show_rss_parsing_errors">Tampilkan pesan kesalahan pemuatan feed</string>
     <string name="widget_configuration_description">Pembaruan widget mengikuti pengaturan sinkronisasi latar belakang Anda dari Sinkronisasi &amp; Penyimpanan.</string>
     <string name="widget_background_sync_disabled_warning">Sinkronisasi latar belakang saat ini dinonaktifkan, sehingga widget tidak akan diperbarui secara otomatis.</string>
     <string name="widget_background_color_brightness">Kecerahan</string>

@@ -22,7 +22,6 @@ import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
-import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.test.KoinTestBase
@@ -1459,9 +1458,6 @@ class HomeViewModelTest : KoinTestBase() {
         val viewModel = getViewModel()
 
         viewModel.errorState.test {
-            feedStateRepository.emitErrorState(FeedErrorState("Feed"))
-            assertEquals(UIErrorState.FeedErrorState("Feed"), awaitItem())
-
             feedStateRepository.emitErrorState(DatabaseError(DatabaseErrorCode.FeedRetrievalFailed))
             assertEquals(UIErrorState.DatabaseError(DatabaseErrorCode.FeedRetrievalFailed), awaitItem())
 

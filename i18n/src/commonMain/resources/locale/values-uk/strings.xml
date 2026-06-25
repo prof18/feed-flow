@@ -232,7 +232,6 @@
     <string name="reader_mode_archive_button">Відкрити в archive.is</string>
     <string name="previous_article">Попередня стаття</string>
     <string name="next_article">Наступна стаття</string>
-    <string name="feed_error_message_improved">Не вдалося завантажити %s. Можливо, він недоступний або ваше інтернет-з’єднання відсутнє.</string>
     <string name="about_menu_faq">FAQ</string>
     <string name="settings_hide_date">Приховати дату статті</string>
     <string name="settings_auto_delete_period_one_day">Один день</string>
@@ -334,7 +333,6 @@
     <string name="settings_theme_oled">Чорний</string>
     <string name="open_feed_website_button">Відкрити веб-сайт стрічки</string>
     <string name="settings_hide_read_items">Автоматично приховувати статті, позначені як прочитані</string>
-    <string name="settings_show_rss_parsing_errors">Показувати повідомлення про помилки завантаження стрічки</string>
     <string name="exit_menu">Вихід</string>
     <string name="browser_launch_error">Не вдається відкрити посилання. Перевірте налаштування браузера.</string>
     <string name="choose_another_file_button">Виберіть інший файл</string>

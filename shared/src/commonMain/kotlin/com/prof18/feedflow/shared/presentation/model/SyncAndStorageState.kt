@@ -9,5 +9,4 @@ data class SyncAndStorageState(
     val backgroundSyncRestrictions: BackgroundSyncRestrictions = BackgroundSyncRestrictions(),
     val autoDeletePeriod: AutoDeletePeriod = AutoDeletePeriod.DISABLED,
     val refreshFeedsOnLaunch: Boolean = true,
-    val showRssParsingErrors: Boolean = true,
 )

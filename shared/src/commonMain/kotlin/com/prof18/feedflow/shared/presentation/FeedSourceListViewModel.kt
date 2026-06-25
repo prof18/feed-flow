@@ -12,7 +12,6 @@ import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
-import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import kotlinx.collections.immutable.persistentListOf
@@ -98,14 +97,6 @@ class FeedSourceListViewModel internal constructor(
             feedStateRepository.errorState
                 .collect { error ->
                     when (error) {
-                        is FeedErrorState -> {
-                            mutableUIErrorState.emit(
-                                UIErrorState.FeedErrorState(
-                                    feedName = error.failingSourceName,
-                                ),
-                            )
-                        }
-
                         is DatabaseError -> {
                             mutableUIErrorState.emit(
                                 UIErrorState.DatabaseError(errorCode = error.errorCode),

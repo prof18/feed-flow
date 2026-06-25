@@ -1,5 +1,6 @@
 package com.prof18.feedflow.core.model
 
+import com.prof18.feedflow.core.utils.HttpHostValidator
 import io.ktor.http.Url
 
 object ReaderModeEligibility {
@@ -11,7 +12,7 @@ object ReaderModeEligibility {
         }
 
         val host = parsedUrl.host.lowercase()
-        if (host.isBlank() || host.isYouTubeHost() || host.isTelegramHost()) {
+        if (!HttpHostValidator.isSafeForHttpClient(host) || host.isYouTubeHost() || host.isTelegramHost()) {
             return false
         }
 

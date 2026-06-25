@@ -19,6 +19,16 @@ class ReaderModeEligibilityTest {
     }
 
     @Test
+    fun `hosts unsupported by http client cannot use reader mode`() {
+        assertFalse(ReaderModeEligibility.canOpenReaderMode("https://m\u00FCnchen.example/news/story"))
+        assertFalse(
+            ReaderModeEligibility.canOpenReaderMode(
+                "https://xn--socit_franaise_de_pschiatrie-wpc7cb/news/story",
+            ),
+        )
+    }
+
+    @Test
     fun `media and download extensions cannot use reader mode`() {
         assertFalse(ReaderModeEligibility.canOpenReaderMode("https://example.com/podcast/episode.mp3"))
         assertFalse(ReaderModeEligibility.canOpenReaderMode("https://example.com/video/clip.MP4?token=abc"))

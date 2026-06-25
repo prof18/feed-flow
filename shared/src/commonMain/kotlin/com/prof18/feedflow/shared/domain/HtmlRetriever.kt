@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.utils.HttpHostValidator
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.client.request.prepareGet
@@ -23,12 +24,10 @@ class HtmlRetriever(
     private val client: HttpClient,
 ) {
     suspend fun retrieveHtml(url: String): String? {
-        // Ktor's Darwin engine passes the parsed host straight into NSURLComponents
-        // setPercentEncodedHost:, which throws an uncatchable NSInvalidArgumentException
-        // (std::terminate) for non-ASCII hosts. Reject those early.
+        // Platform engines can reject unsupported hosts outside the normal suspend call path.
         val host = runCatching { Url(url).host }.getOrNull()
-        if (host.isNullOrEmpty() || host.any { it.code >= ASCII_LIMIT }) {
-            logger.d { "Skipping URL with unparsable or non-ASCII host: $url" }
+        if (host == null || !HttpHostValidator.isSafeForHttpClient(host)) {
+            logger.d { "Skipping URL with unsupported host for HTTP client: $url" }
             return null
         }
         return try {
@@ -176,7 +175,6 @@ class HtmlRetriever(
     }
 
     private companion object {
-        private const val ASCII_LIMIT = 128
         private const val MAX_RESPONSE_BYTES = 5 * 1024 * 1024 // 5 MB
         private const val META_SNIFF_LIMIT = 4096 // 4 KB
         private const val XML_DECLARATION_SNIFF_LIMIT = 256 // 256 B

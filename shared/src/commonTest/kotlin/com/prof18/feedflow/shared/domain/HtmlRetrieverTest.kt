@@ -119,6 +119,27 @@ class HtmlRetrieverTest {
     }
 
     @Test
+    fun `host unsupported by http client short-circuits without hitting the engine`() = runTest(testDispatcher) {
+        var requests = 0
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        requests++
+                        respond(content = ByteArray(0), status = HttpStatusCode.OK)
+                    }
+                }
+            },
+        )
+
+        val result = retriever.retrieveHtml("https://xn--socit_franaise_de_pschiatrie-wpc7cb/feed")
+
+        assertNull(result)
+        assertEquals(0, requests)
+    }
+
+    @Test
     fun `non-success statuses are skipped`() = runTest(testDispatcher) {
         listOf(
             HttpStatusCode.MovedPermanently,

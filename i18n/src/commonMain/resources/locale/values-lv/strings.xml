@@ -292,7 +292,6 @@
     <string name="no_icloud_sync_yet">Jūsu dati vēl nav sinhronizēti ar iCloud. Noklikšķiniet dublēšanas pogu, lai sāktu sinhronizāciju</string>
     <string name="no_bazqux_sync_yet">Dati vēl nav sinhronizēti</string>
     <string name="browser_launch_error">Nevar atvērt saiti. Lūdzu, pārbaudiet pārlūka iestatījumus.</string>
-    <string name="feed_error_message_improved">%s nevarēja ielādēt. Iespējams, ka tā nav pieejama vai zudis savienojums ar internetu.</string>
     <string name="import_export_label">Ievietot un izgūt</string>
     <string name="choose_another_file_button">Atlasīt citu datni</string>
     <string name="invalid_opml_import_description">Nederīga OPML datne. Mēģiniet izgūt savas ziņu plūsmas kā OPML datni savā RSS lietotnē un ievietot to vēlreiz.</string>

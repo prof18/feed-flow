@@ -46,9 +46,20 @@ All Gradle commands in this section should be run with `--quiet --console=plain`
 
 ### Running & validating the Android app
 
-Use the [Android CLI](https://developer.android.com/tools/agents/android-cli) (`android`, installed globally; SDK at `~/Library/Android/sdk`) as the default tool to deploy, run, and validate Android. Run `android update` occasionally to keep it current.
+Use the [Android CLI](https://developer.android.com/tools/agents/android-cli) (`android`, installed globally; SDK at `~/Library/Android/sdk`) as the default tool to deploy, run, and validate Android.
 
-Precondition: a device/emulator must be running — `adb devices` to check. Default to the resizable emulator: `android emulator start Resizable_Experimental` (verify the exact AVD name with `android emulator list` if it fails).
+**Auto-update on session start.** The first time `android` is invoked in a session, check its output for a notice like `A new version of Android CLI is available (<version>). Please run 'android update' to install it.` If you see it, run `android update` immediately, then tell the user which version was installed and continue with the original task. Don't ask for permission — this is a routine self-update.
+
+**Precondition — Android CLI must be installed.** Before running any of the commands below, verify it is available with `command -v android`. If it is not installed, stop and ask the user to install it:
+
+> The `android` CLI is required to deploy and validate the app. Install it by following the official guide: https://developer.android.com/tools/agents/android-cli
+> After installation, install the companion skill so agents (Claude Code, codex) know how to drive it:
+> ```
+> android init
+> ```
+> Restart your shell and confirm with `android --version`, then re-run the task.
+
+**Precondition — a device/emulator must be running.** Check with `adb devices`. Do not assume an emulator: use the first device returned by `adb devices` (real device or emulator — both are fine). If none is connected, default to the resizable emulator: `android emulator start Resizable_Experimental` (verify the exact AVD name with `android emulator list` if it fails).
 
 Validate a UI change end to end:
 1. Build + deploy: `./gradlew --quiet --console=plain :androidApp:assembleGooglePlayDebug`, then `android run --apks=androidApp/build/outputs/apk/googlePlay/debug/androidApp-googlePlay-debug.apk` (`--device=<serial>` to pick a device; `.scripts/run-android.sh` covers the routine install+launch loop).

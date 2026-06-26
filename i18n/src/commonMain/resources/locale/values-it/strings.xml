@@ -57,7 +57,7 @@
     <string name="add_feed_category_title">Categoria</string>
     <string name="add_feed_categories_title">Categorie</string>
     <string name="action_save">Salva</string>
-    <string name="import_export_description">FeedFlow supporta l\'importazione e l\'esportazione delle tue iscrizioni con un file OPML, per una migliore interoperabilità con gli altri lettori di feed</string>
+    <string name="import_export_description">FeedFlow supporta l\'importazione e l\'esportazione delle tue iscrizioni con un file OPML, per una migliore interoperabilità con gli altri lettori di feed.</string>
     <string name="no_feed_modal_title">Aggiungi un nuovo feed</string>
     <string name="import_export_opml_title">Importa ed esporta</string>
     <string name="no_feed_modal_message">Puoi aggiungere manualmente un feed, importare le tue iscrizioni da un altro lettore RSS oppure collegare un account per sincronizzare i dati da un altro dispositivo (questa funzionalità è in beta).</string>
@@ -72,7 +72,7 @@
     <string name="menu_mark_as_read">Segna come letto</string>
     <string name="about_menu_contribute_translations">Aiuto con le traduzioni</string>
     <string name="drawer_title_read">Letti</string>
-    <string name="settings_toggle_show_read_articles">Mostra articoli letti nella timeline</string>
+    <string name="settings_toggle_show_read_articles">Mostra articoli letti negli elenchi</string>
     <string name="rename_feed_source_name_button">Rinomina</string>
     <string name="in_app_browser">Browser integrato</string>
     <string name="search_no_data">Impossibile trovare \"%s\".</string>
@@ -337,4 +337,6 @@
     <string name="add_feed_anyway_button">Aggiungi comunque</string>
     <string name="choose_another_file_button">Scegli un altro file</string>
     <string name="invalid_opml_import_title">Impossibile importare questo file</string>
+    <string name="about_the_app">FeedFlow è un lettore RSS minimalista per una timeline pulita e cronologica, senza algoritmi, senza distrazioni. Apri gli articoli nel tuo browser preferito o leggili senza interruzioni con la Modalità lettura. Pre-scarica e salva in cache gli articoli completi per leggerli offline ovunque.\nSincronizza i tuoi feed, lo stato di lettura e i segnalibri su Android, iOS, macOS, Windows e Linux utilizzando iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin o BazQux. Organizza i feed in categorie, blocca le parole chiave rumorose e importa o esporta tutto tramite file OPML.</string>
+    <string name="settings_hide_unread_dot">Nascondi indicatore non letto</string>
 </resources>

@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,7 +24,7 @@ fun ScrollToTopButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = FloatingActionButtonDefaults.containerColor,
-    contentColor: Color = Color.Unspecified,
+    contentColor: Color = contentColorFor(containerColor),
 ) {
     ConditionalAnimatedVisibility(
         visible = visible,

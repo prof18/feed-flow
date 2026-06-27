@@ -5,7 +5,6 @@ import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.core.domain.HtmlParser
-import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
@@ -54,7 +53,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         RssParserBuilder(
             callFactory = OkHttpClient
                 .Builder()
-                .addInterceptor(UserAgentInterceptor(get<AppConfig>().appVersion))
+                .addInterceptor(UserAgentInterceptor())
                 .addInterceptor(ConditionalGetInterceptor(get()))
                 .build(),
         ).build()

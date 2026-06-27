@@ -64,6 +64,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 
+val FeedListMaxContentWidth = 720.dp
+
 @Suppress("MagicNumber")
 @Composable
 fun FeedList(

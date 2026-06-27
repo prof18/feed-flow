@@ -65,6 +65,7 @@ import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
+import com.prof18.feedflow.shared.ui.home.components.list.FeedListMaxContentWidth
 import com.prof18.feedflow.shared.ui.readermode.ReaderModeEmptyState
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
@@ -446,7 +447,7 @@ internal val drawerPaneWidth = 320.dp
 internal val toolbarHeight = 48.dp
 internal val listPaneTopContentFadeHeight = 30.dp
 internal val listPaneTopContentPadding = 4.dp
-internal val listPaneMaxContentWidth = 720.dp
+internal val listPaneMaxContentWidth = FeedListMaxContentWidth
 private const val DESKTOP_PANE_TRANSITION_DURATION = 120
 
 private val detailFullscreenAnchor = PaneExpansionAnchor.Proportion(0f)

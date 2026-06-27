@@ -56,6 +56,7 @@ struct FeedListView: View {
     private let coordinateSpaceName = "FeedListViewCoordinateSpace"
     private let viewportVerticalInset: CGFloat = 8
     private let minimumVisibleRowHeight: CGFloat = 24
+    private let maxContentWidth: CGFloat = 720
 
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
@@ -166,6 +167,11 @@ struct FeedListView: View {
                     .refreshable {
                         onReloadClick()
                     }
+                    .contentMargins(
+                        .horizontal,
+                        max((listProxy.size.width - maxContentWidth) / 2, 0),
+                        for: .scrollContent
+                    )
                 }
             }
         }

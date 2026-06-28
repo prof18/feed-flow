@@ -29,7 +29,7 @@ import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.m3.chipColors
 import com.mikepenz.aboutlibraries.ui.compose.m3.libraryColors
-import com.mikepenz.aboutlibraries.ui.compose.rememberLibraries
+import com.mikepenz.aboutlibraries.ui.compose.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.util.strippedLicenseContent
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -67,7 +67,7 @@ fun LicensesScreen(
         val aboutLibsJson = useResource("aboutlibraries.json") {
             it.bufferedReader().readText()
         }
-        val libs by rememberLibraries(aboutLibsJson)
+        val libs by produceLibraries(aboutLibsJson)
 
         val backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh
         val borderColor = MaterialTheme.colorScheme.outlineVariant
@@ -90,6 +90,7 @@ fun LicensesScreen(
             colors = colors,
             onLibraryClick = { library ->
                 openLicenseDialog = library.licenses.firstOrNull()?.strippedLicenseContent ?: ""
+                true
             },
         )
 

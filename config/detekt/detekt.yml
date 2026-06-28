@@ -1067,8 +1067,6 @@ Compose:
     # treatAsLambda: MyLambdaType
   CompositionLocalAllowlist:
     active: true
-    # -- You can optionally define a list of CompositionLocals that are allowed here
-    allowedCompositionLocals: LocalComponentContext, LocalFeedFlowStrings, LocalReduceMotion, LocalComposeWindow
   CompositionLocalNaming:
     active: true
   ContentEmitterReturningValues:
@@ -1085,7 +1083,7 @@ Compose:
     active: true
     # -- You can optionally add your own Modifier types
     # customModifiers: BananaModifier,PotatoModifier
-  ModifierComposable:
+  ModifierComposed:
     active: true
     # -- You can optionally add your own Modifier types
     # customModifiers: BananaModifier,PotatoModifier

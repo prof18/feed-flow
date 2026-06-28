@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.ParsingResult
+import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository.Companion.DEFAULT_READER_MODE_FONT_SIZE
@@ -86,7 +87,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
     @Test
     fun `initial state is loading and font size is from settings`() = runTest {
         assertEquals(ReaderModeState.Loading, viewModel.readerModeState.value)
-        assertEquals(DEFAULT_READER_MODE_FONT_SIZE, viewModel.readerFontSizeState.value)
+        assertEquals(DEFAULT_READER_MODE_FONT_SIZE, viewModel.readerFontSettingsState.value.fontSize)
         assertNull(viewModel.currentArticleState.value)
     }
 
@@ -286,7 +287,41 @@ class ReaderModeViewModelTest : KoinTestBase() {
     fun `updateFontSize updates settings and state`() = runTest {
         viewModel.updateFontSize(22)
 
-        assertEquals(22, viewModel.readerFontSizeState.value)
+        assertEquals(22, viewModel.readerFontSettingsState.value.fontSize)
+    }
+
+    @Test
+    fun `initial line height is default value`() = runTest {
+        assertEquals(
+            ReaderModeDefaults.LINE_HEIGHT,
+            viewModel.readerFontSettingsState.value.lineHeight,
+        )
+    }
+
+    @Test
+    fun `updateLineHeight updates settings and state`() = runTest {
+        viewModel.readerFontSettingsState.test {
+            assertEquals(ReaderModeDefaults.LINE_HEIGHT, awaitItem().lineHeight)
+
+            viewModel.updateLineHeight(4)
+
+            assertEquals(4, awaitItem().lineHeight)
+        }
+    }
+
+    @Test
+    fun `reset restores defaults`() = runTest {
+        viewModel.updateFontSize(30)
+        viewModel.updateLineHeight(6)
+
+        viewModel.updateFontSize(ReaderModeDefaults.FONT_SIZE)
+        viewModel.updateLineHeight(ReaderModeDefaults.LINE_HEIGHT)
+
+        assertEquals(ReaderModeDefaults.FONT_SIZE, viewModel.readerFontSettingsState.value.fontSize)
+        assertEquals(
+            ReaderModeDefaults.LINE_HEIGHT,
+            viewModel.readerFontSettingsState.value.lineHeight,
+        )
     }
 
     @Test

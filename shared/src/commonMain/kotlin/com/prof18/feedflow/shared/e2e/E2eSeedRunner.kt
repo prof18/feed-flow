@@ -15,6 +15,7 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.SyncAccounts
@@ -103,6 +104,7 @@ class E2eSeedRunner internal constructor(
         settingsRepository.setPrefetchArticleContent(false)
         settingsRepository.setIsSyncUploadRequired(false)
         settingsRepository.setReaderModeFontSize(SettingsRepository.DEFAULT_READER_MODE_FONT_SIZE)
+        settingsRepository.setReaderModeLineHeight(ReaderModeDefaults.LINE_HEIGHT)
         settingsRepository.setAutoDeletePeriod(AutoDeletePeriod.DISABLED)
         settingsRepository.setCrashReportingEnabled(false)
         settingsRepository.setSyncPeriod(SyncPeriod.NEVER)

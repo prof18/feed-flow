@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.data
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.NotificationMode
+import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.russhwolf.settings.Settings
@@ -133,10 +134,16 @@ class SettingsRepository(
     }
 
     fun getReaderModeFontSize(): Int =
-        settings.getInt(SettingsFields.READER_MODE_FONT_SIZE.name, DEFAULT_READER_MODE_FONT_SIZE)
+        settings.getInt(SettingsFields.READER_MODE_FONT_SIZE.name, ReaderModeDefaults.FONT_SIZE)
 
     fun setReaderModeFontSize(value: Int) =
         settings.set(SettingsFields.READER_MODE_FONT_SIZE.name, value)
+
+    fun getReaderModeLineHeight(): Int =
+        settings.getInt(SettingsFields.READER_MODE_LINE_HEIGHT.name, ReaderModeDefaults.LINE_HEIGHT)
+
+    fun setReaderModeLineHeight(value: Int) =
+        settings.set(SettingsFields.READER_MODE_LINE_HEIGHT.name, value)
 
     internal fun getAutoDeletePeriod(): AutoDeletePeriod =
         settings.getString(SettingsFields.AUTO_DELETE_PERIOD.name, AutoDeletePeriod.DISABLED.name)
@@ -222,7 +229,7 @@ class SettingsRepository(
         settings.set(SettingsFields.NOTIFICATION_MODE.name, mode.name)
 
     internal companion object {
-        const val DEFAULT_READER_MODE_FONT_SIZE = 16
+        const val DEFAULT_READER_MODE_FONT_SIZE = ReaderModeDefaults.FONT_SIZE
     }
 }
 
@@ -236,6 +243,7 @@ private enum class SettingsFields {
     PREFETCH_ARTICLE_CONTENT,
     IS_SYNC_UPLOAD_REQUIRED,
     READER_MODE_FONT_SIZE,
+    READER_MODE_LINE_HEIGHT,
     AUTO_DELETE_PERIOD,
     CRASH_REPORTING_ENABLED,
     SYNC_PERIOD,

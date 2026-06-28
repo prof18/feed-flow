@@ -58,6 +58,7 @@ import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
+import com.prof18.feedflow.shared.domain.readerLineHeightJs
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.delay
@@ -70,6 +71,8 @@ internal fun ReaderModeScreen(
     fontSize: Int,
     themeMode: ThemeMode,
     onUpdateFontSize: (Int) -> Unit,
+    lineHeight: Int,
+    onUpdateLineHeight: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     navigateBack: () -> Unit,
     canNavigatePrevious: Boolean,
@@ -164,10 +167,14 @@ internal fun ReaderModeScreen(
                             navigator.evaluateJavaScript(
                                 """
         document.getElementById("container").style.fontSize = "$newFontSize" + "px";
-        document.getElementById("container").style.lineHeight = "1.5em";
                                 """.trimIndent(),
                             )
                             onUpdateFontSize(newFontSize)
+                        },
+                        lineHeight = lineHeight,
+                        onLineHeightChange = { newLineHeight ->
+                            navigator.evaluateJavaScript(readerLineHeightJs(newLineHeight))
+                            onUpdateLineHeight(newLineHeight)
                         },
                         onBookmarkClick = onBookmarkClick,
                         canNavigatePrevious = canNavigatePrevious,
@@ -332,6 +339,7 @@ private fun ReaderMode(
             ${readerModeState.readerModeData.content}
         """.trimIndent(),
         fontSize = readerModeState.readerModeData.fontSize,
+        lineHeight = readerModeState.readerModeData.lineHeight,
         imageUrl = readerModeState.readerModeData.imageUrl,
     )
 

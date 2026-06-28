@@ -33,14 +33,13 @@ appId: com.prof18.feedflow.debug
       id: reader_article_e2e_article_reader_success
     timeout: 5000
 
-# Open the font size menu and exercise the Increase / Decrease buttons. The
-# DropdownMenu container does not expose its testTag to uiautomator on
-# Android, so we anchor on the visible "Font Size" header instead.
+# Open the text settings sheet and verify the reader text controls expose
+# their current values.
 - tapOn:
     id: reader_more_menu_button
-- tapOn: "Font Size"
-- assertVisible: "Font Size"
-- tapOn:
-    text: "Increase font size"
-- tapOn:
-    text: "Decrease font size"
+- tapOn: "Text Settings"
+- assertVisible: "Text Settings"
+- assertVisible: "Line Height"
+- assertVisible: "Reset to default"
+- assertVisible: "20"
+- assertVisible: "1.7"

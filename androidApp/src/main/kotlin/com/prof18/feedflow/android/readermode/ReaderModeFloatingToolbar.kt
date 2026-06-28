@@ -8,8 +8,8 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
@@ -27,8 +27,10 @@ import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,9 +46,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
-import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
+import com.prof18.feedflow.shared.ui.readermode.ReaderTextSettingsSheetContent
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
-import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -73,6 +74,8 @@ fun ReaderModeFloatingToolbar(
     onArchiveClick: (String) -> Unit,
     onCommentsClick: (String) -> Unit,
     onFontSizeChange: (Int) -> Unit,
+    lineHeight: Int,
+    onLineHeightChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showFontSizeMenu by remember { mutableStateOf(false) }
@@ -181,7 +184,7 @@ fun ReaderModeFloatingToolbar(
                 add(
                     ToolbarAction(
                         icon = Icons.Outlined.TextFields,
-                        label = strings.readerModeFontSize,
+                        label = strings.readerModeTextSettings,
                         testTag = ReaderModeE2eIds.FONT_SIZE_BUTTON,
                         onClick = { showFontSizeMenu = true },
                     ),
@@ -234,26 +237,24 @@ fun ReaderModeFloatingToolbar(
                     )
                 }
             }
+        }
+    }
 
-            DropdownMenu(
-                expanded = showFontSizeMenu,
-                onDismissRequest = { showFontSizeMenu = false },
-                modifier = Modifier.testTag(ReaderModeE2eIds.FONT_SIZE_MENU),
-                shape = MaterialTheme.shapes.large,
-            ) {
-                Column(modifier = Modifier.padding(Spacing.regular)) {
-                    Text(
-                        text = strings.readerModeFontSize,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    SliderWithPlusMinus(
-                        value = fontSize.toFloat(),
-                        onValueChange = { onFontSizeChange(it.toInt()) },
-                        valueRange = 12f..40f,
-                        steps = 40,
-                    )
-                }
-            }
+    if (showFontSizeMenu) {
+        ModalBottomSheet(
+            onDismissRequest = { showFontSizeMenu = false },
+            sheetState = rememberModalBottomSheetState(),
+        ) {
+            ReaderTextSettingsSheetContent(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .testTag(ReaderModeE2eIds.TEXT_SETTINGS_SHEET),
+                fontSize = fontSize,
+                onFontSizeChange = onFontSizeChange,
+                lineHeight = lineHeight,
+                onLineHeightChange = onLineHeightChange,
+                resetButtonModifier = Modifier.testTag(ReaderModeE2eIds.TEXT_SETTINGS_RESET_BUTTON),
+            )
         }
     }
 }

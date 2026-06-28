@@ -1,10 +1,13 @@
 package com.prof18.feedflow.shared.domain
 
+import com.prof18.feedflow.core.model.ReaderModeDefaults
+
 // Last export: 2025-12-21T11:48:48.756Z
 fun getReaderModeStyledHtml(
     colors: ReaderColors?,
     content: String,
     fontSize: Int,
+    lineHeight: Int = ReaderModeDefaults.LINE_HEIGHT,
     title: String? = null, // This is added only on desktop
     imageUrl: String? = null,
 ): String {
@@ -33,7 +36,7 @@ fun getReaderModeStyledHtml(
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-      ${readerModeCss(colors, fontSize)}
+      ${readerModeCss(colors, fontSize, lineHeight)}
     </style>
     </head>
     <body>
@@ -144,8 +147,9 @@ private fun hasLeadingImage(content: String): Boolean {
     return window.indexOf("<img", ignoreCase = true) >= 0
 }
 
-internal fun readerModeCss(colors: ReaderColors?, fontSize: Int): String {
+internal fun readerModeCss(colors: ReaderColors?, fontSize: Int, lineHeight: Int): String {
     val fontSizeCss = "${fontSize}px"
+    val lineHeightCss = readerLineHeightToCss(lineHeight)
     val textColor = colors?.textColor ?: "inherit"
     val linkColor = colors?.linkColor ?: "inherit"
     val backgroundColor = colors?.backgroundColor ?: "transparent"
@@ -169,7 +173,7 @@ body {
     font: -apple-system-body;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-size: $fontSizeCss;
-    line-height: 1.5em;
+    line-height: $lineHeightCss;
     padding-bottom: 112px;
     color: var(--reader-text);
 }
@@ -185,12 +189,12 @@ body {
 }
 
 #__content {
-    line-height: 1.5;
+    line-height: $lineHeightCss;
     overflow-x: hidden;
 }
 
 @media screen and (min-width: 650px) {
-    #__content {  line-height: 1.5; }
+    #__content {  line-height: $lineHeightCss; }
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -369,6 +373,40 @@ img, iframe, object, video {
     border-radius: 7px;
 }
 
+    """.trimIndent()
+}
+
+private const val LINE_HEIGHT_BASE_TENTHS = 15
+private const val LINE_HEIGHT_STEP_TENTHS = 1
+private const val LINE_HEIGHT_TENTHS_DIVISOR = 10
+private const val LINE_HEIGHT_DESKTOP_ROUNDING_OFFSET = 5
+
+// step 0 -> "1.5", default step 2 -> "1.7", step 15 -> "3.0". Integer tenths avoids float/locale issues.
+internal fun readerLineHeightToCss(step: Int): String {
+    val tenths = LINE_HEIGHT_BASE_TENTHS + step * LINE_HEIGHT_STEP_TENTHS
+    return "${tenths / LINE_HEIGHT_TENTHS_DIVISOR}.${tenths % LINE_HEIGHT_TENTHS_DIVISOR}"
+}
+
+fun readerLineHeightToTextLineHeightSp(fontSize: Int, step: Int): Int =
+    (
+        fontSize * (LINE_HEIGHT_BASE_TENTHS + step * LINE_HEIGHT_STEP_TENTHS) +
+            LINE_HEIGHT_DESKTOP_ROUNDING_OFFSET
+        ) / LINE_HEIGHT_TENTHS_DIVISOR
+
+// Live update injected into the reader WebView (Android & iOS use the same rule string).
+fun readerLineHeightJs(step: Int): String {
+    val lineHeight = readerLineHeightToCss(step)
+    return """
+        (function() {
+          var styleId = "__feedflow_line_height_style";
+          var style = document.getElementById(styleId);
+          if (!style) {
+            style = document.createElement("style");
+            style.id = styleId;
+            document.head.appendChild(style);
+          }
+          style.textContent = "body, #__content { line-height: $lineHeight; }";
+        })();
     """.trimIndent()
 }
 

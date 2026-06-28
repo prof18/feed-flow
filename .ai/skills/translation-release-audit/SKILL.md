@@ -48,6 +48,13 @@ Optional live-store checks:
 6. If live store checking is requested or this is the weekly automation, compare against current store state when credentials are available.
    - Google Play: only run bootstrap in a disposable worktree or otherwise clean throwaway checkout because it writes downloaded listing files into `androidApp/src/googlePlay/play/listings`.
    - App Store: pull metadata/screenshots into a temp directory and compare against FeedFlow's source store/screenshot copy where mapping is clear.
+7. Add follow-up TODOs to the FeedFlow Obsidian board when the audit finds actionable store release work.
+   - Board path: `/Users/mg/Workspace/Notes/projects/feed-flow/feed-flow-board.md`.
+   - Use the `## marketing` lane for store listing, ASO, screenshot, and store localization release work.
+   - Preserve the kanban Markdown format: add one `- [ ] ...` item per action under the lane.
+   - Keep TODO text short and concrete, for example `- [ ] Sync App Store metadata for Italian, Russian, and French`.
+   - Do not add TODOs for app-string translation gaps, non-actionable status, credential setup noise, or findings already represented by an existing unchecked board item.
+   - If the board is unavailable or cannot be edited, include the TODO text in the final report under `Action needed` instead.
 
 ## Live Store Checks
 
@@ -127,6 +134,17 @@ Recommended next commands:
 ```
 
 If nothing changed, say that no translation, store-copy, or screenshot action is needed.
+
+## Obsidian Board Follow-Up
+
+When store action is needed, write a compact board item so the work is not lost after the audit thread ends. Prefer one grouped task per operational outcome. Do not create board items for missing app-string translations; those belong only in the audit report.
+
+- Store metadata stale: `- [ ] Sync stale App Store metadata for <locales>`
+- Play metadata stale: `- [ ] Sync stale Google Play metadata for <locales>`
+- Screenshots stale or incomplete: `- [ ] Regenerate/upload localized screenshots for <locales/platforms>`
+- Store locale scaffold incomplete: `- [ ] Complete store and screenshot copy for <locale>`
+
+Before editing the board, read the existing `## marketing` lane and avoid duplicates by matching the main noun phrase and locale/platform names. Insert new items near related store-copy or conversion-analysis tasks. Do not create separate Obsidian notes unless the user asks.
 
 ## Guardrails
 

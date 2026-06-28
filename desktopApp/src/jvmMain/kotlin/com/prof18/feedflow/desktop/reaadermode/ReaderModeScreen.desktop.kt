@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -77,9 +78,10 @@ import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.openUriSafely
+import com.prof18.feedflow.shared.domain.readerLineHeightToTextLineHeightSp
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
-import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
+import com.prof18.feedflow.shared.ui.readermode.ReaderTextSettingsSheetContent
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -89,6 +91,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 private val readerModeMaxContentWidth = 720.dp
 private val readerPaneTopContentFadeHeight = 30.dp
+private val readerTextSettingsMenuWidth = 420.dp
 
 @Composable
 internal fun ReaderModeScreen(
@@ -100,7 +103,9 @@ internal fun ReaderModeScreen(
 ) {
     val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
     val state by readerModeViewModel.readerModeState.collectAsState()
-    val fontSize by readerModeViewModel.readerFontSizeState.collectAsState()
+    val fontSettings by readerModeViewModel.readerFontSettingsState.collectAsState()
+    val fontSize = fontSettings.fontSize
+    val lineHeight = fontSettings.lineHeight
 
     LaunchedEffect(feedItemUrlInfo.id) {
         readerModeViewModel.getReaderModeHtml(feedItemUrlInfo)
@@ -180,6 +185,8 @@ internal fun ReaderModeScreen(
                         },
                         onCommentsClick = ::openExternalUrl,
                         onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
+                        lineHeight = lineHeight,
+                        onLineHeightChange = { readerModeViewModel.updateLineHeight(it) },
                         onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
                             readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
                         },
@@ -235,7 +242,8 @@ internal fun ReaderModeScreen(
                                 Column(
                                     modifier = contentModifier,
                                 ) {
-                                    key(s.readerModeData.content, fontSize) {
+                                    key(s.readerModeData.content, fontSize, lineHeight) {
+                                        val bodyLineHeight = readerLineHeightToTextLineHeightSp(fontSize, lineHeight).sp
                                         SelectionContainer {
                                             Markdown(
                                                 modifier = Modifier
@@ -279,11 +287,11 @@ internal fun ReaderModeScreen(
                                                     ),
                                                     paragraph = MaterialTheme.typography.bodyLarge.copy(
                                                         fontSize = fontSize.sp,
-                                                        lineHeight = (fontSize + 12).sp,
+                                                        lineHeight = bodyLineHeight,
                                                     ),
                                                     text = MaterialTheme.typography.bodyLarge.copy(
                                                         fontSize = fontSize.sp,
-                                                        lineHeight = (fontSize + 12).sp,
+                                                        lineHeight = bodyLineHeight,
                                                     ),
                                                     code = MaterialTheme.typography.bodyMedium.copy(
                                                         fontSize = (fontSize - 2).sp,
@@ -291,12 +299,12 @@ internal fun ReaderModeScreen(
                                                     ),
                                                     list = MaterialTheme.typography.bodyLarge.copy(
                                                         fontSize = fontSize.sp,
-                                                        lineHeight = (fontSize + 12).sp,
+                                                        lineHeight = bodyLineHeight,
                                                     ),
                                                     textLink = TextLinkStyles(
                                                         style = MaterialTheme.typography.bodyLarge.copy(
                                                             fontSize = fontSize.sp,
-                                                            lineHeight = (fontSize + 12).sp,
+                                                            lineHeight = bodyLineHeight,
                                                             fontWeight = FontWeight.Bold,
                                                             textDecoration = TextDecoration.Underline,
                                                         ).toSpanStyle(),
@@ -457,6 +465,8 @@ private fun ReaderModeToolbar(
     onArchiveClick: (String) -> Unit,
     onCommentsClick: (String) -> Unit,
     onFontSizeChange: (Int) -> Unit,
+    lineHeight: Int,
+    onLineHeightChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
@@ -621,7 +631,7 @@ private fun ReaderModeToolbar(
                                 positioning = TooltipAnchorPosition.Above,
                             ),
                             state = rememberTooltipState(),
-                            tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.readerModeFontSize) } },
+                            tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.readerModeTextSettings) } },
                         ) {
                             IconButton(
                                 onClick = {
@@ -642,23 +652,13 @@ private fun ReaderModeToolbar(
                             },
                             shape = MaterialTheme.shapes.large,
                         ) {
-                            Column(
-                                modifier = Modifier.padding(Spacing.regular),
-                            ) {
-                                Text(
-                                    text = LocalFeedFlowStrings.current.readerModeFontSize,
-                                    style = MaterialTheme.typography.titleMedium,
-                                )
-
-                                SliderWithPlusMinus(
-                                    value = fontSize.toFloat(),
-                                    onValueChange = {
-                                        onFontSizeChange(it.toInt())
-                                    },
-                                    valueRange = 12f..40f,
-                                    steps = 40,
-                                )
-                            }
+                            ReaderTextSettingsSheetContent(
+                                modifier = Modifier.width(readerTextSettingsMenuWidth),
+                                fontSize = fontSize,
+                                onFontSizeChange = onFontSizeChange,
+                                lineHeight = lineHeight,
+                                onLineHeightChange = onLineHeightChange,
+                            )
                         }
                     }
                 }

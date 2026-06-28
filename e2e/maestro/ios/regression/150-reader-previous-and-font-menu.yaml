@@ -35,11 +35,16 @@ appId: com.prof18.feedflow.dev
       text: "E2E Reader Mode Success[\\s\\S]*"
     timeout: 5000
 
-# Open the font size sheet from the reader more menu. The +/- buttons inside
-# are SF Symbols without dedicated accessibility identifiers, so we only
-# verify the sheet appears.
+# Open the text settings sheet from the reader more menu and verify the
+# reader text controls appear.
 - tapOn:
     id: reader_more_menu_button
-- tapOn: "Font Size"
+- tapOn: "Text Settings"
 - assertVisible:
-    id: reader_font_size_sheet
+    id: reader_text_settings_sheet
+- assertVisible: "Line Height"
+- assertVisible: "Reset to default"
+- assertVisible:
+    id: reader_font_size_value_label
+- assertVisible:
+    id: reader_line_height_value_label

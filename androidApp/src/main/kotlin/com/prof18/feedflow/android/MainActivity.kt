@@ -386,7 +386,8 @@ class MainActivity : BaseThemeActivity() {
 
                 entry<ReaderMode> {
                     val readerModeState by readerModeViewModel.readerModeState.collectAsStateWithLifecycle()
-                    val fontSizeState by readerModeViewModel.readerFontSizeState.collectAsStateWithLifecycle()
+                    val fontSettingsState by readerModeViewModel.readerFontSettingsState
+                        .collectAsStateWithLifecycle()
                     val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState
                         .collectAsStateWithLifecycle()
                     val canNavigateNext by readerModeViewModel.canNavigateToNextState
@@ -397,11 +398,15 @@ class MainActivity : BaseThemeActivity() {
 
                     ReaderModeScreen(
                         readerModeState = readerModeState,
-                        fontSize = fontSizeState,
+                        fontSize = fontSettingsState.fontSize,
                         themeMode = themeState,
                         navigateBack = navigateBack,
                         onUpdateFontSize = { newFontSize ->
                             readerModeViewModel.updateFontSize(newFontSize)
+                        },
+                        lineHeight = fontSettingsState.lineHeight,
+                        onUpdateLineHeight = { newLineHeight ->
+                            readerModeViewModel.updateLineHeight(newLineHeight)
                         },
                         onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
                             readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)

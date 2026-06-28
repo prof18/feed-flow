@@ -27,6 +27,6 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: reader_more_menu_button
 - tapOn:
-    text: "Font Size"
+    text: "Text Settings"
 - assertVisible:
-    text: "Font Size"
+    text: "Text Settings"

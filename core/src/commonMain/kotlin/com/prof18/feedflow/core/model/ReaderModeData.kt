@@ -7,6 +7,7 @@ data class ReaderModeData(
     val url: String,
     val baseUrl: String,
     val fontSize: Int,
+    val lineHeight: Int,
     val isBookmarked: Boolean,
     val commentsUrl: String? = null,
     val imageUrl: String? = null,

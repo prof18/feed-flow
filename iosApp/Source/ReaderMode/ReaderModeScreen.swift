@@ -18,6 +18,7 @@ struct ReaderModeScreen: View {
 
     @State private var showFontSizeMenu = false
     @State private var fontSize = 16.0
+    @State private var lineHeight = 0.0
     @State private var isBookmarked = false
     @State private var readerStatus = ReaderStatus.fetching
     @State private var currentContent: String?
@@ -65,6 +66,10 @@ struct ReaderModeScreen: View {
                     openInArchive: feedFlowStrings.readerModeArchiveButton,
                     openComments: feedFlowStrings.menuOpenComments,
                     fontSize: feedFlowStrings.readerModeFontSize,
+                    lineHeight: feedFlowStrings.readerModeLineHeight,
+                    textSettings: feedFlowStrings.readerModeTextSettings,
+                    resetToDefault: feedFlowStrings.readerModeResetToDefault,
+                    done: feedFlowStrings.actionDone,
                     previousArticle: feedFlowStrings.previousArticle,
                     nextArticle: feedFlowStrings.nextArticle
                 ),
@@ -125,17 +130,13 @@ struct ReaderModeScreen: View {
                 onFontSizeMenuToggle: {
                     showFontSizeMenu.toggle()
                 },
-                onFontSizeDecrease: {
-                    fontSize -= 1.0
-                    viewModel.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                },
-                onFontSizeIncrease: {
-                    fontSize += 1.0
-                    viewModel.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                },
                 onFontSizeChange: { newSize in
                     fontSize = newSize
                     viewModel.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                },
+                onLineHeightChange: { newValue in
+                    lineHeight = newValue
+                    viewModel.updateLineHeight(newLineHeight: Int32(Int(newValue)))
                 },
                 onNavigateToNext: canNavigateNext ? {
                     viewModel.navigateToNextArticle()
@@ -146,6 +147,9 @@ struct ReaderModeScreen: View {
             ),
             isBookmarked: isBookmarked,
             fontSize: fontSize,
+            lineHeight: lineHeight,
+            defaultFontSize: Double(ReaderModeDefaults.shared.FONT_SIZE),
+            defaultLineHeight: Double(ReaderModeDefaults.shared.LINE_HEIGHT),
             showFontSizeMenu: $showFontSizeMenu,
             openInBrowser: { url in
                 openInBrowser(url: url)
@@ -168,8 +172,9 @@ struct ReaderModeScreen: View {
             }
         }
         .task {
-            for await state in viewModel.readerFontSizeState {
-                self.fontSize = Double(truncating: state)
+            for await settings in viewModel.readerFontSettingsState {
+                self.fontSize = Double(settings.fontSize)
+                self.lineHeight = Double(settings.lineHeight)
             }
         }
         .task {
@@ -242,6 +247,7 @@ struct ReaderModeScreen: View {
             ),
             content: content,
             fontSize: Int32(fontSize),
+            lineHeight: Int32(lineHeight),
             title: nil,
             imageUrl: currentImageUrl
         )

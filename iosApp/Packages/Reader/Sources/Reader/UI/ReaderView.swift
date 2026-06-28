@@ -7,9 +7,8 @@ public struct ReaderViewActions {
     public let onOpenInBrowser: () -> Void
     public let onComments: (() -> Void)?
     public let onFontSizeMenuToggle: () -> Void
-    public let onFontSizeDecrease: () -> Void
-    public let onFontSizeIncrease: () -> Void
     public let onFontSizeChange: (Double) -> Void
+    public let onLineHeightChange: (Double) -> Void
     public let onNavigateToNext: (() -> Void)?
     public let onNavigateToPrevious: (() -> Void)?
 
@@ -20,9 +19,8 @@ public struct ReaderViewActions {
         onOpenInBrowser: @escaping () -> Void,
         onComments: (() -> Void)? = nil,
         onFontSizeMenuToggle: @escaping () -> Void,
-        onFontSizeDecrease: @escaping () -> Void,
-        onFontSizeIncrease: @escaping () -> Void,
         onFontSizeChange: @escaping (Double) -> Void,
+        onLineHeightChange: @escaping (Double) -> Void,
         onNavigateToNext: (() -> Void)? = nil,
         onNavigateToPrevious: (() -> Void)? = nil
     ) {
@@ -32,9 +30,8 @@ public struct ReaderViewActions {
         self.onOpenInBrowser = onOpenInBrowser
         self.onComments = onComments
         self.onFontSizeMenuToggle = onFontSizeMenuToggle
-        self.onFontSizeDecrease = onFontSizeDecrease
-        self.onFontSizeIncrease = onFontSizeIncrease
         self.onFontSizeChange = onFontSizeChange
+        self.onLineHeightChange = onLineHeightChange
         self.onNavigateToNext = onNavigateToNext
         self.onNavigateToPrevious = onNavigateToPrevious
     }
@@ -47,6 +44,9 @@ public struct ReaderView: View {
     var actions: ReaderViewActions
     var isBookmarked: Bool
     var fontSize: Double
+    var lineHeight: Double
+    var defaultFontSize: Double
+    var defaultLineHeight: Double
     @Binding var showFontSizeMenu: Bool
     var openInBrowser: (URL) -> Void
 
@@ -59,6 +59,9 @@ public struct ReaderView: View {
         actions: ReaderViewActions,
         isBookmarked: Bool,
         fontSize: Double,
+        lineHeight: Double,
+        defaultFontSize: Double,
+        defaultLineHeight: Double,
         showFontSizeMenu: Binding<Bool>,
         openInBrowser: @escaping (URL) -> Void
     ) {
@@ -68,6 +71,9 @@ public struct ReaderView: View {
         self.actions = actions
         self.isBookmarked = isBookmarked
         self.fontSize = fontSize
+        self.lineHeight = lineHeight
+        self.defaultFontSize = defaultFontSize
+        self.defaultLineHeight = defaultLineHeight
         self._showFontSizeMenu = showFontSizeMenu
         self.openInBrowser = openInBrowser
     }
@@ -90,8 +96,8 @@ public struct ReaderView: View {
                 }
                 .sheet(isPresented: $showFontSizeMenu) {
                     fontSizeSheet
-                        .presentationDetents([.height(200)])
-                        .presentationDragIndicator(.visible)
+                        .presentationDetents([.medium])
+                        .presentationBackground(Color(.secondarySystemBackground))
                 }
 
             if !isiOS26OrLater() {
@@ -235,7 +241,7 @@ public struct ReaderView: View {
                     Button {
                         actions.onFontSizeMenuToggle()
                     } label: {
-                        Label(actions.strings.fontSize, systemImage: "textformat.size")
+                        Label(actions.strings.textSettings, systemImage: "textformat.size")
                     }
                     .accessibilityIdentifier(ReaderAccessibilityIdentifiers.fontSizeButton)
                 }
@@ -293,7 +299,7 @@ public struct ReaderView: View {
                     Button {
                         actions.onFontSizeMenuToggle()
                     } label: {
-                        Label(actions.strings.fontSize, systemImage: "textformat.size")
+                        Label(actions.strings.textSettings, systemImage: "textformat.size")
                     }
                     .accessibilityIdentifier(ReaderAccessibilityIdentifiers.fontSizeButton)
                 }
@@ -306,56 +312,155 @@ public struct ReaderView: View {
 
     @ViewBuilder
     private var fontSizeSheet: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(actions.strings.fontSize)
-                .font(.headline)
-
-            HStack(spacing: 16) {
-                Button {
-                    let newFontSize = fontSize - 1.0
-                    updateFontSizeWithJS(newFontSize)
-                    actions.onFontSizeDecrease()
-                } label: {
-                    Image(systemName: "minus.circle.fill")
-                        .font(.title2)
-                }
-                .disabled(fontSize <= 12)
-
-                Slider(
-                    value: Binding(
-                        get: { fontSize },
-                        set: { newValue in
-                            updateFontSizeWithJS(newValue)
-                            actions.onFontSizeChange(newValue)
+        NavigationStack {
+            VStack(spacing: 0) {
+                VStack(alignment: .leading, spacing: 22) {
+                    textSettingSliderRow(
+                        title: actions.strings.fontSize,
+                        valueLabel: fontSizeValueLabel(fontSize),
+                        valueAccessibilityIdentifier: ReaderAccessibilityIdentifiers.fontSizeValueLabel,
+                        value: fontSize,
+                        range: 12 ... 40,
+                        step: 1,
+                        onValueChange: {
+                            updateFontSizeWithJS($0)
+                            actions.onFontSizeChange($0)
                         }
-                    ),
-                    in: 12 ... 40
-                )
+                    )
 
-                Button {
-                    let newFontSize = fontSize + 1.0
-                    updateFontSizeWithJS(newFontSize)
-                    actions.onFontSizeIncrease()
-                } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.title2)
+                    Divider()
+
+                    textSettingSliderRow(
+                        title: actions.strings.lineHeight,
+                        valueLabel: lineHeightValueLabel(lineHeight),
+                        valueAccessibilityIdentifier: ReaderAccessibilityIdentifiers.lineHeightValueLabel,
+                        value: lineHeight,
+                        range: 0 ... 15,
+                        step: 1,
+                        onValueChange: {
+                            updateLineHeightWithJS($0)
+                            actions.onLineHeightChange($0)
+                        }
+                    )
+
+                    HStack {
+                        Spacer()
+                        resetTextSettingsButton
+                    }
                 }
-                .disabled(fontSize >= 40)
+                .padding(.horizontal, 24)
+                .padding(.top, 56)
+
+                Spacer(minLength: 0)
+            }
+            .background(Color(.secondarySystemBackground))
+            .navigationTitle(actions.strings.textSettings)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showFontSizeMenu = false
+                    } label: {
+                        Text(actions.strings.done).bold()
+                    }
+                }
+            }
+        }
+        .accessibilityIdentifier(ReaderAccessibilityIdentifiers.textSettingsSheet)
+    }
+
+    private var resetTextSettingsButton: some View {
+        let isDisabled = fontSize == defaultFontSize && lineHeight == defaultLineHeight
+        return Button {
+            updateFontSizeWithJS(defaultFontSize)
+            updateLineHeightWithJS(defaultLineHeight)
+            actions.onFontSizeChange(defaultFontSize)
+            actions.onLineHeightChange(defaultLineHeight)
+        } label: {
+            Text(actions.strings.resetToDefault)
+                .font(.body)
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(isDisabled ? Color.secondary : Color.accentColor)
+        .disabled(isDisabled)
+        .accessibilityIdentifier(ReaderAccessibilityIdentifiers.textSettingsResetButton)
+    }
+
+    @ViewBuilder
+    private func textSettingSliderRow(
+        title: String,
+        valueLabel: String,
+        valueAccessibilityIdentifier: String,
+        value: Double,
+        range: ClosedRange<Double>,
+        step: Double?,
+        onValueChange: @escaping (Double) -> Void
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(title)
+                Spacer()
+                Text(valueLabel)
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier(valueAccessibilityIdentifier)
             }
 
-            Text("\(Int(fontSize))px")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            if let step {
+                Slider(
+                    value: Binding(
+                        get: { value },
+                        set: onValueChange
+                    ),
+                    in: range,
+                    step: step
+                )
+            } else {
+                Slider(
+                    value: Binding(
+                        get: { value },
+                        set: onValueChange
+                    ),
+                    in: range
+                )
+            }
         }
-        .padding()
-        .accessibilityIdentifier(ReaderAccessibilityIdentifiers.fontSizeSheet)
+        .padding(.vertical, 4)
+    }
+
+    private func fontSizeValueLabel(_ fontSize: Double) -> String {
+        "\(Int(fontSize))"
+    }
+
+    private func lineHeightValueLabel(_ lineHeight: Double) -> String {
+        let tenths = 15 + Int(lineHeight)
+        return "\(tenths / 10).\(tenths % 10)"
     }
 
     private func updateFontSizeWithJS(_ newFontSize: Double) {
         guard let webContent = webContent else { return }
         let script = """
             document.getElementById("container").style.fontSize = "\(Int(newFontSize))" + "px";
-            document.getElementById("container").style.lineHeight = "1.5em";
+        """
+        webContent.evaluateJavaScript(script)
+    }
+
+    // Mirror of Kotlin readerLineHeightToCss + readerLineHeightJs - keep in sync.
+    private func updateLineHeightWithJS(_ lineHeight: Double) {
+        guard let webContent = webContent else { return }
+        let tenths = 15 + Int(lineHeight)
+        let lineHeightCss = "\(tenths / 10).\(tenths % 10)"
+        let script = """
+            (function() {
+              var styleId = "__feedflow_line_height_style";
+              var style = document.getElementById(styleId);
+              if (!style) {
+                style = document.createElement("style");
+                style.id = styleId;
+                document.head.appendChild(style);
+              }
+              style.textContent = "body, #__content { line-height: \(lineHeightCss); }";
+            })();
         """
         webContent.evaluateJavaScript(script)
     }

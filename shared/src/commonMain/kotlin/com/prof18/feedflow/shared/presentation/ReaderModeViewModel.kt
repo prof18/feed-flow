@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsingResult
+import com.prof18.feedflow.core.model.ReaderFontSettings
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.canOpenReaderMode
@@ -37,10 +38,13 @@ class ReaderModeViewModel internal constructor(
     )
     val readerModeState = readerModeMutableState.asStateFlow()
 
-    private val readerFontSizeMutableState: MutableStateFlow<Int> = MutableStateFlow(
-        settingsRepository.getReaderModeFontSize(),
+    private val readerFontSettingsMutableState: MutableStateFlow<ReaderFontSettings> = MutableStateFlow(
+        ReaderFontSettings(
+            fontSize = settingsRepository.getReaderModeFontSize(),
+            lineHeight = settingsRepository.getReaderModeLineHeight(),
+        ),
     )
-    val readerFontSizeState = readerFontSizeMutableState.asStateFlow()
+    val readerFontSettingsState = readerFontSettingsMutableState.asStateFlow()
 
     private val canNavigateToPreviousMutableState = MutableStateFlow(false)
     val canNavigateToPreviousState = canNavigateToPreviousMutableState.asStateFlow()
@@ -105,6 +109,7 @@ class ReaderModeViewModel internal constructor(
                             url = urlInfo.url,
                             baseUrl = baseUrl,
                             fontSize = settingsRepository.getReaderModeFontSize(),
+                            lineHeight = settingsRepository.getReaderModeLineHeight(),
                             isBookmarked = urlInfo.isBookmarked,
                             commentsUrl = urlInfo.commentsUrl,
                             imageUrl = urlInfo.imageUrl,
@@ -131,6 +136,7 @@ class ReaderModeViewModel internal constructor(
                         url = urlInfo.url,
                         baseUrl = baseUrl,
                         fontSize = settingsRepository.getReaderModeFontSize(),
+                        lineHeight = settingsRepository.getReaderModeLineHeight(),
                         isBookmarked = urlInfo.isBookmarked,
                         commentsUrl = urlInfo.commentsUrl,
                         imageUrl = urlInfo.imageUrl,
@@ -149,7 +155,12 @@ class ReaderModeViewModel internal constructor(
 
     fun updateFontSize(newFontSize: Int) {
         settingsRepository.setReaderModeFontSize(newFontSize)
-        readerFontSizeMutableState.update { newFontSize }
+        readerFontSettingsMutableState.update { it.copy(fontSize = newFontSize) }
+    }
+
+    fun updateLineHeight(newLineHeight: Int) {
+        settingsRepository.setReaderModeLineHeight(newLineHeight)
+        readerFontSettingsMutableState.update { it.copy(lineHeight = newLineHeight) }
     }
 
     fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {

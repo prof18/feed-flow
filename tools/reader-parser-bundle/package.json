@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@mozilla/readability": "0.6.0",
-    "turndown": "github:mixmark-io/turndown#6bc99188006a9c2b413cd3229adcb7d73cb00394"
+    "turndown": "github:mixmark-io/turndown#fb7a865ef5eba4081dfd4e20a894a61ef7a2edca"
   },
   "devDependencies": {
     "@babel/core": "7.26.0",

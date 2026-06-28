@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.AnnotatedString
@@ -46,6 +47,7 @@ internal fun HoverAwareMarkdownNodeText(
 
     HoverAwareMarkdownText(
         content = styledText,
+        node = childNode,
         style = style,
         onHoveredLinkChange = onHoveredLinkChange,
         modifier = modifier,
@@ -56,6 +58,7 @@ internal fun HoverAwareMarkdownNodeText(
 @OptIn(ExperimentalComposeUiApi::class)
 internal fun HoverAwareMarkdownText(
     content: AnnotatedString,
+    node: ASTNode,
     style: TextStyle,
     onHoveredLinkChange: (String?) -> Unit,
     modifier: Modifier = Modifier,
@@ -64,6 +67,7 @@ internal fun HoverAwareMarkdownText(
 
     MarkdownText(
         content = content,
+        node = node,
         style = style,
         modifier = modifier
             .onPointerEvent(PointerEventType.Move) { pointerEvent ->
@@ -73,7 +77,7 @@ internal fun HoverAwareMarkdownText(
             .onPointerEvent(PointerEventType.Exit) {
                 onHoveredLinkChange(null)
             },
-        onTextLayout = { result, _ ->
+        onTextLayout = { result: TextLayoutResult, _: Color? ->
             layoutResult = result
         },
     )

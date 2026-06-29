@@ -386,4 +386,9 @@
     <string name="sort_and_filter_button">Сортиране и филтриране</string>
     <string name="greader_bad_token_sync_error_message">Сървърът отхвърли токена за синхронизация. Ако вашата услуга, съвместима с Google Reader, се намира зад обратен прокси сървър, уверете се, че той препраща заглавката Авторизация.</string>
     <string name="miniflux_bad_token_error_message">Влизането е успешно, но Miniflux отхвърли токена за синхронизация. Ако Miniflux се намира зад обратен прокси сървър, уверете се, че той препраща заглавката Авторизация.</string>
+    <string name="reader_mode_line_height">Височина на реда</string>
+    <string name="reader_mode_text_settings">Настройки на текста</string>
+    <string name="reader_mode_reset_to_default">Възстановяване на фабричните настройки</string>
+    <string name="increase_line_height_button_content_description">Увеличаване на височината на реда</string>
+    <string name="decrease_line_height_button_content_description">Намаляване на височината на реда</string>
 </resources>

@@ -18,6 +18,8 @@ struct HomeContent: View {
     private var browserSelector
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass
+    @Environment(\.dynamicTypeSize)
+    var dynamicTypeSize
 
     @Environment(\.dismiss)
     private var dismiss

@@ -92,19 +92,29 @@ extension HomeContent {
                     .padding(.trailing, Spacing.small)
                     .layoutPriority(1)
             }
-            .fixedSize(horizontal: true, vertical: false)
+            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+            .fixedSize(horizontal: true, vertical: true)
             .layoutPriority(1)
         }
     }
 
     var compactPhoneHeaderMaxWidth: CGFloat {
+        let dynamicTypeWidth: CGFloat
+        if dynamicTypeSize.isAccessibilitySize {
+            dynamicTypeWidth = 56
+        } else if dynamicTypeSize >= .xLarge {
+            dynamicTypeWidth = 24
+        } else {
+            dynamicTypeWidth = 0
+        }
+
         switch getDeviceType() {
         case .iphonePortrait:
-            return 148
+            return 148 + dynamicTypeWidth
         case .iphoneLandscape:
-            return 320
+            return 320 + dynamicTypeWidth
         case .ipad:
-            return 220
+            return 220 + dynamicTypeWidth
         }
     }
 
@@ -119,20 +129,34 @@ extension HomeContent {
     }
 
     func makeCompactPhoneHeaderText() -> some View {
-        VStack(alignment: .leading, spacing: shouldShowUnreadCount ? Spacing.xxsmall : 0) {
-            Text(getCompactToolbarTitle(feedFilter: currentFeedFilter))
-                .font(.headline)
-                .foregroundStyle(.primary)
-                .lineLimit(1)
-                .truncationMode(.tail)
+        HStack(alignment: .center, spacing: Spacing.small) {
+            compactPhoneHeaderTitle
+                .layoutPriority(1)
 
-            Text(unreadCount.formatted())
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .monospacedDigit()
-                .frame(height: shouldShowUnreadCount ? nil : 0)
-                .clipped()
+            if shouldShowUnreadCount {
+                UnreadCountBadge(count: unreadCount)
+                    .layoutPriority(2)
+            }
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(compactPhoneHeaderAccessibilityLabel)
+    }
+
+    var compactPhoneHeaderTitle: some View {
+        Text(getCompactToolbarTitle(feedFilter: currentFeedFilter))
+            .font(.headline)
+            .foregroundStyle(.primary)
+            .lineLimit(1)
+            .truncationMode(.tail)
+    }
+
+    var compactPhoneHeaderAccessibilityLabel: String {
+        let title = getCompactToolbarTitle(feedFilter: currentFeedFilter)
+        if shouldShowUnreadCount {
+            return "\(title), \(unreadCount.formatted())"
+        } else {
+            return title
         }
     }
 

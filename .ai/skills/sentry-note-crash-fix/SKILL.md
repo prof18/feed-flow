@@ -25,19 +25,26 @@ description: Investigate and fix FeedFlow crashes from Sentry triage notes. Use 
    - Include production facts: first/last seen, occurrence count, release, environment, platform/runtime.
    - Avoid dumping raw stack traces; quote only the important frames or summarize.
 
-4. Inspect the repo before deciding on a fix.
+4. Decide whether the issue is worth fixing.
+   - Use the live Sentry context when available to judge impact: affected users, occurrence count, recurrence, releases, platforms, environments, and whether it is still happening.
+   - It is acceptable to skip implementation when the issue is too exotic, affects only one or a very small number of users, depends on a very unusual local setup, or is a strange edge case with no clear product impact.
+   - Also skip when the app is already handling the situation correctly and the report is just noise from expected user/environment failure, unavailable local resources, cancellation, or telemetry classification.
+   - When skipping, do not invent a fix or do speculative hardening. Explain the skip reason, mention any uncertainty such as missing Sentry auth or stale counts, and stop without code changes unless the user explicitly asks to address the noise.
+   - If the impact is unclear but plausibly significant, keep investigating before deciding.
+
+5. Inspect the repo before deciding on a fix.
    - Search with `rg` for the first-party symbols, imported library package names, dependency aliases, and failing API calls.
    - Check current dependency versions in `gradle/libs.versions.toml` and module `build.gradle.kts` files.
    - If the suspected fix depends on current external package versions or migration docs, verify with authoritative sources: official docs, Maven metadata, GitHub releases, or vendor docs. Use web/curl as needed.
 
-5. Implement the root-cause fix.
+6. Implement the root-cause fix.
    - Prefer a narrow change that removes or guards the crashing path.
    - Follow existing project patterns and AGENTS.md rules.
    - If the fix is a dependency migration, import only the required new module and remove unused old dependencies.
    - If the fix changes business logic, add or update focused tests.
    - Use `apply_patch` for manual edits.
 
-6. Validate.
+7. Validate.
    - Build only the affected platform first for fast feedback.
    - For desktop changes, run `./gradlew --quiet --console=plain :desktopApp:compileKotlinJvm`.
    - For shared/Kotlin/Android/Desktop changes, run `./gradlew --quiet --console=plain detekt allTests` before handoff.
@@ -45,8 +52,9 @@ description: Investigate and fix FeedFlow crashes from Sentry triage notes. Use 
    - If iOS code changed, follow the repo iOS build/format instructions.
    - If a UI was affected and the user wants to test, launch the app and leave the run session alive; otherwise stop long-running app sessions before final handoff.
 
-7. Report outcome.
+8. Report outcome.
    - State why it was failing, what changed, and which validation passed.
+   - If skipped, state that no code was changed and give the concrete reason it was not worth addressing.
    - Reference changed files with clickable absolute links.
    - Mention any remaining uncertainty, such as inability to reproduce locally or missing Sentry auth.
 

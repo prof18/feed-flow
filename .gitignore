@@ -145,6 +145,7 @@ iosApp/.swiftpm/
 /.junie/memory/feedback.md
 /.junie/memory/tasks.md
 /.tmp/
+/.air/
 tmp
 .claude/worktrees
 .claude/settings.local.json

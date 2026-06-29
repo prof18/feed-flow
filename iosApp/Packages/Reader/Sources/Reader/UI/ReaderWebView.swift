@@ -77,5 +77,8 @@ private func isValidImageUrl(_ url: URL) -> Bool {
                      host.contains("0.0.0.0") ||
                      host.contains("::1")
 
-    return isHttpUrl && !isLocalhost
+    let pathExtension = url.pathExtension.lowercased()
+    let isUnsupportedFullscreenFormat = ["pdf", "svg", "svgz"].contains(pathExtension)
+
+    return isHttpUrl && !isLocalhost && !isUnsupportedFullscreenFormat
 }

@@ -386,4 +386,9 @@
     <string name="rename_category">重命名类别</string>
     <string name="greader_bad_token_sync_error_message">服务器拒绝了同步令牌。如果您的 Google Reader 兼容服务位于反向代理之后，请确保其转发了授权标头。</string>
     <string name="miniflux_bad_token_error_message">登录成功，但 Miniflux 拒绝了同步令牌。如果 Miniflux 位于反向代理之后，请确保其转发了授权标头。</string>
+    <string name="reader_mode_line_height">行高</string>
+    <string name="reader_mode_text_settings">文本设置</string>
+    <string name="reader_mode_reset_to_default">重置为默认</string>
+    <string name="increase_line_height_button_content_description">增加行高</string>
+    <string name="decrease_line_height_button_content_description">降低行高</string>
 </resources>

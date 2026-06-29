@@ -384,4 +384,6 @@
     <string name="add_feed_anyway_acknowledgement">Ce flux n\'a pas été vérifié. Le système tentera tout de même de le récupérer, et il pourra être supprimé ultérieurement s\'il ne fonctionne pas.</string>
     <string name="add_feed_anyway_button">Ajouter quand même</string>
     <string name="sort_and_filter_button">Trier &amp; filtrer</string>
+    <string name="reader_mode_text_settings">Paramètres du texte</string>
+    <string name="reader_mode_reset_to_default">Réinitialiser</string>
 </resources>

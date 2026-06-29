@@ -1,5 +1,5 @@
 [versions]
-about-libraries = "14.2.1"
+about-libraries = "15.0.2"
 activity-compose = "1.13.0"
 android-compile-sdk = "37"
 android-gradle-plugin = "9.2.1"

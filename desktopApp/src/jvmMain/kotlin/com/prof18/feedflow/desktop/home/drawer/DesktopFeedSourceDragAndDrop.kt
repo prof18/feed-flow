@@ -229,6 +229,7 @@ internal fun Modifier.dropTargetModifier(
         .then(highlightModifier)
 }
 
+@Suppress("ModifierComposed")
 internal fun Modifier.feedSourceDragSource(
     dragState: FeedSourceDragState,
     feedSource: FeedSource,

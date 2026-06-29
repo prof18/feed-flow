@@ -16,6 +16,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 
+@Suppress("ModifierComposed")
 actual fun Modifier.singleAndLongClickModifier(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)?,

@@ -1067,6 +1067,10 @@ Compose:
     # treatAsLambda: MyLambdaType
   CompositionLocalAllowlist:
     active: true
+    allowedCompositionLocals:
+      - LocalComposeWindow
+      - LocalFeedFlowStrings
+      - LocalReduceMotion
   CompositionLocalNaming:
     active: true
   ContentEmitterReturningValues:

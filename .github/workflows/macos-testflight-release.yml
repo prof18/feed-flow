@@ -122,7 +122,7 @@ jobs:
           echo "tdeck_app_id=$TDECK_APP_ID" >> desktopApp/src/jvmMain/resources/props.properties
         env:
           SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
-          VERSION: ${{ inputs.version }}
+          VERSION: ${{ steps.version.outputs.version }}
           DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
           TDECK_SALT: ${{ secrets.TDECK_SALT }}
           TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}

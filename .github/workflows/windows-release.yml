@@ -88,8 +88,8 @@ jobs:
           "sentry_dns=$env:SENTRY_DNS" >> desktopApp/src/jvmMain/resources/props.properties
           "version=$env:VERSION" >> desktopApp/src/jvmMain/resources/props.properties
           "dropbox_key=$env:DROPBOX_API_KEY" >> desktopApp/src/jvmMain/resources/props.properties
-          "tdeck_app_id=$env:DROPBOX_API_KEY" >> desktopApp/src/jvmMain/resources/props.properties
-          "tdeck_salt=$env:DROPBOX_API_KEY" >> desktopApp/src/jvmMain/resources/props.properties
+          "tdeck_app_id=$env:TDECK_APP_ID" >> desktopApp/src/jvmMain/resources/props.properties
+          "tdeck_salt=$env:TDECK_SALT" >> desktopApp/src/jvmMain/resources/props.properties
         env:
           SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
           VERSION: ${{ steps.version.outputs.version }}

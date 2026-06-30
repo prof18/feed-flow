@@ -33,16 +33,18 @@ Optional live-store checks:
    - `App translations`: new locale folders, modified `strings.xml`, removed strings, or regenerated locale code.
    - `Completed translations`: locales whose `strings.xml` now has the same string-key set as `values/strings.xml`, ignoring files outside the app-string path.
    - `Store copy`: changes under `assets/storecopy` or generated Play listing text files.
+   - `Completed store copy`: locales under `assets/storecopy/<locale>/` whose store-facing source copy is fully translated and ready in the codebase compared with `assets/storecopy/base/`.
    - `Screenshot copy`: changes under `assets/screenshotcopy`.
+   - `Completed screenshot copy`: locales under `assets/screenshotcopy/<locale>/` whose screenshot text is fully translated and ready in the codebase compared with `assets/screenshotcopy/base/`.
    - `Screenshot assets`: changed PNG/WebP screenshot files or screenshot metadata.
 3. For app translations, compare every changed locale file against `i18n/src/commonMain/resources/locale/values/strings.xml`.
    - Report missing keys and extra keys by locale.
    - Treat a locale as completed only when no keys are missing.
 4. For store copy, flag the operational action:
-   - Source copy changed under `assets/storecopy`: Play/App/Microsoft store metadata may need syncing or upload.
+   - Source copy changed under `assets/storecopy`: Play/App/Microsoft store metadata may need syncing or upload only when the changed locale's store copy is fully translated in the codebase.
    - Generated Play listing text changed under `androidApp/src/googlePlay/play/listings`: Google Play metadata has changed and may need upload.
 5. For screenshot copy/assets, flag the operational action:
-   - `assets/screenshotcopy` changed: localized screenshot generation may be needed.
+   - `assets/screenshotcopy` changed: localized screenshot generation may be needed only when the changed locale's screenshot copy is fully translated in the codebase.
    - Store listing screenshot images changed: store screenshots may need upload.
    - Website screenshot assets changed: website screenshot gallery/hero may need deploy.
 6. If live store checking is requested or this is the weekly automation, compare against current store state when credentials are available.
@@ -53,7 +55,9 @@ Optional live-store checks:
    - Use the `## marketing` lane for store listing, ASO, screenshot, and store localization release work.
    - Preserve the kanban Markdown format: add one `- [ ] ...` item per action under the lane.
    - Keep TODO text short and concrete, for example `- [ ] Sync App Store metadata for Italian, Russian, and French`.
-   - Do not add TODOs for app-string translation gaps, non-actionable status, credential setup noise, or findings already represented by an existing unchecked board item.
+   - Do not add TODOs just because a translation was created or changed. Add TODOs only after verifying the relevant source copy is complete in the repo: store metadata cards require complete `assets/storecopy/<locale>/` content; screenshot cards require complete `assets/screenshotcopy/<locale>/` content.
+   - Keep store metadata follow-up and screenshot generation/upload follow-up as separate board cards when both apply.
+   - Do not add TODOs for app-string translation gaps, incomplete store/screenshot copy, non-actionable status, credential setup noise, or findings already represented by an existing unchecked board item.
    - If the board is unavailable or cannot be edited, include the TODO text in the final report under `Action needed` instead.
 
 ## Live Store Checks
@@ -142,7 +146,9 @@ When store action is needed, write a compact board item so the work is not lost 
 - Store metadata stale: `- [ ] Sync stale App Store metadata for <locales>`
 - Play metadata stale: `- [ ] Sync stale Google Play metadata for <locales>`
 - Screenshots stale or incomplete: `- [ ] Regenerate/upload localized screenshots for <locales/platforms>`
-- Store locale scaffold incomplete: `- [ ] Complete store and screenshot copy for <locale>`
+- Store copy complete in repo but not shipped: `- [ ] Sync localized store metadata for <locales>`
+- Screenshot copy complete in repo but screenshots not regenerated/uploaded: `- [ ] Create localized screenshots for <locales>`
+- Store or screenshot locale scaffold incomplete: report only; do not create a board item until the relevant source copy is complete.
 
 Before editing the board, read the existing `## marketing` lane and avoid duplicates by matching the main noun phrase and locale/platform names. Insert new items near related store-copy or conversion-analysis tasks. Do not create separate Obsidian notes unless the user asks.
 

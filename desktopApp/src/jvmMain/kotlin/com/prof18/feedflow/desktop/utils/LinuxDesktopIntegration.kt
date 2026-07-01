@@ -90,7 +90,8 @@ private fun updateDesktopDatabase(applicationsDir: File) {
 }
 
 private fun installIcon(appDir: String?) {
-    val iconsDir = File(xdgDataHome(), "icons/hicolor/$ICON_SIZE_DIR/apps").apply { mkdirs() }
+    val hicolorDir = File(xdgDataHome(), "icons/hicolor")
+    val iconsDir = File(hicolorDir, "$ICON_SIZE_DIR/apps").apply { mkdirs() }
     val target = File(iconsDir, "$APP_ID.png")
     if (target.exists()) return
 
@@ -102,4 +103,19 @@ private fun installIcon(appDir: String?) {
     } ?: return
 
     source.copyTo(target, overwrite = true)
+    // A stale icon-theme.cache built before this file existed actively hides the
+    // new icon, so GNOME shows a generic one until the cache is rebuilt (often
+    // not until next login). Refresh it so the app icon resolves on first run.
+    updateIconCache(hicolorDir)
+}
+
+private fun updateIconCache(hicolorDir: File) {
+    try {
+        ProcessBuilder("gtk-update-icon-cache", "-f", "-t", hicolorDir.absolutePath)
+            .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+            .redirectError(ProcessBuilder.Redirect.DISCARD)
+            .start()
+    } catch (_: Exception) {
+        // gtk-update-icon-cache may be absent; the icon file is still valid on disk.
+    }
 }

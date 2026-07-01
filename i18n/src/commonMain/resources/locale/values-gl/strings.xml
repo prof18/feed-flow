@@ -384,4 +384,11 @@
     <string name="add_feed_anyway_button">Engadir igualmente</string>
     <string name="sort_and_filter_button">Orde e filtros</string>
     <string name="rename_category">Cambiar nome á categoría</string>
+    <string name="reader_mode_line_height">Altura da liña</string>
+    <string name="reader_mode_text_settings">Axustes do texto</string>
+    <string name="reader_mode_reset_to_default">Restablecer predeterminados</string>
+    <string name="greader_bad_token_sync_error_message">O servidor rexeitou o token de sincronización. Se o teu servizo compatible con Google Reader está detrás dun mandatario inverso, comproba que reenvía a cabeceira Authorization.</string>
+    <string name="miniflux_bad_token_error_message">Acceso correcto, pero Miniflux rexeitou o token de sincronización. Se Miniflux está detrás dun mandatario inverso, comproba que reenvía a cabeceira Authorization.</string>
+    <string name="increase_line_height_button_content_description">Aumentar altura da liña</string>
+    <string name="decrease_line_height_button_content_description">Diminuír altura da liña</string>
 </resources>

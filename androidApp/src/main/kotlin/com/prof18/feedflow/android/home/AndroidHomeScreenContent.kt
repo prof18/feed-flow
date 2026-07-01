@@ -31,10 +31,13 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -89,11 +92,26 @@ fun AndroidHomeScreenContent(
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
+    val hasFeedItems = displayState.feedItems.isNotEmpty()
+    val isShowingEmptyFeed = displayState.feedUpdateStatus !is NoFeedSourcesStatus &&
+        !displayState.feedUpdateStatus.isLoading() &&
+        !hasFeedItems
+    var scrollToTopWhenItemsReturn by remember { mutableStateOf(isShowingEmptyFeed) }
 
     @Suppress("MagicNumber")
     val showScrollToTopButton by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 1
+        }
+    }
+
+    LaunchedEffect(isShowingEmptyFeed, hasFeedItems) {
+        when {
+            isShowingEmptyFeed -> scrollToTopWhenItemsReturn = true
+            hasFeedItems && scrollToTopWhenItemsReturn -> {
+                listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                scrollToTopWhenItemsReturn = false
+            }
         }
     }
 

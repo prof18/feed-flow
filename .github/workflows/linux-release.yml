@@ -50,7 +50,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Update Licenses file
-        run: ./gradlew --quiet --console=plain desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
+        run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
 
       - name: Create path variables
         id: path_variables
@@ -100,7 +100,7 @@ jobs:
           TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
 
       - name: Create RPM, DEB & staged AppImage
-        run: ./gradlew --quiet --console=plain packageReleaseDeb packageReleaseRpm :desktopApp:packageReleaseAppImage
+        run: ./gradlew packageReleaseDeb packageReleaseRpm :desktopApp:packageReleaseAppImage
 
       - name: Create AppImage
         run: .scripts/package-appimage.sh

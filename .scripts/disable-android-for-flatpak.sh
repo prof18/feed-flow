@@ -10,8 +10,24 @@ disable_android_in_file() {
     # Use awk for more robust pattern matching
     awk '
     BEGIN { in_android_block = 0; brace_count = 0 }
+
+    # Leave already-commented lines untouched so the script is idempotent.
+    /^[[:space:]]*\/\// {
+        print
+        next
+    }
     
-    # Match androidLibrary lines
+    # Match KMP Android target lines
+    /^[[:space:]]*androidTarget/ {
+        print "// " $0
+        if ($0 ~ /{[[:space:]]*$/) {
+            in_android_block = 1
+            brace_count = 1
+        }
+        next
+    }
+
+    # Match AGP 9 KMP Android library target lines
     /^[[:space:]]*androidLibrary/ {
         print "// " $0
         if ($0 ~ /{[[:space:]]*$/) {
@@ -59,6 +75,27 @@ disable_android_in_file() {
 
     # Match Android plugin applications
     /alias\(libs\.plugins\.android\./ {
+        print "// " $0
+        next
+    }
+
+    # Match Android-only publishing and service plugins
+    /alias\(libs\.plugins\.triplet\.play\)/ {
+        print "// " $0
+        next
+    }
+
+    /alias\(libs\.plugins\.crashlytics\)/ {
+        print "// " $0
+        next
+    }
+
+    /alias\(libs\.plugins\.google\.services\)/ {
+        print "// " $0
+        next
+    }
+
+    /alias\(libs\.plugins\.about\.libraries\.android\)/ {
         print "// " $0
         next
     }
@@ -124,6 +161,18 @@ disable_android_in_file() {
     }
 
     /getByName\("androidHostTest"\)/ {
+        print "// " $0
+        in_android_block = 1
+        # Check if opening brace is on same line
+        if ($0 ~ /{/) {
+            brace_count = 1
+        } else {
+            brace_count = -1  # Look for opening brace on next line
+        }
+        next
+    }
+
+    /^[[:space:]]*val androidUnitTest/ {
         print "// " $0
         in_android_block = 1
         # Check if opening brace is on same line

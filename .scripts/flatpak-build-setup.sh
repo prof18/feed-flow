@@ -13,20 +13,25 @@ echo "version=1.14.0" >> desktopApp/src/jvmMain/resources/props.properties
 echo "flatpak=true" >> desktopApp/src/jvmMain/resources/props.properties
 
 # Update Gradle wrapper distribution URL
-sed -i s/distributionUrl.*/distributionUrl=gradle-bin.zip/ gradle/wrapper/gradle-wrapper.properties
+sed 's/distributionUrl.*/distributionUrl=gradle-bin.zip/' gradle/wrapper/gradle-wrapper.properties > gradle/wrapper/gradle-wrapper.properties.tmp &&
+  mv gradle/wrapper/gradle-wrapper.properties.tmp gradle/wrapper/gradle-wrapper.properties
 
 # Comment out Android-specific plugins in build.gradle.kts
-sed -i \
+sed \
+  -e 's/alias(libs\.plugins\.android\.application) apply false/\/\/ &/' \
+  -e 's/alias(libs\.plugins\.android\.library) apply false/\/\/ &/' \
   -e 's/alias(libs\.plugins\.triplet\.play) apply false/\/\/ &/' \
   -e 's/alias(libs\.plugins\.crashlytics) apply false/\/\/ &/' \
   -e 's/alias(libs\.plugins\.google\.services) apply false/\/\/ &/' \
   -e 's/alias(libs\.plugins\.about\.libraries\.android) apply false/\/\/ &/' \
-  build.gradle.kts
+  build.gradle.kts > build.gradle.kts.tmp &&
+  mv build.gradle.kts.tmp build.gradle.kts
 
 # Replace JetBrains JDK 17 toolchain with OpenJDK 21
-find . -name "*.gradle.kts" -exec sed -i \
- -e 's/vendor\s*=\s*JvmVendorSpec\.JETBRAINS/\/\/ vendor = JvmVendorSpec.JETBRAINS/' \
- {} \;
+find . -name "*.gradle.kts" -type f | while read -r file; do
+  sed 's/vendor[[:space:]]*=[[:space:]]*JvmVendorSpec\.JETBRAINS/\/\/ vendor = JvmVendorSpec.JETBRAINS/' "$file" > "$file.tmp" &&
+    mv "$file.tmp" "$file"
+done
 
 # Disable toolchain auto-provisioning
 echo "org.gradle.java.installations.auto-detect=false" >> gradle.properties

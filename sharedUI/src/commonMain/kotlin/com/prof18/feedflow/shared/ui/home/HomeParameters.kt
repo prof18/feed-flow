@@ -32,6 +32,7 @@ data class HomeDisplayState(
     val nextFeedDisplayState: NextFeedDisplayState,
     val swipeActions: SwipeActions,
     val feedLayout: FeedLayout,
+    val isGridLayoutEnabled: Boolean,
     val isSyncUploadRequired: Boolean = false,
     val feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
 )

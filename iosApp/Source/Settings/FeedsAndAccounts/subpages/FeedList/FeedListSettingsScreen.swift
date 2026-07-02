@@ -17,6 +17,7 @@ struct FeedListSettingsScreen: View {
         dateFormat: .normal,
         timeFormat: .hours24,
         feedLayout: .list,
+        isGridLayoutEnabled: false,
         fontScale: 0,
         leftSwipeActionType: .toggleReadStatus,
         rightSwipeActionType: .toggleBookmarkStatus,
@@ -66,6 +67,10 @@ struct FeedListSettingsScreen: View {
                 get: { settingsState.feedLayout },
                 set: { vmStoreOwner.instance.updateFeedLayout(feedLayout: $0) }
             ),
+            isGridLayoutEnabled: Binding(
+                get: { settingsState.isGridLayoutEnabled },
+                set: { vmStoreOwner.instance.updateGridLayoutEnabled(isEnabled: $0) }
+            ),
             leftSwipeAction: Binding(
                 get: { settingsState.leftSwipeActionType },
                 set: { vmStoreOwner.instance.updateSwipeAction(direction: .left, action: $0) }
@@ -100,6 +105,9 @@ struct FeedListSettingsScreen: View {
         )
         .navigationTitle(Text(feedFlowStrings.settingsFeedListTitle))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Color.secondaryBackgroundColor, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .background(Color.secondaryBackgroundColor.ignoresSafeArea())
         .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in vmStoreOwner.instance.state {

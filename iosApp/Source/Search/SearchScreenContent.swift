@@ -83,7 +83,13 @@ struct SearchScreenContent: View {
         Button {
             handleSearchItemTap(feedItem: feedItem)
         } label: {
-            FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes, feedItemDisplaySettings: feedItemDisplaySettings)
+            FeedItemView(
+                feedItem: feedItem,
+                index: index,
+                feedFontSizes: feedFontSizes,
+                feedLayout: currentFeedLayout,
+                feedItemDisplaySettings: feedItemDisplaySettings
+            )
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier(FeedItemAccessibilityIdentifiers.row(feedItem.id))
@@ -96,6 +102,13 @@ struct SearchScreenContent: View {
                 .environment(browserSelector)
                 .environment(appState)
         }
+    }
+
+    private var currentFeedLayout: FeedLayout {
+        guard case let .dataFound(state) = onEnum(of: searchState) else {
+            return .list
+        }
+        return state.feedLayout
     }
 
     private func handleSearchItemTap(feedItem: FeedItem) {

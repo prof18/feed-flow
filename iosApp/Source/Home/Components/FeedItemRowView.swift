@@ -15,7 +15,9 @@ struct FeedItemRowView: View {
   let feedFontSizes: FeedFontSizes
   let swipeActions: SwipeActions
   let feedLayout: FeedLayout
+  var isGridCell = false
   let currentFeedFilter: FeedFilter
+  var allowsSwipeActions = true
   var feedItemDisplaySettings = FeedItemDisplaySettings(
     isHideUnreadDotEnabled: false,
     isHideFeedSourceEnabled: false,
@@ -81,6 +83,7 @@ struct FeedItemRowView: View {
           index: index,
           feedFontSizes: feedFontSizes,
           feedLayout: feedLayout,
+          isGridCell: isGridCell,
           currentFeedFilter: currentFeedFilter,
           feedItemDisplaySettings: feedItemDisplaySettings
         )
@@ -92,12 +95,12 @@ struct FeedItemRowView: View {
     .id(feedItem.id)
     .listRowInsets(EdgeInsets())
     .hoverEffect()
-    .if(swipeActions.leftSwipeAction != .none) { view in
+    .if(allowsSwipeActions && swipeActions.leftSwipeAction != .none) { view in
       view.swipeActions(edge: .trailing) {
         swipeActionButton(for: swipeActions.leftSwipeAction)
       }
     }
-    .if(swipeActions.rightSwipeAction != .none) { view in
+    .if(allowsSwipeActions && swipeActions.rightSwipeAction != .none) { view in
       view.swipeActions(edge: .leading) {
         swipeActionButton(for: swipeActions.rightSwipeAction)
       }
@@ -142,14 +145,6 @@ struct FeedItemRowView: View {
   ) -> some View {
     Button(action: action) {
       Image(systemName: isToggled ? toggledImageName : untoggledImageName)
-        .if(feedLayout == .card) { image in
-          image
-            .symbolRenderingMode(.palette)
-            .foregroundStyle(Color.accentColor, Color.accentColor)
-        }
-    }
-    .if(feedLayout == .card) { button in
-      button.tint(Color(.systemBackground))
     }
   }
 
@@ -160,14 +155,6 @@ struct FeedItemRowView: View {
   ) -> some View {
     Button(action: action) {
       Image(systemName: systemImageName)
-        .if(feedLayout == .card) { image in
-          image
-            .symbolRenderingMode(.palette)
-            .foregroundStyle(Color.accentColor, Color.accentColor)
-        }
-    }
-    .if(feedLayout == .card) { button in
-      button.tint(Color(.systemBackground))
     }
   }
 

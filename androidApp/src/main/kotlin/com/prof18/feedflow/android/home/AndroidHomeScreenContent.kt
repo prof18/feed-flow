@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +48,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
 import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
@@ -82,6 +85,7 @@ fun AndroidHomeScreenContent(
     onFeedOrderChange: (FeedOrder) -> Unit,
     onShowReadArticlesTimelineChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     showDrawerMenu: Boolean = false,
     isDrawerOpen: Boolean = false,
     onDrawerMenuClick: () -> Unit = {},
@@ -97,11 +101,16 @@ fun AndroidHomeScreenContent(
         !displayState.feedUpdateStatus.isLoading() &&
         !hasFeedItems
     var scrollToTopWhenItemsReturn by remember { mutableStateOf(isShowingEmptyFeed) }
+    var isGridArrangement by remember { mutableStateOf(false) }
 
     @Suppress("MagicNumber")
     val showScrollToTopButton by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex > 1
+            shouldShowScrollToTopButton(
+                isGridArrangement = isGridArrangement,
+                listState = listState,
+                gridState = gridState,
+            )
         }
     }
 
@@ -109,14 +118,22 @@ fun AndroidHomeScreenContent(
         when {
             isShowingEmptyFeed -> scrollToTopWhenItemsReturn = true
             hasFeedItems && scrollToTopWhenItemsReturn -> {
-                listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                scrollFeedToTop(
+                    isGridArrangement = isGridArrangement,
+                    listState = listState,
+                    gridState = gridState,
+                    reduceMotionEnabled = reduceMotionEnabled,
+                )
                 scrollToTopWhenItemsReturn = false
             }
         }
     }
 
+    val contentContainerColor = displayState.feedLayout.contentContainerColor()
+
     Scaffold(
         modifier = modifier,
+        containerColor = contentContainerColor,
         snackbarHost = {
             SnackbarHost(snackbarHostState) { data ->
                 val dismissState = rememberSwipeToDismissBoxState(
@@ -140,7 +157,12 @@ fun AndroidHomeScreenContent(
                 visible = showScrollToTopButton,
                 onClick = {
                     scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                        scrollFeedToTop(
+                            isGridArrangement = isGridArrangement,
+                            listState = listState,
+                            gridState = gridState,
+                            reduceMotionEnabled = reduceMotionEnabled,
+                        )
                     }
                 },
             )
@@ -154,6 +176,7 @@ fun AndroidHomeScreenContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(contentContainerColor)
                 .padding(start = innerPadding.calculateLeftPadding(layoutDir))
                 .padding(end = innerPadding.calculateRightPadding(layoutDir)),
         ) {
@@ -216,16 +239,18 @@ fun AndroidHomeScreenContent(
                                     modifier = Modifier.fillMaxSize(),
                                     contentAlignment = Alignment.TopCenter,
                                 ) {
+                                    val feedListWidthModifier = displayState.feedLayout.feedListWidthModifier(
+                                        isGridLayoutEnabled = displayState.isGridLayoutEnabled,
+                                    )
+
                                     Box(
-                                        modifier = Modifier
-                                            .widthIn(max = FeedListMaxContentWidth)
-                                            .fillMaxWidth()
-                                            .fillMaxHeight(),
+                                        modifier = feedListWidthModifier.fillMaxHeight(),
                                     ) {
                                         FeedList(
                                             modifier = Modifier.fillMaxSize(),
                                             feedItems = displayState.feedItems,
                                             listState = listState,
+                                            gridState = gridState,
                                             contentPadding = PaddingValues(top = feedListTopPadding),
                                             feedFontSize = displayState.feedFontSizes,
                                             nextFeedState = displayState.nextFeedDisplayState,
@@ -234,6 +259,7 @@ fun AndroidHomeScreenContent(
                                             currentFeedFilter = displayState.currentFeedFilter,
                                             swipeActions = displayState.swipeActions,
                                             requestMoreItems = feedListActions.requestNewData,
+                                            onGridArrangementChanged = { isGridArrangement = it },
                                             onFeedItemClick = { feedInfo ->
                                                 feedListActions.openUrl(feedInfo)
                                                 feedListActions.markAsRead(FeedItemId(feedInfo.id))
@@ -251,6 +277,7 @@ fun AndroidHomeScreenContent(
                                             onOpenFeedSettings = feedManagementActions.onEditFeedClick,
                                             onOpenFeedWebsite = feedManagementActions.onOpenWebsite,
                                             feedLayout = displayState.feedLayout,
+                                            isGridLayoutEnabled = displayState.isGridLayoutEnabled,
                                             onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
                                             onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
                                             onNavigateNext = { onNavigateToNextFeed() },
@@ -273,8 +300,8 @@ fun AndroidHomeScreenContent(
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
-                                MaterialTheme.colorScheme.surface,
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                                contentContainerColor,
+                                contentContainerColor.copy(alpha = 0.8f),
                                 Color.Transparent,
                             ),
                         ),
@@ -305,12 +332,22 @@ fun AndroidHomeScreenContent(
                 onEditFeedClick = feedManagementActions.onEditFeedClick,
                 onClick = {
                     scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                        scrollFeedToTop(
+                            isGridArrangement = isGridArrangement,
+                            listState = listState,
+                            gridState = gridState,
+                            reduceMotionEnabled = reduceMotionEnabled,
+                        )
                     }
                 },
                 onDoubleClick = {
                     scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                        scrollFeedToTop(
+                            isGridArrangement = isGridArrangement,
+                            listState = listState,
+                            gridState = gridState,
+                            reduceMotionEnabled = reduceMotionEnabled,
+                        )
                         onRefresh()
                     }
                 },
@@ -320,5 +357,54 @@ fun AndroidHomeScreenContent(
                 onShowReadArticlesTimelineChange = onShowReadArticlesTimelineChange,
             )
         }
+    }
+}
+
+private fun FeedLayout.isCardStyleLayout(): Boolean = when (this) {
+    FeedLayout.CARD,
+    FeedLayout.BIG_IMAGE,
+    FeedLayout.GRID,
+    -> true
+    FeedLayout.LIST -> false
+}
+
+@Composable
+private fun FeedLayout.contentContainerColor(): Color =
+    if (isCardStyleLayout()) {
+        MaterialTheme.colorScheme.surfaceContainer
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+
+private fun FeedLayout.feedListWidthModifier(isGridLayoutEnabled: Boolean): Modifier =
+    if (isGridLayoutEnabled && isCardStyleLayout()) {
+        Modifier.fillMaxWidth()
+    } else {
+        Modifier
+            .widthIn(max = FeedListMaxContentWidth)
+            .fillMaxWidth()
+    }
+
+private fun shouldShowScrollToTopButton(
+    isGridArrangement: Boolean,
+    listState: LazyListState,
+    gridState: LazyStaggeredGridState,
+): Boolean =
+    if (isGridArrangement) {
+        gridState.firstVisibleItemIndex > 1
+    } else {
+        listState.firstVisibleItemIndex > 1
+    }
+
+private suspend fun scrollFeedToTop(
+    isGridArrangement: Boolean,
+    listState: LazyListState,
+    gridState: LazyStaggeredGridState,
+    reduceMotionEnabled: Boolean,
+) {
+    if (isGridArrangement) {
+        gridState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+    } else {
+        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
     }
 }

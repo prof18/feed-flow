@@ -117,6 +117,7 @@ class HomeViewModel internal constructor(
     val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
     val swipeActions: StateFlow<SwipeActions> = feedAppearanceSettingsRepository.swipeActions
     val feedLayout: StateFlow<FeedLayout> = feedAppearanceSettingsRepository.feedLayout
+    val isGridLayoutEnabled: StateFlow<Boolean> = feedAppearanceSettingsRepository.gridLayoutEnabled
     val feedItemDisplaySettings: StateFlow<FeedItemDisplaySettings> = combine(
         feedAppearanceSettingsRepository.hideUnreadDot,
         feedAppearanceSettingsRepository.hideFeedSource,
@@ -280,6 +281,8 @@ class HomeViewModel internal constructor(
             listShapeKey = ScrollReadListShapeKey(
                 showReadArticlesTimeline = settingsRepository.showReadArticlesTimelineFlow.value,
                 hideReadItems = settingsRepository.hideReadItemsFlow.value,
+                feedLayout = feedAppearanceSettingsRepository.feedLayout.value,
+                isGridLayoutEnabled = feedAppearanceSettingsRepository.gridLayoutEnabled.value,
             ),
         )
         if (idsToMark.isEmpty()) {

@@ -1,6 +1,6 @@
 package com.prof18.feedflow.shared.data
 
-import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
@@ -13,7 +13,7 @@ class WidgetSettingsRepository(
     private val settings: Settings,
 ) {
     private val feedWidgetLayoutMutableFlow = MutableStateFlow(getFeedWidgetLayout())
-    val feedWidgetLayout: StateFlow<FeedLayout> = feedWidgetLayoutMutableFlow.asStateFlow()
+    val feedWidgetLayout: StateFlow<WidgetFeedLayout> = feedWidgetLayoutMutableFlow.asStateFlow()
 
     private val widgetShowHeaderMutableFlow = MutableStateFlow(getWidgetShowHeader())
     val widgetShowHeader: StateFlow<Boolean> = widgetShowHeaderMutableFlow.asStateFlow()
@@ -33,11 +33,14 @@ class WidgetSettingsRepository(
     private val widgetHideImagesMutableFlow = MutableStateFlow(getWidgetHideImages())
     val widgetHideImages: StateFlow<Boolean> = widgetHideImagesMutableFlow.asStateFlow()
 
-    fun getFeedWidgetLayout(): FeedLayout =
-        settings.getString(WidgetSettingsFields.FEED_WIDGET_LAYOUT.name, FeedLayout.LIST.name)
-            .let { FeedLayout.valueOf(it) }
+    fun getFeedWidgetLayout(): WidgetFeedLayout =
+        settings.getString(WidgetSettingsFields.FEED_WIDGET_LAYOUT.name, WidgetFeedLayout.LIST.name)
+            .let { storedLayout ->
+                runCatching { WidgetFeedLayout.valueOf(storedLayout) }
+                    .getOrDefault(WidgetFeedLayout.LIST)
+            }
 
-    fun setFeedWidgetLayout(feedLayout: FeedLayout) {
+    fun setFeedWidgetLayout(feedLayout: WidgetFeedLayout) {
         settings[WidgetSettingsFields.FEED_WIDGET_LAYOUT.name] = feedLayout.name
         feedWidgetLayoutMutableFlow.update { feedLayout }
     }

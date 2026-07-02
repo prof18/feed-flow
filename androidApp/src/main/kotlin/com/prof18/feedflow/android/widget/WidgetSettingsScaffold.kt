@@ -17,7 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
-import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -28,7 +28,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun WidgetSettingsScaffold(
     title: String,
     settingsState: WidgetSettingsState,
-    onFeedLayoutSelected: (FeedLayout) -> Unit,
+    onFeedLayoutSelected: (WidgetFeedLayout) -> Unit,
     onShowHeaderSelected: (Boolean) -> Unit,
     onFontScaleSelected: (Int) -> Unit,
     onBackgroundColorSelected: (Int?) -> Unit,
@@ -115,7 +115,7 @@ private fun WidgetSettingsScaffoldPreview() {
             title = strings.widgetConfigurationTitle,
             settingsState = WidgetSettingsState(
                 syncPeriod = SyncPeriod.ONE_HOUR,
-                feedLayout = FeedLayout.CARD,
+                feedLayout = WidgetFeedLayout.CARD,
                 showHeader = true,
                 fontScale = 0,
                 backgroundColor = null,

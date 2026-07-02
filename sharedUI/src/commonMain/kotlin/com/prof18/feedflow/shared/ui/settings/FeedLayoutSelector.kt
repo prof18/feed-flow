@@ -20,6 +20,7 @@ fun FeedLayoutSelector(
         options = persistentListOf(
             SettingDropdownOption(FeedLayout.LIST, strings.settingsFeedLayoutList),
             SettingDropdownOption(FeedLayout.CARD, strings.settingsFeedLayoutCard),
+            SettingDropdownOption(FeedLayout.BIG_IMAGE, strings.settingsFeedLayoutBigImage),
         ),
         onOptionSelected = onFeedLayoutSelected,
         modifier = modifier,

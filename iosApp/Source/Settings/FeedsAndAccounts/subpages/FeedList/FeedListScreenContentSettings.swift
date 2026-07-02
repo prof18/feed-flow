@@ -13,6 +13,7 @@ struct FeedListSettingsScreenContent: View {
     @Binding var dateFormat: DateFormat
     @Binding var timeFormat: TimeFormat
     @Binding var feedLayout: FeedLayout
+    @Binding var isGridLayoutEnabled: Bool
     @Binding var leftSwipeAction: SwipeActionType
     @Binding var rightSwipeAction: SwipeActionType
     @Binding var isRemoveTitleFromDescriptionEnabled: Bool
@@ -23,8 +24,13 @@ struct FeedListSettingsScreenContent: View {
     let onScaleFactorChange: (Double) -> Void
 
     private let feedFlowStrings = Deps.shared.getStrings()
+    private let previewMaxWidth: CGFloat = 360
+    private let imageCardPreviewMaxWidth: CGFloat = 320
+    private let previewHeroImageAspectRatio: CGFloat = 3.0
 
     var body: some View {
+        let isCompactImageCardPreview = feedLayout == .bigImage || feedLayout == .grid
+
         VStack(spacing: 0) {
             VStack {
                 FeedItemView(
@@ -60,6 +66,8 @@ struct FeedListSettingsScreenContent: View {
                     index: 0,
                     feedFontSizes: feedFontSizes,
                     feedLayout: feedLayout,
+                    isGridCell: true,
+                    heroImageAspectRatio: previewHeroImageAspectRatio,
                     feedItemDisplaySettings: FeedItemDisplaySettings(
                         isHideUnreadDotEnabled: isHideUnreadDotEnabled,
                         isHideFeedSourceEnabled: isHideFeedSourceEnabled,
@@ -67,13 +75,16 @@ struct FeedListSettingsScreenContent: View {
                     )
                 )
                 .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: isCompactImageCardPreview ? imageCardPreviewMaxWidth : previewMaxWidth)
                 .padding(Spacing.small)
                 .padding(.top, Spacing.small)
                 .background(Color(UIColor.secondarySystemGroupedBackground))
                 .cornerRadius(Spacing.small)
                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-                .padding(Spacing.regular)
+                .padding(.horizontal, Spacing.regular)
+                .padding(.vertical, isCompactImageCardPreview ? Spacing.xsmall : Spacing.small)
             }
+            .frame(maxWidth: .infinity)
             .background(Color.secondaryBackgroundColor)
 
             Form(content: {
@@ -106,10 +117,20 @@ struct FeedListSettingsScreenContent: View {
                             .tag(FeedLayout.list)
                         Text(feedFlowStrings.settingsFeedLayoutCard)
                             .tag(FeedLayout.card)
+                        Text(feedFlowStrings.settingsFeedLayoutBigImage)
+                            .tag(FeedLayout.bigImage)
                     } label: {
                         Text(feedFlowStrings.feedLayoutTitle)
                     }
                     .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.layoutPicker)
+
+                    if feedLayout.supportsGridToggle {
+                        Toggle(isOn: $isGridLayoutEnabled) {
+                            Text(feedFlowStrings.settingsFeedLayoutGridToggle)
+                        }.onTapGesture {
+                            isGridLayoutEnabled.toggle()
+                        }
+                    }
 
                     Toggle(isOn: $isHideDescriptionEnabled) {
                         Text(feedFlowStrings.settingsHideDescription)
@@ -203,6 +224,8 @@ struct FeedListSettingsScreenContent: View {
             .scrollContentBackground(.hidden)
             .background(Color.secondaryBackgroundColor)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.secondaryBackgroundColor.ignoresSafeArea())
     }
 }
 
@@ -217,4 +240,10 @@ private func formatDateTimeExample(dateFormat: DateFormat, timeFormat: TimeForma
     }
     let timePart = timeFormat == .hours24 ? "14:30" : "2:30 PM"
     return "\(datePart) - \(timePart)"
+}
+
+private extension FeedLayout {
+    var supportsGridToggle: Bool {
+        self == .card || self == .bigImage
+    }
 }

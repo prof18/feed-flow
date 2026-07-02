@@ -30,6 +30,9 @@ class FeedAppearanceSettingsRepository(
     private val feedLayoutMutableFlow = MutableStateFlow(getFeedLayout())
     val feedLayout: StateFlow<FeedLayout> = feedLayoutMutableFlow.asStateFlow()
 
+    private val gridLayoutEnabledMutableFlow = MutableStateFlow(getGridLayoutEnabled())
+    val gridLayoutEnabled: StateFlow<Boolean> = gridLayoutEnabledMutableFlow.asStateFlow()
+
     private val hideUnreadDotMutableFlow = MutableStateFlow(getHideUnreadDot())
     val hideUnreadDot: StateFlow<Boolean> = hideUnreadDotMutableFlow.asStateFlow()
 
@@ -167,19 +170,50 @@ class FeedAppearanceSettingsRepository(
         feedOrderMutableFlow.update { order }
     }
 
-    fun getFeedLayout(): FeedLayout =
-        settings.getString(FeedAppearanceSettingsFields.FEED_LAYOUT.name, FeedLayout.LIST.name)
-            .let { FeedLayout.valueOf(it) }
+    fun getFeedLayout(): FeedLayout {
+        val storedLayout = settings.getString(FeedAppearanceSettingsFields.FEED_LAYOUT.name, FeedLayout.LIST.name)
+        if (storedLayout == FeedLayout.GRID.name) {
+            settings[FeedAppearanceSettingsFields.FEED_LAYOUT.name] = FeedLayout.BIG_IMAGE.name
+            settings[FeedAppearanceSettingsFields.GRID_LAYOUT_ENABLED.name] = true
+            return FeedLayout.BIG_IMAGE
+        }
+        return runCatching { FeedLayout.valueOf(storedLayout) }
+            .getOrDefault(FeedLayout.LIST)
+            .normalizeForFeedListSetting()
+    }
 
     fun setFeedLayout(feedLayout: FeedLayout) {
-        settings[FeedAppearanceSettingsFields.FEED_LAYOUT.name] = feedLayout.name
-        feedLayoutMutableFlow.update { feedLayout }
+        val normalizedLayout = feedLayout.normalizeForFeedListSetting()
+        settings[FeedAppearanceSettingsFields.FEED_LAYOUT.name] = normalizedLayout.name
+        feedLayoutMutableFlow.update { normalizedLayout }
+        if (feedLayout == FeedLayout.GRID) {
+            setGridLayoutEnabled(true)
+        } else {
+            gridLayoutEnabledMutableFlow.update { getGridLayoutEnabled(normalizedLayout) }
+        }
+    }
+
+    fun getGridLayoutEnabled(): Boolean =
+        getGridLayoutEnabled(getFeedLayout())
+
+    private fun getGridLayoutEnabled(feedLayout: FeedLayout): Boolean =
+        settings.getBoolean(
+            key = FeedAppearanceSettingsFields.GRID_LAYOUT_ENABLED.name,
+            defaultValue = feedLayout == FeedLayout.BIG_IMAGE,
+        )
+
+    fun setGridLayoutEnabled(isEnabled: Boolean) {
+        settings[FeedAppearanceSettingsFields.GRID_LAYOUT_ENABLED.name] = isEnabled
+        gridLayoutEnabledMutableFlow.update { isEnabled }
     }
 
     private companion object {
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
     }
 }
+
+private fun FeedLayout.normalizeForFeedListSetting(): FeedLayout =
+    if (this == FeedLayout.GRID) FeedLayout.BIG_IMAGE else this
 
 private enum class FeedAppearanceSettingsFields {
     FEED_ORDER,
@@ -197,4 +231,5 @@ private enum class FeedAppearanceSettingsFields {
     HIDE_UNREAD_COUNT,
     HIDE_FEED_SOURCE,
     DESCRIPTION_LINE_LIMIT,
+    GRID_LAYOUT_ENABLED,
 }

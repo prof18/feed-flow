@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 54 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 56 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -58,7 +58,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-105 | `105-category-management.yaml` (+ iOS `105-category-add-validation.yaml`) | `content-rich` | Android, iOS | Add Feed category sheet: create new category, duplicate-name validation. Drawer category menu: rename, delete all feeds. The drawer "Delete category" path is dropped on both platforms — neither drawer renders categories that no longer own a feed source. iOS now drives the category name inputs through `inputText` rather than DEBUG hooks. |
 | REG-106 | `106-article-context-menu.yaml` | `content-rich` | Android, iOS | Article long-press: Mark as read/unread, Add/Remove bookmark mutations. |
 | REG-107 | `107-swipe-actions.yaml` | `swipe-actions`, `swipe-disabled` | Android, iOS | Left = toggle read, right = toggle bookmark swipes. Android also covers the disabled-swipe variant. |
-| REG-108 | `108-feed-layout-matrix-card.yaml`, `108-feed-layout-matrix-compact.yaml` | `card-layout`, `compact-list` | Android, iOS | Card and Compact feed-list layouts render the seeded items. |
+| REG-108 | `108-feed-layout-matrix-card.yaml`, `108-feed-layout-matrix-big-image.yaml`, `108-feed-layout-matrix-grid.yaml`, `108-feed-layout-matrix-compact.yaml` | `card-layout`, `big-image-layout`, `grid-layout`, `compact-list` | Android, iOS | Card, Big Image, Grid, and Compact feed-list layouts render the seeded items. |
 | REG-109 | `109-feed-order-mark-above-below.yaml` | `oldest-first` | Android, iOS | Oldest-first ordering profile, Mark all above / below as read article context-menu actions. |
 | REG-110 | `110-reader-fallback.yaml` | `reader-mode` | Android, iOS | Reader fallback path: article fails extraction, fallback web view + Open in browser button visible. |
 | REG-111 | `111-reader-image-viewer.yaml` | `reader-mode` | Android, iOS | Reader image viewer: open image, share button visible, close. |

@@ -214,6 +214,8 @@ class E2eSeedRunner internal constructor(
             -> Unit
 
             E2eSeedProfile.CARD_LAYOUT,
+            E2eSeedProfile.BIG_IMAGE_LAYOUT,
+            E2eSeedProfile.GRID_LAYOUT,
             E2eSeedProfile.COMPACT_LIST,
             E2eSeedProfile.READER_MODE,
             E2eSeedProfile.EXTERNAL_BROWSER,
@@ -237,6 +239,8 @@ class E2eSeedRunner internal constructor(
     private suspend fun applyDisplayProfileSettings(profile: E2eSeedProfile) {
         when (profile) {
             E2eSeedProfile.CARD_LAYOUT -> applyCardLayoutSettings()
+            E2eSeedProfile.BIG_IMAGE_LAYOUT -> applyBigImageLayoutSettings()
+            E2eSeedProfile.GRID_LAYOUT -> applyGridLayoutSettings()
             E2eSeedProfile.COMPACT_LIST -> applyCompactListSettings()
             E2eSeedProfile.READER_MODE -> applyReaderModeSettings()
             E2eSeedProfile.EXTERNAL_BROWSER -> applyExternalBrowserSettings()
@@ -334,6 +338,25 @@ class E2eSeedRunner internal constructor(
 
     private fun applyCardLayoutSettings() {
         feedAppearanceSettingsRepository.setFeedLayout(FeedLayout.CARD)
+        feedAppearanceSettingsRepository.setGridLayoutEnabled(false)
+        feedAppearanceSettingsRepository.setHideImages(false)
+        feedAppearanceSettingsRepository.setHideDate(false)
+        feedAppearanceSettingsRepository.setHideDescription(false)
+        feedAppearanceSettingsRepository.setDescriptionLineLimit(DescriptionLineLimit.THREE)
+    }
+
+    private fun applyBigImageLayoutSettings() {
+        feedAppearanceSettingsRepository.setFeedLayout(FeedLayout.BIG_IMAGE)
+        feedAppearanceSettingsRepository.setGridLayoutEnabled(true)
+        feedAppearanceSettingsRepository.setHideImages(false)
+        feedAppearanceSettingsRepository.setHideDate(false)
+        feedAppearanceSettingsRepository.setHideDescription(false)
+        feedAppearanceSettingsRepository.setDescriptionLineLimit(DescriptionLineLimit.THREE)
+    }
+
+    private fun applyGridLayoutSettings() {
+        feedAppearanceSettingsRepository.setFeedLayout(FeedLayout.BIG_IMAGE)
+        feedAppearanceSettingsRepository.setGridLayoutEnabled(true)
         feedAppearanceSettingsRepository.setHideImages(false)
         feedAppearanceSettingsRepository.setHideDate(false)
         feedAppearanceSettingsRepository.setHideDescription(false)
@@ -342,6 +365,7 @@ class E2eSeedRunner internal constructor(
 
     private fun applyCompactListSettings() {
         feedAppearanceSettingsRepository.setFeedLayout(FeedLayout.LIST)
+        feedAppearanceSettingsRepository.setGridLayoutEnabled(false)
         feedAppearanceSettingsRepository.setHideImages(true)
         feedAppearanceSettingsRepository.setHideDate(true)
         feedAppearanceSettingsRepository.setHideFeedSource(true)

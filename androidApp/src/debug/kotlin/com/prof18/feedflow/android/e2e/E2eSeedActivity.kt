@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.android.base.BaseThemeActivity
-import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.e2e.E2eSeedProfile
@@ -151,7 +151,7 @@ class E2eSeedActivity : BaseThemeActivity() {
     }
 
     private fun resetWidgetSettings() {
-        widgetSettingsRepository.setFeedWidgetLayout(FeedLayout.LIST)
+        widgetSettingsRepository.setFeedWidgetLayout(WidgetFeedLayout.LIST)
         widgetSettingsRepository.setWidgetShowHeader(true)
         widgetSettingsRepository.setWidgetFontScaleFactor(0)
         widgetSettingsRepository.setWidgetBackgroundColor(null)
@@ -161,7 +161,7 @@ class E2eSeedActivity : BaseThemeActivity() {
     }
 
     private fun applyAndroidWidgetProfile() {
-        widgetSettingsRepository.setFeedWidgetLayout(FeedLayout.CARD)
+        widgetSettingsRepository.setFeedWidgetLayout(WidgetFeedLayout.CARD)
         widgetSettingsRepository.setWidgetShowHeader(true)
         widgetSettingsRepository.setWidgetFontScaleFactor(2)
         widgetSettingsRepository.setWidgetBackgroundColor(0xFF1E3A5F.toInt())

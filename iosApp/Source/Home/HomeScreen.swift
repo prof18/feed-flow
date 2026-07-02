@@ -42,6 +42,7 @@ struct HomeScreen: View {
     @State var swipeActions: SwipeActions = .init(leftSwipeAction: .none, rightSwipeAction: .none)
 
     @State var feedLayout: FeedLayout = .list
+    @State var isGridLayoutEnabled = false
 
     @State var nextFeedPreviewState: NextFeedPreviewState = .NextFeedPreviewDisabledState()
 
@@ -87,6 +88,7 @@ struct HomeScreen: View {
             feedFontSizes: $feedFontSizes,
             swipeActions: $swipeActions,
             feedLayout: $feedLayout,
+            isGridLayoutEnabled: $isGridLayoutEnabled,
             nextFeedPreviewState: $nextFeedPreviewState,
             feedItemDisplaySettings: $feedItemDisplaySettings,
             viewMenuState: $viewMenuState,
@@ -238,6 +240,11 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.feedLayout {
                 self.feedLayout = state
+            }
+        }
+        .task {
+            for await state in homeViewModel.isGridLayoutEnabled {
+                self.isGridLayoutEnabled = state as? Bool ?? false
             }
         }
         .task {

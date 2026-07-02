@@ -6,6 +6,7 @@ sealed class SearchState {
     data class DataFound(
         val items: ImmutableList<FeedItem>,
         val feedLayout: FeedLayout,
+        val isGridLayoutEnabled: Boolean,
     ) : SearchState()
 
     data class NoDataFound(

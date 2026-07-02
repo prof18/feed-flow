@@ -73,6 +73,7 @@ internal fun HomeScreen(
     val swipeActions by homeViewModel.swipeActions.collectAsState()
     val feedOperation by homeViewModel.feedOperationState.collectAsState()
     val feedLayout by homeViewModel.feedLayout.collectAsState()
+    val isGridLayoutEnabled by homeViewModel.isGridLayoutEnabled.collectAsState()
     val feedItemDisplaySettings by homeViewModel.feedItemDisplaySettings.collectAsState()
     val nextFeedPreviewState by homeViewModel.nextFeedPreviewState.collectAsState()
     val refreshTrigger by homeViewModel.refreshTriggerState.collectAsState()
@@ -143,6 +144,7 @@ internal fun HomeScreen(
         currentFeedFilter,
         swipeActions,
         feedLayout,
+        isGridLayoutEnabled,
         nextFeedPreviewState,
         feedItemDisplaySettings,
     ) {
@@ -156,6 +158,7 @@ internal fun HomeScreen(
             currentFeedFilter = currentFeedFilter,
             swipeActions = swipeActions,
             feedLayout = feedLayout,
+            isGridLayoutEnabled = isGridLayoutEnabled,
             nextFeedDisplayState = nextFeedPreviewState.asDisplayState(),
             feedItemDisplaySettings = feedItemDisplaySettings,
         )

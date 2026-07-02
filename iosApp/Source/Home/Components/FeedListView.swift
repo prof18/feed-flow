@@ -31,6 +31,7 @@ struct FeedListView: View {
     let feedFontSizes: FeedFontSizes
     let swipeActions: SwipeActions
     let feedLayout: FeedLayout
+    let isGridLayoutEnabled: Bool
     var feedItemDisplaySettings = FeedItemDisplaySettings(
         isHideUnreadDotEnabled: false,
         isHideFeedSourceEnabled: false,
@@ -57,6 +58,10 @@ struct FeedListView: View {
     private let viewportVerticalInset: CGFloat = 8
     private let minimumVisibleRowHeight: CGFloat = 24
     private let maxContentWidth: CGFloat = 720
+    private let layoutWidthBucketSize: CGFloat = 8
+    private let layoutWidthSettleDelay: Duration = .milliseconds(220)
+
+    @State private var stableLayoutWidth: CGFloat = 0
 
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
@@ -81,101 +86,271 @@ struct FeedListView: View {
             VStack(alignment: .center) {
                 LoadingHeaderView(loadingState: loadingState, showLoading: showLoading)
                 GeometryReader { listProxy in
-                    List {
-                        ForEach(feedItems, id: \.element.id) { index, feedItem in
-                            FeedItemRowView(
-                                feedItem: feedItem,
-                                index: index,
-                                feedFontSizes: feedFontSizes,
-                                swipeActions: swipeActions,
-                                feedLayout: feedLayout,
-                                currentFeedFilter: currentFeedFilter,
-                                feedItemDisplaySettings: feedItemDisplaySettings,
-                                onItemClick: onItemClick,
-                                onReaderModeClick: onReaderModeClick,
-                                onBookmarkClick: onBookmarkClick,
-                                onReadStatusClick: onReadStatusClick
+                    let itemFeedLayout = normalizedLayout
+                    let currentWidth = listProxy.size.width
+                    let layoutDecisionWidth = stableLayoutWidth > 0 ? stableLayoutWidth : currentWidth
+                    let isGridArrangement = isGridLayoutEnabled &&
+                        itemFeedLayout.supportsGridArrangement &&
+                        layoutDecisionWidth >= itemFeedLayout.gridMinContentWidth(maxContentWidth: maxContentWidth)
+                    Group {
+                        if isGridArrangement {
+                            gridFeedContent(
+                                feedItems: feedItems,
+                                feedLayout: itemFeedLayout,
+                                availableWidth: layoutDecisionWidth,
+                                maxContentWidth: maxContentWidth
                             )
-                            .contextMenu {
-                                FeedItemContextMenu(
-                                    feedItem: feedItem,
-                                    onBookmarkClick: onBookmarkClick,
-                                    onReadStatusClick: onReadStatusClick,
-                                    onMarkAllAboveAsRead: onMarkAllAboveAsRead,
-                                    onMarkAllBelowAsRead: onMarkAllBelowAsRead,
-                                    onOpenFeedSettings: onOpenFeedSettings
-                                )
-                                .environment(browserSelector)
-                                .environment(appState)
+                            .onPreferenceChange(FeedItemVisibilityPreferenceKey.self) { items in
+                                visibleItemsChanged(items: items, viewportHeight: listProxy.size.height)
                             }
-                            .listRowSeparator(feedLayout == .card ? .hidden : .automatic)
-                            .listRowInsets(EdgeInsets())
-                            .background(
-                                FeedItemVisibilityReader(
-                                    id: feedItem.id,
-                                    index: index,
-                                    coordinateSpaceName: coordinateSpaceName
-                                )
-                            )
-                            .onAppear {
-                                if index == feedState.count - 15 {
-                                    requestNewPage()
-                                }
-                                // Show scroll to top button when user has scrolled past first 3 items
-                                onScrollPositionChanged(index > 3)
-                            }
-                            if index == feedState.count - 1 {
-                                if !(currentFeedFilter is FeedFilter.Read) {
-                                    Button(
-                                        action: {
-                                            onMarkAllAsReadClick()
-                                        },
-                                        label: {
-                                            Text(feedFlowStrings.markAllReadButton)
-                                        }
+                        } else {
+                            List {
+                                ForEach(feedItems, id: \.element.id) { index, feedItem in
+                                    feedItemRow(
+                                        index: index,
+                                        feedItem: feedItem,
+                                        feedLayout: itemFeedLayout,
+                                        isGridCell: false,
+                                        allowsSwipeActions: true
                                     )
-                                    .buttonStyle(.borderless)
-                                    .frame(maxWidth: .infinity)
-                                    .listRowSeparator(.hidden)
-                                }
+                                    .listRowSeparator(itemFeedLayout == .list ? .automatic : .hidden)
+                                    .listRowInsets(EdgeInsets())
+                                    .listRowBackground(Color.clear)
 
-                                if let enabledState = nextFeedPreviewState
-                                    as? NextFeedPreviewState.NextFeedPreviewEnabledState {
-                                    NextFeedButton(
-                                        title: enabledState.title,
-                                        onNavigateNext: onNavigateToNextFeed
-                                    )
+                                    if index == feedState.count - 1 {
+                                        footerButtons
+                                    }
                                 }
                             }
+                            .coordinateSpace(name: coordinateSpaceName)
+                            .listStyle(PlainListStyle())
+                            .scrollContentBackground(.hidden)
+                            .background(feedContentBackground(for: itemFeedLayout))
+                            .onPreferenceChange(FeedItemVisibilityPreferenceKey.self) { items in
+                                visibleItemsChanged(items: items, viewportHeight: listProxy.size.height)
+                            }
+                            .refreshable {
+                                onReloadClick()
+                            }
+                            .contentMargins(
+                                .horizontal,
+                                max((currentWidth - maxContentWidth) / 2, 0),
+                                for: .scrollContent
+                            )
                         }
                     }
-                    .coordinateSpace(name: coordinateSpaceName)
-                    .listStyle(PlainListStyle())
-                    .onPreferenceChange(FeedItemVisibilityPreferenceKey.self) { items in
-                        let visibleItems = items
-                            .filter { item in
-                                let visibleTop = max(item.minY, viewportVerticalInset)
-                                let visibleBottom = min(item.maxY, listProxy.size.height - viewportVerticalInset)
-                                return visibleBottom - visibleTop >= minimumVisibleRowHeight
-                            }
-                            .sorted { $0.minY < $1.minY }
-                            .map {
-                                VisibleFeedItem(id: $0.id, index: Int32($0.index))
-                            }
-                        indexHolder.visibleItemsChanged(visibleItems)
+                    .transaction { transaction in
+                        transaction.animation = nil
                     }
-                    .refreshable {
-                        onReloadClick()
+                    .task(id: layoutWidthBucket(for: currentWidth)) {
+                        await updateStableLayoutWidth(currentWidth)
                     }
-                    .contentMargins(
-                        .horizontal,
-                        max((listProxy.size.width - maxContentWidth) / 2, 0),
-                        for: .scrollContent
-                    )
                 }
             }
         }
     }
+
+    private var normalizedLayout: FeedLayout {
+        feedLayout == .grid ? .bigImage : feedLayout
+    }
+
+    private func gridFeedContent(
+        feedItems: [(offset: Int, element: FeedItem)],
+        feedLayout: FeedLayout,
+        availableWidth: CGFloat,
+        maxContentWidth: CGFloat
+    ) -> some View {
+        ScrollView {
+            let columnCount = gridColumnCount(
+                availableWidth: availableWidth,
+                feedLayout: feedLayout,
+                maxContentWidth: maxContentWidth
+            )
+            VStack(spacing: Spacing.regular) {
+                HStack(alignment: .top, spacing: Spacing.regular) {
+                    ForEach(0 ..< columnCount, id: \.self) { column in
+                        LazyVStack(spacing: Spacing.regular) {
+                            ForEach(
+                                gridFeedItems(
+                                    feedItems: feedItems,
+                                    column: column,
+                                    columnCount: columnCount
+                                ),
+                                id: \.element.id
+                            ) { index, feedItem in
+                                feedItemRow(
+                                    index: index,
+                                    feedItem: feedItem,
+                                    feedLayout: feedLayout,
+                                    isGridCell: true,
+                                    allowsSwipeActions: false
+                                )
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+
+                footerButtons
+            }
+        }
+        .coordinateSpace(name: coordinateSpaceName)
+        .background(feedContentBackground(for: feedLayout))
+        .safeAreaPadding(.horizontal, Spacing.regular)
+        .safeAreaPadding(.top, Spacing.regular)
+        .refreshable {
+            onReloadClick()
+        }
+    }
+
+    private func gridFeedItems(
+        feedItems: [(offset: Int, element: FeedItem)],
+        column: Int,
+        columnCount: Int
+    ) -> [(offset: Int, element: FeedItem)] {
+        feedItems.enumerated().compactMap { visualIndex, feedItem in
+            visualIndex % columnCount == column ? feedItem : nil
+        }
+    }
+
+    private func gridColumnCount(
+        availableWidth: CGFloat,
+        feedLayout: FeedLayout,
+        maxContentWidth: CGFloat
+    ) -> Int {
+        let contentWidth = max(availableWidth - Spacing.regular * 2, 0)
+        let minCellWidth = feedLayout.gridMinCellWidth(maxContentWidth: maxContentWidth)
+        return max(Int((contentWidth + Spacing.regular) / (minCellWidth + Spacing.regular)), 1)
+    }
+
+    private func layoutWidthBucket(for width: CGFloat) -> Int {
+        Int((width / layoutWidthBucketSize).rounded(.toNearestOrAwayFromZero))
+    }
+
+    @MainActor
+    private func updateStableLayoutWidth(_ width: CGFloat) async {
+        if stableLayoutWidth == 0 {
+            stableLayoutWidth = width
+        }
+        try? await Task.sleep(for: layoutWidthSettleDelay)
+        guard !Task.isCancelled else {
+            return
+        }
+        stableLayoutWidth = width
+    }
+
+    private func feedItemRow(
+        index: Int,
+        feedItem: FeedItem,
+        feedLayout: FeedLayout,
+        isGridCell: Bool,
+        allowsSwipeActions: Bool
+    ) -> some View {
+        FeedItemRowView(
+            feedItem: feedItem,
+            index: index,
+            feedFontSizes: feedFontSizes,
+            swipeActions: swipeActions,
+            feedLayout: feedLayout,
+            isGridCell: isGridCell,
+            currentFeedFilter: currentFeedFilter,
+            allowsSwipeActions: allowsSwipeActions,
+            feedItemDisplaySettings: feedItemDisplaySettings,
+            onItemClick: onItemClick,
+            onReaderModeClick: onReaderModeClick,
+            onBookmarkClick: onBookmarkClick,
+            onReadStatusClick: onReadStatusClick
+        )
+        .contextMenu {
+            FeedItemContextMenu(
+                feedItem: feedItem,
+                onBookmarkClick: onBookmarkClick,
+                onReadStatusClick: onReadStatusClick,
+                onMarkAllAboveAsRead: onMarkAllAboveAsRead,
+                onMarkAllBelowAsRead: onMarkAllBelowAsRead,
+                onOpenFeedSettings: onOpenFeedSettings
+            )
+            .environment(browserSelector)
+            .environment(appState)
+        }
+        .background(
+            FeedItemVisibilityReader(
+                id: feedItem.id,
+                index: index,
+                coordinateSpaceName: coordinateSpaceName
+            )
+        )
+        .onAppear {
+            if index == feedState.count - 15 {
+                requestNewPage()
+            }
+            onScrollPositionChanged(index > 3)
+        }
+    }
+
+    @ViewBuilder private var footerButtons: some View {
+        if !(currentFeedFilter is FeedFilter.Read) {
+            Button(
+                action: {
+                    onMarkAllAsReadClick()
+                },
+                label: {
+                    Text(feedFlowStrings.markAllReadButton)
+                }
+            )
+            .buttonStyle(.borderless)
+            .frame(maxWidth: .infinity)
+            .listRowSeparator(.hidden)
+        }
+
+        if let enabledState = nextFeedPreviewState
+            as? NextFeedPreviewState.NextFeedPreviewEnabledState {
+            NextFeedButton(
+                title: enabledState.title,
+                onNavigateNext: onNavigateToNextFeed
+            )
+        }
+    }
+
+    private func visibleItemsChanged(items: [FeedItemVisibilityPreference], viewportHeight: CGFloat) {
+        let visibleItems = items
+            .filter { item in
+                let visibleTop = max(item.minY, viewportVerticalInset)
+                let visibleBottom = min(item.maxY, viewportHeight - viewportVerticalInset)
+                return visibleBottom - visibleTop >= minimumVisibleRowHeight
+            }
+            .sorted { $0.minY < $1.minY }
+            .map {
+                VisibleFeedItem(id: $0.id, index: Int32($0.index))
+            }
+        indexHolder.visibleItemsChanged(visibleItems)
+    }
+}
+
+private extension FeedLayout {
+    var supportsGridArrangement: Bool {
+        self == .card || self == .bigImage
+    }
+
+    var usesCardBackground: Bool {
+        self == .card || self == .bigImage || self == .grid
+    }
+
+    func gridMinCellWidth(maxContentWidth: CGFloat) -> CGFloat {
+        let cardWidth = (maxContentWidth - Spacing.regular) / 2
+        if self == .bigImage {
+            return cardWidth - (Spacing.medium + Spacing.small) - Spacing.medium - Spacing.regular
+        }
+        return cardWidth
+    }
+
+    func gridMinContentWidth(maxContentWidth: CGFloat) -> CGFloat {
+        gridMinCellWidth(maxContentWidth: maxContentWidth) * 2 + Spacing.regular
+    }
+}
+
+private func feedContentBackground(for layout: FeedLayout) -> Color {
+    layout.usesCardBackground ? Color(.systemGroupedBackground) : Color(.systemBackground)
 }
 
 private struct FeedItemVisibilityPreference: Equatable {

@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.ui.search
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
@@ -47,22 +50,33 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.Dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemContainer
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemView
+import com.prof18.feedflow.shared.ui.home.components.list.FeedListMaxContentWidth
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
+import androidx.compose.foundation.lazy.grid.itemsIndexed as gridItemsIndexed
+
+private val SearchGridContentPadding = Spacing.regular
+private val SearchCardGridMinCellWidth = (FeedListMaxContentWidth - Spacing.regular) / 2
+private val SearchBigImageGridMinCellWidth = SearchCardGridMinCellWidth -
+    Spacing.xlarge -
+    Spacing.medium -
+    Spacing.regular
 
 @Composable
 fun SearchScreenContent(
@@ -86,6 +100,7 @@ fun SearchScreenContent(
     onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
     onOpenFeedWebsite: (String) -> Unit,
     modifier: Modifier = Modifier,
+    isGridLayoutEnabled: Boolean = true,
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
     snackbarHost: @Composable () -> Unit = {
     },
@@ -134,54 +149,161 @@ fun SearchScreenContent(
                 onFilterSelected = onSearchFilterSelected,
             )
 
-            LazyColumn(
+            BoxWithConstraints(
                 modifier = Modifier
                     .padding(top = Spacing.regular)
                     .fillMaxSize(),
             ) {
-                when (searchState) {
-                    is SearchState.EmptyState -> {
-                        // No-op
-                    }
+                val itemFeedLayout = when {
+                    searchState is SearchState.DataFound -> searchState.feedLayout.normalizeForSearchList()
+                    else -> FeedLayout.LIST
+                }
+                val gridContentPadding = PaddingValues(
+                    start = SearchGridContentPadding,
+                    end = SearchGridContentPadding,
+                    bottom = padding.calculateBottomPadding(),
+                )
+                val isGridArrangement = searchState is SearchState.DataFound &&
+                    searchState.isGridLayoutEnabled &&
+                    isGridLayoutEnabled &&
+                    itemFeedLayout.supportsSearchGridArrangement() &&
+                    maxWidth >= itemFeedLayout.searchGridMinContentWidth()
 
-                    is SearchState.NoDataFound -> {
-                        item {
-                            NoDataFoundView(searchState)
+                if (isGridArrangement && searchState is SearchState.DataFound) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(minSize = itemFeedLayout.searchGridMinCellWidth()),
+                        contentPadding = gridContentPadding,
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+                        verticalArrangement = Arrangement.spacedBy(Spacing.regular),
+                    ) {
+                        gridItemsIndexed(searchState.items) { _, item ->
+                            SearchFeedItem(
+                                item = item,
+                                feedFontSizes = feedFontSizes,
+                                feedLayout = itemFeedLayout,
+                                isGridCell = true,
+                                currentFeedFilter = currentFeedFilter,
+                                shareCommentsMenuLabel = shareCommentsMenuLabel,
+                                shareMenuLabel = shareMenuLabel,
+                                onFeedItemClick = onFeedItemClick,
+                                onBookmarkClick = onBookmarkClick,
+                                onReadStatusClick = onReadStatusClick,
+                                onCommentClick = onCommentClick,
+                                onOpenFeedSettings = onOpenFeedSettings,
+                                onOpenFeedWebsite = onOpenFeedWebsite,
+                                onShareClick = onShareClick,
+                                onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+                                onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                                feedItemDisplaySettings = feedItemDisplaySettings,
+                            )
                         }
                     }
+                } else {
+                    LazyColumn {
+                        when (searchState) {
+                            is SearchState.EmptyState -> {
+                                // No-op
+                            }
 
-                    is SearchState.DataFound -> {
-                        itemsIndexed(searchState.items) { index, item ->
-                            FeedItemContainer(feedLayout = searchState.feedLayout) {
-                                FeedItemView(
-                                    feedItem = item,
-                                    feedFontSize = feedFontSizes,
-                                    shareCommentsMenuLabel = shareCommentsMenuLabel,
-                                    shareMenuLabel = shareMenuLabel,
-                                    onFeedItemClick = onFeedItemClick,
-                                    onBookmarkClick = onBookmarkClick,
-                                    onReadStatusClick = onReadStatusClick,
-                                    onCommentClick = onCommentClick,
-                                    onOpenFeedSettings = onOpenFeedSettings,
-                                    onOpenFeedWebsite = onOpenFeedWebsite,
-                                    feedLayout = searchState.feedLayout,
-                                    onShareClick = onShareClick,
-                                    onMarkAllAboveAsRead = onMarkAllAboveAsRead,
-                                    onMarkAllBelowAsRead = onMarkAllBelowAsRead,
-                                    feedItemDisplaySettings = feedItemDisplaySettings,
-                                )
+                            is SearchState.NoDataFound -> {
+                                item {
+                                    NoDataFoundView(searchState)
+                                }
+                            }
+
+                            is SearchState.DataFound -> {
+                                itemsIndexed(searchState.items) { _, item ->
+                                    SearchFeedItem(
+                                        item = item,
+                                        feedFontSizes = feedFontSizes,
+                                        feedLayout = itemFeedLayout,
+                                        currentFeedFilter = currentFeedFilter,
+                                        shareCommentsMenuLabel = shareCommentsMenuLabel,
+                                        shareMenuLabel = shareMenuLabel,
+                                        onFeedItemClick = onFeedItemClick,
+                                        onBookmarkClick = onBookmarkClick,
+                                        onReadStatusClick = onReadStatusClick,
+                                        onCommentClick = onCommentClick,
+                                        onOpenFeedSettings = onOpenFeedSettings,
+                                        onOpenFeedWebsite = onOpenFeedWebsite,
+                                        onShareClick = onShareClick,
+                                        onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+                                        onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                                        feedItemDisplaySettings = feedItemDisplaySettings,
+                                    )
+                                }
                             }
                         }
-                    }
-                }
 
-                item {
-                    Spacer(modifier = Modifier.height(padding.calculateBottomPadding()))
+                        item {
+                            Spacer(modifier = Modifier.height(padding.calculateBottomPadding()))
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+@Composable
+private fun SearchFeedItem(
+    item: com.prof18.feedflow.core.model.FeedItem,
+    feedFontSizes: FeedFontSizes,
+    feedLayout: FeedLayout,
+    currentFeedFilter: FeedFilter?,
+    shareCommentsMenuLabel: String,
+    shareMenuLabel: String,
+    onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
+    onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
+    onOpenFeedWebsite: (String) -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    onMarkAllAboveAsRead: (String) -> Unit,
+    onMarkAllBelowAsRead: (String) -> Unit,
+    feedItemDisplaySettings: FeedItemDisplaySettings,
+    isGridCell: Boolean = false,
+) {
+    FeedItemContainer(
+        feedLayout = feedLayout,
+        isGridCell = isGridCell,
+    ) {
+        FeedItemView(
+            feedItem = item,
+            feedFontSize = feedFontSizes,
+            shareCommentsMenuLabel = shareCommentsMenuLabel,
+            shareMenuLabel = shareMenuLabel,
+            onFeedItemClick = onFeedItemClick,
+            onBookmarkClick = onBookmarkClick,
+            onReadStatusClick = onReadStatusClick,
+            onCommentClick = onCommentClick,
+            onOpenFeedSettings = onOpenFeedSettings,
+            onOpenFeedWebsite = onOpenFeedWebsite,
+            feedLayout = feedLayout,
+            isGridCell = isGridCell,
+            currentFeedFilter = currentFeedFilter ?: FeedFilter.Timeline,
+            onShareClick = onShareClick,
+            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+            feedItemDisplaySettings = feedItemDisplaySettings,
+        )
+    }
+}
+
+private fun FeedLayout.normalizeForSearchList(): FeedLayout =
+    if (this == FeedLayout.GRID) FeedLayout.BIG_IMAGE else this
+
+private fun FeedLayout.supportsSearchGridArrangement(): Boolean =
+    this == FeedLayout.CARD || this == FeedLayout.BIG_IMAGE
+
+private fun FeedLayout.searchGridMinCellWidth(): Dp = when (this) {
+    FeedLayout.BIG_IMAGE -> SearchBigImageGridMinCellWidth
+    else -> SearchCardGridMinCellWidth
+}
+
+private fun FeedLayout.searchGridMinContentWidth(): Dp =
+    searchGridMinCellWidth() * 2 + Spacing.regular
 
 @Composable
 private fun NoDataFoundView(

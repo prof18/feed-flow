@@ -17,6 +17,8 @@ struct FeedItemView: View {
     let index: Int
     let feedFontSizes: FeedFontSizes
     var feedLayout: FeedLayout = .list
+    var isGridCell = false
+    var heroImageAspectRatio: CGFloat = 16.0 / 9.0
     var currentFeedFilter: FeedFilter = .Timeline()
     var feedItemDisplaySettings = FeedItemDisplaySettings(
         isHideUnreadDotEnabled: false,
@@ -25,6 +27,9 @@ struct FeedItemView: View {
     )
 
     var body: some View {
+        if normalizedFeedLayout == .bigImage {
+            imageCardView
+        } else {
         VStack(alignment: .leading) {
             let showUnreadDot = !feedItem.isRead && !feedItemDisplaySettings.isHideUnreadDotEnabled
             let showFeedSource = !feedItemDisplaySettings.isHideFeedSourceEnabled
@@ -43,12 +48,7 @@ struct FeedItemView: View {
                         Text(feedItem.feedSource.title)
                             .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
                             .padding(.top, Spacing.small)
-                            .opacity(
-                                feedItem.isRead &&
-                                    !(currentFeedFilter is FeedFilter.Read) &&
-                                    !(currentFeedFilter is FeedFilter.Bookmarks)
-                                    ? 0.6 : 1.0
-                            )
+                            .opacity(readTextOpacity)
                     }
 
                     Spacer()
@@ -71,23 +71,195 @@ struct FeedItemView: View {
                 Text(dateString)
                     .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
                     .padding(.bottom, Spacing.small)
-                    .opacity(
-                        feedItem.isRead &&
-                            !(currentFeedFilter is FeedFilter.Read) &&
-                            !(currentFeedFilter is FeedFilter.Bookmarks)
-                            ? 0.6 : 1.0
-                    )
+                    .opacity(readTextOpacity)
             }
         }
         .padding(.horizontal, Spacing.regular)
         .padding(.vertical, Spacing.small)
-        .if(feedLayout == .card) { view in
+        .if(normalizedFeedLayout == .card) { view in
             view
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(16)
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay(cardOutline)
+                .shadow(color: cardShadowColor, radius: 3, x: 0, y: 1)
                 .padding(.horizontal, Spacing.small)
                 .padding(.vertical, Spacing.small)
         }
+        }
+    }
+
+    private var imageCardView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            heroImage
+
+            VStack(alignment: .leading, spacing: 0) {
+                imageCardSourceRow
+
+                if let title = feedItem.title {
+                    Text(title)
+                        .font(.system(size: CGFloat(feedFontSizes.feedTitleFontSize)))
+                        .bold()
+                        .lineLimit(isGridCell ? 2 : 3)
+                        .foregroundStyle(.primary)
+                        .opacity(readTextOpacity)
+                        .padding(.top, hasImageCardSourceRow ? Spacing.small : 0)
+                }
+
+                if let subtitle = feedItem.subtitle {
+                    let lineLimit = feedItemDisplaySettings.descriptionLineLimit == .noLimit
+                        ? nil
+                        : Int(feedItemDisplaySettings.descriptionLineLimit.lines)
+                    Text(subtitle)
+                        .lineLimit(lineLimit)
+                        .font(.system(size: CGFloat(feedFontSizes.feedDescFontSize)))
+                        .foregroundStyle(.secondary)
+                        .opacity(readTextOpacity)
+                        .padding(.top, feedItem.title == nil ? 0 : Spacing.small)
+                }
+
+                if let dateString = feedItem.dateString {
+                    Text(dateString)
+                        .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
+                        .foregroundStyle(.primary)
+                        .opacity(readTextOpacity)
+                        .padding(.top, feedItem.title == nil && feedItem.subtitle == nil ? 0 : Spacing.small)
+                }
+            }
+            .padding(.horizontal, Spacing.regular)
+            .padding(.vertical, Spacing.regular)
+        }
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay(cardOutline)
+        .shadow(color: cardShadowColor, radius: 3, x: 0, y: 1)
+        .padding(.horizontal, normalizedFeedLayout == .bigImage && !isGridCell ? Spacing.regular : 0)
+        .padding(.vertical, normalizedFeedLayout == .bigImage && !isGridCell ? Spacing.small : 0)
+    }
+
+    private var normalizedFeedLayout: FeedLayout {
+        feedLayout == .grid ? .bigImage : feedLayout
+    }
+
+    private var cardOutline: some View {
+        RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .stroke(Color(.separator).opacity(0.65), lineWidth: 1)
+    }
+
+    private var cardShadowColor: Color {
+        Color.black.opacity(0.08)
+    }
+
+    private var hasImageCardSourceRow: Bool {
+        let showUnreadDot = !feedItem.isRead && !feedItemDisplaySettings.isHideUnreadDotEnabled
+        let showFeedSource = !feedItemDisplaySettings.isHideFeedSourceEnabled
+        return showUnreadDot || showFeedSource || feedItem.isBookmarked
+    }
+
+    @ViewBuilder private var heroImage: some View {
+        if let imageUrl = feedItem.imageUrl {
+            Color(.secondarySystemBackground)
+                .aspectRatio(heroImageAspectRatio, contentMode: .fit)
+                .overlay {
+                    LazyImage(
+                        request: ImageRequest.resized(
+                            url: URL(string: imageUrl),
+                            size: CGSize(width: 600, height: 338)
+                        )
+                    ) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        } else {
+                            Color(.secondarySystemBackground)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
+                }
+                .clipped()
+                .opacity(readImageOpacity)
+                .accessibilityIdentifier(FeedItemAccessibilityIdentifiers.image(feedItem.id))
+        }
+    }
+
+    @ViewBuilder private var imageCardSourceRow: some View {
+        let showUnreadDot = !feedItem.isRead && !feedItemDisplaySettings.isHideUnreadDotEnabled
+        let showFeedSource = !feedItemDisplaySettings.isHideFeedSourceEnabled
+        let showBookmark = feedItem.isBookmarked
+
+        if showUnreadDot || showFeedSource || showBookmark {
+            HStack(spacing: Spacing.small) {
+                if showFeedSource {
+                    feedSourceLogo
+
+                    Text(feedItem.feedSource.title)
+                        .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize), weight: .medium))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .opacity(readTextOpacity)
+                }
+
+                Spacer()
+
+                if showBookmark {
+                    Image(systemName: "bookmark.fill")
+                        .font(.system(size: 14))
+                        .foregroundStyle(Color.accentColor)
+                }
+
+                if showUnreadDot {
+                    Circle()
+                        .fill(Color.accentColor)
+                        .frame(width: 9, height: 9)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder private var feedSourceLogo: some View {
+        if let logoUrl = feedItem.feedSource.logoUrl {
+            LazyImage(
+                request: ImageRequest.resized(
+                    url: URL(string: logoUrl),
+                    size: CGSize(width: 24, height: 24)
+                )
+            ) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    Image(systemName: "square.stack.3d.up")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color.accentColor)
+                }
+            }
+            .frame(width: 24, height: 24)
+            .background(Color.accentColor.opacity(0.15))
+            .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+        } else {
+            Image(systemName: "square.stack.3d.up")
+                .font(.system(size: 13))
+                .foregroundStyle(Color.accentColor)
+                .frame(width: 24, height: 24)
+                .background(Color.accentColor.opacity(0.15))
+                .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+        }
+    }
+
+    private var readTextOpacity: Double {
+        feedItem.isRead &&
+            !(currentFeedFilter is FeedFilter.Read) &&
+            !(currentFeedFilter is FeedFilter.Bookmarks)
+            ? 0.6 : 1.0
+    }
+
+    private var readImageOpacity: Double {
+        feedItem.isRead &&
+            !(currentFeedFilter is FeedFilter.Read) &&
+            !(currentFeedFilter is FeedFilter.Bookmarks)
+            ? 0.76 : 1.0
     }
 
     @ViewBuilder private var titleAndSubtitleCell: some View {
@@ -96,12 +268,7 @@ struct FeedItemView: View {
                 Text(title)
                     .font(.system(size: CGFloat(feedFontSizes.feedTitleFontSize)))
                     .bold()
-                    .opacity(
-                        feedItem.isRead &&
-                            !(currentFeedFilter is FeedFilter.Read) &&
-                            !(currentFeedFilter is FeedFilter.Bookmarks)
-                            ? 0.6 : 1.0
-                    )
+                    .opacity(readTextOpacity)
             }
 
             if let subtitle = feedItem.subtitle {
@@ -112,12 +279,7 @@ struct FeedItemView: View {
                     .lineLimit(lineLimit)
                     .font(.system(size: CGFloat(feedFontSizes.feedDescFontSize)))
                     .padding(.top, getPaddingTop(feedItem: feedItem))
-                    .opacity(
-                        feedItem.isRead &&
-                            !(currentFeedFilter is FeedFilter.Read) &&
-                            !(currentFeedFilter is FeedFilter.Bookmarks)
-                            ? 0.6 : 1.0
-                    )
+                    .opacity(readTextOpacity)
             }
         }
     }
@@ -146,6 +308,7 @@ struct FeedItemView: View {
                 }
             }
             .padding(.leading, Spacing.regular)
+            .opacity(readImageOpacity)
             .accessibilityIdentifier(FeedItemAccessibilityIdentifiers.image(feedItem.id))
         } else {
             Spacer()

@@ -34,6 +34,8 @@ import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.PreviewHelper
 
+private const val DefaultHeroImageAspectRatio = 16f / 9f
+
 @Composable
 internal fun FeedItemView(
     feedItem: FeedItem,
@@ -51,6 +53,8 @@ internal fun FeedItemView(
     onMarkAllAboveAsRead: (String) -> Unit,
     modifier: Modifier = Modifier,
     disableClick: Boolean = false,
+    isGridCell: Boolean = false,
+    heroImageAspectRatio: Float = DefaultHeroImageAspectRatio,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
     onMarkAllBelowAsRead: (String) -> Unit,
@@ -88,6 +92,46 @@ internal fun FeedItemView(
                 showItemMenu = true
             },
         )
+    }
+
+    val normalizedFeedLayout = if (feedLayout == FeedLayout.GRID) FeedLayout.BIG_IMAGE else feedLayout
+    if (normalizedFeedLayout == FeedLayout.BIG_IMAGE) {
+        Column(modifier = modifier) {
+            Column(
+                modifier = clickableItemModifier
+                    .testTag(FeedItemE2eIds.row(feedItem.id)),
+            ) {
+                FeedItemImageCardContent(
+                    feedItem = feedItem,
+                    feedFontSize = feedFontSize,
+                    isGridCell = isGridCell,
+                    heroImageAspectRatio = heroImageAspectRatio,
+                    currentFeedFilter = currentFeedFilter,
+                    feedItemDisplaySettings = feedItemDisplaySettings,
+                )
+
+                FeedItemContextMenu(
+                    showMenu = showItemMenu,
+                    closeMenu = {
+                        showItemMenu = false
+                        menuPositionInWindow = null
+                    },
+                    menuPositionInWindow = menuPositionInWindow,
+                    feedItem = feedItem,
+                    shareMenuLabel = shareMenuLabel,
+                    shareCommentsMenuLabel = shareCommentsMenuLabel,
+                    onBookmarkClick = onBookmarkClick,
+                    onReadStatusClick = onReadStatusClick,
+                    onCommentClick = onCommentClick,
+                    onShareClick = onShareClick,
+                    onOpenFeedSettings = onOpenFeedSettings,
+                    onOpenFeedWebsite = onOpenFeedWebsite,
+                    onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+                    onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                )
+            }
+        }
+        return
     }
 
     Column(modifier = modifier) {
@@ -158,7 +202,7 @@ internal fun FeedItemView(
             )
         }
 
-        if (feedLayout == FeedLayout.LIST) {
+        if (normalizedFeedLayout == FeedLayout.LIST) {
             HorizontalDivider(
                 thickness = 0.2.dp,
                 color = Color.Gray,

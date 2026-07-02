@@ -1,5 +1,6 @@
 package com.prof18.feedflow.desktop.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -21,13 +24,18 @@ import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.dp
 import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
@@ -55,23 +63,32 @@ fun DesktopHomeScreenContent(
     snackbarHostState: SnackbarHostState,
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
+    gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     showDrawerMenu: Boolean = true,
+    isGridLayoutAllowed: Boolean = true,
     isDrawerOpen: Boolean = false,
     onDrawerMenuClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
+    var isGridArrangement by remember { mutableStateOf(false) }
 
     @Suppress("MagicNumber")
     val showScrollToTopButton by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex > 1
+            shouldShowScrollToTopButton(
+                isGridArrangement = isGridArrangement,
+                listState = listState,
+                gridState = gridState,
+            )
         }
     }
+    val contentContainerColor = displayState.feedLayout.contentContainerColor()
 
     Scaffold(
         modifier = modifier,
+        containerColor = contentContainerColor,
         topBar = {
             DesktopHomeAppBar(
                 currentFeedFilter = displayState.currentFeedFilter,
@@ -83,12 +100,22 @@ fun DesktopHomeScreenContent(
                 onSearchClick = onSearchClick,
                 onClick = {
                     scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                        scrollFeedToTop(
+                            isGridArrangement = isGridArrangement,
+                            listState = listState,
+                            gridState = gridState,
+                            reduceMotionEnabled = reduceMotionEnabled,
+                        )
                     }
                 },
                 onDoubleClick = {
                     scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                        scrollFeedToTop(
+                            isGridArrangement = isGridArrangement,
+                            listState = listState,
+                            gridState = gridState,
+                            reduceMotionEnabled = reduceMotionEnabled,
+                        )
                         feedListActions.refreshData()
                     }
                 },
@@ -117,7 +144,12 @@ fun DesktopHomeScreenContent(
                 visible = showScrollToTopButton,
                 onClick = {
                     scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                        scrollFeedToTop(
+                            isGridArrangement = isGridArrangement,
+                            listState = listState,
+                            gridState = gridState,
+                            reduceMotionEnabled = reduceMotionEnabled,
+                        )
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -129,6 +161,8 @@ fun DesktopHomeScreenContent(
 
         Column(
             modifier = Modifier
+                .fillMaxSize()
+                .background(contentContainerColor)
                 .padding(top = innerPadding.calculateTopPadding())
                 .padding(start = innerPadding.calculateLeftPadding(layoutDir))
                 .padding(end = innerPadding.calculateRightPadding(layoutDir)),
@@ -150,17 +184,18 @@ fun DesktopHomeScreenContent(
                     Box(
                         modifier = Modifier.fillMaxSize(),
                     ) {
-                        val scrollbarState = rememberScrollbarState(listState)
+                        val showListScrollbar = !isGridArrangement
+                        val feedListWidthModifier = displayState.feedLayout.feedListWidthModifier(
+                            isGridLayoutEnabled = displayState.isGridLayoutEnabled,
+                            isGridLayoutAllowed = isGridLayoutAllowed,
+                        )
 
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.TopCenter,
                         ) {
                             Box(
-                                modifier = Modifier
-                                    .widthIn(max = listPaneMaxContentWidth)
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(),
+                                modifier = feedListWidthModifier.fillMaxHeight(),
                             ) {
                                 Column {
                                     FeedLoader(
@@ -185,7 +220,11 @@ fun DesktopHomeScreenContent(
                                         modifier = Modifier,
                                         feedItems = displayState.feedItems,
                                         listState = listState,
-                                        contentPadding = PaddingValues(top = listPaneTopContentPadding),
+                                        gridState = gridState,
+                                        contentPadding = PaddingValues(
+                                            top = listPaneTopContentPadding,
+                                            end = displayState.feedLayout.endContentInset(),
+                                        ),
                                         feedFontSize = displayState.feedFontSizes,
                                         nextFeedState = displayState.nextFeedDisplayState,
                                         shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
@@ -193,6 +232,7 @@ fun DesktopHomeScreenContent(
                                         currentFeedFilter = displayState.currentFeedFilter,
                                         swipeActions = displayState.swipeActions,
                                         requestMoreItems = feedListActions.requestNewData,
+                                        onGridArrangementChanged = { isGridArrangement = it },
                                         onFeedItemClick = { feedInfo ->
                                             feedListActions.openUrl(feedInfo)
                                             feedListActions.markAsRead(FeedItemId(feedInfo.id))
@@ -210,6 +250,8 @@ fun DesktopHomeScreenContent(
                                         onOpenFeedSettings = feedManagementActions.onEditFeedClick,
                                         onOpenFeedWebsite = feedManagementActions.onOpenWebsite,
                                         feedLayout = displayState.feedLayout,
+                                        isGridLayoutEnabled = displayState.isGridLayoutEnabled,
+                                        isGridLayoutAllowed = isGridLayoutAllowed,
                                         onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
                                         onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
                                         onNavigateNext = feedListActions.onNavigateNext,
@@ -220,16 +262,74 @@ fun DesktopHomeScreenContent(
                             }
                         }
 
-                        FeedFlowVerticalScrollbar(scrollbarState)
+                        if (showListScrollbar) {
+                            val scrollbarState = rememberScrollbarState(listState)
+                            FeedFlowVerticalScrollbar(scrollbarState)
+                        }
 
                         TopToolbarContentFade(
                             modifier = Modifier.align(Alignment.TopCenter),
                             height = listPaneTopContentFadeHeight,
-                            color = MaterialTheme.colorScheme.surface,
+                            color = contentContainerColor,
                         )
                     }
                 }
             }
         }
+    }
+}
+
+private fun FeedLayout.endContentInset() =
+    if (isCardStyleLayout()) Spacing.regular else 0.dp
+
+private fun FeedLayout.isCardStyleLayout() = when (this) {
+    FeedLayout.CARD,
+    FeedLayout.BIG_IMAGE,
+    FeedLayout.GRID,
+    -> true
+    FeedLayout.LIST -> false
+}
+
+@Composable
+private fun FeedLayout.contentContainerColor(): Color =
+    if (isCardStyleLayout()) {
+        MaterialTheme.colorScheme.surfaceContainer
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+
+private fun FeedLayout.feedListWidthModifier(
+    isGridLayoutEnabled: Boolean,
+    isGridLayoutAllowed: Boolean,
+): Modifier =
+    if (isGridLayoutEnabled && isGridLayoutAllowed && isCardStyleLayout()) {
+        Modifier.fillMaxWidth()
+    } else {
+        Modifier
+            .widthIn(max = listPaneMaxContentWidth)
+            .fillMaxWidth()
+    }
+
+private fun shouldShowScrollToTopButton(
+    isGridArrangement: Boolean,
+    listState: LazyListState,
+    gridState: LazyStaggeredGridState,
+): Boolean =
+    if (isGridArrangement) {
+        gridState.firstVisibleItemIndex > 1
+    } else {
+        listState.firstVisibleItemIndex > 1
+    }
+
+private suspend fun scrollFeedToTop(
+    isGridArrangement: Boolean,
+    listState: LazyListState,
+    gridState: LazyStaggeredGridState,
+    reduceMotionEnabled: Boolean,
+) {
+    if (isGridArrangement) {
+        gridState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+    } else {
+        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
     }
 }

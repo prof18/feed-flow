@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.VisibleFeedItem
 
 internal class ScrollReadTracker {
@@ -89,4 +90,6 @@ internal class ScrollReadTracker {
 internal data class ScrollReadListShapeKey(
     val showReadArticlesTimeline: Boolean,
     val hideReadItems: Boolean,
+    val feedLayout: FeedLayout,
+    val isGridLayoutEnabled: Boolean,
 )

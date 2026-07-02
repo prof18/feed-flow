@@ -1,9 +1,14 @@
 package com.prof18.feedflow.shared.ui.home.components.list
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -12,6 +17,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
@@ -20,6 +30,7 @@ import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material.icons.filled.MarkEmailUnread
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
@@ -63,9 +75,14 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed as staggeredItemsIndexed
 
 val FeedListMaxContentWidth = 720.dp
 
+private val GridContentPadding = Spacing.regular
+private val GridMinCellWidth = 280.dp
+
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("MagicNumber")
 @Composable
 fun FeedList(
@@ -90,118 +107,81 @@ fun FeedList(
     onOpenFeedWebsite: (String) -> Unit,
     onNavigateNext: () -> Unit,
     modifier: Modifier = Modifier,
+    onGridArrangementChanged: (Boolean) -> Unit = {},
     listState: LazyListState = rememberLazyListState(),
+    gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     contentPadding: PaddingValues = PaddingValues(),
     showNextFeedButton: Boolean = false,
+    isGridLayoutEnabled: Boolean = true,
+    isGridLayoutAllowed: Boolean = true,
     onMarkAllAboveAsRead: (String) -> Unit = {},
     onMarkAllBelowAsRead: (String) -> Unit = {},
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
 ) {
-    val shouldStartPaginate = remember {
-        derivedStateOf {
-            val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-                ?: return@derivedStateOf false
-
-            val totalItemsCount = listState.layoutInfo.totalItemsCount
-            lastVisibleItemIndex >= totalItemsCount - 15
-        }
+    val itemFeedLayout = feedLayout.normalizeForFeedList()
+    val feedBackgroundModifier = if (itemFeedLayout.usesCardBackground()) {
+        Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
+    } else {
+        Modifier
     }
 
-    PullToNextLayout(
-        modifier = modifier,
-        onNavigateNext = { onNavigateNext() },
-        enabled = !showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState,
-        indicator = { progress ->
-            PullToNextIndicator(
-                progress = progress,
-                title = (nextFeedState as? NextFeedDisplayEnabledState)?.title,
-            )
-        },
-    ) {
-        LazyColumn(
-            state = listState,
-            contentPadding = contentPadding,
+    BoxWithConstraints(modifier = modifier.then(feedBackgroundModifier)) {
+        val gridContentPadding = contentPadding.withHorizontal(GridContentPadding)
+        val isGridArrangement = isGridLayoutEnabled &&
+            isGridLayoutAllowed &&
+            itemFeedLayout.supportsGridArrangement() &&
+            maxWidth >= itemFeedLayout.gridMinContentWidth()
+        val latestOnGridArrangementChanged by rememberUpdatedState(onGridArrangementChanged)
+        LaunchedEffect(isGridArrangement) {
+            latestOnGridArrangementChanged(isGridArrangement)
+        }
+        val shouldStartPaginate = remember(isGridArrangement) {
+            derivedStateOf {
+                if (isGridArrangement) {
+                    val lastVisibleItemIndex = gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                        ?: return@derivedStateOf false
+                    val totalItemsCount = gridState.layoutInfo.totalItemsCount
+                    lastVisibleItemIndex >= totalItemsCount - 15
+                } else {
+                    val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                        ?: return@derivedStateOf false
+                    val totalItemsCount = listState.layoutInfo.totalItemsCount
+                    lastVisibleItemIndex >= totalItemsCount - 15
+                }
+            }
+        }
+
+        PullToNextLayout(
+            onNavigateNext = { onNavigateNext() },
+            enabled = !showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState,
+            indicator = { progress ->
+                PullToNextIndicator(
+                    progress = progress,
+                    title = (nextFeedState as? NextFeedDisplayEnabledState)?.title,
+                )
+            },
         ) {
-            itemsIndexed(
-                items = feedItems,
-            ) { index, item ->
-                val swipeBackgroundColor = when (feedLayout) {
-                    FeedLayout.LIST -> MaterialTheme.colorScheme.surfaceContainerHighest
-                    FeedLayout.CARD -> MaterialTheme.colorScheme.surfaceContainer
-                }
-
-                val swipeToRight = remember(
-                    item,
-                    swipeActions.rightSwipeAction,
-                    swipeBackgroundColor,
-                    onOpenInBrowser,
-                    onBookmarkClick,
-                    onReadStatusClick,
+            if (isGridArrangement) {
+                LazyVerticalStaggeredGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    state = gridState,
+                    columns = StaggeredGridCells.Adaptive(minSize = itemFeedLayout.gridMinCellWidth()),
+                    contentPadding = gridContentPadding,
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+                    verticalItemSpacing = Spacing.regular,
                 ) {
-                    swipeActions.rightSwipeAction.toSwipeAction(
-                        feedItem = item,
-                        swipeBackgroundColor = swipeBackgroundColor,
-                        onOpenInBrowser = onOpenInBrowser,
-                        onBookmarkClick = onBookmarkClick,
-                        onReadStatusClick = onReadStatusClick,
-                    )
-                }
-                val swipeToLeft = remember(
-                    item,
-                    swipeActions.leftSwipeAction,
-                    swipeBackgroundColor,
-                    onOpenInBrowser,
-                    onBookmarkClick,
-                    onReadStatusClick,
-                ) {
-                    swipeActions.leftSwipeAction.toSwipeAction(
-                        feedItem = item,
-                        swipeBackgroundColor = swipeBackgroundColor,
-                        onOpenInBrowser = onOpenInBrowser,
-                        onBookmarkClick = onBookmarkClick,
-                        onReadStatusClick = onReadStatusClick,
-                    )
-                }
-                val startSwipeActions = remember(swipeToRight) {
-                    swipeToRight?.let { listOf(it) }.orEmpty()
-                }
-                val endSwipeActions = remember(swipeToLeft) {
-                    swipeToLeft?.let { listOf(it) }.orEmpty()
-                }
-
-                FeedItemContainer(feedLayout = feedLayout) { itemModifier ->
-                    if (swipeToRight == null && swipeToLeft == null) {
-                        FeedItemView(
-                            modifier = itemModifier,
-                            feedItem = item,
-                            shareMenuLabel = shareMenuLabel,
-                            shareCommentsMenuLabel = shareCommentsMenuLabel,
-                            onFeedItemClick = onFeedItemClick,
-                            onCommentClick = onCommentClick,
-                            onBookmarkClick = onBookmarkClick,
-                            onReadStatusClick = onReadStatusClick,
-                            feedFontSize = feedFontSize,
-                            onOpenFeedSettings = onOpenFeedSettings,
-                            onOpenFeedWebsite = onOpenFeedWebsite,
-                            onShareClick = onShareClick,
-                            feedLayout = feedLayout,
-                            currentFeedFilter = currentFeedFilter,
-                            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
-                            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
-                            feedItemDisplaySettings = feedItemDisplaySettings,
-                        )
-                    } else {
-                        SwipeableActionsBox(
-                            modifier = itemModifier,
-                            backgroundUntilSwipeThreshold = swipeBackgroundColor,
-                            startActions = startSwipeActions,
-                            endActions = endSwipeActions,
-                        ) {
+                    staggeredItemsIndexed(
+                        items = feedItems,
+                    ) { _, item ->
+                        FeedItemContainer(
+                            feedLayout = itemFeedLayout,
+                            isGridCell = true,
+                        ) { itemModifier ->
                             FeedItemView(
+                                modifier = itemModifier,
                                 feedItem = item,
                                 shareMenuLabel = shareMenuLabel,
                                 shareCommentsMenuLabel = shareCommentsMenuLabel,
-                                feedLayout = feedLayout,
                                 onFeedItemClick = onFeedItemClick,
                                 onCommentClick = onCommentClick,
                                 onBookmarkClick = onBookmarkClick,
@@ -210,6 +190,8 @@ fun FeedList(
                                 onOpenFeedSettings = onOpenFeedSettings,
                                 onOpenFeedWebsite = onOpenFeedWebsite,
                                 onShareClick = onShareClick,
+                                feedLayout = itemFeedLayout,
+                                isGridCell = true,
                                 currentFeedFilter = currentFeedFilter,
                                 onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                                 onMarkAllBelowAsRead = onMarkAllBelowAsRead,
@@ -217,35 +199,222 @@ fun FeedList(
                             )
                         }
                     }
+
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        FeedFooterButtons(
+                            currentFeedFilter = currentFeedFilter,
+                            showNextFeedButton = showNextFeedButton,
+                            nextFeedState = nextFeedState,
+                            markAllAsRead = markAllAsRead,
+                            onNavigateNext = onNavigateNext,
+                        )
+                    }
                 }
-                if (index == feedItems.size - 1 && currentFeedFilter !is FeedFilter.Read) {
-                    MarkAllReadButton(
-                        showNextFeedButton = showNextFeedButton,
-                        nextFeedState = nextFeedState,
-                        onClick = markAllAsRead,
-                    )
-                }
-                if (index == feedItems.size - 1 && showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState) {
-                    NavigateNextButton(
-                        title = nextFeedState.title,
-                        onClick = onNavigateNext,
-                    )
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    state = listState,
+                    contentPadding = contentPadding,
+                ) {
+                    itemsIndexed(
+                        items = feedItems,
+                    ) { index, item ->
+                        FeedListItem(
+                            item = item,
+                            feedFontSize = feedFontSize,
+                            feedLayout = itemFeedLayout,
+                            currentFeedFilter = currentFeedFilter,
+                            shareMenuLabel = shareMenuLabel,
+                            shareCommentsMenuLabel = shareCommentsMenuLabel,
+                            swipeActions = swipeActions,
+                            onFeedItemClick = onFeedItemClick,
+                            onOpenInBrowser = onOpenInBrowser,
+                            onBookmarkClick = onBookmarkClick,
+                            onReadStatusClick = onReadStatusClick,
+                            onCommentClick = onCommentClick,
+                            onShareClick = onShareClick,
+                            onOpenFeedSettings = onOpenFeedSettings,
+                            onOpenFeedWebsite = onOpenFeedWebsite,
+                            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+                            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                            feedItemDisplaySettings = feedItemDisplaySettings,
+                        )
+                        if (index == feedItems.size - 1) {
+                            FeedFooterButtons(
+                                currentFeedFilter = currentFeedFilter,
+                                showNextFeedButton = showNextFeedButton,
+                                nextFeedState = nextFeedState,
+                                markAllAsRead = markAllAsRead,
+                                onNavigateNext = onNavigateNext,
+                            )
+                        }
+                    }
                 }
             }
         }
+
+        if (isGridArrangement) {
+            ObserveVisibleGridFeedItems(
+                feedItems = feedItems,
+                gridState = gridState,
+                onVisibleFeedItemsChanged = onVisibleFeedItemsChanged,
+            )
+        } else {
+            ObserveVisibleFeedItems(
+                feedItems = feedItems,
+                listState = listState,
+                onVisibleFeedItemsChanged = onVisibleFeedItemsChanged,
+            )
+        }
+
+        val latestRequestMoreItems by rememberUpdatedState(requestMoreItems)
+        LaunchedEffect(key1 = shouldStartPaginate.value) {
+            if (shouldStartPaginate.value) {
+                latestRequestMoreItems()
+            }
+        }
+    }
+}
+
+@Composable
+private fun FeedListItem(
+    item: FeedItem,
+    feedFontSize: FeedFontSizes,
+    feedLayout: FeedLayout,
+    currentFeedFilter: FeedFilter,
+    shareMenuLabel: String,
+    shareCommentsMenuLabel: String,
+    swipeActions: SwipeActions,
+    onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onOpenInBrowser: (FeedItemUrlInfo) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
+    onOpenFeedWebsite: (String) -> Unit,
+    onMarkAllAboveAsRead: (String) -> Unit,
+    onMarkAllBelowAsRead: (String) -> Unit,
+    feedItemDisplaySettings: FeedItemDisplaySettings,
+) {
+    val swipeBackgroundColor = when (feedLayout) {
+        FeedLayout.LIST -> MaterialTheme.colorScheme.surfaceContainerHighest
+        FeedLayout.CARD,
+        FeedLayout.BIG_IMAGE,
+        FeedLayout.GRID,
+        -> MaterialTheme.colorScheme.surfaceContainer
     }
 
-    ObserveVisibleFeedItems(
-        feedItems = feedItems,
-        listState = listState,
-        onVisibleFeedItemsChanged = onVisibleFeedItemsChanged,
-    )
+    val swipeToRight = remember(
+        item,
+        swipeActions.rightSwipeAction,
+        swipeBackgroundColor,
+        onOpenInBrowser,
+        onBookmarkClick,
+        onReadStatusClick,
+    ) {
+        swipeActions.rightSwipeAction.toSwipeAction(
+            feedItem = item,
+            swipeBackgroundColor = swipeBackgroundColor,
+            onOpenInBrowser = onOpenInBrowser,
+            onBookmarkClick = onBookmarkClick,
+            onReadStatusClick = onReadStatusClick,
+        )
+    }
+    val swipeToLeft = remember(
+        item,
+        swipeActions.leftSwipeAction,
+        swipeBackgroundColor,
+        onOpenInBrowser,
+        onBookmarkClick,
+        onReadStatusClick,
+    ) {
+        swipeActions.leftSwipeAction.toSwipeAction(
+            feedItem = item,
+            swipeBackgroundColor = swipeBackgroundColor,
+            onOpenInBrowser = onOpenInBrowser,
+            onBookmarkClick = onBookmarkClick,
+            onReadStatusClick = onReadStatusClick,
+        )
+    }
+    val startSwipeActions = remember(swipeToRight) {
+        swipeToRight?.let { listOf(it) }.orEmpty()
+    }
+    val endSwipeActions = remember(swipeToLeft) {
+        swipeToLeft?.let { listOf(it) }.orEmpty()
+    }
 
-    val latestRequestMoreItems by rememberUpdatedState(requestMoreItems)
-    LaunchedEffect(key1 = shouldStartPaginate.value) {
-        if (shouldStartPaginate.value) {
-            latestRequestMoreItems()
+    FeedItemContainer(feedLayout = feedLayout) { itemModifier ->
+        if (swipeToRight == null && swipeToLeft == null) {
+            FeedItemView(
+                modifier = itemModifier,
+                feedItem = item,
+                shareMenuLabel = shareMenuLabel,
+                shareCommentsMenuLabel = shareCommentsMenuLabel,
+                onFeedItemClick = onFeedItemClick,
+                onCommentClick = onCommentClick,
+                onBookmarkClick = onBookmarkClick,
+                onReadStatusClick = onReadStatusClick,
+                feedFontSize = feedFontSize,
+                onOpenFeedSettings = onOpenFeedSettings,
+                onOpenFeedWebsite = onOpenFeedWebsite,
+                onShareClick = onShareClick,
+                feedLayout = feedLayout,
+                currentFeedFilter = currentFeedFilter,
+                onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+                onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                feedItemDisplaySettings = feedItemDisplaySettings,
+            )
+        } else {
+            SwipeableActionsBox(
+                modifier = itemModifier,
+                backgroundUntilSwipeThreshold = swipeBackgroundColor,
+                startActions = startSwipeActions,
+                endActions = endSwipeActions,
+            ) {
+                FeedItemView(
+                    feedItem = item,
+                    shareMenuLabel = shareMenuLabel,
+                    shareCommentsMenuLabel = shareCommentsMenuLabel,
+                    feedLayout = feedLayout,
+                    onFeedItemClick = onFeedItemClick,
+                    onCommentClick = onCommentClick,
+                    onBookmarkClick = onBookmarkClick,
+                    onReadStatusClick = onReadStatusClick,
+                    feedFontSize = feedFontSize,
+                    onOpenFeedSettings = onOpenFeedSettings,
+                    onOpenFeedWebsite = onOpenFeedWebsite,
+                    onShareClick = onShareClick,
+                    currentFeedFilter = currentFeedFilter,
+                    onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+                    onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                    feedItemDisplaySettings = feedItemDisplaySettings,
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun FeedFooterButtons(
+    currentFeedFilter: FeedFilter,
+    showNextFeedButton: Boolean,
+    nextFeedState: NextFeedDisplayState,
+    markAllAsRead: () -> Unit,
+    onNavigateNext: () -> Unit,
+) {
+    if (currentFeedFilter !is FeedFilter.Read) {
+        MarkAllReadButton(
+            showNextFeedButton = showNextFeedButton,
+            nextFeedState = nextFeedState,
+            onClick = markAllAsRead,
+        )
+    }
+    if (showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState) {
+        NavigateNextButton(
+            title = nextFeedState.title,
+            onClick = onNavigateNext,
+        )
     }
 }
 
@@ -261,6 +430,33 @@ private fun ObserveVisibleFeedItems(
         snapshotFlow {
             listState.layoutInfo.visibleItemsInfo
                 .sortedBy { it.offset }
+                .mapNotNull { visibleItem ->
+                    val feedItem = latestFeedItems.getOrNull(visibleItem.index) ?: return@mapNotNull null
+                    VisibleFeedItem(
+                        id = feedItem.id,
+                        index = visibleItem.index,
+                    )
+                }
+        }
+            .distinctUntilChanged()
+            .collect { visibleItems ->
+                latestOnVisibleFeedItemsChanged(visibleItems)
+            }
+    }
+}
+
+@Composable
+private fun ObserveVisibleGridFeedItems(
+    feedItems: ImmutableList<FeedItem>,
+    gridState: LazyStaggeredGridState,
+    onVisibleFeedItemsChanged: (List<VisibleFeedItem>) -> Unit,
+) {
+    val latestFeedItems by rememberUpdatedState(feedItems)
+    val latestOnVisibleFeedItemsChanged by rememberUpdatedState(onVisibleFeedItemsChanged)
+    LaunchedEffect(gridState) {
+        snapshotFlow {
+            gridState.layoutInfo.visibleItemsInfo
+                .sortedWith(compareBy({ it.offset.y }, { it.offset.x }))
                 .mapNotNull { visibleItem ->
                     val feedItem = latestFeedItems.getOrNull(visibleItem.index) ?: return@mapNotNull null
                     VisibleFeedItem(
@@ -340,18 +536,79 @@ private fun NavigateNextButton(
 fun FeedItemContainer(
     feedLayout: FeedLayout,
     modifier: Modifier = Modifier,
+    isGridCell: Boolean = false,
     content: @Composable (Modifier) -> Unit,
 ) {
-    when (feedLayout) {
+    when (feedLayout.normalizeForFeedList()) {
         FeedLayout.LIST -> content(modifier)
         FeedLayout.CARD -> {
-            Card(
-                modifier = modifier.padding(Spacing.small),
-                shape = MaterialTheme.shapes.large,
+            FeedItemCard(
+                modifier = if (isGridCell) {
+                    modifier.fillMaxWidth()
+                } else {
+                    modifier.padding(Spacing.small)
+                },
             ) {
                 content(Modifier)
             }
         }
+        FeedLayout.BIG_IMAGE -> {
+            FeedItemCard(
+                modifier = if (isGridCell) {
+                    modifier.fillMaxWidth()
+                } else {
+                    modifier.padding(
+                        horizontal = Spacing.regular,
+                        vertical = Spacing.small,
+                    )
+                },
+            ) {
+                content(Modifier)
+            }
+        }
+        FeedLayout.GRID -> content(modifier)
+    }
+}
+
+private fun FeedLayout.normalizeForFeedList(): FeedLayout =
+    if (this == FeedLayout.GRID) FeedLayout.BIG_IMAGE else this
+
+private fun FeedLayout.supportsGridArrangement(): Boolean =
+    this == FeedLayout.CARD || this == FeedLayout.BIG_IMAGE
+
+private fun FeedLayout.usesCardBackground(): Boolean =
+    this == FeedLayout.CARD || this == FeedLayout.BIG_IMAGE || this == FeedLayout.GRID
+
+private fun FeedLayout.gridMinCellWidth(): Dp = GridMinCellWidth
+
+private fun FeedLayout.gridMinContentWidth(): Dp =
+    gridMinCellWidth() * 2 + Spacing.regular
+
+private fun PaddingValues.withHorizontal(padding: Dp): PaddingValues = PaddingValues(
+    start = padding,
+    top = calculateTopPadding(),
+    end = padding,
+    bottom = calculateBottomPadding(),
+)
+
+@Composable
+private fun FeedItemCard(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Card(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
+        ),
+    ) {
+        content()
     }
 }
 

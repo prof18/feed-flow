@@ -38,6 +38,7 @@ internal fun FeedListPane(
     feedOrder: FeedOrder,
     onFontScaleUpdate: (Int) -> Unit,
     onFeedLayoutUpdate: (FeedLayout) -> Unit,
+    onGridLayoutEnabledUpdate: (Boolean) -> Unit,
     onHideDescriptionUpdate: (Boolean) -> Unit,
     onHideImagesUpdate: (Boolean) -> Unit,
     onHideDateUpdate: (Boolean) -> Unit,
@@ -93,9 +94,18 @@ internal fun FeedListPane(
                 options = persistentListOf(
                     SettingDropdownOption(FeedLayout.LIST, strings.settingsFeedLayoutList),
                     SettingDropdownOption(FeedLayout.CARD, strings.settingsFeedLayoutCard),
+                    SettingDropdownOption(FeedLayout.BIG_IMAGE, strings.settingsFeedLayoutBigImage),
                 ),
                 onOptionSelected = onFeedLayoutUpdate,
             )
+
+            if (settingsState.feedLayout.supportsGridToggle()) {
+                SettingSwitchItem(
+                    title = strings.settingsFeedLayoutGridToggle,
+                    isChecked = settingsState.isGridLayoutEnabled,
+                    onCheckedChange = onGridLayoutEnabledUpdate,
+                )
+            }
 
             SettingSwitchItem(
                 title = LocalFeedFlowStrings.current.settingsHideDescription,
@@ -241,6 +251,9 @@ private fun swipeActionOptions(
     ),
 )
 
+private fun FeedLayout.supportsGridToggle(): Boolean =
+    this == FeedLayout.CARD || this == FeedLayout.BIG_IMAGE
+
 @Preview
 @Composable
 private fun FeedListPanePreview() {
@@ -251,6 +264,7 @@ private fun FeedListPanePreview() {
             feedOrder = FeedOrder.NEWEST_FIRST,
             onFontScaleUpdate = {},
             onFeedLayoutUpdate = {},
+            onGridLayoutEnabledUpdate = {},
             onHideDescriptionUpdate = {},
             onHideImagesUpdate = {},
             onHideDateUpdate = {},

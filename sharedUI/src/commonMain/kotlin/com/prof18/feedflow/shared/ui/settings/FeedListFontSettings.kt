@@ -2,10 +2,14 @@ package com.prof18.feedflow.shared.ui.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -19,6 +23,10 @@ import com.prof18.feedflow.shared.ui.home.components.list.FeedItemView
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
+private val FeedItemPreviewMaxWidth = 420.dp
+private val FeedItemImageCardPreviewMaxWidth = 320.dp
+private const val FeedItemPreviewHeroImageAspectRatio = 3f
+
 @Composable
 fun FeedItemPreview(
     fontSizes: FeedFontSizes,
@@ -31,12 +39,25 @@ fun FeedItemPreview(
     modifier: Modifier = Modifier,
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
 ) {
+    val isCompactImageCardPreview = feedLayout == FeedLayout.BIG_IMAGE || feedLayout == FeedLayout.GRID
     Box(
         modifier = modifier
+            .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceContainer)
-            .padding(Spacing.medium),
+            .padding(if (isCompactImageCardPreview) Spacing.regular else Spacing.medium),
+        contentAlignment = Alignment.Center,
     ) {
-        FeedItemContainer(feedLayout) {
+        FeedItemContainer(
+            feedLayout = feedLayout,
+            modifier = Modifier.widthIn(
+                max = if (isCompactImageCardPreview) {
+                    FeedItemImageCardPreviewMaxWidth
+                } else {
+                    FeedItemPreviewMaxWidth
+                },
+            ),
+            isGridCell = isCompactImageCardPreview,
+        ) {
             FeedItemView(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background),
@@ -88,6 +109,8 @@ fun FeedItemPreview(
                 shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuShareComments,
                 shareMenuLabel = LocalFeedFlowStrings.current.menuShare,
                 disableClick = true,
+                isGridCell = isCompactImageCardPreview,
+                heroImageAspectRatio = FeedItemPreviewHeroImageAspectRatio,
                 onFeedItemClick = {},
                 onBookmarkClick = { _, _ -> },
                 onReadStatusClick = { _, _ -> },

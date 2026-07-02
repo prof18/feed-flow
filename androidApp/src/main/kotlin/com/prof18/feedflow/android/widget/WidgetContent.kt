@@ -30,7 +30,7 @@ import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.android.widget.components.WidgetFeedItemCard
 import com.prof18.feedflow.android.widget.components.WidgetFeedItemList
 import com.prof18.feedflow.core.model.FeedItem
-import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -40,7 +40,7 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 internal fun WidgetContent(
     feedItems: ImmutableList<FeedItem>,
-    feedLayout: FeedLayout,
+    feedLayout: WidgetFeedLayout,
     browserManager: BrowserManager,
     showHeader: Boolean,
     fontScale: Int,
@@ -143,7 +143,7 @@ internal fun WidgetContent(
 
                 items(feedItems) { feedItem ->
                     when (feedLayout) {
-                        FeedLayout.LIST -> WidgetFeedItemList(
+                        WidgetFeedLayout.LIST -> WidgetFeedItemList(
                             feedItem = feedItem,
                             browserManager = browserManager,
                             fontSizes = fontSizes,
@@ -151,7 +151,7 @@ internal fun WidgetContent(
                             primaryTextColor = primaryTextColor,
                             secondaryTextColor = secondaryTextColor,
                         )
-                        FeedLayout.CARD -> WidgetFeedItemCard(feedItem, browserManager, fontSizes, hideImages)
+                        WidgetFeedLayout.CARD -> WidgetFeedItemCard(feedItem, browserManager, fontSizes, hideImages)
                     }
                 }
 

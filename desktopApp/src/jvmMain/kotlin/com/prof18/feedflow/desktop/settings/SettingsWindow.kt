@@ -173,6 +173,7 @@ internal fun SettingsWindow(
                         feedOrder = settingsState.feedOrder,
                         onFontScaleUpdate = feedListSettingsViewModel::updateFontScale,
                         onFeedLayoutUpdate = feedListSettingsViewModel::updateFeedLayout,
+                        onGridLayoutEnabledUpdate = feedListSettingsViewModel::updateGridLayoutEnabled,
                         onHideDescriptionUpdate = feedListSettingsViewModel::updateHideDescription,
                         onHideImagesUpdate = feedListSettingsViewModel::updateHideImages,
                         onHideDateUpdate = feedListSettingsViewModel::updateHideDate,

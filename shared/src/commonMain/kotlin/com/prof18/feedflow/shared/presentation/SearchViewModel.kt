@@ -77,8 +77,6 @@ class SearchViewModel internal constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, FeedItemDisplaySettings())
 
-    private val feedLayout = feedAppearanceSettingsRepository.getFeedLayout()
-
     init {
         searchQueryMutableState
             .debounce(500.milliseconds)
@@ -227,7 +225,8 @@ class SearchViewModel internal constructor(
                         )
                     } else {
                         SearchState.DataFound(
-                            feedLayout = feedLayout,
+                            feedLayout = feedAppearanceSettingsRepository.getFeedLayout(),
+                            isGridLayoutEnabled = feedAppearanceSettingsRepository.getGridLayoutEnabled(),
                             items = foundFeed.map { feedItem ->
                                 feedItem.toFeedItem(
                                     dateFormatter = dateFormatter,

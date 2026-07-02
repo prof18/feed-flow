@@ -2,7 +2,7 @@ package com.prof18.feedflow.android.widget
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
@@ -55,7 +55,7 @@ class WidgetConfigurationViewModel(
         }
     }
 
-    fun updateFeedLayout(feedLayout: FeedLayout) {
+    fun updateFeedLayout(feedLayout: WidgetFeedLayout) {
         if (_settingsState.value.feedLayout == feedLayout) return
         widgetSettingsRepository.setFeedWidgetLayout(feedLayout)
     }
@@ -95,7 +95,7 @@ class WidgetConfigurationViewModel(
     }
 
     private data class WidgetAppearanceSettings(
-        val feedLayout: FeedLayout,
+        val feedLayout: WidgetFeedLayout,
         val showHeader: Boolean,
         val fontScale: Int,
         val backgroundColor: Int?,

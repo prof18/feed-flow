@@ -35,21 +35,23 @@ import androidx.compose.ui.window.Dialog
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
-import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
-import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
+import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
+import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.collections.immutable.persistentListOf
 import kotlin.math.roundToInt
 
 @Composable
 fun WidgetSettingsContent(
     settingsState: WidgetSettingsState,
-    onFeedLayoutSelected: (FeedLayout) -> Unit,
+    onFeedLayoutSelected: (WidgetFeedLayout) -> Unit,
     onShowHeaderSelected: (Boolean) -> Unit,
     onFontScaleSelected: (Int) -> Unit,
     onBackgroundColorSelected: (Int?) -> Unit,
@@ -92,7 +94,7 @@ fun WidgetSettingsContent(
             style = MaterialTheme.typography.bodyLarge,
         )
 
-        FeedLayoutSelector(
+        WidgetFeedLayoutSelector(
             feedLayout = settingsState.feedLayout,
             onFeedLayoutSelected = onFeedLayoutSelected,
         )
@@ -175,6 +177,23 @@ fun WidgetSettingsContent(
             },
         )
     }
+}
+
+@Composable
+private fun WidgetFeedLayoutSelector(
+    feedLayout: WidgetFeedLayout,
+    onFeedLayoutSelected: (WidgetFeedLayout) -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    CompactSettingDropdownRow(
+        title = strings.feedLayoutTitle,
+        currentValue = feedLayout,
+        options = persistentListOf(
+            SettingDropdownOption(WidgetFeedLayout.LIST, strings.settingsFeedLayoutList),
+            SettingDropdownOption(WidgetFeedLayout.CARD, strings.settingsFeedLayoutCard),
+        ),
+        onOptionSelected = onFeedLayoutSelected,
+    )
 }
 
 @Composable
@@ -361,7 +380,7 @@ private fun WidgetSettingsContentPreview() {
             WidgetSettingsContent(
                 settingsState = WidgetSettingsState(
                     syncPeriod = SyncPeriod.ONE_HOUR,
-                    feedLayout = FeedLayout.CARD,
+                    feedLayout = WidgetFeedLayout.CARD,
                     showHeader = true,
                     fontScale = 0,
                     backgroundColor = null,

@@ -1,8 +1,6 @@
 package com.prof18.feedflow.core.model
 
-enum class FeedLayout {
+enum class WidgetFeedLayout {
     LIST,
     CARD,
-    BIG_IMAGE,
-    GRID,
 }

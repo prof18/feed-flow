@@ -41,6 +41,7 @@ class FeedListSettingsViewModel internal constructor(
         val dateFormat = feedAppearanceSettingsRepository.getDateFormat()
         val timeFormat = feedAppearanceSettingsRepository.getTimeFormat()
         val feedLayout = feedAppearanceSettingsRepository.getFeedLayout()
+        val isGridLayoutEnabled = feedAppearanceSettingsRepository.getGridLayoutEnabled()
         val fontScale = feedAppearanceSettingsRepository.getFeedListFontScaleFactor()
         val leftSwipeAction = feedAppearanceSettingsRepository.getSwipeAction(SwipeDirection.LEFT)
         val rightSwipeAction = feedAppearanceSettingsRepository.getSwipeAction(SwipeDirection.RIGHT)
@@ -58,6 +59,7 @@ class FeedListSettingsViewModel internal constructor(
                 dateFormat = dateFormat,
                 timeFormat = timeFormat,
                 feedLayout = feedLayout,
+                isGridLayoutEnabled = isGridLayoutEnabled,
                 fontScale = fontScale,
                 leftSwipeActionType = leftSwipeAction,
                 rightSwipeActionType = rightSwipeAction,
@@ -123,8 +125,21 @@ class FeedListSettingsViewModel internal constructor(
     fun updateFeedLayout(feedLayout: FeedLayout) {
         viewModelScope.launch {
             feedAppearanceSettingsRepository.setFeedLayout(feedLayout)
+            val isGridLayoutEnabled = feedAppearanceSettingsRepository.getGridLayoutEnabled()
             stateMutableFlow.update {
-                it.copy(feedLayout = feedLayout)
+                it.copy(
+                    feedLayout = feedAppearanceSettingsRepository.getFeedLayout(),
+                    isGridLayoutEnabled = isGridLayoutEnabled,
+                )
+            }
+        }
+    }
+
+    fun updateGridLayoutEnabled(isEnabled: Boolean) {
+        viewModelScope.launch {
+            feedAppearanceSettingsRepository.setGridLayoutEnabled(isEnabled)
+            stateMutableFlow.update {
+                it.copy(isGridLayoutEnabled = isEnabled)
             }
         }
     }

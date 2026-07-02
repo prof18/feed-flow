@@ -67,6 +67,7 @@ internal fun HomeScreen(
     val swipeActions by homeViewModel.swipeActions.collectAsStateWithLifecycle()
     val feedOperation by homeViewModel.feedOperationState.collectAsStateWithLifecycle()
     val feedLayout by homeViewModel.feedLayout.collectAsStateWithLifecycle()
+    val isGridLayoutEnabled by homeViewModel.isGridLayoutEnabled.collectAsStateWithLifecycle()
     val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsStateWithLifecycle()
     val feedItemDisplaySettings by homeViewModel.feedItemDisplaySettings.collectAsStateWithLifecycle()
     val viewMenuState by homeViewModel.viewMenuState.collectAsStateWithLifecycle()
@@ -128,6 +129,7 @@ internal fun HomeScreen(
         currentFeedFilter,
         swipeActions,
         feedLayout,
+        isGridLayoutEnabled,
         isSyncUploadRequired,
         nextFeedPreviewState,
         feedItemDisplaySettings,
@@ -142,6 +144,7 @@ internal fun HomeScreen(
             currentFeedFilter = currentFeedFilter,
             swipeActions = swipeActions,
             feedLayout = feedLayout,
+            isGridLayoutEnabled = isGridLayoutEnabled,
             isSyncUploadRequired = isSyncUploadRequired,
             nextFeedDisplayState = nextFeedPreviewState.asDisplayState(),
             feedItemDisplaySettings = feedItemDisplaySettings,

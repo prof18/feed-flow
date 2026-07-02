@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.VisibleFeedItem
@@ -219,6 +220,44 @@ class ScrollReadTrackerTest {
         assertTrue(result.isEmpty())
     }
 
+    @Test
+    fun `layout change discards previous visible items`() {
+        onVisibleItemsChanged(
+            listOf(
+                visibleItem(id = "item-1", index = 0),
+                visibleItem(id = "item-2", index = 1),
+            ),
+        )
+
+        val result = onVisibleItemsChanged(
+            listOf(
+                visibleItem(id = "item-3", index = 2),
+            ),
+            listShapeKey = defaultListShapeKey.copy(feedLayout = FeedLayout.BIG_IMAGE),
+        )
+
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `grid mode change discards previous visible items`() {
+        onVisibleItemsChanged(
+            listOf(
+                visibleItem(id = "item-1", index = 0),
+                visibleItem(id = "item-2", index = 1),
+            ),
+        )
+
+        val result = onVisibleItemsChanged(
+            listOf(
+                visibleItem(id = "item-3", index = 2),
+            ),
+            listShapeKey = defaultListShapeKey.copy(isGridLayoutEnabled = true),
+        )
+
+        assertTrue(result.isEmpty())
+    }
+
     private fun onVisibleItemsChanged(
         visibleItems: List<VisibleFeedItem>,
         readIds: Set<String> = emptySet(),
@@ -283,6 +322,8 @@ class ScrollReadTrackerTest {
         val defaultListShapeKey = ScrollReadListShapeKey(
             showReadArticlesTimeline = false,
             hideReadItems = false,
+            feedLayout = FeedLayout.LIST,
+            isGridLayoutEnabled = false,
         )
     }
 }

@@ -61,6 +61,14 @@ Use the [Android CLI](https://developer.android.com/tools/agents/android-cli) (`
 
 **Precondition — a device/emulator must be running.** Check with `adb devices`. Do not assume an emulator: use the first device returned by `adb devices` (real device or emulator — both are fine). If none is connected, default to the resizable emulator: `android emulator start Resizable_Experimental` (verify the exact AVD name with `android emulator list` if it fails).
 
+**Resizable emulator display mode.** When testing with the resizable emulator and the task needs a specific form factor, set it before building/running:
+
+```bash
+adb emu resize-display 0 # phone
+adb emu resize-display 1 # foldable
+adb emu resize-display 2 # tablet
+```
+
 Validate a UI change end to end:
 1. Build + deploy: `./gradlew --quiet --console=plain :androidApp:assembleGooglePlayDebug`, then `android run --apks=androidApp/build/outputs/apk/googlePlay/debug/androidApp-googlePlay-debug.apk` (`--device=<serial>` to pick a device; `.scripts/run-android.sh` covers the routine install+launch loop).
 2. Inspect structure/text/state with `android layout --pretty`. To confirm a specific change, capture the layout before and after the change, then use `android layout --diff` to see only what moved.

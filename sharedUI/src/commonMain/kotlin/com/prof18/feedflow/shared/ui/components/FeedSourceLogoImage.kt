@@ -25,6 +25,7 @@ fun FeedSourceLogoImage(
     imageUrl: String,
     size: Dp,
     modifier: Modifier = Modifier,
+    cornerRadius: Dp = Spacing.small,
 ) {
     if (LocalInspectionMode.current) {
         Box(
@@ -46,7 +47,7 @@ fun FeedSourceLogoImage(
             contentScale = ContentScale.Crop,
             modifier = modifier
                 .size(size)
-                .clip(RoundedCornerShape(Spacing.small)),
+                .clip(RoundedCornerShape(cornerRadius)),
         )
     }
 }

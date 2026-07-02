@@ -10,6 +10,7 @@ data class FeedListSettingsState(
     val dateFormat: DateFormat = DateFormat.NORMAL,
     val timeFormat: TimeFormat = TimeFormat.HOURS_24,
     val feedLayout: FeedLayout = FeedLayout.LIST,
+    val isGridLayoutEnabled: Boolean = false,
     val fontScale: Int = 0,
     val leftSwipeActionType: SwipeActionType = SwipeActionType.TOGGLE_READ_STATUS,
     val rightSwipeActionType: SwipeActionType = SwipeActionType.TOGGLE_BOOKMARK_STATUS,

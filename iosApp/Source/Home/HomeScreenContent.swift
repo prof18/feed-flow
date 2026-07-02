@@ -40,6 +40,7 @@ struct HomeContent: View {
     @Binding var feedFontSizes: FeedFontSizes
     @Binding var swipeActions: SwipeActions
     @Binding var feedLayout: FeedLayout
+    @Binding var isGridLayoutEnabled: Bool
     @Binding var nextFeedPreviewState: NextFeedPreviewState
     @Binding var feedItemDisplaySettings: FeedItemDisplaySettings
     @Binding var viewMenuState: HomeViewMenuState
@@ -150,6 +151,7 @@ private extension HomeContent {
             feedFontSizes: feedFontSizes,
             swipeActions: swipeActions,
             feedLayout: feedLayout,
+            isGridLayoutEnabled: isGridLayoutEnabled,
             feedItemDisplaySettings: feedItemDisplaySettings,
             nextFeedPreviewState: nextFeedPreviewState,
             onReloadClick: onRefresh,

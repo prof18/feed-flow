@@ -20,6 +20,7 @@ fun FeedListSettingsScreen(
         state = state,
         updateFontScale = viewModel::updateFontScale,
         setFeedLayout = viewModel::updateFeedLayout,
+        setGridLayoutEnabled = viewModel::updateGridLayoutEnabled,
         setHideDescription = viewModel::updateHideDescription,
         setHideImages = viewModel::updateHideImages,
         setHideDate = viewModel::updateHideDate,

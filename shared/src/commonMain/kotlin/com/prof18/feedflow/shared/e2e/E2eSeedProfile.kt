@@ -6,6 +6,8 @@ enum class E2eSeedProfile(val queryValue: String) {
     EMPTY("empty"),
     CONTENT_RICH("content-rich"),
     CARD_LAYOUT("card-layout"),
+    BIG_IMAGE_LAYOUT("big-image-layout"),
+    GRID_LAYOUT("grid-layout"),
     COMPACT_LIST("compact-list"),
     READER_MODE("reader-mode"),
     EXTERNAL_BROWSER("external-browser"),

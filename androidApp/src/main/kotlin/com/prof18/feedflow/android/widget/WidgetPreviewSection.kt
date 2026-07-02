@@ -36,7 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -97,7 +97,7 @@ internal fun WidgetPreviewSection(
 
 @Composable
 private fun WidgetPreviewWallpaper(
-    feedLayout: FeedLayout,
+    feedLayout: WidgetFeedLayout,
     showWidgetHeader: Boolean,
     hideImages: Boolean,
     fontSizes: WidgetFontSizes,
@@ -183,7 +183,7 @@ private fun PreviewBackdropToggleButton(
 
 @Composable
 private fun WidgetPreview(
-    feedLayout: FeedLayout,
+    feedLayout: WidgetFeedLayout,
     showWidgetHeader: Boolean,
     hideImages: Boolean,
     fontSizes: WidgetFontSizes,
@@ -231,14 +231,14 @@ private fun WidgetPreview(
             ) {
                 items.forEach { item ->
                     when (feedLayout) {
-                        FeedLayout.LIST -> WidgetPreviewListItem(
+                        WidgetFeedLayout.LIST -> WidgetPreviewListItem(
                             item = item,
                             fontSizes = fontSizes,
                             hideImages = hideImages,
                             primaryTextColor = primaryTextColor,
                             secondaryTextColor = secondaryTextColor,
                         )
-                        FeedLayout.CARD -> WidgetPreviewCardItem(item, fontSizes, hideImages)
+                        WidgetFeedLayout.CARD -> WidgetPreviewCardItem(item, fontSizes, hideImages)
                     }
                 }
             }
@@ -417,7 +417,7 @@ private fun WidgetPreviewSectionPreview() {
             WidgetPreviewSection(
                 settingsState = WidgetSettingsState(
                     syncPeriod = SyncPeriod.ONE_HOUR,
-                    feedLayout = FeedLayout.LIST,
+                    feedLayout = WidgetFeedLayout.LIST,
                     showHeader = true,
                     fontScale = 0,
                     backgroundColor = 0xFFC7B2E7.toInt(),

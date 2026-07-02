@@ -23,6 +23,7 @@ import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.openUriSafely
+import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.search.SearchScreenContent
@@ -39,6 +40,7 @@ internal fun SearchScreen(
     navigateToEditFeed: (FeedSource) -> Unit,
 ) {
     val browserManager = DI.koin.get<BrowserManager>()
+    val desktopHomeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
     val viewModel = koinViewModel<SearchViewModel>()
 
     val state: SearchState by viewModel.searchState.collectAsState()
@@ -47,6 +49,7 @@ internal fun SearchScreen(
     val currentFeedFilter by viewModel.searchFeedFilterState.collectAsState()
     val feedFontSizes by viewModel.feedFontSizeState.collectAsState()
     val feedItemDisplaySettings by viewModel.feedItemDisplaySettings.collectAsState()
+    val isMultiPaneLayoutEnabled by desktopHomeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
     val strings = LocalFeedFlowStrings.current
     val uriHandler = LocalUriHandler.current
 
@@ -145,6 +148,7 @@ internal fun SearchScreen(
             navigateToEditFeed(feedSource)
         },
         onOpenFeedWebsite = ::openExternalUrl,
+        isGridLayoutEnabled = !isMultiPaneLayoutEnabled,
         feedItemDisplaySettings = feedItemDisplaySettings,
     )
 }

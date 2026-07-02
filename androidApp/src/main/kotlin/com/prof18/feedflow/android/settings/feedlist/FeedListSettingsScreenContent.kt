@@ -47,6 +47,7 @@ internal fun FeedListSettingsScreenContent(
     state: FeedListSettingsState,
     updateFontScale: (Int) -> Unit,
     setFeedLayout: (FeedLayout) -> Unit,
+    setGridLayoutEnabled: (Boolean) -> Unit,
     setHideDescription: (Boolean) -> Unit,
     setHideImages: (Boolean) -> Unit,
     setHideDate: (Boolean) -> Unit,
@@ -129,9 +130,20 @@ internal fun FeedListSettingsScreenContent(
                         options = persistentListOf(
                             SettingDropdownOption(FeedLayout.LIST, strings.settingsFeedLayoutList),
                             SettingDropdownOption(FeedLayout.CARD, strings.settingsFeedLayoutCard),
+                            SettingDropdownOption(FeedLayout.BIG_IMAGE, strings.settingsFeedLayoutBigImage),
                         ),
                         onOptionSelected = setFeedLayout,
                     )
+                }
+
+                if (state.feedLayout.supportsGridToggle()) {
+                    item {
+                        SettingSwitchItem(
+                            title = strings.settingsFeedLayoutGridToggle,
+                            isChecked = state.isGridLayoutEnabled,
+                            onCheckedChange = setGridLayoutEnabled,
+                        )
+                    }
                 }
 
                 item {
@@ -309,6 +321,9 @@ private fun swipeActionOptions(
     ),
 )
 
+private fun FeedLayout.supportsGridToggle(): Boolean =
+    this == FeedLayout.CARD || this == FeedLayout.BIG_IMAGE
+
 @Preview
 @Composable
 private fun FeedListSettingsScreenContentPreview() {
@@ -327,6 +342,7 @@ private fun FeedListSettingsScreenContentPreview() {
             ),
             updateFontScale = {},
             setFeedLayout = {},
+            setGridLayoutEnabled = {},
             setHideDescription = {},
             setHideImages = {},
             setHideDate = {},

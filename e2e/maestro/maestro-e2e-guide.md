@@ -50,6 +50,8 @@ Supported profiles:
 - `empty`
 - `content-rich`
 - `card-layout`
+- `big-image-layout`
+- `grid-layout`
 - `compact-list`
 - `reader-mode`
 - `external-browser`

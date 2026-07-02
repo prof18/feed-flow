@@ -206,7 +206,7 @@ internal fun DesktopHomeScaffold(
                                 interactionSource = interactionSource,
                             )
                             .pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR))),
-                        contentAlignment = Alignment.TopCenter,
+                        contentAlignment = Alignment.TopStart,
                     ) {
                         Box(
                             modifier = Modifier
@@ -234,6 +234,7 @@ internal fun DesktopHomeScaffold(
                             snackbarHostState = snackbarHostState,
                             onSearchClick = onSearchClick,
                             showDrawerMenu = true,
+                            isGridLayoutAllowed = false,
                             isDrawerOpen = if (isThreePaneLayout) {
                                 isDockedDrawerVisible
                             } else {

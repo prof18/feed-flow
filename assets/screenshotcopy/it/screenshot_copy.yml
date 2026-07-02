@@ -73,26 +73,31 @@ screenshot_copy_ipad_02_headline: "Leggi a modo tuo"
 screenshot_copy_ipad_02_subheadline: "Utilizza la Modalità lettura esperienza più
   pulita e senza distrazioni."
 screenshot_copy_ipad_03_headline: "Resta organizzato"
-screenshot_copy_ipad_03_subheadline: ""
-screenshot_copy_ipad_04_headline: ""
-screenshot_copy_ipad_04_subheadline: ""
-screenshot_copy_ipad_05_headline: ""
-screenshot_copy_ipad_05_subheadline: ""
-screenshot_copy_ipad_05_compact_label: ""
-screenshot_copy_ipad_05_rich_cards_label: ""
+screenshot_copy_ipad_03_subheadline: "Numero non letti, segnalibri e cartelle rendono
+  tutto a portata di mano."
+screenshot_copy_ipad_04_headline: "Sincronizza a modo tuo"
+screenshot_copy_ipad_04_subheadline: "Sincronizza con iCloud, Dropbox, Drive, FreshRSS,
+  Feedbin e altri."
+screenshot_copy_ipad_05_headline: "Rendi l'elenco tuo"
+screenshot_copy_ipad_05_subheadline: "Cambia layout e nascondi i dettagli che non
+  ti servono."
+screenshot_copy_ipad_05_compact_label: "Elenco compatto"
+screenshot_copy_ipad_05_rich_cards_label: "Schede dettagliate"
 
-screenshot_copy_macos_01_headline: ""
-screenshot_copy_macos_01_subheadline: ""
+screenshot_copy_macos_01_headline: "Tre pannelli"
+screenshot_copy_macos_01_subheadline: "Scansiona, seleziona e leggi rapidamente su
+  uno schermo più grande."
 screenshot_copy_macos_02_headline: ""
 screenshot_copy_macos_02_subheadline: ""
 screenshot_copy_macos_03_headline: ""
 screenshot_copy_macos_03_subheadline: ""
 screenshot_copy_macos_04_headline: ""
 screenshot_copy_macos_04_subheadline: ""
-screenshot_copy_macos_04_compact_label: ""
-screenshot_copy_macos_04_rich_cards_label: ""
+screenshot_copy_macos_04_compact_label: "Elenco compatto"
+screenshot_copy_macos_04_rich_cards_label: "Schede dettagliate"
 
-screenshot_copy_windows_01_caption: ""
+screenshot_copy_windows_01_caption: "Sfoglia, seleziona e leggi in un rapido layout
+  a tre pannelli."
 screenshot_copy_windows_02_caption: ""
 screenshot_copy_windows_03_caption: ""
 screenshot_copy_windows_04_caption: ""

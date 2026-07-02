@@ -391,4 +391,7 @@
     <string name="reader_mode_reset_to_default">Lähtesta vaikimisi väärtusteks</string>
     <string name="increase_line_height_button_content_description">Suurenda reakõrgust</string>
     <string name="decrease_line_height_button_content_description">Vähenda reakõrgust</string>
+    <string name="settings_feed_layout_big_image">Suure pildiga kaart</string>
+    <string name="settings_feed_layout_grid">Ruudustik</string>
+    <string name="settings_feed_layout_grid_toggle">Näita laiadel ekraanidel ruudustikuvaadet</string>
 </resources>

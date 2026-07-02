@@ -53,6 +53,7 @@ class MenuBarViewModel internal constructor(
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
         val isRefreshFeedsOnLaunchEnabled = settingsRepository.getRefreshFeedsOnLaunch()
         val isReduceMotionEnabled = settingsRepository.getReduceMotionEnabled()
+        val isWindowsOpenGLRendererEnabled = settingsRepository.getWindowsOpenGLRendererEnabled()
         val isHideUnreadCountEnabled = feedAppearanceSettingsRepository.getHideUnreadCount()
         val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
         val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
@@ -69,6 +70,7 @@ class MenuBarViewModel internal constructor(
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
                 isRefreshFeedsOnLaunchEnabled = isRefreshFeedsOnLaunchEnabled,
                 isReduceMotionEnabled = isReduceMotionEnabled,
+                isWindowsOpenGLRendererEnabled = isWindowsOpenGLRendererEnabled,
                 isHideUnreadCountEnabled = isHideUnreadCountEnabled,
                 autoDeletePeriod = autoDeletePeriod,
                 isCrashReportingEnabled = isCrashReportingEnabled,
@@ -157,6 +159,15 @@ class MenuBarViewModel internal constructor(
             settingsRepository.setReduceMotionEnabled(value)
             stateMutableFlow.update {
                 it.copy(isReduceMotionEnabled = value)
+            }
+        }
+    }
+
+    fun updateWindowsOpenGLRendererEnabled(value: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setWindowsOpenGLRendererEnabled(value)
+            stateMutableFlow.update {
+                it.copy(isWindowsOpenGLRendererEnabled = value)
             }
         }
     }

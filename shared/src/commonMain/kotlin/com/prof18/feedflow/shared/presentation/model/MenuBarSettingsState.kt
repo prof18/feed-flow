@@ -15,6 +15,7 @@ data class MenuBarSettingsState(
     val isPrefetchArticleContentEnabled: Boolean = false,
     val isRefreshFeedsOnLaunchEnabled: Boolean = true,
     val isReduceMotionEnabled: Boolean = false,
+    val isWindowsOpenGLRendererEnabled: Boolean = true,
     val isHideUnreadCountEnabled: Boolean = false,
     val autoDeletePeriod: AutoDeletePeriod = AutoDeletePeriod.DISABLED,
     val isCrashReportingEnabled: Boolean = true,

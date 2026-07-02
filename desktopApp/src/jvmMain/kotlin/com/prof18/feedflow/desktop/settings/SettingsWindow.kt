@@ -33,6 +33,8 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.utils.getDesktopOS
+import com.prof18.feedflow.core.utils.isWindows
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.desktop.ui.components.MacToolbarTitleAreaHeight
@@ -68,6 +70,7 @@ internal fun SettingsWindow(
         val isMultiPaneEnabled by desktopHomeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
         val fontSizesState by feedListSettingsViewModel.feedFontSizeState.collectAsState()
         val feedListSettingsState by feedListSettingsViewModel.state.collectAsState()
+        val showWindowsOpenGLRendererSetting = remember { getDesktopOS().isWindows() }
 
         var selectedCategory by remember(initialCategory) { mutableStateOf(initialCategory) }
 
@@ -215,6 +218,9 @@ internal fun SettingsWindow(
                             menuBarViewModel.updateCrashReporting(enabled)
                             updateDesktopCrashReporting(enabled)
                         },
+                        showWindowsRendererSetting = showWindowsOpenGLRendererSetting,
+                        isWindowsOpenGLRendererEnabled = settingsState.isWindowsOpenGLRendererEnabled,
+                        onWindowsRendererSelected = menuBarViewModel::updateWindowsOpenGLRendererEnabled,
                     )
                 }
             }

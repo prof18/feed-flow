@@ -36,12 +36,15 @@ import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.ui.about.AboutButtonItem
 import com.prof18.feedflow.shared.ui.about.AboutTextItem
 import com.prof18.feedflow.shared.ui.about.AuthorText
+import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
+import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import java.awt.Desktop
 import java.net.URI
@@ -50,6 +53,9 @@ import java.net.URI
 internal fun AboutPane(
     isCrashReportingEnabled: Boolean,
     onCrashReportingToggled: (Boolean) -> Unit,
+    showWindowsRendererSetting: Boolean,
+    isWindowsOpenGLRendererEnabled: Boolean,
+    onWindowsRendererSelected: (Boolean) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
     val appConfig = remember { DI.koin.get<DesktopConfig>() }
@@ -91,6 +97,18 @@ internal fun AboutPane(
                     title = strings.settingsCrashReporting,
                     isChecked = isCrashReportingEnabled,
                     onCheckedChange = onCrashReportingToggled,
+                )
+            }
+
+            if (showWindowsRendererSetting) {
+                CompactSettingDropdownRow(
+                    title = "Windows renderer",
+                    currentValue = isWindowsOpenGLRendererEnabled,
+                    options = persistentListOf(
+                        SettingDropdownOption(false, "Default"),
+                        SettingDropdownOption(true, "OpenGL (restart required)"),
+                    ),
+                    onOptionSelected = onWindowsRendererSelected,
                 )
             }
 
@@ -190,6 +208,9 @@ private fun AboutPanePreview() {
         AboutPane(
             isCrashReportingEnabled = false,
             onCrashReportingToggled = {},
+            showWindowsRendererSetting = true,
+            isWindowsOpenGLRendererEnabled = true,
+            onWindowsRendererSelected = {},
         )
     }
 }

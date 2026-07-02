@@ -23,6 +23,7 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
+import com.prof18.feedflow.core.utils.isWindows
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
@@ -43,18 +44,25 @@ import java.awt.Toolkit
 import java.io.File
 import java.io.InputStream
 import java.util.Properties
+import java.util.prefs.Preferences
 import kotlin.time.Duration.Companion.milliseconds
 
 private const val DARK_THEME_BACKGROUND = 0x1A1B1F
 private const val LIGHT_THEME_BACKGROUND = 0xFAFAFA
 private const val OLED_THEME_BACKGROUND = 0x000000
+internal const val SKIKO_RENDER_API_ENV = "SKIKO_RENDER_API"
+internal const val SKIKO_RENDER_API_PROPERTY = "skiko.renderApi"
+internal const val WINDOWS_DEFAULT_RENDER_API = "OPENGL"
 
 fun main() {
+    val properties = loadProperties()
+    configureWindowsRenderApiWorkaround(
+        windowsOpenGLRendererEnabled = getWindowsOpenGLRendererEnabled(properties),
+    )
     integrateAppImageIfNeeded()
     setupSandboxEnvironment()
 
     application {
-        val properties = loadProperties()
         val appConfig = createAppConfig(properties)
 
         var isInitialized by remember { mutableStateOf(false) }
@@ -171,6 +179,69 @@ fun main() {
         }
     }
 }
+
+internal fun configureWindowsRenderApiWorkaround(
+    desktopOS: DesktopOS = getDesktopOS(),
+    osArch: String = System.getProperty("os.arch").orEmpty(),
+    skikoRenderApiEnv: String? = System.getenv(SKIKO_RENDER_API_ENV),
+    skikoRenderApiProperty: String? = System.getProperty(SKIKO_RENDER_API_PROPERTY),
+    windowsOpenGLRendererEnabled: Boolean = true,
+    setProperty: (String, String) -> Unit = { key, value -> System.setProperty(key, value) },
+) {
+    val renderApi = windowsDefaultRenderApi(
+        desktopOS = desktopOS,
+        osArch = osArch,
+        skikoRenderApiEnv = skikoRenderApiEnv,
+        skikoRenderApiProperty = skikoRenderApiProperty,
+        windowsOpenGLRendererEnabled = windowsOpenGLRendererEnabled,
+    ) ?: return
+
+    setProperty(SKIKO_RENDER_API_PROPERTY, renderApi)
+}
+
+internal fun windowsDefaultRenderApi(
+    desktopOS: DesktopOS,
+    osArch: String,
+    skikoRenderApiEnv: String?,
+    skikoRenderApiProperty: String?,
+    windowsOpenGLRendererEnabled: Boolean,
+): String? {
+    if (!desktopOS.isWindows()) return null
+    if (!windowsOpenGLRendererEnabled) return null
+    if (osArch.isWindowsArm64Architecture()) return null
+    if (skikoRenderApiEnv.isRenderApiOverrideSet()) return null
+    if (skikoRenderApiProperty.isRenderApiOverrideSet()) return null
+
+    return WINDOWS_DEFAULT_RENDER_API
+}
+
+private fun getWindowsOpenGLRendererEnabled(properties: Properties): Boolean {
+    val isRelease = properties["is_release"]?.toString()?.toBooleanStrictOrNull() ?: false
+    val nodeName = if (isRelease) {
+        DESKTOP_RELEASE_SETTINGS_NODE
+    } else {
+        DESKTOP_DEBUG_SETTINGS_NODE
+    }
+    return Preferences.userRoot()
+        .node(nodeName)
+        .getBoolean(
+            SettingsRepository.WINDOWS_OPENGL_RENDERER_ENABLED_KEY,
+            SettingsRepository.DEFAULT_WINDOWS_OPENGL_RENDERER_ENABLED,
+        )
+}
+
+private fun String?.isRenderApiOverrideSet(): Boolean =
+    !this.isNullOrBlank()
+
+private fun String.isWindowsArm64Architecture(): Boolean {
+    val normalized = lowercase()
+        .replace("-", "")
+        .replace("_", "")
+    return normalized == "arm64" || normalized == "aarch64"
+}
+
+private const val DESKTOP_RELEASE_SETTINGS_NODE = "feedflow"
+private const val DESKTOP_DEBUG_SETTINGS_NODE = "feedflow-dev"
 
 private fun loadProperties(): Properties {
     val properties = Properties()

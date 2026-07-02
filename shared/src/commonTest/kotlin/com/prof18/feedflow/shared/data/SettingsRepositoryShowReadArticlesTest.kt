@@ -50,4 +50,15 @@ class SettingsRepositoryShowReadArticlesTest : KoinTestBase() {
             assertFalse(awaitItem())
         }
     }
+
+    @Test
+    fun `windows OpenGL renderer setting defaults to enabled and can be changed`() {
+        assertTrue(repository.getWindowsOpenGLRendererEnabled())
+
+        repository.setWindowsOpenGLRendererEnabled(false)
+        assertFalse(repository.getWindowsOpenGLRendererEnabled())
+
+        repository.setWindowsOpenGLRendererEnabled(true)
+        assertTrue(repository.getWindowsOpenGLRendererEnabled())
+    }
 }

@@ -221,6 +221,13 @@ class SettingsRepository(
         reduceMotionEnabledMutableFlow.update { value }
     }
 
+    fun getWindowsOpenGLRendererEnabled(): Boolean =
+        settings.getBoolean(WINDOWS_OPENGL_RENDERER_ENABLED_KEY, DEFAULT_WINDOWS_OPENGL_RENDERER_ENABLED)
+
+    fun setWindowsOpenGLRendererEnabled(value: Boolean) {
+        settings[WINDOWS_OPENGL_RENDERER_ENABLED_KEY] = value
+    }
+
     fun getNotificationMode(): NotificationMode =
         settings.getString(SettingsFields.NOTIFICATION_MODE.name, NotificationMode.FEED_SOURCE.name)
             .let { NotificationMode.valueOf(it) }
@@ -228,8 +235,10 @@ class SettingsRepository(
     fun setNotificationMode(mode: NotificationMode) =
         settings.set(SettingsFields.NOTIFICATION_MODE.name, mode.name)
 
-    internal companion object {
+    companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = ReaderModeDefaults.FONT_SIZE
+        const val DEFAULT_WINDOWS_OPENGL_RENDERER_ENABLED = true
+        const val WINDOWS_OPENGL_RENDERER_ENABLED_KEY = "WINDOWS_OPENGL_RENDERER_ENABLED"
     }
 }
 

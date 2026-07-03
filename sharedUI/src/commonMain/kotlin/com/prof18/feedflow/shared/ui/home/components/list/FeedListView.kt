@@ -119,7 +119,7 @@ fun FeedList(
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
 ) {
     val itemFeedLayout = feedLayout.normalizeForFeedList()
-    val feedBackgroundModifier = if (itemFeedLayout.usesCardBackground()) {
+    val feedBackgroundModifier = if (itemFeedLayout.usesCardBackground() && feedItems.isNotEmpty()) {
         Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
     } else {
         Modifier

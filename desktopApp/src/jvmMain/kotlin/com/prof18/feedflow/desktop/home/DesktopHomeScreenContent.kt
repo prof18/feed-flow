@@ -84,7 +84,9 @@ fun DesktopHomeScreenContent(
             )
         }
     }
-    val contentContainerColor = displayState.feedLayout.contentContainerColor()
+    val contentContainerColor = displayState.feedLayout.contentContainerColor(
+        hasFeedItems = displayState.feedItems.isNotEmpty(),
+    )
 
     Scaffold(
         modifier = modifier,
@@ -291,8 +293,8 @@ private fun FeedLayout.isCardStyleLayout() = when (this) {
 }
 
 @Composable
-private fun FeedLayout.contentContainerColor(): Color =
-    if (isCardStyleLayout()) {
+private fun FeedLayout.contentContainerColor(hasFeedItems: Boolean): Color =
+    if (hasFeedItems && isCardStyleLayout()) {
         MaterialTheme.colorScheme.surfaceContainer
     } else {
         MaterialTheme.colorScheme.surface

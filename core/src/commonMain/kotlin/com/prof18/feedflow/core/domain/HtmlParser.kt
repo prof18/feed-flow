@@ -4,5 +4,10 @@ interface HtmlParser {
     fun getTextFromHTML(html: String): String?
     fun getFaviconUrl(html: String): String?
     fun getRssUrl(html: String): String?
-    fun extractCommentsUrl(html: String): String?
+    fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent
 }
+
+data class ParsedFeedContent(
+    val text: String?,
+    val commentsUrl: String?,
+)

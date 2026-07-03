@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.presentation
 import app.cash.turbine.test
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.DrawerItem
@@ -1600,6 +1601,7 @@ class HomeViewModelTest : KoinTestBase() {
         override fun getTextFromHTML(html: String): String? = html
         override fun getFaviconUrl(html: String): String? = null
         override fun getRssUrl(html: String): String? = null
-        override fun extractCommentsUrl(html: String): String? = null
+        override fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent =
+            ParsedFeedContent(text = html, commentsUrl = null)
     }
 }

@@ -4,6 +4,7 @@ import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Severity
 import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.AppConfig
@@ -111,7 +112,8 @@ object TestModules {
                 override fun getTextFromHTML(html: String): String? = null
                 override fun getFaviconUrl(html: String): String? = null
                 override fun getRssUrl(html: String): String? = null
-                override fun extractCommentsUrl(html: String): String? = null
+                override fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent =
+                    ParsedFeedContent(text = null, commentsUrl = null)
             }
         }
         single<HtmlRetriever> {

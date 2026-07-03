@@ -2,6 +2,7 @@ package com.prof18.feedflow.feedsync.feedbin.domain.mapping
 
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -119,6 +120,63 @@ class EntryDTOMapperTest {
         assertNull(result.imageUrl)
     }
 
+    @Test
+    fun `mapToFeedItem extracts commentsUrl from content`() {
+        val entryDTO = createEntryDTO(
+            id = 10,
+            published = "2023-11-14T10:00:00Z",
+            summary = "Summary",
+            content = """<p>Body</p><a href="https://news.ycombinator.com/item?id=1">Comments</a>""",
+        )
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertEquals("https://news.ycombinator.com/item?id=1", result.commentsUrl)
+    }
+
+    @Test
+    fun `mapToFeedItem extracts commentsUrl from summary when content is null`() {
+        val entryDTO = createEntryDTO(
+            id = 10,
+            published = "2023-11-14T10:00:00Z",
+            summary = """<a href="https://example.com/article#comments">Comments</a>""",
+            content = null,
+        )
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertEquals("https://example.com/article#comments", result.commentsUrl)
+    }
+
+    @Test
+    fun `mapToFeedItem sets commentsUrl to null when content has no comments anchor`() {
+        val entryDTO = createEntryDTO(
+            id = 10,
+            published = "2023-11-14T10:00:00Z",
+            summary = "Summary",
+            content = "<p>Body mentioning comments but with no anchor</p>",
+        )
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertNull(result.commentsUrl)
+    }
+
     private fun createEntryDTO(
         id: Long,
         published: String,
@@ -141,7 +199,11 @@ class EntryDTOMapperTest {
         override fun getTextFromHTML(html: String): String? = "Parsed Summary"
         override fun getFaviconUrl(html: String): String? = null
         override fun getRssUrl(html: String): String? = null
-        override fun extractCommentsUrl(html: String): String? = null
+        override fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent {
+            val regex = Regex("""<a\s[^>]*href="([^"]*)"[^>]*>\s*[Cc]omments\s*</a>""")
+            val commentsUrl = regex.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
+            return ParsedFeedContent(text = "Parsed Summary", commentsUrl = commentsUrl)
+        }
     }
 
     private class FakeDateFormatter : DateFormatter {

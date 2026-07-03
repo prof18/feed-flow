@@ -26,6 +26,11 @@ internal class EntryDTOMapper(
             null
         }
 
+        // The contains check avoids parsing the HTML of items that can't have a comments link
+        val commentsUrl = (entryDTO.content ?: entryDTO.summary)
+            ?.takeIf { it.contains("comments", ignoreCase = true) }
+            ?.let { htmlParser.parseFeedContent(html = it, baseUrl = entryDTO.url).commentsUrl }
+
         return FeedItem(
             id = entryDTO.id.toString(),
             url = entryDTO.url,
@@ -43,7 +48,7 @@ internal class EntryDTOMapper(
                     timeFormat = TimeFormat.HOURS_24,
                 )
             },
-            commentsUrl = null,
+            commentsUrl = commentsUrl,
             isBookmarked = isBookmarked,
         )
     }

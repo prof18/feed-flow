@@ -19,11 +19,12 @@ internal class ItemContentDTOMapper(
     ): FeedItem? {
         val url = itemContentDTO.canonical?.firstOrNull()?.href ?: return null
         val content = itemContentDTO.content?.content ?: itemContentDTO.summary?.content
+        val parsedContent = content?.let { htmlParser.parseFeedContent(html = it, baseUrl = url) }
         return FeedItem(
             id = itemContentDTO.hexID,
             url = url,
             title = itemContentDTO.title,
-            subtitle = content?.let { htmlParser.getTextFromHTML(it) },
+            subtitle = parsedContent?.text,
             content = null,
             imageUrl = itemContentDTO.image?.href ?: getImageFromContent(content),
             feedSource = feedSource,
@@ -35,7 +36,7 @@ internal class ItemContentDTOMapper(
                 dateFormat = DateFormat.NORMAL,
                 timeFormat = TimeFormat.HOURS_24,
             ),
-            commentsUrl = content?.let { htmlParser.extractCommentsUrl(it) },
+            commentsUrl = parsedContent?.commentsUrl,
             isBookmarked = itemContentDTO.starred,
         )
     }

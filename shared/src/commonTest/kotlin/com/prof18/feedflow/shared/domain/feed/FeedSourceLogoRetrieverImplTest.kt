@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.feed
 
 import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.testLogger
@@ -72,7 +73,8 @@ class FeedSourceLogoRetrieverImplTest {
 
                 override fun getRssUrl(html: String): String? = null
 
-                override fun extractCommentsUrl(html: String): String? = null
+                override fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent =
+                    ParsedFeedContent(text = null, commentsUrl = null)
             },
         )
 }

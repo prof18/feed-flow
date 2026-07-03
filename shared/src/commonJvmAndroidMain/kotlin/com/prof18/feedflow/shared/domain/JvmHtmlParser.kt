@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.domain.ParsedFeedContent
 import org.jsoup.Jsoup
 
 internal class JvmHtmlParser(
@@ -43,16 +44,20 @@ internal class JvmHtmlParser(
         return null
     }
 
-    override fun extractCommentsUrl(html: String): String? {
+    override fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent {
         return try {
-            val doc = Jsoup.parse(html)
-            doc.select("a")
+            val doc = Jsoup.parse(html, baseUrl.orEmpty())
+            val commentsUrl = doc.select("a")
                 .firstOrNull { it.text().trim().equals("comments", ignoreCase = true) }
-                ?.attr("href")
-                ?.takeIf { it.isNotBlank() }
+                ?.absUrl("href")
+                ?.takeIf { it.startsWith("http") }
+            ParsedFeedContent(
+                text = doc.text(),
+                commentsUrl = commentsUrl,
+            )
         } catch (e: Throwable) {
-            logger.d(e) { "Unable to extract comments URL from HTML, skipping" }
-            null
+            logger.d(e) { "Unable to parse feed content, skipping" }
+            ParsedFeedContent(text = null, commentsUrl = null)
         }
     }
 }

@@ -149,46 +149,72 @@ class JvmHtmlParserTest {
     }
 
     @Test
-    fun `extractCommentsUrl returns href when anchor text is Comments`() {
+    fun `parseFeedContent returns text and commentsUrl when anchor text is Comments`() {
         val html = """
             <p>Some content</p>
             <p><a href="https://example.com/article#comments">Comments</a></p>
         """.trimIndent()
 
-        val url = parser.extractCommentsUrl(html)
-        assertEquals("https://example.com/article#comments", url)
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertEquals("Some content Comments", result.text)
+        assertEquals("https://example.com/article#comments", result.commentsUrl)
     }
 
     @Test
-    fun `extractCommentsUrl is case insensitive`() {
+    fun `parseFeedContent comments matching is case insensitive`() {
         val html = """<a href="https://example.com/article#comments">COMMENTS</a>"""
 
-        val url = parser.extractCommentsUrl(html)
-        assertEquals("https://example.com/article#comments", url)
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertEquals("https://example.com/article#comments", result.commentsUrl)
     }
 
     @Test
-    fun `extractCommentsUrl returns null when no comments anchor present`() {
+    fun `parseFeedContent resolves relative comments url against base url`() {
+        val html = """<a href="/article#comments">Comments</a>"""
+
+        val result = parser.parseFeedContent(html, baseUrl = "https://example.com/posts/123")
+        assertEquals("https://example.com/article#comments", result.commentsUrl)
+    }
+
+    @Test
+    fun `parseFeedContent returns null commentsUrl for relative href without base url`() {
+        val html = """<a href="/article#comments">Comments</a>"""
+
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertNull(result.commentsUrl)
+    }
+
+    @Test
+    fun `parseFeedContent returns null commentsUrl for non http scheme`() {
+        val html = """<a href="mailto:someone@example.com">Comments</a>"""
+
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertNull(result.commentsUrl)
+    }
+
+    @Test
+    fun `parseFeedContent returns null commentsUrl when no comments anchor present`() {
         val html = """
             <p>Some content without a comments link</p>
             <a href="https://example.com/article">Read more</a>
         """.trimIndent()
 
-        val url = parser.extractCommentsUrl(html)
-        assertNull(url)
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertNull(result.commentsUrl)
     }
 
     @Test
-    fun `extractCommentsUrl returns null for empty html`() {
-        val url = parser.extractCommentsUrl("")
-        assertNull(url)
+    fun `parseFeedContent handles empty html`() {
+        val result = parser.parseFeedContent("", baseUrl = null)
+        assertEquals("", result.text)
+        assertNull(result.commentsUrl)
     }
 
     @Test
-    fun `extractCommentsUrl returns null when comments anchor has no href`() {
+    fun `parseFeedContent returns null commentsUrl when comments anchor has no href`() {
         val html = """<a>Comments</a>"""
 
-        val url = parser.extractCommentsUrl(html)
-        assertNull(url)
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertNull(result.commentsUrl)
     }
 }

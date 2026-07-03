@@ -71,28 +71,35 @@ class IosHtmlParser: HtmlParser {
         }
     }
 
-    func extractCommentsUrl(html: String) -> String? {
-        guard !html.isEmpty else { return nil }
+    func parseFeedContent(html: String, baseUrl: String?) -> ParsedFeedContent {
+        guard !html.isEmpty else { return ParsedFeedContent(text: nil, commentsUrl: nil) }
         let sanitizedHtml = sanitizeHtml(html)
+        guard !sanitizedHtml.isEmpty else { return ParsedFeedContent(text: nil, commentsUrl: nil) }
 
         do {
-            let doc: Document = try SwiftSoup.parse(sanitizedHtml)
-            let anchors = try doc.select("a")
-            for anchor in anchors {
-                let text = try anchor.text().trimmingCharacters(in: .whitespaces)
-                if text.caseInsensitiveCompare("comments") == .orderedSame {
-                    let href = try anchor.attr("href")
-                    if !href.isEmpty {
-                        return href
-                    }
-                }
-            }
-            return nil
+            let doc: Document = try SwiftSoup.parse(sanitizedHtml, baseUrl ?? "")
+            let text = try doc.text()
+            let commentsUrl = try extractCommentsUrl(doc: doc)
+            return ParsedFeedContent(text: text, commentsUrl: commentsUrl)
         } catch {
             Deps.shared.getLogger(tag: "IosHtmlParser")
-                .e(messageString: "Error during extracting comments URL: \(error)")
-            return nil
+                .e(messageString: "Error during feed content parsing: \(error)")
+            return ParsedFeedContent(text: nil, commentsUrl: nil)
         }
+    }
+
+    private func extractCommentsUrl(doc: Document) throws -> String? {
+        let anchors = try doc.select("a")
+        for anchor in anchors {
+            let text = try anchor.text().trimmingCharacters(in: .whitespaces)
+            if text.caseInsensitiveCompare("comments") == .orderedSame {
+                let href = try anchor.absUrl("href")
+                if href.hasPrefix("http") {
+                    return href
+                }
+            }
+        }
+        return nil
     }
 
     // Without this, SwiftSoup will still crash on some htmls

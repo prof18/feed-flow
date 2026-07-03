@@ -2,6 +2,7 @@ package com.prof18.feedflow.feedsync.greader.domain.mapping
 
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -262,9 +263,10 @@ class ItemContentDTOMapperTest {
         override fun getTextFromHTML(html: String): String? = html
         override fun getFaviconUrl(html: String): String? = null
         override fun getRssUrl(html: String): String? = null
-        override fun extractCommentsUrl(html: String): String? {
+        override fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent {
             val regex = Regex("""<a\s[^>]*href="([^"]*)"[^>]*>\s*[Cc]omments\s*</a>""")
-            return regex.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
+            val commentsUrl = regex.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
+            return ParsedFeedContent(text = html, commentsUrl = commentsUrl)
         }
     }
 

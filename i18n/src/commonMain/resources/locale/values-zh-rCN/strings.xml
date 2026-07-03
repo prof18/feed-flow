@@ -389,6 +389,9 @@
     <string name="reader_mode_line_height">行高</string>
     <string name="reader_mode_text_settings">文本设置</string>
     <string name="reader_mode_reset_to_default">重置为默认</string>
-    <string name="increase_line_height_button_content_description">增加行高</string>
-    <string name="decrease_line_height_button_content_description">降低行高</string>
+    <string name="increase_line_height_button_content_description">增大行高</string>
+    <string name="decrease_line_height_button_content_description">减小行高</string>
+    <string name="settings_feed_layout_big_image">大图卡片</string>
+    <string name="settings_feed_layout_grid">网格</string>
+    <string name="settings_feed_layout_grid_toggle">在宽屏上使用网格</string>
 </resources>

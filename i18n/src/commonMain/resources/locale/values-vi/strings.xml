@@ -391,4 +391,7 @@
     <string name="reader_mode_reset_to_default">Đặt về mặc định</string>
     <string name="increase_line_height_button_content_description">Tăng độ rộng hàng</string>
     <string name="decrease_line_height_button_content_description">Giảm độ rộng hàng</string>
+    <string name="settings_feed_layout_big_image">Thẻ hình ảnh lớn</string>
+    <string name="settings_feed_layout_grid">Ô</string>
+    <string name="settings_feed_layout_grid_toggle">Dùng ô trên các màn hình rộng</string>
 </resources>

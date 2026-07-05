@@ -386,4 +386,12 @@
     <string name="rename_category">Переименовать категорию</string>
     <string name="article_bookmarked_content_description">В закладках</string>
     <string name="sort_and_filter_button">Сортировка и фильтрация</string>
+    <string name="reader_mode_line_height">Высота строки</string>
+    <string name="reader_mode_text_settings">Настройки текста</string>
+    <string name="reader_mode_reset_to_default">Сбросить по умолчанию</string>
+    <string name="settings_feed_layout_big_image">Большая карточка с изображением</string>
+    <string name="settings_feed_layout_grid">Сетка</string>
+    <string name="settings_feed_layout_grid_toggle">Использовать сетку на широких экранах</string>
+    <string name="increase_line_height_button_content_description">Увеличить высоту строки</string>
+    <string name="decrease_line_height_button_content_description">Уменьшить высоту строки</string>
 </resources>

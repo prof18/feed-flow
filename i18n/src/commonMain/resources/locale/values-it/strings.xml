@@ -391,4 +391,5 @@
     <string name="delete_all_feeds_confirmation_message">Sei sicuro di voler eliminare tutti i feed in questa categoria? Questa azione non può essere annullata.</string>
     <string name="settings_appearance">Aspetto</string>
     <string name="sort_and_filter_button">Ordina e filtra</string>
+    <string name="settings_feed_layout_grid">Griglia</string>
 </resources>

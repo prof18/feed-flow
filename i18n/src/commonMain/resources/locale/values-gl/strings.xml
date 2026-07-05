@@ -391,4 +391,7 @@
     <string name="miniflux_bad_token_error_message">Acceso correcto, pero Miniflux rexeitou o token de sincronización. Se Miniflux está detrás dun mandatario inverso, comproba que reenvía a cabeceira Authorization.</string>
     <string name="increase_line_height_button_content_description">Aumentar altura da liña</string>
     <string name="decrease_line_height_button_content_description">Diminuír altura da liña</string>
+    <string name="settings_feed_layout_big_image">Tarxeta con imaxe grande</string>
+    <string name="settings_feed_layout_grid">Grella</string>
+    <string name="settings_feed_layout_grid_toggle">Usar grella en pantallas anchas</string>
 </resources>

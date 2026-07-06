@@ -394,4 +394,7 @@
     <string name="settings_feed_layout_big_image">Karta z dużym obrazkiem</string>
     <string name="settings_feed_layout_grid">Siatka</string>
     <string name="settings_feed_layout_grid_toggle">Włącz siatkę na szerokich ekranach</string>
+    <string name="reorder_drag_handle">Zmień kolejność</string>
+    <string name="reorder_mode_enter">Zmień kolejność</string>
+    <string name="reorder_mode_done">Gotowe</string>
 </resources>

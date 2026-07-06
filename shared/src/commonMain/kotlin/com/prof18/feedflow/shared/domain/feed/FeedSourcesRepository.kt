@@ -21,6 +21,7 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.domain.toFeedSource
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
@@ -32,7 +33,7 @@ import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
 
 internal class FeedSourcesRepository(
@@ -49,6 +50,7 @@ internal class FeedSourcesRepository(
     private val rssParserWrapper: RssParserWrapper,
     private val dateFormatter: DateFormatter,
     private val rssChannelMapper: RssChannelMapper,
+    private val settingsRepository: SettingsRepository,
 ) {
     private val knownUrlSuffix = listOf(
         "",
@@ -114,14 +116,36 @@ internal class FeedSourcesRepository(
     }
 
     fun observeFeedSourcesByCategoryWithUnreadCount(): Flow<Map<FeedSourceCategory?, List<FeedSourceWithUnreadCount>>> =
-        databaseHelper.getFeedSourcesWithUnreadCountFlow()
-            .map { feedSources ->
-                val sourcesByCategory = feedSources.groupBy { it.feedSource.category }
-                val sortedKeys = sourcesByCategory.keys.sortedBy { it?.title }
-                sortedKeys.associateWith {
-                    sourcesByCategory[it] ?: emptyList()
-                }
+        combine(
+            databaseHelper.getFeedSourcesWithUnreadCountFlow(),
+            settingsRepository.uncategorizedPositionFlow,
+        ) { feedSources, uncategorizedPosition ->
+            val sourcesByCategory = feedSources.groupBy { it.feedSource.category }
+            val sortedKeys = sourcesByCategory.keys.sortedWith(
+                compareBy(
+                    { it?.position ?: uncategorizedPosition },
+                    { it?.title },
+                ),
+            )
+            sortedKeys.associateWith {
+                sourcesByCategory[it]
+                    ?.sortedWith(
+                        compareBy(
+                            { sourceWithCount -> sourceWithCount.feedSource.position },
+                            { sourceWithCount -> sourceWithCount.feedSource.title },
+                        ),
+                    )
+                    ?: emptyList()
             }
+        }
+
+    suspend fun reorderPinnedFeedSources(orderedIds: List<String>) = withContext(dispatcherProvider.io) {
+        databaseHelper.updatePinnedPositions(orderedIds)
+    }
+
+    suspend fun reorderFeedSources(orderedIds: List<String>) = withContext(dispatcherProvider.io) {
+        databaseHelper.updateFeedSourcePositions(orderedIds)
+    }
 
     suspend fun updateFeedSourceName(feedSourceId: String, newName: String) =
         when (accountsRepository.getCurrentSyncAccount()) {
@@ -156,6 +180,11 @@ internal class FeedSourcesRepository(
         isPinned: Boolean,
         isNotificationEnabled: Boolean,
     ) = withContext(dispatcherProvider.io) {
+        val pinnedFeedSourceIds = if (isPinned) {
+            databaseHelper.getPinnedFeedSourceIds()
+        } else {
+            emptyList()
+        }
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = feedSourceId,
             preference = preference,
@@ -163,6 +192,9 @@ internal class FeedSourcesRepository(
             isPinned = isPinned,
             isNotificationEnabled = isNotificationEnabled,
         )
+        if (isPinned && feedSourceId !in pinnedFeedSourceIds) {
+            databaseHelper.updatePinnedPositions(pinnedFeedSourceIds + feedSourceId)
+        }
     }
 
     suspend fun addFeedSource(

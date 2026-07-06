@@ -40,7 +40,9 @@ struct FeedPreviewSection: View {
                             linkOpeningPreference: .default,
                             isHiddenFromTimeline: false,
                             isPinned: false,
-                            isNotificationEnabled: false
+                            isNotificationEnabled: false,
+                            pinnedPosition: 0,
+                            position: 0
                         ),
                         pubDateMillis: nil,
                         isRead: false,

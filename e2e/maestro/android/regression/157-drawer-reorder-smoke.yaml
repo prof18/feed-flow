@@ -1,0 +1,92 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=reorder-drag
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_pinned_reorder_toggle
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_pinned_reorder_toggle
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_e2e_feed_android_weekly
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: drawer_feed_source_e2e_feed_pinned
+- swipe:
+    from:
+      id: drawer_feed_source_e2e_feed_pinned
+    direction: DOWN
+    duration: 1200
+- waitForAnimationToEnd
+- assertVisible:
+    id: drawer_feed_source_e2e_feed_pinned
+- assertVisible:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_sources_reorder_toggle
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_feed_sources_reorder_toggle
+- scrollUntilVisible:
+    element:
+      id: drawer_category_uncategorized
+    direction: DOWN
+    timeout: 10000
+- swipe:
+    from:
+      id: drawer_category_uncategorized
+    direction: DOWN
+    duration: 1200
+- waitForAnimationToEnd
+- assertVisible:
+    id: drawer_category_uncategorized
+- scrollUntilVisible:
+    element:
+      id: drawer_category_e2e_category_technology
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: drawer_category_e2e_category_news
+- swipe:
+    from:
+      id: drawer_category_e2e_category_technology
+    direction: DOWN
+    duration: 1200
+- waitForAnimationToEnd
+- assertVisible:
+    id: drawer_category_e2e_category_technology
+- assertVisible:
+    id: drawer_category_e2e_category_news
+- tapOn:
+    id: drawer_category_expand_e2e_category_technology
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_e2e_feed_swift_weekly
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: drawer_feed_source_e2e_feed_hidden
+- swipe:
+    from:
+      id: drawer_feed_source_e2e_feed_swift_weekly
+    direction: DOWN
+    duration: 1200
+- waitForAnimationToEnd
+- assertVisible:
+    id: drawer_feed_source_e2e_feed_swift_weekly
+- assertVisible:
+    id: drawer_feed_source_e2e_feed_hidden

@@ -16,6 +16,7 @@ import com.prof18.feedflow.core.model.trimmed
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -32,6 +33,7 @@ internal class FeedCategoryRepository(
     private val gReaderRepository: GReaderRepository,
     private val feedStateRepository: FeedStateRepository,
     private val feedbinRepository: FeedbinRepository,
+    private val settingsRepository: SettingsRepository,
 ) {
     private val categoriesMutableState: MutableStateFlow<CategoriesState> = MutableStateFlow(CategoriesState())
     val categoriesState = categoriesMutableState
@@ -173,6 +175,23 @@ internal class FeedCategoryRepository(
 
     fun observeCategoriesWithUnreadCount(): Flow<List<CategoryWithUnreadCount>> =
         databaseHelper.observeCategoriesWithUnreadCount()
+
+    /**
+     * Persists the order of the category groups. A null entry represents the
+     * "Uncategorized" pseudo-category, whose position is stored in settings since
+     * it has no database row.
+     */
+    suspend fun reorderCategories(orderedIds: List<String?>) {
+        val idsWithPosition = mutableListOf<Pair<String, Int>>()
+        orderedIds.forEachIndexed { index, id ->
+            if (id == null) {
+                settingsRepository.setUncategorizedPosition(index)
+            } else {
+                idsWithPosition.add(id to index)
+            }
+        }
+        databaseHelper.updateCategoryPositions(idsWithPosition)
+    }
 
     fun validateCategoryName(categoryId: CategoryId?, newName: CategoryName): CategoryNameValidationResult {
         if (newName.trimmed().name.isBlank()) {

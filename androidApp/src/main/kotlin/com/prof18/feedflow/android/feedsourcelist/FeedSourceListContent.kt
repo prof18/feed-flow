@@ -4,10 +4,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
+import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
@@ -26,8 +31,17 @@ fun FeedSourceListContent(
     onOpenWebsite: (String) -> Unit,
     modifier: Modifier = Modifier,
     onDeleteAllFeedsInCategory: (List<FeedSource>) -> Unit = {},
+    onReorderCategories: (List<FeedSourceState>) -> Unit = {},
+    onReorderFeedSources: (List<FeedSource>) -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
 ) {
+    var isEditMode by rememberSaveable { mutableStateOf(false) }
+
+    val canReorderAnything = feedSourceListState.feedSourcesWithoutCategory.size > 1 ||
+        feedSourceListState.feedSourcesWithCategory.size > 1 ||
+        feedSourceListState.feedSourcesWithCategory.any { it.feedSources.size > 1 }
+    val editModeActive = isEditMode && canReorderAnything
+
     Scaffold(
         modifier = modifier,
         snackbarHost = snackbarHost,
@@ -35,6 +49,9 @@ fun FeedSourceListContent(
             FeedSourceNavBar(
                 navigateBack = navigateBack,
                 onAddFeedSourceClick = onAddFeedClick,
+                isEditMode = editModeActive,
+                onToggleEditMode = { isEditMode = !isEditMode },
+                showEditToggle = canReorderAnything,
             )
         },
     ) { paddingValues ->
@@ -54,6 +71,9 @@ fun FeedSourceListContent(
                 onPinFeedClick = onPinFeedClick,
                 onOpenWebsite = onOpenWebsite,
                 onDeleteAllFeedsInCategory = onDeleteAllFeedsInCategory,
+                onReorderCategories = onReorderCategories,
+                onReorderFeedSources = onReorderFeedSources,
+                isEditMode = editModeActive,
                 paddingValues = paddingValues,
             )
         }

@@ -60,6 +60,9 @@ struct SidebarDrawer: View {
     let onDeleteCategory: (String) -> Void
     let onUpdateCategoryName: (String, String) -> Void
     let validateCategoryName: (String, CategoryName) -> CategoryNameValidationResult
+    let onReorderPinnedFeedSources: ([FeedSource]) -> Void
+    let onReorderCategories: ([DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper]) -> Void
+    let onReorderFeedSources: ([FeedSource]) -> Void
 
     var isCompactPhone: Bool {
         UIDevice.current.userInterfaceIdiom == .phone

@@ -209,6 +209,15 @@ internal fun HomeScreen(
             onDeleteAllFeedsInCategoryByIdClick = { categoryId ->
                 homeViewModel.deleteAllFeedsInCategory(categoryId)
             },
+            onReorderPinnedFeedSources = { feedSources ->
+                homeViewModel.reorderPinnedFeedSources(feedSources)
+            },
+            onReorderCategories = { categoryWrappers ->
+                homeViewModel.reorderCategories(categoryWrappers)
+            },
+            onReorderFeedSources = { feedSources ->
+                homeViewModel.reorderFeedSources(feedSources)
+            },
             onMarkAllReadForFeedSourceClick = { feedSource ->
                 homeViewModel.markAllReadForFeedSource(feedSource)
             },

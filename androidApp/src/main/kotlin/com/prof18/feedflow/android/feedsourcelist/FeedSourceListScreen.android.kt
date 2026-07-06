@@ -93,5 +93,11 @@ fun FeedSourceListScreen(
         onDeleteAllFeedsInCategory = { feedSources ->
             viewModel.deleteAllFeedsInCategory(feedSources)
         },
+        onReorderCategories = { categories ->
+            viewModel.reorderCategories(categories)
+        },
+        onReorderFeedSources = { feedSources ->
+            viewModel.reorderFeedSources(feedSources)
+        },
     )
 }

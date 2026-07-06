@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
+import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.DrawerItem.DrawerCategory
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
@@ -17,6 +18,7 @@ import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActions
@@ -166,15 +168,39 @@ class HomeViewModel internal constructor(
 
     private suspend fun initDrawerData() {
         combine(
-            feedSourcesRepository.observeFeedSourcesByCategoryWithUnreadCount(),
-            feedCategoryRepository.observeCategoriesWithUnreadCount(),
-            feedStateRepository.getUnreadTimelineCountFlow(),
-            feedStateRepository.getUnreadBookmarksCountFlow(),
-            feedAppearanceSettingsRepository.hideUnreadCount,
-        ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, bookmarksCount, hideUnreadCount ->
+            combine(
+                feedSourcesRepository.observeFeedSourcesByCategoryWithUnreadCount(),
+                feedCategoryRepository.observeCategoriesWithUnreadCount(),
+                feedStateRepository.getUnreadTimelineCountFlow(),
+                feedStateRepository.getUnreadBookmarksCountFlow(),
+                feedAppearanceSettingsRepository.hideUnreadCount,
+            ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, bookmarksCount, hideUnreadCount ->
+                DrawerDataSnapshot(
+                    feedSourceByCategoryWithCount = feedSourceByCategoryWithCount,
+                    categoriesWithCount = categoriesWithCount,
+                    timelineCount = timelineCount,
+                    bookmarksCount = bookmarksCount,
+                    hideUnreadCount = hideUnreadCount,
+                )
+            },
+            settingsRepository.uncategorizedPositionFlow,
+        ) { snapshot, uncategorizedPosition ->
+            val feedSourceByCategoryWithCount = snapshot.feedSourceByCategoryWithCount
+            val categoriesWithCount = snapshot.categoriesWithCount
+            val timelineCount = snapshot.timelineCount
+            val bookmarksCount = snapshot.bookmarksCount
+            val hideUnreadCount = snapshot.hideUnreadCount
             val containsOnlyNullKey = feedSourceByCategoryWithCount.keys.all { it == null }
 
-            val pinnedFeedSources = feedSourceByCategoryWithCount.values.flatten().filter { it.feedSource.isPinned }
+            val pinnedFeedSources = feedSourceByCategoryWithCount.values
+                .flatten()
+                .filter { it.feedSource.isPinned }
+                .sortedWith(
+                    compareBy(
+                        { it.feedSource.pinnedPosition },
+                        { it.feedSource.title },
+                    ),
+                )
 
             fun displayCount(actual: Long): Long = if (hideUnreadCount) 0L else actual
 
@@ -222,11 +248,20 @@ class HomeViewModel internal constructor(
                         }
                     }.toMap().toPersistentMap()
                 },
+                uncategorizedPosition = uncategorizedPosition,
             )
         }.collect { navDrawerState ->
             drawerMutableState.update { navDrawerState }
         }
     }
+
+    private data class DrawerDataSnapshot(
+        val feedSourceByCategoryWithCount: Map<FeedSourceCategory?, List<FeedSourceWithUnreadCount>>,
+        val categoriesWithCount: List<CategoryWithUnreadCount>,
+        val timelineCount: Long,
+        val bookmarksCount: Long,
+        val hideUnreadCount: Boolean,
+    )
 
     private fun observeErrorState() {
         viewModelScope.launch {
@@ -437,6 +472,78 @@ class HomeViewModel internal constructor(
                 isNotificationEnabled = feedSource.isNotificationEnabled,
             )
         }
+    }
+
+    fun reorderPinnedFeedSources(feedSources: List<FeedSource>) {
+        drawerMutableState.update { oldState ->
+            oldState.withReorderedPinnedFeedSources(feedSources)
+        }
+        viewModelScope.launch {
+            feedSourcesRepository.reorderPinnedFeedSources(feedSources.map { it.id })
+        }
+    }
+
+    fun reorderCategories(categoryWrappers: List<DrawerFeedSource.FeedSourceCategoryWrapper>) {
+        drawerMutableState.update { oldState ->
+            oldState.withReorderedCategoryWrappers(categoryWrappers)
+        }
+        viewModelScope.launch {
+            feedCategoryRepository.reorderCategories(categoryWrappers.map { it.feedSourceCategory?.id })
+        }
+    }
+
+    fun reorderFeedSources(feedSources: List<FeedSource>) {
+        drawerMutableState.update { oldState ->
+            oldState.withReorderedFeedSources(feedSources)
+        }
+        viewModelScope.launch {
+            feedSourcesRepository.reorderFeedSources(feedSources.map { it.id })
+        }
+    }
+
+    private fun NavDrawerState.withReorderedPinnedFeedSources(feedSources: List<FeedSource>): NavDrawerState =
+        copy(
+            pinnedFeedSources = pinnedFeedSources.reorderedFeedSources(feedSources)?.toImmutableList()
+                ?: pinnedFeedSources,
+        )
+
+    private fun NavDrawerState.withReorderedCategoryWrappers(
+        categoryWrappers: List<DrawerFeedSource.FeedSourceCategoryWrapper>,
+    ): NavDrawerState {
+        val reorderedKeys = categoryWrappers.toSet()
+        if (feedSourcesByCategory.keys.toSet() != reorderedKeys) {
+            return this
+        }
+
+        return copy(
+            feedSourcesByCategory = categoryWrappers
+                .associateWith { categoryWrapper -> feedSourcesByCategory.getValue(categoryWrapper) }
+                .toPersistentMap(),
+        )
+    }
+
+    private fun NavDrawerState.withReorderedFeedSources(feedSources: List<FeedSource>): NavDrawerState {
+        val updatedFeedSourcesWithoutCategory = feedSourcesWithoutCategory.reorderedFeedSources(feedSources)
+        if (updatedFeedSourcesWithoutCategory != null) {
+            return copy(feedSourcesWithoutCategory = updatedFeedSourcesWithoutCategory.toImmutableList())
+        }
+
+        return copy(
+            feedSourcesByCategory = feedSourcesByCategory.mapValues { (_, drawerItems) ->
+                drawerItems.reorderedFeedSources(feedSources) ?: drawerItems
+            }.toPersistentMap(),
+        )
+    }
+
+    private fun List<DrawerItem>.reorderedFeedSources(feedSources: List<FeedSource>): List<DrawerFeedSource>? {
+        val feedSourceIds = feedSources.map { it.id }.toSet()
+        val drawerFeedSources = filterIsInstance<DrawerFeedSource>()
+        if (drawerFeedSources.map { it.feedSource.id }.toSet() != feedSourceIds) {
+            return null
+        }
+
+        val drawerFeedSourceById = drawerFeedSources.associateBy { it.feedSource.id }
+        return feedSources.mapNotNull { feedSource -> drawerFeedSourceById[feedSource.id] }
     }
 
     // Used on iOS

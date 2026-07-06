@@ -1,0 +1,93 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: feed_source_list_settings_row
+- assertVisible:
+    id: feed_source_list_screen
+- tapOn:
+    id: feed_source_list_edit_toggle
+- tapOn:
+    id: feed_source_list_category_no_category
+- assertVisible:
+    id: feed_source_list_reorder_e2e_feed_uncategorized
+- assertVisible:
+    id: feed_source_list_reorder_e2e_feed_pinned
+- swipe:
+    from:
+      id: feed_source_list_reorder_e2e_feed_uncategorized
+    direction: DOWN
+    duration: 1200
+- waitForAnimationToEnd
+- assertVisible:
+    id: feed_source_list_row_e2e_feed_uncategorized
+- assertVisible:
+    id: feed_source_list_row_e2e_feed_pinned
+- scrollUntilVisible:
+    element:
+      id: feed_source_list_category_reorder_e2e_category_technology
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: feed_source_list_category_reorder_e2e_category_news
+- swipe:
+    from:
+      id: feed_source_list_category_reorder_e2e_category_technology
+    direction: DOWN
+    duration: 1200
+- waitForAnimationToEnd
+- assertVisible:
+    id: feed_source_list_category_e2e_category_technology
+- assertVisible:
+    id: feed_source_list_category_e2e_category_news
+- scrollUntilVisible:
+    element:
+      id: feed_source_list_category_reorder_no_category
+    direction: UP
+    timeout: 10000
+- swipe:
+    from:
+      id: feed_source_list_category_reorder_no_category
+    direction: DOWN
+    duration: 1200
+- waitForAnimationToEnd
+- assertVisible:
+    id: feed_source_list_category_no_category
+- scrollUntilVisible:
+    element:
+      id: feed_source_list_category_e2e_category_technology
+    direction: UP
+    timeout: 10000
+- tapOn:
+    id: feed_source_list_category_e2e_category_technology
+- assertVisible:
+    id: feed_source_list_row_e2e_feed_android_weekly
+- assertVisible:
+    id: feed_source_list_row_e2e_feed_swift_weekly
+- assertVisible:
+    id: feed_source_list_reorder_e2e_feed_android_weekly
+- swipe:
+    from:
+      id: feed_source_list_reorder_e2e_feed_android_weekly
+    direction: DOWN
+    duration: 1200
+- waitForAnimationToEnd
+- assertVisible:
+    id: feed_source_list_screen
+- assertVisible:
+    id: feed_source_list_row_e2e_feed_android_weekly
+- assertVisible:
+    id: feed_source_list_row_e2e_feed_swift_weekly

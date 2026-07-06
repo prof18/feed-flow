@@ -14,6 +14,7 @@ data class NavDrawerState(
     val pinnedFeedSources: ImmutableList<DrawerItem> = persistentListOf(),
     val feedSourcesWithoutCategory: ImmutableList<DrawerItem> = persistentListOf(),
     val feedSourcesByCategory: ImmutableMap<FeedSourceCategoryWrapper, List<DrawerItem>> = persistentMapOf(),
+    val uncategorizedPosition: Int = 0,
 ) {
     fun isEmpty(): Boolean =
         categories.isEmpty() && feedSourcesByCategory.isEmpty()

@@ -143,7 +143,7 @@ internal fun AndroidDrawerFeedSourcesByCategories(
 }
 
 @Composable
-private fun AndroidDrawerFeedSourceByCategoryItem(
+internal fun AndroidDrawerFeedSourceByCategoryItem(
     feedSourceCategoryWrapper: DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper,
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
@@ -163,6 +163,9 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
     onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
     onMarkAllReadForCategoryClick: (FeedSourceCategory) -> Unit,
     onDeleteAllFeedsInCategoryByIdClick: (CategoryId) -> Unit,
+    modifier: Modifier = Modifier,
+    dragHandle: (@Composable () -> Unit)? = null,
+    showFeedSources: Boolean = true,
 ) {
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
     var showMenu by rememberSaveable { mutableStateOf(false) }
@@ -175,7 +178,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
     }
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         @Suppress("MagicNumber")
         val degrees by conditionalAnimateFloatAsState(
@@ -238,7 +241,7 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                         )
                     }
 
-                    if (unreadCount > 0) {
+                    if (unreadCount > 0 && dragHandle == null) {
                         Text(
                             modifier = Modifier.padding(start = Spacing.small),
                             text = unreadCount.toString(),
@@ -248,6 +251,8 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
                     }
                 }
             }
+
+            dragHandle?.invoke()
 
             Box(
                 modifier = Modifier
@@ -269,19 +274,21 @@ private fun AndroidDrawerFeedSourceByCategoryItem(
             }
         }
 
-        FeedSourcesListWithCategorySelector(
-            isCategoryExpanded = isCategoryExpanded,
-            drawerFeedSources = drawerFeedSources,
-            currentFeedFilter = currentFeedFilter,
-            drawerItemVisualStyle = drawerItemVisualStyle,
-            onFeedSourceClick = onFeedSourceClick,
-            onEditFeedClick = onEditFeedClick,
-            onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-            onPinFeedClick = onPinFeedClick,
-            onChangeFeedCategoryClick = onChangeFeedCategoryClick,
-            onOpenWebsite = onOpenWebsite,
-            onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
-        )
+        if (showFeedSources) {
+            FeedSourcesListWithCategorySelector(
+                isCategoryExpanded = isCategoryExpanded,
+                drawerFeedSources = drawerFeedSources,
+                currentFeedFilter = currentFeedFilter,
+                drawerItemVisualStyle = drawerItemVisualStyle,
+                onFeedSourceClick = onFeedSourceClick,
+                onEditFeedClick = onEditFeedClick,
+                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                onPinFeedClick = onPinFeedClick,
+                onChangeFeedCategoryClick = onChangeFeedCategoryClick,
+                onOpenWebsite = onOpenWebsite,
+                onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
+            )
+        }
 
         if (category != null) {
             val strings = LocalFeedFlowStrings.current

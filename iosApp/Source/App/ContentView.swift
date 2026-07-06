@@ -26,7 +26,8 @@ struct ContentView: View {
         categories: [],
         pinnedFeedSources: [],
         feedSourcesWithoutCategory: [],
-        feedSourcesByCategory: [:]
+        feedSourcesByCategory: [:],
+        uncategorizedPosition: 0
     )
     @State private var pendingNotificationSelection: NotificationSelectionTarget?
 

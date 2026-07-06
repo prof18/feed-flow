@@ -1,10 +1,13 @@
+import kotlin.Int;
+
 CREATE TABLE feed_source_category (
     id TEXT NOT NULL PRIMARY KEY,
-    title TEXT NOT NULL UNIQUE
+    title TEXT NOT NULL UNIQUE,
+    position INTEGER AS Int NOT NULL DEFAULT 0
 );
 
 insertFeedSourceCategory:
-INSERT OR REPLACE INTO feed_source_category(id, title)
+INSERT OR IGNORE INTO feed_source_category(id, title)
 VALUES (?,?);
 
 getCategoryByName:
@@ -15,7 +18,7 @@ SELECT * FROM feed_source_category WHERE id = ?;
 
 selectAll:
 SELECT * FROM feed_source_category
-ORDER BY title COLLATE NOCASE ASC;
+ORDER BY position ASC, title COLLATE NOCASE ASC;
 
 delete:
 DELETE FROM feed_source_category WHERE id = ?;
@@ -38,3 +41,8 @@ updateCategoryNameAndId:
 UPDATE feed_source_category
 SET title = ?, id = :newId
 WHERE id = :oldId;
+
+updateCategoryPosition:
+UPDATE feed_source_category
+SET position = :position
+WHERE id = :id;

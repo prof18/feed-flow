@@ -8,8 +8,10 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
+import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
 import com.prof18.feedflow.shared.presentation.model.SyncError
@@ -22,12 +24,15 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedSourceListViewModel internal constructor(
     private val feedSourcesRepository: FeedSourcesRepository,
+    private val feedCategoryRepository: FeedCategoryRepository,
     private val feedStateRepository: FeedStateRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val feedsMutableState: MutableStateFlow<FeedSourceListState> = MutableStateFlow(FeedSourceListState())
@@ -39,22 +44,18 @@ class FeedSourceListViewModel internal constructor(
     private val feedOperationMutableState = MutableStateFlow<FeedOperation>(FeedOperation.None)
     val feedOperationState: StateFlow<FeedOperation> = feedOperationMutableState.asStateFlow()
 
-    private val expandedCategories = mutableSetOf<CategoryId>()
+    private val expandedCategories = mutableSetOf<CategoryId?>()
 
     init {
         observeErrorState()
         viewModelScope.launch {
-            feedSourcesRepository.getFeedSources().collect { feeds ->
-                val groupedSources = feeds.groupBy {
-                    val id = it.category?.id
-                    val name = it.category?.title
-
-                    if (id != null && name != null) {
-                        FeedSourceCategory(id, name)
-                    } else {
-                        null
-                    }
-                }
+            combine(
+                feedSourcesRepository.getFeedSources(),
+                settingsRepository.uncategorizedPositionFlow,
+            ) { feeds, uncategorizedPosition ->
+                feeds to uncategorizedPosition
+            }.collect { (feeds, uncategorizedPosition) ->
+                val groupedSources = feeds.groupBy { it.category }
 
                 val containsOnlyNullKey = groupedSources.keys.all { it == null }
 
@@ -63,7 +64,14 @@ class FeedSourceListViewModel internal constructor(
                 if (containsOnlyNullKey) {
                     feedsMutableState.update {
                         FeedSourceListState(
-                            feedSourcesWithoutCategory = feeds.sortedBy { it.title }.toImmutableList(),
+                            feedSourcesWithoutCategory = feeds
+                                .sortedWith(
+                                    compareBy(
+                                        { it.position },
+                                        { it.title },
+                                    ),
+                                )
+                                .toImmutableList(),
                             feedSourcesWithCategory = persistentListOf(),
                         )
                     }
@@ -73,18 +81,31 @@ class FeedSourceListViewModel internal constructor(
                             FeedSourceState(
                                 categoryId = category?.id?.let { CategoryId(it) },
                                 categoryName = category?.title,
+                                categoryPosition = category?.position ?: uncategorizedPosition,
                                 isExpanded = category?.id?.let { CategoryId(it) } in expandedCategories,
-                                feedSources = feedSources.toImmutableList(),
+                                feedSources = feedSources
+                                    .sortedWith(
+                                        compareBy(
+                                            { it.position },
+                                            { it.title },
+                                        ),
+                                    )
+                                    .toImmutableList(),
                             ),
                         )
                     }
 
-                    feedSourceStates.sortedBy { it.categoryName }
-
                     feedsMutableState.update {
                         FeedSourceListState(
                             feedSourcesWithoutCategory = persistentListOf(),
-                            feedSourcesWithCategory = feedSourceStates.toImmutableList(),
+                            feedSourcesWithCategory = feedSourceStates
+                                .sortedWith(
+                                    compareBy(
+                                        { it.categoryPosition },
+                                        { it.categoryName },
+                                    ),
+                                )
+                                .toImmutableList(),
                         )
                     }
                 }
@@ -139,8 +160,6 @@ class FeedSourceListViewModel internal constructor(
     }
 
     fun expandCategory(categoryId: CategoryId?) {
-        if (categoryId == null) return
-
         if (!expandedCategories.add(categoryId)) {
             expandedCategories.remove(categoryId)
         }
@@ -177,5 +196,41 @@ class FeedSourceListViewModel internal constructor(
                 isNotificationEnabled = feedSource.isNotificationEnabled,
             )
         }
+    }
+
+    fun reorderCategories(categories: List<FeedSourceState>) {
+        feedsMutableState.update { oldState ->
+            oldState.copy(feedSourcesWithCategory = categories.toImmutableList())
+        }
+        viewModelScope.launch {
+            feedCategoryRepository.reorderCategories(categories.map { it.categoryId?.value })
+        }
+    }
+
+    fun reorderFeedSources(feedSources: List<FeedSource>) {
+        feedsMutableState.update { oldState ->
+            oldState.withReorderedFeedSources(feedSources)
+        }
+        viewModelScope.launch {
+            feedSourcesRepository.reorderFeedSources(feedSources.map { it.id })
+        }
+    }
+
+    private fun FeedSourceListState.withReorderedFeedSources(feedSources: List<FeedSource>): FeedSourceListState {
+        val reorderedIds = feedSources.map { it.id }.toSet()
+
+        if (feedSourcesWithoutCategory.map { it.id }.toSet() == reorderedIds) {
+            return copy(feedSourcesWithoutCategory = feedSources.toImmutableList())
+        }
+
+        return copy(
+            feedSourcesWithCategory = feedSourcesWithCategory.map { feedSourceState ->
+                if (feedSourceState.feedSources.map { it.id }.toSet() == reorderedIds) {
+                    feedSourceState.copy(feedSources = feedSources.toImmutableList())
+                } else {
+                    feedSourceState
+                }
+            }.toImmutableList(),
+        )
     }
 }

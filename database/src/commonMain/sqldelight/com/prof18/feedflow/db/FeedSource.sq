@@ -9,32 +9,42 @@ CREATE TABLE feed_source (
     last_sync_timestamp INTEGER,
     logo_url TEXT,
     fetch_failed INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0,
-    website_url TEXT
+    website_url TEXT,
+    position INTEGER AS Int NOT NULL DEFAULT 0
 );
 
 CREATE INDEX idx_feed_source_category_id ON feed_source(category_id);
 
 insertFeedSource:
-INSERT OR REPLACE INTO feed_source(url_hash, url, title, category_id, logo_url)
+INSERT OR IGNORE INTO feed_source(url_hash, url, title, category_id, logo_url)
 VALUES (?,?,?,?, ?);
 
 insertFeedSourceWithWebsite:
-INSERT OR REPLACE INTO feed_source(url_hash, url, title, category_id, logo_url, website_url)
+INSERT OR IGNORE INTO feed_source(url_hash, url, title, category_id, logo_url, website_url)
 VALUES (?,?,?,?, ?, ?);
+
+updateFeedSourceMetadata:
+UPDATE feed_source
+SET url = :url,
+    title = :title,
+    category_id = :categoryId,
+    logo_url = :logoUrl,
+    website_url = :websiteUrl
+WHERE url_hash = :urlHash;
 
 deleteAllExcept:
 DELETE FROM feed_source WHERE url_hash NOT IN :urlHashes;
 
 selectFeedUrls:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source.website_url AS feed_source_website_url, feed_source.fetch_failed AS fetch_failed, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.position AS feed_source_position, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source_category.position AS category_position, feed_source.logo_url AS feed_source_logo_url, feed_source.website_url AS feed_source_website_url, feed_source.fetch_failed AS fetch_failed, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.pinned_position, feed_source_preferences.notifications_enabled FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id
-ORDER BY feed_source.title COLLATE NOCASE ASC;
+ORDER BY feed_source.category_id ASC, feed_source.position ASC, feed_source.title COLLATE NOCASE ASC;
 
 selectFeedSourceById:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source.website_url AS feed_source_website_url, feed_source.fetch_failed AS fetch_failed, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.position AS feed_source_position, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source_category.position AS category_position, feed_source.logo_url AS feed_source_logo_url, feed_source.website_url AS feed_source_website_url, feed_source.fetch_failed AS fetch_failed, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.pinned_position, feed_source_preferences.notifications_enabled FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences
@@ -64,6 +74,11 @@ UPDATE feed_source
 SET url = :url, title = :title, category_id = :categoryId
 WHERE url_hash = :urlHash;
 
+updateFeedSourcePosition:
+UPDATE feed_source
+SET position = :position
+WHERE url_hash = :urlHash;
+
 selectAllUrlHashes:
 SELECT url_hash FROM feed_source;
 
@@ -71,12 +86,13 @@ deleteAll:
 DELETE FROM feed_source;
 
 selectByCategory:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source.website_url AS feed_source_website_url, feed_source.fetch_failed AS fetch_failed, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.position AS feed_source_position, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source_category.position AS category_position, feed_source.logo_url AS feed_source_logo_url, feed_source.website_url AS feed_source_website_url, feed_source.fetch_failed AS fetch_failed, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.pinned_position, feed_source_preferences.notifications_enabled FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id
-WHERE feed_source.category_id = :categoryId;
+WHERE feed_source.category_id = :categoryId
+ORDER BY feed_source.position ASC, feed_source.title COLLATE NOCASE ASC;
 
 
 updateCategoryId:

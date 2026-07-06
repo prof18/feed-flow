@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
+import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -78,6 +79,9 @@ data class FeedManagementActions(
     val onChangeFeedCategoryClick: (FeedSource) -> Unit,
     val onOpenWebsite: (String) -> Unit,
     val onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit = { _, _ -> },
+    val onReorderPinnedFeedSources: (List<FeedSource>) -> Unit = { _ -> },
+    val onReorderCategories: (List<DrawerFeedSource.FeedSourceCategoryWrapper>) -> Unit = { _ -> },
+    val onReorderFeedSources: (List<FeedSource>) -> Unit = { _ -> },
     val onDeleteAllFeedsInCategoryClick: (List<FeedSource>) -> Unit = { _ -> },
     val onDeleteAllFeedsInCategoryByIdClick: (CategoryId) -> Unit = { _ -> },
     val onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit = { _ -> },

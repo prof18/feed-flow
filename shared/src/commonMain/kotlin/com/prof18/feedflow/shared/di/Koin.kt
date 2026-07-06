@@ -241,7 +241,9 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         FeedSourceListViewModel(
             feedSourcesRepository = get(),
+            feedCategoryRepository = get(),
             feedStateRepository = get(),
+            settingsRepository = get(),
         )
     }
 
@@ -554,6 +556,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             rssParserWrapper = get(),
             dateFormatter = get(),
             rssChannelMapper = get(),
+            settingsRepository = get(),
         )
     }
 

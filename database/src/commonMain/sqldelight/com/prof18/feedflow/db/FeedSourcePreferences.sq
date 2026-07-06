@@ -1,4 +1,5 @@
 import kotlin.Boolean;
+import kotlin.Int;
 import com.prof18.feedflow.core.model.LinkOpeningPreference;
 
 CREATE TABLE feed_source_preferences (
@@ -7,19 +8,27 @@ CREATE TABLE feed_source_preferences (
     is_hidden INTEGER AS Boolean NOT NULL DEFAULT 0,
     is_pinned INTEGER AS Boolean NOT NULL DEFAULT 0,
     notifications_enabled INTEGER AS Boolean NOT NULL DEFAULT 0,
+    pinned_position INTEGER AS Int NOT NULL DEFAULT 0,
     FOREIGN KEY (feed_source_id) REFERENCES feed_source(url_hash) ON DELETE CASCADE
 );
 
 insertPreference:
-INSERT OR REPLACE INTO feed_source_preferences(feed_source_id, link_opening_preference, is_hidden, is_pinned, notifications_enabled)
+INSERT OR IGNORE INTO feed_source_preferences(feed_source_id, link_opening_preference, is_hidden, is_pinned, notifications_enabled)
 VALUES (?, ?, ?, ?, ?);
 
 insertNotificationEnabledPreference:
-INSERT OR REPLACE INTO feed_source_preferences(feed_source_id, notifications_enabled)
+INSERT OR IGNORE INTO feed_source_preferences(feed_source_id, notifications_enabled)
 VALUES (?, ?);
 
 getPreference:
 SELECT * FROM feed_source_preferences WHERE feed_source_id = ?;
+
+getPinnedFeedSourceIds:
+SELECT feed_source_preferences.feed_source_id
+FROM feed_source_preferences
+INNER JOIN feed_source ON feed_source.url_hash = feed_source_preferences.feed_source_id
+WHERE feed_source_preferences.is_pinned = 1
+ORDER BY feed_source_preferences.pinned_position ASC, feed_source.title COLLATE NOCASE ASC;
 
 deletePreference:
 DELETE FROM feed_source_preferences WHERE feed_source_id = ?;
@@ -28,7 +37,7 @@ deleteAllPreferences:
 DELETE FROM feed_source_preferences;
 
 getFeedSourceWithPreference:
-SELECT feed_source.*, feed_source_preferences.link_opening_preference, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled
+SELECT feed_source.*, feed_source_preferences.link_opening_preference, feed_source_preferences.is_pinned, feed_source_preferences.pinned_position, feed_source_preferences.notifications_enabled
 FROM feed_source
 LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferences.feed_source_id
 ORDER BY feed_source.title COLLATE NOCASE ASC;
@@ -38,8 +47,21 @@ UPDATE feed_source_preferences
 SET notifications_enabled = :enabled
 WHERE feed_source_id = :feedSourceId;
 
+updatePreference:
+UPDATE feed_source_preferences
+SET link_opening_preference = :linkOpeningPreference,
+    is_hidden = :isHidden,
+    is_pinned = :isPinned,
+    notifications_enabled = :notificationsEnabled
+WHERE feed_source_id = :feedSourceId;
+
 areNotificationsEnabled:
 SELECT EXISTS(
     SELECT 1 FROM feed_source_preferences 
     WHERE notifications_enabled = 1
 );
+
+updatePinnedPosition:
+UPDATE feed_source_preferences
+SET pinned_position = :position
+WHERE feed_source_id = :feedSourceId;

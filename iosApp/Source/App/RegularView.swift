@@ -28,7 +28,8 @@ struct RegularView: View {
         categories: [],
         pinnedFeedSources: [],
         feedSourcesWithoutCategory: [],
-        feedSourcesByCategory: [:]
+        feedSourcesByCategory: [:],
+        uncategorizedPosition: 0
     )
     @State var scrollUpTrigger = false
     @State var showSettings = false
@@ -110,6 +111,15 @@ struct RegularView: View {
                         categoryId: CategoryId(value: categoryId),
                         newName: categoryName
                     )
+                },
+                onReorderPinnedFeedSources: { feedSources in
+                    homeViewModel.reorderPinnedFeedSources(feedSources: feedSources)
+                },
+                onReorderCategories: { categoryWrappers in
+                    homeViewModel.reorderCategories(categoryWrappers: categoryWrappers)
+                },
+                onReorderFeedSources: { feedSources in
+                    homeViewModel.reorderFeedSources(feedSources: feedSources)
                 }
             )
             .environment(appState)

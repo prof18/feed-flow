@@ -232,6 +232,7 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.SYNC_LINKED_MOCK,
             E2eSeedProfile.SYNC_UPLOAD_REQUIRED,
             E2eSeedProfile.LARGE_CONTENT,
+            E2eSeedProfile.REORDER_DRAG,
             -> applyFeatureProfileSettings(profile, account)
         }
     }
@@ -268,8 +269,20 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.SYNC_LINKED_MOCK -> applyMockLinkedAccount(account ?: E2eSeedAccount.FRESH_RSS)
             E2eSeedProfile.SYNC_UPLOAD_REQUIRED -> applySyncUploadRequiredSettings(account ?: E2eSeedAccount.FRESH_RSS)
             E2eSeedProfile.LARGE_CONTENT -> applyLargeContentSettings()
+            E2eSeedProfile.REORDER_DRAG -> applyReorderDragSettings()
             else -> Unit
         }
+    }
+
+    private suspend fun applyReorderDragSettings() {
+        val feedSource = seedFeedSources.first { it.id == ANDROID_WEEKLY_FEED_ID }
+        databaseHelper.insertFeedSourcePreference(
+            feedSourceId = feedSource.id,
+            preference = feedSource.linkOpeningPreference,
+            isHidden = feedSource.isHiddenFromTimeline,
+            isPinned = true,
+            isNotificationEnabled = feedSource.isNotificationEnabled,
+        )
     }
 
     private suspend fun applyLargeContentSettings() {

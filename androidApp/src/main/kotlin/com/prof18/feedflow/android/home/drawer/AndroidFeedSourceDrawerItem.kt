@@ -59,6 +59,7 @@ internal fun AndroidFeedSourceDrawerItem(
     onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
     unreadCount: Long,
     modifier: Modifier = Modifier,
+    dragHandle: (@Composable () -> Unit)? = null,
 ) {
     var showFeedMenu by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -129,7 +130,7 @@ internal fun AndroidFeedSourceDrawerItem(
                     }
                 }
 
-                if (unreadCount > 0) {
+                if (unreadCount > 0 && dragHandle == null) {
                     Text(
                         modifier = Modifier.padding(start = Spacing.small),
                         text = unreadCount.toString(),
@@ -137,6 +138,8 @@ internal fun AndroidFeedSourceDrawerItem(
                         color = itemColors.textColor(selected).value,
                     )
                 }
+
+                dragHandle?.invoke()
             }
 
             DropdownMenu(

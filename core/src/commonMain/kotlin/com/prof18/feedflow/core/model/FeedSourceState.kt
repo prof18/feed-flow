@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.persistentListOf
 data class FeedSourceState(
     val categoryId: CategoryId?,
     val categoryName: String?,
+    val categoryPosition: Int = 0,
     val isExpanded: Boolean = false,
     val feedSources: ImmutableList<FeedSource>,
 )

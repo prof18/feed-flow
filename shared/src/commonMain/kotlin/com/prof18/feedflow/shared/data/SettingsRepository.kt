@@ -47,6 +47,9 @@ class SettingsRepository(
     private val hideReadItemsMutableFlow = MutableStateFlow(getHideReadItems())
     internal val hideReadItemsFlow: StateFlow<Boolean> = hideReadItemsMutableFlow.asStateFlow()
 
+    private val uncategorizedPositionMutableFlow = MutableStateFlow(getUncategorizedPosition())
+    internal val uncategorizedPositionFlow: StateFlow<Int> = uncategorizedPositionMutableFlow.asStateFlow()
+
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
 
@@ -78,6 +81,14 @@ class SettingsRepository(
     internal fun setHideReadItems(value: Boolean) {
         settings.set(SettingsFields.HIDE_READ_ITEMS.name, value)
         hideReadItemsMutableFlow.update { value }
+    }
+
+    internal fun getUncategorizedPosition(): Int =
+        settings.getInt(SettingsFields.UNCATEGORIZED_CATEGORY_POSITION.name, 0)
+
+    internal fun setUncategorizedPosition(value: Int) {
+        settings.set(SettingsFields.UNCATEGORIZED_CATEGORY_POSITION.name, value)
+        uncategorizedPositionMutableFlow.update { value }
     }
 
     fun isUseReaderModeEnabled(): Boolean {
@@ -253,4 +264,5 @@ private enum class SettingsFields {
     REDUCE_MOTION_ENABLED,
     REFRESH_FEEDS_ON_LAUNCH,
     NOTIFICATION_MODE,
+    UNCATEGORIZED_CATEGORY_POSITION,
 }

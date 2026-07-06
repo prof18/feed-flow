@@ -3,6 +3,7 @@ package com.prof18.feedflow.database
 import app.cash.sqldelight.EnumColumnAdapter
 import app.cash.sqldelight.Transacter
 import app.cash.sqldelight.TransactionWithoutReturn
+import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrDefault
@@ -28,6 +29,8 @@ import com.prof18.feedflow.core.model.PrefetchQueueItem
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item_status
+import com.prof18.feedflow.db.Feed_source
+import com.prof18.feedflow.db.Feed_source_category
 import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.db.GetFeedSourcesWithUnreadCount
 import com.prof18.feedflow.db.Read_status_pending_action
@@ -52,8 +55,15 @@ class DatabaseHelper(
 ) {
     private val dbRef: FeedFlowDB = FeedFlowDB(
         sqlDriver,
+        feed_sourceAdapter = Feed_source.Adapter(
+            positionAdapter = IntColumnAdapter,
+        ),
         feed_source_preferencesAdapter = Feed_source_preferences.Adapter(
             link_opening_preferenceAdapter = EnumColumnAdapter(),
+            pinned_positionAdapter = IntColumnAdapter,
+        ),
+        feed_source_categoryAdapter = Feed_source_category.Adapter(
+            positionAdapter = IntColumnAdapter,
         ),
         feed_item_statusAdapter = Feed_item_status.Adapter(
             typeAdapter = EnumColumnAdapter(),
@@ -69,6 +79,12 @@ class DatabaseHelper(
             .selectFeedUrls()
             .executeAsList()
             .map(::transformToFeedSource)
+    }
+
+    suspend fun getPinnedFeedSourceIds(): List<String> = withContext(backgroundDispatcher) {
+        dbRef.feedSourcePreferencesQueries
+            .getPinnedFeedSourceIds()
+            .executeAsList()
     }
 
     suspend fun getFeedSource(feedSourceId: String): FeedSource? =
@@ -159,6 +175,10 @@ class DatabaseHelper(
                     id = category.id,
                     title = category.title,
                 )
+                dbRef.feedSourceCategoryQueries.updateCategoryName(
+                    id = category.id,
+                    title = category.title,
+                )
             }
         }
 
@@ -183,6 +203,14 @@ class DatabaseHelper(
                         logo_url = feedSource.logoUrl,
                     )
                 }
+                dbRef.feedSourceQueries.updateFeedSourceMetadata(
+                    urlHash = feedSource.id,
+                    url = feedSource.url,
+                    title = feedSource.title,
+                    categoryId = feedSource.category?.id,
+                    logoUrl = feedSource.logoUrl,
+                    websiteUrl = feedSource.websiteUrl,
+                )
             }
         }
     }
@@ -493,6 +521,7 @@ class DatabaseHelper(
                     FeedSourceCategory(
                         id = it.id,
                         title = it.title,
+                        position = it.position,
                     )
                 }
             }
@@ -508,6 +537,7 @@ class DatabaseHelper(
                         category = FeedSourceCategory(
                             id = category.id,
                             title = category.title,
+                            position = category.position,
                         ),
                         unreadCount = category.unread_count,
                     )
@@ -523,6 +553,7 @@ class DatabaseHelper(
                     FeedSourceCategory(
                         id = categories.id,
                         title = categories.title,
+                        position = categories.position,
                     )
                 }
         }
@@ -535,6 +566,7 @@ class DatabaseHelper(
                     FeedSourceCategory(
                         id = category.id,
                         title = category.title,
+                        position = category.position,
                     )
                 }
         }
@@ -569,6 +601,7 @@ class DatabaseHelper(
                     FeedSourceCategory(
                         id = category.id,
                         title = category.title,
+                        position = category.position,
                     )
                 }
         }
@@ -736,6 +769,36 @@ class DatabaseHelper(
         dbRef.feedSourceCategoryQueries.selectAllIds().executeAsList()
     }
 
+    suspend fun updateCategoryPositions(idsWithPosition: List<Pair<String, Int>>) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            idsWithPosition.forEach { (id, position) ->
+                dbRef.feedSourceCategoryQueries.updateCategoryPosition(
+                    position = position,
+                    id = id,
+                )
+            }
+        }
+
+    suspend fun updatePinnedPositions(orderedIds: List<String>) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            orderedIds.forEachIndexed { index, id ->
+                dbRef.feedSourcePreferencesQueries.updatePinnedPosition(
+                    position = index,
+                    feedSourceId = id,
+                )
+            }
+        }
+
+    suspend fun updateFeedSourcePositions(orderedIds: List<String>) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            orderedIds.forEachIndexed { index, id ->
+                dbRef.feedSourceQueries.updateFeedSourcePosition(
+                    position = index,
+                    urlHash = id,
+                )
+            }
+        }
+
     suspend fun updateFeedItemReadAndBookmarked(
         syncedFeedItems: List<SyncedFeedItem>,
     ) = dbRef.transactionWithContext(backgroundDispatcher) {
@@ -826,6 +889,13 @@ class DatabaseHelper(
             is_pinned = isPinned,
             notifications_enabled = isNotificationEnabled,
         )
+        dbRef.feedSourcePreferencesQueries.updatePreference(
+            feedSourceId = feedSourceId,
+            linkOpeningPreference = preference,
+            isHidden = isHidden,
+            isPinned = isPinned,
+            notificationsEnabled = isNotificationEnabled,
+        )
     }
 
     suspend fun deleteCategoriesExcept(categoryIds: List<String>) = dbRef.transactionWithContext(backgroundDispatcher) {
@@ -844,6 +914,7 @@ class DatabaseHelper(
                     category = FeedSourceCategory(
                         id = requireNotNull(feedSource.category_id),
                         title = requireNotNull(feedSource.category_title),
+                        position = feedSource.category_position ?: 0,
                     ),
                     lastSyncTimestamp = feedSource.last_sync_timestamp,
                     logoUrl = feedSource.feed_source_logo_url,
@@ -852,6 +923,8 @@ class DatabaseHelper(
                     isHiddenFromTimeline = feedSource.is_hidden ?: false,
                     isPinned = feedSource.is_pinned ?: false,
                     isNotificationEnabled = feedSource.notifications_enabled ?: false,
+                    pinnedPosition = feedSource.pinned_position ?: 0,
+                    position = feedSource.feed_source_position,
                     websiteUrl = feedSource.feed_source_website_url,
                 )
             }
@@ -1065,6 +1138,7 @@ class DatabaseHelper(
             FeedSourceCategory(
                 id = requireNotNull(feedSource.category_id),
                 title = requireNotNull(feedSource.category_title),
+                position = feedSource.category_position ?: 0,
             )
         } else {
             null
@@ -1083,6 +1157,8 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            pinnedPosition = feedSource.pinned_position ?: 0,
+            position = feedSource.feed_source_position,
         )
     }
 
@@ -1091,6 +1167,7 @@ class DatabaseHelper(
             FeedSourceCategory(
                 id = requireNotNull(feedSource.category_id),
                 title = requireNotNull(feedSource.category_title),
+                position = feedSource.category_position ?: 0,
             )
         } else {
             null
@@ -1109,6 +1186,8 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            pinnedPosition = feedSource.pinned_position ?: 0,
+            position = feedSource.feed_source_position,
         )
     }
 
@@ -1117,6 +1196,7 @@ class DatabaseHelper(
             FeedSourceCategory(
                 id = requireNotNull(feedSource.category_id),
                 title = requireNotNull(feedSource.category_title),
+                position = feedSource.category_position ?: 0,
             )
         } else {
             null
@@ -1135,6 +1215,8 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            pinnedPosition = feedSource.pinned_position ?: 0,
+            position = feedSource.feed_source_position,
         )
     }
 

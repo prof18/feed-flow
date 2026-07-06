@@ -43,13 +43,30 @@ internal fun DesktopDrawerFeedSourcesList(
     onOpenWebsite: (String) -> Unit,
     onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
     onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
-    dragState: FeedSourceDragState,
+    onReorderFeedSource: (String, Int, FeedSource) -> Unit,
+    dragState: DesktopDrawerDragState,
+    sectionKey: String,
+    indexInSection: Int,
+    sectionSize: Int,
+    sectionCategory: FeedSourceCategory?,
+    isCategoryDropTarget: Boolean,
+    reorderEnabled: Boolean,
+    modifier: Modifier = Modifier,
 ) {
-    Column {
-        drawerFeedSources.forEach { feedSourceWrapper ->
+    Column(
+        modifier = modifier,
+    ) {
+        drawerFeedSources.forEachIndexed { rowIndex, feedSourceWrapper ->
             val modifiers = LocalWindowInfo.current.keyboardModifiers
             val isMultiSelectPressed = modifiers.isCtrlPressed || modifiers.isMetaPressed
             val isMultiSelected = selectedFeedSourceIds.contains(feedSourceWrapper.feedSource.id)
+            val rowIndexInSection = indexInSection + rowIndex
+            val slotKey = "$sectionKey:${feedSourceWrapper.feedSource.id}"
+
+            ReorderSlotCleanup(
+                dragState = dragState,
+                slotKey = slotKey,
+            )
 
             DesktopFeedSourceDrawerItem(
                 label = {
@@ -88,12 +105,31 @@ internal fun DesktopDrawerFeedSourcesList(
                 feedSource = feedSourceWrapper.feedSource,
                 unreadCount = feedSourceWrapper.unreadCount,
                 isMultiSelected = isMultiSelected,
-                modifier = Modifier.feedSourceDragSource(
-                    dragState = dragState,
-                    feedSource = feedSourceWrapper.feedSource,
-                    selectedFeedSources = selectedFeedSourcesProvider,
-                    onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
-                ),
+                modifier = Modifier
+                    .reorderSlot(
+                        dragState = dragState,
+                        slotKey = slotKey,
+                        sectionKey = sectionKey,
+                        index = rowIndexInSection,
+                        category = sectionCategory,
+                        isCategoryDropTarget = isCategoryDropTarget,
+                        reorderEnabled = reorderEnabled,
+                    )
+                    .feedSourceReorderInsertionIndicator(
+                        dragState = dragState,
+                        sectionKey = sectionKey,
+                        index = rowIndexInSection,
+                        isLast = rowIndexInSection == sectionSize - 1,
+                    )
+                    .feedSourceDragSource(
+                        dragState = dragState,
+                        feedSource = feedSourceWrapper.feedSource,
+                        sectionKey = sectionKey,
+                        indexInSection = rowIndexInSection,
+                        selectedFeedSources = selectedFeedSourcesProvider,
+                        onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                        onReorderFeedSource = onReorderFeedSource,
+                    ),
             )
         }
     }
@@ -115,7 +151,10 @@ internal fun ColumnScope.FeedSourcesListWithCategorySelector(
     onOpenWebsite: (String) -> Unit,
     onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
     onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
-    dragState: FeedSourceDragState,
+    dragState: DesktopDrawerDragState,
+    sectionKey: String,
+    sectionCategory: FeedSourceCategory?,
+    onReorderFeedSource: (String, Int, FeedSource) -> Unit = { _, _, _ -> },
 ) {
     ConditionalAnimatedVisibility(
         visible = isCategoryExpanded,
@@ -141,7 +180,14 @@ internal fun ColumnScope.FeedSourcesListWithCategorySelector(
             onOpenWebsite = onOpenWebsite,
             onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
             onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+            onReorderFeedSource = onReorderFeedSource,
             dragState = dragState,
+            sectionKey = sectionKey,
+            indexInSection = 0,
+            sectionSize = drawerFeedSources.size,
+            sectionCategory = sectionCategory,
+            isCategoryDropTarget = true,
+            reorderEnabled = drawerFeedSources.size > 1,
         )
     }
 }

@@ -13,6 +13,8 @@ data class FeedSource(
     val isHiddenFromTimeline: Boolean,
     val isPinned: Boolean,
     val isNotificationEnabled: Boolean,
+    val pinnedPosition: Int = 0,
+    val position: Int = 0,
 ) {
     fun websiteUrlFallback(): String? =
         websiteUrl ?: url.toWebsiteBaseUrl()

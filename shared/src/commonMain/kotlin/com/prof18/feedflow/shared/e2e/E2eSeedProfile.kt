@@ -20,6 +20,7 @@ enum class E2eSeedProfile(val queryValue: String) {
     SYNC_LINKED_MOCK("sync-linked-mock"),
     SYNC_UPLOAD_REQUIRED("sync-upload-required"),
     LARGE_CONTENT("large-content"),
+    REORDER_DRAG("reorder-drag"),
     ;
 
     companion object {

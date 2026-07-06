@@ -1342,6 +1342,257 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `drawer pinned feed sources are sorted by pinned position`() = runTest(testDispatcher) {
+        val alphaSource = createFeedSource(id = "source-alpha", title = "Alpha")
+        val betaSource = createFeedSource(id = "source-beta", title = "Beta")
+        insertFeedSources(alphaSource, betaSource)
+        insertPinnedPreference(alphaSource)
+        insertPinnedPreference(betaSource)
+        databaseHelper.updatePinnedPositions(listOf(betaSource.id, alphaSource.id))
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        val pinnedTitles = viewModel.navDrawerState.value.pinnedFeedSources
+            .filterIsInstance<DrawerItem.DrawerFeedSource>()
+            .map { it.feedSource.title }
+        assertEquals(listOf("Beta", "Alpha"), pinnedTitles)
+    }
+
+    @Test
+    fun `reorderPinnedFeedSources persists pinned positions`() = runTest(testDispatcher) {
+        val alphaSource = createFeedSource(id = "source-alpha", title = "Alpha")
+        val betaSource = createFeedSource(id = "source-beta", title = "Beta")
+        insertFeedSources(alphaSource, betaSource)
+        insertPinnedPreference(alphaSource)
+        insertPinnedPreference(betaSource)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.reorderPinnedFeedSources(listOf(betaSource, alphaSource))
+        advanceUntilIdle()
+
+        assertEquals(0, databaseHelper.getFeedSource(betaSource.id)?.pinnedPosition)
+        assertEquals(1, databaseHelper.getFeedSource(alphaSource.id)?.pinnedPosition)
+    }
+
+    @Test
+    fun `reorderPinnedFeedSources updates drawer state immediately`() = runTest(testDispatcher) {
+        val alphaSource = createFeedSource(id = "source-alpha", title = "Alpha")
+        val betaSource = createFeedSource(id = "source-beta", title = "Beta")
+        insertFeedSources(alphaSource, betaSource)
+        insertPinnedPreference(alphaSource)
+        insertPinnedPreference(betaSource)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.reorderPinnedFeedSources(listOf(betaSource, alphaSource))
+
+        val pinnedTitles = viewModel.navDrawerState.value.pinnedFeedSources
+            .filterIsInstance<DrawerItem.DrawerFeedSource>()
+            .map { it.feedSource.title }
+        assertEquals(listOf("Beta", "Alpha"), pinnedTitles)
+    }
+
+    @Test
+    fun `toggleFeedPin appends newly pinned feed source`() = runTest(testDispatcher) {
+        val alphaSource = createFeedSource(id = "source-alpha", title = "Alpha")
+        val betaSource = createFeedSource(id = "source-beta", title = "Beta")
+        val gammaSource = createFeedSource(id = "source-gamma", title = "Gamma")
+        insertFeedSources(alphaSource, betaSource, gammaSource)
+        insertPinnedPreference(alphaSource)
+        insertPinnedPreference(betaSource)
+        databaseHelper.updatePinnedPositions(listOf(betaSource.id, alphaSource.id))
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.toggleFeedPin(gammaSource)
+        advanceUntilIdle()
+
+        val pinnedTitles = viewModel.navDrawerState.value.pinnedFeedSources
+            .filterIsInstance<DrawerItem.DrawerFeedSource>()
+            .map { it.feedSource.title }
+        assertEquals(listOf("Beta", "Alpha", "Gamma"), pinnedTitles)
+        assertEquals(2, databaseHelper.getFeedSource(gammaSource.id)?.pinnedPosition)
+    }
+
+    @Test
+    fun `drawer category feed sources are sorted by position`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "category-tech", title = "Tech")
+        val alphaSource = createFeedSource(id = "source-alpha", title = "Alpha", category = techCategory)
+        val betaSource = createFeedSource(id = "source-beta", title = "Beta", category = techCategory)
+        insertFeedSources(alphaSource, betaSource)
+        databaseHelper.updateFeedSourcePositions(listOf(betaSource.id, alphaSource.id))
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        val categoryFeedTitles = viewModel.navDrawerState.value.feedSourcesByCategory.values
+            .first()
+            .filterIsInstance<DrawerItem.DrawerFeedSource>()
+            .map { it.feedSource.title }
+        assertEquals(listOf("Beta", "Alpha"), categoryFeedTitles)
+    }
+
+    @Test
+    fun `drawer exposes mixed uncategorized feed sources as no category section`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "category-tech", title = "Tech")
+        val uncategorizedSource = createFeedSource(id = "source-uncategorized", title = "Uncategorized")
+        val techSource = createFeedSource(id = "source-tech", title = "Tech", category = techCategory)
+        insertFeedSources(uncategorizedSource, techSource)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        val grouped = viewModel.navDrawerState.value.feedSourcesByCategory.mapKeys { entry ->
+            entry.key.feedSourceCategory?.id
+        }
+        assertEquals(emptyList(), viewModel.navDrawerState.value.feedSourcesWithoutCategory)
+        assertEquals(
+            listOf(uncategorizedSource.id),
+            grouped[null]?.filterIsInstance<DrawerItem.DrawerFeedSource>()?.map { it.feedSource.id },
+        )
+        assertEquals(
+            listOf(techSource.id),
+            grouped[techCategory.id]?.filterIsInstance<DrawerItem.DrawerFeedSource>()?.map { it.feedSource.id },
+        )
+    }
+
+    @Test
+    fun `reorderFeedSources persists feed source positions`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "category-tech", title = "Tech")
+        val alphaSource = createFeedSource(id = "source-alpha", title = "Alpha", category = techCategory)
+        val betaSource = createFeedSource(id = "source-beta", title = "Beta", category = techCategory)
+        insertFeedSources(alphaSource, betaSource)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.reorderFeedSources(listOf(betaSource, alphaSource))
+        advanceUntilIdle()
+
+        assertEquals(0, databaseHelper.getFeedSource(betaSource.id)?.position)
+        assertEquals(1, databaseHelper.getFeedSource(alphaSource.id)?.position)
+    }
+
+    @Test
+    fun `reorderFeedSources updates drawer state immediately`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "category-tech", title = "Tech")
+        val alphaSource = createFeedSource(id = "source-alpha", title = "Alpha", category = techCategory)
+        val betaSource = createFeedSource(id = "source-beta", title = "Beta", category = techCategory)
+        insertFeedSources(alphaSource, betaSource)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.reorderFeedSources(listOf(betaSource, alphaSource))
+
+        val feedSourceTitles = viewModel.navDrawerState.value.feedSourcesByCategory.values
+            .first()
+            .filterIsInstance<DrawerItem.DrawerFeedSource>()
+            .map { it.feedSource.title }
+        assertEquals(listOf("Beta", "Alpha"), feedSourceTitles)
+    }
+
+    @Test
+    fun `reorderFeedSources persists mixed uncategorized feed source positions`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "category-tech", title = "Tech")
+        val alphaSource = createFeedSource(id = "source-alpha", title = "Alpha")
+        val betaSource = createFeedSource(id = "source-beta", title = "Beta")
+        val techSource = createFeedSource(id = "source-tech", title = "Tech", category = techCategory)
+        insertFeedSources(alphaSource, betaSource, techSource)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.reorderFeedSources(listOf(betaSource, alphaSource))
+        advanceUntilIdle()
+
+        assertEquals(0, databaseHelper.getFeedSource(betaSource.id)?.position)
+        assertEquals(1, databaseHelper.getFeedSource(alphaSource.id)?.position)
+        assertEquals(0, databaseHelper.getFeedSource(techSource.id)?.position)
+    }
+
+    @Test
+    fun `reorderCategories persists category positions`() = runTest(testDispatcher) {
+        val alphaCategory = FeedSourceCategory(id = "category-alpha", title = "Alpha")
+        val betaCategory = FeedSourceCategory(id = "category-beta", title = "Beta")
+        databaseHelper.insertCategories(listOf(alphaCategory, betaCategory))
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.reorderCategories(
+            listOf(
+                DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(betaCategory),
+                DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(alphaCategory),
+            ),
+        )
+        advanceUntilIdle()
+
+        val savedCategories = databaseHelper.getFeedSourceCategories()
+        assertEquals(listOf("Beta", "Alpha"), savedCategories.map { it.title })
+        assertEquals(listOf(0, 1), savedCategories.map { it.position })
+    }
+
+    @Test
+    fun `reorderCategories updates drawer state immediately`() = runTest(testDispatcher) {
+        val alphaCategory = FeedSourceCategory(id = "category-alpha", title = "Alpha")
+        val betaCategory = FeedSourceCategory(id = "category-beta", title = "Beta")
+        val alphaSource = createFeedSource(id = "source-alpha", title = "Alpha", category = alphaCategory)
+        val betaSource = createFeedSource(id = "source-beta", title = "Beta", category = betaCategory)
+        insertFeedSources(alphaSource, betaSource)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.reorderCategories(
+            listOf(
+                DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(betaCategory),
+                DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(alphaCategory),
+            ),
+        )
+
+        val categoryTitles = viewModel.navDrawerState.value.feedSourcesByCategory.keys
+            .map { it.feedSourceCategory?.title }
+        assertEquals(listOf("Beta", "Alpha"), categoryTitles)
+    }
+
+    @Test
+    fun `reorderCategories persists uncategorized group position`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "category-tech", title = "Tech")
+        val newsCategory = FeedSourceCategory(id = "category-news", title = "News")
+        val uncategorizedSource = createFeedSource(id = "source-uncategorized", title = "Uncategorized")
+        val techSource = createFeedSource(id = "source-tech", title = "Tech", category = techCategory)
+        val newsSource = createFeedSource(id = "source-news", title = "News", category = newsCategory)
+        insertFeedSources(uncategorizedSource, techSource, newsSource)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.reorderCategories(
+            listOf(
+                DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(techCategory),
+                DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(null),
+                DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(newsCategory),
+            ),
+        )
+        advanceUntilIdle()
+
+        assertEquals(1, viewModel.navDrawerState.value.uncategorizedPosition)
+        val orderedGroupIds = viewModel.navDrawerState.value.feedSourcesByCategory.keys
+            .map { it.feedSourceCategory?.id }
+        assertEquals(listOf(techCategory.id, null, newsCategory.id), orderedGroupIds)
+
+        val savedCategories = databaseHelper.getFeedSourceCategories()
+        assertEquals(listOf("Tech", "News"), savedCategories.map { it.title })
+        assertEquals(listOf(0, 2), savedCategories.map { it.position })
+    }
+
+    @Test
     fun `enqueueBackup keeps sync upload state unchanged`() = runTest(testDispatcher) {
         val viewModel = getViewModel()
         advanceUntilIdle()
@@ -1528,6 +1779,16 @@ class HomeViewModelTest : KoinTestBase() {
             databaseHelper.insertCategories(categories)
         }
         databaseHelper.insertFeedSource(sources.map { it.toParsedFeedSource() })
+    }
+
+    private suspend fun insertPinnedPreference(feedSource: FeedSource) {
+        databaseHelper.insertFeedSourcePreference(
+            feedSourceId = feedSource.id,
+            preference = LinkOpeningPreference.DEFAULT,
+            isHidden = false,
+            isPinned = true,
+            isNotificationEnabled = false,
+        )
     }
 
     private fun createFeedSource(

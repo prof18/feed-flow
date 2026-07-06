@@ -71,6 +71,163 @@ class FeedSourceListViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `mixed uncategorized and categorized feed sources expose no category section`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "tech", title = "Tech")
+        val uncategorizedSource = createFeedSource(id = "uncategorized-source", title = "Uncategorized Source")
+        val techSource = createFeedSource(id = "tech-source", title = "Tech Source", category = techCategory)
+
+        insertFeedSources(databaseHelper, uncategorizedSource, techSource)
+        advanceUntilIdle()
+
+        val state = viewModel.feedSourcesState.value
+        val grouped = state.feedSourcesWithCategory.associate { feedSourceState ->
+            feedSourceState.categoryId to feedSourceState.feedSources.map { it.id }
+        }
+        assertTrue(state.feedSourcesWithoutCategory.isEmpty())
+        assertEquals(listOf(uncategorizedSource.id), grouped[null])
+        assertEquals(listOf(techSource.id), grouped[CategoryId("tech")])
+    }
+
+    @Test
+    fun `feed source categories are sorted by position`() = runTest(testDispatcher) {
+        val alphaCategory = FeedSourceCategory(id = "alpha", title = "Alpha")
+        val betaCategory = FeedSourceCategory(id = "beta", title = "Beta")
+        val alphaSource = createFeedSource(id = "alpha-source", title = "Alpha Source", category = alphaCategory)
+        val betaSource = createFeedSource(id = "beta-source", title = "Beta Source", category = betaCategory)
+
+        insertFeedSources(databaseHelper, alphaSource, betaSource)
+        databaseHelper.updateCategoryPositions(listOf("beta" to 0, "alpha" to 1))
+        advanceUntilIdle()
+
+        val categoryNames = viewModel.feedSourcesState.value.feedSourcesWithCategory.map { it.categoryName }
+        assertEquals(listOf("Beta", "Alpha"), categoryNames)
+    }
+
+    @Test
+    fun `reorderCategories persists category positions`() = runTest(testDispatcher) {
+        val alphaCategory = FeedSourceCategory(id = "alpha", title = "Alpha")
+        val betaCategory = FeedSourceCategory(id = "beta", title = "Beta")
+        val alphaSource = createFeedSource(id = "alpha-source", title = "Alpha Source", category = alphaCategory)
+        val betaSource = createFeedSource(id = "beta-source", title = "Beta Source", category = betaCategory)
+
+        insertFeedSources(databaseHelper, alphaSource, betaSource)
+        advanceUntilIdle()
+
+        viewModel.reorderCategories(viewModel.feedSourcesState.value.feedSourcesWithCategory.reversed())
+        advanceUntilIdle()
+
+        val savedCategories = databaseHelper.getFeedSourceCategories()
+        assertEquals(listOf("Beta", "Alpha"), savedCategories.map { it.title })
+        assertEquals(listOf(0, 1), savedCategories.map { it.position })
+    }
+
+    @Test
+    fun `reorderCategories updates observed state immediately`() = runTest(testDispatcher) {
+        val alphaCategory = FeedSourceCategory(id = "alpha", title = "Alpha")
+        val betaCategory = FeedSourceCategory(id = "beta", title = "Beta")
+        val alphaSource = createFeedSource(id = "alpha-source", title = "Alpha Source", category = alphaCategory)
+        val betaSource = createFeedSource(id = "beta-source", title = "Beta Source", category = betaCategory)
+
+        insertFeedSources(databaseHelper, alphaSource, betaSource)
+        advanceUntilIdle()
+
+        viewModel.reorderCategories(viewModel.feedSourcesState.value.feedSourcesWithCategory.reversed())
+
+        val categoryNames = viewModel.feedSourcesState.value.feedSourcesWithCategory.map { it.categoryName }
+        assertEquals(listOf("Beta", "Alpha"), categoryNames)
+    }
+
+    @Test
+    fun `reorderCategories persists uncategorized group position`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "tech", title = "Tech")
+        val uncategorizedSource = createFeedSource(id = "uncategorized-source", title = "Uncategorized Source")
+        val techSource = createFeedSource(id = "tech-source", title = "Tech Source", category = techCategory)
+
+        insertFeedSources(databaseHelper, uncategorizedSource, techSource)
+        advanceUntilIdle()
+
+        val initialCategoryNames = viewModel.feedSourcesState.value.feedSourcesWithCategory.map { it.categoryName }
+        assertEquals(listOf(null, "Tech"), initialCategoryNames)
+
+        viewModel.reorderCategories(viewModel.feedSourcesState.value.feedSourcesWithCategory.reversed())
+        advanceUntilIdle()
+
+        val categoryNames = viewModel.feedSourcesState.value.feedSourcesWithCategory.map { it.categoryName }
+        assertEquals(listOf("Tech", null), categoryNames)
+        assertEquals(0, databaseHelper.getFeedSourceCategories().single().position)
+    }
+
+    @Test
+    fun `reorderFeedSources persists feed source positions`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "tech", title = "Tech")
+        val alphaSource = createFeedSource(id = "alpha-source", title = "Alpha Source", category = techCategory)
+        val betaSource = createFeedSource(id = "beta-source", title = "Beta Source", category = techCategory)
+
+        insertFeedSources(databaseHelper, alphaSource, betaSource)
+        advanceUntilIdle()
+
+        val feedSources = viewModel.feedSourcesState.value.feedSourcesWithCategory.first().feedSources
+        viewModel.reorderFeedSources(feedSources.reversed())
+        advanceUntilIdle()
+
+        assertEquals(0, databaseHelper.getFeedSource(betaSource.id)?.position)
+        assertEquals(1, databaseHelper.getFeedSource(alphaSource.id)?.position)
+    }
+
+    @Test
+    fun `reorderFeedSources updates observed state immediately`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "tech", title = "Tech")
+        val alphaSource = createFeedSource(id = "alpha-source", title = "Alpha Source", category = techCategory)
+        val betaSource = createFeedSource(id = "beta-source", title = "Beta Source", category = techCategory)
+
+        insertFeedSources(databaseHelper, alphaSource, betaSource)
+        advanceUntilIdle()
+
+        val feedSources = viewModel.feedSourcesState.value.feedSourcesWithCategory.first().feedSources
+        viewModel.reorderFeedSources(feedSources.reversed())
+
+        val sourceTitles = viewModel.feedSourcesState.value.feedSourcesWithCategory.first().feedSources.map { it.title }
+        assertEquals(listOf("Beta Source", "Alpha Source"), sourceTitles)
+    }
+
+    @Test
+    fun `reorderFeedSources persists uncategorized feed source positions`() = runTest(testDispatcher) {
+        val alphaSource = createFeedSource(id = "alpha-source", title = "Alpha Source")
+        val betaSource = createFeedSource(id = "beta-source", title = "Beta Source")
+
+        insertFeedSources(databaseHelper, alphaSource, betaSource)
+        advanceUntilIdle()
+
+        viewModel.reorderFeedSources(viewModel.feedSourcesState.value.feedSourcesWithoutCategory.reversed())
+        advanceUntilIdle()
+
+        assertEquals(0, databaseHelper.getFeedSource(betaSource.id)?.position)
+        assertEquals(1, databaseHelper.getFeedSource(alphaSource.id)?.position)
+    }
+
+    @Test
+    fun `reorderFeedSources only updates the reordered category subset`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "tech", title = "Tech")
+        val newsCategory = FeedSourceCategory(id = "news", title = "News")
+        val techAlphaSource = createFeedSource(id = "tech-alpha-source", title = "Tech Alpha", category = techCategory)
+        val techBetaSource = createFeedSource(id = "tech-beta-source", title = "Tech Beta", category = techCategory)
+        val newsSource = createFeedSource(id = "news-source", title = "News Source", category = newsCategory)
+
+        insertFeedSources(databaseHelper, techAlphaSource, techBetaSource, newsSource)
+        advanceUntilIdle()
+
+        val techSources = viewModel.feedSourcesState.value.feedSourcesWithCategory
+            .first { it.categoryId == CategoryId("tech") }
+            .feedSources
+        viewModel.reorderFeedSources(techSources.reversed())
+        advanceUntilIdle()
+
+        assertEquals(0, databaseHelper.getFeedSource(techBetaSource.id)?.position)
+        assertEquals(1, databaseHelper.getFeedSource(techAlphaSource.id)?.position)
+        assertEquals(0, databaseHelper.getFeedSource(newsSource.id)?.position)
+    }
+
+    @Test
     fun `expandCategory toggles expanded state`() = runTest(testDispatcher) {
         val techCategory = FeedSourceCategory(id = "tech", title = "Tech")
         val techSource = createFeedSource(id = "tech-source", title = "Tech Source", category = techCategory)
@@ -87,6 +244,28 @@ class FeedSourceListViewModelTest : KoinTestBase() {
 
         state = viewModel.feedSourcesState.value
         assertTrue(state.feedSourcesWithCategory.first().isExpanded.not())
+    }
+
+    @Test
+    fun `expandCategory toggles uncategorized expanded state`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "tech", title = "Tech")
+        val uncategorizedSource = createFeedSource(id = "uncategorized-source", title = "Uncategorized Source")
+        val techSource = createFeedSource(id = "tech-source", title = "Tech Source", category = techCategory)
+        insertFeedSources(databaseHelper, uncategorizedSource, techSource)
+
+        advanceUntilIdle()
+
+        viewModel.expandCategory(null)
+
+        var uncategorizedState = viewModel.feedSourcesState.value.feedSourcesWithCategory
+            .first { it.categoryId == null }
+        assertTrue(uncategorizedState.isExpanded)
+
+        viewModel.expandCategory(null)
+
+        uncategorizedState = viewModel.feedSourcesState.value.feedSourcesWithCategory
+            .first { it.categoryId == null }
+        assertTrue(uncategorizedState.isExpanded.not())
     }
 
     @Test

@@ -27,7 +27,6 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -69,25 +68,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 internal fun DesktopDrawerFeedSourcesByCategories(
     navDrawerState: NavDrawerState,
-    currentFeedFilter: FeedFilter,
-    drawerItemVisualStyle: DrawerItemVisualStyle,
-    onFeedFilterSelected: (FeedFilter) -> Unit,
-    selectedFeedSourceIds: ImmutableSet<String>,
-    onFeedSourceClick: (FeedSource, Boolean) -> Unit,
-    selectedFeedSourcesProvider: () -> List<FeedSource>,
-    onEditFeedClick: (FeedSource) -> Unit,
-    onDeleteFeedSourceClick: (FeedSource) -> Unit,
-    onPinFeedClick: (FeedSource) -> Unit,
-    onOpenWebsite: (String) -> Unit,
-    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
-    validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
-    onChangeFeedCategoryClick: (FeedSource) -> Unit,
-    onDeleteCategoryClick: (CategoryId) -> Unit,
     onDeleteAllFeedsInCategoryClick: (List<FeedSource>) -> Unit,
-    onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
-    onMarkAllReadForCategoryClick: (FeedSourceCategory) -> Unit,
-    onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
-    dragState: FeedSourceDragState,
     onAddFeedClick: () -> Unit,
     onFeedSuggestionsClick: () -> Unit,
     onImportExportClick: () -> Unit,
@@ -155,59 +136,6 @@ internal fun DesktopDrawerFeedSourcesByCategories(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = LocalFeedFlowStrings.current.addFeed,
-                    )
-                }
-            }
-
-            DesktopDrawerFeedSourcesList(
-                drawerFeedSources = uncategorizedFeedSources,
-                currentFeedFilter = currentFeedFilter,
-                drawerItemVisualStyle = drawerItemVisualStyle,
-                selectedFeedSourceIds = selectedFeedSourceIds,
-                onFeedSourceClick = onFeedSourceClick,
-                selectedFeedSourcesProvider = selectedFeedSourcesProvider,
-                onEditFeedClick = onEditFeedClick,
-                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                onPinFeedClick = onPinFeedClick,
-                onChangeFeedCategoryClick = onChangeFeedCategoryClick,
-                onOpenWebsite = onOpenWebsite,
-                onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
-                onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
-                dragState = dragState,
-            )
-
-            for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
-                key(categoryWrapper.feedSourceCategory?.id ?: "no-category") {
-                    var isCategoryExpanded by rememberSaveable { mutableStateOf(false) }
-
-                    val drawerFeedSourceItems = remember(drawerFeedSources) {
-                        drawerFeedSources
-                            .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
-                    }
-                    DesktopDrawerFeedSourceByCategoryItem(
-                        feedSourceCategoryWrapper = categoryWrapper,
-                        drawerFeedSources = drawerFeedSourceItems,
-                        currentFeedFilter = currentFeedFilter,
-                        drawerItemVisualStyle = drawerItemVisualStyle,
-                        isCategoryExpanded = isCategoryExpanded,
-                        onCategoryExpand = { isCategoryExpanded = !isCategoryExpanded },
-                        onFeedFilterSelected = onFeedFilterSelected,
-                        selectedFeedSourceIds = selectedFeedSourceIds,
-                        onFeedSourceClick = onFeedSourceClick,
-                        selectedFeedSourcesProvider = selectedFeedSourcesProvider,
-                        onEditFeedClick = onEditFeedClick,
-                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                        onPinFeedClick = onPinFeedClick,
-                        onChangeFeedCategoryClick = onChangeFeedCategoryClick,
-                        onOpenWebsite = onOpenWebsite,
-                        onEditCategoryClick = onEditCategoryClick,
-                        validateCategoryName = validateCategoryName,
-                        onDeleteCategoryClick = onDeleteCategoryClick,
-                        onDeleteAllFeedsInCategoryClick = onDeleteAllFeedsInCategoryClick,
-                        onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
-                        onMarkAllReadForCategoryClick = onMarkAllReadForCategoryClick,
-                        onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
-                        dragState = dragState,
                     )
                 }
             }
@@ -295,7 +223,7 @@ internal fun DesktopDrawerFeedSourcesByCategories(
 }
 
 @Composable
-private fun DesktopDrawerFeedSourceByCategoryItem(
+internal fun DesktopDrawerFeedSourceByCategoryItem(
     feedSourceCategoryWrapper: DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper,
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
@@ -318,7 +246,10 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
     onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
     onMarkAllReadForCategoryClick: (FeedSourceCategory) -> Unit,
     onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
-    dragState: FeedSourceDragState,
+    dragState: DesktopDrawerDragState,
+    modifier: Modifier = Modifier,
+    headerModifier: Modifier = Modifier,
+    showFeedSources: Boolean = true,
 ) {
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
     var showMenu by rememberSaveable { mutableStateOf(false) }
@@ -332,13 +263,17 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
     }
     val isDropTargetActive = dragState.isDragOver(category)
 
-    FeedSourceDropTargetCleanup(
+    DrawerDropTargetCleanup(
         dragState = dragState,
         category = category,
     )
+    CategoryHeaderSlotCleanup(
+        dragState = dragState,
+        sectionKey = desktopDrawerCategorySectionKey(category),
+    )
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         @Suppress("MagicNumber")
         val degrees by conditionalAnimateFloatAsState(
@@ -385,6 +320,7 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
                     .semantics { role = Role.Tab }
                     .heightIn(min = drawerItemVisualStyle.itemMinHeight)
                     .hoverable(remember { MutableInteractionSource() })
+                    .then(headerModifier)
                     .then(dropTargetModifier),
             ) {
                 val contentModifier = Modifier.singleAndLongClickModifier(
@@ -442,23 +378,27 @@ private fun DesktopDrawerFeedSourceByCategoryItem(
             }
         }
 
-        FeedSourcesListWithCategorySelector(
-            isCategoryExpanded = isCategoryExpanded,
-            drawerFeedSources = drawerFeedSources,
-            currentFeedFilter = currentFeedFilter,
-            drawerItemVisualStyle = drawerItemVisualStyle,
-            selectedFeedSourceIds = selectedFeedSourceIds,
-            onFeedSourceClick = onFeedSourceClick,
-            selectedFeedSourcesProvider = selectedFeedSourcesProvider,
-            onEditFeedClick = onEditFeedClick,
-            onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-            onPinFeedClick = onPinFeedClick,
-            onChangeFeedCategoryClick = onChangeFeedCategoryClick,
-            onOpenWebsite = onOpenWebsite,
-            onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
-            onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
-            dragState = dragState,
-        )
+        if (showFeedSources) {
+            FeedSourcesListWithCategorySelector(
+                isCategoryExpanded = isCategoryExpanded,
+                drawerFeedSources = drawerFeedSources,
+                currentFeedFilter = currentFeedFilter,
+                drawerItemVisualStyle = drawerItemVisualStyle,
+                selectedFeedSourceIds = selectedFeedSourceIds,
+                onFeedSourceClick = onFeedSourceClick,
+                selectedFeedSourcesProvider = selectedFeedSourcesProvider,
+                onEditFeedClick = onEditFeedClick,
+                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                onPinFeedClick = onPinFeedClick,
+                onChangeFeedCategoryClick = onChangeFeedCategoryClick,
+                onOpenWebsite = onOpenWebsite,
+                onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
+                onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                dragState = dragState,
+                sectionKey = desktopDrawerCategorySectionKey(category),
+                sectionCategory = category,
+            )
+        }
     }
 
     val strings = LocalFeedFlowStrings.current

@@ -1,3 +1,10 @@
+DROP VIEW IF EXISTS feed_source_unread_count;
+DROP VIEW IF EXISTS category_with_unread;
+
+ALTER TABLE feed_source_category ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE feed_source_preferences ADD COLUMN pinned_position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE feed_source ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+
 CREATE VIEW feed_source_unread_count AS
 SELECT
     feed_source.url_hash AS url_hash,
@@ -29,7 +36,6 @@ ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id;
 
-
 CREATE VIEW category_with_unread AS
 SELECT
     feed_source_category.id,
@@ -44,14 +50,3 @@ SELECT
         AND feed_item.is_blocked == 0
     ) AS unread_count
 FROM feed_source_category;
-
-getCategoriesWithUnreadCount:
-SELECT id, title, position, unread_count
-FROM category_with_unread
-ORDER BY position ASC, title COLLATE NOCASE ASC;
-
-
-getFeedSourcesWithUnreadCount:
-SELECT url_hash, feed_source_title, url, feed_source_logo_url, feed_source_website_url, feed_source_position, category_id, category_title, category_position, last_sync_timestamp, fetch_failed, link_opening_preference, is_hidden, is_pinned, pinned_position, notifications_enabled, unread_count
-FROM feed_source_unread_count
-ORDER BY category_id ASC, feed_source_position ASC, feed_source_title COLLATE NOCASE ASC;

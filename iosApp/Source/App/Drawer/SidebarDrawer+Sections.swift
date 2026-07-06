@@ -4,41 +4,55 @@ import SwiftUI
 
 extension SidebarDrawer {
     @ViewBuilder var pinnedFeedSourcesContent: some View {
-        ForEach(navDrawerState.pinnedFeedSources, id: \.stableId) { drawerItem in
-            if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
-                makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
-            }
+        let pinnedFeedSources = navDrawerState.pinnedFeedSources
+            .compactMap { $0 as? DrawerItem.DrawerFeedSource }
+
+        ForEach(pinnedFeedSources, id: \.feedSource.id) { drawerFeedSource in
+            makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
         }
+        .onMove(perform: pinnedFeedSourcesMoveAction(pinnedFeedSources))
     }
 
     @ViewBuilder var feedSourcesContent: some View {
         if !navDrawerState.feedSourcesByCategory.isEmpty || !navDrawerState.feedSourcesWithoutCategory.isEmpty {
-            let uncategorizedFromMap = navDrawerState.feedSourcesByCategory
-                .filter { $0.key.feedSourceCategory == nil }
-                .flatMap { $0.value }
-            let uncategorizedItems: [DrawerItem] =
-                Array(navDrawerState.feedSourcesWithoutCategory) + uncategorizedFromMap
+            if navDrawerState.feedSourcesByCategory.isEmpty {
+                makeUncategorizedDropdown(drawerItems: Array(navDrawerState.feedSourcesWithoutCategory))
+            } else {
+                let categoryWrappers = sortedCategoryWrappers
 
-            makeUncategorizedDropdown(drawerItems: uncategorizedItems)
+                ForEach(categoryWrappers, id: \.self) { category in
+                    let categoryWrapper =
+                        category as DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
 
-            ForEach(
-                navDrawerState.feedSourcesByCategory.keys.sorted {
-                    $0.feedSourceCategory?.title ?? "" < $1.feedSourceCategory?.title ?? ""
-                },
-                id: \.self
-            ) { category in
-                let categoryWrapper =
-                    category as DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
-
-                if categoryWrapper.feedSourceCategory != nil {
                     let drawerItems = navDrawerState.feedSourcesByCategory[categoryWrapper] ?? []
-                    makeCategoryDropdown(
-                        drawerItems: drawerItems,
-                        categoryWrapper: categoryWrapper
-                    )
+                    if categoryWrapper.feedSourceCategory == nil {
+                        makeUncategorizedDropdown(drawerItems: drawerItems)
+                    } else {
+                        makeCategoryDropdown(
+                            drawerItems: drawerItems,
+                            categoryWrapper: categoryWrapper
+                        )
+                    }
                 }
+                .onMove(perform: categoryWrappersMoveAction(categoryWrappers))
             }
         }
+    }
+
+    private var sortedCategoryWrappers: [DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper] {
+        navDrawerState.feedSourcesByCategory.keys
+            .map { $0 as DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper }
+            .sorted { lhs, rhs in
+                let lhsPosition = lhs.feedSourceCategory?.position ?? navDrawerState.uncategorizedPosition
+                let rhsPosition = rhs.feedSourceCategory?.position ?? navDrawerState.uncategorizedPosition
+                if lhsPosition == rhsPosition {
+                    // The Uncategorized group (nil title) sorts first, matching the shared ordering
+                    guard let lhsTitle = lhs.feedSourceCategory?.title else { return true }
+                    guard let rhsTitle = rhs.feedSourceCategory?.title else { return false }
+                    return lhsTitle < rhsTitle
+                }
+                return lhsPosition < rhsPosition
+            }
     }
 
     @ViewBuilder
@@ -202,20 +216,52 @@ extension SidebarDrawer {
 
     @ViewBuilder
     func feedSourcesList(drawerItems: [DrawerItem]) -> some View {
-        ForEach(drawerItems, id: \.stableId) { drawerItem in
-            if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
-                makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
-                    .listRowInsets(
-                        EdgeInsets(
-                            top: Spacing.small,
-                            leading: Spacing.medium,
-                            bottom: Spacing.small,
-                            trailing: Spacing.regular
-                        )
+        let drawerFeedSources = drawerItems.compactMap { $0 as? DrawerItem.DrawerFeedSource }
+
+        ForEach(drawerFeedSources, id: \.feedSource.id) { drawerFeedSource in
+            makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
+                .listRowInsets(
+                    EdgeInsets(
+                        top: Spacing.small,
+                        leading: Spacing.medium,
+                        bottom: Spacing.small,
+                        trailing: Spacing.regular
                     )
-            } else {
-                EmptyView()
-            }
+                )
+        }
+        .onMove(perform: drawerFeedSourcesMoveAction(drawerFeedSources))
+    }
+
+    func pinnedFeedSourcesMoveAction(
+        _ pinnedFeedSources: [DrawerItem.DrawerFeedSource]
+    ) -> ((IndexSet, Int) -> Void)? {
+        guard pinnedFeedSources.count > 1 else { return nil }
+        return { source, destination in
+            var reorderedFeedSources = pinnedFeedSources
+            reorderedFeedSources.move(fromOffsets: source, toOffset: destination)
+            onReorderPinnedFeedSources(reorderedFeedSources.map(\.feedSource))
+        }
+    }
+
+    func categoryWrappersMoveAction(
+        _ categoryWrappers: [DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper]
+    ) -> ((IndexSet, Int) -> Void)? {
+        guard categoryWrappers.count > 1 else { return nil }
+        return { source, destination in
+            var reorderedCategories = categoryWrappers
+            reorderedCategories.move(fromOffsets: source, toOffset: destination)
+            onReorderCategories(reorderedCategories)
+        }
+    }
+
+    func drawerFeedSourcesMoveAction(
+        _ drawerFeedSources: [DrawerItem.DrawerFeedSource]
+    ) -> ((IndexSet, Int) -> Void)? {
+        guard drawerFeedSources.count > 1 else { return nil }
+        return { source, destination in
+            var reorderedFeedSources = drawerFeedSources
+            reorderedFeedSources.move(fromOffsets: source, toOffset: destination)
+            onReorderFeedSources(reorderedFeedSources.map(\.feedSource))
         }
     }
 

@@ -33,6 +33,8 @@ struct FeedSourceListScreenContent: View {
     let deleteFeedSource: (FeedSource) -> Void
     let renameFeedSource: (FeedSource, String) -> Void
     let deleteAllFeedsInCategory: ([FeedSource]) -> Void
+    let onReorderCategories: ([FeedSourceState]) -> Void
+    let onReorderFeedSources: ([FeedSource]) -> Void
 
     var body: some View {
         VStack {
@@ -59,8 +61,8 @@ struct FeedSourceListScreenContent: View {
                 NavigationLink(destination: AddFeedScreen()
                     .environment(appState)
                     .environment(browserSelector)) {
-                    Image(systemName: "plus")
-                        .foregroundStyle(.primary)
+                        Image(systemName: "plus")
+                            .foregroundStyle(.primary)
                 }
             }
         }
@@ -105,6 +107,9 @@ struct FeedSourceListScreenContent: View {
                         .id(feedSource.id)
                         .listRowInsets(EdgeInsets())
                     }
+                    .onMove(
+                        perform: feedSourcesMoveAction(Array(feedState.feedSourcesWithoutCategory))
+                    )
                 } header: {
                     Text(feedFlowStrings.noCategory)
                         .contextMenu {
@@ -126,51 +131,11 @@ struct FeedSourceListScreenContent: View {
     @ViewBuilder private var feedSourcesWithCategoryList: some View {
         List {
             ForEach(feedState.feedSourcesWithCategory, id: \.self.categoryId) { feedSourceState in
-                DisclosureGroup(
-                    content: {
-                        ForEach(feedSourceState.feedSources, id: \.self.id) { feedSource in
-                            FeedSourceListItem(
-                                feedSource: feedSource,
-                                feedSourceTitle: feedSource.title,
-                                deleteFeedSource: { source in
-                                    feedToDelete = source
-                                    showDeleteFeedDialog = true
-                                },
-                                renameFeedSource: renameFeedSource
-                            )
-                            .id(feedSource.id)
-                        }
-                    },
-                    label: {
-                        Text(feedSourceState.categoryName ?? feedFlowStrings.noCategory)
-                            .font(.system(size: 16))
-                            .foregroundStyle(Color(UIColor.label))
-                            .padding(Spacing.regular)
-                            .contextMenu {
-                                Button(role: .destructive) {
-                                    feedSourcesToDelete = Array(feedSourceState.feedSources)
-                                    showDeleteAllFeedsDialog = true
-                                } label: {
-                                    Label(
-                                        feedFlowStrings.deleteAllFeedsInCategory,
-                                        systemImage: "trash"
-                                    )
-                                }
-                            }
-                    }
-                )
-                .accessibilityIdentifier(
-                    FeedSourceListAccessibilityIdentifiers.category(feedSourceState.categoryId?.value)
-                )
-                .listRowInsets(
-                    EdgeInsets(
-                        top: .zero,
-                        leading: .zero,
-                        bottom: .zero,
-                        trailing: Spacing.regular
-                    )
-                )
+                feedSourceCategoryDisclosure(feedSourceState)
             }
+            .onMove(
+                perform: categoriesMoveAction(Array(feedState.feedSourcesWithCategory))
+            )
         }
         .alert(
             feedFlowStrings.deleteAllFeedsConfirmationTitle,
@@ -203,6 +168,88 @@ struct FeedSourceListScreenContent: View {
             }
         } message: {
             Text(feedFlowStrings.deleteFeedConfirmationMessage)
+        }
+    }
+
+    @ViewBuilder
+    private func feedSourceCategoryDisclosure(_ feedSourceState: FeedSourceState) -> some View {
+        DisclosureGroup(
+            content: {
+                categoryFeedSourceRows(feedSourceState)
+            },
+            label: {
+                categoryDisclosureLabel(feedSourceState)
+            }
+        )
+        .accessibilityIdentifier(
+            FeedSourceListAccessibilityIdentifiers.category(feedSourceState.categoryId?.value)
+        )
+        .listRowInsets(
+            EdgeInsets(
+                top: .zero,
+                leading: .zero,
+                bottom: .zero,
+                trailing: Spacing.regular
+            )
+        )
+    }
+
+    @ViewBuilder
+    private func categoryFeedSourceRows(_ feedSourceState: FeedSourceState) -> some View {
+        ForEach(feedSourceState.feedSources, id: \.self.id) { feedSource in
+            feedSourceListItem(feedSource)
+        }
+        .onMove(
+            perform: feedSourcesMoveAction(Array(feedSourceState.feedSources))
+        )
+    }
+
+    private func feedSourceListItem(_ feedSource: FeedSource) -> some View {
+        FeedSourceListItem(
+            feedSource: feedSource,
+            feedSourceTitle: feedSource.title,
+            deleteFeedSource: { source in
+                feedToDelete = source
+                showDeleteFeedDialog = true
+            },
+            renameFeedSource: renameFeedSource
+        )
+        .id(feedSource.id)
+    }
+
+    private func categoryDisclosureLabel(_ feedSourceState: FeedSourceState) -> some View {
+        Text(feedSourceState.categoryName ?? feedFlowStrings.noCategory)
+            .font(.system(size: 16))
+            .foregroundStyle(Color(UIColor.label))
+            .padding(Spacing.regular)
+            .contextMenu {
+                Button(role: .destructive) {
+                    feedSourcesToDelete = Array(feedSourceState.feedSources)
+                    showDeleteAllFeedsDialog = true
+                } label: {
+                    Label(
+                        feedFlowStrings.deleteAllFeedsInCategory,
+                        systemImage: "trash"
+                    )
+                }
+            }
+    }
+
+    private func feedSourcesMoveAction(_ feedSources: [FeedSource]) -> ((IndexSet, Int) -> Void)? {
+        guard feedSources.count > 1 else { return nil }
+        return { source, destination in
+            var reorderedFeedSources = feedSources
+            reorderedFeedSources.move(fromOffsets: source, toOffset: destination)
+            onReorderFeedSources(reorderedFeedSources)
+        }
+    }
+
+    private func categoriesMoveAction(_ categories: [FeedSourceState]) -> ((IndexSet, Int) -> Void)? {
+        guard categories.count > 1 else { return nil }
+        return { source, destination in
+            var reorderedCategories = categories
+            reorderedCategories.move(fromOffsets: source, toOffset: destination)
+            onReorderCategories(reorderedCategories)
         }
     }
 }

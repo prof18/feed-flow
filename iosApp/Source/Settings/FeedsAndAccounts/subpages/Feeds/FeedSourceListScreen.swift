@@ -37,6 +37,12 @@ struct FeedSourceListScreen: View {
             },
             deleteAllFeedsInCategory: { feedSources in
                 vmStoreOwner.instance.deleteAllFeedsInCategory(feedSources: feedSources)
+            },
+            onReorderCategories: { categories in
+                vmStoreOwner.instance.reorderCategories(categories: categories)
+            },
+            onReorderFeedSources: { feedSources in
+                vmStoreOwner.instance.reorderFeedSources(feedSources: feedSources)
             }
         )
         .id(appState.redrawAfterFeedSourceEdit)

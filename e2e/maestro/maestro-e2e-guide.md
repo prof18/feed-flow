@@ -64,6 +64,7 @@ Supported profiles:
 - `sync-linked-mock`
 - `sync-upload-required`
 - `large-content`
+- `reorder-drag`
 
 Seed deep links:
 

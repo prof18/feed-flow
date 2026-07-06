@@ -1,12 +1,15 @@
 package com.prof18.feedflow.shared.di
 
 import app.cash.sqldelight.EnumColumnAdapter
+import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.getAppGroupDatabasePath
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item_status
+import com.prof18.feedflow.db.Feed_source
+import com.prof18.feedflow.db.Feed_source_category
 import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
@@ -30,8 +33,15 @@ fun getFeedItems(appEnvironment: AppEnvironment): List<FeedItemWidget> {
 
     val dbRef = FeedFlowDB(
         sqlDriver,
+        feed_sourceAdapter = Feed_source.Adapter(
+            positionAdapter = IntColumnAdapter,
+        ),
         feed_source_preferencesAdapter = Feed_source_preferences.Adapter(
             link_opening_preferenceAdapter = EnumColumnAdapter(),
+            pinned_positionAdapter = IntColumnAdapter,
+        ),
+        feed_source_categoryAdapter = Feed_source_category.Adapter(
+            positionAdapter = IntColumnAdapter,
         ),
         feed_item_statusAdapter = Feed_item_status.Adapter(
             typeAdapter = EnumColumnAdapter(),

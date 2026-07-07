@@ -32,7 +32,7 @@ class ReaderModeHtmlAndCssTest {
     @Test
     fun `readerLineHeightToCss maps steps`() {
         assertEquals("1.5", readerLineHeightToCss(0))
-        assertEquals("1.7", readerLineHeightToCss(ReaderModeDefaults.LINE_HEIGHT))
+        assertEquals("1.6", readerLineHeightToCss(ReaderModeDefaults.LINE_HEIGHT))
         assertEquals("2.5", readerLineHeightToCss(10))
         assertEquals("3.0", readerLineHeightToCss(15))
     }
@@ -40,7 +40,7 @@ class ReaderModeHtmlAndCssTest {
     @Test
     fun `readerModeCss includes line height rule`() {
         val defaultCss = readerModeCss(null, 18, lineHeight = ReaderModeDefaults.LINE_HEIGHT)
-        assertTrue(defaultCss.contains("line-height: 1.7"))
+        assertTrue(defaultCss.contains("line-height: 1.6"))
 
         val spacedCss = readerModeCss(null, 18, lineHeight = 5)
         assertTrue(spacedCss.contains("line-height: 2.0"))

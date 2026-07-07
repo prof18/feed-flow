@@ -381,7 +381,7 @@ private const val LINE_HEIGHT_STEP_TENTHS = 1
 private const val LINE_HEIGHT_TENTHS_DIVISOR = 10
 private const val LINE_HEIGHT_DESKTOP_ROUNDING_OFFSET = 5
 
-// step 0 -> "1.5", default step 2 -> "1.7", step 15 -> "3.0". Integer tenths avoids float/locale issues.
+// step 0 -> "1.5", default step 1 -> "1.6", step 15 -> "3.0". Integer tenths avoids float/locale issues.
 internal fun readerLineHeightToCss(step: Int): String {
     val tenths = LINE_HEIGHT_BASE_TENTHS + step * LINE_HEIGHT_STEP_TENTHS
     return "${tenths / LINE_HEIGHT_TENTHS_DIVISOR}.${tenths % LINE_HEIGHT_TENTHS_DIVISOR}"

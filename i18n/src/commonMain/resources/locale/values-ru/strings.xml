@@ -394,4 +394,7 @@
     <string name="settings_feed_layout_grid_toggle">Использовать сетку на широких экранах</string>
     <string name="increase_line_height_button_content_description">Увеличить высоту строки</string>
     <string name="decrease_line_height_button_content_description">Уменьшить высоту строки</string>
+    <string name="reorder_drag_handle">Изменить порядок</string>
+    <string name="reorder_mode_enter">Изменить порядок</string>
+    <string name="reorder_mode_done">Готово</string>
 </resources>

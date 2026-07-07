@@ -392,4 +392,9 @@
     <string name="settings_appearance">Aspetto</string>
     <string name="sort_and_filter_button">Ordina e filtra</string>
     <string name="settings_feed_layout_grid">Griglia</string>
+    <string name="reorder_drag_handle">Riordina</string>
+    <string name="reorder_mode_enter">Riordina</string>
+    <string name="reorder_mode_done">Fatto</string>
+    <string name="settings_feed_layout_big_image">Immagine scheda grande</string>
+    <string name="settings_feed_layout_grid_toggle">Usa la griglia su schermi ampi</string>
 </resources>

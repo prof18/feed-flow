@@ -75,7 +75,7 @@ internal class RssChannelMapper(
                         }
                         htmlParser.getTextFromHTML(partialDesc)
                     },
-                    content = null,
+                    content = rssItem.content ?: rssItem.description,
                     imageUrl = imageUrl,
                     feedSource = feedSource,
                     pubDateMillis = dateMillis,

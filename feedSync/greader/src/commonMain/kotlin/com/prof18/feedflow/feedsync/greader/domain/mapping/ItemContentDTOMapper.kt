@@ -25,7 +25,7 @@ internal class ItemContentDTOMapper(
             url = url,
             title = itemContentDTO.title,
             subtitle = parsedContent?.text,
-            content = null,
+            content = content,
             imageUrl = itemContentDTO.image?.href ?: getImageFromContent(content),
             feedSource = feedSource,
             pubDateMillis = itemContentDTO.published * 1000,

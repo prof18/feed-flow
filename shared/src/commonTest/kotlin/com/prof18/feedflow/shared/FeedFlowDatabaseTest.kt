@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.test.KoinTestBase
+import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.inject
 import kotlin.test.Test
@@ -90,6 +91,26 @@ class FeedFlowDatabaseTest : KoinTestBase() {
         val savedFeedSources = databaseHelper.getFeedSources()
         assertEquals(listOf("Beta Updated", "Alpha"), savedFeedSources.map { it.title })
         assertEquals(0, savedFeedSources.first { it.id == "beta" }.position)
+    }
+
+    @Test
+    fun `insertFeedItems stores feed item content`() = runTest {
+        val feedItem = FeedItemGenerator.feedItem(
+            id = "content-item",
+            content = "<article>Stored feed content</article>",
+        )
+        databaseHelper.insertFeedSource(
+            listOf(
+                createParsedFeedSource(
+                    id = feedItem.feedSource.id,
+                    title = feedItem.feedSource.title,
+                ),
+            ),
+        )
+
+        databaseHelper.insertFeedItems(listOf(feedItem), lastSyncTimestamp = 0)
+
+        assertEquals("<article>Stored feed content</article>", databaseHelper.getFeedItemContent("content-item"))
     }
 
     @Test

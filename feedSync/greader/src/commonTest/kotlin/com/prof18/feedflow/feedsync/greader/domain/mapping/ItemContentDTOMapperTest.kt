@@ -51,6 +51,7 @@ class ItemContentDTOMapperTest {
         assertEquals("https://example.com/article", result?.url)
         assertEquals("Test Article", result?.title)
         assertEquals("<p>Article content</p>", result?.subtitle)
+        assertEquals("<p>Article content</p>", result?.content)
         assertEquals(testFeedSource, result?.feedSource)
         assertEquals(1700000000000L, result?.pubDateMillis)
         assertEquals("formatted-date", result?.dateString)
@@ -80,6 +81,7 @@ class ItemContentDTOMapperTest {
         val result = mapper.mapToFeedItem(itemContentDTO, testFeedSource)
 
         assertEquals("Content text", result?.subtitle)
+        assertEquals("Content text", result?.content)
     }
 
     @Test
@@ -93,6 +95,7 @@ class ItemContentDTOMapperTest {
         val result = mapper.mapToFeedItem(itemContentDTO, testFeedSource)
 
         assertEquals("Summary text", result?.subtitle)
+        assertEquals("Summary text", result?.content)
     }
 
     @Test

@@ -1,18 +1,6 @@
-CREATE TABLE blocked_word (
-    keyword TEXT NOT NULL PRIMARY KEY
-);
-
-insertBlockedKeyword:
-INSERT OR IGNORE INTO blocked_word(keyword) VALUES (?);
-
-deleteBlockedKeyword:
-DELETE FROM blocked_word WHERE keyword = ?;
-
-deleteAllBlockedKeywords:
-DELETE FROM blocked_word;
-
-selectBlockedKeywords:
-SELECT keyword FROM blocked_word ORDER BY rowid DESC;
+DROP TRIGGER IF EXISTS update_blocked_on_keyword_insert;
+DROP TRIGGER IF EXISTS update_blocked_on_keyword_delete;
+DROP TRIGGER IF EXISTS update_blocked_on_feed_insert;
 
 CREATE TRIGGER IF NOT EXISTS update_blocked_on_keyword_insert
 AFTER INSERT ON blocked_word
@@ -41,4 +29,21 @@ BEGIN
     ) THEN 1
     ELSE 0
   END;
+END;
+
+CREATE TRIGGER IF NOT EXISTS update_blocked_on_feed_insert
+AFTER INSERT ON feed_item
+FOR EACH ROW
+BEGIN
+  UPDATE feed_item
+  SET is_blocked = CASE
+    WHEN EXISTS (
+      SELECT 1 FROM blocked_word bk
+      WHERE
+        (COALESCE(new.title, '') LIKE '%' || bk.keyword || '%' ESCAPE '\' COLLATE NOCASE) OR
+        (COALESCE(new.subtitle, '') LIKE '%' || bk.keyword || '%' ESCAPE '\' COLLATE NOCASE)
+    ) THEN 1
+    ELSE 0
+  END
+  WHERE url_hash = new.url_hash;
 END;

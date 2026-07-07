@@ -55,6 +55,7 @@ class EntryDTOMapperTest {
         assertEquals("42", result.id)
         assertEquals("https://example.com/article", result.url)
         assertEquals("Parsed Summary", result.subtitle)
+        assertEquals("<p>Content</p> https://example.com/image.jpg", result.content)
         assertEquals("https://example.com/image.jpg", result.imageUrl)
         assertEquals(true, result.isRead)
         assertEquals(false, result.isBookmarked)

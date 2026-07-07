@@ -227,7 +227,7 @@ class DatabaseHelper(
                             url = url,
                             title = title,
                             subtitle = subtitle,
-                            content = null,
+                            content = content,
                             image_url = imageUrl,
                             feed_source_id = feedSource.id,
                             pub_date = pubDateMillis,
@@ -245,6 +245,10 @@ class DatabaseHelper(
 
     suspend fun hasFeedItems(): Boolean = withContext(backgroundDispatcher) {
         dbRef.feedItemQueries.countFeedItems().executeAsOne() > 0
+    }
+
+    suspend fun getFeedItemContent(urlHash: String): String? = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.selectFeedItemContent(urlHash).executeAsOneOrNull()?.content
     }
 
     suspend fun getMissingFeedItemIds(feedItemIds: List<String>): Set<String> =

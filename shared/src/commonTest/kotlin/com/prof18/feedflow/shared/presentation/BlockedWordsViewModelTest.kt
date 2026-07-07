@@ -1,6 +1,8 @@
 package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
+import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -96,8 +98,52 @@ class BlockedWordsViewModelTest : KoinTestBase() {
         }
     }
 
+    @Test
+    fun `add blocked word does not block existing items with matching content`() = runTest {
+        val blockedWord = "contentonlykeyword"
+        populateDatabaseWithItem(
+            id = "existing-content-match",
+            title = "Visible article",
+            subtitle = "Visible subtitle",
+            content = "Article body with $blockedWord",
+        )
+
+        databaseHelper.addBlockedWord(blockedWord)
+
+        assertEquals(1, getVisibleFeedCount())
+    }
+
+    @Test
+    fun `insert feed item does not block matching content`() = runTest {
+        val blockedWord = "insertcontentkeyword"
+        databaseHelper.addBlockedWord(blockedWord)
+
+        populateDatabaseWithItem(
+            id = "new-content-match",
+            title = "Visible article",
+            subtitle = "Visible subtitle",
+            content = "Article body with $blockedWord",
+        )
+
+        assertEquals(1, getVisibleFeedCount())
+    }
+
     private suspend fun populateDatabaseWithTitle(title: String) {
-        val feedItem = FeedItemGenerator.unreadFeedItem(title = title)
+        populateDatabaseWithItem(title = title)
+    }
+
+    private suspend fun populateDatabaseWithItem(
+        id: String = "feed-item-id",
+        title: String? = "Feed item title",
+        subtitle: String? = "Feed item subtitle",
+        content: String? = "Feed item content",
+    ) {
+        val feedItem = FeedItemGenerator.unreadFeedItem(
+            id = id,
+            title = title,
+            subtitle = subtitle,
+            content = content,
+        )
         databaseHelper.insertFeedSource(
             listOf(
                 ParsedFeedSource(
@@ -116,4 +162,13 @@ class BlockedWordsViewModelTest : KoinTestBase() {
             lastSyncTimestamp = 0,
         )
     }
+
+    private suspend fun getVisibleFeedCount(): Int =
+        databaseHelper.getFeedItems(
+            feedFilter = FeedFilter.Timeline,
+            pageSize = 20,
+            offset = 0,
+            showReadItems = true,
+            sortOrder = FeedOrder.NEWEST_FIRST,
+        ).size
 }

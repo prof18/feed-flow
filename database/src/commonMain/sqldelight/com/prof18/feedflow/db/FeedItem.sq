@@ -29,6 +29,10 @@ VALUES (?,?,?,?,?,?,?,?, ?);
 countFeedItems:
 SELECT COUNT(*) FROM feed_item;
 
+selectFeedItemContent:
+SELECT content FROM feed_item
+WHERE url_hash = :urlHash;
+
 countUnreadFeeds:
 SELECT COUNT(*) FROM feed_item
 INNER JOIN feed_source
@@ -414,8 +418,7 @@ BEGIN
       SELECT 1 FROM blocked_word bk
       WHERE
         (COALESCE(new.title, '') LIKE '%' || bk.keyword || '%' ESCAPE '\' COLLATE NOCASE) OR
-        (COALESCE(new.subtitle, '') LIKE '%' || bk.keyword || '%' ESCAPE '\' COLLATE NOCASE) OR
-        (COALESCE(new.content, '') LIKE '%' || bk.keyword || '%' ESCAPE '\' COLLATE NOCASE)
+        (COALESCE(new.subtitle, '') LIKE '%' || bk.keyword || '%' ESCAPE '\' COLLATE NOCASE)
     ) THEN 1
     ELSE 0
   END

@@ -144,6 +144,9 @@ struct FeedFlowApp: App {
                         Deps.shared.getContentPrefetchManager().startBackgroundFetching()
                     case .background:
                         feedSyncTimer.invalidate()
+                        // Stop prefetch DB writes before suspension: a SQLite lock held on the
+                        // app-group container while suspended gets the app killed (0xdead10cc).
+                        Deps.shared.getContentPrefetchManager().pauseFetching()
                         scheduleAppRefresh()
                         WidgetCenter.shared.reloadAllTimelines()
                     default:

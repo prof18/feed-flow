@@ -301,8 +301,6 @@ class FeedFetcherRepository internal constructor(
                             rssParserWrapper.getRssChannel(feedSource.url)
                         }
                         logger.d { "<- Got back ${rssChannel.title}" }
-                        feedToUpdate.remove(feedSource.url)
-                        updateRefreshCount()
                         if (feedSource.logoUrl == null) {
                             val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
                             databaseHelper.updateFeedSourceLogoUrl(feedSourceId = feedSource.id, logoUrl = logoUrl)
@@ -321,8 +319,6 @@ class FeedFetcherRepository internal constructor(
                             ),
                         )
                     } catch (e: Throwable) {
-                        feedToUpdate.remove(feedSource.url)
-                        updateRefreshCount()
                         handleFetchError(
                             feedSource = feedSource,
                             error = e,
@@ -331,6 +327,8 @@ class FeedFetcherRepository internal constructor(
                 }.asFlow()
             }
             .collect { result ->
+                feedToUpdate.remove(result.feedSource.url)
+                updateRefreshCount()
                 when (result) {
                     is FeedFetchResult.Success -> {
                         logger.d { "Collected ${result.feedItems.size} items" }

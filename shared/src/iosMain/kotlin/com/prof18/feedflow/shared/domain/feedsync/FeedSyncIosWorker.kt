@@ -80,6 +80,12 @@ internal class FeedSyncIosWorker(
     }
 
     private suspend fun performUpload() = withContext(dispatcherProvider.io) {
+        withSuspensionGuard("FeedFlow sync upload") {
+            performUploadInternal()
+        }
+    }
+
+    private suspend fun performUploadInternal() {
         mutex.withLock {
             try {
                 logger.w { "Starting upload" }
@@ -123,15 +129,17 @@ internal class FeedSyncIosWorker(
     }
 
     override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
-        return@withContext mutex.withLock {
-            try {
-                feedSyncer.closeDB()
-                accountSpecificDownload(isFirstSync)
-            } catch (e: Exception) {
-                if (!isFirstSync) {
-                    logger.e("Download failed", e)
+        return@withContext withSuspensionGuard("FeedFlow sync download") {
+            mutex.withLock {
+                try {
+                    feedSyncer.closeDB()
+                    accountSpecificDownload(isFirstSync)
+                } catch (e: Exception) {
+                    if (!isFirstSync) {
+                        logger.e("Download failed", e)
+                    }
+                    SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
                 }
-                SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
             }
         }
     }

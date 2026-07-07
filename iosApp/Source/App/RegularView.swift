@@ -257,6 +257,8 @@ struct RegularView: View {
                     .navigationBarBackButtonHidden(true)
             }
         }
+        .environment(appState)
+        .environment(browserSelector)
         .onAppear {
             appState.currentCommonRoute = route
         }

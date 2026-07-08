@@ -62,7 +62,9 @@ function Invoke-StoreApi {
     )
 
     if ($MaxAttempts -lt 1) {
-        $MaxAttempts = if ($Method -eq "GET") { 3 } else { 1 }
+        # GET and PUT are safe to repeat blindly; POST/DELETE callers that need
+        # retries must verify server-side state between attempts themselves.
+        $MaxAttempts = if ($Method -eq "GET" -or $Method -eq "PUT") { 3 } else { 1 }
     }
 
     $headers = @{

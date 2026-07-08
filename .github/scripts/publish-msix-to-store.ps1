@@ -274,6 +274,31 @@ function New-SubmissionRequestBody {
     return $body
 }
 
+function New-StoreSubmission {
+    # Like finalizepackagerollout and commit, the create endpoint can time out
+    # at the gateway while the submission is still created server-side, so on
+    # failure check whether a pending submission appeared and adopt it instead
+    # of retrying blindly.
+    $maxAttempts = 4
+    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+        try {
+            return Invoke-StoreApi -Method POST -Path "applications/$ApplicationId/submissions"
+        } catch {
+            Write-Warning "Create submission attempt $attempt of ${maxAttempts} failed: $_"
+        }
+
+        Start-Sleep -Seconds 30
+        $app = Invoke-StoreApi -Method GET -Path "applications/$ApplicationId"
+        if ($app.pendingApplicationSubmission -and $app.pendingApplicationSubmission.id) {
+            $pendingId = $app.pendingApplicationSubmission.id
+            Write-Host "Found pending submission $pendingId created by an earlier attempt; using it."
+            return Get-AppSubmission -SubmissionId $pendingId
+        }
+    }
+
+    throw "Could not create a new Store submission after $maxAttempts attempts."
+}
+
 if (-not (Test-Path $MsixPath)) {
     throw "MSIX package not found at $MsixPath"
 }
@@ -308,11 +333,36 @@ if ($app.pendingApplicationSubmission -and $app.pendingApplicationSubmission.id)
     }
 
     Write-Host "Deleting existing draft submission $pendingId before creating a new one..."
-    Invoke-StoreApi -Method DELETE -Path "applications/$ApplicationId/submissions/$pendingId" | Out-Null
+
+    # The delete can also time out at the gateway while still succeeding
+    # server-side, so verify the draft is gone instead of trusting the
+    # response; a stale draft surviving here would be mistaken for our own
+    # submission by the create step's recovery logic.
+    $maxAttempts = 3
+    $draftDeleted = $false
+    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+        try {
+            Invoke-StoreApi -Method DELETE -Path "applications/$ApplicationId/submissions/$pendingId" | Out-Null
+        } catch {
+            Write-Warning "Delete draft attempt $attempt of ${maxAttempts} failed: $_"
+        }
+
+        $app = Invoke-StoreApi -Method GET -Path "applications/$ApplicationId"
+        if (-not ($app.pendingApplicationSubmission -and $app.pendingApplicationSubmission.id)) {
+            $draftDeleted = $true
+            break
+        }
+
+        Start-Sleep -Seconds 15
+    }
+
+    if (-not $draftDeleted) {
+        throw "Could not delete existing draft submission $pendingId after $maxAttempts attempts."
+    }
 }
 
 Write-Host "Creating new Store submission..."
-$submission = Invoke-StoreApi -Method POST -Path "applications/$ApplicationId/submissions"
+$submission = New-StoreSubmission
 $submissionId = $submission.id
 $commitStarted = $false
 Write-Host "Created submission $submissionId"
@@ -329,12 +379,24 @@ try {
     $submission = Invoke-StoreApi -Method PUT -Path "applications/$ApplicationId/submissions/$submissionId" -Body $requestBody
 
     Write-Host "Uploading package ZIP to Microsoft Store ingestion storage..."
-    Invoke-RestMethod `
-        -Method Put `
-        -Uri $submission.fileUploadUrl `
-        -InFile $zipPath `
-        -ContentType "application/zip" `
-        -Headers @{ "x-ms-blob-type" = "BlockBlob" } | Out-Null
+    $maxUploadAttempts = 3
+    for ($attempt = 1; $attempt -le $maxUploadAttempts; $attempt++) {
+        try {
+            Invoke-RestMethod `
+                -Method Put `
+                -Uri $submission.fileUploadUrl `
+                -InFile $zipPath `
+                -ContentType "application/zip" `
+                -Headers @{ "x-ms-blob-type" = "BlockBlob" } | Out-Null
+            break
+        } catch {
+            if ($attempt -eq $maxUploadAttempts) {
+                throw
+            }
+            Write-Warning "Package upload attempt $attempt of ${maxUploadAttempts} failed: $_"
+            Start-Sleep -Seconds (30 * $attempt)
+        }
+    }
 
     if ($SkipCommit) {
         Write-Host "Submission $submissionId is prepared as an uncommitted draft with $RolloutPercentage% package rollout; the currently published version stays live."

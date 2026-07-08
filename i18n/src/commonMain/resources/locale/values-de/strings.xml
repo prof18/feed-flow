@@ -394,4 +394,5 @@
     <string name="settings_feed_layout_grid_toggle">Raster bei großen Bildschirmen verwenden</string>
     <string name="settings_feed_layout_big_image">Große Bildkarte</string>
     <string name="settings_feed_layout_grid">Raster</string>
+    <string name="reorder_mode_done">Fertig</string>
 </resources>

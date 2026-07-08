@@ -35,19 +35,37 @@ function ConvertTo-JsonBody {
 }
 
 function Read-ErrorResponseBody {
-    param([Parameter(Mandatory = $true)] $Exception)
+    param([Parameter(Mandatory = $true)] $ErrorRecord)
 
-    if (-not $Exception.Response) {
-        return $Exception.Message
+    if ($ErrorRecord.ErrorDetails -and $ErrorRecord.ErrorDetails.Message) {
+        return $ErrorRecord.ErrorDetails.Message
+    }
+
+    $exception = $ErrorRecord.Exception
+    if (-not $exception.Response) {
+        return $exception.Message
     }
 
     try {
-        $stream = $Exception.Response.GetResponseStream()
+        $stream = $exception.Response.GetResponseStream()
         $reader = [System.IO.StreamReader]::new($stream)
         return $reader.ReadToEnd()
     } catch {
-        return $Exception.Message
+        return $exception.Message
     }
+}
+
+function Test-TransientStoreApiError {
+    param([Parameter(Mandatory = $true)] $ErrorRecord)
+
+    $response = $ErrorRecord.Exception.Response
+    if ($response -and $response.StatusCode) {
+        $statusCode = [int]$response.StatusCode
+        return $statusCode -eq 408 -or $statusCode -eq 429 -or $statusCode -ge 500
+    }
+
+    # No HTTP response usually means a network-level failure or timeout.
+    return $true
 }
 
 function Invoke-StoreApi {
@@ -59,8 +77,16 @@ function Invoke-StoreApi {
         [Parameter(Mandatory = $true)]
         [string] $Path,
 
-        $Body = $null
+        $Body = $null,
+
+        [int] $MaxAttempts = 0,
+
+        [int] $RetryDelaySeconds = 20
     )
+
+    if ($MaxAttempts -lt 1) {
+        $MaxAttempts = if ($Method -eq "GET") { 3 } else { 1 }
+    }
 
     $headers = @{
         Authorization = "Bearer $script:accessToken"
@@ -68,20 +94,31 @@ function Invoke-StoreApi {
     }
     $uri = "$baseUri/$Path"
 
-    try {
-        if ($null -eq $Body) {
-            return Invoke-RestMethod -Method $Method -Uri $uri -Headers $headers
-        }
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        try {
+            if ($null -eq $Body) {
+                return Invoke-RestMethod -Method $Method -Uri $uri -Headers $headers -TimeoutSec 300
+            }
 
-        return Invoke-RestMethod `
-            -Method $Method `
-            -Uri $uri `
-            -Headers $headers `
-            -ContentType "application/json" `
-            -Body (ConvertTo-JsonBody $Body)
-    } catch {
-        $responseBody = Read-ErrorResponseBody $_.Exception
-        throw "Microsoft Store API $Method $uri failed: $responseBody"
+            return Invoke-RestMethod `
+                -Method $Method `
+                -Uri $uri `
+                -Headers $headers `
+                -ContentType "application/json" `
+                -Body (ConvertTo-JsonBody $Body) `
+                -TimeoutSec 300
+        } catch {
+            $responseBody = Read-ErrorResponseBody $_
+            $message = "Microsoft Store API $Method $uri failed: $responseBody"
+
+            if ($attempt -lt $MaxAttempts -and (Test-TransientStoreApiError $_)) {
+                Write-Warning "$message (attempt $attempt of $MaxAttempts, retrying in $($RetryDelaySeconds * $attempt) seconds)"
+                Start-Sleep -Seconds ($RetryDelaySeconds * $attempt)
+                continue
+            }
+
+            throw $message
+        }
     }
 }
 
@@ -102,7 +139,7 @@ function Get-AccessToken {
 
         return $response.access_token
     } catch {
-        $responseBody = Read-ErrorResponseBody $_.Exception
+        $responseBody = Read-ErrorResponseBody $_
         throw "Failed to obtain Microsoft Store access token: $responseBody"
     }
 }
@@ -141,8 +178,30 @@ function Finalize-PreviousRolloutIfNeeded {
 
     if ($rollout.isPackageRollout -and $rollout.packageRolloutStatus -eq "PackageRolloutInProgress") {
         Write-Host "Finalizing previous rollout before creating the new submission..."
-        Invoke-StoreApi -Method POST -Path "applications/$ApplicationId/submissions/$submissionId/finalizepackagerollout" | Out-Null
-        Write-Host "Previous rollout finalized."
+
+        # The finalizepackagerollout endpoint is slow and regularly answers with a
+        # gateway timeout even though the operation may still complete server-side,
+        # so verify the rollout status between attempts instead of trusting the
+        # response alone.
+        $maxAttempts = 4
+        for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+            try {
+                Invoke-StoreApi -Method POST -Path "applications/$ApplicationId/submissions/$submissionId/finalizepackagerollout" | Out-Null
+                Write-Host "Previous rollout finalized."
+                return
+            } catch {
+                Write-Warning "Finalize attempt $attempt of ${maxAttempts} failed: $_"
+            }
+
+            Start-Sleep -Seconds 30
+            $rollout = Get-PackageRollout -SubmissionId $submissionId
+            if ($rollout.packageRolloutStatus -ne "PackageRolloutInProgress") {
+                Write-Host "Previous rollout status is now $($rollout.packageRolloutStatus); finalization no longer needed."
+                return
+            }
+        }
+
+        throw "Could not finalize the package rollout of previous submission $submissionId after $maxAttempts attempts."
     } else {
         Write-Host "No in-progress previous rollout to finalize."
     }
@@ -325,6 +384,32 @@ function New-SubmissionRequestBody {
     return $body
 }
 
+function Invoke-SubmissionCommit {
+    param([Parameter(Mandatory = $true)] [string] $SubmissionId)
+
+    # Like finalizepackagerollout, the commit endpoint can time out at the gateway
+    # while the commit still goes through, so check the submission status between
+    # attempts before treating a failure as real.
+    $maxAttempts = 3
+    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+        try {
+            Invoke-StoreApi -Method POST -Path "applications/$ApplicationId/submissions/$SubmissionId/commit" | Out-Null
+            return
+        } catch {
+            Write-Warning "Commit attempt $attempt of ${maxAttempts} failed: $_"
+        }
+
+        Start-Sleep -Seconds 20
+        $statusResponse = Get-SubmissionStatus -SubmissionId $SubmissionId
+        if ($statusResponse.status -ne "PendingCommit") {
+            Write-Host "Submission $SubmissionId status is $($statusResponse.status); commit was accepted."
+            return
+        }
+    }
+
+    throw "Could not commit Store submission $SubmissionId after $maxAttempts attempts."
+}
+
 function Wait-ForCommitToStartProcessing {
     param([Parameter(Mandatory = $true)] [string] $SubmissionId)
 
@@ -407,7 +492,7 @@ try {
         -Headers @{ "x-ms-blob-type" = "BlockBlob" } | Out-Null
 
     Write-Host "Committing submission $submissionId..."
-    Invoke-StoreApi -Method POST -Path "applications/$ApplicationId/submissions/$submissionId/commit" | Out-Null
+    Invoke-SubmissionCommit -SubmissionId $submissionId
     $commitStarted = $true
 
     Wait-ForCommitToStartProcessing -SubmissionId $submissionId

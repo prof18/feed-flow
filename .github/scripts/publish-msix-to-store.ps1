@@ -94,6 +94,13 @@ function Invoke-StoreApi {
     }
     $uri = "$baseUri/$Path"
 
+    # The Ingestion API rejects bodyless non-GET requests with
+    # InvalidParameterValue "Only JSON content is accepted" (target: mediaType),
+    # so send an empty JSON object to force a JSON content type.
+    if ($null -eq $Body -and $Method -ne "GET") {
+        $Body = @{}
+    }
+
     for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
         try {
             if ($null -eq $Body) {

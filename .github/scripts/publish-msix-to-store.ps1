@@ -30,7 +30,12 @@ param(
 
     [int] $StatusPollSeconds = 30,
 
-    [int] $StatusPollAttempts = 20
+    [int] $StatusPollAttempts = 20,
+
+    # How long to keep retrying submission creation while Partner Center is
+    # still republishing the app after a rollout finalization. Must fit in the
+    # deploy job's timeout-minutes budget together with the build itself.
+    [int] $CreateSubmissionWaitMinutes = 40
 )
 
 $ErrorActionPreference = "Stop"
@@ -274,72 +279,68 @@ function New-SubmissionRequestBody {
     return $body
 }
 
-function Wait-ForPublishedSubmissionReady {
-    param([Parameter(Mandatory = $true)] $App)
-
-    if (-not $App.lastPublishedApplicationSubmission -or -not $App.lastPublishedApplicationSubmission.id) {
-        return
-    }
-
-    $submissionId = $App.lastPublishedApplicationSubmission.id
-
-    # After a rollout finalization Partner Center republishes the app, and while
-    # that is in flight reads of the published submission time out or come back
-    # without listings, and creating a new submission fails with
-    # InvalidParameterValue "The size of Listings must be 1 or more" because the
-    # clone source is incomplete. Wait until the published submission is
-    # readable and has listings again before creating the next submission.
-    $maxAttempts = 10
-    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
-        try {
-            $published = Invoke-StoreApi -Method GET -Path "applications/$ApplicationId/submissions/$submissionId" -MaxAttempts 1
-            $listingCount = @($published.listings.PSObject.Properties).Count
-            if ($listingCount -gt 0) {
-                Write-Host "Published submission $submissionId is ready with $listingCount listing(s)."
-                return
-            }
-            Write-Warning "Published submission $submissionId has no listings yet (status: $($published.status)); Partner Center is likely still republishing (attempt $attempt of $maxAttempts)."
-        } catch {
-            Write-Warning "Published submission $submissionId is not readable yet (attempt $attempt of $maxAttempts): $_"
-        }
-
-        if ($attempt -lt $maxAttempts) {
-            Start-Sleep -Seconds 60
-        }
-    }
-
-    throw "Published submission $submissionId is still not readable with listings after $maxAttempts checks. Partner Center is likely still republishing the app after the rollout finalization; re-run this workflow once the app leaves the 'Publishing' state."
-}
-
 function New-StoreSubmission {
     # Like finalizepackagerollout and commit, the create endpoint can time out
     # at the gateway while the submission is still created server-side, so on
     # failure check whether a pending submission appeared and adopt it instead
     # of retrying blindly.
-    $maxAttempts = 4
+    #
+    # After a rollout finalization Partner Center republishes the app, and until
+    # that republish completes the create endpoint rejects requests with
+    # InvalidParameterValue "The size of Listings must be 1 or more", even
+    # while the published submission reads back fine with all of its listings,
+    # so reading it is no readiness signal. The republish regularly takes tens
+    # of minutes, so failures with that signature keep retrying until
+    # $CreateSubmissionWaitMinutes elapses instead of giving up after a few
+    # attempts.
+    $republishSignature = "The size of Listings must be 1 or more"
+    $deadline = (Get-Date).AddMinutes($CreateSubmissionWaitMinutes)
+    $shortAttemptLimit = 4
+    $sawRepublish = $false
     $lastError = $null
-    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+
+    for ($attempt = 1; ; $attempt++) {
         try {
             return Invoke-StoreApi -Method POST -Path "applications/$ApplicationId/submissions"
         } catch {
             $lastError = "$_"
-            Write-Warning "Create submission attempt $attempt of ${maxAttempts} failed: $_"
+            Write-Warning "Create submission attempt $attempt failed: $_"
+        }
+
+        if ($lastError -match $republishSignature) {
+            $sawRepublish = $true
         }
 
         Start-Sleep -Seconds 30
-        $app = Invoke-StoreApi -Method GET -Path "applications/$ApplicationId"
-        if ($app.pendingApplicationSubmission -and $app.pendingApplicationSubmission.id) {
-            $pendingId = $app.pendingApplicationSubmission.id
-            Write-Host "Found pending submission $pendingId created by an earlier attempt; using it."
-            return Get-AppSubmission -SubmissionId $pendingId
+
+        try {
+            $app = Invoke-StoreApi -Method GET -Path "applications/$ApplicationId"
+            if ($app.pendingApplicationSubmission -and $app.pendingApplicationSubmission.id) {
+                $pendingId = $app.pendingApplicationSubmission.id
+                Write-Host "Found pending submission $pendingId created by an earlier attempt; using it."
+                return Get-AppSubmission -SubmissionId $pendingId
+            }
+        } catch {
+            Write-Warning "Could not check for a pending submission after the failed create: $_"
+        }
+
+        if ($sawRepublish) {
+            if ((Get-Date) -ge $deadline) {
+                break
+            }
+            Write-Host "Partner Center is still republishing the app after the rollout finalization; retrying until $($deadline.ToString('HH:mm:ss'))."
+            Start-Sleep -Seconds 90
+        } elseif ($attempt -ge $shortAttemptLimit) {
+            break
         }
     }
 
     $hint = ""
-    if ($lastError -match "The size of Listings must be 1 or more") {
-        $hint = " Partner Center is likely still republishing the app after a rollout finalization; re-run this workflow once the app leaves the 'Publishing' state."
+    if ($sawRepublish) {
+        $hint = " Partner Center did not finish republishing the app after the rollout finalization within $CreateSubmissionWaitMinutes minutes." +
+            " Wait until the app leaves the 'Publishing' state in Partner Center, then re-run this workflow."
     }
-    throw "Could not create a new Store submission after $maxAttempts attempts. Last error: $lastError$hint"
+    throw "Could not create a new Store submission. Last error: $lastError$hint"
 }
 
 if (-not (Test-Path $MsixPath)) {
@@ -403,8 +404,6 @@ if ($app.pendingApplicationSubmission -and $app.pendingApplicationSubmission.id)
         throw "Could not delete existing draft submission $pendingId after $maxAttempts attempts."
     }
 }
-
-Wait-ForPublishedSubmissionReady -App $app
 
 Write-Host "Creating new Store submission..."
 $submission = New-StoreSubmission

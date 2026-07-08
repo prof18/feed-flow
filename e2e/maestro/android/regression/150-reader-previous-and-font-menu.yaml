@@ -42,4 +42,4 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "Line Height"
 - assertVisible: "Reset to default"
 - assertVisible: "20"
-- assertVisible: "1.7"
+- assertVisible: "1.6"

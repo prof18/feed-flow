@@ -48,3 +48,4 @@ appId: com.prof18.feedflow.dev
     id: reader_font_size_value_label
 - assertVisible:
     id: reader_line_height_value_label
+- assertVisible: "1.6"

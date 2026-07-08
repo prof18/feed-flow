@@ -20,5 +20,7 @@ appId: com.prof18.feedflow.debug
     id: reader_more_menu_button
 - tapOn:
     text: "Text Settings"
-- assertVisible:
-    id: reader_text_settings_sheet
+- extendedWaitUntil:
+    visible: "Font Size"
+    timeout: 5000
+- assertVisible: "Line Height"

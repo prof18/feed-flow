@@ -18,8 +18,17 @@ internal object DrawerE2eIds {
     fun categoryExpand(categoryId: String?): String =
         "drawer_category_expand_${categoryId?.toE2eIdSuffix() ?: "uncategorized"}"
 
+    fun categoryReorderHandle(categoryId: String?): String =
+        "drawer_category_reorder_${categoryId?.toE2eIdSuffix() ?: "uncategorized"}"
+
     fun feedSource(feedSourceId: String): String =
         "drawer_feed_source_${feedSourceId.toE2eIdSuffix()}"
+
+    fun feedSourceReorderHandle(feedSourceId: String): String =
+        "drawer_feed_source_reorder_${feedSourceId.toE2eIdSuffix()}"
+
+    fun pinnedFeedSourceReorderHandle(feedSourceId: String): String =
+        "drawer_pinned_feed_source_reorder_${feedSourceId.toE2eIdSuffix()}"
 }
 
 private fun String.toE2eIdSuffix(): String =

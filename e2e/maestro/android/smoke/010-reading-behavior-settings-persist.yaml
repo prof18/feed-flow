@@ -61,7 +61,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: article_row_e2e_article_reader_success
 - assertVisible:
-    id: reader_browser_button
+    id: reader_article_e2e_article_reader_success
 - tapOn:
     id: reader_back_button
 - assertNotVisible:

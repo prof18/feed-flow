@@ -24,9 +24,11 @@ appId: com.prof18.feedflow.debug
     timeout: 10000
 - assertVisible:
     id: drawer_feed_source_e2e_feed_pinned
+- assertVisible:
+    id: drawer_pinned_feed_source_reorder_e2e_feed_pinned
 - swipe:
     from:
-      id: drawer_feed_source_e2e_feed_pinned
+      id: drawer_pinned_feed_source_reorder_e2e_feed_pinned
     direction: DOWN
     duration: 1200
 - waitForAnimationToEnd
@@ -46,9 +48,11 @@ appId: com.prof18.feedflow.debug
       id: drawer_category_uncategorized
     direction: DOWN
     timeout: 10000
+- assertVisible:
+    id: drawer_category_reorder_uncategorized
 - swipe:
     from:
-      id: drawer_category_uncategorized
+      id: drawer_category_reorder_uncategorized
     direction: DOWN
     duration: 1200
 - waitForAnimationToEnd
@@ -61,9 +65,11 @@ appId: com.prof18.feedflow.debug
     timeout: 10000
 - assertVisible:
     id: drawer_category_e2e_category_news
+- assertVisible:
+    id: drawer_category_reorder_e2e_category_technology
 - swipe:
     from:
-      id: drawer_category_e2e_category_technology
+      id: drawer_category_reorder_e2e_category_technology
     direction: DOWN
     duration: 1200
 - waitForAnimationToEnd
@@ -80,9 +86,11 @@ appId: com.prof18.feedflow.debug
     timeout: 10000
 - assertVisible:
     id: drawer_feed_source_e2e_feed_hidden
+- assertVisible:
+    id: drawer_feed_source_reorder_e2e_feed_swift_weekly
 - swipe:
     from:
-      id: drawer_feed_source_e2e_feed_swift_weekly
+      id: drawer_feed_source_reorder_e2e_feed_swift_weekly
     direction: DOWN
     duration: 1200
 - waitForAnimationToEnd

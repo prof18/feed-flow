@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,6 +59,7 @@ import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import sh.calvin.reorderable.ReorderableColumn
 
@@ -66,6 +68,10 @@ private val drawerActionsBottomPadding = 16.dp
 private val drawerActionsListTopPadding = 80.dp
 private val drawerActionsFadeHeight = 110.dp
 private const val UncategorizedCategoryKey = "uncategorized"
+private val expandedCategoryIdsSaver = listSaver<ImmutableList<String>, String>(
+    save = { it.toList() },
+    restore = { it.toImmutableList() },
+)
 
 @Composable
 fun AndroidDrawer(
@@ -111,7 +117,9 @@ fun AndroidDrawer(
             feedSourcesWithoutCategory = displayState.navDrawerState.feedSourcesWithoutCategory,
         )
     }
-    var expandedCategoryIds by rememberSaveable { mutableStateOf(emptyList<String>()) }
+    var expandedCategoryIds by rememberSaveable(stateSaver = expandedCategoryIdsSaver) {
+        mutableStateOf(persistentListOf())
+    }
     var isPinnedEditMode by rememberSaveable { mutableStateOf(false) }
     var isFeedSourcesEditMode by rememberSaveable { mutableStateOf(false) }
 
@@ -229,7 +237,7 @@ fun AndroidDrawer(
                     AndroidDrawerCategorySections(
                         orderedCategorySections = categorySections,
                         isEditMode = isFeedSourcesEditMode,
-                        expandedCategoryIds = expandedCategoryIds.toImmutableList(),
+                        expandedCategoryIds = expandedCategoryIds,
                         currentFeedFilter = displayState.currentFeedFilter,
                         feedManagementActions = feedManagementActions,
                         onFeedFilterSelected = onFeedFilterSelected,
@@ -300,7 +308,15 @@ private fun AndroidDrawerPinnedFeedSources(
                     currentFeedFilter = currentFeedFilter,
                     feedManagementActions = feedManagementActions,
                     onFeedSourceClick = onFeedSourceClick,
-                    dragHandle = { DrawerReorderDragHandle(Modifier.draggableHandle()) },
+                    dragHandle = {
+                        DrawerReorderDragHandle(
+                            Modifier
+                                .testTag(
+                                    DrawerE2eIds.pinnedFeedSourceReorderHandle(feedSourceWrapper.feedSource.id),
+                                )
+                                .draggableHandle(),
+                        )
+                    },
                 )
             }
         }
@@ -349,7 +365,13 @@ private fun AndroidDrawerCategorySections(
                 ReorderableItem {
                     AndroidDrawerCategorySectionContent(
                         categorySection = categorySection,
-                        categoryDragHandle = { DrawerReorderDragHandle(Modifier.draggableHandle()) },
+                        categoryDragHandle = {
+                            DrawerReorderDragHandle(
+                                Modifier
+                                    .testTag(DrawerE2eIds.categoryReorderHandle(categorySection.categoryId))
+                                    .draggableHandle(),
+                            )
+                        },
                         isEditMode = isEditMode,
                         expandedCategoryIds = expandedCategoryIds,
                         currentFeedFilter = currentFeedFilter,
@@ -474,7 +496,13 @@ private fun AndroidDrawerCategoryFeedSources(
                     currentFeedFilter = currentFeedFilter,
                     feedManagementActions = feedManagementActions,
                     onFeedSourceClick = onFeedSourceClick,
-                    dragHandle = { DrawerReorderDragHandle(Modifier.draggableHandle()) },
+                    dragHandle = {
+                        DrawerReorderDragHandle(
+                            Modifier
+                                .testTag(DrawerE2eIds.feedSourceReorderHandle(feedSourceWrapper.feedSource.id))
+                                .draggableHandle(),
+                        )
+                    },
                 )
             }
         }

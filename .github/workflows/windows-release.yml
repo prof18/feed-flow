@@ -437,6 +437,8 @@ jobs:
           name: ${{ env.NAME_MSIX }}
           retention-days: 7 
 
+      # Tag pushes publish the submission; manual dispatches only prepare an
+      # uncommitted draft in Partner Center and keep the old version live.
       - name: Publish MSIX to Microsoft Store
         shell: pwsh
         env:
@@ -444,7 +446,12 @@ jobs:
           MS_STORE_CLIENT_ID: ${{ secrets.MS_STORE_CLIENT_ID }}
           MS_STORE_CLIENT_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
           MS_STORE_APP_ID: ${{ secrets.MS_STORE_APP_ID }}
+          IS_TAG_RELEASE: ${{ github.event_name == 'push' }}
         run: |
+          $skipCommit = $env:IS_TAG_RELEASE -ne 'true'
+          if ($skipCommit) {
+            Write-Host "Manual dispatch: preparing the Store submission as a draft without publishing."
+          }
           .github/scripts/publish-msix-to-store.ps1 `
             -TenantId $env:MS_STORE_TENANT_ID `
             -ClientId $env:MS_STORE_CLIENT_ID `
@@ -453,4 +460,6 @@ jobs:
             -MsixPath "${{ env.RELEASE_PATH_MSIX }}" `
             -ReleaseNotesPath "assets/storecopy/microsoft-store-release-notes.json" `
             -RolloutPercentage 90 `
-            -TargetPublishMode "Immediate"
+            -TargetPublishMode "Immediate" `
+            -ReplacePendingSubmission `
+            -SkipCommit:$skipCommit

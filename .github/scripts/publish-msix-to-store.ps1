@@ -20,154 +20,21 @@ param(
 
     [string] $TargetPublishMode = "Immediate",
 
+    # Prepare the submission (package upload, rollout, release notes) but leave
+    # it as an uncommitted draft in Partner Center instead of publishing it.
+    [switch] $SkipCommit,
+
+    # Delete an existing uncommitted draft submission instead of failing, e.g.
+    # the draft left behind by a previous -SkipCommit run.
+    [switch] $ReplacePendingSubmission,
+
     [int] $StatusPollSeconds = 30,
 
     [int] $StatusPollAttempts = 20
 )
 
 $ErrorActionPreference = "Stop"
-$baseUri = "https://manage.devcenter.microsoft.com/v1.0/my"
-
-function ConvertTo-JsonBody {
-    param([Parameter(Mandatory = $true)] $Body)
-
-    return ($Body | ConvertTo-Json -Depth 100 -Compress)
-}
-
-function Read-ErrorResponseBody {
-    param([Parameter(Mandatory = $true)] $ErrorRecord)
-
-    if ($ErrorRecord.ErrorDetails -and $ErrorRecord.ErrorDetails.Message) {
-        return $ErrorRecord.ErrorDetails.Message
-    }
-
-    $exception = $ErrorRecord.Exception
-    if (-not $exception.Response) {
-        return $exception.Message
-    }
-
-    try {
-        $stream = $exception.Response.GetResponseStream()
-        $reader = [System.IO.StreamReader]::new($stream)
-        return $reader.ReadToEnd()
-    } catch {
-        return $exception.Message
-    }
-}
-
-function Test-TransientStoreApiError {
-    param([Parameter(Mandatory = $true)] $ErrorRecord)
-
-    $response = $ErrorRecord.Exception.Response
-    if ($response -and $response.StatusCode) {
-        $statusCode = [int]$response.StatusCode
-        return $statusCode -eq 408 -or $statusCode -eq 429 -or $statusCode -ge 500
-    }
-
-    # No HTTP response usually means a network-level failure or timeout.
-    return $true
-}
-
-function Invoke-StoreApi {
-    param(
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("GET", "POST", "PUT", "DELETE")]
-        [string] $Method,
-
-        [Parameter(Mandatory = $true)]
-        [string] $Path,
-
-        $Body = $null,
-
-        [int] $MaxAttempts = 0,
-
-        [int] $RetryDelaySeconds = 20
-    )
-
-    if ($MaxAttempts -lt 1) {
-        $MaxAttempts = if ($Method -eq "GET") { 3 } else { 1 }
-    }
-
-    $headers = @{
-        Authorization = "Bearer $script:accessToken"
-        Accept = "application/json"
-    }
-    $uri = "$baseUri/$Path"
-
-    # The Ingestion API rejects bodyless non-GET requests with
-    # InvalidParameterValue "Only JSON content is accepted" (target: mediaType),
-    # so send an empty JSON object to force a JSON content type.
-    if ($null -eq $Body -and $Method -ne "GET") {
-        $Body = @{}
-    }
-
-    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
-        try {
-            if ($null -eq $Body) {
-                return Invoke-RestMethod -Method $Method -Uri $uri -Headers $headers -TimeoutSec 300
-            }
-
-            return Invoke-RestMethod `
-                -Method $Method `
-                -Uri $uri `
-                -Headers $headers `
-                -ContentType "application/json" `
-                -Body (ConvertTo-JsonBody $Body) `
-                -TimeoutSec 300
-        } catch {
-            $responseBody = Read-ErrorResponseBody $_
-            $message = "Microsoft Store API $Method $uri failed: $responseBody"
-
-            if ($attempt -lt $MaxAttempts -and (Test-TransientStoreApiError $_)) {
-                Write-Warning "$message (attempt $attempt of $MaxAttempts, retrying in $($RetryDelaySeconds * $attempt) seconds)"
-                Start-Sleep -Seconds ($RetryDelaySeconds * $attempt)
-                continue
-            }
-
-            throw $message
-        }
-    }
-}
-
-function Get-AccessToken {
-    $body = @{
-        grant_type = "client_credentials"
-        client_id = $ClientId
-        client_secret = $ClientSecret
-        resource = "https://manage.devcenter.microsoft.com"
-    }
-
-    try {
-        $response = Invoke-RestMethod `
-            -Method Post `
-            -Uri "https://login.microsoftonline.com/$TenantId/oauth2/token" `
-            -ContentType "application/x-www-form-urlencoded" `
-            -Body $body
-
-        return $response.access_token
-    } catch {
-        $responseBody = Read-ErrorResponseBody $_
-        throw "Failed to obtain Microsoft Store access token: $responseBody"
-    }
-}
-
-function Get-AppSubmission {
-    param([Parameter(Mandatory = $true)] [string] $SubmissionId)
-
-    return Invoke-StoreApi -Method GET -Path "applications/$ApplicationId/submissions/$SubmissionId"
-}
-
-function Get-SubmissionStatus {
-    param([Parameter(Mandatory = $true)] [string] $SubmissionId)
-
-    return Invoke-StoreApi -Method GET -Path "applications/$ApplicationId/submissions/$SubmissionId/status"
-}
-
-function Get-PackageRollout {
-    param([Parameter(Mandatory = $true)] [string] $SubmissionId)
-
-    return Invoke-StoreApi -Method GET -Path "applications/$ApplicationId/submissions/$SubmissionId/packagerollout"
-}
+. (Join-Path $PSScriptRoot "store-submission-common.ps1")
 
 function Finalize-PreviousRolloutIfNeeded {
     param([Parameter(Mandatory = $true)] $App)
@@ -378,72 +245,33 @@ function New-SubmissionRequestBody {
     }
 
     $body["targetPublishMode"] = $TargetPublishMode
-    $body["applicationPackages"] = @(
-        [ordered]@{
-            fileName = $PackageFileName
-            fileStatus = "PendingUpload"
-            minimumDirectXVersion = "None"
-            minimumSystemRam = "None"
+
+    # Keep the newest already-published package so customers outside the
+    # gradual rollout group still get a valid package; delete anything older.
+    $packages = @()
+    $existingPackages = @($Submission.applicationPackages | Where-Object { $_ })
+    if ($existingPackages.Count -gt 0) {
+        $sortedPackages = @($existingPackages | Sort-Object -Property { [version]$_.version } -Descending)
+        for ($i = 0; $i -lt $sortedPackages.Count; $i++) {
+            $package = $sortedPackages[$i]
+            if ($i -gt 0) {
+                $package.fileStatus = "PendingDelete"
+            }
+            $packages += $package
         }
-    )
+    }
+
+    $packages += [ordered]@{
+        fileName = $PackageFileName
+        fileStatus = "PendingUpload"
+        minimumDirectXVersion = "None"
+        minimumSystemRam = "None"
+    }
+
+    $body["applicationPackages"] = @($packages)
     $body["packageDeliveryOptions"] = $packageDeliveryOptions
 
     return $body
-}
-
-function Invoke-SubmissionCommit {
-    param([Parameter(Mandatory = $true)] [string] $SubmissionId)
-
-    # Like finalizepackagerollout, the commit endpoint can time out at the gateway
-    # while the commit still goes through, so check the submission status between
-    # attempts before treating a failure as real.
-    $maxAttempts = 3
-    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
-        try {
-            Invoke-StoreApi -Method POST -Path "applications/$ApplicationId/submissions/$SubmissionId/commit" | Out-Null
-            return
-        } catch {
-            Write-Warning "Commit attempt $attempt of ${maxAttempts} failed: $_"
-        }
-
-        Start-Sleep -Seconds 20
-        $statusResponse = Get-SubmissionStatus -SubmissionId $SubmissionId
-        if ($statusResponse.status -ne "PendingCommit") {
-            Write-Host "Submission $SubmissionId status is $($statusResponse.status); commit was accepted."
-            return
-        }
-    }
-
-    throw "Could not commit Store submission $SubmissionId after $maxAttempts attempts."
-}
-
-function Wait-ForCommitToStartProcessing {
-    param([Parameter(Mandatory = $true)] [string] $SubmissionId)
-
-    $failureStatuses = @("CommitFailed", "PreProcessingFailed")
-    $transientStatuses = @("PendingCommit", "CommitStarted")
-
-    for ($attempt = 1; $attempt -le $StatusPollAttempts; $attempt++) {
-        $statusResponse = Get-SubmissionStatus -SubmissionId $SubmissionId
-        $status = $statusResponse.status
-        Write-Host "Submission $SubmissionId status: $status"
-
-        if ($failureStatuses -contains $status) {
-            $details = ConvertTo-JsonBody $statusResponse.statusDetails
-            throw "Submission $SubmissionId failed with status $status. Details: $details"
-        }
-
-        if ($transientStatuses -notcontains $status) {
-            Write-Host "Submission $SubmissionId has moved past commit startup."
-            return
-        }
-
-        if ($attempt -lt $StatusPollAttempts) {
-            Start-Sleep -Seconds $StatusPollSeconds
-        }
-    }
-
-    Write-Warning "Submission $SubmissionId is still in commit startup after polling. Check Partner Center for final status."
 }
 
 if (-not (Test-Path $MsixPath)) {
@@ -470,7 +298,17 @@ $app = Invoke-StoreApi -Method GET -Path "applications/$ApplicationId"
 if ($app.pendingApplicationSubmission -and $app.pendingApplicationSubmission.id) {
     $pendingId = $app.pendingApplicationSubmission.id
     $pending = Get-AppSubmission -SubmissionId $pendingId
-    throw "App already has pending submission $pendingId with status $($pending.status). Resolve or delete that draft before creating a new Store submission."
+
+    if (-not $ReplacePendingSubmission) {
+        throw "App already has pending submission $pendingId with status $($pending.status). Resolve or delete that draft before creating a new Store submission, or pass -ReplacePendingSubmission."
+    }
+
+    if ($pending.status -ne "PendingCommit") {
+        throw "App already has pending submission $pendingId with status $($pending.status); only an uncommitted draft (PendingCommit) can be replaced automatically. Resolve it in Partner Center first."
+    }
+
+    Write-Host "Deleting existing draft submission $pendingId before creating a new one..."
+    Invoke-StoreApi -Method DELETE -Path "applications/$ApplicationId/submissions/$pendingId" | Out-Null
 }
 
 Write-Host "Creating new Store submission..."
@@ -498,12 +336,17 @@ try {
         -ContentType "application/zip" `
         -Headers @{ "x-ms-blob-type" = "BlockBlob" } | Out-Null
 
-    Write-Host "Committing submission $submissionId..."
-    Invoke-SubmissionCommit -SubmissionId $submissionId
-    $commitStarted = $true
+    if ($SkipCommit) {
+        Write-Host "Submission $submissionId is prepared as an uncommitted draft with $RolloutPercentage% package rollout; the currently published version stays live."
+        Write-Host "Publish it with .github/scripts/commit-store-submission.ps1 or from a release tag."
+    } else {
+        Write-Host "Committing submission $submissionId..."
+        Invoke-SubmissionCommit -SubmissionId $submissionId
+        $commitStarted = $true
 
-    Wait-ForCommitToStartProcessing -SubmissionId $submissionId
-    Write-Host "Microsoft Store submission $submissionId created with $RolloutPercentage% package rollout."
+        Wait-ForCommitToStartProcessing -SubmissionId $submissionId
+        Write-Host "Microsoft Store submission $submissionId created with $RolloutPercentage% package rollout."
+    }
 } catch {
     if ($submissionId -and -not $commitStarted) {
         try {

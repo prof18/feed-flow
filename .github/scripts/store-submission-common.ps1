@@ -75,13 +75,24 @@ function Invoke-StoreApi {
 
     # The Ingestion API rejects bodyless non-GET requests with
     # InvalidParameterValue "Only JSON content is accepted" (target: mediaType),
-    # so send an empty JSON object to force a JSON content type.
-    if ($null -eq $Body -and $Method -ne "GET") {
-        $Body = @{}
-    }
+    # but sending an empty JSON object is not safe either: the create-submission
+    # endpoint validates it as submission data and rejects it with "The size of
+    # Listings must be 1 or more". Send an EMPTY body with a JSON content type,
+    # which satisfies the media-type check without submitting any content.
+    $sendEmptyJsonBody = ($null -eq $Body -and $Method -ne "GET")
 
     for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
         try {
+            if ($sendEmptyJsonBody) {
+                return Invoke-RestMethod `
+                    -Method $Method `
+                    -Uri $uri `
+                    -Headers $headers `
+                    -ContentType "application/json" `
+                    -Body "" `
+                    -TimeoutSec 300
+            }
+
             if ($null -eq $Body) {
                 return Invoke-RestMethod -Method $Method -Uri $uri -Headers $headers -TimeoutSec 300
             }

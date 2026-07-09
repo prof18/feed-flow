@@ -7,6 +7,13 @@ on:
         description: "Also probe the create-submission endpoint (creates and immediately deletes a draft)"
         type: boolean
         default: true
+  push:
+    branches:
+      - claude/windows-store-upload-fix-70f888
+    paths:
+      - ".github/workflows/store-diagnostics.yml"
+      - ".github/scripts/diagnose-store-submission.ps1"
+      - ".github/scripts/store-submission-common.ps1"
 
 jobs:
   diagnose:
@@ -24,7 +31,8 @@ jobs:
           MS_STORE_APP_ID: ${{ secrets.MS_STORE_APP_ID }}
           TRY_CREATE: ${{ inputs.try_create }}
         run: |
-          $tryCreate = $env:TRY_CREATE -eq 'true'
+          # Empty on push events; probe the create endpoint unless explicitly disabled.
+          $tryCreate = $env:TRY_CREATE -ne 'false'
           .github/scripts/diagnose-store-submission.ps1 `
             -TenantId $env:MS_STORE_TENANT_ID `
             -ClientId $env:MS_STORE_CLIENT_ID `

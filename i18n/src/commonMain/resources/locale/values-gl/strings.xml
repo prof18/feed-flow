@@ -394,4 +394,7 @@
     <string name="settings_feed_layout_big_image">Tarxeta con imaxe grande</string>
     <string name="settings_feed_layout_grid">Grella</string>
     <string name="settings_feed_layout_grid_toggle">Usar grella en pantallas anchas</string>
+    <string name="reorder_drag_handle">Reordear</string>
+    <string name="reorder_mode_enter">Reordear</string>
+    <string name="reorder_mode_done">Feito</string>
 </resources>

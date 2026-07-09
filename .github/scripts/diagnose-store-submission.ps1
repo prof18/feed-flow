@@ -105,17 +105,52 @@ if ($publishedId) {
     }
 }
 
-if ($TryCreate) {
-    Write-Section "Create submission probe"
+function Invoke-CreateProbe {
+    param(
+        [Parameter(Mandatory = $true)] [string] $Label,
+        [Parameter(Mandatory = $true)] [scriptblock] $Request
+    )
+
+    Write-Host "--- Probe: $Label"
     try {
-        $submission = Invoke-StoreApi -Method POST -Path "applications/$ApplicationId/submissions"
+        $submission = & $Request
         $listingCount = @($submission.listings.PSObject.Properties).Count
-        Write-Host "Create SUCCEEDED: submission $($submission.id) with $listingCount listing(s)."
+        Write-Host "Create SUCCEEDED ($Label): submission $($submission.id) with $listingCount listing(s)."
         Write-Host "Deleting the probe submission again..."
         Invoke-StoreApi -Method DELETE -Path "applications/$ApplicationId/submissions/$($submission.id)" | Out-Null
         Write-Host "Probe submission deleted."
+        return $true
     } catch {
-        Write-Warning "Create FAILED: $_"
+        Write-Warning "Create FAILED ($Label): $_"
+        return $false
+    }
+}
+
+if ($TryCreate) {
+    Write-Section "Create submission probe"
+
+    # The documented shape for this endpoint is POST with NO request body.
+    # Sending an empty JSON object makes the Ingestion API validate it as
+    # submission data and reject it with "The size of Listings must be 1 or
+    # more", so probe the documented bodyless shapes.
+    $createUri = "$baseUri/applications/$ApplicationId/submissions"
+    $createHeaders = @{
+        Authorization = "Bearer $script:accessToken"
+        Accept = "application/json"
+    }
+
+    $created = Invoke-CreateProbe -Label "no body" {
+        Invoke-RestMethod -Method Post -Uri $createUri -Headers $createHeaders -TimeoutSec 300
+    }
+
+    if (-not $created) {
+        $created = Invoke-CreateProbe -Label "empty body with JSON content type" {
+            Invoke-RestMethod -Method Post -Uri $createUri -Headers $createHeaders -ContentType "application/json" -Body "" -TimeoutSec 300
+        }
+    }
+
+    if (-not $created) {
+        Write-Warning "All create probes failed."
     }
 }
 

@@ -57,6 +57,30 @@ if ($pendingId) {
     } catch {
         Write-Warning "Could not read pending submission status: $_"
     }
+
+    Write-Section "Pending submission $pendingId content"
+    try {
+        $pending = Get-AppSubmission -SubmissionId $pendingId
+        Write-Host "targetPublishMode: $($pending.targetPublishMode)"
+        Write-Host "packageRollout: $(ConvertTo-JsonBody $pending.packageDeliveryOptions.packageRollout)"
+
+        $packages = @($pending.applicationPackages)
+        Write-Host "applicationPackages count: $($packages.Count)"
+        foreach ($package in $packages) {
+            Write-Host "  fileName=$($package.fileName), version=$($package.version), fileStatus=$($package.fileStatus)"
+        }
+
+        $listingProperties = @($pending.listings.PSObject.Properties)
+        Write-Host "listing count: $($listingProperties.Count)"
+        $enListing = $pending.listings.PSObject.Properties["en-us"]
+        if ($enListing -and $enListing.Value.baseListing) {
+            $notes = [string]$enListing.Value.baseListing.releaseNotes
+            $snippet = if ($notes.Length -gt 200) { $notes.Substring(0, 200) + "..." } else { $notes }
+            Write-Host "en-us releaseNotes: $snippet"
+        }
+    } catch {
+        Write-Warning "Could not read pending submission content: $_"
+    }
 }
 
 if ($publishedId) {
@@ -126,7 +150,10 @@ function Invoke-CreateProbe {
     }
 }
 
-if ($TryCreate) {
+if ($TryCreate -and $pendingId) {
+    Write-Section "Create submission probe"
+    Write-Host "Skipped: a pending submission ($pendingId) already exists and must not be disturbed."
+} elseif ($TryCreate) {
     Write-Section "Create submission probe"
 
     # Exercise the same code path the release workflow uses, so this doubles

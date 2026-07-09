@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -77,17 +78,8 @@ fun HomeFloatingToolbar(
     val viewOptionsSheetState = rememberModalBottomSheetState()
     val strings = LocalFeedFlowStrings.current
     val currentFeedFilter = displayState.currentFeedFilter
-    val isDarkTheme = isSystemInDarkTheme()
-    val toolbarContainerColor = if (isDarkTheme) {
-        MaterialTheme.colorScheme.surfaceContainerHighest
-    } else {
-        MaterialTheme.colorScheme.surfaceContainerHigh
-    }
-    val toolbarBorder = if (isDarkTheme) {
-        BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-    } else {
-        null
-    }
+    val toolbarContainerColor = homeFloatingToolbarContainerColor()
+    val toolbarBorder = homeFloatingToolbarBorder()
 
     Row(
         modifier = modifier
@@ -226,6 +218,24 @@ fun HomeFloatingToolbar(
             onDismiss = { showViewOptionsSheet = false },
             sheetState = viewOptionsSheetState,
         )
+    }
+}
+
+@Composable
+internal fun homeFloatingToolbarContainerColor(): Color {
+    return if (isSystemInDarkTheme()) {
+        MaterialTheme.colorScheme.surfaceContainerHighest
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    }
+}
+
+@Composable
+internal fun homeFloatingToolbarBorder(): BorderStroke? {
+    return if (isSystemInDarkTheme()) {
+        BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    } else {
+        null
     }
 }
 

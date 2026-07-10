@@ -112,7 +112,6 @@ compose-multiplatform-foundation = { module = "org.jetbrains.compose.foundation:
 compose-multiplatform-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
 compose-multiplatform-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose-multiplatform" }
 compose-multiplatform-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-multiplatform" }
-compose-unstyled-scrollbars = { module = "com.composables:composeunstyled-scrollbars", version.ref = "compose-unstyled" }
 compose-unstyled-slider = { module = "com.composables:composeunstyled-slider", version.ref = "compose-unstyled" }
 compose-multiplatform-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 compose-webview = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "compose-webview" }

@@ -269,18 +269,7 @@ fun DesktopHomeScreenContent(
                             FeedFlowVerticalScrollbar(scrollbarState)
                         }
 
-                        val isScrolled by remember {
-                            derivedStateOf {
-                                if (isGridArrangement) {
-                                    gridState.firstVisibleItemIndex > 0 || gridState.firstVisibleItemScrollOffset > 0
-                                } else {
-                                    listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
-                                }
-                            }
-                        }
-
                         TopToolbarContentFade(
-                            visible = isScrolled,
                             modifier = Modifier.align(Alignment.TopCenter),
                             height = listPaneTopContentFadeHeight,
                             color = contentContainerColor,

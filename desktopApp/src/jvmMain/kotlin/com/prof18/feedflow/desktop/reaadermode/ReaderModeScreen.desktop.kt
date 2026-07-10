@@ -202,6 +202,11 @@ internal fun ReaderModeScreen(
                     .fillMaxSize(),
                 contentAlignment = Alignment.TopCenter,
             ) {
+                val scrollState = rememberScrollState()
+                LaunchedEffect(state) {
+                    scrollState.scrollTo(0)
+                }
+
                 val contentModifier = Modifier
                     .widthIn(max = readerModeMaxContentWidth)
                     .fillMaxWidth()
@@ -228,7 +233,6 @@ internal fun ReaderModeScreen(
                     }
 
                     is ReaderModeState.Success -> {
-                        val scrollState = rememberScrollState()
                         val scrollbarState = rememberScrollbarState(scrollState)
 
                         Box(
@@ -323,6 +327,7 @@ internal fun ReaderModeScreen(
                 }
 
                 TopToolbarContentFade(
+                    visible = state is ReaderModeState.Success && scrollState.value > 0,
                     modifier = Modifier.align(Alignment.TopCenter),
                     height = readerPaneTopContentFadeHeight,
                     color = MaterialTheme.colorScheme.surface,

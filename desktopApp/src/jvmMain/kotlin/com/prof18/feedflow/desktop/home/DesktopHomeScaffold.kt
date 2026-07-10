@@ -446,7 +446,7 @@ private fun SyncReaderPaneNavigation(
 internal val threePaneMinWidth = 1360.dp
 internal val drawerPaneWidth = 320.dp
 internal val toolbarHeight = 48.dp
-internal val listPaneTopContentFadeHeight = 30.dp
+internal val listPaneTopContentFadeHeight = 40.dp
 internal val listPaneTopContentPadding = 4.dp
 internal val listPaneMaxContentWidth = FeedListMaxContentWidth
 private const val DESKTOP_PANE_TRANSITION_DURATION = 120

@@ -1,7 +1,6 @@
 package com.prof18.feedflow.desktop.reaadermode
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -28,8 +26,6 @@ import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,7 +56,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
@@ -68,11 +63,11 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.composeunstyled.rememberScrollbarState
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
@@ -80,6 +75,7 @@ import com.mikepenz.markdown.model.markdownAnimations
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.domain.readerLineHeightToTextLineHeightSp
@@ -232,11 +228,13 @@ internal fun ReaderModeScreen(
                             modifier = Modifier
                                 .fillMaxSize(),
                         ) {
-                            CircularProgressIndicator()
+                            androidx.compose.material3.CircularProgressIndicator()
                         }
                     }
 
                     is ReaderModeState.Success -> {
+                        val scrollbarState = rememberScrollbarState(scrollState)
+
                         Box(
                             modifier = Modifier.fillMaxSize(),
                         ) {
@@ -323,12 +321,7 @@ internal fun ReaderModeScreen(
                                 }
                             }
 
-                            VerticalScrollbar(
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .fillMaxHeight(),
-                                adapter = rememberScrollbarAdapter(scrollState),
-                            )
+                            FeedFlowVerticalScrollbar(scrollbarState)
                         }
                     }
                 }
@@ -433,7 +426,7 @@ internal fun ReaderModeScreen(
 }
 
 private fun handleKeyEvent(
-    keyEvent: KeyEvent,
+    keyEvent: androidx.compose.ui.input.key.KeyEvent,
     state: ReaderModeState,
     canNavigatePrevious: Boolean,
     canNavigateNext: Boolean,
@@ -744,10 +737,10 @@ private fun ReaderModeFallbackContent(
             modifier = Modifier
                 .padding(start = Spacing.large, end = Spacing.large)
                 .padding(bottom = Spacing.regular),
-            textAlign = TextAlign.Center,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
         )
 
-        Button(
+        androidx.compose.material3.Button(
             onClick = onOpenInBrowser,
         ) {
             Icon(

@@ -1,6 +1,5 @@
 package com.prof18.feedflow.desktop.home
 
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -35,9 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
+import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
+import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
@@ -265,12 +265,8 @@ fun DesktopHomeScreenContent(
                         }
 
                         if (showListScrollbar) {
-                            VerticalScrollbar(
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .fillMaxHeight(),
-                                adapter = rememberScrollbarAdapter(listState),
-                            )
+                            val scrollbarState = rememberScrollbarState(listState)
+                            FeedFlowVerticalScrollbar(scrollbarState)
                         }
 
                         val isScrolled by remember {

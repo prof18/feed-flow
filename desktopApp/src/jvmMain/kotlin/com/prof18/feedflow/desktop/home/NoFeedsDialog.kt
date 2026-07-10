@@ -1,5 +1,6 @@
 package com.prof18.feedflow.desktop.home
 
+import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
+import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsInfoContent
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -70,7 +72,7 @@ internal fun NoFeedsDialog(
                     },
                 )
 
-                CompositionLocalProvider {
+                CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
                     VerticalScrollbar(
                         modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
                         adapter = rememberScrollbarAdapter(

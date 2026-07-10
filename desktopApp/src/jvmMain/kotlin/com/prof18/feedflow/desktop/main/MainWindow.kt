@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -71,6 +72,7 @@ import com.prof18.feedflow.desktop.settings.DesktopSettingsCategory
 import com.prof18.feedflow.desktop.settings.SettingsWindow
 import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.desktop.toReaderMode
+import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -241,7 +243,7 @@ private fun FrameWindowScope.MainWindowContent(
         homeViewModel.onAppLaunch()
     }
 
-    CompositionLocalProvider {
+    CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
         val reduceMotionEnabled = LocalReduceMotion.current
 
         var showMarkAllReadDialog by remember { mutableStateOf(false) }
@@ -324,7 +326,9 @@ private fun FrameWindowScope.MainWindowContent(
         }
         val shouldShowWindowSnackbarHost = backStack.lastOrNull() != Home
 
-        CompositionLocalProvider {
+        CompositionLocalProvider(
+            LocalScrollbarStyle provides scrollbarStyle(),
+        ) {
             Surface(
                 modifier = Modifier
                     .then(

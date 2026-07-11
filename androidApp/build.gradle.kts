@@ -3,6 +3,7 @@ import java.util.*
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.androidx.baselineprofile)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.triplet.play)
@@ -131,9 +132,17 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     }
 }
 
+baselineProfile {
+    // A single profile in src/main is shared by both flavors, so the fdroid builds
+    // (which never receive Play cloud profiles) get the same coverage.
+    mergeIntoMain = true
+}
+
 dependencies {
     implementation(project(":shared"))
     implementation(project(":sharedUI"))
+    implementation(libs.androidx.profileinstaller)
+    "baselineProfile"(project(":benchmarks"))
  
     implementation(libs.compose.multiplatform.runtime)
     implementation(libs.compose.multiplatform.foundation)

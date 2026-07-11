@@ -175,10 +175,14 @@ function Invoke-SubmissionCommit {
         }
 
         Start-Sleep -Seconds 20
-        $statusResponse = Get-SubmissionStatus -SubmissionId $SubmissionId
-        if ($statusResponse.status -ne "PendingCommit") {
-            Write-Host "Submission $SubmissionId status is $($statusResponse.status); commit was accepted."
-            return
+        try {
+            $statusResponse = Get-SubmissionStatus -SubmissionId $SubmissionId
+            if ($statusResponse.status -ne "PendingCommit") {
+                Write-Host "Submission $SubmissionId status is $($statusResponse.status); commit was accepted."
+                return
+            }
+        } catch {
+            Write-Warning "Could not verify submission $SubmissionId status between commit attempts: $_"
         }
     }
 
@@ -192,7 +196,20 @@ function Wait-ForCommitToStartProcessing {
     $transientStatuses = @("PendingCommit", "CommitStarted")
 
     for ($attempt = 1; $attempt -le $StatusPollAttempts; $attempt++) {
-        $statusResponse = Get-SubmissionStatus -SubmissionId $SubmissionId
+        # The status endpoint regularly answers with gateway timeouts during
+        # Store API hiccups. The commit is already accepted at this point and
+        # this loop only exists to surface early failures, so a failed poll
+        # must not fail the release; count it as an attempt and keep polling.
+        try {
+            $statusResponse = Get-SubmissionStatus -SubmissionId $SubmissionId
+        } catch {
+            Write-Warning "Could not read submission $SubmissionId status (poll $attempt of ${StatusPollAttempts}): $_"
+            if ($attempt -lt $StatusPollAttempts) {
+                Start-Sleep -Seconds $StatusPollSeconds
+            }
+            continue
+        }
+
         $status = $statusResponse.status
         Write-Host "Submission $SubmissionId status: $status"
 

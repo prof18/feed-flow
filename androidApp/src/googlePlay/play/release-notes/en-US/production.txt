@@ -1,5 +1,4 @@
-• Redesigned home toolbar and refreshed drawer menus
-• Sort your articles and optionally hide unread counts directly from the timeline
-• Improved mark-as-read while scrolling
-• Reader Mode now shows a leading image when an article doesn't include one.
-• Your feed customization and opening preferences now apply to search results too.
+• Choose big-image card or grid layouts for your feeds.
+• Reorder feeds and categories to match your workflow.
+• Customize reader text with line height.
+• Enjoy more reliable article loading with smarter feed refreshing.

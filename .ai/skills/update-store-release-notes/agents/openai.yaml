@@ -1,0 +1,4 @@
+interface:
+  display_name: "Update Store Release Notes"
+  short_description: "Update localized notes for every app store"
+  default_prompt: "Use $update-store-release-notes to update the release notes I provide."

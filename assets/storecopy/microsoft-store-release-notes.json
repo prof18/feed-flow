@@ -1,179 +1,179 @@
 {
   "notes": {
     "bg": [
-      "• Добавена е стъпка за потвърждение преди изтриване на емисия.",
-      "• Полирани са лентата с инструменти, менютата и чекмеджето за по-изчистен десктоп интерфейс.",
-      "• Подобрена е обработката на прозорци и диалогови прозорци в цялото приложение.",
-      "• Персонализирането на емисиите и предпочитанията за отваряне вече се прилагат и към резултатите от търсенето.",
-      "• Поправки на грешки и подобрения."
+      "• Изберете карти с големи изображения или решетъчно оформление за вашите емисии.",
+      "• Пренаредете емисиите и категориите според начина си на работа.",
+      "• Персонализирайте текста в четеца с височина на редовете.",
+      "• Насладете се на по-надеждно зареждане на статии с по-умно обновяване на емисиите.",
+      "• Подобрена надеждност при отваряне на уеб връзки."
     ],
     "cs": [
-      "• Přidán potvrzovací krok před odstraněním kanálu.",
-      "• Vyladěna lišta nástrojů, nabídky a boční panel pro čistší desktopové rozhraní.",
-      "• Vylepšeno chování oken a dialogů napříč aplikací.",
-      "• Přizpůsobení kanálů a předvolby otevírání se nyní vztahují také na výsledky vyhledávání.",
-      "• Opravy chyb a vylepšení."
+      "• Zvolte pro své kanály karty s velkými obrázky nebo mřížkové rozvržení.",
+      "• Uspořádejte kanály a kategorie podle svého způsobu práce.",
+      "• Přizpůsobte text ve čtečce pomocí výšky řádků.",
+      "• Užijte si spolehlivější načítání článků díky chytřejšímu obnovování kanálů.",
+      "• Vylepšená spolehlivost při otevírání webových odkazů."
     ],
     "de": [
-      "• Vor dem Löschen eines Feeds wurde ein Bestätigungsschritt hinzugefügt.",
-      "• Symbolleiste, Menüs und Seitenleiste wurden für eine übersichtlichere Desktop-Oberfläche überarbeitet.",
-      "• Fenster- und Dialogverhalten wurden in der gesamten App verfeinert.",
-      "• Feed-Anpassungen und Öffnungseinstellungen gelten jetzt auch für Suchergebnisse.",
-      "• Fehlerbehebungen und Verbesserungen."
+      "• Wählen Sie für Ihre Feeds große Bildkarten oder ein Rasterlayout.",
+      "• Ordnen Sie Feeds und Kategorien passend zu Ihrem Arbeitsablauf neu an.",
+      "• Passen Sie den Lesetext mit der Zeilenhöhe an.",
+      "• Genießen Sie zuverlässigeres Laden von Artikeln durch intelligenteres Aktualisieren von Feeds.",
+      "• Verbesserte Zuverlässigkeit beim Öffnen von Weblinks."
     ],
     "de-de": [
-      "• Vor dem Löschen eines Feeds wurde ein Bestätigungsschritt hinzugefügt.",
-      "• Symbolleiste, Menüs und Seitenleiste wurden für eine übersichtlichere Desktop-Oberfläche überarbeitet.",
-      "• Fenster- und Dialogverhalten wurden in der gesamten App verfeinert.",
-      "• Feed-Anpassungen und Öffnungseinstellungen gelten jetzt auch für Suchergebnisse.",
-      "• Fehlerbehebungen und Verbesserungen."
+      "• Wählen Sie für Ihre Feeds große Bildkarten oder ein Rasterlayout.",
+      "• Ordnen Sie Feeds und Kategorien passend zu Ihrem Arbeitsablauf neu an.",
+      "• Passen Sie den Lesetext mit der Zeilenhöhe an.",
+      "• Genießen Sie zuverlässigeres Laden von Artikeln durch intelligenteres Aktualisieren von Feeds.",
+      "• Verbesserte Zuverlässigkeit beim Öffnen von Weblinks."
     ],
     "en-us": [
-      "• Added a confirmation step before deleting a feed.",
-      "• Polished toolbar, menus, and drawer for a cleaner desktop interface.",
-      "• Refined window and dialog handling across the app.",
-      "• Feed customization and opening preferences now apply to search results too.",
-      "• Bug fixes and improvements."
+      "• Choose big-image cards or a grid layout for your feeds.",
+      "• Reorder feeds and categories to match your workflow.",
+      "• Customize reader text with line height.",
+      "• Enjoy more reliable article loading with smarter feed refreshing.",
+      "• Improved reliability when opening web links."
     ],
     "es": [
-      "• Se añadió un paso de confirmación antes de eliminar un feed.",
-      "• Se pulieron la barra de herramientas, los menús y el panel lateral para una interfaz de escritorio más limpia.",
-      "• Se refinó la gestión de ventanas y diálogos en toda la aplicación.",
-      "• La personalización de feeds y las preferencias de apertura ahora también se aplican a los resultados de búsqueda.",
-      "• Correcciones de errores y mejoras."
+      "• Elige tarjetas con imágenes grandes o un diseño de cuadrícula para tus feeds.",
+      "• Reordena los feeds y las categorías según tu forma de trabajar.",
+      "• Personaliza el texto del lector con la altura de línea.",
+      "• Disfruta de una carga de artículos más fiable con una actualización de feeds más inteligente.",
+      "• Mayor fiabilidad al abrir enlaces web."
     ],
     "es-es": [
-      "• Se añadió un paso de confirmación antes de eliminar un feed.",
-      "• Se pulieron la barra de herramientas, los menús y el panel lateral para una interfaz de escritorio más limpia.",
-      "• Se refinó la gestión de ventanas y diálogos en toda la aplicación.",
-      "• La personalización de feeds y las preferencias de apertura ahora también se aplican a los resultados de búsqueda.",
-      "• Correcciones de errores y mejoras."
+      "• Elige tarjetas con imágenes grandes o un diseño de cuadrícula para tus feeds.",
+      "• Reordena los feeds y las categorías según tu forma de trabajar.",
+      "• Personaliza el texto del lector con la altura de línea.",
+      "• Disfruta de una carga de artículos más fiable con una actualización de feeds más inteligente.",
+      "• Mayor fiabilidad al abrir enlaces web."
     ],
     "et": [
-      "• Enne voo kustutamist lisati kinnitusetapp.",
-      "• Tööriistariba, menüüd ja sahtel on viimistletud puhtama töölaualiidese jaoks.",
-      "• Akende ja dialoogide käsitlust on kogu rakenduses täiustatud.",
-      "• Voo kohandamine ja avamise eelistused rakenduvad nüüd ka otsingutulemustele.",
-      "• Veaparandused ja täiustused."
+      "• Valige oma voogude jaoks suurte piltidega kaardid või ruudustikpaigutus.",
+      "• Järjestage vood ja kategooriad oma töövoole sobivaks.",
+      "• Kohandage lugeja teksti reavahega.",
+      "• Nautige töökindlamat artiklite laadimist tänu nutikamale voogude värskendamisele.",
+      "• Veebilinkide avamise töökindlust on parandatud."
     ],
     "fr": [
-      "• Ajout d’une étape de confirmation avant la suppression d’un flux.",
-      "• Barre d’outils, menus et volet latéral peaufinés pour une interface de bureau plus claire.",
-      "• Gestion des fenêtres et des boîtes de dialogue affinée dans toute l’application.",
-      "• La personnalisation des flux et les préférences d’ouverture s’appliquent désormais aussi aux résultats de recherche.",
-      "• Corrections de bugs et améliorations."
+      "• Choisissez des cartes avec de grandes images ou une disposition en grille pour vos flux.",
+      "• Réorganisez les flux et les catégories selon votre façon de travailler.",
+      "• Personnalisez le texte du lecteur avec la hauteur de ligne.",
+      "• Profitez d’un chargement des articles plus fiable grâce à une actualisation plus intelligente des flux.",
+      "• Fiabilité améliorée lors de l’ouverture de liens web."
     ],
     "gl": [
-      "• Engadiuse un paso de confirmación antes de eliminar unha fonte.",
-      "• Pulíronse a barra de ferramentas, os menús e o panel lateral para unha interface de escritorio máis limpa.",
-      "• Mellorouse a xestión de xanelas e diálogos en toda a aplicación.",
-      "• A personalización das fontes e as preferencias de apertura agora tamén se aplican aos resultados da busca.",
-      "• Correccións de erros e melloras."
+      "• Escolle tarxetas con imaxes grandes ou unha disposición en grella para as túas fontes.",
+      "• Reordena as fontes e as categorías segundo o teu fluxo de traballo.",
+      "• Personaliza o texto do lector coa altura de liña.",
+      "• Goza dunha carga de artigos máis fiable cunha actualización máis intelixente das fontes.",
+      "• Mellorouse a fiabilidade ao abrir ligazóns web."
     ],
     "gl-es": [
-      "• Engadiuse un paso de confirmación antes de eliminar unha fonte.",
-      "• Pulíronse a barra de ferramentas, os menús e o panel lateral para unha interface de escritorio máis limpa.",
-      "• Mellorouse a xestión de xanelas e diálogos en toda a aplicación.",
-      "• A personalización das fontes e as preferencias de apertura agora tamén se aplican aos resultados da busca.",
-      "• Correccións de erros e melloras."
+      "• Escolle tarxetas con imaxes grandes ou unha disposición en grella para as túas fontes.",
+      "• Reordena as fontes e as categorías segundo o teu fluxo de traballo.",
+      "• Personaliza o texto do lector coa altura de liña.",
+      "• Goza dunha carga de artigos máis fiable cunha actualización máis intelixente das fontes.",
+      "• Mellorouse a fiabilidade ao abrir ligazóns web."
     ],
     "he": [
-      "• נוסף שלב אישור לפני מחיקת פיד.",
-      "• סרגל הכלים, התפריטים והמגירה לוטשו לממשק שולחני נקי יותר.",
-      "• שופר הטיפול בחלונות ובתיבות דו-שיח ברחבי האפליקציה.",
-      "• התאמות אישיות של פידים והעדפות פתיחה חלות כעת גם על תוצאות חיפוש.",
-      "• תיקוני באגים ושיפורים."
+      "• בחרו בכרטיסים עם תמונות גדולות או בפריסת רשת עבור הפידים שלכם.",
+      "• סדרו מחדש פידים וקטגוריות כך שיתאימו לאופן העבודה שלכם.",
+      "• התאימו את טקסט הקורא באמצעות גובה השורה.",
+      "• תיהנו מטעינה אמינה יותר של מאמרים עם רענון חכם יותר של פידים.",
+      "• אמינות משופרת בעת פתיחת קישורי אינטרנט."
     ],
     "hu": [
-      "• Megerősítési lépés került hozzáadásra hírforrás törlése előtt.",
-      "• Letisztultabb asztali felületet kapott az eszköztár, a menük és az oldalsó fiók.",
-      "• Finomhangoltuk az ablakok és párbeszédpanelek kezelését az alkalmazásban.",
-      "• A hírforrások testreszabása és a megnyitási beállítások mostantól a keresési találatokra is érvényesek.",
-      "• Hibajavítások és fejlesztések."
+      "• Válasszon nagyképes kártyákat vagy rácsos elrendezést a hírfolyamokhoz.",
+      "• Rendezze át a hírfolyamokat és kategóriákat a munkafolyamatának megfelelően.",
+      "• A sorközzel szabhatja testre az olvasó szövegét.",
+      "• Élvezze a cikkek megbízhatóbb betöltését az intelligensebb hírfolyam-frissítéssel.",
+      "• Megbízhatóbbá vált a webes hivatkozások megnyitása."
     ],
     "it": [
-      "• Aggiunto un passaggio di conferma prima di eliminare un feed.",
-      "• Rifiniti barra degli strumenti, menu e pannello laterale per un'interfaccia desktop più pulita.",
-      "• Migliorata la gestione di finestre e finestre di dialogo in tutta l'app.",
-      "• Le personalizzazioni dei feed e le preferenze di apertura ora si applicano anche ai risultati di ricerca.",
-      "• Correzioni di bug e miglioramenti."
+      "• Scegli schede con immagini grandi o una disposizione a griglia per i tuoi feed.",
+      "• Riordina feed e categorie in base al tuo flusso di lavoro.",
+      "• Personalizza il testo del lettore con l'altezza della riga.",
+      "• Goditi un caricamento degli articoli più affidabile grazie a un aggiornamento più intelligente dei feed.",
+      "• Maggiore affidabilità nell'apertura dei link web."
     ],
     "ja": [
-      "• フィードを削除する前に確認ステップを追加しました。",
-      "• よりすっきりしたデスクトップインターフェイスにするため、ツールバー、メニュー、ドロワーを調整しました。",
-      "• アプリ全体でウィンドウとダイアログの処理を改善しました。",
-      "• フィードのカスタマイズと開き方の設定が検索結果にも適用されるようになりました。",
-      "• バグ修正と改善。"
+      "• フィードには大きな画像のカードまたはグリッドレイアウトを選べるようになりました。",
+      "• ワークフローに合わせてフィードとカテゴリを並べ替えられます。",
+      "• 行の高さを調整して、リーダーのテキストをカスタマイズできます。",
+      "• よりスマートなフィード更新により、記事をより確実に読み込めるようになりました。",
+      "• Web リンクを開く際の信頼性を向上しました。"
     ],
     "pl": [
-      "• Dodano krok potwierdzenia przed usunięciem kanału.",
-      "• Dopracowano pasek narzędzi, menu i panel boczny, aby interfejs desktopowy był bardziej przejrzysty.",
-      "• Usprawniono obsługę okien i okien dialogowych w całej aplikacji.",
-      "• Dostosowanie kanałów i preferencje otwierania są teraz stosowane także do wyników wyszukiwania.",
-      "• Poprawki błędów i ulepszenia."
+      "• Wybierz karty z dużymi obrazami lub układ siatki dla swoich kanałów.",
+      "• Zmień kolejność kanałów i kategorii, aby dopasować je do swojego sposobu pracy.",
+      "• Dostosuj tekst czytnika za pomocą wysokości wiersza.",
+      "• Ciesz się bardziej niezawodnym ładowaniem artykułów dzięki inteligentniejszemu odświeżaniu kanałów.",
+      "• Poprawiono niezawodność otwierania linków internetowych."
     ],
     "pt-br": [
-      "• Adicionada uma etapa de confirmação antes de excluir um feed.",
-      "• Barra de ferramentas, menus e gaveta foram refinados para uma interface de desktop mais limpa.",
-      "• Melhorado o comportamento de janelas e caixas de diálogo em todo o app.",
-      "• A personalização de feeds e as preferências de abertura agora também se aplicam aos resultados de pesquisa.",
-      "• Correções de bugs e melhorias."
+      "• Escolha cartões com imagens grandes ou um layout em grade para seus feeds.",
+      "• Reordene feeds e categorias para combinar com seu fluxo de trabalho.",
+      "• Personalize o texto do leitor com a altura da linha.",
+      "• Aproveite um carregamento de artigos mais confiável com uma atualização de feeds mais inteligente.",
+      "• Maior confiabilidade ao abrir links da web."
     ],
     "ru": [
-      "• Добавлен шаг подтверждения перед удалением ленты.",
-      "• Панель инструментов, меню и боковая панель доработаны для более чистого интерфейса на рабочем столе.",
-      "• Улучшена работа с окнами и диалогами во всем приложении.",
-      "• Настройки лент и предпочтения открытия теперь применяются и к результатам поиска.",
-      "• Исправления ошибок и улучшения."
+      "• Выбирайте карточки с большими изображениями или сетку для своих лент.",
+      "• Меняйте порядок лент и категорий в соответствии со своим рабочим процессом.",
+      "• Настраивайте текст в режиме чтения с помощью высоты строки.",
+      "• Оцените более надёжную загрузку статей благодаря более умному обновлению лент.",
+      "• Повышена надёжность при открытии веб-ссылок."
     ],
     "sk": [
-      "• Pred odstránením kanála bol pridaný krok potvrdenia.",
-      "• Panel nástrojov, ponuky a bočný panel boli vyladené pre čistejšie desktopové rozhranie.",
-      "• Vylepšené spracovanie okien a dialógov v celej aplikácii.",
-      "• Prispôsobenie kanálov a predvoľby otvárania sa teraz vzťahujú aj na výsledky vyhľadávania.",
-      "• Opravy chýb a vylepšenia."
+      "• Pre svoje kanály si vyberte karty s veľkými obrázkami alebo mriežkové rozloženie.",
+      "• Zmeňte poradie kanálov a kategórií podľa svojho pracovného postupu.",
+      "• Prispôsobte text čítačky pomocou výšky riadkov.",
+      "• Vďaka inteligentnejšiemu obnovovaniu kanálov si užite spoľahlivejšie načítavanie článkov.",
+      "• Zlepšená spoľahlivosť pri otváraní webových odkazov."
     ],
     "ta": [
-      "• ஒரு ஊட்டத்தை நீக்கும் முன் உறுதிப்படுத்தும் படி சேர்க்கப்பட்டது.",
-      "• மேலும் சுத்தமான டெஸ்க்டாப் இடைமுகத்திற்காக கருவிப்பட்டி, மெனுக்கள் மற்றும் டிராயர் மேம்படுத்தப்பட்டன.",
-      "• பயன்பாடு முழுவதும் சாளரங்கள் மற்றும் உரையாடல்களின் கையாளுதல் மேம்படுத்தப்பட்டது.",
-      "• ஊட்ட தனிப்பயனாக்கமும் திறக்கும் விருப்பங்களும் இப்போது தேடல் முடிவுகளுக்கும் பொருந்தும்.",
-      "• பிழை திருத்தங்கள் மற்றும் மேம்பாடுகள்."
+      "• உங்கள் ஊட்டங்களுக்கு பெரிய பட அட்டைகள் அல்லது கட்ட அமைப்பைத் தேர்ந்தெடுக்கவும்.",
+      "• உங்கள் பணிச்சூழலுக்கு ஏற்ப ஊட்டங்களையும் வகைகளையும் மறுவரிசைப்படுத்தவும்.",
+      "• வரி உயரத்தைப் பயன்படுத்தி வாசிப்பான் உரையைத் தனிப்பயனாக்கவும்.",
+      "• சிறந்த ஊட்டப் புதுப்பிப்பால் கட்டுரைகள் இன்னும் நம்பகமாக ஏற்றப்படும்.",
+      "• வலை இணைப்புகளைத் திறப்பதற்கான நம்பகத்தன்மை மேம்படுத்தப்பட்டது."
     ],
     "tr": [
-      "• Bir akışı silmeden önce onay adımı eklendi.",
-      "• Daha temiz bir masaüstü arayüzü için araç çubuğu, menüler ve çekmece elden geçirildi.",
-      "• Uygulama genelinde pencere ve iletişim kutusu davranışları iyileştirildi.",
-      "• Akış özelleştirme ve açma tercihleri artık arama sonuçlarına da uygulanıyor.",
-      "• Hata düzeltmeleri ve iyileştirmeler."
+      "• Akışlarınız için büyük görselli kartları veya ızgara düzenini seçin.",
+      "• Akışları ve kategorileri çalışma düzeninize göre yeniden sıralayın.",
+      "• Satır yüksekliğiyle okuyucu metnini özelleştirin.",
+      "• Daha akıllı akış yenileme sayesinde daha güvenilir makale yüklemenin keyfini çıkarın.",
+      "• Web bağlantıları açılırken güvenilirlik iyileştirildi."
     ],
     "uk": [
-      "• Додано крок підтвердження перед видаленням стрічки.",
-      "• Панель інструментів, меню та бічну панель відшліфовано для чистішого інтерфейсу на робочому столі.",
-      "• Покращено обробку вікон і діалогів у всьому застосунку.",
-      "• Налаштування стрічок і параметри відкриття тепер застосовуються також до результатів пошуку.",
-      "• Виправлення помилок і покращення."
+      "• Вибирайте картки з великими зображеннями або сітку для своїх стрічок.",
+      "• Змінюйте порядок стрічок і категорій відповідно до свого робочого процесу.",
+      "• Налаштовуйте текст у режимі читання за допомогою висоти рядка.",
+      "• Насолоджуйтеся надійнішим завантаженням статей завдяки розумнішому оновленню стрічок.",
+      "• Покращено надійність під час відкривання вебпосилань."
     ],
     "vi": [
-      "• Đã thêm bước xác nhận trước khi xóa một nguồn cấp.",
-      "• Thanh công cụ, menu và ngăn kéo được trau chuốt để giao diện desktop gọn gàng hơn.",
-      "• Cải thiện cách xử lý cửa sổ và hộp thoại trong toàn bộ ứng dụng.",
-      "• Tùy chỉnh nguồn cấp và tùy chọn mở giờ cũng áp dụng cho kết quả tìm kiếm.",
-      "• Sửa lỗi và cải tiến."
+      "• Chọn thẻ có ảnh lớn hoặc bố cục lưới cho các nguồn cấp của bạn.",
+      "• Sắp xếp lại nguồn cấp và danh mục cho phù hợp với quy trình làm việc của bạn.",
+      "• Tùy chỉnh văn bản trình đọc bằng chiều cao dòng.",
+      "• Tận hưởng việc tải bài viết đáng tin cậy hơn với tính năng làm mới nguồn cấp thông minh hơn.",
+      "• Cải thiện độ tin cậy khi mở liên kết web."
     ],
     "zh-cn": [
-      "• 删除订阅源前新增确认步骤。",
-      "• 优化了工具栏、菜单和抽屉，让桌面界面更清爽。",
-      "• 改进了整个应用中的窗口和对话框处理。",
-      "• 订阅源自定义和打开偏好现在也会应用到搜索结果。",
-      "• 错误修复和改进。"
+      "• 可为订阅源选择大图卡片或网格布局。",
+      "• 可按您的工作流程重新排序订阅源和分类。",
+      "• 可通过行高自定义阅读器文本。",
+      "• 更智能的订阅源刷新带来更可靠的文章加载体验。",
+      "• 提升了打开网页链接时的可靠性。"
     ],
     "zh-hans": [
-      "• 删除订阅源前新增确认步骤。",
-      "• 优化了工具栏、菜单和抽屉，让桌面界面更清爽。",
-      "• 改进了整个应用中的窗口和对话框处理。",
-      "• 订阅源自定义和打开偏好现在也会应用到搜索结果。",
-      "• 错误修复和改进。"
+      "• 可为订阅源选择大图卡片或网格布局。",
+      "• 可按您的工作流程重新排序订阅源和分类。",
+      "• 可通过行高自定义阅读器文本。",
+      "• 更智能的订阅源刷新带来更可靠的文章加载体验。",
+      "• 提升了打开网页链接时的可靠性。"
     ]
   }
 }

@@ -87,6 +87,15 @@
   </content_rating>
 
   <releases>
+      <release version="1.15.0" date="2026-07-09">
+        <description>
+          <p>Added big-image card and grid layouts for feeds.</p>
+          <p>Added feed and category reordering.</p>
+          <p>Added Reader Mode line height controls.</p>
+          <p>Improved feed refreshing with conditional caching.</p>
+        </description>
+      </release>
+
       <release version="1.14.0" date="2026-06-09">
           <description>
               <p>Added a confirmation step before deleting a feed.</p>

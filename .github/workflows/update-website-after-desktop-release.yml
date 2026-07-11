@@ -35,18 +35,21 @@ jobs:
           # Extract URLs for each file type
           DMG_URL=$(echo "$ASSETS" | jq -r 'select(.name | endswith(".dmg")) | .url')
           MSI_URL=$(echo "$ASSETS" | jq -r 'select(.name | endswith(".msi")) | .url')
+          APPIMAGE_URL=$(echo "$ASSETS" | jq -r 'select(.name | endswith(".AppImage")) | .url')
           RPM_URL=$(echo "$ASSETS" | jq -r 'select(.name | endswith(".rpm")) | .url')
           DEB_URL=$(echo "$ASSETS" | jq -r 'select(.name | endswith(".deb")) | .url')
           
           echo "Extracted URLs:"
           echo "DMG URL: $DMG_URL"
           echo "MSI URL: $MSI_URL"
+          echo "AppImage URL: $APPIMAGE_URL"
           echo "RPM URL: $RPM_URL"
           echo "DEB URL: $DEB_URL"
           
           # Set outputs
           echo "DMG_URL=$DMG_URL" >> $GITHUB_ENV
           echo "MSI_URL=$MSI_URL" >> $GITHUB_ENV
+          echo "APPIMAGE_URL=$APPIMAGE_URL" >> $GITHUB_ENV
           echo "RPM_URL=$RPM_URL" >> $GITHUB_ENV
           echo "DEB_URL=$DEB_URL" >> $GITHUB_ENV
 
@@ -58,6 +61,9 @@ jobs:
           fi
           if [ ! -z "$MSI_URL" ]; then
             sed -i "s|url: \".*\.msi\"|url: \"${MSI_URL}\"|" website/data/downloads.yml
+          fi
+          if [ ! -z "$APPIMAGE_URL" ]; then
+            sed -i "s|url: \".*\.AppImage\"|url: \"${APPIMAGE_URL}\"|" website/data/downloads.yml
           fi
           if [ ! -z "$RPM_URL" ]; then
             sed -i "s|url: \".*\.rpm\"|url: \"${RPM_URL}\"|" website/data/downloads.yml

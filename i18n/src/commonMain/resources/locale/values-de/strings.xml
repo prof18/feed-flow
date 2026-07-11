@@ -395,4 +395,6 @@
     <string name="settings_feed_layout_big_image">Große Bildkarte</string>
     <string name="settings_feed_layout_grid">Raster</string>
     <string name="reorder_mode_done">Fertig</string>
+    <string name="reorder_drag_handle">Neu anordnen</string>
+    <string name="reorder_mode_enter">Neu anordnen</string>
 </resources>

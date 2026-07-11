@@ -1,11 +1,11 @@
-FeedFlow is a minimal RSS reader designed for one thing: keeping up with the
-open web without noise.
+FeedFlow on minimalistinen RSS-lukija, joka on suunniteltu vain yhtä tarkoitusta
+varten: avoimen verkon seuraamiseen ilman turhaa häiriötä.
 
-Follow your favorite blogs and news sites in a clean, chronological timeline. No
-algorithms decide what you see — just your feeds, in the order they were
-published.
+Seuraa suosikkiblogejasi ja uutissivustojasi puhtaassa, kronologisessa
+järjestyksessä. Mikään algoritmi ei päätä, mitä näet – vain syötteesi, siinä
+järjestyksessä kuin ne on julkaistu.
 
-Read Your Way
+Lue omalla tavallasi
 - Open articles in your browser, or use Reader Mode for a clutter-free view.
 - Adjust text size and spacing for comfortable reading.
 - Cache full articles for offline reading — perfect for commutes, flights, or

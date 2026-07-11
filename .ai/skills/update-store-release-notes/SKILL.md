@@ -22,6 +22,16 @@ Respect a user request to translate store copy even if general project localizat
 - `en-US/production.txt` is the English source. Every existing locale directory is a target; create `production.txt` in empty locale directories.
 - Keep each note at or below 500 characters: `wc -m androidApp/src/googlePlay/play/release-notes/*/production.txt`.
 - Do not edit `alpha.txt` unless the user explicitly requests alpha-track notes.
+- Return Android notes in chat as one XML-like block per locale when requested. Use the exact folder name as the tag, keep `en-US` first, then list the remaining configured locales in alphabetical order:
+
+  ```text
+  <en-US>
+  • English release note
+  </en-US>
+  <bg>
+  • Bulgarian release note
+  </bg>
+  ```
 
 ## iOS and macOS: App Store Connect
 

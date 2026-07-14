@@ -386,4 +386,15 @@
     <string name="sort_and_filter_button">Trier &amp; filtrer</string>
     <string name="reader_mode_text_settings">Paramètres du texte</string>
     <string name="reader_mode_reset_to_default">Réinitialiser</string>
+    <string name="reorder_drag_handle">Réordonner</string>
+    <string name="reader_mode_line_height">Hauteur de ligne</string>
+    <string name="reorder_mode_done">Fait</string>
+    <string name="reorder_mode_enter">Réordonner</string>
+    <string name="greader_bad_token_sync_error_message">Le serveur a rejeté le jeton de synchronisation. Si votre service compatible avec Google Reader est derrière un proxy inverse, assurez-vous que celui-ci transmet bien l\'en-tête « Authorization ».</string>
+    <string name="miniflux_bad_token_error_message">La connexion a réussi, mais Miniflux a rejeté le jeton de synchronisation. Si Miniflux est derrière un proxy inverse, assurez-vous que celui-ci transmet l\'en-tête « Authorization ».</string>
+    <string name="settings_feed_layout_grid">Grille</string>
+    <string name="settings_feed_layout_grid_toggle">Utiliser la grille sur les écrans larges</string>
+    <string name="increase_line_height_button_content_description">Augmenter la hauteur de ligne</string>
+    <string name="decrease_line_height_button_content_description">Réduire la hauteur de ligne</string>
+    <string name="settings_feed_layout_big_image">Carte avec grande image</string>
 </resources>

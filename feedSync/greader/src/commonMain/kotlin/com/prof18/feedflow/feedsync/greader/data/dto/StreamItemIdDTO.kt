@@ -13,5 +13,9 @@ internal data class ItemDTO(
     val id: String,
 ) {
     @Suppress("MagicNumber")
-    fun getHexID(): String = id.toLong().toString(16).padStart(16, '0')
+    fun getHexID(): String {
+        val raw = id.substringAfterLast("/")
+        val bits = raw.toLongOrNull()?.toULong() ?: raw.toULongOrNull()
+        return bits?.toString(16)?.padStart(16, '0') ?: raw
+    }
 }

@@ -23,7 +23,7 @@ struct SettingToggleItem: View {
         Toggle(isOn: Binding(
             get: { isOn },
             set: { newValue in
-                if newValue, let config = confirmationDialog {
+                if newValue, confirmationDialog != nil {
                     pendingValue = newValue
                     showConfirmation = true
                 } else {
@@ -35,15 +35,6 @@ struct SettingToggleItem: View {
                 Label(title, systemImage: systemImage)
             } else {
                 Text(title)
-            }
-        }
-        .onTapGesture {
-            let newValue = !isOn
-            if newValue, let config = confirmationDialog {
-                pendingValue = newValue
-                showConfirmation = true
-            } else {
-                isOn = newValue
             }
         }
         .confirmationDialog(

@@ -97,7 +97,6 @@ struct FeedSourceListScreenContent: View {
                     ForEach(feedState.feedSourcesWithoutCategory, id: \.self.id) { feedSource in
                         FeedSourceListItem(
                             feedSource: feedSource,
-                            feedSourceTitle: feedSource.title,
                             deleteFeedSource: { source in
                                 feedToDelete = source
                                 showDeleteFeedDialog = true
@@ -207,7 +206,6 @@ struct FeedSourceListScreenContent: View {
     private func feedSourceListItem(_ feedSource: FeedSource) -> some View {
         FeedSourceListItem(
             feedSource: feedSource,
-            feedSourceTitle: feedSource.title,
             deleteFeedSource: { source in
                 feedToDelete = source
                 showDeleteFeedDialog = true
@@ -261,15 +259,26 @@ private struct FeedSourceListItem: View {
     @Environment(BrowserSelector.self)
     private var browserSelector
 
-    @State var feedSource: FeedSource
-    @State var feedSourceTitle: String
+    let feedSource: FeedSource
+    @State private var feedSourceTitle: String
 
-    @State var isRenameEnabled = false
+    @State private var isRenameEnabled = false
 
     let deleteFeedSource: (FeedSource) -> Void
     let renameFeedSource: (FeedSource, String) -> Void
 
-    @FocusState var isTextFieldFocused: Bool?
+    @FocusState private var isTextFieldFocused: Bool
+
+    init(
+        feedSource: FeedSource,
+        deleteFeedSource: @escaping (FeedSource) -> Void,
+        renameFeedSource: @escaping (FeedSource, String) -> Void
+    ) {
+        self.feedSource = feedSource
+        _feedSourceTitle = State(initialValue: feedSource.title)
+        self.deleteFeedSource = deleteFeedSource
+        self.renameFeedSource = renameFeedSource
+    }
 
     var body: some View {
         HStack {
@@ -386,6 +395,11 @@ private struct FeedSourceListItem: View {
                 } label: {
                     Label(feedFlowStrings.deleteFeed, systemImage: "trash")
                 }
+            }
+        }
+        .onChange(of: feedSource.title) { _, newTitle in
+            if !isRenameEnabled {
+                feedSourceTitle = newTitle
             }
         }
     }

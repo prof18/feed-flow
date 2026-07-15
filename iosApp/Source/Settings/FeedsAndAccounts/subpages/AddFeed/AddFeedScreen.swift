@@ -20,7 +20,7 @@ struct AddFeedScreen: View {
     @State private var showError = false
     @State private var errorMessage = ""
     @State private var isAddingFeed = false
-    @State var feedURL = ""
+    @State private var feedURL = ""
     @State private var showNotificationToggle = false
     @State private var isNotificationEnabled = false
     @State private var canForceAdd = false

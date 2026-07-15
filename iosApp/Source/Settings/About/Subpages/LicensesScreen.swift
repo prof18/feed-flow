@@ -13,7 +13,7 @@ struct LicensesScreen: View {
     @Environment(\.presentationMode)
     private var presentationMode
 
-    @State var htmlContent: String?
+    @State private var htmlContent: String?
 
     var body: some View {
         licenseView

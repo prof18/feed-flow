@@ -16,7 +16,7 @@ struct DeepLinkFeedScreen: View {
 
     @State private var state: DeeplinkFeedState = .Loading()
 
-    @State var feedId: String
+    let feedId: String
     let readerModeViewModel: ReaderModeViewModel
 
     var body: some View {

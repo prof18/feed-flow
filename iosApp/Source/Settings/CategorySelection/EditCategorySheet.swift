@@ -264,11 +264,23 @@ private struct EditCategoryNameSheet: View {
     private var dismiss
 
     let categoryId: String
-    @State var categoryName: String
+    @State private var categoryName: String
     let validateCategoryName: (String?, CategoryName) -> CategoryNameValidationResult
     let onConfirm: (String) -> Void
 
     @FocusState private var isTextFieldFocused: Bool
+
+    init(
+        categoryId: String,
+        categoryName: String,
+        validateCategoryName: @escaping (String?, CategoryName) -> CategoryNameValidationResult,
+        onConfirm: @escaping (String) -> Void
+    ) {
+        self.categoryId = categoryId
+        _categoryName = State(initialValue: categoryName)
+        self.validateCategoryName = validateCategoryName
+        self.onConfirm = onConfirm
+    }
 
     private var validationResult: CategoryNameValidationResult {
         validateCategoryName(categoryId, CategoryName(name: categoryName))

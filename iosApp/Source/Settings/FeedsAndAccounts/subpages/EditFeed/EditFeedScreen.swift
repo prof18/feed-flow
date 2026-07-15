@@ -13,8 +13,8 @@ struct EditFeedScreen: View {
     @Environment(AppState.self)
     private var appState
 
-    @Environment(\.presentationMode)
-    private var presentationMode
+    @Environment(\.dismiss)
+    private var dismiss
 
     @StateObject private var vmStoreOwner = VMStoreOwner<EditFeedViewModel>(Deps.shared.getEditFeedViewModel())
 
@@ -111,7 +111,7 @@ struct EditFeedScreen: View {
                             )
                         )
                         self.appState.redrawAfterFeedSourceEdit.toggle()
-                        self.presentationMode.wrappedValue.dismiss()
+                        dismiss()
 
                     case .idle:
                         errorMessage = ""
@@ -158,7 +158,7 @@ struct EditFeedScreen: View {
             .task {
                 for await _ in vmStoreOwner.instance.feedDeletedState {
                     self.appState.redrawAfterFeedSourceEdit.toggle()
-                    self.presentationMode.wrappedValue.dismiss()
+                    dismiss()
                 }
             }
         }

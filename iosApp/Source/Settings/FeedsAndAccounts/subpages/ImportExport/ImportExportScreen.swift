@@ -11,8 +11,8 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ImportExportScreen: View {
-    @Environment(\.presentationMode)
-    private var presentationMode
+    @Environment(\.dismiss)
+    private var dismiss
 
     @Environment(AppState.self)
     private var appState
@@ -82,7 +82,7 @@ struct ImportExportScreen: View {
                 if showCloseButton {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {
-                            presentationMode.wrappedValue.dismiss()
+                            dismiss()
                         } label: {
                             if isiOS26OrLater() {
                                 Image(systemName: "xmark")

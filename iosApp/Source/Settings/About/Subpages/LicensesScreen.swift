@@ -10,9 +10,6 @@ import FeedFlowKit
 import SwiftUI
 
 struct LicensesScreen: View {
-    @Environment(\.presentationMode)
-    private var presentationMode
-
     @State private var htmlContent: String?
 
     var body: some View {

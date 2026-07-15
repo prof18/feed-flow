@@ -13,8 +13,6 @@ import SwiftUI
 
 @MainActor
 struct FeedSourceListScreenContent: View {
-    @Environment(\.presentationMode)
-    private var presentationMode
     @Environment(AppState.self)
     private var appState
     @Environment(BrowserSelector.self)

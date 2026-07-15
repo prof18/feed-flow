@@ -129,40 +129,28 @@ struct FeedListSettingsScreenContent: View {
                     if feedLayout.supportsGridToggle {
                         Toggle(isOn: $isGridLayoutEnabled) {
                             Text(feedFlowStrings.settingsFeedLayoutGridToggle)
-                        }.onTapGesture {
-                            isGridLayoutEnabled.toggle()
                         }
                     }
 
                     Toggle(isOn: $isHideDescriptionEnabled) {
                         Text(feedFlowStrings.settingsHideDescription)
-                    }.onTapGesture {
-                        isHideDescriptionEnabled.toggle()
                     }
 
                     Toggle(isOn: $isHideImagesEnabled) {
                         Text(feedFlowStrings.settingsHideImages)
-                    }.onTapGesture {
-                        isHideImagesEnabled.toggle()
                     }
                     .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideImagesToggle)
 
                     Toggle(isOn: $isHideDateEnabled) {
                         Text(feedFlowStrings.settingsHideDate)
-                    }.onTapGesture {
-                        isHideDateEnabled.toggle()
                     }
 
                     Toggle(isOn: $isHideUnreadDotEnabled) {
                         Text(feedFlowStrings.settingsHideUnreadDot)
-                    }.onTapGesture {
-                        isHideUnreadDotEnabled.toggle()
                     }
 
                     Toggle(isOn: $isHideFeedSourceEnabled) {
                         Text(feedFlowStrings.settingsHideFeedSource)
-                    }.onTapGesture {
-                        isHideFeedSourceEnabled.toggle()
                     }
 
                     Picker(selection: $descriptionLineLimit) {
@@ -178,8 +166,6 @@ struct FeedListSettingsScreenContent: View {
 
                     Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {
                         Text(feedFlowStrings.settingsHideDuplicatedTitleFromDesc)
-                    }.onTapGesture {
-                        isRemoveTitleFromDescriptionEnabled.toggle()
                     }
 
                     DateFormatSection(dateFormat: $dateFormat)

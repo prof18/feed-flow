@@ -29,15 +29,11 @@ struct ReadingBehaviorScreenContent: View {
 
                 Toggle(isOn: $isReaderModeEnabled) {
                     Text(feedFlowStrings.settingsReaderMode)
-                }.onTapGesture {
-                    isReaderModeEnabled.toggle()
                 }
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.readerModeToggle)
 
                 Toggle(isOn: $isSaveReaderModeContentEnabled) {
                     Text(feedFlowStrings.settingsSaveReaderModeContent)
-                }.onTapGesture {
-                    isSaveReaderModeContentEnabled.toggle()
                 }
 
                 SettingToggleItem(
@@ -51,21 +47,15 @@ struct ReadingBehaviorScreenContent: View {
 
                 Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
                     Text(feedFlowStrings.toggleMarkReadWhenScrolling)
-                }.onTapGesture {
-                    isMarkReadWhenScrollingEnabled.toggle()
                 }
 
                 Toggle(isOn: $isShowReadItemEnabled) {
                     Text(feedFlowStrings.settingsToggleShowReadArticles)
-                }.onTapGesture {
-                    isShowReadItemEnabled.toggle()
                 }
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.showReadToggle)
 
                 Toggle(isOn: $isHideReadItemsEnabled) {
                     Text(feedFlowStrings.settingsHideReadItems)
-                }.onTapGesture {
-                    isHideReadItemsEnabled.toggle()
                 }
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.hideReadToggle)
             }

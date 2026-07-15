@@ -7,17 +7,17 @@ struct SearchScreen: View {
 
     @StateObject private var vmStoreOwner = VMStoreOwner<SearchViewModel>(Deps.shared.getSearchViewModel())
 
-    @State var searchText = ""
+    @State private var searchText = ""
 
-    @State var searchState: SearchState = .EmptyState()
+    @State private var searchState: SearchState = .EmptyState()
 
-    @State var searchFilter: SearchFilter = .all
+    @State private var searchFilter: SearchFilter = .all
 
-    @State var currentFeedFilter: FeedFilter?
+    @State private var currentFeedFilter: FeedFilter?
 
-    @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
+    @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 
-    @State var feedItemDisplaySettings = FeedItemDisplaySettings(
+    @State private var feedItemDisplaySettings = FeedItemDisplaySettings(
         isHideUnreadDotEnabled: false,
         isHideFeedSourceEnabled: false,
         descriptionLineLimit: .three

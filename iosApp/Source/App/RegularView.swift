@@ -21,7 +21,7 @@ struct RegularView: View {
 
     @Binding var selectedSidebarItem: SidebarSelection?
 
-    @State var navDrawerState: NavDrawerState = .init(
+    @State private var navDrawerState: NavDrawerState = .init(
         timeline: [],
         read: [],
         bookmarks: [],
@@ -31,13 +31,13 @@ struct RegularView: View {
         feedSourcesByCategory: [:],
         uncategorizedPosition: 0
     )
-    @State var scrollUpTrigger = false
-    @State var showSettings = false
+    @State private var scrollUpTrigger = false
+    @State private var showSettings = false
     @State private var showSidebarSettingsSheet = false
-    @State var showAddFeedSheet = false
+    @State private var showAddFeedSheet = false
     @State private var showImportExportSheet = false
 
-    @State var indexHolder: HomeListIndexHolder
+    @State private var indexHolder: HomeListIndexHolder
     let homeViewModel: HomeViewModel
     let readerModeViewModel: ReaderModeViewModel
 
@@ -47,6 +47,17 @@ struct RegularView: View {
 
     @State private var showFeedOperationDialog = false
     @State private var feedOperationLoadingMessage: String?
+
+    init(
+        selectedSidebarItem: Binding<SidebarSelection?>,
+        homeViewModel: HomeViewModel,
+        readerModeViewModel: ReaderModeViewModel
+    ) {
+        _selectedSidebarItem = selectedSidebarItem
+        _indexHolder = State(initialValue: HomeListIndexHolder(homeViewModel: homeViewModel))
+        self.homeViewModel = homeViewModel
+        self.readerModeViewModel = readerModeViewModel
+    }
 
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {

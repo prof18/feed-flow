@@ -39,14 +39,12 @@ struct ContentView: View {
             if effectiveSizeClass == .compact {
                 CompactView(
                     selectedSidebarItem: $selectedSidebarItem,
-                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
                     homeViewModel: vmStoreOwner.instance,
                     readerModeViewModel: readerModeVmStoreOwner.instance
                 )
             } else {
                 RegularView(
                     selectedSidebarItem: $selectedSidebarItem,
-                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
                     homeViewModel: vmStoreOwner.instance,
                     readerModeViewModel: readerModeVmStoreOwner.instance
                 )

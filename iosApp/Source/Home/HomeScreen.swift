@@ -21,38 +21,38 @@ struct HomeScreen: View {
     @Environment(\.openURL)
     private var openURL
 
-    @State var loadingState: FeedUpdateStatus?
+    @State private var loadingState: FeedUpdateStatus?
 
-    @State var feedState: [FeedItem] = []
+    @State private var feedState: [FeedItem] = []
 
-    @State var showLoading = true
+    @State private var showLoading = true
 
     @State private var sheetToShow: HomeSheetToShow?
 
-    @State var unreadCount = 0
+    @State private var unreadCount = 0
 
-    @State var isUnreadCountHidden = false
+    @State private var isUnreadCountHidden = false
 
-    @State var currentFeedFilter: FeedFilter = .Timeline()
+    @State private var currentFeedFilter: FeedFilter = .Timeline()
 
-    @State var showFeedSyncButton = false
+    @State private var showFeedSyncButton = false
 
-    @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
+    @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 
-    @State var swipeActions: SwipeActions = .init(leftSwipeAction: .none, rightSwipeAction: .none)
+    @State private var swipeActions: SwipeActions = .init(leftSwipeAction: .none, rightSwipeAction: .none)
 
-    @State var feedLayout: FeedLayout = .list
-    @State var isGridLayoutEnabled = false
+    @State private var feedLayout: FeedLayout = .list
+    @State private var isGridLayoutEnabled = false
 
-    @State var nextFeedPreviewState: NextFeedPreviewState = .NextFeedPreviewDisabledState()
+    @State private var nextFeedPreviewState: NextFeedPreviewState = .NextFeedPreviewDisabledState()
 
-    @State var feedItemDisplaySettings = FeedItemDisplaySettings(
+    @State private var feedItemDisplaySettings = FeedItemDisplaySettings(
         isHideUnreadDotEnabled: false,
         isHideFeedSourceEnabled: false,
         descriptionLineLimit: .three
     )
 
-    @State var viewMenuState = HomeViewMenuState(
+    @State private var viewMenuState = HomeViewMenuState(
         feedOrder: .newestFirst,
         showReadArticlesTimeline: false
     )

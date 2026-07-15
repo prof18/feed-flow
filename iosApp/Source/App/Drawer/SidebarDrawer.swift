@@ -23,25 +23,24 @@ struct SidebarDrawer: View {
 
     @Binding var selectedSidebarItem: SidebarSelection?
 
-    @StateObject var categoryVMStoreOwner = VMStoreOwner<ChangeFeedCategoryViewModel>(
+    @StateObject private var categoryVMStoreOwner = VMStoreOwner<ChangeFeedCategoryViewModel>(
         Deps.shared.getChangeFeedCategoryViewModel()
     )
 
     @State private var showMarkAllReadDialog = false
     @State private var showClearOldArticlesDialog = false
-    @State var expandedCategoryIds: Set<String> = []
-    @State var showDeleteCategoryDialog = false
-    @State var showEditCategoryDialog = false
-    @State var categoryToDelete: String?
-    @State var categoryToEdit: String?
-    @State var editedCategoryName: String = ""
-    @State var showChangeCategorySheet = false
-    @State var selectedFeedForCategoryChange: FeedSource?
+    @State private var expandedCategoryIds: Set<String> = []
+    @State private var showDeleteCategoryDialog = false
+    @State private var showEditCategoryDialog = false
+    @State private var categoryToDelete: String?
+    @State private var categoryToEdit: String?
+    @State private var editedCategoryName: String = ""
+    @State private var showChangeCategorySheet = false
     @State private var showFeedSuggestionsSheet = false
-    @State var showDeleteFeedDialog = false
-    @State var feedToDelete: FeedSource?
-    @State var showDeleteAllFeedsDialog = false
-    @State var categoryToDeleteAllFeeds: String?
+    @State private var showDeleteFeedDialog = false
+    @State private var feedToDelete: FeedSource?
+    @State private var showDeleteAllFeedsDialog = false
+    @State private var categoryToDeleteAllFeeds: String?
 
     let navDrawerState: NavDrawerState
     let onFeedFilterSelected: (FeedFilter) -> Void
@@ -216,8 +215,45 @@ struct SidebarDrawer: View {
         .task {
             for await _ in categoryVMStoreOwner.instance.categoryChangedState {
                 showChangeCategorySheet = false
-                selectedFeedForCategoryChange = nil
             }
+        }
+    }
+
+    func requestCategoryChange(for feedSource: FeedSource) {
+        categoryVMStoreOwner.instance.loadFeedSource(feedSource: feedSource)
+        showChangeCategorySheet = true
+    }
+
+    func requestFeedDeletion(_ feedSource: FeedSource) {
+        feedToDelete = feedSource
+        showDeleteFeedDialog = true
+    }
+
+    func isCategoryExpanded(_ categoryId: String) -> Bool {
+        expandedCategoryIds.contains(categoryId)
+    }
+
+    func requestCategoryEdit(_ category: FeedSourceCategory) {
+        editedCategoryName = category.title
+        categoryToEdit = category.id
+        showEditCategoryDialog = true
+    }
+
+    func requestAllFeedsDeletion(in categoryId: String) {
+        categoryToDeleteAllFeeds = categoryId
+        showDeleteAllFeedsDialog = true
+    }
+
+    func requestCategoryDeletion(_ categoryId: String) {
+        categoryToDelete = categoryId
+        showDeleteCategoryDialog = true
+    }
+
+    func toggleCategoryExpansion(for categoryId: String) {
+        if expandedCategoryIds.contains(categoryId) {
+            expandedCategoryIds.remove(categoryId)
+        } else {
+            expandedCategoryIds.insert(categoryId)
         }
     }
 }

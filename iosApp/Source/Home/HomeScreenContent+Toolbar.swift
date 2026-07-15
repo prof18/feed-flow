@@ -217,14 +217,14 @@ extension HomeContent {
         }
 
         Button {
-            showMarkAllReadDialog = true
+            requestMarkAllReadConfirmation()
         } label: {
             Label(feedFlowStrings.markAllReadButton, systemImage: "text.badge.checkmark")
         }
         .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.markAllReadMenuItem)
 
         Button {
-            showViewOptionsSheet = true
+            requestViewOptions()
         } label: {
             Label(feedFlowStrings.sortAndFilterButton, systemImage: "line.3.horizontal.decrease")
         }
@@ -240,7 +240,7 @@ extension HomeContent {
         Divider()
 
         Button {
-            showClearOldArticlesDialog = true
+            requestClearOldArticlesConfirmation()
         } label: {
             Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
         }

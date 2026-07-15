@@ -155,9 +155,7 @@ struct ReaderModeScreen: View {
                 openInBrowser(url: url)
             }
         )
-        .if(isiOS26OrLater()) { view in
-            view.ignoresSafeArea()
-        }
+        .ignoresSafeArea(edges: isiOS26OrLater() ? .all : [])
         .fullScreenCover(
             isPresented: Binding(
                 get: { imageViewerUrl != nil },

@@ -30,61 +30,72 @@ struct FeedItemView: View {
         if normalizedFeedLayout == .bigImage {
             imageCardView
         } else {
-        VStack(alignment: .leading) {
-            let showUnreadDot = !feedItem.isRead && !feedItemDisplaySettings.isHideUnreadDotEnabled
-            let showFeedSource = !feedItemDisplaySettings.isHideFeedSourceEnabled
-            let showBookmark = feedItem.isBookmarked
+            VStack(alignment: .leading) {
+                let showUnreadDot = !feedItem.isRead && !feedItemDisplaySettings.isHideUnreadDotEnabled
+                let showFeedSource = !feedItemDisplaySettings.isHideFeedSourceEnabled
+                let showBookmark = feedItem.isBookmarked
 
-            if showUnreadDot || showFeedSource || showBookmark {
-                HStack {
-                    if showUnreadDot {
-                        Circle()
-                            .fill(Color.accentColor)
-                            .frame(width: 10, height: 10)
-                            .padding(.top, Spacing.small)
-                    }
+                if showUnreadDot || showFeedSource || showBookmark {
+                    HStack {
+                        if showUnreadDot {
+                            Circle()
+                                .fill(Color.accentColor)
+                                .frame(width: 10, height: 10)
+                                .padding(.top, Spacing.small)
+                        }
 
-                    if showFeedSource {
-                        Text(feedItem.feedSource.title)
-                            .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
-                            .padding(.top, Spacing.small)
-                            .opacity(readTextOpacity)
-                    }
+                        if showFeedSource {
+                            Text(feedItem.feedSource.title)
+                                .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
+                                .padding(.top, Spacing.small)
+                                .opacity(readTextOpacity)
+                        }
 
-                    Spacer()
+                        Spacer()
 
-                    if showBookmark {
-                        Image(systemName: "bookmark.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(Color.accentColor)
-                            .padding(.top, Spacing.small)
+                        if showBookmark {
+                            Image(systemName: "bookmark.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(Color.accentColor)
+                                .padding(.top, Spacing.small)
+                        }
                     }
                 }
-            }
 
-            HStack {
-                titleAndSubtitleCell.frame(maxHeight: .infinity)
-                feedItemImage
-            }
+                HStack {
+                    titleAndSubtitleCell.frame(maxHeight: .infinity)
+                    feedItemImage
+                }
 
-            if let dateString = feedItem.dateString {
-                Text(dateString)
-                    .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
-                    .padding(.bottom, Spacing.small)
-                    .opacity(readTextOpacity)
+                if let dateString = feedItem.dateString {
+                    Text(dateString)
+                        .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
+                        .padding(.bottom, Spacing.small)
+                        .opacity(readTextOpacity)
+                }
             }
-        }
-        .padding(.horizontal, Spacing.regular)
-        .padding(.vertical, Spacing.small)
-        .if(normalizedFeedLayout == .card) { view in
-            view
-                .background(Color(.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .overlay(cardOutline)
-                .shadow(color: cardShadowColor, radius: 3, x: 0, y: 1)
-                .padding(.horizontal, Spacing.small)
-                .padding(.vertical, Spacing.small)
-        }
+            .padding(.horizontal, Spacing.regular)
+            .padding(.vertical, Spacing.small)
+            .background(normalizedFeedLayout == .card ? Color(.systemBackground) : Color.clear)
+            .clipShape(
+                RoundedRectangle(
+                    cornerRadius: normalizedFeedLayout == .card ? 16 : 0,
+                    style: .continuous
+                )
+            )
+            .overlay {
+                if normalizedFeedLayout == .card {
+                    cardOutline
+                }
+            }
+            .shadow(
+                color: normalizedFeedLayout == .card ? cardShadowColor : .clear,
+                radius: normalizedFeedLayout == .card ? 3 : 0,
+                x: 0,
+                y: normalizedFeedLayout == .card ? 1 : 0
+            )
+            .padding(.horizontal, normalizedFeedLayout == .card ? Spacing.small : 0)
+            .padding(.vertical, normalizedFeedLayout == .card ? Spacing.small : 0)
         }
     }
 

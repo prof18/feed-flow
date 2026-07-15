@@ -9,6 +9,7 @@
 import Foundation
 
 struct SnackbarData: Equatable {
+    let id = UUID()
     let title: String
     let subtitle: String?
     var showSnackbar: Bool

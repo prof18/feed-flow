@@ -16,6 +16,7 @@ struct Snackbar: View {
 
     @State private var showBanner = false
     @State private var dismissDirection: SnackbarDismissDirection = .vertical
+    @State private var snackbarSize = CGSize.zero
 
     var body: some View {
         HStack(spacing: Spacing.medium) {
@@ -65,34 +66,48 @@ struct Snackbar: View {
                         abs(value.translation.width) > abs(value.translation.height)
 
                     if horizontalSwipe {
-                        dismissDirection = .horizontal(direction: value.translation.width >= 0 ? 1 : -1)
-                        withAnimation {
-                            showBanner = false
+                        let direction: CGFloat = value.translation.width >= 0 ? 1 : -1
+                        if let id = messageQueue.first?.id {
+                            Task {
+                                await dismissCurrent(
+                                    id: id,
+                                    direction: .horizontal(direction: direction)
+                                )
+                            }
                         }
                     }
                 }
         )
-        .onChange(of: messageQueue) {
-            if let data = self.messageQueue.first {
-                dismissDirection = .vertical
-                withAnimation {
-                    self.snackbarData = data
-                    self.showBanner = true
-                }
+        .task(id: messageQueue.first?.id) {
+            guard let data = messageQueue.first else {
+                showBanner = false
+                return
+            }
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                    withAnimation {
-                        dismissDirection = .vertical
-                        showBanner = false
-                        if !self.messageQueue.isEmpty {
-                            self.messageQueue.removeFirst()
-                        }
-                    }
-                }
+            dismissDirection = .vertical
+            snackbarData = data
+            withAnimation {
+                showBanner = true
+            }
+
+            do {
+                try await Task.sleep(for: .seconds(5))
+            } catch {
+                return
+            }
+
+            await dismissCurrent(id: data.id, direction: .vertical)
+        }
+        .onGeometryChange(for: CGSize.self) { proxy in
+            proxy.size
+        } action: { newSize in
+            if snackbarSize != newSize {
+                snackbarSize = newSize
             }
         }
         .padding(.bottom, Spacing.regular)
         .zIndex(100)
+        .opacity(showBanner ? 1 : 0)
         .offset(showBanner ? .zero : hiddenOffset)
         .padding(.horizontal, Spacing.medium)
     }
@@ -100,9 +115,29 @@ struct Snackbar: View {
     private var hiddenOffset: CGSize {
         switch dismissDirection {
         case .horizontal(let direction):
-            return CGSize(width: direction * UIScreen.main.bounds.width, height: 0)
+            return CGSize(width: direction * (snackbarSize.width + Spacing.medium), height: 0)
         case .vertical:
-            return CGSize(width: 0, height: UIScreen.main.bounds.height)
+            return CGSize(width: 0, height: snackbarSize.height + Spacing.regular)
+        }
+    }
+
+    @MainActor
+    private func dismissCurrent(id: UUID, direction: SnackbarDismissDirection) async {
+        guard messageQueue.first?.id == id else { return }
+
+        dismissDirection = direction
+        withAnimation {
+            showBanner = false
+        }
+
+        do {
+            try await Task.sleep(for: .milliseconds(300))
+        } catch {
+            return
+        }
+
+        if messageQueue.first?.id == id {
+            messageQueue.removeFirst()
         }
     }
 }

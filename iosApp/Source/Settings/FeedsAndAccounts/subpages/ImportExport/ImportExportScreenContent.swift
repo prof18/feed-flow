@@ -76,7 +76,7 @@ private extension ImportExportContent {
     @ViewBuilder private var idleView: some View {
         VStack {
             Form {
-                Section(header: Text(feedFlowStrings.importExportOpmlSectionTitle)) {
+                Section {
                     Text(feedFlowStrings.importExportDescription)
                         .font(.body)
                         .multilineTextAlignment(.leading)
@@ -93,9 +93,11 @@ private extension ImportExportContent {
                         Label(feedFlowStrings.exportFeedsButton, systemImage: "arrow.up.doc")
                     }
                     .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.exportFeeds)
+                } header: {
+                    Text(feedFlowStrings.importExportOpmlSectionTitle)
                 }
 
-                Section(header: Text(feedFlowStrings.importExportArticlesSectionTitle)) {
+                Section {
                     Text(feedFlowStrings.importExportArticlesDescription)
                         .font(.body)
                         .multilineTextAlignment(.leading)
@@ -118,6 +120,8 @@ private extension ImportExportContent {
                         }
                     )
                     .accessibilityIdentifier(ImportExportAccessibilityIdentifiers.exportArticles)
+                } header: {
+                    Text(feedFlowStrings.importExportArticlesSectionTitle)
                 }
             }
             Spacer()
@@ -130,17 +134,18 @@ private extension ImportExportContent {
     private var exportArticlesDialog: some View {
         NavigationStack {
             Form {
-                Section(header: Text(feedFlowStrings.articlesExportFilterTitle)) {
+                Section {
                     Picker(
                         selection: $pendingArticleExportFilter,
                         label: Text(feedFlowStrings.articlesExportFilterTitle)
                     ) {
-                        ForEach(articleExportFilters.indices, id: \.self) { index in
-                            let filter = articleExportFilters[index]
+                        ForEach(articleExportFilters, id: \.self) { filter in
                             Text(articleExportFilterLabel(filter))
                                 .tag(filter)
                         }
                     }
+                } header: {
+                    Text(feedFlowStrings.articlesExportFilterTitle)
                 }
             }
             .navigationTitle(feedFlowStrings.articlesExportFilterTitle)

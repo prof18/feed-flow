@@ -19,7 +19,7 @@ struct ImportExportScreen: View {
 
     @StateObject private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(Deps.shared.getImportExportViewModel())
 
-    @State var feedImportExportState: FeedImportExportState = .Idle()
+    @State private var feedImportExportState: FeedImportExportState = .Idle()
     @State private var sheetToShow: ImportExportSheetToShow?
     @State private var showFileExporter = false
     @State private var exportDocument: ExportDocument?

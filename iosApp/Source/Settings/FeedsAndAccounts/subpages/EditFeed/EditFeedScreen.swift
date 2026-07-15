@@ -25,13 +25,13 @@ struct EditFeedScreen: View {
     @State private var showError = false
     @State private var errorMessage = ""
     @State private var isAddingFeed = false
-    @State var feedURL = ""
-    @State var feedName = ""
-    @State var linkOpeningPreference = LinkOpeningPreference.default
-    @State var isHidden = false
-    @State var isPinned = false
-    @State var showNotificationToggle = false
-    @State var isNotificationEnabled = false
+    @State private var feedURL = ""
+    @State private var feedName = ""
+    @State private var linkOpeningPreference = LinkOpeningPreference.default
+    @State private var isHidden = false
+    @State private var isPinned = false
+    @State private var showNotificationToggle = false
+    @State private var isNotificationEnabled = false
 
     var body: some View {
         @Bindable var appState = appState

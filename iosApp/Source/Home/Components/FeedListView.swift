@@ -116,13 +116,11 @@ struct FeedListView: View {
                                     .listRowSeparator(itemFeedLayout == .list ? .automatic : .hidden)
                                     .listRowInsets(EdgeInsets())
                                     .listRowBackground(Color.clear)
-
-                                    if index == feedState.count - 1 {
-                                        footerButtons
-                                    }
                                 }
+
+                                footerButtons
                             }
-                            .coordinateSpace(name: coordinateSpaceName)
+                            .coordinateSpace(.named(coordinateSpaceName))
                             .listStyle(PlainListStyle())
                             .scrollContentBackground(.hidden)
                             .background(feedContentBackground(for: itemFeedLayout))
@@ -194,7 +192,7 @@ struct FeedListView: View {
                 footerButtons
             }
         }
-        .coordinateSpace(name: coordinateSpaceName)
+        .coordinateSpace(.named(coordinateSpaceName))
         .background(feedContentBackground(for: feedLayout))
         .safeAreaPadding(.horizontal, Spacing.regular)
         .safeAreaPadding(.top, Spacing.regular)

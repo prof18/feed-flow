@@ -191,9 +191,11 @@ private extension HomeContent {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isCompactPhone)
-            .if(shouldUseSystemNavigationTitle) { view in
-                view.navigationTitle(getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount))
-            }
+            .navigationTitle(
+                shouldUseSystemNavigationTitle
+                    ? getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount)
+                    : ""
+            )
             .toolbar {
                 if isCompactPhone {
                     makeCompactPhoneToolbarContent(proxy: proxy)

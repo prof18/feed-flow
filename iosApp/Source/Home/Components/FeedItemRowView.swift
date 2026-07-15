@@ -95,13 +95,13 @@ struct FeedItemRowView: View {
     .id(feedItem.id)
     .listRowInsets(EdgeInsets())
     .hoverEffect()
-    .if(allowsSwipeActions && swipeActions.leftSwipeAction != .none) { view in
-      view.swipeActions(edge: .trailing) {
+    .swipeActions(edge: .trailing) {
+      if allowsSwipeActions && swipeActions.leftSwipeAction != .none {
         swipeActionButton(for: swipeActions.leftSwipeAction)
       }
     }
-    .if(allowsSwipeActions && swipeActions.rightSwipeAction != .none) { view in
-      view.swipeActions(edge: .leading) {
+    .swipeActions(edge: .leading) {
+      if allowsSwipeActions && swipeActions.rightSwipeAction != .none {
         swipeActionButton(for: swipeActions.rightSwipeAction)
       }
     }

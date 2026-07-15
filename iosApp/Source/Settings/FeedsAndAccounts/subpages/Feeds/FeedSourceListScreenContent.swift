@@ -357,8 +357,8 @@ private struct FeedSourceListItem: View {
                 trailing: .zero
             )
         )
-        .if(!isRenameEnabled) { view in
-            view.contextMenu {
+        .contextMenu {
+            if !isRenameEnabled {
                 if feedSource.fetchFailed {
                     Label(
                         feedFlowStrings.feedFetchFailedTooltipShort,

@@ -5,13 +5,4 @@ extension View {
         onAppear { perform(value) }
             .onChange(of: value) { perform($1) }
     }
-
-    @ViewBuilder
-    func `if`<NewView: View>(_ condition: Bool, apply: (Self) -> NewView) -> some View {
-        if condition {
-            apply(self)
-        } else {
-            self
-        }
-    }
 }

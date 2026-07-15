@@ -10,9 +10,6 @@ import FeedFlowKit
 import SwiftUI
 
 struct EditFeedScreenContent: View {
-    @Environment(\.presentationMode)
-    private var presentationMode
-
     @State private var showCategorySheet = false
     @State private var showDeleteFeedDialog = false
     @FocusState private var isTextFieldFocused: Bool
@@ -49,7 +46,7 @@ struct EditFeedScreenContent: View {
                         feedFlowStrings.feedName,
                         text: $feedName
                     )
-                    .disableAutocorrection(true)
+                    .autocorrectionDisabled()
                     .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.nameInput)
                     .hoverEffect()
                     .focused($isTextFieldFocused)
@@ -64,7 +61,7 @@ struct EditFeedScreenContent: View {
                     TextField(feedFlowStrings.feedUrl, text: $feedURL)
                         .keyboardType(.URL)
                         .textContentType(.URL)
-                        .disableAutocorrection(true)
+                        .autocorrectionDisabled()
                         .hoverEffect()
                         .focused($isTextFieldFocused)
                 },

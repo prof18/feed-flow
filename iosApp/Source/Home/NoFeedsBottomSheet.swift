@@ -10,12 +10,10 @@ import FeedFlowKit
 import SwiftUI
 
 struct NoFeedsBottomSheet: View {
-    @Environment(\.presentationMode)
-    private var presentationMode
-    @Environment(AppState.self)
-    private var appState
     @Environment(\.dismiss)
     private var dismiss
+    @Environment(AppState.self)
+    private var appState
 
     let onAddFeedClick: () -> Void
     let onImportExportClick: () -> Void
@@ -45,7 +43,7 @@ struct NoFeedsBottomSheet: View {
                     }
 
                     Button {
-                        self.dismiss()
+                        dismiss()
                         appState.navigate(route: CommonViewRoute.accounts)
                     } label: {
                         Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
@@ -68,7 +66,7 @@ struct NoFeedsBottomSheet: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        self.presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     } label: {
                         Text(feedFlowStrings.actionDone).bold()
                     }

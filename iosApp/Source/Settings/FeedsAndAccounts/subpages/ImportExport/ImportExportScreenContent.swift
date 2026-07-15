@@ -10,8 +10,8 @@ import FeedFlowKit
 import SwiftUI
 
 struct ImportExportContent: View {
-    @Environment(\.presentationMode)
-    var presentationMode
+    @Environment(\.dismiss)
+    private var dismiss
 
     @Binding var feedImportExportState: FeedImportExportState
     @Binding var articleExportFilter: ArticleExportFilter
@@ -244,7 +244,7 @@ private extension ImportExportContent {
             Button(
                 action: {
                     onDoneClick()
-                    self.presentationMode.wrappedValue.dismiss()
+                    dismiss()
                 },
                 label: {
                     Text(feedFlowStrings.doneButton)
@@ -272,7 +272,7 @@ private extension ImportExportContent {
             Button(
                 action: {
                     onDoneClick()
-                    self.presentationMode.wrappedValue.dismiss()
+                    dismiss()
                 },
                 label: {
                     Text(feedFlowStrings.doneButton)
@@ -314,7 +314,7 @@ private extension ImportExportContent {
             Button(
                 action: {
                     onDoneClick()
-                    self.presentationMode.wrappedValue.dismiss()
+                    dismiss()
                 },
                 label: {
                     Text(feedFlowStrings.doneButton)
@@ -341,7 +341,7 @@ private extension ImportExportContent {
         Button(
             action: {
                 onDoneClick()
-                self.presentationMode.wrappedValue.dismiss()
+                dismiss()
             },
             label: {
                 Text(feedFlowStrings.doneButton)
@@ -382,7 +382,7 @@ private extension ImportExportContent {
 
         Button {
             onDoneClick()
-            self.presentationMode.wrappedValue.dismiss()
+            dismiss()
         } label: {
             Text(feedFlowStrings.doneButton)
                 .frame(maxWidth: .infinity)
@@ -418,7 +418,7 @@ private extension ImportExportContent {
 
         Button {
             onDoneClick()
-            self.presentationMode.wrappedValue.dismiss()
+            dismiss()
         } label: {
             Text(feedFlowStrings.doneButton)
                 .frame(maxWidth: .infinity)

@@ -10,8 +10,8 @@ import FeedFlowKit
 import SwiftUI
 
 struct AddFeedScreenContent: View {
-    @Environment(\.presentationMode)
-    private var presentationMode
+    @Environment(\.dismiss)
+    private var dismiss
 
     @State private var showCategorySheet = false
     @FocusState private var isTextFieldFocused: Bool
@@ -41,7 +41,7 @@ struct AddFeedScreenContent: View {
                     TextField(feedFlowStrings.feedUrl, text: $feedURL)
                         .keyboardType(.URL)
                         .textContentType(.URL)
-                        .disableAutocorrection(true)
+                        .autocorrectionDisabled()
                         .hoverEffect()
                         .focused($isTextFieldFocused)
                         .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.urlInput)
@@ -163,7 +163,7 @@ struct AddFeedScreenContent: View {
             ToolbarItemGroup(placement: .navigationBarLeading) {
                 if showCloseButton {
                     Button(action: {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }, label: {
                         if isiOS26OrLater() {
                             Image(systemName: "xmark")

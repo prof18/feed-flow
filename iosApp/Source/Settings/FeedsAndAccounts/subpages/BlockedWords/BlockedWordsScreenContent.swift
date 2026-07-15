@@ -27,7 +27,7 @@ struct BlockedWordsScreenContent: View {
                 Section(feedFlowStrings.addWordPlaceholder) {
                 HStack {
                     TextField(feedFlowStrings.addWordPlaceholder, text: $newWord)
-                        .disableAutocorrection(true)
+                        .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                         .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.input)
                         .onSubmit {

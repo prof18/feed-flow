@@ -52,7 +52,7 @@ struct FreshRssSyncContent: View {
                 TextField(feedFlowStrings.accountTextFieldServerUrl, text: $serverUrl)
                     .textContentType(.URL)
                     .keyboardType(.URL)
-                    .disableAutocorrection(true)
+                    .autocorrectionDisabled()
                     .accessibilityIdentifier(AccountAccessibilityIdentifiers.serverUrlInput)
             },
             header: {
@@ -71,7 +71,7 @@ struct FreshRssSyncContent: View {
             content: {
                 TextField(feedFlowStrings.accountTextFieldUsername, text: $username)
                     .textContentType(.username)
-                    .disableAutocorrection(true)
+                    .autocorrectionDisabled()
                     .accessibilityIdentifier(AccountAccessibilityIdentifiers.usernameInput)
             },
             header: {

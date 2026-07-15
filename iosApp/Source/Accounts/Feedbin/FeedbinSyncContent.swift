@@ -51,7 +51,7 @@ struct FeedbinSyncContent: View {
                 TextField(feedFlowStrings.accountTextFieldUsername, text: $username)
                     .textContentType(.username)
                     .keyboardType(.emailAddress)
-                    .disableAutocorrection(true)
+                    .autocorrectionDisabled()
                     .accessibilityIdentifier(AccountAccessibilityIdentifiers.usernameInput)
             },
             header: {

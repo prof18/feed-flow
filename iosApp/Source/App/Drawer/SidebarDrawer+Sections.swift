@@ -67,13 +67,10 @@ extension SidebarDrawer {
             onEdit: onEditFeedClick,
             onPin: onPinFeedClick,
             onChangeCategory: { feedSource in
-                selectedFeedForCategoryChange = feedSource
-                categoryVMStoreOwner.instance.loadFeedSource(feedSource: feedSource)
-                showChangeCategorySheet = true
+                requestCategoryChange(for: feedSource)
             },
             onDelete: { feedSource in
-                feedToDelete = feedSource
-                showDeleteFeedDialog = true
+                requestFeedDeletion(feedSource)
             },
             onOpenWebsite: { url in
                 if browserSelector.openInAppBrowser() {
@@ -100,7 +97,7 @@ extension SidebarDrawer {
     ) -> some View {
         if let categoryItem = categoryItem(for: categoryWrapper) {
             let categoryId = categoryIdentifier(for: categoryWrapper)
-            let isExpanded = expandedCategoryIds.contains(categoryId)
+            let isExpanded = isCategoryExpanded(categoryId)
             let isSelected = selectedSidebarItem == .category(id: categoryItem.category.id)
 
             Group {
@@ -124,7 +121,7 @@ extension SidebarDrawer {
     func makeUncategorizedDropdown(drawerItems: [DrawerItem]) -> some View {
         if !drawerItems.isEmpty {
             let categoryId = categoryIdentifier(for: nil)
-            let isExpanded = expandedCategoryIds.contains(categoryId)
+            let isExpanded = isCategoryExpanded(categoryId)
             let unreadCount = drawerItems
                 .compactMap { $0 as? DrawerItem.DrawerFeedSource }
                 .map(\.unreadCount)
@@ -286,9 +283,7 @@ extension SidebarDrawer {
     @ViewBuilder
     func categoryContextMenu(categoryItem: DrawerItem.DrawerCategory) -> some View {
         Button {
-            editedCategoryName = categoryItem.category.title
-            categoryToEdit = categoryItem.category.id
-            showEditCategoryDialog = true
+            requestCategoryEdit(categoryItem.category)
         } label: {
             Label(feedFlowStrings.renameCategory, systemImage: "pencil")
         }
@@ -305,28 +300,18 @@ extension SidebarDrawer {
         Divider()
 
         Button(role: .destructive) {
-            categoryToDeleteAllFeeds = categoryItem.category.id
-            showDeleteAllFeedsDialog = true
+            requestAllFeedsDeletion(in: categoryItem.category.id)
         } label: {
             Label(feedFlowStrings.deleteAllFeedsInCategory, systemImage: "trash")
         }
         .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryMenuDeleteAllFeeds)
 
         Button(role: .destructive) {
-            categoryToDelete = categoryItem.category.id
-            showDeleteCategoryDialog = true
+            requestCategoryDeletion(categoryItem.category.id)
         } label: {
             Label(feedFlowStrings.deleteCategory, systemImage: "trash")
         }
         .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryMenuDeleteCategory)
-    }
-
-    func toggleCategoryExpansion(for categoryId: String) {
-        if expandedCategoryIds.contains(categoryId) {
-            expandedCategoryIds.remove(categoryId)
-        } else {
-            expandedCategoryIds.insert(categoryId)
-        }
     }
 
     func categoryIdentifier(

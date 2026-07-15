@@ -45,10 +45,10 @@ struct HomeContent: View {
     @Binding var feedItemDisplaySettings: FeedItemDisplaySettings
     @Binding var viewMenuState: HomeViewMenuState
 
-    @State var showScrollToTop = false
-    @State var showMarkAllReadDialog = false
-    @State var showClearOldArticlesDialog = false
-    @State var showViewOptionsSheet = false
+    @State private var showScrollToTop = false
+    @State private var showMarkAllReadDialog = false
+    @State private var showClearOldArticlesDialog = false
+    @State private var showViewOptionsSheet = false
 
     let onRefresh: () -> Void
     let onMarkAllReadClick: () -> Void
@@ -255,5 +255,19 @@ private extension HomeContent {
             FeedSuggestionsScreen()
                 .environment(browserSelector)
         }
+    }
+}
+
+extension HomeContent {
+    func requestMarkAllReadConfirmation() {
+        showMarkAllReadDialog = true
+    }
+
+    func requestClearOldArticlesConfirmation() {
+        showClearOldArticlesDialog = true
+    }
+
+    func requestViewOptions() {
+        showViewOptionsSheet = true
     }
 }

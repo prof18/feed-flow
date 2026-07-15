@@ -24,44 +24,46 @@ struct CategoriesSection: View {
     @State private var editedCategoryName: String = ""
 
     var body: some View {
-        if !categories.isEmpty {
+        let categoryItems = categories.compactMap { $0 as? DrawerItem.DrawerCategory }
+
+        if !categoryItems.isEmpty {
             Section(
                 content: {
-                    ForEach(categories, id: \.self) { drawerItem in
-                        if let categoryItem = drawerItem as? DrawerItem.DrawerCategory {
+                    ForEach(categoryItems, id: \.category.id) { categoryItem in
+                        Button {
+                            onSelect(categoryItem)
+                            onFeedFilterSelected(
+                                FeedFilter.Category(feedCategory: categoryItem.category))
+                        } label: {
                             HStack {
                                 Label(categoryItem.category.title, systemImage: "tag")
                                 Spacer()
                                 if categoryItem.unreadCount > 0 {
                                     Text("\(categoryItem.unreadCount)")
                                         .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .foregroundStyle(.secondary)
                                         .padding(.horizontal, 8)
                                         .background(Color.secondary.opacity(0.2))
                                         .clipShape(Capsule())
                                 }
                             }
                             .contentShape(Rectangle())
-                            .onTapGesture {
-                                onSelect(categoryItem)
-                                onFeedFilterSelected(
-                                    FeedFilter.Category(feedCategory: categoryItem.category))
+                        }
+                        .buttonStyle(.plain)
+                        .contextMenu {
+                            Button {
+                                editedCategoryName = categoryItem.category.title
+                                categoryToEdit = categoryItem.category.id
+                                showEditCategoryDialog = true
+                            } label: {
+                                Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
                             }
-                            .contextMenu {
-                                Button {
-                                    editedCategoryName = categoryItem.category.title
-                                    categoryToEdit = categoryItem.category.id
-                                    showEditCategoryDialog = true
-                                } label: {
-                                    Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
-                                }
 
-                                Button(role: .destructive) {
-                                    categoryToDelete = categoryItem.category.id
-                                    showDeleteCategoryDialog = true
-                                } label: {
-                                    Label(feedFlowStrings.deleteCategory, systemImage: "trash")
-                                }
+                            Button(role: .destructive) {
+                                categoryToDelete = categoryItem.category.id
+                                showDeleteCategoryDialog = true
+                            } label: {
+                                Label(feedFlowStrings.deleteCategory, systemImage: "trash")
                             }
                         }
                     }

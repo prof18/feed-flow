@@ -22,19 +22,21 @@ struct FeedSourceDrawerItem: View {
     let onMarkAllRead: (FeedSource) -> Void
 
     var body: some View {
-        HStack {
-            if drawerItem.feedSource.fetchFailed {
-                makeFeedFailureIcon()
-            }
-            makeFeedSourceIcon(logoUrl: drawerItem.feedSource.logoUrl)
-            makeFeedSourceTitle(title: drawerItem.feedSource.title)
-            Spacer()
-            makeUnreadCountBadge(count: drawerItem.unreadCount)
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
+        Button {
             onSelect(drawerItem)
+        } label: {
+            HStack {
+                if drawerItem.feedSource.fetchFailed {
+                    makeFeedFailureIcon()
+                }
+                makeFeedSourceIcon(logoUrl: drawerItem.feedSource.logoUrl)
+                makeFeedSourceTitle(title: drawerItem.feedSource.title)
+                Spacer()
+                makeUnreadCountBadge(count: drawerItem.unreadCount)
+            }
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
         .accessibilityIdentifier(DrawerAccessibilityIdentifiers.feedSource(drawerItem.feedSource.id))
         .contextMenu {
             makeFeedSourceContextMenu(feedSource: drawerItem.feedSource)

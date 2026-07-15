@@ -18,24 +18,26 @@ struct TimelineSection: View {
 
     var body: some View {
         if let timelineItem = timeline.first as? DrawerItem.Timeline {
-            HStack {
-                Label(feedFlowStrings.drawerTitleTimeline, systemImage: "newspaper")
-                Spacer()
-                if timelineItem.unreadCount > 0 {
-                    Text("\(timelineItem.unreadCount)")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.secondary.opacity(0.15))
-                        .clipShape(Capsule())
-                }
-            }
-            .contentShape(Rectangle())
-            .onTapGesture {
+            Button {
                 onSelect()
                 onFeedFilterSelected(FeedFilter.Timeline())
+            } label: {
+                HStack {
+                    Label(feedFlowStrings.drawerTitleTimeline, systemImage: "newspaper")
+                    Spacer()
+                    if timelineItem.unreadCount > 0 {
+                        Text("\(timelineItem.unreadCount)")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.secondary.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                }
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
             .tag(SidebarSelection.timeline)
             .accessibilityIdentifier(DrawerAccessibilityIdentifiers.timeline)
             .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))

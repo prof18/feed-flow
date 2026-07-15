@@ -406,32 +406,32 @@ struct CategoryChip: View {
     }
 
     var body: some View {
-        HStack(spacing: 6) {
-            if isSelected {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(usePrimaryColor ? .accentColor : .primary)
-            }
+        Button(action: onTap) {
+            HStack(spacing: 6) {
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(usePrimaryColor ? Color.accentColor : Color.primary)
+                }
 
-            Text(label)
-                .font(.subheadline)
-                .fontWeight(isSelected ? .semibold : .medium)
-                .foregroundColor(isSelected && usePrimaryColor ? .accentColor : .primary)
+                Text(label)
+                    .font(.subheadline)
+                    .fontWeight(isSelected ? .semibold : .medium)
+                    .foregroundStyle(isSelected && usePrimaryColor ? Color.accentColor : Color.primary)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(backgroundColor)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(borderColor, lineWidth: isSelected ? 2 : 1)
+            )
+            .contentShape(Rectangle())
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(backgroundColor)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(borderColor, lineWidth: isSelected ? 2 : 1)
-        )
-        .contentShape(Rectangle())
-        .onTapGesture {
-            onTap()
-        }
+        .buttonStyle(.plain)
         .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.categoryChip(label))
         .contextMenu {
             if let onEditTap = onEditTap {

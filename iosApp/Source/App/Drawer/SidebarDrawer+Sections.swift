@@ -133,26 +133,28 @@ extension SidebarDrawer {
 
             Group {
                 HStack(spacing: Spacing.xsmall) {
-                    HStack {
-                        Image(systemName: "folder")
-                            .foregroundStyle(.secondary)
-                        Text(feedFlowStrings.noCategory)
-                        Spacer()
-                        if unreadCount > 0 {
-                            Text("\(unreadCount)")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.secondary.opacity(0.15))
-                                .clipShape(Capsule())
-                        }
-                    }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
+                    Button {
                         self.selectedSidebarItem = .category(id: categoryId)
                         self.onFeedFilterSelected(FeedFilter.Uncategorized())
+                    } label: {
+                        HStack {
+                            Image(systemName: "folder")
+                                .foregroundStyle(.secondary)
+                            Text(feedFlowStrings.noCategory)
+                            Spacer()
+                            if unreadCount > 0 {
+                                Text("\(unreadCount)")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.secondary.opacity(0.15))
+                                    .clipShape(Capsule())
+                            }
+                        }
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
                     .foregroundStyle(Color.primary)
                     .accessibilityIdentifier(DrawerAccessibilityIdentifiers.category(nil))
 
@@ -179,26 +181,28 @@ extension SidebarDrawer {
         isSelected: Bool
     ) -> some View {
         HStack(spacing: Spacing.xsmall) {
-            HStack {
-                Image(systemName: "folder")
-                    .foregroundStyle(.secondary)
-                Text(categoryItem.category.title)
-                Spacer()
-                if categoryItem.unreadCount > 0 {
-                    Text("\(categoryItem.unreadCount)")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.secondary.opacity(0.15))
-                        .clipShape(Capsule())
-                }
-            }
-            .contentShape(Rectangle())
-            .onTapGesture {
+            Button {
                 self.selectedSidebarItem = .category(id: categoryItem.category.id)
                 self.onFeedFilterSelected(FeedFilter.Category(feedCategory: categoryItem.category))
+            } label: {
+                HStack {
+                    Image(systemName: "folder")
+                        .foregroundStyle(.secondary)
+                    Text(categoryItem.category.title)
+                    Spacer()
+                    if categoryItem.unreadCount > 0 {
+                        Text("\(categoryItem.unreadCount)")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.secondary.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                }
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
             .foregroundStyle(Color.primary)
             .contextMenu {
                 categoryContextMenu(categoryItem: categoryItem)
@@ -267,14 +271,16 @@ extension SidebarDrawer {
 
     @ViewBuilder
     func expansionToggle(isExpanded: Bool, action: @escaping () -> Void) -> some View {
-        Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-            .font(.system(size: 12, weight: .semibold))
-            .foregroundStyle(.secondary)
-            .padding(.leading, Spacing.small)
-            .padding(.trailing, Spacing.small)
-            .padding(.vertical, Spacing.xxsmall)
-            .contentShape(Rectangle())
-            .onTapGesture(perform: action)
+        Button(action: action) {
+            Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .padding(.leading, Spacing.small)
+                .padding(.trailing, Spacing.small)
+                .padding(.vertical, Spacing.xxsmall)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder

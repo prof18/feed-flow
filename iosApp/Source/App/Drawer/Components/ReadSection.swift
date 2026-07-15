@@ -18,15 +18,17 @@ struct ReadSection: View {
 
     var body: some View {
         if !read.isEmpty {
-            HStack {
-                Label(feedFlowStrings.drawerTitleRead, systemImage: "text.badge.checkmark")
-                Spacer()
-            }
-            .contentShape(Rectangle())
-            .onTapGesture {
+            Button {
                 onSelect()
                 onFeedFilterSelected(FeedFilter.Read())
+            } label: {
+                HStack {
+                    Label(feedFlowStrings.drawerTitleRead, systemImage: "text.badge.checkmark")
+                    Spacer()
+                }
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
             .tag(SidebarSelection.read)
             .accessibilityIdentifier(DrawerAccessibilityIdentifiers.read)
             .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))

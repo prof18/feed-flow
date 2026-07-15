@@ -14,14 +14,14 @@ struct FeedSuggestionsSection: View {
     let onFeedSuggestionsClick: () -> Void
 
     var body: some View {
-        HStack {
-            Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb")
-            Spacer()
+        Button(action: onFeedSuggestionsClick) {
+            HStack {
+                Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb")
+                Spacer()
+            }
+            .contentShape(Rectangle())
         }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            onFeedSuggestionsClick()
-        }
+        .buttonStyle(.plain)
         .listRowBackground(sidebarSelectionBackground(isSelected: false, isCompact: isCompact))
     }
 }

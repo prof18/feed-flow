@@ -342,6 +342,8 @@
     <string name="increase_line_height_button_content_description">Increase line height</string>
     <string name="decrease_line_height_button_content_description">Decrease line height</string>
     <string name="scroll_to_top_button_content_description">Scroll to top</string>
+    <string name="expand_category_button_content_description">Expand %s</string>
+    <string name="collapse_category_button_content_description">Collapse %s</string>
     <string name="previous_article">Previous article</string>
     <string name="next_article">Next article</string>
     <string name="next">Next</string>

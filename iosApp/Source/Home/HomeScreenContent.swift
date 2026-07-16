@@ -170,6 +170,7 @@ private extension HomeContent {
             onMarkAllAsReadClick: onMarkAllReadClick,
             openDrawer: openDrawer,
             onScrollPositionChanged: { shouldShow in
+                guard showScrollToTop != shouldShow else { return }
                 withAnimation(.easeInOut(duration: 0.3)) {
                     showScrollToTop = shouldShow
                 }

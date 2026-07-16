@@ -18,8 +18,6 @@ struct FeedSourceListScreenContent: View {
     @Environment(BrowserSelector.self)
     private var browserSelector
 
-    @State private var showAddFeed = false
-
     @State private var showDeleteAllFeedsDialog = false
     @State private var feedSourcesToDelete: [FeedSource]?
 
@@ -39,8 +37,7 @@ struct FeedSourceListScreenContent: View {
             if feedState.isEmpty() {
                 emptyView
             } else {
-                feedSourcesWithoutCategoryList
-                feedSourcesWithCategoryList
+                feedSourcesList
             }
             Spacer()
         }
@@ -48,12 +45,6 @@ struct FeedSourceListScreenContent: View {
         .scrollContentBackground(.hidden)
         .background(Color.secondaryBackgroundColor)
         .navigationTitle(Text(feedFlowStrings.feedsTitle))
-        .sheet(isPresented: $showAddFeed) {
-            AddFeedScreen()
-                .environment(appState)
-                .environment(browserSelector)
-                .toggleStyle(BlueToggleStyle())
-        }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 NavigationLink(destination: AddFeedScreen()
@@ -88,45 +79,10 @@ struct FeedSourceListScreenContent: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    @ViewBuilder private var feedSourcesWithoutCategoryList: some View {
-        if !feedState.feedSourcesWithoutCategory.isEmpty {
-            List {
-                Section {
-                    ForEach(feedState.feedSourcesWithoutCategory, id: \.self.id) { feedSource in
-                        FeedSourceListItem(
-                            feedSource: feedSource,
-                            deleteFeedSource: { source in
-                                feedToDelete = source
-                                showDeleteFeedDialog = true
-                            },
-                            renameFeedSource: renameFeedSource
-                        )
-                        .id(feedSource.id)
-                        .listRowInsets(EdgeInsets())
-                    }
-                    .onMove(
-                        perform: feedSourcesMoveAction(Array(feedState.feedSourcesWithoutCategory))
-                    )
-                } header: {
-                    Text(feedFlowStrings.noCategory)
-                        .contextMenu {
-                            Button(role: .destructive) {
-                                feedSourcesToDelete = Array(feedState.feedSourcesWithoutCategory)
-                                showDeleteAllFeedsDialog = true
-                            } label: {
-                                Label(
-                                    feedFlowStrings.deleteAllFeedsInCategory,
-                                    systemImage: "trash"
-                                )
-                            }
-                        }
-                }
-            }
-        }
-    }
-
-    @ViewBuilder private var feedSourcesWithCategoryList: some View {
+    private var feedSourcesList: some View {
         List {
+            feedSourcesWithoutCategorySection
+
             ForEach(feedState.feedSourcesWithCategory, id: \.self.categoryId) { feedSourceState in
                 feedSourceCategoryDisclosure(feedSourceState)
             }
@@ -165,6 +121,41 @@ struct FeedSourceListScreenContent: View {
             }
         } message: {
             Text(feedFlowStrings.deleteFeedConfirmationMessage)
+        }
+    }
+
+    @ViewBuilder private var feedSourcesWithoutCategorySection: some View {
+        if !feedState.feedSourcesWithoutCategory.isEmpty {
+            Section {
+                ForEach(feedState.feedSourcesWithoutCategory, id: \.self.id) { feedSource in
+                    FeedSourceListItem(
+                        feedSource: feedSource,
+                        deleteFeedSource: { source in
+                            feedToDelete = source
+                            showDeleteFeedDialog = true
+                        },
+                        renameFeedSource: renameFeedSource
+                    )
+                    .id(feedSource.id)
+                    .listRowInsets(EdgeInsets())
+                }
+                .onMove(
+                    perform: feedSourcesMoveAction(Array(feedState.feedSourcesWithoutCategory))
+                )
+            } header: {
+                Text(feedFlowStrings.noCategory)
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            feedSourcesToDelete = Array(feedState.feedSourcesWithoutCategory)
+                            showDeleteAllFeedsDialog = true
+                        } label: {
+                            Label(
+                                feedFlowStrings.deleteAllFeedsInCategory,
+                                systemImage: "trash"
+                            )
+                        }
+                    }
+            }
         }
     }
 

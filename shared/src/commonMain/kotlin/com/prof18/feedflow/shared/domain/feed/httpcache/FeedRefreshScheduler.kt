@@ -10,12 +10,14 @@ import kotlin.time.Duration.Companion.seconds
 /**
  * Computes when a feed should be fetched again, based on the caching headers of the
  * last HTTP response. Ladder, first match wins:
- * 1. Cache-Control max-age
- * 2. Expires - Date
- * 3. RFC 9111 heuristic: 10% of the time elapsed since Last-Modified
- * 4. Default interval
- * The result is always clamped between [MIN_INTERVAL] and [MAX_INTERVAL],
- * so servers can only ever stretch the polling window, never tighten it.
+ * 1. Cache-Control max-age or Expires - Date, capped at [MIN_INTERVAL]: servers routinely
+ *    publish inflated max-age values (days or even a year) on feeds they update daily,
+ *    so explicit freshness can never stretch the window, only confirm the floor.
+ * 2. RFC 9111 heuristic: 10% of the time elapsed since Last-Modified. An actively
+ *    publishing feed has a recent Last-Modified, so only genuinely quiet feeds get
+ *    a long window here.
+ * 3. Default interval
+ * The result is always clamped between [MIN_INTERVAL] and [MAX_INTERVAL].
  */
 internal object FeedRefreshScheduler {
 
@@ -25,12 +27,14 @@ internal object FeedRefreshScheduler {
         fallbackLastModified: String? = null,
     ): Long {
         val explicitFreshness = responseInfo?.let { explicitFreshness(info = it, now = now) }
-        val interval = explicitFreshness
-            ?: heuristicFreshness(
+        val interval = if (explicitFreshness != null) {
+            explicitFreshness.coerceAtMost(MIN_INTERVAL)
+        } else {
+            heuristicFreshness(
                 lastModified = responseInfo?.lastModified ?: fallbackLastModified,
                 now = now,
-            )
-            ?: MIN_INTERVAL
+            ) ?: MIN_INTERVAL
+        }
         return now + interval.coerceIn(MIN_INTERVAL, MAX_INTERVAL).inWholeMilliseconds
     }
 

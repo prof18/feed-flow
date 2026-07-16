@@ -179,13 +179,16 @@ struct RegularView: View {
                 .toggleStyle(BlueToggleStyle())
         }
         .sheet(isPresented: $showSidebarSettingsSheet) {
-            SettingsScreen(fetchFeeds: { homeViewModel.getNewFeeds(isFirstLaunch: false) })
+            SettingsScreen(fetchFeeds: { homeViewModel.getNewFeeds(isFirstLaunch: false, forceRefresh: false) })
                 .environment(appState)
                 .environment(browserSelector)
                 .preferredColorScheme(appState.colorScheme)
         }
         .sheet(isPresented: $showImportExportSheet) {
-            ImportExportScreen(showCloseButton: true, fetchFeeds: { homeViewModel.getNewFeeds(isFirstLaunch: false) })
+            ImportExportScreen(
+                showCloseButton: true,
+                fetchFeeds: { homeViewModel.getNewFeeds(isFirstLaunch: false, forceRefresh: false) }
+            )
                 .environment(appState)
         }
         .sheet(isPresented: $showEditFeedSheet) {

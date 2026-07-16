@@ -93,7 +93,7 @@ struct HomeScreen: View {
             feedItemDisplaySettings: $feedItemDisplaySettings,
             viewMenuState: $viewMenuState,
             onRefresh: {
-                homeViewModel.getNewFeeds(isFirstLaunch: false)
+                homeViewModel.getNewFeeds(isFirstLaunch: false, forceRefresh: true)
             },
             onMarkAllReadClick: {
                 homeViewModel.markAllRead()

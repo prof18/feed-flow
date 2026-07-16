@@ -100,7 +100,7 @@ extension SidebarDrawer {
             let isExpanded = isCategoryExpanded(categoryId)
             let isSelected = selectedSidebarItem == .category(id: categoryItem.category.id)
 
-            Group {
+            Section {
                 categoryHeader(
                     categoryItem: categoryItem,
                     categoryId: categoryId,
@@ -128,7 +128,7 @@ extension SidebarDrawer {
                 .reduce(0 as Int64, +)
             let isSelected = selectedSidebarItem == .category(id: categoryId)
 
-            Group {
+            Section {
                 HStack(spacing: Spacing.xsmall) {
                     Button {
                         self.selectedSidebarItem = .category(id: categoryId)
@@ -276,7 +276,11 @@ extension SidebarDrawer {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(label)
+        .accessibilityLabel(
+            isExpanded
+                ? feedFlowStrings.collapseCategoryButtonContentDescription(label)
+                : feedFlowStrings.expandCategoryButtonContentDescription(label)
+        )
     }
 
     @ViewBuilder

@@ -33,7 +33,10 @@ private struct IOS26ScrollToTopView: View {
                 Button {
                     onScrollToTop()
                 } label: {
-                    Label("Scroll to Top", systemImage: "arrow.up.circle.fill")
+                    Label(
+                        feedFlowStrings.scrollToTopButtonContentDescription,
+                        systemImage: "arrow.up.circle.fill"
+                    )
                         .foregroundStyle(.primary)
                         .labelStyle(.iconOnly)
                         .fontWeight(.medium)
@@ -54,7 +57,10 @@ private struct LegacyScrollToTopView: View {
         Button {
             onScrollToTop()
         } label: {
-            Label("Scroll to Top", systemImage: "arrow.up.circle.fill")
+            Label(
+                feedFlowStrings.scrollToTopButtonContentDescription,
+                systemImage: "arrow.up.circle.fill"
+            )
                 .foregroundStyle(.primary)
                 .labelStyle(.iconOnly)
                 .fontWeight(.medium)

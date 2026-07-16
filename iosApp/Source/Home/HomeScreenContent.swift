@@ -67,6 +67,7 @@ struct HomeContent: View {
     let openDrawer: () -> Void
     let onFeedOrderChange: (FeedOrder) -> Void
     let onShowReadArticlesTimelineChange: (Bool) -> Void
+    let onSettingsDone: () -> Void
 
     var isCompactPhone: Bool {
         horizontalSizeClass == .compact && UIDevice.current.userInterfaceIdiom == .phone
@@ -218,7 +219,10 @@ private extension HomeContent {
     func sheetContent(_ item: HomeSheetToShow) -> some View {
         switch item {
         case .settings:
-            SettingsScreen(fetchFeeds: onRefresh)
+            SettingsScreen(
+                fetchFeeds: onRefresh,
+                onDone: onSettingsDone
+            )
                 .environment(appState)
                 .environment(browserSelector)
                 .preferredColorScheme(appState.colorScheme)

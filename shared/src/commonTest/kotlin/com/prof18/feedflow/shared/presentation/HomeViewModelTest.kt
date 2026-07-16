@@ -1232,6 +1232,31 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `reloadFeedState reloads the current database snapshot`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        databaseHelper.insertFeedItems(
+            listOf(
+                buildFeedItem(
+                    id = "item-1",
+                    title = "Item 1",
+                    pubDateMillis = 1000,
+                    source = feedSource,
+                ),
+            ),
+            lastSyncTimestamp = 0,
+        )
+
+        viewModel.reloadFeedState()
+        advanceUntilIdle()
+
+        assertEquals(listOf("item-1"), viewModel.feedState.value.map { it.id })
+    }
+
+    @Test
     fun `deleteAllFeeds clears data`() = runTest(testDispatcher) {
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)

@@ -31,7 +31,7 @@ class FeedListSettingsViewModel internal constructor(
     val feedFontSizeState: StateFlow<FeedFontSizes> = fontSizeRepository.feedFontSizeState
 
     init {
-        viewModelScope.launch { loadSettings() }
+        loadSettings()
     }
 
     private fun loadSettings() {
@@ -73,141 +73,125 @@ class FeedListSettingsViewModel internal constructor(
     }
 
     fun updateHideDescription(value: Boolean) {
+        feedAppearanceSettingsRepository.setHideDescription(value)
+        stateMutableFlow.update {
+            it.copy(isHideDescriptionEnabled = value)
+        }
         viewModelScope.launch {
-            feedAppearanceSettingsRepository.setHideDescription(value)
-            stateMutableFlow.update {
-                it.copy(isHideDescriptionEnabled = value)
-            }
             feedStateRepository.getFeeds()
         }
     }
 
     fun updateHideImages(value: Boolean) {
+        feedAppearanceSettingsRepository.setHideImages(value)
+        stateMutableFlow.update {
+            it.copy(isHideImagesEnabled = value)
+        }
         viewModelScope.launch {
-            feedAppearanceSettingsRepository.setHideImages(value)
-            stateMutableFlow.update {
-                it.copy(isHideImagesEnabled = value)
-            }
             feedStateRepository.getFeeds()
         }
     }
 
     fun updateHideDate(value: Boolean) {
+        feedAppearanceSettingsRepository.setHideDate(value)
+        stateMutableFlow.update {
+            it.copy(isHideDateEnabled = value)
+        }
         viewModelScope.launch {
-            feedAppearanceSettingsRepository.setHideDate(value)
-            stateMutableFlow.update {
-                it.copy(isHideDateEnabled = value)
-            }
             feedStateRepository.getFeeds()
         }
     }
 
     fun updateDateFormat(format: DateFormat) {
+        feedAppearanceSettingsRepository.setDateFormat(format)
+        stateMutableFlow.update {
+            it.copy(dateFormat = format)
+        }
         viewModelScope.launch {
-            feedAppearanceSettingsRepository.setDateFormat(format)
-            stateMutableFlow.update {
-                it.copy(dateFormat = format)
-            }
             feedStateRepository.getFeeds()
         }
     }
 
     fun updateTimeFormat(format: TimeFormat) {
+        feedAppearanceSettingsRepository.setTimeFormat(format)
+        stateMutableFlow.update {
+            it.copy(timeFormat = format)
+        }
         viewModelScope.launch {
-            feedAppearanceSettingsRepository.setTimeFormat(format)
-            stateMutableFlow.update {
-                it.copy(timeFormat = format)
-            }
             feedStateRepository.getFeeds()
         }
     }
 
     fun updateFeedLayout(feedLayout: FeedLayout) {
-        viewModelScope.launch {
-            feedAppearanceSettingsRepository.setFeedLayout(feedLayout)
-            val isGridLayoutEnabled = feedAppearanceSettingsRepository.getGridLayoutEnabled()
-            stateMutableFlow.update {
-                it.copy(
-                    feedLayout = feedAppearanceSettingsRepository.getFeedLayout(),
-                    isGridLayoutEnabled = isGridLayoutEnabled,
-                )
-            }
+        feedAppearanceSettingsRepository.setFeedLayout(feedLayout)
+        val isGridLayoutEnabled = feedAppearanceSettingsRepository.getGridLayoutEnabled()
+        stateMutableFlow.update {
+            it.copy(
+                feedLayout = feedAppearanceSettingsRepository.getFeedLayout(),
+                isGridLayoutEnabled = isGridLayoutEnabled,
+            )
         }
     }
 
     fun updateGridLayoutEnabled(isEnabled: Boolean) {
-        viewModelScope.launch {
-            feedAppearanceSettingsRepository.setGridLayoutEnabled(isEnabled)
-            stateMutableFlow.update {
-                it.copy(isGridLayoutEnabled = isEnabled)
-            }
+        feedAppearanceSettingsRepository.setGridLayoutEnabled(isEnabled)
+        stateMutableFlow.update {
+            it.copy(isGridLayoutEnabled = isEnabled)
         }
     }
 
     fun updateFontScale(value: Int) {
-        viewModelScope.launch {
-            fontSizeRepository.updateFontScale(value)
-            stateMutableFlow.update {
-                it.copy(fontScale = value)
-            }
+        fontSizeRepository.updateFontScale(value)
+        stateMutableFlow.update {
+            it.copy(fontScale = value)
         }
     }
 
     fun updateSwipeAction(direction: SwipeDirection, action: SwipeActionType) {
-        viewModelScope.launch {
-            feedAppearanceSettingsRepository.setSwipeAction(direction, action)
-            stateMutableFlow.update {
-                when (direction) {
-                    SwipeDirection.LEFT -> it.copy(leftSwipeActionType = action)
-                    SwipeDirection.RIGHT -> it.copy(rightSwipeActionType = action)
-                }
+        feedAppearanceSettingsRepository.setSwipeAction(direction, action)
+        stateMutableFlow.update {
+            when (direction) {
+                SwipeDirection.LEFT -> it.copy(leftSwipeActionType = action)
+                SwipeDirection.RIGHT -> it.copy(rightSwipeActionType = action)
             }
         }
     }
 
     fun updateRemoveTitleFromDescription(value: Boolean) {
-        viewModelScope.launch {
-            feedAppearanceSettingsRepository.setRemoveTitleFromDescription(value)
-            stateMutableFlow.update {
-                it.copy(isRemoveTitleFromDescriptionEnabled = value)
-            }
+        feedAppearanceSettingsRepository.setRemoveTitleFromDescription(value)
+        stateMutableFlow.update {
+            it.copy(isRemoveTitleFromDescriptionEnabled = value)
         }
     }
 
     fun updateFeedOrder(feedOrder: com.prof18.feedflow.core.model.FeedOrder) {
+        feedAppearanceSettingsRepository.setFeedOrder(feedOrder)
+        stateMutableFlow.update {
+            it.copy(feedOrder = feedOrder)
+        }
         viewModelScope.launch {
-            feedAppearanceSettingsRepository.setFeedOrder(feedOrder)
-            stateMutableFlow.update {
-                it.copy(feedOrder = feedOrder)
-            }
             feedStateRepository.getFeeds()
         }
     }
 
     fun updateHideUnreadDot(value: Boolean) {
-        viewModelScope.launch {
-            feedAppearanceSettingsRepository.setHideUnreadDot(value)
-            stateMutableFlow.update {
-                it.copy(isHideUnreadDotEnabled = value)
-            }
+        feedAppearanceSettingsRepository.setHideUnreadDot(value)
+        stateMutableFlow.update {
+            it.copy(isHideUnreadDotEnabled = value)
         }
     }
 
     fun updateHideFeedSource(value: Boolean) {
-        viewModelScope.launch {
-            feedAppearanceSettingsRepository.setHideFeedSource(value)
-            stateMutableFlow.update {
-                it.copy(isHideFeedSourceEnabled = value)
-            }
+        feedAppearanceSettingsRepository.setHideFeedSource(value)
+        stateMutableFlow.update {
+            it.copy(isHideFeedSourceEnabled = value)
         }
     }
 
     fun updateDescriptionLineLimit(limit: DescriptionLineLimit) {
-        viewModelScope.launch {
-            feedAppearanceSettingsRepository.setDescriptionLineLimit(limit)
-            stateMutableFlow.update {
-                it.copy(descriptionLineLimit = limit)
-            }
+        feedAppearanceSettingsRepository.setDescriptionLineLimit(limit)
+        stateMutableFlow.update {
+            it.copy(descriptionLineLimit = limit)
         }
     }
 }

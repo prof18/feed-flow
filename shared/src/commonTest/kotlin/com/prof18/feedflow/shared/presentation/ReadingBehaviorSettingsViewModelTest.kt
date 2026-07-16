@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.presentation
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
@@ -16,6 +17,7 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
 
     private val viewModel: ReadingBehaviorSettingsViewModel by inject()
     private val feedStateRepository: FeedStateRepository by inject()
+    private val settingsRepository: SettingsRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
 
     @Test
@@ -90,6 +92,7 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
             awaitItem()
 
             viewModel.updateShowReadItemsOnTimeline(true)
+            assertTrue(settingsRepository.getShowReadArticlesTimeline())
             assertTrue(awaitItem().isShowReadItemsEnabled)
 
             viewModel.updateShowReadItemsOnTimeline(false)

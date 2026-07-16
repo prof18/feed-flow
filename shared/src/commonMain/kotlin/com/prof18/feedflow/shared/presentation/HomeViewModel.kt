@@ -394,6 +394,12 @@ class HomeViewModel internal constructor(
         getNewFeeds(forceRefresh = true)
     }
 
+    fun reloadFeedState() {
+        launchAfterFlushingScrollReadState {
+            feedStateRepository.getFeeds()
+        }
+    }
+
     fun deleteAllFeeds() {
         launchAfterFlushingScrollReadState {
             feedSourcesRepository.deleteAllFeeds()

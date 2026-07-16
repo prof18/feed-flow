@@ -20,7 +20,7 @@ class ReadingBehaviorSettingsViewModel internal constructor(
     val state: StateFlow<ReadingBehaviorState> = stateMutableFlow.asStateFlow()
 
     init {
-        viewModelScope.launch { loadSettings() }
+        loadSettings()
     }
 
     private fun loadSettings() {
@@ -44,57 +44,47 @@ class ReadingBehaviorSettingsViewModel internal constructor(
     }
 
     fun updateReaderMode(value: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.setUseReaderMode(value)
-            stateMutableFlow.update {
-                it.copy(isReaderModeEnabled = value)
-            }
+        settingsRepository.setUseReaderMode(value)
+        stateMutableFlow.update {
+            it.copy(isReaderModeEnabled = value)
         }
     }
 
     fun updateSaveReaderModeContent(value: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.setSaveItemContentOnOpen(value)
-            stateMutableFlow.update {
-                it.copy(isSaveReaderModeContentEnabled = value)
-            }
+        settingsRepository.setSaveItemContentOnOpen(value)
+        stateMutableFlow.update {
+            it.copy(isSaveReaderModeContentEnabled = value)
         }
     }
 
     fun updatePrefetchArticleContent(value: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.setPrefetchArticleContent(value)
-            stateMutableFlow.update {
-                it.copy(isPrefetchArticleContentEnabled = value)
-            }
+        settingsRepository.setPrefetchArticleContent(value)
+        stateMutableFlow.update {
+            it.copy(isPrefetchArticleContentEnabled = value)
         }
     }
 
     fun updateMarkReadWhenScrolling(value: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.setMarkFeedAsReadWhenScrolling(value)
-            stateMutableFlow.update {
-                it.copy(isMarkReadWhenScrollingEnabled = value)
-            }
+        settingsRepository.setMarkFeedAsReadWhenScrolling(value)
+        stateMutableFlow.update {
+            it.copy(isMarkReadWhenScrollingEnabled = value)
         }
     }
 
     fun updateShowReadItemsOnTimeline(value: Boolean) {
+        settingsRepository.setShowReadArticlesTimeline(value)
+        stateMutableFlow.update {
+            it.copy(isShowReadItemsEnabled = value)
+        }
         viewModelScope.launch {
-            settingsRepository.setShowReadArticlesTimeline(value)
-            stateMutableFlow.update {
-                it.copy(isShowReadItemsEnabled = value)
-            }
             feedStateRepository.getFeeds()
         }
     }
 
     fun updateHideReadItems(value: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.setHideReadItems(value)
-            stateMutableFlow.update {
-                it.copy(isHideReadItemsEnabled = value)
-            }
+        settingsRepository.setHideReadItems(value)
+        stateMutableFlow.update {
+            it.copy(isHideReadItemsEnabled = value)
         }
     }
 }

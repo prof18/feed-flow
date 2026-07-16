@@ -11,6 +11,7 @@ import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.core.model.plus
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
@@ -25,6 +26,7 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
 
     private val viewModel: FeedListSettingsViewModel by inject()
     private val feedStateRepository: FeedStateRepository by inject()
+    private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
 
     @Test
@@ -63,6 +65,7 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
             assertEquals(emptyList(), awaitItem())
             viewModel.updateHideImages(true)
             assertTrue(viewModel.state.value.isHideImagesEnabled)
+            assertTrue(feedAppearanceSettingsRepository.getHideImages())
             awaitItem()
         }
     }

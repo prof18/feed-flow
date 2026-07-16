@@ -12,7 +12,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ShareView: View {
-    var extensionContext: NSExtensionContext?
+    let extensionContext: NSExtensionContext?
 
     enum UIState {
         case loading
@@ -38,7 +38,7 @@ struct ShareView: View {
             case let .error(message):
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 50))
-                    .foregroundColor(.red)
+                    .foregroundStyle(.red)
                 Text(message)
                     .font(.headline)
 
@@ -47,7 +47,7 @@ struct ShareView: View {
             case let .success(message):
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 50))
-                    .foregroundColor(.green)
+                    .foregroundStyle(.green)
                 Text(message)
                     .font(.headline)
 
@@ -105,13 +105,13 @@ struct ShareView: View {
                 self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
             },
             label: {
-                Text("Done")
+                Text(feedFlowStrings.actionDone)
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
-                    .cornerRadius(10)
+                    .clipShape(.rect(cornerRadius: 10))
             }
         )
         .padding(.horizontal, Spacing.regular)
@@ -126,32 +126,28 @@ struct ShareView: View {
             uiState = .error(message: feedFlowStrings.errorFeedAdd)
             return
         }
-        var pageUrl: URL?
-
-        let group = DispatchGroup()
-
         let urlType = UTType.url.identifier
-        for attachment in attachments
-            where attachment.hasItemConformingToTypeIdentifier(urlType) {
-            group.enter()
-            attachment.loadItem(
-                forTypeIdentifier: urlType,
-                options: nil
-            ) { item, error in
-                if error != nil {
-                    group.leave()
-                }
-                pageUrl = item as? URL
-                group.leave()
-            }
+        guard let attachment = attachments.first(where: {
+            $0.hasItemConformingToTypeIdentifier(urlType)
+        }) else {
+            uiState = .error(message: feedFlowStrings.errorFeedAdd)
+            return
         }
+        let errorMessage = feedFlowStrings.errorFeedAdd
+        let viewModel = vmStoreOwner.instance
 
-        group.notify(queue: .main) {
-            if let url = pageUrl {
-                vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: url.absoluteString)
-                vmStoreOwner.instance.addFeed()
-            } else {
-                self.uiState = .error(message: feedFlowStrings.errorFeedAdd)
+        attachment.loadItem(
+            forTypeIdentifier: urlType,
+            options: nil
+        ) { item, error in
+            DispatchQueue.main.async {
+                guard error == nil, let url = item as? URL else {
+                    self.uiState = .error(message: errorMessage)
+                    return
+                }
+
+                viewModel.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: url.absoluteString)
+                viewModel.addFeed()
             }
         }
     }

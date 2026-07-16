@@ -48,12 +48,6 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
         )
 
         observers.append(
-            webview.observe(\.url) { [weak self] _, _ in
-                self?.needsMetadataRefresh()
-            }
-        )
-
-        observers.append(
             webview.observe(\.canGoBack) { [weak self] _, val in
                 self?.info.canGoBack = val.newValue ?? false
             }

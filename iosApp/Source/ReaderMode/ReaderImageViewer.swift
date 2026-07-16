@@ -44,6 +44,7 @@ struct ReaderImageViewer: View {
                         }
                     )
                     .accessibilityIdentifier(ReaderImageViewerIds.shareButton)
+                    .disabled(imageToShare == nil)
                     .padding()
                 }
                 Spacer()
@@ -100,8 +101,8 @@ private struct ZoomableImageView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIScrollView, context: Context) {
-        context.coordinator.loadImage(from: url)
         context.coordinator.onImageLoaded = onImageLoaded
+        context.coordinator.loadImage(from: url)
     }
 
     static func dismantleUIView(_: UIScrollView, coordinator: Coordinator) {
@@ -156,6 +157,7 @@ private struct ZoomableImageView: UIViewRepresentable {
         func cancelLoad() {
             currentTask?.cancel()
             currentTask = nil
+            currentUrl = nil
         }
 
         func loadImage(from url: URL) {
@@ -169,27 +171,14 @@ private struct ZoomableImageView: UIViewRepresentable {
             currentUrl = url
             currentTask?.cancel()
 
-            // Check cache first
             let request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad)
-            if let cachedResponse = urlSession.configuration.urlCache?.cachedResponse(for: request),
-               let image = ReaderImageDecoder.decode(
-                data: cachedResponse.data,
-                response: cachedResponse.response
-               ) {
-                DispatchQueue.main.async { [weak self] in
-                    self?.imageView?.image = image
-                    self?.onImageLoaded?(image)
-                }
-                return
-            }
-
-            // Download if not cached
             currentTask = urlSession.dataTask(with: request) { [weak self] data, response, _ in
                 guard let data,
                       let image = ReaderImageDecoder.decode(data: data, response: response) else { return }
-                DispatchQueue.main.async {
-                    self?.imageView?.image = image
-                    self?.onImageLoaded?(image)
+                DispatchQueue.main.async { [weak self] in
+                    guard let self, self.currentUrl == url else { return }
+                    self.imageView?.image = image
+                    self.onImageLoaded?(image)
                 }
             }
             currentTask?.resume()

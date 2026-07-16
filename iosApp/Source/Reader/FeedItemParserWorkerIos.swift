@@ -32,7 +32,7 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
     func parse(
         feedItemId: String,
         url: String,
-        completionHandler: @escaping (ParsingResult?, (any Error)?) -> Void
+        completionHandler: @escaping @Sendable (ParsingResult?, (any Error)?) -> Void
     ) {
         parse(feedItemId: feedItemId, url: url, imageUrl: nil, completionHandler: completionHandler)
     }
@@ -64,15 +64,16 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
                     }
 
                     if saveContent {
-                        let fileURL = self.getContentPath(feedItemId: feedItemId)
                         if let data = htmlWithTitle?.data(using: .utf8) {
-                            do {
-                                try data.write(to: fileURL)
-                            } catch {
-                                Deps.shared.getLogger(tag: "FeedItemParserWorkerIos").d(
-                                    messageString: "Error writing to file: \(error)"
-                                )
+                            let result = ParsingResult.Success(
+                                htmlContent: htmlWithTitle,
+                                title: title,
+                                siteName: result.siteName
+                            )
+                            self.saveContent(data, feedItemId: feedItemId) {
+                                completionHandler(result)
                             }
+                            return
                         }
                     }
                 }
@@ -86,6 +87,22 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
 
             case .error:
                 completionHandler(ParsingResult.Error())
+            }
+        }
+    }
+
+    private func saveContent(_ data: Data, feedItemId: String, completionHandler: @escaping () -> Void) {
+        DispatchQueue.global(qos: .utility).async {
+            let fileURL = self.getContentPath(feedItemId: feedItemId)
+            do {
+                try data.write(to: fileURL)
+            } catch {
+                Deps.shared.getLogger(tag: "FeedItemParserWorkerIos").d(
+                    messageString: "Error writing to file: \(error)"
+                )
+            }
+            DispatchQueue.main.async {
+                completionHandler()
             }
         }
     }

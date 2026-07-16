@@ -51,7 +51,7 @@ struct ReaderPlaceholder: View {
 }
 
 private struct ShimmerMask: ViewModifier {
-    var delay: TimeInterval = 1
+    var delay: Duration = .seconds(1)
     private let animation = Animation.easeInOut(duration: 1).repeatForever(autoreverses: false)
 
     @State private var endState = false
@@ -65,11 +65,14 @@ private struct ShimmerMask: ViewModifier {
                     endPoint: endPoint
                 )
             }
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                    withAnimation(animation) {
-                        endState.toggle()
-                    }
+            .task {
+                do {
+                    try await Task.sleep(for: delay)
+                } catch {
+                    return
+                }
+                withAnimation(animation) {
+                    endState.toggle()
                 }
             }
     }

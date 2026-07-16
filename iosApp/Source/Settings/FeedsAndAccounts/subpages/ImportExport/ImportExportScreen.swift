@@ -35,7 +35,7 @@ struct ImportExportScreen: View {
 
         NavigationStack {
             ImportExportContent(
-                feedImportExportState: $feedImportExportState,
+                feedImportExportState: feedImportExportState,
                 articleExportFilter: $articleExportFilter,
                 onImportClick: {
                     sheetToShow = .opmlFilePicker
@@ -118,18 +118,13 @@ struct ImportExportScreen: View {
                         supportedTypes: opmlImportContentTypes,
                         initialDirectoryURL: e2eImportDirectoryURL
                     ) { url in
-                        do {
-                            let data = try Data(contentsOf: url)
-                            vmStoreOwner.instance.importFeed(opmlInput: OpmlInput(opmlData: data))
-                        } catch {
-                            vmStoreOwner.instance.reportExportError()
-                            appState.snackbarQueue.append(
-                                SnackbarData(
-                                    title: feedFlowStrings.loadFileErrorMessage,
-                                    subtitle: nil,
-                                    showBanner: true
-                                )
-                            )
+                        Task {
+                            do {
+                                let data = try await readFileData(from: url)
+                                vmStoreOwner.instance.importFeed(opmlInput: OpmlInput(opmlData: data))
+                            } catch {
+                                reportFileLoadError()
+                            }
                         }
                     }
                 case .csvFilePicker:
@@ -137,18 +132,13 @@ struct ImportExportScreen: View {
                         supportedTypes: [.commaSeparatedText],
                         initialDirectoryURL: e2eImportDirectoryURL
                     ) { url in
-                        do {
-                            let data = try Data(contentsOf: url)
-                            vmStoreOwner.instance.importArticles(csvInput: CsvInput(csvData: data))
-                        } catch {
-                            vmStoreOwner.instance.reportExportError()
-                            appState.snackbarQueue.append(
-                                SnackbarData(
-                                    title: feedFlowStrings.loadFileErrorMessage,
-                                    subtitle: nil,
-                                    showBanner: true
-                                )
-                            )
+                        Task {
+                            do {
+                                let data = try await readFileData(from: url)
+                                vmStoreOwner.instance.importArticles(csvInput: CsvInput(csvData: data))
+                            } catch {
+                                reportFileLoadError()
+                            }
                         }
                     }
                 }
@@ -211,15 +201,35 @@ struct ImportExportScreen: View {
             vmStoreOwner.instance.reportExportError()
             return
         }
-        do {
-            let data = try Data(contentsOf: url)
-            exportDocument = ExportDocument(data: data)
-            exportContentType = contentType
-            exportDefaultFileName = defaultFileName
-            showFileExporter = true
-        } catch {
-            vmStoreOwner.instance.reportExportError()
+        Task {
+            do {
+                let data = try await readFileData(from: url)
+                guard !Task.isCancelled else { return }
+                exportDocument = ExportDocument(data: data)
+                exportContentType = contentType
+                exportDefaultFileName = defaultFileName
+                showFileExporter = true
+            } catch {
+                vmStoreOwner.instance.reportExportError()
+            }
         }
+    }
+
+    private func readFileData(from url: URL) async throws -> Data {
+        try await Task.detached(priority: .userInitiated) {
+            try Data(contentsOf: url)
+        }.value
+    }
+
+    private func reportFileLoadError() {
+        vmStoreOwner.instance.reportExportError()
+        appState.snackbarQueue.append(
+            SnackbarData(
+                title: feedFlowStrings.loadFileErrorMessage,
+                subtitle: nil,
+                showBanner: true
+            )
+        )
     }
 
     private func articleExportFilterSuffix(_ filter: ArticleExportFilter) -> String {

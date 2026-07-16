@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import UIKit
 @preconcurrency import WebKit
 
 class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject {
@@ -174,6 +175,10 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
 
     func webViewWebContentProcessDidTerminate(_: WKWebView) {
         waitingForRepopulationAfterTermination = true
+        if UIApplication.shared.applicationState == .active, let block = populateBlock {
+            waitingForRepopulationAfterTermination = false
+            block(self)
+        }
     }
 
     func webView(

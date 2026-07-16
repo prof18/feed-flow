@@ -24,6 +24,8 @@ struct ShareView: View {
     @StateObject private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(Deps.shared.getAddFeedViewModel())
 
     @State private var uiState: UIState = .loading
+    @State private var extractionProgress: Progress?
+    @State private var extractionId: UUID?
 
     var body: some View {
         VStack(spacing: Spacing.regular) {
@@ -62,6 +64,11 @@ struct ShareView: View {
         .multilineTextAlignment(.center)
         .onAppear {
             extractSharedItem(extensionContext: extensionContext)
+        }
+        .onDisappear {
+            extractionId = nil
+            extractionProgress?.cancel()
+            extractionProgress = nil
         }
         .task {
             for await state in vmStoreOwner.instance.feedAddedState {
@@ -135,16 +142,18 @@ struct ShareView: View {
         }
         let errorMessage = feedFlowStrings.errorFeedAdd
         let viewModel = vmStoreOwner.instance
+        let extractionId = UUID()
+        self.extractionId = extractionId
 
-        attachment.loadItem(
-            forTypeIdentifier: urlType,
-            options: nil
-        ) { item, error in
+        extractionProgress = attachment.loadObject(ofClass: NSURL.self) { item, error in
             DispatchQueue.main.async {
-                guard error == nil, let url = item as? URL else {
+                guard self.extractionId == extractionId else { return }
+                self.extractionProgress = nil
+                guard error == nil, let sharedURL = item as? NSURL else {
                     self.uiState = .error(message: errorMessage)
                     return
                 }
+                let url = sharedURL as URL
 
                 viewModel.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: url.absoluteString)
                 viewModel.addFeed()

@@ -324,6 +324,34 @@ def run_flows(
             relative_flow = flow_path.relative_to(repo_root)
             log_path = log_root / "flows" / platform / suite / safe_log_name(flow_path)
             if platform == "ios":
+                reset_flow = Path("e2e/maestro/ios/helpers/reset-orientation.yaml")
+                reset_result = run_command(
+                    f"{platform} {suite} {flow_path.name} orientation reset",
+                    [
+                        "maestro",
+                        "--platform",
+                        "ios",
+                        "--device",
+                        env["SIMULATOR_UDID"],
+                        "test",
+                        str(reset_flow),
+                    ],
+                    repo_root,
+                    log_path.with_name(f"{flow_path.stem}-orientation-reset.log"),
+                    env=env,
+                )
+                if reset_result.returncode != 0:
+                    results.append(
+                        FlowResult(
+                            platform=platform,
+                            suite=suite,
+                            flow_path=relative_flow,
+                            returncode=reset_result.returncode,
+                            seconds=reset_result.seconds,
+                            log_path=reset_result.log_path,
+                        )
+                    )
+                    continue
                 args = [
                     "maestro",
                     "--platform",

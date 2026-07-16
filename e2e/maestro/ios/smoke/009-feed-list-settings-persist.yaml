@@ -19,8 +19,13 @@ appId: com.prof18.feedflow.dev
     id: feed_list_settings_layout
 - tapOn:
     text: "Card"
+- assertVisible:
+    id: article_image_1
 - tapOn:
-    text: "Hide article image"
+    id: feed_list_settings_hide_images
+    point: "90%,50%"
+- assertNotVisible:
+    id: article_image_1
 - scrollUntilVisible:
     element:
       id: feed_list_settings_order

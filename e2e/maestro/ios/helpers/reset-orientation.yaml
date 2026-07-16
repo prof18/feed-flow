@@ -1,0 +1,4 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- setOrientation: PORTRAIT

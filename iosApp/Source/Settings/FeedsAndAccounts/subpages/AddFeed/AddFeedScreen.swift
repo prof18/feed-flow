@@ -37,12 +37,12 @@ struct AddFeedScreen: View {
         NavigationStack {
             AddFeedScreenContent(
                 feedURL: $feedURL,
-                showError: $showError,
-                errorMessage: $errorMessage,
+                showError: showError,
+                errorMessage: errorMessage,
                 isAddingFeed: $isAddingFeed,
                 showNotificationToggle: showNotificationToggle,
                 isNotificationEnabled: $isNotificationEnabled,
-                canForceAdd: $canForceAdd,
+                canForceAdd: canForceAdd,
                 categorySelectorObserver: categorySelectorObserver,
                 viewModel: vmStoreOwner.instance,
                 showCloseButton: showCloseButton,

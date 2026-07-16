@@ -39,10 +39,10 @@ struct SearchScreen: View {
         
         SearchScreenContent(
             searchText: $searchText,
-            searchState: $searchState,
-            searchFilter: $searchFilter,
+            searchState: searchState,
+            searchFilter: searchFilter,
             currentFeedFilter: currentFeedFilter,
-            feedFontSizes: $feedFontSizes,
+            feedFontSizes: feedFontSizes,
             feedItemDisplaySettings: feedItemDisplaySettings,
             readerModeViewModel: readerModeViewModel,
             onReaderModeNavigate: onReaderModeNavigate,

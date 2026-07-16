@@ -58,7 +58,7 @@ struct AccountsScreenContent: View {
                 .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("google_drive"))
 
             case .icloud:
-                NavigationLink(destination: ICloudSyncScreen(isFromAddAccount: false)) {
+                NavigationLink(destination: ICloudSyncScreen(onAccountLinked: nil)) {
                     HStack {
                         Image(systemName: "icloud")
                             .fontWeight(.bold)
@@ -72,7 +72,7 @@ struct AccountsScreenContent: View {
                 .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("icloud"))
 
             case .freshRss:
-                NavigationLink(destination: FreshRssSyncScreen(isFromAddAccount: false)) {
+                NavigationLink(destination: FreshRssSyncScreen(onAccountLinked: nil)) {
                     HStack {
                         Image("freshrss")
                             .renderingMode(.template)
@@ -89,7 +89,7 @@ struct AccountsScreenContent: View {
                 .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("fresh_rss"))
 
             case .miniflux:
-                NavigationLink(destination: MinifluxSyncScreen(isFromAddAccount: false)) {
+                NavigationLink(destination: MinifluxSyncScreen(onAccountLinked: nil)) {
                     HStack {
                         Image("miniflux")
                             .renderingMode(.template)
@@ -106,7 +106,7 @@ struct AccountsScreenContent: View {
                 .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("miniflux"))
 
             case .bazqux:
-                NavigationLink(destination: BazquxSyncScreen(isFromAddAccount: false)) {
+                NavigationLink(destination: BazquxSyncScreen(onAccountLinked: nil)) {
                     HStack {
                         Image("bazqux")
                             .renderingMode(.template)
@@ -124,7 +124,7 @@ struct AccountsScreenContent: View {
                 .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("bazqux"))
 
             case .feedbin:
-                NavigationLink(destination: FeedbinSyncScreen(isFromAddAccount: false)) {
+                NavigationLink(destination: FeedbinSyncScreen(onAccountLinked: nil)) {
                     HStack {
                         Image("feedbin")
                             .renderingMode(.template)

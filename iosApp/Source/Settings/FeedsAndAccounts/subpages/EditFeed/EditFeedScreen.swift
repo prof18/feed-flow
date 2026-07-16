@@ -40,8 +40,8 @@ struct EditFeedScreen: View {
             EditFeedScreenContent(
                 feedURL: $feedURL,
                 feedName: $feedName,
-                showError: $showError,
-                errorMessage: $errorMessage,
+                showError: showError,
+                errorMessage: errorMessage,
                 isAddingFeed: $isAddingFeed,
                 linkOpeningPreference: $linkOpeningPreference,
                 isHidden: $isHidden,

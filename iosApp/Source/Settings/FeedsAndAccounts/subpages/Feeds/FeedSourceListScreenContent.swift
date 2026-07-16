@@ -24,7 +24,7 @@ struct FeedSourceListScreenContent: View {
     @State private var showDeleteFeedDialog = false
     @State private var feedToDelete: FeedSource?
 
-    @Binding var feedState: FeedSourceListState
+    let feedState: FeedSourceListState
 
     let deleteFeedSource: (FeedSource) -> Void
     let renameFeedSource: (FeedSource, String) -> Void

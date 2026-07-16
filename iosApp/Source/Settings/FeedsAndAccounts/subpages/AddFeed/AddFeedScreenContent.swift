@@ -17,12 +17,12 @@ struct AddFeedScreenContent: View {
     @FocusState private var isTextFieldFocused: Bool
 
     @Binding var feedURL: String
-    @Binding var showError: Bool
-    @Binding var errorMessage: String
+    let showError: Bool
+    let errorMessage: String
     @Binding var isAddingFeed: Bool
     var showNotificationToggle: Bool
     @Binding var isNotificationEnabled: Bool
-    @Binding var canForceAdd: Bool
+    let canForceAdd: Bool
     @State private var acknowledged: Bool = false
 
     var categorySelectorObserver: CategorySelectorObserver

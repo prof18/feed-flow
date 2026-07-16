@@ -16,8 +16,8 @@ struct EditFeedScreenContent: View {
 
     @Binding var feedURL: String
     @Binding var feedName: String
-    @Binding var showError: Bool
-    @Binding var errorMessage: String
+    let showError: Bool
+    let errorMessage: String
     @Binding var isAddingFeed: Bool
     @Binding var linkOpeningPreference: LinkOpeningPreference
     @Binding var isHidden: Bool

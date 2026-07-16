@@ -144,14 +144,17 @@ struct FeedListSettingsScreenContent: View {
                     Toggle(isOn: $isHideDateEnabled) {
                         Text(feedFlowStrings.settingsHideDate)
                     }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideDateToggle)
 
                     Toggle(isOn: $isHideUnreadDotEnabled) {
                         Text(feedFlowStrings.settingsHideUnreadDot)
                     }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideUnreadDotToggle)
 
                     Toggle(isOn: $isHideFeedSourceEnabled) {
                         Text(feedFlowStrings.settingsHideFeedSource)
                     }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideFeedSourceToggle)
 
                     Picker(selection: $descriptionLineLimit) {
                         Text(feedFlowStrings.settingsDescriptionLinesThree)
@@ -167,6 +170,7 @@ struct FeedListSettingsScreenContent: View {
                     Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {
                         Text(feedFlowStrings.settingsHideDuplicatedTitleFromDesc)
                     }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.removeTitleToggle)
 
                     DateFormatSection(dateFormat: $dateFormat)
 

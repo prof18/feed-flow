@@ -1059,6 +1059,10 @@ class HomeViewModelTest : KoinTestBase() {
         assertEquals(2, viewModel.feedState.value.size)
 
         viewModel.markAsRead("item-1")
+
+        assertEquals(1, viewModel.feedState.value.size)
+        assertEquals("item-2", viewModel.feedState.value.first().id)
+
         advanceUntilIdle()
 
         assertEquals(1, viewModel.feedState.value.size)

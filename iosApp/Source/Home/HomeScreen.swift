@@ -112,6 +112,7 @@ struct HomeScreen: View {
             },
             onReaderModeClick: { feedItemUrlInfo in
                 if browserSelector.isReaderModeEligible(link: feedItemUrlInfo.url) {
+                    homeViewModel.markAsRead(feedItemId: feedItemUrlInfo.id)
                     readerModeViewModel.getReaderModeHtml(urlInfo: feedItemUrlInfo)
                     if let navigate = onReaderModeNavigate {
                         navigate()

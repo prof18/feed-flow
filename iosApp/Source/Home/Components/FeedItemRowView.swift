@@ -52,30 +52,34 @@ struct FeedItemRowView: View {
           if browserSelector.isReaderModeEligible(link: feedItem.url) {
             onReaderModeClick(urlInfo)
           } else {
+            onItemClick(urlInfo)
             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
           }
         case .internalBrowser:
+          onItemClick(urlInfo)
           if browserSelector.isValidForInAppBrowser(url) {
             self.appState.openInAppBrowser(url: url)
           } else {
             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
           }
         case .preferredBrowser:
+          onItemClick(urlInfo)
           openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
         case .default:
           if browserSelector.shouldOpenInReaderMode(link: feedItem.url) {
             onReaderModeClick(urlInfo)
           } else if browserSelector.openInAppBrowser() {
+            onItemClick(urlInfo)
             if browserSelector.isValidForInAppBrowser(url) {
               self.appState.openInAppBrowser(url: url)
             } else {
               openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
             }
           } else {
+            onItemClick(urlInfo)
             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
           }
         }
-        onItemClick(urlInfo)
       },
       label: {
         FeedItemView(

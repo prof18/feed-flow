@@ -15,11 +15,17 @@ appId: com.prof18.feedflow.dev
     id: settings_feed_list
 - assertVisible: "Text scale"
 - assertVisible: "Hide article date"
-- tapOn: "Hide article date"
+- tapOn:
+    id: feed_list_settings_hide_date
+    point: "90%,50%"
 - assertVisible: "Hide unread indicator"
-- tapOn: "Hide unread indicator"
+- tapOn:
+    id: feed_list_settings_hide_unread_dot
+    point: "90%,50%"
 - assertVisible: "Hide feed source"
-- tapOn: "Hide feed source"
+- tapOn:
+    id: feed_list_settings_hide_feed_source
+    point: "90%,50%"
 - scrollUntilVisible:
     element: "Description lines"
     direction: DOWN
@@ -28,7 +34,9 @@ appId: com.prof18.feedflow.dev
 - tapOn: "No limit"
 - assertVisible: "No limit"
 - assertVisible: "Hide title from article description"
-- tapOn: "Hide title from article description"
+- tapOn:
+    id: feed_list_settings_remove_title
+    point: "90%,50%"
 - scrollUntilVisible:
     element: "Date format"
     direction: DOWN

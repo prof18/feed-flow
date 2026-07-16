@@ -314,7 +314,7 @@ private struct SearchFilterChip: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
-        .accessibilityAddTraits(.isButton)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
         .accessibilityIdentifier(accessibilityIdentifier)
     }
 }

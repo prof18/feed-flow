@@ -116,7 +116,7 @@ private struct EditCategoryNameSheet: View {
                 }
             }
         }
-        .presentationDetents([.height(280)])
+        .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .onAppear {
             DispatchQueue.main.async {

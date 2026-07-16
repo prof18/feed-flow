@@ -14,18 +14,22 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: settings_reading_behavior
 - tapOn:
-    text: "Open articles on reader mode"
+    id: reading_behavior_reader_mode
+    point: "90%,50%"
 - tapOn:
-    text: "Open articles on reader mode"
+    id: reading_behavior_reader_mode
+    point: "90%,50%"
 - tapOn:
-    text: "Show read articles in lists"
+    id: reading_behavior_show_read
+    point: "90%,50%"
 - scrollUntilVisible:
     element:
       text: "Auto-hide articles when marked as read"
     direction: DOWN
     timeout: 10000
 - tapOn:
-    text: "Auto-hide articles when marked as read"
+    id: reading_behavior_hide_read
+    point: "90%,50%"
 - tapOn:
     id: BackButton
 - tapOn:
@@ -45,7 +49,8 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: settings_reading_behavior
 - tapOn:
-    text: "Show read articles in lists"
+    id: reading_behavior_show_read
+    point: "90%,50%"
 - tapOn:
     id: BackButton
 - tapOn:

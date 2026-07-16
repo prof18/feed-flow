@@ -43,10 +43,13 @@ struct ICloudSyncScreen: View {
                 self.uiState = state
                 if uiState is AccountConnectionUiState.Linked {
                     if isFromAddAccount {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                            dismiss()
-                            dismiss()
+                        do {
+                            try await Task.sleep(for: .seconds(1))
+                        } catch {
+                            return
                         }
+                        dismiss()
+                        dismiss()
                     }
                 }
             }

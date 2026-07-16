@@ -15,23 +15,43 @@ struct DeepLinkFeedScreen: View {
         Deps.shared.getDeeplinkFeedViewModel())
 
     @State private var state: DeeplinkFeedState = .Loading()
+    @State private var shouldShowReaderMode = false
 
     let feedId: String
     let readerModeViewModel: ReaderModeViewModel
 
     var body: some View {
-        ReaderModeScreen(viewModel: readerModeViewModel, onInAppBrowserClick: nil)
-        .onAppear {
-            vmStoreOwner.instance.getReaderModeUrl(feedItemId: FeedItemId(id: feedId))
+        Group {
+            if state is DeeplinkFeedState.Error {
+                ContentUnavailableView {
+                    Label(feedFlowStrings.genericErrorMessage, systemImage: "exclamationmark.triangle")
+                } actions: {
+                    Button(feedFlowStrings.retryButton) {
+                        loadFeed()
+                    }
+                }
+            } else if shouldShowReaderMode {
+                ReaderModeScreen(viewModel: readerModeViewModel, onInAppBrowserClick: nil)
+                    .id(feedId)
+            } else {
+                ProgressView()
+            }
+        }
+        .task(id: feedId) {
+            loadFeed()
         }
         .task {
             for await state in vmStoreOwner.instance.deeplinkFeedState {
                 self.state = state
+                if state is DeeplinkFeedState.Error {
+                    shouldShowReaderMode = false
+                }
                 if let urlInfo = (state as? DeeplinkFeedState.Success)?.data {
                     switch urlInfo.linkOpeningPreference {
                     case .readerMode:
                         if browserSelector.isReaderModeEligible(link: urlInfo.url) {
                             readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                            shouldShowReaderMode = true
                         } else {
                             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
                             self.dismiss()
@@ -51,6 +71,7 @@ struct DeepLinkFeedScreen: View {
                     case .default:
                         if browserSelector.shouldOpenInReaderMode(link: urlInfo.url) {
                             readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                            shouldShowReaderMode = true
                         } else if browserSelector.openInAppBrowser() {
                             if let url = URL(string: urlInfo.url) {
                                 if browserSelector.isValidForInAppBrowser(url) {
@@ -69,5 +90,12 @@ struct DeepLinkFeedScreen: View {
                 }
             }
         }
+    }
+
+    private func loadFeed() {
+        state = .Loading()
+        shouldShowReaderMode = false
+        readerModeViewModel.resetState()
+        vmStoreOwner.instance.getReaderModeUrl(feedItemId: FeedItemId(id: feedId))
     }
 }

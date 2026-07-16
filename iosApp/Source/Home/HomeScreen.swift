@@ -158,6 +158,9 @@ struct HomeScreen: View {
             },
             onShowReadArticlesTimelineChange: { value in
                 homeViewModel.updateShowReadArticlesTimeline(value: value)
+            },
+            onSettingsDone: {
+                homeViewModel.reloadFeedState()
             }
         )
         .snackbar(messageQueue: $appState.snackbarQueue)

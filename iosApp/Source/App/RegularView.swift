@@ -190,7 +190,10 @@ struct RegularView: View {
                 .toggleStyle(BlueToggleStyle())
         }
         .sheet(isPresented: $showSidebarSettingsSheet) {
-            SettingsScreen(fetchFeeds: { homeViewModel.getNewFeeds(isFirstLaunch: false, forceRefresh: false) })
+            SettingsScreen(
+                fetchFeeds: { homeViewModel.getNewFeeds(isFirstLaunch: false, forceRefresh: false) },
+                onDone: { homeViewModel.reloadFeedState() }
+            )
                 .environment(appState)
                 .environment(browserSelector)
                 .preferredColorScheme(appState.colorScheme)

@@ -11,10 +11,10 @@ struct SearchScreenContent: View {
     private var appState
 
     @Binding var searchText: String
-    @Binding var searchState: SearchState
-    @Binding var searchFilter: SearchFilter
+    let searchState: SearchState
+    let searchFilter: SearchFilter
     let currentFeedFilter: FeedFilter?
-    @Binding var feedFontSizes: FeedFontSizes
+    let feedFontSizes: FeedFontSizes
     var feedItemDisplaySettings = FeedItemDisplaySettings(
         isHideUnreadDotEnabled: false,
         isHideFeedSourceEnabled: false,

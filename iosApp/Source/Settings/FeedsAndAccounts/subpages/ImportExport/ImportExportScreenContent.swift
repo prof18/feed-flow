@@ -13,7 +13,7 @@ struct ImportExportContent: View {
     @Environment(\.dismiss)
     private var dismiss
 
-    @Binding var feedImportExportState: FeedImportExportState
+    let feedImportExportState: FeedImportExportState
     @Binding var articleExportFilter: ArticleExportFilter
 
     @State private var showExportArticlesDialog = false

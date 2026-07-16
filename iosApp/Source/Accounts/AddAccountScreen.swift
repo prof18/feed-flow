@@ -37,7 +37,7 @@ struct AddAccountScreen: View {
                             .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("dropbox"))
 
                         case .icloud:
-                            NavigationLink(destination: ICloudSyncScreen(isFromAddAccount: true)) {
+                            NavigationLink(destination: ICloudSyncScreen(onAccountLinked: { dismiss() })) {
                                 Label {
                                     Text("iCloud")
                                 } icon: {
@@ -49,7 +49,7 @@ struct AddAccountScreen: View {
                             .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("icloud"))
 
                         case .freshRss:
-                            NavigationLink(destination: FreshRssSyncScreen(isFromAddAccount: true)) {
+                            NavigationLink(destination: FreshRssSyncScreen(onAccountLinked: { dismiss() })) {
                                 Label {
                                     Text("FreshRSS")
                                 } icon: {
@@ -64,7 +64,7 @@ struct AddAccountScreen: View {
                             .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("fresh_rss"))
 
                         case .miniflux:
-                            NavigationLink(destination: MinifluxSyncScreen(isFromAddAccount: true)) {
+                            NavigationLink(destination: MinifluxSyncScreen(onAccountLinked: { dismiss() })) {
                                 Label {
                                     Text("Miniflux")
                                 } icon: {
@@ -79,7 +79,7 @@ struct AddAccountScreen: View {
                             .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("miniflux"))
 
                         case .bazqux:
-                            NavigationLink(destination: BazquxSyncScreen(isFromAddAccount: true)) {
+                            NavigationLink(destination: BazquxSyncScreen(onAccountLinked: { dismiss() })) {
                                 Label {
                                     Text("BazQux")
                                 } icon: {
@@ -109,7 +109,7 @@ struct AddAccountScreen: View {
                             .accessibilityIdentifier(AccountAccessibilityIdentifiers.provider("google_drive"))
 
                         case .feedbin:
-                            NavigationLink(destination: FeedbinSyncScreen(isFromAddAccount: true)) {
+                            NavigationLink(destination: FeedbinSyncScreen(onAccountLinked: { dismiss() })) {
                                 Label {
                                     Text("Feedbin")
                                 } icon: {

@@ -26,24 +26,24 @@ struct HomeContent: View {
     @Environment(\.openURL)
     private var openURL
 
-    @Binding var loadingState: FeedUpdateStatus?
-    @Binding var feedState: [FeedItem]
-    @Binding var showLoading: Bool
-    @Binding var unreadCount: Int
-    @Binding var isUnreadCountHidden: Bool
+    let loadingState: FeedUpdateStatus?
+    let feedState: [FeedItem]
+    let showLoading: Bool
+    let unreadCount: Int
+    let isUnreadCountHidden: Bool
     @Binding var sheetToShow: HomeSheetToShow?
-    @Binding var toggleListScroll: Bool
-    @Binding var currentFeedFilter: FeedFilter
-    @Binding var showSettings: Bool
-    @Binding var showFeedSyncButton: Bool
-    @Binding var columnVisibility: NavigationSplitViewVisibility
-    @Binding var feedFontSizes: FeedFontSizes
-    @Binding var swipeActions: SwipeActions
-    @Binding var feedLayout: FeedLayout
-    @Binding var isGridLayoutEnabled: Bool
-    @Binding var nextFeedPreviewState: NextFeedPreviewState
-    @Binding var feedItemDisplaySettings: FeedItemDisplaySettings
-    @Binding var viewMenuState: HomeViewMenuState
+    let toggleListScroll: Bool
+    let currentFeedFilter: FeedFilter
+    let showSettings: Bool
+    let showFeedSyncButton: Bool
+    let columnVisibility: NavigationSplitViewVisibility
+    let feedFontSizes: FeedFontSizes
+    let swipeActions: SwipeActions
+    let feedLayout: FeedLayout
+    let isGridLayoutEnabled: Bool
+    let nextFeedPreviewState: NextFeedPreviewState
+    let feedItemDisplaySettings: FeedItemDisplaySettings
+    let viewMenuState: HomeViewMenuState
 
     @State private var showScrollToTop = false
     @State private var showMarkAllReadDialog = false

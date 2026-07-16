@@ -12,17 +12,15 @@ import SwiftUI
 struct MinifluxSyncScreen: View {
     @Environment(AppState.self)
     private var appState
-    @Environment(\.dismiss)
-    private var dismiss
-
     @StateObject private var vmStoreOwner = VMStoreOwner<MinifluxSyncViewModel>(
         Deps.shared.getMinifluxSyncViewModel()
     )
 
     @State private var uiState: AccountConnectionUiState = .Unlinked()
     @State private var isLoginLoading = false
+    @State private var didHandleLinkedAccount = false
 
-    let isFromAddAccount: Bool
+    let onAccountLinked: (() -> Void)?
 
     var body: some View {
         @Bindable var appState = appState
@@ -46,16 +44,16 @@ struct MinifluxSyncScreen: View {
         .task {
             for await state in vmStoreOwner.instance.uiState {
                 self.uiState = state
-                if uiState is AccountConnectionUiState.Linked {
-                    if isFromAddAccount {
-                        do {
-                            try await Task.sleep(for: .seconds(1))
-                        } catch {
-                            return
-                        }
-                        dismiss()
-                        dismiss()
+                if uiState is AccountConnectionUiState.Linked,
+                   !didHandleLinkedAccount,
+                   let onAccountLinked {
+                    didHandleLinkedAccount = true
+                    do {
+                        try await Task.sleep(for: .seconds(1))
+                    } catch {
+                        return
                     }
+                    onAccountLinked()
                 }
             }
         }

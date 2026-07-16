@@ -57,14 +57,7 @@ struct DeepLinkFeedScreen: View {
                             self.dismiss()
                         }
                     case .internalBrowser:
-                        if let url = URL(string: urlInfo.url) {
-                            if browserSelector.isValidForInAppBrowser(url) {
-                                appState.openInAppBrowser(url: url)
-                            } else {
-                                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
-                                self.dismiss()
-                            }
-                        }
+                        openInAppBrowser(urlString: urlInfo.url)
                     case .preferredBrowser:
                         openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
                         self.dismiss()
@@ -73,14 +66,7 @@ struct DeepLinkFeedScreen: View {
                             readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
                             shouldShowReaderMode = true
                         } else if browserSelector.openInAppBrowser() {
-                            if let url = URL(string: urlInfo.url) {
-                                if browserSelector.isValidForInAppBrowser(url) {
-                                    appState.openInAppBrowser(url: url)
-                                } else {
-                                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
-                                    self.dismiss()
-                                }
-                            }
+                            openInAppBrowser(urlString: urlInfo.url)
                         } else {
                             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
                             self.dismiss()
@@ -97,5 +83,20 @@ struct DeepLinkFeedScreen: View {
         shouldShowReaderMode = false
         readerModeViewModel.resetState()
         vmStoreOwner.instance.getReaderModeUrl(feedItemId: FeedItemId(id: feedId))
+    }
+
+    private func openInAppBrowser(urlString: String) {
+        guard let url = URL(string: urlString) else {
+            state = .Error()
+            return
+        }
+
+        if browserSelector.isValidForInAppBrowser(url) {
+            appState.openInAppBrowser(url: url)
+            dismiss()
+        } else {
+            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlString))
+            dismiss()
+        }
     }
 }

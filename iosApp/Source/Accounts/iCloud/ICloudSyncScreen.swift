@@ -13,14 +13,12 @@ import SwiftUI
 struct ICloudSyncScreen: View {
     @Environment(AppState.self)
     private var appState
-    @Environment(\.dismiss)
-    private var dismiss
-
     @StateObject private var vmStoreOwner = VMStoreOwner<ICloudSyncViewModel>(Deps.shared.getICloudSyncViewModel())
 
     @State private var uiState: AccountConnectionUiState = .Unlinked()
+    @State private var didHandleLinkedAccount = false
 
-    let isFromAddAccount: Bool
+    let onAccountLinked: (() -> Void)?
 
     var body: some View {
         @Bindable var appState = appState
@@ -41,16 +39,16 @@ struct ICloudSyncScreen: View {
         .task {
             for await state in vmStoreOwner.instance.iCloudConnectionUiState {
                 self.uiState = state
-                if uiState is AccountConnectionUiState.Linked {
-                    if isFromAddAccount {
-                        do {
-                            try await Task.sleep(for: .seconds(1))
-                        } catch {
-                            return
-                        }
-                        dismiss()
-                        dismiss()
+                if uiState is AccountConnectionUiState.Linked,
+                   !didHandleLinkedAccount,
+                   let onAccountLinked {
+                    didHandleLinkedAccount = true
+                    do {
+                        try await Task.sleep(for: .seconds(1))
+                    } catch {
+                        return
                     }
+                    onAccountLinked()
                 }
             }
         }

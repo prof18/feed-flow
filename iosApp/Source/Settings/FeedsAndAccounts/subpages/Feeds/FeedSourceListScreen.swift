@@ -28,7 +28,7 @@ struct FeedSourceListScreen: View {
         @Bindable var appState = appState
 
         FeedSourceListScreenContent(
-            feedState: $feedState,
+            feedState: feedState,
             deleteFeedSource: { feedSource in
                 vmStoreOwner.instance.deleteFeedSource(feedSource: feedSource)
             },

@@ -153,3 +153,4 @@ tmp
 !/.xcodebuildmcp/
 !/.xcodebuildmcp/config.yaml
 /.ai/plan/
+.asc

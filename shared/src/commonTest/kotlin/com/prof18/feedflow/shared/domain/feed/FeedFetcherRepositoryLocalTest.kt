@@ -369,6 +369,78 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     }
 
     @Test
+    fun `fetchFeeds with force refresh ignores the refresh window`() = runTest(testDispatcher) {
+        setupLocalAccount()
+
+        val now = dateFormatter.currentTimeMillis()
+        val feedSource = createFeedSource(
+            id = "source-1",
+            title = "Test Feed",
+        )
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.updateFeedSourcesCacheInfo(
+            listOf(
+                FeedSourceCacheInfo(
+                    feedSourceId = feedSource.id,
+                    etag = null,
+                    lastModified = null,
+                    validatorsTimestamp = null,
+                    nextFetchTimestamp = now + 4.hours.inWholeMilliseconds,
+                    backoffTimestamp = null,
+                ),
+            ),
+        )
+
+        val rssChannel = createRssChannel(
+            title = "Test Feed",
+            link = "https://example.com",
+            items = emptyList(),
+        )
+        fakeRssParserWrapper.setChannel(feedSource.url, rssChannel)
+
+        feedFetcherRepository.fetchFeeds(forceRefresh = true)
+        advanceUntilIdle()
+
+        assertEquals(1, fakeRssParserWrapper.callCount)
+    }
+
+    @Test
+    fun `fetchFeeds with force refresh still honors backoff`() = runTest(testDispatcher) {
+        setupLocalAccount()
+
+        val now = dateFormatter.currentTimeMillis()
+        val feedSource = createFeedSource(
+            id = "source-1",
+            title = "Test Feed",
+        )
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.updateFeedSourcesCacheInfo(
+            listOf(
+                FeedSourceCacheInfo(
+                    feedSourceId = feedSource.id,
+                    etag = null,
+                    lastModified = null,
+                    validatorsTimestamp = null,
+                    nextFetchTimestamp = null,
+                    backoffTimestamp = now + 1.hours.inWholeMilliseconds,
+                ),
+            ),
+        )
+
+        val rssChannel = createRssChannel(
+            title = "Test Feed",
+            link = "https://example.com",
+            items = emptyList(),
+        )
+        fakeRssParserWrapper.setChannel(feedSource.url, rssChannel)
+
+        feedFetcherRepository.fetchFeeds(forceRefresh = true)
+        advanceUntilIdle()
+
+        assertEquals(0, fakeRssParserWrapper.callCount)
+    }
+
+    @Test
     fun `fetchFeeds sends fresh validators`() = runTest(testDispatcher) {
         setupLocalAccount()
 

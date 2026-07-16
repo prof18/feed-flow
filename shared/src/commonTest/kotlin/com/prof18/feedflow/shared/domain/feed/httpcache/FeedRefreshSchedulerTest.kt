@@ -34,12 +34,12 @@ class FeedRefreshSchedulerTest {
     )
 
     @Test
-    fun `max-age longer than the floor is honored`() {
+    fun `max-age longer than the floor is capped at the floor`() {
         val nextFetch = FeedRefreshScheduler.computeNextFetchTimestamp(
             now = now,
             responseInfo = responseInfo(cacheControl = "public, max-age=7200"),
         )
-        assertEquals(now + 2.hours.inWholeMilliseconds, nextFetch)
+        assertEquals(now + 1.hours.inWholeMilliseconds, nextFetch)
     }
 
     @Test
@@ -61,16 +61,16 @@ class FeedRefreshSchedulerTest {
     }
 
     @Test
-    fun `huge max-age is clamped to the ceiling`() {
+    fun `huge max-age is capped at the floor instead of stretching the window`() {
         val nextFetch = FeedRefreshScheduler.computeNextFetchTimestamp(
             now = now,
             responseInfo = responseInfo(cacheControl = "max-age=604800"),
         )
-        assertEquals(now + 1.days.inWholeMilliseconds, nextFetch)
+        assertEquals(now + 1.hours.inWholeMilliseconds, nextFetch)
     }
 
     @Test
-    fun `expires minus date is used when max-age is missing`() {
+    fun `expires minus date is used when max-age is missing and is capped at the floor`() {
         val nextFetch = FeedRefreshScheduler.computeNextFetchTimestamp(
             now = now,
             responseInfo = responseInfo(
@@ -78,7 +78,20 @@ class FeedRefreshSchedulerTest {
                 date = "Mon, 15 Jun 2026 14:00:00 GMT",
             ),
         )
-        assertEquals(now + 2.hours.inWholeMilliseconds, nextFetch)
+        assertEquals(now + 1.hours.inWholeMilliseconds, nextFetch)
+    }
+
+    @Test
+    fun `explicit freshness wins over the heuristic even when last modified is old`() {
+        val lastModifiedMillis = now - 400.days.inWholeMilliseconds
+        val nextFetch = FeedRefreshScheduler.computeNextFetchTimestamp(
+            now = now,
+            responseInfo = responseInfo(
+                cacheControl = "max-age=15552000",
+                lastModified = httpDate(lastModifiedMillis),
+            ),
+        )
+        assertEquals(now + 1.hours.inWholeMilliseconds, nextFetch)
     }
 
     @Test

@@ -60,7 +60,7 @@ class FeedFetcherRepository internal constructor(
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
 
-    suspend fun fetchFeeds(isFirstLaunch: Boolean = false) {
+    suspend fun fetchFeeds(isFirstLaunch: Boolean = false, forceRefresh: Boolean = false) {
         return withContext(dispatcherProvider.io) {
             feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
             when {
@@ -71,7 +71,7 @@ class FeedFetcherRepository internal constructor(
                     fetchFeedsWithFeedbin()
                 }
                 else -> {
-                    fetchFeedsWithRssParser(isFirstLaunch)
+                    fetchFeedsWithRssParser(isFirstLaunch = isFirstLaunch, forceRefresh = forceRefresh)
                 }
             }
         }
@@ -124,7 +124,7 @@ class FeedFetcherRepository internal constructor(
         feedStateRepository.getFeeds()
     }
 
-    private suspend fun fetchFeedsWithRssParser(isFirstLaunch: Boolean = false) {
+    private suspend fun fetchFeedsWithRssParser(isFirstLaunch: Boolean = false, forceRefresh: Boolean = false) {
         feedSyncRepository.syncFeedSources()
 
         val feedSourceUrls = databaseHelper.getFeedSources()
@@ -146,6 +146,7 @@ class FeedFetcherRepository internal constructor(
             isFeedSyncDone = false
             parseFeeds(
                 feedSourceUrls = feedSourceUrls,
+                forceRefresh = forceRefresh,
             )
 
             feedSyncRepository.syncFeedItems()
@@ -205,6 +206,7 @@ class FeedFetcherRepository internal constructor(
         feedSource: FeedSource,
         cacheInfo: FeedSourceCacheInfo?,
         currentTime: Long,
+        forceRefresh: Boolean,
     ): Boolean {
         val backoffTimestamp = cacheInfo?.backoffTimestamp
         if (backoffTimestamp != null && currentTime < backoffTimestamp) {
@@ -213,6 +215,12 @@ class FeedFetcherRepository internal constructor(
                 "Skipping ${feedSource.url}: Retry-After backoff active for another $minutes min"
             }
             return false
+        }
+
+        // A user-initiated refresh revalidates every feed (conditional GET, usually a 304),
+        // like a browser reload; only the Retry-After backoff above can veto it.
+        if (forceRefresh) {
+            return true
         }
 
         val nextFetchTimestamp = cacheInfo?.nextFetchTimestamp
@@ -246,6 +254,7 @@ class FeedFetcherRepository internal constructor(
     @Suppress("LongMethod")
     private suspend fun parseFeeds(
         feedSourceUrls: List<FeedSource>,
+        forceRefresh: Boolean,
     ) {
         val allFeedItems = mutableListOf<FeedItem>()
         // Every source that fetched successfully (with or without new items, including 304s).
@@ -282,6 +291,7 @@ class FeedFetcherRepository internal constructor(
                     feedSource = feedSource,
                     cacheInfo = cacheInfoById[feedSource.id],
                     currentTime = currentTime,
+                    forceRefresh = forceRefresh,
                 )
                 if (shouldRefresh) {
                     feedSource

@@ -292,13 +292,13 @@ class HomeViewModel internal constructor(
         }
     }
 
-    fun getNewFeeds(isFirstLaunch: Boolean = false) {
+    fun getNewFeeds(isFirstLaunch: Boolean = false, forceRefresh: Boolean = false) {
         if (isFirstLaunch && !settingsRepository.getRefreshFeedsOnLaunch()) {
             return
         }
         launchAfterFlushingScrollReadState {
             retryPendingReadStatusActionsNow()
-            feedFetcherRepository.fetchFeeds(isFirstLaunch = isFirstLaunch)
+            feedFetcherRepository.fetchFeeds(isFirstLaunch = isFirstLaunch, forceRefresh = forceRefresh)
         }
     }
 
@@ -391,7 +391,7 @@ class HomeViewModel internal constructor(
 
     fun refreshFeeds() {
         refreshTriggerMutableState.update { it + 1 }
-        getNewFeeds()
+        getNewFeeds(forceRefresh = true)
     }
 
     fun deleteAllFeeds() {

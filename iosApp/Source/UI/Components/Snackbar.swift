@@ -89,6 +89,7 @@ struct Snackbar: View {
             withAnimation {
                 showBanner = true
             }
+            AccessibilityNotification.Announcement(data.title).post()
 
             do {
                 try await Task.sleep(for: .seconds(5))
@@ -108,6 +109,7 @@ struct Snackbar: View {
         .padding(.bottom, Spacing.regular)
         .zIndex(100)
         .opacity(showBanner ? 1 : 0)
+        .accessibilityHidden(!showBanner)
         .offset(showBanner ? .zero : hiddenOffset)
         .padding(.horizontal, Spacing.medium)
     }

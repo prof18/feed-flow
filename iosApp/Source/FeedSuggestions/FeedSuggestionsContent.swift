@@ -54,19 +54,21 @@ struct FeedSuggestionsContent: View {
                     ScrollView {
                         LazyVStack(spacing: 0) {
                             ForEach(filteredFeeds, id: \.url) { feed in
-                                SuggestedFeedRow(
-                                    feed: feed,
-                                    feedState: getFeedState(feed.url),
-                                    onAddFeed: {
-                                        if let categoryName = selectedCategory?.name {
-                                            viewModel.addFeed(feed: feed, categoryName: categoryName)
+                                VStack(spacing: 0) {
+                                    SuggestedFeedRow(
+                                        feed: feed,
+                                        feedState: getFeedState(feed.url),
+                                        onAddFeed: {
+                                            if let categoryName = selectedCategory?.name {
+                                                viewModel.addFeed(feed: feed, categoryName: categoryName)
+                                            }
                                         }
-                                    }
-                                )
+                                    )
 
-                                if feed.url != filteredFeeds.last?.url {
-                                    Divider()
-                                        .padding(.leading, 64)
+                                    if feed.url != filteredFeeds.last?.url {
+                                        Divider()
+                                            .padding(.leading, 64)
+                                    }
                                 }
                             }
                         }
@@ -160,7 +162,7 @@ private struct CategoryFilterChip: View {
         .foregroundColor(isSelected ? .accentColor : .primary)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(category.name)
-        .accessibilityAddTraits(.isButton)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
         .accessibilityIdentifier(FeedSuggestionsIds.category(category.id))
     }
 }
@@ -240,7 +242,7 @@ private struct AddButton: View {
                 HStack(spacing: 4) {
                     Image(systemName: "checkmark")
                         .font(.system(size: 12, weight: .semibold))
-                    Text("Added")
+                    Text(feedFlowStrings.feedAddedMessageWithoutName)
                         .font(.subheadline)
                         .fontWeight(.medium)
                 }
@@ -258,6 +260,7 @@ private struct AddButton: View {
             .buttonStyle(.plain)
             .foregroundColor(.secondary)
             .disabled(true)
+            .accessibilityLabel(feedFlowStrings.feedAddedMessageWithoutName)
             .accessibilityIdentifier(accessibilityIdentifier)
 
         case .adding:
@@ -277,6 +280,7 @@ private struct AddButton: View {
             }
             .buttonStyle(.plain)
             .disabled(true)
+            .accessibilityLabel(feedFlowStrings.addingFeed)
             .accessibilityIdentifier(accessibilityIdentifier)
 
         case .notAdded:
@@ -284,7 +288,7 @@ private struct AddButton: View {
                 HStack(spacing: 4) {
                     Image(systemName: "plus")
                         .font(.system(size: 12, weight: .semibold))
-                    Text("Add")
+                    Text(feedFlowStrings.addFeed)
                         .font(.subheadline)
                         .fontWeight(.medium)
                 }

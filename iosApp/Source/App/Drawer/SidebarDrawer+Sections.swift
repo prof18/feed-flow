@@ -20,7 +20,7 @@ extension SidebarDrawer {
             } else {
                 let categoryWrappers = sortedCategoryWrappers
 
-                ForEach(categoryWrappers, id: \.self) { category in
+                ForEach(categoryWrappers, id: \.stableId) { category in
                     let categoryWrapper =
                         category as DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
 
@@ -155,7 +155,7 @@ extension SidebarDrawer {
                     .foregroundStyle(Color.primary)
                     .accessibilityIdentifier(DrawerAccessibilityIdentifiers.category(nil))
 
-                    expansionToggle(isExpanded: isExpanded) {
+                    expansionToggle(label: feedFlowStrings.noCategory, isExpanded: isExpanded) {
                         toggleCategoryExpansion(for: categoryId)
                     }
                     .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryExpand(nil))
@@ -206,7 +206,7 @@ extension SidebarDrawer {
             }
             .accessibilityIdentifier(DrawerAccessibilityIdentifiers.category(categoryId))
 
-            expansionToggle(isExpanded: isExpanded) {
+            expansionToggle(label: categoryItem.category.title, isExpanded: isExpanded) {
                 toggleCategoryExpansion(for: categoryId)
             }
             .accessibilityIdentifier(DrawerAccessibilityIdentifiers.categoryExpand(categoryId))
@@ -267,17 +267,16 @@ extension SidebarDrawer {
     }
 
     @ViewBuilder
-    func expansionToggle(isExpanded: Bool, action: @escaping () -> Void) -> some View {
+    func expansionToggle(label: String, isExpanded: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.secondary)
-                .padding(.leading, Spacing.small)
-                .padding(.trailing, Spacing.small)
-                .padding(.vertical, Spacing.xxsmall)
+                .frame(minWidth: 44, minHeight: 44)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(label)
     }
 
     @ViewBuilder
@@ -348,5 +347,11 @@ extension SidebarDrawer {
         } else {
             Color.clear
         }
+    }
+}
+
+private extension DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper {
+    var stableId: String {
+        feedSourceCategory.map { "category-\($0.id)" } ?? "uncategorized"
     }
 }

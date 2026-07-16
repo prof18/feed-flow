@@ -249,7 +249,7 @@ private struct AddCategoryNameSheet: View {
                 }
             }
         }
-        .presentationDetents([.height(280)])
+        .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .onAppear {
             DispatchQueue.main.async {
@@ -332,7 +332,7 @@ private struct EditCategoryNameSheet: View {
                 }
             }
         }
-        .presentationDetents([.height(280)])
+        .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .onAppear {
             DispatchQueue.main.async {
@@ -432,6 +432,7 @@ struct CategoryChip: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
         .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.categoryChip(label))
         .contextMenu {
             if let onEditTap = onEditTap {

@@ -17,8 +17,14 @@ appId: com.prof18.feedflow.dev
 - assertVisible: "Save article content on open for offline reading"
 - assertVisible: "Prefetch article content for offline reading"
 - assertVisible: "Mark as read when scrolling"
-- tapOn: "Save article content on open for offline reading"
-- tapOn: "Mark as read when scrolling"
-- tapOn: "Prefetch article content for offline reading"
+- tapOn:
+    id: reading_behavior_save_content
+    point: "90%,50%"
+- tapOn:
+    id: reading_behavior_mark_read_when_scrolling
+    point: "90%,50%"
+- tapOn:
+    id: reading_behavior_prefetch_content
+    point: "90%,50%"
 - assertVisible: "Enabling this option will increase synchronization time and data usage.*"
 - tapOn: "Confirm"

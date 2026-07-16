@@ -364,6 +364,7 @@ class HomeViewModel internal constructor(
         val idsToMark = takePendingScrollReadIds()
         idsToMark.add(FeedItemId(feedItemId))
         scrollReadTracker.reset()
+        feedStateRepository.markAsRead(idsToMark)
         viewModelScope.launch {
             feedActionsRepository.markAsRead(idsToMark)
         }

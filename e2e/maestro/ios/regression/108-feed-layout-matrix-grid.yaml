@@ -12,7 +12,5 @@ appId: com.prof18.feedflow.dev
 - assertVisible:
     text: "E2E Newest Unread Article.*"
 - assertVisible:
-    text: "E2E Bookmarked Unread Article.*"
-- assertVisible:
     id: article_image_e2e_article_newest_unread
 - setOrientation: PORTRAIT

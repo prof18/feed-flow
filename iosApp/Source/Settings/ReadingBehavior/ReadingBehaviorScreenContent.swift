@@ -35,6 +35,7 @@ struct ReadingBehaviorScreenContent: View {
                 Toggle(isOn: $isSaveReaderModeContentEnabled) {
                     Text(feedFlowStrings.settingsSaveReaderModeContent)
                 }
+                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.saveContentToggle)
 
                 SettingToggleItem(
                     isOn: $isPrefetchArticleContentEnabled,
@@ -44,10 +45,12 @@ struct ReadingBehaviorScreenContent: View {
                         message: feedFlowStrings.settingsPrefetchArticleContentWarning
                     )
                 )
+                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.prefetchContentToggle)
 
                 Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
                     Text(feedFlowStrings.toggleMarkReadWhenScrolling)
                 }
+                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.markReadWhenScrollingToggle)
 
                 Toggle(isOn: $isShowReadItemEnabled) {
                     Text(feedFlowStrings.settingsToggleShowReadArticles)

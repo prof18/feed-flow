@@ -62,7 +62,7 @@ knownRegions:
 packages:
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
-    exactVersion: 12.15.0
+    exactVersion: 12.16.0
   SwiftyDropbox:
     url: https://github.com/dropbox/SwiftyDropbox
     exactVersion: 10.2.4

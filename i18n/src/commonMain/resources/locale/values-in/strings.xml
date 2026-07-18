@@ -374,4 +374,22 @@
     <string name="delete_all_feeds_confirmation_title">Hapus semua feed dalam kategori?</string>
     <string name="delete_all_feeds_confirmation_message">Apakah Anda yakin ingin menghapus semua feed dalam kategori ini? Tindakan ini tidak dapat dibatalkan.</string>
     <string name="settings_appearance">Tampilan</string>
+    <string name="add_feed_anyway_button">Tetap tambahkan</string>
+    <string name="reorder_drag_handle">Urutkan ulang</string>
+    <string name="reorder_mode_enter">Urutkan</string>
+    <string name="reorder_mode_done">Selesai</string>
+    <string name="settings_hide_unread_count">Sembunyikan jumlah belum dibaca</string>
+    <string name="reader_mode_line_height">Tinggi Baris</string>
+    <string name="reader_mode_text_settings">Pengaturan Teks</string>
+    <string name="reader_mode_reset_to_default">Kembalikan ke bawaan</string>
+    <string name="close_button_content_description">Tutup</string>
+    <string name="category_name_already_exists">Kategori dengan nama ini sudah ada</string>
+    <string name="rename_category">Ubah nama kategori</string>
+    <string name="settings_feed_layout_big_image">Kartu gambar besar</string>
+    <string name="settings_feed_layout_grid">Grid</string>
+    <string name="settings_feed_layout_grid_toggle">Gunakan grid pada layar lebar</string>
+    <string name="article_bookmarked_content_description">Ditandai markah</string>
+    <string name="increase_line_height_button_content_description">Tambah tinggi baris</string>
+    <string name="decrease_line_height_button_content_description">Kurangi tinggi baris</string>
+    <string name="sort_and_filter_button">Urut &amp; filter</string>
 </resources>

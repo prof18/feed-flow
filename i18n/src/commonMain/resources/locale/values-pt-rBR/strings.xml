@@ -82,4 +82,7 @@
     <string name="import_export_label">Importe e exporte</string>
     <string name="choose_another_file_button">Escolha outro arquivo</string>
     <string name="invalid_opml_import_title">Não foi possível importar este arquivo</string>
+    <string name="about_the_app">FeedFlow é um leitor RSS minimalista com linha do tempo limpa e organizada cronologicamente — sem algoritmos, sem bagunça. Abra artigos no seu navegador favorito, ou leia-os sem distrações no Modo Leitor. Baixe e conserve artigos completos para ler de maneira offline em qualquer lugar.\nSincronize seus feeds, feeds lidos e não lidos e favoritos em dispositivos Android, iOS, macOS, Windows e Linux utilizando iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin ou BazQux. Organize feeds em categorias, bloqueie palavras-chave irritantes, e importe e exporte tudo utilizando OPML.</string>
+    <string name="invalid_rss_url_with_retry_hint">Não foi possível validar esse feed. Ele pode não ser um feed RSS válido, ou o servidor pode estar temporariamente indisponível.</string>
+    <string name="add_feed_anyway_acknowledgement">Esse feed ainda não foi verificado. Ainda assim será feita uma tentativa de busca, e pode posteriormente ser removida caso não funcione.</string>
 </resources>

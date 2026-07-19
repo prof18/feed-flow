@@ -397,4 +397,6 @@
     <string name="reorder_drag_handle">重新排序</string>
     <string name="reorder_mode_enter">重新排序</string>
     <string name="reorder_mode_done">完成</string>
+    <string name="expand_category_button_content_description">展开 %s</string>
+    <string name="collapse_category_button_content_description">收起 %s</string>
 </resources>

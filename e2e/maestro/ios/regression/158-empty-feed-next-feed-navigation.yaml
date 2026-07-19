@@ -1,0 +1,42 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+
+# Filter on the pinned Ars Technica source, which has a single unread
+# article, then mark it as read. With a single-source filter and a
+# remaining unread source in the same (uncategorized) group, EmptyFeedView
+# renders the NextFeedButton instead of only Refresh feeds / Open another
+# feed.
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_e2e_feed_pinned
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_feed_source_e2e_feed_pinned
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_pinned
+    timeout: 10000
+- tapOn: "Mark all as read"
+- assertVisible: "Nothing else to read here!"
+
+# The NextFeedButton renders below Refresh feeds / Open another feed with
+# the next unread source's title as its label.
+- tapOn: "HDblog.it"
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_no_image
+    timeout: 10000
+- assertNotVisible:
+    id: article_row_e2e_article_pinned

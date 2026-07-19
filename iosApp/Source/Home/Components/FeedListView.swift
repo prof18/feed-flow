@@ -69,9 +69,11 @@ struct FeedListView: View {
         } else if loadingState?.isLoading() == false && feedState.isEmpty {
             EmptyFeedView(
                 currentFeedFilter: currentFeedFilter,
+                nextFeedPreviewState: nextFeedPreviewState,
                 onReloadClick: onReloadClick,
                 onBackToTimelineClick: onBackToTimelineClick,
                 openDrawer: openDrawer,
+                onNavigateToNextFeed: onNavigateToNextFeed,
                 columnVisibility: columnVisibility
             )
         } else if feedState.isEmpty {

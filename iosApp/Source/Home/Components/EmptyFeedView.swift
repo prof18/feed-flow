@@ -16,9 +16,11 @@ struct EmptyFeedView: View {
     private var dismiss
 
     let currentFeedFilter: FeedFilter
+    let nextFeedPreviewState: NextFeedPreviewState
     let onReloadClick: () -> Void
     let onBackToTimelineClick: () -> Void
     let openDrawer: () -> Void
+    let onNavigateToNextFeed: () -> Void
     let columnVisibility: NavigationSplitViewVisibility
 
     var body: some View {
@@ -60,6 +62,16 @@ struct EmptyFeedView: View {
                     }
                 )
                 .buttonStyle(.bordered)
+                .padding(.top, Spacing.regular)
+                .padding(.horizontal, Spacing.medium)
+            }
+
+            if let enabledState = nextFeedPreviewState
+                as? NextFeedPreviewState.NextFeedPreviewEnabledState {
+                NextFeedButton(
+                    title: enabledState.title,
+                    onNavigateNext: onNavigateToNextFeed
+                )
                 .padding(.top, Spacing.regular)
                 .padding(.horizontal, Spacing.medium)
             }

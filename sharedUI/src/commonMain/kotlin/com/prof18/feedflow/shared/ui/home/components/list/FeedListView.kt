@@ -502,7 +502,7 @@ private fun MarkAllReadButton(
 }
 
 @Composable
-private fun NavigateNextButton(
+internal fun NavigateNextButton(
     title: String,
     onClick: () -> Unit,
 ) {

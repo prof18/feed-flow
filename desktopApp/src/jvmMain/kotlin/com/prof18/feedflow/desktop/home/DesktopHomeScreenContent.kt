@@ -180,6 +180,9 @@ fun DesktopHomeScreenContent(
                     onBackToTimelineClick = feedListActions.onBackToTimelineClick,
                     onOpenDrawerClick = onDrawerMenuClick,
                     isDrawerVisible = showDrawerMenu,
+                    nextFeedState = displayState.nextFeedDisplayState,
+                    onNavigateNext = feedListActions.onNavigateNext,
+                    showNextFeedButton = true,
                 )
 
                 else -> {

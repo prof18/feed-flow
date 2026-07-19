@@ -198,6 +198,8 @@ fun AndroidHomeScreenContent(
                     onBackToTimelineClick = feedListActions.onBackToTimelineClick,
                     onOpenDrawerClick = onDrawerMenuClick,
                     isDrawerVisible = showDrawerMenu,
+                    nextFeedState = displayState.nextFeedDisplayState,
+                    onNavigateNext = onNavigateToNextFeed,
                 )
 
                 else -> {

@@ -100,7 +100,7 @@ extension SidebarDrawer {
             let isExpanded = isCategoryExpanded(categoryId)
             let isSelected = selectedSidebarItem == .category(id: categoryItem.category.id)
 
-            Section {
+            Group {
                 categoryHeader(
                     categoryItem: categoryItem,
                     categoryId: categoryId,
@@ -128,31 +128,33 @@ extension SidebarDrawer {
                 .reduce(0 as Int64, +)
             let isSelected = selectedSidebarItem == .category(id: categoryId)
 
-            Section {
+            Group {
                 HStack(spacing: Spacing.xsmall) {
-                    Button {
-                        self.selectedSidebarItem = .category(id: categoryId)
-                        self.onFeedFilterSelected(FeedFilter.Uncategorized())
-                    } label: {
-                        HStack {
-                            Image(systemName: "folder")
+                    HStack {
+                        Image(systemName: "folder")
+                            .foregroundStyle(.secondary)
+                        Text(feedFlowStrings.noCategory)
+                        Spacer()
+                        if unreadCount > 0 {
+                            Text("\(unreadCount)")
+                                .font(.caption2)
                                 .foregroundStyle(.secondary)
-                            Text(feedFlowStrings.noCategory)
-                            Spacer()
-                            if unreadCount > 0 {
-                                Text("\(unreadCount)")
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.secondary.opacity(0.15))
-                                    .clipShape(Capsule())
-                            }
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.secondary.opacity(0.15))
+                                .clipShape(Capsule())
                         }
-                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        selectUncategorizedCategory(categoryId: categoryId)
+                    }
                     .foregroundStyle(Color.primary)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isButton)
+                    .accessibilityAction {
+                        selectUncategorizedCategory(categoryId: categoryId)
+                    }
                     .accessibilityIdentifier(DrawerAccessibilityIdentifiers.category(nil))
 
                     expansionToggle(label: feedFlowStrings.noCategory, isExpanded: isExpanded) {
@@ -170,6 +172,11 @@ extension SidebarDrawer {
         }
     }
 
+    private func selectUncategorizedCategory(categoryId: String) {
+        selectedSidebarItem = .category(id: categoryId)
+        onFeedFilterSelected(FeedFilter.Uncategorized())
+    }
+
     @ViewBuilder
     func categoryHeader(
         categoryItem: DrawerItem.DrawerCategory,
@@ -178,31 +185,35 @@ extension SidebarDrawer {
         isSelected: Bool
     ) -> some View {
         HStack(spacing: Spacing.xsmall) {
-            Button {
+            HStack {
+                Image(systemName: "folder")
+                    .foregroundStyle(.secondary)
+                Text(categoryItem.category.title)
+                Spacer()
+                if categoryItem.unreadCount > 0 {
+                    Text("\(categoryItem.unreadCount)")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.secondary.opacity(0.15))
+                        .clipShape(Capsule())
+                }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
                 self.selectedSidebarItem = .category(id: categoryItem.category.id)
                 self.onFeedFilterSelected(FeedFilter.Category(feedCategory: categoryItem.category))
-            } label: {
-                HStack {
-                    Image(systemName: "folder")
-                        .foregroundStyle(.secondary)
-                    Text(categoryItem.category.title)
-                    Spacer()
-                    if categoryItem.unreadCount > 0 {
-                        Text("\(categoryItem.unreadCount)")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.secondary.opacity(0.15))
-                            .clipShape(Capsule())
-                    }
-                }
-                .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
             .foregroundStyle(Color.primary)
             .contextMenu {
                 categoryContextMenu(categoryItem: categoryItem)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isButton)
+            .accessibilityAction {
+                self.selectedSidebarItem = .category(id: categoryItem.category.id)
+                self.onFeedFilterSelected(FeedFilter.Category(feedCategory: categoryItem.category))
             }
             .accessibilityIdentifier(DrawerAccessibilityIdentifiers.category(categoryId))
 
@@ -268,14 +279,19 @@ extension SidebarDrawer {
 
     @ViewBuilder
     func expansionToggle(label: String, isExpanded: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.secondary)
-                .frame(minWidth: 44, minHeight: 44)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
+        Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundStyle(.secondary)
+            .padding(.leading, Spacing.small)
+            .padding(.trailing, Spacing.small)
+            .padding(.vertical, Spacing.xxsmall)
+            .contentShape(Rectangle())
+            .onTapGesture(perform: action)
+            .accessibilityElement()
+            .accessibilityAddTraits(.isButton)
+            .accessibilityAction {
+                action()
+            }
         .accessibilityLabel(
             isExpanded
                 ? feedFlowStrings.collapseCategoryButtonContentDescription(label)

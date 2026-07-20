@@ -397,4 +397,6 @@
     <string name="reorder_drag_handle">Muuda järjestust</string>
     <string name="reorder_mode_enter">Muuda järjestust</string>
     <string name="reorder_mode_done">Valmis</string>
+    <string name="expand_category_button_content_description">Laienda: %s</string>
+    <string name="collapse_category_button_content_description">Ahenda: %s</string>
 </resources>

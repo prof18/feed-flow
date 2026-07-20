@@ -397,4 +397,6 @@
     <string name="reorder_drag_handle">Reordear</string>
     <string name="reorder_mode_enter">Reordear</string>
     <string name="reorder_mode_done">Feito</string>
+    <string name="expand_category_button_content_description">Despregar %s</string>
+    <string name="collapse_category_button_content_description">Pregar %s</string>
 </resources>

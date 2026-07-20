@@ -397,4 +397,6 @@
     <string name="reorder_mode_done">Fertig</string>
     <string name="reorder_drag_handle">Neu anordnen</string>
     <string name="reorder_mode_enter">Neu anordnen</string>
+    <string name="expand_category_button_content_description">Erweitern %s</string>
+    <string name="collapse_category_button_content_description">Einklappen %s</string>
 </resources>

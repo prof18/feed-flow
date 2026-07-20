@@ -397,4 +397,6 @@
     <string name="reorder_drag_handle">Zmień kolejność</string>
     <string name="reorder_mode_enter">Zmień kolejność</string>
     <string name="reorder_mode_done">Gotowe</string>
+    <string name="expand_category_button_content_description">Rozwiń %s</string>
+    <string name="collapse_category_button_content_description">Zwiń %s</string>
 </resources>

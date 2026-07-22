@@ -139,6 +139,7 @@ internal fun ReaderModeScreen(
 
     LaunchedEffect(state) {
         hoveredLink = null
+        focusRequester.requestFocus()
     }
 
     Box(

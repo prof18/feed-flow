@@ -23,7 +23,7 @@ Sync Feeds Across All Your Devices
 - Your feeds, read status, and bookmarks stay in sync across Windows, Android,
   iOS, macOS, and Linux.
 
-Stay Organized
+Μείνετε οργανωμένοι
 - Import and export feeds with OPML — migrate from any RSS tool.
 - Block keywords to filter out unwanted content.
 - Organize feeds into categories and bookmark articles for later.

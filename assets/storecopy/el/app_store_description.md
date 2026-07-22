@@ -1,31 +1,32 @@
 Το FeedFlow είναι ένας μινιμαλιστικός αναγνώστης RSS σχεδιασμένος για ένα
 πράγμα: να είσαι μαζί με τις εξελίξεις στο διαδίκτυο χωρίς τον θόρυβο.
 
-Follow your favorite blogs and news sites in a clean, chronological timeline. No
-algorithms decide what you see — just your feeds, in the order they were
-published.
+Ακολουθήστε τα αγαπημένα σας blogs και ειδησεογραφικές σελίδες σε ένα καθαρό,
+χρονολογικό χρονοδιάγραμμα. Κανένας αλγόριθμος δεν αποφασίζει τι βλέπετε - μόνο
+οι ροές σας, με την σειρά που δημοσιεύτηκαν.
 
 Διάβασε Όπως Θες
 - Άνοιξε άρθρα στον περιηγητή σου ή σε Λειτουργία Αναγνώστη για προβολή χωρίς
   ενοχλήσεις.
-- Adjust text size and spacing for comfortable reading.
-- Cache full articles for offline reading — perfect for commutes, flights, or
-  anywhere without a connection.
+- Προσαρμογή μέγεθος κειμένου και διαστήματος για άνετη ανάγνωση.
+- Αποθηκεύστε πλήρη άρθρα για ανάγνωση εκτός σύνδεσης - τέλειο για μετακινήσεις,
+  πτήσεις ή οπουδήποτε χωρίς σύνδεση.
 
-Sync That Fits Your Setup
-- iCloud sync keeps your feeds, read status, and bookmarks in sync across
-  iPhone, iPad, and Mac — effortlessly.
-- Or choose another backend: Dropbox, Google Drive, or self-hosted services like
-  FreshRSS, Miniflux, Feedbin, and BazQux.
-- Your reading progress follows you everywhere.
+Συγχρονισμός Που Σου Ταιριάζει
+- Το iCloud κρατά τις ροές, την κατάσταση ανάγνωσης και τους σελιδοδείκτες σε
+  συγχρονισμό σε iPhone, iPad και Mac - αβίαστα.
+- Ή επιλέξτε ένα άλλο backend: Dropbox, Google Drive, ή αυτοφιλοξενούμενες
+  υπηρεσίες όπως το FreshRSS, το Miniflux, το Feedbin και το BazQux.
+- Η πρόοδος ανάγνωσης σάς ακολουθεί παντού.
 
-Stay Organized
-- Import and export feeds with OPML.
-- Block keywords to silence noisy topics.
-- Categories, bookmarks, and search keep everything at your fingertips.
+Μείνετε οργανωμένοι
+- Εισαγωγή και εξαγωγή ροών με OPML.
+- Αποκλείστε λέξεις-κλειδιά για να σιωπήσετε ενοχλητικά θέματα.
+- Οι κατηγορίες, οι σελιδοδείκτες και η αναζήτηση κρατούν τα πάντα στα δάχτυλά
+  σας.
 
-Make It Yours
-- Dark and light themes.
+Κάνε το δικό σου
+- Σκοτεινά και φωτεινά θέματα.
 - Background refresh so your feeds are always fresh.
 - Supports RSS and Atom feed formats.
 

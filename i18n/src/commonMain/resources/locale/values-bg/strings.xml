@@ -397,4 +397,6 @@
     <string name="reorder_drag_handle">Пренареждане</string>
     <string name="reorder_mode_enter">Пренареждане</string>
     <string name="reorder_mode_done">Готово</string>
+    <string name="expand_category_button_content_description">Разгъване %s</string>
+    <string name="collapse_category_button_content_description">Свиване %s</string>
 </resources>

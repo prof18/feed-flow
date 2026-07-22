@@ -386,4 +386,17 @@
     <string name="rename_category">Přejmenovat kategorii</string>
     <string name="article_bookmarked_content_description">Uloženo do záložek</string>
     <string name="sort_and_filter_button">Řazení a filtrování</string>
+    <string name="reorder_drag_handle">Změnit pořadí</string>
+    <string name="reorder_mode_enter">Změnit pořadí</string>
+    <string name="reorder_mode_done">Hotovo</string>
+    <string name="reader_mode_line_height">Výška řádku</string>
+    <string name="reader_mode_text_settings">Nastavení textu</string>
+    <string name="reader_mode_reset_to_default">Obnovit výchozí</string>
+    <string name="settings_feed_layout_big_image">Karta s velkým obrázkem</string>
+    <string name="settings_feed_layout_grid">Mřížka</string>
+    <string name="settings_feed_layout_grid_toggle">Použijte mřížku na široké obrazovky</string>
+    <string name="increase_line_height_button_content_description">Zvětšit výšku řádku</string>
+    <string name="decrease_line_height_button_content_description">Zmenšit výšku řádku</string>
+    <string name="expand_category_button_content_description">Rozbalit %s</string>
+    <string name="collapse_category_button_content_description">Sbalit %s</string>
 </resources>

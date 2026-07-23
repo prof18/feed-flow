@@ -397,4 +397,6 @@
     <string name="reorder_drag_handle">Sắp xếp lại</string>
     <string name="reorder_mode_enter">Sắp xếp lại</string>
     <string name="reorder_mode_done">Xong</string>
+    <string name="expand_category_button_content_description">Mở rộng %s</string>
+    <string name="collapse_category_button_content_description">Thu gọn %s</string>
 </resources>

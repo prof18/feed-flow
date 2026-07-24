@@ -67,9 +67,9 @@
     <string name="dropbox_sync_desktop_description">Nhấn vào nút Kết nối, bạn sẽ được chuyển hướng đến trang web Dropbox. Sau khi kết nối tài khoản, hãy sao chép và nhập mã xác minh vào đây trong ứng dụng</string>
     <string name="feed_sync_in_progress">Đang làm mới. Ứng dụng sẽ tự đóng khi xong.</string>
     <string name="no_icloud_sync_yet">Dữ liệu chưa được đồng bộ hóa với iCloud. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
-    <string name="settings_toggle_show_read_articles">Hiện các bài viết đã đọc trong danh sách</string>
+    <string name="settings_toggle_show_read_articles">Bao gồm các bài viết đã đọc</string>
     <string name="about_button">Giới thiệu</string>
-    <string name="dropbox_sync_common_description">Kết nối tài khoản Dropbox của bạn để đồng bộ hóa các nguồn tin, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn.</string>
+    <string name="dropbox_sync_common_description">Kết nối tài khoản Dropbox của bạn để đồng bộ các nguồn tin, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn.</string>
     <string name="last_download">Tải xuống lần cuối: %s</string>
     <string name="wrong_link_report_title">Các nguồn tin sau đây không được thêm vào vì chúng không hợp lệ</string>
     <string name="done_button">OK</string>
@@ -91,8 +91,8 @@
     <string name="add_feed_category_title">Danh mục</string>
     <string name="no_category_selected_header">Chưa có danh mục</string>
     <string name="action_done">Xong</string>
-    <string name="drawer_title_timeline">Dòng thời gian</string>
-    <string name="empty_screen_back_to_timeline">Quay lại dòng thời gian</string>
+    <string name="drawer_title_timeline">Bảng tin của tôi</string>
+    <string name="empty_screen_back_to_timeline">Quay lại bảng tin</string>
     <string name="dropbox_auth_code_hint">Mã xác minh</string>
     <string name="bookmarked_articles_empty_screen_message">Không có gì ở đây, đến lúc lưu gì đó rồi!</string>
     <string name="about_app_version">Phiên bản: %s</string>
@@ -109,7 +109,7 @@
     <string name="feed_name">Tên nguồn tin</string>
     <string name="feed_edited_message">Nguồn tin %s đã được cập nhật</string>
     <string name="edit_feed">Cập nhật nguồn tin</string>
-    <string name="icloud_sync_description">Kết nối tài khoản iCloud của bạn để đồng bộ hóa các nguồn tin, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị iOS, iPadOS và iPadOS. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn.</string>
+    <string name="icloud_sync_description">Kết nối tài khoản iCloud của bạn để đồng bộ các nguồn tin, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị iOS, iPadOS và iPadOS. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn.</string>
     <string name="settings_feed_list_scale_title">Cỡ chữ</string>
     <string name="settings_font_scale_feed_source_example">Tên nguồn tin</string>
     <string name="settings_feed_list_title">Danh sách nguồn tin</string>
@@ -187,12 +187,12 @@
     <string name="notification_channel_description">Thông báo bài viết mới trên bảng tin</string>
     <string name="settings_notifications_permission_status_title">Trạng thái cấp quyền</string>
     <string name="settings_notifications_permission_status_granted">Đã cho phép</string>
-    <string name="settings_notifications_permission_status_denied">Đã từ chối</string>
+    <string name="settings_notifications_permission_status_denied">Chưa cho phép</string>
     <string name="settings_notifications_permission_request_button">Cho phép</string>
     <string name="new_articles_notification_title">Có bài viết mới</string>
     <string name="notification_channel_name">Những bài viết mới</string>
     <string name="settings_notifications_title">Thông báo</string>
-    <string name="settings_notifications_warning_reliability">Thông báo được kiểm tra trên thiết bị của bạn, nhưng hệ thống cũng cần cho phép hoạt động dưới nền.</string>
+    <string name="settings_notifications_warning_reliability">Thông báo được kiểm tra trên thiết bị của bạn, nhưng việc phân phối còn phụ thuộc vào các hoạt động chạy ngầm được hệ thống cho phép, cũng như thói quen sử dụng ứng dụng.</string>
     <string name="marking_all_read_dialog_title">Đánh dấu đã đọc tất cả...</string>
     <string name="date_format_title">Định dạng ngày</string>
     <string name="date_format_normal">Ngày/Tháng</string>
@@ -261,7 +261,7 @@
     <string name="trigger_feed_sync">Đồng bộ những thay đổi</string>
     <string name="menu_mark_all_above_as_read">Đã đọc tất cả bài viết mới hơn</string>
     <string name="menu_mark_all_below_as_read">Đã đọc tất cả bài viết cũ hơn</string>
-    <string name="google_drive_sync_common_description">Kết nối tài khoản Google Drive của bạn để đồng bộ hóa các nguồn tin đăng ký, danh mục, bài viết đã đọc và đánh dấu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong thư mục dành riêng cho ứng dụng; FeedFlow sẽ không có quyền truy cập vào bất kỳ tệp nào của bạn</string>
+    <string name="google_drive_sync_common_description">Kết nối tài khoản Google Drive của bạn để đồng bộ các nguồn tin đăng ký, danh mục, bài viết đã đọc và đánh dấu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ tệp nào của bạn.</string>
     <string name="google_drive_sync_error">Đã xảy ra lỗi khi kết nối với Google Drive. Vui lòng thử lại</string>
     <string name="google_drive_sync_success">Tài khoản Google Drive của bạn đã được kết nối thành công</string>
     <string name="no_google_drive_sync_yet">Dữ liệu chưa được đồng bộ hóa với Google Drive. Nhấn vào nút sao lưu để bắt đầu đồng bộ hóa</string>
@@ -308,7 +308,7 @@
     <string name="widget_font_size_title">Cỡ chữ</string>
     <string name="reset_button">Đặt lại</string>
     <string name="settings_feeds_and_accounts">Nguồn tin &amp; Tài khoản</string>
-    <string name="settings_reading_behavior">Hành vi đọc</string>
+    <string name="settings_reading_behavior">Thói quen đọc</string>
     <string name="settings_sync_and_storage">Đồng bộ &amp; Lưu trữ</string>
     <string name="settings_about_and_support">Giới thiệu &amp; Hỗ trợ</string>
     <string name="bazqux_account_connected">Tài khoản BazQux của bạn đã được kết nối thành công</string>
@@ -351,9 +351,9 @@
     <string name="delete_category">Xóa danh mục</string>
     <string name="settings_sync_period">Đồng bộ nền</string>
     <string name="settings_background_sync_restrictions_title">Điều kiện đồng bộ nền</string>
-    <string name="settings_background_sync_restrictions_description">Dùng một hoặc cả hai tùy chọn để giới hạn thời gian chạy đồng bộ nền.</string>
-    <string name="settings_background_sync_wifi_only">Chỉ đồng bộ nền khi có Wi-Fi</string>
-    <string name="settings_background_sync_charging_only">Chỉ đồng bộ nền khi sạc điện thoại</string>
+    <string name="settings_background_sync_restrictions_description">Dùng một hoặc cả hai tùy chọn để giới hạn việc đồng bộ nền.</string>
+    <string name="settings_background_sync_wifi_only">Đồng bộ nền bằng Wi-Fi</string>
+    <string name="settings_background_sync_charging_only">Đồng bộ nền khi sạc pin</string>
     <string name="widget_configuration_description">Các bản cập nhật widget tuân theo cài đặt đồng bộ nền của bạn trong mục Đồng bộ &amp; Lưu trữ.</string>
     <string name="widget_background_sync_disabled_warning">Tính năng đồng bộ nền hiện đang bị vô hiệu hóa, do đó tiện ích sẽ không tự động làm mới.</string>
     <string name="widget_background_color_brightness">Độ sáng</string>
@@ -376,7 +376,7 @@
     <string name="delete_all_feeds_confirmation_message">Bạn có chắc muốn xóa tất cả nguồn tin trong danh mục này? Thao tác này không thể hoàn tác.</string>
     <string name="settings_appearance">Giao diện</string>
     <string name="category_name_already_exists">Tên danh mục đã tồn tại</string>
-    <string name="settings_hide_unread_count">Ẩn số lượng chưa đọc</string>
+    <string name="settings_hide_unread_count">Ẩn đếm số bài viết chưa đọc</string>
     <string name="close_button_content_description">Đóng</string>
     <string name="article_bookmarked_content_description">Đã lưu</string>
     <string name="invalid_rss_url_with_retry_hint">Không thể xác thực nguồn tin này. Có thể đây không phải là nguồn tin RSS hợp lệ hoặc máy chủ có thể tạm thời không khả dụng.</string>

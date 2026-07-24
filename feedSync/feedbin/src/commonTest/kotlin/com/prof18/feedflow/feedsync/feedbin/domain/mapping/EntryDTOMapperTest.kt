@@ -103,6 +103,28 @@ class EntryDTOMapperTest {
     }
 
     @Test
+    fun `mapToFeedItem keeps the query string of the image extracted from content`() {
+        val entryDTO = createEntryDTO(
+            id = 10,
+            published = "2023-11-14T10:00:00Z",
+            summary = null,
+            content = "<img src=\"https://images.tagesschau.de/image/abc/16x9-big/schnieder-144.jpg?width=1920\">",
+        )
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertEquals(
+            "https://images.tagesschau.de/image/abc/16x9-big/schnieder-144.jpg?width=1920",
+            result.imageUrl,
+        )
+    }
+
+    @Test
     fun `mapToFeedItem filters emoji images`() {
         val entryDTO = createEntryDTO(
             id = 10,

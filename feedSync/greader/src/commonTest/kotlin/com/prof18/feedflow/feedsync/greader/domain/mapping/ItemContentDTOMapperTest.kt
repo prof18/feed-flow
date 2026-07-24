@@ -124,6 +124,22 @@ class ItemContentDTOMapperTest {
     }
 
     @Test
+    fun `mapToFeedItem keeps the query string of the image extracted from content`() {
+        val itemContentDTO = createItemContentDTO(
+            canonicalHref = "https://example.com/article",
+            imageHref = null,
+            contentText = "<img src=\"https://images.tagesschau.de/image/abc/16x9-big/schnieder-144.jpg?width=1920\">",
+        )
+
+        val result = mapper.mapToFeedItem(itemContentDTO, testFeedSource)
+
+        assertEquals(
+            "https://images.tagesschau.de/image/abc/16x9-big/schnieder-144.jpg?width=1920",
+            result?.imageUrl,
+        )
+    }
+
+    @Test
     fun `mapToFeedItem filters out emoji images from content`() {
         val itemContentDTO = createItemContentDTO(
             canonicalHref = "https://example.com/article",

@@ -39,6 +39,46 @@ class ContentImageUrlExtractorTest {
     }
 
     @Test
+    fun `decodes decimal numeric entities inside the image url`() {
+        val content = """<img src="https://example.com/image.jpg?w=180&#038;h=180&#038;sig=abc">"""
+
+        assertEquals(
+            "https://example.com/image.jpg?w=180&h=180&sig=abc",
+            ContentImageUrlExtractor.extractImageUrl(content),
+        )
+    }
+
+    @Test
+    fun `decodes hexadecimal numeric entities inside the image url`() {
+        val content = """<img src="https://example.com/image.jpg?w=180&#x26;h=180">"""
+
+        assertEquals(
+            "https://example.com/image.jpg?w=180&h=180",
+            ContentImageUrlExtractor.extractImageUrl(content),
+        )
+    }
+
+    @Test
+    fun `decodes double encoded numeric entities inside the image url`() {
+        val content = """<img src="https://example.com/image.jpg?w=180&amp;#038;h=180">"""
+
+        assertEquals(
+            "https://example.com/image.jpg?w=180&h=180",
+            ContentImageUrlExtractor.extractImageUrl(content),
+        )
+    }
+
+    @Test
+    fun `keeps invalid numeric entities untouched`() {
+        val content = """<img src="https://example.com/image.jpg?name=x&#0;y">"""
+
+        assertEquals(
+            "https://example.com/image.jpg?name=x&#0;y",
+            ContentImageUrlExtractor.extractImageUrl(content),
+        )
+    }
+
+    @Test
     fun `ignores emoji images`() {
         val content = """<img src="https://s.w.org/images/core/emoji/test.png">"""
 

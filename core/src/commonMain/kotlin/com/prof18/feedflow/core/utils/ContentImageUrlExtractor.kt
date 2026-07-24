@@ -7,6 +7,11 @@ object ContentImageUrlExtractor {
         options = setOf(RegexOption.IGNORE_CASE),
     )
 
+    private val numericEntityRegex = Regex(
+        pattern = """&#(x?)([0-9a-fA-F]{1,6});""",
+        options = setOf(RegexOption.IGNORE_CASE),
+    )
+
     /**
      * Finds the first image url inside the provided HTML content, keeping any query string
      * since some websites use it to request a properly sized image.
@@ -19,6 +24,7 @@ object ContentImageUrlExtractor {
                 ?.replace("&quot;", "\"")
                 ?.replace("&lt;", "<")
                 ?.replace("&gt;", ">")
+                ?.let(::decodeNumericEntities)
                 ?.let { imageUrlRegex.find(it) }
                 ?.value
                 ?.trim()
@@ -29,5 +35,22 @@ object ContentImageUrlExtractor {
         }
     }
 
+    private fun decodeNumericEntities(content: String): String =
+        numericEntityRegex.replace(content) { match ->
+            val isHex = match.groupValues[1].isNotEmpty()
+            val body = match.groupValues[2]
+            val codePoint = if (isHex) {
+                body.toIntOrNull(radix = 16)
+            } else {
+                body.takeIf { it.all(Char::isDigit) }?.toIntOrNull()
+            }
+            val char = codePoint
+                ?.takeIf { it in 1..MAX_BMP_CODE_POINT }
+                ?.toChar()
+                ?.takeIf { !it.isSurrogate() }
+            char?.toString() ?: match.value
+        }
+
+    private const val MAX_BMP_CODE_POINT = 0xFFFF
     private const val EMOJI_WEBSITE = "https://s.w.org/images/core/emoji"
 }

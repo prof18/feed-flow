@@ -13,6 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
+import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState.NextFeedDisplayEnabledState
+import com.prof18.feedflow.shared.ui.home.components.list.NavigateNextButton
+import com.prof18.feedflow.shared.ui.home.components.list.PullToNextIndicator
+import com.prof18.feedflow.shared.ui.home.components.list.PullToNextLayout
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -20,62 +25,83 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun EmptyFeedView(
     currentFeedFilter: FeedFilter,
     isDrawerVisible: Boolean,
+    nextFeedState: NextFeedDisplayState,
     onReloadClick: () -> Unit,
     onBackToTimelineClick: () -> Unit,
     onOpenDrawerClick: () -> Unit,
+    onNavigateNext: () -> Unit,
     modifier: Modifier = Modifier,
+    showNextFeedButton: Boolean = false,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    PullToNextLayout(
+        modifier = modifier.fillMaxSize(),
+        onNavigateNext = onNavigateNext,
+        enabled = !showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState,
+        indicator = { progress ->
+            PullToNextIndicator(
+                progress = progress,
+                title = (nextFeedState as? NextFeedDisplayEnabledState)?.title,
+            )
+        },
     ) {
-        val emptyMessage = when (currentFeedFilter) {
-            is FeedFilter.Read -> LocalFeedFlowStrings.current.readArticlesEmptyScreenMessage
-            is FeedFilter.Bookmarks -> LocalFeedFlowStrings.current.bookmarkedArticlesEmptyScreenMessage
-            else -> LocalFeedFlowStrings.current.emptyFeedMessage
-        }
-
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Spacing.regular),
-            text = emptyMessage,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-
-        val buttonAction = if (currentFeedFilter is FeedFilter.Read || currentFeedFilter is FeedFilter.Bookmarks) {
-            onBackToTimelineClick
-        } else {
-            onReloadClick
-        }
-
-        val buttonText = when (currentFeedFilter) {
-            is FeedFilter.Read, is FeedFilter.Bookmarks -> {
-                LocalFeedFlowStrings.current.emptyScreenBackToTimeline
-            }
-            else -> {
-                LocalFeedFlowStrings.current.refreshFeeds
-            }
-        }
-
-        Button(
-            modifier = Modifier
-                .padding(top = Spacing.regular),
-            onClick = buttonAction,
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(buttonText)
-        }
+            val emptyMessage = when (currentFeedFilter) {
+                is FeedFilter.Read -> LocalFeedFlowStrings.current.readArticlesEmptyScreenMessage
+                is FeedFilter.Bookmarks -> LocalFeedFlowStrings.current.bookmarkedArticlesEmptyScreenMessage
+                else -> LocalFeedFlowStrings.current.emptyFeedMessage
+            }
 
-        if (isDrawerVisible) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.regular),
+                text = emptyMessage,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+
+            val buttonAction = if (currentFeedFilter is FeedFilter.Read || currentFeedFilter is FeedFilter.Bookmarks) {
+                onBackToTimelineClick
+            } else {
+                onReloadClick
+            }
+
+            val buttonText = when (currentFeedFilter) {
+                is FeedFilter.Read, is FeedFilter.Bookmarks -> {
+                    LocalFeedFlowStrings.current.emptyScreenBackToTimeline
+                }
+                else -> {
+                    LocalFeedFlowStrings.current.refreshFeeds
+                }
+            }
+
             Button(
                 modifier = Modifier
                     .padding(top = Spacing.regular),
-                onClick = onOpenDrawerClick,
+                onClick = buttonAction,
             ) {
-                Text(LocalFeedFlowStrings.current.openAnotherFeed)
+                Text(buttonText)
+            }
+
+            if (isDrawerVisible) {
+                Button(
+                    modifier = Modifier
+                        .padding(top = Spacing.regular),
+                    onClick = onOpenDrawerClick,
+                ) {
+                    Text(LocalFeedFlowStrings.current.openAnotherFeed)
+                }
+            }
+
+            if (showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState) {
+                NavigateNextButton(
+                    title = nextFeedState.title,
+                    onClick = onNavigateNext,
+                )
             }
         }
     }

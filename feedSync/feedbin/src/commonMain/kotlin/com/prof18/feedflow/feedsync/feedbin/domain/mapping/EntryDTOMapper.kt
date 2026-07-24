@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.TimeFormat
+import com.prof18.feedflow.core.utils.ContentImageUrlExtractor
 import com.prof18.feedflow.feedsync.feedbin.data.dto.EntryDTO
 import kotlin.time.Instant
 
@@ -37,7 +38,7 @@ internal class EntryDTOMapper(
             title = entryDTO.title,
             subtitle = entryDTO.summary?.let { htmlParser.getTextFromHTML(it) },
             content = entryDTO.content,
-            imageUrl = getImageFromContent(entryDTO.content ?: entryDTO.summary),
+            imageUrl = ContentImageUrlExtractor.extractImageUrl(entryDTO.content ?: entryDTO.summary),
             feedSource = feedSource,
             pubDateMillis = pubDateMillis,
             isRead = isRead,
@@ -51,24 +52,5 @@ internal class EntryDTOMapper(
             commentsUrl = commentsUrl,
             isBookmarked = isBookmarked,
         )
-    }
-
-    private fun getImageFromContent(content: String?): String? {
-        return try {
-            val urlRegex = Regex(pattern = "https?:\\/\\/[^\\s<>\"]+\\.(?:jpg|jpeg|png|gif|bmp|webp)")
-            content
-                ?.let { urlRegex.find(it) }
-                ?.let {
-                    it.value
-                        .trim()
-                        .takeIf { url -> !url.contains(EMOJI_WEBSITE) }
-                }
-        } catch (_: Throwable) {
-            null
-        }
-    }
-
-    private companion object {
-        const val EMOJI_WEBSITE = "https://s.w.org/images/core/emoji"
     }
 }

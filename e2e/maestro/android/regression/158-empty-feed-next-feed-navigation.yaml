@@ -1,0 +1,45 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+
+# Filter on the pinned Ars Technica source, which has a single unread
+# article, then mark it as read. With a single-source filter and a
+# remaining unread source in the same (uncategorized) group, EmptyFeedView
+# renders with the next-feed affordance instead of only Refresh feeds /
+# Open another feed.
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_e2e_feed_pinned
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_feed_source_e2e_feed_pinned
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_pinned
+    timeout: 10000
+- tapOn: "Mark all as read"
+- assertVisible: "Nothing else to read here!"
+
+# The pull-to-next gesture stays active on the empty state. Overscrolling
+# upward past the empty message moves the filter to the next unread source
+# (HDblog.it) instead of doing nothing.
+- swipe:
+    start: 50%,90%
+    end: 50%,15%
+    duration: 250
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_no_image
+    timeout: 10000
+- assertNotVisible:
+    id: article_row_e2e_article_pinned

@@ -107,6 +107,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-155 | `155-empty-home-open-another-feed.yaml` | `empty` | Android, iOS | EmptyFeedView Open another feed button opens the drawer. |
 | REG-156 | `156-feed-source-reorder-smoke.yaml` | `content-rich` | Android | Settings → Feeds: drag uncategorized feed sources, categories (including the Uncategorized group), and Technology feed sources, then verify the list remains usable. Shared/database tests assert the exact ordering semantics. |
 | REG-157 | `157-drawer-reorder-smoke.yaml` | `reorder-drag` | Android | Drawer: drag pinned feed sources, categories (including the Uncategorized group), and feed sources inside Technology, then verify the drawer remains usable. Shared/database tests assert the exact ordering semantics. |
+| REG-158 | `158-empty-feed-next-feed-navigation.yaml` | `content-rich` | Android, iOS | Mark the last unread article in a single-source filter as read; EmptyFeedView renders the next-feed affordance and Android's overscroll gesture / iOS's NextFeedButton move the filter to the next unread source. |
 
 ## Known Limitations
 

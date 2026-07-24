@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.TimeFormat
+import com.prof18.feedflow.core.utils.ContentImageUrlExtractor
 import com.prof18.feedflow.feedsync.greader.data.dto.ItemContentDTO
 
 internal class ItemContentDTOMapper(
@@ -26,7 +27,7 @@ internal class ItemContentDTOMapper(
             title = itemContentDTO.title,
             subtitle = parsedContent?.text,
             content = content,
-            imageUrl = itemContentDTO.image?.href ?: getImageFromContent(content),
+            imageUrl = itemContentDTO.image?.href ?: ContentImageUrlExtractor.extractImageUrl(content),
             feedSource = feedSource,
             pubDateMillis = itemContentDTO.published * 1000,
             isRead = itemContentDTO.read,
@@ -39,31 +40,5 @@ internal class ItemContentDTOMapper(
             commentsUrl = parsedContent?.commentsUrl,
             isBookmarked = itemContentDTO.starred,
         )
-    }
-
-    /**
-     * Finds the first img tag and gets the src as the featured image.
-     *
-     * @param content The content in which to search for the tag
-     * @return The url, if there is one
-     */
-    private fun getImageFromContent(content: String?): String? {
-        return try {
-            val urlRegex = Regex(pattern = "https?:\\/\\/[^\\s<>\"]+\\.(?:jpg|jpeg|png|gif|bmp|webp)")
-            content
-                ?.let { urlRegex.find(it) }
-                ?.let {
-                    it.value
-                        .trim()
-                        .takeIf { url -> !url.contains(EMOJI_WEBSITE) }
-                }
-        } catch (_: Throwable) {
-            // Do nothing, on iOS it could fail for too much recursion
-            null
-        }
-    }
-
-    private companion object {
-        const val EMOJI_WEBSITE = "https://s.w.org/images/core/emoji"
     }
 }

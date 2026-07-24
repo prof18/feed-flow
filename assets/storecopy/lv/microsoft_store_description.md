@@ -24,7 +24,7 @@ Ziņu plūsmu sinhronizācija visās jūsu ierīcēs
 - Your feeds, read status, and bookmarks stay in sync across Windows, Android,
   iOS, macOS, and Linux.
 
-Stay Organized
+Uztur kārtību
 - Import and export feeds with OPML — migrate from any RSS tool.
 - Block keywords to filter out unwanted content.
 - Organize feeds into categories and bookmark articles for later.

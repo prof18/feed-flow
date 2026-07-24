@@ -18,7 +18,7 @@ Sync That Fits Your Setup
   FreshRSS, Miniflux, Feedbin, and BazQux.
 - Your reading progress follows you everywhere.
 
-Uzturēt kārtību
+Uztur kārtību
 - Ievietot un izgūt ziņu plūsmas, izmantojot OPML.
 - Bloķēt atslēgvārdus, lai nerādītu traucējošās, nevēlamās, tēmas.
 - Categories, bookmarks, and search keep everything at your fingertips.

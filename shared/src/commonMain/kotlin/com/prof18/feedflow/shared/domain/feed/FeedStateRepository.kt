@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.database.DatabaseHelper
@@ -48,12 +49,16 @@ internal class FeedStateRepository(
     private val mutableFeedListVersion: MutableStateFlow<Long> = MutableStateFlow(0L)
     val feedListVersion = mutableFeedListVersion.asStateFlow()
 
+    private val pendingNewArticlesMutableState = MutableStateFlow(0)
+    val pendingNewArticlesState: StateFlow<Int> = pendingNewArticlesMutableState.asStateFlow()
+
     private val currentFeedFilterMutableState: MutableStateFlow<FeedFilter> = MutableStateFlow(FeedFilter.Timeline)
     val currentFeedFilter: StateFlow<FeedFilter> = currentFeedFilterMutableState.asStateFlow()
 
     private var currentPage: Int = 0
 
     suspend fun getFeeds() {
+        pendingNewArticlesMutableState.update { 0 }
         try {
             val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
 
@@ -83,6 +88,31 @@ internal class FeedStateRepository(
         } catch (e: Throwable) {
             logger.d(e) { "Something wrong while getting data from Database" }
             errorMutableState.emit(DatabaseError(DatabaseErrorCode.FeedRetrievalFailed))
+        }
+    }
+
+    suspend fun refreshPendingNewArticlesCount() {
+        try {
+            val feedFilter = currentFeedFilterMutableState.value
+            val feedListVersion = mutableFeedListVersion.value
+            val visibleIds = feedState.value.map { it.id }.toHashSet()
+            val feeds = executeWithRetry {
+                databaseHelper.getFeedItems(
+                    feedFilter = feedFilter,
+                    pageSize = FEED_DB_PAGE_SIZE,
+                    offset = 0,
+                    showReadItems = settingsRepository.getShowReadArticlesTimeline(),
+                    sortOrder = FeedOrder.NEWEST_FIRST,
+                )
+            }
+            if (currentFeedFilterMutableState.value != feedFilter || mutableFeedListVersion.value != feedListVersion) {
+                return
+            }
+            pendingNewArticlesMutableState.update {
+                feeds.count { it.url_hash !in visibleIds }
+            }
+        } catch (_: Throwable) {
+            // The pill is best-effort and must not turn a successful refresh into an error.
         }
     }
 

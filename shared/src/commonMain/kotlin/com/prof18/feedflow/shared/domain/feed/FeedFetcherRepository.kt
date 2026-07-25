@@ -60,18 +60,26 @@ class FeedFetcherRepository internal constructor(
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
 
-    suspend fun fetchFeeds(isFirstLaunch: Boolean = false, forceRefresh: Boolean = false) {
-        return withContext(dispatcherProvider.io) {
+    suspend fun fetchFeeds(
+        isFirstLaunch: Boolean = false,
+        forceRefresh: Boolean = false,
+        publishToFeedList: Boolean = true,
+    ) {
+        withContext(dispatcherProvider.io) {
             feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
             when {
                 gReaderRepository.isAccountSet() -> {
-                    fetchFeedsWithGReader()
+                    fetchFeedsWithGReader(publishToFeedList)
                 }
                 feedbinRepository.isAccountSet() -> {
-                    fetchFeedsWithFeedbin()
+                    fetchFeedsWithFeedbin(publishToFeedList)
                 }
                 else -> {
-                    fetchFeedsWithRssParser(isFirstLaunch = isFirstLaunch, forceRefresh = forceRefresh)
+                    fetchFeedsWithRssParser(
+                        isFirstLaunch = isFirstLaunch,
+                        forceRefresh = forceRefresh,
+                        publishToFeedList = publishToFeedList,
+                    )
                 }
             }
         }
@@ -85,7 +93,7 @@ class FeedFetcherRepository internal constructor(
     suspend fun markItemsAsNotified() =
         databaseHelper.markFeedItemsAsNotified()
 
-    private suspend fun fetchFeedsWithGReader() {
+    private suspend fun fetchFeedsWithGReader(publishToFeedList: Boolean) {
         val feedSourceUrls = databaseHelper.getFeedSources()
         if (feedSourceUrls.isEmpty()) {
             feedStateRepository.emitUpdateStatus(NoFeedSourcesStatus)
@@ -101,11 +109,13 @@ class FeedFetcherRepository internal constructor(
         isFeedSyncDone = true
         updateRefreshCount()
         // After fetching new feeds, delete old ones based on user settings
-        cleanOldFeeds()
-        feedStateRepository.getFeeds()
+        cleanOldFeeds(publishToFeedList)
+        if (publishToFeedList) {
+            feedStateRepository.getFeeds()
+        }
     }
 
-    private suspend fun fetchFeedsWithFeedbin() {
+    private suspend fun fetchFeedsWithFeedbin(publishToFeedList: Boolean) {
         val feedSourceUrls = databaseHelper.getFeedSources()
         if (feedSourceUrls.isEmpty()) {
             feedStateRepository.emitUpdateStatus(NoFeedSourcesStatus)
@@ -120,11 +130,17 @@ class FeedFetcherRepository internal constructor(
         isFeedSyncDone = true
         updateRefreshCount()
         // After fetching new feeds, delete old ones based on user settings
-        cleanOldFeeds()
-        feedStateRepository.getFeeds()
+        cleanOldFeeds(publishToFeedList)
+        if (publishToFeedList) {
+            feedStateRepository.getFeeds()
+        }
     }
 
-    private suspend fun fetchFeedsWithRssParser(isFirstLaunch: Boolean = false, forceRefresh: Boolean = false) {
+    private suspend fun fetchFeedsWithRssParser(
+        isFirstLaunch: Boolean = false,
+        forceRefresh: Boolean = false,
+        publishToFeedList: Boolean,
+    ) {
         feedSyncRepository.syncFeedSources()
 
         val feedSourceUrls = databaseHelper.getFeedSources()
@@ -133,7 +149,7 @@ class FeedFetcherRepository internal constructor(
         if (feedSourceUrls.isEmpty()) {
             feedStateRepository.emitUpdateStatus(NoFeedSourcesStatus)
         } else {
-            if (!isFirstLaunch) {
+            if (!isFirstLaunch && publishToFeedList) {
                 feedStateRepository.getFeeds()
             }
             feedStateRepository.emitUpdateStatus(
@@ -155,9 +171,11 @@ class FeedFetcherRepository internal constructor(
             contentPrefetchRepository.prefetchContent()
             isFeedSyncDone = true
             // After fetching new feeds, delete old ones based on user settings
-            cleanOldFeeds()
+            cleanOldFeeds(publishToFeedList)
             updateRefreshCount()
-            feedStateRepository.getFeeds()
+            if (publishToFeedList) {
+                feedStateRepository.getFeeds()
+            }
         }
     }
 
@@ -180,7 +198,7 @@ class FeedFetcherRepository internal constructor(
         }
     }
 
-    private suspend fun cleanOldFeeds() {
+    private suspend fun cleanOldFeeds(publishToFeedList: Boolean) {
         val deletePeriod = settingsRepository.getAutoDeletePeriod()
         if (deletePeriod == AutoDeletePeriod.DISABLED) {
             return
@@ -199,7 +217,9 @@ class FeedFetcherRepository internal constructor(
         databaseHelper.deleteOldFeedItems(timeThreshold = threshold, feedFilter = currentFilter)
         feedSyncRepository.deleteFeedItems(oldFeedIds)
         databaseHelper.cleanupOldDeletedItems()
-        feedStateRepository.getFeeds()
+        if (publishToFeedList) {
+            feedStateRepository.getFeeds()
+        }
     }
 
     private fun shouldRefreshFeed(

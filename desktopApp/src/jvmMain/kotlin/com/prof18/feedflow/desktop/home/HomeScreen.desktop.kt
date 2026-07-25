@@ -1,5 +1,6 @@
 package com.prof18.feedflow.desktop.home
 
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -62,6 +63,7 @@ internal fun HomeScreen(
     val homeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
     val isMultiPaneLayoutEnabled by homeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
     val listState = listStateStore.getListState(isMultiPaneLayoutEnabled)
+    val gridState = rememberLazyStaggeredGridState()
 
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()
@@ -77,6 +79,7 @@ internal fun HomeScreen(
     val feedItemDisplaySettings by homeViewModel.feedItemDisplaySettings.collectAsState()
     val nextFeedPreviewState by homeViewModel.nextFeedPreviewState.collectAsState()
     val refreshTrigger by homeViewModel.refreshTriggerState.collectAsState()
+    val pendingNewArticlesCount by homeViewModel.pendingNewArticlesState.collectAsState()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsState()
     val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
@@ -175,7 +178,11 @@ internal fun HomeScreen(
 
     LaunchedEffect(refreshTrigger, isMultiPaneLayoutEnabled) {
         if (refreshTrigger > 0) {
-            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+            if (isGridLayoutEnabled && !isMultiPaneLayoutEnabled) {
+                gridState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+            } else {
+                listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+            }
             if (isMultiPaneLayoutEnabled) {
                 resetReaderArticle()
             }
@@ -312,7 +319,10 @@ internal fun HomeScreen(
     if (isMultiPaneLayoutEnabled) {
         DesktopHomeScaffold(
             listState = listState,
+            gridState = gridState,
             onSearchClick = onSearchClick,
+            pendingNewArticlesCount = pendingNewArticlesCount,
+            onShowNewArticlesClicked = homeViewModel::onShowNewArticlesClicked,
             displayState = homeDisplayState,
             feedListActions = feedListActions,
             feedManagementActions = feedManagementActions,
@@ -329,7 +339,10 @@ internal fun HomeScreen(
     } else {
         DesktopSinglePaneHomeScaffold(
             listState = listState,
+            gridState = gridState,
             onSearchClick = onSearchClick,
+            pendingNewArticlesCount = pendingNewArticlesCount,
+            onShowNewArticlesClicked = homeViewModel::onShowNewArticlesClicked,
             displayState = homeDisplayState,
             feedListActions = feedListActions,
             feedManagementActions = feedManagementActions,

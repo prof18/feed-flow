@@ -6,13 +6,18 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.test.ContentPrefetchRepositoryFake
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,11 +26,18 @@ import kotlin.test.assertTrue
 
 class MenuBarViewModelTest : KoinTestBase() {
 
+    private val recordingScheduler = RecordingBackgroundSyncScheduler()
+
     private val viewModel: MenuBarViewModel by inject()
     private val feedStateRepository: FeedStateRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
     private val contentPrefetchRepository: ContentPrefetchRepository by inject()
     private val feedItemContentFileHandler: FeedItemContentFileHandler by inject()
+    private val settingsRepository: SettingsRepository by inject()
+
+    override fun getTestModules(): List<Module> = super.getTestModules() + module {
+        single<BackgroundSyncScheduler> { recordingScheduler }
+    }
 
     @Test
     fun `initial state is loaded correctly`() = runTest {
@@ -38,6 +50,7 @@ class MenuBarViewModelTest : KoinTestBase() {
         assertFalse(state.isSaveReaderModeContentEnabled)
         assertFalse(state.isPrefetchArticleContentEnabled)
         assertTrue(state.isRefreshFeedsOnLaunchEnabled)
+        assertEquals(SyncPeriod.NEVER, state.syncPeriod)
         assertFalse(state.isReduceMotionEnabled)
         assertEquals(AutoDeletePeriod.DISABLED, state.autoDeletePeriod)
         assertTrue(state.isCrashReportingEnabled)
@@ -96,6 +109,14 @@ class MenuBarViewModelTest : KoinTestBase() {
     fun `updateRefreshFeedsOnLaunch updates state`() = runTest {
         viewModel.updateRefreshFeedsOnLaunch(false)
         assertFalse(viewModel.state.value.isRefreshFeedsOnLaunchEnabled)
+    }
+
+    @Test
+    fun `updateSyncPeriod updates state`() = runTest {
+        viewModel.updateSyncPeriod(SyncPeriod.THIRTY_MINUTES)
+        assertEquals(SyncPeriod.THIRTY_MINUTES, viewModel.state.value.syncPeriod)
+        assertEquals(SyncPeriod.THIRTY_MINUTES, settingsRepository.getSyncPeriod())
+        assertEquals(SyncPeriod.THIRTY_MINUTES, recordingScheduler.lastPeriod)
     }
 
     @Test
@@ -166,5 +187,13 @@ class MenuBarViewModelTest : KoinTestBase() {
             listOf(feedItem),
             lastSyncTimestamp = 0,
         )
+    }
+}
+
+private class RecordingBackgroundSyncScheduler : BackgroundSyncScheduler {
+    var lastPeriod: SyncPeriod? = null
+
+    override fun updateSyncPeriod(syncPeriod: SyncPeriod) {
+        lastPeriod = syncPeriod
     }
 }

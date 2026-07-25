@@ -205,7 +205,9 @@ internal fun SettingsWindow(
                     DesktopSettingsCategory.SYNC_STORAGE -> SyncStoragePane(
                         isRefreshFeedsOnLaunchEnabled = settingsState.isRefreshFeedsOnLaunchEnabled,
                         autoDeletePeriod = settingsState.autoDeletePeriod,
+                        syncPeriod = settingsState.syncPeriod,
                         onRefreshFeedsOnLaunchToggled = menuBarViewModel::updateRefreshFeedsOnLaunch,
+                        onSyncPeriodSelected = menuBarViewModel::updateSyncPeriod,
                         onAutoDeletePeriodSelected = menuBarViewModel::updateAutoDeletePeriod,
                         onClearDownloadedArticles = menuBarViewModel::clearDownloadedArticleContent,
                     )

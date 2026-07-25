@@ -32,6 +32,7 @@ import com.prof18.feedflow.desktop.utils.integrateAppImageIfNeeded
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
+import com.prof18.feedflow.shared.domain.DesktopAutoRefreshScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
 import kotlinx.coroutines.Dispatchers
@@ -67,6 +68,7 @@ fun main() {
             initProgress = 0.2f
             launch(Dispatchers.IO) {
                 initializeDependencies(appConfig)
+                DI.koin.get<DesktopAutoRefreshScheduler>().start()
                 withContext(Dispatchers.Main) { initProgress = 0.6f }
                 setupTelemetryAndCrashReporting(appConfig)
                 withContext(Dispatchers.Main) {
@@ -118,6 +120,7 @@ fun main() {
                     scope.launch {
                         showBackupLoader = true
                         try {
+                            DI.koin.get<DesktopAutoRefreshScheduler>().stop()
                             DI.koin.get<FeedSyncRepository>().performBackup()
                             DI.koin.get<DatabaseCloser>().close()
                         } catch (e: Exception) {

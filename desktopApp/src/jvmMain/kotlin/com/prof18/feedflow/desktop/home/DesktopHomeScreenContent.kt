@@ -37,6 +37,7 @@ import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
+import com.prof18.feedflow.desktop.home.components.NewArticlesPill
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.ui.home.FeedListActions
@@ -62,6 +63,8 @@ fun DesktopHomeScreenContent(
     listState: LazyListState,
     snackbarHostState: SnackbarHostState,
     onSearchClick: () -> Unit,
+    pendingNewArticlesCount: Int,
+    onShowNewArticlesClicked: () -> Unit,
     modifier: Modifier = Modifier,
     gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     showDrawerMenu: Boolean = true,
@@ -161,7 +164,7 @@ fun DesktopHomeScreenContent(
     ) { innerPadding ->
         val layoutDir = LocalLayoutDirection.current
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(contentContainerColor)
@@ -280,6 +283,14 @@ fun DesktopHomeScreenContent(
                     }
                 }
             }
+
+            NewArticlesPill(
+                pendingNewArticlesCount = pendingNewArticlesCount,
+                onClick = onShowNewArticlesClicked,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = Spacing.small),
+            )
         }
     }
 }

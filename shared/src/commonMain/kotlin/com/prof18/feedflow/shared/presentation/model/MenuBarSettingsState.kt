@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.presentation.model
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.shared.domain.model.SyncPeriod
 
 data class MenuBarSettingsState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
@@ -14,6 +15,7 @@ data class MenuBarSettingsState(
     val isSaveReaderModeContentEnabled: Boolean = false,
     val isPrefetchArticleContentEnabled: Boolean = false,
     val isRefreshFeedsOnLaunchEnabled: Boolean = true,
+    val syncPeriod: SyncPeriod = SyncPeriod.NEVER,
     val isReduceMotionEnabled: Boolean = false,
     val isHideUnreadCountEnabled: Boolean = false,
     val autoDeletePeriod: AutoDeletePeriod = AutoDeletePeriod.DISABLED,

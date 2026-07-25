@@ -84,6 +84,7 @@ class HomeViewModel internal constructor(
 
     // Feeds
     val feedState: StateFlow<ImmutableList<FeedItem>> = feedStateRepository.feedState
+    val pendingNewArticlesState: StateFlow<Int> = feedStateRepository.pendingNewArticlesState
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val unreadCountFlow: Flow<Long> = feedAppearanceSettingsRepository.hideUnreadCount.flatMapLatest { hide ->
@@ -398,6 +399,13 @@ class HomeViewModel internal constructor(
     fun reloadFeedState() {
         launchAfterFlushingScrollReadState {
             feedStateRepository.getFeeds()
+        }
+    }
+
+    fun onShowNewArticlesClicked() {
+        launchAfterFlushingScrollReadState {
+            feedStateRepository.getFeeds()
+            refreshTriggerMutableState.update { it + 1 }
         }
     }
 

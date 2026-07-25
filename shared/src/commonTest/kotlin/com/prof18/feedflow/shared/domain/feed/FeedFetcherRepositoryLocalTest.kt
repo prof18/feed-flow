@@ -118,6 +118,76 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     }
 
     @Test
+    fun `silent fetch inserts items without publishing feed state`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val feedSource = createFeedSource(id = "source-1", title = "Test Feed")
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "existing", title = "Existing", pubDateMillis = 1, source = feedSource)),
+            lastSyncTimestamp = 0,
+        )
+        feedStateRepository.getFeeds()
+        val initialVersion = feedStateRepository.feedListVersion.value
+        settingsRepository.setAutoDeletePeriod(AutoDeletePeriod.ONE_DAY)
+        fakeRssParserWrapper.setChannel(
+            feedSource.url,
+            createRssChannel(
+                title = "Test Feed",
+                link = "https://example.com",
+                items = listOf(
+                    createRssItem(
+                        id = "new-item",
+                        title = "New Item",
+                        link = "https://example.com/new-item",
+                    ),
+                ),
+            ),
+        )
+
+        feedFetcherRepository.fetchFeeds(publishToFeedList = false)
+        advanceUntilIdle()
+
+        assertEquals(listOf("https://example.com/new-item"), getTimelineItems().map { it.url })
+        assertEquals(listOf("existing"), feedStateRepository.feedState.value.map { it.id })
+        assertEquals(initialVersion, feedStateRepository.feedListVersion.value)
+    }
+
+    @Test
+    fun `foreground fetch continues publishing feed state`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val feedSource = createFeedSource(id = "source-1", title = "Test Feed")
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "existing", title = "Existing", pubDateMillis = 1, source = feedSource)),
+            lastSyncTimestamp = 0,
+        )
+        feedStateRepository.getFeeds()
+        val initialVersion = feedStateRepository.feedListVersion.value
+        fakeRssParserWrapper.setChannel(
+            feedSource.url,
+            createRssChannel(
+                title = "Test Feed",
+                link = "https://example.com",
+                items = listOf(
+                    createRssItem(
+                        id = "new-item",
+                        title = "New Item",
+                        link = "https://example.com/new-item",
+                    ),
+                ),
+            ),
+        )
+
+        feedFetcherRepository.fetchFeeds(publishToFeedList = true)
+        advanceUntilIdle()
+
+        assertEquals(2, feedStateRepository.feedState.value.size)
+        assertTrue(feedStateRepository.feedState.value.any { it.id == "existing" })
+        assertTrue(feedStateRepository.feedState.value.any { it.url == "https://example.com/new-item" })
+        assertTrue(feedStateRepository.feedListVersion.value > initialVersion)
+    }
+
+    @Test
     fun `fetchFeeds skips refresh when feed is too recent`() = runTest(testDispatcher) {
         setupLocalAccount()
 

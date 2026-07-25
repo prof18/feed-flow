@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -47,8 +48,11 @@ internal fun DesktopSinglePaneHomeScaffold(
     feedManagementActions: FeedManagementActions,
     shareBehavior: ShareBehavior,
     listState: LazyListState,
+    gridState: LazyStaggeredGridState,
     snackbarHostState: SnackbarHostState,
     onSearchClick: () -> Unit,
+    pendingNewArticlesCount: Int,
+    onShowNewArticlesClicked: () -> Unit,
     onFeedSuggestionsClick: () -> Unit,
     onEmptyStateClick: () -> Unit,
     onImportExportClick: () -> Unit = {},
@@ -121,8 +125,11 @@ internal fun DesktopSinglePaneHomeScaffold(
                     feedManagementActions = feedManagementActions,
                     shareBehavior = shareBehavior,
                     listState = listState,
+                    gridState = gridState,
                     snackbarHostState = snackbarHostState,
                     onSearchClick = onSearchClick,
+                    pendingNewArticlesCount = pendingNewArticlesCount,
+                    onShowNewArticlesClicked = onShowNewArticlesClicked,
                     showDrawerMenu = true,
                     isDrawerOpen = if (usesDockedDrawer) isDockedDrawerVisible else drawerState.isOpen,
                     onDrawerMenuClick = {

@@ -13,6 +13,7 @@ import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.DatabaseCloser
+import com.prof18.feedflow.shared.domain.DesktopAutoRefreshScheduler
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
@@ -43,6 +44,7 @@ import org.koin.core.KoinApplication
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import java.util.prefs.Preferences
 
@@ -222,9 +224,15 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single<BackgroundSyncScheduler> {
-        BackgroundSyncScheduler { }
-    }
+    single {
+        DesktopAutoRefreshScheduler(
+            feedFetcherRepository = get(),
+            feedStateRepository = get(),
+            settingsRepository = get(),
+            logger = getWith("DesktopAutoRefreshScheduler"),
+            dispatcherProvider = get(),
+        )
+    } bind BackgroundSyncScheduler::class
 }
 
 internal actual fun platformLogWriters(): List<LogWriter> =

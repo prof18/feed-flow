@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -87,8 +88,11 @@ internal fun DesktopHomeScaffold(
     feedManagementActions: FeedManagementActions,
     shareBehavior: ShareBehavior,
     listState: LazyListState,
+    gridState: LazyStaggeredGridState,
     snackbarHostState: SnackbarHostState,
     onSearchClick: () -> Unit,
+    pendingNewArticlesCount: Int,
+    onShowNewArticlesClicked: () -> Unit,
     onFeedSuggestionsClick: () -> Unit,
     currentReaderArticle: FeedItemUrlInfo?,
     onReaderClosed: () -> Unit,
@@ -231,8 +235,11 @@ internal fun DesktopHomeScaffold(
                             feedManagementActions = feedManagementActions,
                             shareBehavior = shareBehavior,
                             listState = listState,
+                            gridState = gridState,
                             snackbarHostState = snackbarHostState,
                             onSearchClick = onSearchClick,
+                            pendingNewArticlesCount = pendingNewArticlesCount,
+                            onShowNewArticlesClicked = onShowNewArticlesClicked,
                             showDrawerMenu = true,
                             isGridLayoutAllowed = false,
                             isDrawerOpen = if (isThreePaneLayout) {

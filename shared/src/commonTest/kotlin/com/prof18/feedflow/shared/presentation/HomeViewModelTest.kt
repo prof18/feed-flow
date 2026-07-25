@@ -920,6 +920,33 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `show new articles publishes latest snapshot and bumps refresh trigger`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "existing", title = "Existing", pubDateMillis = 1, source = feedSource)),
+            lastSyncTimestamp = 0,
+        )
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "new-item", title = "New", pubDateMillis = 2, source = feedSource)),
+            lastSyncTimestamp = 0,
+        )
+        feedStateRepository.refreshPendingNewArticlesCount()
+
+        viewModel.refreshTriggerState.test {
+            assertEquals(0, awaitItem())
+
+            viewModel.onShowNewArticlesClicked()
+
+            assertEquals(1, awaitItem())
+            assertEquals(setOf("existing", "new-item"), viewModel.feedState.value.map { it.id }.toSet())
+            assertEquals(0, viewModel.pendingNewArticlesState.value)
+        }
+    }
+
+    @Test
     fun `markAllRead updates state and database`() = runTest(testDispatcher) {
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)

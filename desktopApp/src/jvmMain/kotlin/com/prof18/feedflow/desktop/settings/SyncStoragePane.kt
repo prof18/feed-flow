@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil3.SingletonImageLoader
 import coil3.compose.LocalPlatformContext
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.shared.ui.settings.ConfirmationSettingItem
 import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
@@ -29,7 +30,9 @@ import kotlinx.coroutines.launch
 internal fun SyncStoragePane(
     isRefreshFeedsOnLaunchEnabled: Boolean,
     autoDeletePeriod: AutoDeletePeriod,
+    syncPeriod: SyncPeriod,
     onRefreshFeedsOnLaunchToggled: (Boolean) -> Unit,
+    onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     onClearDownloadedArticles: () -> Unit,
 ) {
@@ -46,6 +49,22 @@ internal fun SyncStoragePane(
             title = strings.settingsRefreshFeedsOnLaunch,
             isChecked = isRefreshFeedsOnLaunchEnabled,
             onCheckedChange = onRefreshFeedsOnLaunchToggled,
+        )
+
+        CompactSettingDropdownRow(
+            title = strings.settingsSyncPeriod,
+            currentValue = syncPeriod,
+            options = persistentListOf(
+                SettingDropdownOption(SyncPeriod.NEVER, strings.settingsSyncPeriodNever),
+                SettingDropdownOption(SyncPeriod.FIFTEEN_MINUTES, strings.settingsSyncPeriodFifteenMinutes),
+                SettingDropdownOption(SyncPeriod.THIRTY_MINUTES, strings.settingsSyncPeriodThirtyMinutes),
+                SettingDropdownOption(SyncPeriod.ONE_HOUR, strings.settingsSyncPeriodOneHour),
+                SettingDropdownOption(SyncPeriod.TWO_HOURS, strings.settingsSyncPeriodTwoHours),
+                SettingDropdownOption(SyncPeriod.SIX_HOURS, strings.settingsSyncPeriodSixHours),
+                SettingDropdownOption(SyncPeriod.TWELVE_HOURS, strings.settingsSyncPeriodTwelveHours),
+                SettingDropdownOption(SyncPeriod.ONE_DAY, strings.settingsSyncPeriodOneDay),
+            ),
+            onOptionSelected = onSyncPeriodSelected,
         )
 
         CompactSettingDropdownRow(
@@ -99,7 +118,9 @@ private fun SyncStoragePanePreview() {
         SyncStoragePane(
             isRefreshFeedsOnLaunchEnabled = false,
             autoDeletePeriod = AutoDeletePeriod.DISABLED,
+            syncPeriod = SyncPeriod.NEVER,
             onRefreshFeedsOnLaunchToggled = {},
+            onSyncPeriodSelected = {},
             onAutoDeletePeriodSelected = {},
             onClearDownloadedArticles = {},
         )

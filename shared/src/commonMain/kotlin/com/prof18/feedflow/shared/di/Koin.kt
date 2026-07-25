@@ -310,6 +310,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedStateRepository = get(),
             contentPrefetchRepository = get(),
             feedItemContentFileHandler = get(),
+            backgroundSyncScheduler = get(),
         )
     }
 

@@ -309,6 +309,7 @@
     <string name="settings_notifications_permission_status_denied">Denied</string>
     <string name="settings_notifications_permission_request_button">Request Permission</string>
     <string name="new_articles_notification_title">New articles available</string>
+    <string name="new_articles_button">%s new articles</string>
     <string name="notification_channel_name">New Articles</string>
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_notifications_warning_reliability">Notifications are checked on your device, but delivery depends on background activity allowed by the system and app usage, which FeedFlow cannot control.</string>

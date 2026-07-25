@@ -7,9 +7,11 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.model.MenuBarSettingsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +26,7 @@ class MenuBarViewModel internal constructor(
     private val feedStateRepository: FeedStateRepository,
     private val contentPrefetchRepository: ContentPrefetchRepository,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
+    private val backgroundSyncScheduler: BackgroundSyncScheduler,
 ) : ViewModel() {
 
     private val stateMutableFlow = MutableStateFlow(MenuBarSettingsState())
@@ -52,6 +55,7 @@ class MenuBarViewModel internal constructor(
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
         val isRefreshFeedsOnLaunchEnabled = settingsRepository.getRefreshFeedsOnLaunch()
+        val syncPeriod = settingsRepository.getSyncPeriod()
         val isReduceMotionEnabled = settingsRepository.getReduceMotionEnabled()
         val isHideUnreadCountEnabled = feedAppearanceSettingsRepository.getHideUnreadCount()
         val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
@@ -68,6 +72,7 @@ class MenuBarViewModel internal constructor(
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
                 isRefreshFeedsOnLaunchEnabled = isRefreshFeedsOnLaunchEnabled,
+                syncPeriod = syncPeriod,
                 isReduceMotionEnabled = isReduceMotionEnabled,
                 isHideUnreadCountEnabled = isHideUnreadCountEnabled,
                 autoDeletePeriod = autoDeletePeriod,
@@ -148,6 +153,16 @@ class MenuBarViewModel internal constructor(
             settingsRepository.setRefreshFeedsOnLaunch(value)
             stateMutableFlow.update {
                 it.copy(isRefreshFeedsOnLaunchEnabled = value)
+            }
+        }
+    }
+
+    fun updateSyncPeriod(period: SyncPeriod) {
+        viewModelScope.launch {
+            settingsRepository.setSyncPeriod(period)
+            backgroundSyncScheduler.updateSyncPeriod(period)
+            stateMutableFlow.update {
+                it.copy(syncPeriod = period)
             }
         }
     }

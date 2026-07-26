@@ -397,4 +397,5 @@
     <string name="reorder_mode_done">Valmis</string>
     <string name="expand_category_button_content_description">Laienda: %s</string>
     <string name="collapse_category_button_content_description">Ahenda: %s</string>
+    <string name="new_articles_button">%s uut artiklit</string>
 </resources>

@@ -50,6 +50,7 @@ fun EditFeedContent(
     onFeedNameUpdated: (String) -> Unit,
     onLinkOpeningPreferenceSelected: (LinkOpeningPreference) -> Unit,
     onHiddenToggled: (Boolean) -> Unit,
+    onHideImagesToggled: (Boolean) -> Unit,
     onPinnedToggled: (Boolean) -> Unit,
     editFeed: () -> Unit,
     onCategorySelectorClick: () -> Unit,
@@ -156,6 +157,27 @@ fun EditFeedContent(
                     onCheckedChange = onHiddenToggled,
                     modifier = Modifier
                         .testTag(FeedFormE2eIds.HIDDEN_TOGGLE)
+                        .padding(start = Spacing.regular),
+                )
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .padding(top = Spacing.regular),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = LocalFeedFlowStrings.current.hideImagesForFeedDescription,
+                    modifier = Modifier.padding(top = Spacing.xsmall)
+                        .weight(1f),
+                )
+                Switch(
+                    checked = feedSourceSettings.isHideImagesEnabled,
+                    onCheckedChange = onHideImagesToggled,
+                    modifier = Modifier
+                        .testTag(FeedFormE2eIds.HIDE_IMAGES_TOGGLE)
                         .padding(start = Spacing.regular),
                 )
             }

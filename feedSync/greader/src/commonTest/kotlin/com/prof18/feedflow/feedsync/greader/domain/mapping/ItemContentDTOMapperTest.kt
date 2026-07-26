@@ -33,6 +33,7 @@ class ItemContentDTOMapperTest {
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,
+        isHideImagesEnabled = false,
     )
 
     @Test

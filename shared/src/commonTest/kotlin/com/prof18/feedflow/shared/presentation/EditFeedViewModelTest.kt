@@ -127,6 +127,7 @@ class EditFeedViewModelTest : KoinTestBase() {
         viewModel.updateIsHiddenFromTimeline(true)
         viewModel.updateIsPinned(true)
         viewModel.updateIsNotificationEnabled(true)
+        viewModel.updateIsHideImagesEnabled(true)
         advanceUntilIdle()
 
         viewModel.feedEditedState.test {
@@ -142,6 +143,7 @@ class EditFeedViewModelTest : KoinTestBase() {
         assertEquals(true, updatedFeedSource.isHiddenFromTimeline)
         assertEquals(true, updatedFeedSource.isPinned)
         assertEquals(true, updatedFeedSource.isNotificationEnabled)
+        assertEquals(true, updatedFeedSource.isHideImagesEnabled)
     }
 
     @Test

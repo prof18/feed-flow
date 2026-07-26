@@ -54,6 +54,7 @@ struct FeedListSettingsScreenContent: View {
                             isHiddenFromTimeline: false,
                             isPinned: false,
                             isNotificationEnabled: false,
+                            isHideImagesEnabled: false,
                             pinnedPosition: 0,
                             position: 0
                         ),

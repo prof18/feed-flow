@@ -18,6 +18,7 @@ object FeedSourceGenerator {
         isHiddenFromTimeline: Boolean = false,
         isPinned: Boolean = false,
         isNotificationEnabled: Boolean = false,
+        isHideImagesEnabled: Boolean = false,
     ): FeedSource = FeedSource(
         id = id,
         title = title,
@@ -31,6 +32,7 @@ object FeedSourceGenerator {
         isHiddenFromTimeline = isHiddenFromTimeline,
         isPinned = isPinned,
         isNotificationEnabled = isNotificationEnabled,
+        isHideImagesEnabled = isHideImagesEnabled,
     )
 
     fun feedSourceWithCategory(
@@ -47,6 +49,7 @@ object FeedSourceGenerator {
         isHiddenFromTimeline: Boolean = false,
         isPinned: Boolean = false,
         isNotificationEnabled: Boolean = false,
+        isHideImagesEnabled: Boolean = false,
     ): FeedSource = feedSource(
         id = id,
         title = title,
@@ -63,5 +66,6 @@ object FeedSourceGenerator {
         isHiddenFromTimeline = isHiddenFromTimeline,
         isPinned = isPinned,
         isNotificationEnabled = isNotificationEnabled,
+        isHideImagesEnabled = isHideImagesEnabled,
     )
 }

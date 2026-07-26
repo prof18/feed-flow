@@ -485,6 +485,7 @@ class HomeViewModel internal constructor(
                 isHidden = feedSource.isHiddenFromTimeline,
                 isPinned = !feedSource.isPinned,
                 isNotificationEnabled = feedSource.isNotificationEnabled,
+                isHideImagesEnabled = feedSource.isHideImagesEnabled,
             )
         }
     }

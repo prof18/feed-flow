@@ -83,6 +83,8 @@ data class EditFeed(
     val isHidden: Boolean,
     val isPinned: Boolean,
     val isNotificationEnabled: Boolean,
+    // Defaulted so a back stack serialized by an older version still deserializes after an upgrade
+    val isHideImagesEnabled: Boolean = false,
     val fetchFailed: Boolean,
 ) : NavKey
 

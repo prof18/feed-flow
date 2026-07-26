@@ -112,6 +112,15 @@ class EditFeedViewModel internal constructor(
         }
     }
 
+    fun updateIsHideImagesEnabled(isHideImagesEnabled: Boolean) {
+        feedSourceSettingsMutableState.update { oldValue ->
+            oldValue.copy(isHideImagesEnabled = isHideImagesEnabled)
+        }
+        viewModelScope.launch {
+            feedEditedMutableState.emit(FeedEditedState.Idle)
+        }
+    }
+
     fun loadFeedToEdit(feedSource: FeedSource) {
         originalFeedSource = feedSource
 
@@ -124,6 +133,7 @@ class EditFeedViewModel internal constructor(
                     isHiddenFromTimeline = feedSource.isHiddenFromTimeline,
                     isPinned = feedSource.isPinned,
                     isNotificationEnabled = feedSource.isNotificationEnabled,
+                    isHideImagesEnabled = feedSource.isHideImagesEnabled,
                 )
             }
 
@@ -176,6 +186,7 @@ class EditFeedViewModel internal constructor(
                 isHiddenFromTimeline = feedSourceSettingsState.value.isHiddenFromTimeline,
                 isPinned = feedSourceSettingsState.value.isPinned,
                 isNotificationEnabled = feedSourceSettingsState.value.isNotificationEnabled,
+                isHideImagesEnabled = feedSourceSettingsState.value.isHideImagesEnabled,
             )
 
             if (newFeedSource != null && newFeedSource != originalFeedSource) {

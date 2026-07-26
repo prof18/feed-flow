@@ -156,6 +156,7 @@ class E2eSeedRunner internal constructor(
                 isHidden = feedSource.isHiddenFromTimeline,
                 isPinned = feedSource.isPinned,
                 isNotificationEnabled = feedSource.isNotificationEnabled,
+                isHideImagesEnabled = feedSource.isHideImagesEnabled,
             )
         }
     }
@@ -282,6 +283,7 @@ class E2eSeedRunner internal constructor(
             isHidden = feedSource.isHiddenFromTimeline,
             isPinned = true,
             isNotificationEnabled = feedSource.isNotificationEnabled,
+            isHideImagesEnabled = feedSource.isHideImagesEnabled,
         )
     }
 
@@ -410,6 +412,7 @@ class E2eSeedRunner internal constructor(
                 isHidden = feedSource.isHiddenFromTimeline,
                 isPinned = feedSource.isPinned,
                 isNotificationEnabled = feedSource.isNotificationEnabled,
+                isHideImagesEnabled = feedSource.isHideImagesEnabled,
             )
         }
     }
@@ -799,6 +802,7 @@ class E2eSeedRunner internal constructor(
                 isHiddenFromTimeline = isHiddenFromTimeline,
                 isPinned = isPinned,
                 isNotificationEnabled = false,
+                isHideImagesEnabled = false,
             )
 
         private fun feedItem(

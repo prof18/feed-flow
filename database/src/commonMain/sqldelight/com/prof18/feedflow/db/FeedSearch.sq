@@ -29,7 +29,8 @@ SELECT
   feed_source_category.id AS feed_source_category_id,
   feed_source_category.title AS feed_source_category_title,
   feed_source.logo_url AS feed_source_logo_url,
-  feed_source_preferences.link_opening_preference AS feed_source_link_opening_preference
+  feed_source_preferences.link_opening_preference AS feed_source_link_opening_preference,
+  feed_source_preferences.hide_images AS feed_source_hide_images
 FROM (
   SELECT *
   FROM feed_search

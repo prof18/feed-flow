@@ -87,5 +87,6 @@ class FeedFetcherRepositoryMinifluxTest : FeedFetcherRepositoryTestBase() {
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,
+        isHideImagesEnabled = false,
     )
 }

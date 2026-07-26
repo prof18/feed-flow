@@ -7,6 +7,7 @@ import com.prof18.feedflow.db.Search
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class SearchFeedMapperTest {
 
@@ -87,11 +88,28 @@ class SearchFeedMapperTest {
         assertEquals("https://example.com/image.jpg", result.imageUrl)
     }
 
+    @Test
+    fun `toFeedItem hides image when the feed source opts out`() {
+        val search = createSearch(
+            imageUrl = "https://example.com/image.jpg",
+            feedSourceHideImages = true,
+        )
+
+        val result = search.toFeedItem(
+            dateFormatter = dateFormatter,
+            settings = FeedItemMappingSettings(hideImages = false),
+        )
+
+        assertNull(result.imageUrl)
+        assertTrue(result.feedSource.isHideImagesEnabled)
+    }
+
     private fun createSearch(
         title: String = "Title",
         subtitle: String? = "Subtitle",
         imageUrl: String? = null,
         pubDate: Long? = 1000L,
+        feedSourceHideImages: Boolean? = false,
     ): Search = Search(
         url_hash = "item-1",
         url = "https://example.com/item-1",
@@ -116,6 +134,7 @@ class SearchFeedMapperTest {
         feed_source_category_title = null,
         feed_source_logo_url = "https://example.com/logo.png",
         feed_source_link_opening_preference = null,
+        feed_source_hide_images = feedSourceHideImages,
     )
 
     private class FakeDateFormatter : DateFormatter {

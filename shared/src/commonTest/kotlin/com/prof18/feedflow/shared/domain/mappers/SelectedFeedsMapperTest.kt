@@ -10,6 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class SelectedFeedsMapperTest {
 
@@ -55,6 +56,38 @@ class SelectedFeedsMapperTest {
     }
 
     @Test
+    fun `toFeedItem hides images when the feed source opts out`() {
+        val selectFeeds = createSelectFeeds(
+            imageUrl = "https://example.com/image.jpg",
+            feedSourceHideImages = true,
+        )
+
+        val result = selectFeeds.toFeedItem(
+            dateFormatter = dateFormatter,
+            settings = FeedItemMappingSettings(hideImages = false),
+        )
+
+        assertNull(result.imageUrl)
+        assertTrue(result.feedSource.isHideImagesEnabled)
+    }
+
+    @Test
+    fun `toFeedItem keeps images when the feed source does not opt out`() {
+        val selectFeeds = createSelectFeeds(
+            imageUrl = "https://example.com/image.jpg",
+            feedSourceHideImages = false,
+        )
+
+        val result = selectFeeds.toFeedItem(
+            dateFormatter = dateFormatter,
+            settings = FeedItemMappingSettings(hideImages = false),
+        )
+
+        assertEquals("https://example.com/image.jpg", result.imageUrl)
+        assertFalse(result.feedSource.isHideImagesEnabled)
+    }
+
+    @Test
     fun `toFeedItem hides date when requested`() {
         val selectFeeds = createSelectFeeds(pubDate = 1000L)
 
@@ -75,6 +108,7 @@ class SelectedFeedsMapperTest {
             isHidden = null,
             isPinned = null,
             isNotificationEnabled = null,
+            feedSourceHideImages = null,
         )
 
         val result = selectFeeds.toFeedItem(
@@ -86,6 +120,7 @@ class SelectedFeedsMapperTest {
         assertFalse(result.feedSource.isHiddenFromTimeline)
         assertFalse(result.feedSource.isPinned)
         assertFalse(result.feedSource.isNotificationEnabled)
+        assertFalse(result.feedSource.isHideImagesEnabled)
         assertEquals(FeedSourceCategory("cat-1", "Tech"), result.feedSource.category)
     }
 
@@ -100,6 +135,7 @@ class SelectedFeedsMapperTest {
         isHidden: Boolean? = false,
         isPinned: Boolean? = false,
         isNotificationEnabled: Boolean? = false,
+        feedSourceHideImages: Boolean? = false,
     ): SelectFeeds = SelectFeeds(
         url_hash = "item-1",
         url = "https://example.com/item-1",
@@ -122,6 +158,7 @@ class SelectedFeedsMapperTest {
         feed_source_is_hidden = isHidden,
         feed_source_is_pinned = isPinned,
         feed_source_notifications_enabled = isNotificationEnabled,
+        feed_source_hide_images = feedSourceHideImages,
         feed_source_fetch_failed = false,
     )
 

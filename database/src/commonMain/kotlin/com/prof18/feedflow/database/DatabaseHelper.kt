@@ -885,6 +885,7 @@ class DatabaseHelper(
         isHidden: Boolean,
         isPinned: Boolean,
         isNotificationEnabled: Boolean,
+        isHideImagesEnabled: Boolean,
     ) = dbRef.transactionWithContext(backgroundDispatcher) {
         dbRef.feedSourcePreferencesQueries.insertPreference(
             feed_source_id = feedSourceId,
@@ -892,6 +893,7 @@ class DatabaseHelper(
             is_hidden = isHidden,
             is_pinned = isPinned,
             notifications_enabled = isNotificationEnabled,
+            hide_images = isHideImagesEnabled,
         )
         dbRef.feedSourcePreferencesQueries.updatePreference(
             feedSourceId = feedSourceId,
@@ -899,6 +901,7 @@ class DatabaseHelper(
             isHidden = isHidden,
             isPinned = isPinned,
             notificationsEnabled = isNotificationEnabled,
+            hideImages = isHideImagesEnabled,
         )
     }
 
@@ -927,6 +930,7 @@ class DatabaseHelper(
                     isHiddenFromTimeline = feedSource.is_hidden ?: false,
                     isPinned = feedSource.is_pinned ?: false,
                     isNotificationEnabled = feedSource.notifications_enabled ?: false,
+                    isHideImagesEnabled = feedSource.hide_images ?: false,
                     pinnedPosition = feedSource.pinned_position ?: 0,
                     position = feedSource.feed_source_position,
                     websiteUrl = feedSource.feed_source_website_url,
@@ -1161,6 +1165,7 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            isHideImagesEnabled = feedSource.hide_images ?: false,
             pinnedPosition = feedSource.pinned_position ?: 0,
             position = feedSource.feed_source_position,
         )
@@ -1190,6 +1195,7 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            isHideImagesEnabled = feedSource.hide_images ?: false,
             pinnedPosition = feedSource.pinned_position ?: 0,
             position = feedSource.feed_source_position,
         )
@@ -1219,6 +1225,7 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            isHideImagesEnabled = feedSource.hide_images ?: false,
             pinnedPosition = feedSource.pinned_position ?: 0,
             position = feedSource.feed_source_position,
         )

@@ -25,6 +25,7 @@ internal fun EditFeed.toFeedSource(): FeedSource {
         isHiddenFromTimeline = isHidden,
         isPinned = isPinned,
         isNotificationEnabled = isNotificationEnabled,
+        isHideImagesEnabled = isHideImagesEnabled,
         fetchFailed = fetchFailed,
     )
 }
@@ -43,6 +44,7 @@ internal fun FeedSource.toEditFeed(): EditFeed {
         isHidden = isHiddenFromTimeline,
         isPinned = isPinned,
         isNotificationEnabled = isNotificationEnabled,
+        isHideImagesEnabled = isHideImagesEnabled,
         fetchFailed = fetchFailed,
     )
 }

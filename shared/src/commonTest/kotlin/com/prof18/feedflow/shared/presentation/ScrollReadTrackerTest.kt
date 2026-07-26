@@ -317,6 +317,7 @@ class ScrollReadTrackerTest {
             isHiddenFromTimeline = false,
             isPinned = false,
             isNotificationEnabled = false,
+            isHideImagesEnabled = false,
         )
 
         val defaultListShapeKey = ScrollReadListShapeKey(

@@ -13,6 +13,7 @@ data class FeedSource(
     val isHiddenFromTimeline: Boolean,
     val isPinned: Boolean,
     val isNotificationEnabled: Boolean,
+    val isHideImagesEnabled: Boolean,
     val pinnedPosition: Int = 0,
     val position: Int = 0,
 ) {

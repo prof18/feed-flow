@@ -29,6 +29,7 @@ struct EditFeedScreen: View {
     @State private var feedName = ""
     @State private var linkOpeningPreference = LinkOpeningPreference.default
     @State private var isHidden = false
+    @State private var isHideImagesEnabled = false
     @State private var isPinned = false
     @State private var showNotificationToggle = false
     @State private var isNotificationEnabled = false
@@ -45,6 +46,7 @@ struct EditFeedScreen: View {
                 isAddingFeed: $isAddingFeed,
                 linkOpeningPreference: $linkOpeningPreference,
                 isHidden: $isHidden,
+                isHideImagesEnabled: $isHideImagesEnabled,
                 isPinned: $isPinned,
                 showNotificationToggle: showNotificationToggle,
                 isNotificationEnabled: $isNotificationEnabled,
@@ -61,6 +63,9 @@ struct EditFeedScreen: View {
                 },
                 onHiddenToggled: { hidden in
                     vmStoreOwner.instance.updateIsHiddenFromTimeline(isHidden: hidden)
+                },
+                onHideImagesToggled: { hideImages in
+                    vmStoreOwner.instance.updateIsHideImagesEnabled(isHideImagesEnabled: hideImages)
                 },
                 onPinnedToggled: { pinned in
                     vmStoreOwner.instance.updateIsPinned(isPinned: pinned)
@@ -146,6 +151,7 @@ struct EditFeedScreen: View {
                 for await state in vmStoreOwner.instance.feedSourceSettingsState {
                     self.linkOpeningPreference = state.linkOpeningPreference
                     self.isHidden = state.isHiddenFromTimeline
+                    self.isHideImagesEnabled = state.isHideImagesEnabled
                     self.isPinned = state.isPinned
                     self.isNotificationEnabled = state.isNotificationEnabled
                 }

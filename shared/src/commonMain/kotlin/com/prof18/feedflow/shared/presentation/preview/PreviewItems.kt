@@ -44,6 +44,7 @@ val feedSourcesForPreview = persistentListOf(
         linkOpeningPreference = LinkOpeningPreference.DEFAULT,
         isPinned = false,
         isNotificationEnabled = false,
+        isHideImagesEnabled = false,
         fetchFailed = false,
     ),
     FeedSource(
@@ -61,6 +62,7 @@ val feedSourcesForPreview = persistentListOf(
         linkOpeningPreference = LinkOpeningPreference.DEFAULT,
         isPinned = false,
         isNotificationEnabled = false,
+        isHideImagesEnabled = false,
         fetchFailed = false,
     ),
     FeedSource(
@@ -78,6 +80,7 @@ val feedSourcesForPreview = persistentListOf(
         linkOpeningPreference = LinkOpeningPreference.DEFAULT,
         isPinned = false,
         isNotificationEnabled = false,
+        isHideImagesEnabled = false,
         fetchFailed = false,
     ),
 )

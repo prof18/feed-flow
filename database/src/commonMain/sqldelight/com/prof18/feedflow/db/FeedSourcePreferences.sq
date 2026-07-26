@@ -9,12 +9,13 @@ CREATE TABLE feed_source_preferences (
     is_pinned INTEGER AS Boolean NOT NULL DEFAULT 0,
     notifications_enabled INTEGER AS Boolean NOT NULL DEFAULT 0,
     pinned_position INTEGER AS Int NOT NULL DEFAULT 0,
+    hide_images INTEGER AS Boolean NOT NULL DEFAULT 0,
     FOREIGN KEY (feed_source_id) REFERENCES feed_source(url_hash) ON DELETE CASCADE
 );
 
 insertPreference:
-INSERT OR IGNORE INTO feed_source_preferences(feed_source_id, link_opening_preference, is_hidden, is_pinned, notifications_enabled)
-VALUES (?, ?, ?, ?, ?);
+INSERT OR IGNORE INTO feed_source_preferences(feed_source_id, link_opening_preference, is_hidden, is_pinned, notifications_enabled, hide_images)
+VALUES (?, ?, ?, ?, ?, ?);
 
 insertNotificationEnabledPreference:
 INSERT OR IGNORE INTO feed_source_preferences(feed_source_id, notifications_enabled)
@@ -37,7 +38,7 @@ deleteAllPreferences:
 DELETE FROM feed_source_preferences;
 
 getFeedSourceWithPreference:
-SELECT feed_source.*, feed_source_preferences.link_opening_preference, feed_source_preferences.is_pinned, feed_source_preferences.pinned_position, feed_source_preferences.notifications_enabled
+SELECT feed_source.*, feed_source_preferences.link_opening_preference, feed_source_preferences.is_pinned, feed_source_preferences.pinned_position, feed_source_preferences.notifications_enabled, feed_source_preferences.hide_images
 FROM feed_source
 LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferences.feed_source_id
 ORDER BY feed_source.title COLLATE NOCASE ASC;
@@ -52,7 +53,8 @@ UPDATE feed_source_preferences
 SET link_opening_preference = :linkOpeningPreference,
     is_hidden = :isHidden,
     is_pinned = :isPinned,
-    notifications_enabled = :notificationsEnabled
+    notifications_enabled = :notificationsEnabled,
+    hide_images = :hideImages
 WHERE feed_source_id = :feedSourceId;
 
 areNotificationsEnabled:

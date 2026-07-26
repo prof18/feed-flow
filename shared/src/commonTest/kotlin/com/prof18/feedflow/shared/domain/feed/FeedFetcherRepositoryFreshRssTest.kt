@@ -87,5 +87,6 @@ class FeedFetcherRepositoryFreshRssTest : FeedFetcherRepositoryTestBase() {
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,
+        isHideImagesEnabled = false,
     )
 }

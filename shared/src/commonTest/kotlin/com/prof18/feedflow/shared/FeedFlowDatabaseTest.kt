@@ -145,6 +145,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,
+            isHideImagesEnabled = false,
         )
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = "beta",
@@ -152,6 +153,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,
+            isHideImagesEnabled = false,
         )
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = "gamma",
@@ -159,12 +161,42 @@ class FeedFlowDatabaseTest : KoinTestBase() {
             isHidden = false,
             isPinned = false,
             isNotificationEnabled = false,
+            isHideImagesEnabled = false,
         )
         databaseHelper.updatePinnedPositions(listOf("beta", "alpha"))
 
         val pinnedIds = databaseHelper.getPinnedFeedSourceIds()
 
         assertEquals(listOf("beta", "alpha"), pinnedIds)
+    }
+
+    @Test
+    fun `insertFeedSourcePreference round-trips the hide images flag`() = runTest {
+        databaseHelper.insertFeedSource(
+            listOf(createParsedFeedSource(id = "alpha", title = "Alpha")),
+        )
+
+        databaseHelper.insertFeedSourcePreference(
+            feedSourceId = "alpha",
+            preference = LinkOpeningPreference.DEFAULT,
+            isHidden = false,
+            isPinned = false,
+            isNotificationEnabled = false,
+            isHideImagesEnabled = true,
+        )
+
+        assertEquals(true, databaseHelper.getFeedSource("alpha")?.isHideImagesEnabled)
+
+        databaseHelper.insertFeedSourcePreference(
+            feedSourceId = "alpha",
+            preference = LinkOpeningPreference.DEFAULT,
+            isHidden = false,
+            isPinned = false,
+            isNotificationEnabled = false,
+            isHideImagesEnabled = false,
+        )
+
+        assertEquals(false, databaseHelper.getFeedSource("alpha")?.isHideImagesEnabled)
     }
 
     @Test
@@ -181,6 +213,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,
+            isHideImagesEnabled = false,
         )
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = "beta",
@@ -188,6 +221,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,
+            isHideImagesEnabled = false,
         )
         databaseHelper.updatePinnedPositions(listOf("beta", "alpha"))
 
@@ -197,6 +231,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
             isHidden = true,
             isPinned = true,
             isNotificationEnabled = true,
+            isHideImagesEnabled = false,
         )
 
         val updatedSource = databaseHelper.getFeedSource("alpha")

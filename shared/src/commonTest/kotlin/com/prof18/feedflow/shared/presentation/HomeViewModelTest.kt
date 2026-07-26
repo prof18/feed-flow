@@ -78,6 +78,7 @@ class HomeViewModelTest : KoinTestBase() {
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,
+            isHideImagesEnabled = false,
         )
 
         val items = listOf(
@@ -1844,6 +1845,7 @@ class HomeViewModelTest : KoinTestBase() {
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,
+            isHideImagesEnabled = false,
         )
     }
 

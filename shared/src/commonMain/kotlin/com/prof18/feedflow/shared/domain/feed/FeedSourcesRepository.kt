@@ -179,6 +179,7 @@ internal class FeedSourcesRepository(
         isHidden: Boolean,
         isPinned: Boolean,
         isNotificationEnabled: Boolean,
+        isHideImagesEnabled: Boolean,
     ) = withContext(dispatcherProvider.io) {
         val pinnedFeedSourceIds = if (isPinned) {
             databaseHelper.getPinnedFeedSourceIds()
@@ -191,6 +192,7 @@ internal class FeedSourcesRepository(
             isHidden = isHidden,
             isPinned = isPinned,
             isNotificationEnabled = isNotificationEnabled,
+            isHideImagesEnabled = isHideImagesEnabled,
         )
         if (isPinned && feedSourceId !in pinnedFeedSourceIds) {
             databaseHelper.updatePinnedPositions(pinnedFeedSourceIds + feedSourceId)
@@ -236,6 +238,7 @@ internal class FeedSourcesRepository(
                 isHidden = newFeedSource.isHiddenFromTimeline,
                 isPinned = newFeedSource.isPinned,
                 isNotificationEnabled = newFeedSource.isNotificationEnabled,
+                isHideImagesEnabled = newFeedSource.isHideImagesEnabled,
             )
             feedStateRepository.getFeeds()
         }
@@ -481,6 +484,7 @@ internal class FeedSourcesRepository(
             linkOpeningPreference = LinkOpeningPreference.DEFAULT,
             isPinned = false,
             isNotificationEnabled = isNotificationEnabled,
+            isHideImagesEnabled = false,
             fetchFailed = false,
         )
 

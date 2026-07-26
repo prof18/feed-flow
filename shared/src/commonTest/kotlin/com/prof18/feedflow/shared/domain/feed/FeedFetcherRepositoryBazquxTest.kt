@@ -87,5 +87,6 @@ class FeedFetcherRepositoryBazquxTest : FeedFetcherRepositoryTestBase() {
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,
+        isHideImagesEnabled = false,
     )
 }

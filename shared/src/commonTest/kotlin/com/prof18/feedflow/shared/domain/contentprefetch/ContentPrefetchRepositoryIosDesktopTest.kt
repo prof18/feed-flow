@@ -186,6 +186,7 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,
+        isHideImagesEnabled = false,
     )
 
     private class FakeFeedItemParserWorker : FeedItemParserWorker {

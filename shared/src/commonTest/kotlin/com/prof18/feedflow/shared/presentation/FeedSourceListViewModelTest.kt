@@ -347,6 +347,28 @@ class FeedSourceListViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `toggleFeedPin preserves the hide images preference`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource(id = "source-hide-images", title = "Hidden Images Source")
+        insertFeedSources(databaseHelper, feedSource)
+        databaseHelper.insertFeedSourcePreference(
+            feedSourceId = feedSource.id,
+            preference = feedSource.linkOpeningPreference,
+            isHidden = false,
+            isPinned = false,
+            isNotificationEnabled = false,
+            isHideImagesEnabled = true,
+        )
+
+        val storedSource = requireNotNull(databaseHelper.getFeedSource(feedSource.id))
+        viewModel.toggleFeedPin(storedSource)
+        advanceUntilIdle()
+
+        val updatedSource = databaseHelper.getFeedSource(feedSource.id)
+        assertEquals(true, updatedSource?.isPinned)
+        assertEquals(true, updatedSource?.isHideImagesEnabled)
+    }
+
+    @Test
     fun `deleteFeedSource removes it from database and state`() = runTest(testDispatcher) {
         val feedSource = createFeedSource(id = "source-3", title = "Delete Me")
         insertFeedSources(databaseHelper, feedSource)

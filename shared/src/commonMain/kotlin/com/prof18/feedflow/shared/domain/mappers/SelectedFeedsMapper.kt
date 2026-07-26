@@ -24,7 +24,7 @@ internal fun SelectFeeds.toFeedItem(
         }
     }.takeIf { !settings.hideDescription },
     content = null,
-    imageUrl = image_url.takeIf { !settings.hideImages },
+    imageUrl = image_url.takeIf { !settings.hideImages && feed_source_hide_images != true },
     feedSource = FeedSource(
         id = feed_source_id,
         url = feed_source_url,
@@ -46,6 +46,7 @@ internal fun SelectFeeds.toFeedItem(
         isHiddenFromTimeline = feed_source_is_hidden ?: false,
         isPinned = feed_source_is_pinned ?: false,
         isNotificationEnabled = feed_source_notifications_enabled ?: false,
+        isHideImagesEnabled = feed_source_hide_images ?: false,
         fetchFailed = feed_source_fetch_failed,
     ),
     pubDateMillis = pub_date,

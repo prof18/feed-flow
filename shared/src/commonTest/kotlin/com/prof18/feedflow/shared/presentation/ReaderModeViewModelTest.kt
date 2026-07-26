@@ -447,6 +447,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
             isHiddenFromTimeline = false,
             isPinned = false,
             isNotificationEnabled = false,
+            isHideImagesEnabled = false,
         )
 
         databaseHelper.insertFeedSource(

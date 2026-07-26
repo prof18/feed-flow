@@ -21,6 +21,7 @@ struct EditFeedScreenContent: View {
     @Binding var isAddingFeed: Bool
     @Binding var linkOpeningPreference: LinkOpeningPreference
     @Binding var isHidden: Bool
+    @Binding var isHideImagesEnabled: Bool
     @Binding var isPinned: Bool
     var showNotificationToggle: Bool
     @Binding var isNotificationEnabled: Bool
@@ -32,6 +33,7 @@ struct EditFeedScreenContent: View {
     let updateFeedNameTextFieldValue: (String) -> Void
     let updateLinkOpeningPreference: (LinkOpeningPreference) -> Void
     let onHiddenToggled: (Bool) -> Void
+    let onHideImagesToggled: (Bool) -> Void
     let onPinnedToggled: (Bool) -> Void
     let onNotificationToggled: (Bool) -> Void
     let addFeed: () -> Void
@@ -103,6 +105,14 @@ struct EditFeedScreenContent: View {
                 .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.hiddenToggle)
                 .onChange(of: isHidden) {
                     onHiddenToggled(isHidden)
+                }
+
+                Toggle(isOn: $isHideImagesEnabled) {
+                    Text(feedFlowStrings.hideImagesForFeedDescription)
+                }
+                .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.hideImagesToggle)
+                .onChange(of: isHideImagesEnabled) {
+                    onHideImagesToggled(isHideImagesEnabled)
                 }
 
                 Toggle(isOn: $isPinned) {

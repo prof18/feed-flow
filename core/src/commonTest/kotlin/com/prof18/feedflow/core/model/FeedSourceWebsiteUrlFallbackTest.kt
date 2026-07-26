@@ -82,5 +82,6 @@ class FeedSourceWebsiteUrlFallbackTest {
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,
+        isHideImagesEnabled = false,
     )
 }

@@ -132,6 +132,9 @@ private fun EditFeedScreenContent(
         onHiddenToggled = { hidden ->
             viewModel.updateIsHiddenFromTimeline(hidden)
         },
+        onHideImagesToggled = { hideImages ->
+            viewModel.updateIsHideImagesEnabled(hideImages)
+        },
         onPinnedToggled = { pinned ->
             viewModel.updateIsPinned(pinned)
         },
@@ -192,6 +195,7 @@ private fun EditScreenPreview() {
             onFeedNameUpdated = {},
             onLinkOpeningPreferenceSelected = {},
             onHiddenToggled = {},
+            onHideImagesToggled = {},
             onPinnedToggled = {},
             showNotificationToggle = true,
             onNotificationToggleChanged = {},

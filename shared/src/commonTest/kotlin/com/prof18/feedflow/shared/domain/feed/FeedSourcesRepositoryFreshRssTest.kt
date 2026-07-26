@@ -138,5 +138,6 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,
+        isHideImagesEnabled = false,
     )
 }

@@ -84,6 +84,7 @@ fun FeedItemPreview(
                         isHiddenFromTimeline = false,
                         isPinned = false,
                         isNotificationEnabled = false,
+                        isHideImagesEnabled = false,
                         fetchFailed = false,
                     ),
                     pubDateMillis = null,

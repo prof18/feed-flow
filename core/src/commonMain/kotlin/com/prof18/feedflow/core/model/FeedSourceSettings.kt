@@ -5,4 +5,5 @@ data class FeedSourceSettings(
     val isHiddenFromTimeline: Boolean = false,
     val isPinned: Boolean = false,
     val isNotificationEnabled: Boolean = false,
+    val isHideImagesEnabled: Boolean = false,
 )

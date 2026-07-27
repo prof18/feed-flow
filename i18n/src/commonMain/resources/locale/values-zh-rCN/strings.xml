@@ -141,7 +141,7 @@
     <string name="fresh_rss_password_hint">FreshRSS API 密码（设置 &gt; 账号）</string>
     <string name="fresh_rss_url_hint">FreshRSS API 端点，例如 %s</string>
     <string name="link_opening_preference_internal_browser">应用内浏览器</string>
-    <string name="link_opening_preference_default">默认</string>
+    <string name="link_opening_preference_default">与应用设置相同</string>
     <string name="delete_category_close_button">关闭</string>
     <string name="link_opening_preference_preferred_browser">首选浏览器</string>
     <string name="delete_category_confirmation_title">删除类别？</string>
@@ -398,5 +398,18 @@
     <string name="expand_category_button_content_description">展开 %s</string>
     <string name="collapse_category_button_content_description">收起 %s</string>
     <string name="new_articles_button">%s 篇新文章</string>
-    <string name="hide_images_for_feed_description">隐藏该订阅源的图片</string>
+    <string name="hide_images_for_feed_description">隐藏此订阅源的图片</string>
+    <string name="link_opening_preference_default_short">应用设置</string>
+    <string name="link_opening_preference_system_browser">默认浏览器</string>
+    <string name="article_open_mode">打开文章方式</string>
+    <string name="article_open_mode_section_reader">阅读模式</string>
+    <string name="article_open_mode_section_browser">浏览器</string>
+    <string name="article_open_mode_full_article_short">阅读器（网站）</string>
+    <string name="article_open_mode_feed_short">阅读器（订阅源）</string>
+    <string name="reader_content_source_web">来自网站的文章</string>
+    <string name="reader_content_source_web_subtitle">获取并清理原始页面</string>
+    <string name="reader_content_source_feed">来自订阅源的内容</string>
+    <string name="reader_content_source_feed_subtitle">使用 RSS 订阅源中包含的文本</string>
+    <string name="reader_mode_no_content_title">无可用内容</string>
+    <string name="reader_mode_no_content_message">此文章不包含任何内容，也没有在网页上打开的链接。</string>
 </resources>

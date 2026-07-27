@@ -134,7 +134,7 @@
     <string name="fresh_rss_url_hint">Endpoint FreshRSS API, ví dụ %s</string>
     <string name="link_opening_preference_internal_browser">Mở trong app</string>
     <string name="link_opening_preference_preferred_browser">Mở bằng trình duyệt</string>
-    <string name="link_opening_preference_default">Mặc định</string>
+    <string name="link_opening_preference_default">Giống cài đặt ứng dụng</string>
     <string name="fresh_rss_password_hint">Mật khẩu FreshRSS API (Cài đặt &gt; Hồ sơ)</string>
     <string name="delete_category_close_button">Đóng</string>
     <string name="settings_auto_delete">Tự động xóa bài viết cũ</string>
@@ -397,4 +397,19 @@
     <string name="reorder_mode_done">Xong</string>
     <string name="expand_category_button_content_description">Mở rộng %s</string>
     <string name="collapse_category_button_content_description">Thu gọn %s</string>
+    <string name="link_opening_preference_default_short">Cài đặt ứng dụng</string>
+    <string name="link_opening_preference_system_browser">Trình duyệt mặc định</string>
+    <string name="article_open_mode">Mở bài viết bằng</string>
+    <string name="article_open_mode_section_reader">Chế độ đọc</string>
+    <string name="article_open_mode_section_browser">Trình duyệt</string>
+    <string name="article_open_mode_full_article_short">Trình đọc (website)</string>
+    <string name="article_open_mode_feed_short">Trình đọc (bảng tin)</string>
+    <string name="reader_content_source_web">Bài viết từ website</string>
+    <string name="reader_content_source_web_subtitle">Lấy và làm gọn trang gốc</string>
+    <string name="hide_images_for_feed_description">Ẩn hình ảnh đối với nguồn tin này</string>
+    <string name="new_articles_button">%s bài viết mới</string>
+    <string name="reader_mode_no_content_title">Không có nội dung nào</string>
+    <string name="reader_mode_no_content_message">Bài viết này không có nội dung và cũng không có liên kết để mở trên web.</string>
+    <string name="reader_content_source_feed">Nội dung từ nguồn tin</string>
+    <string name="reader_content_source_feed_subtitle">Dùng văn bản có trong nguồn tin RSS</string>
 </resources>

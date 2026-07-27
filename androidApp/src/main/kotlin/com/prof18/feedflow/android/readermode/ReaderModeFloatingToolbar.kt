@@ -17,15 +17,19 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
@@ -46,6 +50,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.core.model.ShownContentSource
+import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.shared.ui.readermode.ReaderTextSettingsSheetContent
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -56,7 +62,20 @@ private data class ToolbarAction(
     val icon: ImageVector,
     val label: String,
     val testTag: String? = null,
+    val isSelected: Boolean? = null,
     val onClick: () -> Unit,
+)
+
+private fun contentSourceToolbarAction(
+    shownContentSource: ShownContentSource,
+    strings: FeedFlowStrings,
+    onClick: () -> Unit,
+): ToolbarAction = ToolbarAction(
+    icon = Icons.Default.RssFeed,
+    label = strings.readerContentSourceFeed,
+    testTag = ReaderModeE2eIds.CONTENT_SOURCE_BUTTON,
+    isSelected = shownContentSource == ShownContentSource.FEED,
+    onClick = onClick,
 )
 
 @Composable
@@ -73,6 +92,7 @@ fun ReaderModeFloatingToolbar(
     onShareClick: (String, String?) -> Unit,
     onArchiveClick: (String) -> Unit,
     onCommentsClick: (String) -> Unit,
+    onToggleContentSource: () -> Unit,
     onFontSizeChange: (Int) -> Unit,
     lineHeight: Int,
     onLineHeightChange: (Int) -> Unit,
@@ -93,13 +113,15 @@ fun ReaderModeFloatingToolbar(
         null
     }
 
-    val url = readerModeState.getUrl
+    // URL-less items (shown from feed content) have a blank url; hide URL-dependent actions.
+    val url = readerModeState.getUrl?.takeIf { it.isNotBlank() }
     val id = readerModeState.getId
     val latestOpenInBrowser by rememberUpdatedState(openInBrowser)
     val latestOnShareClick by rememberUpdatedState(onShareClick)
     val latestOnBookmarkClick by rememberUpdatedState(onBookmarkClick)
     val latestOnArchiveClick by rememberUpdatedState(onArchiveClick)
     val latestOnCommentsClick by rememberUpdatedState(onCommentsClick)
+    val latestOnToggleContentSource by rememberUpdatedState(onToggleContentSource)
     var isBookmarked by remember(readerModeState) {
         mutableStateOf(readerModeState.getIsBookmarked)
     }
@@ -107,7 +129,7 @@ fun ReaderModeFloatingToolbar(
     val isContentVisible = expanded && readerModeState !is ReaderModeState.Loading
 
     // Build action lists regardless of isContentVisible so AnimatedVisibility can animate exit
-    // Order: Browser, Share | < > | Bookmark, Comments, Archive, Font Size
+    // Order: Browser, Share | < > | Bookmark, Comments, Archive, Text Settings, RSS Content
     val leadingActions = remember(readerModeState, strings, url) {
         buildList {
             if (readerModeState !is ReaderModeState.Loading && url != null) {
@@ -134,7 +156,10 @@ fun ReaderModeFloatingToolbar(
             .toImmutableList()
     }
 
-    val trailingActions = remember(readerModeState, strings, url, id, isBookmarked) {
+    val shownContentSource = (readerModeState as? ReaderModeState.Success)?.readerModeData?.shownContentSource
+    val canToggleContentSource =
+        (readerModeState as? ReaderModeState.Success)?.readerModeData?.canToggleContentSource == true
+    val trailingActions = remember(readerModeState, strings, url, id, isBookmarked, shownContentSource) {
         buildList {
             if (id != null) {
                 val bookmarkLabel = if (isBookmarked) {
@@ -187,6 +212,15 @@ fun ReaderModeFloatingToolbar(
                         label = strings.readerModeTextSettings,
                         testTag = ReaderModeE2eIds.FONT_SIZE_BUTTON,
                         onClick = { showFontSizeMenu = true },
+                    ),
+                )
+            }
+            if (shownContentSource != null && canToggleContentSource) {
+                add(
+                    contentSourceToolbarAction(
+                        shownContentSource = shownContentSource,
+                        strings = strings,
+                        onClick = { latestOnToggleContentSource() },
                     ),
                 )
             }
@@ -370,15 +404,35 @@ private fun OverflowToolbarLayout(
 
 @Composable
 private fun ToolbarActionButton(action: ToolbarAction) {
-    IconButton(
-        modifier = action.testTagModifier(),
-        onClick = action.onClick,
-    ) {
-        Icon(
-            imageVector = action.icon,
-            contentDescription = action.label,
-            tint = MaterialTheme.colorScheme.onSurface,
-        )
+    val isSelected = action.isSelected
+    if (isSelected != null) {
+        FilledIconToggleButton(
+            checked = isSelected,
+            onCheckedChange = { action.onClick() },
+            modifier = action.testTagModifier(),
+            colors = IconButtonDefaults.filledIconToggleButtonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                checkedContainerColor = MaterialTheme.colorScheme.primary,
+                checkedContentColor = MaterialTheme.colorScheme.onPrimary,
+            ),
+        ) {
+            Icon(
+                imageVector = action.icon,
+                contentDescription = action.label,
+            )
+        }
+    } else {
+        IconButton(
+            modifier = action.testTagModifier(),
+            onClick = action.onClick,
+        ) {
+            Icon(
+                imageVector = action.icon,
+                contentDescription = action.label,
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        }
     }
 }
 
@@ -397,6 +451,16 @@ private fun ToolbarActionMenuItem(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        },
+        trailingIcon = if (action.isSelected == true) {
+            {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                )
+            }
+        } else {
+            null
         },
     )
 }

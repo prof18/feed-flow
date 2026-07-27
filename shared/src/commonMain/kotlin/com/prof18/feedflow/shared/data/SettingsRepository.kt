@@ -1,10 +1,13 @@
 package com.prof18.feedflow.shared.data
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.core.model.appDefaultArticleOpenMode
+import com.prof18.feedflow.core.model.resolveWith
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
@@ -16,7 +19,7 @@ import kotlinx.coroutines.flow.update
 class SettingsRepository(
     private val settings: Settings,
 ) {
-    private var isReaderModeEnabled: Boolean? = null
+    private var articleOpenMode: ArticleOpenMode? = null
     private var saveItemContentOnOpenEnabled: Boolean? = null
     private var prefetchArticleContentEnabled: Boolean? = null
 
@@ -91,21 +94,6 @@ class SettingsRepository(
         uncategorizedPositionMutableFlow.update { value }
     }
 
-    fun isUseReaderModeEnabled(): Boolean {
-        if (isReaderModeEnabled != null) {
-            return requireNotNull(isReaderModeEnabled)
-        } else {
-            val value = settings.getBoolean(SettingsFields.USE_READER_MODE.name, true)
-            isReaderModeEnabled = value
-            return value
-        }
-    }
-
-    internal fun setUseReaderMode(value: Boolean) {
-        isReaderModeEnabled = value
-        settings[SettingsFields.USE_READER_MODE.name] = value
-    }
-
     fun isSaveItemContentOnOpenEnabled(): Boolean {
         if (saveItemContentOnOpenEnabled != null) {
             return requireNotNull(saveItemContentOnOpenEnabled)
@@ -155,6 +143,39 @@ class SettingsRepository(
 
     fun setReaderModeLineHeight(value: Int) =
         settings.set(SettingsFields.READER_MODE_LINE_HEIGHT.name, value)
+
+    /**
+     * The app-wide default, always a concrete mode. [ArticleOpenMode.DEFAULT] only means "follow the
+     * global setting" on a feed, so here it resolves to [appDefaultArticleOpenMode].
+     */
+    fun getArticleOpenMode(): ArticleOpenMode {
+        articleOpenMode?.let { return it }
+        val stored = settings.getStringOrNull(SettingsFields.ARTICLE_OPEN_MODE.name)
+        val value = if (stored != null) {
+            runCatching { ArticleOpenMode.valueOf(stored) }
+                .getOrNull()
+                ?.resolveWith(appDefaultArticleOpenMode)
+                ?: appDefaultArticleOpenMode
+        } else {
+            legacyArticleOpenMode()
+        }
+        articleOpenMode = value
+        return value
+    }
+
+    fun setArticleOpenMode(mode: ArticleOpenMode) {
+        val value = mode.resolveWith(appDefaultArticleOpenMode)
+        articleOpenMode = value
+        settings[SettingsFields.ARTICLE_OPEN_MODE.name] = value.name
+    }
+
+    // Pre-unification installs only stored a "use reader mode" flag; browser meant the favourite browser.
+    private fun legacyArticleOpenMode(): ArticleOpenMode =
+        if (settings.getBoolean(SettingsFields.USE_READER_MODE.name, true)) {
+            appDefaultArticleOpenMode
+        } else {
+            ArticleOpenMode.PREFERRED_BROWSER
+        }
 
     internal fun getAutoDeletePeriod(): AutoDeletePeriod =
         settings.getString(SettingsFields.AUTO_DELETE_PERIOD.name, AutoDeletePeriod.DISABLED.name)
@@ -255,6 +276,7 @@ private enum class SettingsFields {
     IS_SYNC_UPLOAD_REQUIRED,
     READER_MODE_FONT_SIZE,
     READER_MODE_LINE_HEIGHT,
+    ARTICLE_OPEN_MODE,
     AUTO_DELETE_PERIOD,
     CRASH_REPORTING_ENABLED,
     SYNC_PERIOD,

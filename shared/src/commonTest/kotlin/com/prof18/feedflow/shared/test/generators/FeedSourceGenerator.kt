@@ -1,8 +1,8 @@
 package com.prof18.feedflow.shared.test.generators
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 
 object FeedSourceGenerator {
     fun feedSource(
@@ -14,7 +14,7 @@ object FeedSourceGenerator {
         logoUrl: String? = "https://example.com/logo.png",
         websiteUrl: String? = "https://example.com",
         fetchFailed: Boolean = false,
-        linkOpeningPreference: LinkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode: ArticleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline: Boolean = false,
         isPinned: Boolean = false,
         isNotificationEnabled: Boolean = false,
@@ -28,7 +28,7 @@ object FeedSourceGenerator {
         logoUrl = logoUrl,
         websiteUrl = websiteUrl,
         fetchFailed = fetchFailed,
-        linkOpeningPreference = linkOpeningPreference,
+        articleOpenMode = articleOpenMode,
         isHiddenFromTimeline = isHiddenFromTimeline,
         isPinned = isPinned,
         isNotificationEnabled = isNotificationEnabled,
@@ -45,7 +45,7 @@ object FeedSourceGenerator {
         logoUrl: String? = "https://example.com/logo.png",
         websiteUrl: String? = "https://example.com",
         fetchFailed: Boolean = false,
-        linkOpeningPreference: LinkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode: ArticleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline: Boolean = false,
         isPinned: Boolean = false,
         isNotificationEnabled: Boolean = false,
@@ -62,7 +62,7 @@ object FeedSourceGenerator {
         logoUrl = logoUrl,
         websiteUrl = websiteUrl,
         fetchFailed = fetchFailed,
-        linkOpeningPreference = linkOpeningPreference,
+        articleOpenMode = articleOpenMode,
         isHiddenFromTimeline = isHiddenFromTimeline,
         isPinned = isPinned,
         isNotificationEnabled = isNotificationEnabled,

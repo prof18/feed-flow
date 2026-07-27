@@ -1,11 +1,11 @@
 package com.prof18.feedflow.shared.domain.feed
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
@@ -474,7 +474,7 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
         logoUrl = null,
         websiteUrl = "https://example.com/$id",
         fetchFailed = false,
-        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,

@@ -142,11 +142,9 @@
     <string name="menu_remove_from_pinned">Открепить</string>
     <string name="settings_auto_delete_period_disabled">Отключено</string>
     <string name="delete_category_confirmation_message">Вы уверены, что хотите удалить эту категорию? Все материалы из неё будут отнесены к \'Без категории\'.</string>
-    <string name="link_opening_preference">Поведение при открытии ссылок</string>
     <string name="feed_url_help_text">Добавьте любую ссылку на прямую ленту, веб-сайт или канал YouTube. Лента будет автоматически обнаружена, когда это возможно</string>
     <string name="settings_auto_delete">Автоудаление старых статей</string>
     <string name="hide_feed_from_timeline_description">Скрыть статьи этой ленты из хроники</string>
-    <string name="link_opening_preference_reader_mode">Режим чтения</string>
     <string name="link_opening_preference_internal_browser">Встроенный браузер</string>
     <string name="link_opening_preference_preferred_browser">Избранный браузер</string>
     <string name="settings_auto_delete_period_one_week">Старше одной недели</string>

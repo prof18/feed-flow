@@ -140,9 +140,7 @@
     <string name="fresh_rss_last_sync">最後の同期: %s</string>
     <string name="fresh_rss_password_hint">FreshRSS APIのパスワード (設定 &gt; プロファイル)</string>
     <string name="fresh_rss_url_hint">FreshRSS APIの終点、例えば %s</string>
-    <string name="link_opening_preference">リンクを開く動作</string>
     <string name="link_opening_preference_default">デフォルト</string>
-    <string name="link_opening_preference_reader_mode">リーダーモード</string>
     <string name="link_opening_preference_internal_browser">アプリ内蔵ブラウザ</string>
     <string name="link_opening_preference_preferred_browser">お好みのブラウザ</string>
     <string name="delete_category_confirmation_title">カテゴリを削除しますか？</string>

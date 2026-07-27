@@ -188,13 +188,13 @@ internal fun SettingsWindow(
                     )
 
                     DesktopSettingsCategory.READING -> ReadingPane(
-                        isReaderModeEnabled = settingsState.isReaderModeEnabled,
+                        articleOpenMode = settingsState.articleOpenMode,
                         isSaveReaderModeContentEnabled = settingsState.isSaveReaderModeContentEnabled,
                         isPrefetchArticleContentEnabled = settingsState.isPrefetchArticleContentEnabled,
                         isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
                         isShowReadItemsEnabled = settingsState.isShowReadItemsEnabled,
                         isHideReadItemsEnabled = settingsState.isHideReadItemsEnabled,
-                        onReaderModeToggled = menuBarViewModel::updateReaderMode,
+                        onArticleOpenModeSelected = menuBarViewModel::updateArticleOpenMode,
                         onSaveReaderModeContentToggled = menuBarViewModel::updateSaveReaderModeContent,
                         onPrefetchToggled = menuBarViewModel::updatePrefetchArticleContent,
                         onMarkReadWhenScrollingToggled = menuBarViewModel::updateMarkReadWhenScrolling,

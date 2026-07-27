@@ -61,12 +61,13 @@ import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.Notificati
 import com.prof18.feedflow.android.settings.readingbehavior.ReadingBehaviorScreen
 import com.prof18.feedflow.android.settings.syncstorage.SyncAndStorageScreen
 import com.prof18.feedflow.android.settings.widget.WidgetSettingsScreen
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncResult
-import com.prof18.feedflow.core.model.canOpenReaderMode
+import com.prof18.feedflow.core.model.isReaderMode
+import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.parser.ReaderModeParserWarmer
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
@@ -419,6 +420,9 @@ class MainActivity : BaseThemeActivity() {
                         onNavigateToNext = {
                             readerModeViewModel.navigateToNextArticle()
                         },
+                        onToggleContentSource = {
+                            readerModeViewModel.toggleContentSource()
+                        },
                     )
                 }
 
@@ -515,35 +519,25 @@ class MainActivity : BaseThemeActivity() {
         if (state is DeeplinkFeedState.Success) {
             val feedUrlInfo = state.data
             deeplinkViewModel.markAsRead(FeedItemId(feedUrlInfo.id))
-            handleLinkOpeningPreference(feedUrlInfo, readerModeViewModel, backStack)
+            handleArticleOpenMode(feedUrlInfo, readerModeViewModel, backStack)
         }
     }
 
-    private fun handleLinkOpeningPreference(
+    private fun handleArticleOpenMode(
         feedUrlInfo: FeedItemUrlInfo,
         readerModeViewModel: ReaderModeViewModel,
         backStack: NavBackStack<NavKey>,
     ) {
-        when (feedUrlInfo.linkOpeningPreference) {
-            LinkOpeningPreference.READER_MODE -> {
-                if (feedUrlInfo.canOpenReaderMode()) {
-                    navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo, backStack)
-                } else {
-                    browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)
-                }
+        val openMode = feedUrlInfo.resolveArticleOpenMode(browserManager.getArticleOpenMode())
+        when {
+            openMode.isReaderMode() -> {
+                navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo, backStack)
             }
-            LinkOpeningPreference.INTERNAL_BROWSER -> {
+            openMode == ArticleOpenMode.INTERNAL_BROWSER -> {
                 browserManager.openWithInAppBrowser(feedUrlInfo.url, this@MainActivity)
             }
-            LinkOpeningPreference.PREFERRED_BROWSER -> {
+            else -> {
                 browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)
-            }
-            LinkOpeningPreference.DEFAULT -> {
-                if (browserManager.openReaderMode() && feedUrlInfo.canOpenReaderMode()) {
-                    navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo, backStack)
-                } else {
-                    browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)
-                }
             }
         }
     }

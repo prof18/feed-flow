@@ -3,10 +3,10 @@ package com.prof18.feedflow.feedsync.feedbin.domain.mapping
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.domain.ParsedFeedContent
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.feedsync.feedbin.data.dto.EntryDTO
 import kotlin.test.Test
@@ -29,7 +29,7 @@ class EntryDTOMapperTest {
         logoUrl = null,
         websiteUrl = "https://example.com",
         fetchFailed = false,
-        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,
@@ -101,6 +101,7 @@ class EntryDTOMapperTest {
         )
 
         assertEquals("https://example.com/summary.png", result.imageUrl)
+        assertEquals("Summary https://example.com/summary.png", result.content)
     }
 
     @Test

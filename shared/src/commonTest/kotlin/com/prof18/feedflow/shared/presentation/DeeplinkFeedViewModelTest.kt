@@ -34,7 +34,7 @@ class DeeplinkFeedViewModelTest : KoinTestBase() {
             url = feedItem.url,
             title = feedItem.title,
             isBookmarked = feedItem.isBookmarked,
-            linkOpeningPreference = feedItem.feedSource.linkOpeningPreference,
+            articleOpenMode = feedItem.feedSource.articleOpenMode,
             commentsUrl = feedItem.commentsUrl,
         )
 

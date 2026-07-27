@@ -247,7 +247,7 @@
     <section class="summary" aria-label="Summary">
       <div class="metric"><strong id="total-count">0</strong><span>automated flow files</span></div>
       <div class="metric"><strong>13</strong><span>smoke coverage IDs</span></div>
-      <div class="metric"><strong>56</strong><span>regression coverage IDs</span></div>
+      <div class="metric"><strong>57</strong><span>regression coverage IDs</span></div>
     </section>
 
     <div class="toolbar">
@@ -324,6 +324,9 @@
       "android/regression/156-feed-source-reorder-smoke.yaml",
       "android/regression/157-drawer-reorder-smoke.yaml",
       "android/regression/158-empty-feed-next-feed-navigation.yaml",
+      "android/regression/159-reader-feed-content-no-url.yaml",
+      "android/regression/160-reader-content-source-navigation.yaml",
+      "android/regression/161-reader-no-url-no-content.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -395,6 +398,9 @@
       "ios/regression/154-empty-bookmarks-back-to-timeline.yaml",
       "ios/regression/155-empty-home-open-another-feed.yaml",
       "ios/regression/158-empty-feed-next-feed-navigation.yaml",
+      "ios/regression/159-reader-feed-content-no-url.yaml",
+      "ios/regression/160-reader-content-source-navigation.yaml",
+      "ios/regression/161-reader-no-url-no-content.yaml",
       "ios/smoke/001-first-launch-empty.yaml",
       "ios/smoke/002-seeded-timeline-loads.yaml",
       "ios/smoke/003-library-filters.yaml",
@@ -494,7 +500,9 @@
       "regression/155": "Empty home Open another feed action opens the drawer.",
       "regression/156": "Android Settings > Feeds reorder drag smoke.",
       "regression/157": "Android drawer reorder drag smoke.",
-      "regression/158": "Empty single-source filter renders the next-feed affordance and moves to the next unread source."
+      "regression/158": "Empty single-source filter renders the next-feed affordance and moves to the next unread source.",
+      "regression/159": "URL-less article opens in the styled feed-content reader without unavailable actions.",
+      "regression/160": "Switching between cached web and RSS content preserves the reader Back destination."
     };
 
     const sections = document.querySelector("#sections");

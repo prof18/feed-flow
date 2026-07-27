@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -56,7 +57,6 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedLayout
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActionType.NONE
 import com.prof18.feedflow.core.model.SwipeActionType.OPEN_IN_BROWSER
@@ -672,26 +672,31 @@ private fun SwipeActionType.toSwipeAction(
             },
         )
 
-        OPEN_IN_BROWSER -> SwipeAction(
-            icon = {
-                Icon(
-                    modifier = Modifier.padding(Spacing.regular),
-                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                    contentDescription = LocalFeedFlowStrings.current.readerModeBrowserButtonContentDescription,
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-            },
-            background = swipeBackgroundColor,
-            onSwipe = {
-                onOpenInBrowser(feedItem.toSwipeActionUrlInfo())
-                if (!feedItem.isRead) {
-                    onReadStatusClick(
-                        FeedItemId(feedItem.id),
-                        true,
+        // URL-less items have nothing to open in a browser, so no swipe action.
+        OPEN_IN_BROWSER -> if (feedItem.url.isBlank()) {
+            null
+        } else {
+            SwipeAction(
+                icon = {
+                    Icon(
+                        modifier = Modifier.padding(Spacing.regular),
+                        imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                        contentDescription = LocalFeedFlowStrings.current.readerModeBrowserButtonContentDescription,
+                        tint = MaterialTheme.colorScheme.primary,
                     )
-                }
-            },
-        )
+                },
+                background = swipeBackgroundColor,
+                onSwipe = {
+                    onOpenInBrowser(feedItem.toSwipeActionUrlInfo())
+                    if (!feedItem.isRead) {
+                        onReadStatusClick(
+                            FeedItemId(feedItem.id),
+                            true,
+                        )
+                    }
+                },
+            )
+        }
 
         NONE -> null
     }
@@ -703,7 +708,7 @@ private fun FeedItem.toSwipeActionUrlInfo(): FeedItemUrlInfo =
         url = url,
         title = title,
         isBookmarked = isBookmarked,
-        linkOpeningPreference = LinkOpeningPreference.PREFERRED_BROWSER,
+        articleOpenMode = ArticleOpenMode.PREFERRED_BROWSER,
         commentsUrl = commentsUrl,
         imageUrl = imageUrl,
     )

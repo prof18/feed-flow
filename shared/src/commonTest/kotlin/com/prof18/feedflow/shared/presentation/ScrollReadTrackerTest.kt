@@ -1,10 +1,10 @@
 package com.prof18.feedflow.shared.presentation
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.VisibleFeedItem
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -313,7 +313,7 @@ class ScrollReadTrackerTest {
             logoUrl = null,
             websiteUrl = null,
             fetchFailed = false,
-            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isHiddenFromTimeline = false,
             isPinned = false,
             isNotificationEnabled = false,

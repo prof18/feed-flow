@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 public struct ReaderViewActions {
     public let strings: ReaderViewStrings
@@ -11,6 +12,9 @@ public struct ReaderViewActions {
     public let onLineHeightChange: (Double) -> Void
     public let onNavigateToNext: (() -> Void)?
     public let onNavigateToPrevious: (() -> Void)?
+    public let onToggleContentSource: (() -> Void)?
+    public let isShowingFeedContent: Bool
+    public let hasUrl: Bool
 
     public init(
         strings: ReaderViewStrings,
@@ -22,7 +26,10 @@ public struct ReaderViewActions {
         onFontSizeChange: @escaping (Double) -> Void,
         onLineHeightChange: @escaping (Double) -> Void,
         onNavigateToNext: (() -> Void)? = nil,
-        onNavigateToPrevious: (() -> Void)? = nil
+        onNavigateToPrevious: (() -> Void)? = nil,
+        onToggleContentSource: (() -> Void)? = nil,
+        isShowingFeedContent: Bool = false,
+        hasUrl: Bool = true
     ) {
         self.strings = strings
         self.onBookmarkToggle = onBookmarkToggle
@@ -34,6 +41,9 @@ public struct ReaderViewActions {
         self.onLineHeightChange = onLineHeightChange
         self.onNavigateToNext = onNavigateToNext
         self.onNavigateToPrevious = onNavigateToPrevious
+        self.onToggleContentSource = onToggleContentSource
+        self.isShowingFeedContent = isShowingFeedContent
+        self.hasUrl = hasUrl
     }
 }
 
@@ -113,6 +123,8 @@ public struct ReaderView: View {
         switch readerStatus {
         case .fetching:
             EmptyView()
+        case .contentUnavailable:
+            contentUnavailableView
         case let .failedToExtractContent(url):
             FallbackWebView(
                 url: url,
@@ -130,6 +142,21 @@ public struct ReaderView: View {
                 }
             )
         }
+    }
+
+    @ViewBuilder private var contentUnavailableView: some View {
+        VStack(spacing: 8) {
+            Text(actions.strings.contentUnavailableTitle)
+                .font(.headline)
+                .multilineTextAlignment(.center)
+
+            Text(actions.strings.contentUnavailableMessage)
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.horizontal, 24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     @ViewBuilder private var loader: some View {
@@ -156,7 +183,7 @@ public struct ReaderView: View {
     @ToolbarContentBuilder
     private func makeIOS26ToolbarContent() -> some ToolbarContent {
         // Bottom bar - left edge
-        if let url = readerStatus.getUrl() {
+        if actions.hasUrl, let url = readerStatus.getUrl() {
             ToolbarItem(placement: .bottomBar) {
                 Button {
                     openInBrowser(url)
@@ -189,7 +216,7 @@ public struct ReaderView: View {
         }
 
         // Top bar: Share button
-        if let url = readerStatus.getUrl() {
+        if actions.hasUrl, let url = readerStatus.getUrl() {
             if #available(iOS 26.0, *) {
                 ToolbarSpacer(.fixed)
             }
@@ -222,10 +249,12 @@ public struct ReaderView: View {
                 }
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.bookmarkButton)
 
-                Button {
-                    actions.onArchive()
-                } label: {
-                    Label(actions.strings.openInArchive, systemImage: "hammer.fill")
+                if actions.hasUrl {
+                    Button {
+                        actions.onArchive()
+                    } label: {
+                        Label(actions.strings.openInArchive, systemImage: "hammer.fill")
+                    }
                 }
 
                 if case .extractedContent = readerStatus,
@@ -245,6 +274,11 @@ public struct ReaderView: View {
                     }
                     .accessibilityIdentifier(ReaderAccessibilityIdentifiers.fontSizeButton)
                 }
+
+                if case .extractedContent = readerStatus,
+                   let onToggleContentSource = actions.onToggleContentSource {
+                    contentSourceMenuToggle(onToggle: onToggleContentSource)
+                }
             } label: {
                 Image(systemName: "ellipsis.circle")
                     .accessibilityIdentifier(ReaderAccessibilityIdentifiers.moreMenuButton)
@@ -255,7 +289,7 @@ public struct ReaderView: View {
     @ToolbarContentBuilder
     private func makeLegacyToolbarContent() -> some ToolbarContent {
         // Share button
-        if let url = readerStatus.getUrl() {
+        if actions.hasUrl, let url = readerStatus.getUrl() {
             ToolbarItem(placement: .navigationBarTrailing) {
                 ShareLink(
                     item: url,
@@ -280,10 +314,12 @@ public struct ReaderView: View {
                 }
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.bookmarkButton)
 
-                Button {
-                    actions.onArchive()
-                } label: {
-                    Label(actions.strings.openInArchive, systemImage: "hammer.fill")
+                if actions.hasUrl {
+                    Button {
+                        actions.onArchive()
+                    } label: {
+                        Label(actions.strings.openInArchive, systemImage: "hammer.fill")
+                    }
                 }
 
                 if case .extractedContent = readerStatus,
@@ -303,10 +339,44 @@ public struct ReaderView: View {
                     }
                     .accessibilityIdentifier(ReaderAccessibilityIdentifiers.fontSizeButton)
                 }
+
+                if case .extractedContent = readerStatus,
+                   let onToggleContentSource = actions.onToggleContentSource {
+                    contentSourceMenuToggle(onToggle: onToggleContentSource)
+                }
             } label: {
                 Image(systemName: "ellipsis.circle")
                     .accessibilityIdentifier(ReaderAccessibilityIdentifiers.moreMenuButton)
             }
+        }
+    }
+
+    private func contentSourceMenuToggle(onToggle: @escaping () -> Void) -> some View {
+        Toggle(isOn: contentSourceToggleBinding(onToggle: onToggle)) {
+            Label {
+                Text(actions.strings.feedContent)
+            } icon: {
+                contentSourceMenuIcon
+            }
+        }
+        .accessibilityIdentifier(ReaderAccessibilityIdentifiers.contentSourceButton)
+    }
+
+    private func contentSourceToggleBinding(onToggle: @escaping () -> Void) -> Binding<Bool> {
+        Binding(
+            get: { actions.isShowingFeedContent },
+            set: { _ in onToggle() }
+        )
+    }
+
+    @ViewBuilder
+    private var contentSourceMenuIcon: some View {
+        if let image = UIImage(systemName: "dot.radiowaves.up.forward")?
+            .withTintColor(.label, renderingMode: .alwaysOriginal) {
+            Image(uiImage: image)
+        } else {
+            Image(systemName: "dot.radiowaves.up.forward")
+                .foregroundStyle(.primary)
         }
     }
 
@@ -469,7 +539,7 @@ public struct ReaderView: View {
     private var compactNavigationToolbar: some View {
         HStack(spacing: 0) {
             // Open in browser - left edge
-            if let url = readerStatus.getUrl() {
+            if actions.hasUrl, let url = readerStatus.getUrl() {
                 Button {
                     openInBrowser(url)
                 } label: {

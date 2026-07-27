@@ -1,7 +1,7 @@
 package com.prof18.feedflow.shared
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.test.KoinTestBase
@@ -114,6 +114,59 @@ class FeedFlowDatabaseTest : KoinTestBase() {
     }
 
     @Test
+    fun `insertFeedSourcePreference stores the article open mode override`() = runTest {
+        databaseHelper.insertFeedSource(
+            listOf(createParsedFeedSource(id = "alpha", title = "Alpha")),
+        )
+
+        databaseHelper.insertFeedSourcePreference(
+            feedSourceId = "alpha",
+            articleOpenMode = ArticleOpenMode.FEED_CONTENT,
+            isHidden = false,
+            isPinned = false,
+            isNotificationEnabled = false,
+            isHideImagesEnabled = false,
+        )
+
+        assertEquals(ArticleOpenMode.FEED_CONTENT, databaseHelper.getFeedSource("alpha")?.articleOpenMode)
+    }
+
+    @Test
+    fun `getFeedItemUrlInfo returns the feed article open mode override`() = runTest {
+        val feedItem = FeedItemGenerator.feedItem(id = "cs-item")
+        databaseHelper.insertFeedSource(
+            listOf(createParsedFeedSource(id = feedItem.feedSource.id, title = feedItem.feedSource.title)),
+        )
+        databaseHelper.insertFeedItems(listOf(feedItem), lastSyncTimestamp = 0)
+        databaseHelper.insertFeedSourcePreference(
+            feedSourceId = feedItem.feedSource.id,
+            articleOpenMode = ArticleOpenMode.FEED_CONTENT,
+            isHidden = false,
+            isPinned = false,
+            isNotificationEnabled = false,
+            isHideImagesEnabled = false,
+        )
+
+        assertEquals(
+            ArticleOpenMode.FEED_CONTENT,
+            databaseHelper.getFeedItemUrlInfo("cs-item")?.articleOpenMode,
+        )
+    }
+
+    @Test
+    fun `prefetch queries exclude url-less feed content items`() = runTest {
+        val webItem = FeedItemGenerator.feedItem(id = "prefetch-web").copy(url = "https://example.com/article")
+        val feedOnlyItem = FeedItemGenerator.feedItem(id = "prefetch-feed-only").copy(url = "")
+        databaseHelper.insertFeedSource(
+            listOf(createParsedFeedSource(id = webItem.feedSource.id, title = webItem.feedSource.title)),
+        )
+        databaseHelper.insertFeedItems(listOf(webItem, feedOnlyItem), lastSyncTimestamp = 0)
+
+        assertEquals(listOf("prefetch-web"), databaseHelper.getUnfetchedItems().map { it.feedItemId })
+        assertEquals(listOf("prefetch-web"), databaseHelper.getFirstUnfetchedItemsBatch(10).map { it.feedItemId })
+    }
+
+    @Test
     fun `insertCategories preserves existing category position`() = runTest {
         databaseHelper.insertCategories(
             listOf(
@@ -141,7 +194,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
         )
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = "alpha",
-            preference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,
@@ -149,7 +202,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
         )
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = "beta",
-            preference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,
@@ -157,7 +210,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
         )
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = "gamma",
-            preference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isHidden = false,
             isPinned = false,
             isNotificationEnabled = false,
@@ -178,7 +231,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
 
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = "alpha",
-            preference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isHidden = false,
             isPinned = false,
             isNotificationEnabled = false,
@@ -189,7 +242,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
 
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = "alpha",
-            preference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isHidden = false,
             isPinned = false,
             isNotificationEnabled = false,
@@ -209,7 +262,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
         )
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = "alpha",
-            preference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,
@@ -217,7 +270,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
         )
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = "beta",
-            preference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,
@@ -227,7 +280,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
 
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = "alpha",
-            preference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isHidden = true,
             isPinned = true,
             isNotificationEnabled = true,

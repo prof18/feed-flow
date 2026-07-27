@@ -1,10 +1,10 @@
 import kotlin.Boolean;
 import kotlin.Int;
-import com.prof18.feedflow.core.model.LinkOpeningPreference;
+import com.prof18.feedflow.core.model.ArticleOpenMode;
 
 CREATE TABLE feed_source_preferences (
     feed_source_id TEXT NOT NULL PRIMARY KEY,
-    link_opening_preference TEXT AS LinkOpeningPreference NOT NULL DEFAULT 'DEFAULT',
+    article_open_mode TEXT AS ArticleOpenMode NOT NULL DEFAULT 'DEFAULT',
     is_hidden INTEGER AS Boolean NOT NULL DEFAULT 0,
     is_pinned INTEGER AS Boolean NOT NULL DEFAULT 0,
     notifications_enabled INTEGER AS Boolean NOT NULL DEFAULT 0,
@@ -14,7 +14,7 @@ CREATE TABLE feed_source_preferences (
 );
 
 insertPreference:
-INSERT OR IGNORE INTO feed_source_preferences(feed_source_id, link_opening_preference, is_hidden, is_pinned, notifications_enabled, hide_images)
+INSERT OR IGNORE INTO feed_source_preferences(feed_source_id, article_open_mode, is_hidden, is_pinned, notifications_enabled, hide_images)
 VALUES (?, ?, ?, ?, ?, ?);
 
 insertNotificationEnabledPreference:
@@ -38,7 +38,7 @@ deleteAllPreferences:
 DELETE FROM feed_source_preferences;
 
 getFeedSourceWithPreference:
-SELECT feed_source.*, feed_source_preferences.link_opening_preference, feed_source_preferences.is_pinned, feed_source_preferences.pinned_position, feed_source_preferences.notifications_enabled, feed_source_preferences.hide_images
+SELECT feed_source.*, feed_source_preferences.article_open_mode, feed_source_preferences.is_pinned, feed_source_preferences.pinned_position, feed_source_preferences.notifications_enabled, feed_source_preferences.hide_images
 FROM feed_source
 LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferences.feed_source_id
 ORDER BY feed_source.title COLLATE NOCASE ASC;
@@ -50,7 +50,7 @@ WHERE feed_source_id = :feedSourceId;
 
 updatePreference:
 UPDATE feed_source_preferences
-SET link_opening_preference = :linkOpeningPreference,
+SET article_open_mode = :articleOpenMode,
     is_hidden = :isHidden,
     is_pinned = :isPinned,
     notifications_enabled = :notificationsEnabled,

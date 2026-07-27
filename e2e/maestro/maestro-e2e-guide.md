@@ -65,6 +65,7 @@ Supported profiles:
 - `sync-upload-required`
 - `large-content`
 - `reorder-drag`
+- `feed-content`
 
 Seed deep links:
 
@@ -137,6 +138,11 @@ The wrapper scripts push fixtures after installing the app and before running Ma
 
 7. Keep each flow focused on one behavior. Do not make one long flow cover unrelated settings, reading, search, and import behavior.
 8. Avoid live network dependencies, OAuth, real provider auth, and OS-owned state in smoke and regression tests.
+
+On Android, Compose popups (`DropdownMenu`, dialogs) own their semantics tree, so the
+`testTagsAsResourceId` flag set on the activity content does not reach them and their test tags stay
+invisible to Maestro. Apply `Modifier.exposeTestTagsAsResourceIds()` to the popup content before
+targeting its children by id, as `CompactSettingDropdownRow` does for its options.
 
 ## Common Commands
 

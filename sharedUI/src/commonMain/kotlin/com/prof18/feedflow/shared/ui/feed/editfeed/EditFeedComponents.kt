@@ -27,12 +27,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.FeedSourceSettings
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.shared.ui.feed.CategoriesSelector
 import com.prof18.feedflow.shared.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.shared.ui.feed.FeedNameTextField
 import com.prof18.feedflow.shared.ui.feed.FeedUrlTextField
-import com.prof18.feedflow.shared.ui.feed.LinkOpeningPreferenceSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -48,7 +46,8 @@ fun EditFeedContent(
     feedSourceSettings: FeedSourceSettings,
     onFeedUrlUpdated: (String) -> Unit,
     onFeedNameUpdated: (String) -> Unit,
-    onLinkOpeningPreferenceSelected: (LinkOpeningPreference) -> Unit,
+    /** Android and Desktop offer different browser options, so each supplies its own selector. */
+    articleOpenModeSelector: @Composable (Modifier) -> Unit,
     onHiddenToggled: (Boolean) -> Unit,
     onHideImagesToggled: (Boolean) -> Unit,
     onPinnedToggled: (Boolean) -> Unit,
@@ -132,12 +131,10 @@ fun EditFeedContent(
         }
 
         item {
-            LinkOpeningPreferenceSelector(
-                modifier = Modifier
+            articleOpenModeSelector(
+                Modifier
                     .padding(top = Spacing.regular)
                     .fillMaxWidth(),
-                currentPreference = feedSourceSettings.linkOpeningPreference,
-                onPreferenceSelected = onLinkOpeningPreferenceSelected,
             )
         }
 

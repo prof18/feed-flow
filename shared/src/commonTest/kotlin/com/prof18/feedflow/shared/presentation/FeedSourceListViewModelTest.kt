@@ -352,7 +352,7 @@ class FeedSourceListViewModelTest : KoinTestBase() {
         insertFeedSources(databaseHelper, feedSource)
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = feedSource.id,
-            preference = feedSource.linkOpeningPreference,
+            articleOpenMode = feedSource.articleOpenMode,
             isHidden = false,
             isPinned = false,
             isNotificationEnabled = false,

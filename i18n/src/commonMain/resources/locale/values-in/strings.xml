@@ -195,9 +195,7 @@
     <string name="feedbin_last_sync">Sinkronisasi terakhir: %s</string>
     <string name="feedbin_username_hint">Alamat email Feedbin Anda</string>
     <string name="feedbin_password_hint">Kata sandi Feedbin Anda</string>
-    <string name="link_opening_preference">Perilaku pembukaan tautan</string>
     <string name="link_opening_preference_default">Default</string>
-    <string name="link_opening_preference_reader_mode">Mode pembaca</string>
     <string name="link_opening_preference_internal_browser">Browser dalam aplikasi</string>
     <string name="link_opening_preference_preferred_browser">Browser favorit</string>
     <string name="delete_category_confirmation_title">Hapus kategori?</string>

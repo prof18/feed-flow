@@ -11,10 +11,11 @@ appId: com.prof18.feedflow.debug
     id: article_row_e2e_article_newest_unread
 - tapOn: "Open feed settings"
 - assertVisible: "Edit feed"
-- assertVisible: "Link opening behaviour"
-- tapOn: "Link opening behaviour"
-- tapOn: "Reader mode"
-- assertVisible: "Reader mode"
+- assertVisible: "Open articles in"
+- tapOn: "Open articles in"
+- tapOn:
+    id: article_open_mode_full_article
+- assertVisible: "Reader \\(website\\)"
 - scrollUntilVisible:
     element: "Enable notifications for new articles"
     direction: DOWN

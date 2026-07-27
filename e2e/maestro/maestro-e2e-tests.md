@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 56 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 58 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -41,7 +41,7 @@ Fast confidence subset. Flow files live in `e2e/maestro/{android,ios}/smoke/`.
 | SM-007 | `007-reader-mode-core.yaml` | `reader-mode` | Open article in reader, next-article button, more menu, Text Settings sheet opens. |
 | SM-008 | `008-feed-edit-core.yaml` | `content-rich` | Drawer feed-source long-press → Edit feed, toggle hide and pin, change category, save. Android also exercises the inline rename via `inputText`; iOS skips the rename (SwiftUI text input is flaky in Maestro) and only verifies the feed lands in the new category. |
 | SM-009 | `009-feed-list-settings-persist.yaml` | `content-rich` | Feed list settings: layout, image visibility, order — mutated and persisted across relaunch. |
-| SM-010 | `010-reading-behavior-settings-persist.yaml` | `content-rich` | Reading behaviour: reader mode, show-read, auto-hide read — mutated and persisted across relaunch. |
+| SM-010 | `010-reading-behavior-settings-persist.yaml` | `content-rich` | Reading behaviour: article open mode, show-read, auto-hide read — mutated and persisted across relaunch. |
 | SM-011 | `011-import-export-smoke.yaml` | `empty` + fixtures | OPML import (Android Downloads / iOS Files), CSV import, end-to-end success. |
 | SM-012 | `012-blocked-words.yaml` | `content-rich` | Add blocked word, blocked article disappears from Timeline; iOS covers the deterministic settings add/delete path. |
 | SM-013 | `013-relaunch-persistence.yaml` | `content-rich` | Reader-mode + bookmark mutations survive app relaunch. |
@@ -79,7 +79,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-126 | `126-deep-link-routing.yaml` | `content-rich` | Android, iOS | Android: article reader, feed-source filter, category filter routes. iOS: `feedflow://feed/<id>` reader route. |
 | REG-127 | `127-notifications-secondary-settings.yaml` | `notifications` | Android, iOS | Enable-all mutation, per-feed toggle mutation, grouping picker; Android check-period + Wi-Fi/charging restrictions. |
 | REG-128 | `128-notifications-empty-state.yaml` | `empty` | Android, iOS | Notifications settings empty/no-feeds state. |
-| REG-129 | `129-edit-feed-secondary-options.yaml` | `notifications` | Android, iOS | Article context-menu → feed settings; link-opening-preference mutation, notification toggle mutation, save. |
+| REG-129 | `129-edit-feed-secondary-options.yaml` | `notifications` | Android, iOS | Article context-menu → feed settings; article-open-mode mutation, notification toggle mutation, save. |
 | REG-130 | `130-add-feed-secondary-options.yaml` | `notifications` | Android, iOS | Add-feed: select existing category, toggle notifications. |
 | REG-131 | `131-home-source-filter-edit-entry.yaml` | `content-rich` | Android, iOS | Pick a feed-source filter from the drawer, open that source's Edit screen from the Home overflow menu. |
 | REG-132 | `132-about-support-secondary-options.yaml` | `content-rich` | Android, iOS | Crash-reporting toggle mutation, support-link visibility. |
@@ -108,6 +108,9 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-156 | `156-feed-source-reorder-smoke.yaml` | `content-rich` | Android | Settings → Feeds: drag uncategorized feed sources, categories (including the Uncategorized group), and Technology feed sources, then verify the list remains usable. Shared/database tests assert the exact ordering semantics. |
 | REG-157 | `157-drawer-reorder-smoke.yaml` | `reorder-drag` | Android | Drawer: drag pinned feed sources, categories (including the Uncategorized group), and feed sources inside Technology, then verify the drawer remains usable. Shared/database tests assert the exact ordering semantics. |
 | REG-158 | `158-empty-feed-next-feed-navigation.yaml` | `content-rich` | Android, iOS | Mark the last unread article in a single-source filter as read; EmptyFeedView renders the next-feed affordance and Android's overscroll gesture / iOS's NextFeedButton move the filter to the next unread source. |
+| REG-159 | `159-reader-feed-content-no-url.yaml` | `feed-content` | Android, iOS | URL-less item opens into the fully styled feed-content reader with its title and feed source, and omits unavailable browser and content-source actions. |
+| REG-160 | `160-reader-content-source-navigation.yaml` | `reader-mode` | Android, iOS | Switching from cached web content to RSS content does not consume the reader back action; Back returns to the feed list. |
+| REG-161 | `161-reader-no-url-no-content.yaml` | `feed-content` | Android, iOS | An item with neither a url nor feed content shows the unavailable-content message instead of an empty web view. |
 
 ## Known Limitations
 
@@ -130,6 +133,7 @@ These are features intentionally not covered, with the reason recorded so they a
 - **Background sync / notification delivery** — WorkManager scheduling, iOS background refresh, notification delivery, and notification deep-link routing remain manual / nightly candidates.
 - **Desktop background refresh and new-articles pill** — Maestro coverage is mobile-only. Desktop timer scheduling, silent snapshot preservation, pending-count calculation, and pill publishing are covered by shared/JVM tests; desktop presentation remains a manual smoke check.
 - **HTTP conditional GET / cache-aware refresh scheduling** — the per-feed `ETag`/`Last-Modified`/`Cache-Control` handling (304 skip, `next_fetch_timestamp` window, `Retry-After` backoff) lives below the UI in the HTTP layer and needs a server emitting real caching headers and 304/429 responses; smoke/regression flows use seeded local data without live feeds. Covered by unit tests instead (`FeedRefreshSchedulerTest`, `FeedHttpCacheStoreTest`, `FeedFetcherRepositoryLocalTest`).
+- **Reader content source per-feed selector** — the URL-less path is covered end-to-end by REG-158, and switching a URL-bearing item between cached web content and RSS content is covered by REG-159. The global/per-feed "Article content" preference selectors remain covered by unit tests (`ReaderModeViewModelTest` source-resolution/toggle cases and `FeedFlowDatabaseTest` content-source roundtrip).
 - **Exact visual order assertions for drag-reorder rows** — REG-156 and REG-157 cover the Android drag gesture paths for settings-list feed sources, settings-list categories, drawer pinned feeds, drawer categories, and drawer category feed sources. Reliable assertions for relative row order across Compose lazy lists, iOS native edit-mode moves, drawer expansion state, and relaunch persistence would require coordinate-heavy flows or debug-only inspection hooks. The persisted ordering edge cases are covered at the shared/database layer instead.
 - **Force Add feed (formerly REG-102)** — dropped: required a DEBUG-only "trigger force-add failure" hook in production to deterministically reach the force-add UI without depending on network errors.
 - **Delete-category from drawer (formerly part of REG-105 on both platforms)** — dropped: production drawers on both Android and iOS only list categories that still own at least one feed source, so an empty category can't be long-pressed. A test that needs the empty branch would require production drawer changes solely to surface them.

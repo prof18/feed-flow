@@ -28,4 +28,4 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "Edit feed"
 - tapOn: "Edit feed"
 - assertVisible: "Edit feed"
-- assertVisible: "Link opening behaviour"
+- assertVisible: "Open articles in"

@@ -133,9 +133,7 @@
     <string name="wrong_credentials_error_message">As credenciais non son correctas. Volve intentalo.</string>
     <string name="fresh_rss_password_hint">Contrasinal da API FreshRSS (Axustes &gt; Perfil)</string>
     <string name="fresh_rss_url_hint">Punto de acceso á API FreshRSS, ex.: %s</string>
-    <string name="link_opening_preference">Comportamento apertura de ligazóns</string>
     <string name="link_opening_preference_default">Predeterminado</string>
-    <string name="link_opening_preference_reader_mode">Modo lectura</string>
     <string name="link_opening_preference_internal_browser">Navegador da app</string>
     <string name="link_opening_preference_preferred_browser">Navegador favorito</string>
     <string name="delete_category_confirmation_title">Eliminar categoría?</string>

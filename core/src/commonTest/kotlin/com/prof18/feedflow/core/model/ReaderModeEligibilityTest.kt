@@ -13,6 +13,12 @@ class ReaderModeEligibilityTest {
     }
 
     @Test
+    fun `blank urls cannot use reader mode`() {
+        assertFalse(ReaderModeEligibility.canOpenReaderMode(""))
+        assertFalse(ReaderModeEligibility.canOpenReaderMode("   "))
+    }
+
+    @Test
     fun `non-http urls cannot use reader mode`() {
         assertFalse(ReaderModeEligibility.canOpenReaderMode("feedflow://feed/123"))
         assertFalse(ReaderModeEligibility.canOpenReaderMode("mailto:hello@example.com"))
@@ -66,10 +72,25 @@ class ReaderModeEligibilityTest {
             title = "Title",
             openOnlyOnBrowser = true,
             isBookmarked = false,
-            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             commentsUrl = null,
         )
 
-        assertFalse(urlInfo.canOpenReaderMode())
+        assertFalse(urlInfo.canOpenWebReaderMode())
+    }
+
+    @Test
+    fun `url-less feed items are not eligible for the web reader`() {
+        val urlInfo = FeedItemUrlInfo(
+            id = "id",
+            url = "",
+            title = "Title",
+            isBookmarked = false,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
+            commentsUrl = null,
+        )
+
+        assertFalse(urlInfo.canOpenWebReaderMode())
+        assertTrue(urlInfo.hasNoUrl())
     }
 }

@@ -37,7 +37,7 @@ internal class EntryDTOMapper(
             url = entryDTO.url,
             title = entryDTO.title,
             subtitle = entryDTO.summary?.let { htmlParser.getTextFromHTML(it) },
-            content = entryDTO.content,
+            content = entryDTO.content?.takeIf { it.isNotBlank() } ?: entryDTO.summary,
             imageUrl = ContentImageUrlExtractor.extractImageUrl(entryDTO.content ?: entryDTO.summary),
             feedSource = feedSource,
             pubDateMillis = pubDateMillis,

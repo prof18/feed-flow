@@ -12,13 +12,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.openShareSheet
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
-import com.prof18.feedflow.core.model.canOpenReaderMode
+import com.prof18.feedflow.core.model.isReaderMode
+import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
@@ -146,23 +147,11 @@ private fun openSearchResult(
     browserManager: BrowserManager,
     context: android.content.Context,
 ) {
-    when (urlInfo.linkOpeningPreference) {
-        LinkOpeningPreference.READER_MODE -> {
-            if (urlInfo.canOpenReaderMode()) {
-                navigateToReaderMode(urlInfo)
-            } else {
-                browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
-            }
-        }
-        LinkOpeningPreference.INTERNAL_BROWSER -> browserManager.openWithInAppBrowser(urlInfo.url, context)
-        LinkOpeningPreference.PREFERRED_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
-        LinkOpeningPreference.DEFAULT -> {
-            if (browserManager.openReaderMode() && urlInfo.canOpenReaderMode()) {
-                navigateToReaderMode(urlInfo)
-            } else {
-                browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
-            }
-        }
+    val openMode = urlInfo.resolveArticleOpenMode(browserManager.getArticleOpenMode())
+    when {
+        openMode.isReaderMode() -> navigateToReaderMode(urlInfo)
+        openMode == ArticleOpenMode.INTERNAL_BROWSER -> browserManager.openWithInAppBrowser(urlInfo.url, context)
+        else -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
     }
 }
 

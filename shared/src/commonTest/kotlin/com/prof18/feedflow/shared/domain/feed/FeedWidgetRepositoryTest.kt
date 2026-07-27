@@ -2,9 +2,9 @@ package com.prof18.feedflow.shared.domain.feed
 
 import app.cash.turbine.test
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
@@ -115,7 +115,7 @@ class FeedWidgetRepositoryTest : KoinTestBase() {
         assertEquals("item-1", info.id)
         assertEquals("https://example.com/item-1", info.url)
         assertEquals("Item", info.title)
-        assertEquals(LinkOpeningPreference.DEFAULT, info.linkOpeningPreference)
+        assertEquals(ArticleOpenMode.DEFAULT, info.articleOpenMode)
     }
 
     private fun createFeedSource(
@@ -130,7 +130,7 @@ class FeedWidgetRepositoryTest : KoinTestBase() {
         logoUrl = null,
         websiteUrl = "https://example.com",
         fetchFailed = false,
-        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,

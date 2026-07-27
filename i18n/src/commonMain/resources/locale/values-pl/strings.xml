@@ -140,9 +140,7 @@
     <string name="fresh_rss_last_sync">Ostatnia synchronizacja: %s</string>
     <string name="fresh_rss_password_hint">Hasło do API FreshRSS (Ustawienia &gt; Profil)</string>
     <string name="fresh_rss_url_hint">Punkt końcowy API FreshRSS, na przykład %s</string>
-    <string name="link_opening_preference">Zachowanie podczas otwierania linków</string>
     <string name="link_opening_preference_default">Domyślna przeglądarka</string>
-    <string name="link_opening_preference_reader_mode">Tryb czytnika</string>
     <string name="link_opening_preference_internal_browser">Przeglądarka w aplikacji</string>
     <string name="link_opening_preference_preferred_browser">Ulubiona przeglądarka</string>
     <string name="delete_category_confirmation_title">Usunąć kategorię?</string>

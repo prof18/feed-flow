@@ -28,9 +28,13 @@ struct ReaderModeScreen: View {
     @State private var feedItemTitle: String?
     @State private var commentsUrl: String?
     @State private var currentImageUrl: String?
+    @State private var currentSiteName: String?
     @State private var imageViewerUrl: URL?
     @State private var canNavigatePrevious = false
     @State private var canNavigateNext = false
+    @State private var isShowingFeedContent = false
+    @State private var hasArticleUrl = true
+    @State private var canToggleContentSource = false
     @State private var macOSThemeChangeToken = UUID()
 
     let viewModel: ReaderModeViewModel
@@ -71,7 +75,10 @@ struct ReaderModeScreen: View {
                     resetToDefault: feedFlowStrings.readerModeResetToDefault,
                     done: feedFlowStrings.actionDone,
                     previousArticle: feedFlowStrings.previousArticle,
-                    nextArticle: feedFlowStrings.nextArticle
+                    nextArticle: feedFlowStrings.nextArticle,
+                    feedContent: feedFlowStrings.readerContentSourceFeed,
+                    contentUnavailableTitle: feedFlowStrings.readerModeNoContentTitle,
+                    contentUnavailableMessage: feedFlowStrings.readerModeNoContentMessage
                 ),
                 onBookmarkToggle: { newBookmarkState in
                     if let id = feedItemId {
@@ -143,7 +150,12 @@ struct ReaderModeScreen: View {
                 } : nil,
                 onNavigateToPrevious: canNavigatePrevious ? {
                     viewModel.navigateToPreviousArticle()
-                } : nil
+                } : nil,
+                onToggleContentSource: canToggleContentSource ? {
+                    viewModel.toggleContentSource()
+                } : nil,
+                isShowingFeedContent: isShowingFeedContent,
+                hasUrl: hasArticleUrl
             ),
             isBookmarked: isBookmarked,
             fontSize: fontSize,
@@ -180,11 +192,20 @@ struct ReaderModeScreen: View {
                 switch onEnum(of: state) {
                 case let .htmlNotAvailable(data):
                     self.feedItemId = data.id
-                    let url = URL(string: data.url) ?? URL(fileURLWithPath: "")
-                    self.articleUrl = url
-                    self.readerStatus = .failedToExtractContent(url: url)
+                    self.hasArticleUrl = !data.url.isEmpty
+                    self.canToggleContentSource = false
+                    self.currentSiteName = nil
+                    // A url-less item has no page to fall back to, so there is nothing to load.
+                    if let url = URL(string: data.url) {
+                        self.articleUrl = url
+                        self.readerStatus = .failedToExtractContent(url: url)
+                    } else {
+                        self.readerStatus = .contentUnavailable
+                    }
                 case .loading:
                     self.readerStatus = .fetching
+                    self.canToggleContentSource = false
+                    self.currentSiteName = nil
                 case let .success(data):
                     let readerModeData = data.readerModeData
 
@@ -194,6 +215,10 @@ struct ReaderModeScreen: View {
                     self.currentContent = readerModeData.content
                     self.currentBaseUrl = readerModeData.baseUrl
                     self.currentImageUrl = readerModeData.imageUrl
+                    self.currentSiteName = readerModeData.siteName
+                    self.isShowingFeedContent = readerModeData.shownContentSource == .feed
+                    self.hasArticleUrl = !readerModeData.url.isEmpty
+                    self.canToggleContentSource = readerModeData.canToggleContentSource
                     let url = URL(string: readerModeData.url) ?? URL(fileURLWithPath: "")
                     self.articleUrl = url
 
@@ -246,8 +271,10 @@ struct ReaderModeScreen: View {
             content: content,
             fontSize: Int32(fontSize),
             lineHeight: Int32(lineHeight),
-            title: nil,
-            imageUrl: currentImageUrl
+            title: isShowingFeedContent ? feedItemTitle : nil,
+            imageUrl: currentImageUrl,
+            leadingContent: "",
+            siteName: isShowingFeedContent ? currentSiteName : nil
         )
 
         self.readerStatus = .extractedContent(

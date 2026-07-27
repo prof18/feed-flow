@@ -133,9 +133,7 @@
     <string name="fresh_rss_last_sync">Последна синхронизация: %s</string>
     <string name="fresh_rss_password_hint">FreshRSS API парола (Настройки &gt; Профил)</string>
     <string name="fresh_rss_url_hint">FreshRSS API крайна точка, например %s</string>
-    <string name="link_opening_preference">Поведение при отваряне на връзка</string>
     <string name="link_opening_preference_default">По подразбиране</string>
-    <string name="link_opening_preference_reader_mode">Режим на четене</string>
     <string name="link_opening_preference_internal_browser">Вграден браузър</string>
     <string name="link_opening_preference_preferred_browser">Любим браузър</string>
     <string name="delete_category_confirmation_title">Изтриване на категория?</string>

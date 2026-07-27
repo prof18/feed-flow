@@ -10,6 +10,7 @@ import app.cash.sqldelight.coroutines.mapToOneOrDefault
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ArticleExportFilter
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
@@ -23,7 +24,6 @@ import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.PrefetchQueueItem
 import com.prof18.feedflow.core.model.SyncedFeedItem
@@ -59,7 +59,7 @@ class DatabaseHelper(
             positionAdapter = IntColumnAdapter,
         ),
         feed_source_preferencesAdapter = Feed_source_preferences.Adapter(
-            link_opening_preferenceAdapter = EnumColumnAdapter(),
+            article_open_modeAdapter = EnumColumnAdapter(),
             pinned_positionAdapter = IntColumnAdapter,
         ),
         feed_source_categoryAdapter = Feed_source_category.Adapter(
@@ -881,7 +881,7 @@ class DatabaseHelper(
 
     suspend fun insertFeedSourcePreference(
         feedSourceId: String,
-        preference: LinkOpeningPreference,
+        articleOpenMode: ArticleOpenMode,
         isHidden: Boolean,
         isPinned: Boolean,
         isNotificationEnabled: Boolean,
@@ -889,7 +889,7 @@ class DatabaseHelper(
     ) = dbRef.transactionWithContext(backgroundDispatcher) {
         dbRef.feedSourcePreferencesQueries.insertPreference(
             feed_source_id = feedSourceId,
-            link_opening_preference = preference,
+            article_open_mode = articleOpenMode,
             is_hidden = isHidden,
             is_pinned = isPinned,
             notifications_enabled = isNotificationEnabled,
@@ -897,7 +897,7 @@ class DatabaseHelper(
         )
         dbRef.feedSourcePreferencesQueries.updatePreference(
             feedSourceId = feedSourceId,
-            linkOpeningPreference = preference,
+            articleOpenMode = articleOpenMode,
             isHidden = isHidden,
             isPinned = isPinned,
             notificationsEnabled = isNotificationEnabled,
@@ -926,7 +926,7 @@ class DatabaseHelper(
                     lastSyncTimestamp = feedSource.last_sync_timestamp,
                     logoUrl = feedSource.feed_source_logo_url,
                     fetchFailed = feedSource.fetch_failed,
-                    linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+                    articleOpenMode = feedSource.article_open_mode ?: ArticleOpenMode.DEFAULT,
                     isHiddenFromTimeline = feedSource.is_hidden ?: false,
                     isPinned = feedSource.is_pinned ?: false,
                     isNotificationEnabled = feedSource.notifications_enabled ?: false,
@@ -947,9 +947,11 @@ class DatabaseHelper(
                     url = url.url,
                     title = url.title,
                     isBookmarked = url.is_bookmarked,
-                    linkOpeningPreference = url.feed_source_link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+                    articleOpenMode = url.feed_source_article_open_mode ?: ArticleOpenMode.DEFAULT,
                     commentsUrl = url.comments_url,
                     imageUrl = url.image_url,
+                    feedSourceTitle = url.feed_source_title,
+                    feedSourceBaseUrl = url.feed_source_website_url ?: url.feed_source_url,
                 )
             }
     }
@@ -1161,7 +1163,7 @@ class DatabaseHelper(
             logoUrl = feedSource.feed_source_logo_url,
             websiteUrl = feedSource.feed_source_website_url,
             fetchFailed = feedSource.fetch_failed,
-            linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+            articleOpenMode = feedSource.article_open_mode ?: ArticleOpenMode.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
@@ -1191,7 +1193,7 @@ class DatabaseHelper(
             logoUrl = feedSource.feed_source_logo_url,
             websiteUrl = feedSource.feed_source_website_url,
             fetchFailed = feedSource.fetch_failed,
-            linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+            articleOpenMode = feedSource.article_open_mode ?: ArticleOpenMode.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
@@ -1221,7 +1223,7 @@ class DatabaseHelper(
             logoUrl = feedSource.feed_source_logo_url,
             websiteUrl = feedSource.feed_source_website_url,
             fetchFailed = feedSource.fetch_failed,
-            linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+            articleOpenMode = feedSource.article_open_mode ?: ArticleOpenMode.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,

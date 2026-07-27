@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
+import com.prof18.feedflow.android.feed.ArticleOpenModeSelector
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
@@ -138,8 +140,15 @@ internal fun EditScreen(
             onFeedNameUpdated = { name ->
                 viewModel.updateFeedNameTextFieldValue(name)
             },
-            onLinkOpeningPreferenceSelected = { preference ->
-                viewModel.updateLinkOpeningPreference(preference)
+            articleOpenModeSelector = { selectorModifier ->
+                ArticleOpenModeSelector(
+                    modifier = selectorModifier,
+                    currentMode = feedSourceSettings.articleOpenMode,
+                    onModeSelected = { articleOpenMode ->
+                        viewModel.updateArticleOpenMode(articleOpenMode)
+                    },
+                    allowDefault = true,
+                )
             },
             onHiddenToggled = { hidden ->
                 viewModel.updateIsHiddenFromTimeline(hidden)
@@ -230,7 +239,14 @@ private fun EditScreenPreview() {
                 feedSourceSettings = FeedSourceSettings(),
                 onFeedUrlUpdated = {},
                 onFeedNameUpdated = {},
-                onLinkOpeningPreferenceSelected = {},
+                articleOpenModeSelector = { selectorModifier ->
+                    ArticleOpenModeSelector(
+                        modifier = selectorModifier,
+                        currentMode = ArticleOpenMode.DEFAULT,
+                        onModeSelected = {},
+                        allowDefault = true,
+                    )
+                },
                 onHiddenToggled = {},
                 onHideImagesToggled = {},
                 onPinnedToggled = {},

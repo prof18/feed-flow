@@ -18,8 +18,10 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchWorker
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
+import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feeditem.HtmlFeedContentPreparer
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
@@ -121,6 +123,10 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     single<ReaderModeParserWarmer> {
         get<AndroidFeedItemParserWorker>()
+    }
+
+    single<FeedContentPreparer> {
+        HtmlFeedContentPreparer()
     }
 
     viewModel {

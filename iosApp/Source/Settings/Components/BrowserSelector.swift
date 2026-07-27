@@ -131,8 +131,14 @@ class BrowserSelector {
         return currentSelectedBrowserId() == BrowserIds.shared.IN_APP_BROWSER
     }
 
-    func shouldOpenInReaderMode(link: String) -> Bool {
-        return settingsRepository.isUseReaderModeEnabled() && isReaderModeEligible(link: link)
+    func articleOpenMode() -> ArticleOpenMode {
+        return settingsRepository.getArticleOpenMode()
+    }
+
+    /// Mirrors the shared resolution: per-feed value falls back to the global default, and a reader
+    /// mode falls back to the favourite browser when the page cannot be parsed.
+    func resolvedOpenMode(for urlInfo: FeedItemUrlInfo) -> ArticleOpenMode {
+        return ArticleOpenModeResolver.shared.resolve(urlInfo: urlInfo, globalDefault: articleOpenMode())
     }
 
     func isReaderModeEligible(link: String) -> Bool {

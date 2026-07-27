@@ -2,6 +2,7 @@
 
 package com.prof18.feedflow.shared.e2e
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.DescriptionLineLimit
@@ -12,7 +13,6 @@ import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.ReaderModeDefaults
@@ -99,7 +99,7 @@ class E2eSeedRunner internal constructor(
         settingsRepository.setMarkFeedAsReadWhenScrolling(true)
         settingsRepository.setShowReadArticlesTimeline(false)
         settingsRepository.setHideReadItems(false)
-        settingsRepository.setUseReaderMode(true)
+        settingsRepository.setArticleOpenMode(ArticleOpenMode.FULL_ARTICLE)
         settingsRepository.setSaveItemContentOnOpen(false)
         settingsRepository.setPrefetchArticleContent(false)
         settingsRepository.setIsSyncUploadRequired(false)
@@ -152,7 +152,7 @@ class E2eSeedRunner internal constructor(
         seedFeedSources.forEach { feedSource ->
             databaseHelper.insertFeedSourcePreference(
                 feedSourceId = feedSource.id,
-                preference = feedSource.linkOpeningPreference,
+                articleOpenMode = feedSource.articleOpenMode,
                 isHidden = feedSource.isHiddenFromTimeline,
                 isPinned = feedSource.isPinned,
                 isNotificationEnabled = feedSource.isNotificationEnabled,
@@ -234,6 +234,7 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.SYNC_UPLOAD_REQUIRED,
             E2eSeedProfile.LARGE_CONTENT,
             E2eSeedProfile.REORDER_DRAG,
+            E2eSeedProfile.FEED_CONTENT,
             -> applyFeatureProfileSettings(profile, account)
         }
     }
@@ -271,15 +272,48 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.SYNC_UPLOAD_REQUIRED -> applySyncUploadRequiredSettings(account ?: E2eSeedAccount.FRESH_RSS)
             E2eSeedProfile.LARGE_CONTENT -> applyLargeContentSettings()
             E2eSeedProfile.REORDER_DRAG -> applyReorderDragSettings()
+            E2eSeedProfile.FEED_CONTENT -> applyFeedContentSettings()
             else -> Unit
         }
+    }
+
+    private suspend fun applyFeedContentSettings() {
+        // A URL-less item that ships its content inside the feed. It opens straight into the
+        // reader (feed content) and exposes no browser/share/comments actions.
+        databaseHelper.insertFeedItems(
+            listOf(
+                feedItem(
+                    id = FEED_CONTENT_NO_URL_ARTICLE_ID,
+                    title = "E2E Feed Content Article Without Link",
+                    subtitle = "Seeded URL-less item shown from its feed content",
+                    feedSource = androidWeekly,
+                    url = "",
+                    imageUrl = FEED_CONTENT_IMAGE_URL,
+                    content = FEED_CONTENT_NO_URL_HTML,
+                    pubDateMillis = SEED_NOW_MILLIS + ONE_HOUR_MILLIS,
+                ),
+                // Neither a url nor feed content: the reader has nothing to show and nowhere to
+                // fall back to, so it must render the unavailable message.
+                feedItem(
+                    id = NO_URL_NO_CONTENT_ARTICLE_ID,
+                    title = "E2E Article Without Link Or Content",
+                    subtitle = "Seeded URL-less item that ships no content either",
+                    feedSource = androidWeekly,
+                    url = "",
+                    imageUrl = null,
+                    content = null,
+                    pubDateMillis = SEED_NOW_MILLIS + ONE_HOUR_MILLIS - 1,
+                ),
+            ),
+            lastSyncTimestamp = SEED_NOW_MILLIS,
+        )
     }
 
     private suspend fun applyReorderDragSettings() {
         val feedSource = seedFeedSources.first { it.id == ANDROID_WEEKLY_FEED_ID }
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = feedSource.id,
-            preference = feedSource.linkOpeningPreference,
+            articleOpenMode = feedSource.articleOpenMode,
             isHidden = feedSource.isHiddenFromTimeline,
             isPinned = true,
             isNotificationEnabled = feedSource.isNotificationEnabled,
@@ -390,25 +424,25 @@ class E2eSeedRunner internal constructor(
     }
 
     private fun applyReaderModeSettings() {
-        settingsRepository.setUseReaderMode(true)
+        settingsRepository.setArticleOpenMode(ArticleOpenMode.FULL_ARTICLE)
         settingsRepository.setSaveItemContentOnOpen(true)
         settingsRepository.setPrefetchArticleContent(false)
         settingsRepository.setReaderModeFontSize(READER_MODE_PROFILE_FONT_SIZE)
     }
 
     private suspend fun applyExternalBrowserSettings() {
-        settingsRepository.setUseReaderMode(false)
+        settingsRepository.setArticleOpenMode(ArticleOpenMode.PREFERRED_BROWSER)
         val preferencesByFeedId = mapOf(
-            ANDROID_WEEKLY_FEED_ID to LinkOpeningPreference.DEFAULT,
-            SWIFT_WEEKLY_FEED_ID to LinkOpeningPreference.READER_MODE,
-            WORLD_NEWS_FEED_ID to LinkOpeningPreference.INTERNAL_BROWSER,
-            UNCATEGORIZED_FEED_ID to LinkOpeningPreference.PREFERRED_BROWSER,
+            ANDROID_WEEKLY_FEED_ID to ArticleOpenMode.DEFAULT,
+            SWIFT_WEEKLY_FEED_ID to ArticleOpenMode.FULL_ARTICLE,
+            WORLD_NEWS_FEED_ID to ArticleOpenMode.INTERNAL_BROWSER,
+            UNCATEGORIZED_FEED_ID to ArticleOpenMode.PREFERRED_BROWSER,
         )
-        preferencesByFeedId.forEach { (feedId, preference) ->
+        preferencesByFeedId.forEach { (feedId, articleOpenMode) ->
             val feedSource = seedFeedSources.first { it.id == feedId }
             databaseHelper.insertFeedSourcePreference(
                 feedSourceId = feedId,
-                preference = preference,
+                articleOpenMode = articleOpenMode,
                 isHidden = feedSource.isHiddenFromTimeline,
                 isPinned = feedSource.isPinned,
                 isNotificationEnabled = feedSource.isNotificationEnabled,
@@ -471,6 +505,21 @@ class E2eSeedRunner internal constructor(
         const val BLOCKED_WORD = "blockedword"
         const val READER_SUCCESS_ARTICLE_ID = "e2e-article-reader-success"
         const val READER_FALLBACK_ARTICLE_ID = "e2e-article-reader-fallback"
+        const val FEED_CONTENT_NO_URL_ARTICLE_ID = "e2e-article-feed-content-no-url"
+        const val NO_URL_NO_CONTENT_ARTICLE_ID = "e2e-article-no-content-no-url"
+
+        private const val FEED_CONTENT_IMAGE_URL =
+            "https://cdn.mos.cms.futurecdn.net/kDPsA7KqMQchuAKRoTZozb-1280-80.jpg"
+
+        // Must exceed the ReaderModeViewModel "substantial text" threshold (~200 chars) so it is
+        // rendered as feed content instead of being treated as a stub.
+        private const val FEED_CONTENT_NO_URL_HTML =
+            "<p><img src=\"$FEED_CONTENT_IMAGE_URL\" style=\"float: left\">" +
+                "This article ships no link at all, so there is no web page to fetch or parse. " +
+                "FeedFlow renders it entirely from the content included inside the RSS feed item, " +
+                "and opening it goes straight into the reader. Because there is no URL, the reader " +
+                "hides the open-in-browser, share, and archive actions that only make sense for a " +
+                "real web address.</p>"
 
         private const val TECHNOLOGY_CATEGORY_ID = "e2e-category-technology"
         private const val NEWS_CATEGORY_ID = "e2e-category-news"
@@ -712,6 +761,7 @@ class E2eSeedRunner internal constructor(
                 url = "https://www.ilpost.it/2026/05/25/interstitium/",
                 imageUrl = "https://static-prod.cdnilpost.com/wp-content/uploads/2026/05/25/" +
                     "680x453/1779707841-GettyImages-113189195.jpg",
+                content = FEED_CONTENT_NO_URL_HTML,
                 pubDateMillis = SEED_NOW_MILLIS - (ONE_HOUR_MILLIS * 9),
             ),
             feedItem(
@@ -798,7 +848,7 @@ class E2eSeedRunner internal constructor(
                 logoUrl = logoUrl,
                 websiteUrl = websiteUrl,
                 fetchFailed = fetchFailed,
-                linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+                articleOpenMode = ArticleOpenMode.DEFAULT,
                 isHiddenFromTimeline = isHiddenFromTimeline,
                 isPinned = isPinned,
                 isNotificationEnabled = false,
@@ -814,13 +864,14 @@ class E2eSeedRunner internal constructor(
             url: String = "https://e2e.feedflow.local/articles/$id",
             imageUrl: String? = null,
             commentsUrl: String? = null,
+            content: String? = null,
         ): FeedItem =
             FeedItem(
                 id = id,
                 url = url,
                 title = title,
                 subtitle = subtitle,
-                content = null,
+                content = content,
                 imageUrl = imageUrl,
                 feedSource = feedSource,
                 pubDateMillis = pubDateMillis,

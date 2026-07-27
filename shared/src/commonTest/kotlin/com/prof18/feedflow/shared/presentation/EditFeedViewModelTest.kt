@@ -1,10 +1,10 @@
 package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceSettings
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
@@ -35,7 +35,7 @@ class EditFeedViewModelTest : KoinTestBase() {
             id = "source-1",
             title = "Tech Feed",
             category = category,
-            linkPreference = LinkOpeningPreference.INTERNAL_BROWSER,
+            articleOpenMode = ArticleOpenMode.INTERNAL_BROWSER,
             isHiddenFromTimeline = true,
             isPinned = true,
             isNotificationEnabled = true,
@@ -48,7 +48,7 @@ class EditFeedViewModelTest : KoinTestBase() {
         assertEquals(feedSource.title, viewModel.feedNameState.value)
         assertEquals(
             FeedSourceSettings(
-                linkOpeningPreference = feedSource.linkOpeningPreference,
+                articleOpenMode = feedSource.articleOpenMode,
                 isHiddenFromTimeline = feedSource.isHiddenFromTimeline,
                 isPinned = feedSource.isPinned,
                 isNotificationEnabled = feedSource.isNotificationEnabled,
@@ -123,7 +123,7 @@ class EditFeedViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         viewModel.updateFeedNameTextFieldValue("New Name")
-        viewModel.updateLinkOpeningPreference(LinkOpeningPreference.PREFERRED_BROWSER)
+        viewModel.updateArticleOpenMode(ArticleOpenMode.PREFERRED_BROWSER)
         viewModel.updateIsHiddenFromTimeline(true)
         viewModel.updateIsPinned(true)
         viewModel.updateIsNotificationEnabled(true)
@@ -139,7 +139,7 @@ class EditFeedViewModelTest : KoinTestBase() {
         val updatedFeedSource = databaseHelper.getFeedSource(feedSource.id)
         assertNotNull(updatedFeedSource)
         assertEquals("New Name", updatedFeedSource.title)
-        assertEquals(LinkOpeningPreference.PREFERRED_BROWSER, updatedFeedSource.linkOpeningPreference)
+        assertEquals(ArticleOpenMode.PREFERRED_BROWSER, updatedFeedSource.articleOpenMode)
         assertEquals(true, updatedFeedSource.isHiddenFromTimeline)
         assertEquals(true, updatedFeedSource.isPinned)
         assertEquals(true, updatedFeedSource.isNotificationEnabled)
@@ -174,7 +174,7 @@ class EditFeedViewModelTest : KoinTestBase() {
         id: String,
         title: String,
         category: FeedSourceCategory? = null,
-        linkPreference: LinkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode: ArticleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline: Boolean = false,
         isPinned: Boolean = false,
         isNotificationEnabled: Boolean = false,
@@ -187,7 +187,7 @@ class EditFeedViewModelTest : KoinTestBase() {
         logoUrl = null,
         websiteUrl = null,
         fetchFailed = false,
-        linkOpeningPreference = linkPreference,
+        articleOpenMode = articleOpenMode,
         isHiddenFromTimeline = isHiddenFromTimeline,
         isPinned = isPinned,
         isNotificationEnabled = isNotificationEnabled,

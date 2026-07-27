@@ -27,7 +27,7 @@ struct EditFeedScreen: View {
     @State private var isAddingFeed = false
     @State private var feedURL = ""
     @State private var feedName = ""
-    @State private var linkOpeningPreference = LinkOpeningPreference.default
+    @State private var articleOpenMode = ArticleOpenMode.default
     @State private var isHidden = false
     @State private var isHideImagesEnabled = false
     @State private var isPinned = false
@@ -44,7 +44,7 @@ struct EditFeedScreen: View {
                 showError: showError,
                 errorMessage: errorMessage,
                 isAddingFeed: $isAddingFeed,
-                linkOpeningPreference: $linkOpeningPreference,
+                articleOpenMode: $articleOpenMode,
                 isHidden: $isHidden,
                 isHideImagesEnabled: $isHideImagesEnabled,
                 isPinned: $isPinned,
@@ -58,8 +58,8 @@ struct EditFeedScreen: View {
                 updateFeedNameTextFieldValue: { value in
                     vmStoreOwner.instance.updateFeedNameTextFieldValue(feedNameTextFieldValue: value)
                 },
-                updateLinkOpeningPreference: { preference in
-                    vmStoreOwner.instance.updateLinkOpeningPreference(preference: preference)
+                updateArticleOpenMode: { mode in
+                    vmStoreOwner.instance.updateArticleOpenMode(articleOpenMode: mode)
                 },
                 onHiddenToggled: { hidden in
                     vmStoreOwner.instance.updateIsHiddenFromTimeline(isHidden: hidden)
@@ -149,7 +149,7 @@ struct EditFeedScreen: View {
             }
             .task {
                 for await state in vmStoreOwner.instance.feedSourceSettingsState {
-                    self.linkOpeningPreference = state.linkOpeningPreference
+                    self.articleOpenMode = state.articleOpenMode
                     self.isHidden = state.isHiddenFromTimeline
                     self.isHideImagesEnabled = state.isHideImagesEnabled
                     self.isPinned = state.isPinned

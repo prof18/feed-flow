@@ -1,9 +1,9 @@
 package com.prof18.feedflow.shared.domain.mappers
 
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.db.SelectFeeds
 import kotlin.test.Test
@@ -104,7 +104,7 @@ class SelectedFeedsMapperTest {
         val selectFeeds = createSelectFeeds(
             feedSourceCategoryId = "cat-1",
             feedSourceCategoryTitle = "Tech",
-            linkOpeningPreference = null,
+            articleOpenMode = null,
             isHidden = null,
             isPinned = null,
             isNotificationEnabled = null,
@@ -116,12 +116,23 @@ class SelectedFeedsMapperTest {
             settings = FeedItemMappingSettings(),
         )
 
-        assertEquals(LinkOpeningPreference.DEFAULT, result.feedSource.linkOpeningPreference)
+        assertEquals(ArticleOpenMode.DEFAULT, result.feedSource.articleOpenMode)
+        assertEquals(ArticleOpenMode.DEFAULT, result.feedSource.articleOpenMode)
         assertFalse(result.feedSource.isHiddenFromTimeline)
         assertFalse(result.feedSource.isPinned)
         assertFalse(result.feedSource.isNotificationEnabled)
         assertFalse(result.feedSource.isHideImagesEnabled)
         assertEquals(FeedSourceCategory("cat-1", "Tech"), result.feedSource.category)
+    }
+
+    @Test
+    fun `toFeedItem maps per-feed content source`() {
+        val result = createSelectFeeds(articleOpenMode = ArticleOpenMode.FEED_CONTENT).toFeedItem(
+            dateFormatter = dateFormatter,
+            settings = FeedItemMappingSettings(),
+        )
+
+        assertEquals(ArticleOpenMode.FEED_CONTENT, result.feedSource.articleOpenMode)
     }
 
     private fun createSelectFeeds(
@@ -131,7 +142,7 @@ class SelectedFeedsMapperTest {
         pubDate: Long? = 1000L,
         feedSourceCategoryId: String? = null,
         feedSourceCategoryTitle: String? = null,
-        linkOpeningPreference: LinkOpeningPreference? = LinkOpeningPreference.INTERNAL_BROWSER,
+        articleOpenMode: ArticleOpenMode? = ArticleOpenMode.INTERNAL_BROWSER,
         isHidden: Boolean? = false,
         isPinned: Boolean? = false,
         isNotificationEnabled: Boolean? = false,
@@ -154,7 +165,7 @@ class SelectedFeedsMapperTest {
         feed_source_category_id = feedSourceCategoryId,
         feed_source_category_title = feedSourceCategoryTitle,
         feed_source_logo_url = "https://example.com/logo.png",
-        feed_source_link_opening_preference = linkOpeningPreference,
+        feed_source_article_open_mode = articleOpenMode,
         feed_source_is_hidden = isHidden,
         feed_source_is_pinned = isPinned,
         feed_source_notifications_enabled = isNotificationEnabled,

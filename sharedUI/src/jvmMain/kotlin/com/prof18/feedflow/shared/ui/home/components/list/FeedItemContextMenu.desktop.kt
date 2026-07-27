@@ -13,12 +13,12 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenu
 import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenuEntry
 import com.prof18.feedflow.shared.ui.home.components.ShareCommentsIcon
@@ -159,7 +159,7 @@ private fun buildFeedItemDesktopMenuEntries(
                             title = feedItem.title,
                             openOnlyOnBrowser = true,
                             isBookmarked = feedItem.isBookmarked,
-                            linkOpeningPreference = LinkOpeningPreference.PREFERRED_BROWSER,
+                            articleOpenMode = ArticleOpenMode.PREFERRED_BROWSER,
                             commentsUrl = feedItem.commentsUrl,
                         ),
                     )
@@ -170,21 +170,23 @@ private fun buildFeedItemDesktopMenuEntries(
         add(DesktopPopupMenuEntry.Divider)
     }
 
-    add(
-        DesktopPopupMenuEntry.Action(
-            text = shareMenuLabel,
-            icon = Icons.Default.Share,
-            onClick = {
-                onShareClick(
-                    FeedItemUrlTitle(
-                        title = feedItem.title,
-                        url = feedItem.url,
-                    ),
-                )
-                closeMenu()
-            },
-        ),
-    )
+    if (feedItem.url.isNotBlank()) {
+        add(
+            DesktopPopupMenuEntry.Action(
+                text = shareMenuLabel,
+                icon = Icons.Default.Share,
+                onClick = {
+                    onShareClick(
+                        FeedItemUrlTitle(
+                            title = feedItem.title,
+                            url = feedItem.url,
+                        ),
+                    )
+                    closeMenu()
+                },
+            ),
+        )
+    }
     add(
         DesktopPopupMenuEntry.Action(
             text = if (feedItem.isBookmarked) {

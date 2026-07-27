@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ThemeMode
@@ -51,7 +52,7 @@ class MenuBarViewModel internal constructor(
         val isMarkReadWhenScrollingEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
         val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
         val isHideReadItemsEnabled = settingsRepository.getHideReadItems()
-        val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
+        val articleOpenMode = settingsRepository.getArticleOpenMode()
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
         val isRefreshFeedsOnLaunchEnabled = settingsRepository.getRefreshFeedsOnLaunch()
@@ -68,7 +69,7 @@ class MenuBarViewModel internal constructor(
                 isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
                 isShowReadItemsEnabled = isShowReadItemsEnabled,
                 isHideReadItemsEnabled = isHideReadItemsEnabled,
-                isReaderModeEnabled = isReaderModeEnabled,
+                articleOpenMode = articleOpenMode,
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
                 isRefreshFeedsOnLaunchEnabled = isRefreshFeedsOnLaunchEnabled,
@@ -117,11 +118,11 @@ class MenuBarViewModel internal constructor(
         }
     }
 
-    fun updateReaderMode(value: Boolean) {
+    fun updateArticleOpenMode(value: ArticleOpenMode) {
         viewModelScope.launch {
-            settingsRepository.setUseReaderMode(value)
+            settingsRepository.setArticleOpenMode(value)
             stateMutableFlow.update {
-                it.copy(isReaderModeEnabled = value)
+                it.copy(articleOpenMode = value)
             }
         }
     }

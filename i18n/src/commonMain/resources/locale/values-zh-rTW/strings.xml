@@ -146,9 +146,7 @@
     <string name="fresh_rss_last_sync">最後同步：%s</string>
     <string name="fresh_rss_password_hint">FreshRSS API密碼（設定 &gt; 帳號）</string>
     <string name="fresh_rss_url_hint">FreshRSS API端點，例如%s</string>
-    <string name="link_opening_preference">連結開啟方式</string>
     <string name="link_opening_preference_default">預設</string>
-    <string name="link_opening_preference_reader_mode">閲讀模式</string>
     <string name="link_opening_preference_internal_browser">內建瀏覽器</string>
     <string name="link_opening_preference_preferred_browser">偏好的瀏覽器</string>
     <string name="delete_category_confirmation_title">刪除分類？</string>

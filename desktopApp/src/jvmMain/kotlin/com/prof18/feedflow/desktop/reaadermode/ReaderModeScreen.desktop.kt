@@ -24,11 +24,14 @@ import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
@@ -55,6 +58,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -75,6 +79,7 @@ import com.mikepenz.markdown.model.markdownAnimations
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.openUriSafely
@@ -190,6 +195,7 @@ internal fun ReaderModeScreen(
                         onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
                             readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
                         },
+                        onToggleContentSource = { readerModeViewModel.toggleContentSource() },
                     )
                 }
             },
@@ -210,8 +216,10 @@ internal fun ReaderModeScreen(
                         ReaderModeFallbackContent(
                             modifier = contentModifier
                                 .fillMaxHeight(),
-                            onOpenInBrowser = {
-                                openExternalUrl(s.url)
+                            onOpenInBrowser = s.url.takeIf { it.isNotBlank() }?.let { url ->
+                                {
+                                    openExternalUrl(url)
+                                }
                             },
                         )
                     }
@@ -468,6 +476,7 @@ private fun ReaderModeToolbar(
     lineHeight: Int,
     onLineHeightChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onToggleContentSource: () -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -510,7 +519,8 @@ private fun ReaderModeToolbar(
         actions = {
             Row {
                 if (readerModeState !is ReaderModeState.Loading) {
-                    val url = readerModeState.getUrl
+                    // URL-less items (shown from feed content) have a blank url; hide URL-dependent actions.
+                    val url = readerModeState.getUrl?.takeIf { it.isNotBlank() }
                     val id = readerModeState.getId
                     var isBookmarked by remember(readerModeState) {
                         mutableStateOf(readerModeState.getIsBookmarked)
@@ -524,6 +534,42 @@ private fun ReaderModeToolbar(
                                 onBookmarkClick(FeedItemId(id), isBookmarked)
                             },
                         )
+                    }
+
+                    val shownContentSource =
+                        (readerModeState as? ReaderModeState.Success)?.readerModeData?.shownContentSource
+                    val canToggleContentSource =
+                        (readerModeState as? ReaderModeState.Success)
+                            ?.readerModeData
+                            ?.canToggleContentSource == true
+                    if (shownContentSource != null && canToggleContentSource) {
+                        val isFeedContent = shownContentSource == ShownContentSource.FEED
+                        val contentSourceLabel = LocalFeedFlowStrings.current.readerContentSourceFeed
+                        if (readerModeState.readerModeData.url.isNotBlank()) {
+                            TooltipBox(
+                                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                    positioning = TooltipAnchorPosition.Above,
+                                ),
+                                state = rememberTooltipState(),
+                                tooltip = { PlainTooltip { Text(contentSourceLabel) } },
+                            ) {
+                                FilledIconToggleButton(
+                                    checked = isFeedContent,
+                                    onCheckedChange = { onToggleContentSource() },
+                                    colors = IconButtonDefaults.filledIconToggleButtonColors(
+                                        containerColor = Color.Transparent,
+                                        contentColor = MaterialTheme.colorScheme.onSurface,
+                                        checkedContainerColor = MaterialTheme.colorScheme.primary,
+                                        checkedContentColor = MaterialTheme.colorScheme.onPrimary,
+                                    ),
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.RssFeed,
+                                        contentDescription = contentSourceLabel,
+                                    )
+                                }
+                            }
+                        }
                     }
 
                     if (url != null) {
@@ -702,7 +748,7 @@ private fun BookmarkButton(
 @Composable
 private fun ReaderModeFallbackContent(
     modifier: Modifier = Modifier,
-    onOpenInBrowser: () -> Unit,
+    onOpenInBrowser: (() -> Unit)?,
 ) {
     val strings = LocalFeedFlowStrings.current
 
@@ -718,14 +764,18 @@ private fun ReaderModeFallbackContent(
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
+        // No browser action means the item carries no url at all: nothing was parsed and there is
+        // no page to send the reader to, so the parsing-failure copy would be misleading.
+        val hasUrl = onOpenInBrowser != null
+
         Text(
-            text = strings.readerModeFallbackTitle,
+            text = if (hasUrl) strings.readerModeFallbackTitle else strings.readerModeNoContentTitle,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(bottom = Spacing.small),
         )
 
         Text(
-            text = strings.readerModeFallbackMessage,
+            text = if (hasUrl) strings.readerModeFallbackMessage else strings.readerModeNoContentMessage,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
@@ -734,15 +784,17 @@ private fun ReaderModeFallbackContent(
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
         )
 
-        androidx.compose.material3.Button(
-            onClick = onOpenInBrowser,
-        ) {
-            Icon(
-                imageVector = Icons.Default.Language,
-                contentDescription = null,
-                modifier = Modifier.padding(end = Spacing.small),
-            )
-            Text(strings.readerModeFallbackOpenBrowserButton)
+        if (onOpenInBrowser != null) {
+            androidx.compose.material3.Button(
+                onClick = onOpenInBrowser,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Language,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = Spacing.small),
+                )
+                Text(strings.readerModeFallbackOpenBrowserButton)
+            }
         }
     }
 }

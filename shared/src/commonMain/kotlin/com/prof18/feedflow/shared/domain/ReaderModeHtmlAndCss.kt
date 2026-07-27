@@ -8,26 +8,35 @@ fun getReaderModeStyledHtml(
     content: String,
     fontSize: Int,
     lineHeight: Int = ReaderModeDefaults.LINE_HEIGHT,
-    title: String? = null, // This is added only on desktop
+    title: String? = null,
     imageUrl: String? = null,
+    leadingContent: String = "",
+    siteName: String? = null,
 ): String {
     val titleTag = if (title != null) {
-        "<h1>$title</h1>"
+        "<h1>${title.escapeHtml()}</h1>"
     } else {
         ""
     }
 
+    val subtitleTag = if (!siteName.isNullOrBlank()) {
+        "<h4>${siteName.escapeHtml()}</h4>"
+    } else {
+        ""
+    }
+    val contentWithSubtitle = subtitleTag + content
+
     val processedContent = if (imageUrl != null && !hasLeadingImage(content)) {
-        val heroTag = "<img class=\"__hero\" src=\"$imageUrl\" alt=\"\" />"
-        val h4CloseIndex = content.indexOf("</h4>", ignoreCase = true)
+        val heroTag = "<img class=\"__hero\" src=\"${imageUrl.escapeHtml()}\" alt=\"\" />"
+        val h4CloseIndex = contentWithSubtitle.indexOf("</h4>", ignoreCase = true)
         if (h4CloseIndex >= 0) {
             val insertAt = h4CloseIndex + "</h4>".length
-            content.substring(0, insertAt) + heroTag + content.substring(insertAt)
+            contentWithSubtitle.substring(0, insertAt) + heroTag + contentWithSubtitle.substring(insertAt)
         } else {
-            heroTag + content
+            heroTag + contentWithSubtitle
         }
     } else {
-        content
+        contentWithSubtitle
     }
 
     // language=html
@@ -40,6 +49,7 @@ fun getReaderModeStyledHtml(
     </style>
     </head>
     <body>
+    $leadingContent
     $titleTag
     <div id="container">
         <div id="__content">
@@ -82,7 +92,7 @@ fun getReaderModeStyledHtml(
           document.body.addEventListener("click", function(event) {
               let anchor = event.target.closest("a");
               if (anchor) {
-                  let url = anchor.getAttribute("href");
+                  let url = anchor.href || anchor.getAttribute("href");
                   if (url && window.kmpJsBridge && window.kmpJsBridge.callNative) {
                       event.preventDefault();
                       window.kmpJsBridge.callNative(
@@ -135,6 +145,13 @@ fun getReaderModeStyledHtml(
         """
         .trimIndent()
 }
+
+private fun String.escapeHtml(): String =
+    replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("\"", "&quot;")
+        .replace("'", "&#39;")
 
 private const val LEADING_IMAGE_SCAN_WINDOW = 1000
 

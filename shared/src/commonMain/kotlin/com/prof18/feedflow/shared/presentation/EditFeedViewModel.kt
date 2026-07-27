@@ -2,12 +2,12 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceSettings
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
@@ -76,9 +76,9 @@ class EditFeedViewModel internal constructor(
         }
     }
 
-    fun updateLinkOpeningPreference(preference: LinkOpeningPreference) {
+    fun updateArticleOpenMode(articleOpenMode: ArticleOpenMode) {
         feedSourceSettingsMutableState.update { oldValue ->
-            oldValue.copy(linkOpeningPreference = preference)
+            oldValue.copy(articleOpenMode = articleOpenMode)
         }
         viewModelScope.launch {
             feedEditedMutableState.emit(FeedEditedState.Idle)
@@ -129,7 +129,7 @@ class EditFeedViewModel internal constructor(
             feedNameMutableState.update { feedSource.title }
             feedSourceSettingsMutableState.update {
                 FeedSourceSettings(
-                    linkOpeningPreference = feedSource.linkOpeningPreference,
+                    articleOpenMode = feedSource.articleOpenMode,
                     isHiddenFromTimeline = feedSource.isHiddenFromTimeline,
                     isPinned = feedSource.isPinned,
                     isNotificationEnabled = feedSource.isNotificationEnabled,
@@ -182,7 +182,7 @@ class EditFeedViewModel internal constructor(
                 url = feedUrlState.value,
                 title = feedNameState.value,
                 category = selectedCategory,
-                linkOpeningPreference = feedSourceSettingsState.value.linkOpeningPreference,
+                articleOpenMode = feedSourceSettingsState.value.articleOpenMode,
                 isHiddenFromTimeline = feedSourceSettingsState.value.isHiddenFromTimeline,
                 isPinned = feedSourceSettingsState.value.isPinned,
                 isNotificationEnabled = feedSourceSettingsState.value.isNotificationEnabled,

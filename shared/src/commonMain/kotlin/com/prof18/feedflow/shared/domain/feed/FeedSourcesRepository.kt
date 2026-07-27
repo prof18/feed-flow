@@ -3,12 +3,12 @@ package com.prof18.feedflow.shared.domain.feed
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.core.model.SyncAccounts
@@ -175,7 +175,7 @@ internal class FeedSourcesRepository(
 
     suspend fun insertFeedSourcePreference(
         feedSourceId: String,
-        preference: LinkOpeningPreference,
+        articleOpenMode: ArticleOpenMode,
         isHidden: Boolean,
         isPinned: Boolean,
         isNotificationEnabled: Boolean,
@@ -188,7 +188,7 @@ internal class FeedSourcesRepository(
         }
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = feedSourceId,
-            preference = preference,
+            articleOpenMode = articleOpenMode,
             isHidden = isHidden,
             isPinned = isPinned,
             isNotificationEnabled = isNotificationEnabled,
@@ -234,7 +234,7 @@ internal class FeedSourcesRepository(
         if (newFeedSource != originalFeedSource) {
             databaseHelper.insertFeedSourcePreference(
                 feedSourceId = newFeedSource.id,
-                preference = newFeedSource.linkOpeningPreference,
+                articleOpenMode = newFeedSource.articleOpenMode,
                 isHidden = newFeedSource.isHiddenFromTimeline,
                 isPinned = newFeedSource.isPinned,
                 isNotificationEnabled = newFeedSource.isNotificationEnabled,
@@ -481,7 +481,7 @@ internal class FeedSourcesRepository(
             logoUrl = parsedFeedSource.logoUrl,
             websiteUrl = rssChannel.link,
             isHiddenFromTimeline = false,
-            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isPinned = false,
             isNotificationEnabled = isNotificationEnabled,
             isHideImagesEnabled = false,

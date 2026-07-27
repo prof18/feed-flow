@@ -14,8 +14,10 @@ data class ReaderMode(
     val url: String,
     val title: String,
     val isBookmarked: Boolean,
-    val linkOpeningPreference: String,
+    val articleOpenMode: String,
     val commentsUrl: String?,
+    val imageUrl: String? = null,
+    val feedSourceTitle: String? = null,
 ) : NavKey
 
 fun FeedItemUrlInfo.toReaderMode(): ReaderMode = ReaderMode(
@@ -23,6 +25,8 @@ fun FeedItemUrlInfo.toReaderMode(): ReaderMode = ReaderMode(
     url = url,
     title = title ?: "",
     isBookmarked = isBookmarked,
-    linkOpeningPreference = linkOpeningPreference.name,
+    articleOpenMode = articleOpenMode.name,
     commentsUrl = commentsUrl,
+    imageUrl = imageUrl,
+    feedSourceTitle = feedSourceTitle,
 )

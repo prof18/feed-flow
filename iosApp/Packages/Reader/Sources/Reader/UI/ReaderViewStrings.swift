@@ -13,6 +13,9 @@ public struct ReaderViewStrings {
     public let done: String
     public let previousArticle: String
     public let nextArticle: String
+    public let feedContent: String
+    public let contentUnavailableTitle: String
+    public let contentUnavailableMessage: String
 
     public init(
         share: String,
@@ -26,7 +29,10 @@ public struct ReaderViewStrings {
         resetToDefault: String,
         done: String,
         previousArticle: String,
-        nextArticle: String
+        nextArticle: String,
+        feedContent: String = "",
+        contentUnavailableTitle: String = "",
+        contentUnavailableMessage: String = ""
     ) {
         self.share = share
         self.addBookmark = addBookmark
@@ -40,5 +46,8 @@ public struct ReaderViewStrings {
         self.done = done
         self.previousArticle = previousArticle
         self.nextArticle = nextArticle
+        self.feedContent = feedContent
+        self.contentUnavailableTitle = contentUnavailableTitle
+        self.contentUnavailableMessage = contentUnavailableMessage
     }
 }

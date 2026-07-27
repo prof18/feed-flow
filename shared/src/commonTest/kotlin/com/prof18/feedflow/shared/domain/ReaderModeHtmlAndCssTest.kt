@@ -57,4 +57,50 @@ class ReaderModeHtmlAndCssTest {
 
         assertTrue(html.contains("line-height: 1.8"))
     }
+
+    @Test
+    fun `getReaderModeStyledHtml includes an escaped article title`() {
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = "<p>Content</p>",
+            fontSize = 18,
+            title = "Title <with> & symbols",
+            imageUrl = "https://example.com/hero.jpg",
+            leadingContent = "<div id=\"spacer\"></div>",
+            siteName = "Example & Site",
+        )
+
+        assertTrue(html.contains("<h1>Title &lt;with&gt; &amp; symbols</h1>"))
+        assertTrue(html.contains("<img class=\"__hero\" src=\"https://example.com/hero.jpg\""))
+        assertTrue(html.contains("<h4>Example &amp; Site</h4>"))
+        assertTrue(html.indexOf("id=\"spacer\"") < html.indexOf("<h1>"))
+    }
+
+    @Test
+    fun `feed hero is not duplicated when content has a leading image`() {
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = "<p><img src=\"https://example.com/hero.jpg\" style=\"float: left\">Article body</p>",
+            fontSize = 18,
+            imageUrl = "https://example.com/hero.jpg",
+            siteName = "Example Site",
+        )
+
+        assertTrue(html.contains("<h4>Example Site</h4><p><img"))
+        assertTrue(html.contains("float: left"))
+        assertTrue(!html.contains("class=\"__hero\""))
+    }
+
+    @Test
+    fun `feed hero is not injected when content has a different leading image`() {
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = "<p><img src=\"https://example.com/diagram.jpg\">Article body</p>",
+            fontSize = 18,
+            imageUrl = "https://example.com/hero.jpg",
+        )
+
+        assertTrue(html.contains("https://example.com/diagram.jpg"))
+        assertTrue(!html.contains("class=\"__hero\""))
+    }
 }

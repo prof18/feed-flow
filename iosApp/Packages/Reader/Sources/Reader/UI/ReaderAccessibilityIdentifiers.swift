@@ -1,6 +1,7 @@
 enum ReaderAccessibilityIdentifiers {
     static let bookmarkButton = "reader_bookmark_button"
     static let browserButton = "reader_browser_button"
+    static let contentSourceButton = "reader_content_source_button"
     static let fontSizeButton = "reader_font_size_button"
     static let fontSizeSheet = "reader_font_size_sheet"
     static let fontSizeValueLabel = "reader_font_size_value_label"

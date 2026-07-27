@@ -1,0 +1,20 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=feed-content
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_no_content_no_url
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_no_content_no_url
+# No url and no feed content: the reader has nothing to render and nowhere to fall back to,
+# so it must explain that rather than showing an empty web view.
+- assertVisible: "No content available"
+# There is no web URL, so the browser action stays hidden.
+- assertNotVisible:
+    id: reader_browser_button

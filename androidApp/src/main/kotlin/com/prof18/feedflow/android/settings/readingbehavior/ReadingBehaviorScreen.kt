@@ -24,7 +24,7 @@ internal fun ReadingBehaviorScreen(
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
         },
-        setReaderMode = viewModel::updateReaderMode,
+        setArticleOpenMode = viewModel::updateArticleOpenMode,
         setSaveReaderModeContent = viewModel::updateSaveReaderModeContent,
         setPrefetchArticleContent = viewModel::updatePrefetchArticleContent,
         setMarkReadWhenScrolling = viewModel::updateMarkReadWhenScrolling,

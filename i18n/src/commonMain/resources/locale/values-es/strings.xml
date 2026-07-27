@@ -184,9 +184,7 @@
     <string name="fresh_rss_last_sync">Última sincronización: %s</string>
     <string name="fresh_rss_password_hint">La contraseña de API en FreshRSS (Configuración &gt; Perfil)</string>
     <string name="fresh_rss_url_hint">El endpoint de la API de FreshRSS. Por ejemplo, %s</string>
-    <string name="link_opening_preference">Comportamiento al abrir enlaces</string>
     <string name="link_opening_preference_default">Por defecto</string>
-    <string name="link_opening_preference_reader_mode">Modo lectura</string>
     <string name="link_opening_preference_internal_browser">Navegador integrado en la app</string>
     <string name="link_opening_preference_preferred_browser">Navegador favorito</string>
     <string name="delete_category_confirmation_title">¿Eliminar categoría?</string>

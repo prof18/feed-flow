@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.ReadingBehaviorState
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -24,29 +25,29 @@ class ReadingBehaviorSettingsViewModel internal constructor(
     }
 
     private fun loadSettings() {
-        val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
         val isMarkReadWhenScrollingEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
         val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
         val isHideReadItemsEnabled = settingsRepository.getHideReadItems()
+        val articleOpenMode = settingsRepository.getArticleOpenMode()
 
         stateMutableFlow.update {
             ReadingBehaviorState(
-                isReaderModeEnabled = isReaderModeEnabled,
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
                 isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
                 isShowReadItemsEnabled = isShowReadItemsEnabled,
                 isHideReadItemsEnabled = isHideReadItemsEnabled,
+                articleOpenMode = articleOpenMode,
             )
         }
     }
 
-    fun updateReaderMode(value: Boolean) {
-        settingsRepository.setUseReaderMode(value)
+    fun updateArticleOpenMode(value: ArticleOpenMode) {
+        settingsRepository.setArticleOpenMode(value)
         stateMutableFlow.update {
-            it.copy(isReaderModeEnabled = value)
+            it.copy(articleOpenMode = value)
         }
     }
 

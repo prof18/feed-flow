@@ -2,25 +2,29 @@ package com.prof18.feedflow.desktop.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.desktop.ui.components.ArticleOpenModeSelector
 import com.prof18.feedflow.shared.ui.settings.ConfirmationDialogConfig
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
+import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun ReadingPane(
-    isReaderModeEnabled: Boolean,
+    articleOpenMode: ArticleOpenMode,
     isSaveReaderModeContentEnabled: Boolean,
     isPrefetchArticleContentEnabled: Boolean,
     isMarkReadWhenScrollingEnabled: Boolean,
     isShowReadItemsEnabled: Boolean,
     isHideReadItemsEnabled: Boolean,
-    onReaderModeToggled: (Boolean) -> Unit,
+    onArticleOpenModeSelected: (ArticleOpenMode) -> Unit,
     onSaveReaderModeContentToggled: (Boolean) -> Unit,
     onPrefetchToggled: (Boolean) -> Unit,
     onMarkReadWhenScrollingToggled: (Boolean) -> Unit,
@@ -32,10 +36,10 @@ internal fun ReadingPane(
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
     ) {
-        SettingSwitchItem(
-            title = LocalFeedFlowStrings.current.settingsReaderMode,
-            isChecked = isReaderModeEnabled,
-            onCheckedChange = onReaderModeToggled,
+        ArticleOpenModeSelector(
+            modifier = Modifier.padding(horizontal = Spacing.regular),
+            currentMode = articleOpenMode,
+            onModeSelected = onArticleOpenModeSelected,
         )
 
         SettingSwitchItem(
@@ -79,13 +83,13 @@ internal fun ReadingPane(
 private fun ReadingPanePreview() {
     FeedFlowTheme {
         ReadingPane(
-            isReaderModeEnabled = false,
+            articleOpenMode = ArticleOpenMode.FULL_ARTICLE,
             isSaveReaderModeContentEnabled = false,
             isPrefetchArticleContentEnabled = false,
             isMarkReadWhenScrollingEnabled = false,
             isShowReadItemsEnabled = false,
             isHideReadItemsEnabled = false,
-            onReaderModeToggled = {},
+            onArticleOpenModeSelected = {},
             onSaveReaderModeContentToggled = {},
             onPrefetchToggled = {},
             onMarkReadWhenScrollingToggled = {},

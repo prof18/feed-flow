@@ -37,7 +37,7 @@ struct FeedPreviewSection: View {
                             logoUrl: nil,
                             websiteUrl: nil,
                             fetchFailed: false,
-                            linkOpeningPreference: .default,
+                            articleOpenMode: .default,
                             isHiddenFromTimeline: false,
                             isPinned: false,
                             isNotificationEnabled: false,

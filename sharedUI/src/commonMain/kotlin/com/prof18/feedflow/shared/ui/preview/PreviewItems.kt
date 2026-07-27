@@ -2,10 +2,10 @@
 
 package com.prof18.feedflow.shared.ui.preview
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import kotlinx.collections.immutable.persistentListOf
 
 val feedItemsForPreview = persistentListOf(
@@ -28,7 +28,7 @@ val feedItemsForPreview = persistentListOf(
             logoUrl = null,
             websiteUrl = null,
             isHiddenFromTimeline = false,
-            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isPinned = false,
             isNotificationEnabled = false,
             isHideImagesEnabled = false,
@@ -59,7 +59,7 @@ val feedItemsForPreview = persistentListOf(
             logoUrl = null,
             websiteUrl = null,
             isHiddenFromTimeline = false,
-            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isPinned = false,
             isNotificationEnabled = false,
             isHideImagesEnabled = false,
@@ -90,7 +90,7 @@ val feedItemsForPreview = persistentListOf(
             logoUrl = null,
             websiteUrl = null,
             isHiddenFromTimeline = false,
-            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isPinned = false,
             isNotificationEnabled = false,
             isHideImagesEnabled = false,
@@ -121,7 +121,7 @@ val feedItemsForPreview = persistentListOf(
             logoUrl = null,
             websiteUrl = null,
             isHiddenFromTimeline = false,
-            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isPinned = false,
             isNotificationEnabled = false,
             isHideImagesEnabled = false,
@@ -152,7 +152,7 @@ val feedItemsForPreview = persistentListOf(
             logoUrl = null,
             websiteUrl = null,
             isHiddenFromTimeline = false,
-            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isPinned = false,
             isNotificationEnabled = false,
             isHideImagesEnabled = false,
@@ -179,7 +179,7 @@ val feedSourcesForPreview = persistentListOf(
         logoUrl = null,
         websiteUrl = null,
         isHiddenFromTimeline = false,
-        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode = ArticleOpenMode.DEFAULT,
         isPinned = false,
         isNotificationEnabled = false,
         isHideImagesEnabled = false,
@@ -197,7 +197,7 @@ val feedSourcesForPreview = persistentListOf(
         logoUrl = null,
         websiteUrl = null,
         isHiddenFromTimeline = false,
-        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode = ArticleOpenMode.DEFAULT,
         isPinned = false,
         isNotificationEnabled = false,
         isHideImagesEnabled = false,
@@ -215,7 +215,7 @@ val feedSourcesForPreview = persistentListOf(
         logoUrl = null,
         websiteUrl = null,
         isHiddenFromTimeline = false,
-        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode = ArticleOpenMode.DEFAULT,
         isPinned = false,
         isNotificationEnabled = false,
         isHideImagesEnabled = false,

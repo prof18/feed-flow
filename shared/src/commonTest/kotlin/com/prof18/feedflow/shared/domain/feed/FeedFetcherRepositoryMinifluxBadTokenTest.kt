@@ -1,9 +1,9 @@
 package com.prof18.feedflow.shared.domain.feed
 
 import app.cash.turbine.test
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSyncError
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
@@ -64,7 +64,7 @@ class FeedFetcherRepositoryMinifluxBadTokenTest : FeedFetcherRepositoryTestBase(
         logoUrl = null,
         websiteUrl = "https://www.20percent.berlin/feed",
         fetchFailed = false,
-        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,

@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -10,6 +11,7 @@ import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -25,7 +27,7 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
         viewModel.state.test {
             val initialState = awaitItem()
             // Default values from SettingsRepository
-            assertTrue(initialState.isReaderModeEnabled)
+            assertEquals(ArticleOpenMode.FULL_ARTICLE, initialState.articleOpenMode)
             assertFalse(initialState.isSaveReaderModeContentEnabled)
             assertFalse(initialState.isPrefetchArticleContentEnabled)
             assertTrue(initialState.isMarkReadWhenScrollingEnabled)
@@ -35,15 +37,15 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `updateReaderMode updates state`() = runTest {
+    fun `updateArticleOpenMode updates state`() = runTest {
         viewModel.state.test {
             awaitItem()
 
-            viewModel.updateReaderMode(false)
-            assertFalse(awaitItem().isReaderModeEnabled)
+            viewModel.updateArticleOpenMode(ArticleOpenMode.PREFERRED_BROWSER)
+            assertEquals(ArticleOpenMode.PREFERRED_BROWSER, awaitItem().articleOpenMode)
 
-            viewModel.updateReaderMode(true)
-            assertTrue(awaitItem().isReaderModeEnabled)
+            viewModel.updateArticleOpenMode(ArticleOpenMode.FEED_CONTENT)
+            assertEquals(ArticleOpenMode.FEED_CONTENT, awaitItem().articleOpenMode)
         }
     }
 

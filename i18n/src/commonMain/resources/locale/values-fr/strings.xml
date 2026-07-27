@@ -130,9 +130,7 @@
     <string name="fresh_rss_last_sync">Dernière synchronisation : %s</string>
     <string name="fresh_rss_password_hint">Le mot de passe de l\'API FreshRSS (Paramètres &gt; Profil)</string>
     <string name="fresh_rss_url_hint">L\'endpoint de FreshRSS API, par exemple %s</string>
-    <string name="link_opening_preference">Comportement à l\'ouverture de liens</string>
     <string name="link_opening_preference_default">Défaut</string>
-    <string name="link_opening_preference_reader_mode">Mode lecture</string>
     <string name="settings_auto_delete">Supprimer automatiquement les anciens articles</string>
     <string name="settings_auto_delete_period_disabled">Désactivé</string>
     <string name="settings_auto_delete_period_one_week">Vieux d\'une semaine</string>

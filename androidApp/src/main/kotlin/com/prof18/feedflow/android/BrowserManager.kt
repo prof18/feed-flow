@@ -9,6 +9,7 @@ import android.os.Build
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.Browser
 import com.prof18.feedflow.core.utils.BrowserIds
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
@@ -38,8 +39,8 @@ class BrowserManager(
         populateBrowserList()
     }
 
-    fun openReaderMode(): Boolean =
-        settingsRepository.isUseReaderModeEnabled()
+    fun getArticleOpenMode(): ArticleOpenMode =
+        settingsRepository.getArticleOpenMode()
 
     fun setFavouriteBrowser(browser: Browser) {
         settingsRepository.saveFavouriteBrowserId(browser.id)

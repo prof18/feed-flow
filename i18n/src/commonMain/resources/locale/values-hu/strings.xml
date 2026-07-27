@@ -160,9 +160,7 @@
     <string name="settings_font_scale_feed_source_example">Hírforrás neve</string>
     <string name="fresh_rss_password_hint">A FreshRss API-jelszó (Beállítások &gt; Profil)</string>
     <string name="fresh_rss_url_hint">A FreshRss API-végpont, például: %s</string>
-    <string name="link_opening_preference">Hivatkozás-megnyitási viselkedés</string>
     <string name="link_opening_preference_default">Alapértelmezett</string>
-    <string name="link_opening_preference_reader_mode">Olvasó mód</string>
     <string name="link_opening_preference_preferred_browser">Kedvenc böngésző</string>
     <string name="delete_category_confirmation_title">Biztosan törli a kategóriát?</string>
     <string name="account_refresh_progress">Frissítés folyamatban</string>

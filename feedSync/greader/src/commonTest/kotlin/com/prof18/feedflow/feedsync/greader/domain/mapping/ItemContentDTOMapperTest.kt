@@ -3,10 +3,10 @@ package com.prof18.feedflow.feedsync.greader.domain.mapping
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.domain.ParsedFeedContent
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.feedsync.greader.data.dto.ItemContentDTO
 import kotlin.test.Test
@@ -29,7 +29,7 @@ class ItemContentDTOMapperTest {
         logoUrl = null,
         websiteUrl = "https://example.com",
         fetchFailed = false,
-        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,
@@ -59,7 +59,7 @@ class ItemContentDTOMapperTest {
     }
 
     @Test
-    fun `mapToFeedItem returns null when canonical URL is missing`() {
+    fun `mapToFeedItem returns null when canonical URL and content are missing`() {
         val itemContentDTO = createItemContentDTO(
             id = "tag:google.com,2005:reader/item/abc123",
             published = 1700000000L,
@@ -69,6 +69,21 @@ class ItemContentDTOMapperTest {
         val result = mapper.mapToFeedItem(itemContentDTO, testFeedSource)
 
         assertNull(result)
+    }
+
+    @Test
+    fun `mapToFeedItem keeps item without url when content is present`() {
+        val itemContentDTO = createItemContentDTO(
+            id = "tag:google.com,2005:reader/item/abc123",
+            published = 1700000000L,
+            canonicalHref = null,
+            contentText = "<p>Feed content without a link</p>",
+        )
+
+        val result = mapper.mapToFeedItem(itemContentDTO, testFeedSource)
+
+        assertEquals("", result?.url)
+        assertEquals("<p>Feed content without a link</p>", result?.content)
     }
 
     @Test
@@ -97,6 +112,41 @@ class ItemContentDTOMapperTest {
 
         assertEquals("Summary text", result?.subtitle)
         assertEquals("Summary text", result?.content)
+    }
+
+    @Test
+    fun `mapToFeedItem uses summary when content is blank`() {
+        val itemContentDTO = createItemContentDTO(
+            canonicalHref = "https://example.com/article",
+            contentText = "   ",
+            summaryText = "Summary text",
+        )
+
+        val result = mapper.mapToFeedItem(itemContentDTO, testFeedSource)
+
+        assertEquals("Summary text", result?.content)
+    }
+
+    @Test
+    fun `mapToFeedItem ignores blank canonical links`() {
+        val itemContentDTO = createItemContentDTO(canonicalHref = "   ")
+
+        assertNull(mapper.mapToFeedItem(itemContentDTO, testFeedSource))
+    }
+
+    @Test
+    fun `mapToFeedItem uses first nonblank canonical link`() {
+        val itemContentDTO = createItemContentDTO(contentText = "Content").copy(
+            canonical = listOf(
+                ItemContentDTO.Link(href = ""),
+                ItemContentDTO.Link(href = "https://example.com/valid"),
+            ),
+        )
+
+        assertEquals(
+            "https://example.com/valid",
+            mapper.mapToFeedItem(itemContentDTO, testFeedSource)?.url,
+        )
     }
 
     @Test

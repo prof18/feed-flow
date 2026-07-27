@@ -12,12 +12,12 @@ struct ReadingBehaviorScreen: View {
     private let feedFlowStrings = Deps.shared.getStrings()
 
     @State private var settingsState = ReadingBehaviorState(
-        isReaderModeEnabled: false,
         isSaveReaderModeContentEnabled: false,
         isPrefetchArticleContentEnabled: false,
         isMarkReadWhenScrollingEnabled: false,
         isShowReadItemsEnabled: false,
-        isHideReadItemsEnabled: false
+        isHideReadItemsEnabled: false,
+        articleOpenMode: .fullArticle
     )
 
     var body: some View {
@@ -26,9 +26,9 @@ struct ReadingBehaviorScreen: View {
 
         ReadingBehaviorScreenContent(
             browserSelector: browserSelector,
-            isReaderModeEnabled: Binding(
-                get: { settingsState.isReaderModeEnabled },
-                set: { vmStoreOwner.instance.updateReaderMode(value: $0) }
+            articleOpenMode: Binding(
+                get: { settingsState.articleOpenMode },
+                set: { vmStoreOwner.instance.updateArticleOpenMode(value: $0) }
             ),
             isSaveReaderModeContentEnabled: Binding(
                 get: { settingsState.isSaveReaderModeContentEnabled },

@@ -6,6 +6,9 @@ import io.ktor.http.Url
 object ReaderModeEligibility {
 
     fun canOpenReaderMode(url: String): Boolean {
+        // Ktor resolves a blank url to "http://localhost", which would otherwise pass every check below.
+        if (url.isBlank()) return false
+
         val parsedUrl = runCatching { Url(url.trim()) }.getOrNull() ?: return false
         if (parsedUrl.protocol.name !in webProtocols) {
             return false

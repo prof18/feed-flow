@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
@@ -8,7 +9,6 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSyncError
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
@@ -582,7 +582,7 @@ class SearchViewModelTest : KoinTestBase() {
         logoUrl = null,
         websiteUrl = "https://example.com/$id",
         fetchFailed = false,
-        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,

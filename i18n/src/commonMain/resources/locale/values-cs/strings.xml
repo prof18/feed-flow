@@ -114,8 +114,6 @@
     <string name="fresh_rss_last_sync">Poslední synchronizace: %s</string>
     <string name="fresh_rss_password_hint">Heslo FreshRSS API (Nastavení &gt; Profil)</string>
     <string name="fresh_rss_url_hint">Koncový bod API FreshRSS, například %s</string>
-    <string name="link_opening_preference">Chování při otevírání odkazů</string>
-    <string name="link_opening_preference_reader_mode">Režim čtení</string>
     <string name="delete_category_close_button">Zavřít</string>
     <string name="settings_auto_delete_period_disabled">Deaktivováno</string>
     <string name="settings_auto_delete_period_two_weeks">Automatické mazání 2 týdny starých článků</string>

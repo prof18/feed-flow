@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.presentation.model
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ThemeMode
@@ -11,7 +12,7 @@ data class MenuBarSettingsState(
     val isMarkReadWhenScrollingEnabled: Boolean = true,
     val isShowReadItemsEnabled: Boolean = false,
     val isHideReadItemsEnabled: Boolean = false,
-    val isReaderModeEnabled: Boolean = false,
+    val articleOpenMode: ArticleOpenMode = ArticleOpenMode.FULL_ARTICLE,
     val isSaveReaderModeContentEnabled: Boolean = false,
     val isPrefetchArticleContentEnabled: Boolean = false,
     val isRefreshFeedsOnLaunchEnabled: Boolean = true,

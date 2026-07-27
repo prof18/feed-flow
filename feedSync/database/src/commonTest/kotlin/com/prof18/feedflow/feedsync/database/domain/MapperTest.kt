@@ -1,7 +1,7 @@
 package com.prof18.feedflow.feedsync.database.domain
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,7 +30,7 @@ class MapperTest {
         assertEquals("https://example.com/logo.png", result.logoUrl)
         assertEquals("https://example.com", result.websiteUrl)
         assertNull(result.lastSyncTimestamp)
-        assertEquals(LinkOpeningPreference.DEFAULT, result.linkOpeningPreference)
+        assertEquals(ArticleOpenMode.DEFAULT, result.articleOpenMode)
         assertFalse(result.fetchFailed)
         assertFalse(result.isHiddenFromTimeline)
         assertFalse(result.isPinned)

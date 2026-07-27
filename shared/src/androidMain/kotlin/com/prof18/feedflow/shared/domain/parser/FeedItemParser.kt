@@ -111,6 +111,52 @@ internal class FeedItemParser(
             <html dir='auto'>
                 <head>
                   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+                  <script>
+                    if (!CSS.supports('selector(:has(*))')) {
+                      [Document.prototype, Element.prototype].forEach(prototype => {
+                        const querySelectorAll = prototype.querySelectorAll;
+                        prototype.querySelectorAll = function(selector) {
+                          if (!selector.includes(':has(')) {
+                            return querySelectorAll.call(this, selector);
+                          }
+
+                          const compatibleSelectors = [];
+                          let currentSelector = '';
+                          let bracketDepth = 0;
+                          let parenthesisDepth = 0;
+                          let quote = null;
+
+                          for (const character of selector) {
+                            if (quote !== null) {
+                              currentSelector += character;
+                              if (character === quote) quote = null;
+                              continue;
+                            }
+                            if (character === '"' || character === "'") {
+                              quote = character;
+                              currentSelector += character;
+                              continue;
+                            }
+                            if (character === '[') bracketDepth++;
+                            if (character === ']') bracketDepth--;
+                            if (character === '(') parenthesisDepth++;
+                            if (character === ')') parenthesisDepth--;
+
+                            if (character === ',' && bracketDepth === 0 && parenthesisDepth === 0) {
+                              if (!currentSelector.includes(':has(')) compatibleSelectors.push(currentSelector);
+                              currentSelector = '';
+                            } else {
+                              currentSelector += character;
+                            }
+                          }
+
+                          if (!currentSelector.includes(':has(')) compatibleSelectors.push(currentSelector);
+                          const compatibleSelector = compatibleSelectors.filter(Boolean).join(',');
+                          return querySelectorAll.call(this, compatibleSelector || '*:not(*)');
+                        };
+                      });
+                    }
+                  </script>
                   <script>$js</script>
                 </head>
                 <body />

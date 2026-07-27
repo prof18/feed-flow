@@ -1,0 +1,30 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=feed-content
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_feed_content_no_url
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_feed_content_no_url
+# URL-less item opens straight into the reader from its feed content (the reader toolbar is shown)...
+- assertVisible:
+    id: reader_more_menu_button
+# Feed-provided content uses the full reader document, including its article title.
+- assertVisible: "E2E Feed Content Article Without Link"
+- assertVisible: "Android Central RSS Feed"
+# ...and exposes no browser action because there is no web URL to open.
+- assertNotVisible:
+    id: reader_browser_button
+# The alternate web source is unavailable, so the source toggle is omitted from More.
+- tapOn:
+    id: reader_more_menu_button
+- assertNotVisible:
+    id: reader_content_source_button

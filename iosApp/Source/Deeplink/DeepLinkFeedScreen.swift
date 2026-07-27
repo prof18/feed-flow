@@ -47,25 +47,21 @@ struct DeepLinkFeedScreen: View {
                     shouldShowReaderMode = false
                 }
                 if let urlInfo = (state as? DeeplinkFeedState.Success)?.data {
-                    switch urlInfo.linkOpeningPreference {
-                    case .readerMode:
-                        if browserSelector.isReaderModeEligible(link: urlInfo.url) {
-                            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
-                            shouldShowReaderMode = true
-                        } else {
-                            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
-                            self.dismiss()
-                        }
+                    // URL-less items can only be shown in the reader from their feed content.
+                    if urlInfo.url.isEmpty {
+                        readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                        shouldShowReaderMode = true
+                        vmStoreOwner.instance.markAsRead(feedItemId: FeedItemId(id: feedId))
+                        continue
+                    }
+                    switch browserSelector.resolvedOpenMode(for: urlInfo) {
+                    case .fullArticle, .feedContent:
+                        readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                        shouldShowReaderMode = true
                     case .internalBrowser:
                         openInAppBrowser(urlString: urlInfo.url)
-                    case .preferredBrowser:
-                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
-                        self.dismiss()
-                    case .default:
-                        if browserSelector.shouldOpenInReaderMode(link: urlInfo.url) {
-                            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
-                            shouldShowReaderMode = true
-                        } else if browserSelector.openInAppBrowser() {
+                    default:
+                        if browserSelector.openInAppBrowser() {
                             openInAppBrowser(urlString: urlInfo.url)
                         } else {
                             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))

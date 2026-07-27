@@ -1,0 +1,66 @@
+-- Merges link_opening_preference into a single article_open_mode column.
+-- The view is dropped first so the table rebuild below cannot rewrite it implicitly.
+DROP VIEW IF EXISTS feed_source_unread_count;
+
+CREATE TABLE feed_source_preferences_new (
+    feed_source_id TEXT NOT NULL PRIMARY KEY,
+    article_open_mode TEXT NOT NULL DEFAULT 'DEFAULT',
+    is_hidden INTEGER NOT NULL DEFAULT 0,
+    is_pinned INTEGER NOT NULL DEFAULT 0,
+    notifications_enabled INTEGER NOT NULL DEFAULT 0,
+    pinned_position INTEGER NOT NULL DEFAULT 0,
+    hide_images INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (feed_source_id) REFERENCES feed_source(url_hash) ON DELETE CASCADE
+);
+
+INSERT INTO feed_source_preferences_new(feed_source_id, article_open_mode, is_hidden, is_pinned, notifications_enabled, pinned_position, hide_images)
+SELECT
+    feed_source_id,
+    CASE link_opening_preference
+        WHEN 'READER_MODE' THEN 'FULL_ARTICLE'
+        WHEN 'INTERNAL_BROWSER' THEN 'INTERNAL_BROWSER'
+        WHEN 'PREFERRED_BROWSER' THEN 'PREFERRED_BROWSER'
+        ELSE 'DEFAULT'
+    END,
+    is_hidden,
+    is_pinned,
+    notifications_enabled,
+    pinned_position,
+    hide_images
+FROM feed_source_preferences;
+
+DROP TABLE feed_source_preferences;
+
+ALTER TABLE feed_source_preferences_new RENAME TO feed_source_preferences;
+
+CREATE VIEW feed_source_unread_count AS
+SELECT
+    feed_source.url_hash AS url_hash,
+    feed_source.title AS feed_source_title,
+    feed_source.url,
+    feed_source.logo_url AS feed_source_logo_url,
+    feed_source.website_url AS feed_source_website_url,
+    feed_source.position AS feed_source_position,
+    feed_source.category_id,
+    feed_source.last_sync_timestamp,
+    feed_source.fetch_failed AS fetch_failed,
+    feed_source_category.title AS category_title,
+    feed_source_category.position AS category_position,
+    feed_source_preferences.article_open_mode,
+    feed_source_preferences.is_hidden,
+    feed_source_preferences.is_pinned,
+    feed_source_preferences.pinned_position,
+    feed_source_preferences.notifications_enabled,
+    feed_source_preferences.hide_images,
+    (
+        SELECT COUNT(*)
+        FROM feed_item
+        WHERE feed_item.feed_source_id == feed_source.url_hash
+        AND feed_item.is_read == 0
+        AND feed_item.is_blocked == 0
+    ) AS unread_count
+FROM feed_source
+LEFT JOIN feed_source_category
+ON feed_source.category_id = feed_source_category.id
+LEFT JOIN feed_source_preferences
+ON feed_source.url_hash = feed_source_preferences.feed_source_id;

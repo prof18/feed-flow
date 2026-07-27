@@ -32,4 +32,10 @@ class LinkSanitizerTest {
         val cleanLink = sanitizeUrl("http://example.com")
         assertEquals("http://example.com", cleanLink)
     }
+
+    @Test
+    fun `sanitizeUrl keeps a blank url blank`() {
+        assertEquals("", sanitizeUrl(""))
+        assertEquals("", sanitizeUrl("   "))
+    }
 }

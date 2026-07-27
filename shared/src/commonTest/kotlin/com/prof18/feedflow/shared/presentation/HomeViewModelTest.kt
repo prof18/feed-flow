@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.domain.ParsedFeedContent
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.DrawerItem
@@ -13,7 +14,6 @@ import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.model.VisibleFeedItem
@@ -74,7 +74,7 @@ class HomeViewModelTest : KoinTestBase() {
         insertFeedSources(feedSourceA, feedSourceB)
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = feedSourceA.id,
-            preference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,
@@ -1841,7 +1841,7 @@ class HomeViewModelTest : KoinTestBase() {
     private suspend fun insertPinnedPreference(feedSource: FeedSource) {
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = feedSource.id,
-            preference = LinkOpeningPreference.DEFAULT,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
             isHidden = false,
             isPinned = true,
             isNotificationEnabled = false,

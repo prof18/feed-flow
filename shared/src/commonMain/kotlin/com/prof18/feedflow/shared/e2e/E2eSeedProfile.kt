@@ -21,6 +21,7 @@ enum class E2eSeedProfile(val queryValue: String) {
     SYNC_UPLOAD_REQUIRED("sync-upload-required"),
     LARGE_CONTENT("large-content"),
     REORDER_DRAG("reorder-drag"),
+    FEED_CONTENT("feed-content"),
     ;
 
     companion object {

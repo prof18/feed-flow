@@ -481,7 +481,7 @@ class HomeViewModel internal constructor(
         viewModelScope.launch {
             feedSourcesRepository.insertFeedSourcePreference(
                 feedSourceId = feedSource.id,
-                preference = feedSource.linkOpeningPreference,
+                articleOpenMode = feedSource.articleOpenMode,
                 isHidden = feedSource.isHiddenFromTimeline,
                 isPinned = !feedSource.isPinned,
                 isNotificationEnabled = feedSource.isNotificationEnabled,

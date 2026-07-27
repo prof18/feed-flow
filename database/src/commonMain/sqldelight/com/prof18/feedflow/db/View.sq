@@ -11,7 +11,7 @@ SELECT
     feed_source.fetch_failed AS fetch_failed,
     feed_source_category.title AS category_title,
     feed_source_category.position AS category_position,
-    feed_source_preferences.link_opening_preference,
+    feed_source_preferences.article_open_mode,
     feed_source_preferences.is_hidden,
     feed_source_preferences.is_pinned,
     feed_source_preferences.pinned_position,
@@ -53,6 +53,6 @@ ORDER BY position ASC, title COLLATE NOCASE ASC;
 
 
 getFeedSourcesWithUnreadCount:
-SELECT url_hash, feed_source_title, url, feed_source_logo_url, feed_source_website_url, feed_source_position, category_id, category_title, category_position, last_sync_timestamp, fetch_failed, link_opening_preference, is_hidden, is_pinned, pinned_position, notifications_enabled, hide_images, unread_count
+SELECT url_hash, feed_source_title, url, feed_source_logo_url, feed_source_website_url, feed_source_position, category_id, category_title, category_position, last_sync_timestamp, fetch_failed, article_open_mode, is_hidden, is_pinned, pinned_position, notifications_enabled, hide_images, unread_count
 FROM feed_source_unread_count
 ORDER BY category_id ASC, feed_source_position ASC, feed_source_title COLLATE NOCASE ASC;

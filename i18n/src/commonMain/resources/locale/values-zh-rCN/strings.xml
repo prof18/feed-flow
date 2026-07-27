@@ -141,9 +141,7 @@
     <string name="fresh_rss_password_hint">FreshRSS API 密码（设置 &gt; 账号）</string>
     <string name="fresh_rss_url_hint">FreshRSS API 端点，例如 %s</string>
     <string name="link_opening_preference_internal_browser">应用内浏览器</string>
-    <string name="link_opening_preference_reader_mode">阅读模式</string>
     <string name="link_opening_preference_default">默认</string>
-    <string name="link_opening_preference">打开链接时的行为</string>
     <string name="delete_category_close_button">关闭</string>
     <string name="link_opening_preference_preferred_browser">首选浏览器</string>
     <string name="delete_category_confirmation_title">删除类别？</string>

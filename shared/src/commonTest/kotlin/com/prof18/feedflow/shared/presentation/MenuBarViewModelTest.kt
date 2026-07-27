@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ParsedFeedSource
@@ -46,7 +47,7 @@ class MenuBarViewModelTest : KoinTestBase() {
         assertTrue(state.isMarkReadWhenScrollingEnabled)
         assertFalse(state.isShowReadItemsEnabled)
         assertFalse(state.isHideReadItemsEnabled)
-        assertTrue(state.isReaderModeEnabled)
+        assertEquals(ArticleOpenMode.FULL_ARTICLE, state.articleOpenMode)
         assertFalse(state.isSaveReaderModeContentEnabled)
         assertFalse(state.isPrefetchArticleContentEnabled)
         assertTrue(state.isRefreshFeedsOnLaunchEnabled)
@@ -82,9 +83,9 @@ class MenuBarViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `updateReaderMode updates state`() = runTest {
-        viewModel.updateReaderMode(false)
-        assertFalse(viewModel.state.value.isReaderModeEnabled)
+    fun `updateArticleOpenMode updates state`() = runTest {
+        viewModel.updateArticleOpenMode(ArticleOpenMode.PREFERRED_BROWSER)
+        assertEquals(ArticleOpenMode.PREFERRED_BROWSER, viewModel.state.value.articleOpenMode)
     }
 
     @Test

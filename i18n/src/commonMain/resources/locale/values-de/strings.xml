@@ -133,11 +133,9 @@
     <string name="wrong_url_error_message">Der eingegebene Link ist nicht korrekt. Bitte erneut versuchen.</string>
     <string name="fresh_rss_password_hint">Passwort für FreshRSS-API (Einstellungen &gt; Profil)</string>
     <string name="fresh_rss_url_hint">Endpunkt der FreshRSS-API, zum Beispiel %s</string>
-    <string name="link_opening_preference">Verhalten beim Öfffnen des Links</string>
     <string name="link_opening_preference_default">Vorgabe</string>
     <string name="link_opening_preference_internal_browser">In-App Browser</string>
     <string name="link_opening_preference_preferred_browser">Bevorzugter Browser</string>
-    <string name="link_opening_preference_reader_mode">Lesemodus</string>
     <string name="delete_category_confirmation_title">Kategorie löschen?</string>
     <string name="delete_category_confirmation_message">Möchtest du diese Kategorie wirklich löschen? Die Feeds in dieser Kategorie werden zu \"Ohne Kategorie\" verschoben.</string>
     <string name="delete_category_close_button">Schließen</string>

@@ -44,9 +44,9 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.DesktopDatabaseErrorState
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
@@ -536,8 +536,10 @@ private fun EntryProviderScope<NavKey>.screens(
                 url = route.url,
                 title = route.title,
                 isBookmarked = route.isBookmarked,
-                linkOpeningPreference = LinkOpeningPreference.valueOf(route.linkOpeningPreference),
+                articleOpenMode = ArticleOpenMode.valueOf(route.articleOpenMode),
                 commentsUrl = route.commentsUrl,
+                imageUrl = route.imageUrl,
+                feedSourceTitle = route.feedSourceTitle,
             )
             ReaderModeScreen(
                 feedItemUrlInfo = feedItemUrlInfo,

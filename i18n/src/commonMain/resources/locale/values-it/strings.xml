@@ -139,9 +139,7 @@
     <string name="menu_add_to_pinned">Fissa</string>
     <string name="link_opening_preference_internal_browser">Browser interno</string>
     <string name="pin_feed_source_description">Fissa questo feed</string>
-    <string name="link_opening_preference_reader_mode">Modalità lettura</string>
     <string name="menu_remove_from_pinned">Sblocca</string>
-    <string name="link_opening_preference">Comportamento apertura link</string>
     <string name="delete_category_confirmation_title">Eliminare la categoria?</string>
     <string name="delete_category_confirmation_message">Sei sicuro di voler eliminare questa categoria? I feed in questa categoria saranno spostati in \'Non categorizzato\'.</string>
     <string name="settings_auto_delete_period_disabled">Disabilitato</string>

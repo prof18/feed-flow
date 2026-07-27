@@ -14,11 +14,10 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: settings_reading_behavior
 - tapOn:
-    id: reading_behavior_reader_mode
-    point: "90%,50%"
+    id: reading_behavior_article_open_mode
 - tapOn:
-    id: reading_behavior_reader_mode
-    point: "90%,50%"
+    id: article_open_mode_feed_content
+- assertVisible: "Reader \\(feed\\)"
 - tapOn:
     id: reading_behavior_show_read
     point: "90%,50%"

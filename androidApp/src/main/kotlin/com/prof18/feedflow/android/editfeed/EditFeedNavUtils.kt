@@ -1,9 +1,9 @@
 package com.prof18.feedflow.android.editfeed
 
 import com.prof18.feedflow.android.EditFeed
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 
 internal fun EditFeed.toFeedSource(): FeedSource {
     return FeedSource(
@@ -21,7 +21,7 @@ internal fun EditFeed.toFeedSource(): FeedSource {
         lastSyncTimestamp = lastSyncTimestamp,
         logoUrl = logoUrl,
         websiteUrl = websiteUrl,
-        linkOpeningPreference = LinkOpeningPreference.valueOf(linkOpeningPreference),
+        articleOpenMode = ArticleOpenMode.valueOf(articleOpenMode),
         isHiddenFromTimeline = isHidden,
         isPinned = isPinned,
         isNotificationEnabled = isNotificationEnabled,
@@ -40,7 +40,7 @@ internal fun FeedSource.toEditFeed(): EditFeed {
         lastSyncTimestamp = lastSyncTimestamp,
         logoUrl = logoUrl,
         websiteUrl = websiteUrl,
-        linkOpeningPreference = linkOpeningPreference.name,
+        articleOpenMode = articleOpenMode.name,
         isHidden = isHiddenFromTimeline,
         isPinned = isPinned,
         isNotificationEnabled = isNotificationEnabled,

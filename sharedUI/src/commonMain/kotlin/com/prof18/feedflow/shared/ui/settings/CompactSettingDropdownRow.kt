@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.ui.settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,18 +27,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.PreviewTheme
+import com.prof18.feedflow.shared.ui.utils.exposeTestTagsAsResourceIds
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * @param shortLabel shown in the collapsed row instead of [label], when the full label is too
+ * verbose to fit the pill.
+ * @param sectionHeader when set, a non-clickable header rendered above this option, grouping it
+ * with the options that follow.
+ */
 data class SettingDropdownOption<T>(
     val value: T,
     val label: String,
+    val e2eId: String? = null,
+    val subtitle: String? = null,
+    val shortLabel: String? = null,
+    val sectionHeader: String? = null,
 )
 
 @Composable
@@ -54,7 +67,8 @@ fun <T> CompactSettingDropdownRow(
     ),
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val currentLabel = options.firstOrNull { it.value == currentValue }?.label.orEmpty()
+    val currentOption = options.firstOrNull { it.value == currentValue }
+    val currentLabel = currentOption?.let { it.shortLabel ?: it.label }.orEmpty()
 
     Row(
         modifier = modifier
@@ -105,6 +119,7 @@ fun <T> CompactSettingDropdownRow(
             }
 
             DropdownMenu(
+                modifier = Modifier.exposeTestTagsAsResourceIds(),
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
                 shape = MaterialTheme.shapes.large,
@@ -112,19 +127,35 @@ fun <T> CompactSettingDropdownRow(
                 tonalElevation = 0.dp,
                 shadowElevation = 3.dp,
             ) {
-                options.forEach { option ->
+                options.forEachIndexed { index, option ->
                     val isSelected = option.value == currentValue
+                    if (option.sectionHeader != null) {
+                        DropdownSectionHeader(
+                            title = option.sectionHeader,
+                            isFirst = index == 0,
+                        )
+                    }
                     DropdownMenuItem(
+                        modifier = option.e2eId?.let { Modifier.testTag(it) } ?: Modifier,
                         text = {
-                            Text(
-                                text = option.label,
-                                color = if (isSelected) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurface
-                                },
-                                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
-                            )
+                            Column {
+                                Text(
+                                    text = option.label,
+                                    color = if (isSelected) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurface
+                                    },
+                                    fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
+                                )
+                                if (option.subtitle != null) {
+                                    Text(
+                                        text = option.subtitle,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            }
                         },
                         leadingIcon = {
                             Box(
@@ -149,6 +180,24 @@ fun <T> CompactSettingDropdownRow(
             }
         }
     }
+}
+
+@Composable
+private fun DropdownSectionHeader(
+    title: String,
+    isFirst: Boolean,
+) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(
+            start = Spacing.regular,
+            end = Spacing.regular,
+            top = if (isFirst) Spacing.small else Spacing.regular,
+            bottom = Spacing.xsmall,
+        ),
+    )
 }
 
 private val RoundedDropdownShape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)

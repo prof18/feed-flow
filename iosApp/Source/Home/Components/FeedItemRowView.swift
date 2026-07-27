@@ -37,24 +37,27 @@ struct FeedItemRowView: View {
           title: feedItem.title,
           openOnlyOnBrowser: false,
           isBookmarked: feedItem.isBookmarked,
-          linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
+          articleOpenMode: feedItem.feedSource.articleOpenMode,
           commentsUrl: feedItem.commentsUrl,
-          imageUrl: feedItem.imageUrl
+          imageUrl: feedItem.imageUrl,
+          feedSourceTitle: feedItem.feedSource.title,
+          feedSourceBaseUrl: feedItem.feedSource.websiteUrlFallback()
         )
+
+        // URL-less items can only be shown in the reader from their feed content.
+        if feedItem.url.isEmpty {
+          onReaderModeClick(urlInfo)
+          return
+        }
 
         guard let url = URL(string: feedItem.url) else {
           onItemClick(urlInfo)
           return
         }
 
-        switch urlInfo.linkOpeningPreference {
-        case .readerMode:
-          if browserSelector.isReaderModeEligible(link: feedItem.url) {
-            onReaderModeClick(urlInfo)
-          } else {
-            onItemClick(urlInfo)
-            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-          }
+        switch browserSelector.resolvedOpenMode(for: urlInfo) {
+        case .fullArticle, .feedContent:
+          onReaderModeClick(urlInfo)
         case .internalBrowser:
           onItemClick(urlInfo)
           if browserSelector.isValidForInAppBrowser(url) {
@@ -62,21 +65,11 @@ struct FeedItemRowView: View {
           } else {
             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
           }
-        case .preferredBrowser:
+        default:
           onItemClick(urlInfo)
-          openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-        case .default:
-          if browserSelector.shouldOpenInReaderMode(link: feedItem.url) {
-            onReaderModeClick(urlInfo)
-          } else if browserSelector.openInAppBrowser() {
-            onItemClick(urlInfo)
-            if browserSelector.isValidForInAppBrowser(url) {
-              self.appState.openInAppBrowser(url: url)
-            } else {
-              openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-            }
+          if browserSelector.openInAppBrowser(), browserSelector.isValidForInAppBrowser(url) {
+            self.appState.openInAppBrowser(url: url)
           } else {
-            onItemClick(urlInfo)
             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
           }
         }
@@ -129,10 +122,15 @@ struct FeedItemRowView: View {
         untoggledImageName: "bookmark"
       )
     case .openInBrowser:
-      createSwipeButton(
-        action: openItemInBrowser,
-        systemImageName: "globe"
-      )
+      // URL-less items have nothing to open in a browser.
+      if feedItem.url.isEmpty {
+        EmptyView()
+      } else {
+        createSwipeButton(
+          action: openItemInBrowser,
+          systemImageName: "globe"
+        )
+      }
     case .none:
       EmptyView()
     @unknown default:
@@ -167,7 +165,7 @@ struct FeedItemRowView: View {
       return
     }
 
-    switch feedItem.feedSource.linkOpeningPreference {
+    switch feedItem.feedSource.articleOpenMode {
     case .internalBrowser:
       if browserSelector.isValidForInAppBrowser(url) {
         self.appState.openInAppBrowser(url: url)
@@ -176,7 +174,7 @@ struct FeedItemRowView: View {
       }
     case .preferredBrowser:
       openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-    case .readerMode, .default:
+    default:
       if browserSelector.openInAppBrowser() {
         if browserSelector.isValidForInAppBrowser(url) {
           self.appState.openInAppBrowser(url: url)

@@ -10,13 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemContainer
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemView
@@ -80,7 +80,7 @@ fun FeedItemPreview(
                         lastSyncTimestamp = null,
                         logoUrl = null,
                         websiteUrl = null,
-                        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+                        articleOpenMode = ArticleOpenMode.DEFAULT,
                         isHiddenFromTimeline = false,
                         isPinned = false,
                         isNotificationEnabled = false,

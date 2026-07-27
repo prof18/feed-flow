@@ -19,6 +19,7 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
+import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
@@ -28,6 +29,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerIos
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerJvm
+import com.prof18.feedflow.shared.domain.parser.DesktopFeedContentPreparer
 import com.prof18.feedflow.shared.domain.parser.DesktopFeedItemParserWorker
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerDesktop
 import com.prof18.feedflow.shared.logging.SentryLogWriter
@@ -149,6 +151,13 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dispatcherProvider = get(),
             feedItemContentFileHandler = get(),
             settingsRepository = get(),
+        )
+    }
+
+    single<FeedContentPreparer> {
+        DesktopFeedContentPreparer(
+            logger = getWith("FeedContentPreparer"),
+            dispatcherProvider = get(),
         )
     }
 

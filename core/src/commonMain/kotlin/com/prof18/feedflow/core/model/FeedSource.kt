@@ -9,7 +9,7 @@ data class FeedSource(
     val logoUrl: String?,
     val websiteUrl: String?,
     val fetchFailed: Boolean,
-    val linkOpeningPreference: LinkOpeningPreference,
+    val articleOpenMode: ArticleOpenMode,
     val isHiddenFromTimeline: Boolean,
     val isPinned: Boolean,
     val isNotificationEnabled: Boolean,

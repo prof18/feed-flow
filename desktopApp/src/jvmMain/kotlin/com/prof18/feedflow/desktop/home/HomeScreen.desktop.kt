@@ -17,8 +17,8 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
-import com.prof18.feedflow.core.model.canOpenReaderMode
+import com.prof18.feedflow.core.model.isReaderMode
+import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.di.DI
@@ -416,29 +416,14 @@ private fun handleOpenUrlForDesktop(
         }
     }
 
-    when (feedItemUrlInfo.linkOpeningPreference) {
-        LinkOpeningPreference.READER_MODE -> {
-            if (feedItemUrlInfo.canOpenReaderMode()) {
-                onOpenReaderArticle(feedItemUrlInfo)
-            } else {
-                openUri(feedItemUrlInfo.url)
-            }
+    val openMode = feedItemUrlInfo.resolveArticleOpenMode(browserManager.getArticleOpenMode())
+    when {
+        openMode.isReaderMode() -> {
+            onOpenReaderArticle(feedItemUrlInfo)
         }
 
-        LinkOpeningPreference.INTERNAL_BROWSER -> {
+        else -> {
             openUri(feedItemUrlInfo.url)
-        }
-
-        LinkOpeningPreference.PREFERRED_BROWSER -> {
-            openUri(feedItemUrlInfo.url)
-        }
-
-        LinkOpeningPreference.DEFAULT -> {
-            if (browserManager.openReaderMode() && feedItemUrlInfo.canOpenReaderMode()) {
-                onOpenReaderArticle(feedItemUrlInfo)
-            } else {
-                openUri(feedItemUrlInfo.url)
-            }
         }
     }
 }

@@ -140,9 +140,7 @@
     <string name="fresh_rss_last_sync">Son eşitleme: %s</string>
     <string name="fresh_rss_password_hint">FreshRSS API parolası (Ayarlar &gt; Profil)</string>
     <string name="fresh_rss_url_hint">FreshRSS API uç noktası, örneğin %s</string>
-    <string name="link_opening_preference">Bağlantı açma davranışı</string>
     <string name="link_opening_preference_default">Varsayılan</string>
-    <string name="link_opening_preference_reader_mode">Okuyucu modu</string>
     <string name="link_opening_preference_internal_browser">Uygulama içi tarayıcı</string>
     <string name="link_opening_preference_preferred_browser">Favori tarayıcı</string>
     <string name="delete_category_confirmation_title">Kategori silinsin mi?</string>

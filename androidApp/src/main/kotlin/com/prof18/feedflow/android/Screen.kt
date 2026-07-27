@@ -79,7 +79,7 @@ data class EditFeed(
     val lastSyncTimestamp: Long?,
     val logoUrl: String?,
     val websiteUrl: String?,
-    val linkOpeningPreference: String,
+    val articleOpenMode: String,
     val isHidden: Boolean,
     val isPinned: Boolean,
     val isNotificationEnabled: Boolean,

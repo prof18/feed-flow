@@ -37,7 +37,7 @@ fun getFeedItems(appEnvironment: AppEnvironment): List<FeedItemWidget> {
             positionAdapter = IntColumnAdapter,
         ),
         feed_source_preferencesAdapter = Feed_source_preferences.Adapter(
-            link_opening_preferenceAdapter = EnumColumnAdapter(),
+            article_open_modeAdapter = EnumColumnAdapter(),
             pinned_positionAdapter = IntColumnAdapter,
         ),
         feed_source_categoryAdapter = Feed_source_category.Adapter(

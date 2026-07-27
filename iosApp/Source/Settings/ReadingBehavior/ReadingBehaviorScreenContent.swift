@@ -3,7 +3,7 @@ import SwiftUI
 
 struct ReadingBehaviorScreenContent: View {
     @Bindable var browserSelector: BrowserSelector
-    @Binding var isReaderModeEnabled: Bool
+    @Binding var articleOpenMode: ArticleOpenMode
     @Binding var isSaveReaderModeContentEnabled: Bool
     @Binding var isPrefetchArticleContentEnabled: Bool
     @Binding var isMarkReadWhenScrollingEnabled: Bool
@@ -27,10 +27,19 @@ struct ReadingBehaviorScreenContent: View {
                     }
                 )
 
-                Toggle(isOn: $isReaderModeEnabled) {
-                    Text(feedFlowStrings.settingsReaderMode)
+                NavigationLink {
+                    ArticleOpenModeSelectionScreen(articleOpenMode: $articleOpenMode)
+                } label: {
+                    HStack {
+                        Text(feedFlowStrings.articleOpenMode)
+
+                        Spacer()
+
+                        Text(articleOpenModePreview)
+                            .foregroundStyle(.secondary)
+                    }
                 }
-                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.readerModeToggle)
+                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.articleOpenModePicker)
 
                 Toggle(isOn: $isSaveReaderModeContentEnabled) {
                     Text(feedFlowStrings.settingsSaveReaderModeContent)
@@ -65,5 +74,18 @@ struct ReadingBehaviorScreenContent: View {
         }
         .scrollContentBackground(.hidden)
         .background(Color.secondaryBackgroundColor)
+    }
+
+    private var articleOpenModePreview: String {
+        switch articleOpenMode {
+        case .fullArticle:
+            feedFlowStrings.articleOpenModeFullArticleShort
+        case .feedContent:
+            feedFlowStrings.articleOpenModeFeedShort
+        case .internalBrowser:
+            feedFlowStrings.linkOpeningPreferenceInternalBrowser
+        default:
+            feedFlowStrings.linkOpeningPreferencePreferredBrowser
+        }
     }
 }

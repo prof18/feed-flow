@@ -9,12 +9,14 @@ import Foundation
 
 public enum ReaderStatus: Equatable {
     case fetching
+    /// Nothing to show and no page to fall back to: the item carries no url of its own.
+    case contentUnavailable
     case failedToExtractContent(url: URL)
     case extractedContent(html: String, baseURL: URL, url: URL)
 
     public func getUrl() -> URL? {
         switch self {
-        case .fetching:
+        case .fetching, .contentUnavailable:
             return nil
         case let .failedToExtractContent(url):
             return url

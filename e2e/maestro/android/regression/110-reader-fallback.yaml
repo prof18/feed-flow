@@ -10,6 +10,7 @@ appId: com.prof18.feedflow.debug
       id: article_row_e2e_article_reader_fallback
     direction: DOWN
     timeout: 10000
+    centerElement: true
 - tapOn:
     id: article_row_e2e_article_reader_fallback
 - assertVisible:

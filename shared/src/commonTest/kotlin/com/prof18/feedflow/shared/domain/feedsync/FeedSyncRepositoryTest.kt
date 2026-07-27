@@ -290,7 +290,7 @@ class FeedSyncRepositoryTest : KoinTestBase() {
         logoUrl = null,
         websiteUrl = "https://example.com",
         fetchFailed = false,
-        linkOpeningPreference = com.prof18.feedflow.core.model.LinkOpeningPreference.DEFAULT,
+        articleOpenMode = com.prof18.feedflow.core.model.ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,

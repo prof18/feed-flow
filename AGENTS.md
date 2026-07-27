@@ -258,7 +258,8 @@ When creating commits:
 - For SwiftUI screens that use `BrowserSelector`, pass the same environment instance into nested `NavigationLink` destinations and sheets so link-opening and reader-mode settings do not reset while navigating.
 
 ### Reader mode
-- Use `ReaderModeEligibility.canOpenReaderMode` / `FeedItemUrlInfo.canOpenReaderMode()` as the shared gate before opening reader mode on Android, Desktop, and iOS. Ineligible links such as non-http(s), media/PDF/download URLs, YouTube, and Telegram should fall back to the configured browser or `HtmlNotAvailable` behavior instead of attempting reader parsing.
+- Use `ReaderModeEligibility.canOpenReaderMode` / `FeedItemUrlInfo.canOpenWebReaderMode()` as the shared gate before opening reader mode on Android, Desktop, and iOS. Ineligible links such as blank, non-http(s), media/PDF/download URLs, YouTube, and Telegram should fall back to the configured browser or `HtmlNotAvailable` behavior instead of attempting reader parsing.
+- URL-less items are a separate case: they are never web-reader eligible, but they still open in the reader from their feed content. Check `FeedItemUrlInfo.hasNoUrl()` first (it must bypass the whole `linkOpeningPreference` branch, since there is no URL any browser could open).
 
 ### Internationalization
 - String resources are located in `i18n/src/commonMain/resources/locale/values-[language]/`

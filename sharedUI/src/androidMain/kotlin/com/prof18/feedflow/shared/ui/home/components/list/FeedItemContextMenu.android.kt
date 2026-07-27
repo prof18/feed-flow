@@ -20,12 +20,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.window.PopupProperties
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.shared.ui.home.components.ShareCommentsIcon
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -110,12 +110,14 @@ internal actual fun FeedItemContextMenu(
             HorizontalDivider()
         }
 
-        ShareMenuItem(
-            feedItem = feedItem,
-            shareMenuLabel = shareMenuLabel,
-            onShareClick = onShareClick,
-            closeMenu = closeMenu,
-        )
+        if (feedItem.url.isNotBlank()) {
+            ShareMenuItem(
+                feedItem = feedItem,
+                shareMenuLabel = shareMenuLabel,
+                onShareClick = onShareClick,
+                closeMenu = closeMenu,
+            )
+        }
 
         ChangeBookmarkStatusMenuItem(
             feedItem = feedItem,
@@ -220,7 +222,7 @@ private fun OpenCommentsMenuItem(
                     title = feedItem.title,
                     openOnlyOnBrowser = true,
                     isBookmarked = feedItem.isBookmarked,
-                    linkOpeningPreference = LinkOpeningPreference.PREFERRED_BROWSER,
+                    articleOpenMode = ArticleOpenMode.PREFERRED_BROWSER,
                     commentsUrl = feedItem.commentsUrl,
                 ),
             )

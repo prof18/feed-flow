@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -40,6 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
@@ -55,10 +58,12 @@ import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.domain.readerLineHeightJs
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.delay
@@ -79,6 +84,7 @@ internal fun ReaderModeScreen(
     canNavigateNext: Boolean,
     onNavigateToPrevious: () -> Unit,
     onNavigateToNext: () -> Unit,
+    onToggleContentSource: () -> Unit,
     isDetailFullscreen: Boolean = false,
     onToggleDetailFullscreen: (() -> Unit)? = null,
 ) {
@@ -177,6 +183,7 @@ internal fun ReaderModeScreen(
                             onUpdateLineHeight(newLineHeight)
                         },
                         onBookmarkClick = onBookmarkClick,
+                        onToggleContentSource = onToggleContentSource,
                         canNavigatePrevious = canNavigatePrevious,
                         canNavigateNext = canNavigateNext,
                         onNavigateToPrevious = onNavigateToPrevious,
@@ -186,11 +193,19 @@ internal fun ReaderModeScreen(
 
                 when (readerModeState) {
                     is ReaderModeState.HtmlNotAvailable -> {
-                        FallbackWebView(
-                            url = readerModeState.url,
-                            contentPadding = contentPadding,
-                            navigator = navigator,
-                        )
+                        if (readerModeState.url.isBlank()) {
+                            ReaderContentUnavailable(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(contentPadding),
+                            )
+                        } else {
+                            FallbackWebView(
+                                url = readerModeState.url,
+                                contentPadding = contentPadding,
+                                navigator = navigator,
+                            )
+                        }
                     }
 
                     ReaderModeState.Loading -> {
@@ -237,6 +252,29 @@ internal fun ReaderModeScreen(
                 onDismiss = { fullscreenImageUrl = null },
             )
         }
+    }
+}
+
+@Composable
+private fun ReaderContentUnavailable(modifier: Modifier = Modifier) {
+    val strings = LocalFeedFlowStrings.current
+    Column(
+        modifier = modifier.padding(horizontal = 24.dp),
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = strings.readerModeNoContentTitle,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = strings.readerModeNoContentMessage,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 8.dp),
+        )
     }
 }
 
@@ -334,13 +372,15 @@ private fun ReaderMode(
 
     val content = getReaderModeStyledHtml(
         colors = colors,
-        content = """
-            <div id="__feedflow_top_spacer" style="height: ${spacerHeightDp}px;"></div>
-            ${readerModeState.readerModeData.content}
-        """.trimIndent(),
+        content = readerModeState.readerModeData.content,
         fontSize = readerModeState.readerModeData.fontSize,
         lineHeight = readerModeState.readerModeData.lineHeight,
+        title = readerModeState.readerModeData.title.takeIf {
+            readerModeState.readerModeData.shownContentSource == ShownContentSource.FEED
+        },
         imageUrl = readerModeState.readerModeData.imageUrl,
+        leadingContent = "<div id=\"__feedflow_top_spacer\" style=\"height: ${spacerHeightDp}px;\"></div>",
+        siteName = readerModeState.readerModeData.siteName,
     )
 
     val jsBridge = rememberWebViewJsBridge()

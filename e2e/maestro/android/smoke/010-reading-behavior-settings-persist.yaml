@@ -12,9 +12,9 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: settings_reading_behavior
 - tapOn:
-    id: reading_behavior_reader_mode
+    id: reading_behavior_article_open_mode
 - tapOn:
-    id: reading_behavior_reader_mode
+    id: article_open_mode_feed_content
 - tapOn:
     id: reading_behavior_show_read
 - scrollUntilVisible:

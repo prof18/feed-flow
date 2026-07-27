@@ -19,7 +19,7 @@ struct EditFeedScreenContent: View {
     let showError: Bool
     let errorMessage: String
     @Binding var isAddingFeed: Bool
-    @Binding var linkOpeningPreference: LinkOpeningPreference
+    @Binding var articleOpenMode: ArticleOpenMode
     @Binding var isHidden: Bool
     @Binding var isHideImagesEnabled: Bool
     @Binding var isPinned: Bool
@@ -31,7 +31,7 @@ struct EditFeedScreenContent: View {
 
     let updateFeedUrlTextFieldValue: (String) -> Void
     let updateFeedNameTextFieldValue: (String) -> Void
-    let updateLinkOpeningPreference: (LinkOpeningPreference) -> Void
+    let updateArticleOpenMode: (ArticleOpenMode) -> Void
     let onHiddenToggled: (Bool) -> Void
     let onHideImagesToggled: (Bool) -> Void
     let onPinnedToggled: (Bool) -> Void
@@ -79,22 +79,18 @@ struct EditFeedScreenContent: View {
                 }
             )
 
-            Section(feedFlowStrings.linkOpeningPreference) {
+            Section(feedFlowStrings.articleOpenMode) {
                 Picker(
-                    selection: $linkOpeningPreference,
-                    label: Text(feedFlowStrings.linkOpeningPreference)
+                    selection: $articleOpenMode,
+                    label: Text(feedFlowStrings.articleOpenMode)
                 ) {
-                    Text(feedFlowStrings.linkOpeningPreferenceDefault)
-                        .tag(LinkOpeningPreference.default)
-                    Text(feedFlowStrings.linkOpeningPreferenceReaderMode)
-                        .tag(LinkOpeningPreference.readerMode)
-                    Text(feedFlowStrings.linkOpeningPreferenceInternalBrowser)
-                        .tag(LinkOpeningPreference.internalBrowser)
-                    Text(feedFlowStrings.linkOpeningPreferencePreferredBrowser)
-                        .tag(LinkOpeningPreference.preferredBrowser)
+                    articleOpenModeOptions
                 }
-                .onChange(of: linkOpeningPreference) {
-                    updateLinkOpeningPreference(linkOpeningPreference)
+                // The section header already says it; repeating it inline squeezes the value onto
+                // a second line on small screens. Kept for VoiceOver via labelsHidden().
+                .labelsHidden()
+                .onChange(of: articleOpenMode) {
+                    updateArticleOpenMode(articleOpenMode)
                 }
             }
 
@@ -211,6 +207,25 @@ struct EditFeedScreenContent: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 saveButton
             }
+        }
+    }
+
+    @ViewBuilder private var articleOpenModeOptions: some View {
+        Text(feedFlowStrings.linkOpeningPreferenceDefault)
+            .tag(ArticleOpenMode.default)
+
+        Section(feedFlowStrings.articleOpenModeSectionReader) {
+            Text(feedFlowStrings.readerContentSourceWeb)
+                .tag(ArticleOpenMode.fullArticle)
+            Text(feedFlowStrings.readerContentSourceFeed)
+                .tag(ArticleOpenMode.feedContent)
+        }
+
+        Section(feedFlowStrings.articleOpenModeSectionBrowser) {
+            Text(feedFlowStrings.linkOpeningPreferenceInternalBrowser)
+                .tag(ArticleOpenMode.internalBrowser)
+            Text(feedFlowStrings.linkOpeningPreferencePreferredBrowser)
+                .tag(ArticleOpenMode.preferredBrowser)
         }
     }
 

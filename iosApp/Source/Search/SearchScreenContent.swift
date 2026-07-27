@@ -118,42 +118,39 @@ struct SearchScreenContent: View {
             title: feedItem.title,
             openOnlyOnBrowser: false,
             isBookmarked: feedItem.isBookmarked,
-            linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
+            articleOpenMode: feedItem.feedSource.articleOpenMode,
             commentsUrl: feedItem.commentsUrl,
-            imageUrl: feedItem.imageUrl
+            imageUrl: feedItem.imageUrl,
+            feedSourceTitle: feedItem.feedSource.title,
+            feedSourceBaseUrl: feedItem.feedSource.websiteUrlFallback()
         )
+
+        // URL-less items can only be shown in the reader from their feed content.
+        if feedItem.url.isEmpty {
+            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+            navigateToReaderMode()
+            onReadStatusClick(FeedItemId(id: feedItem.id), true)
+            return
+        }
 
         guard let url = URL(string: feedItem.url) else {
             onReadStatusClick(FeedItemId(id: feedItem.id), true)
             return
         }
 
-        switch urlInfo.linkOpeningPreference {
-        case .readerMode:
-            if browserSelector.isReaderModeEligible(link: feedItem.url) {
-                readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
-                navigateToReaderMode()
-            } else {
-                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-            }
+        switch browserSelector.resolvedOpenMode(for: urlInfo) {
+        case .fullArticle, .feedContent:
+            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+            navigateToReaderMode()
         case .internalBrowser:
             if browserSelector.isValidForInAppBrowser(url) {
                 appState.openInAppBrowser(url: url)
             } else {
                 openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
             }
-        case .preferredBrowser:
-            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-        case .default:
-            if browserSelector.shouldOpenInReaderMode(link: feedItem.url) {
-                readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
-                navigateToReaderMode()
-            } else if browserSelector.openInAppBrowser() {
-                if browserSelector.isValidForInAppBrowser(url) {
-                    appState.openInAppBrowser(url: url)
-                } else {
-                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                }
+        default:
+            if browserSelector.openInAppBrowser(), browserSelector.isValidForInAppBrowser(url) {
+                appState.openInAppBrowser(url: url)
             } else {
                 openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
             }

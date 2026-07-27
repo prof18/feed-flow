@@ -2,6 +2,7 @@
 
 package com.prof18.feedflow.shared.e2e
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedLayout
@@ -67,7 +68,7 @@ class E2eSeedRunnerTest : KoinTestBase() {
         assertTrue(fetchFailedFeed.fetchFailed)
 
         assertFalse(settingsRepository.getRefreshFeedsOnLaunch())
-        assertTrue(settingsRepository.isUseReaderModeEnabled())
+        assertEquals(ArticleOpenMode.FULL_ARTICLE, settingsRepository.getArticleOpenMode())
         assertEquals(FeedLayout.LIST, feedAppearanceSettingsRepository.getFeedLayout())
         assertEquals(DescriptionLineLimit.THREE, feedAppearanceSettingsRepository.getDescriptionLineLimit())
         assertTrue(

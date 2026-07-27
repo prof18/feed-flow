@@ -1,7 +1,7 @@
 package com.prof18.feedflow.feedsync.database.domain
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 
 fun ParsedFeedSource.toFeedSource() = FeedSource(
@@ -13,7 +13,7 @@ fun ParsedFeedSource.toFeedSource() = FeedSource(
     logoUrl = this.logoUrl,
     websiteUrl = this.websiteUrl,
     fetchFailed = false,
-    linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+    articleOpenMode = ArticleOpenMode.DEFAULT,
     isHiddenFromTimeline = false,
     isPinned = false,
     isNotificationEnabled = false,

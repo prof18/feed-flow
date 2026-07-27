@@ -1,7 +1,7 @@
 package com.prof18.feedflow.shared.domain.contentprefetch
 
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -182,7 +182,7 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
         logoUrl = null,
         websiteUrl = "https://example.com",
         fetchFailed = false,
-        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,

@@ -49,8 +49,9 @@ import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.android.widget.WidgetFontSizes
 import com.prof18.feedflow.core.model.FeedItem
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ReaderModeEligibility
+import com.prof18.feedflow.core.model.isReaderMode
+import com.prof18.feedflow.core.model.resolveWith
 import com.prof18.feedflow.shared.ui.style.Spacing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -215,23 +216,16 @@ private fun createFeedItemClickAction(
     feedItem: FeedItem,
     context: Context,
     browserManager: BrowserManager,
-): Action = when (feedItem.feedSource.linkOpeningPreference) {
-    LinkOpeningPreference.READER_MODE -> {
-        if (feedItem.canOpenReaderMode()) {
-            createDeepLinkAction(feedItem, context)
-        } else {
-            createBrowserAction(feedItem, browserManager)
-        }
+): Action {
+    // URL-less items can only be shown in the reader; deep-link into the app.
+    if (feedItem.url.isBlank()) {
+        return createDeepLinkAction(feedItem, context)
     }
-    LinkOpeningPreference.INTERNAL_BROWSER, LinkOpeningPreference.PREFERRED_BROWSER -> {
+    val openMode = feedItem.feedSource.articleOpenMode.resolveWith(browserManager.getArticleOpenMode())
+    return if (openMode.isReaderMode() && feedItem.canOpenWebReaderMode()) {
+        createDeepLinkAction(feedItem, context)
+    } else {
         createBrowserAction(feedItem, browserManager)
-    }
-    LinkOpeningPreference.DEFAULT -> {
-        if (browserManager.openReaderMode() && feedItem.canOpenReaderMode()) {
-            createDeepLinkAction(feedItem, context)
-        } else {
-            createBrowserAction(feedItem, browserManager)
-        }
     }
 }
 
@@ -260,5 +254,5 @@ private fun createDeepLinkAction(feedItem: FeedItem, context: Context): Action {
     )
 }
 
-private fun FeedItem.canOpenReaderMode(): Boolean =
+private fun FeedItem.canOpenWebReaderMode(): Boolean =
     ReaderModeEligibility.canOpenReaderMode(url)

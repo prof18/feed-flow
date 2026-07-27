@@ -18,12 +18,19 @@ internal class ItemContentDTOMapper(
         itemContentDTO: ItemContentDTO,
         feedSource: FeedSource,
     ): FeedItem? {
-        val url = itemContentDTO.canonical?.firstOrNull()?.href ?: return null
-        val content = itemContentDTO.content?.content ?: itemContentDTO.summary?.content
-        val parsedContent = content?.let { htmlParser.parseFeedContent(html = it, baseUrl = url) }
+        val url = itemContentDTO.canonical
+            ?.firstNotNullOfOrNull { canonical -> canonical.href?.takeIf { it.isNotBlank() } }
+        val content = itemContentDTO.content?.content?.takeIf { it.isNotBlank() } ?: itemContentDTO.summary?.content
+        if (url == null && content.isNullOrBlank()) {
+            // No URL to open and no content to show — the item is unusable.
+            return null
+        }
+        val parsedContent = content?.let { htmlParser.parseFeedContent(html = it, baseUrl = url.orEmpty()) }
         return FeedItem(
             id = itemContentDTO.hexID,
-            url = url,
+            // feed_item.url stays NOT NULL; URL-less items use an empty string and open straight
+            // into the reader with their feed-provided content.
+            url = url.orEmpty(),
             title = itemContentDTO.title,
             subtitle = parsedContent?.text,
             content = content,

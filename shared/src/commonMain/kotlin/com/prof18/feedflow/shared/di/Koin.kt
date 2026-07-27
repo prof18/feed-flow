@@ -373,6 +373,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedItemParserWorker = get(),
             feedItemContentFileHandler = get(),
             feedStateRepository = get(),
+            databaseHelper = get(),
+            feedContentPreparer = get(),
         )
     }
 

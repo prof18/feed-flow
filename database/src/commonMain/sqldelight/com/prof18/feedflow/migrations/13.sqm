@@ -1,4 +1,3 @@
-import com.prof18.feedflow.core.model.LinkOpeningPreference;
 import kotlin.Boolean;
 
 -- Drop the dependent view first
@@ -8,7 +7,7 @@ DROP VIEW IF EXISTS feed_source_unread_count;
 -- Create a temporary table with the new schema including ON DELETE CASCADE
 CREATE TABLE feed_source_preferences_new (
     feed_source_id TEXT NOT NULL PRIMARY KEY,
-    link_opening_preference TEXT AS LinkOpeningPreference NOT NULL DEFAULT 'DEFAULT',
+    link_opening_preference TEXT NOT NULL DEFAULT 'DEFAULT',
     is_hidden INTEGER AS Boolean NOT NULL DEFAULT 0,
     is_pinned INTEGER AS Boolean NOT NULL DEFAULT 0,
     notifications_enabled INTEGER AS Boolean NOT NULL DEFAULT 0,

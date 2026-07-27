@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.mappers
 
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.db.Search
@@ -104,12 +105,23 @@ class SearchFeedMapperTest {
         assertTrue(result.feedSource.isHideImagesEnabled)
     }
 
+    @Test
+    fun `toFeedItem maps the per-feed article open mode`() {
+        val result = createSearch(articleOpenMode = ArticleOpenMode.FULL_ARTICLE).toFeedItem(
+            dateFormatter = dateFormatter,
+            settings = FeedItemMappingSettings(),
+        )
+
+        assertEquals(ArticleOpenMode.FULL_ARTICLE, result.feedSource.articleOpenMode)
+    }
+
     private fun createSearch(
         title: String = "Title",
         subtitle: String? = "Subtitle",
         imageUrl: String? = null,
         pubDate: Long? = 1000L,
         feedSourceHideImages: Boolean? = false,
+        articleOpenMode: ArticleOpenMode? = null,
     ): Search = Search(
         url_hash = "item-1",
         url = "https://example.com/item-1",
@@ -133,7 +145,7 @@ class SearchFeedMapperTest {
         feed_source_category_id = null,
         feed_source_category_title = null,
         feed_source_logo_url = "https://example.com/logo.png",
-        feed_source_link_opening_preference = null,
+        feed_source_article_open_mode = articleOpenMode,
         feed_source_hide_images = feedSourceHideImages,
     )
 

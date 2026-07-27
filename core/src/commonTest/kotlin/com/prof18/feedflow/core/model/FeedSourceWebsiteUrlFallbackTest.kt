@@ -78,7 +78,7 @@ class FeedSourceWebsiteUrlFallbackTest {
         logoUrl = null,
         websiteUrl = websiteUrl,
         fetchFailed = false,
-        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+        articleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,

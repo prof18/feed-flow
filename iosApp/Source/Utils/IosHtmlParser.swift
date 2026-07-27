@@ -18,7 +18,7 @@ class IosHtmlParser: HtmlParser {
         guard !sanitizedHtml.isEmpty else { return nil }
 
         do {
-            let doc: Document = try SwiftSoup.parse(sanitizedHtml)
+            let doc: Document = try SwiftSoup.parseHTML(sanitizedHtml)
             return try doc.text()
         } catch {
             Deps.shared.getLogger(tag: "IosHtmlParser")
@@ -32,7 +32,7 @@ class IosHtmlParser: HtmlParser {
         let sanitizedHtml = sanitizeHtml(html)
 
         do {
-            let doc: Document = try SwiftSoup.parse(sanitizedHtml)
+            let doc: Document = try SwiftSoup.parseHTML(sanitizedHtml)
 
             let faviconLink = try doc.select("link[rel~=(?i)^(shortcut|icon)$][href]").first()
             return try faviconLink?.attr("href")
@@ -48,7 +48,7 @@ class IosHtmlParser: HtmlParser {
         let sanitizedHtml = sanitizeHtml(html)
 
         do {
-            let doc: Document = try SwiftSoup.parse(sanitizedHtml)
+            let doc: Document = try SwiftSoup.parseHTML(sanitizedHtml)
 
             let queries = [
                 "link[type='application/rss+xml']",
@@ -77,7 +77,7 @@ class IosHtmlParser: HtmlParser {
         guard !sanitizedHtml.isEmpty else { return ParsedFeedContent(text: nil, commentsUrl: nil) }
 
         do {
-            let doc: Document = try SwiftSoup.parse(sanitizedHtml, baseUrl ?? "")
+            let doc: Document = try SwiftSoup.parseHTML(sanitizedHtml, baseUrl ?? "")
             let text = try doc.text()
             let commentsUrl = try extractCommentsUrl(doc: doc)
             return ParsedFeedContent(text: text, commentsUrl: commentsUrl)

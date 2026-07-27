@@ -398,4 +398,5 @@
     <string name="expand_category_button_content_description">展开 %s</string>
     <string name="collapse_category_button_content_description">收起 %s</string>
     <string name="new_articles_button">%s 篇新文章</string>
+    <string name="hide_images_for_feed_description">隐藏该订阅源的图片</string>
 </resources>

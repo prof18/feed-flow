@@ -1891,7 +1891,6 @@ class HomeViewModelTest : KoinTestBase() {
     private suspend fun getDbItems(feedFilter: FeedFilter = FeedFilter.Timeline) = databaseHelper.getFeedItems(
         feedFilter = feedFilter,
         pageSize = 100,
-        offset = 0,
         showReadItems = true,
         sortOrder = com.prof18.feedflow.core.model.FeedOrder.NEWEST_FIRST,
     )

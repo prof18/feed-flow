@@ -233,6 +233,7 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.SYNC_LINKED_MOCK,
             E2eSeedProfile.SYNC_UPLOAD_REQUIRED,
             E2eSeedProfile.LARGE_CONTENT,
+            E2eSeedProfile.PAGINATION_SCROLL_READ,
             E2eSeedProfile.REORDER_DRAG,
             E2eSeedProfile.FEED_CONTENT,
             -> applyFeatureProfileSettings(profile, account)
@@ -271,6 +272,7 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.SYNC_LINKED_MOCK -> applyMockLinkedAccount(account ?: E2eSeedAccount.FRESH_RSS)
             E2eSeedProfile.SYNC_UPLOAD_REQUIRED -> applySyncUploadRequiredSettings(account ?: E2eSeedAccount.FRESH_RSS)
             E2eSeedProfile.LARGE_CONTENT -> applyLargeContentSettings()
+            E2eSeedProfile.PAGINATION_SCROLL_READ -> applyPaginationScrollReadSettings()
             E2eSeedProfile.REORDER_DRAG -> applyReorderDragSettings()
             E2eSeedProfile.FEED_CONTENT -> applyFeedContentSettings()
             else -> Unit
@@ -323,6 +325,15 @@ class E2eSeedRunner internal constructor(
 
     private suspend fun applyLargeContentSettings() {
         databaseHelper.insertFeedItems(largeFeedItems, lastSyncTimestamp = SEED_NOW_MILLIS)
+    }
+
+    private suspend fun applyPaginationScrollReadSettings() {
+        // Scrolled-past items must be flushed as read while the timeline keeps hiding read items,
+        // so every new page is requested against a shrinking unread set.
+        settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+        settingsRepository.setHideReadItems(false)
+        settingsRepository.setShowReadArticlesTimeline(false)
+        databaseHelper.insertFeedItems(paginationScrollReadFeedItems, lastSyncTimestamp = SEED_NOW_MILLIS)
     }
 
     private fun applySyncUploadRequiredSettings(account: E2eSeedAccount) {
@@ -810,6 +821,25 @@ class E2eSeedRunner internal constructor(
                 subtitle = "Large seeded pagination item $formattedIndex",
                 feedSource = androidWeekly,
                 url = "https://e2e.feedflow.local/large/$formattedIndex",
+                pubDateMillis = SEED_NOW_MILLIS + ONE_HOUR_MILLIS - index,
+            )
+        }
+
+        // Item 050 sits inside the 41..80 window that offset pagination used to skip once
+        // scrolled-past items were flushed as read (issue #1319).
+        private val paginationScrollReadFeedItems = (1..90).map { index ->
+            val formattedIndex = index.toString().padStart(length = 3, padChar = '0')
+            val title = if (index == 50) {
+                "E2E Scroll Read Article $formattedIndex: Skip Needle"
+            } else {
+                "E2E Scroll Read Article $formattedIndex"
+            }
+            feedItem(
+                id = "e2e-scroll-read-article-$formattedIndex",
+                title = title,
+                subtitle = "Scroll-read pagination item $formattedIndex",
+                feedSource = androidWeekly,
+                url = "https://e2e.feedflow.local/scroll-read/$formattedIndex",
                 pubDateMillis = SEED_NOW_MILLIS + ONE_HOUR_MILLIS - index,
             )
         }

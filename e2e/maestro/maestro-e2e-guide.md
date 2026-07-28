@@ -64,6 +64,7 @@ Supported profiles:
 - `sync-linked-mock`
 - `sync-upload-required`
 - `large-content`
+- `pagination-scroll-read`
 - `reorder-drag`
 - `feed-content`
 

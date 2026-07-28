@@ -341,7 +341,6 @@ class ReaderModeViewModelTest : KoinTestBase() {
         val feeds = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         )

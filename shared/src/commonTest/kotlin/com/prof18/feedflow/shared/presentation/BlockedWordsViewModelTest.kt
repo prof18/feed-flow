@@ -167,7 +167,6 @@ class BlockedWordsViewModelTest : KoinTestBase() {
         databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 20,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         ).size

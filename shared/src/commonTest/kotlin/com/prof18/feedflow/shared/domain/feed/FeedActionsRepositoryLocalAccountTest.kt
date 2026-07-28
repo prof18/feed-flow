@@ -106,7 +106,6 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
         val updatedItem = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         ).first { it.url_hash == feedItem.id }
@@ -139,7 +138,6 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
             val readIds = databaseHelper.getFeedItems(
                 feedFilter = FeedFilter.Timeline,
                 pageSize = 10,
-                offset = 0,
                 showReadItems = true,
                 sortOrder = FeedOrder.NEWEST_FIRST,
             ).filter { it.is_read }.map { it.url_hash }.toSet()
@@ -170,7 +168,6 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
             val readIds = databaseHelper.getFeedItems(
                 feedFilter = FeedFilter.Timeline,
                 pageSize = 10,
-                offset = 0,
                 showReadItems = true,
                 sortOrder = FeedOrder.OLDEST_FIRST,
             ).filter { it.is_read }.map { it.url_hash }.toSet()
@@ -199,7 +196,6 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
         val readIds = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         ).filter { it.is_read }.map { it.url_hash }.toSet()
@@ -229,7 +225,6 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
         val updatedItems = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Source(feedSource),
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         )
@@ -273,7 +268,6 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
         val updatedItems = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         )
@@ -332,7 +326,6 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
         val updatedItems = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.OLDEST_FIRST,
         )
@@ -385,7 +378,6 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
         val updatedItems = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         )
@@ -436,7 +428,6 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
         val updatedItems = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.OLDEST_FIRST,
         )

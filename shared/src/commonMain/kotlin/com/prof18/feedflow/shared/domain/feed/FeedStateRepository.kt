@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
@@ -55,7 +56,10 @@ internal class FeedStateRepository(
     private val currentFeedFilterMutableState: MutableStateFlow<FeedFilter> = MutableStateFlow(FeedFilter.Timeline)
     val currentFeedFilter: StateFlow<FeedFilter> = currentFeedFilterMutableState.asStateFlow()
 
-    private var currentPage: Int = 0
+    private var lastFetchedPubDate: Long? = null
+    private var lastFetchedUrlHash: String? = null
+    private var hasMorePages: Boolean = true
+    private var isLoadingMore: Boolean = false
 
     suspend fun getFeeds() {
         pendingNewArticlesMutableState.update { 0 }
@@ -66,12 +70,11 @@ internal class FeedStateRepository(
                 databaseHelper.getFeedItems(
                     feedFilter = currentFeedFilterMutableState.value,
                     pageSize = FEED_DB_PAGE_SIZE,
-                    offset = 0,
                     showReadItems = settingsRepository.getShowReadArticlesTimeline(),
                     sortOrder = feedOrder,
                 )
             }
-            currentPage = 1
+            updateCursor(feeds)
             val settings = feedAppearanceSettingsRepository.getFeedItemMappingSettings()
 
             if (feeds.isNotEmpty()) {
@@ -100,7 +103,6 @@ internal class FeedStateRepository(
                 databaseHelper.getFeedItems(
                     feedFilter = feedFilter,
                     pageSize = FEED_DB_PAGE_SIZE,
-                    offset = 0,
                     showReadItems = settingsRepository.getShowReadArticlesTimeline(),
                     sortOrder = FeedOrder.NEWEST_FIRST,
                 )
@@ -117,22 +119,23 @@ internal class FeedStateRepository(
     }
 
     suspend fun loadMoreFeeds() {
-        // Stop loading if there are no more items
-        if (mutableFeedState.value.size % FEED_DB_PAGE_SIZE != 0L) {
+        if (!hasMorePages || isLoadingMore) {
             return
         }
+        isLoadingMore = true
         try {
             val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
             val feeds = executeWithRetry {
                 databaseHelper.getFeedItems(
                     feedFilter = currentFeedFilterMutableState.value,
                     pageSize = FEED_DB_PAGE_SIZE,
-                    offset = currentPage * FEED_DB_PAGE_SIZE,
                     showReadItems = settingsRepository.getShowReadArticlesTimeline(),
                     sortOrder = feedOrder,
+                    lastPubDate = lastFetchedPubDate,
+                    lastUrlHash = lastFetchedUrlHash,
                 )
             }
-            currentPage += 1
+            updateCursor(feeds)
             val settings = feedAppearanceSettingsRepository.getFeedItemMappingSettings()
             updateFeedState(incrementListVersion = false) { currentItems ->
                 val newList = feeds.map {
@@ -146,7 +149,19 @@ internal class FeedStateRepository(
         } catch (e: Throwable) {
             logger.d(e) { "Something wrong while getting data from Database" }
             errorMutableState.emit(DatabaseError(DatabaseErrorCode.PaginationFailed))
+        } finally {
+            isLoadingMore = false
         }
+    }
+
+    // Only ever called after a successful query: a failed one must leave the cursor pointing at
+    // the list the user is still looking at, otherwise the next page restarts from the top and is
+    // appended as duplicates. See .ai/PAGINATION.md.
+    private fun updateCursor(fetchedRows: List<SelectFeeds>) {
+        hasMorePages = fetchedRows.size == FEED_DB_PAGE_SIZE.toInt()
+        val lastRow = fetchedRows.lastOrNull()
+        lastFetchedPubDate = lastRow?.pub_date
+        lastFetchedUrlHash = lastRow?.url_hash
     }
 
     suspend fun updateFeedFilter(feedFilter: FeedFilter) {

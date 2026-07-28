@@ -121,7 +121,6 @@ class FeedSyncerTest : KoinTestBase() {
         val items = databaseHelper.getFeedItems(
             feedFilter = com.prof18.feedflow.core.model.FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = com.prof18.feedflow.core.model.FeedOrder.NEWEST_FIRST,
         )
@@ -211,7 +210,6 @@ class FeedSyncerTest : KoinTestBase() {
         val items = databaseHelper.getFeedItems(
             feedFilter = com.prof18.feedflow.core.model.FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = com.prof18.feedflow.core.model.FeedOrder.NEWEST_FIRST,
         )

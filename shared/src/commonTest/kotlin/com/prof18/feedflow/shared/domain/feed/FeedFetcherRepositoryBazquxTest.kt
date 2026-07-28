@@ -64,7 +64,6 @@ class FeedFetcherRepositoryBazquxTest : FeedFetcherRepositoryTestBase() {
     private suspend fun getTimelineItems() = databaseHelper.getFeedItems(
         feedFilter = FeedFilter.Timeline,
         pageSize = 50,
-        offset = 0,
         showReadItems = true,
         sortOrder = FeedOrder.NEWEST_FIRST,
     )

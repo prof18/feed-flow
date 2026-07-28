@@ -131,9 +131,10 @@ class DatabaseHelper(
     suspend fun getFeedItems(
         feedFilter: FeedFilter,
         pageSize: Long,
-        offset: Long,
         showReadItems: Boolean,
         sortOrder: FeedOrder,
+        lastPubDate: Long? = null,
+        lastUrlHash: String? = null,
     ): List<SelectFeeds> = withContext(backgroundDispatcher) {
         dbRef.feedItemQueries
             .selectFeeds(
@@ -144,8 +145,9 @@ class DatabaseHelper(
                 isBookmarked = feedFilter.getBookmarkFlag(),
                 isUncategorized = feedFilter.getIsUncategorized(),
                 isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
+                lastUrlHash = lastUrlHash,
+                lastPubDate = lastPubDate,
                 pageSize = pageSize,
-                offset = offset,
             )
             .executeAsList()
     }
@@ -162,8 +164,9 @@ class DatabaseHelper(
                 isBookmarked = null,
                 isUncategorized = null,
                 isHidden = 0,
+                lastUrlHash = null,
+                lastPubDate = null,
                 pageSize = pageSize,
-                offset = 0,
             )
             .asFlow()
             .mapToList(backgroundDispatcher)

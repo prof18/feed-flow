@@ -414,7 +414,6 @@ class SearchViewModelTest : KoinTestBase() {
         val dbItems = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         )
@@ -463,7 +462,6 @@ class SearchViewModelTest : KoinTestBase() {
         val dbItems = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         )
@@ -511,7 +509,6 @@ class SearchViewModelTest : KoinTestBase() {
         val dbItems = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 10,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         )

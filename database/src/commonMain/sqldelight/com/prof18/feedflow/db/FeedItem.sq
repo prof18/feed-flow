@@ -66,12 +66,57 @@ AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCateg
 AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source.category_id IS NULL))
 AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
 AND is_blocked = 0
+-- Keyset cursor on (pub_date, url_hash), never LIMIT/OFFSET: read state changes while the user
+-- scrolls, so a positional offset skips articles. The four branches exist because pub_date is
+-- nullable and comparing a null yields NULL, not false, so undated rows need matching explicitly.
+-- Must mirror the ORDER BY below. See .ai/PAGINATION.md.
+AND (
+    :lastUrlHash IS NULL
+    OR (
+        :sortOrder = 'DESC'
+        AND (
+            (
+                :lastPubDate IS NOT NULL
+                AND (
+                    pub_date IS NULL
+                    OR pub_date < :lastPubDate
+                    OR (pub_date = :lastPubDate AND feed_item.url_hash < :lastUrlHash)
+                )
+            )
+            OR (
+                :lastPubDate IS NULL
+                AND pub_date IS NULL
+                AND feed_item.url_hash < :lastUrlHash
+            )
+        )
+    )
+    OR (
+        :sortOrder = 'ASC'
+        AND (
+            (
+                :lastPubDate IS NOT NULL
+                AND pub_date IS NOT NULL
+                AND (
+                    pub_date > :lastPubDate
+                    OR (pub_date = :lastPubDate AND feed_item.url_hash > :lastUrlHash)
+                )
+            )
+            OR (
+                :lastPubDate IS NULL
+                AND (
+                    pub_date IS NOT NULL
+                    OR feed_item.url_hash > :lastUrlHash
+                )
+            )
+        )
+    )
+)
 ORDER BY
     CASE WHEN :sortOrder = 'ASC' THEN pub_date END ASC,
     CASE WHEN :sortOrder = 'ASC' THEN feed_item.url_hash END ASC,
     CASE WHEN :sortOrder = 'DESC' THEN pub_date END DESC,
     CASE WHEN :sortOrder = 'DESC' THEN feed_item.url_hash END DESC
-LIMIT :pageSize OFFSET :offset;
+LIMIT :pageSize;
 
 selectFeedUrlsForFilter:
 SELECT feed_item.url_hash FROM feed_item

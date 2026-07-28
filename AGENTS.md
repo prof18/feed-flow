@@ -261,6 +261,10 @@ When creating commits:
 - Use `ReaderModeEligibility.canOpenReaderMode` / `FeedItemUrlInfo.canOpenWebReaderMode()` as the shared gate before opening reader mode on Android, Desktop, and iOS. Ineligible links such as blank, non-http(s), media/PDF/download URLs, YouTube, and Telegram should fall back to the configured browser or `HtmlNotAvailable` behavior instead of attempting reader parsing.
 - URL-less items are a separate case: they are never web-reader eligible, but they still open in the reader from their feed content. Check `FeedItemUrlInfo.hasNoUrl()` first (it must bypass the whole `linkOpeningPreference` branch, since there is no URL any browser could open).
 
+### Timeline pagination
+- The feed list pages with a keyset cursor on `(pub_date, url_hash)`, never `LIMIT`/`OFFSET`: the timeline filters on `is_read` while mark-as-read-on-scroll mutates it mid-scroll, so a positional offset skips articles (issue #1319). Read **`.ai/PAGINATION.md`** before changing `selectFeeds` in `FeedItem.sq` or the cursor handling in `FeedStateRepository`.
+- The cursor predicate must mirror the query's `ORDER BY` exactly, including SQLite NULL placement for nullable `pub_date`; invalidate the cursor only after a query succeeds.
+
 ### Internationalization
 - String resources are located in `i18n/src/commonMain/resources/locale/values-[language]/`
 - Run .scripts/refresh-translations.sh after adding a new translation, to re-generate the kotlin code

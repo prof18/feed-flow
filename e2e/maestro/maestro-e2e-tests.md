@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 58 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 59 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -111,6 +111,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-159 | `159-reader-feed-content-no-url.yaml` | `feed-content` | Android, iOS | URL-less item opens into the fully styled feed-content reader with its title and feed source, and omits unavailable browser and content-source actions. |
 | REG-160 | `160-reader-content-source-navigation.yaml` | `reader-mode` | Android, iOS | Switching from cached web content to RSS content does not consume the reader back action; Back returns to the feed list. |
 | REG-161 | `161-reader-no-url-no-content.yaml` | `feed-content` | Android, iOS | An item with neither a url nor feed content shows the unavailable-content message instead of an empty web view. |
+| REG-162 | `162-pagination-scroll-read.yaml` | `pagination-scroll-read` | Android | Guards issue #1319: with mark-as-read-on-scroll enabled, scrolling through 90 unread items keeps loading every following page. Offset pagination over the unread-only query skipped ~40 articles per page once scrolled-past items were flushed as read, so articles 041-080 (asserted through the 050 "Skip Needle" row) were unreachable and the list stopped early. iOS is intentionally skipped: the pagination logic lives in shared code and the Android flow covers the regression wiring. |
 
 ## Known Limitations
 
@@ -118,6 +119,7 @@ These are features intentionally not covered, with the reason recorded so they a
 
 - **iOS Share Extension via OS share sheet** — Maestro can reach `shareCell` from Safari, but the synthesized tap dispatches into MobileSafari's WebView instead of the remote-hosted `SharingUIService` popover, so the extension process never starts (Maestro/XCTest limitation on iOS 26).
 - **iOS large-dataset search (REG-134)** — XCTest hierarchy retrieval times out after opening the large search-result screen.
+- **iOS scroll-read pagination (REG-162)** — intentionally Android-only. The keyset pagination and the scroll-read flush both live in shared code, and the Android flow already exercises that wiring end to end; a second platform run would only re-test SwiftUI list scrolling.
 - **iOS search-result context-menu mutations (REG-152)** — `.searchable` view hierarchy exceeds Maestro's 30s main-thread snapshot budget. Android covers the menu; iOS is row-visibility only.
 - **iOS SwiftUI text input on the FreshRSS connect form (REG-117)** — Maestro stalls on `setClipboard` / `pasteText` into the form. FreshRSS filled-form coverage stays Android-only.
 - **OS browser launches (REG-112 / REG-137 / open-website actions)** — Default / internal / preferred-browser destinations leave the app. Only the in-app preference mutation and per-feed Reader Mode override are asserted.

@@ -44,7 +44,6 @@ class E2eSeedRunnerTest : KoinTestBase() {
         val timelineItems = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Timeline,
             pageSize = 50,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         )
@@ -57,7 +56,6 @@ class E2eSeedRunnerTest : KoinTestBase() {
         val bookmarkedItems = databaseHelper.getFeedItems(
             feedFilter = FeedFilter.Bookmarks,
             pageSize = 50,
-            offset = 0,
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         )
@@ -102,6 +100,30 @@ class E2eSeedRunnerTest : KoinTestBase() {
         assertTrue(
             feedItemContentFileHandler.isContentAvailable(E2eSeedRunner.READER_FALLBACK_ARTICLE_ID),
         )
+    }
+
+    @Test
+    fun `pagination-scroll-read profile seeds enough unread items and scroll-read settings`() = runTest {
+        seedRunner.resetAndSeed(E2eSeedProfile.PAGINATION_SCROLL_READ)
+
+        val timelineItems = databaseHelper.getFeedItems(
+            feedFilter = FeedFilter.Timeline,
+            pageSize = 200,
+            showReadItems = false,
+            sortOrder = FeedOrder.NEWEST_FIRST,
+        )
+        val scrollReadTitles = timelineItems
+            .mapNotNull { it.title }
+            .filter { it.startsWith("E2E Scroll Read Article") }
+
+        assertEquals(90, scrollReadTitles.size)
+        assertEquals("E2E Scroll Read Article 001", scrollReadTitles.first())
+        assertTrue("E2E Scroll Read Article 050: Skip Needle" in scrollReadTitles)
+        assertTrue("E2E Scroll Read Article 090" in scrollReadTitles)
+
+        assertTrue(settingsRepository.getMarkFeedAsReadWhenScrolling())
+        assertFalse(settingsRepository.getHideReadItems())
+        assertFalse(settingsRepository.getShowReadArticlesTimeline())
     }
 
     @Test

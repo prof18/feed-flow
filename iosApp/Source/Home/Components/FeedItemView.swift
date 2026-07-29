@@ -13,6 +13,9 @@ import SwiftUI
 
 @MainActor
 struct FeedItemView: View {
+    @Environment(\.layoutDirection)
+    private var localeLayoutDirection
+
     let feedItem: FeedItem
     let index: Int
     let feedFontSizes: FeedFontSizes
@@ -27,6 +30,12 @@ struct FeedItemView: View {
     )
 
     var body: some View {
+        // Mirrors the item when its own text reads in the opposite direction of the app locale.
+        itemContent
+            .environment(\.layoutDirection, feedItem.contentLayoutDirection ?? localeLayoutDirection)
+    }
+
+    @ViewBuilder private var itemContent: some View {
         if normalizedFeedLayout == .bigImage {
             imageCardView
         } else {

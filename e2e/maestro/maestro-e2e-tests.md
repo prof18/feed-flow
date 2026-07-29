@@ -112,6 +112,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-160 | `160-reader-content-source-navigation.yaml` | `reader-mode` | Android, iOS | Switching from cached web content to RSS content does not consume the reader back action; Back returns to the feed list. |
 | REG-161 | `161-reader-no-url-no-content.yaml` | `feed-content` | Android, iOS | An item with neither a url nor feed content shows the unavailable-content message instead of an empty web view. |
 | REG-162 | `162-pagination-scroll-read.yaml` | `pagination-scroll-read` | Android | Guards issue #1319: with mark-as-read-on-scroll enabled, scrolling through 90 unread items keeps loading every following page. Offset pagination over the unread-only query skipped ~40 articles per page once scrolled-past items were flushed as read, so articles 041-080 (asserted through the 050 "Skip Needle" row) were unreachable and the list stopped early. iOS is intentionally skipped: the pagination logic lives in shared code and the Android flow covers the regression wiring. |
+| REG-163 | `163-rtl-content-direction.yaml` | `rtl-content` | Android, iOS | Timeline items follow their own content direction, not the app locale: a Persian item mirrors (image left of the title) while a Latin item in the same list does not; a Latin-prefixed mixed title stays left-to-right, and a direction-neutral title falls back to the description. |
 
 ## Known Limitations
 

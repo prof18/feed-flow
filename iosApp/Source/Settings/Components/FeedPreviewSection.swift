@@ -49,7 +49,8 @@ struct FeedPreviewSection: View {
                         isRead: false,
                         dateString: previewDateString(dateFormat: dateFormat),
                         commentsUrl: nil,
-                        isBookmarked: false
+                        isBookmarked: false,
+                        contentDirection: nil
                     ),
                     index: 0,
                     feedFontSizes: feedFontSizes

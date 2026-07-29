@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.domain.feed
 
+import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
@@ -27,6 +29,7 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
     override fun getTestModules(): List<Module> = TestModules.createTestModules() + module {
         single { FakeRssParserWrapper() }
         single<RssParserWrapper> { get<FakeRssParserWrapper>() }
+        single<HtmlParser> { EntityDecodingHtmlParser() }
     }
 
     @Test
@@ -63,6 +66,25 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
         assertEquals("https://example.com/index.rss", fakeRssParserWrapper.requestedUrls.last())
     }
 
+    @Test
+    fun `addFeedSource decodes numeric entities in channel title`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        fakeRssParserWrapper.reset(
+            supportedUrl = "https://example.com/feed.rss",
+            feedTitle = "BBC &#8238;فارسی",
+        )
+
+        val result = feedSourcesRepository.addFeedSource(
+            feedUrl = "https://example.com/feed.rss",
+            categoryName = null,
+            isNotificationEnabled = false,
+        )
+        advanceUntilIdle()
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        assertEquals("BBC \u202Eفارسی", databaseHelper.getFeedSources().single().title)
+    }
+
     private fun setupLocalAccount() {
         val settings: NetworkSettings = getKoin().get()
         settings.setSyncAccountType(SyncAccounts.LOCAL)
@@ -70,13 +92,14 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
 
     private class FakeRssParserWrapper : RssParserWrapper {
         private var supportedUrl: String? = null
+        private var feedTitle = "Example Feed"
         val requestedUrls = mutableListOf<String>()
 
         override suspend fun getRssChannel(url: String): RssChannel {
             requestedUrls.add(url)
             check(url == supportedUrl) { "Unsupported url: $url" }
             return RssChannel(
-                title = "Example Feed",
+                title = feedTitle,
                 link = "https://example.com",
                 description = null,
                 image = null,
@@ -88,9 +111,18 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
             )
         }
 
-        fun reset(supportedUrl: String) {
+        fun reset(supportedUrl: String, feedTitle: String = "Example Feed") {
             this.supportedUrl = supportedUrl
+            this.feedTitle = feedTitle
             requestedUrls.clear()
         }
+    }
+
+    private class EntityDecodingHtmlParser : HtmlParser {
+        override fun getTextFromHTML(html: String): String = html.replace("&#8238;", "\u202E")
+        override fun getFaviconUrl(html: String): String? = null
+        override fun getRssUrl(html: String): String? = null
+        override fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent =
+            ParsedFeedContent(text = html, commentsUrl = null)
     }
 }

@@ -37,6 +37,13 @@ class JvmHtmlParserTest {
     }
 
     @Test
+    fun `getTextFromHTML decodes decimal and hexadecimal numeric entities`() {
+        val text = parser.getTextFromHTML("BBC &#8238;فارسی &#x2026;")
+
+        assertEquals("BBC \u202Eفارسی …", text)
+    }
+
+    @Test
     fun `getRssUrl finds RSS feed link`() {
         val html = """
             <html>

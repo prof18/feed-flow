@@ -1,0 +1,43 @@
+appId: com.prof18.feedflow.debug
+---
+# Each timeline item is laid out from its own text, not from the app locale. The app locale here
+# is left-to-right, so the article image moving to the left edge is what proves an item mirrored.
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=rtl-content
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+
+# Persian title and description: the item mirrors, so the image sits left of the title.
+- assertVisible:
+    text: "خبر فوری درباره تاسیسات نفتی"
+- assertVisible:
+    id: "article_image_e2e_article_rtl_persian"
+    leftOf:
+      text: "خبر فوری درباره تاسیسات نفتی"
+
+# A Latin article in the same list is unaffected: its image stays right of the title.
+- assertVisible:
+    text: "E2E Latin Neighbour Article"
+- assertVisible:
+    id: "article_image_e2e_article_rtl_latin_neighbour"
+    rightOf:
+      text: "E2E Latin Neighbour Article"
+
+# Mixed title starting with Latin: the first strong character decides, so the item stays
+# left-to-right even though most of its text is Persian.
+- assertVisible:
+    text: "BBC گزارش تازه از تهران"
+- assertVisible:
+    id: "article_image_e2e_article_rtl_latin_prefix"
+    rightOf:
+      text: "BBC گزارش تازه از تهران"
+
+# Title made only of digits and punctuation has no direction of its own, so the Persian
+# description decides and the item mirrors.
+- assertVisible:
+    text: "2026 (#1) — 12:45"
+- assertVisible:
+    id: "article_image_e2e_article_rtl_neutral_title"
+    leftOf:
+      text: "2026 (#1) — 12:45"

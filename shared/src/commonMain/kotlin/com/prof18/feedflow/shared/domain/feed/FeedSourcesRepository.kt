@@ -329,7 +329,7 @@ internal class FeedSourcesRepository(
 
         logger.d { "<- Got back ${rssChannel.title}" }
 
-        val title = rssChannel.title
+        val title = rssChannelMapper.getFeedTitle(rssChannel)
 
         if (title != null) {
             val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)

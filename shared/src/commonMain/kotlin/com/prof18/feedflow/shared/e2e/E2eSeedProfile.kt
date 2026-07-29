@@ -23,6 +23,7 @@ enum class E2eSeedProfile(val queryValue: String) {
     PAGINATION_SCROLL_READ("pagination-scroll-read"),
     REORDER_DRAG("reorder-drag"),
     FEED_CONTENT("feed-content"),
+    RTL_CONTENT("rtl-content"),
     ;
 
     companion object {

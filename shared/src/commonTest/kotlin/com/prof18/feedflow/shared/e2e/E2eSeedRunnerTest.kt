@@ -8,6 +8,8 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.utils.ContentDirection
+import com.prof18.feedflow.core.utils.ContentDirectionDetector
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
@@ -22,6 +24,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class E2eSeedRunnerTest : KoinTestBase() {
@@ -124,6 +127,34 @@ class E2eSeedRunnerTest : KoinTestBase() {
         assertTrue(settingsRepository.getMarkFeedAsReadWhenScrolling())
         assertFalse(settingsRepository.getHideReadItems())
         assertFalse(settingsRepository.getShowReadArticlesTimeline())
+    }
+
+    @Test
+    fun `rtl-content profile seeds articles covering every content direction case`() = runTest {
+        seedRunner.resetAndSeed(E2eSeedProfile.RTL_CONTENT)
+
+        assertNotNull(databaseHelper.getFeedItemUrlInfo(E2eSeedRunner.RTL_ARTICLE_ID))
+        assertNotNull(databaseHelper.getFeedItemUrlInfo(E2eSeedRunner.RTL_NEIGHBOUR_LTR_ARTICLE_ID))
+        assertNotNull(databaseHelper.getFeedItemUrlInfo(E2eSeedRunner.RTL_LATIN_PREFIX_ARTICLE_ID))
+        assertNotNull(databaseHelper.getFeedItemUrlInfo(E2eSeedRunner.RTL_NEUTRAL_TITLE_ARTICLE_ID))
+
+        // The flows assert on layout direction, so the seeded text must keep resolving the way
+        // each case is meant to exercise the detector.
+        assertEquals(
+            ContentDirection.RIGHT_TO_LEFT,
+            ContentDirectionDetector.detect(E2eSeedRunner.RTL_ARTICLE_TITLE),
+        )
+        assertEquals(
+            ContentDirection.LEFT_TO_RIGHT,
+            ContentDirectionDetector.detect(E2eSeedRunner.RTL_LATIN_PREFIX_TITLE),
+        )
+        assertNull(ContentDirectionDetector.detect(E2eSeedRunner.RTL_NEUTRAL_TITLE))
+        assertEquals(
+            ContentDirection.RIGHT_TO_LEFT,
+            ContentDirectionDetector.detect(
+                listOf(E2eSeedRunner.RTL_NEUTRAL_TITLE, E2eSeedRunner.RTL_ARTICLE_SUBTITLE),
+            ),
+        )
     }
 
     @Test

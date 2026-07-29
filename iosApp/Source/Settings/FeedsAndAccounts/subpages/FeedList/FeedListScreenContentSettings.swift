@@ -64,7 +64,8 @@ struct FeedListSettingsScreenContent: View {
                             ? nil
                             : formatDateTimeExample(dateFormat: dateFormat, timeFormat: timeFormat),
                         commentsUrl: nil,
-                        isBookmarked: false
+                        isBookmarked: false,
+                        contentDirection: nil
                     ),
                     index: 0,
                     feedFontSizes: feedFontSizes,

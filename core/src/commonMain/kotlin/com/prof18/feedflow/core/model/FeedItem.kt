@@ -1,6 +1,7 @@
 package com.prof18.feedflow.core.model
 
 import androidx.compose.runtime.Immutable
+import com.prof18.feedflow.core.utils.ContentDirection
 
 @Immutable
 data class FeedItem(
@@ -16,4 +17,5 @@ data class FeedItem(
     val dateString: String?,
     val commentsUrl: String?,
     val isBookmarked: Boolean,
+    val contentDirection: ContentDirection? = null,
 )

@@ -35,6 +35,7 @@ All Gradle commands in this section should be run with `--quiet --console=plain`
 - `./gradlew --quiet --console=plain :androidApp:assembleGooglePlayDebug` -> Build the Android debug APK (then deploy/run with the `android` CLI, see "Running & validating the Android app")
 - `./gradlew --quiet --console=plain :androidApp:compileGooglePlayDebugKotlin` -> Quick compile check for Android (no APK assembly)
 - `.scripts/run-android.sh` -> Install and launch Android Google Play debug (wraps `:androidApp:installGooglePlayDebug`)
+- `.scripts/add-android-feed.sh <url>...` -> Add RSS feeds to the app on a connected device via the share intent, without typing URLs on the device
 - `./gradlew --quiet --console=plain desktopApp:run` -> Run Desktop app
 - `./gradlew --quiet --console=plain :desktopApp:compileKotlinJvm` -> Quick compile check for Desktop
 - `./gradlew --quiet --console=plain :desktopApp:jvmMainClasses` -> Compile Desktop main classes (faster than full build)

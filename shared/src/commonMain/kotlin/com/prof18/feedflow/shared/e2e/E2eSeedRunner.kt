@@ -236,6 +236,7 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.PAGINATION_SCROLL_READ,
             E2eSeedProfile.REORDER_DRAG,
             E2eSeedProfile.FEED_CONTENT,
+            E2eSeedProfile.RTL_CONTENT,
             -> applyFeatureProfileSettings(profile, account)
         }
     }
@@ -275,8 +276,58 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.PAGINATION_SCROLL_READ -> applyPaginationScrollReadSettings()
             E2eSeedProfile.REORDER_DRAG -> applyReorderDragSettings()
             E2eSeedProfile.FEED_CONTENT -> applyFeedContentSettings()
+            E2eSeedProfile.RTL_CONTENT -> applyRtlContentSettings()
             else -> Unit
         }
+    }
+
+    /**
+     * Articles that exercise per-item content direction. Each one is laid out from its own text,
+     * so a right-to-left article must mirror while a left-to-right one in the same list must not.
+     */
+    private suspend fun applyRtlContentSettings() {
+        databaseHelper.insertFeedItems(
+            listOf(
+                // Persian throughout: the item must mirror.
+                feedItem(
+                    id = RTL_ARTICLE_ID,
+                    title = RTL_ARTICLE_TITLE,
+                    subtitle = RTL_ARTICLE_SUBTITLE,
+                    feedSource = androidWeekly,
+                    imageUrl = RTL_IMAGE_URL,
+                    pubDateMillis = SEED_NOW_MILLIS + (ONE_HOUR_MILLIS * 4),
+                ),
+                // Latin throughout, in the same list: the item must stay left-to-right.
+                feedItem(
+                    id = RTL_NEIGHBOUR_LTR_ARTICLE_ID,
+                    title = "E2E Latin Neighbour Article",
+                    subtitle = "Latin item seeded next to the right-to-left ones",
+                    feedSource = androidWeekly,
+                    imageUrl = RTL_IMAGE_URL,
+                    pubDateMillis = SEED_NOW_MILLIS + (ONE_HOUR_MILLIS * 3),
+                ),
+                // Latin first, Persian after: the first strong character wins, so this stays
+                // left-to-right even though most of the text is Persian.
+                feedItem(
+                    id = RTL_LATIN_PREFIX_ARTICLE_ID,
+                    title = RTL_LATIN_PREFIX_TITLE,
+                    subtitle = RTL_ARTICLE_SUBTITLE,
+                    feedSource = androidWeekly,
+                    imageUrl = RTL_IMAGE_URL,
+                    pubDateMillis = SEED_NOW_MILLIS + (ONE_HOUR_MILLIS * 2),
+                ),
+                // Title has no strongly directional character, so the subtitle decides.
+                feedItem(
+                    id = RTL_NEUTRAL_TITLE_ARTICLE_ID,
+                    title = RTL_NEUTRAL_TITLE,
+                    subtitle = RTL_ARTICLE_SUBTITLE,
+                    feedSource = androidWeekly,
+                    imageUrl = RTL_IMAGE_URL,
+                    pubDateMillis = SEED_NOW_MILLIS + ONE_HOUR_MILLIS,
+                ),
+            ),
+            lastSyncTimestamp = SEED_NOW_MILLIS,
+        )
     }
 
     private suspend fun applyFeedContentSettings() {
@@ -518,6 +569,22 @@ class E2eSeedRunner internal constructor(
         const val READER_FALLBACK_ARTICLE_ID = "e2e-article-reader-fallback"
         const val FEED_CONTENT_NO_URL_ARTICLE_ID = "e2e-article-feed-content-no-url"
         const val NO_URL_NO_CONTENT_ARTICLE_ID = "e2e-article-no-content-no-url"
+
+        // No id may be a prefix of another one: Maestro matches accessibility ids by regex, so a
+        // shared prefix would resolve to several elements at once.
+        const val RTL_ARTICLE_ID = "e2e-article-rtl-persian"
+        const val RTL_NEIGHBOUR_LTR_ARTICLE_ID = "e2e-article-rtl-latin-neighbour"
+        const val RTL_LATIN_PREFIX_ARTICLE_ID = "e2e-article-rtl-latin-prefix"
+        const val RTL_NEUTRAL_TITLE_ARTICLE_ID = "e2e-article-rtl-neutral-title"
+
+        // Persian text kept verbatim in the flows, so it must stay byte-identical here.
+        const val RTL_ARTICLE_TITLE = "خبر فوری درباره تاسیسات نفتی"
+        const val RTL_ARTICLE_SUBTITLE = "توضیح کوتاه برای این خبر آزمایشی"
+        const val RTL_LATIN_PREFIX_TITLE = "BBC گزارش تازه از تهران"
+        const val RTL_NEUTRAL_TITLE = "2026 (#1) — 12:45"
+
+        private const val RTL_IMAGE_URL =
+            "https://cdn.mos.cms.futurecdn.net/kDPsA7KqMQchuAKRoTZozb-1280-80.jpg"
 
         private const val FEED_CONTENT_IMAGE_URL =
             "https://cdn.mos.cms.futurecdn.net/kDPsA7KqMQchuAKRoTZozb-1280-80.jpg"

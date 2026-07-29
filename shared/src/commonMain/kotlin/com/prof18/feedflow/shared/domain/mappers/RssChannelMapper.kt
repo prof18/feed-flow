@@ -15,6 +15,10 @@ internal class RssChannelMapper(
     private val logger: Logger,
 ) {
 
+    fun getFeedTitle(rssChannel: RssChannel): String? = rssChannel.title?.let { title ->
+        (htmlParser.getTextFromHTML(title) ?: title).filterSpecialCharacters()
+    }
+
     fun getFeedItems(rssChannel: RssChannel, feedSource: FeedSource): List<FeedItem> =
         rssChannel.items.mapNotNull { rssItem ->
             val url = rssItem.resolveUrl()
@@ -26,9 +30,7 @@ internal class RssChannelMapper(
                 return@mapNotNull null
             }
 
-            val title = rssItem.title
-                ?.let { htmlParser.getTextFromHTML(it) }
-                ?.filterSpecialCharacters()
+            val title = rssItem.title.cleanTitle()
 
             FeedItem(
                 id = rssItem.resolveId(url, content, feedSource.id),
@@ -65,6 +67,10 @@ internal class RssChannelMapper(
         val currentTimeMillis = dateFormatter.currentTimeMillis()
         return if (parsedDateMillis > currentTimeMillis) currentTimeMillis else parsedDateMillis
     }
+
+    private fun String?.cleanTitle(): String? = this
+        ?.let { htmlParser.getTextFromHTML(it) }
+        ?.filterSpecialCharacters()
 }
 
 private fun RssItem.resolveUrl(): String? = link?.takeIf { it.isNotBlank() } ?: run {

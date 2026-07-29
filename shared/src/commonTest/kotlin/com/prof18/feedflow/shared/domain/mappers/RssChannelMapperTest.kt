@@ -21,6 +21,17 @@ class RssChannelMapperTest {
     )
 
     @Test
+    fun `getFeedTitle decodes numeric HTML entities`() {
+        val rssChannel = RssChannelGenerator.rssChannel(
+            title = "BBC &#8238;فارسی",
+        )
+
+        val result = mapper.getFeedTitle(rssChannel)
+
+        assertEquals("BBC \u202Eفارسی", result)
+    }
+
+    @Test
     fun `getFeedItems stores content when content encoded is present`() {
         val rssChannel = RssChannelGenerator.rssChannel(
             items = listOf(
@@ -219,6 +230,7 @@ class RssChannelMapperTest {
         override fun getTextFromHTML(html: String): String? = html
             .replace("<p>", "")
             .replace("</p>", "")
+            .replace("&#8238;", "\u202E")
 
         override fun getFaviconUrl(html: String): String? = null
         override fun getRssUrl(html: String): String? = null

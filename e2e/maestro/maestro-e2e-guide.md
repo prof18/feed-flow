@@ -67,6 +67,7 @@ Supported profiles:
 - `pagination-scroll-read`
 - `reorder-drag`
 - `feed-content`
+- `rtl-content`
 
 Seed deep links:
 

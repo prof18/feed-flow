@@ -9,6 +9,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,8 +17,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.prof18.feedflow.core.model.FeedFilter
@@ -29,6 +32,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.utils.ContentDirection
 import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -95,6 +99,8 @@ internal fun FeedItemView(
         )
     }
 
+    val contentLayoutDirection = contentLayoutDirection(feedItem)
+
     val normalizedFeedLayout = if (feedLayout == FeedLayout.GRID) FeedLayout.BIG_IMAGE else feedLayout
     if (normalizedFeedLayout == FeedLayout.BIG_IMAGE) {
         Column(modifier = modifier) {
@@ -102,14 +108,16 @@ internal fun FeedItemView(
                 modifier = clickableItemModifier
                     .testTag(FeedItemE2eIds.row(feedItem.id)),
             ) {
-                FeedItemImageCardContent(
-                    feedItem = feedItem,
-                    feedFontSize = feedFontSize,
-                    isGridCell = isGridCell,
-                    heroImageAspectRatio = heroImageAspectRatio,
-                    currentFeedFilter = currentFeedFilter,
-                    feedItemDisplaySettings = feedItemDisplaySettings,
-                )
+                CompositionLocalProvider(LocalLayoutDirection provides contentLayoutDirection) {
+                    FeedItemImageCardContent(
+                        feedItem = feedItem,
+                        feedFontSize = feedFontSize,
+                        isGridCell = isGridCell,
+                        heroImageAspectRatio = heroImageAspectRatio,
+                        currentFeedFilter = currentFeedFilter,
+                        feedItemDisplaySettings = feedItemDisplaySettings,
+                    )
+                }
 
                 FeedItemContextMenu(
                     showMenu = showItemMenu,
@@ -145,41 +153,46 @@ internal fun FeedItemView(
                     bottom = Spacing.regular,
                 ),
         ) {
-            FeedSourceAndUnreadDotRow(
-                feedItem = feedItem,
-                feedFontSize = feedFontSize,
-                currentFeedFilter = currentFeedFilter,
-                isHideUnreadDotEnabled = feedItemDisplaySettings.isHideUnreadDotEnabled,
-                isHideFeedSourceEnabled = feedItemDisplaySettings.isHideFeedSourceEnabled,
-            )
-
-            TitleSubtitleAndImageRow(
-                modifier = Modifier
-                    .height(IntrinsicSize.Min)
-                    .fillMaxWidth(),
-                feedItem = feedItem,
-                feedFontSize = feedFontSize,
-                currentFeedFilter = currentFeedFilter,
-                descriptionLineLimit = feedItemDisplaySettings.descriptionLineLimit,
-            )
-
-            feedItem.dateString?.let { dateString ->
-                Text(
-                    modifier = Modifier
-                        .padding(top = Spacing.small),
-                    text = dateString,
-                    fontSize = feedFontSize.feedMetaFontSize.sp,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = if (feedItem.isRead &&
-                            currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
-                        ) {
-                            0.6f
-                        } else {
-                            1f
-                        },
-                    ),
+            CompositionLocalProvider(LocalLayoutDirection provides contentLayoutDirection) {
+                FeedSourceAndUnreadDotRow(
+                    feedItem = feedItem,
+                    feedFontSize = feedFontSize,
+                    currentFeedFilter = currentFeedFilter,
+                    isHideUnreadDotEnabled = feedItemDisplaySettings.isHideUnreadDotEnabled,
+                    isHideFeedSourceEnabled = feedItemDisplaySettings.isHideFeedSourceEnabled,
                 )
+
+                TitleSubtitleAndImageRow(
+                    modifier = Modifier
+                        .height(IntrinsicSize.Min)
+                        .fillMaxWidth(),
+                    feedItem = feedItem,
+                    feedFontSize = feedFontSize,
+                    currentFeedFilter = currentFeedFilter,
+                    descriptionLineLimit = feedItemDisplaySettings.descriptionLineLimit,
+                )
+
+                feedItem.dateString?.let { dateString ->
+                    Text(
+                        // Fills the width so the date follows the item direction: the enclosing
+                        // Column resolves its alignment outside this provider, in locale direction.
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = Spacing.small),
+                        text = dateString,
+                        fontSize = feedFontSize.feedMetaFontSize.sp,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = if (feedItem.isRead &&
+                                currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
+                            ) {
+                                0.6f
+                            } else {
+                                1f
+                            },
+                        ),
+                    )
+                }
             }
 
             FeedItemContextMenu(
@@ -211,6 +224,19 @@ internal fun FeedItemView(
         }
     }
 }
+
+/**
+ * Mirrors a single item when its own content reads in the opposite direction of the app locale,
+ * so a Persian article is laid out right-to-left even while the UI is in English. The direction
+ * is resolved once while mapping; items whose text has no direction follow the app locale.
+ */
+@Composable
+private fun contentLayoutDirection(feedItem: FeedItem): LayoutDirection =
+    when (feedItem.contentDirection) {
+        ContentDirection.LEFT_TO_RIGHT -> LayoutDirection.Ltr
+        ContentDirection.RIGHT_TO_LEFT -> LayoutDirection.Rtl
+        null -> LocalLayoutDirection.current
+    }
 
 @Preview
 @Composable

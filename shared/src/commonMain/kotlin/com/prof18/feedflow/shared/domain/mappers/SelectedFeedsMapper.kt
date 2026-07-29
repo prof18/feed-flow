@@ -5,61 +5,67 @@ import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.utils.ContentDirectionDetector
 import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 
 internal fun SelectFeeds.toFeedItem(
     dateFormatter: DateFormatter,
     settings: FeedItemMappingSettings,
-) = FeedItem(
-    id = url_hash,
-    url = sanitizeUrl(url),
-    title = title,
-    subtitle = subtitle?.let { desc ->
+): FeedItem {
+    val resolvedSubtitle = subtitle?.let { desc ->
         val title = title
         if (settings.removeTitleFromDescription && title != null) {
             desc.replace(title, "").replace("  ", "").trim()
         } else {
             desc
         }
-    }.takeIf { !settings.hideDescription },
-    content = null,
-    imageUrl = image_url.takeIf { !settings.hideImages && feed_source_hide_images != true },
-    feedSource = FeedSource(
-        id = feed_source_id,
-        url = feed_source_url,
-        title = feed_source_title,
-        category = if (feed_source_category_title != null && feed_source_category_id != null) {
-            @Suppress("RedundantRequireNotNullCall")
-            // It's required because the variables come from another module
-            FeedSourceCategory(
-                id = requireNotNull(feed_source_category_id),
-                title = requireNotNull(feed_source_category_title),
+    }.takeIf { !settings.hideDescription }
+
+    return FeedItem(
+        id = url_hash,
+        url = sanitizeUrl(url),
+        title = title,
+        subtitle = resolvedSubtitle,
+        contentDirection = ContentDirectionDetector.detect(listOfNotNull(title, resolvedSubtitle)),
+        content = null,
+        imageUrl = image_url.takeIf { !settings.hideImages && feed_source_hide_images != true },
+        feedSource = FeedSource(
+            id = feed_source_id,
+            url = feed_source_url,
+            title = feed_source_title,
+            category = if (feed_source_category_title != null && feed_source_category_id != null) {
+                @Suppress("RedundantRequireNotNullCall")
+                // It's required because the variables come from another module
+                FeedSourceCategory(
+                    id = requireNotNull(feed_source_category_id),
+                    title = requireNotNull(feed_source_category_title),
+                )
+            } else {
+                null
+            },
+            lastSyncTimestamp = feed_source_last_sync_timestamp,
+            logoUrl = feed_source_logo_url,
+            websiteUrl = null,
+            articleOpenMode = feed_source_article_open_mode ?: ArticleOpenMode.DEFAULT,
+            isHiddenFromTimeline = feed_source_is_hidden ?: false,
+            isPinned = feed_source_is_pinned ?: false,
+            isNotificationEnabled = feed_source_notifications_enabled ?: false,
+            isHideImagesEnabled = feed_source_hide_images ?: false,
+            fetchFailed = feed_source_fetch_failed,
+        ),
+        pubDateMillis = pub_date,
+        dateString = if (pub_date != null && !settings.hideDate) {
+            dateFormatter.formatDateForFeed(
+                millis = requireNotNull(pub_date),
+                dateFormat = settings.dateFormat,
+                timeFormat = settings.timeFormat,
             )
         } else {
             null
         },
-        lastSyncTimestamp = feed_source_last_sync_timestamp,
-        logoUrl = feed_source_logo_url,
-        websiteUrl = null,
-        articleOpenMode = feed_source_article_open_mode ?: ArticleOpenMode.DEFAULT,
-        isHiddenFromTimeline = feed_source_is_hidden ?: false,
-        isPinned = feed_source_is_pinned ?: false,
-        isNotificationEnabled = feed_source_notifications_enabled ?: false,
-        isHideImagesEnabled = feed_source_hide_images ?: false,
-        fetchFailed = feed_source_fetch_failed,
-    ),
-    pubDateMillis = pub_date,
-    dateString = if (pub_date != null && !settings.hideDate) {
-        dateFormatter.formatDateForFeed(
-            millis = requireNotNull(pub_date),
-            dateFormat = settings.dateFormat,
-            timeFormat = settings.timeFormat,
-        )
-    } else {
-        null
-    },
-    isRead = is_read,
-    commentsUrl = comments_url?.let { sanitizeUrl(it) },
-    isBookmarked = is_bookmarked,
-)
+        isRead = is_read,
+        commentsUrl = comments_url?.let { sanitizeUrl(it) },
+        isBookmarked = is_bookmarked,
+    )
+}

@@ -1,8 +1,8 @@
 package com.prof18.feedflow.android.widget
 
-import com.prof18.feedflow.shared.domain.feed.MAX_WIDGET_FEED_ITEMS
 import kotlin.math.sqrt
 
+private const val MAX_SERIALIZED_ITEM_VARIANT_PAYLOAD_SLOTS = 80
 private const val REMOTE_VIEWS_BYTES_PER_PIXEL_WITH_HEADROOM = 6L
 private const val ARTICLE_BUDGET_NUMERATOR = 3L
 private const val ARTICLE_BUDGET_DENOMINATOR = 4L
@@ -14,9 +14,13 @@ internal fun resolveWidgetImageBudget(
     screenWidthPx: Int,
     screenHeightPx: Int,
     exactSizes: WidgetExactSizeResolution,
+    feedItemCount: Int,
 ): WidgetImageBudgetPolicy {
     require(exactSizes.payloadVariantCount > 0)
+    require(feedItemCount >= 0)
 
+    val maxItemsForHost = MAX_SERIALIZED_ITEM_VARIANT_PAYLOAD_SLOTS / exactSizes.payloadVariantCount
+    val itemCapacity = minOf(feedItemCount, maxItemsForHost)
     val screenPixelCount = saturatedMultiply(
         screenWidthPx.coerceAtLeast(0).toLong(),
         screenHeightPx.coerceAtLeast(0).toLong(),
@@ -35,14 +39,15 @@ internal fun resolveWidgetImageBudget(
         deviceArticleBudgetBytes,
     )
     val payloadCount = saturatedMultiply(
-        MAX_WIDGET_FEED_ITEMS.toLong(),
+        maxItemsForHost.toLong(),
         exactSizes.payloadVariantCount.toLong(),
-    )
+    ).coerceAtLeast(1L)
     val payloadBudgetBytes = effectiveArticleBudgetBytes / payloadCount
     val budgetEdgePx = sqrt(payloadBudgetBytes.toDouble() / ARGB_8888_BYTES_PER_PIXEL).toInt()
 
     return WidgetImageBudgetPolicy(
         exactSizeKey = exactSizes.stableKey,
+        itemCapacity = itemCapacity,
         payloadCount = payloadCount,
         remoteViewsLimitBytes = remoteViewsLimitBytes,
         effectiveArticleBudgetBytes = effectiveArticleBudgetBytes,
@@ -70,6 +75,7 @@ private fun multiplyDivideFloor(
 
 internal data class WidgetImageBudgetPolicy(
     val exactSizeKey: String,
+    val itemCapacity: Int,
     val payloadCount: Long,
     val remoteViewsLimitBytes: Long,
     val effectiveArticleBudgetBytes: Long,

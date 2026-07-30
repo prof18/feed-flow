@@ -43,8 +43,9 @@ class WidgetBitmapValidatorTest {
                     },
                     payloadVariantCount = variantCount,
                 ),
+                feedItemCount = MAX_WIDGET_FEED_ITEMS,
             )
-            val slotCount = MAX_WIDGET_FEED_ITEMS * variantCount
+            val slotCount = budget.payloadCount.toInt()
             val allocationByteCounts = List(slotCount) { slotIndex ->
                 val request = requireNotNull(
                     budget.resolveRequest(

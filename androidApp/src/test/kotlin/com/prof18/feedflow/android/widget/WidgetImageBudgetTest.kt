@@ -6,23 +6,82 @@ import com.prof18.feedflow.shared.domain.feed.MAX_WIDGET_FEED_ITEMS
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class WidgetImageBudgetTest {
 
     @Test
-    fun `payload count always reserves maximum feed items for every exact-size variant`() {
-        val oneVariant = resolveBudget(variantCount = 1)
-        val threeVariants = resolveBudget(variantCount = 3)
+    fun `host slot cap limits item capacity for one through four payload variants`() {
+        val expectedPolicies = listOf(
+            Triple(1, 80, 80L),
+            Triple(2, 40, 80L),
+            Triple(3, 26, 78L),
+            Triple(4, 20, 80L),
+        )
 
-        assertEquals(MAX_WIDGET_FEED_ITEMS.toLong(), oneVariant.payloadCount)
-        assertEquals(MAX_WIDGET_FEED_ITEMS.toLong() * 3L, threeVariants.payloadCount)
-        assertEquals(oneVariant.payloadBudgetBytes / 3L, threeVariants.payloadBudgetBytes)
+        expectedPolicies.forEach { (variantCount, expectedCapacity, expectedPayloadCount) ->
+            val budget = resolveBudget(
+                variantCount = variantCount,
+                feedItemCount = 100,
+            )
+
+            assertEquals("capacity for $variantCount variants", expectedCapacity, budget.itemCapacity)
+            assertEquals("payloads for $variantCount variants", expectedPayloadCount, budget.payloadCount)
+        }
     }
 
     @Test
-    fun `budget reserves 15 payloads for every Glance variant including unusable layout sizes`() {
+    fun `candidate counts below host capacity do not shrink reserved payload count`() {
+        val expectedPayloadCounts = listOf(80L, 80L, 78L, 80L)
+
+        expectedPayloadCounts.forEachIndexed { index, expectedPayloadCount ->
+            val variantCount = index + 1
+            val budget = resolveBudget(
+                variantCount = variantCount,
+                feedItemCount = 7,
+            )
+
+            assertEquals(7, budget.itemCapacity)
+            assertEquals(expectedPayloadCount, budget.payloadCount)
+        }
+    }
+
+    @Test
+    fun `zero candidates keeps stable host reservation with zero item capacity`() {
+        val budget = resolveBudget(
+            variantCount = 2,
+            feedItemCount = 0,
+        )
+
+        assertEquals(0, budget.itemCapacity)
+        assertEquals(80L, budget.payloadCount)
+    }
+
+    @Test
+    fun `more payload variants than host slots yields zero capacity and one reserved slot`() {
+        val budget = resolveBudget(
+            variantCount = 81,
+            feedItemCount = 100,
+        )
+
+        assertEquals(0, budget.itemCapacity)
+        assertEquals(1L, budget.payloadCount)
+    }
+
+    @Test
+    fun `negative candidate count is rejected`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            resolveBudget(
+                variantCount = 1,
+                feedItemCount = -1,
+            )
+        }
+    }
+
+    @Test
+    fun `budget uses exact payload variants including unusable layout sizes`() {
         val exactSizes = resolveExactSizes(
             snapshot = WidgetOptionsSnapshot(
                 explicitSizes = listOf(
@@ -44,20 +103,22 @@ class WidgetImageBudgetTest {
             screenWidthPx = 480,
             screenHeightPx = 800,
             exactSizes = exactSizes,
+            feedItemCount = 100,
         )
 
         assertEquals(1, exactSizes.variantCount)
         assertEquals(3, exactSizes.payloadVariantCount)
-        assertEquals(MAX_WIDGET_FEED_ITEMS.toLong() * 3L, budget.payloadCount)
+        assertEquals(26, budget.itemCapacity)
+        assertEquals(78L, budget.payloadCount)
         assertTrue(budget.exactSizeKey.contains("payloadVariants=3"))
     }
 
     @Test
-    fun `list policy keeps 50dp viewport and fixed 15 by variant shared budget`() {
+    fun `list policy keeps 50dp viewport and stable host payload budget`() {
         val variantCount = 3
         val imageLayout = resolveWidgetListImageLayout(displayDensity = 2f)
         val budget = resolveBudget(variantCount = variantCount)
-        val requests = List(MAX_WIDGET_FEED_ITEMS * variantCount) { index ->
+        val requests = List(budget.itemCapacity * variantCount) { index ->
             requireNotNull(
                 budget.resolveRequest(
                     imageUrl = "https://example.com/list-image-$index",
@@ -68,7 +129,8 @@ class WidgetImageBudgetTest {
 
         assertEquals(50, imageLayout.displayViewportDp)
         assertEquals(100, imageLayout.displayTargetPx)
-        assertEquals((MAX_WIDGET_FEED_ITEMS * variantCount).toLong(), budget.payloadCount)
+        assertEquals(MAX_WIDGET_FEED_ITEMS, budget.itemCapacity)
+        assertEquals(78L, budget.payloadCount)
         assertTrue(requests.all { it.identity.payloadBudgetBytes == budget.payloadBudgetBytes })
         assertTrue(requests.all { it.identity.exactSizeKey == budget.exactSizeKey })
     }
@@ -83,8 +145,8 @@ class WidgetImageBudgetTest {
 
         assertEquals(2_304_000L, budget.remoteViewsLimitBytes)
         assertEquals(1_728_000L, budget.effectiveArticleBudgetBytes)
-        assertEquals(115_200L, budget.payloadBudgetBytes)
-        assertEquals(169, budget.budgetEdgePx)
+        assertEquals(21_600L, budget.payloadBudgetBytes)
+        assertEquals(73, budget.budgetEdgePx)
     }
 
     @Test
@@ -96,7 +158,7 @@ class WidgetImageBudgetTest {
         )
 
         assertEquals(6L * 1024L * 1024L, budget.effectiveArticleBudgetBytes)
-        assertEquals(323, budget.budgetEdgePx)
+        assertEquals(140, budget.budgetEdgePx)
     }
 
     @Test
@@ -121,29 +183,50 @@ class WidgetImageBudgetTest {
         )
 
         assertEquals(50, budget.resolveRequest("https://example.com/image", displayTargetPx = 50)?.edgePx)
-        assertEquals(169, budget.resolveRequest("https://example.com/image", displayTargetPx = 500)?.edgePx)
+        assertEquals(73, budget.resolveRequest("https://example.com/image", displayTargetPx = 500)?.edgePx)
         assertNull(budget.resolveRequest("https://example.com/image", displayTargetPx = 0))
     }
 
     @Test
-    fun `feed emission count cannot change fixed-capacity budget or otherwise identical request identity`() {
-        val budget = resolveBudget(variantCount = 2)
-        val oneImageEmission = listOf("https://example.com/image")
-        val fifteenImageEmission = List(MAX_WIDGET_FEED_ITEMS) { index ->
-            if (index == 0) "https://example.com/image" else "https://example.com/image-$index"
-        }
+    fun `candidate count cannot change stable host budget or otherwise identical request identity`() {
+        val oneCandidateBudget = resolveBudget(
+            variantCount = 2,
+            feedItemCount = 1,
+        )
+        val fifteenCandidateBudget = resolveBudget(
+            variantCount = 2,
+            feedItemCount = MAX_WIDGET_FEED_ITEMS,
+        )
 
-        val oneItemRequest = budget.resolveRequest(oneImageEmission.first(), displayTargetPx = 50)
-        val fifteenItemRequest = budget.resolveRequest(fifteenImageEmission.first(), displayTargetPx = 50)
+        val oneItemRequest = oneCandidateBudget.resolveRequest(
+            imageUrl = "https://example.com/image",
+            displayTargetPx = 50,
+        )
+        val fifteenItemRequest = fifteenCandidateBudget.resolveRequest(
+            imageUrl = "https://example.com/image",
+            displayTargetPx = 50,
+        )
 
-        assertEquals(MAX_WIDGET_FEED_ITEMS.toLong() * 2L, budget.payloadCount)
+        assertEquals(80L, oneCandidateBudget.payloadCount)
+        assertEquals(oneCandidateBudget.payloadCount, fifteenCandidateBudget.payloadCount)
+        assertEquals(oneCandidateBudget.payloadBudgetBytes, fifteenCandidateBudget.payloadBudgetBytes)
         assertEquals(oneItemRequest, fifteenItemRequest)
     }
 
     @Test
     fun `smaller budget changes policy and request identity when bounded edge is unchanged`() {
-        val largerBudget = resolveBudget(variantCount = 1, exactSizeKey = "one-size")
-        val smallerBudget = resolveBudget(variantCount = 2, exactSizeKey = "two-sizes")
+        val largerBudget = resolveBudget(
+            screenWidthPx = 480,
+            screenHeightPx = 800,
+            variantCount = 1,
+            exactSizeKey = "larger-screen",
+        )
+        val smallerBudget = resolveBudget(
+            screenWidthPx = 400,
+            screenHeightPx = 700,
+            variantCount = 1,
+            exactSizeKey = "smaller-screen",
+        )
         val largerRequest = largerBudget.resolveRequest("https://example.com/image", displayTargetPx = 50)
         val smallerRequest = smallerBudget.resolveRequest("https://example.com/image", displayTargetPx = 50)
 
@@ -152,7 +235,7 @@ class WidgetImageBudgetTest {
         assertNotEquals(largerBudget.identity, smallerBudget.identity)
         assertNotEquals(largerRequest?.identity, smallerRequest?.identity)
         assertEquals(smallerBudget.payloadBudgetBytes, smallerRequest?.identity?.payloadBudgetBytes)
-        assertEquals("two-sizes", smallerRequest?.identity?.exactSizeKey)
+        assertEquals("smaller-screen", smallerRequest?.identity?.exactSizeKey)
     }
 
     @Test
@@ -173,6 +256,7 @@ class WidgetImageBudgetTest {
         screenHeightPx: Int = 800,
         variantCount: Int,
         exactSizeKey: String = "sizes-$variantCount",
+        feedItemCount: Int = MAX_WIDGET_FEED_ITEMS,
     ): WidgetImageBudgetPolicy = resolveWidgetImageBudget(
         screenWidthPx = screenWidthPx,
         screenHeightPx = screenHeightPx,
@@ -183,5 +267,6 @@ class WidgetImageBudgetTest {
             },
             payloadVariantCount = variantCount,
         ),
+        feedItemCount = feedItemCount,
     )
 }

@@ -206,6 +206,7 @@ class WidgetCardSlabRemoteViewsTest {
             ),
             imageBudgetPolicy = WidgetImageBudgetPolicy(
                 exactSizeKey = "test-size",
+                itemCapacity = 1,
                 payloadCount = 1,
                 remoteViewsLimitBytes = 1,
                 effectiveArticleBudgetBytes = 1,

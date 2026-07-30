@@ -1,7 +1,9 @@
 package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.WidgetFeedLayout
+import com.prof18.feedflow.shared.domain.model.WidgetCardAppearance
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
+import com.prof18.feedflow.shared.domain.model.normalized
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +14,8 @@ import kotlinx.coroutines.flow.update
 class WidgetSettingsRepository(
     private val settings: Settings,
 ) {
+    private val widgetCardAppearanceLock = Any()
+
     private val feedWidgetLayoutMutableFlow = MutableStateFlow(getFeedWidgetLayout())
     val feedWidgetLayout: StateFlow<WidgetFeedLayout> = feedWidgetLayoutMutableFlow.asStateFlow()
 
@@ -32,6 +36,9 @@ class WidgetSettingsRepository(
 
     private val widgetHideImagesMutableFlow = MutableStateFlow(getWidgetHideImages())
     val widgetHideImages: StateFlow<Boolean> = widgetHideImagesMutableFlow.asStateFlow()
+
+    private val widgetCardAppearanceMutableFlow = MutableStateFlow(getWidgetCardAppearance())
+    val widgetCardAppearance: StateFlow<WidgetCardAppearance> = widgetCardAppearanceMutableFlow.asStateFlow()
 
     fun getFeedWidgetLayout(): WidgetFeedLayout =
         settings.getString(WidgetSettingsFields.FEED_WIDGET_LAYOUT.name, WidgetFeedLayout.LIST.name)
@@ -106,6 +113,62 @@ class WidgetSettingsRepository(
         widgetHideImagesMutableFlow.update { value }
     }
 
+    fun getWidgetCardAppearance(): WidgetCardAppearance = synchronized(widgetCardAppearanceLock) {
+        val defaults = WidgetCardAppearance()
+        WidgetCardAppearance(
+            surfaceColor = settings.getIntOrNull(
+                WidgetSettingsFields.WIDGET_CARD_SURFACE_COLOR.name,
+            ),
+            surfaceOpacityPercent = settings.getInt(
+                WidgetSettingsFields.WIDGET_CARD_SURFACE_OPACITY_PERCENT.name,
+                defaults.surfaceOpacityPercent,
+            ),
+            cornerRadiusDp = settings.getInt(
+                WidgetSettingsFields.WIDGET_CARD_CORNER_RADIUS_DP.name,
+                defaults.cornerRadiusDp,
+            ),
+            itemSeparation = getEnumOrDefault(
+                field = WidgetSettingsFields.WIDGET_CARD_ITEM_SEPARATION,
+                default = defaults.itemSeparation,
+            ),
+            dividerOpacityPercent = settings.getInt(
+                WidgetSettingsFields.WIDGET_CARD_DIVIDER_OPACITY_PERCENT.name,
+                defaults.dividerOpacityPercent,
+            ),
+            imageSizing = getEnumOrDefault(
+                field = WidgetSettingsFields.WIDGET_CARD_IMAGE_SIZING,
+                default = defaults.imageSizing,
+            ),
+        ).normalized()
+    }
+
+    fun setWidgetCardAppearance(value: WidgetCardAppearance) {
+        synchronized(widgetCardAppearanceLock) {
+            val normalizedValue = value.normalized()
+            if (normalizedValue.surfaceColor == null) {
+                settings.remove(WidgetSettingsFields.WIDGET_CARD_SURFACE_COLOR.name)
+            } else {
+                settings[WidgetSettingsFields.WIDGET_CARD_SURFACE_COLOR.name] = normalizedValue.surfaceColor
+            }
+            settings[WidgetSettingsFields.WIDGET_CARD_SURFACE_OPACITY_PERCENT.name] =
+                normalizedValue.surfaceOpacityPercent
+            settings[WidgetSettingsFields.WIDGET_CARD_CORNER_RADIUS_DP.name] = normalizedValue.cornerRadiusDp
+            settings[WidgetSettingsFields.WIDGET_CARD_ITEM_SEPARATION.name] = normalizedValue.itemSeparation.name
+            settings[WidgetSettingsFields.WIDGET_CARD_DIVIDER_OPACITY_PERCENT.name] =
+                normalizedValue.dividerOpacityPercent
+            settings[WidgetSettingsFields.WIDGET_CARD_IMAGE_SIZING.name] = normalizedValue.imageSizing.name
+            widgetCardAppearanceMutableFlow.update { normalizedValue }
+        }
+    }
+
+    private inline fun <reified T : Enum<T>> getEnumOrDefault(
+        field: WidgetSettingsFields,
+        default: T,
+    ): T {
+        val storedValue = settings.getString(field.name, default.name)
+        return enumValues<T>().firstOrNull { it.name == storedValue } ?: default
+    }
+
     private companion object {
         const val DEFAULT_WIDGET_FONT_SCALE_FACTOR = 0
         const val DEFAULT_WIDGET_BACKGROUND_OPACITY_PERCENT = 100
@@ -120,4 +183,10 @@ private enum class WidgetSettingsFields {
     WIDGET_BACKGROUND_OPACITY_PERCENT,
     WIDGET_TEXT_COLOR_MODE,
     WIDGET_HIDE_IMAGES,
+    WIDGET_CARD_SURFACE_COLOR,
+    WIDGET_CARD_SURFACE_OPACITY_PERCENT,
+    WIDGET_CARD_CORNER_RADIUS_DP,
+    WIDGET_CARD_ITEM_SEPARATION,
+    WIDGET_CARD_DIVIDER_OPACITY_PERCENT,
+    WIDGET_CARD_IMAGE_SIZING,
 }

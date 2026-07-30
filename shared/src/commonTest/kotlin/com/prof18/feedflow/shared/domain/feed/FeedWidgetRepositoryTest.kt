@@ -65,6 +65,28 @@ class FeedWidgetRepositoryTest : KoinTestBase() {
     }
 
     @Test
+    fun `getFeeds emits at most the widget item limit`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource(id = "source-1", title = "Widget Feed")
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.insertFeedItems(
+            (0 until MAX_WIDGET_FEED_ITEMS + 2).map { index ->
+                buildFeedItem(
+                    id = "item-$index",
+                    title = "Item $index",
+                    pubDateMillis = index.toLong(),
+                    source = feedSource,
+                )
+            },
+            lastSyncTimestamp = 0,
+        )
+
+        createRepository().getFeeds().test {
+            assertEquals(MAX_WIDGET_FEED_ITEMS, awaitItem().size)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `getFeeds hides date when setting is enabled`() = runTest(testDispatcher) {
         feedAppearanceSettingsRepository.setHideDate(true)
 

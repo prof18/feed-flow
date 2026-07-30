@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_card_slab_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipToOutline="true">
+
+    <ImageView
+        android:id="@+id/widget_card_slab_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@android:color/white"
+        android:tint="@color/glance_colorSecondaryContainer" />
+
+    <FrameLayout
+        android:id="@+id/widget_card_slab_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</FrameLayout>

@@ -29,14 +29,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.prof18.feedflow.shared.domain.model.WidgetCardImageSizing
+import com.prof18.feedflow.shared.domain.model.WidgetCardItemSeparation
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
@@ -58,6 +62,12 @@ fun WidgetSettingsContent(
     onBackgroundOpacitySelected: (Int) -> Unit,
     onTextColorModeSelected: (WidgetTextColorMode) -> Unit,
     onHideImagesSelected: (Boolean) -> Unit,
+    onCardSurfaceColorSelected: (Int?) -> Unit,
+    onCardSurfaceOpacitySelected: (Int) -> Unit,
+    onCardCornerRadiusSelected: (Int) -> Unit,
+    onCardItemSeparationSelected: (WidgetCardItemSeparation) -> Unit,
+    onCardDividerOpacitySelected: (Int) -> Unit,
+    onCardImageSizingSelected: (WidgetCardImageSizing) -> Unit,
     showConfirmButton: Boolean,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
@@ -68,7 +78,7 @@ fun WidgetSettingsContent(
     val resolvedBackgroundColor = settingsState.backgroundColor?.let(::widgetColorFromArgb) ?: defaultBackgroundColor
     val backgroundLabel = settingsState.backgroundColor?.let(::formatWidgetColorHex)
         ?: strings.widgetBackgroundColorDefault
-    var showColorPicker by remember { mutableStateOf(false) }
+    var showBackgroundColorPicker by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier,
@@ -111,11 +121,23 @@ fun WidgetSettingsContent(
             onCheckedChange = onHideImagesSelected,
         )
 
+        if (settingsState.feedLayout == WidgetFeedLayout.CARD) {
+            WidgetCardAppearanceSettings(
+                settingsState = settingsState,
+                onSurfaceColorSelected = onCardSurfaceColorSelected,
+                onSurfaceOpacitySelected = onCardSurfaceOpacitySelected,
+                onCornerRadiusSelected = onCardCornerRadiusSelected,
+                onItemSeparationSelected = onCardItemSeparationSelected,
+                onDividerOpacitySelected = onCardDividerOpacitySelected,
+                onImageSizingSelected = onCardImageSizingSelected,
+            )
+        }
+
         WidgetColorSettingItem(
             title = strings.widgetBackgroundColorTitle,
             currentValueLabel = backgroundLabel,
             color = resolvedBackgroundColor,
-            onClick = { showColorPicker = true },
+            onClick = { showBackgroundColorPicker = true },
         )
 
         Text(
@@ -163,19 +185,182 @@ fun WidgetSettingsContent(
         }
     }
 
-    if (showColorPicker) {
+    if (showBackgroundColorPicker) {
         WidgetColorPickerDialog(
             initialColor = resolvedBackgroundColor,
-            onDismiss = { showColorPicker = false },
+            labels = WidgetColorPickerLabels(
+                title = strings.widgetBackgroundColorTitle,
+                preview = strings.widgetBackgroundColorPreview,
+                brightness = strings.widgetBackgroundColorBrightness,
+                hexLabel = strings.widgetBackgroundColorHexLabel,
+                hexHint = strings.widgetBackgroundColorHexHint,
+                hexError = strings.widgetBackgroundColorHexError,
+                resetToDefault = strings.widgetBackgroundColorReset,
+            ),
+            onDismiss = { showBackgroundColorPicker = false },
             onConfirm = { color ->
                 onBackgroundColorSelected(widgetColorToOpaqueArgb(color))
-                showColorPicker = false
+                showBackgroundColorPicker = false
             },
             onReset = {
                 onBackgroundColorSelected(null)
-                showColorPicker = false
+                showBackgroundColorPicker = false
             },
         )
+    }
+}
+
+@Composable
+private fun WidgetCardAppearanceSettings(
+    settingsState: WidgetSettingsState,
+    onSurfaceColorSelected: (Int?) -> Unit,
+    onSurfaceOpacitySelected: (Int) -> Unit,
+    onCornerRadiusSelected: (Int) -> Unit,
+    onItemSeparationSelected: (WidgetCardItemSeparation) -> Unit,
+    onDividerOpacitySelected: (Int) -> Unit,
+    onImageSizingSelected: (WidgetCardImageSizing) -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    val appearance = settingsState.cardAppearance
+    val surfaceOpacity = appearance.surfaceOpacityPercent.coerceIn(minimumValue = 0, maximumValue = 100)
+    val cornerRadius = appearance.cornerRadiusDp.coerceIn(minimumValue = 0, maximumValue = 32)
+    val dividerOpacity = appearance.dividerOpacityPercent.coerceIn(minimumValue = 0, maximumValue = 100)
+    val themedCardColor = MaterialTheme.colorScheme.secondaryContainer
+    val resolvedCardColor = appearance.surfaceColor?.let(::widgetColorFromArgb) ?: themedCardColor
+    val cardColorLabel = appearance.surfaceColor?.let(::formatWidgetColorHex)
+        ?: strings.widgetCardSurfaceColorDefault
+    var showCardColorPicker by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier.testTag(SettingsE2eIds.WIDGET_CARD_APPEARANCE),
+    ) {
+        Text(
+            text = strings.widgetCardAppearanceTitle,
+            modifier = Modifier.padding(horizontal = Spacing.regular, vertical = Spacing.small),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+
+        WidgetColorSettingItem(
+            title = strings.widgetCardSurfaceColorTitle,
+            currentValueLabel = cardColorLabel,
+            color = resolvedCardColor,
+            onClick = { showCardColorPicker = true },
+            modifier = Modifier.testTag(SettingsE2eIds.WIDGET_CARD_SURFACE_COLOR),
+        )
+
+        Text(
+            text = strings.widgetCardSurfaceOpacityTitle(surfaceOpacity.toString()),
+            modifier = Modifier.padding(horizontal = Spacing.regular, vertical = Spacing.small),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Slider(
+            modifier = Modifier
+                .padding(horizontal = Spacing.regular)
+                .testTag(SettingsE2eIds.WIDGET_CARD_SURFACE_OPACITY),
+            value = surfaceOpacity.toFloat(),
+            onValueChange = { onSurfaceOpacitySelected(it.roundToInt()) },
+            valueRange = 0f..100f,
+        )
+
+        Text(
+            text = strings.widgetCardCornerRadiusTitle(cornerRadius.toString()),
+            modifier = Modifier.padding(horizontal = Spacing.regular, vertical = Spacing.small),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Slider(
+            modifier = Modifier
+                .padding(horizontal = Spacing.regular)
+                .testTag(SettingsE2eIds.WIDGET_CARD_CORNER_RADIUS),
+            value = cornerRadius.toFloat(),
+            onValueChange = { onCornerRadiusSelected(it.roundToInt()) },
+            valueRange = 0f..32f,
+            steps = 15,
+        )
+
+        CompactSettingDropdownRow(
+            title = strings.widgetCardItemSeparationTitle,
+            currentValue = appearance.itemSeparation,
+            options = persistentListOf(
+                SettingDropdownOption(
+                    WidgetCardItemSeparation.SPACING,
+                    strings.widgetCardItemSeparationSpacing,
+                    e2eId = SettingsE2eIds.WIDGET_CARD_ITEM_SEPARATION_SPACING,
+                ),
+                SettingDropdownOption(
+                    WidgetCardItemSeparation.DIVIDER,
+                    strings.widgetCardItemSeparationDivider,
+                    e2eId = SettingsE2eIds.WIDGET_CARD_ITEM_SEPARATION_DIVIDER,
+                ),
+                SettingDropdownOption(
+                    WidgetCardItemSeparation.NONE,
+                    strings.widgetCardItemSeparationNone,
+                    e2eId = SettingsE2eIds.WIDGET_CARD_ITEM_SEPARATION_NONE,
+                ),
+            ),
+            onOptionSelected = onItemSeparationSelected,
+            modifier = Modifier.testTag(SettingsE2eIds.WIDGET_CARD_ITEM_SEPARATION),
+        )
+
+        if (appearance.itemSeparation == WidgetCardItemSeparation.DIVIDER) {
+            Text(
+                text = strings.widgetCardDividerOpacityTitle(dividerOpacity.toString()),
+                modifier = Modifier.padding(horizontal = Spacing.regular, vertical = Spacing.small),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Slider(
+                modifier = Modifier
+                    .padding(horizontal = Spacing.regular)
+                    .testTag(SettingsE2eIds.WIDGET_CARD_DIVIDER_OPACITY),
+                value = dividerOpacity.toFloat(),
+                onValueChange = { onDividerOpacitySelected(it.roundToInt()) },
+                valueRange = 0f..100f,
+            )
+        }
+
+        if (!settingsState.hideImages) {
+            CompactSettingDropdownRow(
+                title = strings.widgetCardImageSizingTitle,
+                currentValue = appearance.imageSizing,
+                options = persistentListOf(
+                    SettingDropdownOption(
+                        WidgetCardImageSizing.THUMBNAIL,
+                        strings.widgetCardImageSizingThumbnail,
+                        e2eId = SettingsE2eIds.WIDGET_CARD_IMAGE_THUMBNAIL,
+                    ),
+                    SettingDropdownOption(
+                        WidgetCardImageSizing.FILL_ROW_HEIGHT,
+                        strings.widgetCardImageSizingFillRowHeight,
+                        e2eId = SettingsE2eIds.WIDGET_CARD_IMAGE_FILL,
+                    ),
+                ),
+                onOptionSelected = onImageSizingSelected,
+                modifier = Modifier.testTag(SettingsE2eIds.WIDGET_CARD_IMAGE_SIZING),
+            )
+        }
+
+        if (showCardColorPicker) {
+            WidgetColorPickerDialog(
+                initialColor = resolvedCardColor,
+                labels = WidgetColorPickerLabels(
+                    title = strings.widgetCardSurfaceColorTitle,
+                    preview = strings.widgetCardSurfaceColorPreview,
+                    brightness = strings.widgetCardSurfaceColorBrightness,
+                    hexLabel = strings.widgetCardSurfaceColorHexLabel,
+                    hexHint = strings.widgetCardSurfaceColorHexHint,
+                    hexError = strings.widgetCardSurfaceColorHexError,
+                    resetToDefault = strings.widgetCardSurfaceColorReset,
+                ),
+                onDismiss = { showCardColorPicker = false },
+                onConfirm = { color ->
+                    onSurfaceColorSelected(widgetColorToOpaqueArgb(color))
+                    showCardColorPicker = false
+                },
+                onReset = {
+                    onSurfaceColorSelected(null)
+                    showCardColorPicker = false
+                },
+            )
+        }
     }
 }
 
@@ -189,10 +374,19 @@ private fun WidgetFeedLayoutSelector(
         title = strings.feedLayoutTitle,
         currentValue = feedLayout,
         options = persistentListOf(
-            SettingDropdownOption(WidgetFeedLayout.LIST, strings.settingsFeedLayoutList),
-            SettingDropdownOption(WidgetFeedLayout.CARD, strings.settingsFeedLayoutCard),
+            SettingDropdownOption(
+                WidgetFeedLayout.LIST,
+                strings.settingsFeedLayoutList,
+                e2eId = SettingsE2eIds.WIDGET_FEED_LAYOUT_LIST,
+            ),
+            SettingDropdownOption(
+                WidgetFeedLayout.CARD,
+                strings.settingsFeedLayoutCard,
+                e2eId = SettingsE2eIds.WIDGET_FEED_LAYOUT_CARD,
+            ),
         ),
         onOptionSelected = onFeedLayoutSelected,
+        modifier = Modifier.testTag(SettingsE2eIds.WIDGET_FEED_LAYOUT),
     )
 }
 
@@ -241,6 +435,7 @@ private fun WidgetColorSettingItem(
 @Composable
 private fun WidgetColorPickerDialog(
     initialColor: Color,
+    labels: WidgetColorPickerLabels,
     onDismiss: () -> Unit,
     onConfirm: (Color) -> Unit,
     onReset: () -> Unit,
@@ -268,7 +463,7 @@ private fun WidgetColorPickerDialog(
                 verticalArrangement = Arrangement.spacedBy(Spacing.medium),
             ) {
                 Text(
-                    text = strings.widgetBackgroundColorTitle,
+                    text = labels.title,
                     style = MaterialTheme.typography.titleMedium,
                 )
 
@@ -277,7 +472,7 @@ private fun WidgetColorPickerDialog(
                     horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
                 ) {
                     Text(
-                        text = strings.widgetBackgroundColorPreview,
+                        text = labels.preview,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     androidx.compose.foundation.layout.Box(
@@ -301,7 +496,7 @@ private fun WidgetColorPickerDialog(
                 )
 
                 Text(
-                    text = strings.widgetBackgroundColorBrightness,
+                    text = labels.brightness,
                     style = MaterialTheme.typography.bodyMedium,
                 )
 
@@ -325,15 +520,15 @@ private fun WidgetColorPickerDialog(
                         }
                     },
                     label = {
-                        Text(text = strings.widgetBackgroundColorHexLabel)
+                        Text(text = labels.hexLabel)
                     },
                     singleLine = true,
                     isError = hexInput.isNotBlank() && !isHexInputValid,
                     supportingText = {
                         val supportingText = if (hexInput.isBlank() || isHexInputValid) {
-                            strings.widgetBackgroundColorHexHint
+                            labels.hexHint
                         } else {
-                            strings.widgetBackgroundColorHexError
+                            labels.hexError
                         }
                         Text(text = supportingText)
                     },
@@ -348,7 +543,7 @@ private fun WidgetColorPickerDialog(
                             onReset()
                         },
                     ) {
-                        Text(text = strings.resetButton)
+                        Text(text = labels.resetToDefault)
                     }
 
                     Row(
@@ -393,9 +588,25 @@ private fun WidgetSettingsContentPreview() {
                 onBackgroundOpacitySelected = {},
                 onTextColorModeSelected = {},
                 onHideImagesSelected = {},
+                onCardSurfaceColorSelected = {},
+                onCardSurfaceOpacitySelected = {},
+                onCardCornerRadiusSelected = {},
+                onCardItemSeparationSelected = {},
+                onCardDividerOpacitySelected = {},
+                onCardImageSizingSelected = {},
                 showConfirmButton = true,
                 onConfirm = {},
             )
         }
     }
 }
+
+private data class WidgetColorPickerLabels(
+    val title: String,
+    val preview: String,
+    val brightness: String,
+    val hexLabel: String,
+    val hexHint: String,
+    val hexError: String,
+    val resetToDefault: String,
+)

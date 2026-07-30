@@ -6,7 +6,11 @@ import com.prof18.feedflow.android.widget.WidgetSettingsState
 import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
+import com.prof18.feedflow.shared.domain.model.WidgetCardAppearance
+import com.prof18.feedflow.shared.domain.model.WidgetCardImageSizing
+import com.prof18.feedflow.shared.domain.model.WidgetCardItemSeparation
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
+import com.prof18.feedflow.shared.domain.model.normalized
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,7 +60,8 @@ class WidgetSettingsViewModel(
                 globalSyncSettingsFlow,
                 widgetAppearanceSettingsWithTextColorFlow,
                 widgetSettingsRepository.widgetHideImages,
-            ) { syncPeriod, widgetAppearanceSettings, hideImages ->
+                widgetSettingsRepository.widgetCardAppearance,
+            ) { syncPeriod, widgetAppearanceSettings, hideImages, cardAppearance ->
                 WidgetSettingsState(
                     syncPeriod = syncPeriod,
                     feedLayout = widgetAppearanceSettings.feedLayout,
@@ -66,6 +71,7 @@ class WidgetSettingsViewModel(
                     backgroundOpacityPercent = widgetAppearanceSettings.backgroundOpacity,
                     textColorMode = widgetAppearanceSettings.textColorMode,
                     hideImages = hideImages,
+                    cardAppearance = cardAppearance,
                 )
             }.collect { widgetSettingsState ->
                 _settingsState.update {
@@ -147,6 +153,46 @@ class WidgetSettingsViewModel(
         }
         _settingsState.update { it.copy(hideImages = hideImages) }
         widgetSettingsRepository.setWidgetHideImages(hideImages)
+        viewModelScope.launch {
+            widgetUpdater.update()
+        }
+    }
+
+    fun updateCardSurfaceColor(colorArgb: Int?) {
+        updateCardAppearance { it.copy(surfaceColor = colorArgb) }
+    }
+
+    fun updateCardSurfaceOpacityPercent(opacityPercent: Int) {
+        updateCardAppearance { it.copy(surfaceOpacityPercent = opacityPercent) }
+    }
+
+    fun updateCardCornerRadiusDp(cornerRadiusDp: Int) {
+        updateCardAppearance { it.copy(cornerRadiusDp = cornerRadiusDp) }
+    }
+
+    fun updateCardItemSeparation(itemSeparation: WidgetCardItemSeparation) {
+        updateCardAppearance { it.copy(itemSeparation = itemSeparation) }
+    }
+
+    fun updateCardDividerOpacityPercent(opacityPercent: Int) {
+        updateCardAppearance { it.copy(dividerOpacityPercent = opacityPercent) }
+    }
+
+    fun updateCardImageSizing(imageSizing: WidgetCardImageSizing) {
+        updateCardAppearance { it.copy(imageSizing = imageSizing) }
+    }
+
+    private fun updateCardAppearance(
+        transform: (WidgetCardAppearance) -> WidgetCardAppearance,
+    ) {
+        val currentAppearance = _settingsState.value.cardAppearance.normalized()
+        val updatedAppearance = transform(currentAppearance).normalized()
+        if (currentAppearance == updatedAppearance) {
+            return
+        }
+
+        _settingsState.update { it.copy(cardAppearance = updatedAppearance) }
+        widgetSettingsRepository.setWidgetCardAppearance(updatedAppearance)
         viewModelScope.launch {
             widgetUpdater.update()
         }

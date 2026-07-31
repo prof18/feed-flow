@@ -17,6 +17,8 @@ on:
         required: true
       CERTIFICATES_PASSWORD:
         required: true
+      CERTIFICATES_DEV_P12:
+        required: true
       BUNDLE_ID:
         required: true
       APPSTORE_ISSUER_ID:
@@ -78,11 +80,25 @@ jobs:
           GID_CLIENT_ID: ${{ secrets.GID_CLIENT_ID }}
           GID_REVERSED_CLIENT_ID: ${{ secrets.GID_REVERSED_CLIENT_ID }}
 
-      - name: import certs
+      - name: import distribution cert
+        id: import_dist_cert
         uses: apple-actions/import-codesign-certs@v7
         with:
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
           p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
+
+      # Imported separately on purpose: a single p12 holding both identities has to be
+      # built by hand, and `openssl pkcs12 -export` silently keeps only the first key.
+      - name: import development cert
+        uses: apple-actions/import-codesign-certs@v7
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATES_DEV_P12 }}
+          p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
+          create-keychain: false
+          keychain-password: ${{ steps.import_dist_cert.outputs.keychain-password }}
+
+      - name: verify signing identities
+        run: security find-identity -v -p codesigning
 
       - name: download provisioning profiles
         uses: apple-actions/download-provisioning-profiles@v6

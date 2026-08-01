@@ -41,6 +41,7 @@ appId: com.prof18.feedflow.dev
     id: article_row_e2e_article_reader_success
 - tapOn:
     text: "Mark all below as read"
+- tapOn: "Confirm"
 - tapOn:
     id: drawer_menu_button
 - tapOn:
@@ -63,6 +64,7 @@ appId: com.prof18.feedflow.dev
     id: article_row_e2e_article_reader_success
 - tapOn:
     text: "Mark all above as read"
+- tapOn: "Confirm"
 - tapOn:
     id: drawer_menu_button
 - tapOn:

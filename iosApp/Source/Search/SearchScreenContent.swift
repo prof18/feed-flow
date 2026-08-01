@@ -22,6 +22,9 @@ struct SearchScreenContent: View {
     )
 
     @State private var isPresented = true
+    @State private var pendingMarkAllFeedItemId: String = ""
+    @State private var showMarkAllAboveConfirmation = false
+    @State private var showMarkAllBelowConfirmation = false
 
     let readerModeViewModel: ReaderModeViewModel
     let onReaderModeNavigate: (() -> Void)?
@@ -44,6 +47,22 @@ struct SearchScreenContent: View {
             makeSearchContent()
         }
         .searchable(text: $searchText, isPresented: $isPresented, placement: .toolbar)
+        .confirmationDialog(
+            title: feedFlowStrings.markAllAboveAsReadConfirmationTitle,
+            message: feedFlowStrings.markAllAboveAsReadConfirmationMessage,
+            isPresented: $showMarkAllAboveConfirmation,
+            onConfirm: {
+                onMarkAllAboveAsRead(pendingMarkAllFeedItemId)
+            }
+        )
+        .confirmationDialog(
+            title: feedFlowStrings.markAllBelowAsReadConfirmationTitle,
+            message: feedFlowStrings.markAllBelowAsReadConfirmationMessage,
+            isPresented: $showMarkAllBelowConfirmation,
+            onConfirm: {
+                onMarkAllBelowAsRead(pendingMarkAllFeedItemId)
+            }
+        )
     }
 
     @ViewBuilder
@@ -197,7 +216,8 @@ struct SearchScreenContent: View {
     @ViewBuilder
     private func makeMarkAllAboveAsReadButton(feedItem: FeedItem) -> some View {
         Button {
-            onMarkAllAboveAsRead(feedItem.id)
+            pendingMarkAllFeedItemId = feedItem.id
+            showMarkAllAboveConfirmation = true
         } label: {
             Label(feedFlowStrings.menuMarkAllAboveAsRead, systemImage: "chevron.up.2")
         }
@@ -206,7 +226,8 @@ struct SearchScreenContent: View {
     @ViewBuilder
     private func makeMarkAllBelowAsReadButton(feedItem: FeedItem) -> some View {
         Button {
-            onMarkAllBelowAsRead(feedItem.id)
+            pendingMarkAllFeedItemId = feedItem.id
+            showMarkAllBelowConfirmation = true
         } label: {
             Label(feedFlowStrings.menuMarkAllBelowAsRead, systemImage: "chevron.down.2")
         }

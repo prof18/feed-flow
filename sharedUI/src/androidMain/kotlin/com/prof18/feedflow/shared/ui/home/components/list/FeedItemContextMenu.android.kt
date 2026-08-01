@@ -18,6 +18,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.core.model.ArticleOpenMode
@@ -26,6 +30,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.shared.ui.components.ConfirmationDialog
 import com.prof18.feedflow.shared.ui.home.components.ShareCommentsIcon
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -46,6 +51,9 @@ internal actual fun FeedItemContextMenu(
     onMarkAllAboveAsRead: (String) -> Unit,
     onMarkAllBelowAsRead: (String) -> Unit,
 ) {
+    var showMarkAllAboveConfirmation by remember { mutableStateOf(false) }
+    var showMarkAllBelowConfirmation by remember { mutableStateOf(false) }
+
     DropdownMenu(
         expanded = showMenu,
         onDismissRequest = closeMenu,
@@ -81,13 +89,13 @@ internal actual fun FeedItemContextMenu(
 
         MarkAllAboveAsReadMenuItem(
             feedItem = feedItem,
-            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+            onMarkAllAboveAsRead = { showMarkAllAboveConfirmation = true },
             closeMenu = closeMenu,
         )
 
         MarkAllBelowAsReadMenuItem(
             feedItem = feedItem,
-            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+            onMarkAllBelowAsRead = { showMarkAllBelowConfirmation = true },
             closeMenu = closeMenu,
         )
 
@@ -129,6 +137,32 @@ internal actual fun FeedItemContextMenu(
             feedItem = feedItem,
             onReadStatusClick = onReadStatusClick,
             closeMenu = closeMenu,
+        )
+    }
+
+    if (showMarkAllAboveConfirmation) {
+        ConfirmationDialog(
+            title = LocalFeedFlowStrings.current.markAllAboveAsReadConfirmationTitle,
+            message = LocalFeedFlowStrings.current.markAllAboveAsReadConfirmationMessage,
+            onConfirm = {
+                onMarkAllAboveAsRead(feedItem.id)
+            },
+            onDismiss = {
+                showMarkAllAboveConfirmation = false
+            },
+        )
+    }
+
+    if (showMarkAllBelowConfirmation) {
+        ConfirmationDialog(
+            title = LocalFeedFlowStrings.current.markAllBelowAsReadConfirmationTitle,
+            message = LocalFeedFlowStrings.current.markAllBelowAsReadConfirmationMessage,
+            onConfirm = {
+                onMarkAllBelowAsRead(feedItem.id)
+            },
+            onDismiss = {
+                showMarkAllBelowConfirmation = false
+            },
         )
     }
 }

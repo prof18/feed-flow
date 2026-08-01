@@ -12,6 +12,10 @@ import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItem
@@ -19,6 +23,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.shared.ui.components.ConfirmationDialog
 import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenu
 import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenuEntry
 import com.prof18.feedflow.shared.ui.home.components.ShareCommentsIcon
@@ -43,6 +48,9 @@ internal actual fun FeedItemContextMenu(
     onMarkAllAboveAsRead: (String) -> Unit,
     onMarkAllBelowAsRead: (String) -> Unit,
 ) {
+    var showMarkAllAboveConfirmation by remember { mutableStateOf(false) }
+    var showMarkAllBelowConfirmation by remember { mutableStateOf(false) }
+
     val strings = LocalFeedFlowStrings.current
     val menuEntries = buildFeedItemDesktopMenuEntries(
         strings = strings,
@@ -56,8 +64,8 @@ internal actual fun FeedItemContextMenu(
         onShareClick = onShareClick,
         onOpenFeedSettings = onOpenFeedSettings,
         onOpenFeedWebsite = onOpenFeedWebsite,
-        onMarkAllAboveAsRead = onMarkAllAboveAsRead,
-        onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+        onMarkAllAboveAsRead = { showMarkAllAboveConfirmation = true },
+        onMarkAllBelowAsRead = { showMarkAllBelowConfirmation = true },
     )
 
     DesktopPopupMenu(
@@ -66,6 +74,32 @@ internal actual fun FeedItemContextMenu(
         menuEntries = menuEntries,
         closeMenu = closeMenu,
     )
+
+    if (showMarkAllAboveConfirmation) {
+        ConfirmationDialog(
+            title = strings.markAllAboveAsReadConfirmationTitle,
+            message = strings.markAllAboveAsReadConfirmationMessage,
+            onConfirm = {
+                onMarkAllAboveAsRead(feedItem.id)
+            },
+            onDismiss = {
+                showMarkAllAboveConfirmation = false
+            },
+        )
+    }
+
+    if (showMarkAllBelowConfirmation) {
+        ConfirmationDialog(
+            title = strings.markAllBelowAsReadConfirmationTitle,
+            message = strings.markAllBelowAsReadConfirmationMessage,
+            onConfirm = {
+                onMarkAllBelowAsRead(feedItem.id)
+            },
+            onDismiss = {
+                showMarkAllBelowConfirmation = false
+            },
+        )
+    }
 }
 
 private fun buildFeedItemDesktopMenuEntries(

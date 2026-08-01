@@ -131,7 +131,7 @@
     <string name="settings_font_scale_subtitle_example">Questo è il sottotitolo dell\'articolo</string>
     <string name="settings_font_scale_feed_source_example">Nome del feed</string>
     <string name="open_another_feed">Apri un altro feed</string>
-    <string name="link_opening_preference_default">Predefinito</string>
+    <string name="link_opening_preference_default">Uguale all\'impostazione dell\'app</string>
     <string name="delete_category_close_button">Chiudi</string>
     <string name="settings_auto_delete_period_one_week">Di una settimana</string>
     <string name="settings_auto_delete_period_two_weeks">Di due settimane</string>
@@ -395,4 +395,21 @@
     <string name="reorder_mode_done">Fatto</string>
     <string name="settings_feed_layout_big_image">Immagine scheda grande</string>
     <string name="settings_feed_layout_grid_toggle">Usa la griglia su schermi ampi</string>
+    <string name="link_opening_preference_default_short">Impostazione app</string>
+    <string name="link_opening_preference_system_browser">Browser predefinito</string>
+    <string name="article_open_mode">Apri articoli in</string>
+    <string name="article_open_mode_section_reader">Modalità lettura</string>
+    <string name="article_open_mode_section_browser">Browser</string>
+    <string name="article_open_mode_full_article_short">Lettore (sito web)</string>
+    <string name="article_open_mode_feed_short">Lettore (feed)</string>
+    <string name="reader_content_source_web">Articolo dal sito web</string>
+    <string name="reader_content_source_web_subtitle">Recupera e pulisci la pagina originale</string>
+    <string name="reader_content_source_feed">Contenuto dal feed</string>
+    <string name="reader_content_source_feed_subtitle">Utilizza il testo incluso nel feed RSS</string>
+    <string name="hide_images_for_feed_description">Nascondi le immagini per questo feed</string>
+    <string name="new_articles_button">%s nuovi articoli</string>
+    <string name="expand_category_button_content_description">Espandi %s</string>
+    <string name="collapse_category_button_content_description">Riduci %s</string>
+    <string name="reader_mode_no_content_title">Nessun contenuto disponibile</string>
+    <string name="reader_mode_no_content_message">Questo articolo non include alcun contenuto, e non è presente un link per aprirlo nel web.</string>
 </resources>

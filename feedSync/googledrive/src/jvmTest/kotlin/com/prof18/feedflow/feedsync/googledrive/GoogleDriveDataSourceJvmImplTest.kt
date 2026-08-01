@@ -37,4 +37,11 @@ class GoogleDriveDataSourceJvmImplTest {
 
         assertEquals(-1, receiver.port)
     }
+
+    @Test
+    fun `buildLocalServerReceiver binds to the loopback IP literal, not the localhost hostname`() {
+        val receiver = buildLocalServerReceiver()
+
+        assertEquals("127.0.0.1", receiver.host)
+    }
 }

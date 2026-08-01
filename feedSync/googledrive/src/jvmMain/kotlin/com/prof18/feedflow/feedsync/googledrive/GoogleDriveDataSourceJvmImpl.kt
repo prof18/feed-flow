@@ -46,8 +46,8 @@ class GoogleDriveDataSourceJvmImpl(
 
             googleDriveSettings.setGoogleDriveLinked(true)
             true
-        } catch (e: Exception) {
-            logger.d(e) { "Error during Google Drive auth flow" }
+        } catch (e: Throwable) {
+            logger.e(e) { "Error during Google Drive auth flow" }
             false
         }
     }
@@ -194,4 +194,8 @@ internal fun requireGoogleDriveBackupFileId(
     errorMessage = "No Google Drive backup file found for '$fileName'",
 )
 
-internal fun buildLocalServerReceiver(): LocalServerReceiver = LocalServerReceiver.Builder().build()
+// Bind to the loopback IP literal rather than the "localhost" hostname: Google's own OAuth docs
+// note that "localhost" can be blocked or misrouted by client firewalls/DNS, while 127.0.0.1 is not.
+internal fun buildLocalServerReceiver(): LocalServerReceiver = LocalServerReceiver.Builder()
+    .setHost("127.0.0.1")
+    .build()

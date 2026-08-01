@@ -259,8 +259,8 @@
     <string name="google_drive_connect_button">连接 Google Drive</string>
     <string name="change_category">更改类别</string>
     <string name="trigger_feed_sync">上传更改</string>
-    <string name="menu_mark_all_above_as_read">将以上所有内容标记为已读</string>
-    <string name="menu_mark_all_below_as_read">将以下所有内容标记为已读</string>
+    <string name="menu_mark_all_above_as_read">将上方所有标记为已读</string>
+    <string name="menu_mark_all_below_as_read">将下方所有标记为已读</string>
     <string name="google_drive_sync_common_description">连接您的 Google Drive 账号，在 Android、iOS、iPadOS 和桌面设备之间同步订阅内容、类别、已读和收藏的文章。数据将保存在应用特定文件夹中，FeedFlow 不会访问您的任何文件</string>
     <string name="google_drive_sync_error">连接到 Google Drive 时出错，请重试</string>
     <string name="google_drive_sync_success">已成功连接您的 Google Drive 账号</string>
@@ -412,4 +412,8 @@
     <string name="reader_content_source_feed_subtitle">使用 RSS 订阅源中包含的文本</string>
     <string name="reader_mode_no_content_title">无可用内容</string>
     <string name="reader_mode_no_content_message">此文章不包含任何内容，也没有在网页上打开的链接。</string>
+    <string name="mark_all_above_as_read_confirmation_title">将上方所有标记为已读？</string>
+    <string name="mark_all_above_as_read_confirmation_message">此文章上方的所有文章都将被标记为已读。</string>
+    <string name="mark_all_below_as_read_confirmation_title">将下方所有标记为已读？</string>
+    <string name="mark_all_below_as_read_confirmation_message">此文章下方的所有文章都将被标记为已读。</string>
 </resources>

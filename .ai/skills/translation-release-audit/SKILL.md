@@ -74,23 +74,32 @@ Optional live-store checks:
 
 ### Google Play
 
-The repo has a Gradle Play Publisher bootstrap task:
+Use the repository's dedicated Publishing API audit script. The API requires a Play
+edit for listing/image reads, so it creates one disposable uncommitted edit, reads the
+content into a temporary directory, then deletes the edit. It never writes under
+`androidApp/src/googlePlay/play/` or publishes metadata:
 
 ```bash
-./gradlew --quiet --console=plain :androidApp:bootstrapGooglePlayReleaseListing
+audit_dir="$(mktemp -d /private/tmp/feedflow-play-listing.XXXXXX)"
+python3 .scripts/pull-google-play-listing.py --output-dir "$audit_dir"
 ```
 
-Do not run this task during the recurring audit for now. It repeatedly hangs during graphics downloads and can leave a temp checkout with deleted/partial graphics, so it is not a reliable live-check source. Until there is a fixed/reliable Play read path, report:
+The script reads `FEEDFLOW_PLAY_CONFIG_JSON` by default. If it is absent or invalid,
+report the live check as unavailable. Compare `listings.json` against the checked-in
+listing output and `image-counts.json` against the expected screenshot assets.
 
-- `Google Play live check: unavailable - Gradle Play Publisher bootstrap currently hangs during graphics download`
+Do not use Gradle Play Publisher bootstrap tasks during the recurring audit. They reset
+the existing Play directory and can delete/partially replace tracked graphics and
+release notes. Never run any `publish*` task during this audit.
 
-Current store-locale exception: Latvian (`assets/storecopy/lv`) has complete source store copy, but App Store Connect currently has no Latvian locale option for this app/version. Exclude Latvian from App Store follow-up until ASC exposes/supports that locale; only consider local/source output and stores that support Latvian, such as Google Play.
+- `Google Play live check: unavailable - FEEDFLOW_PLAY_CONFIG_JSON is unavailable or invalid`
+
+Latvian source store copy is currently incomplete, so report it without creating store or screenshot follow-up. Reassess supported App Store locales only after the source is complete.
 
 Still compare local source and checked-in generated Play output:
 
 - If `assets/storecopy/<locale>/` is complete but `androidApp/src/googlePlay/play/listings/<locale>/` is missing/stale, update or create generated local text output when possible, or create a board card naming the exact local output work.
-- If checked-in Play screenshots/assets changed, create screenshot upload/regeneration cards only from committed/local evidence. Do not infer live Play screenshot drift without a reliable live source.
-- Do not run any `publish*` task during this audit.
+- If checked-in Play screenshots/assets changed, create screenshot upload/regeneration cards only from committed/local evidence. Use the audit script's image counts to identify live screenshot drift.
 
 ### App Store
 
@@ -118,6 +127,10 @@ asc screenshots download --version-localization "LOCALIZATION_ID" --output-dir "
 ```
 
 Compare live App Store metadata with `assets/storecopy/**` where the field mapping is obvious. Compare live screenshot presence/counts with generated screenshot expectations when available; do not treat different App Store processing filenames as meaningful by themselves.
+The current asc screenshots-list JSON response uses a sets array, with each set's
+screenshots nested inside it; it does not expose screenshots in a top-level data array.
+Count those nested arrays before declaring screenshots missing, and download only sets
+whose screenshot count is nonzero.
 
 For App Store metadata, validate field limits before syncing or creating board cards. Current limits used by `asc metadata validate`: name 30, subtitle 30, keywords 100, description 4000, promotional text 170. If source fields exceed these limits, the actionable card should be about shortening/fixing the source copy, not syncing ASC.
 
@@ -139,12 +152,24 @@ No action:
 Details:
 - App translations: ...
 - Store copy: ...
-- Live store state: ...
 - Screenshot copy/assets: ...
+
+Live store state:
+- <locale> Google Play — source: current|incomplete; checked-in output: current|stale;
+  live store: current|stale|unavailable; action: <exact action or none>.
+- <locale> App Store — source: current|incomplete; live metadata: current|stale|unavailable;
+  screenshots: present|missing|unavailable; action: <exact action or none>.
 
 Recommended next commands:
 - ...
 ```
+
+For every locale with an actionable store finding, keep source, checked-in generated
+output, and live-store state on the same line. Never call a store “stale” when only
+the checked-in output is stale: explicitly say that no store upload is needed when
+source equals live store but generated output differs from source. Likewise, distinguish
+complete screenshot *copy* from uploaded screenshot *assets*; the former makes a
+locale ready to generate, while the latter is the live-store upload state.
 
 If nothing changed, say that no translation, store-copy, or screenshot action is needed.
 

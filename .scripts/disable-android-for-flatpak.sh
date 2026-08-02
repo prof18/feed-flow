@@ -208,11 +208,17 @@ find build-logic -name "*.kt" -type f | while read -r file; do
     disable_android_in_file "$file"
 done
 
-# Handle settings.gradle.kts to exclude androidApp module
+# Handle settings.gradle.kts to exclude Android-only modules.
+# :benchmarks is the Android macrobenchmark/baseline-profile module; it applies
+# the androidx.baselineprofile plugin (whose baselineProfile {} DSL needs AGP),
+# so it can't be configured once Android is disabled. Only :androidApp depends
+# on it, and that's excluded too, so drop the whole module.
 if [ -f "settings.gradle.kts" ]; then
     echo "  Processing: settings.gradle.kts"
     # Use portable sed syntax that works on both Linux and macOS
-    sed 's/^include(":androidApp")/\/\/ include(":androidApp")/' "settings.gradle.kts" > "settings.gradle.kts.tmp" && mv "settings.gradle.kts.tmp" "settings.gradle.kts"
+    sed -e 's/^include(":androidApp")/\/\/ include(":androidApp")/' \
+        -e 's/^include(":benchmarks")/\/\/ include(":benchmarks")/' \
+        "settings.gradle.kts" > "settings.gradle.kts.tmp" && mv "settings.gradle.kts.tmp" "settings.gradle.kts"
 fi
 
 echo "Android targets disabled for Flatpak build!"

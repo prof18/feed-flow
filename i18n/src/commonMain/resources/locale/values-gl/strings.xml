@@ -133,7 +133,7 @@
     <string name="wrong_credentials_error_message">As credenciais non son correctas. Volve intentalo.</string>
     <string name="fresh_rss_password_hint">Contrasinal da API FreshRSS (Axustes &gt; Perfil)</string>
     <string name="fresh_rss_url_hint">Punto de acceso á API FreshRSS, ex.: %s</string>
-    <string name="link_opening_preference_default">Predeterminado</string>
+    <string name="link_opening_preference_default">Igual que no axuste da app</string>
     <string name="link_opening_preference_internal_browser">Navegador da app</string>
     <string name="link_opening_preference_preferred_browser">Navegador favorito</string>
     <string name="delete_category_confirmation_title">Eliminar categoría?</string>
@@ -397,4 +397,23 @@
     <string name="reorder_mode_done">Feito</string>
     <string name="expand_category_button_content_description">Despregar %s</string>
     <string name="collapse_category_button_content_description">Pregar %s</string>
+    <string name="mark_all_above_as_read_confirmation_title">Marcar os de arriba como lidos?</string>
+    <string name="mark_all_above_as_read_confirmation_message">Todos os artigos superiores a este vanse marcar como lidos.</string>
+    <string name="mark_all_below_as_read_confirmation_title">Marcar os de abaixo como lidos?</string>
+    <string name="mark_all_below_as_read_confirmation_message">Todos os artigos por embaixo deste vanse marcar como lidos.</string>
+    <string name="link_opening_preference_default_short">Axuste da app</string>
+    <string name="link_opening_preference_system_browser">Navegador predeterminado</string>
+    <string name="article_open_mode">Abrir artigos en</string>
+    <string name="article_open_mode_section_reader">Modo lectura</string>
+    <string name="article_open_mode_section_browser">Navegador</string>
+    <string name="article_open_mode_full_article_short">Lector (sitio web)</string>
+    <string name="article_open_mode_feed_short">Lector (canle)</string>
+    <string name="reader_content_source_web">Artigo desde o sitio web</string>
+    <string name="reader_content_source_web_subtitle">Obter e adecentar a páxina orixinal</string>
+    <string name="reader_content_source_feed">Contido desde a canle</string>
+    <string name="reader_content_source_feed_subtitle">Usar o texto incluído na canle RSS</string>
+    <string name="hide_images_for_feed_description">Ocultar as imaxes desta canle</string>
+    <string name="new_articles_button">%s artigos novos</string>
+    <string name="reader_mode_no_content_title">Sen contido dispoñible</string>
+    <string name="reader_mode_no_content_message">Este artigo non ten ningún contido, e non hai unha ligazón para abrila na web.</string>
 </resources>

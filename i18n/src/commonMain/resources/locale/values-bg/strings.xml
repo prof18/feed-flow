@@ -133,7 +133,7 @@
     <string name="fresh_rss_last_sync">Последна синхронизация: %s</string>
     <string name="fresh_rss_password_hint">FreshRSS API парола (Настройки &gt; Профил)</string>
     <string name="fresh_rss_url_hint">FreshRSS API крайна точка, например %s</string>
-    <string name="link_opening_preference_default">По подразбиране</string>
+    <string name="link_opening_preference_default">Същото като настройката на приложението</string>
     <string name="link_opening_preference_internal_browser">Вграден браузър</string>
     <string name="link_opening_preference_preferred_browser">Любим браузър</string>
     <string name="delete_category_confirmation_title">Изтриване на категория?</string>
@@ -397,4 +397,23 @@
     <string name="reorder_mode_done">Готово</string>
     <string name="expand_category_button_content_description">Разгъване %s</string>
     <string name="collapse_category_button_content_description">Свиване %s</string>
+    <string name="mark_all_above_as_read_confirmation_title">Да се маркира ли всичко по-горе като прочетено?</string>
+    <string name="mark_all_above_as_read_confirmation_message">Всички статии над тази ще бъдат маркирани като прочетени.</string>
+    <string name="mark_all_below_as_read_confirmation_title">Да се маркира ли всичко по-долу като прочетено?</string>
+    <string name="mark_all_below_as_read_confirmation_message">Всички статии под тази ще бъдат маркирани като прочетени.</string>
+    <string name="link_opening_preference_default_short">Настройка на приложението</string>
+    <string name="link_opening_preference_system_browser">Браузър по подразбиране</string>
+    <string name="article_open_mode">Отваряне на статии в</string>
+    <string name="article_open_mode_section_reader">Режим на четене</string>
+    <string name="article_open_mode_section_browser">Браузър</string>
+    <string name="article_open_mode_full_article_short">Четец (уебсайт)</string>
+    <string name="article_open_mode_feed_short">Четец(емисия)</string>
+    <string name="reader_content_source_web">Статия от уебсайта</string>
+    <string name="reader_content_source_web_subtitle">Извличане и почистване на оригиналната страница</string>
+    <string name="reader_content_source_feed">Съдържание от емисията</string>
+    <string name="reader_content_source_feed_subtitle">Използвайте текста, включен в RSS емисията</string>
+    <string name="hide_images_for_feed_description">Скриване на изображенията за тази емисия</string>
+    <string name="new_articles_button">%s нови статии</string>
+    <string name="reader_mode_no_content_title">Няма налично съдържание</string>
+    <string name="reader_mode_no_content_message">Тази статия не включва никакво съдържание и няма линк за отварянето ѝ в мрежата.</string>
 </resources>

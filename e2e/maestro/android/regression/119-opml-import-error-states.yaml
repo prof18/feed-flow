@@ -35,13 +35,13 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: com.google.android.documentsui:id/sub_menu_list
     optional: true
-- scrollUntilVisible:
-    element:
-      text: "zz-feedflow-invalid-opml\\.xml"
-    direction: DOWN
-    timeout: 10000
 - tapOn:
-    text: "zz-feedflow-invalid-opml\\.xml"
+    id: com.google.android.documentsui:id/option_menu_search
+- inputText: zz-feedflow-invalid-opml.xml
+- tapOn:
+    id: com.google.android.documentsui:id/item_root
+    containsDescendants:
+      - text: "zz-feedflow-invalid-opml\\.xml"
 - extendedWaitUntil:
     visible:
       id: import_export_invalid_opml
@@ -66,13 +66,13 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: com.google.android.documentsui:id/sub_menu_list
     optional: true
-- scrollUntilVisible:
-    element:
-      text: "feedflow-valid-opml-smoke\\.xml"
-    direction: DOWN
-    timeout: 10000
 - tapOn:
-    text: "feedflow-valid-opml-smoke\\.xml"
+    id: com.google.android.documentsui:id/option_menu_search
+- inputText: feedflow-valid-opml-smoke.xml
+- tapOn:
+    id: com.google.android.documentsui:id/item_root
+    containsDescendants:
+      - text: "feedflow-valid-opml-smoke\\.xml"
 - extendedWaitUntil:
     visible:
       id: import_export_feed_import_success

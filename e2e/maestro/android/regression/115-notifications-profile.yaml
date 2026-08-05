@@ -23,6 +23,11 @@ appId: com.prof18.feedflow.debug
     text: "By feed"
 - assertVisible:
     text: "Enable All Notifications"
+- scrollUntilVisible:
+    element:
+      text: "Android Central RSS Feed"
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     text: "Android Central RSS Feed"
 - scrollUntilVisible:

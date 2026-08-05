@@ -21,6 +21,9 @@ from pathlib import Path
 ANDROID_APP_ID = "com.prof18.feedflow.debug"
 IOS_SIMULATOR_NAME = "iPhone 17 Pro"
 SUITES = ("smoke", "regression")
+COMMAND_TIMEOUT_RETURN_CODE = 124
+MAESTRO_FLOW_TIMEOUT_SECONDS = 180
+MAESTRO_MAX_ATTEMPTS = 3
 PRINT_LOCK = threading.Lock()
 ANSI_PATTERN = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 
@@ -99,6 +102,7 @@ def run_command(
     cwd: Path,
     log_path: Path,
     env: dict[str, str] | None = None,
+    timeout_seconds: float | None = None,
 ) -> CommandResult:
     log_path.parent.mkdir(parents=True, exist_ok=True)
     start = time.monotonic()
@@ -116,13 +120,85 @@ def run_command(
             bufsize=1,
         )
         assert process.stdout is not None
-        for line in process.stdout:
-            print_text(line)
-            log_file.write(line)
-        returncode = process.wait()
+        def stream_output() -> None:
+            assert process.stdout is not None
+            for line in process.stdout:
+                print_text(line)
+                log_file.write(line)
+                log_file.flush()
+
+        output_thread = threading.Thread(target=stream_output, daemon=True)
+        output_thread.start()
+        timed_out = False
+        try:
+            returncode = process.wait(timeout=timeout_seconds)
+        except subprocess.TimeoutExpired:
+            timed_out = True
+            print_line(f"    timed out after {timeout_seconds:.0f}s; terminating process")
+            process.terminate()
+            try:
+                process.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
+            returncode = COMMAND_TIMEOUT_RETURN_CODE
+        output_thread.join()
+        if timed_out:
+            log_file.write(f"\nCommand timed out after {timeout_seconds:.0f}s.\n")
     seconds = time.monotonic() - start
     print_line(f"<== {name}: exit {returncode} in {seconds:.1f}s")
     return CommandResult(name=name, returncode=returncode, seconds=seconds, log_path=log_path)
+
+
+def retryable_maestro_failure(result: CommandResult) -> bool:
+    if result.returncode == COMMAND_TIMEOUT_RETURN_CODE:
+        return True
+
+    lower = read_log_text(result.log_path).lower()
+    return any(
+        token in lower
+        for token in (
+            "deviceserverdiedexception",
+            "device server died",
+            "statusruntimeexception: unavailable",
+            "command failed (tcp:",
+        )
+    )
+
+
+def run_maestro_command(
+    name: str,
+    args: list[str],
+    cwd: Path,
+    log_path: Path,
+    env: dict[str, str] | None = None,
+) -> CommandResult:
+    total_seconds = 0.0
+    for attempt in range(1, MAESTRO_MAX_ATTEMPTS + 1):
+        result = run_command(
+            name,
+            args,
+            cwd,
+            log_path,
+            env=env,
+            timeout_seconds=MAESTRO_FLOW_TIMEOUT_SECONDS,
+        )
+        total_seconds += result.seconds
+        if result.returncode == 0 or not retryable_maestro_failure(result):
+            return CommandResult(name, result.returncode, total_seconds, log_path)
+        if attempt == MAESTRO_MAX_ATTEMPTS:
+            return CommandResult(name, result.returncode, total_seconds, log_path)
+
+        archived_log = log_path.with_name(f"{log_path.stem}-attempt-{attempt}{log_path.suffix}")
+        log_path.replace(archived_log)
+        retry_delay = attempt * 5
+        print_line(
+            f"    retrying Maestro infrastructure failure in {retry_delay}s "
+            f"(attempt {attempt + 1}/{MAESTRO_MAX_ATTEMPTS}; prior log: {archived_log})"
+        )
+        time.sleep(retry_delay)
+
+    raise AssertionError("unreachable")
 
 
 def print_line(message: str) -> None:
@@ -325,7 +401,7 @@ def run_flows(
             log_path = log_root / "flows" / platform / suite / safe_log_name(flow_path)
             if platform == "ios":
                 reset_flow = Path("e2e/maestro/ios/helpers/reset-orientation.yaml")
-                reset_result = run_command(
+                reset_result = run_maestro_command(
                     f"{platform} {suite} {flow_path.name} orientation reset",
                     [
                         "maestro",
@@ -363,7 +439,7 @@ def run_flows(
                 ]
             else:
                 args = ["maestro", "--platform", "android", "test", str(relative_flow)]
-            command_result = run_command(
+            command_result = run_maestro_command(
                 f"{platform} {suite} {flow_path.name}",
                 args,
                 repo_root,
@@ -475,6 +551,8 @@ def last_meaningful_line(text: str) -> str:
 
 def failure_evidence(text: str) -> str:
     salient_patterns = (
+        "command timed out",
+        "device server died",
         "assertion is false",
         "assertion '",
         "element selector",
@@ -500,6 +578,21 @@ def analyze_failure(log_path: Path, returncode: int, context: str) -> FailureAna
     text = read_log_text(log_path)
     lower = text.lower()
     evidence = failure_evidence(text)
+
+    if returncode == COMMAND_TIMEOUT_RETURN_CODE or any(
+        token in lower
+        for token in (
+            "command timed out",
+            "deviceserverdiedexception",
+            "device server died",
+            "statusruntimeexception: unavailable",
+        )
+    ):
+        return FailureAnalysis(
+            "Maestro infrastructure / driver",
+            "The Maestro device driver or transport failed before the app flow could complete.",
+            evidence,
+        )
 
     if any(token in lower for token in ("fatal exception", "process crashed", "sigabrt", "anr in ")):
         return FailureAnalysis(

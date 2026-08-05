@@ -27,6 +27,7 @@ appId: com.prof18.feedflow.debug
     element: "Date format"
     direction: DOWN
     timeout: 10000
+    centerElement: true
 - tapOn: "Date format"
 - tapOn: "Year-Month-Day"
 - assertVisible: "Year-Month-Day"

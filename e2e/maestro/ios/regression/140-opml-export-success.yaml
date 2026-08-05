@@ -20,6 +20,17 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: import_export_export_feeds
 - extendedWaitUntil:
+    visible: "Cancel"
+    timeout: 10000
+- tapOn:
+    point: "87%,12%"
+- runFlow:
+    when:
+      visible: "Cancel"
+    commands:
+      - tapOn:
+          point: "50%,54%"
+- extendedWaitUntil:
     visible:
       id: import_export_feed_export_success
     timeout: 10000

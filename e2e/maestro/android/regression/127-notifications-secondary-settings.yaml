@@ -20,4 +20,8 @@ appId: com.prof18.feedflow.debug
 - tapOn: "Background sync only on Wi-Fi"
 - tapOn: "Background sync only while charging"
 - tapOn: "Enable All Notifications"
+- scrollUntilVisible:
+    element: "Android Central RSS Feed"
+    direction: DOWN
+    timeout: 10000
 - tapOn: "Android Central RSS Feed"

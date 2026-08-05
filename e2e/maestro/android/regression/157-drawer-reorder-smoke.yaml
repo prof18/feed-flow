@@ -85,9 +85,19 @@ appId: com.prof18.feedflow.debug
     direction: DOWN
     timeout: 10000
 - assertVisible:
-    id: drawer_feed_source_e2e_feed_hidden
-- assertVisible:
     id: drawer_feed_source_reorder_e2e_feed_swift_weekly
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_e2e_feed_hidden
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: drawer_feed_source_e2e_feed_hidden
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_reorder_e2e_feed_swift_weekly
+    direction: UP
+    timeout: 10000
 - swipe:
     from:
       id: drawer_feed_source_reorder_e2e_feed_swift_weekly
@@ -96,5 +106,10 @@ appId: com.prof18.feedflow.debug
 - waitForAnimationToEnd
 - assertVisible:
     id: drawer_feed_source_e2e_feed_swift_weekly
+- scrollUntilVisible:
+    element:
+      id: drawer_feed_source_e2e_feed_hidden
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     id: drawer_feed_source_e2e_feed_hidden

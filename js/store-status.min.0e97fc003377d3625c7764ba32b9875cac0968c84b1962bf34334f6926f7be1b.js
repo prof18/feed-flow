@@ -1,0 +1,1 @@
+(function(){const e=document.querySelector(".ff-strip");if(!e)return;const t=()=>{document.documentElement.style.setProperty("--banner-h",e.offsetHeight+"px")};t(),window.addEventListener("resize",t)})()

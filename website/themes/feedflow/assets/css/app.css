@@ -11,6 +11,9 @@
   --brand-primary-soft:  #D7E3FF;
   --brand-accent:        #B96A2B; /* warm editorial accent, use sparingly */
 
+  /* Fixed top banner (0 when absent) */
+  --banner-h: 0px;
+
   /* Neutrals */
   --surface:         #FAFAFA;
   --surface-raised:  #FFFFFF;
@@ -23,6 +26,9 @@
   /* Semantic */
   --link:       var(--brand-primary);
   --link-hover: var(--brand-primary-hover);
+  --warn-bg:     #3A2A12;
+  --warn-ink:    #FCEFD8;
+  --warn-accent: #E8A23D;
 
   /* Fonts */
   --font-display: "Fraunces", ui-serif, Georgia, serif;
@@ -281,10 +287,48 @@ hr {
   margin-bottom: var(--s-3);
 }
 
+/* ── STORE STATUS STRIP (temporary) ────────────────────────── */
+.ff-strip {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 101;
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+}
+
+.ff-strip-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-2);
+  max-width: var(--container-md);
+  margin-inline: auto;
+  padding: var(--s-2) var(--s-5);
+}
+
+.ff-strip-icon {
+  flex-shrink: 0;
+  color: var(--warn-accent);
+  margin-block-start: 0.15em;
+}
+
+.ff-strip-text {
+  max-width: none;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+}
+
+.ff-strip-text a {
+  color: var(--warn-accent);
+  font-weight: 600;
+  text-underline-offset: 2px;
+}
+.ff-strip-text a:hover { color: var(--warn-ink); }
+
 /* ── 6. NAVIGATION ──────────────────────────────────────────── */
 .site-nav {
   position: fixed;
-  top: 0;
+  top: var(--banner-h);
   inset-inline: 0;
   z-index: 100;
   padding: 0;
@@ -478,7 +522,7 @@ hr {
 /* ── 7. HERO ────────────────────────────────────────────────── */
 .hero {
   background: var(--gradient-hero-wash);
-  padding-block-start: calc(64px + var(--s-9));
+  padding-block-start: calc(64px + var(--banner-h) + var(--s-9));
   padding-block-end: var(--s-9);
   overflow: hidden;
 }
@@ -1238,7 +1282,7 @@ hr {
 
 /* ── 15. FAQ PAGE ───────────────────────────────────────────── */
 .page-header {
-  padding-block-start: calc(64px + var(--s-8));
+  padding-block-start: calc(64px + var(--banner-h) + var(--s-8));
   padding-block-end: var(--s-7);
   border-bottom: 1px solid var(--hairline);
   background: var(--gradient-hero-wash);
@@ -1433,7 +1477,7 @@ hr {
 
 /* Updates single / post */
 .update-post-header {
-  padding-block-start: calc(64px + var(--s-8));
+  padding-block-start: calc(64px + var(--banner-h) + var(--s-8));
   padding-block-end: var(--s-7);
   border-bottom: 1px solid var(--hairline);
   background: var(--gradient-hero-wash);
@@ -1688,7 +1732,7 @@ hr {
   min-height: 80vh;
   display: flex;
   align-items: center;
-  padding-block-start: 64px;
+  padding-block-start: calc(64px + var(--banner-h));
 }
 .not-found-inner { text-align: center; max-width: 480px; margin-inline: auto; }
 .not-found-code {

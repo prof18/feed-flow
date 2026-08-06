@@ -4,12 +4,15 @@
   {{ partial "head.html" . }}
 </head>
 <body class="{{ if .IsHome }}is-home{{ end }}{{ if .IsPage }} is-page{{ end }}">
+  {{ partial "store-status.html" . }}
   {{ partial "nav.html" . }}
   <main id="main">
     {{ block "main" . }}{{ end }}
   </main>
   {{ partial "footer.html" . }}
 
+  {{- $storeStatus := resources.Get "js/store-status.js" | minify | fingerprint -}}
+  <script src="{{ $storeStatus.RelPermalink }}" defer></script>
   {{- $nav := resources.Get "js/nav.js" | minify | fingerprint -}}
   <script src="{{ $nav.RelPermalink }}" defer></script>
   {{- $faq := resources.Get "js/faq.js" | minify | fingerprint -}}

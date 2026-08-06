@@ -412,4 +412,8 @@
     <string name="reader_mode_no_content_message">Bài viết này không có nội dung và cũng không có liên kết để mở trên web.</string>
     <string name="reader_content_source_feed">Nội dung từ nguồn tin</string>
     <string name="reader_content_source_feed_subtitle">Dùng văn bản có trong nguồn tin RSS</string>
+    <string name="mark_all_above_as_read_confirmation_title">Đánh tất cả trên là đã đọc?</string>
+    <string name="mark_all_above_as_read_confirmation_message">Tất cả bài viết phía trên bài viết này sẽ được đánh dấu là đã đọc.</string>
+    <string name="mark_all_below_as_read_confirmation_message">Tất cả bài viết phía dưới bài viết này sẽ được đánh dấu là đã đọc.</string>
+    <string name="mark_all_below_as_read_confirmation_title">Đánh tất cả dưới là đã đọc?</string>
 </resources>

@@ -1,5 +1,6 @@
-{{- $subject := "Notify me when FeedFlow is back on the EU App Store" -}}
-{{- $body := "Hi,\n\nCould you email me once FeedFlow is available again on the EU App Store?\n\nThanks!" -}}
+{{- $subject := replace (urlquery "Notify me when FeedFlow is back on the EU App Store") "+" "%20" -}}
+{{- $body := replace (urlquery "Hi,\n\nCould you email me once FeedFlow is available again on the EU App Store?\n\nThanks!") "+" "%20" -}}
+{{- $mailto := printf "mailto:mgp.dev.studio+feedflow@gmail.com?subject=%s&body=%s" $subject $body -}}
 <div class="ff-strip" role="status">
   <div class="ff-strip-inner">
     <svg class="ff-strip-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -7,7 +8,7 @@
     </svg>
     <p class="ff-strip-text">
       FeedFlow is temporarily unavailable on the EU App Store while Apple reviews required Digital Services Act information. We're on it.
-      <a href="mailto:mgp.dev.studio+feedflow@gmail.com?subject={{ $subject | urlquery }}&amp;body={{ $body | urlquery }}">Email us to be notified when it's back</a>.
+      <a href="{{ $mailto | safeURL }}">Email us to be notified when it's back</a>.
     </p>
   </div>
 </div>

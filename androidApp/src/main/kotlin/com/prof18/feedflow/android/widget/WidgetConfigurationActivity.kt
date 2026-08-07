@@ -52,6 +52,12 @@ class WidgetConfigurationActivity : BaseThemeActivity() {
             onBackgroundOpacitySelected = viewModel::updateBackgroundOpacityPercent,
             onTextColorModeSelected = viewModel::updateTextColorMode,
             onHideImagesSelected = viewModel::updateHideImages,
+            onCardSurfaceColorSelected = viewModel::updateCardSurfaceColor,
+            onCardSurfaceOpacitySelected = viewModel::updateCardSurfaceOpacityPercent,
+            onCardCornerRadiusSelected = viewModel::updateCardCornerRadiusDp,
+            onCardItemSeparationSelected = viewModel::updateCardItemSeparation,
+            onCardDividerOpacitySelected = viewModel::updateCardDividerOpacityPercent,
+            onCardImageSizingSelected = viewModel::updateCardImageSizing,
             showConfirmButton = true,
             onConfirm = {
                 viewModel.enqueueWorker()

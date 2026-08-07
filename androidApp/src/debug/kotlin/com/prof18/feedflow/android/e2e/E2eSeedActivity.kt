@@ -30,6 +30,9 @@ import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
+import com.prof18.feedflow.shared.domain.model.WidgetCardAppearance
+import com.prof18.feedflow.shared.domain.model.WidgetCardImageSizing
+import com.prof18.feedflow.shared.domain.model.WidgetCardItemSeparation
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.e2e.E2eSeedProfile
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
@@ -158,6 +161,7 @@ class E2eSeedActivity : BaseThemeActivity() {
         widgetSettingsRepository.setWidgetBackgroundOpacityPercent(100)
         widgetSettingsRepository.setWidgetTextColorMode(WidgetTextColorMode.AUTOMATIC)
         widgetSettingsRepository.setWidgetHideImages(false)
+        widgetSettingsRepository.setWidgetCardAppearance(WidgetCardAppearance())
     }
 
     private fun applyAndroidWidgetProfile() {
@@ -168,6 +172,16 @@ class E2eSeedActivity : BaseThemeActivity() {
         widgetSettingsRepository.setWidgetBackgroundOpacityPercent(85)
         widgetSettingsRepository.setWidgetTextColorMode(WidgetTextColorMode.LIGHT)
         widgetSettingsRepository.setWidgetHideImages(false)
+        widgetSettingsRepository.setWidgetCardAppearance(
+            WidgetCardAppearance(
+                surfaceColor = 0xFF8C5A3C.toInt(),
+                surfaceOpacityPercent = 70,
+                cornerRadiusDp = 24,
+                itemSeparation = WidgetCardItemSeparation.DIVIDER,
+                dividerOpacityPercent = 60,
+                imageSizing = WidgetCardImageSizing.FILL_ROW_HEIGHT,
+            ),
+        )
     }
 
     private fun openMainActivity(deepLinkUrl: String? = null) {

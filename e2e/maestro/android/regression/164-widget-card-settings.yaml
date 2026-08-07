@@ -1,0 +1,105 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=android-widget
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_widget
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: settings_widget
+- assertVisible:
+    id: widget_settings_preview
+- scrollUntilVisible:
+    element:
+      id: widget_settings_feed_layout
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: widget_settings_feed_layout
+- tapOn:
+    id: widget_settings_feed_layout_card
+- scrollUntilVisible:
+    element:
+      id: widget_settings_card_surface_color
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: widget_settings_card_surface_color
+- scrollUntilVisible:
+    element:
+      id: widget_settings_card_surface_opacity
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: widget_settings_card_surface_opacity
+- assertVisible: "Card opacity: 50%"
+- scrollUntilVisible:
+    element:
+      id: widget_settings_card_corner_radius
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: widget_settings_card_corner_radius
+- assertVisible: "Corner radius: 16 dp"
+- scrollUntilVisible:
+    element:
+      id: widget_settings_card_item_separation
+    direction: DOWN
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      id: widget_settings_card_divider_opacity
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: widget_settings_card_divider_opacity
+- scrollUntilVisible:
+    element:
+      id: widget_settings_card_item_separation
+    direction: UP
+    timeout: 10000
+- tapOn:
+    id: widget_settings_card_item_separation
+- tapOn:
+    id: widget_settings_card_item_separation_none
+- assertVisible: "None"
+- assertNotVisible:
+    id: widget_settings_card_divider_opacity
+- tapOn:
+    id: widget_settings_card_item_separation
+- tapOn:
+    id: widget_settings_card_item_separation_divider
+- scrollUntilVisible:
+    element:
+      id: widget_settings_card_divider_opacity
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: widget_settings_card_divider_opacity
+- assertVisible: "Divider opacity: 50%"
+- scrollUntilVisible:
+    element:
+      id: widget_settings_card_image_sizing
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: widget_settings_card_image_sizing
+- tapOn:
+    id: widget_settings_card_image_thumbnail
+- assertVisible: "Thumbnail"
+- scrollUntilVisible:
+    element:
+      id: widget_settings_preview
+    direction: UP
+    timeout: 10000
+- assertVisible:
+    id: widget_settings_preview

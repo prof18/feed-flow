@@ -87,6 +87,7 @@ internal fun SettingsScreenContent(
             if (showWidgetSettings) {
                 item {
                     SettingItem(
+                        modifier = Modifier.testTag(SettingsE2eIds.WIDGET_ROW),
                         title = LocalFeedFlowStrings.current.widgetConfigurationTitle,
                         icon = Icons.Outlined.Widgets,
                         onClick = navigateToWidgetSettings,

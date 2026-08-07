@@ -2,12 +2,12 @@ package com.prof18.feedflow.android.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,7 +17,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,14 +33,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.core.model.WidgetFeedLayout
-import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.prof18.feedflow.shared.domain.model.WidgetCardAppearance
+import com.prof18.feedflow.shared.domain.model.WidgetCardImageSizing
+import com.prof18.feedflow.shared.domain.model.WidgetCardItemSeparation
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
+import com.prof18.feedflow.shared.domain.model.normalized
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -49,50 +58,46 @@ internal fun WidgetPreviewSection(
     modifier: Modifier = Modifier,
 ) {
     var previewBackdropMode by rememberSaveable { mutableStateOf(WidgetPreviewBackdropMode.LIGHT) }
-    val baseBackgroundColor = settingsState.backgroundColor?.let(::widgetColorFromArgb)
-        ?: MaterialTheme.colorScheme.surface
 
-    @Suppress("MagicNumber")
-    val backgroundAlpha = settingsState.backgroundOpacityPercent.coerceIn(minimumValue = 0, maximumValue = 100) / 100f
-    val previewWallpaperBaseColor = previewBackdropMode.underlayColor
-    val effectiveBackgroundColor = widgetEffectiveBackgroundColor(
-        backgroundColor = baseBackgroundColor,
-        backgroundOpacity = backgroundAlpha,
-        underlayColor = previewWallpaperBaseColor,
-    )
-    val textColors = when {
-        settingsState.backgroundColor != null -> {
-            widgetTextColorsForMode(settingsState.textColorMode, effectiveBackgroundColor)
-        }
-        settingsState.textColorMode != WidgetTextColorMode.AUTOMATIC -> {
-            widgetTextColorsForMode(settingsState.textColorMode, effectiveBackgroundColor)
-        }
-        else -> null
-    }
-    val primaryTextColor = textColors?.primary ?: MaterialTheme.colorScheme.onSurface
-    val secondaryTextColor = textColors?.secondary ?: MaterialTheme.colorScheme.onSurfaceVariant
-    val previewBackgroundColor = baseBackgroundColor.copy(alpha = backgroundAlpha)
-    val fontSizes = widgetFontSizes(settingsState.fontScale)
-
-    Column(
+    WidgetPreviewSectionContent(
+        settingsState = settingsState,
+        backdropMode = previewBackdropMode,
+        onToggleBackdropMode = {
+            previewBackdropMode = previewBackdropMode.next()
+        },
         modifier = modifier,
-    ) {
-        WidgetPreviewWallpaper(
-            feedLayout = settingsState.feedLayout,
-            showWidgetHeader = settingsState.showHeader,
-            hideImages = settingsState.hideImages,
-            fontSizes = fontSizes,
-            backgroundColor = previewBackgroundColor,
-            primaryTextColor = primaryTextColor,
-            secondaryTextColor = secondaryTextColor,
-            backdropMode = previewBackdropMode,
-            onToggleBackdropMode = {
-                previewBackdropMode = previewBackdropMode.next()
-            },
-            modifier = Modifier
-                .padding(vertical = Spacing.small),
-        )
-    }
+    )
+}
+
+@Composable
+private fun WidgetPreviewSectionContent(
+    settingsState: WidgetSettingsState,
+    backdropMode: WidgetPreviewBackdropMode,
+    onToggleBackdropMode: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val previewAppearance = resolveWidgetPreviewAppearance(
+        settingsState = settingsState,
+        themedWidgetUnderlayColor = MaterialTheme.colorScheme.surface,
+        themedCardSurfaceColor = MaterialTheme.colorScheme.secondaryContainer,
+        themedOnSurfaceColor = MaterialTheme.colorScheme.onSurface,
+    )
+
+    WidgetPreviewWallpaper(
+        feedLayout = settingsState.feedLayout,
+        showWidgetHeader = settingsState.showHeader,
+        hideImages = settingsState.hideImages,
+        fontSizes = widgetFontSizes(settingsState.fontScale),
+        outerSurfaceColor = previewAppearance.outerSurfaceColor,
+        outerTextColors = previewAppearance.outerTextColors,
+        cardAppearance = previewAppearance.cardAppearance,
+        resolvedCardAppearance = previewAppearance.card,
+        backdropMode = backdropMode,
+        onToggleBackdropMode = onToggleBackdropMode,
+        modifier = modifier
+            .testTag(SettingsE2eIds.WIDGET_PREVIEW)
+            .padding(vertical = Spacing.small),
+    )
 }
 
 @Composable
@@ -101,9 +106,10 @@ private fun WidgetPreviewWallpaper(
     showWidgetHeader: Boolean,
     hideImages: Boolean,
     fontSizes: WidgetFontSizes,
-    backgroundColor: Color,
-    primaryTextColor: Color,
-    secondaryTextColor: Color,
+    outerSurfaceColor: Color,
+    outerTextColors: WidgetTextColors,
+    cardAppearance: WidgetCardAppearance,
+    resolvedCardAppearance: ResolvedWidgetCardAppearance,
     backdropMode: WidgetPreviewBackdropMode,
     onToggleBackdropMode: () -> Unit,
     modifier: Modifier = Modifier,
@@ -114,7 +120,6 @@ private fun WidgetPreviewWallpaper(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = Spacing.regular)
-            .height(230.dp)
             .background(
                 brush = Brush.linearGradient(backdropMode.wallpaperColors),
                 shape = wallpaperShape,
@@ -127,17 +132,17 @@ private fun WidgetPreviewWallpaper(
             showWidgetHeader = showWidgetHeader,
             hideImages = hideImages,
             fontSizes = fontSizes,
-            backgroundColor = backgroundColor,
-            primaryTextColor = primaryTextColor,
-            secondaryTextColor = secondaryTextColor,
-            modifier = Modifier.fillMaxWidth(fraction = 0.9f),
+            outerSurfaceColor = outerSurfaceColor,
+            outerTextColors = outerTextColors,
+            cardAppearance = cardAppearance,
+            resolvedCardAppearance = resolvedCardAppearance,
+            modifier = Modifier.fillMaxWidth(),
         )
 
         PreviewBackdropToggleButton(
             backdropMode = backdropMode,
             onClick = onToggleBackdropMode,
-            modifier = Modifier
-                .align(Alignment.TopEnd),
+            modifier = Modifier.align(Alignment.TopEnd),
         )
     }
 }
@@ -165,13 +170,12 @@ private fun PreviewBackdropToggleButton(
         Icons.Outlined.DarkMode
     }
 
-    Box(
+    IconButton(
         modifier = modifier
+            .size(48.dp)
             .clip(CircleShape)
-            .background(color = backgroundColor, shape = CircleShape)
-            .clickable(onClick = onClick)
-            .padding(Spacing.small),
-        contentAlignment = Alignment.Center,
+            .background(color = backgroundColor, shape = CircleShape),
+        onClick = onClick,
     ) {
         Icon(
             imageVector = icon,
@@ -187,34 +191,36 @@ private fun WidgetPreview(
     showWidgetHeader: Boolean,
     hideImages: Boolean,
     fontSizes: WidgetFontSizes,
-    backgroundColor: Color,
-    primaryTextColor: Color,
-    secondaryTextColor: Color,
+    outerSurfaceColor: Color,
+    outerTextColors: WidgetTextColors,
+    cardAppearance: WidgetCardAppearance,
+    resolvedCardAppearance: ResolvedWidgetCardAppearance,
     modifier: Modifier = Modifier,
 ) {
     val strings = LocalFeedFlowStrings.current
     val shape = RoundedCornerShape(16.dp)
 
     Surface(
-        modifier = modifier
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
+        modifier = modifier,
         shape = shape,
-        color = backgroundColor,
+        color = outerSurfaceColor,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Spacing.medium),
-        ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             if (showWidgetHeader) {
                 Text(
                     text = strings.widgetLatestItems,
+                    modifier = Modifier.padding(
+                        start = Spacing.medium,
+                        top = Spacing.regular,
+                        end = Spacing.medium,
+                        bottom = Spacing.small,
+                    ),
                     style = MaterialTheme.typography.titleMedium,
                     fontSize = fontSizes.header.sp,
                     fontWeight = FontWeight.Bold,
-                    color = primaryTextColor,
+                    color = outerTextColors.primary,
                 )
-
+            } else {
                 Spacer(modifier = Modifier.height(Spacing.small))
             }
 
@@ -224,27 +230,74 @@ private fun WidgetPreview(
                     title = strings.settingsFontScaleTitleExample,
                     date = "25/12 - 14:30",
                 ),
+                WidgetPreviewItem(
+                    feedSource = strings.settingsFontScaleFeedSourceExample,
+                    title = strings.settingsFontScaleSubtitleExample,
+                    date = "24/12 - 09:15",
+                ),
             )
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(Spacing.small),
-            ) {
-                items.forEach { item ->
-                    when (feedLayout) {
-                        WidgetFeedLayout.LIST -> WidgetPreviewListItem(
-                            item = item,
-                            fontSizes = fontSizes,
-                            hideImages = hideImages,
-                            primaryTextColor = primaryTextColor,
-                            secondaryTextColor = secondaryTextColor,
-                        )
-                        WidgetFeedLayout.CARD -> WidgetPreviewCardItem(item, fontSizes, hideImages)
+            BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                val cardLayout = resolveWidgetPreviewCardLayout(
+                    requestedImageSizing = cardAppearance.imageSizing,
+                    previewWidthDp = maxWidth.value,
+                    fontSizes = fontSizes,
+                    systemFontScale = LocalDensity.current.fontScale,
+                )
+
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    items.forEachIndexed { index, item ->
+                        when (feedLayout) {
+                            WidgetFeedLayout.LIST -> WidgetPreviewListItem(
+                                item = item,
+                                fontSizes = fontSizes,
+                                hideImages = hideImages,
+                                textColors = outerTextColors,
+                            )
+                            WidgetFeedLayout.CARD -> {
+                                WidgetPreviewCardItem(
+                                    item = item,
+                                    fontSizes = fontSizes,
+                                    hideImages = hideImages,
+                                    appearance = cardAppearance,
+                                    resolvedAppearance = resolvedCardAppearance,
+                                    cardLayout = cardLayout,
+                                )
+                                resolveWidgetCardDividerLayout(
+                                    itemSeparation = cardAppearance.itemSeparation,
+                                    itemIndex = index,
+                                    itemCount = items.size,
+                                )?.let { dividerLayout ->
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(
+                                            horizontal = dividerLayout.horizontalInsetDp.dp,
+                                        ),
+                                        thickness = dividerLayout.thicknessDp.dp,
+                                        color = resolvedCardAppearance.dividerColor,
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(Spacing.small))
         }
     }
 }
+
+internal fun resolveWidgetPreviewCardLayout(
+    requestedImageSizing: WidgetCardImageSizing,
+    previewWidthDp: Float,
+    fontSizes: WidgetFontSizes,
+    systemFontScale: Float,
+): ResolvedWidgetCardLayout = resolveWidgetCardLayout(
+    requestedImageSizing = requestedImageSizing,
+    availableSlabWidthDp = calculateWidgetAvailableSlabWidthDp(widgetWidthDp = previewWidthDp),
+    fontSizes = fontSizes,
+    systemFontScale = systemFontScale,
+)
 
 private data class WidgetPreviewItem(
     val feedSource: String,
@@ -257,26 +310,28 @@ private fun WidgetPreviewListItem(
     item: WidgetPreviewItem,
     fontSizes: WidgetFontSizes,
     hideImages: Boolean,
-    primaryTextColor: Color,
-    secondaryTextColor: Color,
+    textColors: WidgetTextColors,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall),
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
         WidgetPreviewTextContent(
             item = item,
             fontSizes = fontSizes,
-            primaryTextColor = primaryTextColor,
-            secondaryTextColor = secondaryTextColor,
-            modifier = Modifier.weight(1f),
+            textColors = textColors,
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = Spacing.regular),
         )
         if (!hideImages) {
-            WidgetPreviewImage()
+            WidgetPreviewImage(
+                size = WIDGET_THUMBNAIL_VIEWPORT_DP.dp,
+                cornerRadius = 8.dp,
+            )
         }
     }
 }
@@ -286,30 +341,134 @@ private fun WidgetPreviewCardItem(
     item: WidgetPreviewItem,
     fontSizes: WidgetFontSizes,
     hideImages: Boolean,
+    appearance: WidgetCardAppearance,
+    resolvedAppearance: ResolvedWidgetCardAppearance,
+    cardLayout: ResolvedWidgetCardLayout,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(16.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Spacing.regular),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-        ) {
-            WidgetPreviewTextContent(
+    if (appearance.itemSeparation == WidgetCardItemSeparation.SPACING) {
+        Box(modifier = modifier.padding(vertical = Spacing.xsmall)) {
+            WidgetPreviewCardSlab(
                 item = item,
                 fontSizes = fontSizes,
-                primaryTextColor = MaterialTheme.colorScheme.onSurface,
-                secondaryTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f),
+                hideImages = hideImages,
+                appearance = appearance,
+                resolvedAppearance = resolvedAppearance,
+                cardLayout = cardLayout,
             )
-            if (!hideImages) {
-                WidgetPreviewImage()
-            }
+        }
+    } else {
+        WidgetPreviewCardSlab(
+            item = item,
+            fontSizes = fontSizes,
+            hideImages = hideImages,
+            appearance = appearance,
+            resolvedAppearance = resolvedAppearance,
+            cardLayout = cardLayout,
+            modifier = modifier,
+        )
+    }
+}
+
+@Composable
+private fun WidgetPreviewCardSlab(
+    item: WidgetPreviewItem,
+    fontSizes: WidgetFontSizes,
+    hideImages: Boolean,
+    appearance: WidgetCardAppearance,
+    resolvedAppearance: ResolvedWidgetCardAppearance,
+    cardLayout: ResolvedWidgetCardLayout,
+    modifier: Modifier = Modifier,
+) {
+    val shape = RoundedCornerShape(appearance.cornerRadiusDp.dp)
+    val slabColor = resolvedAppearance.slabFillColor ?: Color.Transparent
+
+    Surface(
+        modifier = when (cardLayout.imageSizing) {
+            WidgetCardImageSizing.THUMBNAIL -> modifier.fillMaxWidth()
+            WidgetCardImageSizing.FILL_ROW_HEIGHT ->
+                modifier
+                    .fillMaxWidth()
+                    .height(requireNotNull(cardLayout.fixedRowHeightDp).dp)
+        },
+        shape = shape,
+        color = slabColor,
+    ) {
+        when (cardLayout.imageSizing) {
+            WidgetCardImageSizing.THUMBNAIL -> WidgetPreviewThumbnailCardContent(
+                item = item,
+                fontSizes = fontSizes,
+                hideImages = hideImages,
+                textColors = resolvedAppearance.textColors,
+            )
+            WidgetCardImageSizing.FILL_ROW_HEIGHT -> WidgetPreviewFillCardContent(
+                item = item,
+                fontSizes = fontSizes,
+                hideImages = hideImages,
+                textColors = resolvedAppearance.textColors,
+                rowHeight = requireNotNull(cardLayout.fixedRowHeightDp).dp,
+                cornerRadius = appearance.cornerRadiusDp.dp,
+            )
+        }
+    }
+}
+
+@Composable
+private fun WidgetPreviewThumbnailCardContent(
+    item: WidgetPreviewItem,
+    fontSizes: WidgetFontSizes,
+    hideImages: Boolean,
+    textColors: WidgetTextColors,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        WidgetPreviewTextContent(
+            item = item,
+            fontSizes = fontSizes,
+            textColors = textColors,
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = Spacing.regular),
+        )
+        if (!hideImages) {
+            WidgetPreviewImage(
+                size = WIDGET_THUMBNAIL_VIEWPORT_DP.dp,
+                cornerRadius = 8.dp,
+            )
+        }
+    }
+}
+
+@Composable
+private fun WidgetPreviewFillCardContent(
+    item: WidgetPreviewItem,
+    fontSizes: WidgetFontSizes,
+    hideImages: Boolean,
+    textColors: WidgetTextColors,
+    rowHeight: Dp,
+    cornerRadius: Dp,
+) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        WidgetPreviewTextContent(
+            item = item,
+            fontSizes = fontSizes,
+            textColors = textColors,
+            modifier = Modifier
+                .weight(1f)
+                .padding(16.dp),
+        )
+        if (!hideImages) {
+            WidgetPreviewImage(
+                size = rowHeight,
+                cornerRadius = cornerRadius,
+            )
         }
     }
 }
@@ -318,19 +477,16 @@ private fun WidgetPreviewCardItem(
 private fun WidgetPreviewTextContent(
     item: WidgetPreviewItem,
     fontSizes: WidgetFontSizes,
-    primaryTextColor: Color,
-    secondaryTextColor: Color,
+    textColors: WidgetTextColors,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(Spacing.xsmall),
-    ) {
+    Column(modifier = modifier) {
         Text(
             text = item.feedSource,
             style = MaterialTheme.typography.bodySmall,
             fontSize = fontSizes.meta.sp,
-            color = secondaryTextColor,
+            lineHeight = (fontSizes.meta * WIDGET_TEXT_LINE_HEIGHT_MULTIPLIER).sp,
+            color = textColors.secondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -338,16 +494,19 @@ private fun WidgetPreviewTextContent(
             text = item.title,
             style = MaterialTheme.typography.bodyMedium,
             fontSize = fontSizes.title.sp,
+            lineHeight = (fontSizes.title * WIDGET_TEXT_LINE_HEIGHT_MULTIPLIER).sp,
             fontWeight = FontWeight.Bold,
-            color = primaryTextColor,
+            color = textColors.primary,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
         Text(
             text = item.date,
+            modifier = Modifier.padding(top = Spacing.xsmall),
             style = MaterialTheme.typography.bodySmall,
             fontSize = fontSizes.meta.sp,
-            color = secondaryTextColor,
+            lineHeight = (fontSizes.meta * WIDGET_TEXT_LINE_HEIGHT_MULTIPLIER).sp,
+            color = textColors.secondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -356,35 +515,31 @@ private fun WidgetPreviewTextContent(
 
 @Composable
 private fun WidgetPreviewImage(
+    size: Dp,
+    cornerRadius: Dp,
     modifier: Modifier = Modifier,
 ) {
+    val shape = RoundedCornerShape(cornerRadius)
     Box(
         modifier = modifier
-            .size(50.dp)
+            .size(size)
             .background(
                 color = MaterialTheme.colorScheme.tertiaryContainer,
-                shape = RoundedCornerShape(8.dp),
+                shape = shape,
             )
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(8.dp),
+                shape = shape,
             ),
     )
 }
 
 private enum class WidgetPreviewBackdropMode(
-    val underlayColor: Color,
     val wallpaperColors: List<Color>,
 ) {
-    LIGHT(
-        underlayColor = PreviewLightUnderlayColor,
-        wallpaperColors = PreviewLightWallpaperColors,
-    ),
-    DARK(
-        underlayColor = PreviewDarkUnderlayColor,
-        wallpaperColors = PreviewDarkWallpaperColors,
-    ),
+    LIGHT(wallpaperColors = PreviewLightWallpaperColors),
+    DARK(wallpaperColors = PreviewDarkWallpaperColors),
 }
 
 private fun WidgetPreviewBackdropMode.next(): WidgetPreviewBackdropMode =
@@ -393,38 +548,151 @@ private fun WidgetPreviewBackdropMode.next(): WidgetPreviewBackdropMode =
         WidgetPreviewBackdropMode.DARK -> WidgetPreviewBackdropMode.LIGHT
     }
 
+internal fun resolveWidgetPreviewAppearance(
+    settingsState: WidgetSettingsState,
+    themedWidgetUnderlayColor: Color,
+    themedCardSurfaceColor: Color,
+    themedOnSurfaceColor: Color,
+): ResolvedWidgetPreviewAppearance {
+    val normalizedCardAppearance = settingsState.cardAppearance.normalized()
+    val backgroundOpacity = settingsState.backgroundOpacityPercent.coerceIn(0, MAX_PERCENT) / PERCENT_DIVISOR
+    val outerSurfaceBaseColor = settingsState.backgroundColor?.let(::widgetColorFromArgb)
+        ?: themedWidgetUnderlayColor
+    val effectiveOuterColor = widgetEffectiveBackgroundColor(
+        backgroundColor = outerSurfaceBaseColor,
+        backgroundOpacity = backgroundOpacity,
+        underlayColor = themedWidgetUnderlayColor,
+    )
+    val outerTextColors = if (
+        settingsState.backgroundColor == null && settingsState.textColorMode == WidgetTextColorMode.AUTOMATIC
+    ) {
+        WidgetTextColors(
+            primary = themedOnSurfaceColor,
+            secondary = themedOnSurfaceColor,
+        )
+    } else {
+        widgetTextColorsForMode(
+            textColorMode = settingsState.textColorMode,
+            backgroundColor = effectiveOuterColor,
+        )
+    }
+
+    return ResolvedWidgetPreviewAppearance(
+        outerSurfaceColor = outerSurfaceBaseColor.copy(alpha = backgroundOpacity),
+        effectiveOuterColor = effectiveOuterColor,
+        outerTextColors = outerTextColors,
+        cardAppearance = normalizedCardAppearance,
+        card = resolveWidgetCardAppearance(
+            appearance = normalizedCardAppearance,
+            textColorMode = settingsState.textColorMode,
+            outerSurfaceColor = outerSurfaceBaseColor,
+            outerSurfaceOpacityPercent = settingsState.backgroundOpacityPercent,
+            themedWidgetUnderlayColor = themedWidgetUnderlayColor,
+            themedCardSurfaceColor = themedCardSurfaceColor,
+            themedOnSurfaceColor = themedOnSurfaceColor,
+        ),
+    )
+}
+
+internal data class ResolvedWidgetPreviewAppearance(
+    val outerSurfaceColor: Color,
+    val effectiveOuterColor: Color,
+    val outerTextColors: WidgetTextColors,
+    val cardAppearance: WidgetCardAppearance,
+    val card: ResolvedWidgetCardAppearance,
+)
+
+private const val MAX_PERCENT = 100
+private const val PERCENT_DIVISOR = 100f
 private val PreviewToggleDarkChromeColor = Color(0xFF20283A)
-private val PreviewLightUnderlayColor = Color(0xFFF3F5FA)
 private val PreviewLightWallpaperColors = listOf(
     Color(0xFFE9EEF8),
     Color(0xFFF4F6FB),
     Color(0xFFE1E7F2),
 )
-private val PreviewDarkUnderlayColor = Color(0xFF151B28)
 private val PreviewDarkWallpaperColors = listOf(
     Color(0xFF0E1420),
     Color(0xFF1A2232),
     Color(0xFF111827),
 )
 
-@Preview
+@Preview(name = "Compatibility card default")
 @Composable
-private fun WidgetPreviewSectionPreview() {
+private fun WidgetPreviewCompatibilityCardPreview() {
+    WidgetPreviewToolingSurface(
+        settingsState = WidgetSettingsState(
+            feedLayout = WidgetFeedLayout.CARD,
+            cardAppearance = WidgetCardAppearance(),
+        ),
+        backdropMode = WidgetPreviewBackdropMode.LIGHT,
+    )
+}
+
+@Preview(
+    name = "Transparent divider fill card",
+    widthDp = 480,
+)
+@Composable
+private fun WidgetPreviewTransparentDividerFillPreview() {
+    WidgetPreviewToolingSurface(
+        settingsState = WidgetSettingsState(
+            feedLayout = WidgetFeedLayout.CARD,
+            fontScale = MAX_WIDGET_FONT_SCALE,
+            backgroundOpacityPercent = 70,
+            cardAppearance = WidgetCardAppearance(
+                surfaceOpacityPercent = 0,
+                cornerRadiusDp = 24,
+                itemSeparation = WidgetCardItemSeparation.DIVIDER,
+                dividerOpacityPercent = 65,
+                imageSizing = WidgetCardImageSizing.FILL_ROW_HEIGHT,
+            ),
+        ),
+        backdropMode = WidgetPreviewBackdropMode.DARK,
+    )
+}
+
+@Preview(name = "Custom translucent card - light wallpaper")
+@Composable
+private fun WidgetPreviewCustomCardLightWallpaperPreview() {
+    WidgetPreviewCustomCardToolingSurface(WidgetPreviewBackdropMode.LIGHT)
+}
+
+@Preview(name = "Custom translucent card - dark wallpaper")
+@Composable
+private fun WidgetPreviewCustomCardDarkWallpaperPreview() {
+    WidgetPreviewCustomCardToolingSurface(WidgetPreviewBackdropMode.DARK)
+}
+
+@Composable
+private fun WidgetPreviewCustomCardToolingSurface(backdropMode: WidgetPreviewBackdropMode) {
+    WidgetPreviewToolingSurface(
+        settingsState = WidgetSettingsState(
+            feedLayout = WidgetFeedLayout.CARD,
+            backgroundColor = 0xFF455A64.toInt(),
+            backgroundOpacityPercent = 55,
+            cardAppearance = WidgetCardAppearance(
+                surfaceColor = 0xFFFFC107.toInt(),
+                surfaceOpacityPercent = 45,
+                cornerRadiusDp = 28,
+                itemSeparation = WidgetCardItemSeparation.SPACING,
+                imageSizing = WidgetCardImageSizing.THUMBNAIL,
+            ),
+        ),
+        backdropMode = backdropMode,
+    )
+}
+
+@Composable
+private fun WidgetPreviewToolingSurface(
+    settingsState: WidgetSettingsState,
+    backdropMode: WidgetPreviewBackdropMode,
+) {
     FeedFlowTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background,
-        ) {
-            WidgetPreviewSection(
-                settingsState = WidgetSettingsState(
-                    syncPeriod = SyncPeriod.ONE_HOUR,
-                    feedLayout = WidgetFeedLayout.LIST,
-                    showHeader = true,
-                    fontScale = 0,
-                    backgroundColor = 0xFFC7B2E7.toInt(),
-                    backgroundOpacityPercent = 60,
-                    textColorMode = WidgetTextColorMode.AUTOMATIC,
-                    hideImages = false,
-                ),
+        Surface(color = MaterialTheme.colorScheme.background) {
+            WidgetPreviewSectionContent(
+                settingsState = settingsState,
+                backdropMode = backdropMode,
+                onToggleBackdropMode = {},
             )
         }
     }

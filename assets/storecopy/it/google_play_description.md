@@ -1,61 +1,70 @@
-FeedFlow is a minimal RSS reader for people who want a clean, chronological
-timeline — no algorithms, no clutter, no noise. Just your feeds, in order.
+FeedFlow è un lettore RSS minimale per chi desidera un feed pulito e in ordine
+cronologico: niente algoritmi, niente disordine, nessun rumore di fondo. Solo i
+tuoi feed, in ordine.
 
-Whether you follow news sites, blogs, or YouTube channels via RSS, FeedFlow
-gives you a fast, distraction-free way to keep up with everything you care
-about.
+Che tu segua siti di notizie, blog o canali YouTube tramite RSS, FeedFlow ti
+offre un modo rapido e senza distrazioni per rimanere aggiornato su tutto ciò
+che ti interessa.
 
-Read Articles Your Way
-- Open articles in your default browser, or pick a dedicated browser for reading
-  sessions.
-- Use Reader Mode for a distraction-free article view with adjustable text size
-  and spacing.
-- Prefetch and cache full article content for offline reading — read articles
-  anywhere, even without an internet connection.
-- View the original web page or switch to a clean, readable format — the choice
-  is yours.
+Leggi gli articoli a modo tuo
+- Apri gli articoli nel tuo browser predefinito, oppure scegli un browser
+  dedicato per le sessioni di lettura.
+- Usa la Modalità lettura per visualizzare gli articoli senza distrazioni, con
+  dimensioni del testo e spaziatura regolabili.
+- Scarica e memorizza nella cache il testo completo degli articoli per la
+  lettura offline: leggi ovunque, anche senza connessione a internet.
+- Visualizza la pagina web originale o passa ad un fondato più ordinato e
+  leggibile: la scelta è tua.
 
-Sync Feeds Across All Your Devices
-- Keep everything local, or sync feeds across devices with multiple backends.
-- Cloud storage sync with Dropbox or Google Drive.
-- Self-hosted and server sync with FreshRSS, Miniflux, Feedbin, or BazQux.
-- Your feeds, read status, and bookmarks stay in sync across Android, iOS,
-  macOS, Windows, and Linux.
-- Switch between phone, tablet, and desktop without losing your place.
+Sincronizza i feed su tutti i tuoi dispositivi
+- Conserva tutto in locale o sincronizza i feed tra i tuoi dispositivi grazie al
+  supporto di più servizi.
+- Sincronizzazione sul cloud con Dropbox o Google Drive.
+- Sincronizzazione self-hosted e server con FreshRSS, Miniflux, Feedbin o
+  BazQux.
+- I tuoi feed, lo stato di lettura e i segnalibri rimangono sincronizzati su
+  Android, iOS, macOS, Windows e Linux.
+- Passa da smartphone, tablet e computer senza mai perdere il segno.
 
-Stay Organized with Feeds and Categories
-- Import and export feeds with OPML — migrate from any other RSS reader or news
-  reader in minutes.
-- Block noisy keywords to filter out unwanted content from your feed.
-- Organize RSS feeds into categories and bookmark articles to read later.
-- Search across all your feeds and articles to quickly find the content you
-  need.
+Organizzati al meglio con feed e categorie
+- Importa ed esporta feed tramite OPML: migra da qualsiasi lettore RSS o
+  aggregatore di notizie in un attimo.
+- Blocca le parole chiave di disturbo per filtrare i contenuti indesiderati dal
+  tuo feed.
+- Organizza i feed RSS in categorie e salva gli articoli nei segnalibri per
+  leggerli in seguito.
+- Cerca tra tutti i tuoi feed e articoli per trovare rapidamente i contenuti che
+  desideri.
 
-A News Reading Experience You Control
-- Dark mode, light mode, and OLED black theme for comfortable reading day and
-  night.
-- Background refresh keeps your feed list up to date with new articles and
-  posts.
+Un'esperienza di lettura delle notizie sotto il tuo controllo
+- Modalità scura, modalità chiara e tema nero OLED per una lettura confortevole
+  sia di giorno che di notte.
+- Aggiornamenti in background che mantengono l'elenco dei feed sempre aggiornato
+  con i nuovi articoli e post.
 
-Built for RSS, Atom, and the Open Web
-- Full support for RSS 2.0, RSS 1.0, and Atom feed formats.
-- Subscribe to blogs, news sites, YouTube channels, and more.
-- No account required — add feeds directly by URL or browse curated feed
-  suggestions to get started.
-- OPML import and export means you're never locked in to any single app.
+Realizzato per RSS, Atom e l'Open Web
+- Supporto completo per RSS 2.0, RSS 1.0 e formati feed Atom.
+- Iscriviti a blog, siti di notizie, canali YouTube e molto altro.
+- Nessun account richiesto: aggiungi i feed direttamente tramite URL o sfoglia i
+  nostri suggerimenti per iniziare.
+- L'importazione e l'esportazione in formato OPML ti garantiscono di non essere
+  mai vincolato a una singola applicazione.
 
-Perfect For
-- News enthusiasts who want a chronological feed without algorithmic
-  recommendations.
-- Blog readers who want all their favorite sites in one clean timeline.
-- Self-hosted enthusiasts running FreshRSS, Miniflux, or similar services.
-- Anyone switching from another feed reader — OPML import makes migration
-  simple.
+Perfetto per
+- Appassionati di notizie che desiderano un feed cronologico, senza
+  raccomandazioni basate su algoritmi.
+- Lettori di blog che desiderano tutti i loro siti preferiti in un'unica
+  cronologia ordinata.
+- Appassionati del self-hosting che utilizzano FreshRSS, Miniflux o servizi
+  simili.
+- Chiunque voglia passare da un altro lettore di feed: l'importazione in formato
+  OPML rende la migrazione semplicissima.
 
-Why FeedFlow?
-- No algorithmic feed — your timeline is always chronological.
-- Open source with an active community and regular updates.
-- Available on Android, iOS, macOS, Windows, and Linux.
-- Translated into 25+ languages by contributors worldwide.
+Perché FeedFlow?
+- Niente feed algoritmici: i tuoi contenuti sono sempre in ordine cronologico.
+- Open source, con una community attiva e aggiornamenti regolari
+- Disponibile su Android, iOS, macOS, Windows, e Linux.
+- Tradotto in oltre 25 lingue da collaboratori di tutto il mondo.
 
-Take back control of your news and reading — download FeedFlow today.
+Riprendi il controllo delle tue notizie e di come le leggi: scarica FeedFlow
+oggi stesso.

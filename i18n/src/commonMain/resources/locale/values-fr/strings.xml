@@ -268,7 +268,7 @@
     <string name="google_drive_desktop_sync_description">Cliquez sur le bouton ci-dessous pour connecter votre compte Google Drive. Une fenêtre de navigateur s’ouvrira pour l’authentification. Une fois la connexion terminée, vous pourrez revenir à cette application.</string>
     <string name="settings_hide_date">Masquer la date de l\'article</string>
     <string name="settings_hide_unread_dot">Masquer la vignette \"non lu\"</string>
-    <string name="settings_description_max_lines">Nombre de lignes max pour la description</string>
+    <string name="settings_description_max_lines">Nombre maximal de lignes pour la description</string>
     <string name="settings_description_lines_three">Description sur 3 lignes</string>
     <string name="settings_description_lines_five">Description sur 5 lignes</string>
     <string name="settings_description_lines_no_limit">Aucune limite de lignes</string>
@@ -395,4 +395,21 @@
     <string name="increase_line_height_button_content_description">Augmenter la hauteur de ligne</string>
     <string name="decrease_line_height_button_content_description">Réduire la hauteur de ligne</string>
     <string name="settings_feed_layout_big_image">Carte avec grande image</string>
+    <string name="mark_all_above_as_read_confirmation_title">Marquer tout ce qui précède comme lu ?</string>
+    <string name="mark_all_above_as_read_confirmation_message">Tous les articles qui précèdent celui-ci seront marqués comme lus.</string>
+    <string name="mark_all_below_as_read_confirmation_title">Marquer tout ce qui précède comme lu ?</string>
+    <string name="mark_all_below_as_read_confirmation_message">Tous les articles qui suivent celui-ci seront marqués comme lus.</string>
+    <string name="link_opening_preference_default_short">Paramètres de l\'application</string>
+    <string name="link_opening_preference_system_browser">Navigateur par défaut</string>
+    <string name="article_open_mode">Ouvrir les articles avec</string>
+    <string name="article_open_mode_section_reader">Mode lecture</string>
+    <string name="article_open_mode_section_browser">Navigateur</string>
+    <string name="article_open_mode_full_article_short">Lecteur (site internet)</string>
+    <string name="article_open_mode_feed_short">Lecteur (flux)</string>
+    <string name="hide_images_for_feed_description">Masquer les images pour ce flux</string>
+    <string name="new_articles_button">%s d\'articles nouveaux</string>
+    <string name="expand_category_button_content_description">Développer %s</string>
+    <string name="collapse_category_button_content_description">Réduire %s</string>
+    <string name="reader_mode_no_content_title">Aucun contenu disponible</string>
+    <string name="reader_mode_no_content_message">Cet article ne contient aucun contenu et il n\'y a pas de lien pour l\'ouvrir sur internet.</string>
 </resources>

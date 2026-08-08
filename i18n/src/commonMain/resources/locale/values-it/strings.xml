@@ -412,4 +412,8 @@
     <string name="collapse_category_button_content_description">Riduci %s</string>
     <string name="reader_mode_no_content_title">Nessun contenuto disponibile</string>
     <string name="reader_mode_no_content_message">Questo articolo non include alcun contenuto, e non è presente un link per aprirlo nel web.</string>
+    <string name="mark_all_above_as_read_confirmation_title">Contrassegnare tutto sopra come già letto?</string>
+    <string name="mark_all_above_as_read_confirmation_message">Tutti gli articoli sopra a questo verranno contrassegnati come letti.</string>
+    <string name="mark_all_below_as_read_confirmation_title">Contrassegnare tutto sotto come letto?</string>
+    <string name="mark_all_below_as_read_confirmation_message">Tutti gli articoli sotto a questo verranno contrassegnati come letti.</string>
 </resources>

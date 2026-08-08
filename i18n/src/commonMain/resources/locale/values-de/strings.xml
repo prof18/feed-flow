@@ -398,4 +398,22 @@
     <string name="expand_category_button_content_description">Erweitern %s</string>
     <string name="collapse_category_button_content_description">Einklappen %s</string>
     <string name="new_articles_button">%s neue Artikel</string>
+    <string name="mark_all_above_as_read_confirmation_title">Alles oberhalb als gelesen markieren?</string>
+    <string name="mark_all_above_as_read_confirmation_message">Alle Artikel oberhalb dieses werden als gelesen markiert.</string>
+    <string name="mark_all_below_as_read_confirmation_title">Alles unterhalb als gelesen markieren?</string>
+    <string name="mark_all_below_as_read_confirmation_message">Alle Artikel unterhalb dieses werden als gelesen markiert.</string>
+    <string name="link_opening_preference_default_short">Einstellungen der App</string>
+    <string name="link_opening_preference_system_browser">Vorgabebrowser</string>
+    <string name="article_open_mode">Artikel öffnen mit</string>
+    <string name="article_open_mode_section_reader">Lesemodus</string>
+    <string name="article_open_mode_section_browser">Browser</string>
+    <string name="article_open_mode_full_article_short">Reader (Webseite)</string>
+    <string name="article_open_mode_feed_short">Reader (Feed)</string>
+    <string name="reader_content_source_web">Artikel von der Webseite</string>
+    <string name="reader_content_source_web_subtitle">Originalseite abrufen und bereinigen</string>
+    <string name="reader_content_source_feed">Inhalt des Feeds</string>
+    <string name="reader_content_source_feed_subtitle">Text im RSS-Feed verwenden</string>
+    <string name="hide_images_for_feed_description">Bilder für diesen Feed verbergen</string>
+    <string name="reader_mode_no_content_title">Kein Inhalt verfügbar</string>
+    <string name="reader_mode_no_content_message">Dieser Artikel enthält keinerlei Inhalt und es gibt keinen Link, um ihn im Internet zu öffnen.</string>
 </resources>

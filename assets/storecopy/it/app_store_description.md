@@ -1,15 +1,17 @@
-FeedFlow is a minimal RSS reader designed for one thing: keeping up with the
-open web without noise.
+FeedFlow è un lettore RSS essenziale progettato per una sola cosa: tenersi
+aggiornati sul web aperto senza distrazioni.
 
 Follow your favorite blogs and news sites in a clean, chronological timeline. No
 algorithms decide what you see — just your feeds, in the order they were
 published.
 
-Read Your Way
-- Open articles in your browser, or use Reader Mode for a clutter-free view.
-- Adjust text size and spacing for comfortable reading.
-- Cache full articles for offline reading — perfect for commutes, flights, or
-  anywhere without a connection.
+Leggi a modo tuo
+- Apri gli articoli nel tuo browser, oppure usa la Modalità lettura per una
+  visualizzazione senza distrazioni.
+- Regola le dimensioni del testo e la spaziatura per un'esperienza di lettura
+  confortevole.
+- Salva gli articoli completi nella cache per la lettura offline: perfetto per
+  gli spostamenti quotidiani, i voli o qualsiasi luogo senza connessione.
 
 Sync That Fits Your Setup
 - iCloud sync keeps your feeds, read status, and bookmarks in sync across

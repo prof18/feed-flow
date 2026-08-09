@@ -132,7 +132,7 @@
     <string name="fresh_rss_account_connected">Ühenduse loomine sinu FreshRSS-i kontoga õnnestus</string>
     <string name="account_text_field_server_url">Serveri võrguaadress</string>
     <string name="fresh_rss_url_hint">FreshRSS-i API otspunkt, näiteks %s</string>
-    <string name="link_opening_preference_default">Vaikimisi</string>
+    <string name="link_opening_preference_default">Sama, nagu rakenduse seadistustes</string>
     <string name="link_opening_preference_internal_browser">Rakendusesisene brauser</string>
     <string name="link_opening_preference_preferred_browser">Lemmikbrauser</string>
     <string name="delete_category_confirmation_title">Kas kustutame kategooria?</string>
@@ -398,4 +398,22 @@
     <string name="expand_category_button_content_description">Laienda: %s</string>
     <string name="collapse_category_button_content_description">Ahenda: %s</string>
     <string name="new_articles_button">%s uut artiklit</string>
+    <string name="mark_all_above_as_read_confirmation_title">Kas märgid kõik ülaltoodu loetuks?</string>
+    <string name="mark_all_above_as_read_confirmation_message">Kogu sellest artiklist ülalpool olev sisu märgitakse loetuks.</string>
+    <string name="mark_all_below_as_read_confirmation_title">Kas märgid kõik allkuvatu loetuks?</string>
+    <string name="mark_all_below_as_read_confirmation_message">Kogu sellest artiklist allpool olev sisu märgitakse loetuks.</string>
+    <string name="link_opening_preference_default_short">Rakenduse seadistused</string>
+    <string name="link_opening_preference_system_browser">Vaikimisi veebibrauser</string>
+    <string name="article_open_mode">Artiklite avamise viis</string>
+    <string name="article_open_mode_section_reader">Lugemisvaate režiim</string>
+    <string name="article_open_mode_section_browser">Veebibrauser</string>
+    <string name="article_open_mode_full_article_short">Lugemisvaade (veebisait)</string>
+    <string name="article_open_mode_feed_short">Lugemisvaade (uudisvoog)</string>
+    <string name="reader_content_source_web">Artikkel veebisaidist</string>
+    <string name="reader_content_source_web_subtitle">Laadi alla ja puhasta algne leht</string>
+    <string name="reader_content_source_feed">Sisu uudisvoost</string>
+    <string name="reader_content_source_feed_subtitle">Kasuta RSS-voos leiduvat teksti</string>
+    <string name="hide_images_for_feed_description">Peida selle uudisvoo pildid</string>
+    <string name="reader_mode_no_content_title">Sisu pole saadaval</string>
+    <string name="reader_mode_no_content_message">Selles artiklis pole mitte mingit sisu ning seal ei leidu veebis avatavat linki.</string>
 </resources>

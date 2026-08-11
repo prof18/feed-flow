@@ -18,4 +18,8 @@
   <Resource Language="ja" />
   <Resource Language="cs" />
   <Resource Language="tr" />
+  <Resource Language="bg" />
+  <Resource Language="el" />
+  <Resource Language="hu" />
+  <Resource Language="lv" />
 </Resources>

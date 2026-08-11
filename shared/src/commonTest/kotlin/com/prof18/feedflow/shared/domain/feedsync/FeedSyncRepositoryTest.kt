@@ -261,6 +261,30 @@ class FeedSyncRepositoryTest : KoinTestBase() {
     }
 
     @Test
+    fun `syncFeedSources uploads pending changes before downloading`() = runTest(testDispatcher) {
+        enableDropboxSync()
+        settingsRepository.setIsSyncUploadRequired(true)
+        fakeFeedSyncWorker.onUploadImmediate = {
+            settingsRepository.setIsSyncUploadRequired(false)
+        }
+
+        feedSyncRepository.syncFeedSources()
+
+        assertEquals(listOf("upload", "download", "syncSources"), fakeFeedSyncWorker.calls)
+    }
+
+    @Test
+    fun `syncFeedSources does not download when pending upload fails`() = runTest(testDispatcher) {
+        enableDropboxSync()
+        settingsRepository.setIsSyncUploadRequired(true)
+
+        feedSyncRepository.syncFeedSources()
+
+        assertEquals(listOf("upload"), fakeFeedSyncWorker.calls)
+        assertTrue(settingsRepository.getIsSyncUploadRequired())
+    }
+
+    @Test
     fun `syncFeedItems emits error to message queue`() = runTest(testDispatcher) {
         enableDropboxSync()
         val itemError = SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
@@ -307,6 +331,8 @@ private class FakeFeedSyncWorker : FeedSyncWorker {
     var downloadResult: SyncResult = SyncResult.Success
     var syncFeedSourcesResult: SyncResult = SyncResult.Success
     var syncFeedItemsResult: SyncResult = SyncResult.Success
+    var onUploadImmediate: () -> Unit = {}
+    val calls = mutableListOf<String>()
 
     override fun upload() {
         uploadCallCount++
@@ -314,14 +340,20 @@ private class FakeFeedSyncWorker : FeedSyncWorker {
 
     override suspend fun uploadImmediate() {
         uploadImmediateCallCount++
+        calls.add("upload")
+        onUploadImmediate()
     }
 
     override suspend fun download(isFirstSync: Boolean): SyncResult {
+        calls.add("download")
         downloadIsFirstSyncArgs.add(isFirstSync)
         return downloadResult
     }
 
-    override suspend fun syncFeedSources(): SyncResult = syncFeedSourcesResult
+    override suspend fun syncFeedSources(): SyncResult {
+        calls.add("syncSources")
+        return syncFeedSourcesResult
+    }
 
     override suspend fun syncFeedItems(): SyncResult = syncFeedItemsResult
 }

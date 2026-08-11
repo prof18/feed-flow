@@ -437,29 +437,104 @@ jobs:
           name: ${{ env.NAME_MSIX }}
           retention-days: 7 
 
+  # The Store publish is its own job, on Linux, consuming the MSIX the build job
+  # just uploaded. Nothing about talking to the Partner Center API needs Windows:
+  # pcenter is a static Go binary and the work is HTTP plus a blob upload.
+  #
+  # Three reasons this is a separate job rather than two more steps above:
+  #
+  #  1. It is independently retryable. The build above takes the better part of
+  #     an hour (DISM, the MSIX packaging tool, makeappx). When a publish fails
+  #     for a reason that has nothing to do with the package — a pending draft,
+  #     throttling, an expired secret — re-running this job costs a minute
+  #     instead of rebuilding the MSIX.
+  #  2. Linux runners bill at 1x where Windows bills at 2x, and this job is
+  #     minutes.
+  #  3. It runs the linux/amd64 archive, which pcenter's own release workflow
+  #     smoke-tests and its Homebrew formula installs on every update. The
+  #     windows/amd64 archive is the one artifact nothing else exercises.
+  #
+  # `brew install prof18/tap/pcenter` is deliberately not used here: Homebrew is
+  # not preinstalled on the Linux runners, and it would resolve whatever version
+  # is current rather than the one this workflow was tested against. Brew is the
+  # channel for running these commands by hand.
+  publish-store:
+    name: Publish to Microsoft Store
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # For assets/storecopy/microsoft-store-release-notes.json only; the
+      # package itself comes from the build job's artifact.
+      - uses: actions/checkout@v7
+
+      - name: Download the MSIX
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.deploy.outputs.name_msix }}
+          path: msix
+
+      - name: Install pcenter
+        env:
+          PCENTER_VERSION: v0.0.3
+        run: |
+          set -euo pipefail
+          name="pcenter_${PCENTER_VERSION}_linux_amd64.tar.gz"
+          base="https://github.com/prof18/pcenter-cli/releases/download/${PCENTER_VERSION}"
+
+          mkdir -p "$RUNNER_TEMP/pcenter"
+          cd "$RUNNER_TEMP"
+          curl -fsSL -O "$base/$name"
+          curl -fsSL -O "$base/checksums.txt"
+
+          # Verified against the release's own checksums.txt: a pinned URL says
+          # which release, not that it arrived intact.
+          grep " ${name}\$" checksums.txt | sha256sum -c -
+
+          tar -xzf "$name" -C "$RUNNER_TEMP/pcenter"
+          echo "$RUNNER_TEMP/pcenter" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/pcenter/pcenter" version
+
       # Tag pushes publish the submission; manual dispatches only prepare an
       # uncommitted draft in Partner Center and keep the old version live.
+      #
+      # Credentials arrive as MS_STORE_* environment variables, which pcenter
+      # reads directly — nothing is written to the runner and no parameters are
+      # plumbed through. Output is JSON here because stdout is not a terminal.
       - name: Publish MSIX to Microsoft Store
-        shell: pwsh
         env:
           MS_STORE_TENANT_ID: ${{ secrets.MS_STORE_TENANT_ID }}
           MS_STORE_CLIENT_ID: ${{ secrets.MS_STORE_CLIENT_ID }}
           MS_STORE_CLIENT_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
           MS_STORE_APP_ID: ${{ secrets.MS_STORE_APP_ID }}
           IS_TAG_RELEASE: ${{ github.event_name == 'push' }}
+          NAME_MSIX: ${{ needs.deploy.outputs.name_msix }}
         run: |
-          $skipCommit = $env:IS_TAG_RELEASE -ne 'true'
-          if ($skipCommit) {
-            Write-Host "Manual dispatch: preparing the Store submission as a draft without publishing."
-          }
-          .github/scripts/publish-msix-to-store.ps1 `
-            -TenantId $env:MS_STORE_TENANT_ID `
-            -ClientId $env:MS_STORE_CLIENT_ID `
-            -ClientSecret $env:MS_STORE_CLIENT_SECRET `
-            -ApplicationId $env:MS_STORE_APP_ID `
-            -MsixPath "${{ env.RELEASE_PATH_MSIX }}" `
-            -ReleaseNotesPath "assets/storecopy/microsoft-store-release-notes.json" `
-            -RolloutPercentage 90 `
-            -TargetPublishMode "Immediate" `
-            -ReplacePendingSubmission `
-            -SkipCommit:$skipCommit
+          set -euo pipefail
+
+          # Preflight: fail with a readable diagnosis rather than a 401 halfway
+          # through the upload.
+          pcenter auth doctor
+
+          # --release-notes is mandatory: without an explicit choice pcenter
+          # refuses to run, so a forgotten flag can never ship the previous
+          # version's changelog. A Store locale missing from the file is a hard
+          # failure rather than an empty changelog in someone's language.
+          #
+          # --replace-pending clears an existing uncommitted draft, since the
+          # Store allows only one. Note this deletes ANY pending draft,
+          # including one left by a manual dispatch for inspection.
+          args=(
+            publish msix
+            --path "msix/${NAME_MSIX}"
+            --release-notes assets/storecopy/microsoft-store-release-notes.json
+            --rollout-percentage 90
+            --replace-pending
+          )
+
+          if [ "$IS_TAG_RELEASE" != 'true' ]; then
+            echo "Manual dispatch: preparing the Store submission as a draft without publishing."
+            args+=(--skip-commit)
+          fi
+
+          pcenter "${args[@]}"

@@ -119,6 +119,7 @@ Full automated E2E checks before release:
 - `e2e/scripts/run-ios.sh`
 
 When the user asks for the full Maestro release gate or a failure summary, use the repo-local `run-maestro-release-tests` skill. Its runner builds/installs both platforms, runs smoke + regression flows, continues after failures, and writes `report.html`, `report.md`, and logs under `.tmp/maestro-release-tests/<timestamp>/`.
+Each Maestro flow has a three-minute limit and the runner retries only driver/transport failures (up to three attempts). Treat a timeout or device-server failure as infrastructure first; inspect the archived per-attempt logs before changing app code.
 
 Use the debug seeding deep links documented in that guide. Do not depend on live feeds, OAuth, or previous app state in smoke or regression flows.
 
@@ -287,3 +288,25 @@ When creating commits:
 - CI runs `.scripts/refresh-translations.sh` before checks; do this locally before pushing if translations changed
 - Debugging CI failures: `gh run list --limit=10`, then `gh run view <run-id> --log`
 - Red CI recovery loop: `gh run rerun <run-id>` (or `gh run rerun <run-id> --failed`), then fix and push until green
+
+### Microsoft Store (`pcenter`)
+
+The Store is driven by [`pcenter`](https://github.com/prof18/pcenter-cli), which replaced the
+PowerShell scripts in `.github/scripts/`. Locally: `brew install prof18/tap/pcenter`. In CI it
+runs in `windows-release.yml`'s `publish-store` job — a separate Linux job that takes the MSIX
+from the Windows build artifact, so a publish that fails on its own terms is re-runnable in a
+minute instead of rebuilding the package for an hour. Bump `PCENTER_VERSION` in its "Install
+pcenter" step to move the pinned version.
+
+- Reading changes nothing and is the place to start: `pcenter listing show`,
+  `pcenter submission status`, `pcenter rollout status`, `pcenter locales list`.
+- Credentials: `~/.config/pcenter/credentials.env` locally (`pcenter auth login`), `MS_STORE_*`
+  from repository secrets in CI. Never commit them.
+- `assets/storecopy/<locale>/` is the source of truth for listing copy. `.pcenter/` is a
+  gitignored scratch snapshot — never commit it, never hand-edit it.
+- **Never `pcenter listing push --yes` or `submission commit` unless the user explicitly asks.**
+  `--dry-run` first, always.
+
+For the actual workflows — syncing listing text, replacing screenshots, adding or removing a
+Store language, Store field limits, rescuing a stuck submission or rollout — use the repo-local
+`update-microsoft-store-listing` skill instead of expanding this section.

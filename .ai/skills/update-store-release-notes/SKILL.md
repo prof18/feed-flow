@@ -44,10 +44,10 @@ Respect a user request to translate store copy even if general project localizat
 ## Windows: Microsoft Store
 
 - Update `assets/storecopy/microsoft-store-release-notes.json`.
-- Keep the top-level `notes` object. Each locale value is an array of non-empty bullet strings; the Store publishing script joins the array with newlines.
-- Match every Partner Center listing locale. The publisher validates missing locales case-insensitively and warns about unused ones. Discover the live set when credentials are available rather than assuming a static list.
-- The publishing workflow passes this file to `.github/scripts/publish-msix-to-store.ps1`; validate the JSON before handoff, for example with `jq empty assets/storecopy/microsoft-store-release-notes.json`.
-- Do not publish or commit the Microsoft Store submission unless the user explicitly asks; editing the local release-note file is sufficient.
+- Keep the top-level `notes` object. Each locale value is an array of non-empty bullet strings; `pcenter` joins the array with CRLF, which is what the Store renders as line breaks.
+- Match every Partner Center listing locale. A Store locale missing from this file is a **hard failure** at publish time rather than an empty changelog in that language; a locale present here that the Store does not have is only a warning. Matching is case-insensitive. Discover the live set with `pcenter locales list` rather than assuming a static list.
+- Validate the JSON before finishing, for example with `jq empty assets/storecopy/microsoft-store-release-notes.json`.
+- **This skill's output is the file, nothing more.** Writing it is the whole job — the release workflow reads it at release time. Do not publish or commit the Microsoft Store submission unless the user explicitly asks.
 
 ## Final Report
 

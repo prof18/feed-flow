@@ -1,5 +1,9 @@
 package com.prof18.feedflow.android.home
 
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitHorizontalTouchSlopOrCancellation
+import androidx.compose.foundation.gestures.horizontalDrag
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,6 +25,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.home.drawer.AndroidDrawer
 import com.prof18.feedflow.core.model.FeedFilter
@@ -152,9 +160,15 @@ fun AdaptiveHomeView(
         }
     } else {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+        val edgeWidthPx = with(LocalDensity.current) { drawerEdgeWidth.toPx() }
         ModalNavigationDrawer(
             modifier = modifier,
             drawerState = drawerState,
+            // Material3 puts its drag handle on the whole content, so any horizontal drag over the
+            // feed list pulled the drawer open mid-scroll. Opening is left to the edge swipe below;
+            // this keeps the drag-to-close gesture once the drawer is already open.
+            gesturesEnabled = drawerState.isOpen,
             drawerContent = {
                 ModalDrawerSheet(
                     drawerContainerColor = MaterialTheme.colorScheme.background,
@@ -194,6 +208,11 @@ fun AdaptiveHomeView(
             },
         ) {
             HomeContentInternal(
+                modifier = Modifier.drawerEdgeSwipeToOpen(
+                    edgeWidthPx = edgeWidthPx,
+                    isRtl = isRtl,
+                    onOpen = { scope.launch { drawerState.open() } },
+                ),
                 showDrawerMenu = true,
                 onDrawerMenuClick = {
                     scope.launch {
@@ -208,3 +227,49 @@ fun AdaptiveHomeView(
         }
     }
 }
+
+private val drawerEdgeWidth = 20.dp
+
+/**
+ * Opens the drawer on a horizontal drag that starts within [edgeWidthPx] of the leading screen
+ * edge. Drags that start anywhere else are swallowed rather than ignored: a feed item cancels its
+ * click only once something consumes the gesture, so leaving them unconsumed would turn every
+ * horizontal drag into an article tap when swipe actions are off.
+ *
+ * Runs on the main pass, so the feed list claims vertical drags and an enabled swipe action claims
+ * its own row first.
+ *
+ * The edge is deliberately not claimed through `systemGestureExclusion`: under gesture navigation
+ * that edge belongs to the system back gesture, and the platform honours only 200dp of exclusion
+ * per side, so reserving it would leave back working on most of the screen and silently dead near
+ * the bottom. Opening by drag is therefore a button-navigation affordance, and the toolbar menu
+ * stays the gesture-independent way in.
+ */
+private fun Modifier.drawerEdgeSwipeToOpen(
+    edgeWidthPx: Float,
+    isRtl: Boolean,
+    onOpen: () -> Unit,
+): Modifier = this
+    .pointerInput(edgeWidthPx, isRtl) {
+        awaitEachGesture {
+            val down = awaitFirstDown(requireUnconsumed = false)
+            val startedFromEdge = if (isRtl) {
+                down.position.x >= size.width - edgeWidthPx
+            } else {
+                down.position.x <= edgeWidthPx
+            }
+
+            var overSlop = 0f
+            val drag = awaitHorizontalTouchSlopOrCancellation(down.id) { change, slop ->
+                change.consume()
+                overSlop = slop
+            } ?: return@awaitEachGesture
+
+            val opensDrawer = if (isRtl) overSlop < 0f else overSlop > 0f
+            if (startedFromEdge && opensDrawer) {
+                onOpen()
+            }
+
+            horizontalDrag(drag.id) { change -> change.consume() }
+        }
+    }

@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 59 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 60 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -113,11 +113,13 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-161 | `161-reader-no-url-no-content.yaml` | `feed-content` | Android, iOS | An item with neither a url nor feed content shows the unavailable-content message instead of an empty web view. |
 | REG-162 | `162-pagination-scroll-read.yaml` | `pagination-scroll-read` | Android | Guards issue #1319: with mark-as-read-on-scroll enabled, scrolling through 90 unread items keeps loading every following page. Offset pagination over the unread-only query skipped ~40 articles per page once scrolled-past items were flushed as read, so articles 041-080 (asserted through the 050 "Skip Needle" row) were unreachable and the list stopped early. iOS is intentionally skipped: the pagination logic lives in shared code and the Android flow covers the regression wiring. |
 | REG-163 | `163-rtl-content-direction.yaml` | `rtl-content` | Android, iOS | Timeline items follow their own content direction, not the app locale: a Persian item mirrors (image left of the title) while a Latin item in the same list does not; a Latin-prefixed mixed title stays left-to-right, and a direction-neutral title falls back to the description. |
+| REG-164 | `164-drawer-edge-swipe-only.yaml` | `swipe-disabled` | Android | A drag over the timeline neither opens the drawer nor falls through to the article, and drag-to-close still works once the drawer is open. Material3's `ModalNavigationDrawer` puts its horizontal `anchoredDraggable` on a `fillMaxSize()` box, so with every swipe action disabled a drag over the timeline pulled the drawer half open mid-scroll. The drag is swallowed rather than left unconsumed, because a feed row cancels its click only once something consumes the gesture — otherwise the same drag opens the article instead. iOS uses a separate SwiftUI drawer and is unaffected. |
 
 ## Known Limitations
 
 These are features intentionally not covered, with the reason recorded so they aren't re-investigated:
 
+- **Leading-edge drag to open the drawer (REG-164)** — the outcome depends on the device navigation mode, which a flow cannot set. Under gesture navigation the system back gesture owns that edge and the drag leaves the app; under button navigation it opens the drawer. `systemGestureExclusion` is deliberately not used to claim the edge, since the platform honours only 200dp per side and would leave back working on most of the screen and dead near the bottom. REG-164 opens the drawer through the toolbar menu instead and asserts only the nav-mode independent behaviour.
 - **iOS Share Extension via OS share sheet** — Maestro can reach `shareCell` from Safari, but the synthesized tap dispatches into MobileSafari's WebView instead of the remote-hosted `SharingUIService` popover, so the extension process never starts (Maestro/XCTest limitation on iOS 26).
 - **iOS large-dataset search (REG-134)** — XCTest hierarchy retrieval times out after opening the large search-result screen.
 - **iOS scroll-read pagination (REG-162)** — intentionally Android-only. The keyset pagination and the scroll-read flush both live in shared code, and the Android flow already exercises that wiring end to end; a second platform run would only re-test SwiftUI list scrolling.

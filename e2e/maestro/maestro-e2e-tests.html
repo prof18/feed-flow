@@ -328,6 +328,7 @@
       "android/regression/160-reader-content-source-navigation.yaml",
       "android/regression/161-reader-no-url-no-content.yaml",
       "android/regression/162-pagination-scroll-read.yaml",
+      "android/regression/164-drawer-edge-swipe-only.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -504,7 +505,8 @@
       "regression/158": "Empty single-source filter renders the next-feed affordance and moves to the next unread source.",
       "regression/159": "URL-less article opens in the styled feed-content reader without unavailable actions.",
       "regression/160": "Switching between cached web and RSS content preserves the reader Back destination.",
-      "regression/162": "Pagination keeps loading pages while mark-as-read-on-scroll flushes scrolled-past items (issue #1319)."
+      "regression/162": "Pagination keeps loading pages while mark-as-read-on-scroll flushes scrolled-past items (issue #1319).",
+      "regression/164": "A drag over the timeline neither opens the drawer nor falls through to the article, and drag-to-close still works once it is open."
     };
 
     const sections = document.querySelector("#sections");

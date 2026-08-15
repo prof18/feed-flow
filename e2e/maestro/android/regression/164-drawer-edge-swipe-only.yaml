@@ -1,0 +1,46 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=swipe-disabled
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    id: article_row_e2e_article_newest_unread
+- assertNotVisible:
+    id: drawer_bookmarks
+
+# Material3's ModalNavigationDrawer makes the whole content a horizontal drag
+# handle, so a drag over the timeline pulled the drawer open even with every
+# swipe action disabled.
+- swipe:
+    start: 50%,55%
+    end: 95%,55%
+    duration: 250
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: drawer_bookmarks
+# The drag is swallowed rather than left unconsumed, so it does not fall through
+# to the row and open the article either.
+- assertVisible:
+    id: article_row_e2e_article_newest_unread
+
+# Opening by leading-edge drag is not asserted here: under gesture navigation the
+# system back gesture owns that edge, so the result depends on the device nav
+# mode. The toolbar menu is the nav-mode independent way in.
+- tapOn:
+    id: drawer_menu_button
+- extendedWaitUntil:
+    visible:
+      id: drawer_bookmarks
+    timeout: 10000
+
+# Once open, a drag anywhere still closes it.
+- swipe:
+    start: 60%,55%
+    end: 5%,55%
+    duration: 400
+- extendedWaitUntil:
+    notVisible:
+      id: drawer_bookmarks
+    timeout: 10000

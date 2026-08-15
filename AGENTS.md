@@ -307,6 +307,14 @@ pcenter" step to move the pinned version.
 - **Never `pcenter listing push --yes` or `submission commit` unless the user explicitly asks.**
   `--dry-run` first, always.
 
+The MSIX itself is built by `.scripts/package-msix.ps1`, which packs the jpackage app image
+(`createReleaseDistributable`) with `makeappx` against `.github/msix-manifest-template.xml`.
+Do not reintroduce the MSIX Packaging Tool / MSI-conversion route: it needs the
+`Msix.PackagingTool.Driver` FOD, which stopped installing on the hosted Windows image in
+August 2026, and the tool's own DISM call times out after 10 minutes with no way to extend it.
+Package languages still come from `.github/msix-resources-template.xml`. `Identity/Name` and
+`Identity/Publisher` in the manifest must match Partner Center or the upload is rejected.
+
 For the actual workflows — syncing listing text, replacing screenshots, adding or removing a
 Store language, Store field limits, rescuing a stuck submission or rollout — use the repo-local
 `update-microsoft-store-listing` skill instead of expanding this section.

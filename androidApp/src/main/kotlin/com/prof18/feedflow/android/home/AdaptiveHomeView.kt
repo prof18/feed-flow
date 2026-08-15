@@ -166,8 +166,8 @@ fun AdaptiveHomeView(
             modifier = modifier,
             drawerState = drawerState,
             // Material3 puts its drag handle on the whole content, so any horizontal drag over the
-            // feed list pulled the drawer open mid-scroll. Opening is left to the edge swipe below;
-            // this keeps the drag-to-close gesture once the drawer is already open.
+            // feed list pulled the drawer open mid-scroll. Those drags are handled by
+            // claimHorizontalDragsForDrawer below; this keeps drag-to-close once it is open.
             gesturesEnabled = drawerState.isOpen,
             drawerContent = {
                 ModalDrawerSheet(
@@ -208,7 +208,7 @@ fun AdaptiveHomeView(
             },
         ) {
             HomeContentInternal(
-                modifier = Modifier.drawerEdgeSwipeToOpen(
+                modifier = Modifier.claimHorizontalDragsForDrawer(
                     edgeWidthPx = edgeWidthPx,
                     isRtl = isRtl,
                     onOpen = { scope.launch { drawerState.open() } },
@@ -231,10 +231,15 @@ fun AdaptiveHomeView(
 private val drawerEdgeWidth = 20.dp
 
 /**
- * Opens the drawer on a horizontal drag that starts within [edgeWidthPx] of the leading screen
- * edge. Drags that start anywhere else are swallowed rather than ignored: a feed item cancels its
- * click only once something consumes the gesture, so leaving them unconsumed would turn every
- * horizontal drag into an article tap when swipe actions are off.
+ * Claims horizontal drags over the home content on behalf of the drawer.
+ *
+ * Consuming them is the part that carries weight, including the drags that open nothing: a feed
+ * item cancels its click only once something consumes the gesture, so leaving them unconsumed
+ * turns every horizontal drag into an article tap when swipe actions are off. Material3 used to
+ * consume them as a side effect of its own drag handle, which `gesturesEnabled` now switches off
+ * while the drawer is closed. Dropping this modifier therefore reintroduces that tap.
+ *
+ * A drag that starts within [edgeWidthPx] of the leading screen edge additionally opens the drawer.
  *
  * Runs on the main pass, so the feed list claims vertical drags and an enabled swipe action claims
  * its own row first.
@@ -245,7 +250,7 @@ private val drawerEdgeWidth = 20.dp
  * the bottom. Opening by drag is therefore a button-navigation affordance, and the toolbar menu
  * stays the gesture-independent way in.
  */
-private fun Modifier.drawerEdgeSwipeToOpen(
+private fun Modifier.claimHorizontalDragsForDrawer(
     edgeWidthPx: Float,
     isRtl: Boolean,
     onOpen: () -> Unit,

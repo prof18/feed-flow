@@ -1,4 +1,4 @@
-• Vali oma voogude jaoks suurte piltidega kaartide või ruudustikpaigutuse vahel.
-• Järjesta vood ja kategooriad ümber oma töövoo järgi.
-• Kohanda lugemisteksti reavahe abil.
-• Naudi töökindlamat artiklite laadimist tänu nutikamale voogude värskendamisele.
+• Vali artiklite avamisviis üleüldiselt või iga voo jaoks eraldi: lugemisrežiim, voo sisu, rakendusesisene brauser või eelistatud brauser.
+• Peida pildid üksikutes voogudes ja liigu järgmise voo juurde, kui üks neist on tühi.
+• Kinnita enne kõigi ülal- või allpool olevate artiklite loetuks märkimist.
+• Parandatud kerimisel vahele jäävad lugemata artiklid, segakeelse teksti suund ning mõned FreshRSS-i/GReaderi sünkroonimise tõrked.

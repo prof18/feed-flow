@@ -1,4 +1,4 @@
-• Choisissez des cartes à grande image ou une présentation en grille pour vos flux.
-• Réorganisez vos flux et catégories selon votre façon de travailler.
-• Personnalisez le texte de lecture avec l’interligne.
-• Profitez d’un chargement des articles plus fiable grâce à une actualisation plus intelligente des flux.
+• Choisissez l’ouverture des articles globalement ou pour chaque flux : mode Lecture, contenu du flux, navigateur intégré ou navigateur préféré.
+• Masquez les images de flux individuels et passez au flux suivant lorsqu’un flux est vide.
+• Confirmez avant de marquer comme lus tous les articles au-dessus ou au-dessous.
+• Correction d’articles non lus ignorés lors du défilement, du sens du texte multilingue et de certains échecs de synchronisation FreshRSS/GReader.

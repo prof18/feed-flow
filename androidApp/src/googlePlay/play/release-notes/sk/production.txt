@@ -1,4 +1,4 @@
-• Vyberte si pre svoje informačné kanály rozloženie kariet s veľkými obrázkami alebo mriežku.
-• Zmeňte poradie informačných kanálov a kategórií podľa svojho spôsobu práce.
-• Prispôsobte text na čítanie pomocou výšky riadkov.
-• Vďaka inteligentnejšiemu obnovovaniu kanálov sa články načítavajú spoľahlivejšie.
+• Vyberte, ako sa majú články otvárať globálne alebo pre každý kanál: režim čítania, obsah kanála, vstavaný prehliadač alebo váš preferovaný prehliadač.
+• Skryte obrázky pre jednotlivé kanály a prejdite na ďalší kanál, keď je jeden prázdny.
+• Pred označením všetkých článkov nad alebo pod aktuálnym ako prečítaných vyžadujte potvrdenie.
+• Opravené preskakovanie neprečítaných článkov pri posúvaní, smer textu v zmiešaných jazykoch a niektoré chyby synchronizácie FreshRSS/GReader.

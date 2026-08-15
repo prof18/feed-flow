@@ -1,4 +1,4 @@
-• Chọn bố cục thẻ ảnh lớn hoặc lưới cho các nguồn cấp dữ liệu của bạn.
-• Sắp xếp lại nguồn cấp dữ liệu và danh mục cho phù hợp với quy trình làm việc của bạn.
-• Tùy chỉnh văn bản đọc bằng chiều cao dòng.
-• Tận hưởng việc tải bài viết đáng tin cậy hơn nhờ làm mới nguồn cấp dữ liệu thông minh hơn.
+• Chọn cách mở bài viết trên toàn ứng dụng hoặc cho từng nguồn cấp: chế độ Đọc, nội dung nguồn cấp, trình duyệt trong ứng dụng hoặc trình duyệt bạn muốn dùng.
+• Ẩn hình ảnh cho từng nguồn cấp và chuyển sang nguồn cấp tiếp theo khi một nguồn cấp trống.
+• Xác nhận trước khi đánh dấu đã đọc tất cả bài viết phía trên hoặc phía dưới.
+• Đã sửa lỗi bỏ qua bài viết chưa đọc khi cuộn, hướng văn bản với các ngôn ngữ trộn lẫn và một số lỗi đồng bộ FreshRSS/GReader.

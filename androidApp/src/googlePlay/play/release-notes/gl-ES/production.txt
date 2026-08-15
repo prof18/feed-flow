@@ -1,4 +1,4 @@
-• Escolle deseños de tarxetas con imaxes grandes ou de cuadrícula para as túas fontes.
-• Reordena as fontes e as categorías segundo o teu xeito de traballar.
-• Personaliza o texto de lectura coa altura de liña.
-• Goza dunha carga de artigos máis fiable cunha actualización máis intelixente das fontes.
+• Escolle como abrir os artigos globalmente ou para cada fonte: modo de lectura, contido da fonte, navegador integrado ou o teu navegador preferido.
+• Oculta as imaxes de fontes concretas e salta á seguinte fonte cando unha estea baleira.
+• Confirma antes de marcar como lidos todos os artigos de arriba ou de abaixo.
+• Corrixidos artigos non lidos omitidos ao desprazarse, a dirección do texto en idiomas mesturados e algúns fallos de sincronización con FreshRSS/GReader.

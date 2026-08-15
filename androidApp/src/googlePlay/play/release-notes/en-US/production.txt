@@ -1,4 +1,4 @@
-• Choose big-image card or grid layouts for your feeds.
-• Reorder feeds and categories to match your workflow.
-• Customize reader text with line height.
-• Enjoy more reliable article loading with smarter feed refreshing.
+• Choose how articles open globally or for each feed: Reader Mode, feed content, in-app browser, or your preferred browser.
+• Hide images per feed and jump to the next feed when one is empty.
+• Confirm before marking all articles above or below as read.
+• Fixed skipped unread articles while scrolling, mixed-language text direction, and some FreshRSS/GReader sync failures.

@@ -1,179 +1,279 @@
 {
   "notes": {
     "bg": [
-      "• Изберете карти с големи изображения или решетъчно оформление за вашите емисии.",
-      "• Пренаредете емисиите и категориите според начина си на работа.",
-      "• Персонализирайте текста в четеца с височина на редовете.",
-      "• Насладете се на по-надеждно зареждане на статии с по-умно обновяване на емисиите.",
-      "• Подобрена надеждност при отваряне на уеб връзки."
+      "• Добавени са глобални настройки и настройки за отделни емисии за отваряне на статии в режим за четене, от съдържанието на емисията или в браузър.",
+      "• Добавена е възможност за скриване на изображенията за отделни емисии.",
+      "• Добавено е конфигурируемо фоново обновяване на емисиите с индикатор за нови статии.",
+      "• Добавена е навигация към следващата емисия, когато текущата е празна.",
+      "• Добавено е потвърждение преди маркиране като прочетени на всички статии над или под дадена статия.",
+      "• Подобрени са посоката на текста при смесени езици и откриването на изображения в статиите.",
+      "• Подобрен е фокусът на клавиатурата при отваряне на режим за четене.",
+      "• Поправено е пропускането на непрочетени статии при превъртане.",
+      "• Поправени са грешки при синхронизацията за някои акаунти с FreshRSS и съвместими с Google Reader услуги."
     ],
     "cs": [
-      "• Zvolte pro své kanály karty s velkými obrázky nebo mřížkové rozvržení.",
-      "• Uspořádejte kanály a kategorie podle svého způsobu práce.",
-      "• Přizpůsobte text ve čtečce pomocí výšky řádků.",
-      "• Užijte si spolehlivější načítání článků díky chytřejšímu obnovování kanálů.",
-      "• Vylepšená spolehlivost při otevírání webových odkazů."
+      "• Přidáno globální nastavení a nastavení jednotlivých kanálů pro otevírání článků v režimu čtení, z obsahu kanálu nebo v prohlížeči.",
+      "• Přidána možnost skrýt obrázky pro jednotlivé kanály.",
+      "• Přidáno nastavitelné obnovení kanálů na pozadí s indikátorem nových článků.",
+      "• Přidána navigace na další kanál, když je aktuální kanál prázdný.",
+      "• Přidáno potvrzení před označením všech článků nad nebo pod článkem jako přečtených.",
+      "• Vylepšen směr textu ve smíšených jazycích a rozpoznávání obrázků v článcích.",
+      "• Vylepšeno zaměření klávesnice při otevírání režimu čtení.",
+      "• Opraveno přeskakování nepřečtených článků při posouvání.",
+      "• Opraveny chyby synchronizace ovlivňující některé účty FreshRSS a účty kompatibilní s Google Readerem."
     ],
     "de": [
-      "• Wählen Sie für Ihre Feeds große Bildkarten oder ein Rasterlayout.",
-      "• Ordnen Sie Feeds und Kategorien passend zu Ihrem Arbeitsablauf neu an.",
-      "• Passen Sie den Lesetext mit der Zeilenhöhe an.",
-      "• Genießen Sie zuverlässigeres Laden von Artikeln durch intelligenteres Aktualisieren von Feeds.",
-      "• Verbesserte Zuverlässigkeit beim Öffnen von Weblinks."
+      "• Globale und Feed-spezifische Einstellungen zum Öffnen von Artikeln im Lesemodus, aus dem Feed-Inhalt oder in einem Browser hinzugefügt.",
+      "• Option zum Ausblenden von Bildern für einzelne Feeds hinzugefügt.",
+      "• Konfigurierbare Feed-Aktualisierung im Hintergrund mit Anzeige für neue Artikel hinzugefügt.",
+      "• Navigation zum nächsten Feed hinzugefügt, wenn der aktuelle Feed leer ist.",
+      "• Bestätigung vor dem Markieren aller Artikel oberhalb oder unterhalb eines Artikels als gelesen hinzugefügt.",
+      "• Textrichtung bei gemischten Sprachen und Erkennung von Artikelbildern verbessert.",
+      "• Tastaturfokus beim Öffnen des Lesemodus verbessert.",
+      "• Fehler behoben, durch den ungelesene Artikel beim Scrollen übersprungen wurden.",
+      "• Synchronisierungsfehler behoben, die einige FreshRSS- und Google-Reader-kompatible Konten betrafen."
     ],
     "de-de": [
-      "• Wählen Sie für Ihre Feeds große Bildkarten oder ein Rasterlayout.",
-      "• Ordnen Sie Feeds und Kategorien passend zu Ihrem Arbeitsablauf neu an.",
-      "• Passen Sie den Lesetext mit der Zeilenhöhe an.",
-      "• Genießen Sie zuverlässigeres Laden von Artikeln durch intelligenteres Aktualisieren von Feeds.",
-      "• Verbesserte Zuverlässigkeit beim Öffnen von Weblinks."
+      "• Globale und Feed-spezifische Einstellungen zum Öffnen von Artikeln im Lesemodus, aus dem Feed-Inhalt oder in einem Browser hinzugefügt.",
+      "• Option zum Ausblenden von Bildern für einzelne Feeds hinzugefügt.",
+      "• Konfigurierbare Feed-Aktualisierung im Hintergrund mit Anzeige für neue Artikel hinzugefügt.",
+      "• Navigation zum nächsten Feed hinzugefügt, wenn der aktuelle Feed leer ist.",
+      "• Bestätigung vor dem Markieren aller Artikel oberhalb oder unterhalb eines Artikels als gelesen hinzugefügt.",
+      "• Textrichtung bei gemischten Sprachen und Erkennung von Artikelbildern verbessert.",
+      "• Tastaturfokus beim Öffnen des Lesemodus verbessert.",
+      "• Fehler behoben, durch den ungelesene Artikel beim Scrollen übersprungen wurden.",
+      "• Synchronisierungsfehler behoben, die einige FreshRSS- und Google-Reader-kompatible Konten betrafen."
     ],
     "en-us": [
-      "• Choose big-image cards or a grid layout for your feeds.",
-      "• Reorder feeds and categories to match your workflow.",
-      "• Customize reader text with line height.",
-      "• Enjoy more reliable article loading with smarter feed refreshing.",
-      "• Improved reliability when opening web links."
+      "• Added global and per-feed controls for opening articles in Reader Mode, from feed content, or in a browser.",
+      "• Added an option to hide images for individual feeds.",
+      "• Added configurable background feed refresh with a new-article indicator.",
+      "• Added navigation to the next feed when the current feed is empty.",
+      "• Added confirmation before marking all articles above or below an item as read.",
+      "• Improved mixed-language text direction and article image detection.",
+      "• Improved keyboard focus when opening Reader Mode.",
+      "• Fixed unread articles being skipped while scrolling.",
+      "• Fixed sync failures affecting some FreshRSS and Google Reader-compatible accounts."
     ],
     "es": [
-      "• Elige tarjetas con imágenes grandes o un diseño de cuadrícula para tus feeds.",
-      "• Reordena los feeds y las categorías según tu forma de trabajar.",
-      "• Personaliza el texto del lector con la altura de línea.",
-      "• Disfruta de una carga de artículos más fiable con una actualización de feeds más inteligente.",
-      "• Mayor fiabilidad al abrir enlaces web."
+      "• Añadidos controles globales y por fuente para abrir artículos en modo de lectura, desde el contenido de la fuente o en un navegador.",
+      "• Añadida una opción para ocultar imágenes de fuentes individuales.",
+      "• Añadida actualización configurable de fuentes en segundo plano con un indicador de artículos nuevos.",
+      "• Añadida navegación a la siguiente fuente cuando la fuente actual está vacía.",
+      "• Añadida confirmación antes de marcar como leídos todos los artículos situados encima o debajo de un artículo.",
+      "• Mejoradas la dirección del texto en idiomas mezclados y la detección de imágenes de artículos.",
+      "• Mejorado el foco del teclado al abrir el modo de lectura.",
+      "• Corregido el salto de artículos no leídos al desplazarse.",
+      "• Corregidos fallos de sincronización que afectaban a algunas cuentas de FreshRSS y compatibles con Google Reader."
     ],
     "es-es": [
-      "• Elige tarjetas con imágenes grandes o un diseño de cuadrícula para tus feeds.",
-      "• Reordena los feeds y las categorías según tu forma de trabajar.",
-      "• Personaliza el texto del lector con la altura de línea.",
-      "• Disfruta de una carga de artículos más fiable con una actualización de feeds más inteligente.",
-      "• Mayor fiabilidad al abrir enlaces web."
+      "• Añadidos controles globales y por fuente para abrir artículos en modo de lectura, desde el contenido de la fuente o en un navegador.",
+      "• Añadida una opción para ocultar imágenes de fuentes individuales.",
+      "• Añadida actualización configurable de fuentes en segundo plano con un indicador de artículos nuevos.",
+      "• Añadida navegación a la siguiente fuente cuando la fuente actual está vacía.",
+      "• Añadida confirmación antes de marcar como leídos todos los artículos situados encima o debajo de un artículo.",
+      "• Mejoradas la dirección del texto en idiomas mezclados y la detección de imágenes de artículos.",
+      "• Mejorado el foco del teclado al abrir el modo de lectura.",
+      "• Corregido el salto de artículos no leídos al desplazarse.",
+      "• Corregidos fallos de sincronización que afectaban a algunas cuentas de FreshRSS y compatibles con Google Reader."
     ],
     "et": [
-      "• Valige oma voogude jaoks suurte piltidega kaardid või ruudustikpaigutus.",
-      "• Järjestage vood ja kategooriad oma töövoole sobivaks.",
-      "• Kohandage lugeja teksti reavahega.",
-      "• Nautige töökindlamat artiklite laadimist tänu nutikamale voogude värskendamisele.",
-      "• Veebilinkide avamise töökindlust on parandatud."
+      "• Lisatud üldised ja voopõhised seaded artiklite avamiseks lugemisrežiimis, voo sisust või brauseris.",
+      "• Lisatud võimalus peita pilte üksikutes voogudes.",
+      "• Lisatud seadistatav voogude taustal värskendamine koos uute artiklite indikaatoriga.",
+      "• Lisatud liikumine järgmise voo juurde, kui praegune voog on tühi.",
+      "• Lisatud kinnitus enne kõigi artiklist üleval- või allpool olevate artiklite loetuks märkimist.",
+      "• Täiustatud segakeelse teksti suunda ja artiklipiltide tuvastamist.",
+      "• Täiustatud klaviatuurifookust lugemisrežiimi avamisel.",
+      "• Parandatud kerimisel vahele jäävad lugemata artiklid.",
+      "• Parandatud sünkroonimistõrked, mis mõjutasid mõningaid FreshRSS-i ja Google Readeriga ühilduvaid kontosid."
     ],
     "fr": [
-      "• Choisissez des cartes avec de grandes images ou une disposition en grille pour vos flux.",
-      "• Réorganisez les flux et les catégories selon votre façon de travailler.",
-      "• Personnalisez le texte du lecteur avec la hauteur de ligne.",
-      "• Profitez d’un chargement des articles plus fiable grâce à une actualisation plus intelligente des flux.",
-      "• Fiabilité améliorée lors de l’ouverture de liens web."
+      "• Ajout de réglages globaux et par flux pour ouvrir les articles en mode Lecture, depuis le contenu du flux ou dans un navigateur.",
+      "• Ajout d’une option pour masquer les images de flux individuels.",
+      "• Ajout d’une actualisation configurable des flux en arrière-plan avec indicateur de nouveaux articles.",
+      "• Ajout de la navigation vers le flux suivant lorsque le flux actuel est vide.",
+      "• Ajout d’une confirmation avant de marquer comme lus tous les articles au-dessus ou au-dessous d’un article.",
+      "• Amélioration du sens du texte multilingue et de la détection des images des articles.",
+      "• Amélioration du focus clavier à l’ouverture du mode Lecture.",
+      "• Correction des articles non lus ignorés lors du défilement.",
+      "• Correction d’échecs de synchronisation affectant certains comptes FreshRSS et compatibles Google Reader."
     ],
     "gl": [
-      "• Escolle tarxetas con imaxes grandes ou unha disposición en grella para as túas fontes.",
-      "• Reordena as fontes e as categorías segundo o teu fluxo de traballo.",
-      "• Personaliza o texto do lector coa altura de liña.",
-      "• Goza dunha carga de artigos máis fiable cunha actualización máis intelixente das fontes.",
-      "• Mellorouse a fiabilidade ao abrir ligazóns web."
+      "• Engadidos controis globais e por fonte para abrir artigos no modo de lectura, desde o contido da fonte ou nun navegador.",
+      "• Engadida unha opción para ocultar imaxes de fontes individuais.",
+      "• Engadida a actualización configurable de fontes en segundo plano cun indicador de artigos novos.",
+      "• Engadida a navegación á seguinte fonte cando a fonte actual está baleira.",
+      "• Engadida confirmación antes de marcar como lidos todos os artigos por riba ou por baixo dun artigo.",
+      "• Melloradas a dirección do texto en idiomas mesturados e a detección de imaxes dos artigos.",
+      "• Mellorado o foco do teclado ao abrir o modo de lectura.",
+      "• Corrixido o salto de artigos non lidos ao desprazarse.",
+      "• Corrixidos fallos de sincronización que afectaban a algunhas contas de FreshRSS e compatibles con Google Reader."
     ],
     "gl-es": [
-      "• Escolle tarxetas con imaxes grandes ou unha disposición en grella para as túas fontes.",
-      "• Reordena as fontes e as categorías segundo o teu fluxo de traballo.",
-      "• Personaliza o texto do lector coa altura de liña.",
-      "• Goza dunha carga de artigos máis fiable cunha actualización máis intelixente das fontes.",
-      "• Mellorouse a fiabilidade ao abrir ligazóns web."
+      "• Engadidos controis globais e por fonte para abrir artigos no modo de lectura, desde o contido da fonte ou nun navegador.",
+      "• Engadida unha opción para ocultar imaxes de fontes individuais.",
+      "• Engadida a actualización configurable de fontes en segundo plano cun indicador de artigos novos.",
+      "• Engadida a navegación á seguinte fonte cando a fonte actual está baleira.",
+      "• Engadida confirmación antes de marcar como lidos todos os artigos por riba ou por baixo dun artigo.",
+      "• Melloradas a dirección do texto en idiomas mesturados e a detección de imaxes dos artigos.",
+      "• Mellorado o foco do teclado ao abrir o modo de lectura.",
+      "• Corrixido o salto de artigos non lidos ao desprazarse.",
+      "• Corrixidos fallos de sincronización que afectaban a algunhas contas de FreshRSS e compatibles con Google Reader."
     ],
     "he": [
-      "• בחרו בכרטיסים עם תמונות גדולות או בפריסת רשת עבור הפידים שלכם.",
-      "• סדרו מחדש פידים וקטגוריות כך שיתאימו לאופן העבודה שלכם.",
-      "• התאימו את טקסט הקורא באמצעות גובה השורה.",
-      "• תיהנו מטעינה אמינה יותר של מאמרים עם רענון חכם יותר של פידים.",
-      "• אמינות משופרת בעת פתיחת קישורי אינטרנט."
+      "• נוספו הגדרות כלליות ולכל פיד לפתיחת מאמרים במצב קריאה, מתוכן הפיד או בדפדפן.",
+      "• נוספה אפשרות להסתיר תמונות עבור פידים בודדים.",
+      "• נוסף רענון פידים ברקע הניתן להגדרה עם מחוון מאמרים חדשים.",
+      "• נוספה ניווט לפיד הבא כאשר הפיד הנוכחי ריק.",
+      "• נוספה בקשת אישור לפני סימון כל המאמרים שמעל או מתחת לפריט כנקראו.",
+      "• שופרו כיוון הטקסט בשפות מעורבות וזיהוי תמונות במאמרים.",
+      "• שופר מיקוד המקלדת בעת פתיחת מצב קריאה.",
+      "• תוקן דילוג על מאמרים שלא נקראו בגלילה.",
+      "• תוקנו כשלי סנכרון שהשפיעו על חלק מחשבונות FreshRSS וחשבונות תואמי Google Reader."
     ],
     "hu": [
-      "• Válasszon nagyképes kártyákat vagy rácsos elrendezést a hírfolyamokhoz.",
-      "• Rendezze át a hírfolyamokat és kategóriákat a munkafolyamatának megfelelően.",
-      "• A sorközzel szabhatja testre az olvasó szövegét.",
-      "• Élvezze a cikkek megbízhatóbb betöltését az intelligensebb hírfolyam-frissítéssel.",
-      "• Megbízhatóbbá vált a webes hivatkozások megnyitása."
+      "• Globális és hírfolyamonkénti beállítások hozzáadva a cikkek olvasási módban, hírfolyam-tartalomból vagy böngészőben való megnyitásához.",
+      "• Hozzáadva egy lehetőség a képek elrejtésére egyes hírfolyamokban.",
+      "• Hozzáadva a beállítható háttérben történő hírfolyam-frissítés új cikkek jelzőjével.",
+      "• Hozzáadva a következő hírfolyamra való navigáció, ha az aktuális hírfolyam üres.",
+      "• Hozzáadva megerősítés, mielőtt egy cikk feletti vagy alatti összes cikket olvasottnak jelölne.",
+      "• Javítva a vegyes nyelvű szöveg iránya és a cikkképek felismerése.",
+      "• Javítva a billentyűzetfókusz az olvasási mód megnyitásakor.",
+      "• Javítva az olvasatlan cikkek görgetés közbeni kihagyása.",
+      "• Javítva a szinkronizálási hibák, amelyek egyes FreshRSS- és Google Reader-kompatibilis fiókokat érintettek."
     ],
     "it": [
-      "• Scegli schede con immagini grandi o una disposizione a griglia per i tuoi feed.",
-      "• Riordina feed e categorie in base al tuo flusso di lavoro.",
-      "• Personalizza il testo del lettore con l'altezza della riga.",
-      "• Goditi un caricamento degli articoli più affidabile grazie a un aggiornamento più intelligente dei feed.",
-      "• Maggiore affidabilità nell'apertura dei link web."
+      "• Aggiunti controlli globali e per singolo feed per aprire gli articoli in modalità Lettura, dal contenuto del feed o in un browser.",
+      "• Aggiunta un’opzione per nascondere le immagini per singoli feed.",
+      "• Aggiunto l’aggiornamento configurabile dei feed in background con un indicatore di nuovi articoli.",
+      "• Aggiunta la navigazione al feed successivo quando quello corrente è vuoto.",
+      "• Aggiunta una conferma prima di contrassegnare come letti tutti gli articoli sopra o sotto un elemento.",
+      "• Migliorate la direzione del testo in lingue miste e il rilevamento delle immagini degli articoli.",
+      "• Migliorato il focus della tastiera all’apertura della modalità Lettura.",
+      "• Corretto il salto di articoli non letti durante lo scorrimento.",
+      "• Corretti errori di sincronizzazione che interessavano alcuni account FreshRSS e compatibili con Google Reader."
     ],
     "ja": [
-      "• フィードには大きな画像のカードまたはグリッドレイアウトを選べるようになりました。",
-      "• ワークフローに合わせてフィードとカテゴリを並べ替えられます。",
-      "• 行の高さを調整して、リーダーのテキストをカスタマイズできます。",
-      "• よりスマートなフィード更新により、記事をより確実に読み込めるようになりました。",
-      "• Web リンクを開く際の信頼性を向上しました。"
+      "• 記事をリーダーモード、フィードの本文、またはブラウザーで開くための全体設定とフィードごとの設定を追加しました。",
+      "• フィードごとに画像を非表示にするオプションを追加しました。",
+      "• 新着記事の表示を備えた、設定可能なバックグラウンドでのフィード更新を追加しました。",
+      "• 現在のフィードが空の場合に次のフィードへ移動する機能を追加しました。",
+      "• 項目より上または下のすべての記事を既読にする前に確認を追加しました。",
+      "• 複数言語が混在するテキストの方向と記事画像の検出を改善しました。",
+      "• リーダーモードを開く際のキーボードフォーカスを改善しました。",
+      "• スクロール中に未読記事が飛ばされる問題を修正しました。",
+      "• 一部のFreshRSSおよびGoogle Reader互換アカウントで発生する同期エラーを修正しました。"
     ],
     "pl": [
-      "• Wybierz karty z dużymi obrazami lub układ siatki dla swoich kanałów.",
-      "• Zmień kolejność kanałów i kategorii, aby dopasować je do swojego sposobu pracy.",
-      "• Dostosuj tekst czytnika za pomocą wysokości wiersza.",
-      "• Ciesz się bardziej niezawodnym ładowaniem artykułów dzięki inteligentniejszemu odświeżaniu kanałów.",
-      "• Poprawiono niezawodność otwierania linków internetowych."
+      "• Dodano globalne ustawienia i ustawienia dla poszczególnych kanałów otwierania artykułów w trybie czytania, z treści kanału lub w przeglądarce.",
+      "• Dodano opcję ukrywania obrazów dla pojedynczych kanałów.",
+      "• Dodano konfigurowalne odświeżanie kanałów w tle ze wskaźnikiem nowych artykułów.",
+      "• Dodano przejście do następnego kanału, gdy bieżący kanał jest pusty.",
+      "• Dodano potwierdzenie przed oznaczeniem wszystkich artykułów powyżej lub poniżej elementu jako przeczytanych.",
+      "• Poprawiono kierunek tekstu w mieszanych językach i wykrywanie obrazów w artykułach.",
+      "• Poprawiono fokus klawiatury podczas otwierania trybu czytania.",
+      "• Naprawiono pomijanie nieprzeczytanych artykułów podczas przewijania.",
+      "• Naprawiono błędy synchronizacji dotyczące niektórych kont FreshRSS i zgodnych z Google Reader."
     ],
     "pt-br": [
-      "• Escolha cartões com imagens grandes ou um layout em grade para seus feeds.",
-      "• Reordene feeds e categorias para combinar com seu fluxo de trabalho.",
-      "• Personalize o texto do leitor com a altura da linha.",
-      "• Aproveite um carregamento de artigos mais confiável com uma atualização de feeds mais inteligente.",
-      "• Maior confiabilidade ao abrir links da web."
+      "• Adicionados controles globais e por feed para abrir artigos no modo Leitura, a partir do conteúdo do feed ou em um navegador.",
+      "• Adicionada uma opção para ocultar imagens de feeds individuais.",
+      "• Adicionada atualização configurável de feeds em segundo plano com indicador de novos artigos.",
+      "• Adicionada navegação para o próximo feed quando o feed atual está vazio.",
+      "• Adicionada confirmação antes de marcar como lidos todos os artigos acima ou abaixo de um item.",
+      "• Melhoradas a direção do texto em idiomas mistos e a detecção de imagens de artigos.",
+      "• Melhorado o foco do teclado ao abrir o modo Leitura.",
+      "• Corrigido o salto de artigos não lidos durante a rolagem.",
+      "• Corrigidas falhas de sincronização que afetavam algumas contas do FreshRSS e compatíveis com Google Reader."
     ],
     "ru": [
-      "• Выбирайте карточки с большими изображениями или сетку для своих лент.",
-      "• Меняйте порядок лент и категорий в соответствии со своим рабочим процессом.",
-      "• Настраивайте текст в режиме чтения с помощью высоты строки.",
-      "• Оцените более надёжную загрузку статей благодаря более умному обновлению лент.",
-      "• Повышена надёжность при открытии веб-ссылок."
+      "• Добавлены общие и индивидуальные для лент настройки открытия статей в режиме чтения, из содержимого ленты или в браузере.",
+      "• Добавлена возможность скрывать изображения для отдельных лент.",
+      "• Добавлено настраиваемое фоновое обновление лент с индикатором новых статей.",
+      "• Добавлена навигация к следующей ленте, если текущая лента пуста.",
+      "• Добавлено подтверждение перед отметкой всех статей выше или ниже элемента как прочитанных.",
+      "• Улучшены направление текста при смешанных языках и обнаружение изображений в статьях.",
+      "• Улучшен фокус клавиатуры при открытии режима чтения.",
+      "• Исправлен пропуск непрочитанных статей при прокрутке.",
+      "• Исправлены ошибки синхронизации, затрагивавшие некоторые учётные записи FreshRSS и совместимые с Google Reader."
     ],
     "sk": [
-      "• Pre svoje kanály si vyberte karty s veľkými obrázkami alebo mriežkové rozloženie.",
-      "• Zmeňte poradie kanálov a kategórií podľa svojho pracovného postupu.",
-      "• Prispôsobte text čítačky pomocou výšky riadkov.",
-      "• Vďaka inteligentnejšiemu obnovovaniu kanálov si užite spoľahlivejšie načítavanie článkov.",
-      "• Zlepšená spoľahlivosť pri otváraní webových odkazov."
+      "• Pridané globálne nastavenia a nastavenia jednotlivých kanálov na otváranie článkov v režime čítania, z obsahu kanála alebo v prehliadači.",
+      "• Pridaná možnosť skryť obrázky pre jednotlivé kanály.",
+      "• Pridané konfigurovateľné obnovovanie kanálov na pozadí s indikátorom nových článkov.",
+      "• Pridaná navigácia na ďalší kanál, keď je aktuálny kanál prázdny.",
+      "• Pridané potvrdenie pred označením všetkých článkov nad alebo pod položkou ako prečítaných.",
+      "• Vylepšený smer textu pri zmiešaných jazykoch a rozpoznávanie obrázkov v článkoch.",
+      "• Vylepšené zameranie klávesnice pri otváraní režimu čítania.",
+      "• Opravené preskakovanie neprečítaných článkov pri posúvaní.",
+      "• Opravené chyby synchronizácie ovplyvňujúce niektoré účty FreshRSS a účty kompatibilné s Google Readerom."
     ],
     "ta": [
-      "• உங்கள் ஊட்டங்களுக்கு பெரிய பட அட்டைகள் அல்லது கட்ட அமைப்பைத் தேர்ந்தெடுக்கவும்.",
-      "• உங்கள் பணிச்சூழலுக்கு ஏற்ப ஊட்டங்களையும் வகைகளையும் மறுவரிசைப்படுத்தவும்.",
-      "• வரி உயரத்தைப் பயன்படுத்தி வாசிப்பான் உரையைத் தனிப்பயனாக்கவும்.",
-      "• சிறந்த ஊட்டப் புதுப்பிப்பால் கட்டுரைகள் இன்னும் நம்பகமாக ஏற்றப்படும்.",
-      "• வலை இணைப்புகளைத் திறப்பதற்கான நம்பகத்தன்மை மேம்படுத்தப்பட்டது."
+      "• வாசிப்பு முறை, ஊட்ட உள்ளடக்கம் அல்லது உலாவியில் கட்டுரைகளைத் திறக்க உலகளாவிய மற்றும் ஒவ்வொரு ஊட்டத்திற்குமான கட்டுப்பாடுகள் சேர்க்கப்பட்டன.",
+      "• தனிப்பட்ட ஊட்டங்களுக்கான படங்களை மறைக்கும் விருப்பம் சேர்க்கப்பட்டது.",
+      "• புதிய கட்டுரை காட்டியுடன், அமைக்கக்கூடிய பின்னணி ஊட்டப் புதுப்பிப்பு சேர்க்கப்பட்டது.",
+      "• தற்போதைய ஊட்டம் காலியாக இருக்கும்போது அடுத்த ஊட்டத்திற்குச் செல்லும் வழிசெலுத்தல் சேர்க்கப்பட்டது.",
+      "• ஒரு உருப்படிக்கு மேலே அல்லது கீழே உள்ள அனைத்து கட்டுரைகளையும் படித்ததாகக் குறிக்கும் முன் உறுதிப்படுத்தல் சேர்க்கப்பட்டது.",
+      "• கலப்பு மொழி உரைத் திசையும் கட்டுரைப் படங்களைக் கண்டறிதலும் மேம்படுத்தப்பட்டன.",
+      "• வாசிப்பு முறையைத் திறக்கும்போது விசைப்பலகை கவனம் மேம்படுத்தப்பட்டது.",
+      "• உருட்டும்போது படிக்காத கட்டுரைகள் தவிர்க்கப்படுவது சரிசெய்யப்பட்டது.",
+      "• சில FreshRSS மற்றும் Google Reader-இணக்கமான கணக்குகளைப் பாதித்த ஒத்திசைவு தோல்விகள் சரிசெய்யப்பட்டன."
     ],
     "tr": [
-      "• Akışlarınız için büyük görselli kartları veya ızgara düzenini seçin.",
-      "• Akışları ve kategorileri çalışma düzeninize göre yeniden sıralayın.",
-      "• Satır yüksekliğiyle okuyucu metnini özelleştirin.",
-      "• Daha akıllı akış yenileme sayesinde daha güvenilir makale yüklemenin keyfini çıkarın.",
-      "• Web bağlantıları açılırken güvenilirlik iyileştirildi."
+      "• Makaleleri Okuma Modunda, akış içeriğinden veya tarayıcıda açmak için genel ve akış başına denetimler eklendi.",
+      "• Tek tek akışlardaki görselleri gizleme seçeneği eklendi.",
+      "• Yeni makale göstergeli, yapılandırılabilir arka plan akış yenilemesi eklendi.",
+      "• Geçerli akış boş olduğunda sonraki akışa geçiş eklendi.",
+      "• Bir öğenin üstündeki veya altındaki tüm makaleleri okundu olarak işaretlemeden önce onay eklendi.",
+      "• Karışık dillerde metin yönü ve makale görseli algılama iyileştirildi.",
+      "• Okuma Modunu açarken klavye odağı iyileştirildi.",
+      "• Kaydırma sırasında okunmamış makalelerin atlanması düzeltildi.",
+      "• Bazı FreshRSS ve Google Reader uyumlu hesapları etkileyen eşitleme hataları düzeltildi."
     ],
     "uk": [
-      "• Вибирайте картки з великими зображеннями або сітку для своїх стрічок.",
-      "• Змінюйте порядок стрічок і категорій відповідно до свого робочого процесу.",
-      "• Налаштовуйте текст у режимі читання за допомогою висоти рядка.",
-      "• Насолоджуйтеся надійнішим завантаженням статей завдяки розумнішому оновленню стрічок.",
-      "• Покращено надійність під час відкривання вебпосилань."
+      "• Додано глобальні та окремі для кожної стрічки налаштування відкриття статей у режимі читання, із вмісту стрічки або в браузері.",
+      "• Додано можливість приховувати зображення для окремих стрічок.",
+      "• Додано налаштовуване фонове оновлення стрічок з індикатором нових статей.",
+      "• Додано перехід до наступної стрічки, коли поточна стрічка порожня.",
+      "• Додано підтвердження перед позначенням прочитаними всіх статей над або під елементом.",
+      "• Покращено напрямок тексту для змішаних мов і виявлення зображень у статтях.",
+      "• Покращено фокус клавіатури під час відкриття режиму читання.",
+      "• Виправлено пропуск непрочитаних статей під час прокручування.",
+      "• Виправлено помилки синхронізації, що впливали на деякі облікові записи FreshRSS і сумісні з Google Reader."
     ],
     "vi": [
-      "• Chọn thẻ có ảnh lớn hoặc bố cục lưới cho các nguồn cấp của bạn.",
-      "• Sắp xếp lại nguồn cấp và danh mục cho phù hợp với quy trình làm việc của bạn.",
-      "• Tùy chỉnh văn bản trình đọc bằng chiều cao dòng.",
-      "• Tận hưởng việc tải bài viết đáng tin cậy hơn với tính năng làm mới nguồn cấp thông minh hơn.",
-      "• Cải thiện độ tin cậy khi mở liên kết web."
+      "• Đã thêm tùy chọn chung và theo từng nguồn cấp để mở bài viết ở chế độ Đọc, từ nội dung nguồn cấp hoặc trong trình duyệt.",
+      "• Đã thêm tùy chọn ẩn hình ảnh cho từng nguồn cấp.",
+      "• Đã thêm tính năng làm mới nguồn cấp trong nền có thể cấu hình với chỉ báo bài viết mới.",
+      "• Đã thêm tính năng chuyển đến nguồn cấp tiếp theo khi nguồn cấp hiện tại trống.",
+      "• Đã thêm xác nhận trước khi đánh dấu đã đọc tất cả bài viết phía trên hoặc phía dưới một mục.",
+      "• Đã cải thiện hướng văn bản với các ngôn ngữ trộn lẫn và khả năng phát hiện hình ảnh bài viết.",
+      "• Đã cải thiện tiêu điểm bàn phím khi mở chế độ Đọc.",
+      "• Đã sửa lỗi bỏ qua bài viết chưa đọc khi cuộn.",
+      "• Đã sửa lỗi đồng bộ ảnh hưởng đến một số tài khoản FreshRSS và tương thích với Google Reader."
     ],
     "zh-cn": [
-      "• 可为订阅源选择大图卡片或网格布局。",
-      "• 可按您的工作流程重新排序订阅源和分类。",
-      "• 可通过行高自定义阅读器文本。",
-      "• 更智能的订阅源刷新带来更可靠的文章加载体验。",
-      "• 提升了打开网页链接时的可靠性。"
+      "• 新增全局和按订阅源设置，可在阅读模式、订阅源内容或浏览器中打开文章。",
+      "• 新增为单个订阅源隐藏图片的选项。",
+      "• 新增可配置的后台订阅源刷新和新文章提示。",
+      "• 当前订阅源为空时，可导航到下一个订阅源。",
+      "• 新增在将项目上方或下方的所有文章标为已读前的确认步骤。",
+      "• 改进了混合语言的文本方向和文章图片检测。",
+      "• 改进了打开阅读模式时的键盘焦点。",
+      "• 修复了滚动时跳过未读文章的问题。",
+      "• 修复了影响部分 FreshRSS 和兼容 Google Reader 账户的同步失败问题。"
     ],
     "zh-hans": [
-      "• 可为订阅源选择大图卡片或网格布局。",
-      "• 可按您的工作流程重新排序订阅源和分类。",
-      "• 可通过行高自定义阅读器文本。",
-      "• 更智能的订阅源刷新带来更可靠的文章加载体验。",
-      "• 提升了打开网页链接时的可靠性。"
+      "• 新增全局和按订阅源设置，可在阅读模式、订阅源内容或浏览器中打开文章。",
+      "• 新增为单个订阅源隐藏图片的选项。",
+      "• 新增可配置的后台订阅源刷新和新文章提示。",
+      "• 当前订阅源为空时，可导航到下一个订阅源。",
+      "• 新增在将项目上方或下方的所有文章标为已读前的确认步骤。",
+      "• 改进了混合语言的文本方向和文章图片检测。",
+      "• 改进了打开阅读模式时的键盘焦点。",
+      "• 修复了滚动时跳过未读文章的问题。",
+      "• 修复了影响部分 FreshRSS 和兼容 Google Reader 账户的同步失败问题。"
     ]
   }
 }

@@ -162,7 +162,7 @@
     <string name="import_export_description">FeedFlow podporuje import a export vašich odběrů pomocí souboru OPML pro lepší interoperabilitu s ostatními čtečkami.</string>
     <string name="dropbox_sync_mobile_description">Kliknutím na tlačítko Připojit budete přesměrováni na aplikaci nebo webovou stránku Dropbox. Po připojení účtu se můžete vrátit do služby FeedFlow</string>
     <string name="menu_remove_from_bookmark">Odebrat z záložek</string>
-    <string name="link_opening_preference_default">Výchozí</string>
+    <string name="link_opening_preference_default">Stejně jako nastavení aplikace</string>
     <string name="hide_feed_from_timeline_description">Skrýt články tohoto kanálu z časové osy</string>
     <string name="settings_auto_delete">Automatické mazání starých článků</string>
     <string name="error_feed_add">Při přidávání zdroje se něco pokazilo</string>
@@ -397,4 +397,23 @@
     <string name="decrease_line_height_button_content_description">Zmenšit výšku řádku</string>
     <string name="expand_category_button_content_description">Rozbalit %s</string>
     <string name="collapse_category_button_content_description">Sbalit %s</string>
+    <string name="mark_all_above_as_read_confirmation_title">Označte všechno výše jako přečtené?</string>
+    <string name="mark_all_above_as_read_confirmation_message">Všechny články nad tímto budou označeny jako přečtené.</string>
+    <string name="mark_all_below_as_read_confirmation_title">Označte všechno níže jako přečteno?</string>
+    <string name="mark_all_below_as_read_confirmation_message">Všechny články pod tímto budou označeny jako přečtené.</string>
+    <string name="link_opening_preference_default_short">Nastavení aplikace</string>
+    <string name="link_opening_preference_system_browser">Výchozí prohlížeč</string>
+    <string name="article_open_mode">Otevřít články v</string>
+    <string name="article_open_mode_section_reader">Režim čtení</string>
+    <string name="article_open_mode_section_browser">Prohlížeč</string>
+    <string name="article_open_mode_full_article_short">Čtečka (webové stránky)</string>
+    <string name="article_open_mode_feed_short">Čtečka (zdroj)</string>
+    <string name="reader_content_source_web">Článek z webu</string>
+    <string name="reader_content_source_web_subtitle">Přenést a vyčistit původní stránku</string>
+    <string name="reader_content_source_feed">Obsah ze zdroje</string>
+    <string name="reader_content_source_feed_subtitle">Použijte text obsažený v RSS kanálu</string>
+    <string name="hide_images_for_feed_description">Skrýt obrázky pro tento zdroj</string>
+    <string name="new_articles_button">%s nové články</string>
+    <string name="reader_mode_no_content_title">Není dostupný žádný obsah</string>
+    <string name="reader_mode_no_content_message">Tento článek neobsahuje žádný obsah, ani žádný odkaz pro otevření na webu.</string>
 </resources>

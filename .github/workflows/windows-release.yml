@@ -143,11 +143,11 @@ jobs:
   #
   # Three reasons this is a separate job rather than two more steps above:
   #
-  #  1. It is independently retryable. The build above takes the better part of
-  #     an hour (DISM, the MSIX packaging tool, makeappx). When a publish fails
-  #     for a reason that has nothing to do with the package — a pending draft,
-  #     throttling, an expired secret — re-running this job costs a minute
-  #     instead of rebuilding the MSIX.
+  #  1. It is independently retryable. The build above runs for tens of minutes:
+  #     a minified release build, then jpackage, then makeappx. When a publish
+  #     fails for a reason that has nothing to do with the package — a pending
+  #     draft, throttling, an expired secret — re-running this job costs a
+  #     minute instead of rebuilding the MSIX.
   #  2. Linux runners bill at 1x where Windows bills at 2x, and this job is
   #     minutes.
   #  3. It runs the linux/amd64 archive, which pcenter's own release workflow

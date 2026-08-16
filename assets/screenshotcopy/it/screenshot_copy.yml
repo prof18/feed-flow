@@ -88,16 +88,21 @@ screenshot_copy_macos_01_headline: "Tre pannelli"
 screenshot_copy_macos_01_subheadline: "Scansiona, seleziona e leggi rapidamente su
   uno schermo più grande."
 screenshot_copy_macos_02_headline: "Leggi a modo tuo"
-screenshot_copy_macos_02_subheadline: ""
+screenshot_copy_macos_02_subheadline: "La modalità Lettura nel riquadro principale
+  mantiene gli articoli lunghi puliti e leggibili."
 screenshot_copy_macos_03_headline: "Sincronizza a modo tuo"
-screenshot_copy_macos_03_subheadline: ""
+screenshot_copy_macos_03_subheadline: "Mantieni tutto in locale oppure sincronizza
+  con servizi di archiviazione e lettura."
 screenshot_copy_macos_04_headline: "Rendi l'elenco tuo"
-screenshot_copy_macos_04_subheadline: ""
+screenshot_copy_macos_04_subheadline: "Regola densità, layout e cosa resta visibile."
 screenshot_copy_macos_04_compact_label: "Elenco compatto"
 screenshot_copy_macos_04_rich_cards_label: "Schede dettagliate"
 
 screenshot_copy_windows_01_caption: "Sfoglia, seleziona e leggi in un rapido layout
   a tre pannelli."
-screenshot_copy_windows_02_caption: ""
-screenshot_copy_windows_03_caption: ""
-screenshot_copy_windows_04_caption: ""
+screenshot_copy_windows_02_caption: "Modalità Lettura senza distrazioni, con spaziatura
+  e navigazione migliorate."
+screenshot_copy_windows_03_caption: "Scegli l'archiviazione solo locale oppure la
+  sincronizzazione tramite servizi di archiviazione adatti al tuo flusso di lavoro."
+screenshot_copy_windows_04_caption: "Regola disposizione, densità e quali dettagli
+  restano visibili."

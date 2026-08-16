@@ -247,7 +247,7 @@
     <section class="summary" aria-label="Summary">
       <div class="metric"><strong id="total-count">0</strong><span>automated flow files</span></div>
       <div class="metric"><strong>13</strong><span>smoke coverage IDs</span></div>
-      <div class="metric"><strong>58</strong><span>regression coverage IDs</span></div>
+      <div class="metric"><strong>59</strong><span>regression coverage IDs</span></div>
     </section>
 
     <div class="toolbar">
@@ -328,6 +328,7 @@
       "android/regression/160-reader-content-source-navigation.yaml",
       "android/regression/161-reader-no-url-no-content.yaml",
       "android/regression/162-pagination-scroll-read.yaml",
+      "android/regression/164-widget-card-settings.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -504,7 +505,8 @@
       "regression/158": "Empty single-source filter renders the next-feed affordance and moves to the next unread source.",
       "regression/159": "URL-less article opens in the styled feed-content reader without unavailable actions.",
       "regression/160": "Switching between cached web and RSS content preserves the reader Back destination.",
-      "regression/162": "Pagination keeps loading pages while mark-as-read-on-scroll flushes scrolled-past items (issue #1319)."
+      "regression/162": "Pagination keeps loading pages while mark-as-read-on-scroll flushes scrolled-past items (issue #1319).",
+      "regression/164": "Android in-app Widget Settings exposes and mutates Card appearance controls, then returns to the preview container."
     };
 
     const sections = document.querySelector("#sections");

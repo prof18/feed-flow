@@ -13,6 +13,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+const val MAX_WIDGET_FEED_ITEMS = 15
+
 class FeedWidgetRepository internal constructor(
     private val databaseHelper: DatabaseHelper,
     private val dateFormatter: DateFormatter,
@@ -24,7 +26,7 @@ class FeedWidgetRepository internal constructor(
             dateFormat = feedAppearanceSettingsRepository.getDateFormat(),
             timeFormat = feedAppearanceSettingsRepository.getTimeFormat(),
         )
-        return databaseHelper.getFeedWidgetItems(pageSize = 15)
+        return databaseHelper.getFeedWidgetItems(pageSize = MAX_WIDGET_FEED_ITEMS.toLong())
             .map { items ->
                 items.map { item ->
                     item.toFeedItem(dateFormatter, settings = settings)

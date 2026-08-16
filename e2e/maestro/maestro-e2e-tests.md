@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 59 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 60 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -113,6 +113,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-161 | `161-reader-no-url-no-content.yaml` | `feed-content` | Android, iOS | An item with neither a url nor feed content shows the unavailable-content message instead of an empty web view. |
 | REG-162 | `162-pagination-scroll-read.yaml` | `pagination-scroll-read` | Android | Guards issue #1319: with mark-as-read-on-scroll enabled, scrolling through 90 unread items keeps loading every following page. Offset pagination over the unread-only query skipped ~40 articles per page once scrolled-past items were flushed as read, so articles 041-080 (asserted through the 050 "Skip Needle" row) were unreachable and the list stopped early. iOS is intentionally skipped: the pagination logic lives in shared code and the Android flow covers the regression wiring. |
 | REG-163 | `163-rtl-content-direction.yaml` | `rtl-content` | Android, iOS | Timeline items follow their own content direction, not the app locale: a Persian item mirrors (image left of the title) while a Latin item in the same list does not; a Latin-prefixed mixed title stays left-to-right, and a direction-neutral title falls back to the description. |
+| REG-164 | `164-widget-card-settings.yaml` | `android-widget` | Android | In-app Widget Settings selects Card layout, exposes the Card appearance controls and their dependent options, changes opacity, radius, separation, and image sizing, then returns to the preview container. |
 
 ## Known Limitations
 
@@ -128,11 +129,11 @@ These are features intentionally not covered, with the reason recorded so they a
 - **OPML partial-failure reporting (REG-119)** — local OPML imports don't produce `feedSourceWithError` / `notValidFeedSources` entries; only invalid-OPML rejection is exercised.
 - **Real Cloud provider auth and most cloud mutations** — Mocked success/error auth, Google Drive mock state, Android/Dropbox unlink, Dropbox/Google Drive backup, and real provider sync need live credentials or provider-side mock support. Seeded linked screens, iOS iCloud unlink (REG-138), iOS iCloud backup (REG-142), and the pending-upload action (REG-133) are covered.
 - **Denied-notification permission UI** — Revoking notification permission before seeded flows doesn't produce a stable local runner state across Android/iOS, so permission-denied notification UI remains manual coverage.
-- **Android widget launcher smoke and real iOS SpringBoard widget tap** — Need stable widget-host / SpringBoard automation. The app-owned widget feed-link route is covered by REG-126.
+- **Android widget launcher placement and real iOS SpringBoard widget tap** — launcher-host placement remains a manual check because it needs stable widget-host / SpringBoard automation. Android in-app Widget Settings are covered by REG-164, and the app-owned widget feed-link route is covered by REG-126.
+- **Widget Card visual parity** — REG-164 verifies the app-owned Card controls and preview-container availability. Maestro does not place or inspect launcher widgets or reliably assert colors, alpha, divider insets, Fill/Thumbnail geometry, or clipping; those behaviors remain covered by focused tests and manual widget-host validation.
 - **Real OS notification taps and feed-source/category notification delegate routes** — Need OS notification automation. The app-owned deep-link routing is covered by REG-126.
 - **In-app review prompt** — `ReviewViewModel` request flow is OS/timing-driven; not exercised.
 - **iPad / macOS menu commands and keyboard shortcuts** — Cmd-R, Cmd-Shift-A, Cmd-N, etc. from `FeedFlowApp+Menu.swift`. Maestro can drive iPad keyboard chords, but no flow added yet.
-- **Android in-app Widget Settings screen** — Settings → Widget Settings exposes widget controls, but it is not part of the automated Maestro suite.
 - **Background sync / notification delivery** — WorkManager scheduling, iOS background refresh, notification delivery, and notification deep-link routing remain manual / nightly candidates.
 - **Desktop background refresh and new-articles pill** — Maestro coverage is mobile-only. Desktop timer scheduling, silent snapshot preservation, pending-count calculation, and pill publishing are covered by shared/JVM tests; desktop presentation remains a manual smoke check.
 - **HTTP conditional GET / cache-aware refresh scheduling** — the per-feed `ETag`/`Last-Modified`/`Cache-Control` handling (304 skip, `next_fetch_timestamp` window, `Retry-After` backoff) lives below the UI in the HTTP layer and needs a server emitting real caching headers and 304/429 responses; smoke/regression flows use seeded local data without live feeds. Covered by unit tests instead (`FeedRefreshSchedulerTest`, `FeedHttpCacheStoreTest`, `FeedFetcherRepositoryLocalTest`).

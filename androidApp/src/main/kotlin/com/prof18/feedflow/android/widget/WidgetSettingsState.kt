@@ -2,6 +2,7 @@ package com.prof18.feedflow.android.widget
 
 import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.prof18.feedflow.shared.domain.model.WidgetCardAppearance
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 
 data class WidgetSettingsState(
@@ -13,4 +14,5 @@ data class WidgetSettingsState(
     val backgroundOpacityPercent: Int = 100,
     val textColorMode: WidgetTextColorMode = WidgetTextColorMode.AUTOMATIC,
     val hideImages: Boolean = false,
+    val cardAppearance: WidgetCardAppearance = WidgetCardAppearance(),
 )

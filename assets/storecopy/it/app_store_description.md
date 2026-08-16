@@ -1,9 +1,9 @@
 FeedFlow è un lettore RSS essenziale progettato per una sola cosa: tenersi
 aggiornati sul web aperto senza distrazioni.
 
-Follow your favorite blogs and news sites in a clean, chronological timeline. No
-algorithms decide what you see — just your feeds, in the order they were
-published.
+Segui i tuoi blog e siti di notizie preferiti in una timeline pulita e
+cronologica. Nessun algoritmo decide cosa vedi — solo i tuoi feed, nell'ordine
+in cui sono stati pubblicati.
 
 Leggi a modo tuo
 - Apri gli articoli nel tuo browser, oppure usa la Modalità lettura per una
@@ -13,24 +13,24 @@ Leggi a modo tuo
 - Salva gli articoli completi nella cache per la lettura offline: perfetto per
   gli spostamenti quotidiani, i voli o qualsiasi luogo senza connessione.
 
-Sync That Fits Your Setup
-- iCloud sync keeps your feeds, read status, and bookmarks in sync across
-  iPhone, iPad, and Mac — effortlessly.
-- Or choose another backend: Dropbox, Google Drive, or self-hosted services like
-  FreshRSS, Miniflux, Feedbin, and BazQux.
-- Your reading progress follows you everywhere.
+Sincronizzazione su misura per la tua configurazione
+- Con la sincronizzazione iCloud, i tuoi feed, lo stato di lettura e i
+  segnalibri restano sincronizzati su iPhone, iPad e Mac — senza sforzo.
+- Oppure scegli un altro servizio: Dropbox, Google Drive o soluzioni self-hosted
+  come FreshRSS, Miniflux, Feedbin e BazQux.
+- La tua cronologia di lettura ti segue ovunque.
 
-Stay Organized
-- Import and export feeds with OPML.
-- Block keywords to silence noisy topics.
-- Categories, bookmarks, and search keep everything at your fingertips.
+Resta organizzato
+- Importa ed esporta i feed con OPML.
+- Blocca parole chiave per silenziare gli argomenti che non ti interessano.
+- Categorie, segnalibri e ricerca ti mettono tutto a portata di mano.
 
-Make It Yours
-- Dark and light themes.
-- Background refresh so your feeds are always fresh.
-- Supports RSS and Atom feed formats.
+Rendilo tuo
+- Temi chiaro e scuro.
+- L'aggiornamento in background mantiene i tuoi feed sempre aggiornati.
+- Supporta i formati feed RSS e Atom.
 
-Open source and available on all your devices. Translated into 25+ languages by
-a worldwide community.
+Open source e disponibile su tutti i tuoi dispositivi. Tradotto in oltre 25
+lingue da una community internazionale.
 
-Take back control of your reading — try FeedFlow today.
+Riprendi il controllo della tua lettura: prova FeedFlow oggi stesso.

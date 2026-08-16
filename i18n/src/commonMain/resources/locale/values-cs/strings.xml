@@ -236,7 +236,7 @@
     <string name="reader_mode_comments_button_content_description">Otevřít komentáře</string>
     <string name="previous_article">Předchozí článek</string>
     <string name="next_article">Další článek</string>
-    <string name="settings_danger_title">Nebezbečí</string>
+    <string name="settings_danger_title">Nebezpečná nastavení</string>
     <string name="settings_clear_downloaded_articles">Smazat stažené články</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Smazat stažené články?</string>
     <string name="settings_clear_downloaded_articles_dialog_message">Toto odstraní veškerý stažený obsah pro offline čtení. Tuto akci nelze zrušit.</string>

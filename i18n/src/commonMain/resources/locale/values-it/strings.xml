@@ -358,7 +358,7 @@
     <string name="settings_auto_delete_period_one_day">Un giorno</string>
     <string name="settings_sync_period">Sincronizzazione in background</string>
     <string name="settings_background_sync_restrictions_title">Condizioni di sincronizzazione in background</string>
-    <string name="settings_background_sync_restrictions_description">Use one or both options to limit when background sync can run.</string>
+    <string name="settings_background_sync_restrictions_description">Usa una o entrambe le opzioni per limitare quando può essere eseguita la sincronizzazione in background.</string>
     <string name="settings_background_sync_wifi_only">Sincronizzazione in background solo tramite Wi-Fi</string>
     <string name="settings_background_sync_charging_only">Sincronizzazione in background solo sotto carica</string>
     <string name="category_name_already_exists">Esiste già una categoria con questo nome</string>

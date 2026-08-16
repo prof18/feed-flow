@@ -98,7 +98,9 @@ try {
 
     # Render the manifest. Package versions are four-part; the app version is
     # three-part, so the revision field is always 0.
-    $manifest = Get-Content -Path ".github/msix-manifest-template.xml" -Raw
+    # -Encoding UTF8 is required: Windows PowerShell 5.1 reads a BOM-less file as
+    # ANSI by default, which mangles any non-ASCII character in the template.
+    $manifest = Get-Content -Path ".github/msix-manifest-template.xml" -Raw -Encoding UTF8
     $manifest = $manifest.Replace("[AppVersion]", "$Version.0")
     $manifest = $manifest.Replace("[PublisherName]", $PublisherName)
 

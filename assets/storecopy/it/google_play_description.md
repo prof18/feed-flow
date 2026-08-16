@@ -62,7 +62,7 @@ Perfetto per
 
 Perché FeedFlow?
 - Niente feed algoritmici: i tuoi contenuti sono sempre in ordine cronologico.
-- Open source, con una community attiva e aggiornamenti regolari
+- Open source, con una community attiva e aggiornamenti regolari.
 - Disponibile su Android, iOS, macOS, Windows, e Linux.
 - Tradotto in oltre 25 lingue da collaboratori di tutto il mondo.
 

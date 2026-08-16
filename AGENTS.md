@@ -315,6 +315,14 @@ August 2026, and the tool's own DISM call times out after 10 minutes with no way
 Package languages still come from `.github/msix-resources-template.xml`. `Identity/Name` and
 `Identity/Publisher` in the manifest must match Partner Center or the upload is rejected.
 
+To test that package locally, `.scripts/install-msix-dev.ps1` unpacks it, rewrites the identity
+to `MarcoGomiero.FeedFlowRSSReaderDev` and the display name to "FeedFlow (Dev)", and registers
+it. The rename matters: registering under the shipping identity makes Windows treat the build
+as an update to an installed Store FeedFlow and replace it. Needs Developer Mode, no signing.
+It registers loose files out of `desktopApp/build`, so re-run it after every rebuild; clean up
+with `-Uninstall`. Running the app image directly is the quicker check, but only the registered
+package exercises the manifest, the Start-menu entry and the tiles.
+
 For the actual workflows — syncing listing text, replacing screenshots, adding or removing a
 Store language, Store field limits, rescuing a stuck submission or rollout — use the repo-local
 `update-microsoft-store-listing` skill instead of expanding this section.

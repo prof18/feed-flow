@@ -30,7 +30,11 @@
 param(
     [string]$Version = $env:VERSION,
     [string]$PublisherName = $env:MSIX_PUBLISHER_DISPLAY_NAME,
-    [string]$OutputPath = $env:RELEASE_PATH_MSIX
+    [string]$OutputPath = $env:RELEASE_PATH_MSIX,
+    # Override the packaging tool. Normally left unset so the highest installed
+    # Windows SDK is picked up; useful for a non-standard SDK location, and it
+    # is how the packaging flow can be exercised off Windows.
+    [string]$MakeAppxPath
 )
 
 $ErrorActionPreference = "Stop"
@@ -58,15 +62,24 @@ try {
     }
 
     # makeappx ships with the Windows SDK; take the highest installed version.
-    $makeAppx = Get-ChildItem -Path @(
-        "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\makeappx.exe",
-        "C:\Program Files\Windows Kits\10\bin\*\x64\makeappx.exe"
-    ) -ErrorAction SilentlyContinue | Sort-Object -Property FullName -Descending | Select-Object -First 1
-
-    if (-not $makeAppx) {
-        throw "makeappx.exe not found. Install the Windows SDK."
+    if ($MakeAppxPath) {
+        if (-not (Test-Path $MakeAppxPath)) {
+            throw "No packaging tool at the given -MakeAppxPath: $MakeAppxPath"
+        }
+        $makeAppx = (Resolve-Path -LiteralPath $MakeAppxPath).Path
     }
-    Write-Host "Using makeappx: $($makeAppx.FullName)"
+    else {
+        $makeAppx = (Get-ChildItem -Path @(
+            "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\makeappx.exe",
+            "C:\Program Files\Windows Kits\10\bin\*\x64\makeappx.exe"
+        ) -ErrorAction SilentlyContinue |
+            Sort-Object -Property FullName -Descending | Select-Object -First 1).FullName
+
+        if (-not $makeAppx) {
+            throw "makeappx.exe not found. Install the Windows SDK."
+        }
+    }
+    Write-Host "Using makeappx: $makeAppx"
 
     # Stage the package layout: app image at the root, icons under Assets\.
     $staging = "desktopApp/build/release/main-release/msix-staging"
@@ -112,7 +125,7 @@ try {
     New-Item -ItemType Directory -Force -Path (Split-Path $OutputPath -Parent) | Out-Null
 
     Write-Host "`nPacking MSIX..."
-    & $makeAppx.FullName pack /d $staging /p $OutputPath /o
+    & $makeAppx pack /d $staging /p $OutputPath /o
     if ($LASTEXITCODE -ne 0) {
         throw "makeappx pack failed with exit code $LASTEXITCODE"
     }

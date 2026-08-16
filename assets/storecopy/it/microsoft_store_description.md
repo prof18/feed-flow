@@ -7,28 +7,30 @@ Un'esperienza di lettura pensata per desktop
   dell'articolo, tutto visibile contemporaneamente.
 - Passa alla modalità a pannello singolo se preferisci una visualizzazione senza
   distrazioni.
-- Keyboard shortcuts for everything — refresh with F5, navigate with arrow keys,
-  mark as read with Ctrl+Shift+A.
-- The app remembers your window position and size between sessions.
-- Dark mode, light mode, and OLED black theme.
+- Scorciatoie da tastiera per tutto — aggiorna con F5, naviga con le frecce,
+  segna come letto con Ctrl+Shift+A.
+- L'app ricorda la posizione e le dimensioni della finestra tra una sessione e
+  l'altra.
+- Modalità scura, modalità chiara e tema OLED nero.
 
 Leggi gli articoli a modo tuo
-- Open articles in your default browser, or use Reader Mode for a
-  distraction-free reading experience.
-- Adjust text size and spacing in Reader Mode for comfortable reading on any
-  screen.
-- Prefetch and cache full article content for offline reading.
+- Apri gli articoli nel tuo browser predefinito, oppure usa la Modalità Lettura
+  per un'esperienza di lettura senza distrazioni.
+- Regola dimensione del testo e spaziatura in Modalità Lettura per una lettura
+  confortevole su qualsiasi schermo.
+- Precarica e salva in cache il contenuto completo degli articoli per la lettura
+  offline.
 
 Sincronizza i feed su tutti i tuoi dispositivi
-- Keep everything local, or sync with multiple backends.
+- Mantieni tutto in locale, oppure sincronizza con più backend.
 - Sincronizzazione sul cloud con Dropbox o Google Drive.
 - Sincronizzazione self-hosted e server con FreshRSS, Miniflux, Feedbin o
   BazQux.
-- Your feeds, read status, and bookmarks stay in sync across Windows, Android,
-  iOS, macOS, and Linux.
+- I tuoi feed, lo stato di lettura e i segnalibri restano sincronizzati tra
+  Windows, Android, iOS, macOS e Linux.
 
-Stay Organized
-- Import and export feeds with OPML — migrate from any RSS tool.
+Resta organizzato
+- Importa ed esporta i feed con OPML — migra da qualsiasi strumento RSS.
 - Block keywords to filter out unwanted content.
 - Organize feeds into categories and bookmark articles for later.
 - Search across all your feeds to find articles quickly.

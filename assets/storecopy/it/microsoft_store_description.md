@@ -31,16 +31,16 @@ Sincronizza i feed su tutti i tuoi dispositivi
 
 Resta organizzato
 - Importa ed esporta i feed con OPML — migra da qualsiasi strumento RSS.
-- Block keywords to filter out unwanted content.
-- Organize feeds into categories and bookmark articles for later.
-- Search across all your feeds to find articles quickly.
+- Blocca parole chiave per filtrare i contenuti indesiderati.
+- Organizza i feed in categorie e salva gli articoli tra i segnalibri per dopo.
+- Cerca in tutti i tuoi feed per trovare articoli rapidamente.
 
 Realizzato per RSS, Atom e l'Open Web
-- Supports RSS 2.0, RSS 1.0, and Atom feed formats.
-- Add feeds by URL or browse curated suggestions.
-- No account required to get started.
+- Supporta i formati RSS 2.0, RSS 1.0 e Atom.
+- Aggiungi feed tramite URL oppure sfoglia i suggerimenti selezionati.
+- Nessun account richiesto per iniziare.
 
-Open source with an active community. Available on all major platforms.
-Translated into 25+ languages.
+Open source con una community attiva. Disponibile su tutte le principali
+piattaforme. Tradotto in oltre 25 lingue.
 
-Take back control of your reading — download FeedFlow today.
+Riprendi il controllo della tua lettura — scarica FeedFlow oggi.

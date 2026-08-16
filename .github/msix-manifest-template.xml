@@ -7,7 +7,10 @@
   "Package MSIX" step from msix-resources-template.xml, which stays the single
   source of truth for declared package languages.
 
-  Placeholders substituted at build time: [PublisherName], [AppVersion].
+  The publisher DN and the four-part package version are substituted at build
+  time; see .scripts/package-msix.ps1. Do not name the placeholder tokens in
+  this comment — the substitution is a plain string replace and would rewrite
+  them here too, leaking the publisher into the shipped manifest.
 
   Identity/Name and Identity/Publisher must match what Partner Center has on file
   for this app, or the Store rejects the upload. Do not edit them casually.

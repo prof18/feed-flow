@@ -91,6 +91,7 @@ struct FeedListView: View {
                 GeometryReader { listProxy in
                     let itemFeedLayout = normalizedLayout
                     let currentWidth = listProxy.size.width
+                    let centeringMargin = max((currentWidth - maxContentWidth) / 2, 0)
                     let layoutDecisionWidth = stableLayoutWidth > 0 ? stableLayoutWidth : currentWidth
                     let isGridArrangement = isGridLayoutEnabled &&
                         itemFeedLayout.supportsGridArrangement &&
@@ -133,10 +134,9 @@ struct FeedListView: View {
                             .refreshable {
                                 onReloadClick()
                             }
-                            .contentMargins(
-                                .horizontal,
-                                max((currentWidth - maxContentWidth) / 2, 0),
-                                for: .scrollContent
+                            .centeredScrollContent(
+                                margin: centeringMargin,
+                                safeAreaInsets: listProxy.safeAreaInsets
                             )
                         }
                     }
@@ -330,6 +330,18 @@ struct FeedListView: View {
                 VisibleFeedItem(id: $0.id, index: Int32($0.index))
             }
         indexHolder.visibleItemsChanged(visibleItems)
+    }
+}
+
+private extension View {
+    /// Centers the scroll content within the available width.
+    ///
+    /// The scroll view extends under the split view sidebar, so the margin has to be offset by the
+    /// safe area on each edge. A symmetric `.horizontal` margin would be swallowed by the sidebar
+    /// inset on the leading edge only, leaving the list off-center while the sidebar is open.
+    func centeredScrollContent(margin: CGFloat, safeAreaInsets: EdgeInsets) -> some View {
+        contentMargins(.leading, safeAreaInsets.leading + margin, for: .scrollContent)
+            .contentMargins(.trailing, safeAreaInsets.trailing + margin, for: .scrollContent)
     }
 }
 

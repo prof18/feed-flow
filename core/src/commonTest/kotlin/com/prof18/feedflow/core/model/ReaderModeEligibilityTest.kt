@@ -26,8 +26,14 @@ class ReaderModeEligibilityTest {
 
     @Test
     fun `hosts unsupported by http client cannot use reader mode`() {
-        assertFalse(ReaderModeEligibility.canOpenReaderMode("https://m\u00FCnchen.example/news/story"))
-        assertFalse(
+        assertFalse(ReaderModeEligibility.canOpenReaderMode("https://100%example.com/news/story"))
+        assertFalse(ReaderModeEligibility.canOpenReaderMode("https://example%.com/news/story"))
+    }
+
+    @Test
+    fun `internationalized hosts can use reader mode`() {
+        assertTrue(ReaderModeEligibility.canOpenReaderMode("https://m\u00FCnchen.example/news/story"))
+        assertTrue(
             ReaderModeEligibility.canOpenReaderMode(
                 "https://xn--socit_franaise_de_pschiatrie-wpc7cb/news/story",
             ),

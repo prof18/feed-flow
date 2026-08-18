@@ -12,6 +12,7 @@ import com.prof18.feedflow.core.model.onSuccess
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.feedFlowUserAgent
+import com.prof18.feedflow.core.utils.rejectUnsafeHosts
 import com.prof18.feedflow.feedsync.greader.data.dto.StreamItemIdDTO
 import com.prof18.feedflow.feedsync.greader.data.dto.StreamItemsContentsDTO
 import com.prof18.feedflow.feedsync.greader.data.dto.SubscriptionListDTO
@@ -349,7 +350,7 @@ internal class GReaderClient internal constructor(
                     }
                 }
             }
-        }
+        }.rejectUnsafeHosts()
     }
 
     private suspend fun executeLogin(

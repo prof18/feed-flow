@@ -8,7 +8,6 @@ import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
-import io.ktor.http.Url
 import io.ktor.http.isSuccess
 import io.ktor.utils.io.charsets.Charset
 import io.ktor.utils.io.charsets.Charsets
@@ -25,8 +24,7 @@ class HtmlRetriever(
 ) {
     suspend fun retrieveHtml(url: String): String? {
         // Platform engines can reject unsupported hosts outside the normal suspend call path.
-        val host = runCatching { Url(url).host }.getOrNull()
-        if (host == null || !HttpHostValidator.isSafeForHttpClient(host)) {
+        if (!HttpHostValidator.isUrlSafeForHttpClient(url)) {
             logger.d { "Skipping URL with unsupported host for HTTP client: $url" }
             return null
         }

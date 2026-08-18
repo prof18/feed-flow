@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
+import com.prof18.feedflow.core.utils.rejectUnsafeHosts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
 import com.prof18.feedflow.feedsync.dropbox.di.dropboxModule
@@ -421,7 +422,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
                         append("Sec-Fetch-User", "?1")
                     }
                 }
-            },
+            }.rejectUnsafeHosts(),
         )
     }
 

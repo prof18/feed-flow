@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.domain
 
+import com.prof18.feedflow.core.utils.rejectUnsafeHosts
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.testLogger
 import io.ktor.client.HttpClient
@@ -98,27 +99,6 @@ class HtmlRetrieverTest {
     }
 
     @Test
-    fun `non-ascii host short-circuits without hitting the engine`() = runTest(testDispatcher) {
-        var requests = 0
-        val retriever = HtmlRetriever(
-            logger = testLogger,
-            client = HttpClient(MockEngine) {
-                engine {
-                    addHandler {
-                        requests++
-                        respond(content = ByteArray(0), status = HttpStatusCode.OK)
-                    }
-                }
-            },
-        )
-
-        val result = retriever.retrieveHtml("https://m\u00FCnchen.example/feed")
-
-        assertNull(result)
-        assertEquals(0, requests)
-    }
-
-    @Test
     fun `host unsupported by http client short-circuits without hitting the engine`() = runTest(testDispatcher) {
         var requests = 0
         val retriever = HtmlRetriever(
@@ -133,10 +113,55 @@ class HtmlRetrieverTest {
             },
         )
 
-        val result = retriever.retrieveHtml("https://xn--socit_franaise_de_pschiatrie-wpc7cb/feed")
+        val result = retriever.retrieveHtml("https://100%example.com/feed")
 
         assertNull(result)
         assertEquals(0, requests)
+    }
+
+    @Test
+    fun `redirect to an unsupported host never reaches the engine`() = runTest(testDispatcher) {
+        val requestedHosts = mutableListOf<String>()
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler { request ->
+                        requestedHosts += request.url.host
+                        respond(
+                            content = ByteArray(0),
+                            status = HttpStatusCode.MovedPermanently,
+                            headers = headersOf(HttpHeaders.Location, "https://100%zz.example/feed"),
+                        )
+                    }
+                }
+            }.rejectUnsafeHosts(),
+        )
+
+        val result = retriever.retrieveHtml("https://example.com/feed")
+
+        assertNull(result)
+        assertEquals(listOf("example.com"), requestedHosts)
+    }
+
+    @Test
+    fun `non-ascii host reaches the engine`() = runTest(testDispatcher) {
+        var requests = 0
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        requests++
+                        respond(content = ByteArray(0), status = HttpStatusCode.OK)
+                    }
+                }
+            },
+        )
+
+        retriever.retrieveHtml("https://m\u00FCnchen.example/feed")
+
+        assertEquals(1, requests)
     }
 
     @Test

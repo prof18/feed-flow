@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.success
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.feedFlowUserAgent
+import com.prof18.feedflow.core.utils.rejectUnsafeHosts
 import com.prof18.feedflow.feedsync.feedbin.data.dto.CreateSubscriptionRequest
 import com.prof18.feedflow.feedsync.feedbin.data.dto.CreateTaggingRequest
 import com.prof18.feedflow.feedsync.feedbin.data.dto.DeleteTagRequest
@@ -368,7 +369,7 @@ internal class FeedbinClient internal constructor(
                     }
                 }
             }
-        }
+        }.rejectUnsafeHosts()
 
     private fun parseNextPage(linkHeader: String?): Int? {
         if (linkHeader.isNullOrBlank()) {

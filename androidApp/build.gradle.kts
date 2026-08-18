@@ -190,6 +190,8 @@ dependencies {
     "googlePlayImplementation"(libs.kotlinx.coroutines.play.services)
     "googlePlayImplementation"(libs.google.api.client.android)
     "googlePlayImplementation"(libs.google.api.services.drive)
+    "googlePlayImplementation"(libs.revenuecat.purchases)
+    "googlePlayImplementation"(libs.revenuecat.purchases.ui)
 
     debugImplementation(libs.compose.multiplatform.ui.tooling)
 

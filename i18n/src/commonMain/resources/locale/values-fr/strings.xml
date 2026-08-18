@@ -130,7 +130,7 @@
     <string name="fresh_rss_last_sync">Dernière synchronisation : %s</string>
     <string name="fresh_rss_password_hint">Le mot de passe de l\'API FreshRSS (Paramètres &gt; Profil)</string>
     <string name="fresh_rss_url_hint">L\'endpoint de FreshRSS API, par exemple %s</string>
-    <string name="link_opening_preference_default">Défaut</string>
+    <string name="link_opening_preference_default">Identique au paramètre de l\'application</string>
     <string name="settings_auto_delete">Supprimer automatiquement les anciens articles</string>
     <string name="settings_auto_delete_period_disabled">Désactivé</string>
     <string name="settings_auto_delete_period_one_week">Vieux d\'une semaine</string>
@@ -412,4 +412,8 @@
     <string name="collapse_category_button_content_description">Réduire %s</string>
     <string name="reader_mode_no_content_title">Aucun contenu disponible</string>
     <string name="reader_mode_no_content_message">Cet article ne contient aucun contenu et il n\'y a pas de lien pour l\'ouvrir sur internet.</string>
+    <string name="reader_content_source_web">Article du site internet</string>
+    <string name="reader_content_source_web_subtitle">Récupérer et nettoyer la page originale</string>
+    <string name="reader_content_source_feed">Contenu depuis le flux</string>
+    <string name="reader_content_source_feed_subtitle">Utiliser le texte inclus dans le flux RSS</string>
 </resources>

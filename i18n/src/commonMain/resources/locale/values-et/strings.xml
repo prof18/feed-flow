@@ -416,4 +416,7 @@
     <string name="hide_images_for_feed_description">Peida selle uudisvoo pildid</string>
     <string name="reader_mode_no_content_title">Sisu pole saadaval</string>
     <string name="reader_mode_no_content_message">Selles artiklis pole mitte mingit sisu ning seal ei leidu veebis avatavat linki.</string>
+    <string name="support_paywall_title">Aita FeedFlow\'l kasvada 💙</string>
+    <string name="support_purchase_thank_you_title">Sa oled suurepärane! 🎉</string>
+    <string name="support_purchase_thank_you_message">Sinu toetus aitab FeedFlow\'l kasvada 💙 Tänud, et toetad järjepidevat arendust, mõtestatud täiendusi ning vigade parandamist. 🙏</string>
 </resources>

@@ -13,6 +13,9 @@ data class Home(
 data object Settings : NavKey
 
 @Serializable
+data object SupportPaywall : NavKey
+
+@Serializable
 data object FeedsAndAccounts : NavKey
 
 @Serializable

@@ -5,4 +5,5 @@ enum SettingsAccessibilityIdentifiers {
     static let feedListRow = "settings_feed_list"
     static let readingBehaviorRow = "settings_reading_behavior"
     static let syncAndStorageRow = "settings_sync_storage"
+    static let supportProjectRow = "settings_support_project"
 }

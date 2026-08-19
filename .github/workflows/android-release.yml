@@ -17,6 +17,8 @@ on:
         required: true
       DROPBOX_API_KEY:
         required: true
+      REVENUECAT_ANDROID_API_KEY:
+        required: false
       FIREBASE_JSON:
         required: true
       PLAY_CONFIG:
@@ -47,11 +49,13 @@ jobs:
           echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> keystore.properties
           echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> keystore.properties
           echo "dropbox_key=$DROPBOX_API_KEY" >> keystore.properties
+          echo "revenuecat_android_api_key=$REVENUECAT_ANDROID_API_KEY" >> keystore.properties
         env:
           KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
           KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
           KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
           DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+          REVENUECAT_ANDROID_API_KEY: ${{ secrets.REVENUECAT_ANDROID_API_KEY }}
 
       - name: Create Debug dummy Firebase json
         run: |

@@ -49,6 +49,7 @@ import com.prof18.feedflow.android.home.HomeScreen
 import com.prof18.feedflow.android.readermode.ReaderModeScreen
 import com.prof18.feedflow.android.search.SearchScreen
 import com.prof18.feedflow.android.settings.SettingsScreen
+import com.prof18.feedflow.android.settings.SupportPaywallScreen
 import com.prof18.feedflow.android.settings.about.AboutAndSupportScreen
 import com.prof18.feedflow.android.settings.about.subpages.AboutScreen
 import com.prof18.feedflow.android.settings.about.subpages.LicensesScreen
@@ -223,7 +224,6 @@ class MainActivity : BaseThemeActivity() {
     ) {
         val reduceMotionEnabled = LocalReduceMotion.current
         val navigateBack: () -> Unit = { popBackStackOrFinish(backStack) }
-
         NavDisplay(
             backStack = backStack,
             onBack = navigateBack,
@@ -295,6 +295,13 @@ class MainActivity : BaseThemeActivity() {
                         navigateToWidgetSettings = { backStack.add(WidgetSettings) },
                         navigateToAppearance = { backStack.add(Appearance) },
                         navigateToAboutAndSupport = { backStack.add(AboutAndSupport) },
+                        navigateToSupportPaywall = { backStack.add(SupportPaywall) },
+                    )
+                }
+
+                entry<SupportPaywall> {
+                    SupportPaywallScreen(
+                        onNavigateBack = navigateBack,
                     )
                 }
 

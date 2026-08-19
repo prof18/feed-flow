@@ -22,6 +22,7 @@ struct FeedFlowApp: App {
 
     init() {
         startKoin(notifier: IOSNotifier())
+        RevenueCatSupport.configure()
         setupTelemetry()
         _browserSelector = State(initialValue: BrowserSelector())
 

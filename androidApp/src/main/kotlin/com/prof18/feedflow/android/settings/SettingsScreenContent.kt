@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.LocalLibrary
@@ -43,7 +44,9 @@ internal fun SettingsScreenContent(
     navigateToSyncAndStorage: () -> Unit,
     navigateToWidgetSettings: () -> Unit,
     navigateToAboutAndSupport: () -> Unit,
+    onSupportProjectClick: () -> Unit,
     showWidgetSettings: Boolean,
+    showSupportProject: Boolean,
 ) {
     Scaffold(
         topBar = {
@@ -112,6 +115,17 @@ internal fun SettingsScreenContent(
                 )
             }
 
+            if (showSupportProject) {
+                item {
+                    SettingItem(
+                        modifier = Modifier.testTag(SettingsE2eIds.SUPPORT_PROJECT_ROW),
+                        title = LocalFeedFlowStrings.current.supportTheProject,
+                        icon = Icons.Outlined.FavoriteBorder,
+                        onClick = onSupportProjectClick,
+                    )
+                }
+            }
+
             item {
                 SettingItem(
                     title = LocalFeedFlowStrings.current.settingsAboutAndSupport,
@@ -178,7 +192,9 @@ private fun SettingsScreenPreview() {
             navigateToSyncAndStorage = {},
             navigateToWidgetSettings = {},
             navigateToAboutAndSupport = {},
+            onSupportProjectClick = {},
             showWidgetSettings = true,
+            showSupportProject = true,
         )
     }
 }

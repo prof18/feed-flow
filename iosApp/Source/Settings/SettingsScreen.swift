@@ -44,6 +44,15 @@ struct SettingsScreen: View {
                     }
                     .accessibilityIdentifier(SettingsAccessibilityIdentifiers.syncAndStorageRow)
 
+                    if RevenueCatSupport.isAvailable {
+                        NavigationLink {
+                            SupportPaywallScreen()
+                        } label: {
+                            Label(feedFlowStrings.supportTheProject, systemImage: "heart")
+                        }
+                        .accessibilityIdentifier(SettingsAccessibilityIdentifiers.supportProjectRow)
+                    }
+
                     NavigationLink(destination: AboutAndSupportScreen()) {
                         Label(feedFlowStrings.settingsAboutAndSupport, systemImage: "info.circle")
                     }

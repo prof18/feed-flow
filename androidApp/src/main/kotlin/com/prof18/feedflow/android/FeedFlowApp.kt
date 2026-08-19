@@ -10,6 +10,7 @@ import androidx.lifecycle.coroutineScope
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import com.prof18.feedflow.android.billing.RevenueCatSupport
 import com.prof18.feedflow.android.notifications.AndroidNotifier
 import com.prof18.feedflow.android.settings.widget.WidgetSettingsViewModel
 import com.prof18.feedflow.android.widget.FeedFlowWidget
@@ -68,6 +69,12 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
             appVersion = BuildConfig.VERSION_NAME,
             platformName = "Android",
             platformVersion = "${android.os.Build.VERSION.RELEASE} - API ${android.os.Build.VERSION.SDK_INT}",
+        )
+
+        RevenueCatSupport.configure(
+            context = this,
+            apiKey = BuildConfig.REVENUECAT_API_KEY,
+            isDebug = BuildConfig.DEBUG,
         )
 
         if (isGooglePlayFlavor && appEnvironment.isRelease()) {

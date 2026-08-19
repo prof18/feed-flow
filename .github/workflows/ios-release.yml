@@ -11,6 +11,8 @@ on:
         required: true
       GID_REVERSED_CLIENT_ID:
         required: true
+      REVENUECAT_IOS_API_KEY:
+        required: false
       FIREBASE_PLIST:
         required: true
       CERTIFICATES_P12:
@@ -75,10 +77,12 @@ jobs:
           echo "DROPBOX_API_KEY=$DROPBOX_API_KEY" >> iosApp/Assets/Config.xcconfig
           echo "GID_CLIENT_ID=$GID_CLIENT_ID" >> iosApp/Assets/Config.xcconfig
           echo "GID_REVERSED_CLIENT_ID=$GID_REVERSED_CLIENT_ID" >> iosApp/Assets/Config.xcconfig
+          echo "REVENUECAT_API_KEY=$REVENUECAT_IOS_API_KEY" >> iosApp/Assets/Config.xcconfig
         env:
           DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
           GID_CLIENT_ID: ${{ secrets.GID_CLIENT_ID }}
           GID_REVERSED_CLIENT_ID: ${{ secrets.GID_REVERSED_CLIENT_ID }}
+          REVENUECAT_IOS_API_KEY: ${{ secrets.REVENUECAT_IOS_API_KEY }}
 
       - name: import distribution cert
         id: import_dist_cert

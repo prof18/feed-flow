@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import com.prof18.feedflow.android.billing.RevenueCatSupport
 import com.prof18.feedflow.android.widget.FeedFlowWidget
 
 @Composable
@@ -20,12 +21,12 @@ fun SettingsScreen(
     navigateToSyncAndStorage: () -> Unit,
     navigateToWidgetSettings: () -> Unit,
     navigateToAboutAndSupport: () -> Unit,
+    navigateToSupportPaywall: () -> Unit,
 ) {
     val context = LocalContext.current
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     val appVersion = packageInfo.versionName ?: ""
     var hasWidget by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
         val ids = GlanceAppWidgetManager(context).getGlanceIds(FeedFlowWidget::class.java)
         hasWidget = ids.isNotEmpty()
@@ -41,6 +42,8 @@ fun SettingsScreen(
         navigateToSyncAndStorage = navigateToSyncAndStorage,
         navigateToWidgetSettings = navigateToWidgetSettings,
         navigateToAboutAndSupport = navigateToAboutAndSupport,
+        onSupportProjectClick = navigateToSupportPaywall,
         showWidgetSettings = hasWidget,
+        showSupportProject = RevenueCatSupport.isAvailable,
     )
 }

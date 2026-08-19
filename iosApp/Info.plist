@@ -76,6 +76,8 @@
 	<string>VERSION_CODE</string>
 	<key>DropboxApiKey</key>
 	<string>$(DROPBOX_API_KEY)</string>
+	<key>RevenueCatApiKey</key>
+	<string>$(REVENUECAT_API_KEY)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>

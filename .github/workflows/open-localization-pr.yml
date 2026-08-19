@@ -6,6 +6,8 @@ on:
       - localization
     paths:
       - i18n/src/commonMain/resources/locale/**
+      - assets/paywallcopy/**
+      - assets/screenshotcopy/**
       - assets/storecopy/**
       - website/content/**
   workflow_dispatch:

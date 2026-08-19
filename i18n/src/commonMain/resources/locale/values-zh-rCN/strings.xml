@@ -416,4 +416,7 @@
     <string name="mark_all_above_as_read_confirmation_message">此文章上方的所有文章都将被标记为已读。</string>
     <string name="mark_all_below_as_read_confirmation_title">将下方所有标记为已读？</string>
     <string name="mark_all_below_as_read_confirmation_message">此文章下方的所有文章都将被标记为已读。</string>
+    <string name="support_paywall_title">助力 FeedFlow 持续发展 💙</string>
+    <string name="support_purchase_thank_you_title">您太棒了！🎉</string>
+    <string name="support_purchase_thank_you_message">您的支持有助于 FeedFlow 持续发展 💙 感谢您对持续开发、精心优化和错误修复的支持。🙏</string>
 </resources>

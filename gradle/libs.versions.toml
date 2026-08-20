@@ -72,7 +72,7 @@ rss-parser = "6.1.8"
 reorderable = "3.1.0"
 revenuecat = "10.15.1"
 saket-swipe = "1.3.0"
-sentry = "8.51.0"
+sentry = "8.53.0"
 skie = "0.10.14"
 slf4jNop = "2.0.18"
 # When updating, check the version of sqlite-jdbc in the following link:

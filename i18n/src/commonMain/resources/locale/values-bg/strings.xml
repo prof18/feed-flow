@@ -416,4 +416,7 @@
     <string name="new_articles_button">%s нови статии</string>
     <string name="reader_mode_no_content_title">Няма налично съдържание</string>
     <string name="reader_mode_no_content_message">Тази статия не включва никакво съдържание и няма линк за отварянето ѝ в мрежата.</string>
+    <string name="support_paywall_title">Продължавайте да растете с FeedFlow 💙</string>
+    <string name="support_purchase_thank_you_title">Ти си невероятен/а! 🎉</string>
+    <string name="support_purchase_thank_you_message">Вашият съвет помага на FeedFlow да продължи да расте 💙 Благодарим ви, че подкрепяте непрекъснатото развитие, обмислените подобрения и корекциите на грешки. 🙏</string>
 </resources>

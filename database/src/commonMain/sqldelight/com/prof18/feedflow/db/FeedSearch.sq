@@ -7,15 +7,17 @@ CREATE VIRTUAL TABLE IF NOT EXISTS feed_search USING FTS4(
     tokenize=unicode61 "tokenchars=+#"
 );
 
+-- Keyed on docid (an alias for the indexed rowid) rather than url_hash: FTS4 cannot index
+-- an ordinary column, so matching on url_hash made every delete scan the whole index.
 CREATE TRIGGER IF NOT EXISTS populate_feed_search
 AFTER INSERT ON feed_item
-BEGIN INSERT OR IGNORE INTO feed_search(url_hash, title, subtitle) VALUES (new.url_hash, new.title, new.subtitle);
+BEGIN INSERT OR IGNORE INTO feed_search(docid, url_hash, title, subtitle) VALUES (new.rowid, new.url_hash, new.title, new.subtitle);
 END;
 
 
 CREATE TRIGGER IF NOT EXISTS delete_feed_search
 BEFORE DELETE ON feed_item
-BEGIN DELETE FROM feed_search WHERE url_hash = old.url_hash;
+BEGIN DELETE FROM feed_search WHERE docid = old.rowid;
 END;
 
 search:

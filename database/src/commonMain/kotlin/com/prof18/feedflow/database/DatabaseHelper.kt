@@ -27,6 +27,7 @@ import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.PrefetchQueueItem
 import com.prof18.feedflow.core.model.SyncedFeedItem
+import com.prof18.feedflow.core.utils.withSuspensionGuard
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item_status
 import com.prof18.feedflow.db.Feed_source
@@ -219,7 +220,7 @@ class DatabaseHelper(
     }
 
     suspend fun insertFeedItems(feedItems: List<FeedItem>, lastSyncTimestamp: Long) =
-        dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Saving fetched articles") {
             for (feedItem in feedItems) {
                 with(feedItem) {
                     val isDeleted = dbRef.deletedFeedItemsQueries.isItemDeleted(id).executeAsOne()
@@ -237,12 +238,13 @@ class DatabaseHelper(
                             comments_url = commentsUrl,
                         )
                     }
-
-                    dbRef.feedSourceQueries.updateLastSyncTimestamp(
-                        lastSyncTimestamp,
-                        feedSource.id,
-                    )
                 }
+            }
+
+            // One update per source instead of one per item: the timestamp is identical for all
+            // of them, and this transaction is on the path that gets killed for running long.
+            for (feedSourceId in feedItems.mapTo(mutableSetOf()) { it.feedSource.id }) {
+                dbRef.feedSourceQueries.updateLastSyncTimestamp(lastSyncTimestamp, feedSourceId)
             }
         }
 
@@ -392,7 +394,7 @@ class DatabaseHelper(
 
     suspend fun deleteOldFeedItems(timeThreshold: Long, feedFilter: FeedFilter) =
         try {
-            dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Clearing old articles") {
                 val oldItems = dbRef.feedItemQueries.selectOldItems(
                     threshold = timeThreshold,
                     feedSourceId = feedFilter.getFeedSourceId(),
@@ -498,7 +500,7 @@ class DatabaseHelper(
         }
 
     suspend fun deleteFeedSourceExcept(feedSourceIds: List<String>) =
-        dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Removing unsubscribed feeds") {
             dbRef.readStatusPendingActionQueries.deleteReadStatusPendingActionsForFeedSourcesExcept(feedSourceIds)
             dbRef.feedSourceCacheInfoQueries.deleteAllExcept(feedSourceIds)
             dbRef.feedSourceQueries.deleteAllExcept(feedSourceIds)
@@ -1051,14 +1053,29 @@ class DatabaseHelper(
             .executeAsOne()
     }
 
+    /**
+     * Pass [suspensionGuardReason] for transactions that scale with the number of feed items:
+     * those run long enough to still be holding the SQLite lock when iOS suspends the app,
+     * which gets the process killed (0xdead10cc). Short transactions should leave it null,
+     * since asserting background time is not free.
+     */
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
         noEnclosing: Boolean = false,
+        suspensionGuardReason: String? = null,
         body: TransactionWithoutReturn.() -> Unit,
     ) {
         withContext(coroutineContext) {
-            this@transactionWithContext.transaction(noEnclosing) {
-                body()
+            if (suspensionGuardReason == null) {
+                this@transactionWithContext.transaction(noEnclosing) {
+                    body()
+                }
+            } else {
+                withSuspensionGuard(suspensionGuardReason) {
+                    this@transactionWithContext.transaction(noEnclosing) {
+                        body()
+                    }
+                }
             }
         }
     }

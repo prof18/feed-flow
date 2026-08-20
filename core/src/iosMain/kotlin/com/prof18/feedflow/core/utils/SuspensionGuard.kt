@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.domain.feedsync
+package com.prof18.feedflow.core.utils
 
 import platform.Foundation.NSProcessInfo
 import platform.Foundation.performExpiringActivityWithReason
@@ -8,16 +8,14 @@ import platform.darwin.dispatch_semaphore_signal
 import platform.darwin.dispatch_semaphore_wait
 
 /**
- * Defers app suspension while [block] runs, so SQLite/file locks on the app-group
- * container are not held across suspension (the system kills the process with
- * 0xdead10cc otherwise). Uses NSProcessInfo.performExpiringActivity because it is
- * also available in app extensions, unlike UIApplication.beginBackgroundTask.
+ * Uses NSProcessInfo.performExpiringActivity rather than UIApplication.beginBackgroundTask
+ * because it is also available in the widget and share extensions, which open the same
+ * app-group container.
  *
- * If the system expires the activity before [block] finishes, the guard is released
- * and the work continues unprotected: still a best-effort improvement over never
- * asserting background time at all.
+ * If the system expires the activity before [block] finishes, the guard is released and the
+ * work continues unprotected: still better than never asserting background time at all.
  */
-internal suspend fun <T> withSuspensionGuard(reason: String, block: suspend () -> T): T {
+actual suspend fun <T> withSuspensionGuard(reason: String, block: suspend () -> T): T {
     val finished = dispatch_semaphore_create(0)
     NSProcessInfo.processInfo.performExpiringActivityWithReason(reason) { expired: Boolean ->
         if (expired) {

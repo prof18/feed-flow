@@ -1,11 +1,13 @@
 package com.prof18.feedflow.shared
 
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.inject
 import kotlin.test.Test
@@ -111,6 +113,38 @@ class FeedFlowDatabaseTest : KoinTestBase() {
         databaseHelper.insertFeedItems(listOf(feedItem), lastSyncTimestamp = 0)
 
         assertEquals("<article>Stored feed content</article>", databaseHelper.getFeedItemContent("content-item"))
+    }
+
+    @Test
+    fun `deleting feed items drops them from the search index`() = runTest {
+        val staleItem = FeedItemGenerator.feedItem(
+            id = "stale-item",
+            title = "Kotlin coroutines deep dive",
+            pubDateMillis = 1_000L,
+        )
+        val freshItem = FeedItemGenerator.feedItem(
+            id = "fresh-item",
+            title = "Kotlin multiplatform roundup",
+            pubDateMillis = 5_000L,
+            feedSource = staleItem.feedSource,
+        )
+        databaseHelper.insertFeedSource(
+            listOf(
+                createParsedFeedSource(id = staleItem.feedSource.id, title = staleItem.feedSource.title),
+            ),
+        )
+        databaseHelper.insertFeedItems(listOf(staleItem, freshItem), lastSyncTimestamp = 0)
+
+        assertEquals(
+            listOf("fresh-item", "stale-item"),
+            databaseHelper.search("Kotlin").first().map { it.url_hash }.sorted(),
+        )
+
+        databaseHelper.deleteOldFeedItems(timeThreshold = 2_000L, feedFilter = FeedFilter.Timeline)
+
+        // The delete trigger matches on docid, so it has to remove exactly the deleted row and
+        // leave the surviving one searchable.
+        assertEquals(listOf("fresh-item"), databaseHelper.search("Kotlin").first().map { it.url_hash })
     }
 
     @Test

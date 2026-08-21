@@ -416,4 +416,7 @@
     <string name="mark_all_above_as_read_confirmation_message">Tutti gli articoli sopra a questo verranno contrassegnati come letti.</string>
     <string name="mark_all_below_as_read_confirmation_title">Contrassegnare tutto sotto come letto?</string>
     <string name="mark_all_below_as_read_confirmation_message">Tutti gli articoli sotto a questo verranno contrassegnati come letti.</string>
+    <string name="support_paywall_title">Aiuta FeedFlow a crescere 💙</string>
+    <string name="support_purchase_thank_you_title">Grande! 🎉</string>
+    <string name="support_purchase_thank_you_message">Il tuo contributo aiuta FeedFlow a crescere 💙 Grazie per sostenere lo sviluppo continuo, i miglioramenti curati nei dettagli e la risoluzione dei bug. 🙏</string>
 </resources>

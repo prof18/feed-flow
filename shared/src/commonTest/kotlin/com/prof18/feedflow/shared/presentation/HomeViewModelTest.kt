@@ -1251,16 +1251,42 @@ class HomeViewModelTest : KoinTestBase() {
 
     @Test
     fun `refreshFeeds triggers fetch`() = runTest(testDispatcher) {
-        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
-        insertFeedSources(feedSource)
-        fakeRssParser.setChannel(feedSource.url, createChannel(title = "Feed", link = "https://example.com"))
+        val category = FeedSourceCategory(id = "category-1", title = "Technology")
+        val selectedSource = createFeedSource(id = "source-1", title = "Source 1", category = category)
+        val otherSource = createFeedSource(id = "source-2", title = "Source 2", category = category)
+        insertFeedSources(selectedSource, otherSource)
+        fakeRssParser.setChannel(selectedSource.url, createChannel(title = "Feed 1", link = "https://example.com/1"))
+        fakeRssParser.setChannel(otherSource.url, createChannel(title = "Feed 2", link = "https://example.com/2"))
 
         val viewModel = getViewModel()
+        viewModel.onFeedFilterSelected(FeedFilter.Source(selectedSource))
+        advanceUntilIdle()
 
         viewModel.refreshFeeds()
         advanceUntilIdle()
 
         assertEquals(1, fakeRssParser.callCount)
+        assertEquals(listOf(selectedSource.url), fakeRssParser.requestedUrls)
+        assertEquals(1, viewModel.refreshTriggerState.value)
+    }
+
+    @Test
+    fun `getNewFeeds keeps a full refresh with a source filter active`() = runTest(testDispatcher) {
+        val category = FeedSourceCategory(id = "category-1", title = "Technology")
+        val selectedSource = createFeedSource(id = "source-1", title = "Source 1", category = category)
+        val otherSource = createFeedSource(id = "source-2", title = "Source 2", category = category)
+        insertFeedSources(selectedSource, otherSource)
+        fakeRssParser.setChannel(selectedSource.url, createChannel(title = "Feed 1", link = "https://example.com/1"))
+        fakeRssParser.setChannel(otherSource.url, createChannel(title = "Feed 2", link = "https://example.com/2"))
+
+        val viewModel = getViewModel()
+        viewModel.onFeedFilterSelected(FeedFilter.Source(selectedSource))
+        advanceUntilIdle()
+
+        viewModel.getNewFeeds()
+        advanceUntilIdle()
+
+        assertEquals(setOf(selectedSource.url, otherSource.url), fakeRssParser.requestedUrls.toSet())
     }
 
     @Test
@@ -1897,6 +1923,7 @@ class HomeViewModelTest : KoinTestBase() {
 
     private class FakeRssParserWrapper : RssParserWrapper {
         private val channelByUrl = mutableMapOf<String, RssChannel>()
+        val requestedUrls = mutableListOf<String>()
         var callCount: Int = 0
             private set
 
@@ -1906,6 +1933,7 @@ class HomeViewModelTest : KoinTestBase() {
 
         override suspend fun getRssChannel(url: String): RssChannel {
             callCount += 1
+            requestedUrls.add(url)
             return requireNotNull(channelByUrl[url]) { "Missing channel for $url" }
         }
     }

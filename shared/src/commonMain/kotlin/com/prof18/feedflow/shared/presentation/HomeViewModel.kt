@@ -303,6 +303,16 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun refreshCurrentFilter() {
+        launchAfterFlushingScrollReadState {
+            retryPendingReadStatusActionsNow()
+            feedFetcherRepository.fetchFeeds(
+                forceRefresh = true,
+                feedFilter = feedStateRepository.currentFeedFilter.value,
+            )
+        }
+    }
+
     fun onVisibleFeedItemsChanged(visibleItems: List<VisibleFeedItem>) {
         if (!settingsRepository.markFeedAsReadWhenScrollingFlow.value) {
             flushScrollReadStateInBackground()
@@ -393,7 +403,7 @@ class HomeViewModel internal constructor(
 
     fun refreshFeeds() {
         refreshTriggerMutableState.update { it + 1 }
-        getNewFeeds(forceRefresh = true)
+        refreshCurrentFilter()
     }
 
     fun reloadFeedState() {

@@ -59,6 +59,24 @@ class FeedFetcherRepositoryFeedbinTest : FeedFetcherRepositoryTestBase() {
         assertEquals(FinishedFeedUpdateStatus, feedStateRepository.updateState.value)
     }
 
+    @Test
+    fun `fetchFeeds with a Source filter performs full account sync`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
+
+        val feedSource = createFeedSource(
+            id = "feedbin/9115993/1240842",
+            title = "stories – MacStories",
+            url = "https://www.macstories.net/category/stories/feed/",
+            websiteUrl = "https://www.macstories.net/category/stories/",
+        )
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+
+        feedFetcherRepository.fetchFeeds(feedFilter = FeedFilter.Source(feedSource.copy(id = "other-feed")))
+        advanceUntilIdle()
+
+        assertTrue(getTimelineItems().isNotEmpty())
+    }
+
     private suspend fun getTimelineItems() = databaseHelper.getFeedItems(
         feedFilter = FeedFilter.Timeline,
         pageSize = 50,

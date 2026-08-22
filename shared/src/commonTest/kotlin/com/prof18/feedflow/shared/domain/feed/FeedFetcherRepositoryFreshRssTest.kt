@@ -61,6 +61,24 @@ class FeedFetcherRepositoryFreshRssTest : FeedFetcherRepositoryTestBase() {
         assertEquals(FinishedFeedUpdateStatus, feedStateRepository.updateState.value)
     }
 
+    @Test
+    fun `fetchFeeds with a Source filter performs full account sync`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
+
+        val feedSource = createFeedSource(
+            id = "feed/242",
+            title = "20 Percent Berlin",
+            url = "https://www.20percent.berlin/feed",
+            websiteUrl = "https://www.20percent.berlin/",
+        )
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+
+        feedFetcherRepository.fetchFeeds(feedFilter = FeedFilter.Source(feedSource.copy(id = "other-feed")))
+        advanceUntilIdle()
+
+        assertTrue(getTimelineItems().isNotEmpty())
+    }
+
     private suspend fun getTimelineItems() = databaseHelper.getFeedItems(
         feedFilter = FeedFilter.Timeline,
         pageSize = 50,

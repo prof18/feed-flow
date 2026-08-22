@@ -61,6 +61,24 @@ class FeedFetcherRepositoryBazquxTest : FeedFetcherRepositoryTestBase() {
         assertEquals(FinishedFeedUpdateStatus, feedStateRepository.updateState.value)
     }
 
+    @Test
+    fun `fetchFeeds with a Source filter performs full account sync`() = runTest(testDispatcher) {
+        setupBazquxAccount()
+
+        val feedSource = createFeedSource(
+            id = "feed/https://9to5google.com/feed/",
+            title = "9to5Google",
+            url = "https://9to5google.com/feed/",
+            websiteUrl = "https://9to5google.com/",
+        )
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+
+        feedFetcherRepository.fetchFeeds(feedFilter = FeedFilter.Source(feedSource.copy(id = "other-feed")))
+        advanceUntilIdle()
+
+        assertTrue(getTimelineItems().isNotEmpty())
+    }
+
     private suspend fun getTimelineItems() = databaseHelper.getFeedItems(
         feedFilter = FeedFilter.Timeline,
         pageSize = 50,

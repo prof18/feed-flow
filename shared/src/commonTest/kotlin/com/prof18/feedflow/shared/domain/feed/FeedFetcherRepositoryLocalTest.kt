@@ -75,6 +75,94 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     }
 
     @Test
+    fun `fetchFeeds with Source filter only parses that source`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val sources = createScopedSources()
+        insertScopedSources(sources)
+        setEmptyChannels(sources)
+
+        feedFetcherRepository.fetchFeeds(feedFilter = FeedFilter.Source(sources.first()))
+        advanceUntilIdle()
+
+        assertEquals(listOf(sources.first().url), fakeRssParserWrapper.requestedUrls)
+    }
+
+    @Test
+    fun `fetchFeeds with Category filter only parses sources in that category`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val sources = createScopedSources()
+        insertScopedSources(sources)
+        setEmptyChannels(sources)
+
+        feedFetcherRepository.fetchFeeds(feedFilter = FeedFilter.Category(requireNotNull(sources.first().category)))
+        advanceUntilIdle()
+
+        assertEquals(sources.take(2).map { it.url }.toSet(), fakeRssParserWrapper.requestedUrls.toSet())
+    }
+
+    @Test
+    fun `fetchFeeds with Uncategorized filter only parses uncategorized sources`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val sources = createScopedSources()
+        insertScopedSources(sources)
+        setEmptyChannels(sources)
+
+        feedFetcherRepository.fetchFeeds(feedFilter = FeedFilter.Uncategorized)
+        advanceUntilIdle()
+
+        assertEquals(listOf(sources.last().url), fakeRssParserWrapper.requestedUrls)
+    }
+
+    @Test
+    fun `fetchFeeds with library filters parses every source`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val sources = createScopedSources()
+        insertScopedSources(sources)
+        setEmptyChannels(sources)
+
+        listOf(FeedFilter.Timeline, FeedFilter.Read, FeedFilter.Bookmarks).forEach { feedFilter ->
+            fakeRssParserWrapper.reset()
+            setEmptyChannels(sources)
+            feedFetcherRepository.fetchFeeds(forceRefresh = true, feedFilter = feedFilter)
+            advanceUntilIdle()
+
+            assertEquals(sources.map { it.url }.toSet(), fakeRssParserWrapper.requestedUrls.toSet())
+        }
+    }
+
+    @Test
+    fun `fetchFeeds with filter matching no source finishes instead of hanging`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val sources = createScopedSources()
+        insertScopedSources(sources)
+
+        feedFetcherRepository.fetchFeeds(
+            feedFilter = FeedFilter.Category(FeedSourceCategory(id = "empty-category", title = "Empty")),
+        )
+        advanceUntilIdle()
+
+        assertTrue(fakeRssParserWrapper.requestedUrls.isEmpty())
+        assertEquals(FinishedFeedUpdateStatus, feedStateRepository.updateState.value)
+    }
+
+    @Test
+    fun `scoped fetch leaves out of scope source metadata unchanged`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val sources = createScopedSources()
+        insertScopedSources(sources)
+        setEmptyChannels(sources)
+        val outOfScopeSource = sources.last()
+        databaseHelper.setFeedFetchFailed(outOfScopeSource.id, true)
+
+        feedFetcherRepository.fetchFeeds(feedFilter = FeedFilter.Category(requireNotNull(sources.first().category)))
+        advanceUntilIdle()
+
+        val updatedOutOfScopeSource = requireNotNull(databaseHelper.getFeedSource(outOfScopeSource.id))
+        assertTrue(updatedOutOfScopeSource.fetchFailed)
+        assertEquals(null, updatedOutOfScopeSource.lastSyncTimestamp)
+    }
+
+    @Test
     fun `fetchFeeds inserts items and updates metadata`() = runTest(testDispatcher) {
         setupLocalAccount()
 
@@ -804,11 +892,12 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         url: String = "https://example.com/$id/rss.xml",
         websiteUrl: String? = "https://example.com/$id",
         logoUrl: String? = "https://example.com/$id/logo.png",
+        category: FeedSourceCategory? = null,
     ): FeedSource = FeedSource(
         id = id,
         url = url,
         title = title,
-        category = null,
+        category = category,
         lastSyncTimestamp = lastSyncTimestamp,
         logoUrl = logoUrl,
         websiteUrl = websiteUrl,
@@ -819,6 +908,29 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         isNotificationEnabled = false,
         isHideImagesEnabled = false,
     )
+
+    private fun createScopedSources(): List<FeedSource> {
+        val category = FeedSourceCategory(id = "category-tech", title = "Technology")
+        return listOf(
+            createFeedSource(id = "source-a", title = "Source A", category = category),
+            createFeedSource(id = "source-b", title = "Source B", category = category),
+            createFeedSource(id = "source-c", title = "Source C"),
+        )
+    }
+
+    private suspend fun insertScopedSources(sources: List<FeedSource>) {
+        databaseHelper.insertCategories(listOf(requireNotNull(sources.first().category)))
+        databaseHelper.insertFeedSource(sources.map { it.toParsedFeedSource() })
+    }
+
+    private fun setEmptyChannels(sources: List<FeedSource>) {
+        sources.forEach { source ->
+            fakeRssParserWrapper.setChannel(
+                source.url,
+                createRssChannel(title = source.title, link = "https://example.com", items = emptyList()),
+            )
+        }
+    }
 
     private fun createRssChannel(
         title: String,
@@ -848,6 +960,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         private val errorUrls = mutableSetOf<String>()
         private val notModifiedUrls = mutableSetOf<String>()
         val validatorsSeenByUrl = mutableMapOf<String, FeedHttpValidators?>()
+        val requestedUrls = mutableListOf<String>()
         var validatorsFor: (String) -> FeedHttpValidators? = { null }
         var callCount: Int = 0
             private set
@@ -857,6 +970,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
             errorUrls.clear()
             notModifiedUrls.clear()
             validatorsSeenByUrl.clear()
+            requestedUrls.clear()
             callCount = 0
         }
 
@@ -874,6 +988,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
 
         override suspend fun getRssChannel(url: String): RssChannel {
             callCount += 1
+            requestedUrls.add(url)
             validatorsSeenByUrl[url] = validatorsFor(url)
             if (notModifiedUrls.contains(url)) {
                 throw HttpException(code = 304, message = "Not Modified")

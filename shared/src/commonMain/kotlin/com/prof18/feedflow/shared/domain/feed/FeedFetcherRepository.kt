@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.Failure
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCacheInfo
@@ -64,6 +65,7 @@ class FeedFetcherRepository internal constructor(
         isFirstLaunch: Boolean = false,
         forceRefresh: Boolean = false,
         publishToFeedList: Boolean = true,
+        feedFilter: FeedFilter = FeedFilter.Timeline,
     ) {
         withContext(dispatcherProvider.io) {
             feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
@@ -79,6 +81,7 @@ class FeedFetcherRepository internal constructor(
                         isFirstLaunch = isFirstLaunch,
                         forceRefresh = forceRefresh,
                         publishToFeedList = publishToFeedList,
+                        feedFilter = feedFilter,
                     )
                 }
             }
@@ -140,42 +143,46 @@ class FeedFetcherRepository internal constructor(
         isFirstLaunch: Boolean = false,
         forceRefresh: Boolean = false,
         publishToFeedList: Boolean,
+        feedFilter: FeedFilter,
     ) {
         feedSyncRepository.syncFeedSources()
 
-        val feedSourceUrls = databaseHelper.getFeedSources()
+        val allFeedSources = databaseHelper.getFeedSources()
+        if (allFeedSources.isEmpty()) {
+            feedStateRepository.emitUpdateStatus(NoFeedSourcesStatus)
+            return
+        }
+
+        val feedSourceUrls = allFeedSources.scopedTo(feedFilter)
         feedToUpdate.clear()
         feedToUpdate.addAll(feedSourceUrls.map { it.url })
-        if (feedSourceUrls.isEmpty()) {
-            feedStateRepository.emitUpdateStatus(NoFeedSourcesStatus)
-        } else {
-            if (!isFirstLaunch && publishToFeedList) {
-                feedStateRepository.getFeeds()
-            }
-            feedStateRepository.emitUpdateStatus(
-                InProgressFeedUpdateStatus(
-                    refreshedFeedCount = 0,
-                    totalFeedCount = feedSourceUrls.size,
-                ),
-            )
 
-            isFeedSyncDone = false
-            parseFeeds(
-                feedSourceUrls = feedSourceUrls,
-                forceRefresh = forceRefresh,
-            )
+        if (!isFirstLaunch && publishToFeedList) {
+            feedStateRepository.getFeeds()
+        }
+        feedStateRepository.emitUpdateStatus(
+            InProgressFeedUpdateStatus(
+                refreshedFeedCount = 0,
+                totalFeedCount = feedSourceUrls.size,
+            ),
+        )
 
-            feedSyncRepository.syncFeedItems()
-            // If the sync is skipped quickly, sometimes the loading spinner stays out
-            delay(50.milliseconds)
-            contentPrefetchRepository.prefetchContent()
-            isFeedSyncDone = true
-            // After fetching new feeds, delete old ones based on user settings
-            cleanOldFeeds(publishToFeedList)
-            updateRefreshCount()
-            if (publishToFeedList) {
-                feedStateRepository.getFeeds()
-            }
+        isFeedSyncDone = false
+        parseFeeds(
+            feedSourceUrls = feedSourceUrls,
+            forceRefresh = forceRefresh,
+        )
+
+        feedSyncRepository.syncFeedItems()
+        // If the sync is skipped quickly, sometimes the loading spinner stays out
+        delay(50.milliseconds)
+        contentPrefetchRepository.prefetchContent()
+        isFeedSyncDone = true
+        // After fetching new feeds, delete old ones based on user settings
+        cleanOldFeeds(publishToFeedList)
+        updateRefreshCount()
+        if (publishToFeedList) {
+            feedStateRepository.getFeeds()
         }
     }
 
@@ -447,4 +454,12 @@ private fun Failure.toGReaderSyncErrorCode(): FeedSyncError =
     when (this) {
         NetworkFailure.BadToken -> FeedSyncError.GReaderBadToken
         else -> FeedSyncError.SyncFeedsFailed
+    }
+
+private fun List<FeedSource>.scopedTo(feedFilter: FeedFilter): List<FeedSource> =
+    when (feedFilter) {
+        is FeedFilter.Source -> filter { it.id == feedFilter.feedSource.id }
+        is FeedFilter.Category -> filter { it.category?.id == feedFilter.feedCategory.id }
+        FeedFilter.Uncategorized -> filter { it.category == null }
+        FeedFilter.Timeline, FeedFilter.Read, FeedFilter.Bookmarks -> this
     }

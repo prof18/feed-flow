@@ -161,7 +161,7 @@ internal fun HomeScreen(
         FeedListActions(
             onClearOldArticlesClicked = { homeViewModel.deleteOldFeedItems() },
             onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
-            refreshData = { homeViewModel.getNewFeeds(forceRefresh = true) },
+            refreshData = { homeViewModel.refreshCurrentFilter() },
             requestNewData = { homeViewModel.requestNewFeedsPage() },
             markAllRead = { homeViewModel.markAllRead() },
             onBackToTimelineClick = { homeViewModel.onFeedFilterSelected(FeedFilter.Timeline) },

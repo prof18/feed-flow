@@ -233,6 +233,7 @@ class E2eSeedRunner internal constructor(
             -> applyDisplayProfileSettings(profile)
 
             E2eSeedProfile.SWIPE_ACTIONS,
+            E2eSeedProfile.SWIPE_LEFT_ONLY,
             E2eSeedProfile.SWIPE_DISABLED,
             -> applySwipeProfileSettings(profile)
 
@@ -266,6 +267,7 @@ class E2eSeedRunner internal constructor(
     private fun applySwipeProfileSettings(profile: E2eSeedProfile) {
         when (profile) {
             E2eSeedProfile.SWIPE_ACTIONS -> applySwipeActionSettings()
+            E2eSeedProfile.SWIPE_LEFT_ONLY -> applySwipeLeftOnlySettings()
             E2eSeedProfile.SWIPE_DISABLED -> applySwipeDisabledSettings()
             else -> Unit
         }
@@ -536,6 +538,14 @@ class E2eSeedRunner internal constructor(
         feedAppearanceSettingsRepository.setSwipeAction(
             SwipeDirection.RIGHT,
             SwipeActionType.TOGGLE_BOOKMARK_STATUS,
+        )
+    }
+
+    private fun applySwipeLeftOnlySettings() {
+        applySwipeDisabledSettings()
+        feedAppearanceSettingsRepository.setSwipeAction(
+            SwipeDirection.LEFT,
+            SwipeActionType.TOGGLE_READ_STATUS,
         )
     }
 

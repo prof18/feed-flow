@@ -56,8 +56,8 @@ appId: com.prof18.feedflow.debug
     direction: RIGHT
     duration: 700
 - waitForAnimationToEnd
-- tapOn:
-    id: drawer_menu_button
+- assertVisible:
+    id: drawer_bookmarks
 - tapOn:
     id: drawer_read
 - assertNotVisible: "E2E Newest Unread Article.*"
@@ -66,3 +66,39 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: drawer_bookmarks
 - assertNotVisible: "E2E Newest Unread Article.*"
+
+# When only the left row action is configured, it retains priority in that
+# direction while the disabled right direction opens the drawer.
+- openLink: feedflow://e2e/reset-and-seed?profile=swipe-left-only
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    id: article_row_e2e_article_newest_unread
+- swipe:
+    from:
+      id: article_row_e2e_article_newest_unread
+    direction: RIGHT
+    duration: 700
+- waitForAnimationToEnd
+- assertVisible:
+    id: drawer_bookmarks
+- swipe:
+    start: 60%,55%
+    end: 5%,55%
+    duration: 400
+- extendedWaitUntil:
+    notVisible:
+      id: drawer_bookmarks
+    timeout: 10000
+- swipe:
+    from:
+      id: article_row_e2e_article_newest_unread
+    direction: LEFT
+    duration: 700
+- waitForAnimationToEnd
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_read
+- assertVisible: "E2E Newest Unread Article.*"

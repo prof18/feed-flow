@@ -10,26 +10,24 @@ appId: com.prof18.feedflow.debug
 - assertNotVisible:
     id: drawer_bookmarks
 
-# Material3's ModalNavigationDrawer makes the whole content a horizontal drag
-# handle, so a drag over the timeline pulled the drawer open even with every
-# swipe action disabled.
+# A mostly vertical drag with some horizontal movement must stay with the feed
+# list rather than opening the drawer midway through a scroll.
 - swipe:
-    start: 50%,55%
-    end: 95%,55%
+    start: 45%,75%
+    end: 52%,25%
     duration: 250
 - waitForAnimationToEnd
 - assertNotVisible:
     id: drawer_bookmarks
-# The drag is swallowed rather than left unconsumed, so it does not fall through
-# to the row and open the article either.
 - assertVisible:
-    id: article_row_e2e_article_newest_unread
-
-# Opening by leading-edge drag is not asserted here: under gesture navigation the
-# system back gesture owns that edge, so the result depends on the device nav
-# mode. The toolbar menu is the nav-mode independent way in.
-- tapOn:
     id: drawer_menu_button
+
+# A deliberate horizontal swipe over content opens the drawer. It does not need
+# to start at the system Back edge, so this works in every navigation mode.
+- swipe:
+    start: 25%,55%
+    end: 80%,55%
+    duration: 300
 - extendedWaitUntil:
     visible:
       id: drawer_bookmarks

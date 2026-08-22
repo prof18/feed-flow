@@ -58,6 +58,7 @@ Supported profiles:
 - `read-behavior`
 - `oldest-first`
 - `swipe-actions`
+- `swipe-left-only`
 - `swipe-disabled`
 - `notifications`
 - `android-widget`

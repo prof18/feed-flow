@@ -14,6 +14,7 @@ enum class E2eSeedProfile(val queryValue: String) {
     READ_BEHAVIOR("read-behavior"),
     OLDEST_FIRST("oldest-first"),
     SWIPE_ACTIONS("swipe-actions"),
+    SWIPE_LEFT_ONLY("swipe-left-only"),
     SWIPE_DISABLED("swipe-disabled"),
     NOTIFICATIONS("notifications"),
     ANDROID_WIDGET("android-widget"),

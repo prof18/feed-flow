@@ -251,6 +251,7 @@ When creating commits:
 - ALWAYS build with xcodebuild with -quiet flag when building for iOS. If the command returns errors you may run xcodebuild again without the -quiet flag.
 - Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet`
 - IMPORTANT: The project now supports iOS 26 SDK (June 2025) while maintaining iOS 18 as the minimum deployment target. Use #available checks when adopting iOS 26+ APIs.
+- Keep app-group database work that may outlive an iOS foreground interval inside `withSuspensionGuard`; it uses `NSProcessInfo` and also works in the widget and share extensions.
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
 - Keep accessibility identifier enums in separate `*AccessibilityIdentifiers.swift` files, not appended to view files.
 - Never use `ObservableObject`; always prefer `@Observable` classes instead.
@@ -262,6 +263,9 @@ When creating commits:
 ### Reader mode
 - Use `ReaderModeEligibility.canOpenReaderMode` / `FeedItemUrlInfo.canOpenWebReaderMode()` as the shared gate before opening reader mode on Android, Desktop, and iOS. Ineligible links such as blank, non-http(s), media/PDF/download URLs, YouTube, and Telegram should fall back to the configured browser or `HtmlNotAvailable` behavior instead of attempting reader parsing.
 - URL-less items are a separate case: they are never web-reader eligible, but they still open in the reader from their feed content. Check `FeedItemUrlInfo.hasNoUrl()` first (it must bypass the whole `linkOpeningPreference` branch, since there is no URL any browser could open).
+
+### HTTP clients
+- Every Ktor client that can reach the Darwin engine must install `rejectUnsafeHosts()` after its plugins are configured. Its `HttpSend` interceptor validates every request and redirect hop, preventing malformed percent escapes or bare colons in hosts from terminating iOS.
 
 ### Timeline pagination
 - The feed list pages with a keyset cursor on `(pub_date, url_hash)`, never `LIMIT`/`OFFSET`: the timeline filters on `is_read` while mark-as-read-on-scroll mutates it mid-scroll, so a positional offset skips articles (issue #1319). Read **`.ai/PAGINATION.md`** before changing `selectFeeds` in `FeedItem.sq` or the cursor handling in `FeedStateRepository`.

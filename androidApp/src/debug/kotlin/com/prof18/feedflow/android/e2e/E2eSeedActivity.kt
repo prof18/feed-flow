@@ -32,13 +32,13 @@ import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
-import com.prof18.feedflow.shared.e2e.E2eSeedProfile
-import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
-import java.io.ByteArrayInputStream
+import com.prof18.feedflow.shared.e2e.E2eSeedProfile
+import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import java.io.ByteArrayInputStream
 
 class E2eSeedActivity : BaseThemeActivity() {
 

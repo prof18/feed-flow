@@ -211,6 +211,40 @@ class SyncedDatabaseHelper(
         }
     }
 
+    suspend fun updateFeedItemsReadStatus(feedItemIds: List<FeedItemId>, isRead: Boolean) {
+        val dbRef = getDbRef()
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            feedItemIds.forEach { feedItemId ->
+                dbRef.syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
+                    url_hash = feedItemId.id,
+                    is_read = false,
+                    is_bookmarked = false,
+                )
+                dbRef.syncedFeedItemQueries.updateIsRead(
+                    isRead = isRead,
+                    urlHash = feedItemId.id,
+                )
+            }
+            dbRef.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
+        }
+    }
+
+    suspend fun updateFeedItemBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) {
+        val dbRef = getDbRef()
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
+                url_hash = feedItemId.id,
+                is_read = false,
+                is_bookmarked = false,
+            )
+            dbRef.syncedFeedItemQueries.updateIsBookmarked(
+                isBookmarked = isBookmarked,
+                urlHash = feedItemId.id,
+            )
+            dbRef.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
+        }
+    }
+
     suspend fun isDatabaseEmpty(): Boolean = withContext(backgroundDispatcher) {
         getDbRef().syncedMetadataQueries.isSyncDatabaseEmpty().executeAsOne() == 0L
     }

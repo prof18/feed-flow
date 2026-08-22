@@ -147,6 +147,24 @@ class FeedSyncRepository internal constructor(
         }
     }
 
+    internal suspend fun updateFeedItemsReadStatus(feedItemIds: List<FeedItemId>, isRead: Boolean) {
+        if (feedSyncAccountRepository.isSyncEnabled()) {
+            withErrorHandling {
+                syncedDatabaseHelper.updateFeedItemsReadStatus(feedItemIds, isRead)
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
+        }
+    }
+
+    internal suspend fun updateFeedItemBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) {
+        if (feedSyncAccountRepository.isSyncEnabled()) {
+            withErrorHandling {
+                syncedDatabaseHelper.updateFeedItemBookmarkStatus(feedItemId, isBookmarked)
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
+        }
+    }
+
     internal fun setIsSyncUploadRequired() {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             settingsRepository.setIsSyncUploadRequired(true)
@@ -155,6 +173,13 @@ class FeedSyncRepository internal constructor(
 
     internal suspend fun syncFeedSources() {
         if (feedSyncAccountRepository.isSyncEnabled()) {
+            if (settingsRepository.getIsSyncUploadRequired()) {
+                feedSyncWorker.uploadImmediate()
+                if (settingsRepository.getIsSyncUploadRequired()) {
+                    return
+                }
+            }
+
             val result = feedSyncWorker.download()
             if (result.isError()) {
                 Logger.d { "Error on download" }

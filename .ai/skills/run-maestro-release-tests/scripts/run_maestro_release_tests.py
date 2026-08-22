@@ -58,6 +58,7 @@ class PlatformRunResult:
     platform: str
     setup_results: list[CommandResult]
     flow_results: list[FlowResult]
+    restore_result: CommandResult | None = None
 
 
 def parse_args() -> argparse.Namespace:
@@ -500,10 +501,27 @@ def run_platform_tests(
         print_line(f"Skipping {platform} flows because setup failed.")
         return PlatformRunResult(platform, setup_results, [])
 
+    flow_results = run_flows(repo_root, output_dir, platform, suites, env)
+    restore_result: CommandResult | None = None
+    if command_exists("feedflow-restore-dev-feeds"):
+        restore_result = run_command(
+            f"{platform} development-feed restore",
+            ["feedflow-restore-dev-feeds", "--platform", platform],
+            repo_root,
+            output_dir / f"restore/{platform}.log",
+            env=env,
+        )
+        if restore_result.returncode != 0:
+            print_line(
+                f"Warning: {platform} development-feed restore failed; "
+                f"see {restore_result.log_path}."
+            )
+
     return PlatformRunResult(
         platform,
         setup_results,
-        run_flows(repo_root, output_dir, platform, suites, env),
+        flow_results,
+        restore_result,
     )
 
 

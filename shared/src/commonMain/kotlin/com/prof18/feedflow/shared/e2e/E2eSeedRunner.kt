@@ -78,6 +78,14 @@ class E2eSeedRunner internal constructor(
         seed(profile, account)
     }
 
+    suspend fun resetAndSeedDevelopmentFeeds(feedSources: List<ParsedFeedSource>) {
+        reset()
+        databaseHelper.insertCategories(feedSources.mapNotNull { it.category }.distinct())
+        databaseHelper.insertFeedSource(feedSources)
+        settingsRepository.setRefreshFeedsOnLaunch(true)
+        feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
+    }
+
     suspend fun run(
         action: String,
         profileName: String?,

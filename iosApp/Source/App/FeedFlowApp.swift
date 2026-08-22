@@ -1,5 +1,6 @@
 import BackgroundTasks
 import FeedFlowKit
+import Foundation
 import FirebaseCore
 import FirebaseCrashlytics
 import Foundation
@@ -186,13 +187,18 @@ struct FeedFlowApp: App {
             let accountName = components?.queryItems?
                 .first { $0.name == "account" }?
                 .value
+            let developmentOpml = components?.queryItems?
+                .first { $0.name == "opml" }?
+                .value
+                .flatMap(decodeDevelopmentOPML)
             appState.e2eSeedMessage = nil
             Task {
                 do {
                     let seedError = try await Deps.shared.runE2eSeed(
                         action: action,
                         profileName: profileName,
-                        accountName: accountName
+                        accountName: accountName,
+                        developmentOpml: developmentOpml
                     )
                     await MainActor.run {
                         if let seedError {
@@ -213,6 +219,17 @@ struct FeedFlowApp: App {
             }
         }
     #endif
+}
+
+private func decodeDevelopmentOPML(_ urlSafeBase64: String) -> String? {
+    let standardBase64 = urlSafeBase64
+        .replacingOccurrences(of: "-", with: "+")
+        .replacingOccurrences(of: "_", with: "/")
+    let padding = String(repeating: "=", count: (4 - standardBase64.count % 4) % 4)
+    guard let data = Data(base64Encoded: standardBase64 + padding) else {
+        return nil
+    }
+    return String(data: data, encoding: .utf8)
 }
 
 func scheduleAppRefresh() {

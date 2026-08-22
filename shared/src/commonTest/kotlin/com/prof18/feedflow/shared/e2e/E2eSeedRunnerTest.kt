@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
+import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.utils.ContentDirection
 import com.prof18.feedflow.core.utils.ContentDirectionDetector
@@ -88,6 +89,27 @@ class E2eSeedRunnerTest : KoinTestBase() {
         assertTrue(feedAppearanceSettingsRepository.getHideUnreadDot())
         assertTrue(feedAppearanceSettingsRepository.getHideDescription())
         assertTrue(feedAppearanceSettingsRepository.getRemoveTitleFromDescription())
+    }
+
+    @Test
+    fun `development feeds replace E2E data and refresh on launch`() = runTest {
+        seedRunner.resetAndSeed(E2eSeedProfile.CONTENT_RICH)
+
+        seedRunner.resetAndSeedDevelopmentFeeds(
+            listOf(
+                requireNotNull(
+                    ParsedFeedSource.Builder()
+                        .title("Development Feed")
+                        .url("https://example.com/feed.xml")
+                        .category("Development")
+                        .build(),
+                ),
+            ),
+        )
+
+        assertEquals(listOf("Development"), databaseHelper.getFeedSourceCategories().map { it.title })
+        assertEquals(listOf("https://example.com/feed.xml"), databaseHelper.getFeedSources().map { it.url })
+        assertTrue(settingsRepository.getRefreshFeedsOnLaunch())
     }
 
     @Test

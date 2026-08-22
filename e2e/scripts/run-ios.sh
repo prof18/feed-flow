@@ -9,6 +9,19 @@ SIMULATOR_UDID="${SIMULATOR_UDID:-$(xcrun simctl list devices booted | awk -F '[
 
 cd "$REPO_ROOT"
 
+maestro_started=false
+
+restore_development_content() {
+  local original_exit_code=$?
+  if [ "$maestro_started" = true ] && command -v feedflow-restore-dev-feeds >/dev/null 2>&1; then
+    echo "Restoring development feeds after iOS Maestro run..."
+    feedflow-restore-dev-feeds --platform ios || \
+      echo "Warning: development-feed restore failed; run feedflow-restore-dev-feeds --platform ios manually." >&2
+  fi
+  return "$original_exit_code"
+}
+trap restore_development_content EXIT
+
 if [ -z "$SIMULATOR_UDID" ]; then
   echo "No booted iPhone 17 Pro simulator found. Boot one before running iOS E2E flows." >&2
   exit 1
@@ -35,6 +48,7 @@ E2E_IOS_SUITES="${E2E_IOS_SUITES:-smoke regression}"
 
 for suite in $E2E_IOS_SUITES; do
   while IFS= read -r flow_file; do
+    maestro_started=true
     maestro --platform ios --device "$SIMULATOR_UDID" test "$flow_file"
   done < <(find "$REPO_ROOT/e2e/maestro/ios/$suite" -name '*.yaml' | sort)
 done

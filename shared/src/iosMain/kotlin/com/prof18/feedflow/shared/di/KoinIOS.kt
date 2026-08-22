@@ -41,6 +41,7 @@ import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerIos
+import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
@@ -82,6 +83,11 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import platform.Foundation.NSURLSession
 import platform.Foundation.NSURLSessionConfiguration
+import platform.Foundation.NSData
+import platform.Foundation.NSString
+import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.create
+import platform.Foundation.dataUsingEncoding
 import platform.UIKit.UIDevice
 
 fun initKoinIos(
@@ -331,12 +337,22 @@ object Deps : KoinComponent {
         action: String,
         profileName: String?,
         accountName: String?,
+        developmentOpml: String?,
     ): String? =
         runCatching {
-            getKoin().get<E2eSeedRunner>().run(
-                action = action,
-                profileName = profileName,
-                accountName = accountName,
-            )
+            if (action == ACTION_RESTORE_DEVELOPMENT) {
+                val opmlData = requireNotNull(developmentOpml) { "Missing development OPML payload" }
+                    .let { NSString.create(string = it).dataUsingEncoding(NSUTF8StringEncoding) ?: NSData() }
+                val feedSources = getKoin().get<OpmlFeedHandler>().generateFeedSources(OpmlInput(opmlData))
+                getKoin().get<E2eSeedRunner>().resetAndSeedDevelopmentFeeds(feedSources)
+            } else {
+                getKoin().get<E2eSeedRunner>().run(
+                    action = action,
+                    profileName = profileName,
+                    accountName = accountName,
+                )
+            }
         }.exceptionOrNull()?.message
 }
+
+private const val ACTION_RESTORE_DEVELOPMENT = "restore-development"

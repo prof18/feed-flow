@@ -23,3 +23,10 @@ Run the relevant wrapper or single flow before calling an E2E change done:
 - iOS smoke only: `e2e/scripts/run-ios-smoke.sh`
 - Single Android flow: `maestro --platform android test e2e/maestro/android/<suite>/<flow>.yaml`
 - Single iOS flow: `maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/<suite>/<flow>.yaml`
+
+After local Maestro execution, restore the development subscriptions before handoff—even when a flow fails:
+
+- Android: `feedflow-restore-dev-feeds --platform android`
+- iOS: `feedflow-restore-dev-feeds --platform ios`
+
+The all-platform wrapper scripts and release runner do this automatically when the command is installed on `PATH`; single-flow Maestro commands do not.

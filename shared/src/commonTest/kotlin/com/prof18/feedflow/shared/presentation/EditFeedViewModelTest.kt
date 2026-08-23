@@ -63,6 +63,47 @@ class EditFeedViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `loadFeedToEdit uses the latest persisted feed settings`() = runTest {
+        val staleFeedSource = createFeedSource(
+            id = "source-stale",
+            title = "Stale Feed",
+            articleOpenMode = ArticleOpenMode.FEED_CONTENT,
+        )
+        val persistedFeedSource = staleFeedSource.copy(
+            title = "Updated Feed",
+            articleOpenMode = ArticleOpenMode.FULL_ARTICLE,
+            isHiddenFromTimeline = true,
+            isPinned = true,
+            isNotificationEnabled = true,
+            isHideImagesEnabled = true,
+        )
+        insertFeedSource(persistedFeedSource)
+        databaseHelper.insertFeedSourcePreference(
+            feedSourceId = persistedFeedSource.id,
+            articleOpenMode = persistedFeedSource.articleOpenMode,
+            isHidden = persistedFeedSource.isHiddenFromTimeline,
+            isPinned = persistedFeedSource.isPinned,
+            isNotificationEnabled = persistedFeedSource.isNotificationEnabled,
+            isHideImagesEnabled = persistedFeedSource.isHideImagesEnabled,
+        )
+
+        viewModel.loadFeedToEdit(staleFeedSource)
+        advanceUntilIdle()
+
+        assertEquals(persistedFeedSource.title, viewModel.feedNameState.value)
+        assertEquals(
+            FeedSourceSettings(
+                articleOpenMode = persistedFeedSource.articleOpenMode,
+                isHiddenFromTimeline = persistedFeedSource.isHiddenFromTimeline,
+                isPinned = persistedFeedSource.isPinned,
+                isNotificationEnabled = persistedFeedSource.isNotificationEnabled,
+                isHideImagesEnabled = persistedFeedSource.isHideImagesEnabled,
+            ),
+            viewModel.feedSourceSettingsState.value,
+        )
+    }
+
+    @Test
     fun `canEditUrl returns true for local account`() = runTest {
         assertTrue(viewModel.canEditUrl())
     }

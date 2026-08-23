@@ -81,7 +81,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-128 | `128-notifications-empty-state.yaml` | `empty` | Android, iOS | Notifications settings empty/no-feeds state. |
 | REG-129 | `129-edit-feed-secondary-options.yaml` | `notifications` | Android, iOS | Article context-menu → feed settings; article-open-mode mutation, notification toggle mutation, save. |
 | REG-130 | `130-add-feed-secondary-options.yaml` | `notifications` | Android, iOS | Add-feed: select existing category, toggle notifications. |
-| REG-131 | `131-home-source-filter-edit-entry.yaml` | `content-rich` | Android, iOS | Pick a feed-source filter from the drawer, open that source's Edit screen from the Home overflow menu. |
+| REG-131 | `131-home-source-filter-edit-entry.yaml` | `content-rich` | Android, iOS | Pick a feed-source filter from the drawer and open that source's Edit screen from the Home overflow menu. Android also changes the per-feed article-open mode, saves, reopens from the same overflow menu, and verifies the persisted setting is loaded. |
 | REG-132 | `132-about-support-secondary-options.yaml` | `content-rich` | Android, iOS | Crash-reporting toggle mutation, support-link visibility. |
 | REG-133 | `133-home-sync-backup-action.yaml` | `sync-upload-required` | Android, iOS | Pending-upload Home overflow action with a linked mock sync account. |
 | REG-134 | `134-large-content-pagination-search.yaml` (Android) / `134-large-content-pagination.yaml` (iOS) | `large-content` | Android, iOS | Pagination beyond the first 40-item page (both). Android also covers large-dataset search. |

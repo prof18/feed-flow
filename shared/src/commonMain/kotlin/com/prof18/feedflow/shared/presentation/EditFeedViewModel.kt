@@ -125,19 +125,22 @@ class EditFeedViewModel internal constructor(
         originalFeedSource = feedSource
 
         viewModelScope.launch {
-            feedUrlMutableState.update { feedSource.url }
-            feedNameMutableState.update { feedSource.title }
+            val currentFeedSource = databaseHelper.getFeedSource(feedSource.id) ?: feedSource
+            originalFeedSource = currentFeedSource
+
+            feedUrlMutableState.update { currentFeedSource.url }
+            feedNameMutableState.update { currentFeedSource.title }
             feedSourceSettingsMutableState.update {
                 FeedSourceSettings(
-                    articleOpenMode = feedSource.articleOpenMode,
-                    isHiddenFromTimeline = feedSource.isHiddenFromTimeline,
-                    isPinned = feedSource.isPinned,
-                    isNotificationEnabled = feedSource.isNotificationEnabled,
-                    isHideImagesEnabled = feedSource.isHideImagesEnabled,
+                    articleOpenMode = currentFeedSource.articleOpenMode,
+                    isHiddenFromTimeline = currentFeedSource.isHiddenFromTimeline,
+                    isPinned = currentFeedSource.isPinned,
+                    isNotificationEnabled = currentFeedSource.isNotificationEnabled,
+                    isHideImagesEnabled = currentFeedSource.isHideImagesEnabled,
                 )
             }
 
-            val categoryName = feedSource.category?.title?.let { CategoryName(it) }
+            val categoryName = currentFeedSource.category?.title?.let { CategoryName(it) }
             categoryUseCase.setInitialSelection(categoryName)
             categoryUseCase.initCategories()
         }

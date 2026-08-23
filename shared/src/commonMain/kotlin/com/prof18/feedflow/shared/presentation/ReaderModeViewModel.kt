@@ -110,7 +110,7 @@ class ReaderModeViewModel internal constructor(
 
             val requestedArticleId = urlInfo.id
             val data = if (effectiveSource == ShownContentSource.FEED) {
-                // Feed content preferred; fall back to web parsing when the feed only ships a stub.
+                // Feed content preferred; fall back to web parsing when the feed ships no content.
                 loadFeedContent(urlInfo) ?: loadWebContent(urlInfo, requestedArticleId)
             } else {
                 // Web content preferred; use the feed copy when fetching, parsing, or loading times out.
@@ -160,9 +160,7 @@ class ReaderModeViewModel internal constructor(
 
     private suspend fun loadFeedContent(urlInfo: FeedItemUrlInfo): ReaderModeData? {
         val feedContent = databaseHelper.getFeedItemContent(urlInfo.id)
-        if (feedContent.isNullOrBlank() || (urlInfo.url.isNotBlank() && !hasSubstantialText(feedContent))) {
-            return null
-        }
+        if (feedContent.isNullOrBlank()) return null
         val storedUrlInfo = databaseHelper.getFeedItemUrlInfo(urlInfo.id)
         val siteName = storedUrlInfo?.feedSourceTitle ?: urlInfo.feedSourceTitle
         // Not every entry point carries the feed source base url, so fall back to the stored one:
@@ -177,7 +175,7 @@ class ReaderModeViewModel internal constructor(
             imageUrl = urlInfo.imageUrl,
             siteName = siteName,
         )
-        if (prepared.isBlank() || (urlInfo.url.isNotBlank() && !hasSubstantialText(prepared))) return null
+        if (prepared.isBlank()) return null
         return buildReaderModeData(
             urlInfo = urlInfo,
             content = prepared,
@@ -191,7 +189,7 @@ class ReaderModeViewModel internal constructor(
 
     private suspend fun hasAvailableFeedContent(articleId: String): Boolean {
         val feedContent = databaseHelper.getFeedItemContent(articleId)
-        return !feedContent.isNullOrBlank() && hasSubstantialText(feedContent)
+        return !feedContent.isNullOrBlank()
     }
 
     private fun buildReaderModeData(
@@ -264,11 +262,6 @@ class ReaderModeViewModel internal constructor(
             currentShownSource = (state as? ReaderModeState.Success)?.readerModeData?.shownContentSource
             readerModeMutableState.value = state
         }
-    }
-
-    private fun hasSubstantialText(html: String): Boolean {
-        val text = html.replace(HTML_TAG_REGEX, " ").replace(WHITESPACE_REGEX, " ").trim()
-        return text.length >= MIN_FEED_CONTENT_LENGTH
     }
 
     private fun selectArticle(urlInfo: FeedItemUrlInfo): Boolean {
@@ -374,8 +367,5 @@ class ReaderModeViewModel internal constructor(
 
     private companion object {
         private val PARSE_TIMEOUT = 20.seconds
-        private const val MIN_FEED_CONTENT_LENGTH = 200
-        private val HTML_TAG_REGEX = Regex("<[^>]*>")
-        private val WHITESPACE_REGEX = Regex("\\s+")
     }
 }

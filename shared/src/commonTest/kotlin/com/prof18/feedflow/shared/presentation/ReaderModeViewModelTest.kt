@@ -455,8 +455,9 @@ class ReaderModeViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `feed content preference falls back to web parsing when feed content is a stub`() = runTest {
-        val item = seedItemWithContent("feed-stub", "https://example.com/a/feed-stub", "<p>short</p>")
+    fun `feed content preference accepts short feed content`() = runTest {
+        val content = "<p>short</p>"
+        val item = seedItemWithContent("feed-short", "https://example.com/a/feed-short", content)
 
         viewModel.readerModeState.test {
             assertEquals(ReaderModeState.Loading, awaitItem())
@@ -464,9 +465,26 @@ class ReaderModeViewModelTest : KoinTestBase() {
             viewModel.getReaderModeHtml(item.toUrlInfo(ArticleOpenMode.FEED_CONTENT))
 
             val state = awaitItem() as ReaderModeState.Success
-            assertEquals("Content", state.readerModeData.content)
-            assertEquals(ShownContentSource.WEB, state.readerModeData.shownContentSource)
-            assertFalse(state.readerModeData.canToggleContentSource)
+            assertEquals(content, state.readerModeData.content)
+            assertEquals(ShownContentSource.FEED, state.readerModeData.shownContentSource)
+            assertTrue(state.readerModeData.canToggleContentSource)
+        }
+    }
+
+    @Test
+    fun `feed content preference accepts image-only feed content`() = runTest {
+        val content = """<img src="https://imgs.xkcd.com/comics/example.png" alt="Comic">"""
+        val item = seedItemWithContent("feed-image", "https://xkcd.com/1/", content)
+
+        viewModel.readerModeState.test {
+            assertEquals(ReaderModeState.Loading, awaitItem())
+
+            viewModel.getReaderModeHtml(item.toUrlInfo(ArticleOpenMode.FEED_CONTENT))
+
+            val state = awaitItem() as ReaderModeState.Success
+            assertEquals(content, state.readerModeData.content)
+            assertEquals(ShownContentSource.FEED, state.readerModeData.shownContentSource)
+            assertTrue(state.readerModeData.canToggleContentSource)
         }
     }
 

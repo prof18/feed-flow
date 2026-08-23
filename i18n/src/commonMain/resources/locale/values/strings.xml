@@ -125,7 +125,7 @@
     <string name="settings_save_reader_mode_content">Save article content on open for offline reading</string>
     <string name="settings_prefetch_article_content">Prefetch article content for offline reading</string>
     <string name="settings_prefetch_article_content_warning">Enabling this option will increase synchronization time and data usage, because full article content will be downloaded during feed updates. If you have a large number of articles, this may also affect performance. Turn this on only if you need offline access to article content.</string>
-    <string name="settings_use_new_article_parser">Use new article parser</string>
+    <string name="settings_use_new_article_parser">New reader mode engine</string>
     <string name="settings_reduce_motion">Reduce motion and animations</string>
     <string name="search_no_data">No matches for %s.</string>
     <string name="search_placeholder">Search…</string>

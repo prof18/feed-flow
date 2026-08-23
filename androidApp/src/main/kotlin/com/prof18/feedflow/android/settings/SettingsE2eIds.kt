@@ -15,6 +15,7 @@ internal object SettingsE2eIds {
     const val READING_BEHAVIOR_ARTICLE_OPEN_MODE = "reading_behavior_article_open_mode"
     const val READING_BEHAVIOR_SHOW_READ = "reading_behavior_show_read"
     const val READING_BEHAVIOR_HIDE_READ = "reading_behavior_hide_read"
+    const val READING_BEHAVIOR_NEW_PARSER = "reading_behavior_new_parser"
     const val SYNC_AND_STORAGE_ROW = "settings_sync_storage"
     const val SUPPORT_PROJECT_ROW = "settings_support_project"
     const val SYNC_REFRESH_ON_LAUNCH = "sync_storage_refresh_on_launch"

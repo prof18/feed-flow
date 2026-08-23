@@ -18,6 +18,7 @@ internal class KleadFeedItemParserWorker(
     private val logger: Logger,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val settingsRepository: SettingsRepository,
+    private val cacheResult: Boolean = true,
 ) : FeedItemParserWorker {
 
     override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
@@ -49,7 +50,7 @@ internal class KleadFeedItemParserWorker(
                 rawContent = rawContent,
                 imageUrl = imageUrl,
             )
-            if (settingsRepository.isSaveItemContentOnOpenEnabled()) {
+            if (cacheResult && settingsRepository.isSaveItemContentOnOpenEnabled()) {
                 feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, content)
                 logger.d { "Successfully parsed and cached with Klead: $url" }
             }

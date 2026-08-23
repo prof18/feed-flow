@@ -78,16 +78,60 @@ class KleadFeedItemParserWorkerTest {
         )
     }
 
+    @Test
+    fun `returns decorated HTML for mobile readers`() = runTest {
+        val worker = worker(
+            html = articleHtml,
+            contentFormat = KleadContentFormat.HTML,
+        )
+
+        val result = worker.parse(
+            feedItemId = "item-4",
+            url = "https://example.com/articles/klead-html",
+            imageUrl = "https://example.com/feed-hero.png",
+        )
+
+        val content = assertNotNull(assertIs<ParsingResult.Success>(result).htmlContent)
+        assertTrue(content.startsWith("<h1>Klead Reader Mode</h1>"))
+        assertTrue(content.contains("<h4>Example Daily</h4>"))
+        assertTrue(content.contains("<strong>Markdown emphasis</strong>"))
+        assertFalse(content.contains("# Klead Reader Mode"))
+        assertFalse(content.contains("feed-hero.png"))
+    }
+
+    @Test
+    fun `prefetch parser leaves cache writes to its caller`() = runTest {
+        val fileHandler = RecordingFeedItemContentFileHandler()
+        val settingsRepository = SettingsRepository(MapSettings()).apply {
+            setSaveItemContentOnOpen(true)
+        }
+        val worker = worker(
+            html = articleHtml,
+            contentFormat = KleadContentFormat.HTML,
+            fileHandler = fileHandler,
+            settingsRepository = settingsRepository,
+            cacheResult = false,
+        )
+
+        assertIs<ParsingResult.Success>(
+            worker.parse("item-5", "https://example.com/articles/klead-prefetch"),
+        )
+        assertFalse("item-5" in fileHandler.savedContentById)
+    }
+
     private fun worker(
         html: String,
+        contentFormat: KleadContentFormat = KleadContentFormat.MARKDOWN,
         fileHandler: FeedItemContentFileHandler = RecordingFeedItemContentFileHandler(),
         settingsRepository: SettingsRepository = SettingsRepository(MapSettings()),
+        cacheResult: Boolean = true,
     ) = KleadFeedItemParserWorker(
-        contentFormat = KleadContentFormat.MARKDOWN,
+        contentFormat = contentFormat,
         htmlRetriever = htmlRetriever(html),
         logger = testLogger,
         feedItemContentFileHandler = fileHandler,
         settingsRepository = settingsRepository,
+        cacheResult = cacheResult,
     )
 
     private fun htmlRetriever(html: String): HtmlRetriever = HtmlRetriever(

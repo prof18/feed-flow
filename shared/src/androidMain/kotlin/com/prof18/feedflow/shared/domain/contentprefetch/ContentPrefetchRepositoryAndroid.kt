@@ -1,7 +1,6 @@
 package com.prof18.feedflow.shared.domain.contentprefetch
 
 import android.content.Context
-import android.webkit.WebView
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -17,9 +16,8 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository.Companion.FIRST_PAGE_SIZE
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.parser.FeedItemParser
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.withContext
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import kotlinx.coroutines.CancellationException
 import kotlin.time.Clock
 
 class ContentPrefetchRepositoryAndroid(
@@ -30,21 +28,25 @@ class ContentPrefetchRepositoryAndroid(
     private val htmlRetriever: HtmlRetriever,
     private val appContext: Context,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
+    private val kleadFeedItemParserWorker: FeedItemParserWorker,
 ) : ContentPrefetchRepository {
     override suspend fun prefetchContent() {
         if (!settingsRepository.isPrefetchArticleContentEnabled()) {
             logger.d { "Content prefetch is disabled" }
             return
         }
-        val webView = withContext(dispatcherProvider.main) {
-            WebView(appContext)
-        }
+        val legacyParser = LegacyContentPrefetchParser(
+            htmlRetriever = htmlRetriever,
+            appContext = appContext,
+            logger = logger,
+            dispatcherProvider = dispatcherProvider,
+        )
         try {
             val immediateItems = databaseHelper.getFirstUnfetchedItemsBatch(pageSize = FIRST_PAGE_SIZE)
             logger.d { "Found ${immediateItems.size} items for immediate prefetch" }
 
             for (item in immediateItems) {
-                prefetchItem(item, webView)
+                prefetchItem(item, legacyParser)
             }
             val allUnfetched = databaseHelper.getUnfetchedItems()
 
@@ -61,30 +63,32 @@ class ContentPrefetchRepositoryAndroid(
             )
             logger.d { "Queued ${queueItems.size} items for background prefetch" }
             startBackgroundFetching()
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.e(e) { "Error in onFeedSyncCompleted" }
         } finally {
-            withContext(dispatcherProvider.main) {
-                webView.destroy()
-            }
+            legacyParser.close()
         }
     }
 
     private suspend fun prefetchItem(
         item: FeedItemToPrefetch,
-        webView: WebView,
+        legacyParser: LegacyContentPrefetchParser,
     ) {
-        val deferredResult = CompletableDeferred<ParsingResult>()
-        FeedItemParser(
-            htmlRetriever = htmlRetriever,
-            appContext = appContext,
-            logger = logger,
-            dispatcherProvider = dispatcherProvider,
-            webView = webView,
-        ).parseFeedItem(item.url) { result ->
-            deferredResult.complete(result)
+        val useKleadParser = settingsRepository.isKleadParserEnabled()
+        val result = if (useKleadParser) {
+            kleadFeedItemParserWorker.parse(
+                feedItemId = item.feedItemId,
+                url = item.url,
+            )
+        } else {
+            legacyParser.parse(item.url)
         }
-        val result = deferredResult.await()
+        if (useKleadParser != settingsRepository.isKleadParserEnabled()) {
+            logger.d { "Parser changed while prefetching ${item.feedItemId}; discarding result" }
+            return
+        }
         when (result) {
             is ParsingResult.Success -> {
                 val content = result.htmlContent

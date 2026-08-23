@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
@@ -28,6 +29,7 @@ class MenuBarViewModel internal constructor(
     private val contentPrefetchRepository: ContentPrefetchRepository,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val backgroundSyncScheduler: BackgroundSyncScheduler,
+    private val databaseHelper: DatabaseHelper,
 ) : ViewModel() {
 
     private val stateMutableFlow = MutableStateFlow(MenuBarSettingsState())
@@ -55,6 +57,7 @@ class MenuBarViewModel internal constructor(
         val articleOpenMode = settingsRepository.getArticleOpenMode()
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
+        val isKleadParserEnabled = settingsRepository.isKleadParserEnabled()
         val isRefreshFeedsOnLaunchEnabled = settingsRepository.getRefreshFeedsOnLaunch()
         val syncPeriod = settingsRepository.getSyncPeriod()
         val isReduceMotionEnabled = settingsRepository.getReduceMotionEnabled()
@@ -72,6 +75,7 @@ class MenuBarViewModel internal constructor(
                 articleOpenMode = articleOpenMode,
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
+                isKleadParserEnabled = isKleadParserEnabled,
                 isRefreshFeedsOnLaunchEnabled = isRefreshFeedsOnLaunchEnabled,
                 syncPeriod = syncPeriod,
                 isReduceMotionEnabled = isReduceMotionEnabled,
@@ -145,6 +149,18 @@ class MenuBarViewModel internal constructor(
 
             if (!value) {
                 contentPrefetchRepository.cancelFetching()
+            }
+        }
+    }
+
+    fun updateKleadParserEnabled(value: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setKleadParserEnabled(value)
+            contentPrefetchRepository.cancelFetching()
+            feedItemContentFileHandler.clearAllContent()
+            databaseHelper.resetContentFetchedStatus()
+            stateMutableFlow.update {
+                it.copy(isKleadParserEnabled = value)
             }
         }
     }

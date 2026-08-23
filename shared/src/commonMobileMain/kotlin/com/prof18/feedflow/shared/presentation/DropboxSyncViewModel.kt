@@ -84,16 +84,16 @@ class DropboxSyncViewModel internal constructor(
 
     fun unlink() {
         viewModelScope.launch {
+            dropboxSyncUiMutableState.update { AccountConnectionUiState.Loading }
             try {
-                dropboxSyncUiMutableState.update { AccountConnectionUiState.Loading }
                 dropboxDataSource.revokeAccess()
-                dropboxSettings.clearDropboxData()
-                feedSyncRepository.deleteAll()
-                accountsRepository.clearAccount()
-                dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
-            } catch (_: DropboxException) {
-                dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)
+            } catch (e: DropboxException) {
+                logger.d(e) { "Unable to revoke Dropbox access; unlinking locally" }
             }
+            dropboxSettings.clearDropboxData()
+            feedSyncRepository.deleteAll()
+            accountsRepository.clearAccount()
+            dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
         }
     }
 

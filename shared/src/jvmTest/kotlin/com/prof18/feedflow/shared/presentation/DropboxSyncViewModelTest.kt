@@ -116,6 +116,26 @@ class DropboxSyncViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `disconnect clears local state when Dropbox access revocation fails`() = runTest {
+        dropboxSettings.setDropboxData("test-credentials")
+        fakeDropboxDataSource.shouldThrowOnRevokeAccess = true
+
+        val linkedViewModel: DropboxSyncViewModel = getKoin().get()
+
+        linkedViewModel.dropboxConnectionUiState.test {
+            assertTrue(expectMostRecentItem() is AccountConnectionUiState.Linked)
+
+            linkedViewModel.disconnect()
+
+            assertTrue(awaitItem() is AccountConnectionUiState.Loading)
+            assertTrue(awaitItem() is AccountConnectionUiState.Unlinked)
+        }
+
+        assertEquals(null, dropboxSettings.getDropboxData())
+        assertEquals(1, fakeDropboxDataSource.revokeAccessCallCount)
+    }
+
+    @Test
     fun `getSyncState returns Synced when upload timestamp exists`() = runTest {
         dropboxSettings.setDropboxData("test-credentials")
         dropboxSettings.setLastUploadTimestamp(1234567890L)

@@ -207,7 +207,7 @@
     <string name="settings_theme_light">浅色</string>
     <string name="settings_theme_dark">深色</string>
     <string name="icloud_connection_error">抱歉，我们无法连接到 iCloud。请检查您是否已登录、iCloud 云盘是否已打开以及是否有可用空间 - 错误代码：%s。</string>
-    <string name="open_feed_settings">打开订阅源设置</string>
+    <string name="open_feed_settings">订阅源设置</string>
     <string name="reader_mode_browser_button_content_description">在浏览器中打开</string>
     <string name="delete_feed_confirmation_title">删除订阅源？</string>
     <string name="delete_feed_confirmation_message">确定要删除此订阅源吗？此操作无法撤销。</string>
@@ -419,4 +419,8 @@
     <string name="support_paywall_title">助力 FeedFlow 持续发展 💙</string>
     <string name="support_purchase_thank_you_title">您太棒了！🎉</string>
     <string name="support_purchase_thank_you_message">您的支持有助于 FeedFlow 持续发展 💙 感谢您对持续开发、精心优化和错误修复的支持。🙏</string>
+    <string name="server_account_subscriptions_warning">此账号使用存储在其服务器上的订阅。</string>
+    <string name="server_account_replace_local_title">替换本地订阅？</string>
+    <string name="server_account_replace_and_connect_button">替换并连接</string>
+    <string name="server_account_replace_local_message">连接会将当前存储在此设备上的订阅源替换为来自服务器的订阅。稍后断开连接不会恢复本地订阅源。如果要保留副本，请先将其导出为 OPML 格式。</string>
 </resources>

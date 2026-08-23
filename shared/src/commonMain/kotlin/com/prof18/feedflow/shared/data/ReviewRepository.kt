@@ -38,7 +38,7 @@ internal class ReviewRepository(
         val millisSinceInstall = now - firstInstallDate
 
         if (millisSinceInstall < DAYS_BEFORE_FIRST_REVIEW.days.inWholeMilliseconds) {
-            return true
+            return false
         }
 
         val lastReviewDate = getLastReviewRequestDate()

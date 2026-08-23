@@ -60,12 +60,12 @@ class ReviewRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `shouldShowReview returns true when first install and before 2 days`() = runTest {
+    fun `shouldShowReview returns false when first install and before 2 days`() = runTest {
         addFeed()
         val today = Clock.System.now().toEpochMilliseconds()
         settings[ReviewSettingsFields.FIRST_INSTALLATION_DATE.name] = today
 
-        assertTrue(repository.shouldShowReview())
+        assertFalse(repository.shouldShowReview())
     }
 
     @Test
@@ -76,6 +76,7 @@ class ReviewRepositoryTest : KoinTestBase() {
 
         val thirtyOneDaysAgo = Clock.System.now().toEpochMilliseconds() - 32.days.inWholeMilliseconds
         settings[ReviewSettingsFields.LAST_REVIEW_REQUEST_DATE.name] = thirtyOneDaysAgo
+        settings[ReviewSettingsFields.FIRST_INSTALLATION_DATE.name] = thirtyOneDaysAgo
         // Reset version so it doesn't fail on version check
         settings[ReviewSettingsFields.LAST_REVIEW_VERSION.name] = "0.0.1"
         settings[ReviewSettingsFields.REVIEW_REQUEST_COUNT.name] = 1
@@ -111,6 +112,7 @@ class ReviewRepositoryTest : KoinTestBase() {
 
         val sixtyOneDaysAgo = Clock.System.now().toEpochMilliseconds() - 62.days.inWholeMilliseconds
         settings[ReviewSettingsFields.LAST_REVIEW_REQUEST_DATE.name] = sixtyOneDaysAgo
+        settings[ReviewSettingsFields.FIRST_INSTALLATION_DATE.name] = sixtyOneDaysAgo
         // Reset version so it doesn't fail on version check
         settings[ReviewSettingsFields.LAST_REVIEW_VERSION.name] = "0.0.1"
         settings[ReviewSettingsFields.REVIEW_REQUEST_COUNT.name] = 2

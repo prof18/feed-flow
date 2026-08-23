@@ -25,6 +25,7 @@ internal fun FreshRssSyncScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLoginLoading by viewModel.loginLoading.collectAsStateWithLifecycle()
+    val hasLocalSubscriptions by viewModel.hasLocalSubscriptions.collectAsStateWithLifecycle(initialValue = false)
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -50,6 +51,7 @@ internal fun FreshRssSyncScreen(
     FreshRssSyncContent(
         uiState = uiState,
         isLoginLoading = isLoginLoading,
+        hasLocalSubscriptions = hasLocalSubscriptions,
         onBackClick = navigateBack,
         onLoginClick = { serverUrl, username, password ->
             viewModel.login(username, password, serverUrl)

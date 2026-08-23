@@ -15,7 +15,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,6 +38,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.shared.ui.accounts.AccountE2eIds
+import com.prof18.feedflow.shared.ui.accounts.ServerAccountConnectButton
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -47,6 +47,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun MinifluxSyncContent(
     uiState: AccountConnectionUiState,
     isLoginLoading: Boolean,
+    hasLocalSubscriptions: Boolean,
     onBackClick: () -> Unit,
     onDisconnectClick: () -> Unit,
     onLoginClick: (serverUrl: String, username: String, password: String) -> Unit,
@@ -94,6 +95,7 @@ fun MinifluxSyncContent(
                 AccountConnectionUiState.Loading -> LoadingView()
                 AccountConnectionUiState.Unlinked -> DisconnectedView(
                     isLoginLoading = isLoginLoading,
+                    hasLocalSubscriptions = hasLocalSubscriptions,
                     onLoginClick = onLoginClick,
                 )
             }
@@ -117,6 +119,7 @@ private fun LoadingView() {
 @Composable
 fun DisconnectedView(
     isLoginLoading: Boolean,
+    hasLocalSubscriptions: Boolean,
     modifier: Modifier = Modifier,
     onLoginClick: (serverUrl: String, username: String, password: String) -> Unit,
 ) {
@@ -185,23 +188,15 @@ fun DisconnectedView(
             singleLine = true,
         )
 
-        Button(
-            onClick = {
+        ServerAccountConnectButton(
+            isLoginLoading = isLoginLoading,
+            isEnabled = serverUrl.isNotBlank() && username.isNotBlank() && password.isNotBlank(),
+            hasLocalSubscriptions = hasLocalSubscriptions,
+            onConnectClick = {
                 keyboardController?.hide()
                 onLoginClick(serverUrl, username, password)
             },
-            modifier = Modifier
-                .testTag(AccountE2eIds.CONNECT_BUTTON)
-                .fillMaxWidth(),
-            enabled = !isLoginLoading && serverUrl.isNotBlank() &&
-                username.isNotBlank() && password.isNotBlank(),
-        ) {
-            if (isLoginLoading) {
-                CircularProgressIndicator()
-            } else {
-                Text(LocalFeedFlowStrings.current.accountConnectButton)
-            }
-        }
+        )
     }
 }
 

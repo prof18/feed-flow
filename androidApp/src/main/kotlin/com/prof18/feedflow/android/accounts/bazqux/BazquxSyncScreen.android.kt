@@ -25,6 +25,7 @@ internal fun BazquxSyncScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLoginLoading by viewModel.loginLoading.collectAsStateWithLifecycle()
+    val hasLocalSubscriptions by viewModel.hasLocalSubscriptions.collectAsStateWithLifecycle(initialValue = false)
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -52,6 +53,7 @@ internal fun BazquxSyncScreen(
     BazquxSyncContent(
         uiState = uiState,
         isLoginLoading = isLoginLoading,
+        hasLocalSubscriptions = hasLocalSubscriptions,
         onBackClick = navigateBack,
         onLoginClick = { username, password ->
             viewModel.login(username, password)

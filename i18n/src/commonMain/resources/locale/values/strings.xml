@@ -140,6 +140,10 @@
     <string name="settings_help_title">Help</string>
     <string name="settings_crash_reporting">Send anonymous crash reports</string>
     <string name="account_connect_button">Connect</string>
+    <string name="server_account_subscriptions_warning">This account uses the subscriptions stored on its server.</string>
+    <string name="server_account_replace_local_title">Replace local subscriptions?</string>
+    <string name="server_account_replace_local_message">Connecting replaces the feeds currently stored on this device with the subscriptions from the server. Disconnecting later won’t restore the local feeds. Export them to OPML first if you want to keep a copy.</string>
+    <string name="server_account_replace_and_connect_button">Replace and connect</string>
     <string name="account_disconnect_button">Disconnect</string>
     <string name="backup_button">Backup</string>
     <string name="dropbox_sync_common_description">Connect your Dropbox account to sync feed subscriptions, categories, read and bookmarked articles between your Android, iOS, iPadOS and desktop devices. The data will be saved in an app-specific folder; FeedFlow won\'t have any access to any of your files</string>

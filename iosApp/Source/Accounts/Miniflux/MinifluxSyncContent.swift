@@ -17,6 +17,7 @@ struct MinifluxSyncContent: View {
 
     let uiState: AccountConnectionUiState
     let isLoginLoading: Bool
+    let hasLocalSubscriptions: Bool
     let onDisconnectClick: () -> Void
     let onLoginClick: (String, String, String) -> Void
 
@@ -116,22 +117,12 @@ struct MinifluxSyncContent: View {
     }
 
     private func loginButton() -> some View {
-        Section {
-            Button(
-                action: {
-                    onLoginClick(serverUrl, username, password)
-                },
-                label: {
-                    HStack {
-                        Spacer()
-                        Text(feedFlowStrings.accountConnectButton)
-                        Spacer()
-                    }
-                }
-            )
-            .disabled(isLoginLoading || serverUrl.isEmpty || username.isEmpty || password.isEmpty)
-            .accessibilityIdentifier(AccountAccessibilityIdentifiers.connectButton)
-        }
+        ServerAccountConnectSection(
+            isLoginLoading: isLoginLoading,
+            hasLocalSubscriptions: hasLocalSubscriptions,
+            isEnabled: !serverUrl.isEmpty && !username.isEmpty && !password.isEmpty,
+            onConnect: { onLoginClick(serverUrl, username, password) }
+        )
     }
 
     private func disconnectedView() -> some View {

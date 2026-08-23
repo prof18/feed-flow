@@ -26,6 +26,7 @@ internal fun MinifluxSyncScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val isLoginLoading by viewModel.loginLoading.collectAsState()
+    val hasLocalSubscriptions by viewModel.hasLocalSubscriptions.collectAsState(initial = false)
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -52,6 +53,7 @@ internal fun MinifluxSyncScreen(
     MinifluxSyncContent(
         uiState = uiState,
         isLoginLoading = isLoginLoading,
+        hasLocalSubscriptions = hasLocalSubscriptions,
         onBackClick = navigateBack,
         showNavigateBack = showNavigateBack,
         onLoginClick = { serverUrl, username, password ->

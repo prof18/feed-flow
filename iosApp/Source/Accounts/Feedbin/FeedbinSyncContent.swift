@@ -16,6 +16,7 @@ struct FeedbinSyncContent: View {
 
     let uiState: AccountConnectionUiState
     let isLoginLoading: Bool
+    let hasLocalSubscriptions: Bool
     let onDisconnectClick: () -> Void
     let onLoginClick: (String, String) -> Void
 
@@ -101,22 +102,12 @@ struct FeedbinSyncContent: View {
     }
 
     private func loginButton() -> some View {
-        Section {
-            Button(
-                action: {
-                    onLoginClick(username, password)
-                },
-                label: {
-                    HStack {
-                        Spacer()
-                        Text(feedFlowStrings.accountConnectButton)
-                        Spacer()
-                    }
-                }
-            )
-            .disabled(isLoginLoading || username.isEmpty || password.isEmpty)
-            .accessibilityIdentifier(AccountAccessibilityIdentifiers.connectButton)
-        }
+        ServerAccountConnectSection(
+            isLoginLoading: isLoginLoading,
+            hasLocalSubscriptions: hasLocalSubscriptions,
+            isEnabled: !username.isEmpty && !password.isEmpty,
+            onConnect: { onLoginClick(username, password) }
+        )
     }
 
     private func disconnectedView() -> some View {

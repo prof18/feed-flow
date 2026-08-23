@@ -34,6 +34,7 @@ class BazquxSyncViewModel internal constructor(
 
     private val loginLoadingMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val loginLoading = loginLoadingMutableState.asStateFlow()
+    val hasLocalSubscriptions = accountsRepository.hasLocalSubscriptions
 
     init {
         uiMutableState.update { AccountConnectionUiState.Loading }

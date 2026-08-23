@@ -67,7 +67,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-114 | `114-appearance-settings.yaml` | `content-rich` | Android, iOS | Theme picker (Dark), hide unread count, Android Black theme + reduce motion. |
 | REG-115 | `115-notifications-profile.yaml` | `notifications` | Android, iOS | Seeded notifications settings: per-feed toggle and grouping picker visibility. |
 | REG-116 | `116-account-list-one-account-constraint.yaml` | `sync-linked-mock` | Android, iOS | One-account constraint: with FreshRSS linked, other providers are disabled; disconnect unlocks them. |
-| REG-117 | `117-greader-provider-form-validation.yaml` | `empty` | Android, iOS | FreshRSS/Miniflux/BazQux/Feedbin provider forms: required-field state, FreshRSS connect enablement + password-visibility (Android). |
+| REG-117 | `117-greader-provider-form-validation.yaml` | `empty`, `content-rich` | Android, iOS | FreshRSS/Miniflux/BazQux/Feedbin provider forms: required-field state, warning hidden with no local subscriptions and shown when subscriptions exist, plus FreshRSS replacement confirmation + password visibility (Android). |
 | REG-118 | `118-cloud-provider-mock-states.yaml` | `sync-linked-mock` | Android, iOS | Seeded Dropbox linked state (both platforms) and iCloud linked state (iOS). |
 | REG-119 | `119-opml-import-error-states.yaml` | `empty` + fixtures | Android, iOS | Invalid OPML import → error screen + Choose another file recovery. |
 | REG-120 | `120-csv-import-article-states.yaml` | `empty` + fixtures | Android, iOS | CSV article import → unread/read/bookmarked-unread/bookmarked-read state assertions. |

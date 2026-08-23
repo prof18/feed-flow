@@ -18,6 +18,7 @@ struct BazquxSyncScreen: View {
 
     @State private var uiState: AccountConnectionUiState = .Unlinked()
     @State private var isLoginLoading = false
+    @State private var hasLocalSubscriptions = false
     @State private var didHandleLinkedAccount = false
 
     let onAccountLinked: (() -> Void)?
@@ -28,6 +29,7 @@ struct BazquxSyncScreen: View {
         BazquxSyncContent(
             uiState: uiState,
             isLoginLoading: isLoginLoading,
+            hasLocalSubscriptions: hasLocalSubscriptions,
             onDisconnectClick: {
                 vmStoreOwner.instance.disconnect()
             },
@@ -59,6 +61,11 @@ struct BazquxSyncScreen: View {
         .task {
             for await state in vmStoreOwner.instance.loginLoading {
                 self.isLoginLoading = state as? Bool ?? false
+            }
+        }
+        .task {
+            for await state in vmStoreOwner.instance.hasLocalSubscriptions {
+                self.hasLocalSubscriptions = state as? Bool ?? false
             }
         }
         .task {

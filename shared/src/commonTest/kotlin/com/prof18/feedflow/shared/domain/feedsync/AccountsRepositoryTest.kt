@@ -12,6 +12,8 @@ import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.test.KoinTestBase
+import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
+import com.prof18.feedflow.shared.test.toParsedFeedSource
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -167,6 +169,19 @@ class AccountsRepositoryTest : KoinTestBase() {
 
         val validAccounts = accountsRepository.getValidAccounts()
         assertEquals(expectedAccounts.sorted(), validAccounts.sorted())
+    }
+
+    @Test
+    fun `hasLocalSubscriptions reflects feed source presence`() = runTest {
+        accountsRepository.hasLocalSubscriptions.test {
+            assertFalse(awaitItem())
+
+            databaseHelper.insertFeedSource(
+                listOf(FeedSourceGenerator.feedSource().toParsedFeedSource()),
+            )
+
+            assertTrue(awaitItem())
+        }
     }
 
     @Test

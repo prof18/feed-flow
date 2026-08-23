@@ -30,6 +30,7 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: accounts_provider_fresh_rss
 - assertVisible: "FreshRSS"
+- assertNotVisible: "This account uses the subscriptions stored on its server."
 - assertVisible:
     id: account_connect_button
     enabled: false
@@ -41,3 +42,24 @@ appId: com.prof18.feedflow.dev
     id: account_password_input
 - assertVisible:
     id: account_password_visibility
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 10000
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: settings_accounts
+- tapOn:
+    id: accounts_add_account
+- tapOn:
+    id: accounts_provider_fresh_rss
+- assertVisible: "This account uses the subscriptions stored on its server."

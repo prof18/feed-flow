@@ -12,6 +12,8 @@ import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 internal class AccountsRepository(
@@ -27,6 +29,9 @@ internal class AccountsRepository(
 ) {
     private val currentAccountMutableState = MutableStateFlow(SyncAccounts.LOCAL)
     val currentAccountState = currentAccountMutableState.asStateFlow()
+    val hasLocalSubscriptions = databaseHelper.getFeedSourcesFlow()
+        .map { feedSources -> feedSources.isNotEmpty() }
+        .distinctUntilChanged()
 
     init {
         restoreAccounts()

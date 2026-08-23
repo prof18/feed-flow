@@ -37,7 +37,7 @@ extension FeedFlowApp {
             }
             .keyboardShortcut("n", modifiers: [.command])
 
-            Button(feedFlowStrings.editFeed) {
+            Button(feedFlowStrings.openFeedSettings) {
                 NotificationCenter.default.post(name: .feedFlowEditCurrentFeed, object: nil)
             }
 

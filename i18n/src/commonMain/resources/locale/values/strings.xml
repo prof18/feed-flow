@@ -193,7 +193,7 @@
     <string name="deleting_feed_dialog_title">Deleting...</string>
     <string name="add_feed_generic_error">There was an error while adding the feed. Please retry</string>
     <string name="edit_feed_generic_error">Something went wrong while editing the feed. Please retry.</string>
-    <string name="open_feed_settings">Open feed settings</string>
+    <string name="open_feed_settings">Feed settings</string>
     <string name="feed_added_message_without_name">Feed added</string>
     <string name="sync_error_message">There was an error while syncing the feeds - error code: %s :(. Please retry.</string>
     <string name="greader_bad_token_sync_error_message">The server rejected the sync token. If your Google Reader-compatible service is behind a reverse proxy, make sure it forwards the Authorization header.</string>

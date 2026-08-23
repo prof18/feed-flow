@@ -122,7 +122,7 @@ struct FeedSourceDrawerItem: View {
         Button {
             onEdit(feedSource)
         } label: {
-            Label(feedFlowStrings.editFeed, systemImage: "pencil")
+            Label(feedFlowStrings.openFeedSettings, systemImage: "gearshape")
         }
 
         Button {

@@ -27,7 +27,7 @@ internal fun MenuBarScope.FeedMenu(
 
         if (state.feedFilter is FeedFilter.Source) {
             Item(
-                text = LocalFeedFlowStrings.current.editFeed,
+                text = LocalFeedFlowStrings.current.openFeedSettings,
                 onClick = { callbacks.onEditFeed(state.feedFilter.feedSource) },
                 shortcut = if (isMacOS) {
                     KeyShortcut(Key.E, meta = true)

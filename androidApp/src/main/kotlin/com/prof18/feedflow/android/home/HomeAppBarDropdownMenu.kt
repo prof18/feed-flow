@@ -5,7 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
@@ -168,11 +168,11 @@ fun HomeAppBarDropdownMenu(
                     onEditFeedClick(feedFilter.feedSource)
                 },
                 text = {
-                    Text(LocalFeedFlowStrings.current.editFeed)
+                    Text(LocalFeedFlowStrings.current.openFeedSettings)
                 },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Default.Edit,
+                        imageVector = Icons.Default.Settings,
                         contentDescription = null,
                     )
                 },

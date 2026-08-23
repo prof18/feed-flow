@@ -189,7 +189,7 @@ internal fun DesktopFeedSourceDrawerItem(
 
                 add(
                     DesktopPopupMenuEntry.Action(
-                        text = strings.editFeed,
+                        text = strings.openFeedSettings,
                         onClick = {
                             onEditFeedClick(feedSource)
                             showFeedMenu = false

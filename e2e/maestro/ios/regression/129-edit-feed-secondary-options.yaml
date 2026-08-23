@@ -11,8 +11,8 @@ appId: com.prof18.feedflow.dev
     id: e2e_seed_complete
 - longPressOn:
     id: article_row_e2e_article_newest_unread
-- tapOn: "Open feed settings"
-- assertVisible: "Edit feed"
+- tapOn: "Feed settings"
+- assertVisible: "Feed settings"
 - assertVisible: "Open articles in"
 - tapOn: "Same as app setting"
 - tapOn: "Article from the website"

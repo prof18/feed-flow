@@ -23,7 +23,7 @@ appId: com.prof18.feedflow.debug
     timeout: 10000
 - longPressOn:
     id: drawer_feed_source_e2e_feed_android_weekly
-- tapOn: "Edit feed"
+- tapOn: "Feed settings"
 - tapOn:
     id: edit_feed_name
 - eraseText: 100

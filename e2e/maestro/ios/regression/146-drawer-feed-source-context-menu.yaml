@@ -29,7 +29,7 @@ appId: com.prof18.feedflow.dev
     id: drawer_feed_source_e2e_feed_android_weekly
 - assertVisible: "Mark all as read"
 - assertVisible: "Open website"
-- assertVisible: "Edit feed"
+- assertVisible: "Feed settings"
 - assertVisible: "Change category"
 - assertVisible: "Pin"
 - assertVisible: "Delete"

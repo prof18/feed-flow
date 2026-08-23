@@ -233,7 +233,7 @@ extension HomeContent {
             Button {
                 self.sheetToShow = .editFeed(source)
             } label: {
-                Label(feedFlowStrings.editFeed, systemImage: "pencil")
+                Label(feedFlowStrings.openFeedSettings, systemImage: "gearshape")
             }
         }
 

@@ -39,7 +39,7 @@ Fast confidence subset. Flow files live in `e2e/maestro/{android,ios}/smoke/`.
 | SM-005 | `005-mark-all-read.yaml` | `content-rich` | Home overflow → Mark all as read confirmation, articles move to Read filter. |
 | SM-006 | `006-search-core.yaml` (+ iOS `006-search-bookmark-filter.yaml`) | `content-rich` | Search query, filter chips (All / Read / Bookmarks). iOS uses seeded query/filter deeplink. |
 | SM-007 | `007-reader-mode-core.yaml` | `reader-mode` | Open article in reader, next-article button, more menu, Text Settings sheet opens. |
-| SM-008 | `008-feed-edit-core.yaml` | `content-rich` | Drawer feed-source long-press → Edit feed, toggle hide and pin, change category, save. Android also exercises the inline rename via `inputText`; iOS skips the rename (SwiftUI text input is flaky in Maestro) and only verifies the feed lands in the new category. |
+| SM-008 | `008-feed-edit-core.yaml` | `content-rich` | Drawer feed-source long-press → Feed settings, toggle hide and pin, change category, save. Android also exercises the inline rename via `inputText`; iOS skips the rename (SwiftUI text input is flaky in Maestro) and only verifies the feed lands in the new category. |
 | SM-009 | `009-feed-list-settings-persist.yaml` | `content-rich` | Feed list settings: layout, image visibility, order — mutated and persisted across relaunch. |
 | SM-010 | `010-reading-behavior-settings-persist.yaml` | `content-rich` | Reading behaviour: article open mode, show-read, auto-hide read — mutated and persisted across relaunch. |
 | SM-011 | `011-import-export-smoke.yaml` | `empty` + fixtures | OPML import (Android Downloads / iOS Files), CSV import, end-to-end success. |
@@ -95,7 +95,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-142 | `142-icloud-provider-backup.yaml` | `sync-linked-mock` | iOS | Seeded iCloud account Backup action returns to linked sync state. |
 | REG-143 | `143-article-context-menu-action-set.yaml` | `content-rich` | Android, iOS | App-owned context-menu action set for an article with comments + feed website metadata. |
 | REG-145 | `145-network-provider-linked-states.yaml` | `sync-linked-mock` | Android, iOS | Seeded Miniflux / BazQux / Feedbin linked screens, disabled state of unlinked providers, connected/last-sync/disconnect UI. |
-| REG-146 | `146-drawer-feed-source-context-menu.yaml` | `content-rich` | Android, iOS | Drawer long-press: Mark all as read, Open website visibility, Edit feed, Change category sheet, Pin/Unpin toggle, Delete confirmation. |
+| REG-146 | `146-drawer-feed-source-context-menu.yaml` | `content-rich` | Android, iOS | Drawer long-press: Mark all as read, Open website visibility, Feed settings, Change category sheet, Pin/Unpin toggle, Delete confirmation. |
 | REG-147 | `147-no-feeds-empty-state-cta.yaml` | `empty` | Android, iOS | NoFeedsBottomSheet fan-out: Add feed, Import and export, Feed Suggestions, Accounts destinations. |
 | REG-148 | `148-pull-to-next-feed.yaml` | `content-rich` | Android, iOS | iOS NextFeedButton tap and Android PullToNextLayout overscroll gesture move filter to the next feed source. |
 | REG-149 | `149-drawer-category-mark-all-read.yaml` | `content-rich` | Android, iOS | Drawer category long-press → Mark all as read, category Timeline becomes empty. |

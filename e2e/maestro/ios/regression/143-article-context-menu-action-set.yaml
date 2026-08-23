@@ -14,7 +14,7 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - longPressOn:
     id: article_row_e2e_article_comments
-- assertVisible: "Open feed settings"
+- assertVisible: "Feed settings"
 - assertVisible: "Open feed website"
 - assertVisible: "Mark all above as read"
 - assertVisible: "Mark all below as read"

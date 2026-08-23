@@ -76,10 +76,10 @@ internal fun FeedSourceContextMenu(
             )
         }
 
-        // 4. Edit feed (medium frequency - occasional settings adjustment)
+        // 4. Feed settings (medium frequency - occasional settings adjustment)
         DropdownMenuItem(
             text = {
-                Text(LocalFeedFlowStrings.current.editFeedSourceNameButton)
+                Text(LocalFeedFlowStrings.current.openFeedSettings)
             },
             onClick = {
                 onEditFeedClick(feedSource)

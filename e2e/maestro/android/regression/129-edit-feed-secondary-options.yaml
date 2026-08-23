@@ -9,8 +9,8 @@ appId: com.prof18.feedflow.debug
     id: e2e_open_app
 - longPressOn:
     id: article_row_e2e_article_newest_unread
-- tapOn: "Open feed settings"
-- assertVisible: "Edit feed"
+- tapOn: "Feed settings"
+- assertVisible: "Feed settings"
 - assertVisible: "Open articles in"
 - tapOn: "Open articles in"
 - tapOn:

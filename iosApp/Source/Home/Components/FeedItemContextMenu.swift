@@ -18,7 +18,7 @@ struct FeedItemContextMenu: View {
     let onOpenFeedSettings: (FeedSource) -> Void
 
     var body: some View {
-        // 1. Open feed settings
+        // 1. Feed settings
         makeFeedSettingsButton(feedItem: feedItem)
 
         if let websiteUrl = feedItem.feedSource.websiteUrlFallback() {

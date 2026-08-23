@@ -176,7 +176,7 @@ internal fun AndroidFeedSourceDrawerItem(
                 }
 
                 DropdownMenuItem(
-                    text = { Text(strings.editFeed) },
+                    text = { Text(strings.openFeedSettings) },
                     onClick = {
                         onEditFeedClick(feedSource)
                         showFeedMenu = false

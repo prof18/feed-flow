@@ -364,7 +364,7 @@ private struct FeedSourceListItem: View {
                     .environment(appState)
                     .environment(browserSelector)
                 ) {
-                    Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
+                    Label(feedFlowStrings.openFeedSettings, systemImage: "gearshape")
                 }
 
                 Button {

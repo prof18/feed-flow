@@ -195,7 +195,7 @@ struct EditFeedScreenContent: View {
         } message: {
             Text(feedFlowStrings.deleteFeedConfirmationMessage)
         }
-        .navigationTitle(feedFlowStrings.editFeed)
+        .navigationTitle(feedFlowStrings.openFeedSettings)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: feedURL) {
             updateFeedUrlTextFieldValue(feedURL)

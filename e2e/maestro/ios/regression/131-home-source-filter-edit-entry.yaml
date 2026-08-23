@@ -27,7 +27,7 @@ appId: com.prof18.feedflow.dev
     text: "Android Central RSS Feed"
 - tapOn:
     id: home_more_menu_button
-- assertVisible: "Edit feed"
-- tapOn: "Edit feed"
-- assertVisible: "Edit feed"
+- assertVisible: "Feed settings"
+- tapOn: "Feed settings"
+- assertVisible: "Feed settings"
 - assertVisible: "Open articles in"

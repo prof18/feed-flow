@@ -34,7 +34,7 @@ internal fun EditFeedScreen(
     if (feedSource == null) return
 
     DesktopDialogWindow(
-        title = LocalFeedFlowStrings.current.editFeed,
+        title = LocalFeedFlowStrings.current.openFeedSettings,
         size = DpSize(560.dp, 700.dp),
         onCloseRequest = onCloseRequest,
     ) { modifier ->

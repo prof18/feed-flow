@@ -25,7 +25,7 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - longPressOn:
     id: drawer_feed_source_e2e_feed_android_weekly
-- tapOn: "Edit feed"
+- tapOn: "Feed settings"
 - tapOn:
     id: edit_feed_hidden_toggle
 - tapOn:

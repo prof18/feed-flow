@@ -6,6 +6,7 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -31,6 +32,7 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -46,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.prof18.feedflow.core.model.FeedItemId
@@ -58,7 +61,6 @@ import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.EmptyFeedView
-import com.prof18.feedflow.shared.ui.home.components.FeedLoader
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.shared.ui.home.components.ScrollToTopButton
 import com.prof18.feedflow.shared.ui.home.components.list.FeedList
@@ -211,12 +213,10 @@ fun AndroidHomeScreenContent(
                         isRefreshing = isRefreshing,
                         onRefresh = onRefresh,
                         indicator = {
-                            PullToRefreshDefaults.Indicator(
-                                modifier = Modifier
-                                    .align(Alignment.TopCenter)
-                                    .padding(top = topInset),
+                            PullToRefreshIndicator(
                                 state = pullToRefreshState,
                                 isRefreshing = isRefreshing,
+                                topInset = topInset,
                             )
                         },
                     ) {
@@ -320,9 +320,11 @@ fun AndroidHomeScreenContent(
                     .align(Alignment.TopCenter)
                     .fillMaxWidth()
                     .zIndex(zIndex = 0.75f)
+                    .padding(horizontal = Spacing.regular)
                     .padding(top = topInset + Spacing.small),
+                contentAlignment = Alignment.TopCenter,
             ) {
-                FeedLoader(loadingState = displayState.feedUpdateStatus)
+                FeedRefreshPill(loadingState = displayState.feedUpdateStatus)
             }
 
             HomeFloatingToolbar(
@@ -365,6 +367,26 @@ fun AndroidHomeScreenContent(
             )
         }
     }
+}
+
+@Composable
+private fun BoxScope.PullToRefreshIndicator(
+    state: PullToRefreshState,
+    isRefreshing: Boolean,
+    topInset: Dp,
+) {
+    // While a refresh is running the floating pill already reports the progress,
+    // so the spinner would only duplicate it.
+    if (isRefreshing) {
+        return
+    }
+    PullToRefreshDefaults.Indicator(
+        modifier = Modifier
+            .align(Alignment.TopCenter)
+            .padding(top = topInset),
+        state = state,
+        isRefreshing = false,
+    )
 }
 
 private fun FeedLayout.isCardStyleLayout(): Boolean = when (this) {

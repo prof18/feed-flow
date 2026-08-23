@@ -12,6 +12,9 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,6 +29,7 @@ class KleadFeedItemParserWorkerTest {
     fun `returns decorated Markdown and caches it when enabled`() = runTest {
         val fileHandler = RecordingFeedItemContentFileHandler()
         val settingsRepository = SettingsRepository(MapSettings()).apply {
+            setKleadParserEnabled(true)
             setSaveItemContentOnOpen(true)
         }
         val worker = worker(
@@ -119,11 +123,50 @@ class KleadFeedItemParserWorkerTest {
         assertFalse("item-5" in fileHandler.savedContentById)
     }
 
+    @Test
+    fun `parser toggle waits for cache write and then clears content`() = runTest {
+        val settingsRepository = SettingsRepository(MapSettings()).apply {
+            setKleadParserEnabled(true)
+            setSaveItemContentOnOpen(true)
+        }
+        val saveStarted = CompletableDeferred<Unit>()
+        val finishSave = CompletableDeferred<Unit>()
+        val fileHandler = RecordingFeedItemContentFileHandler {
+            saveStarted.complete(Unit)
+            finishSave.await()
+        }
+        val parserSelectionCoordinator = ParserSelectionCoordinator(settingsRepository)
+        val worker = worker(
+            html = articleHtml,
+            fileHandler = fileHandler,
+            settingsRepository = settingsRepository,
+            parserSelectionCoordinator = parserSelectionCoordinator,
+        )
+
+        val parseJob = launch {
+            worker.parse("item-6", "https://example.com/articles/klead-cache-race")
+        }
+        saveStarted.await()
+        val toggleJob = launch {
+            parserSelectionCoordinator.updateSelection(useKleadParser = false) {
+                fileHandler.clearAllContent()
+            }
+        }
+        runCurrent()
+        assertFalse(toggleJob.isCompleted)
+        finishSave.complete(Unit)
+        parseJob.join()
+        toggleJob.join()
+
+        assertFalse("item-6" in fileHandler.savedContentById)
+    }
+
     private fun worker(
         html: String,
         contentFormat: KleadContentFormat = KleadContentFormat.MARKDOWN,
         fileHandler: FeedItemContentFileHandler = RecordingFeedItemContentFileHandler(),
         settingsRepository: SettingsRepository = SettingsRepository(MapSettings()),
+        parserSelectionCoordinator: ParserSelectionCoordinator = ParserSelectionCoordinator(settingsRepository),
         cacheResult: Boolean = true,
     ) = KleadFeedItemParserWorker(
         contentFormat = contentFormat,
@@ -131,6 +174,7 @@ class KleadFeedItemParserWorkerTest {
         logger = testLogger,
         feedItemContentFileHandler = fileHandler,
         settingsRepository = settingsRepository,
+        parserSelectionCoordinator = parserSelectionCoordinator,
         cacheResult = cacheResult,
     )
 
@@ -149,11 +193,14 @@ class KleadFeedItemParserWorkerTest {
         },
     )
 
-    private class RecordingFeedItemContentFileHandler : FeedItemContentFileHandler {
+    private class RecordingFeedItemContentFileHandler(
+        private val onSave: suspend () -> Unit = {},
+    ) : FeedItemContentFileHandler {
         val savedContentById = mutableMapOf<String, String>()
 
         override suspend fun saveFeedItemContentToFile(feedItemId: String, content: String) {
             savedContentById[feedItemId] = content
+            onSave()
         }
 
         override suspend fun loadFeedItemContent(feedItemId: String): String? = savedContentById[feedItemId]

@@ -6,6 +6,7 @@ import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.russhwolf.settings.MapSettings
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
+import kotlin.test.assertIs
 import kotlin.test.assertSame
 
 class ParserSelectingFeedItemParserWorkerTest {
@@ -40,15 +41,53 @@ class ParserSelectingFeedItemParserWorkerTest {
         assertSame(legacyResult, worker.parse("id", "https://example.com"))
     }
 
+    @Test
+    fun `rejects result when parser changes during parsing`() = runTest {
+        val settingsRepository = SettingsRepository(MapSettings())
+        val worker = selector(
+            settingsRepository = settingsRepository,
+            legacyParser = FakeParser(ParsingResult.Success("legacy", null, null)) {
+                settingsRepository.setKleadParserEnabled(true)
+            },
+            kleadParser = FakeParser(ParsingResult.Error),
+        )
+
+        assertIs<ParsingResult.Error>(worker.parse("id", "https://example.com"))
+    }
+
+    @Test
+    fun `rejects result after parser changes away and back during parsing`() = runTest {
+        val settingsRepository = SettingsRepository(MapSettings())
+        val coordinator = ParserSelectionCoordinator(settingsRepository)
+        val worker = ParserSelectingFeedItemParserWorker(
+            legacyParser = FakeParser(ParsingResult.Success("legacy", null, null)) {
+                coordinator.updateSelection(useKleadParser = true) {}
+                coordinator.updateSelection(useKleadParser = false) {}
+            },
+            kleadParser = FakeParser(ParsingResult.Error),
+            parserSelectionCoordinator = coordinator,
+        )
+
+        assertIs<ParsingResult.Error>(worker.parse("id", "https://example.com"))
+    }
+
     private fun selector(
         settingsRepository: SettingsRepository,
         legacyParser: FeedItemParserWorker,
         kleadParser: FeedItemParserWorker,
-    ) = ParserSelectingFeedItemParserWorker(settingsRepository, legacyParser, kleadParser)
+    ) = ParserSelectingFeedItemParserWorker(
+        legacyParser = legacyParser,
+        kleadParser = kleadParser,
+        parserSelectionCoordinator = ParserSelectionCoordinator(settingsRepository),
+    )
 
     private class FakeParser(
         private val result: ParsingResult,
+        private val onParse: suspend () -> Unit = {},
     ) : FeedItemParserWorker {
-        override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult = result
+        override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
+            onParse()
+            return result
+        }
     }
 }

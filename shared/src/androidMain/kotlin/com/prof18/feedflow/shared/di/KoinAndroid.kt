@@ -118,6 +118,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dispatcherProvider = get(),
             feedItemContentFileHandler = get(),
             settingsRepository = get(),
+            parserSelectionCoordinator = get(),
         )
     }
 
@@ -128,11 +129,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("KleadFeedItemParserWorker"),
             feedItemContentFileHandler = get(),
             settingsRepository = get(),
+            parserSelectionCoordinator = get(),
         )
         ParserSelectingFeedItemParserWorker(
-            settingsRepository = get(),
             legacyParser = get<AndroidFeedItemParserWorker>(),
             kleadParser = kleadParser,
+            parserSelectionCoordinator = get(),
         )
     }
 
@@ -147,6 +149,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("KleadPrefetchParserWorker"),
             feedItemContentFileHandler = get(),
             settingsRepository = get(),
+            parserSelectionCoordinator = get(),
             cacheResult = false,
         )
     }
@@ -239,9 +242,9 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             databaseHelper = get(),
             dispatcherProvider = get(),
             htmlRetriever = get(),
-            settingsRepository = get(),
             kleadFeedItemParserWorker = get(KLEAD_PREFETCH_PARSER),
             feedItemContentFileHandler = get(),
+            parserSelectionCoordinator = get(),
             logger = getWith("ContentPrefetchWorker"),
         )
     }
@@ -256,6 +259,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             appContext = get(),
             feedItemContentFileHandler = get(),
             kleadFeedItemParserWorker = get(KLEAD_PREFETCH_PARSER),
+            parserSelectionCoordinator = get(),
         )
     }
 

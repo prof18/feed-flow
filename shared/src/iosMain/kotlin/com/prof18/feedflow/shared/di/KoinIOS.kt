@@ -43,6 +43,10 @@ import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerIos
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
+import com.prof18.feedflow.shared.domain.parser.KleadContentFormat
+import com.prof18.feedflow.shared.domain.parser.KleadFeedItemParserWorker
+import com.prof18.feedflow.shared.domain.parser.ParserSelectingFeedItemParserWorker
+import com.prof18.feedflow.shared.domain.parser.SelectionAwareCachingFeedItemParserWorker
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
@@ -120,7 +124,27 @@ fun initKoinIos(
             single { dropboxDataSource }
             single { googleDrivePlatformClient }
             single { telemetry }
-            single { feedItemParserWorker }
+            single<FeedItemParserWorker> {
+                val selectingParser = ParserSelectingFeedItemParserWorker(
+                    legacyParser = feedItemParserWorker,
+                    kleadParser = KleadFeedItemParserWorker(
+                        contentFormat = KleadContentFormat.HTML,
+                        htmlRetriever = get(),
+                        logger = getWith("KleadFeedItemParserWorker"),
+                        feedItemContentFileHandler = get(),
+                        settingsRepository = get(),
+                        parserSelectionCoordinator = get(),
+                        cacheResult = false,
+                    ),
+                    parserSelectionCoordinator = get(),
+                )
+                SelectionAwareCachingFeedItemParserWorker(
+                    parser = selectingParser,
+                    settingsRepository = get(),
+                    parserSelectionCoordinator = get(),
+                    feedItemContentFileHandler = get(),
+                )
+            }
             single<FeedContentPreparer> { HtmlFeedContentPreparer() }
             single<Notifier> { notifier }
             single {
@@ -279,6 +303,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedItemParserWorker = get(),
             feedItemContentFileHandler = get(),
             logger = getWith("ContentPrefetchRepositoryIosDesktop"),
+            parserSelectionCoordinator = get(),
         )
     }
 

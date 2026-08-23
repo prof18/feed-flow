@@ -154,6 +154,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dispatcherProvider = get(),
             feedItemContentFileHandler = get(),
             settingsRepository = get(),
+            parserSelectionCoordinator = get(),
         )
         val kleadParser = KleadFeedItemParserWorker(
             contentFormat = KleadContentFormat.MARKDOWN,
@@ -161,11 +162,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("KleadFeedItemParserWorker"),
             feedItemContentFileHandler = get(),
             settingsRepository = get(),
+            parserSelectionCoordinator = get(),
         )
         ParserSelectingFeedItemParserWorker(
-            settingsRepository = get(),
             legacyParser = legacyParser,
             kleadParser = kleadParser,
+            parserSelectionCoordinator = get(),
         )
     }
 
@@ -245,6 +247,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedItemParserWorker = get(),
             feedItemContentFileHandler = get(),
             logger = getWith("ContentPrefetchRepositoryIosDesktop"),
+            parserSelectionCoordinator = get(),
         )
     }
 

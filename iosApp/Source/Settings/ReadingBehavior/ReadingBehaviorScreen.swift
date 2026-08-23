@@ -14,6 +14,7 @@ struct ReadingBehaviorScreen: View {
     @State private var settingsState = ReadingBehaviorState(
         isSaveReaderModeContentEnabled: false,
         isPrefetchArticleContentEnabled: false,
+        isKleadParserEnabled: false,
         isMarkReadWhenScrollingEnabled: false,
         isShowReadItemsEnabled: false,
         isHideReadItemsEnabled: false,
@@ -37,6 +38,10 @@ struct ReadingBehaviorScreen: View {
             isPrefetchArticleContentEnabled: Binding(
                 get: { settingsState.isPrefetchArticleContentEnabled },
                 set: { vmStoreOwner.instance.updatePrefetchArticleContent(value: $0) }
+            ),
+            isKleadParserEnabled: Binding(
+                get: { settingsState.isKleadParserEnabled },
+                set: { vmStoreOwner.instance.updateKleadParserEnabled(value: $0) }
             ),
             isMarkReadWhenScrollingEnabled: Binding(
                 get: { settingsState.isMarkReadWhenScrollingEnabled },

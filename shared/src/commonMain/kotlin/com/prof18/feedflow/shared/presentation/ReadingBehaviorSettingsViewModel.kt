@@ -9,6 +9,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.parser.ParserSelectionCoordinator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +22,7 @@ class ReadingBehaviorSettingsViewModel internal constructor(
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val contentPrefetchRepository: ContentPrefetchRepository,
     private val databaseHelper: DatabaseHelper,
+    private val parserSelectionCoordinator: ParserSelectionCoordinator,
 ) : ViewModel() {
 
     private val stateMutableFlow = MutableStateFlow(ReadingBehaviorState())
@@ -75,10 +77,11 @@ class ReadingBehaviorSettingsViewModel internal constructor(
 
     fun updateKleadParserEnabled(value: Boolean) {
         viewModelScope.launch {
-            settingsRepository.setKleadParserEnabled(value)
             contentPrefetchRepository.cancelFetching()
-            feedItemContentFileHandler.clearAllContent()
-            databaseHelper.resetContentFetchedStatus()
+            parserSelectionCoordinator.updateSelection(value) {
+                feedItemContentFileHandler.clearAllContent()
+                databaseHelper.resetContentFetchedStatus()
+            }
             stateMutableFlow.update {
                 it.copy(isKleadParserEnabled = value)
             }

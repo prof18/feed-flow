@@ -52,7 +52,7 @@ val useLocalDefuddle = providers.gradleProperty("feedflow.useLocalDefuddle")
 
 if (useLocalDefuddle) {
     val defuddlePath = providers.gradleProperty("feedflow.defuddlePath")
-        .getOrElse("../../defuddle-kotlin")
+        .getOrElse("../../klead")
     includeBuild(defuddlePath) {
         dependencySubstitution {
             substitute(module("com.prof18:klead")).using(project(":"))

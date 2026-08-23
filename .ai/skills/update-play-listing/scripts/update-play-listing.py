@@ -28,6 +28,7 @@ LANG_MAP = {
     "it": "it-IT",
     "iw": "iw-IL",
     "ja": "ja-JP",
+    "lv": "lv",
     "pt-BR": "pt-BR",
     "ru": "ru-RU",
     "sk": "sk",

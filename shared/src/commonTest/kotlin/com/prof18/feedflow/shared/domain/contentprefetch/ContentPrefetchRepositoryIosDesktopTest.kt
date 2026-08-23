@@ -7,12 +7,17 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.parser.ParserSelectionCoordinator
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.buildFeedItem
 import com.prof18.feedflow.shared.test.testLogger
 import com.prof18.feedflow.shared.test.toParsedFeedSource
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -43,6 +48,7 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
             feedItemParserWorker = fakeParserWorker,
             feedItemContentFileHandler = feedItemContentFileHandler,
             dispatcherProvider = TestDispatcherProvider,
+            parserSelectionCoordinator = ParserSelectionCoordinator(settingsRepository),
         )
 
     @Test
@@ -173,6 +179,79 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
         assertFalse(feedItemContentFileHandler.isContentAvailable("item-1"))
     }
 
+    @Test
+    fun `cancelFetching cancels immediate parsing before clearing the queue`() =
+        runTest(TestDispatcherProvider.testDispatcher) {
+            settingsRepository.setPrefetchArticleContent(true)
+            val parserStarted = CompletableDeferred<Unit>()
+            fakeParserWorker.onParse = {
+                parserStarted.complete(Unit)
+                awaitCancellation()
+            }
+            insertFeedItem("item-1")
+
+            val repository = createRepository()
+            val prefetchJob = launch { repository.prefetchContent() }
+            parserStarted.await()
+            repository.cancelFetching()
+            runCurrent()
+
+            assertTrue(prefetchJob.isCompleted)
+            assertEquals(1, databaseHelper.getUnfetchedItems().size)
+            assertFalse(feedItemContentFileHandler.isContentAvailable("item-1"))
+        }
+
+    @Test
+    fun `prefetchContent discards result when parser changes during parsing`() =
+        runTest(TestDispatcherProvider.testDispatcher) {
+            settingsRepository.setPrefetchArticleContent(true)
+            fakeParserWorker.setResult(
+                feedItemId = "item-1",
+                result = ParsingResult.Success(
+                    htmlContent = "Old parser content",
+                    title = "Title",
+                    siteName = "Site",
+                ),
+            )
+            var parserChanged = false
+            fakeParserWorker.onParse = {
+                if (!parserChanged) {
+                    parserChanged = true
+                    settingsRepository.setKleadParserEnabled(true)
+                    fakeParserWorker.setResult(
+                        feedItemId = "item-1",
+                        result = ParsingResult.Success(
+                            htmlContent = "New parser content",
+                            title = "Title",
+                            siteName = "Site",
+                        ),
+                    )
+                }
+            }
+            insertFeedItem("item-1")
+
+            createRepository().prefetchContent()
+            advanceUntilIdle()
+
+            assertEquals("New parser content", feedItemContentFileHandler.loadFeedItemContent("item-1"))
+        }
+
+    private suspend fun insertFeedItem(id: String) {
+        val feedSource = createFeedSource("source-1")
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.insertFeedItems(
+            listOf(
+                buildFeedItem(
+                    id = id,
+                    title = "Item 1",
+                    pubDateMillis = 1000,
+                    source = feedSource,
+                ),
+            ),
+            lastSyncTimestamp = 0,
+        )
+    }
+
     private fun createFeedSource(id: String): FeedSource = FeedSource(
         id = id,
         url = "https://example.com/$id/rss.xml",
@@ -191,13 +270,16 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
 
     private class FakeFeedItemParserWorker : FeedItemParserWorker {
         private val results = mutableMapOf<String, ParsingResult>()
+        var onParse: suspend (String) -> Unit = {}
 
         fun setResult(feedItemId: String, result: ParsingResult) {
             results[feedItemId] = result
         }
 
         override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
-            return results[feedItemId] ?: ParsingResult.Error
+            val result = results[feedItemId] ?: ParsingResult.Error
+            onParse(feedItemId)
+            return result
         }
     }
 }

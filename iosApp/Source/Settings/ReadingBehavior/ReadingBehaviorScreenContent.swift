@@ -6,6 +6,7 @@ struct ReadingBehaviorScreenContent: View {
     @Binding var articleOpenMode: ArticleOpenMode
     @Binding var isSaveReaderModeContentEnabled: Bool
     @Binding var isPrefetchArticleContentEnabled: Bool
+    @Binding var isKleadParserEnabled: Bool
     @Binding var isMarkReadWhenScrollingEnabled: Bool
     @Binding var isShowReadItemEnabled: Bool
     @Binding var isHideReadItemsEnabled: Bool
@@ -55,6 +56,11 @@ struct ReadingBehaviorScreenContent: View {
                     )
                 )
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.prefetchContentToggle)
+
+                Toggle(isOn: $isKleadParserEnabled) {
+                    Text(feedFlowStrings.settingsUseNewArticleParser)
+                }
+                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.newParserToggle)
 
                 Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
                     Text(feedFlowStrings.toggleMarkReadWhenScrolling)

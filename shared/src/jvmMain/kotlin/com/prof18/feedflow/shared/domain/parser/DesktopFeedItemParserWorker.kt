@@ -24,6 +24,7 @@ internal class DesktopFeedItemParserWorker(
     private val dispatcherProvider: DispatcherProvider,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val settingsRepository: SettingsRepository,
+    private val parserSelectionCoordinator: ParserSelectionCoordinator,
 ) : FeedItemParserWorker {
 
     private fun loadResource(name: String): String =
@@ -53,6 +54,7 @@ internal class DesktopFeedItemParserWorker(
 
     override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
         logger.d { "Triggering immediate parsing for: $url (feedItemId: $feedItemId)" }
+        val selectionSnapshot = parserSelectionCoordinator.snapshot(expectedKleadSelection = false)
 
         return withContext(dispatcherProvider.io) {
             try {
@@ -114,8 +116,13 @@ internal class DesktopFeedItemParserWorker(
                 }
 
                 if (settingsRepository.isSaveItemContentOnOpenEnabled()) {
-                    feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, markdown)
-                    logger.d { "Successfully parsed and cached: $url" }
+                    val cached = parserSelectionCoordinator.withSelection(selectionSnapshot) {
+                        feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, markdown)
+                        true
+                    } ?: false
+                    if (cached) {
+                        logger.d { "Successfully parsed and cached: $url" }
+                    }
                 }
 
                 ParsingResult.Success(

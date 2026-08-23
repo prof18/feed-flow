@@ -17,10 +17,11 @@ import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository.Companion.FIRST_PAGE_SIZE
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.parser.ParserSelectionCoordinator
 import kotlinx.coroutines.CancellationException
 import kotlin.time.Clock
 
-class ContentPrefetchRepositoryAndroid(
+internal class ContentPrefetchRepositoryAndroid(
     private val logger: Logger,
     private val settingsRepository: SettingsRepository,
     private val databaseHelper: DatabaseHelper,
@@ -29,6 +30,7 @@ class ContentPrefetchRepositoryAndroid(
     private val appContext: Context,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val kleadFeedItemParserWorker: FeedItemParserWorker,
+    private val parserSelectionCoordinator: ParserSelectionCoordinator,
 ) : ContentPrefetchRepository {
     override suspend fun prefetchContent() {
         if (!settingsRepository.isPrefetchArticleContentEnabled()) {
@@ -76,8 +78,8 @@ class ContentPrefetchRepositoryAndroid(
         item: FeedItemToPrefetch,
         legacyParser: LegacyContentPrefetchParser,
     ) {
-        val useKleadParser = settingsRepository.isKleadParserEnabled()
-        val result = if (useKleadParser) {
+        val selectionSnapshot = parserSelectionCoordinator.snapshot()
+        val result = if (selectionSnapshot.useKleadParser) {
             kleadFeedItemParserWorker.parse(
                 feedItemId = item.feedItemId,
                 url = item.url,
@@ -85,10 +87,16 @@ class ContentPrefetchRepositoryAndroid(
         } else {
             legacyParser.parse(item.url)
         }
-        if (useKleadParser != settingsRepository.isKleadParserEnabled()) {
-            logger.d { "Parser changed while prefetching ${item.feedItemId}; discarding result" }
-            return
+        val committed = parserSelectionCoordinator.withSelection(selectionSnapshot) {
+            commitPrefetchResult(item, result)
+            true
         }
+        if (committed == null) {
+            logger.d { "Parser changed while prefetching ${item.feedItemId}; discarding result" }
+        }
+    }
+
+    private suspend fun commitPrefetchResult(item: FeedItemToPrefetch, result: ParsingResult) {
         when (result) {
             is ParsingResult.Success -> {
                 val content = result.htmlContent

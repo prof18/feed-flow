@@ -6,6 +6,7 @@ enum ReadingBehaviorAccessibilityIdentifiers {
     static let articleOpenModeInternalBrowserOption = "article_open_mode_internal_browser"
     static let articleOpenModePreferredBrowserOption = "article_open_mode_preferred_browser"
     static let markReadWhenScrollingToggle = "reading_behavior_mark_read_when_scrolling"
+    static let newParserToggle = "reading_behavior_new_parser"
     static let prefetchContentToggle = "reading_behavior_prefetch_content"
     static let saveContentToggle = "reading_behavior_save_content"
     static let showReadToggle = "reading_behavior_show_read"

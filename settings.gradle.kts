@@ -46,6 +46,20 @@ include("feedSync:feedbin")
 include("feedSync:networkcore")
 include("feedSync:test-utils")
 
+val useLocalDefuddle = providers.gradleProperty("feedflow.useLocalDefuddle")
+    .map { it.toBoolean() }
+    .getOrElse(true)
+
+if (useLocalDefuddle) {
+    val defuddlePath = providers.gradleProperty("feedflow.defuddlePath")
+        .getOrElse("../../defuddle-kotlin")
+    includeBuild(defuddlePath) {
+        dependencySubstitution {
+            substitute(module("com.prof18:klead")).using(project(":"))
+        }
+    }
+}
+
 // includeBuild("../RSS-Parser") {
 //    dependencySubstitution {
 //        substitute(module("com.prof18.rssparser:rssparser")).using(project(":rssparser"))

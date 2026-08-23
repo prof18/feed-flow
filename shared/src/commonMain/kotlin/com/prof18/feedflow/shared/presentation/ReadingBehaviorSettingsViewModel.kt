@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.ReadingBehaviorState
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,6 +18,9 @@ import kotlinx.coroutines.launch
 class ReadingBehaviorSettingsViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val feedStateRepository: FeedStateRepository,
+    private val feedItemContentFileHandler: FeedItemContentFileHandler,
+    private val contentPrefetchRepository: ContentPrefetchRepository,
+    private val databaseHelper: DatabaseHelper,
 ) : ViewModel() {
 
     private val stateMutableFlow = MutableStateFlow(ReadingBehaviorState())
@@ -27,6 +33,7 @@ class ReadingBehaviorSettingsViewModel internal constructor(
     private fun loadSettings() {
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
+        val isKleadParserEnabled = settingsRepository.isKleadParserEnabled()
         val isMarkReadWhenScrollingEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
         val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
         val isHideReadItemsEnabled = settingsRepository.getHideReadItems()
@@ -36,6 +43,7 @@ class ReadingBehaviorSettingsViewModel internal constructor(
             ReadingBehaviorState(
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
+                isKleadParserEnabled = isKleadParserEnabled,
                 isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
                 isShowReadItemsEnabled = isShowReadItemsEnabled,
                 isHideReadItemsEnabled = isHideReadItemsEnabled,
@@ -62,6 +70,18 @@ class ReadingBehaviorSettingsViewModel internal constructor(
         settingsRepository.setPrefetchArticleContent(value)
         stateMutableFlow.update {
             it.copy(isPrefetchArticleContentEnabled = value)
+        }
+    }
+
+    fun updateKleadParserEnabled(value: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setKleadParserEnabled(value)
+            contentPrefetchRepository.cancelFetching()
+            feedItemContentFileHandler.clearAllContent()
+            databaseHelper.resetContentFetchedStatus()
+            stateMutableFlow.update {
+                it.copy(isKleadParserEnabled = value)
+            }
         }
     }
 

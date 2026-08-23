@@ -312,6 +312,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             contentPrefetchRepository = get(),
             feedItemContentFileHandler = get(),
             backgroundSyncScheduler = get(),
+            databaseHelper = get(),
         )
     }
 
@@ -327,6 +328,9 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         ReadingBehaviorSettingsViewModel(
             settingsRepository = get(),
             feedStateRepository = get(),
+            feedItemContentFileHandler = get(),
+            contentPrefetchRepository = get(),
+            databaseHelper = get(),
         )
     }
 

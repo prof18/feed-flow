@@ -1296,6 +1296,11 @@ class DatabaseHelper(
             )
         }
 
+    suspend fun resetContentFetchedStatus() =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.resetContentFetchedStatus()
+        }
+
     suspend fun insertPrefetchQueueItems(items: List<PrefetchQueueItem>, currentTimeMillis: Long) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             items.forEach { item ->

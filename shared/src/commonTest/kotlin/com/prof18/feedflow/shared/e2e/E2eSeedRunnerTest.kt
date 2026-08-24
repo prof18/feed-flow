@@ -194,6 +194,7 @@ class E2eSeedRunnerTest : KoinTestBase() {
     @Test
     fun `reset clears seeded content settings and cached files`() = runTest {
         seedRunner.resetAndSeed(E2eSeedProfile.CONTENT_RICH)
+        settingsRepository.setKleadParserEnabled(true)
 
         seedRunner.reset()
 
@@ -205,5 +206,6 @@ class E2eSeedRunnerTest : KoinTestBase() {
         )
         assertEquals(FeedOrder.NEWEST_FIRST, feedAppearanceSettingsRepository.getFeedOrder())
         assertFalse(settingsRepository.getShowReadArticlesTimeline())
+        assertFalse(settingsRepository.isKleadParserEnabled())
     }
 }

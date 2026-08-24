@@ -110,6 +110,7 @@ class E2eSeedRunner internal constructor(
         settingsRepository.setArticleOpenMode(ArticleOpenMode.FULL_ARTICLE)
         settingsRepository.setSaveItemContentOnOpen(false)
         settingsRepository.setPrefetchArticleContent(false)
+        settingsRepository.setKleadParserEnabled(false)
         settingsRepository.setIsSyncUploadRequired(false)
         settingsRepository.setReaderModeFontSize(SettingsRepository.DEFAULT_READER_MODE_FONT_SIZE)
         settingsRepository.setReaderModeLineHeight(ReaderModeDefaults.LINE_HEIGHT)

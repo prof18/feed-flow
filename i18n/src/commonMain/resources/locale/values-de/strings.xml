@@ -83,7 +83,7 @@
     <string name="toggle_mark_read_when_scrolling">Beim Scrollen als gelesen markieren</string>
     <string name="no_feed_modal_title">Neuen Feed hinzufügen</string>
     <string name="account_connect_button">Verbindung herstellen</string>
-    <string name="account_disconnect_button">Verbindung beenden</string>
+    <string name="account_disconnect_button">Trennen</string>
     <string name="add_account_button">Konto hinzufügen</string>
     <string name="icloud_sync_success">Dein iCloud-Konto ist erfolgreich verknüpft</string>
     <string name="settings_hide_duplicated_title_from_desc">Titel aus der Artikelbeschreibung ausblenden</string>
@@ -416,4 +416,5 @@
     <string name="hide_images_for_feed_description">Bilder für diesen Feed verbergen</string>
     <string name="reader_mode_no_content_title">Kein Inhalt verfügbar</string>
     <string name="reader_mode_no_content_message">Dieser Artikel enthält keinerlei Inhalt und es gibt keinen Link, um ihn im Internet zu öffnen.</string>
+    <string name="server_account_replace_and_connect_button">Ersetzen und verbinden</string>
 </resources>

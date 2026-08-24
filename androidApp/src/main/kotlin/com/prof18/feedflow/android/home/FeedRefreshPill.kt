@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.home
 
+import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -42,6 +43,13 @@ internal fun FeedRefreshPill(
                 animationSpec = tween(durationMillis = ANIMATION_DURATION, easing = FastOutSlowInEasing),
             ) { -it / 2 },
     ) {
+        // The elevation shadow is drawn against the layer's rectangular bounds while the
+        // enter/exit alpha is below 1, which shows up as a square behind the pill in light
+        // theme (dark theme hides it, the shadow is invisible there). Only cast it once the
+        // transition has settled.
+        val isTransitionSettled = transition.currentState == transition.targetState &&
+            transition.currentState == EnterExitState.Visible
+
         val hasProgress = loadingState.refreshedFeedCount > 0 && loadingState.totalFeedCount > 0
         val feedRefreshCounter = if (hasProgress) {
             "${loadingState.refreshedFeedCount}/${loadingState.totalFeedCount}"
@@ -53,7 +61,7 @@ internal fun FeedRefreshPill(
             shape = CircleShape,
             color = homeFloatingToolbarContainerColor(),
             contentColor = MaterialTheme.colorScheme.onSurface,
-            shadowElevation = 6.dp,
+            shadowElevation = if (isTransitionSettled) PILL_ELEVATION else 0.dp,
             border = homeFloatingToolbarBorder(),
         ) {
             Row(
@@ -82,6 +90,7 @@ internal fun FeedRefreshPill(
     }
 }
 
+private val PILL_ELEVATION = 6.dp
 private val INDICATOR_SIZE = 16.dp
 private val INDICATOR_STROKE = 2.dp
 

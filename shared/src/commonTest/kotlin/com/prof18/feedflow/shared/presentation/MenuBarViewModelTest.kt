@@ -116,9 +116,9 @@ class MenuBarViewModelTest : KoinTestBase() {
         viewModel.updateKleadParserEnabled(true)
         assertTrue(viewModel.state.value.isKleadParserEnabled)
         assertTrue(settingsRepository.isKleadParserEnabled())
-        assertFalse(feedItemContentFileHandler.isContentAvailable("cached-item"))
-        assertEquals(feedItemId, databaseHelper.getFirstUnfetchedItemsBatch(1).single().feedItemId)
-        assertTrue((contentPrefetchRepository as ContentPrefetchRepositoryFake).cancelFetchingCalled)
+        assertTrue(feedItemContentFileHandler.isContentAvailable("cached-item"))
+        assertTrue(databaseHelper.getFirstUnfetchedItemsBatch(1).isEmpty())
+        assertFalse((contentPrefetchRepository as ContentPrefetchRepositoryFake).cancelFetchingCalled)
     }
 
     @Test

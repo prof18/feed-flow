@@ -17,7 +17,6 @@ import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository.Companion.FIRST_PAGE_SIZE
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.ParserSelectionCoordinator
 import kotlinx.coroutines.CancellationException
 import kotlin.time.Clock
 
@@ -30,7 +29,6 @@ internal class ContentPrefetchRepositoryAndroid(
     private val appContext: Context,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val kleadFeedItemParserWorker: FeedItemParserWorker,
-    private val parserSelectionCoordinator: ParserSelectionCoordinator,
 ) : ContentPrefetchRepository {
     override suspend fun prefetchContent() {
         if (!settingsRepository.isPrefetchArticleContentEnabled()) {
@@ -78,8 +76,7 @@ internal class ContentPrefetchRepositoryAndroid(
         item: FeedItemToPrefetch,
         legacyParser: LegacyContentPrefetchParser,
     ) {
-        val selectionSnapshot = parserSelectionCoordinator.snapshot()
-        val result = if (selectionSnapshot.useKleadParser) {
+        val result = if (settingsRepository.isKleadParserEnabled()) {
             kleadFeedItemParserWorker.parse(
                 feedItemId = item.feedItemId,
                 url = item.url,
@@ -87,13 +84,7 @@ internal class ContentPrefetchRepositoryAndroid(
         } else {
             legacyParser.parse(item.url)
         }
-        val committed = parserSelectionCoordinator.withSelection(selectionSnapshot) {
-            commitPrefetchResult(item, result)
-            true
-        }
-        if (committed == null) {
-            logger.d { "Parser changed while prefetching ${item.feedItemId}; discarding result" }
-        }
+        commitPrefetchResult(item, result)
     }
 
     private suspend fun commitPrefetchResult(item: FeedItemToPrefetch, result: ParsingResult) {

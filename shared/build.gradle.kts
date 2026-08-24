@@ -90,7 +90,7 @@ kotlin {
                 implementation(libs.ktor.client.core)
                 implementation(libs.skie.annotation)
                 implementation(libs.stately.concurrency)
-                implementation(libs.defuddle.kotlin)
+                implementation(libs.klead)
 
                 api(project(":core"))
                 api(project(":i18n"))

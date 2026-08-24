@@ -9,12 +9,6 @@ import FeedFlowKit
 import Foundation
 
 class FeedItemParserWorkerIos: FeedItemParserWorker {
-    private let cacheResult: Bool
-
-    init(cacheResult: Bool = true) {
-        self.cacheResult = cacheResult
-    }
-
     func parse(
         feedItemId: String,
         url: String,
@@ -24,7 +18,7 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
         DispatchQueue.main.async { [weak self] in
             guard let this = self else { return }
             let settingsRepository = Deps.shared.getSettingsRepository()
-            let shouldSaveContent = this.cacheResult && settingsRepository.isSaveItemContentOnOpenEnabled()
+            let shouldSaveContent = settingsRepository.isSaveItemContentOnOpenEnabled()
             this.handleParsing(
                 feedItemId: feedItemId,
                 url: url,

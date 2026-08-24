@@ -19,7 +19,6 @@ internal class AndroidFeedItemParserWorker(
     private val dispatcherProvider: DispatcherProvider,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val settingsRepository: SettingsRepository,
-    private val parserSelectionCoordinator: ParserSelectionCoordinator,
 ) : FeedItemParserWorker, ReaderModeParserWarmer {
     private val parserScope = CoroutineScope(SupervisorJob() + dispatcherProvider.main)
     private val foregroundParser = FeedItemParser(
@@ -37,19 +36,12 @@ internal class AndroidFeedItemParserWorker(
 
     override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
         logger.d { "Triggering immediate parsing for: $url (feedItemId: $feedItemId)" }
-        val selectionSnapshot = parserSelectionCoordinator.snapshot(expectedKleadSelection = false)
-
         val result = foregroundParser.parseFeedItem(url)
         if (result is ParsingResult.Success) {
             val content = result.htmlContent
             if (content != null && settingsRepository.isSaveItemContentOnOpenEnabled()) {
-                val cached = parserSelectionCoordinator.withSelection(selectionSnapshot) {
-                    feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, content)
-                    true
-                } ?: false
-                if (cached) {
-                    logger.d { "Successfully parsed and cached content for: $url (feedItemId: $feedItemId)" }
-                }
+                feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, content)
+                logger.d { "Successfully parsed and cached content for: $url (feedItemId: $feedItemId)" }
             }
         }
 

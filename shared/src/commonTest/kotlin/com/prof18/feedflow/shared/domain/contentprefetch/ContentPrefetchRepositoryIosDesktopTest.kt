@@ -7,7 +7,6 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.ParserSelectionCoordinator
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.buildFeedItem
@@ -48,7 +47,6 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
             feedItemParserWorker = fakeParserWorker,
             feedItemContentFileHandler = feedItemContentFileHandler,
             dispatcherProvider = TestDispatcherProvider,
-            parserSelectionCoordinator = ParserSelectionCoordinator(settingsRepository),
         )
 
     @Test
@@ -202,7 +200,7 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
         }
 
     @Test
-    fun `prefetchContent discards result when parser changes during parsing`() =
+    fun `prefetchContent keeps result when parser changes during parsing`() =
         runTest(TestDispatcherProvider.testDispatcher) {
             settingsRepository.setPrefetchArticleContent(true)
             fakeParserWorker.setResult(
@@ -233,7 +231,7 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
             createRepository().prefetchContent()
             advanceUntilIdle()
 
-            assertEquals("New parser content", feedItemContentFileHandler.loadFeedItemContent("item-1"))
+            assertEquals("Old parser content", feedItemContentFileHandler.loadFeedItemContent("item-1"))
         }
 
     private suspend fun insertFeedItem(id: String) {

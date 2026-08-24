@@ -475,10 +475,6 @@ UPDATE feed_item
 SET content_fetched = :contentFetched
 WHERE url_hash = :urlHash;
 
-resetContentFetchedStatus:
-UPDATE feed_item
-SET content_fetched = 0;
-
 selectFirstUnfetchedItemsBatch:
 SELECT feed_item.url_hash, feed_item.url
 FROM feed_item

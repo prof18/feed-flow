@@ -34,7 +34,7 @@ func startKoin(notifier: (any Notifier)? = nil) {
         googleDrivePlatformClient: GoogleDrivePlatformClient(),
         appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
         telemetry: TelemetryReporter(),
-        feedItemParserWorker: FeedItemParserWorkerIos(cacheResult: false),
+        feedItemParserWorker: FeedItemParserWorkerIos(),
         notifier: notifier ?? NoOpNotifier(),
         feedUrlProtocolClasses: [FeedConditionalGetURLProtocol.self]
     )

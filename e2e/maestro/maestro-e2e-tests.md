@@ -71,7 +71,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-118 | `118-cloud-provider-mock-states.yaml` | `sync-linked-mock` | Android, iOS | Seeded Dropbox linked state (both platforms) and iCloud linked state (iOS). |
 | REG-119 | `119-opml-import-error-states.yaml` | `empty` + fixtures | Android, iOS | Invalid OPML import → error screen + Choose another file recovery. |
 | REG-120 | `120-csv-import-article-states.yaml` | `empty` + fixtures | Android, iOS | CSV article import → unread/read/bookmarked-unread/bookmarked-read state assertions. |
-| REG-121 | `121-reading-behavior-secondary-settings.yaml` | `content-rich` | Android, iOS | Browser row visibility, save-reader-content toggle, prefetch confirmation, mark-read-when-scrolling toggle. |
+| REG-121 | `121-reading-behavior-secondary-settings.yaml` | `content-rich` | Android, iOS | Browser row visibility, save-reader-content toggle, new reader engine opt-in confirmation, prefetch confirmation, mark-read-when-scrolling toggle. |
 | REG-122 | `122-feed-list-settings-detail-controls.yaml` | `content-rich` | Android, iOS | Font scale visibility, secondary hide toggles, description line limit, date/time format, swipe-action pickers. |
 | REG-123 | `123-sync-storage-advanced-settings.yaml` | `content-rich` | Android, iOS | Clear-downloaded confirmation (both); Android Wi-Fi-only, charging-only, clear image cache confirmation. |
 | REG-124 | `124-home-overflow-secondary-actions.yaml` | `content-rich` | Android, iOS | Home overflow: force-refresh visibility, Sort & Filter sheet (Oldest First, Show read), Clear week-old articles confirmation. |

@@ -64,6 +64,10 @@ internal fun ReadingPane(
             title = LocalFeedFlowStrings.current.settingsUseNewArticleParser,
             isChecked = isKleadParserEnabled,
             onCheckedChange = onKleadParserToggled,
+            confirmationDialog = ConfirmationDialogConfig(
+                title = LocalFeedFlowStrings.current.settingsNewReaderModeEngineConfirmationTitle,
+                message = LocalFeedFlowStrings.current.settingsNewReaderModeEngineConfirmationMessage,
+            ),
         )
 
         SettingSwitchItem(

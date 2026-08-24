@@ -14,9 +14,19 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "Browser"
 - assertVisible: "Save article content on open for offline reading"
 - assertVisible: "Prefetch article content for offline reading"
+- assertVisible: "New reader mode engine"
 - assertVisible: "Mark as read when scrolling"
 - tapOn: "Save article content on open for offline reading"
 - tapOn: "Mark as read when scrolling"
+- tapOn:
+    id: reading_behavior_new_parser
+- assertVisible: "Try the new reader mode engine.*"
+- assertVisible: "The new engine is designed to extract articles more accurately.*"
+- tapOn: "Cancel"
+- tapOn:
+    id: reading_behavior_new_parser
+- assertVisible: "Try the new reader mode engine.*"
+- tapOn: "Confirm"
 - tapOn: "Prefetch article content for offline reading"
 - assertVisible: "Enabling this option will increase synchronization time and data usage.*"
 - tapOn: "Confirm"

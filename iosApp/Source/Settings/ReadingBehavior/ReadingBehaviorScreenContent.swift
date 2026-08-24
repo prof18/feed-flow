@@ -57,9 +57,14 @@ struct ReadingBehaviorScreenContent: View {
                 )
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.prefetchContentToggle)
 
-                Toggle(isOn: $isKleadParserEnabled) {
-                    Text(feedFlowStrings.settingsUseNewArticleParser)
-                }
+                SettingToggleItem(
+                    isOn: $isKleadParserEnabled,
+                    title: feedFlowStrings.settingsUseNewArticleParser,
+                    confirmationDialog: ConfirmationDialogConfig(
+                        title: feedFlowStrings.settingsNewReaderModeEngineConfirmationTitle,
+                        message: feedFlowStrings.settingsNewReaderModeEngineConfirmationMessage
+                    )
+                )
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.newParserToggle)
 
                 Toggle(isOn: $isMarkReadWhenScrollingEnabled) {

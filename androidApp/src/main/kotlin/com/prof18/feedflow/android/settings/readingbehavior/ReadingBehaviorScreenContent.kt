@@ -100,6 +100,10 @@ internal fun ReadingBehaviorScreenContent(
                     title = LocalFeedFlowStrings.current.settingsUseNewArticleParser,
                     isChecked = state.isKleadParserEnabled,
                     onCheckedChange = setKleadParserEnabled,
+                    confirmationDialog = ConfirmationDialogConfig(
+                        title = LocalFeedFlowStrings.current.settingsNewReaderModeEngineConfirmationTitle,
+                        message = LocalFeedFlowStrings.current.settingsNewReaderModeEngineConfirmationMessage,
+                    ),
                 )
             }
 

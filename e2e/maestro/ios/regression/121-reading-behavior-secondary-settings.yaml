@@ -16,6 +16,7 @@ appId: com.prof18.feedflow.dev
 - assertVisible: "Browser"
 - assertVisible: "Save article content on open for offline reading"
 - assertVisible: "Prefetch article content for offline reading"
+- assertVisible: "New reader mode engine"
 - assertVisible: "Mark as read when scrolling"
 - tapOn:
     id: reading_behavior_save_content
@@ -23,6 +24,17 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: reading_behavior_mark_read_when_scrolling
     point: "90%,50%"
+- tapOn:
+    id: reading_behavior_new_parser
+    point: "90%,50%"
+- assertVisible: "Try the new reader mode engine.*"
+- assertVisible: "The new engine is designed to extract articles more accurately.*"
+- tapOn: "Cancel"
+- tapOn:
+    id: reading_behavior_new_parser
+    point: "90%,50%"
+- assertVisible: "Try the new reader mode engine.*"
+- tapOn: "Confirm"
 - tapOn:
     id: reading_behavior_prefetch_content
     point: "90%,50%"

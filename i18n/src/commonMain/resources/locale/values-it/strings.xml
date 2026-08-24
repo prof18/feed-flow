@@ -234,7 +234,7 @@
     <string name="search_filter_read">Letti</string>
     <string name="search_filter_bookmarks">Preferiti</string>
     <string name="settings_hide_date">Nascondi data articolo</string>
-    <string name="open_feed_settings">Apri impostazioni feed</string>
+    <string name="open_feed_settings">Impostazioni feed</string>
     <string name="delete_feed_source_error">Impossibile eliminare il feed. Per favore riprova.</string>
     <string name="miniflux_account_connected">Il tuo account Miniflux è stato collegato con successo</string>
     <string name="no_miniflux_sync_yet">I dati non sono ancora sincronizzati</string>
@@ -419,4 +419,8 @@
     <string name="support_paywall_title">Aiuta FeedFlow a crescere 💙</string>
     <string name="support_purchase_thank_you_title">Grande! 🎉</string>
     <string name="support_purchase_thank_you_message">Il tuo contributo aiuta FeedFlow a crescere 💙 Grazie per sostenere lo sviluppo continuo, i miglioramenti curati nei dettagli e la risoluzione dei bug. 🙏</string>
+    <string name="server_account_subscriptions_warning">Questo account utilizza le iscrizioni archiviate nel suo server.</string>
+    <string name="server_account_replace_local_title">Sostituire le iscrizioni locali?</string>
+    <string name="server_account_replace_local_message">La connessione sostituisce i feed attualmente memorizzati su questo dispositivo con gli abbonamenti del server. Una successiva disconnessione non ripristinerà i feed locali. Esportali prima in OPML se desideri conservarne una copia.</string>
+    <string name="server_account_replace_and_connect_button">Sostituisci e connetti</string>
 </resources>

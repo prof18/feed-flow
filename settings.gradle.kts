@@ -46,19 +46,14 @@ include("feedSync:feedbin")
 include("feedSync:networkcore")
 include("feedSync:test-utils")
 
-val useLocalDefuddle = providers.gradleProperty("feedflow.useLocalDefuddle")
-    .map { it.toBoolean() }
-    .getOrElse(true)
-
-if (useLocalDefuddle) {
-    val defuddlePath = providers.gradleProperty("feedflow.defuddlePath")
-        .getOrElse("../../klead")
-    includeBuild(defuddlePath) {
-        dependencySubstitution {
-            substitute(module("com.prof18:klead")).using(project(":"))
-        }
-    }
-}
+// Uncomment to use a local Klead checkout instead of the Maven Central dependency.
+// val defuddlePath = providers.gradleProperty("feedflow.defuddlePath")
+//     .getOrElse("../../klead")
+// includeBuild(defuddlePath) {
+//     dependencySubstitution {
+//         substitute(module("com.prof18:klead")).using(project(":"))
+//     }
+// }
 
 // includeBuild("../RSS-Parser") {
 //    dependencySubstitution {

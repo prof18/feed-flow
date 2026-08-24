@@ -47,9 +47,9 @@ include("feedSync:networkcore")
 include("feedSync:test-utils")
 
 // Uncomment to use a local Klead checkout instead of the Maven Central dependency.
-// val defuddlePath = providers.gradleProperty("feedflow.defuddlePath")
+// val kleadPath = providers.gradleProperty("feedflow.kleadPath")
 //     .getOrElse("../../klead")
-// includeBuild(defuddlePath) {
+// includeBuild(kleadPath) {
 //     dependencySubstitution {
 //         substitute(module("com.prof18:klead")).using(project(":"))
 //     }

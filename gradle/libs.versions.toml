@@ -129,7 +129,7 @@ colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", vers
 components-ui-tooling-preview = { module = "org.jetbrains.compose.components:components-ui-tooling-preview", version.ref = "compose-multiplatform" }
 crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
 csv = { module = "de.halfbit:csv", version.ref = "csv" }
-defuddle-kotlin = { module = "com.prof18:klead", version = "0.0.1-alpha01" }
+klead = { module = "com.prof18:klead", version = "0.0.1-alpha01" }
 detekt = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 detekt-compose-rules = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose-rules" }
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }

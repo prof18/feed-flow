@@ -8,7 +8,6 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.ParserSelectionCoordinator
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -25,7 +24,6 @@ internal class ContentPrefetchRepositoryIosDesktop(
     private val feedItemParserWorker: FeedItemParserWorker,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val dispatcherProvider: DispatcherProvider,
-    private val parserSelectionCoordinator: ParserSelectionCoordinator,
 ) : ContentPrefetchRepository {
 
     private var backgroundJob: Job? = null
@@ -123,19 +121,11 @@ internal class ContentPrefetchRepositoryIosDesktop(
 
     private suspend fun prefetchSingleItem(item: PrefetchQueueItem) {
         logger.d { "Prefetching: ${item.feedItemId}" }
-        val selectionSnapshot = parserSelectionCoordinator.snapshot()
-
         val result = feedItemParserWorker.parse(
             feedItemId = item.feedItemId,
             url = item.url,
         )
-        val committed = parserSelectionCoordinator.withSelection(selectionSnapshot) {
-            commitPrefetchResult(item, result)
-            true
-        }
-        if (committed == null) {
-            logger.d { "Parser changed while prefetching ${item.feedItemId}; discarding result" }
-        }
+        commitPrefetchResult(item, result)
     }
 
     private suspend fun commitPrefetchResult(item: PrefetchQueueItem, result: ParsingResult) {

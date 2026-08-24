@@ -39,7 +39,6 @@ import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
-import com.prof18.feedflow.shared.domain.parser.ParserSelectionCoordinator
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
@@ -256,12 +255,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     }
 
     single {
-        ParserSelectionCoordinator(
-            settingsRepository = get(),
-        )
-    }
-
-    single {
         FeedAppearanceSettingsRepository(
             settings = get(),
         )
@@ -319,8 +312,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             contentPrefetchRepository = get(),
             feedItemContentFileHandler = get(),
             backgroundSyncScheduler = get(),
-            databaseHelper = get(),
-            parserSelectionCoordinator = get(),
         )
     }
 
@@ -336,10 +327,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         ReadingBehaviorSettingsViewModel(
             settingsRepository = get(),
             feedStateRepository = get(),
-            feedItemContentFileHandler = get(),
-            contentPrefetchRepository = get(),
-            databaseHelper = get(),
-            parserSelectionCoordinator = get(),
         )
     }
 

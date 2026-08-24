@@ -8,10 +8,10 @@ import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.model.PrefetchQueueItem
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.ParserSelectionCoordinator
 import kotlinx.coroutines.CancellationException
 
 internal class ContentPrefetchWorker(
@@ -21,7 +21,7 @@ internal class ContentPrefetchWorker(
     private val kleadFeedItemParserWorker: FeedItemParserWorker,
     private val logger: Logger,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
-    private val parserSelectionCoordinator: ParserSelectionCoordinator,
+    private val settingsRepository: SettingsRepository,
     private val appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
@@ -52,8 +52,7 @@ internal class ContentPrefetchWorker(
         item: PrefetchQueueItem,
         legacyParser: LegacyContentPrefetchParser,
     ) {
-        val selectionSnapshot = parserSelectionCoordinator.snapshot()
-        val result = if (selectionSnapshot.useKleadParser) {
+        val result = if (settingsRepository.isKleadParserEnabled()) {
             kleadFeedItemParserWorker.parse(
                 feedItemId = item.feedItemId,
                 url = item.url,
@@ -61,13 +60,7 @@ internal class ContentPrefetchWorker(
         } else {
             legacyParser.parse(item.url)
         }
-        val committed = parserSelectionCoordinator.withSelection(selectionSnapshot) {
-            commitPrefetchResult(item, result)
-            true
-        }
-        if (committed == null) {
-            logger.d { "Parser changed while prefetching ${item.feedItemId}; discarding result" }
-        }
+        commitPrefetchResult(item, result)
     }
 
     private suspend fun commitPrefetchResult(item: PrefetchQueueItem, result: ParsingResult) {

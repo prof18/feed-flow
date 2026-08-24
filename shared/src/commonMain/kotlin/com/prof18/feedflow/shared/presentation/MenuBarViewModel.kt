@@ -6,7 +6,6 @@ import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ThemeMode
-import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
@@ -14,7 +13,6 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
-import com.prof18.feedflow.shared.domain.parser.ParserSelectionCoordinator
 import com.prof18.feedflow.shared.presentation.model.MenuBarSettingsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,8 +28,6 @@ class MenuBarViewModel internal constructor(
     private val contentPrefetchRepository: ContentPrefetchRepository,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val backgroundSyncScheduler: BackgroundSyncScheduler,
-    private val databaseHelper: DatabaseHelper,
-    private val parserSelectionCoordinator: ParserSelectionCoordinator,
 ) : ViewModel() {
 
     private val stateMutableFlow = MutableStateFlow(MenuBarSettingsState())
@@ -156,15 +152,9 @@ class MenuBarViewModel internal constructor(
     }
 
     fun updateKleadParserEnabled(value: Boolean) {
-        viewModelScope.launch {
-            contentPrefetchRepository.cancelFetching()
-            parserSelectionCoordinator.updateSelection(value) {
-                feedItemContentFileHandler.clearAllContent()
-                databaseHelper.resetContentFetchedStatus()
-            }
-            stateMutableFlow.update {
-                it.copy(isKleadParserEnabled = value)
-            }
+        settingsRepository.setKleadParserEnabled(value)
+        stateMutableFlow.update {
+            it.copy(isKleadParserEnabled = value)
         }
     }
 

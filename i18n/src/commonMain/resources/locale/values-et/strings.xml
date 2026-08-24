@@ -207,7 +207,7 @@
     <string name="settings_theme_light">Hele kujundus</string>
     <string name="settings_theme_dark">Tume kujundus</string>
     <string name="icloud_connection_error">Vabandust, ühenduse loomine iCloudiga ei õnnestu. Palun kontrolli, et oleksid sisse loginud, iCloud Drive on kasutusel ja sinu seadmes on piisavalt ruumi - error code: %s.</string>
-    <string name="open_feed_settings">Ava uudisvoo seadistused</string>
+    <string name="open_feed_settings">Uudisvoo seadistused</string>
     <string name="reader_mode_browser_button_content_description">Ava veebibrauseris</string>
     <string name="delete_feed_confirmation_title">Kas kustutame uudisvoo?</string>
     <string name="delete_feed_confirmation_message">Kas sa oled kindel, et soovid selle uudisvoo kustutada? Seda tegevust ei saa tagasi pöörata.</string>
@@ -419,4 +419,8 @@
     <string name="support_paywall_title">Aita FeedFlow\'l kasvada 💙</string>
     <string name="support_purchase_thank_you_title">Sa oled suurepärane! 🎉</string>
     <string name="support_purchase_thank_you_message">Sinu toetus aitab FeedFlow\'l kasvada 💙 Tänud, et toetad järjepidevat arendust, mõtestatud täiendusi ning vigade parandamist. 🙏</string>
+    <string name="server_account_subscriptions_warning">See kasutajakonto pruugib serverisse salvestatud tellimusi.</string>
+    <string name="server_account_replace_local_title">Kas asendad kohalikus seadmes olevad tellimused?</string>
+    <string name="server_account_replace_local_message">Ühendamisel asendatakse kohalikus seadmed salvestatud uudisvood serveris leiduvatega. Ühenduse katkestamine neid hiljem ei taasta. Kui vajad varukoopiat, siis ekspordi kohalikud uudisvood esmalt OPML-faili.</string>
+    <string name="server_account_replace_and_connect_button">Asenda ja ühenda</string>
 </resources>

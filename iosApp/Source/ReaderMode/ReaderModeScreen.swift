@@ -35,7 +35,10 @@ struct ReaderModeScreen: View {
     @State private var isShowingFeedContent = false
     @State private var hasArticleUrl = true
     @State private var canToggleContentSource = false
-    @State private var macOSThemeChangeToken = UUID()
+    // Mirrors the environment color scheme: `updateReaderHTML` runs inside a long-lived `.task`,
+    // which captures the view value and with it a stale `@Environment` copy. `@State` is read
+    // through its storage, so it stays current there.
+    @State private var isDarkMode = false
 
     let viewModel: ReaderModeViewModel
     let onInAppBrowserClick: ((URL) -> Void)?
@@ -181,6 +184,9 @@ struct ReaderModeScreen: View {
                 )
             }
         }
+        .onChange(of: colorScheme, initial: true) { _, newValue in
+            isDarkMode = newValue == .dark
+        }
         .task {
             for await settings in viewModel.readerFontSettingsState {
                 self.fontSize = Double(settings.fontSize)
@@ -227,9 +233,6 @@ struct ReaderModeScreen: View {
 
                 self.isBookmarked = state.getIsBookmarked
             }
-        }
-        .onChange(of: themeColors) { _, _ in
-            updateReaderHTML()
         }
         .task {
             for await canNavigate in viewModel.canNavigateToPreviousState {
@@ -280,21 +283,31 @@ struct ReaderModeScreen: View {
         self.readerStatus = .extractedContent(
             html: html,
             baseURL: URL(string: baseUrlString) ?? URL(fileURLWithPath: ""),
-            url: url
+            url: url,
+            contentId: currentContentId(content: content)
         )
     }
 
+    /// Identifies the document the reader is showing, ignoring everything that only styles it.
+    /// The web view reloads when this changes, so font size, line height and theme must stay out
+    /// of it or the scroll position is lost every time one of them is applied.
+    private func currentContentId(content: String) -> String {
+        var hasher = Hasher()
+        hasher.combine(feedItemId)
+        hasher.combine(isShowingFeedContent)
+        hasher.combine(content)
+        hasher.combine(feedItemTitle)
+        hasher.combine(currentSiteName)
+        hasher.combine(currentImageUrl)
+        return String(hasher.finalize())
+    }
+
     private var themeColors: ReaderThemeColors {
-        let isDarkMode = currentIsDarkMode
-        return ReaderThemeColors(
+        ReaderThemeColors(
             textColor: isDarkMode ? "#FFFFFF" : "#000000",
             linkColor: isDarkMode ? "#3B82F6" : "#2563EB",
             backgroundColor: isDarkMode ? "#1e1e1e" : "#f6f8fa",
             borderColor: isDarkMode ? "#444444" : "#d1d9e0"
         )
-    }
-
-    private var currentIsDarkMode: Bool {
-        return colorScheme == .dark
     }
 }

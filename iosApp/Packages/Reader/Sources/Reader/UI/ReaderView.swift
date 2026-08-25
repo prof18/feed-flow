@@ -130,10 +130,11 @@ public struct ReaderView: View {
                 url: url,
                 onLinkClicked: onLinkClicked
             )
-        case let .extractedContent(html, baseURL, _):
+        case let .extractedContent(html, baseURL, _, contentId):
             ReaderWebView(
                 baseURL: baseURL,
                 html: html,
+                contentId: contentId,
                 onLinkClicked: onLinkClicked,
                 onImageClicked: options.onImageClicked,
                 onWebContentReady: { content in

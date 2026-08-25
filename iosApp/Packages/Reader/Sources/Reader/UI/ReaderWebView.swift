@@ -10,6 +10,7 @@ import SwiftUI
 struct ReaderWebView: View {
     var baseURL: URL
     var html: String
+    var contentId: String
     var onLinkClicked: ((URL) -> Void)?
     var onImageClicked: ((URL) -> Void)?
     var onWebContentReady: ((WebContent) -> Void)?
@@ -22,7 +23,7 @@ struct ReaderWebView: View {
                 setupLinkHandler()
                 onWebContentReady?(content)
             }
-            .onAppearOrChange(Model(baseURL: baseURL, html: html)) { model in
+            .onAppearOrChange(Model(baseURL: baseURL, html: html, contentId: contentId)) { model in
                 content.populate { content in
                     content.load(html: model.html, baseURL: model.baseURL)
                 }
@@ -58,9 +59,14 @@ struct ReaderWebView: View {
     private struct Model: Equatable {
         var baseURL: URL
         var html: String
+        var contentId: String
 
+        // A change here reloads the web view and sends the reader back to the top, so the
+        // document identity is what counts. `html` is deliberately left out: theme, font size
+        // and line height rewrite it while pointing at the same document, and they are applied
+        // to the live page with JS instead.
         static func == (lhs: Model, rhs: Model) -> Bool {
-            lhs.baseURL == rhs.baseURL && lhs.html == rhs.html
+            lhs.baseURL == rhs.baseURL && lhs.contentId == rhs.contentId
         }
     }
 }

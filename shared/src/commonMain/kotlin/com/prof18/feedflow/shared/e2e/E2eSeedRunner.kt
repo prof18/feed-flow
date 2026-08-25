@@ -212,6 +212,15 @@ class E2eSeedRunner internal constructor(
             feedItemId = READER_FALLBACK_ARTICLE_ID,
             fetched = true,
         )
+
+        feedItemContentFileHandler.saveFeedItemContentToFile(
+            feedItemId = READER_LONG_ARTICLE_ID,
+            content = READER_LONG_HTML,
+        )
+        databaseHelper.updateContentFetchedStatus(
+            feedItemId = READER_LONG_ARTICLE_ID,
+            fetched = true,
+        )
     }
 
     private suspend fun applyProfileSettings(
@@ -586,6 +595,7 @@ class E2eSeedRunner internal constructor(
         const val BLOCKED_WORD = "blockedword"
         const val READER_SUCCESS_ARTICLE_ID = "e2e-article-reader-success"
         const val READER_FALLBACK_ARTICLE_ID = "e2e-article-reader-fallback"
+        const val READER_LONG_ARTICLE_ID = "e2e-article-reader-long"
         const val FEED_CONTENT_NO_URL_ARTICLE_ID = "e2e-article-feed-content-no-url"
         const val NO_URL_NO_CONTENT_ARTICLE_ID = "e2e-article-no-content-no-url"
 
@@ -873,6 +883,14 @@ class E2eSeedRunner internal constructor(
                 pubDateMillis = SEED_NOW_MILLIS - (ONE_HOUR_MILLIS * 10),
             ),
             feedItem(
+                id = READER_LONG_ARTICLE_ID,
+                title = "E2E Reader Mode Long Article: Scroll Retention",
+                subtitle = "Seeded item long enough to scroll inside reader mode",
+                feedSource = swiftWeekly,
+                url = "https://e2e.feedflow.local/reader/long-article",
+                pubDateMillis = SEED_NOW_MILLIS - (ONE_HOUR_MILLIS * 10) - 1,
+            ),
+            feedItem(
                 id = HIDDEN_ARTICLE_ID,
                 title = "E2E Hidden Feed Article",
                 subtitle = "This item belongs to a hidden feed",
@@ -934,6 +952,30 @@ class E2eSeedRunner internal constructor(
             <article>
               <h1>E2E Reader Mode Success Article</h1>
               <p>E2E cached reader content loaded from the seed fixture.</p>
+            </article>
+        """
+
+        // Long enough to scroll: REG-165 scrolls to the tail anchor, backgrounds the app and
+        // asserts the reader did not jump back to the top.
+        private const val READER_LONG_HTML = """
+            <article>
+              <h1>E2E Reader Mode Long Article Heading</h1>
+              <p>E2E long reader head anchor.</p>
+              <p>E2E long reader filler paragraph 01. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 02. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 03. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 04. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 05. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 06. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 07. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 08. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 09. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 10. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 11. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 12. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 13. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader filler paragraph 14. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
+              <p>E2E long reader tail anchor.</p>
             </article>
         """
 

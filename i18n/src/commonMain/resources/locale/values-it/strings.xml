@@ -423,4 +423,7 @@
     <string name="server_account_replace_local_title">Sostituire le iscrizioni locali?</string>
     <string name="server_account_replace_local_message">La connessione sostituisce i feed attualmente memorizzati su questo dispositivo con gli abbonamenti del server. Una successiva disconnessione non ripristinerà i feed locali. Esportali prima in OPML se desideri conservarne una copia.</string>
     <string name="server_account_replace_and_connect_button">Sostituisci e connetti</string>
+    <string name="settings_use_new_article_parser">Nuovo motore per modalità lettura</string>
+    <string name="settings_new_reader_mode_engine_confirmation_title">Vuoi provare il nuovo motore per la modalità lettura?</string>
+    <string name="settings_new_reader_mode_engine_confirmation_message">Il nuovo motore è progettato per estrarre gli articoli in modo più preciso e caricare la Modalità lettura più velocemente. È ancora sperimentale, quindi alcune pagine potrebbero presentare contenuti mancanti, formattazione errata o potrebbero non caricarsi affatto. Si prega di segnalare qualsiasi problema riscontrato. Il tuo riscontro ci aiuterà a migliorare la Modalità lettura per tutti prima che questo motore diventi quello predefinito.</string>
 </resources>

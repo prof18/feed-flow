@@ -423,4 +423,7 @@
     <string name="server_account_replace_local_title">Kas asendad kohalikus seadmes olevad tellimused?</string>
     <string name="server_account_replace_local_message">Ühendamisel asendatakse kohalikus seadmed salvestatud uudisvood serveris leiduvatega. Ühenduse katkestamine neid hiljem ei taasta. Kui vajad varukoopiat, siis ekspordi kohalikud uudisvood esmalt OPML-faili.</string>
     <string name="server_account_replace_and_connect_button">Asenda ja ühenda</string>
+    <string name="settings_use_new_article_parser">Lugemisvaate uus lahendus</string>
+    <string name="settings_new_reader_mode_engine_confirmation_title">Kas tahaksid proovida uut lugemisvaate sisumootorit?</string>
+    <string name="settings_new_reader_mode_engine_confirmation_message">Uus mootor on loodud artiklite täpsemaks tuvastamiseks ja lugemisrežiimi kiiremaks laadimiseks. See on veel katsetamisjärgus, mistõttu võib veel mõnel lehel sisu puududa, vorming olla vale või leht üldse mitte laaduda. Palun teavita meid kõigist leitud probleemidest. Sinu tagasiside aitab meil lugemisrežiimi kõigi jaoks paremaks muuta, enne kui see mootor muutub vaikimisi valikuks.</string>
 </resources>

@@ -232,6 +232,11 @@ img, iframe, object, video {
     border-radius: 7px;
 }
 
+#__content img {
+    display: block;
+    margin: 4px auto;
+}
+
 img.__feedflow_image_load_failed {
     display: none !important;
 }

@@ -16,6 +16,22 @@ class ReaderModeHtmlAndCssTest {
     }
 
     @Test
+    fun `reader mode css adds space around article images`() {
+        val css = readerModeCss(colors = null, fontSize = 18, lineHeight = 0)
+
+        assertTrue(
+            css.contains(
+                """
+                #__content img {
+                    display: block;
+                    margin: 4px auto;
+                }
+                """.trimIndent(),
+            ),
+        )
+    }
+
+    @Test
     fun `reader mode html marks failed images as hidden`() {
         val html = getReaderModeStyledHtml(
             colors = null,

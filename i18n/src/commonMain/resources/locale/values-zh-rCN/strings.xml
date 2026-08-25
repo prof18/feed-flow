@@ -423,4 +423,7 @@
     <string name="server_account_replace_local_title">替换本地订阅？</string>
     <string name="server_account_replace_and_connect_button">替换并连接</string>
     <string name="server_account_replace_local_message">连接会将当前存储在此设备上的订阅源替换为来自服务器的订阅。稍后断开连接不会恢复本地订阅源。如果要保留副本，请先将其导出为 OPML 格式。</string>
+    <string name="settings_use_new_article_parser">新阅读模式引擎</string>
+    <string name="settings_new_reader_mode_engine_confirmation_title">要尝试新阅读模式引擎吗？</string>
+    <string name="settings_new_reader_mode_engine_confirmation_message">新引擎旨在更准确地提取文章并更快地加载阅读模式。它仍处于实验阶段，因此部分页面可能会缺失内容、格式不正确，或者根本无法加载。请报告您发现的任何问题。在该引擎成为默认引擎之前，您的反馈将帮助我们为每个人改进阅读模式。</string>
 </resources>

@@ -57,6 +57,27 @@ fun getReaderModeStyledHtml(
         </div>
     </div>
     <script>
+        window.addEventListener("message", function(event) {
+            if (event.origin !== "https://platform.twitter.com") return;
+
+            var payload = event.data && event.data["twttr.embed"];
+            if (!payload || payload.method !== "twttr.private.resize") return;
+
+            var dimensions = payload.params && payload.params[0];
+            var height = Number(dimensions && dimensions.height);
+            if (!Number.isFinite(height) || height <= 0 || height > 10000) return;
+
+            var twitterFrames = document.querySelectorAll(
+                'iframe[src^="https://platform.twitter.com/embed/Tweet.html"]'
+            );
+            var sourceFrame = Array.prototype.find.call(twitterFrames, function(frame) {
+                return frame.contentWindow === event.source;
+            });
+            if (!sourceFrame) return;
+
+            sourceFrame.style.height = Math.ceil(height) + "px";
+        });
+
         document.addEventListener("DOMContentLoaded", function () {
             // Get the title from the first h1 (which we inject)
             var firstH1 = document.querySelector("h1");
@@ -226,9 +247,15 @@ body > h1 {
     max-width: 700px;
 }
 
-img, iframe, object, video {
+img, object, video {
     max-width: 100%;
     height: auto;
+    border-radius: 7px;
+}
+
+iframe {
+    width: 100%;
+    max-width: 100%;
     border-radius: 7px;
 }
 
@@ -363,11 +390,16 @@ figcaption, cite {
     border-radius: 0.5em;
 }
 
-iframe {
-    width: 100%;
-    max-width: 100%;
-    height: 250px;
-    max-height: 250px;
+iframe[src^="https://www.youtube-nocookie.com/embed/"],
+iframe[src^="https://www.youtube.com/embed/"],
+iframe[src^="https://player.vimeo.com/video/"] {
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border: 0;
+}
+
+iframe[src^="https://platform.twitter.com/embed/Tweet.html"] {
+    border: 0;
 }
 
 code {
@@ -387,12 +419,6 @@ pre code {
     background-color: transparent;
     border: none;
     padding: 0;
-}
-
-img, iframe, object, video {
-    max-width: 100%;
-    height: auto;
-    border-radius: 7px;
 }
 
     """.trimIndent()

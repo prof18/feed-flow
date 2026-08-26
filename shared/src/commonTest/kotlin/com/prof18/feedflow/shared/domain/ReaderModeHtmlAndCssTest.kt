@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ReaderModeHtmlAndCssTest {
@@ -43,6 +44,73 @@ class ReaderModeHtmlAndCssTest {
         assertTrue(html.contains("image.complete && image.naturalWidth === 0"))
         assertTrue(html.contains("__feedflow_image_load_failed"))
         assertTrue(html.contains("aria-hidden"))
+    }
+
+    @Test
+    fun `reader mode html resizes twitter embeds from trusted widget messages`() {
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = """<iframe src="https://platform.twitter.com/embed/Tweet.html?id=12345"></iframe>""",
+            fontSize = 18,
+        )
+
+        assertTrue(html.contains("""event.origin !== "https://platform.twitter.com"""))
+        assertTrue(html.contains("""payload.method !== "twttr.private.resize"""))
+        assertTrue(html.contains("frame.contentWindow === event.source"))
+        assertTrue(html.contains("sourceFrame.style.height = Math.ceil(height)"))
+    }
+
+    @Test
+    fun `reader mode css does not force a twitter fallback height`() {
+        val css = readerModeCss(colors = null, fontSize = 18, lineHeight = 0)
+
+        assertTrue(
+            css.contains(
+                """
+                iframe[src^="https://platform.twitter.com/embed/Tweet.html"] {
+                    border: 0;
+                }
+                """.trimIndent(),
+            ),
+        )
+        assertFalse(css.contains("height: 250px"))
+    }
+
+    @Test
+    fun `reader mode css sizes video embeds responsively without a global height cap`() {
+        val css = readerModeCss(colors = null, fontSize = 18, lineHeight = 0)
+
+        assertTrue(
+            css.contains(
+                """
+                iframe[src^="https://www.youtube-nocookie.com/embed/"],
+                iframe[src^="https://www.youtube.com/embed/"],
+                iframe[src^="https://player.vimeo.com/video/"] {
+                    aspect-ratio: 16 / 9;
+                    height: auto;
+                    border: 0;
+                }
+                """.trimIndent(),
+            ),
+        )
+        assertFalse(css.contains("max-height: 250px"))
+    }
+
+    @Test
+    fun `reader mode css leaves ordinary iframe height unforced`() {
+        val css = readerModeCss(colors = null, fontSize = 18, lineHeight = 0)
+
+        assertTrue(
+            css.contains(
+                """
+                iframe {
+                    width: 100%;
+                    max-width: 100%;
+                    border-radius: 7px;
+                }
+                """.trimIndent(),
+            ),
+        )
     }
 
     @Test

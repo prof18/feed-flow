@@ -174,16 +174,21 @@ private fun String.escapeHtml(): String =
         .replace("\"", "&quot;")
         .replace("'", "&#39;")
 
-private const val LEADING_IMAGE_SCAN_WINDOW = 1000
-
 private fun hasLeadingImage(content: String): Boolean {
-    val window = if (content.length > LEADING_IMAGE_SCAN_WINDOW) {
-        content.substring(0, LEADING_IMAGE_SCAN_WINDOW)
-    } else {
-        content
-    }
-    return window.indexOf("<img", ignoreCase = true) >= 0
+    val imageIndex = content.indexOf("<img", ignoreCase = true)
+    if (imageIndex < 0) return false
+
+    val visiblePrefix = content.substring(0, imageIndex)
+        .replace(HTML_ELEMENT_REGEX, " ")
+        .replace("&nbsp;", " ", ignoreCase = true)
+        .replace(HTML_WHITESPACE_REGEX, " ")
+        .trim()
+    return visiblePrefix.length <= MAX_LEADING_IMAGE_PREFIX_LENGTH
 }
+
+private const val MAX_LEADING_IMAGE_PREFIX_LENGTH = 200
+private val HTML_ELEMENT_REGEX = Regex("<[^>]*>")
+private val HTML_WHITESPACE_REGEX = Regex("\\s+")
 
 internal fun readerModeCss(colors: ReaderColors?, fontSize: Int, lineHeight: Int): String {
     val fontSizeCss = "${fontSize}px"
@@ -334,6 +339,46 @@ figure {
 figcaption, cite {
     opacity: 0.5;
     font-size: small;
+}
+
+aside.callout[data-callout] {
+    margin: 1.75em 0;
+    padding: 1em;
+    border: 1px solid color-mix(in srgb, var(--reader-link) 22%, transparent);
+    border-left: 0.3em solid var(--reader-link);
+    border-radius: 10px;
+    background-color: color-mix(in srgb, var(--reader-link) 7%, transparent);
+}
+
+aside.callout[data-callout] .callout-content {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 1em;
+    align-items: center;
+}
+
+aside.callout[data-callout] .callout-media {
+    display: block;
+}
+
+aside.callout[data-callout] .callout-media img {
+    width: 96px;
+    height: 96px;
+    margin: 0;
+    object-fit: cover;
+}
+
+aside.callout[data-callout] .callout-title {
+    margin: 0.25em 0;
+    font-size: 1em;
+    line-height: 1.3;
+}
+
+aside.callout[data-callout] .callout-label {
+    font-size: 0.75em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.7;
 }
 
 .__subtitle {

@@ -131,6 +131,19 @@ class ReaderModeHtmlAndCssTest {
     }
 
     @Test
+    fun `readerModeCss visually separates semantic callouts`() {
+        val css = readerModeCss(null, 18, lineHeight = ReaderModeDefaults.LINE_HEIGHT)
+
+        assertTrue(css.contains("aside.callout[data-callout]"))
+        assertTrue(css.contains(".callout-content"))
+        assertTrue(css.contains(".callout-media"))
+        assertTrue(css.contains(".callout-label"))
+        assertTrue(css.contains(".callout-title"))
+        assertTrue(css.contains("grid-template-columns: 96px minmax(0, 1fr)"))
+        assertTrue(css.contains("border-left: 0.3em solid var(--reader-link)"))
+    }
+
+    @Test
     fun `getReaderModeStyledHtml includes line height`() {
         val html = getReaderModeStyledHtml(
             colors = null,
@@ -186,5 +199,33 @@ class ReaderModeHtmlAndCssTest {
 
         assertTrue(html.contains("https://example.com/diagram.jpg"))
         assertTrue(!html.contains("class=\"__hero\""))
+    }
+
+    @Test
+    fun `feed hero is not duplicated when responsive markup pushes image past initial html`() {
+        val responsiveMarkup = "<source srcset=\"hero.webp 400w\">".repeat(40)
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = "<figure><picture>$responsiveMarkup<img src=\"https://example.com/hero.jpg\"></picture></figure>",
+            fontSize = 18,
+            imageUrl = "https://example.com/hero.jpg",
+        )
+
+        assertTrue(html.contains("https://example.com/hero.jpg"))
+        assertTrue(!html.contains("class=\"__hero\""))
+    }
+
+    @Test
+    fun `feed hero is retained when first content image follows article prose`() {
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = "<p>${"Article prose before an inline diagram. ".repeat(8)}</p>" +
+                "<img src=\"https://example.com/diagram.jpg\">",
+            fontSize = 18,
+            imageUrl = "https://example.com/hero.jpg",
+        )
+
+        assertTrue(html.contains("class=\"__hero\""))
+        assertTrue(html.contains("https://example.com/diagram.jpg"))
     }
 }

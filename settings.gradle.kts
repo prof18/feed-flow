@@ -46,15 +46,15 @@ include("feedSync:feedbin")
 include("feedSync:networkcore")
 include("feedSync:test-utils")
 
-// Pass -Pfeedflow.kleadPath=/path/to/klead to use a local checkout instead of Maven Central.
-providers.gradleProperty("feedflow.kleadPath").orNull?.let { kleadPath ->
-    includeBuild(kleadPath) {
-        dependencySubstitution {
-            substitute(module("com.prof18:klead")).using(project(":"))
-            substitute(module("com.prof18:klead-android")).using(project(":"))
-        }
-    }
-}
+// Uncomment to use a local Klead checkout instead of the Maven Central dependency.
+// val kleadPath = providers.gradleProperty("feedflow.kleadPath")
+//     .getOrElse("../../klead")
+// includeBuild(kleadPath) {
+//     dependencySubstitution {
+//         substitute(module("com.prof18:klead")).using(project(":"))
+//         substitute(module("com.prof18:klead-android")).using(project(":"))
+//     }
+// }
 
 // includeBuild("../RSS-Parser") {
 //    dependencySubstitution {

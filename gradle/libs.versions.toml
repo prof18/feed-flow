@@ -50,6 +50,7 @@ jsoup = "1.23.1"
 jsystem-theme-detector = "3.9.1"
 junit = "4.13.2"
 kermit = "2.1.0"
+klead = "0.0.1-alpha02"
 koin-bom = "4.2.2"
 kotlin = "2.4.10"
 # Because of telemetry deck still using version 0.6.x
@@ -129,7 +130,7 @@ colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", vers
 components-ui-tooling-preview = { module = "org.jetbrains.compose.components:components-ui-tooling-preview", version.ref = "compose-multiplatform" }
 crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
 csv = { module = "de.halfbit:csv", version.ref = "csv" }
-klead = { module = "com.prof18:klead", version = "0.0.1-alpha02" }
+klead = { module = "com.prof18:klead", version.ref = "klead" }
 detekt = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 detekt-compose-rules = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose-rules" }
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }

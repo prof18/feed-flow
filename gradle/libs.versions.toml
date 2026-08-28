@@ -50,7 +50,7 @@ jsoup = "1.23.1"
 jsystem-theme-detector = "3.9.1"
 junit = "4.13.2"
 kermit = "2.1.0"
-klead = "0.0.1-alpha03"
+klead = "0.0.1-alpha04"
 koin-bom = "4.2.2"
 kotlin = "2.4.10"
 # Because of telemetry deck still using version 0.6.x

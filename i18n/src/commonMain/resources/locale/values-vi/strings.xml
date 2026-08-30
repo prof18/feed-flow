@@ -207,7 +207,7 @@
     <string name="settings_theme_light">Sáng</string>
     <string name="settings_theme_dark">Tối</string>
     <string name="icloud_connection_error">Rất tiếc, chúng tôi không thể kết nối với iCloud. Vui lòng kiểm tra xem bạn đã đăng nhập chưa, iCloud Drive đã được bật chưa và bạn còn dung lượng trống không - error code: %s.</string>
-    <string name="open_feed_settings">Mở thiết lập nguồn tin</string>
+    <string name="open_feed_settings">Thiết lập nguồn tin</string>
     <string name="reader_mode_browser_button_content_description">Mở trong trình duyệt</string>
     <string name="delete_feed_confirmation_title">Xóa nguồn tin?</string>
     <string name="delete_feed_confirmation_message">Bạn có chắc muốn xóa nguồn tin này? Thao tác này không thể hoàn tác.</string>
@@ -416,4 +416,14 @@
     <string name="mark_all_above_as_read_confirmation_message">Tất cả bài viết phía trên bài viết này sẽ được đánh dấu là đã đọc.</string>
     <string name="mark_all_below_as_read_confirmation_message">Tất cả bài viết phía dưới bài viết này sẽ được đánh dấu là đã đọc.</string>
     <string name="mark_all_below_as_read_confirmation_title">Đánh tất cả dưới là đã đọc?</string>
+    <string name="settings_use_new_article_parser">Engine chế độ đọc mới</string>
+    <string name="settings_new_reader_mode_engine_confirmation_title">Thử engine chế độ đọc mới?</string>
+    <string name="settings_new_reader_mode_engine_confirmation_message">Engine mới được thiết kế để trích xuất các bài viết chính xác hơn và tải Chế độ đọc nhanh hơn. Tính năng này vẫn đang trong giai đoạn thử nghiệm nên một số trang có thể thiếu nội dung, định dạng không chính xác hoặc có thể không tải được. Vui lòng báo cáo bất kỳ vấn đề bạn tìm thấy. Phản hồi của bạn sẽ giúp chúng tôi cải thiện Chế độ đọc cho mọi người trước khi engine này trở thành công cụ mặc định.</string>
+    <string name="server_account_subscriptions_warning">Tài khoản này sử dụng các mục đăng ký được lưu trữ trên máy chủ của nó.</string>
+    <string name="server_account_replace_local_title">Thay thế đăng ký trên thiết bị?</string>
+    <string name="server_account_replace_local_message">Việc kết nối sẽ thay thế các nguồn tin hiện được lưu trữ trên thiết bị này bằng các đăng ký từ máy chủ. Ngắt kết nối sau sẽ không khôi phục nguồn tin trên thiết bị. Trước tiên hãy xuất chúng sang OPML nếu bạn muốn giữ một bản sao.</string>
+    <string name="server_account_replace_and_connect_button">Thay thế và kết nối</string>
+    <string name="support_paywall_title">Giúp FeedFlow tiếp tục phát triển 💙</string>
+    <string name="support_purchase_thank_you_title">Bạn thật tuyệt vời! 🎉</string>
+    <string name="support_purchase_thank_you_message">Tiền ủng hộ của bạn giúp FeedFlow tiếp tục phát triển 💙 Cảm ơn bạn đã hỗ trợ quá trình phát triển không ngừng, cải tiến chu đáo và sửa lỗi. 🙏</string>
 </resources>

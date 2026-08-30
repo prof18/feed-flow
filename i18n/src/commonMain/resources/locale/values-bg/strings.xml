@@ -207,7 +207,7 @@
     <string name="settings_theme_light">Светла</string>
     <string name="settings_theme_dark">Тъмна</string>
     <string name="icloud_connection_error">За съжаление не можем да се свържем с iCloud. Моля, проверете дали сте влезли в профила си, iCloud Drive е включен и имате свободно място - error code: %s.</string>
-    <string name="open_feed_settings">Отваряне на настройките на емисията</string>
+    <string name="open_feed_settings">Настройки на емисията</string>
     <string name="reader_mode_browser_button_content_description">Отваряне в браузър</string>
     <string name="delete_feed_confirmation_title">Изтриване на емисия?</string>
     <string name="delete_feed_confirmation_message">Сигурни ли сте, че искате да изтриете тази емисия? Това действие не може да бъде отменено.</string>
@@ -419,4 +419,11 @@
     <string name="support_paywall_title">Продължавайте да растете с FeedFlow 💙</string>
     <string name="support_purchase_thank_you_title">Ти си невероятен/а! 🎉</string>
     <string name="support_purchase_thank_you_message">Вашият съвет помага на FeedFlow да продължи да расте 💙 Благодарим ви, че подкрепяте непрекъснатото развитие, обмислените подобрения и корекциите на грешки. 🙏</string>
+    <string name="settings_use_new_article_parser">Нов механизъм за режим на четене</string>
+    <string name="settings_new_reader_mode_engine_confirmation_title">Искате ли да опитате новия механизъм за режим на четене?</string>
+    <string name="settings_new_reader_mode_engine_confirmation_message">Новият механизъм е създаден, за да извлича статиите по-точно и да зарежда „Режим на четене“ по-бързо. Той все още е в експериментална фаза, така че на някои страници може да липсва съдържание, да има неправилно форматиране или изобщо да не се зареждат. Моля, съобщавайте ни за всички проблеми, които откриете. Вашите отзиви ще ни помогнат да подобрим „Режим на четене“ за всички, преди този механизъм да стане стандартен.</string>
+    <string name="server_account_subscriptions_warning">Този акаунт използва абонаментите, съхранени на неговия сървър.</string>
+    <string name="server_account_replace_local_title">Да се заменят ли локалните абонаменти?</string>
+    <string name="server_account_replace_local_message">Свързването замества емисиите, които в момента се съхраняват на това устройство, с абонаментите от сървъра. По-късно прекъсване на връзката няма да възстанови локалните емисии. Първо ги изнесете в OPML, ако искате да запазите копие.</string>
+    <string name="server_account_replace_and_connect_button">Сменете и свържете</string>
 </resources>

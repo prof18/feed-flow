@@ -104,6 +104,10 @@ Use the MCP tools when you need to interact with the running Desktop app: check 
 
 The desktop reader bundles `readability-es5.js` and `turndown-es5.js` in `shared/src/jvmMain/resources/` are committed pre-built ES5 artifacts; do not hand-edit them (the generator tool has been removed from the repo). `reader-content-parser.js` is hand-written glue and can be edited normally.
 
+### Local Klead development
+
+Klead resolves from Maven Central by default. Its composite-build substitution in `settings.gradle.kts` is deliberately commented out; only enable it for explicit local Klead work, using `-Pfeedflow.kleadPath=<checkout>` (default: `../../klead`), and do not commit that local substitution.
+
 ### Maestro E2E tests
 
 When writing or running Maestro E2E tests, follow `e2e/maestro/maestro-e2e-guide.md`.

@@ -76,5 +76,11 @@ kotlin {
                 api(libs.io.coil.network)
             }
         }
+
+        jvmTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }

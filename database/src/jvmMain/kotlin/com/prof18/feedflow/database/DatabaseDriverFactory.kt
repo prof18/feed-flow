@@ -139,6 +139,7 @@ private val requiredTables = listOf(
     "feed_source_category",
     "feed_source_preferences",
     "read_status_pending_action",
+    "read_later_marker",
     "sync_metadata",
 )
 

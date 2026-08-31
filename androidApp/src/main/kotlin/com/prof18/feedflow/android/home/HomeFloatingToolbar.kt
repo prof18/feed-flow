@@ -71,6 +71,7 @@ fun HomeFloatingToolbar(
     viewMenuState: HomeViewMenuState,
     onFeedOrderChange: (FeedOrder) -> Unit,
     onShowReadArticlesTimelineChange: (Boolean) -> Unit,
+    onReadLaterClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     var showMenu by remember { mutableStateOf(false) }
@@ -204,6 +205,7 @@ fun HomeFloatingToolbar(
                             onBackupClick()
                         },
                         onViewOptionsClick = { showViewOptionsSheet = true },
+                        onReadLaterClick = onReadLaterClick,
                     )
                 }
             }

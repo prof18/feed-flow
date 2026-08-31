@@ -22,6 +22,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.readlater.ReadLaterRepository
 import io.ktor.http.Url
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +40,7 @@ class ReaderModeViewModel internal constructor(
     private val feedStateRepository: FeedStateRepository,
     private val databaseHelper: DatabaseHelper,
     private val feedContentPreparer: FeedContentPreparer,
+    private val readLaterRepository: ReadLaterRepository,
 ) : ViewModel() {
 
     private val readerModeMutableState: MutableStateFlow<ReaderModeState> = MutableStateFlow(
@@ -68,18 +70,43 @@ class ReaderModeViewModel internal constructor(
     private var currentShownSource: ShownContentSource? = null
     private var lastRequestedSource: ShownContentSource? = null
 
-    fun setLoading() {
-        loadReaderModeJob?.cancel()
-        readerModeMutableState.value = ReaderModeState.Loading
+    private val pendingReadLaterScrollPositionMutableState = MutableStateFlow<Int?>(null)
+    val pendingReadLaterScrollPosition = pendingReadLaterScrollPositionMutableState.asStateFlow()
+
+    fun setPendingReadLaterScrollPosition(scrollPosition: Int?) {
+        pendingReadLaterScrollPositionMutableState.value = scrollPosition
     }
 
-    fun getReaderModeHtml(urlInfo: FeedItemUrlInfo) {
+    fun clearPendingReadLaterScrollPosition() {
+        pendingReadLaterScrollPositionMutableState.value = null
+    }
+
+    fun saveReadLaterMarker(scrollPosition: Int) {
+        val articleId = currentArticleId ?: return
+        viewModelScope.launch {
+            readLaterRepository.saveReadLaterMarker(articleId, scrollPosition)
+        }
+    }
+
+    fun getReaderModeHtml(urlInfo: FeedItemUrlInfo, initialScrollPosition: Int? = null) {
+        if (initialScrollPosition != null) {
+            pendingReadLaterScrollPositionMutableState.value = initialScrollPosition
+        } else if (pendingReadLaterScrollPositionMutableState.value != null && currentArticleId != urlInfo.id) {
+            // Keep pending if it's for this article, otherwise clear
+            // If opening different article without explicit scroll, clear pending
+            pendingReadLaterScrollPositionMutableState.value = null
+        }
         val effectiveSource = urlInfo.effectiveContentSource()
         val isSameArticle = selectArticle(urlInfo) && lastRequestedSource == effectiveSource
         if (!isSameArticle) {
             lastRequestedSource = effectiveSource
             loadArticleContent(urlInfo, effectiveSource)
         }
+    }
+
+    fun setLoading() {
+        loadReaderModeJob?.cancel()
+        readerModeMutableState.value = ReaderModeState.Loading
     }
 
     fun clearSelection() {

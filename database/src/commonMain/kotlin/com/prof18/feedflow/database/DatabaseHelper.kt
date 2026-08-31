@@ -26,6 +26,8 @@ import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.PrefetchQueueItem
+import com.prof18.feedflow.core.model.ReadLaterMarker
+import com.prof18.feedflow.core.model.ReadLaterMarkerWithDetails
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.core.utils.withSuspensionGuard
 import com.prof18.feedflow.db.FeedFlowDB
@@ -415,6 +417,9 @@ class DatabaseHelper(
                     dbRef.readStatusPendingActionQueries.deleteReadStatusPendingActionsForFeedItems(
                         oldItems.map { it.url_hash },
                     )
+                    oldItems.forEach { item ->
+                        dbRef.readLaterMarkerQueries.deleteReadLaterMarkersForFeedItem(item.url_hash)
+                    }
                 }
 
                 dbRef.feedItemQueries.clearOldItems(
@@ -493,6 +498,7 @@ class DatabaseHelper(
 
     suspend fun deleteFeedSource(feedSourceId: String) =
         dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.readLaterMarkerQueries.deleteReadLaterMarkersForFeedSource(feedSourceId)
             dbRef.readStatusPendingActionQueries.deleteReadStatusPendingActionsForFeedSource(feedSourceId)
             dbRef.feedItemQueries.deleteAllWithFeedSource(feedSourceId)
             dbRef.feedSourceCacheInfoQueries.deleteCacheInfo(feedSourceId)
@@ -862,6 +868,7 @@ class DatabaseHelper(
         }
 
     suspend fun deleteAll() = dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.readLaterMarkerQueries.deleteAllReadLaterMarkers()
         dbRef.readStatusPendingActionQueries.deleteAllReadStatusPendingActions()
         dbRef.feedItemQueries.deleteAll()
         dbRef.feedSourceCategoryQueries.deleteAll()
@@ -870,6 +877,7 @@ class DatabaseHelper(
     }
 
     suspend fun deleteAllE2eData() = dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.readLaterMarkerQueries.deleteAllReadLaterMarkers()
         dbRef.readStatusPendingActionQueries.deleteAllReadStatusPendingActions()
         dbRef.contentPrefetchQueueQueries.clearQueue()
         dbRef.feedItemStatusQueries.deleteAllStatuses()
@@ -1344,6 +1352,81 @@ class DatabaseHelper(
                 .selectUnfetchedItems()
                 .executeAsList()
                 .map { FeedItemToPrefetch(feedItemId = it.url_hash, url = it.url) }
+        }
+
+    // Read Later Markers
+
+    suspend fun insertReadLaterMarker(marker: ReadLaterMarker) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.readLaterMarkerQueries.insertReadLaterMarker(
+                id = marker.id,
+                feed_item_id = marker.feedItemId,
+                scroll_position = marker.scrollPosition.toLong(),
+                created_at = marker.createdAt,
+            )
+        }
+
+    suspend fun deleteReadLaterMarker(id: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.readLaterMarkerQueries.deleteReadLaterMarker(id)
+        }
+
+    suspend fun deleteReadLaterMarkersForFeedItem(feedItemId: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.readLaterMarkerQueries.deleteReadLaterMarkersForFeedItem(feedItemId)
+        }
+
+    suspend fun deleteReadLaterMarkersForFeedSource(feedSourceId: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.readLaterMarkerQueries.deleteReadLaterMarkersForFeedSource(feedSourceId)
+        }
+
+    suspend fun getReadLaterMarkers(): List<ReadLaterMarkerWithDetails> = withContext(backgroundDispatcher) {
+        dbRef.readLaterMarkerQueries.selectAllReadLaterMarkers()
+            .executeAsList()
+            .map { row ->
+                ReadLaterMarkerWithDetails(
+                    id = row.id,
+                    feedItemId = row.feed_item_id,
+                    scrollPosition = row.scroll_position.toInt(),
+                    createdAt = row.created_at,
+                    title = row.title,
+                    url = row.url,
+                    feedSourceTitle = row.feed_source_title,
+                    imageUrl = row.image_url,
+                    pubDateMillis = row.pub_date,
+                )
+            }
+    }
+
+    fun observeReadLaterMarkers(): Flow<List<ReadLaterMarkerWithDetails>> =
+        dbRef.readLaterMarkerQueries.selectAllReadLaterMarkers()
+            .asFlow()
+            .mapToList(backgroundDispatcher)
+            .map { list ->
+                list.map { row ->
+                    ReadLaterMarkerWithDetails(
+                        id = row.id,
+                        feedItemId = row.feed_item_id,
+                        scrollPosition = row.scroll_position.toInt(),
+                        createdAt = row.created_at,
+                        title = row.title,
+                        url = row.url,
+                        feedSourceTitle = row.feed_source_title,
+                        imageUrl = row.image_url,
+                        pubDateMillis = row.pub_date,
+                    )
+                }
+            }
+            .flowOn(backgroundDispatcher)
+
+    suspend fun countReadLaterMarkers(): Long = withContext(backgroundDispatcher) {
+        dbRef.readLaterMarkerQueries.countReadLaterMarkers().executeAsOne()
+    }
+
+    suspend fun deleteAllReadLaterMarkers() =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.readLaterMarkerQueries.deleteAllReadLaterMarkers()
         }
 
     companion object {

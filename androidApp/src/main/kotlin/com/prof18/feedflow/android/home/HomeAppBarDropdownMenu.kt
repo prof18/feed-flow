@@ -3,6 +3,7 @@ package com.prof18.feedflow.android.home
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Sort
+import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Settings
@@ -42,6 +43,7 @@ fun HomeAppBarDropdownMenu(
     isSyncUploadRequired: Boolean,
     onBackupClick: () -> Unit,
     onViewOptionsClick: () -> Unit,
+    onReadLaterClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showMarkAllReadDialog by remember { mutableStateOf(false) }
@@ -157,6 +159,22 @@ fun HomeAppBarDropdownMenu(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.Sort,
+                    contentDescription = null,
+                )
+            },
+        )
+
+        DropdownMenuItem(
+            onClick = {
+                onReadLaterClick()
+                closeMenu()
+            },
+            text = {
+                Text(LocalFeedFlowStrings.current.readLater)
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.BookmarkAdd,
                     contentDescription = null,
                 )
             },

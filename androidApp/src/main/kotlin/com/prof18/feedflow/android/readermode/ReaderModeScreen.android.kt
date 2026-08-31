@@ -66,6 +66,8 @@ import com.prof18.feedflow.shared.domain.readerLineHeightJs
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
+import androidx.compose.material3.SnackbarHostState
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 import kotlin.time.Duration.Companion.milliseconds
@@ -87,6 +89,9 @@ internal fun ReaderModeScreen(
     onToggleContentSource: () -> Unit,
     isDetailFullscreen: Boolean = false,
     onToggleDetailFullscreen: (() -> Unit)? = null,
+    onReadLaterClick: (Int) -> Unit = {},
+    pendingScrollPosition: Int? = null,
+    onPendingScrollConsumed: () -> Unit = {},
 ) {
     val browserManager = koinInject<BrowserManager>()
 
@@ -94,11 +99,16 @@ internal fun ReaderModeScreen(
     val navigator = rememberWebViewNavigator()
     var fullscreenImageUrl by remember { mutableStateOf<String?>(null) }
     var toolbarExpanded by rememberSaveable { mutableStateOf(true) }
+    var currentScrollPosition by remember { mutableIntStateOf(0) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val strings = LocalFeedFlowStrings.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
 
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
         Scaffold(
+            snackbarHost = { androidx.compose.material3.SnackbarHost(snackbarHostState) },
             topBar = {
                 ReaderModeToolbar(
                     navigateBack = {
@@ -188,6 +198,12 @@ internal fun ReaderModeScreen(
                         canNavigateNext = canNavigateNext,
                         onNavigateToPrevious = onNavigateToPrevious,
                         onNavigateToNext = onNavigateToNext,
+                        onReadLaterClick = {
+                            onReadLaterClick(currentScrollPosition)
+                            scope.launch {
+                                snackbarHostState.showSnackbar(strings.readLaterSavedSnackbar)
+                            }
+                        },
                     )
                 }
 
@@ -237,6 +253,9 @@ internal fun ReaderModeScreen(
                             themeMode = themeMode,
                             onExpandToolbar = { toolbarExpanded = true },
                             onCollapseToolbar = { toolbarExpanded = false },
+                            onScrollPositionChanged = { currentScrollPosition = it },
+                            pendingScrollPosition = pendingScrollPosition,
+                            onPendingScrollConsumed = onPendingScrollConsumed,
                             modifier = Modifier.testTag(
                                 ReaderModeE2eIds.article(readerModeState.readerModeData.id.id),
                             ),
@@ -328,6 +347,9 @@ private fun ReaderMode(
     navigator: WebViewNavigator,
     onExpandToolbar: () -> Unit,
     onCollapseToolbar: () -> Unit,
+    onScrollPositionChanged: (Int) -> Unit = {},
+    pendingScrollPosition: Int? = null,
+    onPendingScrollConsumed: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val bodyColor = MaterialTheme.colorScheme.onSurface.toArgb().toHexString().substring(2)
@@ -366,6 +388,9 @@ private fun ReaderMode(
     val latestOpenImage by rememberUpdatedState(onImageClick)
     val latestExpand by rememberUpdatedState(onExpandToolbar)
     val latestCollapse by rememberUpdatedState(onCollapseToolbar)
+    val latestOnScrollChanged by rememberUpdatedState(onScrollPositionChanged)
+    val latestPendingScroll by rememberUpdatedState(pendingScrollPosition)
+    val latestOnPendingConsumed by rememberUpdatedState(onPendingScrollConsumed)
 
     @Suppress("MagicNumber")
     val spacerHeightDp = (contentPadding.calculateTopPadding().value - 40f).toInt().coerceAtLeast(0)
@@ -431,6 +456,15 @@ private fun ReaderMode(
     var scrollExtent by remember { mutableIntStateOf(0) }
     var scrollEventCount by remember { mutableIntStateOf(0) }
 
+    LaunchedEffect(state.loadingState, latestPendingScroll) {
+        val target = latestPendingScroll
+        if (state.loadingState is LoadingState.Finished && target != null) {
+            delay(300.milliseconds)
+            navigator.evaluateJavaScript("window.scrollTo(0, $target);")
+            latestOnPendingConsumed()
+        }
+    }
+
     val layoutDir = LocalLayoutDirection.current
     Box(modifier = modifier.fillMaxSize()) {
         WebView(
@@ -452,6 +486,7 @@ private fun ReaderMode(
                         delta.toFloat() < -thresholdPx -> latestExpand()
                     }
                     scrollY = newScrollY
+                    latestOnScrollChanged(newScrollY)
                     @Suppress("DEPRECATION")
                     val contentHeightPx = (webView.contentHeight * webView.scale).toInt()
                     val viewportHeightPx = webView.height

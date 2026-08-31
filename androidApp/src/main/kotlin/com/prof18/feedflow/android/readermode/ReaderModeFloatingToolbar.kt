@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MoreVert
@@ -102,6 +103,7 @@ fun ReaderModeFloatingToolbar(
     onFontSizeChange: (Int) -> Unit,
     lineHeight: Int,
     onLineHeightChange: (Int) -> Unit,
+    onReadLaterClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showFontSizeMenu by remember { mutableStateOf(false) }
@@ -128,6 +130,7 @@ fun ReaderModeFloatingToolbar(
     val latestOnArchiveClick by rememberUpdatedState(onArchiveClick)
     val latestOnCommentsClick by rememberUpdatedState(onCommentsClick)
     val latestOnToggleContentSource by rememberUpdatedState(onToggleContentSource)
+    val latestOnReadLaterClick by rememberUpdatedState(onReadLaterClick)
     var isBookmarked by remember(readerModeState) {
         mutableStateOf(readerModeState.getIsBookmarked)
     }
@@ -210,6 +213,18 @@ fun ReaderModeFloatingToolbar(
                         onClick = { latestOnArchiveClick(url) },
                     ),
                 )
+            }
+            if (readerModeState is ReaderModeState.Success || readerModeState is ReaderModeState.HtmlNotAvailable) {
+                if (id != null) {
+                    add(
+                        ToolbarAction(
+                            icon = Icons.Default.BookmarkAdd,
+                            label = strings.readLater,
+                            testTag = ReaderModeE2eIds.READ_LATER_BUTTON,
+                            onClick = { latestOnReadLaterClick() },
+                        ),
+                    )
+                }
             }
             if (readerModeState is ReaderModeState.Success) {
                 add(

@@ -15,6 +15,7 @@ internal object ReaderModeE2eIds {
     const val IMAGE_VIEWER = "reader_image_viewer"
     const val IMAGE_VIEWER_CLOSE_BUTTON = "reader_image_viewer_close_button"
     const val IMAGE_VIEWER_SHARE_BUTTON = "reader_image_viewer_share_button"
+    const val READ_LATER_BUTTON = "reader_read_later_button"
 
     fun article(feedItemId: String): String =
         "reader_article_${feedItemId.toE2eIdSuffix()}"

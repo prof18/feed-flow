@@ -53,6 +53,7 @@ internal fun HomeScreen(
     onFeedSuggestionsClick: () -> Unit,
     onNavigateToNextFeed: () -> Unit,
     onImportExportClick: () -> Unit = {},
+    onReadLaterClick: () -> Unit = {},
 ) {
     val browserManager = koinInject<BrowserManager>()
     val changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = koinInject()
@@ -264,6 +265,7 @@ internal fun HomeScreen(
         viewMenuState = viewMenuState,
         onFeedOrderChange = homeViewModel::updateFeedOrder,
         onShowReadArticlesTimelineChange = homeViewModel::updateShowReadArticlesTimeline,
+        onReadLaterClick = onReadLaterClick,
     )
 
     if (showChangeCategorySheet) {

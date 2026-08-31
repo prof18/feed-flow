@@ -67,6 +67,7 @@ fun AdaptiveHomeView(
     onImportExportClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
     onNavigateToNextFeed: (() -> Unit) = {},
+    onReadLaterClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -98,6 +99,7 @@ fun AdaptiveHomeView(
             viewMenuState = viewMenuState,
             onFeedOrderChange = onFeedOrderChange,
             onShowReadArticlesTimelineChange = onShowReadArticlesTimelineChange,
+            onReadLaterClick = onReadLaterClick,
         )
     }
 

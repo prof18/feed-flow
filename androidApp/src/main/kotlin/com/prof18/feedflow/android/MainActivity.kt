@@ -47,6 +47,7 @@ import com.prof18.feedflow.android.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.android.feedsuggestions.FeedSuggestionsScreen
 import com.prof18.feedflow.android.home.HomeScreen
 import com.prof18.feedflow.android.readermode.ReaderModeScreen
+import com.prof18.feedflow.android.readlater.ReadLaterListScreen
 import com.prof18.feedflow.android.search.SearchScreen
 import com.prof18.feedflow.android.settings.SettingsScreen
 import com.prof18.feedflow.android.settings.SupportPaywallScreen
@@ -93,6 +94,7 @@ class MainActivity : BaseThemeActivity() {
     private val homeViewModel by viewModel<HomeViewModel>()
     private val browserManager by inject<BrowserManager>()
     private val readerModeParserWarmer by inject<ReaderModeParserWarmer>()
+    private val databaseHelper by inject<com.prof18.feedflow.database.DatabaseHelper>()
 
     private var currentIntent by mutableStateOf<Intent?>(null)
 
@@ -282,6 +284,7 @@ class MainActivity : BaseThemeActivity() {
                         },
                         onFeedSuggestionsClick = { backStack.add(FeedSuggestions) },
                         onNavigateToNextFeed = { homeViewModel.onNavigateToNextFeed() },
+                        onReadLaterClick = { backStack.add(ReadLaterList) },
                     )
                 }
 
@@ -400,6 +403,8 @@ class MainActivity : BaseThemeActivity() {
                         .collectAsStateWithLifecycle()
                     val canNavigateNext by readerModeViewModel.canNavigateToNextState
                         .collectAsStateWithLifecycle()
+                    val pendingScrollPosition by readerModeViewModel.pendingReadLaterScrollPosition
+                        .collectAsStateWithLifecycle()
 
                     val themeViewModel = koinViewModel<ThemeViewModel>()
                     val themeState by themeViewModel.themeState.collectAsStateWithLifecycle()
@@ -429,6 +434,28 @@ class MainActivity : BaseThemeActivity() {
                         },
                         onToggleContentSource = {
                             readerModeViewModel.toggleContentSource()
+                        },
+                        onReadLaterClick = { scrollPosition ->
+                            readerModeViewModel.saveReadLaterMarker(scrollPosition)
+                        },
+                        pendingScrollPosition = pendingScrollPosition,
+                        onPendingScrollConsumed = {
+                            readerModeViewModel.clearPendingReadLaterScrollPosition()
+                        },
+                    )
+                }
+
+                entry<ReadLaterList> {
+                    ReadLaterListScreen(
+                        navigateBack = navigateBack,
+                        onMarkerClick = { marker ->
+                            lifecycleScope.launch {
+                                val urlInfo = databaseHelper.getFeedItemUrlInfo(marker.feedItemId)
+                                if (urlInfo != null) {
+                                    readerModeViewModel.getReaderModeHtml(urlInfo, marker.scrollPosition)
+                                    backStack.add(ReaderMode)
+                                }
+                            }
                         },
                     )
                 }

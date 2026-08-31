@@ -426,4 +426,12 @@
     <string name="settings_notification_mode_category">By category</string>
     <string name="settings_notification_mode_grouped">All combined</string>
     <string name="sort_and_filter_button">Sort &amp; filter</string>
+    <string name="read_later">Read later</string>
+    <string name="read_later_button_content_description">Save for later</string>
+    <string name="read_later_saved_snackbar">Saved for later</string>
+    <string name="read_later_list_title">Read later</string>
+    <string name="read_later_empty">No saved articles yet</string>
+    <string name="read_later_remove">Remove</string>
+    <string name="read_later_remove_dialog_title">Remove read later marker?</string>
+    <string name="read_later_remove_dialog_message">Are you sure you want to remove this marker?</string>
 </resources>

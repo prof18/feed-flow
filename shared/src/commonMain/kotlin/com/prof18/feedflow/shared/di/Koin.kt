@@ -167,6 +167,13 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
+    single {
+        com.prof18.feedflow.shared.domain.readlater.ReadLaterRepository(
+            databaseHelper = get(),
+            clock = get(),
+        )
+    }
+
     factory {
         UserFeedbackReporter(
             appConfig = appConfig,
@@ -376,6 +383,13 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedStateRepository = get(),
             databaseHelper = get(),
             feedContentPreparer = get(),
+            readLaterRepository = get(),
+        )
+    }
+
+    viewModel {
+        com.prof18.feedflow.shared.presentation.ReadLaterViewModel(
+            readLaterRepository = get(),
         )
     }
 

@@ -96,6 +96,7 @@ fun AndroidHomeScreenContent(
     onBackupClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
     onNavigateToNextFeed: () -> Unit = { },
+    onReadLaterClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -364,6 +365,7 @@ fun AndroidHomeScreenContent(
                 viewMenuState = viewMenuState,
                 onFeedOrderChange = onFeedOrderChange,
                 onShowReadArticlesTimelineChange = onShowReadArticlesTimelineChange,
+                onReadLaterClick = onReadLaterClick,
             )
         }
     }

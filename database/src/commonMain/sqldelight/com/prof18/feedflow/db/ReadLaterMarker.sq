@@ -1,0 +1,37 @@
+CREATE TABLE read_later_marker (
+    id TEXT NOT NULL PRIMARY KEY,
+    feed_item_id TEXT NOT NULL,
+    scroll_position INTEGER NOT NULL,
+    created_at INTEGER NOT NULL
+);
+
+CREATE INDEX idx_read_later_created_at ON read_later_marker(created_at DESC);
+CREATE INDEX idx_read_later_feed_item_id ON read_later_marker(feed_item_id);
+
+insertReadLaterMarker:
+INSERT OR REPLACE INTO read_later_marker(id, feed_item_id, scroll_position, created_at) VALUES (?,?,?,?);
+
+selectAllReadLaterMarkers:
+SELECT read_later_marker.id, read_later_marker.feed_item_id, read_later_marker.scroll_position, read_later_marker.created_at, feed_item.title, feed_item.url, feed_source.title AS feed_source_title, feed_item.image_url, feed_item.pub_date
+FROM read_later_marker
+INNER JOIN feed_item ON read_later_marker.feed_item_id = feed_item.url_hash
+INNER JOIN feed_source ON feed_item.feed_source_id = feed_source.url_hash
+ORDER BY read_later_marker.created_at DESC;
+
+selectReadLaterMarkerById:
+SELECT id, feed_item_id, scroll_position, created_at FROM read_later_marker WHERE id = ?;
+
+deleteReadLaterMarker:
+DELETE FROM read_later_marker WHERE id = ?;
+
+deleteAllReadLaterMarkers:
+DELETE FROM read_later_marker;
+
+deleteReadLaterMarkersForFeedItem:
+DELETE FROM read_later_marker WHERE feed_item_id = ?;
+
+deleteReadLaterMarkersForFeedSource:
+DELETE FROM read_later_marker WHERE feed_item_id IN (SELECT url_hash FROM feed_item WHERE feed_source_id = ?);
+
+countReadLaterMarkers:
+SELECT COUNT(*) FROM read_later_marker;

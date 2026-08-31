@@ -99,3 +99,6 @@ internal data object BlockedWords : NavKey
 
 @Serializable
 data object FeedSuggestions : NavKey
+
+@Serializable
+data object ReadLaterList : NavKey

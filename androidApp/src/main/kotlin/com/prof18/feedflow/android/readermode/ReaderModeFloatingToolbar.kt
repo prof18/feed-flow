@@ -137,8 +137,25 @@ fun ReaderModeFloatingToolbar(
 
     val isContentVisible = expanded && readerModeState !is ReaderModeState.Loading
 
+    // Read-later must stay visible even when the bar shrinks on scroll - keep it in the
+    // fixed center area with the prev/next buttons so the user can always mark the location.
+    val readLaterAction = remember(readerModeState, strings, id) {
+        if (id != null &&
+            (readerModeState is ReaderModeState.Success || readerModeState is ReaderModeState.HtmlNotAvailable)
+        ) {
+            ToolbarAction(
+                icon = Icons.Default.BookmarkAdd,
+                label = strings.readLater,
+                testTag = ReaderModeE2eIds.READ_LATER_BUTTON,
+                onClick = { latestOnReadLaterClick() },
+            )
+        } else {
+            null
+        }
+    }
+
     // Build action lists regardless of isContentVisible so AnimatedVisibility can animate exit
-    // Order: Browser, Share | < > | Bookmark, Comments, Archive, Text Settings, RSS Content
+    // Order: Browser, Share | < > + ReadLater | Bookmark, Comments, Archive, Text Settings, RSS Content
     val leadingActions = remember(readerModeState, strings, url) {
         buildList {
             if (readerModeState !is ReaderModeState.Loading && url != null) {
@@ -214,18 +231,6 @@ fun ReaderModeFloatingToolbar(
                     ),
                 )
             }
-            if (readerModeState is ReaderModeState.Success || readerModeState is ReaderModeState.HtmlNotAvailable) {
-                if (id != null) {
-                    add(
-                        ToolbarAction(
-                            icon = Icons.Default.BookmarkAdd,
-                            label = strings.readLater,
-                            testTag = ReaderModeE2eIds.READ_LATER_BUTTON,
-                            onClick = { latestOnReadLaterClick() },
-                        ),
-                    )
-                }
-            }
             if (readerModeState is ReaderModeState.Success) {
                 add(
                     ToolbarAction(
@@ -249,6 +254,8 @@ fun ReaderModeFloatingToolbar(
             .toImmutableList()
     }
 
+    val isReadLaterVisible = readLaterAction != null && readerModeState !is ReaderModeState.Loading
+
     Surface(
         modifier = modifier,
         shape = FloatingToolbarDefaults.ContainerShape,
@@ -262,6 +269,8 @@ fun ReaderModeFloatingToolbar(
                 leadingActions = leadingActions,
                 trailingActions = trailingActions,
                 isContentVisible = isContentVisible,
+                isReadLaterVisible = isReadLaterVisible,
+                readLaterAction = readLaterAction,
                 showOverflowMenu = showOverflowMenu,
                 onShowOverflowMenu = { showOverflowMenu = it },
                 moreOptionsLabel = strings.moreOptionsButtonContentDescription,
@@ -344,6 +353,8 @@ private fun OverflowToolbarLayout(
     leadingActions: ImmutableList<ToolbarAction>,
     trailingActions: ImmutableList<ToolbarAction>,
     isContentVisible: Boolean,
+    isReadLaterVisible: Boolean,
+    readLaterAction: ToolbarAction?,
     showOverflowMenu: Boolean,
     onShowOverflowMenu: (Boolean) -> Unit,
     moreOptionsLabel: String,
@@ -357,7 +368,7 @@ private fun OverflowToolbarLayout(
         }.first().measure(constraints.copy(minWidth = 0))
         val itemWidth = samplePlaceable.width
 
-        val fixedCount = 2 // prev + next
+        val fixedCount = if (isReadLaterVisible) 3 else 2 // prev + next + read-later when available
         val fixedWidth = fixedCount * itemWidth
 
         val allActions = leadingActions + trailingActions
@@ -398,7 +409,12 @@ private fun OverflowToolbarLayout(
                     }
                 }
 
-                fixedContent()
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    fixedContent()
+                    if (isReadLaterVisible && readLaterAction != null) {
+                        ToolbarActionButton(readLaterAction)
+                    }
+                }
 
                 AnimatedVisibility(
                     visible = isContentVisible && (visibleTrailing > 0 || needsOverflow),

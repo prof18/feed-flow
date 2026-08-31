@@ -20,8 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Comment
-import androidx.compose.material.icons.filled.BookmarkAdd
-import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.RssFeed
@@ -86,6 +84,8 @@ import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.domain.readerLineHeightToTextLineHeightSp
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
+import com.prof18.feedflow.shared.ui.icons.BookmarkIcon
+import com.prof18.feedflow.shared.ui.icons.BookmarkOffIcon
 import com.prof18.feedflow.shared.ui.readermode.ReaderTextSettingsSheetContent
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -736,9 +736,9 @@ private fun BookmarkButton(
         ) {
             Icon(
                 imageVector = if (isBookmarked) {
-                    Icons.Default.BookmarkRemove
+                    BookmarkOffIcon
                 } else {
-                    Icons.Default.BookmarkAdd
+                    BookmarkIcon
                 },
                 contentDescription = null,
             )

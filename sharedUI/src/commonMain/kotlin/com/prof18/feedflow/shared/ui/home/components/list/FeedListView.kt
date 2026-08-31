@@ -25,8 +25,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.BookmarkAdd
-import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material.icons.filled.MarkEmailUnread
 import androidx.compose.material3.Card
@@ -66,6 +64,8 @@ import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.VisibleFeedItem
 import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
 import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState.NextFeedDisplayEnabledState
+import com.prof18.feedflow.shared.ui.icons.BookmarkIcon
+import com.prof18.feedflow.shared.ui.icons.BookmarkOffIcon
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -651,9 +651,9 @@ private fun SwipeActionType.toSwipeAction(
                 Icon(
                     modifier = Modifier.padding(Spacing.regular),
                     imageVector = if (feedItem.isBookmarked) {
-                        Icons.Default.BookmarkRemove
+                        BookmarkOffIcon
                     } else {
-                        Icons.Default.BookmarkAdd
+                        BookmarkIcon
                     },
                     contentDescription = if (feedItem.isBookmarked) {
                         LocalFeedFlowStrings.current.menuRemoveFromBookmark

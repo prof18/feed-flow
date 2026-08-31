@@ -1,8 +1,6 @@
 package com.prof18.feedflow.shared.ui.home.components.list
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BookmarkAdd
-import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
@@ -32,6 +30,8 @@ import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.ui.components.ConfirmationDialog
 import com.prof18.feedflow.shared.ui.home.components.ShareCommentsIcon
+import com.prof18.feedflow.shared.ui.icons.BookmarkIcon
+import com.prof18.feedflow.shared.ui.icons.BookmarkOffIcon
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -284,12 +284,12 @@ private fun ChangeBookmarkStatusMenuItem(
         leadingIcon = {
             if (feedItem.isBookmarked) {
                 Icon(
-                    imageVector = Icons.Default.BookmarkRemove,
+                    imageVector = BookmarkOffIcon,
                     contentDescription = null,
                 )
             } else {
                 Icon(
-                    imageVector = Icons.Default.BookmarkAdd,
+                    imageVector = BookmarkIcon,
                     contentDescription = null,
                 )
             }

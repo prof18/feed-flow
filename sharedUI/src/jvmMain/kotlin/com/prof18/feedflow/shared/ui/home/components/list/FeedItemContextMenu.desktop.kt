@@ -1,8 +1,6 @@
 package com.prof18.feedflow.shared.ui.home.components.list
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BookmarkAdd
-import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
@@ -27,6 +25,8 @@ import com.prof18.feedflow.shared.ui.components.ConfirmationDialog
 import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenu
 import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenuEntry
 import com.prof18.feedflow.shared.ui.home.components.ShareCommentsIcon
+import com.prof18.feedflow.shared.ui.icons.BookmarkIcon
+import com.prof18.feedflow.shared.ui.icons.BookmarkOffIcon
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -229,9 +229,9 @@ private fun buildFeedItemDesktopMenuEntries(
                 strings.menuAddToBookmark
             },
             icon = if (feedItem.isBookmarked) {
-                Icons.Default.BookmarkRemove
+                BookmarkOffIcon
             } else {
-                Icons.Default.BookmarkAdd
+                BookmarkIcon
             },
             onClick = {
                 onBookmarkClick(FeedItemId(feedItem.id), !feedItem.isBookmarked)

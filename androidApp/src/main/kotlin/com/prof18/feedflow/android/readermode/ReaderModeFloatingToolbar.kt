@@ -15,8 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.BookmarkAdd
-import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MoreVert
@@ -52,6 +50,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.i18n.FeedFlowStrings
+import com.prof18.feedflow.shared.ui.icons.BookmarkIcon
+import com.prof18.feedflow.shared.ui.icons.BookmarkOffIcon
 import com.prof18.feedflow.shared.ui.readermode.ReaderTextSettingsSheetContent
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -168,9 +168,9 @@ fun ReaderModeFloatingToolbar(
                     strings.menuAddToBookmark
                 }
                 val bookmarkIcon = if (isBookmarked) {
-                    Icons.Default.BookmarkRemove
+                    BookmarkOffIcon
                 } else {
-                    Icons.Default.BookmarkAdd
+                    BookmarkIcon
                 }
                 add(
                     ToolbarAction(

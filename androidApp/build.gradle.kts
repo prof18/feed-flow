@@ -154,6 +154,7 @@ baselineProfile {
 dependencies {
     implementation(project(":shared"))
     implementation(project(":sharedUI"))
+    implementation(project(":database"))
     implementation(libs.androidx.profileinstaller)
     "baselineProfile"(project(":benchmarks"))
  

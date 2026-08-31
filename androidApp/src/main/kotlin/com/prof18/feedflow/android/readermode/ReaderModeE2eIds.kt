@@ -11,6 +11,7 @@ internal object ReaderModeE2eIds {
     const val MORE_MENU_BUTTON = "reader_more_menu_button"
     const val PREVIOUS_BUTTON = "reader_previous_button"
     const val NEXT_BUTTON = "reader_next_button"
+    const val TOOLTIP = "reader_toolbar_tooltip"
     const val IMAGE_VIEWER = "reader_image_viewer"
     const val IMAGE_VIEWER_CLOSE_BUTTON = "reader_image_viewer_close_button"
     const val IMAGE_VIEWER_SHARE_BUTTON = "reader_image_viewer_share_button"

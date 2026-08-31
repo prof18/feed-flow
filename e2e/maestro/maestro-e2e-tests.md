@@ -38,7 +38,7 @@ Fast confidence subset. Flow files live in `e2e/maestro/{android,ios}/smoke/`.
 | SM-004 | `004-article-read-bookmark-state.yaml` | `content-rich` | Open article, bookmark via reader toolbar, article appears under Read/Bookmarks filters. |
 | SM-005 | `005-mark-all-read.yaml` | `content-rich` | Home overflow → Mark all as read confirmation, articles move to Read filter. |
 | SM-006 | `006-search-core.yaml` (+ iOS `006-search-bookmark-filter.yaml`) | `content-rich` | Search query, filter chips (All / Read / Bookmarks). iOS uses seeded query/filter deeplink. |
-| SM-007 | `007-reader-mode-core.yaml` | `reader-mode` | Open article in reader, next-article button, more menu, Text Settings sheet opens. |
+| SM-007 | `007-reader-mode-core.yaml` | `reader-mode` | Open article in reader, long-press toolbar tooltip (Android), next-article button, more menu, Text Settings sheet opens. |
 | SM-008 | `008-feed-edit-core.yaml` | `content-rich` | Drawer feed-source long-press → Feed settings, toggle hide and pin, change category, save. Android also exercises the inline rename via `inputText`; iOS skips the rename (SwiftUI text input is flaky in Maestro) and only verifies the feed lands in the new category. |
 | SM-009 | `009-feed-list-settings-persist.yaml` | `content-rich` | Feed list settings: layout, image visibility, order — mutated and persisted across relaunch. |
 | SM-010 | `010-reading-behavior-settings-persist.yaml` | `content-rich` | Reading behaviour: article open mode, show-read, auto-hide read — mutated and persisted across relaunch. |

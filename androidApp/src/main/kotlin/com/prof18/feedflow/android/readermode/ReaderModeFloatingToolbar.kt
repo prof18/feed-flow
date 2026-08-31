@@ -30,9 +30,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +60,7 @@ import com.prof18.feedflow.shared.ui.icons.BookmarkOffIcon
 import com.prof18.feedflow.shared.ui.readermode.ReaderTextSettingsSheetContent
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.exposeTestTagsAsResourceIds
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -243,32 +249,57 @@ fun ReaderModeFloatingToolbar(
                 isContentVisible = isContentVisible,
                 showOverflowMenu = showOverflowMenu,
                 onShowOverflowMenu = { showOverflowMenu = it },
+                moreOptionsLabel = strings.moreOptionsButtonContentDescription,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
             ) {
-                IconButton(
-                    modifier = Modifier
-                        .focusProperties { canFocus = expanded }
-                        .testTag(ReaderModeE2eIds.PREVIOUS_BUTTON),
-                    enabled = canNavigatePrevious,
-                    onClick = onNavigateToPrevious,
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                        positioning = TooltipAnchorPosition.Above,
+                    ),
+                    state = rememberTooltipState(),
+                    tooltip = {
+                        PlainTooltip(modifier = Modifier.toolbarTooltipE2eTag()) {
+                            Text(strings.previousArticle)
+                        }
+                    },
                 ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = strings.previousArticle,
-                    )
+                    IconButton(
+                        modifier = Modifier
+                            .focusProperties { canFocus = expanded }
+                            .testTag(ReaderModeE2eIds.PREVIOUS_BUTTON),
+                        enabled = canNavigatePrevious,
+                        onClick = onNavigateToPrevious,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = strings.previousArticle,
+                        )
+                    }
                 }
 
-                IconButton(
-                    modifier = Modifier
-                        .focusProperties { canFocus = expanded }
-                        .testTag(ReaderModeE2eIds.NEXT_BUTTON),
-                    enabled = canNavigateNext,
-                    onClick = onNavigateToNext,
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                        positioning = TooltipAnchorPosition.Above,
+                    ),
+                    state = rememberTooltipState(),
+                    tooltip = {
+                        PlainTooltip(modifier = Modifier.toolbarTooltipE2eTag()) {
+                            Text(strings.nextArticle)
+                        }
+                    },
                 ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = strings.nextArticle,
-                    )
+                    IconButton(
+                        modifier = Modifier
+                            .focusProperties { canFocus = expanded }
+                            .testTag(ReaderModeE2eIds.NEXT_BUTTON),
+                        enabled = canNavigateNext,
+                        onClick = onNavigateToNext,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = strings.nextArticle,
+                        )
+                    }
                 }
             }
         }
@@ -300,6 +331,7 @@ private fun OverflowToolbarLayout(
     isContentVisible: Boolean,
     showOverflowMenu: Boolean,
     onShowOverflowMenu: (Boolean) -> Unit,
+    moreOptionsLabel: String,
     modifier: Modifier = Modifier,
     fixedContent: @Composable () -> Unit,
 ) {
@@ -365,14 +397,26 @@ private fun OverflowToolbarLayout(
 
                         if (needsOverflow) {
                             Box {
-                                IconButton(
-                                    modifier = Modifier.testTag(ReaderModeE2eIds.MORE_MENU_BUTTON),
-                                    onClick = { onShowOverflowMenu(true) },
+                                TooltipBox(
+                                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                        positioning = TooltipAnchorPosition.Above,
+                                    ),
+                                    state = rememberTooltipState(),
+                                    tooltip = {
+                                        PlainTooltip(modifier = Modifier.toolbarTooltipE2eTag()) {
+                                            Text(moreOptionsLabel)
+                                        }
+                                    },
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.MoreVert,
-                                        contentDescription = null,
-                                    )
+                                    IconButton(
+                                        modifier = Modifier.testTag(ReaderModeE2eIds.MORE_MENU_BUTTON),
+                                        onClick = { onShowOverflowMenu(true) },
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.MoreVert,
+                                            contentDescription = moreOptionsLabel,
+                                        )
+                                    }
                                 }
                                 DropdownMenu(
                                     expanded = showOverflowMenu,
@@ -403,35 +447,51 @@ private fun OverflowToolbarLayout(
 }
 
 @Composable
-private fun ToolbarActionButton(action: ToolbarAction) {
-    val isSelected = action.isSelected
-    if (isSelected != null) {
-        FilledIconToggleButton(
-            checked = isSelected,
-            onCheckedChange = { action.onClick() },
-            modifier = action.testTagModifier(),
-            colors = IconButtonDefaults.filledIconToggleButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                checkedContainerColor = MaterialTheme.colorScheme.primary,
-                checkedContentColor = MaterialTheme.colorScheme.onPrimary,
-            ),
-        ) {
-            Icon(
-                imageVector = action.icon,
-                contentDescription = action.label,
-            )
-        }
-    } else {
-        IconButton(
-            modifier = action.testTagModifier(),
-            onClick = action.onClick,
-        ) {
-            Icon(
-                imageVector = action.icon,
-                contentDescription = action.label,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
+private fun ToolbarActionButton(
+    action: ToolbarAction,
+    modifier: Modifier = Modifier,
+) {
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Above,
+        ),
+        state = rememberTooltipState(),
+        tooltip = {
+            PlainTooltip(modifier = Modifier.toolbarTooltipE2eTag()) {
+                Text(action.label)
+            }
+        },
+        modifier = modifier,
+    ) {
+        val isSelected = action.isSelected
+        if (isSelected != null) {
+            FilledIconToggleButton(
+                checked = isSelected,
+                onCheckedChange = { action.onClick() },
+                modifier = action.testTagModifier(),
+                colors = IconButtonDefaults.filledIconToggleButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    checkedContainerColor = MaterialTheme.colorScheme.primary,
+                    checkedContentColor = MaterialTheme.colorScheme.onPrimary,
+                ),
+            ) {
+                Icon(
+                    imageVector = action.icon,
+                    contentDescription = action.label,
+                )
+            }
+        } else {
+            IconButton(
+                modifier = action.testTagModifier(),
+                onClick = action.onClick,
+            ) {
+                Icon(
+                    imageVector = action.icon,
+                    contentDescription = action.label,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
         }
     }
 }
@@ -467,3 +527,6 @@ private fun ToolbarActionMenuItem(
 
 private fun ToolbarAction.testTagModifier(): Modifier =
     testTag?.let { Modifier.testTag(it) } ?: Modifier
+
+private fun Modifier.toolbarTooltipE2eTag(): Modifier =
+    exposeTestTagsAsResourceIds().testTag(ReaderModeE2eIds.TOOLTIP)

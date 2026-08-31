@@ -16,6 +16,19 @@ appId: com.prof18.feedflow.debug
     id: reader_article_e2e_article_reader_success
 - assertVisible:
     id: reader_browser_button
+# Maestro's built-in longPressOn holds until the transient Material tooltip expires.
+# A stationary 800 ms gesture triggers the same Android long press and leaves it assertable.
+- swipe:
+    start: 21%, 89%
+    end: 21%, 89%
+    duration: 800
+    waitToSettleTimeoutMs: 0
+- assertVisible:
+    id: reader_toolbar_tooltip
+- extendedWaitUntil:
+    notVisible:
+      id: reader_toolbar_tooltip
+    timeout: 5000
 - tapOn:
     id: reader_next_button
 - extendedWaitUntil:

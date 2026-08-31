@@ -9,6 +9,11 @@ appId: com.prof18.feedflow.debug
     id: article_row_e2e_article_old
 - assertVisible:
     id: article_row_e2e_article_reader_success
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_duplicate_title
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     id: article_row_e2e_article_duplicate_title
 - tapOn:
@@ -18,6 +23,11 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     text: "Newest First"
 - back
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_newest_unread
+    direction: UP
+    timeout: 10000
 - assertVisible:
     id: article_row_e2e_article_newest_unread
 - openLink: feedflow://e2e/reset-and-seed?profile=oldest-first
@@ -28,8 +38,18 @@ appId: com.prof18.feedflow.debug
     id: article_row_e2e_article_old
 - assertVisible:
     id: article_row_e2e_article_reader_success
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_duplicate_title
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     id: article_row_e2e_article_duplicate_title
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: UP
+    timeout: 10000
 - longPressOn:
     id: article_row_e2e_article_reader_success
 - tapOn:
@@ -49,8 +69,18 @@ appId: com.prof18.feedflow.debug
     id: article_row_e2e_article_old
 - assertVisible:
     id: article_row_e2e_article_reader_success
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_duplicate_title
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     id: article_row_e2e_article_duplicate_title
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: UP
+    timeout: 10000
 - longPressOn:
     id: article_row_e2e_article_reader_success
 - tapOn:

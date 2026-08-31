@@ -42,6 +42,11 @@ appId: com.prof18.feedflow.dev
     id: account_password_input
 - assertVisible:
     id: account_password_visibility
+- tapOn:
+    id: BackButton
+- assertVisible:
+    id: accounts_provider_fresh_rss
+- stopApp
 - openLink: feedflow://e2e/reset-and-seed?profile=content-rich
 - tapOn:
     text: "^Open$"

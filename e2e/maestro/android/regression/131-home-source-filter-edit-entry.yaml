@@ -40,5 +40,5 @@ appId: com.prof18.feedflow.debug
     timeout: 10000
 - tapOn:
     id: home_more_menu_button
-- tapOn: "Edit feed"
+- tapOn: "Feed settings"
 - assertVisible: "Reader \\(website\\)"

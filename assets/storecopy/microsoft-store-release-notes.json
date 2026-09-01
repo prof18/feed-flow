@@ -1,279 +1,104 @@
 {
   "notes": {
     "bg": [
-      "• Добавени са глобални настройки и настройки за отделни емисии за отваряне на статии в режим за четене, от съдържанието на емисията или в браузър.",
-      "• Добавена е възможност за скриване на изображенията за отделни емисии.",
-      "• Добавено е конфигурируемо фоново обновяване на емисиите с индикатор за нови статии.",
-      "• Добавена е навигация към следващата емисия, когато текущата е празна.",
-      "• Добавено е потвърждение преди маркиране като прочетени на всички статии над или под дадена статия.",
-      "• Подобрени са посоката на текста при смесени езици и откриването на изображения в статиите.",
-      "• Подобрен е фокусът на клавиатурата при отваряне на режим за четене.",
-      "• Поправено е пропускането на непрочетени статии при превъртане.",
-      "• Поправени са грешки при синхронизацията за някои акаунти с FreshRSS и съвместими с Google Reader услуги."
+      "• Изпробвайте експерименталния нов механизъм за режим на четене за по-бързо и точно извличане. Помогнете ми да го подобря, като докладвате липсващо съдържание или грешно форматиране.",
+      "• Подобрени са изображенията, вграденото съдържание, кратките и изцяло визуалните статии, отметките и прекъсването на връзката с Dropbox."
     ],
     "cs": [
-      "• Přidáno globální nastavení a nastavení jednotlivých kanálů pro otevírání článků v režimu čtení, z obsahu kanálu nebo v prohlížeči.",
-      "• Přidána možnost skrýt obrázky pro jednotlivé kanály.",
-      "• Přidáno nastavitelné obnovení kanálů na pozadí s indikátorem nových článků.",
-      "• Přidána navigace na další kanál, když je aktuální kanál prázdný.",
-      "• Přidáno potvrzení před označením všech článků nad nebo pod článkem jako přečtených.",
-      "• Vylepšen směr textu ve smíšených jazycích a rozpoznávání obrázků v článcích.",
-      "• Vylepšeno zaměření klávesnice při otevírání režimu čtení.",
-      "• Opraveno přeskakování nepřečtených článků při posouvání.",
-      "• Opraveny chyby synchronizace ovlivňující některé účty FreshRSS a účty kompatibilní s Google Readerem."
+      "• Vyzkoušejte nový experimentální modul režimu čtení pro rychlejší a přesnější získávání článků. Pomozte mi jej zlepšit hlášením chybějícího obsahu nebo chyb formátování.",
+      "• Vylepšeny obrázky, vložený obsah, krátké a obrázkové články, záložky a odpojení Dropboxu."
     ],
     "de": [
-      "• Globale und Feed-spezifische Einstellungen zum Öffnen von Artikeln im Lesemodus, aus dem Feed-Inhalt oder in einem Browser hinzugefügt.",
-      "• Option zum Ausblenden von Bildern für einzelne Feeds hinzugefügt.",
-      "• Konfigurierbare Feed-Aktualisierung im Hintergrund mit Anzeige für neue Artikel hinzugefügt.",
-      "• Navigation zum nächsten Feed hinzugefügt, wenn der aktuelle Feed leer ist.",
-      "• Bestätigung vor dem Markieren aller Artikel oberhalb oder unterhalb eines Artikels als gelesen hinzugefügt.",
-      "• Textrichtung bei gemischten Sprachen und Erkennung von Artikelbildern verbessert.",
-      "• Tastaturfokus beim Öffnen des Lesemodus verbessert.",
-      "• Fehler behoben, durch den ungelesene Artikel beim Scrollen übersprungen wurden.",
-      "• Synchronisierungsfehler behoben, die einige FreshRSS- und Google-Reader-kompatible Konten betrafen."
+      "• Teste die experimentelle neue Lesemodus-Engine für eine schnellere, genauere Artikelextraktion. Hilf mir, sie zu verbessern, indem du fehlende Inhalte oder Formatierungsfehler meldest.",
+      "• Verbessert wurden Bilder, eingebettete Inhalte, kurze und reine Bildartikel, Lesezeichenaktionen und das Trennen von Dropbox."
     ],
     "de-de": [
-      "• Globale und Feed-spezifische Einstellungen zum Öffnen von Artikeln im Lesemodus, aus dem Feed-Inhalt oder in einem Browser hinzugefügt.",
-      "• Option zum Ausblenden von Bildern für einzelne Feeds hinzugefügt.",
-      "• Konfigurierbare Feed-Aktualisierung im Hintergrund mit Anzeige für neue Artikel hinzugefügt.",
-      "• Navigation zum nächsten Feed hinzugefügt, wenn der aktuelle Feed leer ist.",
-      "• Bestätigung vor dem Markieren aller Artikel oberhalb oder unterhalb eines Artikels als gelesen hinzugefügt.",
-      "• Textrichtung bei gemischten Sprachen und Erkennung von Artikelbildern verbessert.",
-      "• Tastaturfokus beim Öffnen des Lesemodus verbessert.",
-      "• Fehler behoben, durch den ungelesene Artikel beim Scrollen übersprungen wurden.",
-      "• Synchronisierungsfehler behoben, die einige FreshRSS- und Google-Reader-kompatible Konten betrafen."
+      "• Teste die experimentelle neue Lesemodus-Engine für eine schnellere, genauere Artikelextraktion. Hilf mir, sie zu verbessern, indem du fehlende Inhalte oder Formatierungsfehler meldest.",
+      "• Verbessert wurden Bilder, eingebettete Inhalte, kurze und reine Bildartikel, Lesezeichenaktionen und das Trennen von Dropbox."
     ],
     "en-us": [
-      "• Added global and per-feed controls for opening articles in Reader Mode, from feed content, or in a browser.",
-      "• Added an option to hide images for individual feeds.",
-      "• Added configurable background feed refresh with a new-article indicator.",
-      "• Added navigation to the next feed when the current feed is empty.",
-      "• Added confirmation before marking all articles above or below an item as read.",
-      "• Improved mixed-language text direction and article image detection.",
-      "• Improved keyboard focus when opening Reader Mode.",
-      "• Fixed unread articles being skipped while scrolling.",
-      "• Fixed sync failures affecting some FreshRSS and Google Reader-compatible accounts."
+      "• Try the experimental new Reader Mode engine for faster, more accurate article extraction. Help me improve it by reporting missing content or formatting issues.",
+      "• Improved Reader Mode images, embedded content, short and image-only articles, bookmark actions, and Dropbox unlinking."
     ],
     "es": [
-      "• Añadidos controles globales y por fuente para abrir artículos en modo de lectura, desde el contenido de la fuente o en un navegador.",
-      "• Añadida una opción para ocultar imágenes de fuentes individuales.",
-      "• Añadida actualización configurable de fuentes en segundo plano con un indicador de artículos nuevos.",
-      "• Añadida navegación a la siguiente fuente cuando la fuente actual está vacía.",
-      "• Añadida confirmación antes de marcar como leídos todos los artículos situados encima o debajo de un artículo.",
-      "• Mejoradas la dirección del texto en idiomas mezclados y la detección de imágenes de artículos.",
-      "• Mejorado el foco del teclado al abrir el modo de lectura.",
-      "• Corregido el salto de artículos no leídos al desplazarse.",
-      "• Corregidos fallos de sincronización que afectaban a algunas cuentas de FreshRSS y compatibles con Google Reader."
+      "• Prueba el nuevo motor experimental del modo de lectura para extraer artículos con más rapidez y precisión. Ayúdame a mejorarlo informando de contenido ausente o errores de formato.",
+      "• Mejoras en imágenes, contenido incrustado, artículos breves o solo con imágenes, marcadores y desconexión de Dropbox."
     ],
     "es-es": [
-      "• Añadidos controles globales y por fuente para abrir artículos en modo de lectura, desde el contenido de la fuente o en un navegador.",
-      "• Añadida una opción para ocultar imágenes de fuentes individuales.",
-      "• Añadida actualización configurable de fuentes en segundo plano con un indicador de artículos nuevos.",
-      "• Añadida navegación a la siguiente fuente cuando la fuente actual está vacía.",
-      "• Añadida confirmación antes de marcar como leídos todos los artículos situados encima o debajo de un artículo.",
-      "• Mejoradas la dirección del texto en idiomas mezclados y la detección de imágenes de artículos.",
-      "• Mejorado el foco del teclado al abrir el modo de lectura.",
-      "• Corregido el salto de artículos no leídos al desplazarse.",
-      "• Corregidos fallos de sincronización que afectaban a algunas cuentas de FreshRSS y compatibles con Google Reader."
+      "• Prueba el nuevo motor experimental del modo de lectura para extraer artículos con más rapidez y precisión. Ayúdame a mejorarlo informando de contenido ausente o errores de formato.",
+      "• Mejoras en imágenes, contenido incrustado, artículos breves o solo con imágenes, marcadores y desconexión de Dropbox."
     ],
     "et": [
-      "• Lisatud üldised ja voopõhised seaded artiklite avamiseks lugemisrežiimis, voo sisust või brauseris.",
-      "• Lisatud võimalus peita pilte üksikutes voogudes.",
-      "• Lisatud seadistatav voogude taustal värskendamine koos uute artiklite indikaatoriga.",
-      "• Lisatud liikumine järgmise voo juurde, kui praegune voog on tühi.",
-      "• Lisatud kinnitus enne kõigi artiklist üleval- või allpool olevate artiklite loetuks märkimist.",
-      "• Täiustatud segakeelse teksti suunda ja artiklipiltide tuvastamist.",
-      "• Täiustatud klaviatuurifookust lugemisrežiimi avamisel.",
-      "• Parandatud kerimisel vahele jäävad lugemata artiklid.",
-      "• Parandatud sünkroonimistõrked, mis mõjutasid mõningaid FreshRSS-i ja Google Readeriga ühilduvaid kontosid."
+      "• Proovi uut katselist lugemisvaate lahendust, et artikleid kiiremini ja täpsemalt eraldada. Aita seda parandada, teatades puuduvast sisust või vormindusvigadest.",
+      "• Parandatud on pildid, manustatud sisu, lühikesed ja ainult pildiga artiklid, järjehoidjad ning Dropboxi lahtiühendamine."
     ],
     "fr": [
-      "• Ajout de réglages globaux et par flux pour ouvrir les articles en mode Lecture, depuis le contenu du flux ou dans un navigateur.",
-      "• Ajout d’une option pour masquer les images de flux individuels.",
-      "• Ajout d’une actualisation configurable des flux en arrière-plan avec indicateur de nouveaux articles.",
-      "• Ajout de la navigation vers le flux suivant lorsque le flux actuel est vide.",
-      "• Ajout d’une confirmation avant de marquer comme lus tous les articles au-dessus ou au-dessous d’un article.",
-      "• Amélioration du sens du texte multilingue et de la détection des images des articles.",
-      "• Amélioration du focus clavier à l’ouverture du mode Lecture.",
-      "• Correction des articles non lus ignorés lors du défilement.",
-      "• Correction d’échecs de synchronisation affectant certains comptes FreshRSS et compatibles Google Reader."
+      "• Testez le nouveau moteur expérimental du mode Lecture pour extraire les articles plus vite et plus précisément. Aidez-moi à l’améliorer en signalant le contenu manquant ou les erreurs de formatage.",
+      "• Amélioration des images, du contenu intégré, des articles courts ou composés d’images, des favoris et de la déconnexion Dropbox."
     ],
     "gl": [
-      "• Engadidos controis globais e por fonte para abrir artigos no modo de lectura, desde o contido da fonte ou nun navegador.",
-      "• Engadida unha opción para ocultar imaxes de fontes individuais.",
-      "• Engadida a actualización configurable de fontes en segundo plano cun indicador de artigos novos.",
-      "• Engadida a navegación á seguinte fonte cando a fonte actual está baleira.",
-      "• Engadida confirmación antes de marcar como lidos todos os artigos por riba ou por baixo dun artigo.",
-      "• Melloradas a dirección do texto en idiomas mesturados e a detección de imaxes dos artigos.",
-      "• Mellorado o foco do teclado ao abrir o modo de lectura.",
-      "• Corrixido o salto de artigos non lidos ao desprazarse.",
-      "• Corrixidos fallos de sincronización que afectaban a algunhas contas de FreshRSS e compatibles con Google Reader."
+      "• Proba o novo motor experimental do modo de lectura para extraer artigos con máis rapidez e precisión. Axúdame a melloralo informando de contido ausente ou erros de formato.",
+      "• Melloras nas imaxes, contido inserido, artigos breves ou só con imaxes, marcadores e desconexión de Dropbox."
     ],
     "gl-es": [
-      "• Engadidos controis globais e por fonte para abrir artigos no modo de lectura, desde o contido da fonte ou nun navegador.",
-      "• Engadida unha opción para ocultar imaxes de fontes individuais.",
-      "• Engadida a actualización configurable de fontes en segundo plano cun indicador de artigos novos.",
-      "• Engadida a navegación á seguinte fonte cando a fonte actual está baleira.",
-      "• Engadida confirmación antes de marcar como lidos todos os artigos por riba ou por baixo dun artigo.",
-      "• Melloradas a dirección do texto en idiomas mesturados e a detección de imaxes dos artigos.",
-      "• Mellorado o foco do teclado ao abrir o modo de lectura.",
-      "• Corrixido o salto de artigos non lidos ao desprazarse.",
-      "• Corrixidos fallos de sincronización que afectaban a algunhas contas de FreshRSS e compatibles con Google Reader."
+      "• Proba o novo motor experimental do modo de lectura para extraer artigos con máis rapidez e precisión. Axúdame a melloralo informando de contido ausente ou erros de formato.",
+      "• Melloras nas imaxes, contido inserido, artigos breves ou só con imaxes, marcadores e desconexión de Dropbox."
     ],
     "he": [
-      "• נוספו הגדרות כלליות ולכל פיד לפתיחת מאמרים במצב קריאה, מתוכן הפיד או בדפדפן.",
-      "• נוספה אפשרות להסתיר תמונות עבור פידים בודדים.",
-      "• נוסף רענון פידים ברקע הניתן להגדרה עם מחוון מאמרים חדשים.",
-      "• נוספה ניווט לפיד הבא כאשר הפיד הנוכחי ריק.",
-      "• נוספה בקשת אישור לפני סימון כל המאמרים שמעל או מתחת לפריט כנקראו.",
-      "• שופרו כיוון הטקסט בשפות מעורבות וזיהוי תמונות במאמרים.",
-      "• שופר מיקוד המקלדת בעת פתיחת מצב קריאה.",
-      "• תוקן דילוג על מאמרים שלא נקראו בגלילה.",
-      "• תוקנו כשלי סנכרון שהשפיעו על חלק מחשבונות FreshRSS וחשבונות תואמי Google Reader."
+      "• נסו את מנוע מצב הקריאה הניסיוני החדש לחילוץ מהיר ומדויק יותר. עזרו לי לשפר אותו בדיווח על תוכן חסר או בעיות עיצוב.",
+      "• שופרו תמונות, תוכן מוטמע, מאמרים קצרים או מבוססי תמונות, פעולות סימניות וניתוק Dropbox."
     ],
     "hu": [
-      "• Globális és hírfolyamonkénti beállítások hozzáadva a cikkek olvasási módban, hírfolyam-tartalomból vagy böngészőben való megnyitásához.",
-      "• Hozzáadva egy lehetőség a képek elrejtésére egyes hírfolyamokban.",
-      "• Hozzáadva a beállítható háttérben történő hírfolyam-frissítés új cikkek jelzőjével.",
-      "• Hozzáadva a következő hírfolyamra való navigáció, ha az aktuális hírfolyam üres.",
-      "• Hozzáadva megerősítés, mielőtt egy cikk feletti vagy alatti összes cikket olvasottnak jelölne.",
-      "• Javítva a vegyes nyelvű szöveg iránya és a cikkképek felismerése.",
-      "• Javítva a billentyűzetfókusz az olvasási mód megnyitásakor.",
-      "• Javítva az olvasatlan cikkek görgetés közbeni kihagyása.",
-      "• Javítva a szinkronizálási hibák, amelyek egyes FreshRSS- és Google Reader-kompatibilis fiókokat érintettek."
+      "• Próbáld ki a kísérleti új olvasási mód motort a gyorsabb, pontosabb cikkkinyeréshez. Segíts nekem továbbfejleszteni a hiányzó tartalom vagy formázási hibák jelentésével.",
+      "• Javultak a képek, beágyazások, rövid és csak képes cikkek, könyvjelzőműveletek és a Dropbox leválasztása."
     ],
     "it": [
-      "• Aggiunti controlli globali e per singolo feed per aprire gli articoli in modalità Lettura, dal contenuto del feed o in un browser.",
-      "• Aggiunta un’opzione per nascondere le immagini per singoli feed.",
-      "• Aggiunto l’aggiornamento configurabile dei feed in background con un indicatore di nuovi articoli.",
-      "• Aggiunta la navigazione al feed successivo quando quello corrente è vuoto.",
-      "• Aggiunta una conferma prima di contrassegnare come letti tutti gli articoli sopra o sotto un elemento.",
-      "• Migliorate la direzione del testo in lingue miste e il rilevamento delle immagini degli articoli.",
-      "• Migliorato il focus della tastiera all’apertura della modalità Lettura.",
-      "• Corretto il salto di articoli non letti durante lo scorrimento.",
-      "• Corretti errori di sincronizzazione che interessavano alcuni account FreshRSS e compatibili con Google Reader."
+      "• Prova il nuovo motore sperimentale della modalità Lettura per estrarre gli articoli più rapidamente e con maggiore precisione. Aiutami a migliorarlo segnalando contenuti mancanti o errori di formattazione.",
+      "• Migliorati immagini, contenuti incorporati, articoli brevi o di sole immagini, azioni dei segnalibri e scollegamento di Dropbox."
     ],
     "ja": [
-      "• 記事をリーダーモード、フィードの本文、またはブラウザーで開くための全体設定とフィードごとの設定を追加しました。",
-      "• フィードごとに画像を非表示にするオプションを追加しました。",
-      "• 新着記事の表示を備えた、設定可能なバックグラウンドでのフィード更新を追加しました。",
-      "• 現在のフィードが空の場合に次のフィードへ移動する機能を追加しました。",
-      "• 項目より上または下のすべての記事を既読にする前に確認を追加しました。",
-      "• 複数言語が混在するテキストの方向と記事画像の検出を改善しました。",
-      "• リーダーモードを開く際のキーボードフォーカスを改善しました。",
-      "• スクロール中に未読記事が飛ばされる問題を修正しました。",
-      "• 一部のFreshRSSおよびGoogle Reader互換アカウントで発生する同期エラーを修正しました。"
+      "• 実験的な新しいリーダーモードエンジンで、記事をより高速かつ正確に抽出できます。コンテンツの欠落や表示の問題をご報告いただき、改善にご協力ください。",
+      "• 画像、埋め込みコンテンツ、短い記事や画像のみの記事、ブックマーク操作、Dropboxのリンク解除を改善しました。"
     ],
     "pl": [
-      "• Dodano globalne ustawienia i ustawienia dla poszczególnych kanałów otwierania artykułów w trybie czytania, z treści kanału lub w przeglądarce.",
-      "• Dodano opcję ukrywania obrazów dla pojedynczych kanałów.",
-      "• Dodano konfigurowalne odświeżanie kanałów w tle ze wskaźnikiem nowych artykułów.",
-      "• Dodano przejście do następnego kanału, gdy bieżący kanał jest pusty.",
-      "• Dodano potwierdzenie przed oznaczeniem wszystkich artykułów powyżej lub poniżej elementu jako przeczytanych.",
-      "• Poprawiono kierunek tekstu w mieszanych językach i wykrywanie obrazów w artykułach.",
-      "• Poprawiono fokus klawiatury podczas otwierania trybu czytania.",
-      "• Naprawiono pomijanie nieprzeczytanych artykułów podczas przewijania.",
-      "• Naprawiono błędy synchronizacji dotyczące niektórych kont FreshRSS i zgodnych z Google Reader."
+      "• Wypróbuj nowy eksperymentalny silnik trybu czytania, aby szybciej i dokładniej wyodrębniać artykuły. Pomóż mi go ulepszyć, zgłaszając brakującą treść lub błędy formatowania.",
+      "• Ulepszono obrazy, osadzone treści, krótkie i obrazkowe artykuły, zakładki oraz odłączanie Dropbox."
     ],
     "pt-br": [
-      "• Adicionados controles globais e por feed para abrir artigos no modo Leitura, a partir do conteúdo do feed ou em um navegador.",
-      "• Adicionada uma opção para ocultar imagens de feeds individuais.",
-      "• Adicionada atualização configurável de feeds em segundo plano com indicador de novos artigos.",
-      "• Adicionada navegação para o próximo feed quando o feed atual está vazio.",
-      "• Adicionada confirmação antes de marcar como lidos todos os artigos acima ou abaixo de um item.",
-      "• Melhoradas a direção do texto em idiomas mistos e a detecção de imagens de artigos.",
-      "• Melhorado o foco do teclado ao abrir o modo Leitura.",
-      "• Corrigido o salto de artigos não lidos durante a rolagem.",
-      "• Corrigidas falhas de sincronização que afetavam algumas contas do FreshRSS e compatíveis com Google Reader."
+      "• Teste o novo mecanismo experimental do modo Leitura para extrair artigos com mais rapidez e precisão. Ajude-me a melhorar reportando conteúdo ausente ou erros de formatação.",
+      "• Melhorias em imagens, conteúdo incorporado, artigos curtos ou só com imagens, ações de favoritos e desvinculação do Dropbox."
     ],
     "ru": [
-      "• Добавлены общие и индивидуальные для лент настройки открытия статей в режиме чтения, из содержимого ленты или в браузере.",
-      "• Добавлена возможность скрывать изображения для отдельных лент.",
-      "• Добавлено настраиваемое фоновое обновление лент с индикатором новых статей.",
-      "• Добавлена навигация к следующей ленте, если текущая лента пуста.",
-      "• Добавлено подтверждение перед отметкой всех статей выше или ниже элемента как прочитанных.",
-      "• Улучшены направление текста при смешанных языках и обнаружение изображений в статьях.",
-      "• Улучшен фокус клавиатуры при открытии режима чтения.",
-      "• Исправлен пропуск непрочитанных статей при прокрутке.",
-      "• Исправлены ошибки синхронизации, затрагивавшие некоторые учётные записи FreshRSS и совместимые с Google Reader."
+      "• Попробуйте новый экспериментальный движок режима чтения для более быстрого и точного извлечения статей. Помогите мне улучшить его, сообщая о пропущенном содержимом или ошибках форматирования.",
+      "• Улучшены изображения, встроенные материалы, короткие статьи, закладки и отвязка Dropbox."
     ],
     "sk": [
-      "• Pridané globálne nastavenia a nastavenia jednotlivých kanálov na otváranie článkov v režime čítania, z obsahu kanála alebo v prehliadači.",
-      "• Pridaná možnosť skryť obrázky pre jednotlivé kanály.",
-      "• Pridané konfigurovateľné obnovovanie kanálov na pozadí s indikátorom nových článkov.",
-      "• Pridaná navigácia na ďalší kanál, keď je aktuálny kanál prázdny.",
-      "• Pridané potvrdenie pred označením všetkých článkov nad alebo pod položkou ako prečítaných.",
-      "• Vylepšený smer textu pri zmiešaných jazykoch a rozpoznávanie obrázkov v článkoch.",
-      "• Vylepšené zameranie klávesnice pri otváraní režimu čítania.",
-      "• Opravené preskakovanie neprečítaných článkov pri posúvaní.",
-      "• Opravené chyby synchronizácie ovplyvňujúce niektoré účty FreshRSS a účty kompatibilné s Google Readerom."
+      "• Vyskúšajte nový experimentálny mechanizmus režimu čítania na rýchlejšie a presnejšie získavanie článkov. Pomôžte mi ho zlepšiť nahlasovaním chýbajúceho obsahu alebo chýb formátovania.",
+      "• Zlepšili sa obrázky, vložený obsah, krátke a obrazové články, záložky aj odpojenie Dropboxu."
     ],
     "ta": [
-      "• வாசிப்பு முறை, ஊட்ட உள்ளடக்கம் அல்லது உலாவியில் கட்டுரைகளைத் திறக்க உலகளாவிய மற்றும் ஒவ்வொரு ஊட்டத்திற்குமான கட்டுப்பாடுகள் சேர்க்கப்பட்டன.",
-      "• தனிப்பட்ட ஊட்டங்களுக்கான படங்களை மறைக்கும் விருப்பம் சேர்க்கப்பட்டது.",
-      "• புதிய கட்டுரை காட்டியுடன், அமைக்கக்கூடிய பின்னணி ஊட்டப் புதுப்பிப்பு சேர்க்கப்பட்டது.",
-      "• தற்போதைய ஊட்டம் காலியாக இருக்கும்போது அடுத்த ஊட்டத்திற்குச் செல்லும் வழிசெலுத்தல் சேர்க்கப்பட்டது.",
-      "• ஒரு உருப்படிக்கு மேலே அல்லது கீழே உள்ள அனைத்து கட்டுரைகளையும் படித்ததாகக் குறிக்கும் முன் உறுதிப்படுத்தல் சேர்க்கப்பட்டது.",
-      "• கலப்பு மொழி உரைத் திசையும் கட்டுரைப் படங்களைக் கண்டறிதலும் மேம்படுத்தப்பட்டன.",
-      "• வாசிப்பு முறையைத் திறக்கும்போது விசைப்பலகை கவனம் மேம்படுத்தப்பட்டது.",
-      "• உருட்டும்போது படிக்காத கட்டுரைகள் தவிர்க்கப்படுவது சரிசெய்யப்பட்டது.",
-      "• சில FreshRSS மற்றும் Google Reader-இணக்கமான கணக்குகளைப் பாதித்த ஒத்திசைவு தோல்விகள் சரிசெய்யப்பட்டன."
+      "• வேகமாகவும் துல்லியமாகவும் கட்டுரைகளைப் பிரித்தெடுக்க புதிய சோதனை வாசிப்பு முறை இயந்திரத்தை முயலுங்கள். விடுபட்ட உள்ளடக்கம் அல்லது வடிவமைப்புப் பிழைகளைப் புகாரளித்து மேம்படுத்த உதவுங்கள்.",
+      "• படங்கள், உட்பொதிகள், குறுகிய மற்றும் படம் மட்டுமே உள்ள கட்டுரைகள், புத்தகக்குறிகள், Dropbox இணைப்பு நீக்கம் மேம்படுத்தப்பட்டன."
     ],
     "tr": [
-      "• Makaleleri Okuma Modunda, akış içeriğinden veya tarayıcıda açmak için genel ve akış başına denetimler eklendi.",
-      "• Tek tek akışlardaki görselleri gizleme seçeneği eklendi.",
-      "• Yeni makale göstergeli, yapılandırılabilir arka plan akış yenilemesi eklendi.",
-      "• Geçerli akış boş olduğunda sonraki akışa geçiş eklendi.",
-      "• Bir öğenin üstündeki veya altındaki tüm makaleleri okundu olarak işaretlemeden önce onay eklendi.",
-      "• Karışık dillerde metin yönü ve makale görseli algılama iyileştirildi.",
-      "• Okuma Modunu açarken klavye odağı iyileştirildi.",
-      "• Kaydırma sırasında okunmamış makalelerin atlanması düzeltildi.",
-      "• Bazı FreshRSS ve Google Reader uyumlu hesapları etkileyen eşitleme hataları düzeltildi."
+      "• Daha hızlı ve doğru makale çıkarımı için yeni deneysel Okuma Modu motorunu deneyin. Eksik içerik veya biçimlendirme sorunlarını bildirerek geliştirmeme yardım edin.",
+      "• Görseller, gömülü içerik, kısa ve yalnızca görsel içeren makaleler, yer imleri ve Dropbox bağlantısını kaldırma iyileştirildi."
     ],
     "uk": [
-      "• Додано глобальні та окремі для кожної стрічки налаштування відкриття статей у режимі читання, із вмісту стрічки або в браузері.",
-      "• Додано можливість приховувати зображення для окремих стрічок.",
-      "• Додано налаштовуване фонове оновлення стрічок з індикатором нових статей.",
-      "• Додано перехід до наступної стрічки, коли поточна стрічка порожня.",
-      "• Додано підтвердження перед позначенням прочитаними всіх статей над або під елементом.",
-      "• Покращено напрямок тексту для змішаних мов і виявлення зображень у статтях.",
-      "• Покращено фокус клавіатури під час відкриття режиму читання.",
-      "• Виправлено пропуск непрочитаних статей під час прокручування.",
-      "• Виправлено помилки синхронізації, що впливали на деякі облікові записи FreshRSS і сумісні з Google Reader."
+      "• Спробуйте новий експериментальний рушій режиму читання для швидшого й точнішого вилучення статей. Допоможіть мені покращити його, повідомляючи про відсутній вміст чи помилки форматування.",
+      "• Покращено зображення, вбудований вміст, короткі статті, закладки та від’єднання Dropbox."
     ],
     "vi": [
-      "• Đã thêm tùy chọn chung và theo từng nguồn cấp để mở bài viết ở chế độ Đọc, từ nội dung nguồn cấp hoặc trong trình duyệt.",
-      "• Đã thêm tùy chọn ẩn hình ảnh cho từng nguồn cấp.",
-      "• Đã thêm tính năng làm mới nguồn cấp trong nền có thể cấu hình với chỉ báo bài viết mới.",
-      "• Đã thêm tính năng chuyển đến nguồn cấp tiếp theo khi nguồn cấp hiện tại trống.",
-      "• Đã thêm xác nhận trước khi đánh dấu đã đọc tất cả bài viết phía trên hoặc phía dưới một mục.",
-      "• Đã cải thiện hướng văn bản với các ngôn ngữ trộn lẫn và khả năng phát hiện hình ảnh bài viết.",
-      "• Đã cải thiện tiêu điểm bàn phím khi mở chế độ Đọc.",
-      "• Đã sửa lỗi bỏ qua bài viết chưa đọc khi cuộn.",
-      "• Đã sửa lỗi đồng bộ ảnh hưởng đến một số tài khoản FreshRSS và tương thích với Google Reader."
+      "• Thử Engine chế độ đọc mới mang tính thử nghiệm để trích xuất bài viết nhanh và chính xác hơn. Hãy giúp tôi cải thiện bằng cách báo nội dung bị thiếu hoặc lỗi định dạng.",
+      "• Cải thiện hình ảnh, nội dung nhúng, bài ngắn hoặc chỉ có hình, thao tác dấu trang và ngắt kết nối Dropbox."
     ],
     "zh-cn": [
-      "• 新增全局和按订阅源设置，可在阅读模式、订阅源内容或浏览器中打开文章。",
-      "• 新增为单个订阅源隐藏图片的选项。",
-      "• 新增可配置的后台订阅源刷新和新文章提示。",
-      "• 当前订阅源为空时，可导航到下一个订阅源。",
-      "• 新增在将项目上方或下方的所有文章标为已读前的确认步骤。",
-      "• 改进了混合语言的文本方向和文章图片检测。",
-      "• 改进了打开阅读模式时的键盘焦点。",
-      "• 修复了滚动时跳过未读文章的问题。",
-      "• 修复了影响部分 FreshRSS 和兼容 Google Reader 账户的同步失败问题。"
+      "• 试用实验性的新阅读模式引擎，更快、更准确地提取文章。如遇内容缺失或格式问题，请反馈并帮助我改进。",
+      "• 改进了图片、嵌入内容、短文和纯图文章、书签操作以及 Dropbox 解绑。"
     ],
     "zh-hans": [
-      "• 新增全局和按订阅源设置，可在阅读模式、订阅源内容或浏览器中打开文章。",
-      "• 新增为单个订阅源隐藏图片的选项。",
-      "• 新增可配置的后台订阅源刷新和新文章提示。",
-      "• 当前订阅源为空时，可导航到下一个订阅源。",
-      "• 新增在将项目上方或下方的所有文章标为已读前的确认步骤。",
-      "• 改进了混合语言的文本方向和文章图片检测。",
-      "• 改进了打开阅读模式时的键盘焦点。",
-      "• 修复了滚动时跳过未读文章的问题。",
-      "• 修复了影响部分 FreshRSS 和兼容 Google Reader 账户的同步失败问题。"
+      "• 试用实验性的新阅读模式引擎，更快、更准确地提取文章。如遇内容缺失或格式问题，请反馈并帮助我改进。",
+      "• 改进了图片、嵌入内容、短文和纯图文章、书签操作以及 Dropbox 解绑。"
     ]
   }
 }

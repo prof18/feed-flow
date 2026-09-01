@@ -1,4 +1,2 @@
-• Choose how articles open globally or for each feed: Reader Mode, feed content, in-app browser, or your preferred browser.
-• Hide images per feed and jump to the next feed when one is empty.
-• Confirm before marking all articles above or below as read.
-• Fixed skipped unread articles while scrolling, mixed-language text direction, and some FreshRSS/GReader sync failures.
+• Try the experimental new Reader Mode engine for faster, more accurate article extraction. Help me improve it by reporting missing content or formatting issues.
+• Improved Reader Mode images, embedded content, short and image-only articles, bookmark actions, and Dropbox unlinking.

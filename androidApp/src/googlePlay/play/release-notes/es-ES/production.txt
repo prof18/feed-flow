@@ -1,4 +1,2 @@
-• Elige cómo abrir los artículos globalmente o para cada fuente: modo de lectura, contenido de la fuente, navegador integrado o tu navegador preferido.
-• Oculta las imágenes de fuentes concretas y salta a la siguiente fuente cuando una esté vacía.
-• Confirma antes de marcar como leídos todos los artículos de arriba o de abajo.
-• Corregidos artículos no leídos que se saltaban al desplazarse, la dirección de texto en idiomas mezclados y algunos fallos de sincronización con FreshRSS/GReader.
+• Prueba el nuevo motor experimental del modo de lectura para extraer artículos con más rapidez y precisión. Ayúdame a mejorarlo informando de contenido ausente o errores de formato.
+• Mejoras en imágenes, contenido incrustado, artículos breves o solo con imágenes, marcadores y desconexión de Dropbox.

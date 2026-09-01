@@ -1,4 +1,2 @@
-• Choisissez l’ouverture des articles globalement ou pour chaque flux : mode Lecture, contenu du flux, navigateur intégré ou navigateur préféré.
-• Masquez les images de flux individuels et passez au flux suivant lorsqu’un flux est vide.
-• Confirmez avant de marquer comme lus tous les articles au-dessus ou au-dessous.
-• Correction d’articles non lus ignorés lors du défilement, du sens du texte multilingue et de certains échecs de synchronisation FreshRSS/GReader.
+• Testez le nouveau moteur expérimental du mode Lecture pour extraire les articles plus vite et plus précisément. Aidez-moi à l’améliorer en signalant le contenu manquant ou les erreurs de formatage.
+• Amélioration des images, du contenu intégré, des articles courts ou composés d’images, des favoris et de la déconnexion Dropbox.

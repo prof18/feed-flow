@@ -1,4 +1,2 @@
-• Válaszd ki, hogyan nyíljanak meg a cikkek globálisan vagy hírfolyamonként: olvasási mód, hírfolyam-tartalom, alkalmazáson belüli böngésző vagy az általad választott böngésző.
-• Rejtsd el a képeket egyes hírfolyamokban, és ugorj a következőre, ha egy üres.
-• Erősítsd meg, mielőtt minden feljebb vagy lejjebb lévő cikket olvasottnak jelölnél.
-• Javítva: görgetéskor kihagyott olvasatlan cikkek, vegyes nyelvű szövegirány és néhány FreshRSS-/GReader-szinkronizálási hiba.
+• Próbáld ki a kísérleti új olvasási mód motort a gyorsabb, pontosabb cikkkinyeréshez. Segíts nekem továbbfejleszteni a hiányzó tartalom vagy formázási hibák jelentésével.
+• Javultak a képek, beágyazások, rövid és csak képes cikkek, könyvjelzőműveletek és a Dropbox leválasztása.

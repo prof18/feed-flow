@@ -1,4 +1,2 @@
-• Escolha como abrir artigos globalmente ou para cada feed: modo Leitura, conteúdo do feed, navegador integrado ou seu navegador preferido.
-• Oculte imagens de feeds específicos e avance para o próximo feed quando um estiver vazio.
-• Confirme antes de marcar como lidos todos os artigos acima ou abaixo.
-• Corrigidos artigos não lidos ignorados durante a rolagem, direção de texto em idiomas mistos e algumas falhas de sincronização do FreshRSS/GReader.
+• Teste o novo mecanismo experimental do modo Leitura para extrair artigos com mais rapidez e precisão. Ajude-me a melhorar reportando conteúdo ausente ou erros de formatação.
+• Melhorias em imagens, conteúdo incorporado, artigos curtos ou só com imagens, ações de favoritos e desvinculação do Dropbox.

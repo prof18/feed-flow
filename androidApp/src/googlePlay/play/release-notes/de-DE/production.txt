@@ -1,4 +1,2 @@
-• Lege global oder für jeden Feed fest, wie Artikel geöffnet werden: Lesemodus, Feed-Inhalt, In-App-Browser oder dein bevorzugter Browser.
-• Blende Bilder für einzelne Feeds aus und springe zum nächsten Feed, wenn einer leer ist.
-• Bestätige, bevor du alle Artikel oberhalb oder unterhalb als gelesen markierst.
-• Fehler behoben, durch den ungelesene Artikel beim Scrollen übersprungen wurden, sowie Probleme mit gemischter Textrichtung und einigen FreshRSS-/GReader-Synchronisierungen.
+• Teste die experimentelle neue Lesemodus-Engine für eine schnellere, genauere Artikelextraktion. Hilf mir, sie zu verbessern, indem du fehlende Inhalte oder Formatierungsfehler meldest.
+• Verbessert wurden Bilder, eingebettete Inhalte, kurze und reine Bildartikel, Lesezeichenaktionen und das Trennen von Dropbox.

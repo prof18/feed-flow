@@ -1,4 +1,2 @@
-• Scegli come aprire gli articoli globalmente o per ogni feed: modalità Lettura, contenuto del feed, browser integrato o il tuo browser preferito.
-• Nascondi le immagini per singoli feed e passa al feed successivo quando uno è vuoto.
-• Conferma prima di contrassegnare come letti tutti gli articoli sopra o sotto.
-• Corretti gli articoli non letti saltati durante lo scorrimento, la direzione del testo in lingue miste e alcuni errori di sincronizzazione FreshRSS/GReader.
+• Prova il nuovo motore sperimentale della modalità Lettura per estrarre gli articoli più rapidamente e con maggiore precisione. Aiutami a migliorarlo segnalando contenuti mancanti o errori di formattazione.
+• Migliorati immagini, contenuti incorporati, articoli brevi o di sole immagini, azioni dei segnalibri e scollegamento di Dropbox.

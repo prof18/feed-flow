@@ -1,4 +1,2 @@
-• Vyberte, ako sa majú články otvárať globálne alebo pre každý kanál: režim čítania, obsah kanála, vstavaný prehliadač alebo váš preferovaný prehliadač.
-• Skryte obrázky pre jednotlivé kanály a prejdite na ďalší kanál, keď je jeden prázdny.
-• Pred označením všetkých článkov nad alebo pod aktuálnym ako prečítaných vyžadujte potvrdenie.
-• Opravené preskakovanie neprečítaných článkov pri posúvaní, smer textu v zmiešaných jazykoch a niektoré chyby synchronizácie FreshRSS/GReader.
+• Vyskúšajte nový experimentálny mechanizmus režimu čítania na rýchlejšie a presnejšie získavanie článkov. Pomôžte mi ho zlepšiť nahlasovaním chýbajúceho obsahu alebo chýb formátovania.
+• Zlepšili sa obrázky, vložený obsah, krátke a obrazové články, záložky aj odpojenie Dropboxu.

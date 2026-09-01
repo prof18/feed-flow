@@ -87,6 +87,13 @@
   </content_rating>
 
   <releases>
+  <release version="1.17.0" date="2026-09-01">
+      <description>
+          <p>Try the experimental new Reader Mode engine for faster, more accurate article extraction. Help me improve it by reporting missing content or formatting issues.</p>
+          <p>Improved Reader Mode images, embedded content, and support for short and image-only articles.</p>
+          <p>Made bookmark actions clearer and fixed Dropbox unlinking.</p>
+      </description>
+  </release>
   <release version="1.16.0" date="2026-08-15">
       <description>
           <p>Added global and per-feed controls for opening articles in Reader Mode, from feed content, or in a browser.</p>

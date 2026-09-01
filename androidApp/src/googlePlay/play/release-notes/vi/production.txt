@@ -1,4 +1,2 @@
-• Chọn cách mở bài viết trên toàn ứng dụng hoặc cho từng nguồn cấp: chế độ Đọc, nội dung nguồn cấp, trình duyệt trong ứng dụng hoặc trình duyệt bạn muốn dùng.
-• Ẩn hình ảnh cho từng nguồn cấp và chuyển sang nguồn cấp tiếp theo khi một nguồn cấp trống.
-• Xác nhận trước khi đánh dấu đã đọc tất cả bài viết phía trên hoặc phía dưới.
-• Đã sửa lỗi bỏ qua bài viết chưa đọc khi cuộn, hướng văn bản với các ngôn ngữ trộn lẫn và một số lỗi đồng bộ FreshRSS/GReader.
+• Thử Engine chế độ đọc mới mang tính thử nghiệm để trích xuất bài viết nhanh và chính xác hơn. Hãy giúp tôi cải thiện bằng cách báo nội dung bị thiếu hoặc lỗi định dạng.
+• Cải thiện hình ảnh, nội dung nhúng, bài ngắn hoặc chỉ có hình, thao tác dấu trang và ngắt kết nối Dropbox.

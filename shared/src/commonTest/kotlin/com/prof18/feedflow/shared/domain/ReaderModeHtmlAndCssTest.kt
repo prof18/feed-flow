@@ -216,6 +216,24 @@ class ReaderModeHtmlAndCssTest {
     }
 
     @Test
+    fun `feed hero is not duplicated when a long summary heading precedes the leading image`() {
+        val summary = "A long article summary that introduces the story before its lead image. ".repeat(5)
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = "<h2>$summary</h2>" +
+                "<figure><img src=\"https://example.com/hero.jpg\"></figure>" +
+                "<p>Article body</p>",
+            fontSize = 18,
+            imageUrl = "https://example.com/hero.jpg",
+        )
+
+        assertTrue(summary.length > 200)
+        assertTrue(html.contains(summary))
+        assertTrue(html.contains("https://example.com/hero.jpg"))
+        assertFalse(html.contains("class=\"__hero\""))
+    }
+
+    @Test
     fun `feed hero is retained when first content image follows article prose`() {
         val html = getReaderModeStyledHtml(
             colors = null,

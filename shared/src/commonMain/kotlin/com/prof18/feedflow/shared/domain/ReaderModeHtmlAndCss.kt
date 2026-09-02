@@ -179,6 +179,7 @@ private fun hasLeadingImage(content: String): Boolean {
     if (imageIndex < 0) return false
 
     val visiblePrefix = content.substring(0, imageIndex)
+        .replace(HTML_HEADING_REGEX, " ")
         .replace(HTML_ELEMENT_REGEX, " ")
         .replace("&nbsp;", " ", ignoreCase = true)
         .replace(HTML_WHITESPACE_REGEX, " ")
@@ -187,6 +188,10 @@ private fun hasLeadingImage(content: String): Boolean {
 }
 
 private const val MAX_LEADING_IMAGE_PREFIX_LENGTH = 200
+private val HTML_HEADING_REGEX = Regex(
+    """<h[1-6]\b[^>]*>.*?</h[1-6]\s*>""",
+    setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL),
+)
 private val HTML_ELEMENT_REGEX = Regex("<[^>]*>")
 private val HTML_WHITESPACE_REGEX = Regex("\\s+")
 

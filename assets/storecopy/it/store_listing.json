@@ -1,9 +1,9 @@
 {
     "title": "FeedFlow - Lettore di Feed RSS",
-    "google_play_short_description": "Lettore RSS minimale con lettura offline, modalità lettura e opzioni di sincronizzazione flessibili.",
-    "app_store_subtitle": "Leggi Offline. Sincronizza a Modo Tuo.",
-    "app_store_promotional_text": "Open source e minimale. Leggi nel browser o in Modalità Lettura, salva gli articoli in cache per la lettura offline e sincronizza i tuoi feed RSS su tutti i dispositivi. Nessun feed algoritmico.",
-    "app_store_keywords": "lettura, modalità, opml, filtro, blog, articolo, segnalibro, contenuto, iscriviti, web, icloud, cronologia, categoria",
+    "google_play_short_description": "Lettore RSS minimale: lettura offline, modalità lettura e sincronizzazione.",
+    "app_store_subtitle": "Offline. Sincronizza come vuoi",
+    "app_store_promotional_text": "Open source e minimale. Leggi nel browser o in Modalità Lettura, salva gli articoli offline e sincronizza i feed RSS su tutti i dispositivi. Nessun feed algoritmico.",
+    "app_store_keywords": "lettura,modalità,opml,filtro,blog,articolo,segnalibro,iscriviti,web,icloud,cronologia,categoria",
     "microsoft_store_short_description": "FeedFlow è un lettore RSS open source per il tuo desktop: una timeline cronologica veloce per notizie e blog. Layout a tre pannelli con scorciatoie da tastiera per una lettura efficiente. Apri gli articoli nel browser o usa la Modalità Lettura. Salva gli articoli completi in cache per l'accesso offline. Importa ed esporta i feed con OPML. Sincronizza tra dispositivi usando l'archiviazione cloud (Dropbox, Google Drive) o servizi self-hosted (FreshRSS, Miniflux, Feedbin, BazQux).",
     "microsoft_store_keywords": "lettore rss, lettore di feed rss, modalità lettura offline, importazione ed esportazione opml, lettore di notizie, aggregatore di feed, sincronizzazione freshrss feedbin",
     "microsoft_store_product_features": [

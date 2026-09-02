@@ -21,6 +21,13 @@
         "com.github.prof18:lyricist"
       ],
       "enabled": false
+    },
+    {
+      "description": "Screenshot renderer is pinned deliberately: playwright-core determines the rendering engine, so an unattended bump can silently change text rasterisation and shift the shipped store screenshots. Update by hand, then run tools/screenshots/verify.mjs.",
+      "matchFileNames": [
+        "tools/screenshots/**"
+      ],
+      "enabled": false
     }
   ]
 }

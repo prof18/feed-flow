@@ -1,0 +1,16 @@
+{
+  "name": "feedflow-screenshots",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Renders FeedFlow store screenshots from repo copy + captures. Replaces the Figma blueprint.",
+  "scripts": {
+    "render": "node render.mjs",
+    "dev": "node serve.mjs",
+    "verify": "node verify.mjs"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "playwright-core": "^1.49.0"
+  }
+}

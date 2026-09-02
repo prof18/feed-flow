@@ -4,8 +4,23 @@
     {
       "name": "feedflow-website",
       "runtimeExecutable": "hugo",
-      "runtimeArgs": ["server", "--disableFastRender", "--port", "1314", "--source", "website"],
+      "runtimeArgs": [
+        "server",
+        "--disableFastRender",
+        "--port",
+        "1314",
+        "--source",
+        "website"
+      ],
       "port": 1314
+    },
+    {
+      "name": "screenshot-preview",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/screenshots/serve.mjs"
+      ],
+      "port": 4321
     }
   ]
 }

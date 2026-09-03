@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.rejectUnsafeHosts
 import com.prof18.feedflow.database.DatabaseHelper
@@ -401,7 +402,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
                             "text/html,application/xhtml+xml,application/xml;q=0.9," +
                                 "image/avif,image/webp,image/apng,*/*;q=0.8," +
                                 "application/signed-exchange;v=b3;q=0.7"
-                        append("User-Agent", "FeedFlow/6046 CFNetwork/3860.100.1 Darwin/24.6.0")
+                        append(HttpHeaders.UserAgent, FEEDFLOW_USER_AGENT)
                         append(HttpHeaders.Accept, acceptHeader)
                         append(HttpHeaders.AcceptLanguage, "en-US,en;q=0.9")
                         append(HttpHeaders.Connection, "keep-alive")

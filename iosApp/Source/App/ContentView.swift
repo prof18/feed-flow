@@ -15,7 +15,6 @@ struct ContentView: View {
     @StateObject private var readerModeVmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
         Deps.shared.getReaderModeViewModel())
 
-    @State private var isAppInBackground = false
     @State private var hasTriggeredLaunch = false
 
     @State private var selectedSidebarItem: SidebarSelection? = .timeline
@@ -58,24 +57,23 @@ struct ContentView: View {
             appState.updateTheme(savedThemeMode)
         }
         .onChange(of: horizontalSizeClass) {
-            if !isAppInBackground && horizontalSizeClass != appState.sizeClass {
-                preserveVisibleRoute(from: appState.sizeClass, to: horizontalSizeClass)
-                appState.sizeClass = horizontalSizeClass
-            }
+            synchronizeSizeClassIfActive()
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
             case .active:
-                isAppInBackground = false
                 if !hasTriggeredLaunch {
                     hasTriggeredLaunch = true
                     vmStoreOwner.instance.onAppLaunch()
                 }
-            case .background:
-                isAppInBackground = true
             default:
                 break
             }
+        }
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            await Task.yield()
+            synchronizeSizeClassIfActive()
         }
         .task {
             for await state in reviewVmStoreOwner.instance.canShowReviewDialog {
@@ -152,6 +150,13 @@ struct ContentView: View {
         appState.regularNavigationPath = NavigationPath()
         appState.compactNavigationPath = NavigationPath()
         appState.compactNavigationPath.append(CompactViewRoute.feed)
+    }
+
+    private func synchronizeSizeClassIfActive() {
+        // Replacing the navigation root while iPadOS detaches the scene can move one navigation item between bars.
+        guard scenePhase == .active, horizontalSizeClass != appState.sizeClass else { return }
+        preserveVisibleRoute(from: appState.sizeClass, to: horizontalSizeClass)
+        appState.sizeClass = horizontalSizeClass
     }
 
     private func preserveVisibleRoute(

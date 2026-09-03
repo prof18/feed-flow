@@ -35,6 +35,8 @@ import com.prof18.rssparser.exception.HttpException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Clock
@@ -58,6 +60,7 @@ class FeedFetcherRepository internal constructor(
     private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
     private val feedHttpCacheStore: FeedHttpCacheStore,
 ) {
+    private val fetchMutex = Mutex()
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
 
@@ -67,22 +70,24 @@ class FeedFetcherRepository internal constructor(
         publishToFeedList: Boolean = true,
         feedFilter: FeedFilter = FeedFilter.Timeline,
     ) {
-        withContext(dispatcherProvider.io) {
-            feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
-            when {
-                gReaderRepository.isAccountSet() -> {
-                    fetchFeedsWithGReader(publishToFeedList)
-                }
-                feedbinRepository.isAccountSet() -> {
-                    fetchFeedsWithFeedbin(publishToFeedList)
-                }
-                else -> {
-                    fetchFeedsWithRssParser(
-                        isFirstLaunch = isFirstLaunch,
-                        forceRefresh = forceRefresh,
-                        publishToFeedList = publishToFeedList,
-                        feedFilter = feedFilter,
-                    )
+        fetchMutex.withLock {
+            withContext(dispatcherProvider.io) {
+                feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
+                when {
+                    gReaderRepository.isAccountSet() -> {
+                        fetchFeedsWithGReader(publishToFeedList)
+                    }
+                    feedbinRepository.isAccountSet() -> {
+                        fetchFeedsWithFeedbin(publishToFeedList)
+                    }
+                    else -> {
+                        fetchFeedsWithRssParser(
+                            isFirstLaunch = isFirstLaunch,
+                            forceRefresh = forceRefresh,
+                            publishToFeedList = publishToFeedList,
+                            feedFilter = feedFilter,
+                        )
+                    }
                 }
             }
         }

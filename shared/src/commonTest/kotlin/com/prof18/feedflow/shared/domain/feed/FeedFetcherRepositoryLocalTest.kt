@@ -23,7 +23,10 @@ import com.prof18.feedflow.shared.test.toParsedFeedSource
 import com.prof18.rssparser.exception.HttpException
 import com.prof18.rssparser.model.RssChannel
 import com.prof18.rssparser.model.RssItem
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -128,6 +131,46 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
 
             assertEquals(sources.map { it.url }.toSet(), fakeRssParserWrapper.requestedUrls.toSet())
         }
+    }
+
+    @Test
+    fun `concurrent fetches are serialized`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val feedSource = createFeedSource(id = "source-1", title = "Test Feed")
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        fakeRssParserWrapper.setChannel(
+            feedSource.url,
+            createRssChannel(title = "Test Feed", link = "https://example.com", items = emptyList()),
+        )
+
+        val firstFetchStarted = CompletableDeferred<Unit>()
+        val releaseFirstFetch = CompletableDeferred<Unit>()
+        fakeRssParserWrapper.onRequest = {
+            if (!firstFetchStarted.isCompleted) {
+                firstFetchStarted.complete(Unit)
+                releaseFirstFetch.await()
+            }
+        }
+
+        val firstFetch = launch {
+            feedFetcherRepository.fetchFeeds(forceRefresh = true)
+        }
+        runCurrent()
+        firstFetchStarted.await()
+
+        val secondFetch = launch {
+            feedFetcherRepository.fetchFeeds(forceRefresh = true)
+        }
+        runCurrent()
+
+        assertEquals(1, fakeRssParserWrapper.callCount)
+
+        releaseFirstFetch.complete(Unit)
+        firstFetch.join()
+        secondFetch.join()
+
+        assertEquals(2, fakeRssParserWrapper.callCount)
+        assertEquals(FinishedFeedUpdateStatus, feedStateRepository.updateState.value)
     }
 
     @Test
@@ -962,6 +1005,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         val validatorsSeenByUrl = mutableMapOf<String, FeedHttpValidators?>()
         val requestedUrls = mutableListOf<String>()
         var validatorsFor: (String) -> FeedHttpValidators? = { null }
+        var onRequest: suspend (String) -> Unit = {}
         var callCount: Int = 0
             private set
 
@@ -972,6 +1016,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
             validatorsSeenByUrl.clear()
             requestedUrls.clear()
             callCount = 0
+            onRequest = {}
         }
 
         fun setChannel(url: String, channel: RssChannel) {
@@ -990,6 +1035,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
             callCount += 1
             requestedUrls.add(url)
             validatorsSeenByUrl[url] = validatorsFor(url)
+            onRequest(url)
             if (notModifiedUrls.contains(url)) {
                 throw HttpException(code = 304, message = "Not Modified")
             }

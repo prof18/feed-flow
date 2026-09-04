@@ -8,6 +8,7 @@ import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import io.ktor.utils.io.charsets.Charset
 import io.ktor.utils.io.charsets.Charsets
@@ -21,6 +22,7 @@ import kotlinx.io.readByteArray
 class HtmlRetriever(
     private val logger: Logger,
     private val client: HttpClient,
+    private val forbiddenFallbackClient: HttpClient,
 ) {
     suspend fun retrieveHtml(url: String): String? {
         // Platform engines can reject unsupported hosts outside the normal suspend call path.
@@ -29,38 +31,47 @@ class HtmlRetriever(
             return null
         }
         return try {
-            client.prepareGet(url) {
-                header(HttpHeaders.Accept, READABLE_CONTENT_ACCEPT_HEADER)
-            }.execute { response ->
-                if (!response.status.isSuccess()) {
-                    logger.d { "Unable to retrieve HTML, HTTP status: ${response.status}" }
-                    return@execute null
-                }
-                val contentTypeHeader = response.headers[HttpHeaders.ContentType]
-                if (!isReadableContentType(contentTypeHeader)) {
-                    logger.d { "Skipping non-readable content type: $contentTypeHeader for $url" }
-                    return@execute null
-                }
-                val declaredLength = response.headers[HttpHeaders.ContentLength]?.toLongOrNull()
-                if (declaredLength != null && declaredLength > MAX_RESPONSE_BYTES) {
-                    return@execute null
-                }
-                val buffer = response.bodyAsChannel().readBuffer(MAX_RESPONSE_BYTES + 1)
-                if (buffer.size > MAX_RESPONSE_BYTES) {
-                    return@execute null
-                }
-                val bytes = buffer.readByteArray()
-                val charset = resolveCharset(
-                    contentTypeHeader = contentTypeHeader,
-                    bodyBytes = bytes,
-                )
-                decodeBytes(bytes, charset)
+            val firstAttempt = retrieveAttempt(url)
+            if (firstAttempt.status == HttpStatusCode.Forbidden) {
+                logger.d { "Retrying HTML retrieval with fallback user agent after HTTP 403" }
+                retrieveAttempt(url, forbiddenFallbackClient).html
+            } else {
+                firstAttempt.html
             }
         } catch (e: Throwable) {
             logger.d(e) { "Unable to retrieve HTML, skipping" }
             null
         }
     }
+
+    private suspend fun retrieveAttempt(url: String, requestClient: HttpClient = client): RetrievalAttempt =
+        requestClient.prepareGet(url) {
+            header(HttpHeaders.Accept, READABLE_CONTENT_ACCEPT_HEADER)
+        }.execute { response ->
+            if (!response.status.isSuccess()) {
+                logger.d { "Unable to retrieve HTML, HTTP status: ${response.status}" }
+                return@execute RetrievalAttempt(response.status, null)
+            }
+            val contentTypeHeader = response.headers[HttpHeaders.ContentType]
+            if (!isReadableContentType(contentTypeHeader)) {
+                logger.d { "Skipping non-readable content type: $contentTypeHeader for $url" }
+                return@execute RetrievalAttempt(response.status, null)
+            }
+            val declaredLength = response.headers[HttpHeaders.ContentLength]?.toLongOrNull()
+            if (declaredLength != null && declaredLength > MAX_RESPONSE_BYTES) {
+                return@execute RetrievalAttempt(response.status, null)
+            }
+            val buffer = response.bodyAsChannel().readBuffer(MAX_RESPONSE_BYTES + 1)
+            if (buffer.size > MAX_RESPONSE_BYTES) {
+                return@execute RetrievalAttempt(response.status, null)
+            }
+            val bytes = buffer.readByteArray()
+            val charset = resolveCharset(
+                contentTypeHeader = contentTypeHeader,
+                bodyBytes = bytes,
+            )
+            RetrievalAttempt(response.status, decodeBytes(bytes, charset))
+        }
 
     private fun resolveCharset(contentTypeHeader: String?, bodyBytes: ByteArray): Charset {
         val headerCharset = parseCharsetFromContentType(contentTypeHeader)?.let { charsetFromName(it) }
@@ -251,3 +262,5 @@ class HtmlRetriever(
         return true
     }
 }
+
+private data class RetrievalAttempt(val status: HttpStatusCode, val html: String?)

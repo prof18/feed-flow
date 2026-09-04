@@ -1,11 +1,15 @@
 package com.prof18.feedflow.shared.domain
 
+import com.prof18.feedflow.core.utils.FEEDFLOW_READER_FALLBACK_USER_AGENT
+import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.core.utils.rejectUnsafeHosts
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.testLogger
+import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -111,6 +115,7 @@ class HtmlRetrieverTest {
                     }
                 }
             },
+            forbiddenFallbackClient = unexpectedRequestHttpClient(),
         )
 
         val result = retriever.retrieveHtml("https://100%example.com/feed")
@@ -136,6 +141,7 @@ class HtmlRetrieverTest {
                     }
                 }
             }.rejectUnsafeHosts(),
+            forbiddenFallbackClient = unexpectedRequestHttpClient(),
         )
 
         val result = retriever.retrieveHtml("https://example.com/feed")
@@ -157,6 +163,7 @@ class HtmlRetrieverTest {
                     }
                 }
             },
+            forbiddenFallbackClient = unexpectedRequestHttpClient(),
         )
 
         retriever.retrieveHtml("https://m\u00FCnchen.example/feed")
@@ -178,6 +185,110 @@ class HtmlRetrieverTest {
 
             assertNull(result)
         }
+    }
+
+    @Test
+    fun `forbidden html is retried once with fallback user agent`() = runTest(testDispatcher) {
+        val userAgents = mutableListOf<String?>()
+        var primaryRequests = 0
+        var fallbackRequests = 0
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                defaultRequest {
+                    headers.append(HttpHeaders.UserAgent, FEEDFLOW_USER_AGENT)
+                }
+                engine {
+                    addHandler { request ->
+                        primaryRequests++
+                        userAgents += request.headers[HttpHeaders.UserAgent]
+                        respond(ByteArray(0), HttpStatusCode.Forbidden)
+                    }
+                }
+            },
+            forbiddenFallbackClient = HttpClient(MockEngine) {
+                defaultRequest {
+                    headers.append(HttpHeaders.UserAgent, FEEDFLOW_READER_FALLBACK_USER_AGENT)
+                }
+                engine {
+                    addHandler { request ->
+                        fallbackRequests++
+                        userAgents += request.headers[HttpHeaders.UserAgent]
+                        respond(
+                            content = "<html>Success</html>",
+                            status = HttpStatusCode.OK,
+                            headers = headersOf(HttpHeaders.ContentType, "text/html"),
+                        )
+                    }
+                }
+            },
+        )
+
+        assertEquals("<html>Success</html>", retriever.retrieveHtml("https://example.com"))
+        assertEquals(
+            listOf<String?>(FEEDFLOW_USER_AGENT, FEEDFLOW_READER_FALLBACK_USER_AGENT),
+            userAgents,
+        )
+        assertEquals(1, primaryRequests)
+        assertEquals(1, fallbackRequests)
+    }
+
+    @Test
+    fun `non-forbidden html status is requested once`() = runTest(testDispatcher) {
+        var primaryRequests = 0
+        var fallbackRequests = 0
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        primaryRequests++
+                        respond(content = ByteArray(0), status = HttpStatusCode.NotFound)
+                    }
+                }
+            },
+            forbiddenFallbackClient = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        fallbackRequests++
+                        respond(content = ByteArray(0), status = HttpStatusCode.OK)
+                    }
+                }
+            },
+        )
+
+        assertNull(retriever.retrieveHtml("https://example.com"))
+        assertEquals(1, primaryRequests)
+        assertEquals(0, fallbackRequests)
+    }
+
+    @Test
+    fun `repeated forbidden html stops after two requests`() = runTest(testDispatcher) {
+        var primaryRequests = 0
+        var fallbackRequests = 0
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        primaryRequests++
+                        respond(content = ByteArray(0), status = HttpStatusCode.Forbidden)
+                    }
+                }
+            },
+            forbiddenFallbackClient = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        fallbackRequests++
+                        respond(content = ByteArray(0), status = HttpStatusCode.Forbidden)
+                    }
+                }
+            },
+        )
+
+        assertNull(retriever.retrieveHtml("https://example.com"))
+        assertEquals(1, primaryRequests)
+        assertEquals(1, fallbackRequests)
     }
 
     @Test
@@ -234,6 +345,7 @@ class HtmlRetrieverTest {
                     }
                 }
             },
+            forbiddenFallbackClient = unexpectedRequestHttpClient(),
         )
 
         val result = retriever.retrieveHtml("https://example.com")
@@ -259,6 +371,7 @@ class HtmlRetrieverTest {
                     }
                 }
             },
+            forbiddenFallbackClient = unexpectedRequestHttpClient(),
         )
         val result = retriever.retrieveHtml("https://example.com")
         assertNull(result)
@@ -331,6 +444,7 @@ class HtmlRetrieverTest {
                     }
                 }
             },
+            forbiddenFallbackClient = unexpectedRequestHttpClient(),
         )
         return retriever.retrieveHtml("https://example.com")
     }

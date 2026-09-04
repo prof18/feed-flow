@@ -8,6 +8,7 @@ import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
 import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
@@ -145,17 +146,17 @@ fun initKoinIos(
             }
             single<FeedContentPreparer> { HtmlFeedContentPreparer() }
             single<Notifier> { notifier }
-            single {
-                RssParserBuilder(
-                    nsUrlSession = NSURLSession.sessionWithConfiguration(
-                        NSURLSessionConfiguration.defaultSessionConfiguration().apply {
-                            HTTPAdditionalHeaders = mapOf(
-                                "User-Agent" to FEEDFLOW_USER_AGENT,
-                            )
-                            protocolClasses = feedUrlProtocolClasses
-                        },
-                    ),
-                ).build()
+            single<RssParserWrapper> {
+                RssParserWrapperImpl(
+                    primaryParser = createRssParser(
+                        userAgent = FEEDFLOW_USER_AGENT,
+                        feedUrlProtocolClasses = feedUrlProtocolClasses,
+                    )::getRssChannel,
+                    forbiddenFallbackParser = createRssParser(
+                        userAgent = FEEDFLOW_FALLBACK_USER_AGENT,
+                        feedUrlProtocolClasses = feedUrlProtocolClasses,
+                    )::getRssChannel,
+                )
             }
             single<FeedFlowStrings> {
                 when {
@@ -172,8 +173,6 @@ fun initKoinIos(
 )
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
-    single<RssParserWrapper> { RssParserWrapperImpl(get()) }
-
     single<SqlDriver> {
         createDatabaseDriver(appEnvironment)
     }
@@ -308,6 +307,20 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         BackgroundSyncScheduler { }
     }
 }
+
+private fun createRssParser(
+    userAgent: String,
+    feedUrlProtocolClasses: List<*>,
+) = RssParserBuilder(
+    nsUrlSession = NSURLSession.sessionWithConfiguration(
+        NSURLSessionConfiguration.defaultSessionConfiguration().apply {
+            HTTPAdditionalHeaders = mapOf(
+                "User-Agent" to userAgent,
+            )
+            protocolClasses = feedUrlProtocolClasses
+        },
+    ),
+).build()
 
 internal actual fun platformLogWriters(): List<LogWriter> {
     return listOf(

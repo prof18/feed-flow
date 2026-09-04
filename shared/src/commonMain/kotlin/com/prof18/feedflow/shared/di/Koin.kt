@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.FEEDFLOW_READER_FALLBACK_USER_AGENT
 import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.rejectUnsafeHosts
@@ -390,40 +391,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     single {
         HtmlRetriever(
             logger = getWith("HtmlRetriever"),
-            client = HttpClient {
-                @Suppress("MagicNumber")
-                install(HttpTimeout) {
-                    requestTimeoutMillis = 30_000
-                    connectTimeoutMillis = 10_000
-                }
-                defaultRequest {
-                    with(headers) {
-                        val acceptHeader =
-                            "text/html,application/xhtml+xml,application/xml;q=0.9," +
-                                "image/avif,image/webp,image/apng,*/*;q=0.8," +
-                                "application/signed-exchange;v=b3;q=0.7"
-                        append(HttpHeaders.UserAgent, FEEDFLOW_USER_AGENT)
-                        append(HttpHeaders.Accept, acceptHeader)
-                        append(HttpHeaders.AcceptLanguage, "en-US,en;q=0.9")
-                        append(HttpHeaders.Connection, "keep-alive")
-                        val requestUrl = url.buildString()
-                        if (requestUrl.isNotBlank()) {
-                            append("Referer", requestUrl)
-                        }
-                        append("Upgrade-Insecure-Requests", "1")
-                        append(
-                            "sec-ch-ua",
-                            "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"",
-                        )
-                        append("sec-ch-ua-mobile", "?0")
-                        append("sec-ch-ua-platform", "\"Windows\"")
-                        append("Sec-Fetch-Dest", "document")
-                        append("Sec-Fetch-Mode", "navigate")
-                        append("Sec-Fetch-Site", "none")
-                        append("Sec-Fetch-User", "?1")
-                    }
-                }
-            }.rejectUnsafeHosts(),
+            client = createHtmlRetrieverClient(FEEDFLOW_USER_AGENT),
+            forbiddenFallbackClient = createHtmlRetrieverClient(FEEDFLOW_READER_FALLBACK_USER_AGENT),
         )
     }
 
@@ -639,6 +608,42 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 }
+
+private fun createHtmlRetrieverClient(userAgent: String): HttpClient =
+    HttpClient {
+        @Suppress("MagicNumber")
+        install(HttpTimeout) {
+            requestTimeoutMillis = 30_000
+            connectTimeoutMillis = 10_000
+        }
+        defaultRequest {
+            with(headers) {
+                val acceptHeader =
+                    "text/html,application/xhtml+xml,application/xml;q=0.9," +
+                        "image/avif,image/webp,image/apng,*/*;q=0.8," +
+                        "application/signed-exchange;v=b3;q=0.7"
+                append(HttpHeaders.UserAgent, userAgent)
+                append(HttpHeaders.Accept, acceptHeader)
+                append(HttpHeaders.AcceptLanguage, "en-US,en;q=0.9")
+                append(HttpHeaders.Connection, "keep-alive")
+                val requestUrl = url.buildString()
+                if (requestUrl.isNotBlank()) {
+                    append("Referer", requestUrl)
+                }
+                append("Upgrade-Insecure-Requests", "1")
+                append(
+                    "sec-ch-ua",
+                    "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"",
+                )
+                append("sec-ch-ua-mobile", "?0")
+                append("sec-ch-ua-platform", "\"Windows\"")
+                append("Sec-Fetch-Dest", "document")
+                append("Sec-Fetch-Mode", "navigate")
+                append("Sec-Fetch-Site", "none")
+                append("Sec-Fetch-User", "?1")
+            }
+        }
+    }.rejectUnsafeHosts()
 
 internal expect fun platformLogWriters(): List<LogWriter>
 

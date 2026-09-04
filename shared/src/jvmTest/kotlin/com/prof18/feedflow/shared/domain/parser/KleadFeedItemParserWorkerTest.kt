@@ -5,6 +5,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.test.testLogger
+import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
 import com.russhwolf.settings.MapSettings
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -148,6 +149,7 @@ class KleadFeedItemParserWorkerTest {
                 }
             }
         },
+        forbiddenFallbackClient = unexpectedRequestHttpClient(),
     )
 
     private class RecordingFeedItemContentFileHandler : FeedItemContentFileHandler {

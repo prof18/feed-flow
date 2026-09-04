@@ -7,6 +7,8 @@ import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DesktopOS
+import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
+import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
@@ -19,6 +21,7 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
+import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
@@ -39,12 +42,8 @@ import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
-import com.prof18.feedflow.shared.utils.ConditionalGetInterceptor
-import com.prof18.feedflow.shared.utils.UserAgentInterceptor
-import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
-import okhttp3.OkHttpClient
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -86,16 +85,19 @@ private fun getDatabaseModule(appEnvironment: AppEnvironment): Module =
     }
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
-    single {
-        RssParserBuilder(
-            callFactory = OkHttpClient
-                .Builder()
-                .addInterceptor(UserAgentInterceptor())
-                .addInterceptor(ConditionalGetInterceptor(get()))
-                .build(),
-        ).build()
+    single<RssParserWrapper> {
+        val feedHttpCacheStore = get<FeedHttpCacheStore>()
+        RssParserWrapperImpl(
+            primaryParser = createRssParser(
+                userAgent = FEEDFLOW_USER_AGENT,
+                feedHttpCacheStore = feedHttpCacheStore,
+            )::getRssChannel,
+            forbiddenFallbackParser = createRssParser(
+                userAgent = FEEDFLOW_FALLBACK_USER_AGENT,
+                feedHttpCacheStore = feedHttpCacheStore,
+            )::getRssChannel,
+        )
     }
-    single<RssParserWrapper> { RssParserWrapperImpl(get()) }
 
     factory<OpmlFeedHandler> {
         OpmlFeedHandlerJvm(

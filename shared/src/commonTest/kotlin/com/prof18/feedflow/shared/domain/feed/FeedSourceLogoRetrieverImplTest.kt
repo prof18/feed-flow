@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.testLogger
+import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -65,6 +66,7 @@ class FeedSourceLogoRetrieverImplTest {
                         }
                     }
                 },
+                forbiddenFallbackClient = unexpectedRequestHttpClient(),
             ),
             htmlParser = object : HtmlParser {
                 override fun getTextFromHTML(html: String): String? = null

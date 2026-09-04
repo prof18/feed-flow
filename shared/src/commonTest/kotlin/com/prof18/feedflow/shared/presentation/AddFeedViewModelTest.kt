@@ -15,6 +15,7 @@ import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
 import com.prof18.feedflow.shared.test.toParsedFeedSource
+import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
 import com.prof18.rssparser.model.RssChannel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -73,6 +74,7 @@ class AddFeedViewModelTest : KoinTestBase() {
                         }
                     }
                 },
+                forbiddenFallbackClient = unexpectedRequestHttpClient(),
             )
         }
     }

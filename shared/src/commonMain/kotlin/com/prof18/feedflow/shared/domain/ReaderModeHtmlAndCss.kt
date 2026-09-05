@@ -57,6 +57,32 @@ fun getReaderModeStyledHtml(
         </div>
     </div>
     <script>
+        // Instagram sends JSON MEASURE messages as its media and caption finish loading.
+        window.addEventListener("message", function(event) {
+            if (event.origin !== "https://www.instagram.com") return;
+
+            var payload;
+            try {
+                payload = JSON.parse(event.data);
+            } catch (error) {
+                return;
+            }
+            if (!payload || payload.type !== "MEASURE") return;
+
+            var height = Number(payload.details && payload.details.height);
+            if (!Number.isFinite(height) || height <= 0 || height > 10000) return;
+
+            var instagramFrames = document.querySelectorAll(
+                'iframe[src^="https://www.instagram.com/"]'
+            );
+            var sourceFrame = Array.prototype.find.call(instagramFrames, function(frame) {
+                return frame.contentWindow === event.source;
+            });
+            if (!sourceFrame) return;
+
+            sourceFrame.style.height = Math.ceil(height) + "px";
+        });
+
         window.addEventListener("message", function(event) {
             if (event.origin !== "https://platform.twitter.com") return;
 

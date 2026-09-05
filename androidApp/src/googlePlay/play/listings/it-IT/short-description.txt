@@ -1,1 +1,1 @@
-Minimale, veloce, ordinato
+Lettore RSS minimale: lettura offline, modalità lettura e sincronizzazione.

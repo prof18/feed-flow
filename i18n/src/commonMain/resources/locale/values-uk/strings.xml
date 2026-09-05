@@ -133,7 +133,7 @@
     <string name="app_name" translatable="false">FeedFlow</string>
     <string name="link_opening_preference_internal_browser">Внутрішній браузер</string>
     <string name="link_opening_preference_preferred_browser">Улюблений браузер</string>
-    <string name="link_opening_preference_default">За замовчуванням</string>
+    <string name="link_opening_preference_default">Те саме, що й налаштування програми</string>
     <string name="fresh_rss_url_hint">Кінцева точка API FreshRSS, наприклад %s</string>
     <string name="fresh_rss_password_hint">Пароль FreshRSS API (Налаштування &gt; Профіль)</string>
     <string name="settings_auto_delete_period_one_month">Один місяць</string>
@@ -207,7 +207,7 @@
     <string name="settings_theme_light">Світло</string>
     <string name="settings_theme_dark">Темний</string>
     <string name="icloud_connection_error">Вибачте, але нам не вдається підключитися до iCloud. Перевірте, чи ви ввійшли в систему, чи ввімкнено iCloud Drive, і чи є у вас вільне місце - error code: %s.</string>
-    <string name="open_feed_settings">Відкрити налаштування стрічки</string>
+    <string name="open_feed_settings">Налаштування стрічки</string>
     <string name="reader_mode_browser_button_content_description">Відкрити у браузері</string>
     <string name="delete_feed_confirmation_title">Видалити стрічку?</string>
     <string name="delete_feed_confirmation_message">Ви впевнені, що хочете видалити цей канал? Цю дію не можна скасувати.</string>
@@ -392,4 +392,38 @@
     <string name="increase_line_height_button_content_description">Збільшити висоту рядка</string>
     <string name="decrease_line_height_button_content_description">Зменшити висоту рядка</string>
     <string name="reader_mode_reset_to_default">Скинути налаштування до стандартних</string>
+    <string name="reorder_mode_done">Готово</string>
+    <string name="mark_all_above_as_read_confirmation_title">Позначити все вищезазначене як прочитане?</string>
+    <string name="mark_all_above_as_read_confirmation_message">Усі статті, що знаходяться вище цієї, будуть позначені як прочитані.</string>
+    <string name="mark_all_below_as_read_confirmation_title">Позначити все нижче як прочитане?</string>
+    <string name="mark_all_below_as_read_confirmation_message">Усі статті, що знаходяться нижче цієї, будуть позначені як прочитані.</string>
+    <string name="settings_use_new_article_parser">Новий механізм режиму читання</string>
+    <string name="settings_new_reader_mode_engine_confirmation_title">Спробувати новий механізм режиму читання?</string>
+    <string name="settings_new_reader_mode_engine_confirmation_message">Новий механізм розроблено для точнішого вилучення статей та швидшого завантаження режиму читання. Він все ще експериментальний, тому на деяких сторінках може бути відсутній контент, неправильне форматування або вони можуть взагалі не завантажуватися. Будь ласка, повідомляйте про будь-які виявлені проблеми. Ваш відгук допоможе нам покращити режим читання для всіх, перш ніж цей механізм стане стандартним.</string>
+    <string name="server_account_subscriptions_warning">Цей обліковий запис використовує підписки, що зберігаються на його сервері.</string>
+    <string name="server_account_replace_local_title">Замінити локальні підписки?</string>
+    <string name="server_account_replace_local_message">Підключення замінить канали, які наразі зберігаються на цьому пристрої, на підписки з сервера. Пізніше відключення не призведе до відновлення локальних каналів. Якщо ви хочете зберегти їх копію, спочатку експортуйте їх у формат OPML.</string>
+    <string name="server_account_replace_and_connect_button">Замінити та підключити</string>
+    <string name="link_opening_preference_default_short">Налаштування додатка</string>
+    <string name="link_opening_preference_system_browser">Браузер за замовчуванням</string>
+    <string name="article_open_mode">Відкрити статті в</string>
+    <string name="article_open_mode_section_reader">Режим читання</string>
+    <string name="article_open_mode_section_browser">Браузер</string>
+    <string name="article_open_mode_full_article_short">Читач (вебсайт)</string>
+    <string name="article_open_mode_feed_short">Читач (стрічка)</string>
+    <string name="reader_content_source_web">Стаття з веб-сайту</string>
+    <string name="reader_content_source_web_subtitle">Отримати та очистити оригінальну сторінку</string>
+    <string name="reader_content_source_feed">Контент зі стрічки</string>
+    <string name="reader_content_source_feed_subtitle">Використовувати текст, що міститься в RSS стрічці</string>
+    <string name="hide_images_for_feed_description">Приховати зображення для цієї стрічки</string>
+    <string name="new_articles_button">%s нових статей</string>
+    <string name="expand_category_button_content_description">Розгорнути %s</string>
+    <string name="collapse_category_button_content_description">Згорнути %s</string>
+    <string name="support_paywall_title">Допоможіть FeedFlow розвиватися далі 💙</string>
+    <string name="support_purchase_thank_you_title">Ти неймовірний! 🎉</string>
+    <string name="support_purchase_thank_you_message">Ваша пожертва допомагає FeedFlow розвиватися 💙 Дякуємо за підтримку постійного розвитку, продуманих вдосконалень та виправлення помилок. 🙏</string>
+    <string name="reader_mode_no_content_title">Немає доступного контенту</string>
+    <string name="reader_mode_no_content_message">Ця стаття не містить жодного вмісту, і немає посилання для її відкриття в Інтернеті.</string>
+    <string name="reorder_drag_handle">Змінити порядок</string>
+    <string name="reorder_mode_enter">Змінити порядок</string>
 </resources>

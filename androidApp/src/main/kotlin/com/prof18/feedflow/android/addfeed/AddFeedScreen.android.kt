@@ -66,14 +66,16 @@ fun AddFeedScreen(
                     }
                 }
 
-                is FeedAddedState.FeedAdded -> {
+                is FeedAddedState.FeedAdded, is FeedAddedState.FeedAlreadyExists -> {
                     feedUrl = ""
                     showLoading = false
                     showError = false
                     errorMessage = ""
                     canForceAdd = false
-                    val feedName = feedAddedState.feedName
-                    val message = if (feedName != null) {
+                    val feedName = (feedAddedState as? FeedAddedState.FeedAdded)?.feedName
+                    val message = if (feedAddedState is FeedAddedState.FeedAlreadyExists) {
+                        strings.feedAlreadyExistsMessage(feedAddedState.feedName)
+                    } else if (feedName != null) {
                         strings.feedAddedMessage(feedName)
                     } else {
                         strings.feedAddedMessageWithoutName

@@ -259,13 +259,12 @@ internal class FeedSourcesRepository(
         categoryName: FeedSourceCategory?,
         isNotificationEnabled: Boolean,
     ): FeedAddedState {
+        databaseHelper.getFeedSources().firstOrNull { it.url == feedUrl }?.let {
+            return FeedAddedState.FeedAlreadyExists(it.title)
+        }
         return when (val feedResponse = fetchSingleFeed(feedUrl, categoryName)) {
             is AddFeedResponse.FeedFound -> {
                 addFeedSource(feedResponse, isNotificationEnabled)
-
-                FeedAddedState.FeedAdded(
-                    feedResponse.parsedFeedSource.title,
-                )
             }
 
             AddFeedResponse.EmptyFeed -> {
@@ -466,9 +465,7 @@ internal class FeedSourcesRepository(
     private suspend fun addFeedSource(
         feedFound: AddFeedResponse.FeedFound,
         isNotificationEnabled: Boolean,
-    ) = withContext(
-        dispatcherProvider.io,
-    ) {
+    ): FeedAddedState = withContext(dispatcherProvider.io) {
         val rssChannel = feedFound.rssChannel
         val parsedFeedSource = feedFound.parsedFeedSource
         val currentTimestamp = dateFormatter.currentTimeMillis()
@@ -493,6 +490,11 @@ internal class FeedSourcesRepository(
             feedSource = feedSource,
         )
 
+        val existingSources = databaseHelper.getFeedSources()
+        val exactMatch = existingSources.firstOrNull { it.url == parsedFeedSource.url }
+        if (exactMatch != null) {
+            return@withContext FeedAddedState.FeedAlreadyExists(exactMatch.title)
+        }
         databaseHelper.insertFeedSource(
             listOf(
                 parsedFeedSource.copy(
@@ -506,6 +508,7 @@ internal class FeedSourcesRepository(
         feedSyncRepository.performBackup()
         feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)
         feedStateRepository.getFeeds()
+        FeedAddedState.FeedAdded(parsedFeedSource.title)
     }
 
     private suspend fun updateFeedSource(feedSource: FeedSource) {

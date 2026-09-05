@@ -135,6 +135,26 @@ class AddFeedViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `addFeed emits already exists and resets notification status`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        viewModel.feedAddedState.test {
+            viewModel.updateFeedUrlTextFieldValue(rssUrl)
+            assertEquals(FeedAddedState.FeedNotAdded, awaitItem())
+            viewModel.addFeed()
+            assertEquals(FeedAddedState.Loading, awaitItem())
+            assertIs<FeedAddedState.FeedAdded>(awaitItem())
+
+            viewModel.updateNotificationStatus(true)
+            viewModel.addFeed()
+            assertEquals(FeedAddedState.Loading, awaitItem())
+            assertEquals(FeedAddedState.FeedAlreadyExists("Example Feed"), awaitItem())
+        }
+        advanceUntilIdle()
+        assertEquals(false, viewModel.isNotificationEnabledState.value)
+        assertEquals(1, databaseHelper.getFeedSources().size)
+    }
+
+    @Test
     fun `forceAddFeed inserts feed and emits FeedAdded with host as title`() = runTest(testDispatcher) {
         val viewModel = getViewModel()
 

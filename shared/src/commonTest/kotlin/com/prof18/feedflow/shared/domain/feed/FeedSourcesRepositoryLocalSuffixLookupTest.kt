@@ -9,8 +9,10 @@ import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
+import com.prof18.feedflow.shared.test.generators.RssItemGenerator
 import com.prof18.feedflow.shared.test.koin.TestModules
 import com.prof18.rssparser.model.RssChannel
+import com.prof18.rssparser.model.RssItem
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
@@ -90,9 +92,50 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
         settings.setSyncAccountType(SyncAccounts.LOCAL)
     }
 
+    @Test
+    fun `exact existing URL preserves title and preferences without fetching`() = runTest(testDispatcher) {
+        addTestFeed("https://example.com/feed", emptyList())
+        fakeRssParserWrapper.reset(supportedUrl = "unused")
+        val result = feedSourcesRepository.addFeedSource("https://example.com/feed", null, true)
+
+        assertEquals(FeedAddedState.FeedAlreadyExists("Example Feed"), result)
+        assertEquals(emptyList(), fakeRssParserWrapper.requestedUrls)
+        assertEquals(false, databaseHelper.getFeedSources().single().isNotificationEnabled)
+    }
+
+    @Test
+    fun `discovered URL already subscribed returns existing source`() = runTest(testDispatcher) {
+        addTestFeed("https://example.com/feed.rss", emptyList())
+        val result = feedSourcesRepository.addFeedSource("https://example.com", null, false)
+
+        assertEquals(FeedAddedState.FeedAlreadyExists("Example Feed"), result)
+        assertEquals(1, databaseHelper.getFeedSources().size)
+    }
+
+    @Test
+    fun `different URLs are added even when their articles overlap`() = runTest(testDispatcher) {
+        val articles = articles(0 until 10)
+        addTestFeed("http://www.androidworld.it/feed/", articles)
+        val result = addTestFeed("https://www.smartworld.it/", articles)
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        assertEquals(2, databaseHelper.getFeedSources().size)
+    }
+
+    private fun articles(indices: IntRange): List<RssItem> = indices.map {
+        RssItemGenerator.rssItem(link = "https://articles.example/$it", guid = "article-$it")
+    }
+
+    private suspend fun addTestFeed(url: String, items: List<RssItem>): FeedAddedState {
+        setupLocalAccount()
+        fakeRssParserWrapper.reset(supportedUrl = url, items = items)
+        return feedSourcesRepository.addFeedSource(url, null, false)
+    }
+
     private class FakeRssParserWrapper : RssParserWrapper {
         private var supportedUrl: String? = null
         private var feedTitle = "Example Feed"
+        private var items: List<RssItem> = emptyList()
         val requestedUrls = mutableListOf<String>()
 
         override suspend fun getRssChannel(url: String): RssChannel {
@@ -105,15 +148,16 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
                 image = null,
                 lastBuildDate = null,
                 updatePeriod = null,
-                items = emptyList(),
+                items = items,
                 itunesChannelData = null,
                 youtubeChannelData = null,
             )
         }
 
-        fun reset(supportedUrl: String, feedTitle: String = "Example Feed") {
+        fun reset(supportedUrl: String, feedTitle: String = "Example Feed", items: List<RssItem> = emptyList()) {
             this.supportedUrl = supportedUrl
             this.feedTitle = feedTitle
+            this.items = items
             requestedUrls.clear()
         }
     }

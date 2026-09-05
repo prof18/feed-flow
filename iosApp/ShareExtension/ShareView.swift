@@ -83,6 +83,9 @@ struct ShareView: View {
 
                     self.uiState = .success(message: message)
 
+                case let .feedAlreadyExists(existingState):
+                    self.uiState = .success(message: feedFlowStrings.feedAlreadyExistsMessage(existingState.feedName))
+
                 case .feedNotAdded:
                     self.uiState = .loading
 

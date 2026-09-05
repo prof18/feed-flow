@@ -90,6 +90,20 @@ struct AddFeedScreen: View {
                     self.errorMessage = ""
                     self.canForceAdd = false
 
+                case let .feedAlreadyExists(existingState):
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.feedAlreadyExistsMessage(existingState.feedName),
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    )
+                    self.feedURL = ""
+                    self.isAddingFeed = false
+                    self.showError = false
+                    self.errorMessage = ""
+                    self.canForceAdd = false
+
                 case .feedNotAdded:
                     errorMessage = ""
                     showError = false

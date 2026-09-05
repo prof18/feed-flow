@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feed_added_message">Feed %s added</string>
+    <string name="feed_already_exists_message">%s is already in your feeds.</string>
     <string name="feed_url">Feed URL</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="add_feed">Add feed</string>

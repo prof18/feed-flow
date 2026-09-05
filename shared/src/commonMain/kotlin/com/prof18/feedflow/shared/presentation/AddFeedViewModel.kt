@@ -71,7 +71,7 @@ class AddFeedViewModel internal constructor(
                     isNotificationEnabled = isNotificationEnabledMutableStateFlow.value,
                 )
                 feedAddedMutableState.emit(feedAddedState)
-                if (feedAddedState is FeedAddedState.FeedAdded) {
+                if (feedAddedState is FeedAddedState.FeedAdded || feedAddedState is FeedAddedState.FeedAlreadyExists) {
                     isNotificationEnabledMutableStateFlow.update { false }
                 }
             }

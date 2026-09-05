@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.model
 sealed class FeedAddedState {
     data object FeedNotAdded : FeedAddedState()
     data object Loading : FeedAddedState()
+    data class FeedAlreadyExists(val feedName: String) : FeedAddedState()
     data class FeedAdded(
         val feedName: String? = null,
     ) : FeedAddedState()

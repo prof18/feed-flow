@@ -76,10 +76,12 @@ class AddFeedExtensionActivity : BaseThemeActivity() {
                         finish()
                     }
 
-                    is FeedAddedState.FeedAdded -> {
+                    is FeedAddedState.FeedAdded, is FeedAddedState.FeedAlreadyExists -> {
                         showLoading = false
-                        val feedName = feedAddedState.feedName
-                        message = if (feedName != null) {
+                        val feedName = (feedAddedState as? FeedAddedState.FeedAdded)?.feedName
+                        message = if (feedAddedState is FeedAddedState.FeedAlreadyExists) {
+                            strings.feedAlreadyExistsMessage(feedAddedState.feedName)
+                        } else if (feedName != null) {
                             strings.feedAddedMessage(feedName)
                         } else {
                             strings.feedAddedMessageWithoutName

@@ -71,6 +71,24 @@ class IosHtmlParser: HtmlParser {
         }
     }
 
+    func getCanonicalUrl(html: String) -> String? {
+        guard !html.isEmpty else { return nil }
+        let sanitizedHtml = sanitizeHtml(html)
+        guard !sanitizedHtml.isEmpty else { return nil }
+
+        do {
+            let doc: Document = try SwiftSoup.parseHTML(sanitizedHtml)
+            let canonicalLink = try doc.select("link[rel=canonical][href]").first()
+            guard let href = try canonicalLink?.attr("href") else { return nil }
+            let trimmedHref = href.trimmingCharacters(in: .whitespacesAndNewlines)
+            return trimmedHref.isEmpty ? nil : trimmedHref
+        } catch {
+            Deps.shared.getLogger(tag: "IosHtmlParser")
+                .e(messageString: "Error during getting the canonical url: \(error)")
+            return nil
+        }
+    }
+
     func parseFeedContent(html: String, baseUrl: String?) -> ParsedFeedContent {
         guard !html.isEmpty else { return ParsedFeedContent(text: nil, commentsUrl: nil) }
         let sanitizedHtml = sanitizeHtml(html)

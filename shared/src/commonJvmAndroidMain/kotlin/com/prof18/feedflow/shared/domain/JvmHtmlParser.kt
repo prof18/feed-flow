@@ -44,6 +44,15 @@ internal class JvmHtmlParser(
         return null
     }
 
+    override fun getCanonicalUrl(html: String): String? {
+        return Jsoup.parse(html)
+            .select("link[rel=canonical][href]")
+            .firstOrNull()
+            ?.attr("href")
+            ?.trim()
+            ?.takeIf { it.isNotEmpty() }
+    }
+
     override fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent {
         return try {
             val doc = Jsoup.parse(html, baseUrl.orEmpty())

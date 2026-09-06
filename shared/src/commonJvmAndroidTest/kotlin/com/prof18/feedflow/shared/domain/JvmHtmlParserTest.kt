@@ -114,6 +114,25 @@ class JvmHtmlParserTest {
     }
 
     @Test
+    fun `getCanonicalUrl finds canonical link regardless of attribute order`() {
+        val html = """
+            <link href="https://example.com/canonical" rel="canonical">
+        """.trimIndent()
+
+        assertEquals("https://example.com/canonical", parser.getCanonicalUrl(html))
+    }
+
+    @Test
+    fun `getCanonicalUrl returns null when no canonical link is present`() {
+        assertNull(parser.getCanonicalUrl("<link rel=alternate href=\"/feed.xml\">"))
+    }
+
+    @Test
+    fun `getCanonicalUrl returns null for blank href`() {
+        assertNull(parser.getCanonicalUrl("<link rel=canonical href=\"   \">"))
+    }
+
+    @Test
     fun `getTextFromHTML handles malformed HTML`() {
         val html = "<html><p>Unclosed paragraph<div>Unclosed div"
 

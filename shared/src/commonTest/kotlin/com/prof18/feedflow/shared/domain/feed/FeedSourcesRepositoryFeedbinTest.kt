@@ -4,15 +4,20 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.feedbin.di.getFeedbinTestModule
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.feedsync.test.di.getFeedSyncTestModules
 import com.prof18.feedflow.feedsync.test.feedbin.configureFeedbinMocks
+import com.prof18.feedflow.feedsync.test.feedbin.createMockFeedbinHttpClient
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.insertFeedSourceWithCategory
 import com.prof18.feedflow.shared.test.koin.TestModules
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.http.HttpMethod
+import io.ktor.http.content.TextContent
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
@@ -28,19 +33,50 @@ class FeedSourcesRepositoryFeedbinTest : KoinTestBase() {
     private val feedSourcesRepository: FeedSourcesRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
 
+    private val recordingClient by lazy { createMockFeedbinHttpClient { configureFeedbinMocks() } }
+
     override fun getTestModules(): List<Module> =
         TestModules.createTestModules() + getFeedSyncTestModules(
             feedbinBaseURL = "https://api.feedbin.com/",
             feedbinConfig = {
                 configureFeedbinMocks()
             },
-        )
+        ) + getFeedbinTestModule(recordingClient)
 
     fun setupFeedbinAccount() {
         val settings: NetworkSettings = getKoin().get()
         settings.setSyncAccountType(SyncAccounts.FEEDBIN)
         settings.setSyncUsername("testuser")
         settings.setSyncPwd("testpassword")
+    }
+
+    @Test
+    fun `YouTube channel subscribes once with canonical RSS URL`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
+        val channelId = "UCsBjURrPoezykLs9EqgamOA"
+        val result = feedSourcesRepository.addFeedSource("https://youtube.com/channel/$channelId", null, false)
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        val request = (recordingClient.engine as MockEngine).requestHistory.single {
+            it.method == HttpMethod.Post && it.url.encodedPath == "/v2/subscriptions.json"
+        }
+        assertEquals(
+            """{"feed_url":"https://www.youtube.com/feeds/videos.xml?channel_id=$channelId"}""",
+            (request.body as TextContent).text,
+        )
+    }
+
+    @Test
+    fun `server can discover channel when client cannot resolve its page`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
+        val originalUrl = "https://www.youtube.com/@Fireship"
+        val result = feedSourcesRepository.addFeedSource(originalUrl, null, false)
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        val request = (recordingClient.engine as MockEngine).requestHistory.single {
+            it.method == HttpMethod.Post && it.url.encodedPath == "/v2/subscriptions.json"
+        }
+        assertEquals("""{"feed_url":"$originalUrl"}""", (request.body as TextContent).text)
     }
 
     @Test

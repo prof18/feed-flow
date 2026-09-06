@@ -282,8 +282,7 @@ internal class FeedSourcesRepository(
         categoryName: FeedSourceCategory?,
         isNotificationEnabled: Boolean,
     ): FeedAddedState {
-        for (suffix in knownUrlSuffix) {
-            val actualUrl = suffix.buildUrl(originalUrl).trim()
+        for (actualUrl in getCandidateFeedUrls(originalUrl, allowServerDiscovery = true)) {
             logger.d { "Trying with actualUrl: $actualUrl" }
 
             val addResult = gReaderRepository.addFeedSource(
@@ -292,12 +291,15 @@ internal class FeedSourcesRepository(
                 isNotificationEnabled = isNotificationEnabled,
             )
             if (addResult.isSuccess()) {
+                if (YouTubeChannelUrl.parse(originalUrl) != null) {
+                    finalizeFreshRssFeedAddition()
+                }
                 return FeedAddedState.FeedAdded()
             }
         }
 
         logger.d { "Trying to get: $originalUrl" }
-        val url = feedUrlRetriever.getFeedUrl(originalUrl)
+        val url = discoverFeedUrlAfterGuessing(originalUrl)
             ?: return FeedAddedState.Error.InvalidUrl(canForceAdd = false)
         logger.d { "Found url: $url" }
 
@@ -310,11 +312,15 @@ internal class FeedSourcesRepository(
             return FeedAddedState.Error.GenericError(canForceAdd = false)
         }
 
+        finalizeFreshRssFeedAddition()
+        return FeedAddedState.FeedAdded()
+    }
+
+    private suspend fun finalizeFreshRssFeedAddition() {
         feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
         gReaderRepository.sync()
         feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)
         feedStateRepository.getFeeds()
-        return FeedAddedState.FeedAdded()
     }
 
     private suspend fun fetchSingleFeed(
@@ -413,8 +419,7 @@ internal class FeedSourcesRepository(
         categoryName: FeedSourceCategory?,
         isNotificationEnabled: Boolean,
     ): FeedAddedState {
-        for (suffix in knownUrlSuffix) {
-            val actualUrl = suffix.buildUrl(originalUrl).trim()
+        for (actualUrl in getCandidateFeedUrls(originalUrl, allowServerDiscovery = true)) {
             logger.d { "Trying with actualUrl: $actualUrl" }
 
             val addResult = feedbinRepository.addFeedSource(
@@ -428,7 +433,7 @@ internal class FeedSourcesRepository(
         }
 
         logger.d { "Trying to get: $originalUrl" }
-        val url = feedUrlRetriever.getFeedUrl(originalUrl)
+        val url = discoverFeedUrlAfterGuessing(originalUrl)
             ?: return FeedAddedState.Error.InvalidUrl(canForceAdd = false)
         logger.d { "Found url: $url" }
 
@@ -518,8 +523,7 @@ internal class FeedSourcesRepository(
     }
 
     private suspend fun guessLinkAndParseFeed(originalUrl: String): AddResult? {
-        for (suffix in knownUrlSuffix) {
-            val actualUrl = suffix.buildUrl(originalUrl).trim()
+        for (actualUrl in getCandidateFeedUrls(originalUrl)) {
             logger.d { "Trying with actualUrl: $actualUrl" }
             try {
                 val channel = rssParserWrapper.getRssChannel(actualUrl)
@@ -534,7 +538,7 @@ internal class FeedSourcesRepository(
         }
 
         logger.d { "Trying to get: $originalUrl" }
-        val url = feedUrlRetriever.getFeedUrl(originalUrl) ?: return null
+        val url = discoverFeedUrlAfterGuessing(originalUrl) ?: return null
         logger.d { "Found url: $url" }
         return try {
             val channel = rssParserWrapper.getRssChannel(url)
@@ -547,6 +551,26 @@ internal class FeedSourcesRepository(
             null
         }
     }
+
+    private suspend fun getCandidateFeedUrls(
+        originalUrl: String,
+        allowServerDiscovery: Boolean = false,
+    ): List<String> =
+        if (YouTubeChannelUrl.parse(originalUrl) != null) {
+            listOfNotNull(
+                feedUrlRetriever.getFeedUrl(originalUrl),
+                originalUrl.takeIf { allowServerDiscovery },
+            )
+        } else {
+            knownUrlSuffix.map { it.buildUrl(originalUrl).trim() }
+        }
+
+    private suspend fun discoverFeedUrlAfterGuessing(originalUrl: String): String? =
+        if (YouTubeChannelUrl.parse(originalUrl) != null) {
+            null
+        } else {
+            feedUrlRetriever.getFeedUrl(originalUrl)
+        }
 
     private fun String.buildUrl(originalUrl: String) =
         when {

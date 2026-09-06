@@ -4,6 +4,7 @@ interface HtmlParser {
     fun getTextFromHTML(html: String): String?
     fun getFaviconUrl(html: String): String?
     fun getRssUrl(html: String): String?
+    fun getCanonicalUrl(html: String): String? = null
     fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent
 }
 

@@ -1,18 +1,27 @@
 package com.prof18.feedflow.shared.domain.feed
 
+import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.greader.di.getGReaderTestModule
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.feedsync.test.di.getFeedSyncTestModules
 import com.prof18.feedflow.feedsync.test.greader.configureFreshRssMocks
+import com.prof18.feedflow.feedsync.test.greader.createMockGReaderHttpClient
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.insertFeedSourceWithCategory
 import com.prof18.feedflow.shared.test.koin.TestModules
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.http.HttpMethod
+import io.ktor.http.parseQueryString
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
@@ -27,6 +36,14 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
 
     private val feedSourcesRepository: FeedSourcesRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
+    private val feedStateRepository: FeedStateRepository by inject()
+
+    private val recordingClient by lazy {
+        createMockGReaderHttpClient(
+            provider = SyncAccounts.FRESH_RSS,
+            baseURL = "https://freshrss.example.com/api/greader.php/",
+        ) { configureFreshRssMocks() }
+    }
 
     override fun getTestModules(): List<Module> =
         TestModules.createTestModules() + getFeedSyncTestModules(
@@ -35,7 +52,7 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
             gReaderConfig = {
                 configureFreshRssMocks()
             },
-        )
+        ) + getGReaderTestModule(recordingClient)
 
     fun setupFreshRssAccount() {
         val settings: NetworkSettings = getKoin().get()
@@ -43,6 +60,52 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
         settings.setSyncUsername("testuser")
         settings.setSyncPwd("testpassword")
         settings.setSyncUrl("https://freshrss.example.com/api/greader.php/")
+    }
+
+    @Test
+    fun `YouTube channel subscribes once with canonical RSS URL`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
+        val channelId = "UCsBjURrPoezykLs9EqgamOA"
+        val result = feedSourcesRepository.addFeedSource("https://youtube.com/channel/$channelId", null, false)
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        val request = (recordingClient.engine as MockEngine).requestHistory.single {
+            it.method == HttpMethod.Post && it.url.encodedPath.endsWith("/subscription/quickadd")
+        }
+        val body = parseQueryString((request.body as FormDataContent).bytes().decodeToString())
+        assertEquals("https://www.youtube.com/feeds/videos.xml?channel_id=$channelId", body["quickadd"])
+
+        val streamRequests = (recordingClient.engine as MockEngine).requestHistory.count {
+            it.method == HttpMethod.Get &&
+                it.url.encodedPath.endsWith(
+                    "/stream/contents/user/-/state/com.google/reading-list",
+                )
+        }
+        assertTrue(streamRequests > 0, "Adding a YouTube channel should sync its articles")
+        assertEquals(FinishedFeedUpdateStatus, feedStateRepository.updateState.value)
+        assertTrue(
+            databaseHelper.getFeedItems(
+                feedFilter = FeedFilter.Timeline,
+                pageSize = 10,
+                showReadItems = true,
+                sortOrder = FeedOrder.NEWEST_FIRST,
+            ).isNotEmpty(),
+            "Adding a YouTube channel should fetch articles",
+        )
+    }
+
+    @Test
+    fun `server can discover channel when client cannot resolve its page`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
+        val originalUrl = "https://www.youtube.com/@Fireship"
+        val result = feedSourcesRepository.addFeedSource(originalUrl, null, false)
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        val request = (recordingClient.engine as MockEngine).requestHistory.single {
+            it.method == HttpMethod.Post && it.url.encodedPath.endsWith("/subscription/quickadd")
+        }
+        val body = parseQueryString((request.body as FormDataContent).bytes().decodeToString())
+        assertEquals(originalUrl, body["quickadd"])
     }
 
     @Test

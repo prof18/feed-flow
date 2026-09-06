@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.model.appDefaultArticleOpenMode
 import com.prof18.feedflow.core.model.resolveWith
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.update
 
 class SettingsRepository(
     private val settings: Settings,
+    private val appEnvironment: AppEnvironment,
 ) {
     private var articleOpenMode: ArticleOpenMode? = null
     private var saveItemContentOnOpenEnabled: Boolean? = null
@@ -127,7 +129,10 @@ class SettingsRepository(
 
     fun isKleadParserEnabled(): Boolean {
         kleadParserEnabled?.let { return it }
-        val value = settings.getBoolean(SettingsFields.USE_KLEAD_READER_PARSER.name, false)
+        val value = settings.getBoolean(
+            SettingsFields.USE_KLEAD_READER_PARSER.name,
+            appEnvironment.isDebug(),
+        )
         kleadParserEnabled = value
         return value
     }

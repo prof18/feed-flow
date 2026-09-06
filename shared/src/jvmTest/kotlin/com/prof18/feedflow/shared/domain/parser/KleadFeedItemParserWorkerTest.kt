@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.parser
 
 import com.prof18.feedflow.core.model.ParsingResult
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
@@ -26,7 +27,7 @@ class KleadFeedItemParserWorkerTest {
     @Test
     fun `returns decorated Markdown and caches it when enabled`() = runTest {
         val fileHandler = RecordingFeedItemContentFileHandler()
-        val settingsRepository = SettingsRepository(MapSettings()).apply {
+        val settingsRepository = SettingsRepository(MapSettings(), AppEnvironment.Release).apply {
             setKleadParserEnabled(true)
             setSaveItemContentOnOpen(true)
         }
@@ -104,7 +105,7 @@ class KleadFeedItemParserWorkerTest {
     @Test
     fun `prefetch parser leaves cache writes to its caller`() = runTest {
         val fileHandler = RecordingFeedItemContentFileHandler()
-        val settingsRepository = SettingsRepository(MapSettings()).apply {
+        val settingsRepository = SettingsRepository(MapSettings(), AppEnvironment.Release).apply {
             setSaveItemContentOnOpen(true)
         }
         val worker = worker(
@@ -125,7 +126,10 @@ class KleadFeedItemParserWorkerTest {
         html: String,
         contentFormat: KleadContentFormat = KleadContentFormat.MARKDOWN,
         fileHandler: FeedItemContentFileHandler = RecordingFeedItemContentFileHandler(),
-        settingsRepository: SettingsRepository = SettingsRepository(MapSettings()),
+        settingsRepository: SettingsRepository = SettingsRepository(
+            MapSettings(),
+            AppEnvironment.Release,
+        ),
         cacheResultWhenEnabled: Boolean = true,
     ) = KleadFeedItemParserWorker(
         contentFormat = contentFormat,

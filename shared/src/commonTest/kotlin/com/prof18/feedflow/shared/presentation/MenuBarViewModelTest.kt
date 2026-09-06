@@ -50,7 +50,7 @@ class MenuBarViewModelTest : KoinTestBase() {
         assertEquals(ArticleOpenMode.FULL_ARTICLE, state.articleOpenMode)
         assertFalse(state.isSaveReaderModeContentEnabled)
         assertFalse(state.isPrefetchArticleContentEnabled)
-        assertFalse(state.isKleadParserEnabled)
+        assertTrue(state.isKleadParserEnabled)
         assertTrue(state.isRefreshFeedsOnLaunchEnabled)
         assertEquals(SyncPeriod.NEVER, state.syncPeriod)
         assertFalse(state.isReduceMotionEnabled)

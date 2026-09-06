@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.parser
 
 import com.prof18.feedflow.core.model.ParsingResult
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.russhwolf.settings.MapSettings
@@ -14,7 +15,7 @@ class ParserSelectingFeedItemParserWorkerTest {
     fun `uses legacy parser by default`() = runTest {
         val legacyResult = ParsingResult.Success("legacy", null, null)
         val worker = selector(
-            settingsRepository = SettingsRepository(MapSettings()),
+            settingsRepository = SettingsRepository(MapSettings(), AppEnvironment.Release),
             legacyParser = FakeParser(legacyResult),
             kleadParser = FakeParser(ParsingResult.Error),
         )
@@ -23,8 +24,20 @@ class ParserSelectingFeedItemParserWorkerTest {
     }
 
     @Test
+    fun `uses Klead parser by default in debug environment`() = runTest {
+        val kleadResult = ParsingResult.Success("klead", null, null)
+        val worker = selector(
+            settingsRepository = SettingsRepository(MapSettings(), AppEnvironment.Debug),
+            legacyParser = FakeParser(ParsingResult.Error),
+            kleadParser = FakeParser(kleadResult),
+        )
+
+        assertSame(kleadResult, worker.parse("id", "https://example.com"))
+    }
+
+    @Test
     fun `uses Klead parser when enabled and observes later changes`() = runTest {
-        val settingsRepository = SettingsRepository(MapSettings())
+        val settingsRepository = SettingsRepository(MapSettings(), AppEnvironment.Release)
         val legacyResult = ParsingResult.Success("legacy", null, null)
         val kleadResult = ParsingResult.Success("klead", null, null)
         val worker = selector(
@@ -42,7 +55,7 @@ class ParserSelectingFeedItemParserWorkerTest {
 
     @Test
     fun `engine changes affect the next parse without discarding the current result`() = runTest {
-        val settingsRepository = SettingsRepository(MapSettings())
+        val settingsRepository = SettingsRepository(MapSettings(), AppEnvironment.Release)
         val legacyResult = ParsingResult.Success("legacy", null, null)
         val kleadResult = ParsingResult.Success("klead", null, null)
         val worker = selector(

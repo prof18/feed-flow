@@ -35,7 +35,7 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
             assertEquals(ArticleOpenMode.FULL_ARTICLE, initialState.articleOpenMode)
             assertFalse(initialState.isSaveReaderModeContentEnabled)
             assertFalse(initialState.isPrefetchArticleContentEnabled)
-            assertFalse(initialState.isKleadParserEnabled)
+            assertTrue(initialState.isKleadParserEnabled)
             assertTrue(initialState.isMarkReadWhenScrollingEnabled)
             assertFalse(initialState.isShowReadItemsEnabled)
             assertFalse(initialState.isHideReadItemsEnabled)
@@ -90,14 +90,14 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
         viewModel.state.test {
             awaitItem()
 
+            viewModel.updateKleadParserEnabled(false)
+            assertFalse(awaitItem().isKleadParserEnabled)
+
             viewModel.updateKleadParserEnabled(true)
             assertTrue(awaitItem().isKleadParserEnabled)
             assertTrue(feedItemContentFileHandler.isContentAvailable("cached-item"))
             assertTrue(databaseHelper.getFirstUnfetchedItemsBatch(1).isEmpty())
             assertFalse((contentPrefetchRepository as ContentPrefetchRepositoryFake).cancelFetchingCalled)
-
-            viewModel.updateKleadParserEnabled(false)
-            assertFalse(awaitItem().isKleadParserEnabled)
         }
     }
 

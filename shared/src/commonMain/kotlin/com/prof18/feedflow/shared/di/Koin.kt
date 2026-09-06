@@ -253,6 +253,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     single {
         SettingsRepository(
             settings = get(),
+            appEnvironment = appConfig.appEnvironment,
         )
     }
 

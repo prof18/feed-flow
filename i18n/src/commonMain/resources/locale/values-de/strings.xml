@@ -417,4 +417,13 @@
     <string name="reader_mode_no_content_title">Kein Inhalt verfügbar</string>
     <string name="reader_mode_no_content_message">Dieser Artikel enthält keinerlei Inhalt und es gibt keinen Link, um ihn im Internet zu öffnen.</string>
     <string name="server_account_replace_and_connect_button">Ersetzen und verbinden</string>
+    <string name="settings_use_new_article_parser">Neue Lesemodus-Engine</string>
+    <string name="settings_new_reader_mode_engine_confirmation_title">Neue Lesemodus-Engine ausprobieren?</string>
+    <string name="settings_new_reader_mode_engine_confirmation_message">Die neue Engine wurde entwickelt, um Artikel genauer zu lesen und den Lesemodus schneller zu laden. Sie ist noch immer experimentell, daher können einige Seiten fehlenden Inhalt oder falsche Formatierung aufweisen oder überhaupt nicht laden. Bitte jedes gefundene Problem melden. Das Feedback hilft uns, den Lesemodus für alle zu verbessern, bevor diese Engine zum Standard wird.</string>
+    <string name="server_account_subscriptions_warning">Dieses Konto verwendet die Abonnements, die auf seinem Server gespeichert sind.</string>
+    <string name="server_account_replace_local_title">Lokale Abonnements ersetzen?</string>
+    <string name="server_account_replace_local_message">Beim Verbinden werden die aktuell am Gerät gespeicherten Feeds durch die Abonnements vom Server ersetzt. Späteres Trennen wird die lokalen Feeds nicht wieder herstellen. Exportieren sie diese in eine OPML-Datei, wenn sie eine Kopie erhalten wollen.</string>
+    <string name="support_paywall_title">Lass FeedFlow weiter wachsen 💙</string>
+    <string name="support_purchase_thank_you_title">Du bist fantastisch! 🎉</string>
+    <string name="support_purchase_thank_you_message">Der Tip hilft, FeedFlow weiter wachsen zu lassen.💙 Danke für die Unterstützung der laufenden Weiterentwicklung, durchdachten Verbesserungen und Fehlerbehebungen.🙏</string>
 </resources>

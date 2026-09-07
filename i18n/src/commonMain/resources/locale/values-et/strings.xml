@@ -426,4 +426,5 @@
     <string name="settings_use_new_article_parser">Lugemisvaate uus lahendus</string>
     <string name="settings_new_reader_mode_engine_confirmation_title">Kas tahaksid proovida uut lugemisvaate sisumootorit?</string>
     <string name="settings_new_reader_mode_engine_confirmation_message">Uus mootor on loodud artiklite täpsemaks tuvastamiseks ja lugemisrežiimi kiiremaks laadimiseks. See on veel katsetamisjärgus, mistõttu võib veel mõnel lehel sisu puududa, vorming olla vale või leht üldse mitte laaduda. Palun teavita meid kõigist leitud probleemidest. Sinu tagasiside aitab meil lugemisrežiimi kõigi jaoks paremaks muuta, enne kui see mootor muutub vaikimisi valikuks.</string>
+    <string name="feed_already_exists_message">%s on juba sinu uudisvoogude hulgas.</string>
 </resources>

@@ -88,7 +88,7 @@ internal class FeedActionsRepository(
             SyncAccounts.ICLOUD,
             -> {
                 databaseHelper.updateReadStatus(feedItemIds, isRead)
-                feedSyncRepository.setIsSyncUploadRequired()
+                feedSyncRepository.updateFeedItemsReadStatus(feedItemIds, isRead)
             }
         }
     }
@@ -289,7 +289,7 @@ internal class FeedActionsRepository(
             SyncAccounts.ICLOUD,
             -> {
                 databaseHelper.updateBookmarkStatus(feedItemId, isBookmarked)
-                feedSyncRepository.setIsSyncUploadRequired()
+                feedSyncRepository.updateFeedItemBookmarkStatus(feedItemId, isBookmarked)
             }
         }
 

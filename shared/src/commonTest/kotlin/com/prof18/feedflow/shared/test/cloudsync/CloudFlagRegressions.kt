@@ -79,7 +79,8 @@ internal suspend fun runStaleCloudRefreshRegression(provider: CloudProvider) {
         assertContentEquals(remote, store.snapshot().single().bytes)
         assertEquals(2, device2.database.getFeedSources().size)
         assertEquals(false to true, device2.flags()["article-two"])
-        // Preserving B's pending field intent during download is the separate C2/C3 work package.
+        assertEquals(false to false, device2.flags()["article-one"])
+        assertTrue(device2.settings.getIsSyncUploadRequired())
     } finally {
         try {
             device1.close()

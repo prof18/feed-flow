@@ -1,0 +1,15 @@
+import com.prof18.feedflow.database.CloudArticleFlag;
+
+CREATE TABLE cloud_sync_state (
+    session_id TEXT NOT NULL PRIMARY KEY,
+    next_revision INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE cloud_pending_article_flag (
+    session_id TEXT NOT NULL,
+    item_id TEXT NOT NULL,
+    field TEXT AS CloudArticleFlag NOT NULL CHECK (field IN ('READ', 'BOOKMARK')),
+    value INTEGER AS Boolean NOT NULL,
+    revision INTEGER NOT NULL,
+    PRIMARY KEY (session_id, item_id, field)
+);

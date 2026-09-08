@@ -260,6 +260,15 @@ SELECT url_hash, is_read, is_bookmarked, pub_date
 FROM feed_item
 WHERE is_read = 1 OR is_bookmarked = 1;
 
+selectAllFeedItemFlagsForCloud:
+SELECT url_hash, is_read, is_bookmarked
+FROM feed_item;
+
+resetAllFeedItemFlags:
+UPDATE feed_item
+SET is_read = 0,
+    is_bookmarked = 0;
+
 updateAllReadStatus:
 UPDATE feed_item
 SET is_read = :isRead,

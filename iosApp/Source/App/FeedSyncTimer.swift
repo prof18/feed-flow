@@ -16,7 +16,13 @@ class FeedSyncTimer {
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true) { _ in
             Deps.shared.getLogger(tag: "FeedSyncTimer").d(messageString: "Sync scheduled")
-            Deps.shared.getFeedSyncRepository().enqueueBackup(forceBackup: false)
+            Task {
+                do {
+                    try await Deps.shared.getFeedSyncRepository().enqueueBackup(forceBackup: false)
+                } catch {
+                    Deps.shared.getLogger(tag: "FeedSyncTimer").d(messageString: "Sync scheduling failed")
+                }
+            }
         }
     }
 

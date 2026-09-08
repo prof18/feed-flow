@@ -20,11 +20,18 @@ class FeedSyncRepository internal constructor(
     private val dropboxSettings: DropboxSettings,
     private val logger: Logger,
     private val settingsRepository: SettingsRepository,
+    private val pendingCloudChanges: PendingCloudChangesManager,
 ) {
     private var canApplyDownloadedItems = true
-    fun enqueueBackup(forceBackup: Boolean = false) {
+    val isUploadRequired = pendingCloudChanges.isUploadRequired
+
+    internal suspend fun cloudSessionForEdit(): String? = pendingCloudChanges.sessionForEdit()
+
+    suspend fun enqueueBackup(forceBackup: Boolean = false) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            if (forceBackup || settingsRepository.getIsSyncUploadRequired()) {
+            if (forceBackup || settingsRepository.getIsSyncUploadRequired() ||
+                pendingCloudChanges.hasPendingChanges()
+            ) {
                 feedSyncWorker.upload()
             }
         }
@@ -32,7 +39,9 @@ class FeedSyncRepository internal constructor(
 
     suspend fun performBackup(forceBackup: Boolean = false) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            if (forceBackup || settingsRepository.getIsSyncUploadRequired()) {
+            if (forceBackup || settingsRepository.getIsSyncUploadRequired() ||
+                pendingCloudChanges.hasPendingChanges()
+            ) {
                 feedSyncWorker.uploadImmediate()
             }
         }
@@ -178,8 +187,13 @@ class FeedSyncRepository internal constructor(
 
     internal suspend fun syncFeedSources() {
         if (feedSyncAccountRepository.isSyncEnabled()) {
+            pendingCloudChanges.sessionForEdit()
             canApplyDownloadedItems = false
             val result = feedSyncWorker.download()
+            if (result is SyncResult.BackupNotFound) {
+                feedSyncWorker.uploadImmediate()
+                return
+            }
             if (result.isError()) {
                 Logger.d { "Error on download" }
                 feedSyncMessageQueue.emitResult(result)
@@ -210,6 +224,7 @@ class FeedSyncRepository internal constructor(
         body: suspend () -> Unit,
     ) {
         try {
+            pendingCloudChanges.sessionForEdit()
             body()
         } catch (e: Exception) {
             logger.d(e) { "Error during feed sync" }

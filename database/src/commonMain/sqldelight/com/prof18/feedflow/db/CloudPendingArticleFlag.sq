@@ -1,0 +1,54 @@
+import com.prof18.feedflow.database.CloudArticleFlag;
+import kotlin.Boolean;
+
+CREATE TABLE cloud_sync_state (
+    session_id TEXT NOT NULL PRIMARY KEY,
+    next_revision INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE cloud_pending_article_flag (
+    session_id TEXT NOT NULL,
+    item_id TEXT NOT NULL,
+    field TEXT AS CloudArticleFlag NOT NULL CHECK (field IN ('READ', 'BOOKMARK')),
+    value INTEGER AS Boolean NOT NULL,
+    revision INTEGER NOT NULL,
+    PRIMARY KEY (session_id, item_id, field)
+);
+
+insertCloudSyncState:
+INSERT OR IGNORE INTO cloud_sync_state(session_id, next_revision)
+VALUES (:sessionId, 0);
+
+incrementCloudRevision:
+UPDATE cloud_sync_state
+SET next_revision = next_revision + 1
+WHERE session_id = :sessionId;
+
+selectCloudRevision:
+SELECT next_revision FROM cloud_sync_state
+WHERE session_id = :sessionId;
+
+insertOrReplaceCloudPendingArticleFlag:
+INSERT OR REPLACE INTO cloud_pending_article_flag(session_id, item_id, field, value, revision)
+VALUES (:sessionId, :itemId, :field, :value, :revision);
+
+selectCloudPendingArticleFlags:
+SELECT item_id, field, value, revision FROM cloud_pending_article_flag
+WHERE session_id = :sessionId
+ORDER BY revision ASC, item_id ASC, field ASC;
+
+countCloudPendingArticleFlags:
+SELECT count(*) FROM cloud_pending_article_flag WHERE session_id = :sessionId;
+
+deleteCloudPendingArticleFlagIfRevisionMatches:
+DELETE FROM cloud_pending_article_flag
+WHERE session_id = :sessionId
+AND item_id = :itemId
+AND field = :field
+AND revision = :revision;
+
+deleteAllCloudPendingArticleFlags:
+DELETE FROM cloud_pending_article_flag;
+
+deleteAllCloudSyncStates:
+DELETE FROM cloud_sync_state;

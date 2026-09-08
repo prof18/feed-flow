@@ -39,7 +39,7 @@ class FeedSyncRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `enqueueBackup triggers upload when sync enabled and upload required`() {
+    fun `enqueueBackup triggers upload when sync enabled and upload required`() = runTest(testDispatcher) {
         enableDropboxSync()
         settingsRepository.setIsSyncUploadRequired(true)
 
@@ -49,7 +49,7 @@ class FeedSyncRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `enqueueBackup does nothing when sync disabled`() {
+    fun `enqueueBackup does nothing when sync disabled`() = runTest(testDispatcher) {
         settingsRepository.setIsSyncUploadRequired(true)
 
         feedSyncRepository.enqueueBackup()
@@ -99,6 +99,19 @@ class FeedSyncRepositoryTest : KoinTestBase() {
 
         assertEquals(1, fakeFeedSyncWorker.uploadImmediateCallCount)
     }
+
+    @Test
+    fun `ordinary refresh bootstraps a confirmed missing backup without reconciling stale data`() =
+        runTest(testDispatcher) {
+            enableDropboxSync()
+            fakeFeedSyncWorker.downloadResult = SyncResult.BackupNotFound(SyncDownloadError.DropboxDownloadFailed)
+
+            feedSyncRepository.syncFeedSources()
+            feedSyncRepository.syncFeedItems()
+
+            assertEquals(1, fakeFeedSyncWorker.uploadImmediateCallCount)
+            assertEquals(listOf("download", "upload"), fakeFeedSyncWorker.calls)
+        }
 
     @Test
     fun `firstSync retains pending work on sign in failure`() = runTest(testDispatcher) {

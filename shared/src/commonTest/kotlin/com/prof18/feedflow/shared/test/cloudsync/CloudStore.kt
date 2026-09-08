@@ -32,6 +32,7 @@ internal data class CloudStoreFile(
 
 /** A deterministic, in-memory stand-in for the byte-file portions of cloud sync providers. */
 internal class CloudStore {
+    var beforeDownload: () -> Unit = {}
     var beforeUploadRead: suspend () -> Unit = {}
     var uploadFailure: Exception? = null
     var downloadFailure: Exception? = null
@@ -86,6 +87,7 @@ internal class CloudStore {
 
     /** Reads only visible cloud state. iCloud local saves become visible after [propagate]. */
     fun download(provider: CloudProvider, account: String, name: String): ByteArray {
+        beforeDownload()
         downloadFailure?.let { throw it }
         downloadedBytes?.let { return it.copyOf() }
         val key = FileKey(provider, account, name)

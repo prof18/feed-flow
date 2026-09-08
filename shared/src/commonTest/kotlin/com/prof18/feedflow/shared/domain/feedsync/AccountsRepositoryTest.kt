@@ -62,6 +62,7 @@ class AccountsRepositoryTest : KoinTestBase() {
                 networkSettings = get(),
                 feedbinRepository = get(),
                 databaseHelper = get(),
+                settingsRepository = get(),
             )
         }
     }

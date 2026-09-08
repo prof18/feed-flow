@@ -15,6 +15,8 @@ class IosCloudSyncSuccessTest : KoinTestBase() {
         runStaleCloudRefreshRegression(CloudProvider.DROPBOX)
         runCloudTransferRegressions(CloudProvider.DROPBOX)
         runCloudInvalidSnapshotRegressions(CloudProvider.DROPBOX)
+        runCloudUpgradeRegressions(CloudProvider.DROPBOX)
+        runCloudPendingRegressions(CloudProvider.DROPBOX)
         runCloudSnapshotRegression(CloudProvider.DROPBOX)
     }
 
@@ -26,6 +28,8 @@ class IosCloudSyncSuccessTest : KoinTestBase() {
         runStaleCloudRefreshRegression(CloudProvider.GOOGLE_DRIVE)
         runCloudTransferRegressions(CloudProvider.GOOGLE_DRIVE)
         runCloudInvalidSnapshotRegressions(CloudProvider.GOOGLE_DRIVE)
+        runCloudUpgradeRegressions(CloudProvider.GOOGLE_DRIVE)
+        runCloudPendingRegressions(CloudProvider.GOOGLE_DRIVE)
     }
 
     @Test
@@ -36,6 +40,8 @@ class IosCloudSyncSuccessTest : KoinTestBase() {
         runStaleCloudRefreshRegression(CloudProvider.ICLOUD)
         runCloudTransferRegressions(CloudProvider.ICLOUD)
         runCloudInvalidSnapshotRegressions(CloudProvider.ICLOUD)
+        runCloudUpgradeRegressions(CloudProvider.ICLOUD)
+        runCloudPendingRegressions(CloudProvider.ICLOUD)
         runCloudSnapshotRegression(CloudProvider.ICLOUD)
     }
 }

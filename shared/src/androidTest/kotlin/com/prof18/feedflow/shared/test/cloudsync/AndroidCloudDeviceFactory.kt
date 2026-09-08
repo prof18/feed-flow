@@ -12,6 +12,7 @@ import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceAndroid
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
+import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.feedsync.SyncDatabaseFileProvider
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.koin.TestModules
@@ -79,6 +80,7 @@ internal fun createAndroidCloudDevice(
                         },
                         logger = testLogger,
                         feedSyncer = get(),
+                        pendingCloudChanges = get<PendingCloudChangesManager>(),
                         feedSyncMessageQueue = get(),
                         dispatcherProvider = TestDispatcherProvider,
                         dropboxSettings = get(),

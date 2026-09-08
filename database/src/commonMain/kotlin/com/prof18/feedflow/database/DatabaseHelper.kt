@@ -2,7 +2,7 @@ package com.prof18.feedflow.database
 
 import app.cash.sqldelight.EnumColumnAdapter
 import app.cash.sqldelight.Transacter
-import app.cash.sqldelight.TransactionWithoutReturn
+import app.cash.sqldelight.TransactionWithReturn
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -28,6 +28,7 @@ import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.PrefetchQueueItem
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.core.utils.withSuspensionGuard
+import com.prof18.feedflow.db.Cloud_pending_article_flag
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item_status
 import com.prof18.feedflow.db.Feed_source
@@ -56,6 +57,9 @@ class DatabaseHelper(
 ) {
     private val dbRef: FeedFlowDB = FeedFlowDB(
         sqlDriver,
+        cloud_pending_article_flagAdapter = Cloud_pending_article_flag.Adapter(
+            field_Adapter = EnumColumnAdapter(),
+        ),
         feed_sourceAdapter = Feed_source.Adapter(
             positionAdapter = IntColumnAdapter,
         ),
@@ -274,15 +278,63 @@ class DatabaseHelper(
             }
         }
 
-    suspend fun updateReadStatus(feedItemId: FeedItemId, isRead: Boolean) =
+    suspend fun updateReadStatus(
+        feedItemId: FeedItemId,
+        isRead: Boolean,
+        cloudSessionId: String? = null,
+    ) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedItemQueries.updateReadStatus(urlHash = feedItemId.id, isRead = isRead)
+            recordCloudPendingArticleFlags(cloudSessionId, listOf(feedItemId.id), CloudArticleFlag.READ, isRead)
         }
 
-    suspend fun updateReadStatus(feedItemId: List<FeedItemId>, isRead: Boolean) =
+    suspend fun updateReadStatus(
+        feedItemId: List<FeedItemId>,
+        isRead: Boolean,
+        cloudSessionId: String? = null,
+    ) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedItemQueries.updateAllReadStatus(urlHash = feedItemId.map { it.id }, isRead = isRead)
+            recordCloudPendingArticleFlags(cloudSessionId, feedItemId.map { it.id }, CloudArticleFlag.READ, isRead)
         }
+
+    suspend fun ensureCloudSyncState(sessionId: String) {
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.cloudPendingArticleFlagQueries.insertCloudSyncState(sessionId)
+        }
+    }
+
+    suspend fun getCloudPendingArticleFlags(sessionId: String): List<CloudPendingArticleFlag> =
+        withContext(backgroundDispatcher) {
+            dbRef.cloudPendingArticleFlagQueries.selectCloudPendingArticleFlags(sessionId) {
+                    itemId, field, value, revision ->
+                CloudPendingArticleFlag(
+                    itemId = itemId,
+                    field = field,
+                    value = value,
+                    revision = revision,
+                )
+            }.executeAsList()
+        }
+
+    fun observeCloudPendingArticleFlags(sessionId: String): Flow<Boolean> =
+        dbRef.cloudPendingArticleFlagQueries.countCloudPendingArticleFlags(sessionId).asFlow()
+            .mapToOneOrDefault(0L, backgroundDispatcher)
+            .map { it > 0 }
+
+    suspend fun acknowledgeCloudPendingArticleFlags(
+        sessionId: String,
+        captured: List<CloudPendingArticleFlag>,
+    ) = dbRef.transactionWithContext(backgroundDispatcher) {
+        captured.forEach { pendingField ->
+            dbRef.cloudPendingArticleFlagQueries.deleteCloudPendingArticleFlagIfRevisionMatches(
+                sessionId = sessionId,
+                itemId = pendingField.itemId,
+                field = pendingField.field,
+                revision = pendingField.revision,
+            )
+        }
+    }
 
     suspend fun upsertReadStatusPendingActions(
         feedItemIds: List<FeedItemId>,
@@ -327,8 +379,25 @@ class DatabaseHelper(
             dbRef.readStatusPendingActionQueries.countReadStatusPendingActions().executeAsOne()
         }
 
-    suspend fun markAllFeedAsRead(feedFilter: FeedFilter) =
+    suspend fun markAllFeedAsRead(
+        feedFilter: FeedFilter,
+        cloudSessionId: String? = null,
+    ) =
         dbRef.transactionWithContext(backgroundDispatcher) {
+            val affectedItemIds = when {
+                cloudSessionId == null -> emptyList()
+                feedFilter == FeedFilter.Read || feedFilter == FeedFilter.Bookmarks -> emptyList()
+                else -> {
+                    dbRef.feedItemQueries.selectFeedUrlsForFilter(
+                        feedSourceId = feedFilter.getFeedSourceId(),
+                        feedSourceCategoryId = feedFilter.getCategoryId(),
+                        isRead = false,
+                        isBookmarked = null,
+                        isUncategorized = feedFilter.getIsUncategorized(),
+                        isHidden = null,
+                    ).executeAsList()
+                }
+            }
             when (feedFilter) {
                 is FeedFilter.Category -> {
                     dbRef.feedItemQueries.markAllReadByCategory(feedFilter.feedCategory.id)
@@ -350,6 +419,7 @@ class DatabaseHelper(
                     // Do nothing
                 }
             }
+            recordCloudPendingArticleFlags(cloudSessionId, affectedItemIds, CloudArticleFlag.READ, true)
         }
 
     suspend fun getNewerItems(targetItemId: String, feedFilter: FeedFilter): List<String> =
@@ -372,24 +442,54 @@ class DatabaseHelper(
             ).executeAsList()
         }
 
-    suspend fun markAllNewerAsRead(targetItemId: String, feedFilter: FeedFilter) =
+    suspend fun markAllNewerAsRead(
+        targetItemId: String,
+        feedFilter: FeedFilter,
+        cloudSessionId: String? = null,
+    ) =
         dbRef.transactionWithContext(backgroundDispatcher) {
+            val affectedItemIds = if (cloudSessionId == null) {
+                emptyList()
+            } else {
+                dbRef.feedItemQueries.selectNewerItems(
+                    targetItemId = targetItemId,
+                    feedSourceId = feedFilter.getFeedSourceId(),
+                    feedSourceCategoryId = feedFilter.getCategoryId(),
+                    isUncategorized = feedFilter.getIsUncategorized(),
+                ).executeAsList()
+            }
             dbRef.feedItemQueries.markAllNewerAsRead(
                 targetItemId = targetItemId,
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isUncategorized = feedFilter.getIsUncategorized(),
             )
+            recordCloudPendingArticleFlags(cloudSessionId, affectedItemIds, CloudArticleFlag.READ, true)
         }
 
-    suspend fun markAllOlderAsRead(targetItemId: String, feedFilter: FeedFilter) =
+    suspend fun markAllOlderAsRead(
+        targetItemId: String,
+        feedFilter: FeedFilter,
+        cloudSessionId: String? = null,
+    ) =
         dbRef.transactionWithContext(backgroundDispatcher) {
+            val affectedItemIds = if (cloudSessionId == null) {
+                emptyList()
+            } else {
+                dbRef.feedItemQueries.selectOlderItems(
+                    targetItemId = targetItemId,
+                    feedSourceId = feedFilter.getFeedSourceId(),
+                    feedSourceCategoryId = feedFilter.getCategoryId(),
+                    isUncategorized = feedFilter.getIsUncategorized(),
+                ).executeAsList()
+            }
             dbRef.feedItemQueries.markAllOlderAsRead(
                 targetItemId = targetItemId,
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isUncategorized = feedFilter.getIsUncategorized(),
             )
+            recordCloudPendingArticleFlags(cloudSessionId, affectedItemIds, CloudArticleFlag.READ, true)
         }
 
     suspend fun deleteOldFeedItems(timeThreshold: Long, feedFilter: FeedFilter) =
@@ -626,11 +726,21 @@ class DatabaseHelper(
             dbRef.feedSourceQueries.updateCategoryId(newCategoryId = newId, oldCategoryId = oldId)
         }
 
-    suspend fun updateBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) =
+    suspend fun updateBookmarkStatus(
+        feedItemId: FeedItemId,
+        isBookmarked: Boolean,
+        cloudSessionId: String? = null,
+    ) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedItemQueries.updateBookmarkStatus(
                 starred = isBookmarked,
                 urlHash = feedItemId.id,
+            )
+            recordCloudPendingArticleFlags(
+                sessionId = cloudSessionId,
+                itemIds = listOf(feedItemId.id),
+                field = CloudArticleFlag.BOOKMARK,
+                value = isBookmarked,
             )
         }
 
@@ -810,7 +920,12 @@ class DatabaseHelper(
 
     suspend fun updateFeedItemReadAndBookmarked(
         syncedFeedItems: List<SyncedFeedItem>,
+        cloudSessionId: String? = null,
+        replaceAll: Boolean = false,
     ) = dbRef.transactionWithContext(backgroundDispatcher) {
+        if (replaceAll) {
+            dbRef.feedItemQueries.resetAllFeedItemFlags()
+        }
         syncedFeedItems.forEach { syncedFeedItem ->
             dbRef.feedItemQueries.updateFeedItemReadAndBookmarked(
                 isRead = syncedFeedItem.isRead,
@@ -818,10 +933,44 @@ class DatabaseHelper(
                 urlHash = syncedFeedItem.id,
             )
         }
+        if (cloudSessionId != null) {
+            dbRef.cloudPendingArticleFlagQueries.selectCloudPendingArticleFlags(
+                sessionId = cloudSessionId,
+                mapper = { itemId, field, value, revision ->
+                    CloudPendingArticleFlag(itemId, field, value, revision)
+                },
+            )
+                .executeAsList()
+                .forEach { pendingField ->
+                    when (pendingField.field) {
+                        CloudArticleFlag.READ -> dbRef.feedItemQueries.updateReadStatus(
+                            urlHash = pendingField.itemId,
+                            isRead = pendingField.value,
+                        )
+
+                        CloudArticleFlag.BOOKMARK -> dbRef.feedItemQueries.updateBookmarkStatus(
+                            urlHash = pendingField.itemId,
+                            starred = pendingField.value,
+                        )
+                    }
+                }
+        }
     }
 
     suspend fun getFeedItemsForSync(): List<SyncedFeedItem> = withContext(backgroundDispatcher) {
         dbRef.feedItemQueries.selectForSync()
+            .executeAsList()
+            .map { queryResult ->
+                SyncedFeedItem(
+                    id = queryResult.url_hash,
+                    isRead = queryResult.is_read,
+                    isBookmarked = queryResult.is_bookmarked,
+                )
+            }
+    }
+
+    suspend fun getAllFeedItemFlagsForCloud(): List<SyncedFeedItem> = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.selectAllFeedItemFlagsForCloud()
             .executeAsList()
             .map { queryResult ->
                 SyncedFeedItem(
@@ -863,6 +1012,8 @@ class DatabaseHelper(
 
     suspend fun deleteAll() = dbRef.transactionWithContext(backgroundDispatcher) {
         dbRef.readStatusPendingActionQueries.deleteAllReadStatusPendingActions()
+        dbRef.cloudPendingArticleFlagQueries.deleteAllCloudPendingArticleFlags()
+        dbRef.cloudPendingArticleFlagQueries.deleteAllCloudSyncStates()
         dbRef.feedItemQueries.deleteAll()
         dbRef.feedSourceCategoryQueries.deleteAll()
         dbRef.feedSourceCacheInfoQueries.deleteAll()
@@ -871,6 +1022,8 @@ class DatabaseHelper(
 
     suspend fun deleteAllE2eData() = dbRef.transactionWithContext(backgroundDispatcher) {
         dbRef.readStatusPendingActionQueries.deleteAllReadStatusPendingActions()
+        dbRef.cloudPendingArticleFlagQueries.deleteAllCloudPendingArticleFlags()
+        dbRef.cloudPendingArticleFlagQueries.deleteAllCloudSyncStates()
         dbRef.contentPrefetchQueueQueries.clearQueue()
         dbRef.feedItemStatusQueries.deleteAllStatuses()
         dbRef.feedItemTempQueries.clearTempFeedItemIds()
@@ -1059,24 +1212,40 @@ class DatabaseHelper(
      * which gets the process killed (0xdead10cc). Short transactions should leave it null,
      * since asserting background time is not free.
      */
-    private suspend fun Transacter.transactionWithContext(
+    private suspend fun <T> Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
         noEnclosing: Boolean = false,
         suspensionGuardReason: String? = null,
-        body: TransactionWithoutReturn.() -> Unit,
-    ) {
+        body: TransactionWithReturn<T>.() -> T,
+    ): T =
         withContext(coroutineContext) {
             if (suspensionGuardReason == null) {
-                this@transactionWithContext.transaction(noEnclosing) {
-                    body()
-                }
+                this@transactionWithContext.transactionWithResult(noEnclosing, body)
             } else {
                 withSuspensionGuard(suspensionGuardReason) {
-                    this@transactionWithContext.transaction(noEnclosing) {
-                        body()
-                    }
+                    this@transactionWithContext.transactionWithResult(noEnclosing, body)
                 }
             }
+        }
+
+    private fun recordCloudPendingArticleFlags(
+        sessionId: String?,
+        itemIds: List<String>,
+        field: CloudArticleFlag,
+        value: Boolean,
+    ) {
+        if (sessionId == null || itemIds.isEmpty()) return
+
+        dbRef.cloudPendingArticleFlagQueries.incrementCloudRevision(sessionId)
+        val revision = dbRef.cloudPendingArticleFlagQueries.selectCloudRevision(sessionId).executeAsOne()
+        itemIds.forEach { itemId ->
+            dbRef.cloudPendingArticleFlagQueries.insertOrReplaceCloudPendingArticleFlag(
+                sessionId = sessionId,
+                itemId = itemId,
+                field = field,
+                value = value,
+                revision = revision,
+            )
         }
     }
 

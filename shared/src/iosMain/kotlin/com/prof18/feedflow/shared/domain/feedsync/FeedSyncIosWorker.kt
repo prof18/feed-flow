@@ -61,6 +61,7 @@ internal class FeedSyncIosWorker(
     private val iCloudDataSource: ICloudDataSource,
     private val logger: Logger,
     private val feedSyncer: FeedSyncer,
+    private val pendingCloudChanges: PendingCloudChangesManager,
     private val appEnvironment: AppEnvironment,
     private val dropboxSettings: DropboxSettings,
     private val googleDriveSettings: GoogleDriveSettings,
@@ -71,6 +72,7 @@ internal class FeedSyncIosWorker(
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
 ) : FeedSyncWorker {
     private val mutex = Mutex()
+    private var downloadSession: String? = null
 
     override fun upload() {
         scope.launch {
@@ -94,10 +96,13 @@ internal class FeedSyncIosWorker(
         mutex.withLock {
             var snapshot: NSURL? = null
             try {
-                val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
-                logger.w { "Starting upload" }
+                val uploadSession = requireNotNull(pendingCloudChanges.sessionForEdit())
+                val uploadAccount = accountsRepository.getCurrentSyncAccount()
                 feedSyncer.populateSyncDbIfEmpty()
                 feedSyncer.updateFeedItemsToSyncDatabase()
+                val pendingBatch = pendingCloudChanges.capturePendingChanges()
+                val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
+                pendingCloudChanges.applyChangesToSyncDatabase(pendingBatch)
 
                 val databasePath = getDatabaseUrl()
                 if (databasePath == null) {
@@ -112,7 +117,9 @@ internal class FeedSyncIosWorker(
                         "Failed to export sync database"
                     }
                 }
-                accountSpecificUpload(requireNotNull(snapshot))
+                pendingCloudChanges.checkAccountSession(uploadSession)
+                accountSpecificUpload(requireNotNull(snapshot), uploadAccount)
+                pendingCloudChanges.markChangesAsUploaded(pendingBatch)
                 settingsRepository.acknowledgeSyncUpload(uploadGeneration)
                 emitSuccessMessage()
             } catch (e: CancellationException) {
@@ -132,22 +139,28 @@ internal class FeedSyncIosWorker(
 
     override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
         return@withContext withSuspensionGuard("FeedFlow sync download") {
-            mutex.withLock {
-                try {
-                    accountSpecificDownload(isFirstSync)
-                } catch (_: CloudBackupNotFoundException) {
-                    SyncResult.BackupNotFound(syncDownloadErrorForAccount(accountsRepository.getCurrentSyncAccount()))
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    if (!isFirstSync) {
-                        logger.e("Download failed", e)
-                    }
-                    SyncResult.General(syncDownloadErrorForAccount(accountsRepository.getCurrentSyncAccount()))
-                }
-            }
+            mutex.withLock { downloadLocked(isFirstSync) }
         }
     }
+
+    private suspend fun downloadLocked(
+        isFirstSync: Boolean,
+        expectedSession: String? = null,
+    ): SyncResult =
+        try {
+            downloadSession = pendingCloudChanges.sessionForEdit()
+            if (expectedSession != null) pendingCloudChanges.checkAccountSession(expectedSession)
+            accountSpecificDownload(isFirstSync)
+        } catch (_: CloudBackupNotFoundException) {
+            SyncResult.BackupNotFound(syncDownloadErrorForAccount(accountsRepository.getCurrentSyncAccount()))
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            if (!isFirstSync) {
+                logger.e("Download failed", e)
+            }
+            SyncResult.General(syncDownloadErrorForAccount(accountsRepository.getCurrentSyncAccount()))
+        }
 
     override suspend fun syncFeedSources(): SyncResult = withContext(dispatcherProvider.io) {
         mutex.withLock {
@@ -228,7 +241,9 @@ internal class FeedSyncIosWorker(
 
     private suspend fun replaceDatabase(url: NSURL): Boolean {
         prepareSyncDatabaseFile(url)
-        return feedSyncer.withClosedDatabase { replaceClosedDatabase(url) }
+        return feedSyncer.withClosedDatabase {
+            pendingCloudChanges.withAccountSession(downloadSession) { replaceClosedDatabase(url) }
+        }
     }
 
     private fun replaceClosedDatabase(url: NSURL): Boolean {
@@ -260,8 +275,8 @@ internal class FeedSyncIosWorker(
         return false
     }
 
-    private suspend fun accountSpecificUpload(databasePath: NSURL) =
-        when (accountsRepository.getCurrentSyncAccount()) {
+    private suspend fun accountSpecificUpload(databasePath: NSURL, account: SyncAccounts) =
+        when (account) {
             SyncAccounts.DROPBOX -> {
                 restoreDropboxClient()
                 val dropboxUploadParam = DropboxUploadParam(

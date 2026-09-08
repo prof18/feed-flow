@@ -31,6 +31,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerAndroid
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncWorker
+import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.feedsync.SyncDatabaseFileProvider
 import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
@@ -201,6 +202,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             syncDatabaseFileProvider = get(),
             logger = getWith("FeedSyncAndroidWorker"),
             feedSyncer = get(),
+            pendingCloudChanges = get<PendingCloudChangesManager>(),
             feedSyncMessageQueue = get(),
             dispatcherProvider = get(),
             dropboxSettings = get(),

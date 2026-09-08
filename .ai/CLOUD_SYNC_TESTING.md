@@ -46,8 +46,8 @@ last successful sync timestamps do not advance on failure.
 Google Drive reauthorization prompts are emitted once per active UI collector until
 a successful sync result resets suppression. Explicit iCloud connection attempts
 still report an unavailable service; background iCloud URL failures remain silent.
-Provider authentication feedback and the recovery-choice UI are separate and remain
-available. `FeedSyncMessageQueueTest` tests this policy, and
+Provider authentication feedback remains available. Upgrades use ordinary sync
+without a special recovery flow or user decision. `FeedSyncMessageQueueTest` tests this policy, and
 `CloudTransferRegressions` asserts that real worker failures and retries emit no UI
 notifications across the supported platforms/providers.
 
@@ -109,12 +109,14 @@ database; complete legacy version-zero files remain supported.
 The desktop sync database factory validates existing files read-only before
 opening them for writes. Its tests preserve invalid bytes, unsupported versions,
 incomplete schemas and paths involved in storage failures instead of deleting
-them. Cross-process ownership and user-facing recovery remain separate work.
+them. Cross-process database ownership remains separate work. Legacy cloud dirty
+state follows the ordinary cloud-first flow described below; general database repair remains separate.
 The desktop iCloud JNI bridge downloads into a caller-owned staging file; rebuild
 both native libraries whenever this interface changes.
 
-Ambiguous writes, process crashes, cancellation, empty remote
-collections and pending-intent replay are added with their corresponding fixes.
+Pending article intent, transaction rollback, restart, account changes and sync
+after upgrade have regressions. Ambiguous remote writes, cancellation and
+general empty remote collections need their corresponding later fixes.
 These tests do not prove the absence of all unseen corner cases.
 
 ## Local and CI execution
@@ -180,3 +182,41 @@ changes, and inspect the normal Gradle reports together with
 Regenerate the Android baseline profiles before a performance-sensitive release:
 some provider constructors gained optional test dependencies, so their recorded
 constructor signatures have changed. Do not hand-edit the generated profiles.
+
+Upgrades use the same cloud-first sync flow as ordinary refresh and backup.
+There is no separate legacy-recovery checkpoint, SQL dump, local recovery archive,
+or recovery UI. The accepted trade-off is that untracked pre-upgrade changes may
+lose to cloud values; this is best-effort compatibility, not a legacy migration
+guarantee.
+
+`CloudPendingArticleFlag` / `cloud_pending_article_flag` stores pending article
+read and bookmark flags. The upload batch exposes them as `articleFlags`.
+
+Read/bookmark and feed/category intent live in the main database per account session.
+Visible edits and pending revisions commit together; upload acknowledgments retire
+only captured revisions. Pending rows survive article cache eviction. Backup
+scheduling and UI observe the table, covering a crash before the Settings write.
+
+Portable upgrade regressions cover refresh and backup as the first action, quiet
+failure/retry across restart, cloud-first convergence, and precisely tracked new
+edits. A backup installs the latest sync snapshot and replays pending edits before
+upload; a subsequent refresh reconciles the visible main database through the
+ordinary source/category and item paths.
+
+A provider-confirmed missing backup bootstraps the full local data. Unknown,
+unavailable or invalid cloud state never permits that bootstrap. Pending edits
+and the upload-required setting remain until a successful upload.
+
+Whole-snapshot multi-writer safety on Drive/iCloud and mixed-version guarantees
+remain explicitly deferred in the main sync plan.
+
+## Pending article changes
+
+`PendingCloudChangesManager` owns capture, application and acknowledgment of
+pending article changes. Refresh downloads the raw cloud snapshot and combines
+its flags with pending local flags when importing into the app database.
+Upload prepares the existing sync database, captures pending changes, applies
+them once with `applyChangesToSyncDatabase`, then uploads and calls
+`markChangesAsUploaded`. Only matching captured revisions are acknowledged.
+Downloading a fresh snapshot before backup and tracking feed/category edits
+are introduced in the following change.

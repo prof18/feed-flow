@@ -38,6 +38,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerIosDesktop
+import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
@@ -219,6 +220,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             iCloudDataSource = get(),
             logger = getWith("FeedSyncIosWorker"),
             feedSyncer = get(),
+            pendingCloudChanges = get<PendingCloudChangesManager>(),
             appEnvironment = appEnvironment,
             dropboxSettings = get(),
             googleDriveSettings = get(),

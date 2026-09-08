@@ -19,6 +19,7 @@ internal class AndroidDropboxTransport(
     private val device: String,
 ) : DropboxDataSource by DropboxDataSourceFake() {
     override suspend fun performUpload(uploadParam: DropboxUploadParam): DropboxUploadResult {
+        store.beforeUploadRead()
         val bytes = uploadParam.file.readBytes()
         val id = store.upload(CloudProvider.DROPBOX, ACCOUNT, uploadParam.path.substringAfterLast('/'), bytes, device)
         return DropboxUploadResult(id, 1000, bytes.size.toLong(), null)
@@ -44,6 +45,7 @@ internal class AndroidDriveTransport(
         AuthorizationValidationResult.Valid
 
     override suspend fun performUpload(uploadParam: GoogleDriveUploadParam): GoogleDriveUploadResult {
+        store.beforeUploadRead()
         val bytes = uploadParam.file.readBytes()
         val id = store.upload(CloudProvider.GOOGLE_DRIVE, ACCOUNT, uploadParam.fileName, bytes, device)
         settings.setBackupFileId(id)

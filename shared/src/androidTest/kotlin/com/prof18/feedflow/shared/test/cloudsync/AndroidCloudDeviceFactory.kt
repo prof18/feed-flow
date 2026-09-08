@@ -76,11 +76,6 @@ internal fun createAndroidCloudDevice(
                                 context.getDatabasePath(syncFile.name)
                             }
                             override val remoteFileName = "${SyncedDatabaseHelper.SYNC_DATABASE_NAME_DEBUG}.db"
-                            override val uploadFile: File = if (useFixtureDatabaseDirectory) {
-                                directory.resolve(remoteFileName)
-                            } else {
-                                context.getFileStreamPath(remoteFileName)
-                            }
                         },
                         logger = testLogger,
                         feedSyncer = get(),

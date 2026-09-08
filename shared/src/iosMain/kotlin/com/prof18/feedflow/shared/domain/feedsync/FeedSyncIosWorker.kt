@@ -48,6 +48,7 @@ import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSFileManagerItemReplacementUsingNewMetadataOnly
 import platform.Foundation.NSURL
+import platform.Foundation.NSUUID
 import kotlin.coroutines.resume
 import kotlin.time.Clock
 
@@ -90,12 +91,11 @@ internal class FeedSyncIosWorker(
 
     private suspend fun performUploadInternal() {
         mutex.withLock {
+            var snapshot: NSURL? = null
             try {
                 logger.w { "Starting upload" }
                 feedSyncer.populateSyncDbIfEmpty()
                 feedSyncer.updateFeedItemsToSyncDatabase()
-                feedSyncer.closeDB()
-                logger.w { "Sync database populated and closed" }
 
                 val databasePath = getDatabaseUrl()
                 if (databasePath == null) {
@@ -103,7 +103,14 @@ internal class FeedSyncIosWorker(
                     emitErrorMessage()
                     return@withLock
                 }
-                accountSpecificUpload(databasePath)
+                snapshot = requireNotNull(databasePath.URLByDeletingLastPathComponent)
+                    .URLByAppendingPathComponent("cloud-upload-${NSUUID().UUIDString}.db")
+                feedSyncer.withClosedDatabase {
+                    check(NSFileManager.defaultManager.copyItemAtURL(databasePath, requireNotNull(snapshot), null)) {
+                        "Failed to export sync database"
+                    }
+                }
+                accountSpecificUpload(requireNotNull(snapshot))
                 settingsRepository.setIsSyncUploadRequired(false)
                 emitSuccessMessage()
             } catch (e: CancellationException) {
@@ -115,6 +122,8 @@ internal class FeedSyncIosWorker(
                 } else {
                     emitErrorMessage()
                 }
+            } finally {
+                snapshot?.let { NSFileManager.defaultManager.removeItemAtURL(it, null) }
             }
         }
     }
@@ -123,7 +132,6 @@ internal class FeedSyncIosWorker(
         return@withContext withSuspensionGuard("FeedFlow sync download") {
             mutex.withLock {
                 try {
-                    feedSyncer.closeDB()
                     accountSpecificDownload(isFirstSync)
                 } catch (_: CloudBackupNotFoundException) {
                     SyncResult.BackupNotFound(syncDownloadErrorForAccount(accountsRepository.getCurrentSyncAccount()))
@@ -216,7 +224,11 @@ internal class FeedSyncIosWorker(
         NSURL.fileURLWithPath(databaseDirectory ?: getAppGroupDatabasePath())
             .URLByAppendingPathComponent(getDatabaseName())
 
-    private fun replaceDatabase(url: NSURL): Boolean {
+    private suspend fun replaceDatabase(url: NSURL): Boolean = feedSyncer.withClosedDatabase {
+        replaceClosedDatabase(url)
+    }
+
+    private fun replaceClosedDatabase(url: NSURL): Boolean {
         val dbUrl = getDatabaseUrl()
         if (dbUrl != null) {
             if (!NSFileManager.defaultManager.fileExistsAtPath(requireNotNull(dbUrl.path))) {

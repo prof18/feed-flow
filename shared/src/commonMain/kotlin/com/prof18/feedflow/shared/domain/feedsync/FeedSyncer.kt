@@ -153,7 +153,6 @@ internal class FeedSyncer(
         logger.d { "Feed Item sync completed" }
     }
 
-    fun closeDB() {
-        syncedDatabaseHelper.closeScope()
-    }
+    suspend fun <T> withClosedDatabase(block: suspend () -> T): T =
+        syncedDatabaseHelper.withClosedDatabase(block)
 }

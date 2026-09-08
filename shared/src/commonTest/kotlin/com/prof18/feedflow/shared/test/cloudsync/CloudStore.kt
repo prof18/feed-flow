@@ -32,6 +32,7 @@ internal data class CloudStoreFile(
 
 /** A deterministic, in-memory stand-in for the byte-file portions of cloud sync providers. */
 internal class CloudStore {
+    var beforeUploadRead: suspend () -> Unit = {}
     var uploadFailure: Exception? = null
     var downloadFailure: Exception? = null
 

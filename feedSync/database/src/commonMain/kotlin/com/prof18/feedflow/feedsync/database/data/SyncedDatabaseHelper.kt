@@ -1,10 +1,6 @@
 package com.prof18.feedflow.feedsync.database.data
 
-import app.cash.sqldelight.Transacter
-import app.cash.sqldelight.TransactionWithoutReturn
 import app.cash.sqldelight.db.SqlDriver
-import co.touchlab.stately.concurrency.AtomicReference
-import co.touchlab.stately.concurrency.value
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
@@ -21,7 +17,7 @@ import kotlinx.coroutines.withContext
 import org.koin.core.Koin
 import org.koin.core.component.KoinComponent
 import org.koin.core.qualifier.named
-import kotlin.coroutines.CoroutineContext
+import org.koin.core.scope.Scope
 import kotlin.time.Clock
 
 class SyncedDatabaseHelper(
@@ -32,70 +28,93 @@ class SyncedDatabaseHelper(
 
     override fun getKoin(): Koin = koinContext ?: super.getKoin()
 
-    private var dbRef: AtomicReference<FeedFlowFeedSyncDB?> = AtomicReference(null)
-    private var driverRef: AtomicReference<SqlDriver?> = AtomicReference(null)
+    private var database: FeedFlowFeedSyncDB? = null
+    private var driver: SqlDriver? = null
+    private var scope: Scope? = null
+    private var driverClosed = false
+    private var closeFailed = false
     private val dbMutex = Mutex()
 
-    private suspend fun getDbRef(): FeedFlowFeedSyncDB =
+    private suspend fun <T> withDatabase(block: (FeedFlowFeedSyncDB) -> T): T =
         withContext(backgroundDispatcher) {
             dbMutex.withLock {
-                if (dbRef.value == null) {
-                    val scope = getKoin().getOrCreateScope(FEED_SYNC_SCOPE_NAME, named(FEED_SYNC_SCOPE_NAME))
-
-                    val driver = scope.get<SqlDriver>(qualifier = named(SYNC_DB_DRIVER))
-                    driverRef.set(driver)
-                    dbRef.set(FeedFlowFeedSyncDB(driver))
+                if (closeFailed) closeScopeLocked()
+                if (database == null) {
+                    val newScope = getKoin().getOrCreateScope(FEED_SYNC_SCOPE_NAME, named(FEED_SYNC_SCOPE_NAME))
+                    val newDriver = newScope.get<SqlDriver>(qualifier = named(SYNC_DB_DRIVER))
+                    scope = newScope
+                    driver = newDriver
+                    database = FeedFlowFeedSyncDB(newDriver)
+                    driverClosed = false
                 }
-                return@withLock requireNotNull(dbRef.get())
+                block(requireNotNull(database))
             }
         }
 
-    fun closeScope() {
-        val driver = driverRef.value
-        val database = dbRef.value
-        if (driver == null && database == null) {
+    suspend fun closeScope() = withContext(backgroundDispatcher) {
+        dbMutex.withLock {
+            closeScopeLocked()
+        }
+    }
+
+    suspend fun <T> withClosedDatabase(block: suspend () -> T): T = withContext(backgroundDispatcher) {
+        dbMutex.withLock {
+            closeScopeLocked()
+            block()
+        }
+    }
+
+    private fun closeScopeLocked() {
+        if (driver == null && database == null && scope == null) {
+            closeFailed = false
             return
         }
 
-        runCatching {
-            driver?.close()
+        try {
+            if (!driverClosed) {
+                driver?.close()
+                driverClosed = true
+            }
+            scope?.close()
+        } catch (e: Exception) {
+            closeFailed = true
+            throw e
         }
 
-        runCatching {
-            getKoin().getScope(FEED_SYNC_SCOPE_NAME).close()
-        }
-
-        driverRef.set(null)
-        dbRef.set(null)
+        database = null
+        driver = null
+        scope = null
+        driverClosed = false
+        closeFailed = false
     }
 
     suspend fun insertSyncedFeedSource(sources: List<FeedSource>) {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            sources.forEach { source ->
-                val category = source.category
-                if (category != null) {
-                    dbRef.syncedFeedSourceCategoryQueries.insertOrIgnoreFeedSourceCategory(
-                        id = category.id,
-                        title = category.title,
+        withDatabase { database ->
+            database.transaction {
+                sources.forEach { source ->
+                    val category = source.category
+                    if (category != null) {
+                        database.syncedFeedSourceCategoryQueries.insertOrIgnoreFeedSourceCategory(
+                            id = category.id,
+                            title = category.title,
+                        )
+                    }
+                    database.syncedFeedSourceQueries.insertOrIgnoreFeedSource(
+                        url_hash = source.id,
+                        url = source.url,
+                        title = source.title,
+                        category_id = category?.id,
+                        logo_url = source.logoUrl,
                     )
                 }
-                dbRef.syncedFeedSourceQueries.insertOrIgnoreFeedSource(
-                    url_hash = source.id,
-                    url = source.url,
-                    title = source.title,
-                    category_id = category?.id,
-                    logo_url = source.logoUrl,
-                )
+                database.updateMetadata(SyncTable.SYNCED_FEED_SOURCE)
             }
-            dbRef.updateMetadata(SyncTable.SYNCED_FEED_SOURCE)
         }
     }
 
     suspend fun updateFeedSourceName(feedSourceId: String, newName: String) {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.syncedFeedSourceQueries.updateFeedSourceTitle(
+        withDatabase { database ->
+            database.syncedFeedSourceQueries.updateFeedSourceTitle(
                 title = newName,
                 urlHash = feedSourceId,
             )
@@ -103,9 +122,8 @@ class SyncedDatabaseHelper(
     }
 
     suspend fun updateFeedSource(feedSource: FeedSource) {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.syncedFeedSourceQueries.updateFeedSource(
+        withDatabase { database ->
+            database.syncedFeedSourceQueries.updateFeedSource(
                 urlHash = feedSource.id,
                 url = feedSource.url,
                 title = feedSource.title,
@@ -114,8 +132,8 @@ class SyncedDatabaseHelper(
         }
     }
 
-    suspend fun getAllFeedSources(): List<SyncedFeedSource> = withContext(backgroundDispatcher) {
-        getDbRef().syncedFeedSourceQueries
+    suspend fun getAllFeedSources(): List<SyncedFeedSource> = withDatabase { database ->
+        database.syncedFeedSourceQueries
             .getAllSyncedFeedSources()
             .executeAsList()
             .map { source ->
@@ -130,38 +148,39 @@ class SyncedDatabaseHelper(
     }
 
     suspend fun deleteFeedSource(sourceId: String) {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.syncedFeedSourceQueries.delete(sourceId)
-            dbRef.updateMetadata(SyncTable.SYNCED_FEED_SOURCE)
+        withDatabase { database ->
+            database.transaction {
+                database.syncedFeedSourceQueries.delete(sourceId)
+                database.updateMetadata(SyncTable.SYNCED_FEED_SOURCE)
+            }
         }
     }
 
     suspend fun insertFeedSourceCategories(categories: List<FeedSourceCategory>) {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            categories.forEach { category ->
-                dbRef.syncedFeedSourceCategoryQueries.insertOrIgnoreFeedSourceCategory(
-                    id = category.id,
-                    title = category.title,
-                )
+        withDatabase { database ->
+            database.transaction {
+                categories.forEach { category ->
+                    database.syncedFeedSourceCategoryQueries.insertOrIgnoreFeedSourceCategory(
+                        id = category.id,
+                        title = category.title,
+                    )
+                }
+                database.updateMetadata(SyncTable.SYNCED_FEED_SOURCE_CATEGORY)
             }
-            dbRef.updateMetadata(SyncTable.SYNCED_FEED_SOURCE_CATEGORY)
         }
     }
 
     suspend fun updateCategoryName(categoryId: String, newName: String) {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.syncedFeedSourceCategoryQueries.updateCategoryName(
+        withDatabase { database ->
+            database.syncedFeedSourceCategoryQueries.updateCategoryName(
                 title = newName,
                 id = categoryId,
             )
         }
     }
 
-    suspend fun getAllFeedSourceCategories(): List<FeedSourceCategory> = withContext(backgroundDispatcher) {
-        getDbRef().syncedFeedSourceCategoryQueries
+    suspend fun getAllFeedSourceCategories(): List<FeedSourceCategory> = withDatabase { database ->
+        database.syncedFeedSourceCategoryQueries
             .getAllFeedSourceCategories()
             .executeAsList()
             .map { category ->
@@ -173,24 +192,25 @@ class SyncedDatabaseHelper(
     }
 
     suspend fun deleteFeedSourceCategory(categoryId: String) {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.syncedFeedSourceCategoryQueries.delete(categoryId)
-            dbRef.updateMetadata(SyncTable.SYNCED_FEED_SOURCE_CATEGORY)
+        withDatabase { database ->
+            database.transaction {
+                database.syncedFeedSourceCategoryQueries.delete(categoryId)
+                database.updateMetadata(SyncTable.SYNCED_FEED_SOURCE_CATEGORY)
+            }
         }
     }
 
-    suspend fun deleteAllFeedSources() = withContext(backgroundDispatcher) {
-        getDbRef().syncedFeedSourceQueries.deleteAll()
+    suspend fun deleteAllFeedSources() = withDatabase { database ->
+        database.syncedFeedSourceQueries.deleteAll()
     }
 
-    suspend fun getLastChangeTimestamp(tableName: SyncTable): Long? = withContext(backgroundDispatcher) {
-        getDbRef().syncedMetadataQueries.selectLastChangeTimestamp(tableName.tableName)
+    suspend fun getLastChangeTimestamp(tableName: SyncTable): Long? = withDatabase { database ->
+        database.syncedMetadataQueries.selectLastChangeTimestamp(tableName.tableName)
             .executeAsOneOrNull()?.last_change_timestamp
     }
 
-    suspend fun getAllFeedItems(): List<SyncedFeedItem> = withContext(backgroundDispatcher) {
-        getDbRef().syncedFeedItemQueries
+    suspend fun getAllFeedItems(): List<SyncedFeedItem> = withDatabase { database ->
+        database.syncedFeedItemQueries
             .selectAllSyncedFeedItems()
             .executeAsList()
             .map { item ->
@@ -203,74 +223,79 @@ class SyncedDatabaseHelper(
     }
 
     suspend fun insertFeedItems(feedItems: List<SyncedFeedItem>) {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            feedItems.forEach { feedItem ->
-                dbRef.syncedFeedItemQueries.insertOrReplaceSyncedFeedItem(
-                    url_hash = feedItem.id,
-                    is_read = feedItem.isRead,
-                    is_bookmarked = feedItem.isBookmarked,
-                )
+        withDatabase { database ->
+            database.transaction {
+                feedItems.forEach { feedItem ->
+                    database.syncedFeedItemQueries.insertOrReplaceSyncedFeedItem(
+                        url_hash = feedItem.id,
+                        is_read = feedItem.isRead,
+                        is_bookmarked = feedItem.isBookmarked,
+                    )
+                }
+                database.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
             }
-            dbRef.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
         }
     }
 
     suspend fun updateFeedItemsReadStatus(feedItemIds: List<FeedItemId>, isRead: Boolean) {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            feedItemIds.forEach { feedItemId ->
-                dbRef.syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
-                    url_hash = feedItemId.id,
-                    is_read = false,
-                    is_bookmarked = false,
-                )
-                dbRef.syncedFeedItemQueries.updateIsRead(
-                    isRead = isRead,
-                    urlHash = feedItemId.id,
-                )
+        withDatabase { database ->
+            database.transaction {
+                feedItemIds.forEach { feedItemId ->
+                    database.syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
+                        url_hash = feedItemId.id,
+                        is_read = false,
+                        is_bookmarked = false,
+                    )
+                    database.syncedFeedItemQueries.updateIsRead(
+                        isRead = isRead,
+                        urlHash = feedItemId.id,
+                    )
+                }
+                database.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
             }
-            dbRef.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
         }
     }
 
     suspend fun updateFeedItemBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
-                url_hash = feedItemId.id,
-                is_read = false,
-                is_bookmarked = false,
-            )
-            dbRef.syncedFeedItemQueries.updateIsBookmarked(
-                isBookmarked = isBookmarked,
-                urlHash = feedItemId.id,
-            )
-            dbRef.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
+        withDatabase { database ->
+            database.transaction {
+                database.syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
+                    url_hash = feedItemId.id,
+                    is_read = false,
+                    is_bookmarked = false,
+                )
+                database.syncedFeedItemQueries.updateIsBookmarked(
+                    isBookmarked = isBookmarked,
+                    urlHash = feedItemId.id,
+                )
+                database.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
+            }
         }
     }
 
-    suspend fun isDatabaseEmpty(): Boolean = withContext(backgroundDispatcher) {
-        getDbRef().syncedMetadataQueries.isSyncDatabaseEmpty().executeAsOne() == 0L
+    suspend fun isDatabaseEmpty(): Boolean = withDatabase { database ->
+        database.syncedMetadataQueries.isSyncDatabaseEmpty().executeAsOne() == 0L
     }
 
     suspend fun deleteFeedItems(feedItemIds: List<FeedItemId>) {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            feedItemIds.forEach { feedItemId ->
-                dbRef.syncedFeedItemQueries.deleteSyncedFeedItem(feedItemId.id)
+        withDatabase { database ->
+            database.transaction {
+                feedItemIds.forEach { feedItemId ->
+                    database.syncedFeedItemQueries.deleteSyncedFeedItem(feedItemId.id)
+                }
+                database.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
             }
-            dbRef.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
         }
     }
 
     suspend fun deleteAllData() {
-        val dbRef = getDbRef()
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.syncedFeedItemQueries.deleteAll()
-            dbRef.syncedFeedSourceQueries.deleteAll()
-            dbRef.syncedFeedSourceCategoryQueries.deleteAll()
-            dbRef.syncedMetadataQueries.deleteAll()
+        withDatabase { database ->
+            database.transaction {
+                database.syncedFeedItemQueries.deleteAll()
+                database.syncedFeedSourceQueries.deleteAll()
+                database.syncedFeedSourceCategoryQueries.deleteAll()
+                database.syncedMetadataQueries.deleteAll()
+            }
         }
     }
 
@@ -279,18 +304,6 @@ class SyncedDatabaseHelper(
             table_name = table.tableName,
             last_change_timestamp = clock.now().toEpochMilliseconds(),
         )
-    }
-
-    private suspend fun Transacter.transactionWithContext(
-        coroutineContext: CoroutineContext,
-        noEnclosing: Boolean = false,
-        body: TransactionWithoutReturn.() -> Unit,
-    ) {
-        withContext(coroutineContext) {
-            this@transactionWithContext.transaction(noEnclosing) {
-                body()
-            }
-        }
     }
 
     companion object {

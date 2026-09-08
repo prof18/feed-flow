@@ -14,6 +14,7 @@ class DesktopCloudSyncSuccessTest : KoinTestBase() {
         runCloudFlagRegressions(CloudProvider.DROPBOX)
         runStaleCloudRefreshRegression(CloudProvider.DROPBOX)
         runCloudTransferRegressions(CloudProvider.DROPBOX)
+        runCloudSnapshotRegression(CloudProvider.DROPBOX)
     }
 
     @Test
@@ -23,6 +24,7 @@ class DesktopCloudSyncSuccessTest : KoinTestBase() {
         runCloudFlagRegressions(CloudProvider.GOOGLE_DRIVE)
         runStaleCloudRefreshRegression(CloudProvider.GOOGLE_DRIVE)
         runCloudTransferRegressions(CloudProvider.GOOGLE_DRIVE)
+        runCloudSnapshotRegression(CloudProvider.GOOGLE_DRIVE)
     }
 
     @Test

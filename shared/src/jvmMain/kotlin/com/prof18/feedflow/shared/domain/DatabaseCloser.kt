@@ -7,7 +7,7 @@ class DatabaseCloser(
     private val databaseHelper: DatabaseHelper,
     private val syncedDatabaseHelper: SyncedDatabaseHelper,
 ) {
-    fun close() {
+    suspend fun close() {
         databaseHelper.close()
         syncedDatabaseHelper.closeScope()
     }

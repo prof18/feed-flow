@@ -32,7 +32,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -76,15 +75,15 @@ internal class FeedSyncAndroidWorker(
 
     internal suspend fun performUpload(): SyncResult = withContext(dispatcherProvider.io) {
         mutex.withLock {
+            var snapshot: File? = null
             try {
                 feedSyncer.populateSyncDbIfEmpty()
                 feedSyncer.updateFeedItemsToSyncDatabase()
-                feedSyncer.closeDB()
-
-                val databaseFile = generateDatabaseFile()
-                    ?: return@withContext SyncResult.General(SyncUploadError.DatabaseFileGeneration)
-
-                accountSpecificUpload(databaseFile)
+                snapshot = File.createTempFile("cloud-upload-", ".db", File(databasePath()).parentFile)
+                feedSyncer.withClosedDatabase {
+                    File(databasePath()).copyTo(requireNotNull(snapshot), overwrite = true)
+                }
+                accountSpecificUpload(requireNotNull(snapshot))
                 emitSuccessMessage()
                 settingsRepository.setIsSyncUploadRequired(false)
                 return@withContext SyncResult.Success
@@ -97,6 +96,8 @@ internal class FeedSyncAndroidWorker(
                 logger.e("Upload failed", e)
                 emitErrorMessage(SyncUploadError.DropboxUploadFailed)
                 return@withLock SyncResult.General(SyncUploadError.DropboxUploadFailed)
+            } finally {
+                snapshot?.delete()
             }
         }
     }
@@ -228,37 +229,14 @@ internal class FeedSyncAndroidWorker(
         }
     }
 
-    private fun installDownloadedFile(stagedFile: File) {
-        feedSyncer.closeDB()
-        Files.move(
-            stagedFile.toPath(),
-            File(databasePath()).toPath(),
-            StandardCopyOption.ATOMIC_MOVE,
-            StandardCopyOption.REPLACE_EXISTING,
-        )
-    }
-
-    private fun generateDatabaseFile(): File? {
-        val inFileName: String = databasePath()
-
-        val dbFile = File(inFileName)
-        val fis = FileInputStream(dbFile)
-        val outputFile = syncDatabaseFileProvider.uploadFile
-        val openFileOutput = FileOutputStream(outputFile)
-        openFileOutput.use { output ->
-            // Transfer bytes from the input file to the output file
-            val buffer = ByteArray(BUFFER_SIZE)
-            var length: Int
-            while (fis.read(buffer).also { length = it } > 0) {
-                output.write(buffer, 0, length)
-            }
-
-            // Close the streams
-            output.flush()
-            fis.close()
-            Logger.d { "Database file generated successfully" }
-
-            return outputFile
+    private suspend fun installDownloadedFile(stagedFile: File) {
+        feedSyncer.withClosedDatabase {
+            Files.move(
+                stagedFile.toPath(),
+                File(databasePath()).toPath(),
+                StandardCopyOption.ATOMIC_MOVE,
+                StandardCopyOption.REPLACE_EXISTING,
+            )
         }
     }
 
@@ -285,8 +263,4 @@ internal class FeedSyncAndroidWorker(
 
     private suspend fun emitSuccessMessage() =
         feedSyncMessageQueue.emitResult(SyncResult.Success)
-
-    private companion object {
-        const val BUFFER_SIZE = 1024
-    }
 }

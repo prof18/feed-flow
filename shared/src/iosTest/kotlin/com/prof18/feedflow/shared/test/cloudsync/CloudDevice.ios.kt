@@ -212,6 +212,7 @@ private class CloudDropboxDataSource(
     override fun isClientSet(): Boolean = linked
 
     override suspend fun performUpload(uploadParam: DropboxUploadParam): DropboxUploadResult {
+        store.beforeUploadRead()
         val bytes = requireNotNull(NSData.create(contentsOfURL = uploadParam.url)).toByteArray()
         val fileId = store.upload(
             provider = CloudProvider.DROPBOX,
@@ -289,6 +290,7 @@ private class CloudICloudDataSource(
     private val root: String,
 ) : ICloudDataSource {
     override suspend fun performUpload(databasePath: NSURL, databaseName: String): ICloudUploadResult {
+        store.beforeUploadRead()
         store.uploadFailure?.let { return ICloudUploadResult.Error.UploadFailed(it.toString()) }
         val bytes = requireNotNull(NSData.create(contentsOfURL = databasePath)).toByteArray()
         store.upload(CloudProvider.ICLOUD, CLOUD_ACCOUNT, databaseName, bytes, deviceId)

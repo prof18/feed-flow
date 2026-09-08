@@ -14,6 +14,7 @@ class IosCloudSyncSuccessTest : KoinTestBase() {
         runCloudFlagRegressions(CloudProvider.DROPBOX)
         runStaleCloudRefreshRegression(CloudProvider.DROPBOX)
         runCloudTransferRegressions(CloudProvider.DROPBOX)
+        runCloudSnapshotRegression(CloudProvider.DROPBOX)
     }
 
     @Test
@@ -32,5 +33,6 @@ class IosCloudSyncSuccessTest : KoinTestBase() {
         runCloudFlagRegressions(CloudProvider.ICLOUD)
         runStaleCloudRefreshRegression(CloudProvider.ICLOUD)
         runCloudTransferRegressions(CloudProvider.ICLOUD)
+        runCloudSnapshotRegression(CloudProvider.ICLOUD)
     }
 }

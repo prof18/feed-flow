@@ -89,7 +89,13 @@ the captured snapshot while the sender keeps the newer edit. It runs for desktop
 and Android Dropbox/Drive and iOS Dropbox/iCloud. The iOS Drive adapter already
 passes materialized NSData to its SDK boundary; the synchronous desktop iCloud
 JNI transfer instead holds the database lifetime lock through its local copy.
-These tests prove snapshot isolation, not exact pending-edit acknowledgment.
+They also verify that a later edit remains pending when the earlier upload
+finishes, and that a second upload transfers and acknowledges it. A persisted
+generation changes on every dirty mark; only the generation captured before
+snapshot preparation can be cleared. Common settings tests cover repository
+recreation, legacy boolean-only state and interrupted acknowledgment. This is
+local upload acknowledgment, not durable per-field intent across downloads or
+account/session ownership.
 
 The sync helper serializes complete SQL operations with closing and file work.
 JVM lifetime tests use a real driver with deterministic barriers to prove that
@@ -98,8 +104,8 @@ stop work until retry succeeds. Platform success suites also exercise WAL-backed
 files and close/reopen. Cross-process ownership, staged snapshot validation and
 non-destructive factory recovery remain separate C7 work.
 
-Ambiguous writes, crashes, cancellation, corruption, empty remote collections and
-pending-change acknowledgment races are added with their corresponding fixes.
+Ambiguous writes, process crashes, cancellation, corruption, empty remote
+collections and pending-intent replay are added with their corresponding fixes.
 These tests do not prove the absence of all unseen corner cases.
 
 ## Local and CI execution

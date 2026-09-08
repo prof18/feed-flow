@@ -93,6 +93,7 @@ internal class FeedSyncIosWorker(
         mutex.withLock {
             var snapshot: NSURL? = null
             try {
+                val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
                 logger.w { "Starting upload" }
                 feedSyncer.populateSyncDbIfEmpty()
                 feedSyncer.updateFeedItemsToSyncDatabase()
@@ -111,7 +112,7 @@ internal class FeedSyncIosWorker(
                     }
                 }
                 accountSpecificUpload(requireNotNull(snapshot))
-                settingsRepository.setIsSyncUploadRequired(false)
+                settingsRepository.acknowledgeSyncUpload(uploadGeneration)
                 emitSuccessMessage()
             } catch (e: CancellationException) {
                 throw e

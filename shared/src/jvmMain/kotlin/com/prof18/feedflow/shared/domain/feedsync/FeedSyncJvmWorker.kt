@@ -85,6 +85,7 @@ internal class FeedSyncJvmWorker(
         mutex.withLock {
             var snapshot: File? = null
             try {
+                val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
                 feedSyncer.populateSyncDbIfEmpty()
                 feedSyncer.updateFeedItemsToSyncDatabase()
                 val uploaded = if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
@@ -96,7 +97,7 @@ internal class FeedSyncJvmWorker(
                 }
 
                 if (uploaded) {
-                    settingsRepository.setIsSyncUploadRequired(false)
+                    settingsRepository.acknowledgeSyncUpload(uploadGeneration)
                     emitSuccessMessage()
                 }
             } catch (e: GoogleDriveNeedsReAuthException) {

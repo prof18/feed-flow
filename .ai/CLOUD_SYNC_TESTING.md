@@ -101,10 +101,19 @@ The sync helper serializes complete SQL operations with closing and file work.
 JVM lifetime tests use a real driver with deterministic barriers to prove that
 close waits for active queries, file work prevents reopening, and close failures
 stop work until retry succeeds. Platform success suites also exercise WAL-backed
-files and close/reopen. Cross-process ownership, staged snapshot validation and
-non-destructive factory recovery remain separate C7 work.
+files and close/reopen. Every provider validates downloaded snapshots before
+installing them. Portable regressions reject empty, truncated, corrupt and
+future-version files while preserving both the main data and the usable sync
+database; complete legacy version-zero files remain supported.
 
-Ambiguous writes, process crashes, cancellation, corruption, empty remote
+The desktop sync database factory validates existing files read-only before
+opening them for writes. Its tests preserve invalid bytes, unsupported versions,
+incomplete schemas and paths involved in storage failures instead of deleting
+them. Cross-process ownership and user-facing recovery remain separate work.
+The desktop iCloud JNI bridge downloads into a caller-owned staging file; rebuild
+both native libraries whenever this interface changes.
+
+Ambiguous writes, process crashes, cancellation, empty remote
 collections and pending-intent replay are added with their corresponding fixes.
 These tests do not prove the absence of all unseen corner cases.
 

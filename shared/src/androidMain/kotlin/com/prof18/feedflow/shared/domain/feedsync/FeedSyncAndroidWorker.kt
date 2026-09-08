@@ -16,6 +16,7 @@ import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.model.SyncUploadError
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
+import com.prof18.feedflow.feedsync.database.data.prepareSyncDatabaseFile
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
@@ -231,6 +232,7 @@ internal class FeedSyncAndroidWorker(
     }
 
     private suspend fun installDownloadedFile(stagedFile: File) {
+        prepareSyncDatabaseFile(context, stagedFile)
         feedSyncer.withClosedDatabase {
             Files.move(
                 stagedFile.toPath(),

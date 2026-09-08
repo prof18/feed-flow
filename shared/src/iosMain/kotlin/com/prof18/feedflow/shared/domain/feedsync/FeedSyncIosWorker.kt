@@ -15,6 +15,7 @@ import com.prof18.feedflow.core.utils.getAppGroupDatabasePath
 import com.prof18.feedflow.core.utils.withSuspensionGuard
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_PROD
+import com.prof18.feedflow.feedsync.database.data.prepareSyncDatabaseFile
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
@@ -225,8 +226,9 @@ internal class FeedSyncIosWorker(
         NSURL.fileURLWithPath(databaseDirectory ?: getAppGroupDatabasePath())
             .URLByAppendingPathComponent(getDatabaseName())
 
-    private suspend fun replaceDatabase(url: NSURL): Boolean = feedSyncer.withClosedDatabase {
-        replaceClosedDatabase(url)
+    private suspend fun replaceDatabase(url: NSURL): Boolean {
+        prepareSyncDatabaseFile(url)
+        return feedSyncer.withClosedDatabase { replaceClosedDatabase(url) }
     }
 
     private fun replaceClosedDatabase(url: NSURL): Boolean {

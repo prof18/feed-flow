@@ -15,6 +15,8 @@ class AndroidCloudSyncSuccessTest : KoinTestBase() {
             CloudSuccessScenario.entries.forEach {
                 runCloudSuccessScenario(CloudProvider.DROPBOX, it)
             }
+            runCloudFlagRegressions(CloudProvider.DROPBOX)
+            runStaleCloudRefreshRegression(CloudProvider.DROPBOX)
         }
 
     @Test
@@ -23,5 +25,7 @@ class AndroidCloudSyncSuccessTest : KoinTestBase() {
             CloudSuccessScenario.entries.forEach {
                 runCloudSuccessScenario(CloudProvider.GOOGLE_DRIVE, it)
             }
+            runCloudFlagRegressions(CloudProvider.GOOGLE_DRIVE)
+            runStaleCloudRefreshRegression(CloudProvider.GOOGLE_DRIVE)
         }
 }

@@ -173,13 +173,6 @@ class FeedSyncRepository internal constructor(
 
     internal suspend fun syncFeedSources() {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            if (settingsRepository.getIsSyncUploadRequired()) {
-                feedSyncWorker.uploadImmediate()
-                if (settingsRepository.getIsSyncUploadRequired()) {
-                    return
-                }
-            }
-
             val result = feedSyncWorker.download()
             if (result.isError()) {
                 Logger.d { "Error on download" }

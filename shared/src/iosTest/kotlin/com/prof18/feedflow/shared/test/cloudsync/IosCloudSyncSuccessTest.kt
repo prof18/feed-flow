@@ -11,17 +11,23 @@ class IosCloudSyncSuccessTest : KoinTestBase() {
     fun `Dropbox successful workflows use real iOS worker and database files`() = runTest(testDispatcher) {
         CloudSuccessScenario.entries.forEach { runCloudSuccessScenario(CloudProvider.DROPBOX, it) }
         runQueuedCloudSuccess(CloudProvider.DROPBOX)
+        runCloudFlagRegressions(CloudProvider.DROPBOX)
+        runStaleCloudRefreshRegression(CloudProvider.DROPBOX)
     }
 
     @Test
     fun `Google Drive successful workflows use real iOS worker and database files`() = runTest(testDispatcher) {
         CloudSuccessScenario.entries.forEach { runCloudSuccessScenario(CloudProvider.GOOGLE_DRIVE, it) }
         runQueuedCloudSuccess(CloudProvider.GOOGLE_DRIVE)
+        runCloudFlagRegressions(CloudProvider.GOOGLE_DRIVE)
+        runStaleCloudRefreshRegression(CloudProvider.GOOGLE_DRIVE)
     }
 
     @Test
     fun `iCloud successful workflows use real iOS worker and database files`() = runTest(testDispatcher) {
         CloudSuccessScenario.entries.forEach { runCloudSuccessScenario(CloudProvider.ICLOUD, it) }
         runQueuedCloudSuccess(CloudProvider.ICLOUD)
+        runCloudFlagRegressions(CloudProvider.ICLOUD)
+        runStaleCloudRefreshRegression(CloudProvider.ICLOUD)
     }
 }

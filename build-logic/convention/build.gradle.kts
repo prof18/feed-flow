@@ -25,6 +25,10 @@ dependencies {
 
 gradlePlugin {
     plugins {
+        register("cloudSyncTests") {
+            id = "com.feedflow.cloud-sync-tests"
+            implementationClass = "CloudSyncTestsPlugin"
+        }
         register("library") {
             id = "com.feedflow.library"
             implementationClass = "KmpLibraryConventionPlugin"

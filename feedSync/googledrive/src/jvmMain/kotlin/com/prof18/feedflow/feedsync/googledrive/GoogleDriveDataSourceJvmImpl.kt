@@ -7,6 +7,7 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
 import com.google.api.client.http.FileContent
+import com.google.api.client.http.HttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
@@ -25,11 +26,12 @@ class GoogleDriveDataSourceJvmImpl(
     private val dispatcherProvider: DispatcherProvider,
     private val googleDriveSettings: GoogleDriveSettings,
     private val appEnvironment: AppEnvironment,
+    private val httpTransport: HttpTransport = NetHttpTransport(),
+    driveService: Drive? = null,
 ) : GoogleDriveDataSourceJvm {
 
-    private var driveService: Drive? = null
+    private var driveService: Drive? = driveService
 
-    private val httpTransport = NetHttpTransport()
     private val jsonFactory = GsonFactory.getDefaultInstance()
     private val dataPath: File
         get() = File("${AppDataPathBuilder.getAppDataPath(appEnvironment)}/gdata")

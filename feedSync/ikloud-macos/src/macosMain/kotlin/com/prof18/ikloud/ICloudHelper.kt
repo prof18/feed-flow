@@ -29,28 +29,7 @@ fun uploadToICloud(env: CPointer<JNIEnvVar>, clazz: jclass, isDebug: jboolean): 
     val isDebugBool = isDebug == JNI_TRUE.toUByte()
     val databasePath = getDatabaseUrl(isDebugBool)
     val iCloudUrl = getICloudFolderURL(isDebugBool) ?: return 1
-    memScoped {
-        val errorPtr: ObjCObjectVar<NSError?> = alloc()
-
-        // Copy doesn't override the item, so we need to clear it before.
-        // An alternative would be checking the existence of the file before and copy or replace.
-        NSFileManager.defaultManager.removeItemAtURL(
-            iCloudUrl,
-            null,
-        )
-
-        NSFileManager.defaultManager.copyItemAtURL(
-            srcURL = databasePath,
-            toURL = iCloudUrl,
-            error = errorPtr.ptr,
-        )
-
-        if (errorPtr.value != null) {
-            return 2
-        }
-
-        return 0
-    }
+    return uploadToICloud(databasePath, iCloudUrl)
 }
 
 /**
@@ -66,12 +45,49 @@ fun iCloudDownload(env: CPointer<JNIEnvVar>, clazz: jclass, isDebug: jboolean): 
     val isDebugBool = isDebug == JNI_TRUE.toUByte()
     val iCloudUrl = getICloudFolderURL(isDebugBool) ?: return 1
     val tempUrl = getTemporaryFileUrl(isDebugBool) ?: return 2
+    return iCloudDownload(
+        iCloudUrl = iCloudUrl,
+        tempUrl = tempUrl,
+        databaseUrl = getDatabaseUrl(isDebugBool),
+        databaseName = getDatabaseName(isDebugBool),
+    )
+}
+
+internal fun uploadToICloud(databaseUrl: NSURL, iCloudUrl: NSURL): Int = memScoped {
+    val errorPtr: ObjCObjectVar<NSError?> = alloc()
+
+    // Copy doesn't override the item, so we need to clear it before.
+    // An alternative would be checking the existence of the file before and copy or replace.
+    NSFileManager.defaultManager.removeItemAtURL(
+        iCloudUrl,
+        null,
+    )
+
+    NSFileManager.defaultManager.copyItemAtURL(
+        srcURL = databaseUrl,
+        toURL = iCloudUrl,
+        error = errorPtr.ptr,
+    )
+
+    if (errorPtr.value != null) {
+        2
+    } else {
+        0
+    }
+}
+
+internal fun iCloudDownload(
+    iCloudUrl: NSURL,
+    tempUrl: NSURL,
+    databaseUrl: NSURL,
+    databaseName: String,
+): Int {
     NSFileManager.defaultManager.removeItemAtURL(
         tempUrl,
         null,
     )
 
-    memScoped {
+    return memScoped {
         val errorPtr: ObjCObjectVar<NSError?> = alloc()
 
         NSFileManager.defaultManager.copyItemAtURL(
@@ -84,7 +100,7 @@ fun iCloudDownload(env: CPointer<JNIEnvVar>, clazz: jclass, isDebug: jboolean): 
             return 3
         }
 
-        val result = replaceDatabase(tempUrl, isDebugBool)
+        val result = replaceDatabase(tempUrl, databaseUrl, databaseName)
         return if (result) {
             0
         } else {
@@ -93,15 +109,14 @@ fun iCloudDownload(env: CPointer<JNIEnvVar>, clazz: jclass, isDebug: jboolean): 
     }
 }
 
-private fun replaceDatabase(url: NSURL, isDebug: Boolean): Boolean {
-    val dbUrl = getDatabaseUrl(isDebug)
+private fun replaceDatabase(url: NSURL, databaseUrl: NSURL, databaseName: String): Boolean {
     // Replace the database
     memScoped {
         val errorPtr: ObjCObjectVar<NSError?> = alloc()
         NSFileManager.defaultManager.replaceItemAtURL(
-            originalItemURL = dbUrl,
+            originalItemURL = databaseUrl,
             withItemAtURL = url,
-            backupItemName = "${getDatabaseName(isDebug)}.old",
+            backupItemName = "$databaseName.old",
             options = NSFileManagerItemReplacementUsingNewMetadataOnly,
             error = errorPtr.ptr,
             resultingItemURL = null,

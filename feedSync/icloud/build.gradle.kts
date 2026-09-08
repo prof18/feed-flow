@@ -26,5 +26,11 @@ kotlin {
                 implementation(libs.touchlab.kermit)
             }
         }
+
+        iosTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }

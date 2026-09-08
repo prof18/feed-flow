@@ -64,8 +64,9 @@ internal class FeedSyncIosWorker(
     private val settingsRepository: SettingsRepository,
     private val accountsRepository: AccountsRepository,
     private val iCloudSettings: ICloudSettings,
+    private val databaseDirectory: String? = null,
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
 ) : FeedSyncWorker {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val mutex = Mutex()
 
     override fun upload() {
@@ -215,7 +216,7 @@ internal class FeedSyncIosWorker(
     }
 
     private fun getDatabaseUrl(): NSURL? =
-        NSURL.fileURLWithPath(getAppGroupDatabasePath())
+        NSURL.fileURLWithPath(databaseDirectory ?: getAppGroupDatabasePath())
             .URLByAppendingPathComponent(getDatabaseName())
 
     private fun replaceDatabase(url: NSURL): Boolean {

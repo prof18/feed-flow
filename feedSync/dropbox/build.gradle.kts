@@ -5,6 +5,7 @@ plugins {
 kotlin {
     androidLibrary {
         namespace = "com.prof18.feedflow.feedsync.dropbox"
+        withHostTest {}
     }
 
     applyDefaultHierarchyTemplate()
@@ -21,12 +22,23 @@ kotlin {
             }
         }
 
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotlinx.coroutines.test)
+            }
+        }
+
         val commonJvmAndroidMain by creating {
             dependsOn(commonMain.get())
 
             dependencies {
                 implementation(libs.dropbox.core)
             }
+        }
+
+        val commonJvmAndroidTest by creating {
+            dependsOn(commonTest.get())
         }
 
         androidMain {
@@ -43,6 +55,14 @@ kotlin {
             dependencies {
                 api(libs.dropbox.core)
             }
+        }
+
+        jvmTest {
+            dependsOn(commonJvmAndroidTest)
+        }
+
+        getByName("androidHostTest") {
+            dependsOn(commonJvmAndroidTest)
         }
     }
 }

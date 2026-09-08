@@ -28,6 +28,26 @@ require_command() {
   fi
 }
 
+prepare_ios_cloud_sync_inputs() {
+  if [[ "$(uname -s)" != "Darwin" ]]; then
+    return
+  fi
+
+  require_command xcodegen
+
+  [[ -f iosApp/GoogleService-Info-dev.plist ]] || \
+    run_cmd cp config/dummy-google-service.plist iosApp/GoogleService-Info-dev.plist
+  [[ -f iosApp/GoogleService-Info.plist ]] || \
+    run_cmd cp config/dummy-google-service.plist iosApp/GoogleService-Info.plist
+  [[ -f iosApp/Assets/Config.xcconfig ]] || \
+    run_cmd cp config/dummy-config.xcconfig iosApp/Assets/Config.xcconfig
+
+  if [[ ! -d iosApp/FeedFlow.xcodeproj ]]; then
+    step "Generate Xcode project"
+    run_shell 'cd iosApp && ./.scripts/generate-project.sh'
+  fi
+}
+
 run_checks_job() {
   step "Checks job: refresh translations"
   run_cmd bash .scripts/refresh-translations.sh
@@ -37,17 +57,18 @@ run_checks_job() {
   run_shell 'cd iosApp && swiftlint'
 
   step "Checks job: detekt + allTests"
-  run_cmd ./gradlew --console=plain detekt allTests
+  prepare_ios_cloud_sync_inputs
+  run_cmd ./gradlew --quiet --console=plain detekt allTests
 }
 
 run_android_build_job() {
   step "Android build job: assemble debug app"
-  run_cmd ./gradlew --console=plain :androidApp:assembleGooglePlayDebug
+  run_cmd ./gradlew --quiet --console=plain :androidApp:assembleGooglePlayDebug
 }
 
 run_desktop_build_job() {
   step "Desktop build job: package distribution"
-  run_cmd ./gradlew --console=plain :desktopApp:packageDistributionForCurrentOS
+  run_cmd ./gradlew --quiet --console=plain :desktopApp:packageDistributionForCurrentOS
 }
 
 run_ios_build_job() {

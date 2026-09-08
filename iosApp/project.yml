@@ -267,8 +267,14 @@ targets:
         excludes:
           - Info.plist
       - path: Source/Accounts/Dropbox/Data/DropboxDataSourceIos.swift
+      - path: Source/Accounts/Dropbox/Data/DropboxClientBridge.swift
+      - path: Source/Accounts/Dropbox/Data/DropboxSDKClientBridge.swift
+      - path: Source/Accounts/Dropbox/Data/DropboxDownloadResponse.swift
+      - path: Source/Accounts/Dropbox/Data/DropboxFileMetadata.swift
       - path: Source/Accounts/Dropbox/Data/DropboxErrors.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDrivePlatformClient.swift
+      - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClient.swift
+      - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClientImpl.swift
       - path: Source/Reader/FeedItemParser.swift
       - path: Source/Reader/FeedItemParserWorkerIos.swift
       - path: Source/UI/Style/Spacing.swift
@@ -346,8 +352,14 @@ targets:
           - Info.plist
           - ShareExtension.entitlements
       - path: Source/Accounts/Dropbox/Data/DropboxDataSourceIos.swift
+      - path: Source/Accounts/Dropbox/Data/DropboxClientBridge.swift
+      - path: Source/Accounts/Dropbox/Data/DropboxSDKClientBridge.swift
+      - path: Source/Accounts/Dropbox/Data/DropboxDownloadResponse.swift
+      - path: Source/Accounts/Dropbox/Data/DropboxFileMetadata.swift
       - path: Source/Accounts/Dropbox/Data/DropboxErrors.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDrivePlatformClient.swift
+      - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClient.swift
+      - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClientImpl.swift
       - path: Source/DI/Koin.swift
       - path: Source/Reader/FeedItemParser.swift
       - path: Source/Reader/FeedItemParserWorkerIos.swift
@@ -410,6 +422,31 @@ targets:
       - package: GoogleAPIClientForREST
         product: GoogleAPIClientForREST_Drive
 
+  CloudSyncTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/CloudSync
+      - path: Source/Accounts/Dropbox/Data
+      - path: Source/Accounts/GoogleDrive/Data
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.CloudSyncTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        TEST_HOST: ""
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) APP_EXTENSION"
+        OTHER_LDFLAGS: ["$(inherited)", "-framework", FeedFlowKit, "-lsqlite3"]
+    dependencies:
+      - target: FeedFlowKitBuilder
+        embed: false
+        link: false
+      - package: SwiftyDropbox
+      - package: GoogleSignIn
+      - package: Firebase
+        product: FirebaseCrashlytics
+      - package: GoogleAPIClientForREST
+        product: GoogleAPIClientForREST_Drive
+
 schemes:
   FeedFlow:
     build:
@@ -465,6 +502,17 @@ schemes:
     archive:
       config: Release
       revealArchiveInOrganizer: true
+
+  CloudSyncTests:
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        CloudSyncTests: all
+    test:
+      config: Debug
+      targets:
+        - CloudSyncTests
 
   ShareExtension:
     build:

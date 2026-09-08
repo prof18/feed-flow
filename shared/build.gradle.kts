@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.feedflow.detekt)
     alias(libs.plugins.skie)
+    id("com.feedflow.cloud-sync-tests")
 }
 
 kotlin {
@@ -19,6 +20,9 @@ kotlin {
         compilerOptions.jvmTarget = JvmTarget.JVM_21
 
         withHostTest {}
+        withDeviceTest {
+            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
 
         androidResources {
             enable = true
@@ -134,6 +138,14 @@ kotlin {
             }
         }
 
+        val androidTest by creating {
+            dependsOn(commonJvmAndroidTest)
+
+            dependencies {
+                implementation(libs.androidx.test.core.ktx)
+            }
+        }
+
         val commonMobileMain by creating {
             dependsOn(commonMain.get())
         }
@@ -150,13 +162,25 @@ kotlin {
         }
 
         getByName("androidHostTest") {
-            dependsOn(commonJvmAndroidTest)
+            dependsOn(androidTest)
 
             dependencies {
                 implementation(libs.junit)
                 implementation(libs.org.robolectric)
                 implementation(libs.androidx.test.core.ktx)
                 implementation(libs.sqldelight.sqlite.driver)
+                implementation(libs.workmanager.testing)
+            }
+        }
+
+        getByName("androidDeviceTest") {
+            dependsOn(androidTest)
+            dependencies {
+                implementation(libs.androidx.test.ext.junit)
+                implementation(libs.androidx.test.runner)
+                implementation(libs.androidx.test.core.ktx)
+                implementation(libs.sqldelight.android.driver)
+                implementation(libs.workmanager.testing)
             }
         }
 
@@ -196,13 +220,12 @@ val testResourcesDir = project(":feedSync:test-utils")
     .file("src/commonMain/resources")
     .absolutePath
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     environment("TEST_RESOURCES_ROOT", testResourcesDir)
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest> {
+tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest>().configureEach {
     environment("TEST_RESOURCES_ROOT", testResourcesDir)
-    // iOS simulator requires SIMCTL_CHILD_ prefix for environment variables
     environment("SIMCTL_CHILD_TEST_RESOURCES_ROOT", testResourcesDir)
 }
 

@@ -7,7 +7,6 @@ import java.io.File
 
 internal interface SyncDatabaseFileProvider {
     val databaseFile: File
-    val uploadFile: File
     val remoteFileName: String
 }
 
@@ -23,5 +22,4 @@ internal class AndroidSyncDatabaseFileProvider(
 
     override val databaseFile: File = context.getDatabasePath(databaseName)
     override val remoteFileName: String = "$databaseName.db"
-    override val uploadFile: File = context.getFileStreamPath(remoteFileName)
 }

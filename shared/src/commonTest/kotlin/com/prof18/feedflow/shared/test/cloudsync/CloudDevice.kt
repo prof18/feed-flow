@@ -83,7 +83,7 @@ internal class CloudDevice(
         sortOrder = FeedOrder.NEWEST_FIRST,
     ).associate { it.url_hash to (it.is_read to it.is_bookmarked) }
 
-    fun close() {
+    suspend fun close() {
         if (closed) return
         closed = true
         try {

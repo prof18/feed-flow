@@ -83,12 +83,17 @@ internal class FeedSyncJvmWorker(
 
     private suspend fun performUpload() = withContext(dispatcherProvider.io) {
         mutex.withLock {
+            var snapshot: File? = null
             try {
                 feedSyncer.populateSyncDbIfEmpty()
                 feedSyncer.updateFeedItemsToSyncDatabase()
-                feedSyncer.closeDB()
-
-                val uploaded = accountSpecificUpload()
+                val uploaded = if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
+                    feedSyncer.withClosedDatabase { accountSpecificUpload(databaseFile) }
+                } else {
+                    snapshot = File.createTempFile("cloud-upload-", ".db", syncDirectory)
+                    feedSyncer.withClosedDatabase { databaseFile.copyTo(requireNotNull(snapshot), overwrite = true) }
+                    accountSpecificUpload(requireNotNull(snapshot))
+                }
 
                 if (uploaded) {
                     settingsRepository.setIsSyncUploadRequired(false)
@@ -104,18 +109,20 @@ internal class FeedSyncJvmWorker(
                     logger.e("Upload to dropbox failed", e)
                 }
                 emitErrorMessage()
+            } finally {
+                snapshot?.delete()
             }
         }
     }
 
-    private suspend fun accountSpecificUpload(): Boolean =
+    private suspend fun accountSpecificUpload(uploadFile: File): Boolean =
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.DROPBOX -> {
                 restoreDropboxClient()
 
                 val dropboxUploadParam = DropboxUploadParam(
                     path = "/${getDatabaseNameWithExtension()}",
-                    file = databaseFile,
+                    file = uploadFile,
                 )
 
                 dropboxDataSource.performUpload(dropboxUploadParam)
@@ -160,7 +167,7 @@ internal class FeedSyncJvmWorker(
 
                 val googleDriveUploadParam = GoogleDriveUploadParam(
                     fileName = getDatabaseNameWithExtension(),
-                    file = databaseFile,
+                    file = uploadFile,
                 )
 
                 googleDriveDataSource.performUpload(googleDriveUploadParam)
@@ -216,8 +223,9 @@ internal class FeedSyncJvmWorker(
                 SyncResult.Success
             }
             SyncAccounts.ICLOUD -> {
-                feedSyncer.closeDB()
-                val result = iCloudBridge.iCloudDownload(appEnvironment.isDebug())
+                val result = feedSyncer.withClosedDatabase {
+                    iCloudBridge.iCloudDownload(appEnvironment.isDebug())
+                }
                 when (DownloadResult.fromCode(result)) {
                     DownloadResult.SUCCESS -> {
                         iCloudSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
@@ -317,14 +325,15 @@ internal class FeedSyncJvmWorker(
         }
     }
 
-    private fun installDownloadedFile(stagedFile: File) {
-        feedSyncer.closeDB()
-        Files.move(
-            stagedFile.toPath(),
-            databaseFile.toPath(),
-            StandardCopyOption.ATOMIC_MOVE,
-            StandardCopyOption.REPLACE_EXISTING,
-        )
+    private suspend fun installDownloadedFile(stagedFile: File) {
+        feedSyncer.withClosedDatabase {
+            Files.move(
+                stagedFile.toPath(),
+                databaseFile.toPath(),
+                StandardCopyOption.ATOMIC_MOVE,
+                StandardCopyOption.REPLACE_EXISTING,
+            )
+        }
     }
 
     private suspend fun restoreDropboxClient() {

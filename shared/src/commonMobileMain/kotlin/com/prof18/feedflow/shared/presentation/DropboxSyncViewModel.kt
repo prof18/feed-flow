@@ -44,7 +44,7 @@ class DropboxSyncViewModel internal constructor(
     private val dropboxSyncMessageMutableState = MutableSharedFlow<DropboxSynMessages>()
     val dropboxSyncMessageState: SharedFlow<DropboxSynMessages> = dropboxSyncMessageMutableState.asSharedFlow()
 
-    val syncMessageQueue = feedSyncMessageQueue.messageQueue
+    val syncMessageQueue = feedSyncMessageQueue.userMessages
 
     init {
         restoreDropboxAuth()

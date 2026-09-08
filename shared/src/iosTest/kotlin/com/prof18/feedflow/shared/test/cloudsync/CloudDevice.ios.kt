@@ -272,13 +272,13 @@ private class CloudGoogleDrivePlatformClient(
     override fun downloadFile(
         fileName: String,
         existingFileId: String?,
-        completionHandler: (NSData?, Throwable?) -> Unit,
+        completionHandler: (NSData?, String?, Throwable?) -> Unit,
     ) {
         runCatching {
             store.download(CloudProvider.GOOGLE_DRIVE, CLOUD_ACCOUNT, fileName).toNSData()
         }.fold(
-            onSuccess = { completionHandler(it, null) },
-            onFailure = { completionHandler(null, it) },
+            onSuccess = { completionHandler(it, store.snapshot().single().fileId, null) },
+            onFailure = { completionHandler(null, null, it) },
         )
     }
 }
@@ -289,12 +289,14 @@ private class CloudICloudDataSource(
     private val root: String,
 ) : ICloudDataSource {
     override suspend fun performUpload(databasePath: NSURL, databaseName: String): ICloudUploadResult {
+        store.uploadFailure?.let { return ICloudUploadResult.Error.UploadFailed(it.toString()) }
         val bytes = requireNotNull(NSData.create(contentsOfURL = databasePath)).toByteArray()
         store.upload(CloudProvider.ICLOUD, CLOUD_ACCOUNT, databaseName, bytes, deviceId)
         return ICloudUploadResult.Success
     }
 
     override suspend fun performDownload(databaseName: String): ICloudDownloadResult {
+        store.downloadFailure?.let { return ICloudDownloadResult.Error.DownloadFailed(it.toString()) }
         val bytes = runCatching { store.download(CloudProvider.ICLOUD, CLOUD_ACCOUNT, databaseName) }
             .getOrElse { return ICloudDownloadResult.Error.FileNotFound }
         val destination = requireNotNull(

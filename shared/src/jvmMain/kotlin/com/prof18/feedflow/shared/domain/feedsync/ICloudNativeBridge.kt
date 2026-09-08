@@ -21,6 +21,7 @@ class ICloudNativeBridge : ICloudFileTransfer {
      *  2 -> temp url null
      *  3 -> download error
      *  4 -> database replace error
+     *  5 -> backup file not found
      */
     external override fun iCloudDownload(isDebug: Boolean): Int
 }
@@ -47,6 +48,7 @@ enum class DownloadResult(val code: Int) {
     TEMP_URL_NULL(2),
     DOWNLOAD_ERROR(3),
     DATABASE_REPLACE_ERROR(4),
+    FILE_NOT_FOUND(5),
     UNKNOWN_ERROR(-1),
     ;
 

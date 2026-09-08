@@ -13,6 +13,7 @@ class DesktopCloudSyncSuccessTest : KoinTestBase() {
         runQueuedCloudSuccess(CloudProvider.DROPBOX)
         runCloudFlagRegressions(CloudProvider.DROPBOX)
         runStaleCloudRefreshRegression(CloudProvider.DROPBOX)
+        runCloudTransferRegressions(CloudProvider.DROPBOX)
     }
 
     @Test
@@ -21,6 +22,7 @@ class DesktopCloudSyncSuccessTest : KoinTestBase() {
         runQueuedCloudSuccess(CloudProvider.GOOGLE_DRIVE)
         runCloudFlagRegressions(CloudProvider.GOOGLE_DRIVE)
         runStaleCloudRefreshRegression(CloudProvider.GOOGLE_DRIVE)
+        runCloudTransferRegressions(CloudProvider.GOOGLE_DRIVE)
     }
 
     @Test
@@ -30,5 +32,6 @@ class DesktopCloudSyncSuccessTest : KoinTestBase() {
         runQueuedCloudSuccess(CloudProvider.ICLOUD)
         runCloudFlagRegressions(CloudProvider.ICLOUD)
         runStaleCloudRefreshRegression(CloudProvider.ICLOUD)
+        runCloudTransferRegressions(CloudProvider.ICLOUD)
     }
 }

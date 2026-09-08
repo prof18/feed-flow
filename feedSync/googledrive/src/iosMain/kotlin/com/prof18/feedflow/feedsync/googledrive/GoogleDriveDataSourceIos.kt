@@ -58,8 +58,10 @@ class GoogleDriveDataSourceIos(
                     if (error != null) {
                         logger.e { "Upload failed: ${error.message}" }
                         continuation.resumeWithException(error)
+                    } else if (fileId.isNullOrBlank()) {
+                        continuation.resumeWithException(GoogleDriveUploadException("Upload returned no file ID"))
                     } else {
-                        fileId?.let { id -> googleDriveSettings.setBackupFileId(id) }
+                        googleDriveSettings.setBackupFileId(fileId)
                         continuation.resume(GoogleDriveUploadResult)
                     }
                 }
@@ -74,13 +76,13 @@ class GoogleDriveDataSourceIos(
                 platformClient.downloadFile(
                     fileName = downloadParam.fileName,
                     existingFileId = cachedFileId,
-                ) { data, error ->
+                ) { data, fileId, error ->
                     if (error != null) {
                         continuation.resumeWithException(error)
                         return@downloadFile
                     }
 
-                    if (data == null) {
+                    if (data == null || fileId.isNullOrBlank()) {
                         continuation.resumeWithException(GoogleDriveDownloadException("Download returned null data"))
                         return@downloadFile
                     }
@@ -90,8 +92,14 @@ class GoogleDriveDataSourceIos(
                         .URLByAppendingPathComponent(downloadParam.outputName)
 
                     if (destUrl != null) {
-                        data.writeToURL(destUrl, atomically = true)
-                        continuation.resume(GoogleDriveDownloadResult(destinationUrl = DatabaseDestinationUrl(destUrl)))
+                        if (data.writeToURL(destUrl, atomically = true)) {
+                            googleDriveSettings.setBackupFileId(fileId)
+                            continuation.resume(
+                                GoogleDriveDownloadResult(destinationUrl = DatabaseDestinationUrl(destUrl)),
+                            )
+                        } else {
+                            continuation.resumeWithException(GoogleDriveDownloadException("Failed to write download"))
+                        }
                     } else {
                         continuation.resumeWithException(
                             GoogleDriveDownloadException("Failed to create destination URL"),

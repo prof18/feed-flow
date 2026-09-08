@@ -42,7 +42,7 @@ class GoogleDriveSyncViewModel internal constructor(
     private val gDriveSyncMessageMutableState = MutableSharedFlow<GoogleDriveSynMessages>()
     val googleDriveSyncMessageState: SharedFlow<GoogleDriveSynMessages> = gDriveSyncMessageMutableState.asSharedFlow()
 
-    val syncMessageQueue = feedSyncMessageQueue.messageQueue
+    val syncMessageQueue = feedSyncMessageQueue.userMessages
 
     init {
         restoreAccount()

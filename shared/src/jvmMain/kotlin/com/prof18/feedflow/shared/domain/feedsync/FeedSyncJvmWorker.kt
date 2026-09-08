@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.feedsync
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.CloudBackupNotFoundException
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.SyncDownloadError
 import com.prof18.feedflow.core.model.SyncFeedError
@@ -26,6 +27,7 @@ import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.utils.isTemporaryNetworkError
 import com.prof18.feedflow.shared.utils.skipLogging
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -35,6 +37,8 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import kotlin.time.Clock
 
 internal class FeedSyncJvmWorker(
@@ -93,6 +97,8 @@ internal class FeedSyncJvmWorker(
             } catch (e: GoogleDriveNeedsReAuthException) {
                 logger.d("Google Drive needs re-authorization", e)
                 feedSyncMessageQueue.emitResult(SyncResult.GoogleDriveNeedReAuth())
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 if (!e.isTemporaryNetworkError()) {
                     logger.e("Upload to dropbox failed", e)
@@ -138,7 +144,12 @@ internal class FeedSyncJvmWorker(
                         logger.d { "Unknown error during iCloud upload. Check the enum mapping" }
                     }
                 }
-                true
+                if (UploadResult.fromCode(result) == UploadResult.SUCCESS) {
+                    true
+                } else {
+                    emitErrorMessage()
+                    false
+                }
             }
 
             SyncAccounts.GOOGLE_DRIVE -> {
@@ -167,42 +178,45 @@ internal class FeedSyncJvmWorker(
         }
 
     override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
-        try {
-            databaseFile.delete()
-        } catch (_: Exception) {
-            // do nothing
-        }
-
         return@withContext mutex.withLock {
+            var stagedFile: File? = null
             try {
-                feedSyncer.closeDB()
-                accountSpecificDownload()
+                stagedFile = File.createTempFile("cloud-download-", ".db", syncDirectory)
+                accountSpecificDownload(stagedFile)
+            } catch (_: CloudBackupNotFoundException) {
+                SyncResult.BackupNotFound(syncDownloadErrorForAccount(accountsRepository.getCurrentSyncAccount()))
             } catch (e: GoogleDriveNeedsReAuthException) {
                 logger.d("Google Drive needs re-authorization", e)
                 SyncResult.GoogleDriveNeedReAuth()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 val currentAccount = accountsRepository.getCurrentSyncAccount()
                 val downloadError = syncDownloadErrorForAccount(currentAccount)
                 logger.d(e) { "Download failed for account $currentAccount" }
                 SyncResult.General(downloadError)
+            } finally {
+                stagedFile?.delete()
             }
         }
     }
 
-    private suspend fun accountSpecificDownload(): SyncResult {
+    private suspend fun accountSpecificDownload(stagedFile: File): SyncResult {
         return when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.DROPBOX -> {
                 val dropboxDownloadParam = DropboxDownloadParam(
                     path = "/${getDatabaseNameWithExtension()}",
-                    outputStream = FileOutputStream(databaseFile),
+                    outputStream = FileOutputStream(stagedFile),
                 )
 
                 restoreDropboxClient()
-                dropboxDataSource.performDownload(dropboxDownloadParam)
+                dropboxDownloadParam.outputStream.use { dropboxDataSource.performDownload(dropboxDownloadParam) }
+                installDownloadedFile(stagedFile)
                 dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
                 SyncResult.Success
             }
             SyncAccounts.ICLOUD -> {
+                feedSyncer.closeDB()
                 val result = iCloudBridge.iCloudDownload(appEnvironment.isDebug())
                 when (DownloadResult.fromCode(result)) {
                     DownloadResult.SUCCESS -> {
@@ -231,6 +245,9 @@ internal class FeedSyncJvmWorker(
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
+                    DownloadResult.FILE_NOT_FOUND ->
+                        SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
+
                     DownloadResult.UNKNOWN_ERROR -> {
                         logger.d { "Unknown error during iCloud download. Check the enum mapping" }
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
@@ -245,10 +262,13 @@ internal class FeedSyncJvmWorker(
 
                 val googleDriveDownloadParam = GoogleDriveDownloadParam(
                     fileName = getDatabaseNameWithExtension(),
-                    outputStream = FileOutputStream(databaseFile),
+                    outputStream = FileOutputStream(stagedFile),
                 )
 
-                googleDriveDataSource.performDownload(googleDriveDownloadParam)
+                googleDriveDownloadParam.outputStream.use {
+                    googleDriveDataSource.performDownload(googleDriveDownloadParam)
+                }
+                installDownloadedFile(stagedFile)
                 googleDriveSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.d { "Download from Google Drive successfully" }
                 SyncResult.Success
@@ -272,6 +292,8 @@ internal class FeedSyncJvmWorker(
                 feedSyncer.syncFeedSourceCategory()
                 feedSyncer.syncFeedSource()
                 SyncResult.Success
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.e("Sync feed sources failed", e)
                 SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
@@ -284,6 +306,8 @@ internal class FeedSyncJvmWorker(
             try {
                 feedSyncer.syncFeedItem()
                 SyncResult.Success
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 if (!e.skipLogging()) {
                     logger.e("Sync feed items failed", e)
@@ -291,6 +315,16 @@ internal class FeedSyncJvmWorker(
                 SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
             }
         }
+    }
+
+    private fun installDownloadedFile(stagedFile: File) {
+        feedSyncer.closeDB()
+        Files.move(
+            stagedFile.toPath(),
+            databaseFile.toPath(),
+            StandardCopyOption.ATOMIC_MOVE,
+            StandardCopyOption.REPLACE_EXISTING,
+        )
     }
 
     private suspend fun restoreDropboxClient() {
@@ -335,16 +369,3 @@ internal class FeedSyncJvmWorker(
     private suspend fun emitSuccessMessage() =
         feedSyncMessageQueue.emitResult(SyncResult.Success)
 }
-
-internal fun syncDownloadErrorForAccount(account: SyncAccounts): SyncDownloadError =
-    when (account) {
-        SyncAccounts.GOOGLE_DRIVE -> SyncDownloadError.GoogleDriveDownloadFailed
-        SyncAccounts.ICLOUD -> SyncDownloadError.ICloudDownloadFailed
-        SyncAccounts.DROPBOX,
-        SyncAccounts.LOCAL,
-        SyncAccounts.FRESH_RSS,
-        SyncAccounts.MINIFLUX,
-        SyncAccounts.BAZQUX,
-        SyncAccounts.FEEDBIN,
-        -> SyncDownloadError.DropboxDownloadFailed
-    }

@@ -11,4 +11,5 @@ import Foundation
 enum DropboxErrors: Error {
     case uploadError(reason: String)
     case downloadError(reason: String)
+    case downloadNotFound
 }

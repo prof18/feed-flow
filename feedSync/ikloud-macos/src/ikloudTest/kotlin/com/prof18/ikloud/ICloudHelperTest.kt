@@ -19,6 +19,47 @@ import kotlin.test.assertNotNull
 class ICloudHelperTest {
 
     @Test
+    fun failedUploadPreservesTheExistingContainerFile() {
+        withFixture { databaseUrl, containerUrl, _ ->
+            val previous = "last good backup".encodeToByteArray()
+            writeBytes(containerUrl, previous)
+            assertEquals(2, uploadToICloud(databaseUrl, containerUrl))
+            assertContentEquals(previous, readBytes(containerUrl))
+        }
+    }
+
+    @Test
+    fun uploadReplacesAnExistingContainerFile() {
+        withFixture { databaseUrl, containerUrl, _ ->
+            writeBytes(containerUrl, "previous".encodeToByteArray())
+            val updated = "updated snapshot".encodeToByteArray()
+            writeBytes(databaseUrl, updated)
+            assertEquals(0, uploadToICloud(databaseUrl, containerUrl))
+            assertContentEquals(updated, readBytes(containerUrl))
+        }
+    }
+
+    @Test
+    fun missingDownloadPreservesTheLocalDatabase() {
+        withFixture { databaseUrl, containerUrl, tempUrl ->
+            val previous = "last good local snapshot".encodeToByteArray()
+            writeBytes(databaseUrl, previous)
+            assertEquals(5, iCloudDownload(containerUrl, tempUrl, databaseUrl, "FixtureDatabase"))
+            assertContentEquals(previous, readBytes(databaseUrl))
+        }
+    }
+
+    @Test
+    fun firstDownloadCreatesTheLocalDatabase() {
+        withFixture { databaseUrl, containerUrl, tempUrl ->
+            val snapshot = "cloud snapshot".encodeToByteArray()
+            writeBytes(containerUrl, snapshot)
+            assertEquals(0, iCloudDownload(containerUrl, tempUrl, databaseUrl, "FixtureDatabase"))
+            assertContentEquals(snapshot, readBytes(databaseUrl))
+        }
+    }
+
+    @Test
     fun uploadCopiesDatabaseBytesToTheLocalContainer() {
         withFixture { databaseUrl, containerUrl, _ ->
             val databaseBytes = byteArrayOf(0, 1, 127, -128, -1, 0, 42)

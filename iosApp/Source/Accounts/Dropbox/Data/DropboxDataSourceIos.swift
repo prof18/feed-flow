@@ -15,16 +15,21 @@ class DropboxDataSourceIos: DropboxDataSource {
     private var client: DropboxClient?
     private let injectedClient: DropboxClientBridge?
     private let documentsDirectoryURL: () -> URL
+    private let logError: (String) -> Void
 
     init(
         client: DropboxClientBridge? = nil,
         documentsDirectoryURL: @escaping () -> URL = {
             FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        },
+        logError: @escaping (String) -> Void = {
+            Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(messageString: $0)
         }
     ) {
         self.client = nil
-        self.injectedClient = client
+        injectedClient = client
         self.documentsDirectoryURL = documentsDirectoryURL
+        self.logError = logError
     }
 
     func setup(apiKey: String) {
@@ -49,12 +54,11 @@ class DropboxDataSourceIos: DropboxDataSource {
         for request in successfulReturnedRequests {
             switch request {
             case let .files_upload(uploadResponse):
-                uploadResponse.response { _, error in
-                    // handle response
-                    if error != nil {
+                uploadResponse.response { response, error in
+                    if shouldAcknowledgeResumedUpload(response: response, error: error) {
                         Deps.shared.getFeedSyncRepository().onDropboxUploadSuccessAfterResume()
                     } else {
-                        print("ERROR: Upload error after resume")
+                        print("ERROR: Dropbox upload failed after resume: \(String(describing: error))")
                     }
                 }
 
@@ -62,6 +66,10 @@ class DropboxDataSourceIos: DropboxDataSource {
                 break
             }
         }
+    }
+
+    static func shouldAcknowledgeResumedUpload<Response>(response: Response?, error: Error?) -> Bool {
+        response != nil && error == nil
     }
 
     func startAuthorization(platformAuthHandler: @escaping () -> Void) {
@@ -106,14 +114,23 @@ class DropboxDataSourceIos: DropboxDataSource {
                         id: response.metadata.id,
                         sizeInByte: Int64(response.metadata.size),
                         contentHash: response.metadata.contentHash,
-                        destinationUrl: DatabaseDestinationUrl(url: response.destination)
+                        destinationUrl: DatabaseDestinationUrl(url: response.destination),
+                        isBackupNotFound: false
                     )
                     completionHandler(downloadResult, nil)
                 } else if let error = error {
-                    Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
-                        messageString: String(describing: error)
-                    )
-                    completionHandler(nil, DropboxErrors.downloadError(reason: String(describing: error)))
+                    self.logError(String(describing: error))
+                    if case DropboxErrors.downloadNotFound = error {
+                        completionHandler(
+                            DropboxDownloadResult(
+                                id: "", sizeInByte: 0, contentHash: nil,
+                                destinationUrl: nil, isBackupNotFound: true
+                            ),
+                            nil
+                        )
+                    } else {
+                        completionHandler(nil, DropboxErrors.downloadError(reason: String(describing: error)))
+                    }
                 }
             }
         } else {
@@ -139,9 +156,7 @@ class DropboxDataSourceIos: DropboxDataSource {
                     )
                     completionHandler(uploadResult, nil)
                 } else if let error = error {
-                    Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
-                        messageString: String(describing: error)
-                    )
+                    self.logError(String(describing: error))
                     completionHandler(nil, DropboxErrors.uploadError(reason: String(describing: error)))
                 }
             }

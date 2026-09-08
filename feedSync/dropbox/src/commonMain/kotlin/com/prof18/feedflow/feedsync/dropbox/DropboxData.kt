@@ -12,4 +12,5 @@ data class DropboxDownloadResult(
     val sizeInByte: Long,
     val contentHash: String?,
     val destinationUrl: DatabaseDestinationUrl? = null,
+    val isBackupNotFound: Boolean = false,
 )

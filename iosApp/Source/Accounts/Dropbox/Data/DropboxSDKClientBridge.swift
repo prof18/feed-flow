@@ -30,6 +30,12 @@ struct DropboxSDKClientBridge: DropboxClientBridge {
             if let response {
                 completion(DropboxDownloadResponse(metadata: metadata(response.0), destination: response.1), nil)
             } else {
+                if let error,
+                   case let .routeError(boxed, _, _, _) = error,
+                   case .path(.notFound) = boxed.unboxed {
+                    completion(nil, DropboxErrors.downloadNotFound)
+                    return
+                }
                 if let error, case let .routeError(boxed, _, _, _) = error {
                     Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
                         messageString: "Boxed error: \(boxed.unboxed.description)"

@@ -6,6 +6,7 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
+import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.http.FileContent
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
@@ -13,6 +14,7 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
+import com.prof18.feedflow.core.model.CloudBackupNotFoundException
 import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
@@ -96,46 +98,53 @@ class GoogleDriveDataSourceJvmImpl(
         withDriveClient { client ->
             val cachedFileId = googleDriveSettings.getBackupFileId()
             val mediaContent = FileContent("application/x-sqlite3", uploadParam.file)
-            if (cachedFileId != null) {
+            var mustUpdateResolvedFile = cachedFileId == null
+            val fileId = if (cachedFileId != null) {
                 try {
                     val metadata = GoogleDriveFile().setName(uploadParam.fileName)
                     client.files().update(cachedFileId, metadata, mediaContent).execute()
-                } catch (_: Exception) {
-                    logger.d { "Failed to update existing file, creating new one" }
-                    createNewFile(client, uploadParam.fileName, mediaContent)
+                    cachedFileId
+                } catch (e: Exception) {
+                    if (!isNotFound(e)) {
+                        throw e
+                    }
+                    mustUpdateResolvedFile = true
+                    discoverUniqueFileId(client, uploadParam.fileName)
                 }
             } else {
+                discoverUniqueFileId(client, uploadParam.fileName)
+            }
+            if (fileId == null) {
                 createNewFile(client, uploadParam.fileName, mediaContent)
+            } else if (mustUpdateResolvedFile || fileId != cachedFileId) {
+                val metadata = GoogleDriveFile().setName(uploadParam.fileName)
+                client.files().update(fileId, metadata, mediaContent).execute()
+                googleDriveSettings.setBackupFileId(fileId)
             }
             GoogleDriveUploadResult
         }
 
     override suspend fun performDownload(downloadParam: GoogleDriveDownloadParam): GoogleDriveDownloadResult =
         withDriveClient { client ->
-            val fileId = googleDriveSettings.getBackupFileId() ?: run {
-                val result = client.files().list()
-                    .setSpaces("appDataFolder")
-                    .setQ("name = '${downloadParam.fileName}' and trashed = false")
-                    .setFields("files(id)")
-                    .execute()
-
-                val discoveredFileId = result.files.firstOrNull()?.id
-
-                if (discoveredFileId != null) {
-                    googleDriveSettings.setBackupFileId(discoveredFileId)
-                }
-                discoveredFileId
+            val cachedFileId = googleDriveSettings.getBackupFileId()
+            var fileId = cachedFileId ?: requireUniqueDownloadFileId(
+                discoverFileIds(client, downloadParam.fileName),
+                downloadParam.fileName,
+            ) ?: throw CloudBackupNotFoundException()
+            val inputStream = try {
+                client.files().get(fileId).executeMediaAsInputStream()
+            } catch (e: GoogleJsonResponseException) {
+                if (e.statusCode != HTTP_NOT_FOUND || cachedFileId == null) throw e
+                fileId = requireUniqueDownloadFileId(
+                    discoverFileIds(client, downloadParam.fileName),
+                    downloadParam.fileName,
+                ) ?: throw CloudBackupNotFoundException()
+                client.files().get(fileId).executeMediaAsInputStream()
             }
-
-            val resolvedFileId = requireGoogleDriveBackupFileId(
-                fileId = fileId,
-                fileName = downloadParam.fileName,
-            )
-
-            val inputStream = client.files().get(resolvedFileId).executeMediaAsInputStream()
-            downloadParam.outputStream.use { outputStream ->
-                inputStream.copyTo(outputStream)
+            inputStream.use { input ->
+                downloadParam.outputStream.use { output -> input.copyTo(output) }
             }
+            googleDriveSettings.setBackupFileId(fileId)
             GoogleDriveDownloadResult()
         }
 
@@ -187,6 +196,51 @@ class GoogleDriveDataSourceJvmImpl(
 
         googleDriveSettings.setBackupFileId(newFile.id)
     }
+
+    private fun discoverUniqueFileId(client: Drive, fileName: String): String? {
+        return requireUniqueFileId(discoverFileIds(client, fileName), fileName)
+    }
+
+    private fun discoverFileIds(client: Drive, fileName: String): List<String> {
+        val fileIds = mutableListOf<String>()
+        var pageToken: String? = null
+        do {
+            val request = client.files().list()
+                .setSpaces("appDataFolder")
+                .setQ("name = '$fileName' and trashed = false")
+                .setFields("nextPageToken,files(id)")
+            if (pageToken != null) request.pageToken = pageToken
+            val result = request.execute()
+            fileIds += result.files.orEmpty().mapNotNull { it.id }
+            pageToken = result.nextPageToken
+        } while (pageToken != null)
+        return fileIds
+    }
+}
+
+private fun isNotFound(exception: Throwable): Boolean =
+    exception is GoogleJsonResponseException && exception.statusCode == HTTP_NOT_FOUND
+
+private fun requireUniqueFileId(
+    fileIds: List<String>,
+    fileName: String,
+): String? = when (fileIds.size) {
+    0 -> null
+    1 -> fileIds.single()
+    else -> throw GoogleDriveUploadException(
+        errorMessage = "Multiple Google Drive backup files found for '$fileName'",
+    )
+}
+
+private fun requireUniqueDownloadFileId(
+    fileIds: List<String>,
+    fileName: String,
+): String? = when (fileIds.size) {
+    0 -> null
+    1 -> fileIds.single()
+    else -> throw GoogleDriveDownloadException(
+        errorMessage = "Multiple Google Drive backup files found for '$fileName'",
+    )
 }
 
 internal fun requireGoogleDriveBackupFileId(
@@ -201,3 +255,5 @@ internal fun requireGoogleDriveBackupFileId(
 internal fun buildLocalServerReceiver(): LocalServerReceiver = LocalServerReceiver.Builder()
     .setHost("127.0.0.1")
     .build()
+
+private const val HTTP_NOT_FOUND = 404

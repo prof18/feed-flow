@@ -7,10 +7,13 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import kotlinx.coroutines.delay
+import platform.Foundation.NSCocoaErrorDomain
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
+import platform.Foundation.NSFileReadNoSuchFileError
 import platform.Foundation.NSURL
+import platform.Foundation.NSUUID
 import platform.Foundation.NSUserDomainMask
 import kotlin.time.Clock
 
@@ -32,26 +35,27 @@ class ICloudDataSourceImpl(
         val iCloudUrl = getICloudFolderURL(databaseName)
             ?: return ICloudUploadResult.Error.ICloudUrlNotAvailable
 
-        memScoped {
-            val errorPtr: ObjCObjectVar<NSError?> = alloc()
-
-            // Copy doesn't override the item, so we need to clear it before.
-            // An alternative would be checking the existence of the file before and copy or replace.
-            NSFileManager.defaultManager.removeItemAtURL(
-                iCloudUrl,
-                null,
-            )
-
-            NSFileManager.defaultManager.copyItemAtURL(
-                srcURL = databasePath,
-                toURL = iCloudUrl,
-                error = errorPtr.ptr,
-            )
-
-            if (errorPtr.value != null) {
-                logger.e { "Error uploading to iCloud: ${errorPtr.value}" }
-                return ICloudUploadResult.Error.UploadFailed(errorPtr.value.toString())
+        val stagedUrl = iCloudUrl.URLByDeletingLastPathComponent
+            ?.URLByAppendingPathComponent(".$databaseName-${NSUUID.UUID().UUIDString}.upload")
+            ?: return ICloudUploadResult.Error.ICloudUrlNotAvailable
+        try {
+            memScoped {
+                val errorPtr: ObjCObjectVar<NSError?> = alloc()
+                val fileManager = NSFileManager.defaultManager
+                if (!fileManager.copyItemAtURL(databasePath, stagedUrl, errorPtr.ptr)) {
+                    return ICloudUploadResult.Error.UploadFailed(errorPtr.value.toString())
+                }
+                val replaced = if (fileManager.fileExistsAtPath(requireNotNull(iCloudUrl.path))) {
+                    fileManager.replaceItemAtURL(iCloudUrl, stagedUrl, null, 0u, null, errorPtr.ptr)
+                } else {
+                    fileManager.moveItemAtURL(stagedUrl, iCloudUrl, errorPtr.ptr)
+                }
+                if (!replaced || errorPtr.value != null) {
+                    return ICloudUploadResult.Error.UploadFailed(errorPtr.value.toString())
+                }
             }
+        } finally {
+            NSFileManager.defaultManager.removeItemAtURL(stagedUrl, null)
         }
 
         logger.d { "Upload to iCloud successfully" }
@@ -73,20 +77,21 @@ class ICloudDataSourceImpl(
         memScoped {
             val errorPtr: ObjCObjectVar<NSError?> = alloc()
 
-            NSFileManager.defaultManager.copyItemAtURL(
+            val copied = NSFileManager.defaultManager.copyItemAtURL(
                 srcURL = iCloudUrl,
                 toURL = tempUrl,
                 error = errorPtr.ptr,
             )
 
-            if (errorPtr.value != null) {
+            if (!copied || errorPtr.value != null) {
                 logger.e { "Error downloading from iCloud: ${errorPtr.value}" }
-                val error = errorPtr.value.toString()
-                return when {
-                    error.contains("Code=260") || error.contains("Code=4") -> ICloudDownloadResult.Error.FileNotFound
-                    error.contains("Code=512") -> ICloudDownloadResult.Error.CopyOperationFailed
-                    error.contains("Code=516") -> ICloudDownloadResult.Error.FileAlreadyExists
-                    else -> ICloudDownloadResult.Error.DownloadFailed(error)
+                val error = errorPtr.value
+                return if (error != null && error.domain == NSCocoaErrorDomain &&
+                    error.code == NSFileReadNoSuchFileError
+                ) {
+                    ICloudDownloadResult.Error.FileNotFound
+                } else {
+                    ICloudDownloadResult.Error.DownloadFailed(error.toString())
                 }
             }
 

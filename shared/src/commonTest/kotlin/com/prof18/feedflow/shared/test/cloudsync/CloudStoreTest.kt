@@ -1,0 +1,73 @@
+package com.prof18.feedflow.shared.test.cloudsync
+
+import com.prof18.feedflow.shared.test.KoinTestBase
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+
+class CloudStoreTest : KoinTestBase() {
+
+    @Test
+    fun `upload and download deep copy bytes`() {
+        val store = CloudStore()
+        val uploaded = byteArrayOf(1, 2, 3)
+
+        store.upload(CloudProvider.DROPBOX, "account", "file", uploaded, "device")
+        uploaded[0] = 9
+
+        val downloaded = store.download(CloudProvider.DROPBOX, "account", "file")
+        downloaded[1] = 8
+
+        assertContentEquals(byteArrayOf(1, 2, 3), store.download(CloudProvider.DROPBOX, "account", "file"))
+        assertFailsWith<IllegalArgumentException> {
+            store.download(CloudProvider.DROPBOX, "account", "missing")
+        }
+    }
+
+    @Test
+    fun `provider and account data are isolated`() {
+        val store = CloudStore()
+        val bytes = byteArrayOf(7)
+
+        store.upload(CloudProvider.DROPBOX, "one", "file", bytes, "device")
+        store.upload(CloudProvider.DROPBOX, "two", "file", bytes, "device")
+        store.upload(CloudProvider.GOOGLE_DRIVE, "one", "file", bytes, "device")
+
+        assertContentEquals(byteArrayOf(7), store.download(CloudProvider.DROPBOX, "one", "file"))
+        assertContentEquals(byteArrayOf(7), store.download(CloudProvider.DROPBOX, "two", "file"))
+        assertContentEquals(byteArrayOf(7), store.download(CloudProvider.GOOGLE_DRIVE, "one", "file"))
+        assertEquals(2, store.fileCount(CloudProvider.DROPBOX))
+        assertEquals(1, store.fileCount(CloudProvider.DROPBOX, "one"))
+    }
+
+    @Test
+    fun `drive update keeps stable opaque identity`() {
+        val store = CloudStore()
+        val firstId = store.upload(CloudProvider.GOOGLE_DRIVE, "account", "file", byteArrayOf(1), "device")
+        val secondId = store.upload(CloudProvider.GOOGLE_DRIVE, "account", "file", byteArrayOf(2), "device")
+
+        assertEquals(firstId, secondId)
+        assertContentEquals(byteArrayOf(2), store.download(CloudProvider.GOOGLE_DRIVE, "account", "file"))
+        assertEquals(1, store.fileCount(CloudProvider.GOOGLE_DRIVE, "account"))
+    }
+
+    @Test
+    fun `icloud upload is staged until explicit propagation`() {
+        val store = CloudStore()
+        val bytes = byteArrayOf(4, 5)
+
+        store.upload(CloudProvider.ICLOUD, "account", "file", bytes, "phone")
+        assertEquals(0, store.fileCount(CloudProvider.ICLOUD))
+        assertFailsWith<IllegalArgumentException> {
+            store.download(CloudProvider.ICLOUD, "account", "file")
+        }
+
+        store.propagate("phone")
+
+        assertEquals(1, store.fileCount(CloudProvider.ICLOUD))
+        assertContentEquals(bytes, store.download(CloudProvider.ICLOUD, "account", "file"))
+        assertEquals(2, store.events.size)
+        assertEquals(CloudStoreOperation.PROPAGATE, store.events.last().operation)
+    }
+}

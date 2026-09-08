@@ -25,11 +25,13 @@ import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feeditem.HtmlFeedContentPreparer
+import com.prof18.feedflow.shared.domain.feedsync.AndroidSyncDatabaseFileProvider
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerAndroid
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncWorker
+import com.prof18.feedflow.shared.domain.feedsync.SyncDatabaseFileProvider
 import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
@@ -54,6 +56,13 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
+    single<SyncDatabaseFileProvider> {
+        AndroidSyncDatabaseFileProvider(
+            context = get(),
+            appEnvironment = appEnvironment,
+        )
+    }
+
     single<RssParserWrapper> {
         val feedHttpCacheStore = get<FeedHttpCacheStore>()
         RssParserWrapperImpl(
@@ -189,7 +198,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             context = get(),
             dropboxDataSource = get(),
             googleDriveDataSource = get(),
-            appEnvironment = appEnvironment,
+            syncDatabaseFileProvider = get(),
             logger = getWith("FeedSyncAndroidWorker"),
             feedSyncer = get(),
             feedSyncMessageQueue = get(),

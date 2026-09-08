@@ -14,11 +14,8 @@ import com.prof18.feedflow.core.model.SyncDownloadError
 import com.prof18.feedflow.core.model.SyncFeedError
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.model.SyncUploadError
-import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
-import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
-import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_PROD
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
@@ -42,7 +39,7 @@ internal class FeedSyncAndroidWorker(
     private val context: Context,
     private val dropboxDataSource: DropboxDataSource,
     private val googleDriveDataSource: GoogleDriveDataSourceAndroid,
-    private val appEnvironment: AppEnvironment,
+    private val syncDatabaseFileProvider: SyncDatabaseFileProvider,
     private val logger: Logger,
     private val feedSyncer: FeedSyncer,
     private val feedSyncMessageQueue: FeedSyncMessageQueue,
@@ -218,10 +215,8 @@ internal class FeedSyncAndroidWorker(
 
         val dbFile = File(inFileName)
         val fis = FileInputStream(dbFile)
-        val openFileOutput = context.openFileOutput(
-            getDatabaseNameWithExtension(),
-            Context.MODE_PRIVATE,
-        ) ?: return null
+        val outputFile = syncDatabaseFileProvider.uploadFile
+        val openFileOutput = FileOutputStream(outputFile)
         openFileOutput.use { output ->
             // Transfer bytes from the input file to the output file
             val buffer = ByteArray(BUFFER_SIZE)
@@ -235,20 +230,11 @@ internal class FeedSyncAndroidWorker(
             fis.close()
             Logger.d { "Database file generated successfully" }
 
-            return context.getFileStreamPath(getDatabaseNameWithExtension())
+            return outputFile
         }
     }
 
-    private fun databasePath(): String =
-        context.getDatabasePath(getDatabaseName()).toString()
-
-    private fun getDatabaseName(): String {
-        return if (appEnvironment.isDebug()) {
-            SYNC_DATABASE_NAME_DEBUG
-        } else {
-            SYNC_DATABASE_NAME_PROD
-        }
-    }
+    private fun databasePath(): String = syncDatabaseFileProvider.databaseFile.toString()
 
     private suspend fun restoreDropboxClient() {
         if (!dropboxDataSource.isClientSet()) {
@@ -264,8 +250,7 @@ internal class FeedSyncAndroidWorker(
         }
     }
 
-    private fun getDatabaseNameWithExtension(): String =
-        "${getDatabaseName()}.db"
+    private fun getDatabaseNameWithExtension(): String = syncDatabaseFileProvider.remoteFileName
 
     private suspend fun emitErrorMessage(errorCode: ErrorCode) =
         feedSyncMessageQueue.emitResult(SyncResult.General(errorCode))

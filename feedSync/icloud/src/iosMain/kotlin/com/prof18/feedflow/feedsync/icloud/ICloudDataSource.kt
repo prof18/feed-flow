@@ -25,6 +25,8 @@ interface ICloudDataSource {
 
 class ICloudDataSourceImpl(
     private val logger: Logger,
+    private val localBaseFolderURL: NSURL? = null,
+    private val localTemporaryFolderURL: NSURL? = null,
 ) : ICloudDataSource {
     override suspend fun performUpload(databasePath: NSURL, databaseName: String): ICloudUploadResult {
         val iCloudUrl = getICloudFolderURL(databaseName)
@@ -100,6 +102,8 @@ class ICloudDataSourceImpl(
         timeoutSeconds: Int,
         initialPollIntervalMs: Long,
     ): NSURL? {
+        localBaseFolderURL?.let { return it }
+
         val startTime = Clock.System.now()
         var currentPollInterval = initialPollIntervalMs
 
@@ -121,6 +125,8 @@ class ICloudDataSourceImpl(
     }
 
     private fun getTemporaryFileUrl(databaseName: String): NSURL? {
+        localTemporaryFolderURL?.let { return it.URLByAppendingPathComponent(databaseName) }
+
         val documentsDirectory: NSURL? = NSFileManager.defaultManager.URLsForDirectory(
             directory = NSDocumentDirectory,
             inDomains = NSUserDomainMask,

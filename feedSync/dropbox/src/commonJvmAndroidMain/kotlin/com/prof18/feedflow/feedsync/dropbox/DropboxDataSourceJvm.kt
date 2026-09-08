@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.dropbox.core.DbxException
 import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.NetworkIOException
+import com.dropbox.core.http.HttpRequestor
 import com.dropbox.core.oauth.DbxCredential
 import com.dropbox.core.v2.DbxClientV2
 import com.dropbox.core.v2.files.WriteMode
@@ -21,6 +22,7 @@ import kotlin.coroutines.resumeWithException
 internal class DropboxDataSourceJvm(
     private val logger: Logger,
     private val dispatcherProvider: DispatcherProvider,
+    private val httpRequestor: HttpRequestor? = null,
 ) : DropboxDataSource {
 
     private var dropboxClient: DbxClientV2? = null
@@ -59,6 +61,9 @@ internal class DropboxDataSourceJvm(
         val requestConfig = DbxRequestConfig
             .newBuilder(DropboxConstants.DROPBOX_CLIENT_IDENTIFIER)
             .withUserLocale(userLocale)
+            .apply {
+                httpRequestor?.let { withHttpRequestor(it) }
+            }
             .build()
         return DbxClientV2(requestConfig, credentials)
     }

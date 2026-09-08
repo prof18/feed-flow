@@ -17,6 +17,7 @@ class GoogleDriveDataSourceIos(
     private val googleDriveSettings: GoogleDriveSettings,
     private val logger: Logger,
     private val dispatcherProvider: DispatcherProvider,
+    private val outputDirectory: String? = null,
 ) {
 
     fun authenticate(onResult: (Boolean) -> Unit) {
@@ -85,7 +86,7 @@ class GoogleDriveDataSourceIos(
                     }
 
                     // Write data to file
-                    val destUrl = NSURL.fileURLWithPath(getAppGroupDatabasePath())
+                    val destUrl = NSURL.fileURLWithPath(outputDirectory ?: getAppGroupDatabasePath())
                         .URLByAppendingPathComponent(downloadParam.outputName)
 
                     if (destUrl != null) {

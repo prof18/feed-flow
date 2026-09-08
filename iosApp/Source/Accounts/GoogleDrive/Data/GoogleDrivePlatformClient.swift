@@ -12,7 +12,11 @@ import GoogleAPIClientForREST_Drive
 import GoogleSignIn
 
 class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
-    private var service: GTLRDriveService?
+    private var service: GoogleDriveServiceClient?
+
+    init(service: GoogleDriveServiceClient? = nil) {
+        self.service = service
+    }
 
     func authenticate(onResult: @escaping (KotlinBoolean) -> Void) {
         #if APP_EXTENSION
@@ -44,7 +48,7 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
 
                 let newService = GTLRDriveService()
                 newService.authorizer = user.fetcherAuthorizer
-                self.service = newService
+                self.service = GoogleDriveServiceClientImpl(service: newService)
                 onResult(KotlinBoolean(value: true))
             }
         #endif
@@ -60,7 +64,7 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
             if let user = user {
                 let newService = GTLRDriveService()
                 newService.authorizer = user.fetcherAuthorizer
-                self?.service = newService
+                self?.service = GoogleDriveServiceClientImpl(service: newService)
                 onResult(KotlinBoolean(value: true))
             } else {
                 onResult(KotlinBoolean(value: false))
@@ -69,7 +73,7 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
     }
 
     func isAuthorized() -> Bool {
-        return service?.authorizer != nil && GIDSignIn.sharedInstance.currentUser != nil
+        return service?.isAuthorized == true && GIDSignIn.sharedInstance.currentUser != nil
     }
 
     func isServiceSet() -> Bool {
@@ -117,7 +121,7 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
     }
 
     private func searchAndUpload(
-        service: GTLRDriveService,
+        service: GoogleDriveServiceClient,
         fileName: String,
         data: Data,
         completionHandler: @escaping (String?, KotlinThrowable?) -> Void
@@ -143,7 +147,7 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
     }
 
     private func updateFile(
-        service: GTLRDriveService,
+        service: GoogleDriveServiceClient,
         fileId: String,
         fileName: String,
         data: Data,
@@ -171,7 +175,7 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
     }
 
     private func createNewFile(
-        service: GTLRDriveService,
+        service: GoogleDriveServiceClient,
         fileName: String,
         data: Data,
         completionHandler: @escaping (String?, KotlinThrowable?) -> Void
@@ -199,7 +203,7 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
     }
 
     private func searchAndDownload(
-        service: GTLRDriveService,
+        service: GoogleDriveServiceClient,
         fileName: String,
         completionHandler: @escaping @Sendable (Data?, KotlinThrowable?) -> Void
     ) {
@@ -226,7 +230,7 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
     }
 
     private func downloadFileById(
-        service: GTLRDriveService,
+        service: GoogleDriveServiceClient,
         fileId: String,
         completionHandler: @escaping @Sendable (Data?, KotlinThrowable?) -> Void
     ) {

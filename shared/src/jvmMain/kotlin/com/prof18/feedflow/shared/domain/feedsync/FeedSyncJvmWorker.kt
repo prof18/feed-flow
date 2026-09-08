@@ -50,12 +50,14 @@ internal class FeedSyncJvmWorker(
     private val googleDriveSettings: GoogleDriveSettings,
     private val accountsRepository: AccountsRepository,
     private val iCloudSettings: ICloudSettings,
+    private val syncDirectory: File = File(AppDataPathBuilder.getAppDataPath(appEnvironment)),
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+    private val iCloudBridge: ICloudFileTransfer = ICloudNativeBridge(),
 ) : FeedSyncWorker {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val mutex = Mutex()
 
-    private val appPath = AppDataPathBuilder.getAppDataPath(appEnvironment)
+    private val appPath = syncDirectory.path
     private val databaseName = if (appEnvironment.isDebug()) {
         SYNC_DATABASE_NAME_DEBUG
     } else {
@@ -117,7 +119,7 @@ internal class FeedSyncJvmWorker(
             }
 
             SyncAccounts.ICLOUD -> {
-                val result = ICloudNativeBridge().uploadToICloud(appEnvironment.isDebug())
+                val result = iCloudBridge.uploadToICloud(appEnvironment.isDebug())
                 when (UploadResult.fromCode(result)) {
                     UploadResult.SUCCESS -> {
                         iCloudSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
@@ -201,7 +203,7 @@ internal class FeedSyncJvmWorker(
                 SyncResult.Success
             }
             SyncAccounts.ICLOUD -> {
-                val result = ICloudNativeBridge().iCloudDownload(appEnvironment.isDebug())
+                val result = iCloudBridge.iCloudDownload(appEnvironment.isDebug())
                 when (DownloadResult.fromCode(result)) {
                     DownloadResult.SUCCESS -> {
                         iCloudSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())

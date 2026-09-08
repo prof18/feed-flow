@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import org.koin.core.Koin
 import org.koin.core.component.KoinComponent
 import org.koin.core.qualifier.named
 import kotlin.coroutines.CoroutineContext
@@ -25,7 +26,11 @@ import kotlin.time.Clock
 
 class SyncedDatabaseHelper(
     private val backgroundDispatcher: CoroutineDispatcher,
+    private val koinContext: Koin? = null,
+    private val clock: Clock = Clock.System,
 ) : KoinComponent {
+
+    override fun getKoin(): Koin = koinContext ?: super.getKoin()
 
     private var dbRef: AtomicReference<FeedFlowFeedSyncDB?> = AtomicReference(null)
     private var driverRef: AtomicReference<SqlDriver?> = AtomicReference(null)
@@ -238,7 +243,7 @@ class SyncedDatabaseHelper(
     private fun FeedFlowFeedSyncDB.updateMetadata(table: SyncTable) {
         syncedMetadataQueries.insertMetadata(
             table_name = table.tableName,
-            last_change_timestamp = Clock.System.now().toEpochMilliseconds(),
+            last_change_timestamp = clock.now().toEpochMilliseconds(),
         )
     }
 

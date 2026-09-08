@@ -13,6 +13,19 @@ import UIKit
 
 class DropboxDataSourceIos: DropboxDataSource {
     private var client: DropboxClient?
+    private let injectedClient: DropboxClientBridge?
+    private let documentsDirectoryURL: () -> URL
+
+    init(
+        client: DropboxClientBridge? = nil,
+        documentsDirectoryURL: @escaping () -> URL = {
+            FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        }
+    ) {
+        self.client = nil
+        self.injectedClient = client
+        self.documentsDirectoryURL = documentsDirectoryURL
+    }
 
     func setup(apiKey: String) {
         DropboxClientsManager.setupWithAppKey(
@@ -70,7 +83,7 @@ class DropboxDataSourceIos: DropboxDataSource {
     }
 
     func isClientSet() -> Bool {
-        client != nil
+        client != nil || injectedClient != nil
     }
 
     func revokeAccess() async throws {
@@ -82,41 +95,27 @@ class DropboxDataSourceIos: DropboxDataSource {
         downloadParam: DropboxDownloadParam,
         completionHandler: @escaping (DropboxDownloadResult?, Error?) -> Void
     ) {
-        let fileManager = FileManager.default
-        let directoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let destURL = directoryURL.appendingPathComponent(downloadParam.outputName)
+        let destURL = documentsDirectoryURL().appendingPathComponent(downloadParam.outputName)
 
-        if let client = getBackgroundClient() {
-            client.files.download(path: downloadParam.path, overwrite: true, destination: destURL)
-                .response { response, error in
-                    if let response = response {
-                        print("Data successfully downloaded from Dropbox")
-                        let downloadResult = DropboxDownloadResult(
-                            id: response.0.id,
-                            sizeInByte: Int64(response.0.size),
-                            contentHash: response.0.contentHash,
-                            destinationUrl: DatabaseDestinationUrl(url: response.1)
-                        )
-                        completionHandler(downloadResult, nil)
-                    } else if let error = error {
-                        Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
-                            messageString: error.description
-                        )
-
-                        switch error as CallError {
-                        case let .routeError(boxed, _, _, _):
-                            let err = boxed.unboxed as Files.DownloadError
-                            Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
-                                messageString: "Boxed error: \(err.description)"
-                            )
-
-                        default:
-                            break
-                        }
-
-                        completionHandler(nil, DropboxErrors.downloadError(reason: error.description))
-                    }
+        let transport = injectedClient ?? getBackgroundClient().map { DropboxSDKClientBridge(client: $0) }
+        if let transport {
+            transport.download(path: downloadParam.path, overwrite: true, destination: destURL) { response, error in
+                if let response = response {
+                    print("Data successfully downloaded from Dropbox")
+                    let downloadResult = DropboxDownloadResult(
+                        id: response.metadata.id,
+                        sizeInByte: Int64(response.metadata.size),
+                        contentHash: response.metadata.contentHash,
+                        destinationUrl: DatabaseDestinationUrl(url: response.destination)
+                    )
+                    completionHandler(downloadResult, nil)
+                } else if let error = error {
+                    Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
+                        messageString: String(describing: error)
+                    )
+                    completionHandler(nil, DropboxErrors.downloadError(reason: String(describing: error)))
                 }
+            }
         } else {
             completionHandler(nil, DropboxErrors.downloadError(reason: "The client is nil"))
         }
@@ -126,13 +125,9 @@ class DropboxDataSourceIos: DropboxDataSource {
         uploadParam: DropboxUploadParam,
         completionHandler: @escaping (DropboxUploadResult?, Error?) -> Void
     ) {
-        if let client = getClient() {
-            client.files.upload(
-                path: uploadParam.path,
-                mode: .overwrite,
-                input: uploadParam.url
-            )
-            .response { response, error in
+        let transport = injectedClient ?? getClient().map { DropboxSDKClientBridge(client: $0) }
+        if let transport {
+            transport.upload(path: uploadParam.path, input: uploadParam.url) { response, error in
                 if let response = response {
                     print("Data successfully uploaded to Dropbox")
 
@@ -145,21 +140,9 @@ class DropboxDataSourceIos: DropboxDataSource {
                     completionHandler(uploadResult, nil)
                 } else if let error = error {
                     Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
-                        messageString: error.description
+                        messageString: String(describing: error)
                     )
-
-                    switch error as CallError {
-                    case let .routeError(boxed, _, _, _):
-                        let err = boxed.unboxed as Files.UploadError
-                        Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
-                            messageString: "Boxed error: \(err.description)"
-                        )
-
-                    default:
-                        break
-                    }
-
-                    completionHandler(nil, DropboxErrors.uploadError(reason: error.description))
+                    completionHandler(nil, DropboxErrors.uploadError(reason: String(describing: error)))
                 }
             }
         } else {

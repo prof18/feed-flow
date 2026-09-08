@@ -38,6 +38,15 @@ jobs:
           cp config/dummy-google-services.json androidApp/src/debug/google-services.json
           cp config/dummy-google-services.json androidApp/src/release/google-services.json
 
+      - name: Create offline iOS configuration
+        run: |
+          cp config/dummy-google-service.plist iosApp/GoogleService-Info-dev.plist
+          cp config/dummy-google-service.plist iosApp/GoogleService-Info.plist
+          cp config/dummy-config.xcconfig iosApp/Assets/Config.xcconfig
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
       - name: Run Checks
         run: ./gradlew detekt allTests
 
@@ -47,7 +56,51 @@ jobs:
         with:
           name: build-reports
           path: |
-            **/build/reports/*    
+            **/build/reports/*
+
+      - name: Upload cloud sync artifacts
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: cloud-sync-macos
+          path: |
+            shared/build/cloud-sync-artifacts
+            shared/build/reports/tests/swiftCloudSyncTest
+
+  tests-desktop:
+    name: Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+
+      - name: Create dummy Firebase json
+        shell: bash
+        run: |
+          cp config/dummy-google-services.json androidApp/src/debug/google-services.json
+          cp config/dummy-google-services.json androidApp/src/release/google-services.json
+
+      - name: Run all tests
+        shell: bash
+        run: ./gradlew allTests
+
+      - name: Upload test reports and cloud snapshots
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-${{ matrix.os }}
+          path: |
+            **/build/reports/tests
+            shared/build/cloud-sync-artifacts
 
   build-android-app:
     name: Build Android App

@@ -25,6 +25,12 @@ kotlin {
     }
 
     sourceSets {
+        val ikloudTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+
         all {
             languageSettings.optIn("kotlinx.cinterop.BetaInteropApi")
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")

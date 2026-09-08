@@ -7,6 +7,7 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.common.api.Scope
 import com.google.api.client.http.FileContent
 import com.google.api.client.http.HttpRequestInitializer
+import com.google.api.client.http.HttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
@@ -21,6 +22,8 @@ class GoogleDriveAndroidDataSourceImpl(
     private val googleDriveSettings: GoogleDriveSettings,
     private val logger: Logger,
     private val dispatcherProvider: DispatcherProvider,
+    private val httpTransport: HttpTransport = NetHttpTransport(),
+    private val accessTokenProvider: (suspend () -> String?)? = null,
 ) : GoogleDriveDataSourceAndroid {
     override suspend fun isAuthorized(): Boolean = runCatching {
         getAccessToken() != null
@@ -108,6 +111,8 @@ class GoogleDriveAndroidDataSourceImpl(
         }
 
     private suspend fun getAccessToken(): String? {
+        accessTokenProvider?.let { return it() }
+
         val authorizationRequest = AuthorizationRequest.builder()
             .setRequestedScopes(listOf(Scope(DriveScopes.DRIVE_APPDATA)))
             .build()
@@ -136,7 +141,7 @@ class GoogleDriveAndroidDataSourceImpl(
         }
 
         return Drive.Builder(
-            NetHttpTransport(),
+            httpTransport,
             GsonFactory.getDefaultInstance(),
             httpRequestInitializer,
         ).setApplicationName(GOOGLE_DRIVE_CLIENT_APPLICATION_NAME).build()

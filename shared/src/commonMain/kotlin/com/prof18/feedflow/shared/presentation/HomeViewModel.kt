@@ -117,7 +117,11 @@ class HomeViewModel internal constructor(
     private var hasTriggeredAppLaunch = false
 
     val currentFeedFilter = feedStateRepository.currentFeedFilter
-    val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
+    val isSyncUploadRequired: StateFlow<Boolean> = feedSyncRepository.isUploadRequired.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        settingsRepository.getIsSyncUploadRequired(),
+    )
     val swipeActions: StateFlow<SwipeActions> = feedAppearanceSettingsRepository.swipeActions
     val feedLayout: StateFlow<FeedLayout> = feedAppearanceSettingsRepository.feedLayout
     val isGridLayoutEnabled: StateFlow<Boolean> = feedAppearanceSettingsRepository.gridLayoutEnabled

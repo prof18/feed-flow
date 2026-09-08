@@ -160,7 +160,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                         lifecycle.coroutineScope.launch {
                             pendingReadStatusActionRetrier.retryPendingReadStatusActions()
                         }
-                        feedSyncRepo.enqueueBackup()
+                        lifecycle.coroutineScope.launch { feedSyncRepo.enqueueBackup() }
                         lifecycle.coroutineScope.launch {
                             GlanceAppWidgetManager(
                                 context = this@FeedFlowApp,

@@ -13,7 +13,15 @@ internal class FeedSyncer(
     private val syncedDatabaseHelper: SyncedDatabaseHelper,
     private val appDatabaseHelper: DatabaseHelper,
     private val logger: Logger,
+    private val pendingCloudChanges: PendingCloudChangesManager? = null,
 ) {
+    suspend fun prepareInitialUpload() {
+        syncedDatabaseHelper.replaceSnapshot(
+            appDatabaseHelper.getFeedSources(),
+            appDatabaseHelper.getFeedSourceCategories(),
+            appDatabaseHelper.getAllFeedItemFlagsForCloud(),
+        )
+    }
 
     suspend fun populateSyncDbIfEmpty() {
         if (syncedDatabaseHelper.isDatabaseEmpty()) {
@@ -141,9 +149,11 @@ internal class FeedSyncer(
         // Sync updates
         val syncFeedItems = syncedDatabaseHelper.getAllFeedItems()
 
-        if (syncFeedItems.isNotEmpty()) {
+        if (syncFeedItems.isNotEmpty() || pendingCloudChanges != null) {
             appDatabaseHelper.updateFeedItemReadAndBookmarked(
                 syncedFeedItems = syncFeedItems,
+                cloudSessionId = pendingCloudChanges?.sessionForEdit(),
+                replaceAll = pendingCloudChanges != null,
             )
         }
 

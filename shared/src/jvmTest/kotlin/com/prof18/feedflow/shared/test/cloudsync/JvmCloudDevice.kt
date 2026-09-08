@@ -15,6 +15,7 @@ import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
+import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.koin.TestModules
 import com.prof18.feedflow.shared.test.testLogger
@@ -72,6 +73,7 @@ internal actual fun createCloudDevice(
                         appEnvironment = AppEnvironment.Debug,
                         logger = testLogger,
                         feedSyncer = get(),
+                        pendingCloudChanges = get<PendingCloudChangesManager>(),
                         feedSyncMessageQueue = get(),
                         settingsRepository = get(),
                         dispatcherProvider = TestDispatcherProvider,

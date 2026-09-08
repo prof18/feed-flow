@@ -28,6 +28,7 @@ import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.feedsync.icloud.ICloudUploadResult
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
+import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.koin.TestModules
 import com.prof18.feedflow.shared.test.koin.getWith
@@ -171,6 +172,7 @@ private fun cloudDeviceModule(
             iCloudDataSource = get(),
             logger = getWith("FeedSyncIosWorker"),
             feedSyncer = get(),
+            pendingCloudChanges = get<PendingCloudChangesManager>(),
             appEnvironment = AppEnvironment.Debug,
             dropboxSettings = get(),
             googleDriveSettings = get(),

@@ -87,7 +87,11 @@ internal class FeedActionsRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.updateReadStatus(feedItemIds, isRead)
+                databaseHelper.updateReadStatus(
+                    feedItemIds,
+                    isRead,
+                    cloudSessionId = feedSyncRepository.cloudSessionForEdit(),
+                )
                 feedSyncRepository.updateFeedItemsReadStatus(feedItemIds, isRead)
             }
         }
@@ -170,8 +174,16 @@ internal class FeedActionsRepository(
             SyncAccounts.ICLOUD,
             -> {
                 when (feedOrder) {
-                    FeedOrder.NEWEST_FIRST -> databaseHelper.markAllNewerAsRead(targetItemId, currentFilter)
-                    FeedOrder.OLDEST_FIRST -> databaseHelper.markAllOlderAsRead(targetItemId, currentFilter)
+                    FeedOrder.NEWEST_FIRST -> databaseHelper.markAllNewerAsRead(
+                        targetItemId,
+                        currentFilter,
+                        cloudSessionId = feedSyncRepository.cloudSessionForEdit(),
+                    )
+                    FeedOrder.OLDEST_FIRST -> databaseHelper.markAllOlderAsRead(
+                        targetItemId,
+                        currentFilter,
+                        cloudSessionId = feedSyncRepository.cloudSessionForEdit(),
+                    )
                 }
                 feedSyncRepository.setIsSyncUploadRequired()
             }
@@ -213,8 +225,16 @@ internal class FeedActionsRepository(
             SyncAccounts.ICLOUD,
             -> {
                 when (feedOrder) {
-                    FeedOrder.NEWEST_FIRST -> databaseHelper.markAllOlderAsRead(targetItemId, currentFilter)
-                    FeedOrder.OLDEST_FIRST -> databaseHelper.markAllNewerAsRead(targetItemId, currentFilter)
+                    FeedOrder.NEWEST_FIRST -> databaseHelper.markAllOlderAsRead(
+                        targetItemId,
+                        currentFilter,
+                        cloudSessionId = feedSyncRepository.cloudSessionForEdit(),
+                    )
+                    FeedOrder.OLDEST_FIRST -> databaseHelper.markAllNewerAsRead(
+                        targetItemId,
+                        currentFilter,
+                        cloudSessionId = feedSyncRepository.cloudSessionForEdit(),
+                    )
                 }
                 feedSyncRepository.setIsSyncUploadRequired()
             }
@@ -248,7 +268,10 @@ internal class FeedActionsRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.markAllFeedAsRead(feedFilter)
+                databaseHelper.markAllFeedAsRead(
+                    feedFilter,
+                    cloudSessionId = feedSyncRepository.cloudSessionForEdit(),
+                )
                 feedSyncRepository.setIsSyncUploadRequired()
             }
         }
@@ -288,7 +311,11 @@ internal class FeedActionsRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.updateBookmarkStatus(feedItemId, isBookmarked)
+                databaseHelper.updateBookmarkStatus(
+                    feedItemId,
+                    isBookmarked,
+                    cloudSessionId = feedSyncRepository.cloudSessionForEdit(),
+                )
                 feedSyncRepository.updateFeedItemBookmarkStatus(feedItemId, isBookmarked)
             }
         }

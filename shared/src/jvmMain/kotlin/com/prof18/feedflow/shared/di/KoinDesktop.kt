@@ -29,6 +29,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerIosDesktop
+import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerJvm
@@ -208,6 +209,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             appEnvironment = appEnvironment,
             logger = getWith("FeedSyncJvmWorker"),
             feedSyncer = get(),
+            pendingCloudChanges = get<PendingCloudChangesManager>(),
             feedSyncMessageQueue = get(),
             settingsRepository = get(),
             dispatcherProvider = get(),

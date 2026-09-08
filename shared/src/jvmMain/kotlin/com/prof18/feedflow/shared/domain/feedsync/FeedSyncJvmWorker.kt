@@ -48,6 +48,7 @@ internal class FeedSyncJvmWorker(
     private val appEnvironment: AppEnvironment,
     private val logger: Logger,
     private val feedSyncer: FeedSyncer,
+    private val pendingCloudChanges: PendingCloudChangesManager,
     private val feedSyncMessageQueue: FeedSyncMessageQueue,
     private val settingsRepository: SettingsRepository,
     private val dispatcherProvider: DispatcherProvider,
@@ -61,6 +62,7 @@ internal class FeedSyncJvmWorker(
 ) : FeedSyncWorker {
 
     private val mutex = Mutex()
+    private var downloadSession: String? = null
 
     private val appPath = syncDirectory.path
     private val databaseName = if (appEnvironment.isDebug()) {
@@ -86,18 +88,27 @@ internal class FeedSyncJvmWorker(
         mutex.withLock {
             var snapshot: File? = null
             try {
-                val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
+                val uploadSession = requireNotNull(pendingCloudChanges.sessionForEdit())
+                val uploadAccount = accountsRepository.getCurrentSyncAccount()
                 feedSyncer.populateSyncDbIfEmpty()
                 feedSyncer.updateFeedItemsToSyncDatabase()
-                val uploaded = if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
-                    feedSyncer.withClosedDatabase { accountSpecificUpload(databaseFile) }
+                val pendingBatch = pendingCloudChanges.capturePendingChanges()
+                val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
+                pendingCloudChanges.applyChangesToSyncDatabase(pendingBatch)
+                val uploaded = if (uploadAccount == SyncAccounts.ICLOUD) {
+                    feedSyncer.withClosedDatabase {
+                        pendingCloudChanges.checkAccountSession(uploadSession)
+                        accountSpecificUpload(databaseFile, uploadAccount)
+                    }
                 } else {
                     snapshot = File.createTempFile("cloud-upload-", ".db", syncDirectory)
                     feedSyncer.withClosedDatabase { databaseFile.copyTo(requireNotNull(snapshot), overwrite = true) }
-                    accountSpecificUpload(requireNotNull(snapshot))
+                    pendingCloudChanges.checkAccountSession(uploadSession)
+                    accountSpecificUpload(requireNotNull(snapshot), uploadAccount)
                 }
 
                 if (uploaded) {
+                    pendingCloudChanges.markChangesAsUploaded(pendingBatch)
                     settingsRepository.acknowledgeSyncUpload(uploadGeneration)
                     emitSuccessMessage()
                 }
@@ -117,8 +128,8 @@ internal class FeedSyncJvmWorker(
         }
     }
 
-    private suspend fun accountSpecificUpload(uploadFile: File): Boolean =
-        when (accountsRepository.getCurrentSyncAccount()) {
+    private suspend fun accountSpecificUpload(uploadFile: File, account: SyncAccounts): Boolean =
+        when (account) {
             SyncAccounts.DROPBOX -> {
                 restoreDropboxClient()
 
@@ -187,26 +198,32 @@ internal class FeedSyncJvmWorker(
         }
 
     override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
-        return@withContext mutex.withLock {
-            var stagedFile: File? = null
-            try {
-                stagedFile = File.createTempFile("cloud-download-", ".db", syncDirectory)
-                accountSpecificDownload(stagedFile)
-            } catch (_: CloudBackupNotFoundException) {
-                SyncResult.BackupNotFound(syncDownloadErrorForAccount(accountsRepository.getCurrentSyncAccount()))
-            } catch (e: GoogleDriveNeedsReAuthException) {
-                logger.d("Google Drive needs re-authorization", e)
-                SyncResult.GoogleDriveNeedReAuth()
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                val currentAccount = accountsRepository.getCurrentSyncAccount()
-                val downloadError = syncDownloadErrorForAccount(currentAccount)
-                logger.d(e) { "Download failed for account $currentAccount" }
-                SyncResult.General(downloadError)
-            } finally {
-                stagedFile?.delete()
-            }
+        mutex.withLock { downloadLocked() }
+    }
+
+    private suspend fun downloadLocked(
+        expectedSession: String? = null,
+    ): SyncResult {
+        var stagedFile: File? = null
+        return try {
+            downloadSession = pendingCloudChanges.sessionForEdit()
+            if (expectedSession != null) pendingCloudChanges.checkAccountSession(expectedSession)
+            stagedFile = File.createTempFile("cloud-download-", ".db", syncDirectory)
+            accountSpecificDownload(stagedFile)
+        } catch (_: CloudBackupNotFoundException) {
+            SyncResult.BackupNotFound(syncDownloadErrorForAccount(accountsRepository.getCurrentSyncAccount()))
+        } catch (e: GoogleDriveNeedsReAuthException) {
+            logger.d("Google Drive needs re-authorization", e)
+            SyncResult.GoogleDriveNeedReAuth()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            val currentAccount = accountsRepository.getCurrentSyncAccount()
+            val downloadError = syncDownloadErrorForAccount(currentAccount)
+            logger.d(e) { "Download failed for account $currentAccount" }
+            SyncResult.General(downloadError)
+        } finally {
+            stagedFile?.delete()
         }
     }
 
@@ -329,12 +346,14 @@ internal class FeedSyncJvmWorker(
     private suspend fun installDownloadedFile(stagedFile: File) {
         prepareSyncDatabaseFile(stagedFile)
         feedSyncer.withClosedDatabase {
-            Files.move(
-                stagedFile.toPath(),
-                databaseFile.toPath(),
-                StandardCopyOption.ATOMIC_MOVE,
-                StandardCopyOption.REPLACE_EXISTING,
-            )
+            pendingCloudChanges.withAccountSession(downloadSession) {
+                Files.move(
+                    stagedFile.toPath(),
+                    databaseFile.toPath(),
+                    StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING,
+                )
+            }
         }
     }
 

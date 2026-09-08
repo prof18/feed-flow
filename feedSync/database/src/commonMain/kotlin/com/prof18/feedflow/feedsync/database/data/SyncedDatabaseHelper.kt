@@ -237,6 +237,34 @@ class SyncedDatabaseHelper(
         }
     }
 
+    suspend fun replaceSnapshot(
+        sources: List<FeedSource>,
+        categories: List<FeedSourceCategory>,
+        items: List<SyncedFeedItem>,
+    ) = withDatabase { database ->
+        database.transaction {
+            database.syncedFeedItemQueries.deleteAll()
+            database.syncedFeedSourceQueries.deleteAll()
+            database.syncedFeedSourceCategoryQueries.deleteAll()
+            categories.forEach { category ->
+                database.syncedFeedSourceCategoryQueries.insertOrIgnoreFeedSourceCategory(category.id, category.title)
+            }
+            sources.forEach { source ->
+                database.syncedFeedSourceQueries.insertOrIgnoreFeedSource(
+                    source.id,
+                    source.url,
+                    source.title,
+                    source.category?.id,
+                    source.logoUrl,
+                )
+            }
+            items.forEach { item ->
+                database.syncedFeedItemQueries.insertOrReplaceSyncedFeedItem(item.id, item.isRead, item.isBookmarked)
+            }
+            SyncTable.entries.forEach { database.updateMetadata(it) }
+        }
+    }
+
     suspend fun updateFeedItemsReadStatus(feedItemIds: List<FeedItemId>, isRead: Boolean) {
         withDatabase { database ->
             database.transaction {
@@ -268,6 +296,20 @@ class SyncedDatabaseHelper(
                     isBookmarked = isBookmarked,
                     urlHash = feedItemId.id,
                 )
+                database.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
+            }
+        }
+    }
+
+    suspend fun applyPendingArticleFlags(readFields: Map<String, Boolean>, bookmarkFields: Map<String, Boolean>) {
+        if (readFields.isEmpty() && bookmarkFields.isEmpty()) return
+        withDatabase { database ->
+            database.transaction {
+                (readFields.keys + bookmarkFields.keys).forEach { id ->
+                    database.syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(id, false, false)
+                }
+                readFields.forEach { (id, value) -> database.syncedFeedItemQueries.updateIsRead(value, id) }
+                bookmarkFields.forEach { (id, value) -> database.syncedFeedItemQueries.updateIsBookmarked(value, id) }
                 database.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
             }
         }

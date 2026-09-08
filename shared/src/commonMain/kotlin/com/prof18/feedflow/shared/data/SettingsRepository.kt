@@ -29,6 +29,23 @@ class SettingsRepository(
     private var prefetchArticleContentEnabled: Boolean? = null
     private var kleadParserEnabled: Boolean? = null
 
+    internal fun cloudSyncSession(): String = syncUploadLock.withLock {
+        settings.getStringOrNull(SettingsFields.CLOUD_SYNC_SESSION.name) ?: Uuid.random().toString().also {
+            settings[SettingsFields.CLOUD_SYNC_SESSION.name] = it
+        }
+    }
+
+    internal fun rotateCloudSyncSession() = syncUploadLock.withLock {
+        val session = Uuid.random().toString()
+        settings[SettingsFields.CLOUD_SYNC_SESSION.name] = session
+        cloudSessionMutableState.value = session
+    }
+
+    internal fun <T> withCloudSession(block: () -> T): T = syncUploadLock.withLock(block)
+
+    private val cloudSessionMutableState = MutableStateFlow(cloudSyncSession())
+    internal val cloudSyncSessionState = cloudSessionMutableState.asStateFlow()
+
     private val isSyncUploadRequiredMutableFlow = MutableStateFlow(getIsSyncUploadRequired())
     val isSyncUploadRequired: StateFlow<Boolean> = isSyncUploadRequiredMutableFlow.asStateFlow()
 
@@ -319,6 +336,7 @@ private enum class SettingsFields {
     USE_KLEAD_READER_PARSER,
     IS_SYNC_UPLOAD_REQUIRED,
     SYNC_UPLOAD_GENERATION,
+    CLOUD_SYNC_SESSION,
     READER_MODE_FONT_SIZE,
     READER_MODE_LINE_HEIGHT,
     ARTICLE_OPEN_MODE,

@@ -40,6 +40,7 @@ import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
+import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
@@ -405,15 +406,19 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSyncMessageQueue = get(),
             dropboxSettings = get(),
             logger = getWith("FeedSyncRepository"),
+            pendingCloudChanges = get(),
             settingsRepository = get(),
         )
     }
+
+    singleOf(::PendingCloudChangesManager)
 
     factory {
         FeedSyncer(
             syncedDatabaseHelper = get(),
             appDatabaseHelper = get(),
             logger = getWith("FeedSyncer"),
+            pendingCloudChanges = get(),
         )
     }
 
@@ -436,6 +441,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             networkSettings = get(),
             feedbinRepository = get(),
             databaseHelper = get(),
+            settingsRepository = get(),
         )
     }
 

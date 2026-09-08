@@ -9,6 +9,7 @@ import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +27,7 @@ internal class AccountsRepository(
     private val networkSettings: NetworkSettings,
     private val feedbinRepository: FeedbinRepository,
     private val databaseHelper: DatabaseHelper,
+    private val settingsRepository: SettingsRepository,
 ) {
     private val currentAccountMutableState = MutableStateFlow(SyncAccounts.LOCAL)
     val currentAccountState = currentAccountMutableState.asStateFlow()
@@ -173,6 +175,7 @@ internal class AccountsRepository(
     }
 
     suspend fun clearAccount() {
+        settingsRepository.rotateCloudSyncSession()
         databaseHelper.deleteAllReadStatusPendingActions()
         currentAccountMutableState.value = SyncAccounts.LOCAL
     }
@@ -184,6 +187,7 @@ internal class AccountsRepository(
     }
 
     private fun clearOtherSyncCredentials(except: SyncAccounts) {
+        settingsRepository.rotateCloudSyncSession()
         if (except != SyncAccounts.DROPBOX) {
             dropboxSettings.clearDropboxData()
         }

@@ -77,6 +77,7 @@ internal class FeedSyncAndroidWorker(
         mutex.withLock {
             var snapshot: File? = null
             try {
+                val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
                 feedSyncer.populateSyncDbIfEmpty()
                 feedSyncer.updateFeedItemsToSyncDatabase()
                 snapshot = File.createTempFile("cloud-upload-", ".db", File(databasePath()).parentFile)
@@ -85,7 +86,7 @@ internal class FeedSyncAndroidWorker(
                 }
                 accountSpecificUpload(requireNotNull(snapshot))
                 emitSuccessMessage()
-                settingsRepository.setIsSyncUploadRequired(false)
+                settingsRepository.acknowledgeSyncUpload(uploadGeneration)
                 return@withContext SyncResult.Success
             } catch (e: GoogleDriveNeedsReAuthException) {
                 logger.e("Google Drive needs re-authorization", e)

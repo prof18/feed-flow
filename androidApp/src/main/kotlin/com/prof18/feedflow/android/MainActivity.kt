@@ -182,7 +182,7 @@ class MainActivity : BaseThemeActivity() {
         }
 
         LaunchedEffect(Unit) {
-            messageQueue.messageQueue.collect { message ->
+            messageQueue.userMessages.collect { message ->
                 if (message is SyncResult.GoogleDriveNeedReAuth) {
                     snackbarHostState.showSnackbar(
                         message = flowStrings.googleDriveAuthRetry,

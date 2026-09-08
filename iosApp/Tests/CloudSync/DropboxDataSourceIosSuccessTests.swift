@@ -3,6 +3,27 @@ import Foundation
 import XCTest
 
 final class DropboxDataSourceIosSuccessTests: XCTestCase {
+    func testResumedUploadIsAcknowledgedOnlyForAValidSuccessfulResponse() {
+        XCTAssertTrue(
+            DropboxDataSourceIos.shouldAcknowledgeResumedUpload(
+                response: NSObject(),
+                error: nil
+            )
+        )
+        XCTAssertFalse(
+            DropboxDataSourceIos.shouldAcknowledgeResumedUpload(
+                response: NSObject(),
+                error: NSError(domain: "DropboxResumeTests", code: 1)
+            )
+        )
+        XCTAssertFalse(
+            DropboxDataSourceIos.shouldAcknowledgeResumedUpload(
+                response: NSObject?.none,
+                error: nil
+            )
+        )
+    }
+
     func testSuccessfulUploadAndDownloadPreserveBytes() throws {
         let fixtureRoot = try makeFixtureRoot()
         defer { try? FileManager.default.removeItem(at: fixtureRoot) }
@@ -53,12 +74,55 @@ final class DropboxDataSourceIosSuccessTests: XCTestCase {
         )
     }
 
+    func testConfirmedMissingDownloadReturnsExplicitNotFoundResult() throws {
+        let fixtureRoot = try makeFixtureRoot()
+        defer { try? FileManager.default.removeItem(at: fixtureRoot) }
+        let dataSource = DropboxDataSourceIos(
+            client: MissingDropboxClient(),
+            documentsDirectoryURL: { fixtureRoot },
+            logError: { _ in }
+        )
+        let downloadExpectation = expectation(description: "Dropbox download fails")
+        var downloadError: Error?
+
+        dataSource.performDownload(
+            downloadParam: DropboxDownloadParam(outputName: "restored.sqlite", path: "/missing.sqlite")
+        ) { result, error in
+            XCTAssertEqual(result?.isBackupNotFound, true)
+            XCTAssertNil(result?.destinationUrl)
+            downloadError = error
+            downloadExpectation.fulfill()
+        }
+        wait(for: [downloadExpectation], timeout: 1)
+
+        XCTAssertNil(downloadError)
+    }
+
     private func makeFixtureRoot() throws -> URL {
         let root = FileManager.default.temporaryDirectory
             .appendingPathComponent("FeedFlowDropboxTests", isDirectory: true)
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         return root
+    }
+}
+
+private final class MissingDropboxClient: DropboxClientBridge {
+    func upload(
+        path _: String,
+        input _: URL,
+        completion: @escaping (DropboxFileMetadata?, Error?) -> Void
+    ) {
+        completion(nil, NSError(domain: "MissingDropboxClient", code: 1))
+    }
+
+    func download(
+        path _: String,
+        overwrite _: Bool,
+        destination _: URL,
+        completion: @escaping (DropboxDownloadResponse?, Error?) -> Void
+    ) {
+        completion(nil, DropboxErrors.downloadNotFound)
     }
 }
 

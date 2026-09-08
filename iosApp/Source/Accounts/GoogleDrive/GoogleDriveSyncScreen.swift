@@ -54,10 +54,10 @@ struct GoogleDriveSyncScreen: View {
         }
         .task {
             for await state in vmStoreOwner.instance.syncMessageQueue where state.isError() {
-                if let errorState = state as? any SyncResultError {
+                if state is SyncResultGoogleDriveNeedReAuth {
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: feedFlowStrings.errorAccountSync(errorState.errorCode.code),
+                            title: feedFlowStrings.googleDriveAuthRetry,
                             subtitle: nil,
                             showBanner: true
                         )

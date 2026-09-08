@@ -13,6 +13,9 @@ import kotlinx.cinterop.value
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
+import platform.Foundation.NSCocoaErrorDomain
+import platform.Foundation.NSFileReadNoSuchFileError
+import platform.Foundation.NSUUID
 import platform.Foundation.NSFileManagerItemReplacementUsingNewMetadataOnly
 import platform.Foundation.NSHomeDirectory
 import platform.Foundation.NSURL
@@ -55,24 +58,19 @@ fun iCloudDownload(env: CPointer<JNIEnvVar>, clazz: jclass, isDebug: jboolean): 
 
 internal fun uploadToICloud(databaseUrl: NSURL, iCloudUrl: NSURL): Int = memScoped {
     val errorPtr: ObjCObjectVar<NSError?> = alloc()
-
-    // Copy doesn't override the item, so we need to clear it before.
-    // An alternative would be checking the existence of the file before and copy or replace.
-    NSFileManager.defaultManager.removeItemAtURL(
-        iCloudUrl,
-        null,
-    )
-
-    NSFileManager.defaultManager.copyItemAtURL(
-        srcURL = databaseUrl,
-        toURL = iCloudUrl,
-        error = errorPtr.ptr,
-    )
-
-    if (errorPtr.value != null) {
-        2
-    } else {
-        0
+    val fileManager = NSFileManager.defaultManager
+    val stagedUrl = iCloudUrl.URLByDeletingLastPathComponent
+        ?.URLByAppendingPathComponent(".feedflow-${NSUUID.UUID().UUIDString}.upload") ?: return 2
+    try {
+        if (!fileManager.copyItemAtURL(databaseUrl, stagedUrl, errorPtr.ptr)) return 2
+        val replaced = if (fileManager.fileExistsAtPath(requireNotNull(iCloudUrl.path))) {
+            fileManager.replaceItemAtURL(iCloudUrl, stagedUrl, null, 0u, null, errorPtr.ptr)
+        } else {
+            fileManager.moveItemAtURL(stagedUrl, iCloudUrl, errorPtr.ptr)
+        }
+        if (replaced && errorPtr.value == null) 0 else 2
+    } finally {
+        fileManager.removeItemAtURL(stagedUrl, null)
     }
 }
 
@@ -90,14 +88,19 @@ internal fun iCloudDownload(
     return memScoped {
         val errorPtr: ObjCObjectVar<NSError?> = alloc()
 
-        NSFileManager.defaultManager.copyItemAtURL(
+        val copied = NSFileManager.defaultManager.copyItemAtURL(
             srcURL = iCloudUrl,
             toURL = tempUrl,
             error = errorPtr.ptr,
         )
 
-        if (errorPtr.value != null) {
-            return 3
+        if (!copied || errorPtr.value != null) {
+            val error = errorPtr.value
+            return if (error != null && error.domain == NSCocoaErrorDomain && error.code == NSFileReadNoSuchFileError) {
+                DOWNLOAD_FILE_NOT_FOUND
+            } else {
+                3
+            }
         }
 
         val result = replaceDatabase(tempUrl, databaseUrl, databaseName)
@@ -110,10 +113,13 @@ internal fun iCloudDownload(
 }
 
 private fun replaceDatabase(url: NSURL, databaseUrl: NSURL, databaseName: String): Boolean {
+    if (!NSFileManager.defaultManager.fileExistsAtPath(requireNotNull(databaseUrl.path))) {
+        return NSFileManager.defaultManager.moveItemAtURL(url, databaseUrl, null)
+    }
     // Replace the database
     memScoped {
         val errorPtr: ObjCObjectVar<NSError?> = alloc()
-        NSFileManager.defaultManager.replaceItemAtURL(
+        val replaced = NSFileManager.defaultManager.replaceItemAtURL(
             originalItemURL = databaseUrl,
             withItemAtURL = url,
             backupItemName = "$databaseName.old",
@@ -122,7 +128,7 @@ private fun replaceDatabase(url: NSURL, databaseUrl: NSURL, databaseName: String
             resultingItemURL = null,
         )
 
-        return errorPtr.value == null
+        return replaced && errorPtr.value == null
     }
 }
 
@@ -168,3 +174,5 @@ private fun getICloudFolderURL(isDebug: Boolean): NSURL? = NSFileManager.default
 
 private const val SYNC_DATABASE_NAME_PROD = "FeedFlowFeedSyncDB"
 private const val SYNC_DATABASE_NAME_DEBUG = "FeedFlowFeedSyncDB-debug"
+
+private const val DOWNLOAD_FILE_NOT_FOUND = 5

@@ -17,6 +17,7 @@ class AndroidCloudSyncSuccessTest : KoinTestBase() {
             }
             runCloudFlagRegressions(CloudProvider.DROPBOX)
             runStaleCloudRefreshRegression(CloudProvider.DROPBOX)
+            runCloudTransferRegressions(CloudProvider.DROPBOX)
         }
 
     @Test
@@ -27,5 +28,6 @@ class AndroidCloudSyncSuccessTest : KoinTestBase() {
             }
             runCloudFlagRegressions(CloudProvider.GOOGLE_DRIVE)
             runStaleCloudRefreshRegression(CloudProvider.GOOGLE_DRIVE)
+            runCloudTransferRegressions(CloudProvider.GOOGLE_DRIVE)
         }
 }

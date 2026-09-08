@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.test.cloudsync
 
+import com.prof18.feedflow.core.model.CloudBackupNotFoundException
 import com.prof18.feedflow.shared.test.KoinTestBase
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -20,7 +21,7 @@ class CloudStoreTest : KoinTestBase() {
         downloaded[1] = 8
 
         assertContentEquals(byteArrayOf(1, 2, 3), store.download(CloudProvider.DROPBOX, "account", "file"))
-        assertFailsWith<IllegalArgumentException> {
+        assertFailsWith<CloudBackupNotFoundException> {
             store.download(CloudProvider.DROPBOX, "account", "missing")
         }
     }
@@ -59,7 +60,7 @@ class CloudStoreTest : KoinTestBase() {
 
         store.upload(CloudProvider.ICLOUD, "account", "file", bytes, "phone")
         assertEquals(0, store.fileCount(CloudProvider.ICLOUD))
-        assertFailsWith<IllegalArgumentException> {
+        assertFailsWith<CloudBackupNotFoundException> {
             store.download(CloudProvider.ICLOUD, "account", "file")
         }
 

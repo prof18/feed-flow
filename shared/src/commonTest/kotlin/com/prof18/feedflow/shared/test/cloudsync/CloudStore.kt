@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.test.cloudsync
 
+import com.prof18.feedflow.core.model.CloudBackupNotFoundException
+
 internal enum class CloudProvider {
     DROPBOX,
     GOOGLE_DRIVE,
@@ -30,6 +32,8 @@ internal data class CloudStoreFile(
 
 /** A deterministic, in-memory stand-in for the byte-file portions of cloud sync providers. */
 internal class CloudStore {
+    var uploadFailure: Exception? = null
+    var downloadFailure: Exception? = null
 
     private data class FileKey(
         val provider: CloudProvider,
@@ -56,6 +60,7 @@ internal class CloudStore {
         bytes: ByteArray,
         deviceId: String,
     ): String {
+        uploadFailure?.let { throw it }
         val key = FileKey(provider, account, name)
         val fileId = fileIds.getOrPut(key) { createFileId(provider, key) }
         val storedFile = StoredFile(fileId, bytes.copyOf())
@@ -79,10 +84,9 @@ internal class CloudStore {
 
     /** Reads only visible cloud state. iCloud local saves become visible after [propagate]. */
     fun download(provider: CloudProvider, account: String, name: String): ByteArray {
+        downloadFailure?.let { throw it }
         val key = FileKey(provider, account, name)
-        return requireNotNull(visibleFiles[key]) {
-            "Missing cloud file: provider=$provider account=$account name=$name"
-        }.bytes.copyOf()
+        return (visibleFiles[key] ?: throw CloudBackupNotFoundException()).bytes.copyOf()
     }
 
     /** Makes all files staged by [deviceId] visible in iCloud and clears that local stage. */

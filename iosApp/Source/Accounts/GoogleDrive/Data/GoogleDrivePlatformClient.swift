@@ -25,9 +25,10 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
         #else
             guard let rootVC = UIApplication.shared.connectedScenes
                 .compactMap({ ($0 as? UIWindowScene)?.keyWindow?.rootViewController })
-                .first else {
-                    onResult(KotlinBoolean(value: false))
-                    return
+                .first
+            else {
+                onResult(KotlinBoolean(value: false))
+                return
             }
 
             let scopes = [kGTLRAuthScopeDriveAppdata]
@@ -97,24 +98,37 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
         }
 
         if let fileId = existingFileId {
-            updateFile(service: service, fileId: fileId, fileName: fileName, data: data, completionHandler: completionHandler)
+            updateFile(
+                service: service,
+                fileId: fileId,
+                fileName: fileName,
+                data: data,
+                rediscoverOnNotFound: true,
+                completionHandler: completionHandler
+            )
         } else {
             searchAndUpload(service: service, fileName: fileName, data: data, completionHandler: completionHandler)
         }
     }
-    
+
     func downloadFile(
         fileName: String,
         existingFileId: String?,
-        completionHandler: @escaping @Sendable (Data?, KotlinThrowable?) -> Void
+        completionHandler: @escaping @Sendable (Data?, String?, KotlinThrowable?) -> Void
     ) {
         guard let service = service else {
-            completionHandler(nil, GoogleDriveDownloadException(errorMessage: "Drive service not initialized", exceptionCause: nil))
+            completionHandler(nil, nil, GoogleDriveDownloadException(errorMessage: "Drive service not initialized", exceptionCause: nil))
             return
         }
 
         if let fileId = existingFileId {
-            downloadFileById(service: service, fileId: fileId, completionHandler: completionHandler)
+            downloadFileById(
+                service: service,
+                fileId: fileId,
+                fileName: fileName,
+                rediscoverOnNotFound: true,
+                completionHandler: completionHandler
+            )
         } else {
             searchAndDownload(service: service, fileName: fileName, completionHandler: completionHandler)
         }
@@ -126,22 +140,35 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
         data: Data,
         completionHandler: @escaping (String?, KotlinThrowable?) -> Void
     ) {
-        let searchQuery = GTLRDriveQuery_FilesList.query()
-        searchQuery.q = "name='\(fileName)' and trashed=false"
-        searchQuery.spaces = "appDataFolder"
-        searchQuery.fields = "files(id)"
+        discoverFiles(service: service, fileName: fileName) { [weak self] result in
+            switch result {
+            case let .failure(error):
+                completionHandler(
+                    nil,
+                    GoogleDriveUploadException(errorMessage: error.localizedDescription, exceptionCause: nil)
+                )
+            case let .success(files):
+                guard let existingFile = files.first else {
+                    self?.createNewFile(service: service, fileName: fileName, data: data, completionHandler: completionHandler)
+                    return
+                }
 
-        service.executeQuery(searchQuery) { [weak self] _, result, error in
-            if error != nil {
-                self?.createNewFile(service: service, fileName: fileName, data: data, completionHandler: completionHandler)
-                return
-            }
+                guard let fileId = existingFile.identifier else {
+                    completionHandler(
+                        nil,
+                        GoogleDriveUploadException(errorMessage: "File search result has no identifier", exceptionCause: nil)
+                    )
+                    return
+                }
 
-            let fileList = result as? GTLRDrive_FileList
-            if let existingFile = fileList?.files?.first, let fileId = existingFile.identifier {
-                self?.updateFile(service: service, fileId: fileId, fileName: fileName, data: data, completionHandler: completionHandler)
-            } else {
-                self?.createNewFile(service: service, fileName: fileName, data: data, completionHandler: completionHandler)
+                self?.updateFile(
+                    service: service,
+                    fileId: fileId,
+                    fileName: fileName,
+                    data: data,
+                    rediscoverOnNotFound: false,
+                    completionHandler: completionHandler
+                )
             }
         }
     }
@@ -151,6 +178,7 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
         fileId: String,
         fileName: String,
         data: Data,
+        rediscoverOnNotFound: Bool,
         completionHandler: @escaping (String?, KotlinThrowable?) -> Void
     ) {
         let file = GTLRDrive_File()
@@ -161,16 +189,34 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
         updateQuery.fields = "id"
 
         service.executeQuery(updateQuery) { [weak self] _, result, error in
-            if error != nil {
-                self?.createNewFile(service: service, fileName: fileName, data: data, completionHandler: completionHandler)
+            if let error {
+                if rediscoverOnNotFound, Self.isNotFound(error) {
+                    self?.searchAndUpload(
+                        service: service,
+                        fileName: fileName,
+                        data: data,
+                        completionHandler: completionHandler
+                    )
+                } else {
+                    completionHandler(
+                        nil,
+                        GoogleDriveUploadException(errorMessage: error.localizedDescription, exceptionCause: nil)
+                    )
+                }
                 return
             }
 
-            if let uploadedFile = result as? GTLRDrive_File {
-                completionHandler(uploadedFile.identifier, nil)
-            } else {
-                completionHandler(fileId, nil)
+            guard let uploadedFile = result as? GTLRDrive_File,
+                  let uploadedFileId = uploadedFile.identifier
+            else {
+                completionHandler(
+                    nil,
+                    GoogleDriveUploadException(errorMessage: "Invalid file update response", exceptionCause: nil)
+                )
+                return
             }
+
+            completionHandler(uploadedFileId, nil)
         }
     }
 
@@ -195,9 +241,19 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
             }
 
             if let uploadedFile = result as? GTLRDrive_File {
-                completionHandler(uploadedFile.identifier, nil)
+                guard let uploadedFileId = uploadedFile.identifier else {
+                    completionHandler(
+                        nil,
+                        GoogleDriveUploadException(errorMessage: "Created file has no identifier", exceptionCause: nil)
+                    )
+                    return
+                }
+                completionHandler(uploadedFileId, nil)
             } else {
-                completionHandler(nil, nil)
+                completionHandler(
+                    nil,
+                    GoogleDriveUploadException(errorMessage: "Invalid file creation response", exceptionCause: nil)
+                )
             }
         }
     }
@@ -205,49 +261,133 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
     private func searchAndDownload(
         service: GoogleDriveServiceClient,
         fileName: String,
-        completionHandler: @escaping @Sendable (Data?, KotlinThrowable?) -> Void
+        completionHandler: @escaping @Sendable (Data?, String?, KotlinThrowable?) -> Void
+    ) {
+        discoverFiles(service: service, fileName: fileName) { [weak self] result in
+            switch result {
+            case let .failure(error):
+                completionHandler(nil, nil, GoogleDriveDownloadException(errorMessage: error.localizedDescription, exceptionCause: nil))
+            case let .success(files):
+                guard let file = files.first else {
+                    completionHandler(nil, nil, CloudBackupNotFoundException())
+                    return
+                }
+
+                guard let fileId = file.identifier else {
+                    completionHandler(
+                        nil,
+                        nil,
+                        GoogleDriveDownloadException(errorMessage: "File search result has no identifier", exceptionCause: nil)
+                    )
+                    return
+                }
+
+                self?.downloadFileById(
+                    service: service,
+                    fileId: fileId,
+                    fileName: fileName,
+                    rediscoverOnNotFound: false,
+                    completionHandler: completionHandler
+                )
+            }
+        }
+    }
+
+    private func discoverFiles(
+        service: GoogleDriveServiceClient,
+        fileName: String,
+        files: [GTLRDrive_File] = [],
+        pageToken: String? = nil,
+        completionHandler: @escaping (Result<[GTLRDrive_File], Error>) -> Void
     ) {
         let query = GTLRDriveQuery_FilesList.query()
         query.q = "name='\(fileName)' and trashed=false"
         query.spaces = "appDataFolder"
-        query.fields = "files(id)"
+        query.fields = "nextPageToken,files(id)"
+        query.pageToken = pageToken
 
         service.executeQuery(query) { [weak self] _, result, error in
-            if let error = error {
-                completionHandler(nil, GoogleDriveDownloadException(errorMessage: error.localizedDescription, exceptionCause: nil))
+            if let error {
+                completionHandler(.failure(error))
                 return
             }
 
-            guard let fileList = result as? GTLRDrive_FileList,
-                  let file = fileList.files?.first,
-                  let fileId = file.identifier else {
-                completionHandler(nil, GoogleDriveDownloadException(errorMessage: "File not found", exceptionCause: nil))
+            guard let fileList = result as? GTLRDrive_FileList else {
+                completionHandler(.failure(GoogleDriveDiscoveryError.invalidResponse))
                 return
             }
 
-            self?.downloadFileById(service: service, fileId: fileId, completionHandler: completionHandler)
+            let discoveredFiles = files + (fileList.files ?? [])
+            guard discoveredFiles.count <= 1 else {
+                completionHandler(.failure(GoogleDriveDiscoveryError.multipleFiles))
+                return
+            }
+
+            if let nextPageToken = fileList.nextPageToken, !nextPageToken.isEmpty {
+                self?.discoverFiles(
+                    service: service,
+                    fileName: fileName,
+                    files: discoveredFiles,
+                    pageToken: nextPageToken,
+                    completionHandler: completionHandler
+                )
+            } else {
+                completionHandler(.success(discoveredFiles))
+            }
         }
     }
 
     private func downloadFileById(
         service: GoogleDriveServiceClient,
         fileId: String,
-        completionHandler: @escaping @Sendable (Data?, KotlinThrowable?) -> Void
+        fileName: String,
+        rediscoverOnNotFound: Bool,
+        completionHandler: @escaping @Sendable (Data?, String?, KotlinThrowable?) -> Void
     ) {
         let downloadQuery = GTLRDriveQuery_FilesGet.queryForMedia(withFileId: fileId)
 
-        service.executeQuery(downloadQuery) { _, fileData, error in
+        service.executeQuery(downloadQuery) { [weak self] _, fileData, error in
             if let error = error {
-                completionHandler(nil, GoogleDriveDownloadException(errorMessage: error.localizedDescription, exceptionCause: nil))
+                if rediscoverOnNotFound, Self.isNotFound(error) {
+                    self?.searchAndDownload(
+                        service: service,
+                        fileName: fileName,
+                        completionHandler: completionHandler
+                    )
+                } else {
+                    completionHandler(
+                        nil,
+                        nil,
+                        GoogleDriveDownloadException(errorMessage: error.localizedDescription, exceptionCause: nil)
+                    )
+                }
                 return
             }
 
             guard let data = (fileData as? GTLRDataObject)?.data else {
-                completionHandler(nil, GoogleDriveDownloadException(errorMessage: "No data received", exceptionCause: nil))
+                completionHandler(nil, nil, GoogleDriveDownloadException(errorMessage: "No data received", exceptionCause: nil))
                 return
             }
 
-            completionHandler(data, nil)
+            completionHandler(data, fileId, nil)
+        }
+    }
+
+    private static func isNotFound(_ error: Error) -> Bool {
+        (error as NSError).code == 404
+    }
+}
+
+private enum GoogleDriveDiscoveryError: LocalizedError {
+    case invalidResponse
+    case multipleFiles
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidResponse:
+            return "Invalid file search response"
+        case .multipleFiles:
+            return "Multiple files found"
         }
     }
 }

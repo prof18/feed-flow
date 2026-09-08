@@ -1,6 +1,7 @@
 package com.prof18.feedflow.feedsync.googledrive
 
 import co.touchlab.kermit.Logger
+import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.http.LowLevelHttpRequest
 import com.google.api.client.http.LowLevelHttpResponse
@@ -19,13 +20,33 @@ import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class GoogleDriveDataSourceJvmImplHttpTest {
 
     @Test
+    fun `stale download ID is rediscovered across pages and persisted after transfer`() = runTest {
+        val payload = "new snapshot".encodeToByteArray()
+        val transport = RecordingDriveHttpTransport(
+            ResponseSpec(statusCode = 404, body = """{"error":{"code":404}}""".encodeToByteArray()),
+            ResponseSpec(body = """{"files":[],"nextPageToken":"next"}""".encodeToByteArray()),
+            ResponseSpec(body = """{"files":[{"id":"current"}]}""".encodeToByteArray()),
+            ResponseSpec(body = payload),
+        )
+        val dataSource = createDataSource(transport, cachedFileId = "stale")
+        val output = ByteArrayOutputStream()
+        dataSource.performDownload(GoogleDriveDownloadParam("FeedFlow.db", output))
+        assertContentEquals(payload, output.toByteArray())
+        assertEquals("current", dataSource.settings.getBackupFileId())
+        assertEquals(4, transport.requests.size)
+        assertTrue(transport.requests[2].url.contains("pageToken=next"))
+    }
+
+    @Test
     fun `upload creates file and stores returned file id`() = runTest {
         val transport = RecordingDriveHttpTransport(
+            ResponseSpec(body = "{\"files\":[]}".encodeToByteArray()),
             ResponseSpec(body = """{"id":"drive-created"}""".encodeToByteArray()),
         )
         val dataSource = createDataSource(transport)
@@ -35,8 +56,8 @@ class GoogleDriveDataSourceJvmImplHttpTest {
         dataSource.performUpload(GoogleDriveUploadParam("FeedFlow.db", file))
 
         assertEquals("drive-created", dataSource.settings.getBackupFileId())
-        assertEquals(2, transport.requests.size)
-        val request = transport.requests.first()
+        assertEquals(3, transport.requests.size)
+        val request = transport.requests[1]
         assertEquals("POST", request.method)
         assertTrue(request.url.contains("/drive/v3/files"))
         assertTrue(request.url.contains("uploadType=resumable"))
@@ -64,6 +85,52 @@ class GoogleDriveDataSourceJvmImplHttpTest {
         assertTrue(transport.requests.last().url.startsWith("https://fixture.invalid/upload-session"))
         assertTrue(transport.requests.last().body.contentEquals(payload))
         assertEquals("drive-existing", dataSource.settings.getBackupFileId())
+    }
+
+    @Test
+    fun `upload rediscoveres after stale cached id and updates the discovered file`() = runTest {
+        val transport = RecordingDriveHttpTransport(
+            ResponseSpec(
+                body = """{"error":{"code":404,"message":"Not Found"}}""".encodeToByteArray(),
+                statusCode = 404,
+            ),
+            ResponseSpec(body = """{"files":[{"id":"rediscovered"}]}""".encodeToByteArray()),
+            ResponseSpec(body = """{"id":"rediscovered"}""".encodeToByteArray()),
+        )
+        val dataSource = createDataSource(transport, cachedFileId = "stale")
+
+        dataSource.performUpload(GoogleDriveUploadParam("FeedFlow.db", temporaryFile("payload".encodeToByteArray())))
+
+        assertEquals("rediscovered", dataSource.settings.getBackupFileId())
+        assertEquals(listOf("PATCH", "PUT", "GET", "PATCH", "PUT"), transport.requests.map { it.method })
+        assertTrue(transport.requests.none { it.url.contains("/files?uploadType") })
+    }
+
+    @Test
+    fun `upload propagates discovery failure without creating a file`() = runTest {
+        val transport = RecordingDriveHttpTransport(
+            ResponseSpec(body = """{"error":{"code":500,"message":"backend"}}""".encodeToByteArray(), statusCode = 500),
+        )
+        val dataSource = createDataSource(transport)
+
+        assertFailsWith<GoogleJsonResponseException> {
+            dataSource.performUpload(GoogleDriveUploadParam("FeedFlow.db", temporaryFile(byteArrayOf(1))))
+        }
+        assertEquals(1, transport.requests.size)
+        assertTrue(transport.requests.single().url.contains("/drive/v3/files"))
+    }
+
+    @Test
+    fun `upload rejects duplicate discovered files without creating or updating`() = runTest {
+        val transport = RecordingDriveHttpTransport(
+            ResponseSpec(body = """{"files":[{"id":"one"},{"id":"two"}]}""".encodeToByteArray()),
+        )
+        val dataSource = createDataSource(transport)
+
+        assertFailsWith<GoogleDriveUploadException> {
+            dataSource.performUpload(GoogleDriveUploadParam("FeedFlow.db", temporaryFile(byteArrayOf(1))))
+        }
+        assertEquals(1, transport.requests.size)
     }
 
     @Test

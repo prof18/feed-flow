@@ -20,7 +20,6 @@ import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -70,24 +69,47 @@ class FeedSyncRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `onDropboxUploadSuccessAfterResume clears upload required`() {
+    fun `onDropboxUploadSuccessAfterResume preserves newer pending work`() {
+        enableDropboxSync()
         settingsRepository.setIsSyncUploadRequired(true)
 
         feedSyncRepository.onDropboxUploadSuccessAfterResume()
 
-        assertFalse(settingsRepository.getIsSyncUploadRequired())
+        assertTrue(settingsRepository.getIsSyncUploadRequired())
         assertNotNull(dropboxSettings.getLastUploadTimestamp())
     }
 
     @Test
-    fun `firstSync uploads when download fails`() = runTest(testDispatcher) {
+    fun `firstSync never uploads after an unknown download failure`() = runTest(testDispatcher) {
         enableDropboxSync()
         fakeFeedSyncWorker.downloadResult = SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
 
         feedSyncRepository.firstSync()
 
         assertEquals(listOf(true), fakeFeedSyncWorker.downloadIsFirstSyncArgs)
+        assertEquals(0, fakeFeedSyncWorker.uploadImmediateCallCount)
+    }
+
+    @Test
+    fun `firstSync initializes only a confirmed missing backup`() = runTest(testDispatcher) {
+        enableDropboxSync()
+        fakeFeedSyncWorker.downloadResult = SyncResult.BackupNotFound(SyncDownloadError.DropboxDownloadFailed)
+
+        feedSyncRepository.firstSync()
+
         assertEquals(1, fakeFeedSyncWorker.uploadImmediateCallCount)
+    }
+
+    @Test
+    fun `firstSync retains pending work on sign in failure`() = runTest(testDispatcher) {
+        enableDropboxSync()
+        settingsRepository.setIsSyncUploadRequired(true)
+        fakeFeedSyncWorker.downloadResult = SyncResult.GoogleDriveNeedReAuth()
+
+        feedSyncRepository.firstSync()
+
+        assertEquals(0, fakeFeedSyncWorker.uploadImmediateCallCount)
+        assertTrue(settingsRepository.getIsSyncUploadRequired())
     }
 
     @Test
@@ -245,7 +267,7 @@ class FeedSyncRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `syncFeedSources emits errors to message queue`() = runTest(testDispatcher) {
+    fun `failed download prevents source and item reconciliation`() = runTest(testDispatcher) {
         enableDropboxSync()
         val downloadError = SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
         val sourcesError = SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
@@ -254,9 +276,11 @@ class FeedSyncRepositoryTest : KoinTestBase() {
 
         feedSyncMessageQueue.messageQueue.test {
             feedSyncRepository.syncFeedSources()
+            feedSyncRepository.syncFeedItems()
 
             assertEquals(downloadError, awaitItem())
-            assertEquals(sourcesError, awaitItem())
+            expectNoEvents()
+            assertEquals(listOf("download"), fakeFeedSyncWorker.calls)
         }
     }
 
@@ -356,5 +380,8 @@ private class FakeFeedSyncWorker : FeedSyncWorker {
         return syncFeedSourcesResult
     }
 
-    override suspend fun syncFeedItems(): SyncResult = syncFeedItemsResult
+    override suspend fun syncFeedItems(): SyncResult {
+        calls.add("syncItems")
+        return syncFeedItemsResult
+    }
 }

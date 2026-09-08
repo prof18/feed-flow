@@ -30,7 +30,7 @@ class ICloudSyncViewModel internal constructor(
     )
     val iCloudConnectionUiState: StateFlow<AccountConnectionUiState> = iCloudSyncUiMutableState.asStateFlow()
 
-    val syncMessageQueue = feedSyncMessageQueue.messageQueue
+    val syncMessageQueue = feedSyncMessageQueue.userMessages
 
     init {
         restoreICloudAuth()

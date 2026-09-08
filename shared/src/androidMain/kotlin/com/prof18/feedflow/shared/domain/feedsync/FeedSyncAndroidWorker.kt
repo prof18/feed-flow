@@ -8,9 +8,9 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.CloudBackupNotFoundException
 import com.prof18.feedflow.core.model.ErrorCode
 import com.prof18.feedflow.core.model.SyncAccounts
-import com.prof18.feedflow.core.model.SyncDownloadError
 import com.prof18.feedflow.core.model.SyncFeedError
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.model.SyncUploadError
@@ -27,12 +27,15 @@ import com.prof18.feedflow.feedsync.googledrive.GoogleDriveNeedsReAuthException
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadParam
 import com.prof18.feedflow.shared.data.SettingsRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import kotlin.time.Clock
 
 internal class FeedSyncAndroidWorker(
@@ -88,6 +91,8 @@ internal class FeedSyncAndroidWorker(
             } catch (e: GoogleDriveNeedsReAuthException) {
                 logger.e("Google Drive needs re-authorization", e)
                 SyncResult.GoogleDriveNeedReAuth()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.e("Upload failed", e)
                 emitErrorMessage(SyncUploadError.DropboxUploadFailed)
@@ -133,41 +138,50 @@ internal class FeedSyncAndroidWorker(
 
     override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
         return@withContext mutex.withLock {
+            var stagedFile: File? = null
             try {
-                feedSyncer.closeDB()
-                accountSpecificDownload()
+                stagedFile = File.createTempFile("cloud-download-", ".db", File(databasePath()).parentFile)
+                accountSpecificDownload(stagedFile)
+            } catch (_: CloudBackupNotFoundException) {
+                SyncResult.BackupNotFound(syncDownloadErrorForAccount(accountsRepository.getCurrentSyncAccount()))
             } catch (e: GoogleDriveNeedsReAuthException) {
                 logger.e("Google Drive needs re-authorization", e)
                 SyncResult.GoogleDriveNeedReAuth()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.e("Download failed", e)
-                SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
+                SyncResult.General(syncDownloadErrorForAccount(accountsRepository.getCurrentSyncAccount()))
+            } finally {
+                stagedFile?.delete()
             }
         }
     }
 
-    private suspend fun accountSpecificDownload(): SyncResult {
+    private suspend fun accountSpecificDownload(stagedFile: File): SyncResult {
         return when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.DROPBOX -> {
                 restoreDropboxClient()
-                val databaseLocalPath = databasePath()
                 val dropboxDownloadParam = DropboxDownloadParam(
                     path = "/${getDatabaseNameWithExtension()}",
-                    outputStream = FileOutputStream(databaseLocalPath),
+                    outputStream = FileOutputStream(stagedFile),
                 )
-                dropboxDataSource.performDownload(dropboxDownloadParam)
+                dropboxDownloadParam.outputStream.use { dropboxDataSource.performDownload(dropboxDownloadParam) }
+                installDownloadedFile(stagedFile)
                 dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.d { "Download from Dropbox successfully" }
                 SyncResult.Success
             }
 
             SyncAccounts.GOOGLE_DRIVE -> {
-                val databaseLocalPath = databasePath()
                 val googleDriveDownloadParam = GoogleDriveDownloadParam(
                     fileName = getDatabaseNameWithExtension(),
-                    outputStream = FileOutputStream(databaseLocalPath),
+                    outputStream = FileOutputStream(stagedFile),
                 )
-                googleDriveDataSource.performDownload(googleDriveDownloadParam)
+                googleDriveDownloadParam.outputStream.use {
+                    googleDriveDataSource.performDownload(googleDriveDownloadParam)
+                }
+                installDownloadedFile(stagedFile)
                 googleDriveSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.d { "Download from Google Drive successfully" }
                 SyncResult.Success
@@ -191,6 +205,8 @@ internal class FeedSyncAndroidWorker(
                 feedSyncer.syncFeedSourceCategory()
                 feedSyncer.syncFeedSource()
                 SyncResult.Success
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.e("Sync feed sources failed", e)
                 SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
@@ -203,11 +219,23 @@ internal class FeedSyncAndroidWorker(
             try {
                 feedSyncer.syncFeedItem()
                 SyncResult.Success
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.e("Sync feed items failed", e)
                 SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
             }
         }
+    }
+
+    private fun installDownloadedFile(stagedFile: File) {
+        feedSyncer.closeDB()
+        Files.move(
+            stagedFile.toPath(),
+            File(databasePath()).toPath(),
+            StandardCopyOption.ATOMIC_MOVE,
+            StandardCopyOption.REPLACE_EXISTING,
+        )
     }
 
     private fun generateDatabaseFile(): File? {

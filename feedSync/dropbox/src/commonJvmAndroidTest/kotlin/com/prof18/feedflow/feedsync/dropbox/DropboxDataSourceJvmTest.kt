@@ -5,6 +5,7 @@ package com.prof18.feedflow.feedsync.dropbox
 import co.touchlab.kermit.Logger
 import com.dropbox.core.http.HttpRequestor
 import com.dropbox.core.oauth.DbxCredential
+import com.prof18.feedflow.core.model.CloudBackupNotFoundException
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -17,9 +18,31 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class DropboxDataSourceJvmTest {
+
+    @Test
+    fun `only path not found is reported as a missing backup`() = runTest {
+        for (tag in listOf("not_found", "not_file")) {
+            val requestor = RecordingDropboxHttpRequestor(
+                ResponseSpec(
+                    statusCode = 409,
+                    headers = mapOf("Content-Type" to "application/json"),
+                    body = """{"error_summary":"path/$tag/","error":{".tag":"path","path":{".tag":"$tag"}}}"""
+                        .encodeToByteArray(),
+                ),
+            )
+            val dataSource = createDataSource(requestor)
+            dataSource.restoreAuth(credentials())
+            val error = assertFailsWith<Exception> {
+                dataSource.performDownload(DropboxDownloadParam("/missing.db", ByteArrayOutputStream()))
+            }
+            assertEquals(tag == "not_found", error is CloudBackupNotFoundException)
+            assertEquals(1, requestor.requests.size)
+        }
+    }
 
     @Test
     fun `upload sends SDK request and preserves metadata and bytes`() = runTest {

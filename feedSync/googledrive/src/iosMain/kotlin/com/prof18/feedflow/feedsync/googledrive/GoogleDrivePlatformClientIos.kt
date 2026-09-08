@@ -19,6 +19,6 @@ interface GoogleDrivePlatformClientIos {
     fun downloadFile(
         fileName: String,
         existingFileId: String?,
-        completionHandler: (NSData?, Throwable?) -> Unit,
+        completionHandler: (NSData?, String?, Throwable?) -> Unit,
     )
 }

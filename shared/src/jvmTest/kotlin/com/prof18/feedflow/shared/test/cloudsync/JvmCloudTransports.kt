@@ -58,6 +58,7 @@ internal class JvmDriveTransport(
 
     override suspend fun performDownload(downloadParam: GoogleDriveDownloadParam): GoogleDriveDownloadResult {
         downloadParam.outputStream.write(store.download(CloudProvider.GOOGLE_DRIVE, ACCOUNT, downloadParam.fileName))
+        settings.setBackupFileId(store.snapshot().single().fileId)
         return GoogleDriveDownloadResult()
     }
 }
@@ -68,11 +69,14 @@ internal class JvmICloudTransport(
     private val database: File,
 ) : ICloudFileTransfer {
     override fun uploadToICloud(isDebug: Boolean): Int {
+        if (store.uploadFailure != null) return 2
         store.upload(CloudProvider.ICLOUD, ACCOUNT, database.nameWithoutExtension, database.readBytes(), device)
         return 0
     }
 
     override fun iCloudDownload(isDebug: Boolean): Int {
+        if (store.downloadFailure != null) return 3
+        if (store.fileCount(CloudProvider.ICLOUD) == 0) return 5
         database.writeBytes(store.download(CloudProvider.ICLOUD, ACCOUNT, database.nameWithoutExtension))
         return 0
     }

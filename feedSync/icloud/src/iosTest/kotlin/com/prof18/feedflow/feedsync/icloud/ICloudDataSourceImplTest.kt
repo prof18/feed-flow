@@ -47,6 +47,16 @@ class ICloudDataSourceImplTest {
         )
         assertContentEquals(bytes, requireNotNull(NSData.create(contentsOfURL = temporaryFile)).toByteArray())
 
+        val updated = byteArrayOf(13, 21, 34)
+        updated.toNSData().writeToURL(source, atomically = true)
+        assertIs<ICloudUploadResult.Success>(dataSource.performUpload(source, databaseName))
+        assertContentEquals(updated, requireNotNull(NSData.create(contentsOfURL = cloudFile)).toByteArray())
+
+        NSFileManager.defaultManager.removeItemAtURL(source, null)
+        assertIs<ICloudUploadResult.Error>(dataSource.performUpload(source, databaseName))
+        assertContentEquals(updated, requireNotNull(NSData.create(contentsOfURL = cloudFile)).toByteArray())
+        assertIs<ICloudDownloadResult.Error.FileNotFound>(dataSource.performDownload("missing.db"))
+
         NSFileManager.defaultManager.removeItemAtPath(root, null)
         Unit
     }

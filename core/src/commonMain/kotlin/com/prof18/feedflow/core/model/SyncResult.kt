@@ -8,6 +8,7 @@ sealed interface SyncResult {
     }
 
     data class General(override val errorCode: ErrorCode) : Error
+    data class BackupNotFound(override val errorCode: ErrorCode) : Error
     data class ICloudNotAvailable(override val errorCode: ErrorCode) : Error
     data class GoogleDriveNeedReAuth(
         override val errorCode: ErrorCode = SyncDownloadError.GoogleDriveNeedsReAuth,

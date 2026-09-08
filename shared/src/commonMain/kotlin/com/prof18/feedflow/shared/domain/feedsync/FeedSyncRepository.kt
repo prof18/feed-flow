@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
@@ -20,6 +21,7 @@ class FeedSyncRepository internal constructor(
     private val logger: Logger,
     private val settingsRepository: SettingsRepository,
 ) {
+    private var canApplyDownloadedItems = true
     fun enqueueBackup(forceBackup: Boolean = false) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             if (forceBackup || settingsRepository.getIsSyncUploadRequired()) {
@@ -38,17 +40,20 @@ class FeedSyncRepository internal constructor(
 
     // Used only on iOS when the system performs a background upload
     fun onDropboxUploadSuccessAfterResume() {
+        if (feedSyncAccountRepository.getCurrentSyncAccount() != SyncAccounts.DROPBOX) return
         dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
         logger.d { "Upload to dropbox successfully from restarted session" }
-        settingsRepository.setIsSyncUploadRequired(false)
+        // A resumed request has no captured edit generation; it cannot acknowledge newer work.
     }
 
     internal suspend fun firstSync() {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             logger.d { "run first sync" }
             val result = feedSyncWorker.download(isFirstSync = true)
-            if (result is SyncResult.Error) {
+            if (result is SyncResult.BackupNotFound) {
                 feedSyncWorker.uploadImmediate()
+            } else if (result.isError()) {
+                feedSyncMessageQueue.emitResult(result)
             }
         }
     }
@@ -173,21 +178,25 @@ class FeedSyncRepository internal constructor(
 
     internal suspend fun syncFeedSources() {
         if (feedSyncAccountRepository.isSyncEnabled()) {
+            canApplyDownloadedItems = false
             val result = feedSyncWorker.download()
             if (result.isError()) {
                 Logger.d { "Error on download" }
                 feedSyncMessageQueue.emitResult(result)
+                return
             }
 
             val feedSourcesResult = feedSyncWorker.syncFeedSources()
             if (feedSourcesResult.isError()) {
                 feedSyncMessageQueue.emitResult(feedSourcesResult)
+                return
             }
+            canApplyDownloadedItems = true
         }
     }
 
     internal suspend fun syncFeedItems() {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
+        if (feedSyncAccountRepository.isSyncEnabled() && canApplyDownloadedItems) {
             val feedItemResult = feedSyncWorker.syncFeedItems()
             feedSyncMessageQueue.emitResult(feedItemResult)
         }

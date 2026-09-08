@@ -54,6 +54,7 @@ internal class AndroidDriveTransport(
         downloadParam.outputStream.use {
             it.write(store.download(CloudProvider.GOOGLE_DRIVE, ACCOUNT, downloadParam.fileName))
         }
+        settings.setBackupFileId(store.snapshot().single().fileId)
         return GoogleDriveDownloadResult()
     }
 }

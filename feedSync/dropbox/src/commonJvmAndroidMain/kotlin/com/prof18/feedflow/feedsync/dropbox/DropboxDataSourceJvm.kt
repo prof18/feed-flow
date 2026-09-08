@@ -7,7 +7,9 @@ import com.dropbox.core.NetworkIOException
 import com.dropbox.core.http.HttpRequestor
 import com.dropbox.core.oauth.DbxCredential
 import com.dropbox.core.v2.DbxClientV2
+import com.dropbox.core.v2.files.DownloadErrorException
 import com.dropbox.core.v2.files.WriteMode
+import com.prof18.feedflow.core.model.CloudBackupNotFoundException
 import com.prof18.feedflow.core.model.DropboxClientStatus
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -162,6 +164,13 @@ internal class DropboxDataSourceJvm(
                     logger.d { "Metadata from Dropbox are null" }
                     continuation.resumeWithException(DropboxDownloadException("Metadata from Dropbox are null"))
                 }
+            } catch (e: DownloadErrorException) {
+                val error = if (e.errorValue.isPath && e.errorValue.pathValue.isNotFound) {
+                    CloudBackupNotFoundException()
+                } else {
+                    DropboxDownloadException(exceptionCause = e)
+                }
+                continuation.resumeWithException(error)
             } catch (e: Exception) {
                 if (!isTemporaryNetworkError(e)) {
                     logger.e(e) { "Error while downloading data from Dropbox" }

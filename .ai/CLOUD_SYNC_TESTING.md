@@ -35,6 +35,22 @@ requires a real iCloud account. The shipping JNI library and Apple background
 delivery require separate integration validation; a passing double is not proof of
 those mechanisms.
 
+## Cloud sync notifications
+
+`FeedSyncMessageQueue.messageQueue` retains every engine result for diagnostics and
+the harness. UI consumers use `userMessages`: transfer, discovery, snapshot and
+reconciliation failures stay quiet, including when refresh or Backup triggers the
+attempt. Pending changes remain available for the next sync opportunity, and the
+last successful sync timestamps do not advance on failure.
+
+Google Drive reauthorization prompts are emitted once per active UI collector until
+a successful sync result resets suppression. Explicit iCloud connection attempts
+still report an unavailable service; background iCloud URL failures remain silent.
+Provider authentication feedback and the recovery-choice UI are separate and remain
+available. `FeedSyncMessageQueueTest` tests this policy, and
+`CloudTransferRegressions` asserts that real worker failures and retries emit no UI
+notifications across the supported platforms/providers.
+
 ## Successful baseline
 
 Every supported provider runs the same independent scenarios:
@@ -53,6 +69,19 @@ refresh and clearing a bulk-read result. Its stale-device refresh test verifies
 that refresh never uploads an old snapshot over a peer's newer bookmark and
 subscription. It does not yet prove preservation of the stale device's pending
 edit during download or competing backup writes; those are separate C2/C3 fixes.
+
+`CloudTransferRegressions` checks confirmed-missing bootstrap, failed upload
+retaining pending work and remote bytes, failed first download performing no
+upload, stopped reconciliation, and a successful retry. iCloud local file absence
+is an unavailable download, not proof of remote absence: automatic first-upload
+requires future metadata discovery; the existing explicit backup action remains
+available. Apple's [iCloud document guide](https://developer.apple.com/documentation/uikit/synchronizing-documents-in-the-icloud-environment)
+explains why local filesystem lookup cannot discover unmaterialized documents.
+
+SDK transport tests cover Drive discovery errors, duplicate identities, stale IDs
+and pagination, plus Dropbox missing-path classification. Swift callbacks carry
+Drive's resolved ID through the local write before caching it. Native iCloud tests
+cover replacement and preserving the last backup when an upload copy fails.
 
 Ambiguous writes, crashes, cancellation, corruption, empty remote collections and
 pending-change acknowledgment races are added with their corresponding fixes.
@@ -98,9 +127,10 @@ provider accounts or SDK credentials; Gradle/Xcode may still download build
 dependencies. A passing double is not proof of shipping JNI loading or Apple's
 background iCloud delivery.
 
-Stage A does not cherry-pick PR #1358. Once Stage B is approved, cherry-pick the
-contributor's commits to preserve attribution, then make separate corrective
-commits and validate them with regressions built on this harness.
+Stage B preserves PR #1358's contributor attribution through cherry-pick
+`a38006731`, followed by the separate corrective commit `9fbe29e50`. The unsafe
+upload-before-download ordering is removed; regression coverage builds on the
+Stage A success suite.
 
 ## Verification and remaining evidence
 

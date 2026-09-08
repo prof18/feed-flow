@@ -11,12 +11,16 @@ class DesktopCloudSyncSuccessTest : KoinTestBase() {
     fun `Dropbox successful workflows use real desktop worker and database files`() = runTest(testDispatcher) {
         CloudSuccessScenario.entries.forEach { runCloudSuccessScenario(CloudProvider.DROPBOX, it) }
         runQueuedCloudSuccess(CloudProvider.DROPBOX)
+        runCloudFlagRegressions(CloudProvider.DROPBOX)
+        runStaleCloudRefreshRegression(CloudProvider.DROPBOX)
     }
 
     @Test
     fun `Drive successful workflows use real desktop worker and database files`() = runTest(testDispatcher) {
         CloudSuccessScenario.entries.forEach { runCloudSuccessScenario(CloudProvider.GOOGLE_DRIVE, it) }
         runQueuedCloudSuccess(CloudProvider.GOOGLE_DRIVE)
+        runCloudFlagRegressions(CloudProvider.GOOGLE_DRIVE)
+        runStaleCloudRefreshRegression(CloudProvider.GOOGLE_DRIVE)
     }
 
     @Test
@@ -24,5 +28,7 @@ class DesktopCloudSyncSuccessTest : KoinTestBase() {
         assumeTrue("iCloud is supported only on macOS", System.getProperty("os.name").contains("Mac"))
         CloudSuccessScenario.entries.forEach { runCloudSuccessScenario(CloudProvider.ICLOUD, it) }
         runQueuedCloudSuccess(CloudProvider.ICLOUD)
+        runCloudFlagRegressions(CloudProvider.ICLOUD)
+        runStaleCloudRefreshRegression(CloudProvider.ICLOUD)
     }
 }

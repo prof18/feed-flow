@@ -1,9 +1,8 @@
 # Cloud sync regression harness
 
-This is Stage A: an offline baseline for the current successful Dropbox, Google
-Drive and iCloud workflows. Stage B will add reproductions and fixes for the sync
-issues in the reviewed plan. Server accounts (GReader, Feedbin and others) are
-outside this harness.
+This harness covers successful Dropbox, Google Drive and iCloud workflows and
+regressions added with the cloud sync fixes. Server accounts (GReader, Feedbin and
+others) are outside this harness.
 
 ## Structure
 
@@ -48,11 +47,16 @@ Every supported provider runs the same independent scenarios:
 - Bulk mark-as-read with bookmarks preserved.
 - Adding a subscription and category after an initial sync.
 
-The sparse false/false export defect is deliberately not defined as successful
-behavior. Stale-device conflicts, ambiguous writes, crashes, cancellation,
-corruption, empty remote collections and pending-change acknowledgment races will
-be introduced with their Stage B reproductions and fixes. These tests do not prove
-the absence of all unseen corner cases.
+`CloudFlagRegressions` checks all 16 transitions between the four read/bookmark
+states, including explicit false/false values, sender refresh after upload, peer
+refresh and clearing a bulk-read result. Its stale-device refresh test verifies
+that refresh never uploads an old snapshot over a peer's newer bookmark and
+subscription. It does not yet prove preservation of the stale device's pending
+edit during download or competing backup writes; those are separate C2/C3 fixes.
+
+Ambiguous writes, crashes, cancellation, corruption, empty remote collections and
+pending-change acknowledgment races are added with their corresponding fixes.
+These tests do not prove the absence of all unseen corner cases.
 
 ## Local and CI execution
 

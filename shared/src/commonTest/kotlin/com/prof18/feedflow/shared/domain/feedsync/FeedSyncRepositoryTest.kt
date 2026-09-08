@@ -261,7 +261,7 @@ class FeedSyncRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `syncFeedSources uploads pending changes before downloading`() = runTest(testDispatcher) {
+    fun `syncFeedSources never uploads a pending stale snapshot`() = runTest(testDispatcher) {
         enableDropboxSync()
         settingsRepository.setIsSyncUploadRequired(true)
         fakeFeedSyncWorker.onUploadImmediate = {
@@ -270,17 +270,18 @@ class FeedSyncRepositoryTest : KoinTestBase() {
 
         feedSyncRepository.syncFeedSources()
 
-        assertEquals(listOf("upload", "download", "syncSources"), fakeFeedSyncWorker.calls)
+        assertEquals(listOf("download", "syncSources"), fakeFeedSyncWorker.calls)
+        assertTrue(settingsRepository.getIsSyncUploadRequired())
     }
 
     @Test
-    fun `syncFeedSources does not download when pending upload fails`() = runTest(testDispatcher) {
+    fun `syncFeedSources downloads without requiring a pending upload`() = runTest(testDispatcher) {
         enableDropboxSync()
         settingsRepository.setIsSyncUploadRequired(true)
 
         feedSyncRepository.syncFeedSources()
 
-        assertEquals(listOf("upload"), fakeFeedSyncWorker.calls)
+        assertEquals(listOf("download", "syncSources"), fakeFeedSyncWorker.calls)
         assertTrue(settingsRepository.getIsSyncUploadRequired())
     }
 

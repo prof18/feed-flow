@@ -35,6 +35,7 @@ internal class CloudStore {
     var beforeUploadRead: suspend () -> Unit = {}
     var uploadFailure: Exception? = null
     var downloadFailure: Exception? = null
+    var downloadedBytes: ByteArray? = null
 
     private data class FileKey(
         val provider: CloudProvider,
@@ -86,6 +87,7 @@ internal class CloudStore {
     /** Reads only visible cloud state. iCloud local saves become visible after [propagate]. */
     fun download(provider: CloudProvider, account: String, name: String): ByteArray {
         downloadFailure?.let { throw it }
+        downloadedBytes?.let { return it.copyOf() }
         val key = FileKey(provider, account, name)
         return (visibleFiles[key] ?: throw CloudBackupNotFoundException()).bytes.copyOf()
     }

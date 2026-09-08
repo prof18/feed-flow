@@ -76,10 +76,10 @@ internal class JvmICloudTransport(
         return 0
     }
 
-    override fun iCloudDownload(isDebug: Boolean): Int {
+    override fun downloadToFile(isDebug: Boolean, destinationPath: String): Int {
         if (store.downloadFailure != null) return 3
         if (store.fileCount(CloudProvider.ICLOUD) == 0) return 5
-        database.writeBytes(store.download(CloudProvider.ICLOUD, ACCOUNT, database.nameWithoutExtension))
+        File(destinationPath).writeBytes(store.download(CloudProvider.ICLOUD, ACCOUNT, database.nameWithoutExtension))
         return 0
     }
 }

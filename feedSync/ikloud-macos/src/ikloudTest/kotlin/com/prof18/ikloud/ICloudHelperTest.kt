@@ -44,18 +44,18 @@ class ICloudHelperTest {
         withFixture { databaseUrl, containerUrl, tempUrl ->
             val previous = "last good local snapshot".encodeToByteArray()
             writeBytes(databaseUrl, previous)
-            assertEquals(5, iCloudDownload(containerUrl, tempUrl, databaseUrl, "FixtureDatabase"))
+            assertEquals(5, downloadToFile(containerUrl, tempUrl))
             assertContentEquals(previous, readBytes(databaseUrl))
         }
     }
 
     @Test
-    fun firstDownloadCreatesTheLocalDatabase() {
-        withFixture { databaseUrl, containerUrl, tempUrl ->
+    fun firstDownloadCreatesTheStagedFile() {
+        withFixture { _, containerUrl, tempUrl ->
             val snapshot = "cloud snapshot".encodeToByteArray()
             writeBytes(containerUrl, snapshot)
-            assertEquals(0, iCloudDownload(containerUrl, tempUrl, databaseUrl, "FixtureDatabase"))
-            assertContentEquals(snapshot, readBytes(databaseUrl))
+            assertEquals(0, downloadToFile(containerUrl, tempUrl))
+            assertContentEquals(snapshot, readBytes(tempUrl))
         }
     }
 
@@ -74,7 +74,7 @@ class ICloudHelperTest {
     }
 
     @Test
-    fun downloadCopiesContainerBytesIntoTheDatabase() {
+    fun downloadStagesContainerBytesWithoutReplacingTheDatabase() {
         withFixture { databaseUrl, containerUrl, tempUrl ->
             val originalDatabaseBytes = "original database bytes".encodeToByteArray()
             val containerBytes = "container bytes • download ✅".encodeToByteArray()
@@ -83,14 +83,13 @@ class ICloudHelperTest {
 
             assertEquals(
                 expected = 0,
-                actual = iCloudDownload(
+                actual = downloadToFile(
                     iCloudUrl = containerUrl,
-                    tempUrl = tempUrl,
-                    databaseUrl = databaseUrl,
-                    databaseName = "FixtureDatabase",
+                    destinationUrl = tempUrl,
                 ),
             )
-            assertContentEquals(containerBytes, readBytes(databaseUrl))
+            assertContentEquals(containerBytes, readBytes(tempUrl))
+            assertContentEquals(originalDatabaseBytes, readBytes(databaseUrl))
         }
     }
 

@@ -13,6 +13,7 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_PROD
+import com.prof18.feedflow.feedsync.database.data.prepareSyncDatabaseFile
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
@@ -224,11 +225,10 @@ internal class FeedSyncJvmWorker(
                 SyncResult.Success
             }
             SyncAccounts.ICLOUD -> {
-                val result = feedSyncer.withClosedDatabase {
-                    iCloudBridge.iCloudDownload(appEnvironment.isDebug())
-                }
+                val result = iCloudBridge.downloadToFile(appEnvironment.isDebug(), stagedFile.absolutePath)
                 when (DownloadResult.fromCode(result)) {
                     DownloadResult.SUCCESS -> {
+                        installDownloadedFile(stagedFile)
                         iCloudSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
                         logger.d { "Download from iCloud successfully" }
                         SyncResult.Success
@@ -327,6 +327,7 @@ internal class FeedSyncJvmWorker(
     }
 
     private suspend fun installDownloadedFile(stagedFile: File) {
+        prepareSyncDatabaseFile(stagedFile)
         feedSyncer.withClosedDatabase {
             Files.move(
                 stagedFile.toPath(),

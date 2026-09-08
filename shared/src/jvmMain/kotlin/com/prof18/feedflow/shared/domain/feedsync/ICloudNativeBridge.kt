@@ -2,7 +2,7 @@ package com.prof18.feedflow.shared.domain.feedsync
 
 interface ICloudFileTransfer {
     fun uploadToICloud(isDebug: Boolean): Int
-    fun iCloudDownload(isDebug: Boolean): Int
+    fun downloadToFile(isDebug: Boolean, destinationPath: String): Int
 }
 
 class ICloudNativeBridge : ICloudFileTransfer {
@@ -18,12 +18,10 @@ class ICloudNativeBridge : ICloudFileTransfer {
      * Result:
      *  0 -> success
      *  1 -> url null
-     *  2 -> temp url null
      *  3 -> download error
-     *  4 -> database replace error
      *  5 -> backup file not found
      */
-    external override fun iCloudDownload(isDebug: Boolean): Int
+    external override fun downloadToFile(isDebug: Boolean, destinationPath: String): Int
 }
 
 @Suppress("MagicNumber")

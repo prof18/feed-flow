@@ -27,14 +27,26 @@ implement the providers' complete consistency, authorization or conflict behavio
 | `androidHostTest` | **Robolectric, no emulator**; Android worker, JDBC SQLite files, preferences and WorkManager queue |
 | `androidDeviceTest` | Optional instrumentation lane using the Android SQLite driver |
 | `iosTest` | iOS worker, native SQLite files and isolated persisted defaults on the simulator |
-| `feedSync/icloud/iosTest` | Real iOS iCloud file adapter with local folder URLs |
+| `feedSync/icloud/iosTest` | Real iOS file operations with local folder URLs and an injected coordinator boundary |
 | `feedSync/ikloud-macos/ikloudTest` | Real macOS Foundation upload/download helper with local URLs |
-| `iosApp/Tests/CloudSync` | Swift provider adapter callbacks and bytes with SDK boundary doubles |
+| `iosApp/Tests/CloudSync` | Swift provider adapter callbacks/bytes and real iOS Foundation coordination with local files |
 
 The macOS native helper tests run separately from the JVM bridge double. Neither
 requires a real iCloud account. The shipping JNI library and Apple background
 delivery require separate integration validation; a passing double is not proof of
 those mechanisms.
+
+Both Apple adapters coordinate cloud reads and writes with Foundation and use the
+URL supplied to the accessor. Native failure tests preserve files when coordination
+is denied, redirects access, or never invokes its accessor. macOS tests also run
+the real coordinator. On iOS, the real Foundation integration runs in the XCTest
+suite: the standalone Kotlin/Native executable receives Cocoa error 512 before
+its accessor on this simulator, including for existing local files. Kotlin tests
+inject only the coordinator boundary and still exercise the real file operations.
+The XCTest case tests creation, replacement, download and failed-upload preservation
+using local directories. It is included in `allTests` without live iCloud access.
+This is local file coordination, not distributed conflict resolution or protection
+against another app process replacing FeedFlow's open main/sync databases.
 
 ## Cloud sync notifications
 

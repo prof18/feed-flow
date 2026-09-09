@@ -11,16 +11,16 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.get
 import kotlinx.cinterop.invoke
 import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
 import kotlinx.cinterop.pointed
+import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
+import platform.Foundation.NSCocoaErrorDomain
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
-import platform.Foundation.NSCocoaErrorDomain
 import platform.Foundation.NSFileReadNoSuchFileError
-import platform.Foundation.NSUUID
 import platform.Foundation.NSHomeDirectory
 import platform.Foundation.NSURL
+import platform.Foundation.NSUUID
 
 /**
 0 -> success
@@ -52,8 +52,21 @@ fun downloadToFile(env: CPointer<JNIEnvVar>, clazz: jclass, isDebug: jboolean, d
     return downloadToFile(iCloudUrl, NSURL.fileURLWithPath(path))
 }
 
-internal fun uploadToICloud(databaseUrl: NSURL, iCloudUrl: NSURL): Int = memScoped {
+internal fun uploadToICloud(
+    databaseUrl: NSURL,
+    iCloudUrl: NSURL,
+    fileCoordinator: ICloudFileCoordinator = FoundationICloudFileCoordinator(),
+): Int {
+    var result = 2
+    val error = fileCoordinator.write(iCloudUrl) { coordinatedUrl ->
+        result = replaceCloudFile(databaseUrl, coordinatedUrl)
+    }
+    return if (error == null) result else 2
+}
+
+private fun replaceCloudFile(databaseUrl: NSURL, iCloudUrl: NSURL): Int = memScoped {
     val errorPtr: ObjCObjectVar<NSError?> = alloc()
+    errorPtr.value = null
     val fileManager = NSFileManager.defaultManager
     val stagedUrl = iCloudUrl.URLByDeletingLastPathComponent
         ?.URLByAppendingPathComponent(".feedflow-${NSUUID.UUID().UUIDString}.upload") ?: return 2
@@ -70,23 +83,38 @@ internal fun uploadToICloud(databaseUrl: NSURL, iCloudUrl: NSURL): Int = memScop
     }
 }
 
-internal fun downloadToFile(iCloudUrl: NSURL, destinationUrl: NSURL): Int {
+internal fun downloadToFile(
+    iCloudUrl: NSURL,
+    destinationUrl: NSURL,
+    fileCoordinator: ICloudFileCoordinator = FoundationICloudFileCoordinator(),
+): Int {
+    var result = 3
+    val error = fileCoordinator.read(iCloudUrl) { coordinatedUrl ->
+        result = copyCloudFile(coordinatedUrl, destinationUrl)
+    }
+    return if (error == null) result else downloadErrorCode(error)
+}
+
+private fun copyCloudFile(iCloudUrl: NSURL, destinationUrl: NSURL): Int {
     NSFileManager.defaultManager.removeItemAtURL(destinationUrl, null)
     return memScoped {
         val errorPtr: ObjCObjectVar<NSError?> = alloc()
+        errorPtr.value = null
         val copied = NSFileManager.defaultManager.copyItemAtURL(iCloudUrl, destinationUrl, errorPtr.ptr)
         if (copied && errorPtr.value == null) {
             0
         } else {
-            val error = errorPtr.value
-            if (error != null && error.domain == NSCocoaErrorDomain && error.code == NSFileReadNoSuchFileError) {
-                DOWNLOAD_FILE_NOT_FOUND
-            } else {
-                3
-            }
+            downloadErrorCode(errorPtr.value)
         }
     }
 }
+
+private fun downloadErrorCode(error: NSError?): Int =
+    if (error != null && error.domain == NSCocoaErrorDomain && error.code == NSFileReadNoSuchFileError) {
+        DOWNLOAD_FILE_NOT_FOUND
+    } else {
+        3
+    }
 
 private fun getDatabaseUrl(isDebug: Boolean): NSURL {
     val path = getDataPath(isDebug)

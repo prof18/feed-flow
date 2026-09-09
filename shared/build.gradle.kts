@@ -44,6 +44,7 @@ kotlin {
             export(project(":core"))
             export(project(":feedSync:dropbox"))
             export(project(":feedSync:googledrive"))
+            export(project(":feedSync:icloud"))
             export(libs.touchlab.kermit.simple)
             export(libs.androidx.lifecycle.viewModel)
         }
@@ -188,6 +189,7 @@ kotlin {
             dependsOn(commonMobileMain)
 
             dependencies {
+                api(project(":feedSync:icloud"))
                 api(libs.touchlab.kermit.simple)
                 implementation(libs.touchlab.kermit.crash)
                 implementation(libs.crashk.ios)

@@ -30,33 +30,23 @@ class ICloudDataSourceImpl(
     private val logger: Logger,
     private val localBaseFolderURL: NSURL? = null,
     private val localTemporaryFolderURL: NSURL? = null,
+    private val fileCoordinator: ICloudFileCoordinator = FoundationICloudFileCoordinator(),
 ) : ICloudDataSource {
     override suspend fun performUpload(databasePath: NSURL, databaseName: String): ICloudUploadResult {
         val iCloudUrl = getICloudFolderURL(databaseName)
             ?: return ICloudUploadResult.Error.ICloudUrlNotAvailable
 
-        val stagedUrl = iCloudUrl.URLByDeletingLastPathComponent
-            ?.URLByAppendingPathComponent(".$databaseName-${NSUUID.UUID().UUIDString}.upload")
-            ?: return ICloudUploadResult.Error.ICloudUrlNotAvailable
-        try {
-            memScoped {
-                val errorPtr: ObjCObjectVar<NSError?> = alloc()
-                val fileManager = NSFileManager.defaultManager
-                if (!fileManager.copyItemAtURL(databasePath, stagedUrl, errorPtr.ptr)) {
-                    return ICloudUploadResult.Error.UploadFailed(errorPtr.value.toString())
-                }
-                val replaced = if (fileManager.fileExistsAtPath(requireNotNull(iCloudUrl.path))) {
-                    fileManager.replaceItemAtURL(iCloudUrl, stagedUrl, null, 0u, null, errorPtr.ptr)
-                } else {
-                    fileManager.moveItemAtURL(stagedUrl, iCloudUrl, errorPtr.ptr)
-                }
-                if (!replaced || errorPtr.value != null) {
-                    return ICloudUploadResult.Error.UploadFailed(errorPtr.value.toString())
-                }
-            }
-        } finally {
-            NSFileManager.defaultManager.removeItemAtURL(stagedUrl, null)
+        var accessorInvoked = false
+        var uploadError: ICloudUploadResult.Error? = null
+        val coordinationError = fileCoordinator.write(iCloudUrl) { coordinatedUrl ->
+            accessorInvoked = true
+            uploadError = upload(databasePath, coordinatedUrl, databaseName)
         }
+        coordinationError?.let { return ICloudUploadResult.Error.UploadFailed(it.toString()) }
+        if (!accessorInvoked) {
+            return ICloudUploadResult.Error.UploadFailed("File coordination accessor was not invoked")
+        }
+        uploadError?.let { return it }
 
         logger.d { "Upload to iCloud successfully" }
         return ICloudUploadResult.Success
@@ -69,36 +59,78 @@ class ICloudDataSourceImpl(
         val tempUrl = getTemporaryFileUrl(databaseName)
             ?: return ICloudDownloadResult.Error.TemporaryUrlNotAvailable
 
-        NSFileManager.defaultManager.removeItemAtURL(
-            tempUrl,
-            null,
-        )
+        var accessorInvoked = false
+        var downloadError: ICloudDownloadResult.Error? = null
+        val coordinationError = fileCoordinator.read(iCloudUrl) { coordinatedUrl ->
+            accessorInvoked = true
+            downloadError = download(coordinatedUrl, tempUrl)
+        }
+        coordinationError?.let { return mapDownloadError(it) }
+        if (!accessorInvoked) {
+            return ICloudDownloadResult.Error.DownloadFailed("File coordination accessor was not invoked")
+        }
+        downloadError?.let { return it }
 
-        memScoped {
-            val errorPtr: ObjCObjectVar<NSError?> = alloc()
+        logger.d { "Download from iCloud successfully" }
+        return ICloudDownloadResult.Success(destinationUrl = tempUrl)
+    }
 
-            val copied = NSFileManager.defaultManager.copyItemAtURL(
-                srcURL = iCloudUrl,
-                toURL = tempUrl,
-                error = errorPtr.ptr,
-            )
+    private fun upload(databasePath: NSURL, coordinatedUrl: NSURL, databaseName: String): ICloudUploadResult.Error? {
+        val coordinatedPath = coordinatedUrl.path
+            ?: return ICloudUploadResult.Error.UploadFailed("Coordinated URL has no file path")
+        val stagedUrl = coordinatedUrl.URLByDeletingLastPathComponent
+            ?.URLByAppendingPathComponent(".$databaseName-${NSUUID.UUID().UUIDString}.upload")
+            ?: return ICloudUploadResult.Error.ICloudUrlNotAvailable
 
-            if (!copied || errorPtr.value != null) {
-                logger.e { "Error downloading from iCloud: ${errorPtr.value}" }
-                val error = errorPtr.value
-                return if (error != null && error.domain == NSCocoaErrorDomain &&
-                    error.code == NSFileReadNoSuchFileError
-                ) {
-                    ICloudDownloadResult.Error.FileNotFound
+        try {
+            return memScoped {
+                val errorPtr: ObjCObjectVar<NSError?> = alloc()
+                errorPtr.value = null
+                val fileManager = NSFileManager.defaultManager
+                if (!fileManager.copyItemAtURL(databasePath, stagedUrl, errorPtr.ptr)) {
+                    return@memScoped ICloudUploadResult.Error.UploadFailed(errorPtr.value.toString())
+                }
+
+                val replaced = if (fileManager.fileExistsAtPath(coordinatedPath)) {
+                    fileManager.replaceItemAtURL(coordinatedUrl, stagedUrl, null, 0u, null, errorPtr.ptr)
                 } else {
-                    ICloudDownloadResult.Error.DownloadFailed(error.toString())
+                    fileManager.moveItemAtURL(stagedUrl, coordinatedUrl, errorPtr.ptr)
+                }
+                if (!replaced || errorPtr.value != null) {
+                    ICloudUploadResult.Error.UploadFailed(errorPtr.value.toString())
+                } else {
+                    null
                 }
             }
-
-            logger.d { "Download from iCloud successfully" }
-            return ICloudDownloadResult.Success(destinationUrl = tempUrl)
+        } finally {
+            NSFileManager.defaultManager.removeItemAtURL(stagedUrl, null)
         }
     }
+
+    private fun download(coordinatedUrl: NSURL, tempUrl: NSURL): ICloudDownloadResult.Error? = memScoped {
+        NSFileManager.defaultManager.removeItemAtURL(tempUrl, null)
+
+        val errorPtr: ObjCObjectVar<NSError?> = alloc()
+        errorPtr.value = null
+        val copied = NSFileManager.defaultManager.copyItemAtURL(
+            srcURL = coordinatedUrl,
+            toURL = tempUrl,
+            error = errorPtr.ptr,
+        )
+        if (copied && errorPtr.value == null) {
+            return@memScoped null
+        }
+
+        logger.e { "Error downloading from iCloud: ${errorPtr.value}" }
+        mapDownloadError(errorPtr.value)
+    }
+
+    private fun mapDownloadError(error: NSError?): ICloudDownloadResult.Error =
+        if (error != null && error.domain == NSCocoaErrorDomain && error.code == NSFileReadNoSuchFileError) {
+            ICloudDownloadResult.Error.FileNotFound
+        } else {
+            ICloudDownloadResult.Error.DownloadFailed(error.toString())
+        }
 
     private suspend fun getICloudFolderURL(databaseName: String): NSURL? =
         getICloudBaseFolderURL()?.URLByAppendingPathComponent(databaseName)

@@ -14,6 +14,8 @@ import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadParam
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadResult
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -44,8 +46,21 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `existing provider authorization does not link a locally disconnected account`() = runTest {
+        fakeGoogleDriveDataSource.authorized = true
+
+        val disconnectedViewModel: GoogleDriveSyncViewModel = getKoin().get()
+
+        disconnectedViewModel.googleDriveConnectionUiState.test {
+            assertEquals(AccountConnectionUiState.Unlinked, awaitItem())
+        }
+        assertEquals(0, fakeGoogleDriveDataSource.isAuthorizedCallCount)
+    }
+
+    @Test
     fun `restoreAccount returns Linked state when Google Drive was previously authorized`() = runTest {
         fakeGoogleDriveDataSource.authorized = true
+        googleDriveSettings.setGoogleDriveLinked(true)
         googleDriveSettings.setLastUploadTimestamp(1234567890L)
         googleDriveSettings.setLastDownloadTimestamp(1234567800L)
 
@@ -64,6 +79,7 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
     @Test
     fun `restoreAccount returns Linked with None sync state when no timestamps`() = runTest {
         fakeGoogleDriveDataSource.authorized = true
+        googleDriveSettings.setGoogleDriveLinked(true)
 
         val linkedViewModel: GoogleDriveSyncViewModel = getKoin().get()
 
@@ -97,6 +113,7 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
     @Test
     fun `triggerBackup keeps linked state`() = runTest {
         fakeGoogleDriveDataSource.authorized = true
+        googleDriveSettings.setGoogleDriveLinked(true)
 
         val linkedViewModel: GoogleDriveSyncViewModel = getKoin().get()
 
@@ -113,6 +130,8 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
     @Test
     fun `unlink sets state to Unlinked and revokes access`() = runTest {
         fakeGoogleDriveDataSource.authorized = true
+        googleDriveSettings.setGoogleDriveLinked(true)
+        fakeGoogleDriveDataSource.onRevokeAccess = googleDriveSettings::clearAll
         val linkedViewModel: GoogleDriveSyncViewModel = getKoin().get()
 
         linkedViewModel.googleDriveConnectionUiState.test {
@@ -129,6 +148,52 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
         }
 
         assertTrue(fakeGoogleDriveDataSource.revokeAccessCallCount > 0)
+    }
+
+    @Test
+    fun `disconnect remains Unlinked in a new view model while provider is still authorized`() = runTest {
+        fakeGoogleDriveDataSource.authorized = true
+        fakeGoogleDriveDataSource.onRevokeAccess = googleDriveSettings::clearAll
+        googleDriveSettings.setGoogleDriveLinked(true)
+        val linkedViewModel: GoogleDriveSyncViewModel = getKoin().get()
+        assertTrue(linkedViewModel.googleDriveConnectionUiState.value is AccountConnectionUiState.Linked)
+
+        linkedViewModel.unlink()
+        advanceUntilIdle()
+        val disconnectedViewModel: GoogleDriveSyncViewModel = getKoin().get()
+
+        assertTrue(disconnectedViewModel.googleDriveConnectionUiState.value is AccountConnectionUiState.Unlinked)
+        assertEquals(1, fakeGoogleDriveDataSource.isAuthorizedCallCount)
+    }
+
+    @Test
+    fun `late restore result cannot relink after disconnect`() = runTest {
+        googleDriveSettings.setGoogleDriveLinked(true)
+        fakeGoogleDriveDataSource.onRevokeAccess = googleDriveSettings::clearAll
+        val authorizationResult = CompletableDeferred<Boolean>()
+        fakeGoogleDriveDataSource.authorizationResult = authorizationResult
+        val restoringViewModel: GoogleDriveSyncViewModel = getKoin().get()
+
+        restoringViewModel.unlink()
+        authorizationResult.complete(true)
+        advanceUntilIdle()
+
+        assertTrue(restoringViewModel.googleDriveConnectionUiState.value is AccountConnectionUiState.Unlinked)
+        assertTrue(!googleDriveSettings.isGoogleDriveLinked())
+    }
+
+    @Test
+    fun `cleared connection settings prevent a suspended restore from linking`() = runTest {
+        googleDriveSettings.setGoogleDriveLinked(true)
+        val authorizationResult = CompletableDeferred<Boolean>()
+        fakeGoogleDriveDataSource.authorizationResult = authorizationResult
+        val restoringViewModel: GoogleDriveSyncViewModel = getKoin().get()
+
+        googleDriveSettings.clearAll()
+        authorizationResult.complete(true)
+        advanceUntilIdle()
+
+        assertEquals(AccountConnectionUiState.Unlinked, restoringViewModel.googleDriveConnectionUiState.value)
     }
 
     @Test
@@ -149,14 +214,22 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
 
 private class GoogleDriveDataSourceAndroidFake : GoogleDriveDataSourceAndroid {
     var authorized: Boolean = false
+    var authorizationResult: CompletableDeferred<Boolean>? = null
+    var isAuthorizedCallCount = 0
+        private set
     var revokeAccessCallCount = 0
         private set
+    var onRevokeAccess: () -> Unit = {}
     var validateAuthorizationResult: AuthorizationValidationResult = AuthorizationValidationResult.Valid
 
-    override suspend fun isAuthorized(): Boolean = authorized
+    override suspend fun isAuthorized(): Boolean {
+        isAuthorizedCallCount++
+        return authorizationResult?.await() ?: authorized
+    }
 
     override fun revokeAccess() {
         revokeAccessCallCount++
+        onRevokeAccess()
     }
 
     override suspend fun validateAuthorization(): AuthorizationValidationResult =

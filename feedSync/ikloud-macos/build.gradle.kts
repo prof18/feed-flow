@@ -25,6 +25,13 @@ kotlin {
     }
 
     sourceSets {
+        matching { it.name == "macosMain" }.all {
+            kotlin.srcDir(rootProject.file("feedSync/icloud/src/appleMain/kotlin"))
+            dependencies {
+                implementation(libs.kotlinx.coroutines.core)
+            }
+        }
+
         val ikloudTest by getting {
             dependencies {
                 implementation(kotlin("test"))

@@ -5,9 +5,8 @@ import XCTest
 final class ICloudDataSourceSuccessTests: XCTestCase {
     func testCoordinatedUploadAndDownloadUseLocalFiles() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        let cloud = root.appendingPathComponent("cloud", isDirectory: true)
+        let cloud = root.appendingPathComponent("cloud/Documents", isDirectory: true)
         let staging = root.appendingPathComponent("staging", isDirectory: true)
-        try FileManager.default.createDirectory(at: cloud, withIntermediateDirectories: true)
         try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: root) }
 
@@ -17,7 +16,8 @@ final class ICloudDataSourceSuccessTests: XCTestCase {
             logger: KermitLogger.companion.withTag(tag: "ICloudTests"),
             localBaseFolderURL: cloud,
             localTemporaryFolderURL: staging,
-            fileCoordinator: FoundationICloudFileCoordinator()
+            fileCoordinator: FoundationICloudFileCoordinator(),
+            fileDiscovery: LocalICloudFileDiscovery()
         )
         let bytes = Data("initial snapshot".utf8)
         try bytes.write(to: source)

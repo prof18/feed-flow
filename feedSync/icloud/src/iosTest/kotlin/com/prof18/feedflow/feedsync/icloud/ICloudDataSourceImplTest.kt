@@ -2,6 +2,9 @@ package com.prof18.feedflow.feedsync.icloud
 
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
+import com.prof18.feedflow.feedsync.icloud.apple.ICloudFileDiscovery
+import com.prof18.feedflow.feedsync.icloud.apple.ICloudFileDiscoveryResult
+import com.prof18.feedflow.feedsync.icloud.apple.LocalICloudFileDiscovery
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import kotlinx.coroutines.runBlocking
@@ -25,6 +28,31 @@ import kotlin.test.assertNotNull
 class ICloudDataSourceImplTest {
 
     @Test
+    fun `upload creates an initially absent cloud documents directory`() = runBlocking {
+        val root = "${NSTemporaryDirectory().trimEnd('/')}/feedflow-icloud-${NSUUID.UUID().UUIDString}"
+        val cloudRoot = NSURL.fileURLWithPath("$root/cloud/Documents")
+        val temporaryRoot = NSURL.fileURLWithPath("$root/temporary")
+        createDirectory(requireNotNull(temporaryRoot.path))
+        try {
+            val source = NSURL.fileURLWithPath("$root/source.db")
+            val bytes = "first cloud snapshot".encodeToByteArray()
+            writeBytes(source, bytes)
+            val dataSource = ICloudDataSourceImpl(
+                logger = Logger(StaticConfig(logWriterList = emptyList())),
+                localBaseFolderURL = cloudRoot,
+                localTemporaryFolderURL = temporaryRoot,
+                fileCoordinator = FakeICloudFileCoordinator(),
+                fileDiscovery = LocalICloudFileDiscovery(),
+            )
+
+            assertIs<ICloudUploadResult.Success>(dataSource.performUpload(source, "database.db"))
+            assertContentEquals(bytes, readBytes(assertNotNull(cloudRoot.URLByAppendingPathComponent("database.db"))))
+        } finally {
+            NSFileManager.defaultManager.removeItemAtPath(root, null)
+        }
+    }
+
+    @Test
     fun `local folder resolver supports upload and download success path`() = runBlocking {
         val temporaryDirectory = NSTemporaryDirectory().trimEnd('/')
         val root = "$temporaryDirectory/feedflow-icloud-${NSUUID.UUID().UUIDString}"
@@ -42,6 +70,7 @@ class ICloudDataSourceImplTest {
             localBaseFolderURL = NSURL.fileURLWithPath(cloudRoot),
             localTemporaryFolderURL = NSURL.fileURLWithPath(temporaryRoot),
             fileCoordinator = FakeICloudFileCoordinator(),
+            fileDiscovery = LocalICloudFileDiscovery(),
         )
 
         val firstUpload = dataSource.performUpload(source, databaseName)
@@ -164,6 +193,53 @@ class ICloudDataSourceImplTest {
         }
     }
 
+    @Test
+    fun `completed discovery without the backup reports remote absence`() = runBlocking {
+        withFixture { _, cloudRoot, temporaryRoot ->
+            val dataSource = createDataSource(
+                cloudRoot = cloudRoot,
+                temporaryRoot = temporaryRoot,
+                coordinator = FakeICloudFileCoordinator(),
+                discovery = FakeICloudFileDiscovery(ICloudFileDiscoveryResult.ConfirmedMissing),
+            )
+
+            assertIs<ICloudDownloadResult.Error.RemoteFileNotFound>(dataSource.performDownload("missing.db"))
+        }
+    }
+
+    @Test
+    fun `discovery failure never reports remote absence`() = runBlocking {
+        withFixture { _, cloudRoot, temporaryRoot ->
+            val dataSource = createDataSource(
+                cloudRoot = cloudRoot,
+                temporaryRoot = temporaryRoot,
+                coordinator = FakeICloudFileCoordinator(),
+                discovery = FakeICloudFileDiscovery(ICloudFileDiscoveryResult.Failure("query timed out")),
+            )
+
+            assertIs<ICloudDownloadResult.Error.DownloadFailed>(dataSource.performDownload("missing.db"))
+        }
+    }
+
+    @Test
+    fun `discovery materialized URL is coordinated and copied`() = runBlocking {
+        withFixture { root, cloudRoot, temporaryRoot ->
+            val databaseName = "database.db"
+            val materializedUrl = NSURL.fileURLWithPath("$root/materialized.db")
+            val bytes = "materialized cloud snapshot".encodeToByteArray()
+            writeBytes(materializedUrl, bytes)
+            val dataSource = createDataSource(
+                cloudRoot = cloudRoot,
+                temporaryRoot = temporaryRoot,
+                coordinator = FakeICloudFileCoordinator(),
+                discovery = FakeICloudFileDiscovery(ICloudFileDiscoveryResult.Available(materializedUrl)),
+            )
+
+            val result = assertIs<ICloudDownloadResult.Success>(dataSource.performDownload(databaseName))
+            assertContentEquals(bytes, readBytes(result.destinationUrl))
+        }
+    }
+
     private suspend fun withFixture(block: suspend (String, NSURL, NSURL) -> Unit) {
         val root = "${NSTemporaryDirectory().trimEnd('/')}/feedflow-icloud-${NSUUID.UUID().UUIDString}"
         val cloudRoot = NSURL.fileURLWithPath("$root/cloud")
@@ -181,11 +257,13 @@ class ICloudDataSourceImplTest {
         cloudRoot: NSURL,
         temporaryRoot: NSURL,
         coordinator: ICloudFileCoordinator,
+        discovery: ICloudFileDiscovery = LocalICloudFileDiscovery(),
     ): ICloudDataSourceImpl = ICloudDataSourceImpl(
         logger = Logger(StaticConfig(logWriterList = emptyList())),
         localBaseFolderURL = cloudRoot,
         localTemporaryFolderURL = temporaryRoot,
         fileCoordinator = coordinator,
+        fileDiscovery = discovery,
     )
 
     private fun writeBytes(url: NSURL, bytes: ByteArray) {
@@ -207,6 +285,15 @@ class ICloudDataSourceImplTest {
             error = null,
         )
     }
+}
+
+private class FakeICloudFileDiscovery(
+    private val result: ICloudFileDiscoveryResult,
+) : ICloudFileDiscovery {
+    override suspend fun discoverAndMaterialize(
+        targetUrl: NSURL,
+        timeoutMillis: Long,
+    ): ICloudFileDiscoveryResult = result
 }
 
 private class FakeICloudFileCoordinator(

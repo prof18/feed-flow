@@ -1,5 +1,8 @@
 package com.prof18.ikloud
 
+import com.prof18.feedflow.feedsync.icloud.apple.FoundationICloudFileDiscovery
+import com.prof18.feedflow.feedsync.icloud.apple.ICloudFileDiscovery
+import com.prof18.feedflow.feedsync.icloud.apple.ICloudFileDiscoveryResult
 import com.prof18.jni.JNIEnvVar
 import com.prof18.jni.JNI_TRUE
 import com.prof18.jni.jboolean
@@ -14,6 +17,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
+import kotlinx.coroutines.runBlocking
 import platform.Foundation.NSCocoaErrorDomain
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
@@ -71,6 +75,9 @@ private fun replaceCloudFile(databaseUrl: NSURL, iCloudUrl: NSURL): Int = memSco
     val stagedUrl = iCloudUrl.URLByDeletingLastPathComponent
         ?.URLByAppendingPathComponent(".feedflow-${NSUUID.UUID().UUIDString}.upload") ?: return 2
     try {
+        val parentUrl = iCloudUrl.URLByDeletingLastPathComponent ?: return 2
+        if (!fileManager.createDirectoryAtURL(parentUrl, true, null, errorPtr.ptr)) return 2
+        errorPtr.value = null
         if (!fileManager.copyItemAtURL(databaseUrl, stagedUrl, errorPtr.ptr)) return 2
         val replaced = if (fileManager.fileExistsAtPath(requireNotNull(iCloudUrl.path))) {
             fileManager.replaceItemAtURL(iCloudUrl, stagedUrl, null, 0u, null, errorPtr.ptr)
@@ -87,9 +94,15 @@ internal fun downloadToFile(
     iCloudUrl: NSURL,
     destinationUrl: NSURL,
     fileCoordinator: ICloudFileCoordinator = FoundationICloudFileCoordinator(),
+    fileDiscovery: ICloudFileDiscovery = FoundationICloudFileDiscovery(),
 ): Int {
+    val discoveredUrl = when (val result = runBlocking { fileDiscovery.discoverAndMaterialize(iCloudUrl) }) {
+        is ICloudFileDiscoveryResult.Available -> result.url
+        ICloudFileDiscoveryResult.ConfirmedMissing -> return DOWNLOAD_REMOTE_FILE_NOT_FOUND
+        is ICloudFileDiscoveryResult.Failure -> return DOWNLOAD_ERROR
+    }
     var result = 3
-    val error = fileCoordinator.read(iCloudUrl) { coordinatedUrl ->
+    val error = fileCoordinator.read(discoveredUrl) { coordinatedUrl ->
         result = copyCloudFile(coordinatedUrl, destinationUrl)
     }
     return if (error == null) result else downloadErrorCode(error)
@@ -150,3 +163,5 @@ private const val SYNC_DATABASE_NAME_PROD = "FeedFlowFeedSyncDB"
 private const val SYNC_DATABASE_NAME_DEBUG = "FeedFlowFeedSyncDB-debug"
 
 private const val DOWNLOAD_FILE_NOT_FOUND = 5
+private const val DOWNLOAD_REMOTE_FILE_NOT_FOUND = 6
+private const val DOWNLOAD_ERROR = 3

@@ -44,6 +44,7 @@ class IosCloudSyncSuccessTest : KoinTestBase() {
     @Test
     fun `iCloud successful workflows use real iOS worker and database files`() = runTest(testDispatcher) {
         CloudSuccessScenario.entries.forEach { runCloudSuccessScenario(CloudProvider.ICLOUD, it) }
+        runICloudStagedReadRegression()
         runQueuedCloudSuccess(CloudProvider.ICLOUD)
         runCloudFlagRegressions(CloudProvider.ICLOUD)
         runStaleCloudRefreshRegression(CloudProvider.ICLOUD)

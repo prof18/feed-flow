@@ -1,5 +1,6 @@
 package com.prof18.ikloud
 
+import com.prof18.feedflow.feedsync.icloud.apple.LocalICloudFileDiscovery
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import platform.Foundation.NSCocoaErrorDomain
@@ -45,7 +46,7 @@ class ICloudCoordinationTest {
 
             val coordinator = FakeCoordinator(readError = testError())
 
-            assertEquals(3, downloadToFile(cloudUrl, destinationUrl, coordinator))
+            assertEquals(3, downloadToFile(cloudUrl, destinationUrl, coordinator, LocalICloudFileDiscovery()))
             assertContentEquals(previous, readBytes(destinationUrl))
             assertFalse(coordinator.accessorCalled)
         }
@@ -72,7 +73,7 @@ class ICloudCoordinationTest {
 
             val coordinator = FakeCoordinator(invokeAccessor = false)
 
-            assertEquals(3, downloadToFile(cloudUrl, destinationUrl, coordinator))
+            assertEquals(3, downloadToFile(cloudUrl, destinationUrl, coordinator, LocalICloudFileDiscovery()))
             assertContentEquals("existing destination".encodeToByteArray(), readBytes(destinationUrl))
         }
     }
@@ -104,7 +105,7 @@ class ICloudCoordinationTest {
 
             val coordinator = FakeCoordinator(readAccessorUrl = redirectedUrl)
 
-            assertEquals(0, downloadToFile(cloudUrl, destinationUrl, coordinator))
+            assertEquals(0, downloadToFile(cloudUrl, destinationUrl, coordinator, LocalICloudFileDiscovery()))
             assertContentEquals("redirected cloud snapshot".encodeToByteArray(), readBytes(destinationUrl))
             assertContentEquals(nominalBytes, readBytes(cloudUrl))
         }
@@ -120,7 +121,7 @@ class ICloudCoordinationTest {
                 ),
             )
 
-            assertEquals(5, downloadToFile(cloudUrl, destinationUrl, coordinator))
+            assertEquals(5, downloadToFile(cloudUrl, destinationUrl, coordinator, LocalICloudFileDiscovery()))
         }
     }
 

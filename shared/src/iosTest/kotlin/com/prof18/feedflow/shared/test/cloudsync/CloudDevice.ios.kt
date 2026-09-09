@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.test.cloudsync
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import co.touchlab.sqliter.JournalMode
+import com.prof18.feedflow.core.model.CloudBackupNotFoundException
 import com.prof18.feedflow.core.model.DropboxClientStatus
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
@@ -307,9 +308,18 @@ private class CloudICloudDataSource(
     }
 
     override suspend fun performDownload(databaseName: String): ICloudDownloadResult {
+        store.iCloudDiscoveryFailure?.let { return ICloudDownloadResult.Error.ICloudUrlNotAvailable }
         store.downloadFailure?.let { return ICloudDownloadResult.Error.DownloadFailed(it.toString()) }
-        val bytes = runCatching { store.download(CloudProvider.ICLOUD, CLOUD_ACCOUNT, databaseName) }
-            .getOrElse { return ICloudDownloadResult.Error.FileNotFound }
+        val bytes = runCatching {
+            store.download(CloudProvider.ICLOUD, CLOUD_ACCOUNT, databaseName, deviceId)
+        }
+            .getOrElse { error ->
+                return if (error is CloudBackupNotFoundException) {
+                    ICloudDownloadResult.Error.RemoteFileNotFound
+                } else {
+                    ICloudDownloadResult.Error.DownloadFailed(error.toString())
+                }
+            }
         val destination = requireNotNull(
             NSURL.fileURLWithPath(root).URLByAppendingPathComponent(databaseName),
         )
@@ -317,8 +327,8 @@ private class CloudICloudDataSource(
         return ICloudDownloadResult.Success(destination)
     }
 
-    override suspend fun getICloudBaseFolderURL(timeoutSeconds: Int, initialPollIntervalMs: Long): NSURL =
-        NSURL.fileURLWithPath(root)
+    override suspend fun getICloudBaseFolderURL(timeoutSeconds: Int, initialPollIntervalMs: Long): NSURL? =
+        if (store.iCloudDiscoveryFailure == null) NSURL.fileURLWithPath(root) else null
 }
 
 private fun createDirectory(path: String) {

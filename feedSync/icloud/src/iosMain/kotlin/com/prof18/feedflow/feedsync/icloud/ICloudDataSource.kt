@@ -1,6 +1,9 @@
 package com.prof18.feedflow.feedsync.icloud
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.feedsync.icloud.apple.FoundationICloudFileDiscovery
+import com.prof18.feedflow.feedsync.icloud.apple.ICloudFileDiscovery
+import com.prof18.feedflow.feedsync.icloud.apple.ICloudFileDiscoveryResult
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
@@ -31,6 +34,7 @@ class ICloudDataSourceImpl(
     private val localBaseFolderURL: NSURL? = null,
     private val localTemporaryFolderURL: NSURL? = null,
     private val fileCoordinator: ICloudFileCoordinator = FoundationICloudFileCoordinator(),
+    private val fileDiscovery: ICloudFileDiscovery = FoundationICloudFileDiscovery(),
 ) : ICloudDataSource {
     override suspend fun performUpload(databasePath: NSURL, databaseName: String): ICloudUploadResult {
         val iCloudUrl = getICloudFolderURL(databaseName)
@@ -56,12 +60,18 @@ class ICloudDataSourceImpl(
         val iCloudUrl = getICloudFolderURL(databaseName)
             ?: return ICloudDownloadResult.Error.ICloudUrlNotAvailable
 
+        val discoveredUrl = when (val result = fileDiscovery.discoverAndMaterialize(iCloudUrl)) {
+            is ICloudFileDiscoveryResult.Available -> result.url
+            ICloudFileDiscoveryResult.ConfirmedMissing -> return ICloudDownloadResult.Error.RemoteFileNotFound
+            is ICloudFileDiscoveryResult.Failure -> return ICloudDownloadResult.Error.DownloadFailed(result.message)
+        }
+
         val tempUrl = getTemporaryFileUrl(databaseName)
             ?: return ICloudDownloadResult.Error.TemporaryUrlNotAvailable
 
         var accessorInvoked = false
         var downloadError: ICloudDownloadResult.Error? = null
-        val coordinationError = fileCoordinator.read(iCloudUrl) { coordinatedUrl ->
+        val coordinationError = fileCoordinator.read(discoveredUrl) { coordinatedUrl ->
             accessorInvoked = true
             downloadError = download(coordinatedUrl, tempUrl)
         }
@@ -87,6 +97,12 @@ class ICloudDataSourceImpl(
                 val errorPtr: ObjCObjectVar<NSError?> = alloc()
                 errorPtr.value = null
                 val fileManager = NSFileManager.defaultManager
+                val parentUrl = coordinatedUrl.URLByDeletingLastPathComponent
+                    ?: return@memScoped ICloudUploadResult.Error.ICloudUrlNotAvailable
+                if (!fileManager.createDirectoryAtURL(parentUrl, true, null, errorPtr.ptr)) {
+                    return@memScoped ICloudUploadResult.Error.UploadFailed(errorPtr.value.toString())
+                }
+                errorPtr.value = null
                 if (!fileManager.copyItemAtURL(databasePath, stagedUrl, errorPtr.ptr)) {
                     return@memScoped ICloudUploadResult.Error.UploadFailed(errorPtr.value.toString())
                 }
@@ -185,6 +201,11 @@ sealed class ICloudDownloadResult {
     sealed class Error : ICloudDownloadResult() {
         data object ICloudUrlNotAvailable : Error()
         data object TemporaryUrlNotAvailable : Error()
+
+        /** Metadata discovery completed without the requested remote backup. */
+        data object RemoteFileNotFound : Error()
+
+        /** A previously discovered local file disappeared during coordinated copying. */
         data object FileNotFound : Error()
         data object CopyOperationFailed : Error()
         data object FileAlreadyExists : Error()

@@ -16,7 +16,8 @@ replace the database or worker with a map of article flags.
 The fake store separates providers and accounts, copies bytes at its boundaries,
 and gives Drive files stable identities. Dropbox reads return bytes and their
 revision together; writes enforce create-only or exact-revision conditions.
-iCloud saves remain staged until explicit propagation. This does not claim to
+iCloud saves are readable by the saving device immediately and remain hidden from
+peers until explicit propagation. This does not claim to
 implement the providers' complete consistency, authorization or conflict behavior.
 
 | Source set / target | What it runs |
@@ -47,6 +48,16 @@ The XCTest case tests creation, replacement, download and failed-upload preserva
 using local directories. It is included in `allTests` without live iCloud access.
 This is local file coordination, not distributed conflict resolution or protection
 against another app process replacing FeedFlow's open main/sync databases.
+
+The shared Apple discovery helper is compiled into the iOS adapter and macOS
+native library. Tests cover exact metadata identity, malformed results, an existing
+but not yet indexed local backup, discovery/materialization timeouts, stale-to-current
+download status, rejected download requests and creating the first Documents folder.
+Native status reads clear the NSURL resource cache before checking readiness.
+The worker suites additionally verify that two local saves before propagation
+preserve both edits. Upgrade scenarios exercise ordinary cloud-first sync with
+old untracked changes and precisely tracked new edits. Discovery tests fake Apple's metadata/download boundary;
+they do not contact the user's iCloud account.
 
 ## Cloud sync notifications
 
@@ -86,9 +97,10 @@ retaining local intent across downloads; Dropbox competing writes are covered be
 `CloudTransferRegressions` checks confirmed-missing bootstrap, failed upload
 retaining pending work and remote bytes, failed first download performing no
 upload, stopped reconciliation, and a successful retry. iCloud local file absence
-is an unavailable download, not proof of remote absence: automatic first-upload
-requires future metadata discovery; the existing explicit backup action remains
-available. Apple's [iCloud document guide](https://developer.apple.com/documentation/uikit/synchronizing-documents-in-the-icloud-environment)
+is an unavailable download, not proof of remote absence. Completed metadata
+discovery that finds no backup has a separate result and permits initial creation;
+failed discovery or materialization retains pending work without uploading.
+Apple's [iCloud document guide](https://developer.apple.com/documentation/uikit/synchronizing-documents-in-the-icloud-environment)
 explains why local filesystem lookup cannot discover unmaterialized documents.
 
 SDK transport tests cover Drive discovery errors, duplicate identities, stale IDs
@@ -145,8 +157,10 @@ delete-versus-rename behavior, empty collections, and category-name collisions.
 An edit cannot recreate a remotely deleted entity; an explicit create can restore
 it. Colliding category titles stop reconciliation and retain pending work.
 
-Fresh-base upload currently applies to Dropbox and Drive. iCloud still needs an
-authoritative discovery/bootstrap design before applying the same orchestration.
+Fresh-base upload applies to Dropbox, Drive and iCloud. On iCloud, discover and
+materialize the available current file before replay, including when a local file
+already exists. A completed metadata query describes the view exposed by iCloud;
+it does not establish an atomic server-wide read/write guarantee.
 Dropbox additionally passes the downloaded revision into a strict conditional
 update, or uses create-only upload after confirmed absence. A conflict triggers
 fresh download and pending replay, bounded to three upload attempts. Lost responses
@@ -160,8 +174,10 @@ Sync downloads current cloud data, including on retries. The cloud version wins
 over ambiguous old local changes, while precisely recorded new article and
 feed/category edits are replayed. Revision/conflict checks protect uploads. There is
 no separate legacy-recovery layer; older clients can still make unconditional writes.
-Drive conditional-write
-guarantees and iCloud discovery/conflicts remain separate work. The tests do not
+Drive conditional-write guarantees and distributed iCloud conflict merging are
+deferred under the approved best-effort scope. Keep the compatible snapshot format
+and recommend updating every syncing device in release notes; no forced migration
+or version handshake is part of this iteration. The tests do not
 prove the absence of all unseen corner cases.
 
 ## Local and CI execution

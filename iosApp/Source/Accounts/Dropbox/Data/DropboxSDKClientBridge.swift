@@ -5,19 +5,40 @@ import SwiftyDropbox
 struct DropboxSDKClientBridge: DropboxClientBridge {
     let client: DropboxClient
 
-    func upload(path: String, input: URL, completion: @escaping (DropboxFileMetadata?, Error?) -> Void) {
-        client.files.upload(path: path, mode: .overwrite, input: input).response { response, error in
-            if let response {
-                completion(metadata(response), nil)
-            } else {
-                if let error, case let .routeError(boxed, _, _, _) = error {
-                    Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
-                        messageString: "Boxed error: \(boxed.unboxed.description)"
-                    )
+    func upload(
+        path: String,
+        expectedRevision: String?,
+        input: URL,
+        completion: @escaping (DropboxFileMetadata?, Error?) -> Void
+    ) {
+        let mode = expectedRevision.map(Files.WriteMode.update) ?? .add
+        client.files
+            .upload(
+                path: path,
+                mode: mode,
+                autorename: false,
+                strictConflict: true,
+                input: input
+            )
+            .response { response, error in
+                if let response {
+                    completion(metadata(response), nil)
+                } else {
+                    if let error,
+                       case let .routeError(boxed, _, _, _) = error,
+                       case let .path(writeFailed) = boxed.unboxed,
+                       case .conflict = writeFailed.reason {
+                        completion(nil, DropboxErrors.uploadConflict)
+                        return
+                    }
+                    if let error, case let .routeError(boxed, _, _, _) = error {
+                        Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
+                            messageString: "Boxed error: \(boxed.unboxed.description)"
+                        )
+                    }
+                    completion(nil, error)
                 }
-                completion(nil, error)
             }
-        }
     }
 
     func download(
@@ -51,7 +72,8 @@ struct DropboxSDKClientBridge: DropboxClientBridge {
             id: file.id,
             size: file.size,
             serverModified: file.serverModified,
-            contentHash: file.contentHash
+            contentHash: file.contentHash,
+            revision: file.rev
         )
     }
 }

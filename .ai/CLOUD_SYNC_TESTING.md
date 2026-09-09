@@ -14,8 +14,9 @@ Provider doubles read and write the actual SQLite snapshot bytes; they do not
 replace the database or worker with a map of article flags.
 
 The fake store separates providers and accounts, copies bytes at its boundaries,
-and gives Drive files stable identities. iCloud saves remain staged until explicit
-propagation. This models successful file transfer only: it does not claim to
+and gives Drive files stable identities. Dropbox reads return bytes and their
+revision together; writes enforce create-only or exact-revision conditions.
+iCloud saves remain staged until explicit propagation. This does not claim to
 implement the providers' complete consistency, authorization or conflict behavior.
 
 | Source set / target | What it runs |
@@ -68,7 +69,7 @@ states, including explicit false/false values, sender refresh after upload, peer
 refresh and clearing a bulk-read result. Its stale-device refresh test verifies
 that refresh never uploads an old snapshot over a peer's newer bookmark and
 subscription. Pending article and collection regressions below additionally cover
-retaining local intent across downloads; competing remote writes remain separate work.
+retaining local intent across downloads; Dropbox competing writes are covered below.
 
 `CloudTransferRegressions` checks confirmed-missing bootstrap, failed upload
 retaining pending work and remote bytes, failed first download performing no
@@ -134,9 +135,22 @@ it. Colliding category titles stop reconciliation and retain pending work.
 
 Fresh-base upload currently applies to Dropbox and Drive. iCloud still needs an
 authoritative discovery/bootstrap design before applying the same orchestration.
-A successful fresh download does not protect the later upload from a racing writer:
-remote conditional writes, ambiguous acknowledgments, and iCloud conflicts remain
-separate work. These tests do not prove the absence of all unseen corner cases.
+Dropbox additionally passes the downloaded revision into a strict conditional
+update, or uses create-only upload after confirmed absence. A conflict triggers
+fresh download and pending replay, bounded to three upload attempts. Lost responses
+and exhausted retries retain pending intent. Portable regressions cover competing
+edits, two first creators, a lost acknowledgment and retry exhaustion on JVM,
+Android/Robolectric and iOS. SDK boundary tests check write modes, strict conflict
+flags, metadata revisions and structured conflict classification; store tests also
+reject an update when the file was deleted after it was read.
+
+Sync downloads current cloud data, including on retries. The cloud version wins
+over ambiguous old local changes, while precisely recorded new article and
+feed/category edits are replayed. Revision/conflict checks protect uploads. There is
+no separate legacy-recovery layer; older clients can still make unconditional writes.
+Drive conditional-write
+guarantees and iCloud discovery/conflicts remain separate work. The tests do not
+prove the absence of all unseen corner cases.
 
 ## Local and CI execution
 

@@ -42,7 +42,11 @@ final class DropboxDataSourceIosSuccessTests: XCTestCase {
         var uploadResult: DropboxUploadResult?
         var uploadError: Error?
         dataSource.performUpload(
-            uploadParam: DropboxUploadParam(path: "/FeedFlow.sqlite", url: sourceURL)
+            uploadParam: DropboxUploadParam(
+                path: "/FeedFlow.sqlite",
+                url: sourceURL,
+                expectedRevision: "expected-revision"
+            )
         ) { result, error in
             uploadResult = result
             uploadError = error
@@ -51,7 +55,8 @@ final class DropboxDataSourceIosSuccessTests: XCTestCase {
         wait(for: [uploadExpectation], timeout: 1)
 
         XCTAssertNil(uploadError)
-        XCTAssertNotNil(uploadResult)
+        assertSuccessfulUploadResult(uploadResult, byteCount: expectedBytes.count)
+        XCTAssertEqual(client.uploadedExpectedRevision, "expected-revision")
         XCTAssertEqual(client.remoteFiles["/FeedFlow.sqlite"], expectedBytes)
 
         let downloadExpectation = expectation(description: "Dropbox download completes")
@@ -67,11 +72,39 @@ final class DropboxDataSourceIosSuccessTests: XCTestCase {
         wait(for: [downloadExpectation], timeout: 1)
 
         XCTAssertNil(downloadError)
-        XCTAssertNotNil(downloadResult)
+        XCTAssertEqual(downloadResult?.id, "dropbox-file-id")
+        XCTAssertEqual(downloadResult?.sizeInByte, Int64(expectedBytes.count))
+        XCTAssertEqual(downloadResult?.contentHash, "downloaded-hash")
+        XCTAssertEqual(downloadResult?.revision, "downloaded-revision")
         XCTAssertEqual(
             try Data(contentsOf: fixtureRoot.appendingPathComponent("restored.sqlite")),
             expectedBytes
         )
+    }
+
+    func testUploadConflictReturnsFlaggedResult() throws {
+        let fixtureRoot = try makeFixtureRoot()
+        defer { try? FileManager.default.removeItem(at: fixtureRoot) }
+        let sourceURL = fixtureRoot.appendingPathComponent("source.sqlite")
+        try Data("conflicting-data".utf8).write(to: sourceURL)
+        let client = ConflictingDropboxClient()
+        let dataSource = DropboxDataSourceIos(
+            client: client,
+            documentsDirectoryURL: { fixtureRoot },
+            logError: { _ in }
+        )
+        let uploadExpectation = expectation(description: "Dropbox conflict completes")
+
+        dataSource.performUpload(
+            uploadParam: DropboxUploadParam(path: "/FeedFlow.sqlite", url: sourceURL, expectedRevision: nil)
+        ) { result, error in
+            XCTAssertNil(error)
+            XCTAssertEqual(result?.isConflict, true)
+            XCTAssertNil(result?.revision)
+            XCTAssertNil(client.uploadedExpectedRevision)
+            uploadExpectation.fulfill()
+        }
+        wait(for: [uploadExpectation], timeout: 1)
     }
 
     func testConfirmedMissingDownloadReturnsExplicitNotFoundResult() throws {
@@ -105,11 +138,21 @@ final class DropboxDataSourceIosSuccessTests: XCTestCase {
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         return root
     }
+
+    private func assertSuccessfulUploadResult(_ result: DropboxUploadResult?, byteCount: Int) {
+        XCTAssertEqual(result?.id, "dropbox-file-id")
+        XCTAssertEqual(result?.editDateMillis, 1_700_000_000_000)
+        XCTAssertEqual(result?.sizeInByte, Int64(byteCount))
+        XCTAssertEqual(result?.contentHash, "uploaded-hash")
+        XCTAssertEqual(result?.revision, "uploaded-revision")
+        XCTAssertEqual(result?.isConflict, false)
+    }
 }
 
 private final class MissingDropboxClient: DropboxClientBridge {
     func upload(
         path _: String,
+        expectedRevision _: String?,
         input _: URL,
         completion: @escaping (DropboxFileMetadata?, Error?) -> Void
     ) {
@@ -128,13 +171,16 @@ private final class MissingDropboxClient: DropboxClientBridge {
 
 private final class FakeDropboxClient: DropboxClientBridge {
     var remoteFiles: [String: Data] = [:]
+    private(set) var uploadedExpectedRevision: String?
 
     func upload(
         path: String,
+        expectedRevision: String?,
         input: URL,
         completion: @escaping (DropboxFileMetadata?, Error?) -> Void
     ) {
         do {
+            uploadedExpectedRevision = expectedRevision
             let data = try Data(contentsOf: input)
             remoteFiles[path] = data
             completion(
@@ -142,7 +188,8 @@ private final class FakeDropboxClient: DropboxClientBridge {
                     id: "dropbox-file-id",
                     size: UInt64(data.count),
                     serverModified: Date(timeIntervalSince1970: 1_700_000_000),
-                    contentHash: nil
+                    contentHash: "uploaded-hash",
+                    revision: "uploaded-revision"
                 ),
                 nil
             )
@@ -173,7 +220,8 @@ private final class FakeDropboxClient: DropboxClientBridge {
                         id: "dropbox-file-id",
                         size: UInt64(data.count),
                         serverModified: Date(timeIntervalSince1970: 1_700_000_000),
-                        contentHash: nil
+                        contentHash: "downloaded-hash",
+                        revision: "downloaded-revision"
                     ),
                     destination: destination
                 ),
@@ -182,5 +230,28 @@ private final class FakeDropboxClient: DropboxClientBridge {
         } catch {
             completion(nil, error)
         }
+    }
+}
+
+private final class ConflictingDropboxClient: DropboxClientBridge {
+    private(set) var uploadedExpectedRevision: String?
+
+    func upload(
+        path _: String,
+        expectedRevision: String?,
+        input _: URL,
+        completion: @escaping (DropboxFileMetadata?, Error?) -> Void
+    ) {
+        uploadedExpectedRevision = expectedRevision
+        completion(nil, DropboxErrors.uploadConflict)
+    }
+
+    func download(
+        path _: String,
+        overwrite _: Bool,
+        destination _: URL,
+        completion: @escaping (DropboxDownloadResponse?, Error?) -> Void
+    ) {
+        completion(nil, NSError(domain: "ConflictingDropboxClient", code: 1))
     }
 }

@@ -115,7 +115,8 @@ class DropboxDataSourceIos: DropboxDataSource {
                         sizeInByte: Int64(response.metadata.size),
                         contentHash: response.metadata.contentHash,
                         destinationUrl: DatabaseDestinationUrl(url: response.destination),
-                        isBackupNotFound: false
+                        isBackupNotFound: false,
+                        revision: response.metadata.revision
                     )
                     completionHandler(downloadResult, nil)
                 } else if let error = error {
@@ -123,8 +124,12 @@ class DropboxDataSourceIos: DropboxDataSource {
                     if case DropboxErrors.downloadNotFound = error {
                         completionHandler(
                             DropboxDownloadResult(
-                                id: "", sizeInByte: 0, contentHash: nil,
-                                destinationUrl: nil, isBackupNotFound: true
+                                id: "",
+                                sizeInByte: 0,
+                                contentHash: nil,
+                                destinationUrl: nil,
+                                isBackupNotFound: true,
+                                revision: nil
                             ),
                             nil
                         )
@@ -144,7 +149,11 @@ class DropboxDataSourceIos: DropboxDataSource {
     ) {
         let transport = injectedClient ?? getClient().map { DropboxSDKClientBridge(client: $0) }
         if let transport {
-            transport.upload(path: uploadParam.path, input: uploadParam.url) { response, error in
+            transport.upload(
+                path: uploadParam.path,
+                expectedRevision: uploadParam.expectedRevision,
+                input: uploadParam.url
+            ) { response, error in
                 if let response = response {
                     print("Data successfully uploaded to Dropbox")
 
@@ -152,12 +161,28 @@ class DropboxDataSourceIos: DropboxDataSource {
                         id: response.id,
                         editDateMillis: Int64(response.serverModified.timeIntervalSince1970 * 1_000),
                         sizeInByte: Int64(response.size),
-                        contentHash: response.contentHash
+                        contentHash: response.contentHash,
+                        revision: response.revision,
+                        isConflict: false
                     )
                     completionHandler(uploadResult, nil)
                 } else if let error = error {
                     self.logError(String(describing: error))
-                    completionHandler(nil, DropboxErrors.uploadError(reason: String(describing: error)))
+                    if case DropboxErrors.uploadConflict = error {
+                        completionHandler(
+                            DropboxUploadResult(
+                                id: "",
+                                editDateMillis: 0,
+                                sizeInByte: 0,
+                                contentHash: nil,
+                                revision: nil,
+                                isConflict: true
+                            ),
+                            nil
+                        )
+                    } else {
+                        completionHandler(nil, DropboxErrors.uploadError(reason: String(describing: error)))
+                    }
                 }
             }
         } else {

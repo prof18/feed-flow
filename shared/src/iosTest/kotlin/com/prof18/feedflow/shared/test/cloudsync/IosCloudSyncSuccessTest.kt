@@ -22,6 +22,7 @@ class IosCloudSyncSuccessTest : KoinTestBase() {
         runCloudFeedAndCategoryDeletionRegressions(CloudProvider.DROPBOX)
         runCloudFeedAndCategoryStaleBackupRegressions(CloudProvider.DROPBOX)
         runCloudSnapshotRegression(CloudProvider.DROPBOX)
+        runDropboxConflictRegressions()
     }
 
     @Test

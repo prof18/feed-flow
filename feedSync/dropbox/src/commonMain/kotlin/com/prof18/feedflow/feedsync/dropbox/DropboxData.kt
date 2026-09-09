@@ -5,6 +5,8 @@ data class DropboxUploadResult(
     val editDateMillis: Long,
     val sizeInByte: Long,
     val contentHash: String?,
+    val revision: String? = null,
+    val isConflict: Boolean = false,
 )
 
 data class DropboxDownloadResult(
@@ -13,4 +15,5 @@ data class DropboxDownloadResult(
     val contentHash: String?,
     val destinationUrl: DatabaseDestinationUrl? = null,
     val isBackupNotFound: Boolean = false,
+    val revision: String? = null,
 )

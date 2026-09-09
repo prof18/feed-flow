@@ -113,7 +113,6 @@ class AndroidCloudWorkManagerSuccessTest : KoinTestBase() {
             device.syncDatabase.getAllFeedItems()
             device.database.updateReadStatus(FeedItemId("article-two"), true)
             device.settings.setIsSyncUploadRequired(true)
-            device.refresh()
             val localBeforeBackup = device.flags()
 
             device.application.koin.get<FeedSyncWorker>().upload()

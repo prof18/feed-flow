@@ -2,8 +2,6 @@ package com.prof18.feedflow.shared.domain.feedsync
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedItemId
-import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
@@ -22,10 +20,20 @@ class FeedSyncRepository internal constructor(
     private val settingsRepository: SettingsRepository,
     private val pendingCloudChanges: PendingCloudChangesManager,
 ) {
-    private var canApplyDownloadedItems = true
+    private var canApplyDownloadedItems = false
     val isUploadRequired = pendingCloudChanges.isUploadRequired
 
     internal suspend fun cloudSessionForEdit(): String? = pendingCloudChanges.sessionForEdit()
+
+    internal fun cloudEditGuard(session: String?): (() -> Unit) -> Unit = { edit ->
+        pendingCloudChanges.withAccountSession(session, edit)
+    }
+
+    internal fun localEditCommitted(session: String?) {
+        pendingCloudChanges.withAccountSession(session) {
+            if (session != null) settingsRepository.setIsSyncUploadRequired(true)
+        }
+    }
 
     suspend fun enqueueBackup(forceBackup: Boolean = false) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
@@ -67,121 +75,12 @@ class FeedSyncRepository internal constructor(
         }
     }
 
-    internal suspend fun addSourceAndCategories(sources: List<FeedSource>, categories: List<FeedSourceCategory>) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            withErrorHandling {
-                syncedDatabaseHelper.insertSyncedFeedSource(sources)
-                syncedDatabaseHelper.insertFeedSourceCategories(categories)
-                settingsRepository.setIsSyncUploadRequired(true)
-            }
-        }
-    }
-
-    internal suspend fun insertSyncedFeedSource(sources: List<FeedSource>) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            withErrorHandling {
-                syncedDatabaseHelper.insertSyncedFeedSource(sources)
-                settingsRepository.setIsSyncUploadRequired(true)
-            }
-        }
-    }
-
-    internal suspend fun insertFeedSourceCategories(categories: List<FeedSourceCategory>) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            withErrorHandling {
-                syncedDatabaseHelper.insertFeedSourceCategories(categories)
-                settingsRepository.setIsSyncUploadRequired(true)
-            }
-        }
-    }
-
-    internal suspend fun updateCategory(category: FeedSourceCategory) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            withErrorHandling {
-                syncedDatabaseHelper.updateCategoryName(
-                    categoryId = category.id,
-                    newName = category.title,
-                )
-                settingsRepository.setIsSyncUploadRequired(true)
-            }
-        }
-    }
-
-    internal suspend fun deleteFeedSource(feedSource: FeedSource) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            withErrorHandling {
-                syncedDatabaseHelper.deleteFeedSource(feedSource.id)
-                settingsRepository.setIsSyncUploadRequired(true)
-            }
-        }
-    }
-
-    internal suspend fun deleteFeedSourceCategory(categoryId: String) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            withErrorHandling {
-                syncedDatabaseHelper.deleteFeedSourceCategory(categoryId)
-                settingsRepository.setIsSyncUploadRequired(true)
-            }
-        }
-    }
-
-    internal suspend fun deleteAllFeedSources() {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            withErrorHandling {
-                syncedDatabaseHelper.deleteAllFeedSources()
-                settingsRepository.setIsSyncUploadRequired(true)
-            }
-        }
-    }
-
-    internal suspend fun updateFeedSourceName(feedSourceId: String, newName: String) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            withErrorHandling {
-                syncedDatabaseHelper.updateFeedSourceName(feedSourceId, newName)
-                settingsRepository.setIsSyncUploadRequired(true)
-            }
-        }
-    }
-
-    internal suspend fun updateFeedSource(feedSource: FeedSource) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            withErrorHandling {
-                syncedDatabaseHelper.updateFeedSource(feedSource)
-                settingsRepository.setIsSyncUploadRequired(true)
-            }
-        }
-    }
-
     internal suspend fun deleteFeedItems(feedIds: List<FeedItemId>) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             withErrorHandling {
                 syncedDatabaseHelper.deleteFeedItems(feedIds)
                 settingsRepository.setIsSyncUploadRequired(true)
             }
-        }
-    }
-
-    internal suspend fun updateFeedItemsReadStatus(feedItemIds: List<FeedItemId>, isRead: Boolean) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            withErrorHandling {
-                syncedDatabaseHelper.updateFeedItemsReadStatus(feedItemIds, isRead)
-                settingsRepository.setIsSyncUploadRequired(true)
-            }
-        }
-    }
-
-    internal suspend fun updateFeedItemBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            withErrorHandling {
-                syncedDatabaseHelper.updateFeedItemBookmarkStatus(feedItemId, isBookmarked)
-                settingsRepository.setIsSyncUploadRequired(true)
-            }
-        }
-    }
-
-    internal fun setIsSyncUploadRequired() {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            settingsRepository.setIsSyncUploadRequired(true)
         }
     }
 

@@ -20,6 +20,8 @@ import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -126,129 +128,6 @@ class FeedSyncRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `addSourceAndCategories inserts data and marks upload required`() = runTest(testDispatcher) {
-        enableDropboxSync()
-        val category = FeedSourceCategory(id = "category-id", title = "Tech")
-        val feedSource = createFeedSource(id = "source-id", title = "Feed", category = category)
-
-        feedSyncRepository.addSourceAndCategories(
-            sources = listOf(feedSource),
-            categories = listOf(category),
-        )
-
-        val sources = syncedDatabaseHelper.getAllFeedSources()
-        val categories = syncedDatabaseHelper.getAllFeedSourceCategories()
-        assertEquals(1, sources.size)
-        assertEquals("source-id", sources.first().id)
-        assertEquals("category-id", categories.first().id)
-        assertTrue(settingsRepository.getIsSyncUploadRequired())
-    }
-
-    @Test
-    fun `insertSyncedFeedSource inserts sources and marks upload required`() = runTest(testDispatcher) {
-        enableDropboxSync()
-        val feedSource = createFeedSource(id = "source-id", title = "Feed")
-
-        feedSyncRepository.insertSyncedFeedSource(listOf(feedSource))
-
-        val sources = syncedDatabaseHelper.getAllFeedSources()
-        assertEquals(1, sources.size)
-        assertEquals("source-id", sources.first().id)
-        assertTrue(settingsRepository.getIsSyncUploadRequired())
-    }
-
-    @Test
-    fun `insertFeedSourceCategories inserts categories and marks upload required`() = runTest(testDispatcher) {
-        enableDropboxSync()
-        val category = FeedSourceCategory(id = "category-id", title = "Tech")
-
-        feedSyncRepository.insertFeedSourceCategories(listOf(category))
-
-        val categories = syncedDatabaseHelper.getAllFeedSourceCategories()
-        assertEquals(1, categories.size)
-        assertEquals("category-id", categories.first().id)
-        assertTrue(settingsRepository.getIsSyncUploadRequired())
-    }
-
-    @Test
-    fun `updateCategory updates category and marks upload required`() = runTest(testDispatcher) {
-        enableDropboxSync()
-        val category = FeedSourceCategory(id = "category-id", title = "Tech")
-        syncedDatabaseHelper.insertFeedSourceCategories(listOf(category))
-
-        feedSyncRepository.updateCategory(category.copy(title = "Updated"))
-
-        val updatedCategory = syncedDatabaseHelper.getAllFeedSourceCategories().single()
-        assertEquals("Updated", updatedCategory.title)
-        assertTrue(settingsRepository.getIsSyncUploadRequired())
-    }
-
-    @Test
-    fun `deleteFeedSource removes source and marks upload required`() = runTest(testDispatcher) {
-        enableDropboxSync()
-        val feedSource = createFeedSource(id = "source-id", title = "Feed")
-        syncedDatabaseHelper.insertSyncedFeedSource(listOf(feedSource))
-
-        feedSyncRepository.deleteFeedSource(feedSource)
-
-        assertTrue(syncedDatabaseHelper.getAllFeedSources().isEmpty())
-        assertTrue(settingsRepository.getIsSyncUploadRequired())
-    }
-
-    @Test
-    fun `deleteAllFeedSources removes all sources and marks upload required`() = runTest(testDispatcher) {
-        enableDropboxSync()
-        val feedSources = listOf(
-            createFeedSource(id = "source-1", title = "Feed 1"),
-            createFeedSource(id = "source-2", title = "Feed 2"),
-        )
-        syncedDatabaseHelper.insertSyncedFeedSource(feedSources)
-
-        feedSyncRepository.deleteAllFeedSources()
-
-        assertTrue(syncedDatabaseHelper.getAllFeedSources().isEmpty())
-        assertTrue(settingsRepository.getIsSyncUploadRequired())
-    }
-
-    @Test
-    fun `updateFeedSourceName updates name and marks upload required`() = runTest(testDispatcher) {
-        enableDropboxSync()
-        val feedSource = createFeedSource(id = "source-id", title = "Old Title")
-        syncedDatabaseHelper.insertSyncedFeedSource(listOf(feedSource))
-
-        feedSyncRepository.updateFeedSourceName(feedSource.id, "New Title")
-
-        val updatedSource = syncedDatabaseHelper.getAllFeedSources().single()
-        assertEquals("New Title", updatedSource.title)
-        assertTrue(settingsRepository.getIsSyncUploadRequired())
-    }
-
-    @Test
-    fun `updateFeedSource updates source and marks upload required`() = runTest(testDispatcher) {
-        enableDropboxSync()
-        val feedSource = createFeedSource(id = "source-id", title = "Old Title")
-        syncedDatabaseHelper.insertSyncedFeedSource(listOf(feedSource))
-
-        feedSyncRepository.updateFeedSource(feedSource.copy(title = "New Title"))
-
-        val updatedSource = syncedDatabaseHelper.getAllFeedSources().single()
-        assertEquals("New Title", updatedSource.title)
-        assertTrue(settingsRepository.getIsSyncUploadRequired())
-    }
-
-    @Test
-    fun `deleteFeedSourceCategory removes category and marks upload required`() = runTest(testDispatcher) {
-        enableDropboxSync()
-        val category = FeedSourceCategory(id = "category-id", title = "Tech")
-        syncedDatabaseHelper.insertFeedSourceCategories(listOf(category))
-
-        feedSyncRepository.deleteFeedSourceCategory(category.id)
-
-        assertTrue(syncedDatabaseHelper.getAllFeedSourceCategories().isEmpty())
-        assertTrue(settingsRepository.getIsSyncUploadRequired())
-    }
-
-    @Test
     fun `deleteFeedItems removes items and marks upload required`() = runTest(testDispatcher) {
         enableDropboxSync()
         val item = SyncedFeedItem(id = "item-1", isRead = false, isBookmarked = false)
@@ -261,12 +140,33 @@ class FeedSyncRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `setIsSyncUploadRequired updates flag when sync is enabled`() {
+    fun `local edit committed marks upload required for the captured session`() = runTest(testDispatcher) {
         enableDropboxSync()
+        val session = feedSyncRepository.cloudSessionForEdit()
 
-        feedSyncRepository.setIsSyncUploadRequired()
+        feedSyncRepository.localEditCommitted(session)
 
         assertTrue(settingsRepository.getIsSyncUploadRequired())
+    }
+
+    @Test
+    fun `stale local edit committed cannot dirty a rotated cloud session`() = runTest(testDispatcher) {
+        enableDropboxSync()
+        val session = feedSyncRepository.cloudSessionForEdit()
+        settingsRepository.rotateCloudSyncSession()
+
+        assertFailsWith<IllegalStateException> { feedSyncRepository.localEditCommitted(session) }
+
+        assertFalse(settingsRepository.getIsSyncUploadRequired())
+    }
+
+    @Test
+    fun `null local edit committed cannot dirty an enabled cloud session`() = runTest(testDispatcher) {
+        enableDropboxSync()
+
+        assertFailsWith<IllegalStateException> { feedSyncRepository.localEditCommitted(null) }
+
+        assertFalse(settingsRepository.getIsSyncUploadRequired())
     }
 
     @Test
@@ -327,6 +227,7 @@ class FeedSyncRepositoryTest : KoinTestBase() {
         enableDropboxSync()
         val itemError = SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
         fakeFeedSyncWorker.syncFeedItemsResult = itemError
+        feedSyncRepository.syncFeedSources()
 
         feedSyncMessageQueue.messageQueue.test {
             feedSyncRepository.syncFeedItems()

@@ -18,7 +18,6 @@ import com.prof18.feedflow.core.model.isSuccess
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
-import com.prof18.feedflow.feedsync.database.domain.toFeedSource
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -98,21 +97,30 @@ internal class FeedSourcesRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
+                val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
+                val withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId)
                 try {
-                    databaseHelper.deleteFeedSource(feedSource.id)
+                    databaseHelper.deleteFeedSource(feedSource.id, cloudSessionId, withCurrentSession)
                 } catch (e: Exception) {
                     logger.e(e) { "Error while deleting feed source" }
                     feedStateRepository.emitErrorState(DeleteFeedSourceError())
+                    return
                 }
-                feedSyncRepository.deleteFeedSource(feedSource)
+                feedSyncRepository.localEditCommitted(cloudSessionId)
                 feedSyncRepository.performBackup()
             }
         }
     }
 
     suspend fun deleteAllFeeds() {
-        databaseHelper.deleteAll()
-        feedSyncRepository.deleteAllFeedSources()
+        val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
+        val withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId)
+        if (cloudSessionId != null) {
+            databaseHelper.deleteAllCloudSubscriptions(cloudSessionId, withCurrentSession)
+        } else {
+            databaseHelper.deleteAll()
+        }
+        feedSyncRepository.localEditCommitted(cloudSessionId)
     }
 
     fun observeFeedSourcesByCategoryWithUnreadCount(): Flow<Map<FeedSourceCategory?, List<FeedSourceWithUnreadCount>>> =
@@ -167,8 +175,14 @@ internal class FeedSourcesRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.updateFeedSourceName(feedSourceId, newName)
-                feedSyncRepository.updateFeedSourceName(feedSourceId, newName)
+                val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
+                databaseHelper.updateFeedSourceName(
+                    feedSourceId = feedSourceId,
+                    newName = newName,
+                    cloudSessionId = cloudSessionId,
+                    withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
+                )
+                feedSyncRepository.localEditCommitted(cloudSessionId)
                 feedSyncRepository.performBackup()
             }
         }
@@ -500,16 +514,19 @@ internal class FeedSourcesRepository(
         if (exactMatch != null) {
             return@withContext FeedAddedState.FeedAlreadyExists(exactMatch.title)
         }
+        val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
         databaseHelper.insertFeedSource(
             listOf(
                 parsedFeedSource.copy(
                     websiteUrl = rssChannel.link,
                 ),
             ),
+            cloudSessionId = cloudSessionId,
+            withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
         )
         databaseHelper.updateNotificationEnabledStatus(feedSource.id, isNotificationEnabled)
         databaseHelper.insertFeedItems(feedItems, currentTimestamp)
-        feedSyncRepository.insertSyncedFeedSource(listOf(parsedFeedSource.toFeedSource()))
+        feedSyncRepository.localEditCommitted(cloudSessionId)
         feedSyncRepository.performBackup()
         feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)
         feedStateRepository.getFeeds()
@@ -517,8 +534,13 @@ internal class FeedSourcesRepository(
     }
 
     private suspend fun updateFeedSource(feedSource: FeedSource) {
-        databaseHelper.updateFeedSource(feedSource)
-        feedSyncRepository.updateFeedSource(feedSource)
+        val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
+        databaseHelper.updateFeedSource(
+            feedSource = feedSource,
+            cloudSessionId = cloudSessionId,
+            withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
+        )
+        feedSyncRepository.localEditCommitted(cloudSessionId)
         feedSyncRepository.performBackup()
     }
 
@@ -608,6 +630,8 @@ internal class FeedSourcesRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
+                val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
+                val withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId)
                 val parsedFeedSource = ParsedFeedSource(
                     id = feedUrl.hashCode().toString(),
                     url = feedUrl,
@@ -617,17 +641,18 @@ internal class FeedSourcesRepository(
                     websiteUrl = null,
                 )
 
-                if (category != null) {
+                if (category != null && cloudSessionId == null) {
                     databaseHelper.insertCategories(listOf(category))
                 }
 
-                databaseHelper.insertFeedSource(listOf(parsedFeedSource))
+                databaseHelper.insertFeedSource(
+                    feedSource = listOf(parsedFeedSource),
+                    cloudSessionId = cloudSessionId,
+                    withCurrentSession = withCurrentSession,
+                )
                 databaseHelper.updateNotificationEnabledStatus(parsedFeedSource.id, isNotificationEnabled)
 
-                feedSyncRepository.addSourceAndCategories(
-                    listOf(parsedFeedSource.toFeedSource()),
-                    category?.let { listOf(it) } ?: emptyList(),
-                )
+                feedSyncRepository.localEditCommitted(cloudSessionId)
                 feedSyncRepository.performBackup()
             }
         }

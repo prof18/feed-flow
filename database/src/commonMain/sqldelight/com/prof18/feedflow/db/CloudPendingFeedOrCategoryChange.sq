@@ -1,0 +1,41 @@
+import com.prof18.feedflow.core.model.CloudFeedOrCategoryEntity;
+import com.prof18.feedflow.core.model.CloudFeedOrCategoryField;
+
+CREATE TABLE cloud_pending_feed_or_category_change (
+    session_id TEXT NOT NULL,
+    entity TEXT AS CloudFeedOrCategoryEntity NOT NULL CHECK (entity IN ('SOURCE', 'CATEGORY')),
+    id TEXT NOT NULL,
+    field TEXT AS CloudFeedOrCategoryField NOT NULL CHECK (field IN ('EXISTS', 'URL', 'TITLE', 'CATEGORY', 'LOGO')),
+    value TEXT,
+    revision INTEGER NOT NULL,
+    PRIMARY KEY (session_id, entity, id, field)
+);
+
+insertOrReplaceCloudPendingFeedOrCategoryChange:
+INSERT OR REPLACE INTO cloud_pending_feed_or_category_change(session_id, entity, id, field, value, revision)
+VALUES (:sessionId, :entity, :id, :field, :value, :revision);
+
+selectCloudPendingFeedAndCategoryChanges:
+SELECT entity, id, field, value, revision FROM cloud_pending_feed_or_category_change
+WHERE session_id = :sessionId
+ORDER BY revision ASC, entity ASC, id ASC, field ASC;
+
+countCloudPendingFeedAndCategoryChanges:
+SELECT count(*) FROM cloud_pending_feed_or_category_change WHERE session_id = :sessionId;
+
+deleteCloudPendingFeedOrCategoryChangeIfRevisionMatches:
+DELETE FROM cloud_pending_feed_or_category_change
+WHERE session_id = :sessionId
+AND entity = :entity
+AND id = :id
+AND field = :field
+AND revision = :revision;
+
+deleteCloudPendingFeedAndCategoryChangesForEntity:
+DELETE FROM cloud_pending_feed_or_category_change
+WHERE session_id = :sessionId
+AND entity = :entity
+AND id = :id;
+
+deleteAllCloudPendingFeedAndCategoryChanges:
+DELETE FROM cloud_pending_feed_or_category_change;

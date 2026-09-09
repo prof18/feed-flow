@@ -15,6 +15,8 @@ internal class FeedSyncer(
     private val logger: Logger,
     private val pendingCloudChanges: PendingCloudChangesManager? = null,
 ) {
+    private var feedAndCategoryChangesApplied = false
+
     suspend fun prepareInitialUpload() {
         syncedDatabaseHelper.replaceSnapshot(
             appDatabaseHelper.getFeedSources(),
@@ -42,6 +44,7 @@ internal class FeedSyncer(
     }
 
     suspend fun syncFeedSource() {
+        if (feedAndCategoryChangesApplied) return
         val lastSyncTimestamp = appDatabaseHelper.getLastChangeTimestamp(DatabaseTables.FEED_SOURCE)
         val remoteSyncTimestamp = syncedDatabaseHelper.getLastChangeTimestamp(SyncTable.SYNCED_FEED_SOURCE)
 
@@ -92,7 +95,12 @@ internal class FeedSyncer(
         logger.d { "Feed Source sync completed" }
     }
 
-    suspend fun syncFeedSourceCategory() {
+    suspend fun syncFeedSourceCategory(session: String? = null) {
+        if (pendingCloudChanges != null) {
+            pendingCloudChanges.mergeFeedAndCategoryChangesIntoAppDatabase(requireNotNull(session))
+            feedAndCategoryChangesApplied = true
+            return
+        }
         val lastSyncTimestamp = appDatabaseHelper.getLastChangeTimestamp(DatabaseTables.FEED_SOURCE_CATEGORY)
         val remoteSyncTimestamp = syncedDatabaseHelper.getLastChangeTimestamp(SyncTable.SYNCED_FEED_SOURCE_CATEGORY)
 
@@ -133,7 +141,8 @@ internal class FeedSyncer(
         logger.d { "Feed Source category sync completed" }
     }
 
-    suspend fun syncFeedItem() {
+    suspend fun syncFeedItem(session: String? = null) {
+        if (pendingCloudChanges != null) pendingCloudChanges.checkAccountSession(requireNotNull(session))
         val lastSyncTimestamp = appDatabaseHelper.getLastChangeTimestamp(DatabaseTables.FEED_ITEM)
         val remoteSyncTimestamp = syncedDatabaseHelper.getLastChangeTimestamp(SyncTable.SYNCED_FEED_ITEM)
 
@@ -152,8 +161,15 @@ internal class FeedSyncer(
         if (syncFeedItems.isNotEmpty() || pendingCloudChanges != null) {
             appDatabaseHelper.updateFeedItemReadAndBookmarked(
                 syncedFeedItems = syncFeedItems,
-                cloudSessionId = pendingCloudChanges?.sessionForEdit(),
+                cloudSessionId = session,
                 replaceAll = pendingCloudChanges != null,
+                withCurrentSession = { block ->
+                    if (pendingCloudChanges != null) {
+                        pendingCloudChanges.withAccountSession(session, block)
+                    } else {
+                        block()
+                    }
+                },
             )
         }
 
@@ -165,4 +181,8 @@ internal class FeedSyncer(
 
     suspend fun <T> withClosedDatabase(block: suspend () -> T): T =
         syncedDatabaseHelper.withClosedDatabase(block)
+
+    fun resetDownloadedSnapshotState() {
+        feedAndCategoryChangesApplied = false
+    }
 }

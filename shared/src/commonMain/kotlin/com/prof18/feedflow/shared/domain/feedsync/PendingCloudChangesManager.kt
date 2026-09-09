@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.domain.feedsync
 
+import com.prof18.feedflow.core.model.CloudPendingFeedOrCategoryChange
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.CloudArticleFlag
 import com.prof18.feedflow.database.CloudPendingArticleFlag
@@ -29,9 +30,10 @@ internal class PendingCloudChangesManager(
         } else {
             combine(
                 database.observeCloudPendingArticleFlags(session),
+                database.observeCloudPendingFeedAndCategoryChanges(session),
                 settings.isSyncUploadRequired,
-            ) { pending, dirty ->
-                pending || dirty
+            ) { articles, feedAndCategoryChanges, dirty ->
+                articles || feedAndCategoryChanges || dirty
             }
         }
     }
@@ -52,36 +54,51 @@ internal class PendingCloudChangesManager(
 
     suspend fun hasPendingChanges(): Boolean {
         val session = sessionForEdit() ?: return false
-        return database.getCloudPendingArticleFlags(session).isNotEmpty()
+        return database.getCloudPendingArticleFlags(session).isNotEmpty() ||
+            database.getCloudPendingFeedAndCategoryChanges(session).isNotEmpty()
     }
 
     suspend fun capturePendingChanges(): CloudUploadBatch {
         val session = requireNotNull(sessionForEdit())
         val articleFlags = database.getCloudPendingArticleFlags(session)
+        val feedAndCategoryChanges = database.getCloudPendingFeedAndCategoryChanges(session)
         return withAccountSession(session) {
-            CloudUploadBatch(session, articleFlags, accounts.getCurrentSyncAccount())
+            CloudUploadBatch(session, articleFlags, accounts.getCurrentSyncAccount(), feedAndCategoryChanges)
         }
     }
 
     suspend fun applyChangesToSyncDatabase(batch: CloudUploadBatch) {
-        checkAccountSession(batch.session)
+        syncDatabase.applyPendingFeedAndCategoryChanges(batch.feedAndCategoryChanges) { block ->
+            withAccountSession(batch.session, block)
+        }
         syncDatabase.applyPendingArticleFlags(
             readFields = batch.articleFlags.filter { it.field == CloudArticleFlag.READ }
                 .associate { it.itemId to it.value },
             bookmarkFields = batch.articleFlags.filter { it.field == CloudArticleFlag.BOOKMARK }
                 .associate { it.itemId to it.value },
+            withCurrentSession = { block -> withAccountSession(batch.session, block) },
         )
     }
 
     suspend fun markChangesAsUploaded(batch: CloudUploadBatch) {
         checkAccountSession(batch.session)
         database.acknowledgeCloudPendingArticleFlags(batch.session, batch.articleFlags)
-        if (database.getCloudPendingArticleFlags(batch.session).isNotEmpty()) settings.setIsSyncUploadRequired(true)
+        database.acknowledgeCloudPendingFeedAndCategoryChanges(batch.session, batch.feedAndCategoryChanges)
+        if (hasPendingChanges()) settings.setIsSyncUploadRequired(true)
     }
 
     fun <T> withAccountSession(session: String?, block: () -> T): T = settings.withCloudSession {
-        if (session != null) checkAccountSession(session)
+        if (session != null) {
+            checkAccountSession(session)
+        } else {
+            check(!accounts.isSyncEnabled()) { "Cloud sync account changed" }
+        }
         block()
+    }
+
+    suspend fun mergeFeedAndCategoryChangesIntoAppDatabase(session: String) {
+        val snapshot = syncDatabase.getFeedAndCategorySnapshot()
+        database.applyCloudFeedAndCategoryChanges(snapshot, session) { block -> withAccountSession(session, block) }
     }
 }
 
@@ -89,4 +106,6 @@ internal data class CloudUploadBatch(
     val session: String,
     val articleFlags: List<CloudPendingArticleFlag>,
     val account: SyncAccounts,
+    val feedAndCategoryChanges: List<CloudPendingFeedOrCategoryChange>,
+    val requiresFreshDownload: Boolean = false,
 )

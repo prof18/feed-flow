@@ -1,0 +1,12 @@
+import com.prof18.feedflow.core.model.CloudFeedOrCategoryEntity;
+import com.prof18.feedflow.core.model.CloudFeedOrCategoryField;
+
+CREATE TABLE cloud_pending_feed_or_category_change (
+    session_id TEXT NOT NULL,
+    entity TEXT AS CloudFeedOrCategoryEntity NOT NULL CHECK (entity IN ('SOURCE', 'CATEGORY')),
+    id TEXT NOT NULL,
+    field TEXT AS CloudFeedOrCategoryField NOT NULL CHECK (field IN ('EXISTS', 'URL', 'TITLE', 'CATEGORY', 'LOGO')),
+    value TEXT,
+    revision INTEGER NOT NULL,
+    PRIMARY KEY (session_id, entity, id, field)
+);

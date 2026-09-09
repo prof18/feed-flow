@@ -51,6 +51,10 @@ LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id
 WHERE feed_source.url_hash = :feedSourceId;
 
+selectCloudFieldsById:
+SELECT url, title, category_id, logo_url, website_url FROM feed_source
+WHERE url_hash = :feedSourceId;
+
 deleteFeedSource:
 DELETE FROM feed_source WHERE url_hash = :urlHash;
 

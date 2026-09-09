@@ -98,8 +98,23 @@ internal class FeedSyncIosWorker(
             try {
                 val uploadSession = requireNotNull(pendingCloudChanges.sessionForEdit())
                 val uploadAccount = accountsRepository.getCurrentSyncAccount()
-                feedSyncer.populateSyncDbIfEmpty()
-                feedSyncer.updateFeedItemsToSyncDatabase()
+                if (uploadAccount != SyncAccounts.ICLOUD) {
+                    val result = downloadLocked(
+                        isFirstSync = false,
+                        expectedSession = uploadSession,
+                    )
+                    pendingCloudChanges.checkAccountSession(uploadSession)
+                    when {
+                        result is SyncResult.BackupNotFound -> feedSyncer.prepareInitialUpload()
+                        result.isError() -> {
+                            feedSyncMessageQueue.emitResult(result)
+                            return@withLock
+                        }
+                    }
+                } else {
+                    feedSyncer.populateSyncDbIfEmpty()
+                    feedSyncer.updateFeedItemsToSyncDatabase()
+                }
                 val pendingBatch = pendingCloudChanges.capturePendingChanges()
                 val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
                 pendingCloudChanges.applyChangesToSyncDatabase(pendingBatch)
@@ -150,6 +165,7 @@ internal class FeedSyncIosWorker(
         try {
             downloadSession = pendingCloudChanges.sessionForEdit()
             if (expectedSession != null) pendingCloudChanges.checkAccountSession(expectedSession)
+            feedSyncer.resetDownloadedSnapshotState()
             accountSpecificDownload(isFirstSync)
         } catch (_: CloudBackupNotFoundException) {
             SyncResult.BackupNotFound(syncDownloadErrorForAccount(accountsRepository.getCurrentSyncAccount()))
@@ -166,7 +182,7 @@ internal class FeedSyncIosWorker(
         mutex.withLock {
             try {
                 logger.w { "Start syncing feed sources" }
-                feedSyncer.syncFeedSourceCategory()
+                feedSyncer.syncFeedSourceCategory(downloadSession)
                 feedSyncer.syncFeedSource()
                 logger.w { "Syncing feed sources finished" }
                 SyncResult.Success
@@ -183,7 +199,7 @@ internal class FeedSyncIosWorker(
         mutex.withLock {
             try {
                 logger.w { "Start syncing feed items" }
-                feedSyncer.syncFeedItem()
+                feedSyncer.syncFeedItem(downloadSession)
                 logger.w { "Syncing feed items finished" }
                 SyncResult.Success
             } catch (e: CancellationException) {

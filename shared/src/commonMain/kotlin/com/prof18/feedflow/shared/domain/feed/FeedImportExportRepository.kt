@@ -7,7 +7,6 @@ import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.onError
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
-import com.prof18.feedflow.feedsync.database.domain.toFeedSource
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.domain.csv.CsvInput
@@ -77,10 +76,20 @@ internal class FeedImportExportRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.insertCategories(categories)
-                databaseHelper.insertFeedSource(feeds)
+                val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
+                val withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId)
+                databaseHelper.insertCategories(
+                    categories = categories,
+                    cloudSessionId = cloudSessionId,
+                    withCurrentSession = withCurrentSession,
+                )
+                databaseHelper.insertFeedSource(
+                    feedSource = feeds,
+                    cloudSessionId = cloudSessionId,
+                    withCurrentSession = withCurrentSession,
+                )
 
-                feedSyncRepository.addSourceAndCategories(feeds.map { it.toFeedSource() }, categories)
+                feedSyncRepository.localEditCommitted(cloudSessionId)
                 feedSyncRepository.performBackup()
 
                 return@withContext NotValidFeedSources(

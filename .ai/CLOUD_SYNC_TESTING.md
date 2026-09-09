@@ -67,8 +67,8 @@ Every supported provider runs the same independent scenarios:
 states, including explicit false/false values, sender refresh after upload, peer
 refresh and clearing a bulk-read result. Its stale-device refresh test verifies
 that refresh never uploads an old snapshot over a peer's newer bookmark and
-subscription. It does not yet prove preservation of the stale device's pending
-edit during download or competing backup writes; those are separate C2/C3 fixes.
+subscription. Pending article and collection regressions below additionally cover
+retaining local intent across downloads; competing remote writes remain separate work.
 
 `CloudTransferRegressions` checks confirmed-missing bootstrap, failed upload
 retaining pending work and remote bytes, failed first download performing no
@@ -94,8 +94,8 @@ finishes, and that a second upload transfers and acknowledges it. A persisted
 generation changes on every dirty mark; only the generation captured before
 snapshot preparation can be cleared. Common settings tests cover repository
 recreation, legacy boolean-only state and interrupted acknowledgment. This is
-local upload acknowledgment, not durable per-field intent across downloads or
-account/session ownership.
+local upload acknowledgment. The pending-intent regressions additionally exercise
+durable per-field intent and account/session guards.
 
 The sync helper serializes complete SQL operations with closing and file work.
 JVM lifetime tests use a real driver with deterministic barriers to prove that
@@ -115,9 +115,28 @@ The desktop iCloud JNI bridge downloads into a caller-owned staging file; rebuil
 both native libraries whenever this interface changes.
 
 Pending article intent, transaction rollback, restart, account changes and sync
-after upgrade have regressions. Ambiguous remote writes, cancellation and
-general empty remote collections need their corresponding later fixes.
-These tests do not prove the absence of all unseen corner cases.
+after upgrade have regressions. `CloudFeedAndCategoryRegressions` exercises offline
+source renames across restart, unrelated remote subscription/bookmark changes, and
+deletion of the final source/category on every supported provider/platform. For
+Dropbox and Drive it also checks direct stale-device backup against a fresh remote
+base, and verifies that a failed fresh download prevents upload.
+
+Collection database tests cover transactional rollback, field coalescing,
+revision-specific acknowledgment, delete/re-add, and upgrades from pre-journal
+state. Session-rotation tests also reject old-account and local-only edits after an
+account change. Local edits update the durable journal; they no longer separately
+copy caller snapshots into the working sync database. Applying captured changes checks the
+session while holding the sync database lifetime gate. Core merge tests check
+unrelated-field preservation, explicit null values,
+delete-versus-rename behavior, empty collections, and category-name collisions.
+An edit cannot recreate a remotely deleted entity; an explicit create can restore
+it. Colliding category titles stop reconciliation and retain pending work.
+
+Fresh-base upload currently applies to Dropbox and Drive. iCloud still needs an
+authoritative discovery/bootstrap design before applying the same orchestration.
+A successful fresh download does not protect the later upload from a racing writer:
+remote conditional writes, ambiguous acknowledgments, and iCloud conflicts remain
+separate work. These tests do not prove the absence of all unseen corner cases.
 
 ## Local and CI execution
 
@@ -189,8 +208,46 @@ or recovery UI. The accepted trade-off is that untracked pre-upgrade changes may
 lose to cloud values; this is best-effort compatibility, not a legacy migration
 guarantee.
 
-`CloudPendingArticleFlag` / `cloud_pending_article_flag` stores pending article
-read and bookmark flags. The upload batch exposes them as `articleFlags`.
+Pending edits are named by their domain:
+
+- `CloudPendingArticleFlag` / `cloud_pending_article_flag`: article read and bookmark flags.
+- `CloudPendingFeedOrCategoryChange` / `cloud_pending_feed_or_category_change`: feed and
+  category creation, deletion, renaming and field changes.
+- `CloudFeedAndCategorySnapshot`: the feeds/categories being merged, rather than pending edits.
+
+The upload batch exposes `articleFlags` and `feedAndCategoryChanges`; both follow
+the same capture, apply and revision-checked acknowledgment workflow.
+
+`PendingCloudChangesManager` owns this lifecycle. Workers call it directly;
+`FeedSyncer` handles importing snapshots into the app database and the sync
+database's file lifetime.
+
+Refresh and upload have distinct destinations for pending changes:
+
+```mermaid
+flowchart TD
+    Download["Worker.downloadLocked: download and install raw cloud snapshot"]
+    Download --> Refresh["Refresh: FeedSyncer.syncFeedSourceCategory / syncFeedItem"]
+    Refresh --> App["Merge cloud values with pending changes in the app database"]
+    Download --> Capture["Upload: PendingCloudChangesManager.capturePendingChanges"]
+    Capture --> Apply["applyChangesToSyncDatabase: apply captured changes once"]
+    Apply --> Upload["Worker.accountSpecificUpload: send prepared snapshot"]
+    Upload --> Ack["markChangesAsUploaded: acknowledge matching revisions"]
+```
+
+Installing a download does not modify that snapshot with pending changes. During
+refresh, `mergeFeedAndCategoryChangesIntoAppDatabase` and
+`DatabaseHelper.updateFeedItemReadAndBookmarked` preserve pending local changes
+while importing into the app database. During upload, the worker captures pending
+changes after download/bootstrap, applies that batch to the sync database once,
+then exports and uploads it. Each Dropbox retry starts from a fresh download and
+captures another batch. An edit made after capture remains pending until a later
+successful upload includes its revision.
+
+Code entry points: `shared/src/commonMain/kotlin/com/prof18/feedflow/shared/domain/feedsync/`
+contains `PendingCloudChangesManager.kt` and `FeedSyncer.kt`; platform workers
+are under the corresponding `androidMain`, `iosMain`, and `jvmMain` source sets.
+The pending tables and atomic app-database mutations live in `database/src/commonMain/`.
 
 Read/bookmark and feed/category intent live in the main database per account session.
 Visible edits and pending revisions commit together; upload acknowledgments retire
@@ -209,14 +266,3 @@ and the upload-required setting remain until a successful upload.
 
 Whole-snapshot multi-writer safety on Drive/iCloud and mixed-version guarantees
 remain explicitly deferred in the main sync plan.
-
-## Pending article changes
-
-`PendingCloudChangesManager` owns capture, application and acknowledgment of
-pending article changes. Refresh downloads the raw cloud snapshot and combines
-its flags with pending local flags when importing into the app database.
-Upload prepares the existing sync database, captures pending changes, applies
-them once with `applyChangesToSyncDatabase`, then uploads and calls
-`markChangesAsUploaded`. Only matching captured revisions are acknowledged.
-Downloading a fresh snapshot before backup and tracking feed/category edits
-are introduced in the following change.

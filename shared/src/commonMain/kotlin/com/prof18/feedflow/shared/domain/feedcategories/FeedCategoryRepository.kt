@@ -101,8 +101,13 @@ internal class FeedCategoryRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.deleteCategory(categoryId)
-                feedSyncRepository.deleteFeedSourceCategory(categoryId)
+                val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
+                databaseHelper.deleteCategory(
+                    id = categoryId,
+                    cloudSessionId = cloudSessionId,
+                    withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
+                )
+                feedSyncRepository.localEditCommitted(cloudSessionId)
             }
         }
     }
@@ -143,12 +148,14 @@ internal class FeedCategoryRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.updateCategoryName(categoryId.value, trimmedName.name)
-                val category = FeedSourceCategory(
+                val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
+                databaseHelper.updateCategoryName(
                     id = categoryId.value,
-                    title = trimmedName.name,
+                    newName = trimmedName.name,
+                    cloudSessionId = cloudSessionId,
+                    withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
                 )
-                feedSyncRepository.updateCategory(category)
+                feedSyncRepository.localEditCommitted(cloudSessionId)
             }
         }
     }
@@ -235,11 +242,14 @@ internal class FeedCategoryRepository(
             id = categoryId,
             title = trimmedName.name,
         )
+        val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
         databaseHelper.insertCategories(
             listOf(category),
+            cloudSessionId = cloudSessionId,
+            withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
         )
 
-        feedSyncRepository.insertFeedSourceCategories(listOf(category))
+        feedSyncRepository.localEditCommitted(cloudSessionId)
     }
 
     fun onCategorySelected(categoryId: CategoryId) {

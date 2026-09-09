@@ -82,8 +82,17 @@ internal class FeedSyncAndroidWorker(
             try {
                 val uploadSession = requireNotNull(pendingCloudChanges.sessionForEdit())
                 val uploadAccount = accountsRepository.getCurrentSyncAccount()
-                feedSyncer.populateSyncDbIfEmpty()
-                feedSyncer.updateFeedItemsToSyncDatabase()
+                val result = downloadLocked(
+                    expectedSession = uploadSession,
+                )
+                pendingCloudChanges.checkAccountSession(uploadSession)
+                when {
+                    result is SyncResult.BackupNotFound -> feedSyncer.prepareInitialUpload()
+                    result.isError() -> {
+                        feedSyncMessageQueue.emitResult(result)
+                        return@withLock result
+                    }
+                }
                 val pendingBatch = pendingCloudChanges.capturePendingChanges()
                 val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
                 pendingCloudChanges.applyChangesToSyncDatabase(pendingBatch)
@@ -158,6 +167,7 @@ internal class FeedSyncAndroidWorker(
         return try {
             downloadSession = pendingCloudChanges.sessionForEdit()
             if (expectedSession != null) pendingCloudChanges.checkAccountSession(expectedSession)
+            feedSyncer.resetDownloadedSnapshotState()
             stagedFile = File.createTempFile("cloud-download-", ".db", File(databasePath()).parentFile)
             accountSpecificDownload(stagedFile)
         } catch (_: CloudBackupNotFoundException) {
@@ -219,7 +229,7 @@ internal class FeedSyncAndroidWorker(
     override suspend fun syncFeedSources(): SyncResult = withContext(dispatcherProvider.io) {
         mutex.withLock {
             try {
-                feedSyncer.syncFeedSourceCategory()
+                feedSyncer.syncFeedSourceCategory(downloadSession)
                 feedSyncer.syncFeedSource()
                 SyncResult.Success
             } catch (e: CancellationException) {
@@ -234,7 +244,7 @@ internal class FeedSyncAndroidWorker(
     override suspend fun syncFeedItems(): SyncResult = withContext(dispatcherProvider.io) {
         mutex.withLock {
             try {
-                feedSyncer.syncFeedItem()
+                feedSyncer.syncFeedItem(downloadSession)
                 SyncResult.Success
             } catch (e: CancellationException) {
                 throw e

@@ -14,6 +14,10 @@ import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -44,11 +48,14 @@ class GoogleDriveSyncViewModel internal constructor(
 
     val syncMessageQueue = feedSyncMessageQueue.userMessages
 
+    private var restoreAccountJob: Job? = null
+
     init {
         restoreAccount()
     }
 
     fun onAuthorizationSuccess() {
+        cancelRestoreAccount()
         viewModelScope.launch {
             try {
                 googleDriveSyncUiMutableState.update {
@@ -60,6 +67,8 @@ class GoogleDriveSyncViewModel internal constructor(
                 feedSyncRepository.firstSync()
                 feedFetcherRepository.fetchFeeds()
                 emitLastSyncUpdate()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.e(e) { "Error while trying to setup Google Drive" }
                 gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
@@ -69,6 +78,7 @@ class GoogleDriveSyncViewModel internal constructor(
     }
 
     fun onAuthorizationFailed() {
+        cancelRestoreAccount()
         viewModelScope.launch {
             gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
             googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
@@ -84,6 +94,7 @@ class GoogleDriveSyncViewModel internal constructor(
     }
 
     fun unlink() {
+        cancelRestoreAccount()
         viewModelScope.launch {
             try {
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
@@ -91,6 +102,8 @@ class GoogleDriveSyncViewModel internal constructor(
                 feedSyncRepository.deleteAll()
                 accountsRepository.clearAccount()
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
+            } catch (e: CancellationException) {
+                throw e
             } catch (_: Throwable) {
                 gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
             }
@@ -98,6 +111,7 @@ class GoogleDriveSyncViewModel internal constructor(
     }
 
     fun showLoading() {
+        cancelRestoreAccount()
         googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
     }
 
@@ -105,8 +119,15 @@ class GoogleDriveSyncViewModel internal constructor(
         googleDriveDataSource.validateAuthorization()
 
     private fun restoreAccount() {
-        viewModelScope.launch {
-            if (googleDriveDataSource.isAuthorized()) {
+        if (!googleDriveSettings.isGoogleDriveLinked()) {
+            googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
+            return
+        }
+
+        restoreAccountJob = viewModelScope.launch {
+            val isAuthorized = googleDriveDataSource.isAuthorized()
+            currentCoroutineContext().ensureActive()
+            if (googleDriveSettings.isGoogleDriveLinked() && isAuthorized) {
                 googleDriveSyncUiMutableState.update {
                     AccountConnectionUiState.Linked(syncState = getSyncState())
                 }
@@ -114,6 +135,11 @@ class GoogleDriveSyncViewModel internal constructor(
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             }
         }
+    }
+
+    private fun cancelRestoreAccount() {
+        restoreAccountJob?.cancel()
+        restoreAccountJob = null
     }
 
     private fun getSyncState(): AccountSyncUIState {

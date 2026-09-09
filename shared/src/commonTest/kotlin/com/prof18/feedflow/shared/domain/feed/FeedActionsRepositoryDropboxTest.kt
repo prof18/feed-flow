@@ -4,10 +4,12 @@ import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.SyncedFeedItem
+import com.prof18.feedflow.database.CloudArticleFlag
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.buildFeedItem
@@ -15,6 +17,7 @@ import com.prof18.feedflow.shared.test.insertFeedSourceWithCategory
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -25,6 +28,7 @@ class FeedActionsRepositoryDropboxTest : KoinTestBase() {
     private val syncedDatabaseHelper: SyncedDatabaseHelper by inject()
     private val dropboxSettings: DropboxSettings by inject()
     private val settingsRepository: SettingsRepository by inject()
+    private val pendingCloudChanges: PendingCloudChangesManager by inject()
 
     @Test
     fun `marking item as unread updates Dropbox sync state`() = runTest(testDispatcher) {
@@ -37,6 +41,8 @@ class FeedActionsRepositoryDropboxTest : KoinTestBase() {
 
         feedActionsRepository.updateReadStatus(feedItemId, isRead = false)
 
+        assertPendingFalseField(CloudArticleFlag.READ)
+        pendingCloudChanges.applyChangesToSyncDatabase(pendingCloudChanges.capturePendingChanges())
         val syncedItem = syncedDatabaseHelper.getAllFeedItems().single()
         assertFalse(syncedItem.isRead)
         assertTrue(syncedItem.isBookmarked)
@@ -53,10 +59,19 @@ class FeedActionsRepositoryDropboxTest : KoinTestBase() {
 
         feedActionsRepository.updateBookmarkStatus(feedItemId, isBookmarked = false)
 
+        assertPendingFalseField(CloudArticleFlag.BOOKMARK)
+        pendingCloudChanges.applyChangesToSyncDatabase(pendingCloudChanges.capturePendingChanges())
         val syncedItem = syncedDatabaseHelper.getAllFeedItems().single()
         assertTrue(syncedItem.isRead)
         assertFalse(syncedItem.isBookmarked)
         assertTrue(settingsRepository.getIsSyncUploadRequired())
+    }
+
+    private suspend fun assertPendingFalseField(field: CloudArticleFlag) {
+        val session = requireNotNull(pendingCloudChanges.sessionForEdit())
+        val pending = databaseHelper.getCloudPendingArticleFlags(session).single()
+        assertEquals(field, pending.field)
+        assertFalse(pending.value)
     }
 
     private fun enableDropboxSync() {

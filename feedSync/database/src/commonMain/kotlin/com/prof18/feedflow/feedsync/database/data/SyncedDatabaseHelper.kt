@@ -2,10 +2,14 @@ package com.prof18.feedflow.feedsync.database.data
 
 import app.cash.sqldelight.db.SqlDriver
 import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.CloudFeedAndCategorySnapshot
+import com.prof18.feedflow.core.model.CloudPendingFeedOrCategoryChange
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SyncedFeedItem
+import com.prof18.feedflow.core.model.applyCloudFeedAndCategoryChanges
 import com.prof18.feedflow.feedsync.database.db.FeedFlowFeedSyncDB
 import com.prof18.feedflow.feedsync.database.di.FEED_SYNC_SCOPE_NAME
 import com.prof18.feedflow.feedsync.database.di.SYNC_DB_DRIVER
@@ -191,6 +195,62 @@ class SyncedDatabaseHelper(
             }
     }
 
+    suspend fun getFeedAndCategorySnapshot(): CloudFeedAndCategorySnapshot = withDatabase { database ->
+        database.transactionWithResult { database.readFeedAndCategorySnapshot() }
+    }
+
+    suspend fun applyPendingFeedAndCategoryChanges(
+        changes: List<CloudPendingFeedOrCategoryChange>,
+        withCurrentSession: (() -> Unit) -> Unit = { it() },
+    ) {
+        if (changes.isEmpty()) return
+        withDatabase { database ->
+            withCurrentSession {
+                database.transaction {
+                    val merged = database.readFeedAndCategorySnapshot().applyCloudFeedAndCategoryChanges(changes)
+                    database.syncedFeedSourceQueries.deleteAll()
+                    database.syncedFeedSourceCategoryQueries.deleteAll()
+                    merged.categories.forEach { category ->
+                        database.syncedFeedSourceCategoryQueries.insertOrIgnoreFeedSourceCategory(
+                            category.id,
+                            category.title,
+                        )
+                    }
+                    merged.sources.forEach { source ->
+                        database.syncedFeedSourceQueries.insertOrIgnoreFeedSource(
+                            source.id,
+                            source.url,
+                            source.title,
+                            source.category?.id,
+                            source.logoUrl,
+                        )
+                    }
+                    database.updateMetadata(SyncTable.SYNCED_FEED_SOURCE)
+                    database.updateMetadata(SyncTable.SYNCED_FEED_SOURCE_CATEGORY)
+                }
+            }
+        }
+    }
+
+    private fun FeedFlowFeedSyncDB.readFeedAndCategorySnapshot(): CloudFeedAndCategorySnapshot {
+        val categories = syncedFeedSourceCategoryQueries.getAllFeedSourceCategories().executeAsList()
+            .map { FeedSourceCategory(it.id, it.title) }
+        val categoriesById = categories.associateBy { it.id }
+        return CloudFeedAndCategorySnapshot(
+            sources = syncedFeedSourceQueries.getAllSyncedFeedSources().executeAsList().map { source ->
+                ParsedFeedSource(
+                    id = source.url_hash,
+                    url = source.url,
+                    title = source.title,
+                    category = source.category_id?.let { categoriesById[it] },
+                    logoUrl = source.logo_url,
+                    websiteUrl = null,
+                )
+            },
+            categories = categories,
+        )
+    }
+
     suspend fun deleteFeedSourceCategory(categoryId: String) {
         withDatabase { database ->
             database.transaction {
@@ -301,16 +361,24 @@ class SyncedDatabaseHelper(
         }
     }
 
-    suspend fun applyPendingArticleFlags(readFields: Map<String, Boolean>, bookmarkFields: Map<String, Boolean>) {
+    suspend fun applyPendingArticleFlags(
+        readFields: Map<String, Boolean>,
+        bookmarkFields: Map<String, Boolean>,
+        withCurrentSession: (() -> Unit) -> Unit = { it() },
+    ) {
         if (readFields.isEmpty() && bookmarkFields.isEmpty()) return
         withDatabase { database ->
-            database.transaction {
-                (readFields.keys + bookmarkFields.keys).forEach { id ->
-                    database.syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(id, false, false)
+            withCurrentSession {
+                database.transaction {
+                    (readFields.keys + bookmarkFields.keys).forEach { id ->
+                        database.syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(id, false, false)
+                    }
+                    readFields.forEach { (id, value) -> database.syncedFeedItemQueries.updateIsRead(value, id) }
+                    bookmarkFields.forEach { (id, value) ->
+                        database.syncedFeedItemQueries.updateIsBookmarked(value, id)
+                    }
+                    database.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
                 }
-                readFields.forEach { (id, value) -> database.syncedFeedItemQueries.updateIsRead(value, id) }
-                bookmarkFields.forEach { (id, value) -> database.syncedFeedItemQueries.updateIsBookmarked(value, id) }
-                database.updateMetadata(SyncTable.SYNCED_FEED_ITEM)
             }
         }
     }

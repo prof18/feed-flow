@@ -17,6 +17,10 @@ class IosCloudSyncSuccessTest : KoinTestBase() {
         runCloudInvalidSnapshotRegressions(CloudProvider.DROPBOX)
         runCloudUpgradeRegressions(CloudProvider.DROPBOX)
         runCloudPendingRegressions(CloudProvider.DROPBOX)
+        runCloudFeedAndCategoryRegressions(CloudProvider.DROPBOX)
+        runCloudFeedAndCategoryAccountGuardRegressions(CloudProvider.DROPBOX)
+        runCloudFeedAndCategoryDeletionRegressions(CloudProvider.DROPBOX)
+        runCloudFeedAndCategoryStaleBackupRegressions(CloudProvider.DROPBOX)
         runCloudSnapshotRegression(CloudProvider.DROPBOX)
     }
 
@@ -30,6 +34,10 @@ class IosCloudSyncSuccessTest : KoinTestBase() {
         runCloudInvalidSnapshotRegressions(CloudProvider.GOOGLE_DRIVE)
         runCloudUpgradeRegressions(CloudProvider.GOOGLE_DRIVE)
         runCloudPendingRegressions(CloudProvider.GOOGLE_DRIVE)
+        runCloudFeedAndCategoryRegressions(CloudProvider.GOOGLE_DRIVE)
+        runCloudFeedAndCategoryAccountGuardRegressions(CloudProvider.GOOGLE_DRIVE)
+        runCloudFeedAndCategoryDeletionRegressions(CloudProvider.GOOGLE_DRIVE)
+        runCloudFeedAndCategoryStaleBackupRegressions(CloudProvider.GOOGLE_DRIVE)
     }
 
     @Test
@@ -42,6 +50,10 @@ class IosCloudSyncSuccessTest : KoinTestBase() {
         runCloudInvalidSnapshotRegressions(CloudProvider.ICLOUD)
         runCloudUpgradeRegressions(CloudProvider.ICLOUD)
         runCloudPendingRegressions(CloudProvider.ICLOUD)
+        runCloudFeedAndCategoryRegressions(CloudProvider.ICLOUD)
+        runCloudFeedAndCategoryAccountGuardRegressions(CloudProvider.ICLOUD)
+        runCloudFeedAndCategoryDeletionRegressions(CloudProvider.ICLOUD)
+        runCloudFeedAndCategoryStaleBackupRegressions(CloudProvider.ICLOUD)
         runCloudSnapshotRegression(CloudProvider.ICLOUD)
     }
 }

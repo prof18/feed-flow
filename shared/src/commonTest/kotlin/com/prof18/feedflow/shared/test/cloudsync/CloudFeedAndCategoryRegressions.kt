@@ -84,8 +84,6 @@ internal suspend fun runCloudFeedAndCategoryDeletionRegressions(provider: CloudP
 }
 
 internal suspend fun runCloudFeedAndCategoryStaleBackupRegressions(provider: CloudProvider) {
-    if (provider == CloudProvider.ICLOUD) return
-
     val store = CloudStore()
     val device1 = createCloudDevice(provider, store, "stale-device1")
     val device2 = createCloudDevice(provider, store, "stale-device2")

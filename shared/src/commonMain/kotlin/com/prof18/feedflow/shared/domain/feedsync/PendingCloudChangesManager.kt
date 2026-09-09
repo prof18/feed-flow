@@ -107,5 +107,4 @@ internal data class CloudUploadBatch(
     val articleFlags: List<CloudPendingArticleFlag>,
     val account: SyncAccounts,
     val feedAndCategoryChanges: List<CloudPendingFeedOrCategoryChange>,
-    val requiresFreshDownload: Boolean = false,
 )

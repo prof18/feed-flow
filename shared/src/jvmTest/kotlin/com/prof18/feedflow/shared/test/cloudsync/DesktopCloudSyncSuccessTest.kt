@@ -46,6 +46,7 @@ class DesktopCloudSyncSuccessTest : KoinTestBase() {
     fun `iCloud successful workflows use desktop bridge with local document storage`() = runTest(testDispatcher) {
         assumeTrue("iCloud is supported only on macOS", System.getProperty("os.name").contains("Mac"))
         CloudSuccessScenario.entries.forEach { runCloudSuccessScenario(CloudProvider.ICLOUD, it) }
+        runICloudStagedReadRegression()
         runQueuedCloudSuccess(CloudProvider.ICLOUD)
         runCloudFlagRegressions(CloudProvider.ICLOUD)
         runStaleCloudRefreshRegression(CloudProvider.ICLOUD)

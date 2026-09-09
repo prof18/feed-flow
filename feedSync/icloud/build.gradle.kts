@@ -13,6 +13,13 @@ kotlin {
             languageSettings.optIn("kotlinx.cinterop.BetaInteropApi")
         }
 
+        matching { it.name == "appleMain" }.all {
+            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+            dependencies {
+                implementation(libs.kotlinx.coroutines.core)
+            }
+        }
+
         commonMain {
             dependencies {
                 implementation(libs.multiplatform.settings)

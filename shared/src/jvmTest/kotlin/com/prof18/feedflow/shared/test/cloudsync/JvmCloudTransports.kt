@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.test.cloudsync
 
+import com.prof18.feedflow.core.model.CloudBackupNotFoundException
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadResult
@@ -89,9 +90,15 @@ internal class JvmICloudTransport(
     }
 
     override fun downloadToFile(isDebug: Boolean, destinationPath: String): Int {
+        if (store.iCloudDiscoveryFailure != null) return 1
         if (store.downloadFailure != null) return 3
-        if (store.fileCount(CloudProvider.ICLOUD) == 0) return 5
-        File(destinationPath).writeBytes(store.download(CloudProvider.ICLOUD, ACCOUNT, database.nameWithoutExtension))
+        try {
+            File(destinationPath).writeBytes(
+                store.download(CloudProvider.ICLOUD, ACCOUNT, database.nameWithoutExtension, device),
+            )
+        } catch (_: CloudBackupNotFoundException) {
+            return 6
+        }
         return 0
     }
 }

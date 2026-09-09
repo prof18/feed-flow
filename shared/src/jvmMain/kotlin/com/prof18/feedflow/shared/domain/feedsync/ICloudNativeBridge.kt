@@ -19,7 +19,8 @@ class ICloudNativeBridge : ICloudFileTransfer {
      *  0 -> success
      *  1 -> url null
      *  3 -> download error
-     *  5 -> backup file not found
+     *  5 -> local file not found (remote absence is unconfirmed)
+     *  6 -> completed cloud discovery found no backup
      */
     external override fun downloadToFile(isDebug: Boolean, destinationPath: String): Int
 }
@@ -47,6 +48,7 @@ enum class DownloadResult(val code: Int) {
     DOWNLOAD_ERROR(3),
     DATABASE_REPLACE_ERROR(4),
     FILE_NOT_FOUND(5),
+    REMOTE_FILE_NOT_FOUND(6),
     UNKNOWN_ERROR(-1),
     ;
 

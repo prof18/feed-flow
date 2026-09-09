@@ -45,6 +45,7 @@ internal class CloudStore {
     /** Used to model an acknowledged Dropbox write whose response is lost. */
     var afterUploadFailure: Exception? = null
     var downloadFailure: Exception? = null
+    var iCloudDiscoveryFailure: Exception? = null
     var downloadedBytes: ByteArray? = null
 
     private data class FileKey(
@@ -138,13 +139,18 @@ internal class CloudStore {
         }
     }
 
-    /** Reads only visible cloud state. iCloud local saves become visible after [propagate]. */
-    fun download(provider: CloudProvider, account: String, name: String): ByteArray {
+    /** Reads visible cloud state, or the caller's staged iCloud save before [propagate]. */
+    fun download(provider: CloudProvider, account: String, name: String, deviceId: String? = null): ByteArray {
         beforeDownload()
         downloadFailure?.let { throw it }
         downloadedBytes?.let { return it.copyOf() }
         val key = FileKey(provider, account, name)
-        return (visibleFiles[key] ?: throw CloudBackupNotFoundException()).bytes.copyOf()
+        val file = if (provider == CloudProvider.ICLOUD && deviceId != null) {
+            iCloudStagedFiles[deviceId]?.get(key) ?: visibleFiles[key]
+        } else {
+            visibleFiles[key]
+        }
+        return (file ?: throw CloudBackupNotFoundException()).bytes.copyOf()
     }
 
     /** Captures Dropbox bytes and revision from one visible-file read. */

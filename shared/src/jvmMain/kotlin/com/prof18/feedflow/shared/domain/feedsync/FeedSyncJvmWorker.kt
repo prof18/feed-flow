@@ -95,24 +95,19 @@ internal class FeedSyncJvmWorker(
                     snapshot?.delete()
                     snapshot = null
                     val uploadAccount = accountsRepository.getCurrentSyncAccount()
-                    if (uploadAccount != SyncAccounts.ICLOUD) {
-                        val result = downloadLocked(
-                            expectedSession = uploadSession,
-                        )
-                        pendingCloudChanges.checkAccountSession(uploadSession)
-                        when {
-                            result is SyncResult.BackupNotFound -> feedSyncer.prepareInitialUpload()
-                            result.isError() -> {
-                                feedSyncMessageQueue.emitResult(result)
-                                return@withLock
-                            }
+                    val result = downloadLocked(
+                        expectedSession = uploadSession,
+                    )
+                    pendingCloudChanges.checkAccountSession(uploadSession)
+                    when {
+                        result is SyncResult.BackupNotFound -> feedSyncer.prepareInitialUpload()
+                        result.isError() -> {
+                            feedSyncMessageQueue.emitResult(result)
+                            return@withLock
                         }
-                        if (uploadAccount == SyncAccounts.DROPBOX && result !is SyncResult.BackupNotFound) {
-                            requireNotNull(dropboxRevision) { "Dropbox download did not return a revision" }
-                        }
-                    } else {
-                        feedSyncer.populateSyncDbIfEmpty()
-                        feedSyncer.updateFeedItemsToSyncDatabase()
+                    }
+                    if (uploadAccount == SyncAccounts.DROPBOX && result !is SyncResult.BackupNotFound) {
+                        requireNotNull(dropboxRevision) { "Dropbox download did not return a revision" }
                     }
                     val pendingBatch = pendingCloudChanges.capturePendingChanges()
                     val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
@@ -305,6 +300,9 @@ internal class FeedSyncJvmWorker(
 
                     DownloadResult.FILE_NOT_FOUND ->
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
+
+                    DownloadResult.REMOTE_FILE_NOT_FOUND ->
+                        SyncResult.BackupNotFound(SyncDownloadError.ICloudDownloadFailed)
 
                     DownloadResult.UNKNOWN_ERROR -> {
                         logger.d { "Unknown error during iCloud download. Check the enum mapping" }

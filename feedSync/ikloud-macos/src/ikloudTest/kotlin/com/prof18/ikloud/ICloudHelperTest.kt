@@ -1,5 +1,8 @@
 package com.prof18.ikloud
 
+import com.prof18.feedflow.feedsync.icloud.apple.ICloudFileDiscovery
+import com.prof18.feedflow.feedsync.icloud.apple.ICloudFileDiscoveryResult
+import com.prof18.feedflow.feedsync.icloud.apple.LocalICloudFileDiscovery
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import platform.Foundation.NSData
@@ -40,11 +43,27 @@ class ICloudHelperTest {
     }
 
     @Test
+    fun uploadCreatesAnInitiallyAbsentDocumentsDirectory() {
+        withFixture { databaseUrl, containerUrl, _ ->
+            val firstSnapshot = "first cloud snapshot".encodeToByteArray()
+            writeBytes(databaseUrl, firstSnapshot)
+            val nestedCloudUrl = assertNotNull(
+                containerUrl.URLByDeletingLastPathComponent
+                    ?.URLByAppendingPathComponent("Documents")
+                    ?.URLByAppendingPathComponent("container.db"),
+            )
+
+            assertEquals(0, uploadToICloud(databaseUrl, nestedCloudUrl))
+            assertContentEquals(firstSnapshot, readBytes(nestedCloudUrl))
+        }
+    }
+
+    @Test
     fun missingDownloadPreservesTheLocalDatabase() {
         withFixture { databaseUrl, containerUrl, tempUrl ->
             val previous = "last good local snapshot".encodeToByteArray()
             writeBytes(databaseUrl, previous)
-            assertEquals(5, downloadToFile(containerUrl, tempUrl))
+            assertEquals(5, downloadToFile(containerUrl, tempUrl, fileDiscovery = LocalICloudFileDiscovery()))
             assertContentEquals(previous, readBytes(databaseUrl))
         }
     }
@@ -54,7 +73,7 @@ class ICloudHelperTest {
         withFixture { _, containerUrl, tempUrl ->
             val snapshot = "cloud snapshot".encodeToByteArray()
             writeBytes(containerUrl, snapshot)
-            assertEquals(0, downloadToFile(containerUrl, tempUrl))
+            assertEquals(0, downloadToFile(containerUrl, tempUrl, fileDiscovery = LocalICloudFileDiscovery()))
             assertContentEquals(snapshot, readBytes(tempUrl))
         }
     }
@@ -86,10 +105,39 @@ class ICloudHelperTest {
                 actual = downloadToFile(
                     iCloudUrl = containerUrl,
                     destinationUrl = tempUrl,
+                    fileDiscovery = LocalICloudFileDiscovery(),
                 ),
             )
             assertContentEquals(containerBytes, readBytes(tempUrl))
             assertContentEquals(originalDatabaseBytes, readBytes(databaseUrl))
+        }
+    }
+
+    @Test
+    fun completedDiscoveryWithoutBackupUsesConfirmedRemoteMissingCode() {
+        withFixture { _, containerUrl, tempUrl ->
+            assertEquals(
+                6,
+                downloadToFile(
+                    iCloudUrl = containerUrl,
+                    destinationUrl = tempUrl,
+                    fileDiscovery = FakeICloudFileDiscovery(ICloudFileDiscoveryResult.ConfirmedMissing),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun discoveryFailureDoesNotUseRemoteMissingCode() {
+        withFixture { _, containerUrl, tempUrl ->
+            assertEquals(
+                3,
+                downloadToFile(
+                    iCloudUrl = containerUrl,
+                    destinationUrl = tempUrl,
+                    fileDiscovery = FakeICloudFileDiscovery(ICloudFileDiscoveryResult.Failure("timed out")),
+                ),
+            )
         }
     }
 
@@ -135,4 +183,13 @@ class ICloudHelperTest {
         }
         return bytes
     }
+}
+
+private class FakeICloudFileDiscovery(
+    private val result: ICloudFileDiscoveryResult,
+) : ICloudFileDiscovery {
+    override suspend fun discoverAndMaterialize(
+        targetUrl: NSURL,
+        timeoutMillis: Long,
+    ): ICloudFileDiscoveryResult = result
 }

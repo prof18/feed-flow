@@ -74,6 +74,27 @@ class CloudStoreTest : KoinTestBase() {
     }
 
     @Test
+    fun `icloud staged upload is visible to its device but not peers`() {
+        val store = CloudStore()
+        store.upload(CloudProvider.ICLOUD, "account", "file", byteArrayOf(1), "phone")
+
+        assertContentEquals(
+            byteArrayOf(1),
+            store.download(CloudProvider.ICLOUD, "account", "file", deviceId = "phone"),
+        )
+        assertFailsWith<CloudBackupNotFoundException> {
+            store.download(CloudProvider.ICLOUD, "account", "file", deviceId = "tablet")
+        }
+
+        store.propagate("phone")
+
+        assertContentEquals(
+            byteArrayOf(1),
+            store.download(CloudProvider.ICLOUD, "account", "file", deviceId = "tablet"),
+        )
+    }
+
+    @Test
     fun `dropbox conditional upload is create only when revision is null`() {
         val store = CloudStore()
         val first = store.uploadDropbox("account", "file", byteArrayOf(1), "device1", null)

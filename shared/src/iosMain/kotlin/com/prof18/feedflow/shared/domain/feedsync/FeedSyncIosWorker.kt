@@ -103,25 +103,20 @@ internal class FeedSyncIosWorker(
                     snapshot?.let { NSFileManager.defaultManager.removeItemAtURL(it, null) }
                     snapshot = null
                     val uploadAccount = accountsRepository.getCurrentSyncAccount()
-                    if (uploadAccount != SyncAccounts.ICLOUD) {
-                        val result = downloadLocked(
-                            isFirstSync = false,
-                            expectedSession = uploadSession,
-                        )
-                        pendingCloudChanges.checkAccountSession(uploadSession)
-                        when {
-                            result is SyncResult.BackupNotFound -> feedSyncer.prepareInitialUpload()
-                            result.isError() -> {
-                                feedSyncMessageQueue.emitResult(result)
-                                return@withLock
-                            }
+                    val result = downloadLocked(
+                        isFirstSync = false,
+                        expectedSession = uploadSession,
+                    )
+                    pendingCloudChanges.checkAccountSession(uploadSession)
+                    when {
+                        result is SyncResult.BackupNotFound -> feedSyncer.prepareInitialUpload()
+                        result.isError() -> {
+                            feedSyncMessageQueue.emitResult(result)
+                            return@withLock
                         }
-                        if (uploadAccount == SyncAccounts.DROPBOX && result !is SyncResult.BackupNotFound) {
-                            requireNotNull(dropboxRevision) { "Dropbox download did not return a revision" }
-                        }
-                    } else {
-                        feedSyncer.populateSyncDbIfEmpty()
-                        feedSyncer.updateFeedItemsToSyncDatabase()
+                    }
+                    if (uploadAccount == SyncAccounts.DROPBOX && result !is SyncResult.BackupNotFound) {
+                        requireNotNull(dropboxRevision) { "Dropbox download did not return a revision" }
                     }
                     val pendingBatch = pendingCloudChanges.capturePendingChanges()
                     val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
@@ -395,17 +390,12 @@ internal class FeedSyncIosWorker(
                 SyncResult.Success
             }
 
+            is ICloudDownloadResult.Error.RemoteFileNotFound ->
+                SyncResult.BackupNotFound(SyncDownloadError.ICloudDownloadFailed)
+
             is ICloudDownloadResult.Error -> {
-                val errorMessage = when (result) {
-                    is ICloudDownloadResult.Error.ICloudUrlNotAvailable -> "iCloud URL is not available"
-                    is ICloudDownloadResult.Error.TemporaryUrlNotAvailable -> "Temporary URL is not available"
-                    is ICloudDownloadResult.Error.FileNotFound -> "File not found in iCloud"
-                    is ICloudDownloadResult.Error.CopyOperationFailed -> "Copy operation failed"
-                    is ICloudDownloadResult.Error.FileAlreadyExists -> "File already exists"
-                    is ICloudDownloadResult.Error.DownloadFailed -> result.errorMessage
-                }
                 if (!isFirstSync) {
-                    logger.e { "Error downloading from iCloud: $errorMessage" }
+                    logger.e { "Error downloading from iCloud: $result" }
                 }
                 when (result) {
                     is ICloudDownloadResult.Error.ICloudUrlNotAvailable ->
@@ -414,6 +404,8 @@ internal class FeedSyncIosWorker(
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     is ICloudDownloadResult.Error.FileNotFound ->
                         SyncResult.General(SyncICloudError.FileNotFound)
+                    is ICloudDownloadResult.Error.RemoteFileNotFound ->
+                        SyncResult.BackupNotFound(SyncDownloadError.ICloudDownloadFailed)
                     is ICloudDownloadResult.Error.CopyOperationFailed ->
                         SyncResult.General(SyncICloudError.CopyOperationFailed)
                     is ICloudDownloadResult.Error.FileAlreadyExists ->

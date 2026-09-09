@@ -29,12 +29,6 @@ internal suspend fun runCloudTransferRegressions(provider: CloudProvider) = coro
         device1.seed()
         device1.read("article-one", true)
         device1.repository.firstSync()
-        if (provider == CloudProvider.ICLOUD) {
-            // A missing local ubiquitous file does not establish that the cloud has no backup.
-            assertTrue(store.events.isEmpty())
-            assertTrue(device1.settings.getIsSyncUploadRequired())
-            device1.backup()
-        }
         store.propagate("device1")
         assertEquals(1, store.fileCount(provider))
         val remote = store.snapshot().single().bytes
@@ -70,6 +64,33 @@ internal suspend fun runCloudTransferRegressions(provider: CloudProvider) = coro
         store.propagate("device1")
         device2.refresh()
         assertEquals(false to true, device2.flags()["article-two"])
+        if (provider == CloudProvider.ICLOUD) {
+            val cloudBeforeFailedDiscovery = store.snapshot().single().bytes
+            device2.bookmark("article-one", false)
+            val localAfterEdit = device2.flags()
+            val uploadsBeforeFailedDiscovery = store.events.count { it.operation == CloudStoreOperation.UPLOAD }
+            store.iCloudDiscoveryFailure = IllegalStateException("Injected iCloud discovery failure")
+            device2.backup()
+            assertEquals(
+                uploadsBeforeFailedDiscovery,
+                store.events.count { it.operation == CloudStoreOperation.UPLOAD },
+            )
+            assertContentEquals(cloudBeforeFailedDiscovery, store.snapshot().single().bytes)
+            assertEquals(localAfterEdit, device2.flags())
+            assertTrue(device2.settings.getIsSyncUploadRequired())
+
+            store.iCloudDiscoveryFailure = null
+            store.downloadFailure = IllegalStateException("Injected iCloud download failure")
+            device2.backup()
+            assertEquals(
+                uploadsBeforeFailedDiscovery,
+                store.events.count { it.operation == CloudStoreOperation.UPLOAD },
+            )
+            assertContentEquals(cloudBeforeFailedDiscovery, store.snapshot().single().bytes)
+            assertEquals(localAfterEdit, device2.flags())
+            assertTrue(device2.settings.getIsSyncUploadRequired())
+            store.downloadFailure = null
+        }
         if (provider == CloudProvider.GOOGLE_DRIVE) {
             assertEquals(
                 store.snapshot().single().fileId,
@@ -86,4 +107,29 @@ internal suspend fun runCloudTransferRegressions(provider: CloudProvider) = coro
         }
     }
     assertTrue(userMessages.isEmpty(), "Transfer failure or retry interrupted the user: $userMessages")
+}
+
+internal suspend fun runICloudStagedReadRegression() = coroutineScope {
+    val store = CloudStore()
+    val device1 = createCloudDevice(CloudProvider.ICLOUD, store, "staged-device1")
+    val device2 = createCloudDevice(CloudProvider.ICLOUD, store, "staged-device2")
+    try {
+        device1.seed()
+        device1.repository.firstSync()
+        store.propagate("staged-device1")
+
+        device1.read("article-one", true)
+        device1.backup()
+        assertFalse(device1.settings.getIsSyncUploadRequired())
+        device1.bookmark("article-two", true)
+        device1.backup()
+        store.propagate("staged-device1")
+
+        device2.refresh()
+        assertEquals(true to false, device2.flags()["article-one"])
+        assertEquals(false to true, device2.flags()["article-two"])
+    } finally {
+        device1.close()
+        device2.close()
+    }
 }

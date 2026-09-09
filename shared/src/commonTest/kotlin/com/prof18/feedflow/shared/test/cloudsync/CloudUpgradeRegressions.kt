@@ -10,9 +10,9 @@ import kotlin.test.assertTrue
 
 internal suspend fun runCloudUpgradeRegressions(provider: CloudProvider) {
     refreshReplacesUntrackedLegacyFlags(provider)
-    if (provider != CloudProvider.ICLOUD) backupPreservesCloudAndTrackedEdits(provider)
-    if (provider != CloudProvider.ICLOUD) failedDownloadPreservesPendingEditsAcrossRestart(provider)
-    if (provider != CloudProvider.ICLOUD) missingBackupUploadsFullLocalState(provider)
+    backupPreservesCloudAndTrackedEdits(provider)
+    failedDownloadPreservesPendingEditsAcrossRestart(provider)
+    missingBackupUploadsFullLocalState(provider)
 }
 
 private suspend fun refreshReplacesUntrackedLegacyFlags(provider: CloudProvider) {

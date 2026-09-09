@@ -5,6 +5,10 @@ data class DropboxUploadException(
     val exceptionCause: Throwable? = null,
 ) : Exception(errorMessage, exceptionCause)
 
+class DropboxUploadConflictException(
+    exceptionCause: Throwable? = null,
+) : Exception("Dropbox upload conflicted with a newer remote revision", exceptionCause)
+
 data class DropboxDownloadException(
     val errorMessage: String? = null,
     val exceptionCause: Throwable? = null,

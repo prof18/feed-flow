@@ -21,6 +21,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
+import com.prof18.feedflow.feedsync.dropbox.DropboxUploadConflictException
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceAndroid
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDownloadParam
@@ -56,6 +57,7 @@ internal class FeedSyncAndroidWorker(
 
     private val mutex = Mutex()
     private var downloadSession: String? = null
+    private var dropboxRevision: String? = null
 
     override suspend fun uploadImmediate() {
         logger.d { "Start Immediate upload" }
@@ -81,31 +83,38 @@ internal class FeedSyncAndroidWorker(
             var snapshot: File? = null
             try {
                 val uploadSession = requireNotNull(pendingCloudChanges.sessionForEdit())
-                val uploadAccount = accountsRepository.getCurrentSyncAccount()
-                val result = downloadLocked(
-                    expectedSession = uploadSession,
-                )
-                pendingCloudChanges.checkAccountSession(uploadSession)
-                when {
-                    result is SyncResult.BackupNotFound -> feedSyncer.prepareInitialUpload()
-                    result.isError() -> {
-                        feedSyncMessageQueue.emitResult(result)
-                        return@withLock result
+                retryDropboxConflicts {
+                    snapshot?.delete()
+                    snapshot = null
+                    val uploadAccount = accountsRepository.getCurrentSyncAccount()
+                    val result = downloadLocked(
+                        expectedSession = uploadSession,
+                    )
+                    pendingCloudChanges.checkAccountSession(uploadSession)
+                    when {
+                        result is SyncResult.BackupNotFound -> feedSyncer.prepareInitialUpload()
+                        result.isError() -> {
+                            feedSyncMessageQueue.emitResult(result)
+                            return@withLock result
+                        }
                     }
+                    if (uploadAccount == SyncAccounts.DROPBOX && result !is SyncResult.BackupNotFound) {
+                        requireNotNull(dropboxRevision) { "Dropbox download did not return a revision" }
+                    }
+                    val pendingBatch = pendingCloudChanges.capturePendingChanges()
+                    val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
+                    pendingCloudChanges.applyChangesToSyncDatabase(pendingBatch)
+                    snapshot = File.createTempFile("cloud-upload-", ".db", File(databasePath()).parentFile)
+                    feedSyncer.withClosedDatabase {
+                        File(databasePath()).copyTo(requireNotNull(snapshot), overwrite = true)
+                    }
+                    pendingCloudChanges.checkAccountSession(uploadSession)
+                    accountSpecificUpload(requireNotNull(snapshot), uploadAccount)
+                    emitSuccessMessage()
+                    pendingCloudChanges.markChangesAsUploaded(pendingBatch)
+                    settingsRepository.acknowledgeSyncUpload(uploadGeneration)
+                    return@withContext SyncResult.Success
                 }
-                val pendingBatch = pendingCloudChanges.capturePendingChanges()
-                val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
-                pendingCloudChanges.applyChangesToSyncDatabase(pendingBatch)
-                snapshot = File.createTempFile("cloud-upload-", ".db", File(databasePath()).parentFile)
-                feedSyncer.withClosedDatabase {
-                    File(databasePath()).copyTo(requireNotNull(snapshot), overwrite = true)
-                }
-                pendingCloudChanges.checkAccountSession(uploadSession)
-                accountSpecificUpload(requireNotNull(snapshot), uploadAccount)
-                emitSuccessMessage()
-                pendingCloudChanges.markChangesAsUploaded(pendingBatch)
-                settingsRepository.acknowledgeSyncUpload(uploadGeneration)
-                return@withContext SyncResult.Success
             } catch (e: GoogleDriveNeedsReAuthException) {
                 logger.e("Google Drive needs re-authorization", e)
                 SyncResult.GoogleDriveNeedReAuth()
@@ -128,8 +137,10 @@ internal class FeedSyncAndroidWorker(
                 val dropboxUploadParam = DropboxUploadParam(
                     path = "/${getDatabaseNameWithExtension()}",
                     file = databaseFile,
+                    expectedRevision = dropboxRevision,
                 )
-                dropboxDataSource.performUpload(dropboxUploadParam)
+                val result = dropboxDataSource.performUpload(dropboxUploadParam)
+                if (result.isConflict) throw DropboxUploadConflictException()
                 dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.d { "Upload to Dropbox successfully" }
             }
@@ -165,6 +176,7 @@ internal class FeedSyncAndroidWorker(
     ): SyncResult {
         var stagedFile: File? = null
         return try {
+            dropboxRevision = null
             downloadSession = pendingCloudChanges.sessionForEdit()
             if (expectedSession != null) pendingCloudChanges.checkAccountSession(expectedSession)
             feedSyncer.resetDownloadedSnapshotState()
@@ -193,7 +205,10 @@ internal class FeedSyncAndroidWorker(
                     path = "/${getDatabaseNameWithExtension()}",
                     outputStream = FileOutputStream(stagedFile),
                 )
-                dropboxDownloadParam.outputStream.use { dropboxDataSource.performDownload(dropboxDownloadParam) }
+                val result = dropboxDownloadParam.outputStream.use {
+                    dropboxDataSource.performDownload(dropboxDownloadParam)
+                }
+                dropboxRevision = result.revision
                 installDownloadedFile(stagedFile)
                 dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.d { "Download from Dropbox successfully" }

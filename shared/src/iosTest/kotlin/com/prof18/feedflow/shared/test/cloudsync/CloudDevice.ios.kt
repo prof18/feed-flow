@@ -216,28 +216,35 @@ private class CloudDropboxDataSource(
     override suspend fun performUpload(uploadParam: DropboxUploadParam): DropboxUploadResult {
         store.beforeUploadRead()
         val bytes = requireNotNull(NSData.create(contentsOfURL = uploadParam.url)).toByteArray()
-        val fileId = store.upload(
-            provider = CloudProvider.DROPBOX,
+        val file = store.uploadDropbox(
             account = CLOUD_ACCOUNT,
             name = uploadParam.path.substringAfterLast('/'),
             bytes = bytes,
             deviceId = deviceId,
+            expectedRevision = uploadParam.expectedRevision,
         )
-        return DropboxUploadResult(fileId, 0L, bytes.size.toLong(), null)
+        return DropboxUploadResult(
+            id = file.fileId,
+            editDateMillis = 0L,
+            sizeInByte = bytes.size.toLong(),
+            contentHash = null,
+            revision = file.revision,
+        )
     }
 
     override suspend fun performDownload(downloadParam: DropboxDownloadParam): DropboxDownloadResult {
         val name = downloadParam.path.substringAfterLast('/')
-        val bytes = store.download(CloudProvider.DROPBOX, CLOUD_ACCOUNT, name)
+        val file = store.downloadDropbox(CLOUD_ACCOUNT, name)
         val destination = requireNotNull(
             NSURL.fileURLWithPath(outputDirectory).URLByAppendingPathComponent(downloadParam.outputName),
         )
-        destination.writeData(bytes)
+        destination.writeData(file.bytes)
         return DropboxDownloadResult(
-            id = name,
-            sizeInByte = bytes.size.toLong(),
+            id = file.fileId,
+            sizeInByte = file.bytes.size.toLong(),
             contentHash = null,
             destinationUrl = DatabaseDestinationUrl(destination),
+            revision = file.revision,
         )
     }
 }

@@ -18,6 +18,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
+import com.prof18.feedflow.feedsync.dropbox.DropboxUploadConflictException
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceJvm
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDownloadParam
@@ -63,6 +64,7 @@ internal class FeedSyncJvmWorker(
 
     private val mutex = Mutex()
     private var downloadSession: String? = null
+    private var dropboxRevision: String? = null
 
     private val appPath = syncDirectory.path
     private val databaseName = if (appEnvironment.isDebug()) {
@@ -89,42 +91,51 @@ internal class FeedSyncJvmWorker(
             var snapshot: File? = null
             try {
                 val uploadSession = requireNotNull(pendingCloudChanges.sessionForEdit())
-                val uploadAccount = accountsRepository.getCurrentSyncAccount()
-                if (uploadAccount != SyncAccounts.ICLOUD) {
-                    val result = downloadLocked(
-                        expectedSession = uploadSession,
-                    )
-                    pendingCloudChanges.checkAccountSession(uploadSession)
-                    when {
-                        result is SyncResult.BackupNotFound -> feedSyncer.prepareInitialUpload()
-                        result.isError() -> {
-                            feedSyncMessageQueue.emitResult(result)
-                            return@withLock
-                        }
-                    }
-                } else {
-                    feedSyncer.populateSyncDbIfEmpty()
-                    feedSyncer.updateFeedItemsToSyncDatabase()
-                }
-                val pendingBatch = pendingCloudChanges.capturePendingChanges()
-                val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
-                pendingCloudChanges.applyChangesToSyncDatabase(pendingBatch)
-                val uploaded = if (uploadAccount == SyncAccounts.ICLOUD) {
-                    feedSyncer.withClosedDatabase {
+                retryDropboxConflicts {
+                    snapshot?.delete()
+                    snapshot = null
+                    val uploadAccount = accountsRepository.getCurrentSyncAccount()
+                    if (uploadAccount != SyncAccounts.ICLOUD) {
+                        val result = downloadLocked(
+                            expectedSession = uploadSession,
+                        )
                         pendingCloudChanges.checkAccountSession(uploadSession)
-                        accountSpecificUpload(databaseFile, uploadAccount)
+                        when {
+                            result is SyncResult.BackupNotFound -> feedSyncer.prepareInitialUpload()
+                            result.isError() -> {
+                                feedSyncMessageQueue.emitResult(result)
+                                return@withLock
+                            }
+                        }
+                        if (uploadAccount == SyncAccounts.DROPBOX && result !is SyncResult.BackupNotFound) {
+                            requireNotNull(dropboxRevision) { "Dropbox download did not return a revision" }
+                        }
+                    } else {
+                        feedSyncer.populateSyncDbIfEmpty()
+                        feedSyncer.updateFeedItemsToSyncDatabase()
                     }
-                } else {
-                    snapshot = File.createTempFile("cloud-upload-", ".db", syncDirectory)
-                    feedSyncer.withClosedDatabase { databaseFile.copyTo(requireNotNull(snapshot), overwrite = true) }
-                    pendingCloudChanges.checkAccountSession(uploadSession)
-                    accountSpecificUpload(requireNotNull(snapshot), uploadAccount)
-                }
+                    val pendingBatch = pendingCloudChanges.capturePendingChanges()
+                    val uploadGeneration = settingsRepository.captureSyncUploadGeneration()
+                    pendingCloudChanges.applyChangesToSyncDatabase(pendingBatch)
+                    val uploaded = if (uploadAccount == SyncAccounts.ICLOUD) {
+                        feedSyncer.withClosedDatabase {
+                            pendingCloudChanges.checkAccountSession(uploadSession)
+                            accountSpecificUpload(databaseFile, uploadAccount)
+                        }
+                    } else {
+                        snapshot = File.createTempFile("cloud-upload-", ".db", syncDirectory)
+                        feedSyncer.withClosedDatabase {
+                            databaseFile.copyTo(requireNotNull(snapshot), overwrite = true)
+                        }
+                        pendingCloudChanges.checkAccountSession(uploadSession)
+                        accountSpecificUpload(requireNotNull(snapshot), uploadAccount)
+                    }
 
-                if (uploaded) {
-                    pendingCloudChanges.markChangesAsUploaded(pendingBatch)
-                    settingsRepository.acknowledgeSyncUpload(uploadGeneration)
-                    emitSuccessMessage()
+                    if (uploaded) {
+                        pendingCloudChanges.markChangesAsUploaded(pendingBatch)
+                        settingsRepository.acknowledgeSyncUpload(uploadGeneration)
+                        emitSuccessMessage()
+                    }
                 }
             } catch (e: GoogleDriveNeedsReAuthException) {
                 logger.d("Google Drive needs re-authorization", e)
@@ -150,9 +161,11 @@ internal class FeedSyncJvmWorker(
                 val dropboxUploadParam = DropboxUploadParam(
                     path = "/${getDatabaseNameWithExtension()}",
                     file = uploadFile,
+                    expectedRevision = dropboxRevision,
                 )
 
-                dropboxDataSource.performUpload(dropboxUploadParam)
+                val result = dropboxDataSource.performUpload(dropboxUploadParam)
+                if (result.isConflict) throw DropboxUploadConflictException()
                 dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.d { "Upload to dropbox successfully" }
                 true
@@ -220,6 +233,7 @@ internal class FeedSyncJvmWorker(
     ): SyncResult {
         var stagedFile: File? = null
         return try {
+            dropboxRevision = null
             downloadSession = pendingCloudChanges.sessionForEdit()
             if (expectedSession != null) pendingCloudChanges.checkAccountSession(expectedSession)
             feedSyncer.resetDownloadedSnapshotState()
@@ -251,7 +265,10 @@ internal class FeedSyncJvmWorker(
                 )
 
                 restoreDropboxClient()
-                dropboxDownloadParam.outputStream.use { dropboxDataSource.performDownload(dropboxDownloadParam) }
+                val result = dropboxDownloadParam.outputStream.use {
+                    dropboxDataSource.performDownload(dropboxDownloadParam)
+                }
+                dropboxRevision = result.revision
                 installDownloadedFile(stagedFile)
                 dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
                 SyncResult.Success

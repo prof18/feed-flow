@@ -21,14 +21,26 @@ internal class AndroidDropboxTransport(
     override suspend fun performUpload(uploadParam: DropboxUploadParam): DropboxUploadResult {
         store.beforeUploadRead()
         val bytes = uploadParam.file.readBytes()
-        val id = store.upload(CloudProvider.DROPBOX, ACCOUNT, uploadParam.path.substringAfterLast('/'), bytes, device)
-        return DropboxUploadResult(id, 1000, bytes.size.toLong(), null)
+        val file = store.uploadDropbox(
+            account = ACCOUNT,
+            name = uploadParam.path.substringAfterLast('/'),
+            bytes = bytes,
+            deviceId = device,
+            expectedRevision = uploadParam.expectedRevision,
+        )
+        return DropboxUploadResult(
+            id = file.fileId,
+            editDateMillis = 1000,
+            sizeInByte = bytes.size.toLong(),
+            contentHash = null,
+            revision = file.revision,
+        )
     }
 
     override suspend fun performDownload(downloadParam: DropboxDownloadParam): DropboxDownloadResult {
-        val bytes = store.download(CloudProvider.DROPBOX, ACCOUNT, downloadParam.path.substringAfterLast('/'))
-        downloadParam.outputStream.use { it.write(bytes) }
-        return DropboxDownloadResult(downloadParam.path, bytes.size.toLong(), null)
+        val file = store.downloadDropbox(ACCOUNT, downloadParam.path.substringAfterLast('/'))
+        downloadParam.outputStream.use { it.write(file.bytes) }
+        return DropboxDownloadResult(downloadParam.path, file.bytes.size.toLong(), null, revision = file.revision)
     }
 }
 

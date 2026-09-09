@@ -45,7 +45,7 @@ class DropboxDataSourceJvmTest {
     }
 
     @Test
-    fun `upload sends SDK request and preserves metadata and bytes`() = runTest {
+    fun `create upload is conditional and preserves metadata and bytes`() = runTest {
         val requestor = RecordingDropboxHttpRequestor(
             ResponseSpec(
                 statusCode = 200,
@@ -68,12 +68,86 @@ class DropboxDataSourceJvmTest {
         assertEquals(Instant.parse("2024-01-02T03:04:05Z").toEpochMilli(), result.editDateMillis)
         assertEquals(payload.size.toLong(), result.sizeInByte)
         assertEquals("a".repeat(64), result.contentHash)
+        assertEquals("0123456789abc", result.revision)
         val request = requestor.requests.single()
         assertEquals("POST", request.method)
         assertTrue(request.url.endsWith("/2/files/upload"))
         assertTrue(request.headers["Dropbox-API-Arg"].orEmpty().contains("\"path\":\"/FeedFlow.db\""))
-        assertTrue(request.headers["Dropbox-API-Arg"].orEmpty().contains("\"mode\":\"overwrite\""))
+        assertTrue(request.headers["Dropbox-API-Arg"].orEmpty().contains("\"mode\":\"add\""))
+        assertTrue(request.headers["Dropbox-API-Arg"].orEmpty().contains("\"autorename\":false"))
+        assertTrue(request.headers["Dropbox-API-Arg"].orEmpty().contains("\"strict_conflict\":true"))
         assertContentEquals(payload, request.body)
+    }
+
+    @Test
+    fun `update upload sends exact expected revision without autorename`() = runTest {
+        val requestor = RecordingDropboxHttpRequestor(
+            ResponseSpec(statusCode = 200, body = metadata("upload", 7).encodeToByteArray()),
+        )
+        val dataSource = createDataSource(requestor)
+        val file = Files.createTempFile("feedflow-dropbox-update", ".db").toFile().apply {
+            writeBytes("updated".encodeToByteArray())
+            deleteOnExit()
+        }
+
+        dataSource.restoreAuth(credentials())
+        dataSource.performUpload(
+            DropboxUploadParam(
+                path = "/FeedFlow.db",
+                file = file,
+                expectedRevision = "fedcba987654321",
+            ),
+        )
+
+        val apiArgument = requestor.requests.single().headers["Dropbox-API-Arg"].orEmpty()
+        assertTrue(apiArgument.contains("\".tag\":\"update\""))
+        assertTrue(apiArgument.contains("\"update\":\"fedcba987654321\""))
+        assertTrue(apiArgument.contains("\"autorename\":false"))
+        assertTrue(apiArgument.contains("\"strict_conflict\":true"))
+    }
+
+    @Test
+    fun `upload path conflict maps to dedicated conflict exception`() = runTest {
+        val requestor = RecordingDropboxHttpRequestor(
+            ResponseSpec(
+                statusCode = 409,
+                headers = mapOf("Content-Type" to "application/json"),
+                body = uploadPathError("conflict", "file").encodeToByteArray(),
+            ),
+        )
+        val dataSource = createDataSource(requestor)
+        val file = Files.createTempFile("feedflow-dropbox-conflict", ".db").toFile().apply {
+            writeBytes(byteArrayOf(1))
+            deleteOnExit()
+        }
+
+        dataSource.restoreAuth(credentials())
+
+        assertFailsWith<DropboxUploadConflictException> {
+            dataSource.performUpload(DropboxUploadParam("/FeedFlow.db", file))
+        }
+    }
+
+    @Test
+    fun `non conflict upload path failure stays a generic upload exception`() = runTest {
+        val requestor = RecordingDropboxHttpRequestor(
+            ResponseSpec(
+                statusCode = 409,
+                headers = mapOf("Content-Type" to "application/json"),
+                body = uploadPathError("no_write_permission").encodeToByteArray(),
+            ),
+        )
+        val dataSource = createDataSource(requestor)
+        val file = Files.createTempFile("feedflow-dropbox-failure", ".db").toFile().apply {
+            writeBytes(byteArrayOf(1))
+            deleteOnExit()
+        }
+
+        dataSource.restoreAuth(credentials())
+
+        assertFailsWith<DropboxUploadException> {
+            dataSource.performUpload(DropboxUploadParam("/FeedFlow.db", file))
+        }
     }
 
     @Test
@@ -99,6 +173,7 @@ class DropboxDataSourceJvmTest {
         assertEquals("id:download", result.id)
         assertEquals(payload.size.toLong(), result.sizeInByte)
         assertEquals("a".repeat(64), result.contentHash)
+        assertEquals("0123456789abc", result.revision)
         assertContentEquals(payload, destination.toByteArray())
         val request = requestor.requests.single()
         assertEquals("POST", request.method)
@@ -121,6 +196,18 @@ class DropboxDataSourceJvmTest {
         "server_modified":"2024-01-02T03:04:05Z","rev":"0123456789abc","size":$size,
         "content_hash":"${"a".repeat(64)}"}
     """.trimIndent()
+
+    private fun uploadPathError(reason: String, conflict: String? = null): String {
+        val reasonJson = if (conflict == null) {
+            """{".tag":"$reason"}"""
+        } else {
+            """{".tag":"$reason","conflict":{".tag":"$conflict"}}"""
+        }
+        return """
+            {"error_summary":"path/$reason/","error":{".tag":"path","reason":$reasonJson,
+            "upload_session_id":"session-id"}}
+        """.trimIndent()
+    }
 }
 
 private object TestDispatcherProvider : DispatcherProvider {

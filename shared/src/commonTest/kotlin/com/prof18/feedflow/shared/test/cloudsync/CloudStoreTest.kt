@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.test.cloudsync
 
 import com.prof18.feedflow.core.model.CloudBackupNotFoundException
+import com.prof18.feedflow.feedsync.dropbox.DropboxUploadConflictException
 import com.prof18.feedflow.shared.test.KoinTestBase
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -70,5 +71,57 @@ class CloudStoreTest : KoinTestBase() {
         assertContentEquals(bytes, store.download(CloudProvider.ICLOUD, "account", "file"))
         assertEquals(2, store.events.size)
         assertEquals(CloudStoreOperation.PROPAGATE, store.events.last().operation)
+    }
+
+    @Test
+    fun `dropbox conditional upload is create only when revision is null`() {
+        val store = CloudStore()
+        val first = store.uploadDropbox("account", "file", byteArrayOf(1), "device1", null)
+
+        assertFailsWith<DropboxUploadConflictException> {
+            store.uploadDropbox("account", "file", byteArrayOf(2), "device2", null)
+        }
+        assertContentEquals(byteArrayOf(1), store.downloadDropbox("account", "file").bytes)
+        assertEquals("1", first.revision)
+    }
+
+    @Test
+    fun `dropbox conditional upload rejects stale revision atomically`() {
+        val store = CloudStore()
+        val first = store.uploadDropbox("account", "file", byteArrayOf(1), "device1", null)
+        val second = store.uploadDropbox("account", "file", byteArrayOf(2), "device2", first.revision)
+
+        assertFailsWith<DropboxUploadConflictException> {
+            store.uploadDropbox("account", "file", byteArrayOf(3), "device1", first.revision)
+        }
+        assertContentEquals(byteArrayOf(2), store.downloadDropbox("account", "file").bytes)
+        assertEquals("2", second.revision)
+    }
+
+    @Test
+    fun `dropbox lost acknowledgement leaves accepted revision visible`() {
+        val store = CloudStore()
+        store.afterUploadFailure = IllegalStateException("lost response")
+
+        assertFailsWith<IllegalStateException> {
+            store.uploadDropbox("account", "file", byteArrayOf(1), "device1", null)
+        }
+        val accepted = store.downloadDropbox("account", "file")
+        assertContentEquals(byteArrayOf(1), accepted.bytes)
+        assertEquals("1", accepted.revision)
+    }
+
+    @Test
+    fun `dropbox stale upload cannot recreate a remotely deleted file`() {
+        val store = CloudStore()
+        val first = store.uploadDropbox("account", "file", byteArrayOf(1), "device1", null)
+        store.deleteDropbox("account", "file")
+
+        assertFailsWith<DropboxUploadConflictException> {
+            store.uploadDropbox("account", "file", byteArrayOf(2), "device1", first.revision)
+        }
+        assertFailsWith<CloudBackupNotFoundException> {
+            store.downloadDropbox("account", "file")
+        }
     }
 }

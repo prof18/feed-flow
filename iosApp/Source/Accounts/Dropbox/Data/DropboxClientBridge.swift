@@ -3,6 +3,7 @@ import Foundation
 protocol DropboxClientBridge {
     func upload(
         path: String,
+        expectedRevision: String?,
         input: URL,
         completion: @escaping (DropboxFileMetadata?, Error?) -> Void
     )

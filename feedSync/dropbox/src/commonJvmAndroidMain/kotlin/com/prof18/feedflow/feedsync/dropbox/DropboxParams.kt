@@ -6,6 +6,7 @@ import java.io.OutputStream
 actual class DropboxUploadParam(
     val path: String,
     val file: File,
+    val expectedRevision: String? = null,
 )
 
 actual class DropboxDownloadParam(

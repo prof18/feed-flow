@@ -5,6 +5,7 @@ import platform.Foundation.NSURL
 actual class DropboxUploadParam(
     val path: String,
     val url: NSURL,
+    val expectedRevision: String? = null,
 )
 
 actual class DropboxDownloadParam(

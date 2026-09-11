@@ -133,7 +133,7 @@
     <string name="wrong_url_error_message">Der eingegebene Link ist nicht korrekt. Bitte erneut versuchen.</string>
     <string name="fresh_rss_password_hint">Passwort für FreshRSS-API (Einstellungen &gt; Profil)</string>
     <string name="fresh_rss_url_hint">Endpunkt der FreshRSS-API, zum Beispiel %s</string>
-    <string name="link_opening_preference_default">Vorgabe</string>
+    <string name="link_opening_preference_default">Gleich wie die App-Einstellungen</string>
     <string name="link_opening_preference_internal_browser">In-App Browser</string>
     <string name="link_opening_preference_preferred_browser">Bevorzugter Browser</string>
     <string name="delete_category_confirmation_title">Kategorie löschen?</string>
@@ -207,7 +207,7 @@
     <string name="settings_theme_light">Hell</string>
     <string name="settings_theme_dark">Dunkel</string>
     <string name="icloud_connection_error">Leider können wir uns nicht mit der iCloud verbinden. Bitte prüfe, ob du angemeldet bist, ob das iCloud-Laufwerk aktiviert ist und ob Speicherplatz zur Verfügung steht - Fehlercode: %s.</string>
-    <string name="open_feed_settings">Feed-Einstellungen öffnen</string>
+    <string name="open_feed_settings">Feed-Einstellungen</string>
     <string name="reader_mode_browser_button_content_description">Im Browser öffnen</string>
     <string name="delete_feed_confirmation_title">Feed löschen?</string>
     <string name="delete_feed_confirmation_message">Möchtest du diesen Feed wirklich löschen? Das kann nicht mehr rückgängig gemacht werden.</string>
@@ -426,4 +426,5 @@
     <string name="support_paywall_title">Lass FeedFlow weiter wachsen 💙</string>
     <string name="support_purchase_thank_you_title">Du bist fantastisch! 🎉</string>
     <string name="support_purchase_thank_you_message">Der Tip hilft, FeedFlow weiter wachsen zu lassen.💙 Danke für die Unterstützung der laufenden Weiterentwicklung, durchdachten Verbesserungen und Fehlerbehebungen.🙏</string>
+    <string name="feed_already_exists_message">%s ist schon in ihren Feeds.</string>
 </resources>

@@ -57,7 +57,7 @@ struct FeedItemRowView: View {
 
         switch browserSelector.resolvedOpenMode(for: urlInfo) {
         case .fullArticle, .feedContent:
-          onReaderModeClick(urlInfo)
+          openReaderMode(urlInfo)
         case .internalBrowser:
           onItemClick(urlInfo)
           if browserSelector.isValidForInAppBrowser(url) {
@@ -157,6 +157,18 @@ struct FeedItemRowView: View {
   ) -> some View {
     Button(action: action) {
       Image(systemName: systemImageName)
+    }
+  }
+
+  private func openReaderMode(_ urlInfo: FeedItemUrlInfo) {
+    if urlInfo.url.isEmpty || browserSelector.isReaderModeEligible(link: urlInfo.url) {
+      onReaderModeClick(urlInfo)
+    } else if let url = URL(string: urlInfo.url),
+              browserSelector.openInAppBrowser(),
+              browserSelector.isValidForInAppBrowser(url) {
+      appState.openInAppBrowser(url: url)
+    } else {
+      openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
     }
   }
 

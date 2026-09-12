@@ -131,9 +131,6 @@ struct FeedListView: View {
                             .onPreferenceChange(FeedItemVisibilityPreferenceKey.self) { items in
                                 visibleItemsChanged(items: items, viewportHeight: listProxy.size.height)
                             }
-                            .refreshable {
-                                onReloadClick()
-                            }
                             .centeredScrollContent(
                                 margin: centeringMargin,
                                 safeAreaInsets: listProxy.safeAreaInsets
@@ -204,9 +201,6 @@ struct FeedListView: View {
         .background(feedContentBackground(for: feedLayout))
         .safeAreaPadding(.horizontal, Spacing.regular)
         .safeAreaPadding(.top, Spacing.regular)
-        .refreshable {
-            onReloadClick()
-        }
     }
 
     private func gridFeedItems(

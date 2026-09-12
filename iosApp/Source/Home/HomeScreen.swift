@@ -12,14 +12,10 @@ import SwiftUI
 struct HomeScreen: View {
     @Environment(AppState.self)
     private var appState
-    @Environment(BrowserSelector.self)
-    private var browserSelector
     @Environment(HomeListIndexHolder.self)
     private var indexHolder
     @Environment(\.scenePhase)
     private var scenePhase
-    @Environment(\.openURL)
-    private var openURL
 
     @State private var loadingState: FeedUpdateStatus?
 
@@ -92,54 +88,38 @@ struct HomeScreen: View {
             nextFeedPreviewState: nextFeedPreviewState,
             feedItemDisplaySettings: feedItemDisplaySettings,
             viewMenuState: viewMenuState,
-            onRefresh: {
+            onRefresh: { [homeViewModel] in
                 homeViewModel.refreshCurrentFilter()
             },
-            onMarkAllReadClick: {
+            onMarkAllReadClick: { [homeViewModel] in
                 homeViewModel.markAllRead()
             },
-            onDeleteOldFeedClick: {
+            onDeleteOldFeedClick: { [homeViewModel] in
                 homeViewModel.deleteOldFeedItems()
             },
-            deleteAllFeeds: {
+            deleteAllFeeds: { [homeViewModel] in
                 homeViewModel.deleteAllFeeds()
             },
-            requestNewPage: {
+            requestNewPage: { [homeViewModel] in
                 homeViewModel.requestNewFeedsPage()
             },
-            onItemClick: { feedItemClickedInfo in
+            onItemClick: { [homeViewModel] feedItemClickedInfo in
                 homeViewModel.markAsRead(feedItemId: feedItemClickedInfo.id)
             },
-            onReaderModeClick: { feedItemUrlInfo in
-                if feedItemUrlInfo.url.isEmpty || browserSelector.isReaderModeEligible(link: feedItemUrlInfo.url) {
-                    homeViewModel.markAsRead(feedItemId: feedItemUrlInfo.id)
-                    readerModeViewModel.getReaderModeHtml(urlInfo: feedItemUrlInfo)
-                    if let navigate = onReaderModeNavigate {
-                        navigate()
-                    } else {
-                        appState.navigate(route: CommonViewRoute.readerMode)
-                    }
-                } else if let url = URL(string: feedItemUrlInfo.url),
-                          browserSelector.openInAppBrowser(),
-                          browserSelector.isValidForInAppBrowser(url) {
-                    appState.openInAppBrowser(url: url)
-                } else {
-                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItemUrlInfo.url))
-                }
-            },
-            onBookmarkClick: { feedItemId, isBookmarked in
+            onReaderModeClick: onReaderModeClick,
+            onBookmarkClick: { [homeViewModel] feedItemId, isBookmarked in
                 homeViewModel.updateBookmarkStatus(feedItemId: feedItemId, bookmarked: isBookmarked)
             },
-            onReadStatusClick: { feedItemId, isRead in
+            onReadStatusClick: { [homeViewModel] feedItemId, isRead in
                 homeViewModel.updateReadStatus(feedItemId: feedItemId, read: isRead)
             },
-            onMarkAllAboveAsRead: { feedItemId in
+            onMarkAllAboveAsRead: { [homeViewModel] feedItemId in
                 homeViewModel.markAllAboveAsRead(feedItemId: feedItemId)
             },
-            onMarkAllBelowAsRead: { feedItemId in
+            onMarkAllBelowAsRead: { [homeViewModel] feedItemId in
                 homeViewModel.markAllBelowAsRead(feedItemId: feedItemId)
             },
-            onBackToTimelineClick: {
+            onBackToTimelineClick: { [homeViewModel] in
                 homeViewModel.onFeedFilterSelected(selectedFeedFilter: FeedFilter.Timeline())
             },
             onNavigateToNextFeed: {
@@ -150,20 +130,23 @@ struct HomeScreen: View {
                 }
                 homeViewModel.onNavigateToNextFeed()
             },
-            onFeedSyncClick: {
+            onFeedSyncClick: { [homeViewModel] in
                 homeViewModel.enqueueBackup()
             },
             openDrawer: openDrawer,
-            onFeedOrderChange: { order in
+            onFeedOrderChange: { [homeViewModel] order in
                 homeViewModel.updateFeedOrder(order: order)
             },
-            onShowReadArticlesTimelineChange: { value in
+            onShowReadArticlesTimelineChange: { [homeViewModel] value in
                 homeViewModel.updateShowReadArticlesTimeline(value: value)
             },
-            onSettingsDone: {
+            onSettingsDone: { [homeViewModel] in
                 homeViewModel.reloadFeedState()
             }
         )
+        .refreshable { [homeViewModel] in
+            homeViewModel.refreshCurrentFilter()
+        }
         .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in homeViewModel.loadingState {
@@ -273,6 +256,22 @@ struct HomeScreen: View {
             default:
                 break
             }
+        }
+    }
+
+    private var onReaderModeClick: (FeedItemUrlInfo) -> Void {
+        if let navigate = onReaderModeNavigate {
+            return { [homeViewModel, readerModeViewModel, navigate] urlInfo in
+                homeViewModel.markAsRead(feedItemId: urlInfo.id)
+                readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                navigate()
+            }
+        }
+
+        return { [homeViewModel, readerModeViewModel, appState] urlInfo in
+            homeViewModel.markAsRead(feedItemId: urlInfo.id)
+            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+            appState.navigate(route: CommonViewRoute.readerMode)
         }
     }
 }

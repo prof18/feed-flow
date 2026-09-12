@@ -1,5 +1,8 @@
 # Cloud sync regression harness
 
+For the component map, data model, refresh/upload flows, and provider guarantees,
+start with the [cloud sync architecture](CLOUD_SYNC_ARCHITECTURE.md).
+
 This harness covers successful Dropbox, Google Drive and iCloud workflows and
 regressions added with the cloud sync fixes. Server accounts (GReader, Feedbin and
 others) are outside this harness.
@@ -66,9 +69,10 @@ they do not contact the user's iCloud account.
 
 ## Cloud sync notifications
 
-`FeedSyncMessageQueue.messageQueue` retains every engine result for diagnostics and
-the harness. UI consumers use `userMessages`: transfer, discovery, snapshot and
-reconciliation failures stay quiet, including when refresh or Backup triggers the
+`FeedSyncMessageQueue.messageQueue` emits engine results to active diagnostic and
+harness collectors; it does not persist or replay them. UI consumers use
+`userMessages`: transfer, discovery, snapshot and reconciliation failures stay
+quiet, including when refresh or Backup triggers the
 attempt. Pending changes remain available for the next sync opportunity, and the
 last successful sync timestamps do not advance on failure.
 

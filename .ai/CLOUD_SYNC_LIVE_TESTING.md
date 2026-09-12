@@ -1,5 +1,8 @@
 # Live cloud-sync testing
 
+Read the [cloud sync architecture](CLOUD_SYNC_ARCHITECTURE.md) for the component
+map, merge rules, provider behavior, and failure handling behind these scenarios.
+
 This is the optional, real-account complement to the deterministic regression
 harness in [CLOUD_SYNC_TESTING.md](CLOUD_SYNC_TESTING.md). It is a manual or
 operator-assisted release check, never a CI requirement and never a replacement

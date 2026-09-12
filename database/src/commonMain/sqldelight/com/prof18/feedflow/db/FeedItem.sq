@@ -69,7 +69,7 @@ AND is_blocked = 0
 -- Keyset cursor on (pub_date, url_hash), never LIMIT/OFFSET: read state changes while the user
 -- scrolls, so a positional offset skips articles. The four branches exist because pub_date is
 -- nullable and comparing a null yields NULL, not false, so undated rows need matching explicitly.
--- Must mirror the ORDER BY below. See .ai/PAGINATION.md.
+-- Must mirror the ORDER BY below. See docs/PAGINATION.md.
 AND (
     :lastUrlHash IS NULL
     OR (

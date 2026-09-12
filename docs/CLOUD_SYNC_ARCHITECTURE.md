@@ -384,7 +384,7 @@ The ordinary gate is:
 
 `allTests` includes cloud suites on supported hosts. Android's normal lane uses Robolectric. On macOS arm64, the gate also includes Apple/native and Swift adapter tests with their Xcode/simulator prerequisites. iCloud is unavailable on non-Mac JVM hosts. CI keeps normal Gradle output and uploads diagnostic artifacts on failure.
 
-Live checks use the [runbook](CLOUD_SYNC_LIVE_TESTING.md) and [`validate-cloud-sync` skill](skills/validate-cloud-sync/SKILL.md), with optional [iPhone controller tooling](../tools/cloud-sync-live). They check sender state after upload **before sender refresh**, then receiver delivery, so a refresh cannot conceal a bad upload. The controller reports UI command outcomes; a successful tap or XCTest session is not itself a sync assertion.
+Live checks use the [runbook](CLOUD_SYNC_LIVE_TESTING.md) and [`validate-cloud-sync` skill](../.ai/skills/validate-cloud-sync/SKILL.md), with optional [iPhone controller tooling](../tools/cloud-sync-live). They check sender state after upload **before sender refresh**, then receiver delivery, so a refresh cannot conceal a bad upload. The controller reports UI command outcomes; a successful tap or XCTest session is not itself a sync assertion.
 
 See [CLOUD_SYNC_TESTING.md](CLOUD_SYNC_TESTING.md) for exact source sets, scenario classes, execution prerequisites, and the boundary between deterministic evidence and real-provider evidence.
 

@@ -156,7 +156,7 @@ internal class FeedStateRepository(
 
     // Only ever called after a successful query: a failed one must leave the cursor pointing at
     // the list the user is still looking at, otherwise the next page restarts from the top and is
-    // appended as duplicates. See .ai/PAGINATION.md.
+    // appended as duplicates. See docs/PAGINATION.md.
     private fun updateCursor(fetchedRows: List<SelectFeeds>) {
         hasMorePages = fetchedRows.size == FEED_DB_PAGE_SIZE.toInt()
         val lastRow = fetchedRows.lastOrNull()

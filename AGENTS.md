@@ -204,7 +204,9 @@ For Google Play listing/bootstrap checks, prefer `FEEDFLOW_PLAY_CONFIG_JSON=/pat
 
 ## Testing
 
-When writing tests, follow the comprehensive testing guide at **`.ai/TESTING.md`**.
+Project documentation lives in **`docs/`**; start with [the documentation index](docs/README.md). Keep agent skills in `.ai/skills/`.
+
+When writing tests, follow the comprehensive testing guide at **`docs/TESTING.md`**.
 
 Key points:
 - All tests extend `KoinTestBase` for dependency injection
@@ -220,7 +222,7 @@ For Miniflux/GReader sync failures, compare FeedFlow's exact requests and header
 
 ## General rules:
 
-- For cloud-backup sync, follow `.ai/CLOUD_SYNC_TESTING.md`; the deterministic harness runs through `allTests`. For live provider checks or adding a provider, use `.ai/skills/validate-cloud-sync/SKILL.md` and `.ai/CLOUD_SYNC_LIVE_TESTING.md`. The optional physical-iPhone controller in `tools/cloud-sync-live/` does not replace that Gradle gate.
+- For cloud-backup sync, follow `docs/CLOUD_SYNC_TESTING.md`; the deterministic harness runs through `allTests`. For live provider checks or adding a provider, use `.ai/skills/validate-cloud-sync/SKILL.md` and `docs/CLOUD_SYNC_LIVE_TESTING.md`. The optional physical-iPhone controller in `tools/cloud-sync-live/` does not replace that Gradle gate.
 
 - DO NOT write comments for every function or class. Only write comments when the code is not self-explanatory.
 - If you touch or create any business logic, ensure it's thoroughly tested with unit tests.
@@ -276,7 +278,7 @@ When creating commits:
 - Every Ktor client that can reach the Darwin engine must install `rejectUnsafeHosts()` after its plugins are configured. Its `HttpSend` interceptor validates every request and redirect hop, preventing malformed percent escapes or bare colons in hosts from terminating iOS.
 
 ### Timeline pagination
-- The feed list pages with a keyset cursor on `(pub_date, url_hash)`, never `LIMIT`/`OFFSET`: the timeline filters on `is_read` while mark-as-read-on-scroll mutates it mid-scroll, so a positional offset skips articles (issue #1319). Read **`.ai/PAGINATION.md`** before changing `selectFeeds` in `FeedItem.sq` or the cursor handling in `FeedStateRepository`.
+- The feed list pages with a keyset cursor on `(pub_date, url_hash)`, never `LIMIT`/`OFFSET`: the timeline filters on `is_read` while mark-as-read-on-scroll mutates it mid-scroll, so a positional offset skips articles (issue #1319). Read **`docs/PAGINATION.md`** before changing `selectFeeds` in `FeedItem.sq` or the cursor handling in `FeedStateRepository`.
 - The cursor predicate must mirror the query's `ORDER BY` exactly, including SQLite NULL placement for nullable `pub_date`; invalidate the cursor only after a query succeeds.
 
 ### Internationalization

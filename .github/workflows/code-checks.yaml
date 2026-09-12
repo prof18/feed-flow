@@ -83,15 +83,9 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
-      - name: Create dummy Firebase json
+      - name: Run desktop tests
         shell: bash
-        run: |
-          cp config/dummy-google-services.json androidApp/src/debug/google-services.json
-          cp config/dummy-google-services.json androidApp/src/release/google-services.json
-
-      - name: Run all tests
-        shell: bash
-        run: ./gradlew allTests
+        run: ./gradlew --quiet --console=plain jvmTest
 
       - name: Upload test reports and cloud snapshots
         if: failure()

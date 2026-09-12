@@ -433,6 +433,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.CloudSyncTests
         GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_PREPROCESS: "NO"
+        INFOPLIST_PREFIX_HEADER: ""
         TEST_HOST: ""
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) APP_EXTENSION"
         OTHER_LDFLAGS: ["$(inherited)", "-framework", FeedFlowKit, "-lsqlite3"]

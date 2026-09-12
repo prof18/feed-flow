@@ -426,4 +426,5 @@
     <string name="settings_use_new_article_parser">新阅读模式引擎</string>
     <string name="settings_new_reader_mode_engine_confirmation_title">要尝试新阅读模式引擎吗？</string>
     <string name="settings_new_reader_mode_engine_confirmation_message">新引擎旨在更准确地提取文章并更快地加载阅读模式。它仍处于实验阶段，因此部分页面可能会缺失内容、格式不正确，或者根本无法加载。请报告您发现的任何问题。在该引擎成为默认引擎之前，您的反馈将帮助我们为每个人改进阅读模式。</string>
+    <string name="feed_already_exists_message">%s 已在源中。</string>
 </resources>

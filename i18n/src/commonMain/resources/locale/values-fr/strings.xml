@@ -416,4 +416,15 @@
     <string name="reader_content_source_web_subtitle">Récupérer et nettoyer la page originale</string>
     <string name="reader_content_source_feed">Contenu depuis le flux</string>
     <string name="reader_content_source_feed_subtitle">Utiliser le texte inclus dans le flux RSS</string>
+    <string name="feed_already_exists_message">% est déjà dans vos flux.</string>
+    <string name="settings_new_reader_mode_engine_confirmation_message">Le nouveau moteur est conçu pour extraire les articles avec plus de précision et charger le mode Lecture plus rapidement. Il est encore au stade expérimental, donc certaines pages peuvent présenter du contenu manquant, un formatage incorrect ou ne pas se charger du tout. N\'hésitez pas à nous signaler tout problème rencontré. Vos retours nous aideront à améliorer le mode Lecture pour tout le monde avant que ce moteur ne devienne la version par défaut.</string>
+    <string name="settings_new_reader_mode_engine_confirmation_title">Essayer le nouveau moteur du mode Lecture ?</string>
+    <string name="settings_use_new_article_parser">Nouveau moteur du mode Lecture</string>
+    <string name="server_account_subscriptions_warning">Ce compte utilise les abonnements enregistrés sur le serveur.</string>
+    <string name="server_account_replace_local_title">Remplacer les abonnements locaux ?</string>
+    <string name="server_account_replace_local_message">Se connecter remplace les flux stockés sur cet appareil par les abonnements du serveur. Se déconnecter plus tard ne restaurera pas les flux locaux. Exportez-les d\'abord en OPML si vous souhaitez en garder une copie.</string>
+    <string name="server_account_replace_and_connect_button">Remplacer et se connecter</string>
+    <string name="support_paywall_title">Soutenez le développement de FeedFlow 💙</string>
+    <string name="support_purchase_thank_you_title">Vous êtes formidable ! 🎉</string>
+    <string name="support_purchase_thank_you_message">Votre don aide FeedFlow à grandir 💙 Merci de soutenir le développement continu, les améliorations apportées et la correction des bugs. 🙏</string>
 </resources>

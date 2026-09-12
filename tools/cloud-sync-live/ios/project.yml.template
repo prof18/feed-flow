@@ -1,0 +1,41 @@
+name: LiveCloudSyncHost
+options:
+  minimumXcodeGenVersion: 2.46.0
+settings:
+  base:
+    IPHONEOS_DEPLOYMENT_TARGET: 18.0
+    SWIFT_VERSION: 5.0
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: __TEAM_ID__
+targets:
+  LiveCloudSyncHost:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: __HOST_BUNDLE_ID__
+        GENERATE_INFOPLIST_FILE: YES
+  LiveCloudSyncTests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - Tests
+      - path: Configuration.json
+        buildPhase: resources
+    dependencies:
+      - target: LiveCloudSyncHost
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: __TEST_BUNDLE_ID__
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  LiveCloudSyncHost:
+    build:
+      targets:
+        LiveCloudSyncHost: all
+        LiveCloudSyncTests: [test]
+    test:
+      targets:
+        - LiveCloudSyncTests

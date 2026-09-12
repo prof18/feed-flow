@@ -220,6 +220,8 @@ For Miniflux/GReader sync failures, compare FeedFlow's exact requests and header
 
 ## General rules:
 
+- For cloud-backup sync, follow `.ai/CLOUD_SYNC_TESTING.md`; the deterministic harness runs through `allTests`. For live provider checks or adding a provider, use `.ai/skills/validate-cloud-sync/SKILL.md` and `.ai/CLOUD_SYNC_LIVE_TESTING.md`. The optional physical-iPhone controller in `tools/cloud-sync-live/` does not replace that Gradle gate.
+
 - DO NOT write comments for every function or class. Only write comments when the code is not self-explanatory.
 - If you touch or create any business logic, ensure it's thoroughly tested with unit tests.
 - DO NOT excessively use try/catch blocks for every function. Use them only for the top caller or the bottom callers, depending on the cases.

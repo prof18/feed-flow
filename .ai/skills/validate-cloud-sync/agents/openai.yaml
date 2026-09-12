@@ -1,0 +1,4 @@
+interface:
+  display_name: "Validate Cloud Sync"
+  short_description: "Validate cloud sync across FeedFlow devices."
+  default_prompt: "Use $validate-cloud-sync to validate the selected FeedFlow cloud provider and report evidence from the regression harness and requested live devices."

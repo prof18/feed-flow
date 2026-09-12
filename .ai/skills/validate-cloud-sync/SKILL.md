@@ -7,8 +7,8 @@ description: Validate FeedFlow cloud-backup sync across supported platforms or o
 
 Use the repository's two maintained references:
 
-- [CLOUD_SYNC_TESTING.md](../../CLOUD_SYNC_TESTING.md) for the deterministic harness, supported source sets, provider boundaries and `allTests`.
-- [CLOUD_SYNC_LIVE_TESTING.md](../../CLOUD_SYNC_LIVE_TESTING.md) for live provider setup, exact device1/device2 scenarios, the optional iPhone controller and evidence/report requirements.
+- [CLOUD_SYNC_TESTING.md](../../../docs/CLOUD_SYNC_TESTING.md) for the deterministic harness, supported source sets, provider boundaries and `allTests`.
+- [CLOUD_SYNC_LIVE_TESTING.md](../../../docs/CLOUD_SYNC_LIVE_TESTING.md) for live provider setup, exact device1/device2 scenarios, the optional iPhone controller and evidence/report requirements.
 
 Resolve these paths from this skill's directory; run commands from the repository root.
 Choose the requested provider, supported platforms and test layer. A request for

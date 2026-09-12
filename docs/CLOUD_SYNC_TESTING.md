@@ -9,7 +9,7 @@ others) are outside this harness.
 
 For repeatable real-account checks and new-provider onboarding, use the
 [live testing runbook](CLOUD_SYNC_LIVE_TESTING.md) and the repo-local
-[`validate-cloud-sync` skill](skills/validate-cloud-sync/SKILL.md). The optional
+[`validate-cloud-sync` skill](../.ai/skills/validate-cloud-sync/SKILL.md). The optional
 physical-device controller is separate from this deterministic `allTests` gate.
 
 ## Structure

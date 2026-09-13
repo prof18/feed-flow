@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.ui.readermode
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -33,6 +35,10 @@ fun ReaderTextSettingsSheetContent(
     onFontSizeChange: (Int) -> Unit,
     lineHeight: Int,
     onLineHeightChange: (Int) -> Unit,
+    bodyFont: ReaderFontFamily,
+    onBodyFontChange: (ReaderFontFamily) -> Unit,
+    headlineFont: ReaderFontFamily,
+    onHeadlineFontChange: (ReaderFontFamily) -> Unit,
     modifier: Modifier = Modifier,
     resetButtonModifier: Modifier = Modifier,
 ) {
@@ -66,13 +72,31 @@ fun ReaderTextSettingsSheetContent(
             steps = LINE_HEIGHT_STEPS,
         )
 
+        ReaderFontFamilyDropdownRow(
+            title = strings.readerModeBodyFont,
+            currentFont = bodyFont,
+            onFontSelected = onBodyFontChange,
+            contentPadding = PaddingValues(vertical = Spacing.xsmall),
+        )
+
+        ReaderFontFamilyDropdownRow(
+            title = strings.readerModeHeadlineFont,
+            currentFont = headlineFont,
+            onFontSelected = onHeadlineFontChange,
+            contentPadding = PaddingValues(vertical = Spacing.xsmall),
+        )
+
         TextButton(
             onClick = {
                 onFontSizeChange(ReaderModeDefaults.FONT_SIZE)
                 onLineHeightChange(ReaderModeDefaults.LINE_HEIGHT)
+                onBodyFontChange(ReaderModeDefaults.BODY_FONT)
+                onHeadlineFontChange(ReaderModeDefaults.HEADLINE_FONT)
             },
             enabled = fontSize != ReaderModeDefaults.FONT_SIZE ||
-                lineHeight != ReaderModeDefaults.LINE_HEIGHT,
+                lineHeight != ReaderModeDefaults.LINE_HEIGHT ||
+                bodyFont != ReaderModeDefaults.BODY_FONT ||
+                headlineFont != ReaderModeDefaults.HEADLINE_FONT,
             modifier = resetButtonModifier.align(Alignment.End),
         ) {
             Text(strings.readerModeResetToDefault)

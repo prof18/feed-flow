@@ -10,6 +10,10 @@ public struct ReaderViewActions {
     public let onFontSizeMenuToggle: () -> Void
     public let onFontSizeChange: (Double) -> Void
     public let onLineHeightChange: (Double) -> Void
+    public let onBodyFontChange: (String) -> Void
+    public let onHeadlineFontChange: (String) -> Void
+    public let fontFamilyScriptFor: (String, String) -> String
+    public let fontOptions: [ReaderFontOption]
     public let onNavigateToNext: (() -> Void)?
     public let onNavigateToPrevious: (() -> Void)?
     public let onToggleContentSource: (() -> Void)?
@@ -25,6 +29,10 @@ public struct ReaderViewActions {
         onFontSizeMenuToggle: @escaping () -> Void,
         onFontSizeChange: @escaping (Double) -> Void,
         onLineHeightChange: @escaping (Double) -> Void,
+        onBodyFontChange: @escaping (String) -> Void,
+        onHeadlineFontChange: @escaping (String) -> Void,
+        fontFamilyScriptFor: @escaping (String, String) -> String,
+        fontOptions: [ReaderFontOption],
         onNavigateToNext: (() -> Void)? = nil,
         onNavigateToPrevious: (() -> Void)? = nil,
         onToggleContentSource: (() -> Void)? = nil,
@@ -39,6 +47,10 @@ public struct ReaderViewActions {
         self.onFontSizeMenuToggle = onFontSizeMenuToggle
         self.onFontSizeChange = onFontSizeChange
         self.onLineHeightChange = onLineHeightChange
+        self.onBodyFontChange = onBodyFontChange
+        self.onHeadlineFontChange = onHeadlineFontChange
+        self.fontFamilyScriptFor = fontFamilyScriptFor
+        self.fontOptions = fontOptions
         self.onNavigateToNext = onNavigateToNext
         self.onNavigateToPrevious = onNavigateToPrevious
         self.onToggleContentSource = onToggleContentSource
@@ -55,8 +67,12 @@ public struct ReaderView: View {
     var isBookmarked: Bool
     var fontSize: Double
     var lineHeight: Double
+    var bodyFontId: String
+    var headlineFontId: String
     var defaultFontSize: Double
     var defaultLineHeight: Double
+    var defaultBodyFontId: String
+    var defaultHeadlineFontId: String
     @Binding var showFontSizeMenu: Bool
     var openInBrowser: (URL) -> Void
 
@@ -70,8 +86,12 @@ public struct ReaderView: View {
         isBookmarked: Bool,
         fontSize: Double,
         lineHeight: Double,
+        bodyFontId: String,
+        headlineFontId: String,
         defaultFontSize: Double,
         defaultLineHeight: Double,
+        defaultBodyFontId: String,
+        defaultHeadlineFontId: String,
         showFontSizeMenu: Binding<Bool>,
         openInBrowser: @escaping (URL) -> Void
     ) {
@@ -82,8 +102,12 @@ public struct ReaderView: View {
         self.isBookmarked = isBookmarked
         self.fontSize = fontSize
         self.lineHeight = lineHeight
+        self.bodyFontId = bodyFontId
+        self.headlineFontId = headlineFontId
         self.defaultFontSize = defaultFontSize
         self.defaultLineHeight = defaultLineHeight
+        self.defaultBodyFontId = defaultBodyFontId
+        self.defaultHeadlineFontId = defaultHeadlineFontId
         self._showFontSizeMenu = showFontSizeMenu
         self.openInBrowser = openInBrowser
     }
@@ -414,6 +438,26 @@ public struct ReaderView: View {
                         }
                     )
 
+                    Divider()
+
+                    fontFamilyPickerRow(
+                        title: actions.strings.bodyFont,
+                        selection: bodyFontId,
+                        onSelectionChange: { newBodyFontId in
+                            updateFontFamilyWithJS(bodyFontId: newBodyFontId, headlineFontId: headlineFontId)
+                            actions.onBodyFontChange(newBodyFontId)
+                        }
+                    )
+
+                    fontFamilyPickerRow(
+                        title: actions.strings.headlineFont,
+                        selection: headlineFontId,
+                        onSelectionChange: { newHeadlineFontId in
+                            updateFontFamilyWithJS(bodyFontId: bodyFontId, headlineFontId: newHeadlineFontId)
+                            actions.onHeadlineFontChange(newHeadlineFontId)
+                        }
+                    )
+
                     HStack {
                         Spacer()
                         resetTextSettingsButton
@@ -441,12 +485,21 @@ public struct ReaderView: View {
     }
 
     private var resetTextSettingsButton: some View {
-        let isDisabled = fontSize == defaultFontSize && lineHeight == defaultLineHeight
+        let isDisabled = fontSize == defaultFontSize &&
+            lineHeight == defaultLineHeight &&
+            bodyFontId == defaultBodyFontId &&
+            headlineFontId == defaultHeadlineFontId
         return Button {
             updateFontSizeWithJS(defaultFontSize)
             updateLineHeightWithJS(defaultLineHeight)
+            updateFontFamilyWithJS(
+                bodyFontId: defaultBodyFontId,
+                headlineFontId: defaultHeadlineFontId
+            )
             actions.onFontSizeChange(defaultFontSize)
             actions.onLineHeightChange(defaultLineHeight)
+            actions.onBodyFontChange(defaultBodyFontId)
+            actions.onHeadlineFontChange(defaultHeadlineFontId)
         } label: {
             Text(actions.strings.resetToDefault)
                 .font(.body)
@@ -455,6 +508,25 @@ public struct ReaderView: View {
         .foregroundStyle(isDisabled ? Color.secondary : Color.accentColor)
         .disabled(isDisabled)
         .accessibilityIdentifier(ReaderAccessibilityIdentifiers.textSettingsResetButton)
+    }
+
+    @ViewBuilder
+    private func fontFamilyPickerRow(
+        title: String,
+        selection: String,
+        onSelectionChange: @escaping (String) -> Void
+    ) -> some View {
+        Picker(selection: Binding(
+            get: { selection },
+            set: onSelectionChange
+        )) {
+            ForEach(actions.fontOptions) { option in
+                Text(option.label).tag(option.id)
+            }
+        } label: {
+            Text(title)
+        }
+        .padding(.vertical, 4)
     }
 
     @ViewBuilder
@@ -534,6 +606,13 @@ public struct ReaderView: View {
             })();
         """
         webContent.evaluateJavaScript(script)
+    }
+
+    private func updateFontFamilyWithJS(bodyFontId: String, headlineFontId: String) {
+        guard let webContent = webContent else { return }
+        webContent.evaluateJavaScript(
+            actions.fontFamilyScriptFor(bodyFontId, headlineFontId)
+        )
     }
 
     @ViewBuilder

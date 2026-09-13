@@ -39,6 +39,7 @@ import com.prof18.feedflow.desktop.ui.components.MacToolbarTitleAreaHeight
 import com.prof18.feedflow.desktop.ui.components.drawerHazeStyle
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
+import com.prof18.feedflow.shared.presentation.MainSettingsViewModel
 import com.prof18.feedflow.shared.presentation.MenuBarViewModel
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -61,10 +62,12 @@ internal fun SettingsWindow(
         extendBehindTitleBar = true,
     ) { modifier ->
         val menuBarViewModel = koinViewModel<MenuBarViewModel>()
+        val mainSettingsViewModel = koinViewModel<MainSettingsViewModel>()
         val feedListSettingsViewModel = koinViewModel<FeedListSettingsViewModel>()
         val desktopHomeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
 
         val settingsState by menuBarViewModel.state.collectAsState()
+        val mainSettingsState by mainSettingsViewModel.settingsState.collectAsState()
         val isMultiPaneEnabled by desktopHomeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
         val fontSizesState by feedListSettingsViewModel.feedFontSizeState.collectAsState()
         val feedListSettingsState by feedListSettingsViewModel.state.collectAsState()
@@ -157,6 +160,10 @@ internal fun SettingsWindow(
                     DesktopSettingsCategory.GENERAL -> GeneralPane(
                         themeMode = settingsState.themeMode,
                         onThemeModeSelected = menuBarViewModel::updateThemeMode,
+                        bodyFont = mainSettingsState.bodyFont,
+                        onBodyFontSelected = mainSettingsViewModel::updateBodyFont,
+                        headlineFont = mainSettingsState.headlineFont,
+                        onHeadlineFontSelected = mainSettingsViewModel::updateHeadlineFont,
                         isMultiPaneEnabled = isMultiPaneEnabled,
                         onMultiPaneToggled = desktopHomeSettingsRepository::setMultiPaneLayoutEnabled,
                         isReduceMotionEnabled = settingsState.isReduceMotionEnabled,

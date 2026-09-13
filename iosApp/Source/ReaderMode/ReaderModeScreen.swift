@@ -19,6 +19,8 @@ struct ReaderModeScreen: View {
     @State private var showFontSizeMenu = false
     @State private var fontSize = 16.0
     @State private var lineHeight = 0.0
+    @State private var bodyFont = ReaderFontFamily.system
+    @State private var headlineFont = ReaderFontFamily.system
     @State private var isBookmarked = false
     @State private var readerStatus = ReaderStatus.fetching
     @State private var currentContent: String?
@@ -74,6 +76,8 @@ struct ReaderModeScreen: View {
                     openComments: feedFlowStrings.menuOpenComments,
                     fontSize: feedFlowStrings.readerModeFontSize,
                     lineHeight: feedFlowStrings.readerModeLineHeight,
+                    bodyFont: feedFlowStrings.readerModeBodyFont,
+                    headlineFont: feedFlowStrings.readerModeHeadlineFont,
                     textSettings: feedFlowStrings.readerModeTextSettings,
                     resetToDefault: feedFlowStrings.readerModeResetToDefault,
                     done: feedFlowStrings.actionDone,
@@ -148,6 +152,23 @@ struct ReaderModeScreen: View {
                     lineHeight = newValue
                     viewModel.updateLineHeight(newLineHeight: Int32(Int(newValue)))
                 },
+                onBodyFontChange: { fontId in
+                    let font = ReaderFontFamily.companion.fromStorageName(name: fontId)
+                    bodyFont = font
+                    viewModel.updateBodyFont(font: font)
+                },
+                onHeadlineFontChange: { fontId in
+                    let font = ReaderFontFamily.companion.fromStorageName(name: fontId)
+                    headlineFont = font
+                    viewModel.updateHeadlineFont(font: font)
+                },
+                fontFamilyScriptFor: { bodyId, headlineId in
+                    readerFontFamilyJs(
+                        bodyFont: ReaderFontFamily.companion.fromStorageName(name: bodyId),
+                        headlineFont: ReaderFontFamily.companion.fromStorageName(name: headlineId)
+                    )
+                },
+                fontOptions: Self.fontOptions(strings: feedFlowStrings),
                 onNavigateToNext: canNavigateNext ? {
                     viewModel.navigateToNextArticle()
                 } : nil,
@@ -163,8 +184,12 @@ struct ReaderModeScreen: View {
             isBookmarked: isBookmarked,
             fontSize: fontSize,
             lineHeight: lineHeight,
+            bodyFontId: bodyFont.name,
+            headlineFontId: headlineFont.name,
             defaultFontSize: Double(ReaderModeDefaults.shared.FONT_SIZE),
             defaultLineHeight: Double(ReaderModeDefaults.shared.LINE_HEIGHT),
+            defaultBodyFontId: ReaderModeDefaults.shared.BODY_FONT.name,
+            defaultHeadlineFontId: ReaderModeDefaults.shared.HEADLINE_FONT.name,
             showFontSizeMenu: $showFontSizeMenu,
             openInBrowser: { url in
                 openInBrowser(url: url)
@@ -191,6 +216,8 @@ struct ReaderModeScreen: View {
             for await settings in viewModel.readerFontSettingsState {
                 self.fontSize = Double(settings.fontSize)
                 self.lineHeight = Double(settings.lineHeight)
+                self.bodyFont = settings.bodyFont
+                self.headlineFont = settings.headlineFont
             }
         }
         .task {
@@ -277,7 +304,9 @@ struct ReaderModeScreen: View {
             title: isShowingFeedContent ? feedItemTitle : nil,
             imageUrl: currentImageUrl,
             leadingContent: "",
-            siteName: isShowingFeedContent ? currentSiteName : nil
+            siteName: isShowingFeedContent ? currentSiteName : nil,
+            bodyFont: bodyFont,
+            headlineFont: headlineFont
         )
 
         self.readerStatus = .extractedContent(
@@ -309,5 +338,20 @@ struct ReaderModeScreen: View {
             backgroundColor: isDarkMode ? "#1e1e1e" : "#f6f8fa",
             borderColor: isDarkMode ? "#444444" : "#d1d9e0"
         )
+    }
+
+    private static func fontOptions(strings: FeedFlowStrings) -> [ReaderFontOption] {
+        [
+            (.system, strings.readerFontSystem),
+            (.outfit, strings.readerFontOutfit),
+            (.inter, strings.readerFontInter),
+            (.atkinsonHyperlegible, strings.readerFontAtkinsonHyperlegible),
+            (.literata, strings.readerFontLiterata),
+            (.sourceSerif4, strings.readerFontSourceSerif4),
+            (.libreBaskerville, strings.readerFontLibreBaskerville),
+            (.lora, strings.readerFontLora)
+        ].map { font, label in
+            ReaderFontOption(id: font.name, label: label)
+        }
     }
 }

@@ -186,6 +186,16 @@
     <string name="settings_description_lines_no_limit">No limit</string>
     <string name="reader_mode_font_size">Font Size</string>
     <string name="reader_mode_line_height">Line Height</string>
+    <string name="reader_mode_body_font">Article body font</string>
+    <string name="reader_mode_headline_font">Headline font</string>
+    <string name="reader_font_system">System</string>
+    <string name="reader_font_outfit">Outfit</string>
+    <string name="reader_font_inter">Inter</string>
+    <string name="reader_font_atkinson_hyperlegible">Atkinson Hyperlegible</string>
+    <string name="reader_font_literata">Literata</string>
+    <string name="reader_font_source_serif_4">Source Serif 4</string>
+    <string name="reader_font_libre_baskerville">Libre Baskerville</string>
+    <string name="reader_font_lora">Lora</string>
     <string name="reader_mode_text_settings">Text Settings</string>
     <string name="reader_mode_reset_to_default">Reset to default</string>
     <string name="edit_feed_source_name_button">Edit</string>

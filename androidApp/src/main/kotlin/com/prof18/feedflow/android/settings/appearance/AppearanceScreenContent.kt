@@ -17,7 +17,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.settings.SettingsE2eIds
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.shared.ui.readermode.ReaderFontFamilyDropdownRow
 import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
@@ -29,9 +31,13 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun AppearanceScreenContent(
     navigateBack: () -> Unit,
     themeMode: ThemeMode,
+    bodyFont: ReaderFontFamily,
+    headlineFont: ReaderFontFamily,
     isReduceMotionEnabled: Boolean,
     isHideUnreadCountEnabled: Boolean,
     onThemeModeSelected: (ThemeMode) -> Unit,
+    onBodyFontSelected: (ReaderFontFamily) -> Unit,
+    onHeadlineFontSelected: (ReaderFontFamily) -> Unit,
     onReduceMotionToggled: (Boolean) -> Unit,
     onHideUnreadCountToggled: (Boolean) -> Unit,
 ) {
@@ -77,6 +83,22 @@ internal fun AppearanceScreenContent(
             }
 
             item {
+                ReaderFontFamilyDropdownRow(
+                    title = strings.readerModeBodyFont,
+                    currentFont = bodyFont,
+                    onFontSelected = onBodyFontSelected,
+                )
+            }
+
+            item {
+                ReaderFontFamilyDropdownRow(
+                    title = strings.readerModeHeadlineFont,
+                    currentFont = headlineFont,
+                    onFontSelected = onHeadlineFontSelected,
+                )
+            }
+
+            item {
                 SettingSwitchItem(
                     modifier = Modifier.testTag(SettingsE2eIds.APPEARANCE_HIDE_UNREAD_COUNT),
                     title = strings.settingsHideUnreadCount,
@@ -108,9 +130,13 @@ private fun AppearanceScreenContentPreview() {
         AppearanceScreenContent(
             navigateBack = {},
             themeMode = ThemeMode.SYSTEM,
+            bodyFont = ReaderFontFamily.SYSTEM,
+            headlineFont = ReaderFontFamily.SYSTEM,
             isReduceMotionEnabled = false,
             isHideUnreadCountEnabled = false,
             onThemeModeSelected = {},
+            onBodyFontSelected = {},
+            onHeadlineFontSelected = {},
             onReduceMotionToggled = {},
             onHideUnreadCountToggled = {},
         )

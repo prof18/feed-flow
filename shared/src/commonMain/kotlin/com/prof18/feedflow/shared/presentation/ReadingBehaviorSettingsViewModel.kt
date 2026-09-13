@@ -31,6 +31,7 @@ class ReadingBehaviorSettingsViewModel internal constructor(
         val isMarkReadWhenScrollingEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
         val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
         val isHideReadItemsEnabled = settingsRepository.getHideReadItems()
+        val isVolumeButtonsScrollEnabled = settingsRepository.getVolumeButtonsScrollEnabled()
         val articleOpenMode = settingsRepository.getArticleOpenMode()
 
         stateMutableFlow.update {
@@ -41,6 +42,7 @@ class ReadingBehaviorSettingsViewModel internal constructor(
                 isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
                 isShowReadItemsEnabled = isShowReadItemsEnabled,
                 isHideReadItemsEnabled = isHideReadItemsEnabled,
+                isVolumeButtonsScrollEnabled = isVolumeButtonsScrollEnabled,
                 articleOpenMode = articleOpenMode,
             )
         }
@@ -95,6 +97,13 @@ class ReadingBehaviorSettingsViewModel internal constructor(
         settingsRepository.setHideReadItems(value)
         stateMutableFlow.update {
             it.copy(isHideReadItemsEnabled = value)
+        }
+    }
+
+    fun updateVolumeButtonsScrollEnabled(value: Boolean) {
+        settingsRepository.setVolumeButtonsScrollEnabled(value)
+        stateMutableFlow.update {
+            it.copy(isVolumeButtonsScrollEnabled = value)
         }
     }
 }

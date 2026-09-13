@@ -43,6 +43,7 @@ internal fun ReadingBehaviorScreenContent(
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setHideReadItems: (Boolean) -> Unit,
+    setVolumeButtonsScrollEnabled: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -146,6 +147,14 @@ internal fun ReadingBehaviorScreenContent(
             }
 
             item {
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsVolumeButtonsScroll,
+                    isChecked = state.isVolumeButtonsScrollEnabled,
+                    onCheckedChange = setVolumeButtonsScrollEnabled,
+                )
+            }
+
+            item {
                 Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
             }
         }
@@ -174,6 +183,7 @@ private fun ReadingBehaviorScreenContentPreview() {
             setMarkReadWhenScrolling = {},
             setShowReadItem = {},
             setHideReadItems = {},
+            setVolumeButtonsScrollEnabled = {},
         )
     }
 }

@@ -40,6 +40,8 @@ internal fun SearchScreen(
     val browserManager = koinInject<BrowserManager>()
     val state: SearchState by viewModel.searchState.collectAsStateWithLifecycle()
     val feedFontSizes by viewModel.feedFontSizeState.collectAsStateWithLifecycle()
+    val bodyFont by viewModel.bodyFontState.collectAsStateWithLifecycle()
+    val headlineFont by viewModel.headlineFontState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQueryState.collectAsStateWithLifecycle()
     val searchFilter by viewModel.searchFilterState.collectAsStateWithLifecycle()
     val currentFeedFilter by viewModel.searchFeedFilterState.collectAsStateWithLifecycle()
@@ -90,6 +92,8 @@ internal fun SearchScreen(
         searchFilter = searchFilter,
         currentFeedFilter = currentFeedFilter,
         feedFontSizes = feedFontSizes,
+        bodyFont = bodyFont,
+        headlineFont = headlineFont,
         shareMenuLabel = strings.menuShare,
         shareCommentsMenuLabel = strings.menuShareComments,
         updateSearchQuery = { query ->

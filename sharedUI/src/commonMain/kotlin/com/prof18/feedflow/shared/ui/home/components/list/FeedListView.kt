@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -55,6 +56,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.ReaderFontFamily
+import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActionType.NONE
 import com.prof18.feedflow.core.model.SwipeActionType.OPEN_IN_BROWSER
@@ -62,8 +65,10 @@ import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_BOOKMARK_STATUS
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_READ_STATUS
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.VisibleFeedItem
+import com.prof18.feedflow.shared.ui.home.LocalFeedContentTypography
 import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
 import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState.NextFeedDisplayEnabledState
+import com.prof18.feedflow.shared.ui.home.rememberFeedContentTypography
 import com.prof18.feedflow.shared.ui.icons.BookmarkIcon
 import com.prof18.feedflow.shared.ui.icons.BookmarkOffIcon
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
@@ -86,6 +91,85 @@ private val GridMinCellWidth = 280.dp
 @Suppress("MagicNumber")
 @Composable
 fun FeedList(
+    feedItems: ImmutableList<FeedItem>,
+    nextFeedState: NextFeedDisplayState,
+    feedFontSize: FeedFontSizes,
+    feedLayout: FeedLayout,
+    currentFeedFilter: FeedFilter,
+    shareMenuLabel: String,
+    shareCommentsMenuLabel: String,
+    swipeActions: SwipeActions,
+    onVisibleFeedItemsChanged: (List<VisibleFeedItem>) -> Unit,
+    requestMoreItems: () -> Unit,
+    onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onOpenInBrowser: (FeedItemUrlInfo) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
+    markAllAsRead: () -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
+    onOpenFeedWebsite: (String) -> Unit,
+    onNavigateNext: () -> Unit,
+    modifier: Modifier = Modifier,
+    onGridArrangementChanged: (Boolean) -> Unit = {},
+    listState: LazyListState = rememberLazyListState(),
+    gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
+    contentPadding: PaddingValues = PaddingValues(),
+    showNextFeedButton: Boolean = false,
+    isGridLayoutEnabled: Boolean = true,
+    isGridLayoutAllowed: Boolean = true,
+    onMarkAllAboveAsRead: (String) -> Unit = {},
+    onMarkAllBelowAsRead: (String) -> Unit = {},
+    feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
+    bodyFont: ReaderFontFamily = ReaderModeDefaults.BODY_FONT,
+    headlineFont: ReaderFontFamily = ReaderModeDefaults.HEADLINE_FONT,
+) {
+    val feedContentTypography = rememberFeedContentTypography(
+        headlineFont = headlineFont,
+        bodyFont = bodyFont,
+    )
+    CompositionLocalProvider(LocalFeedContentTypography provides feedContentTypography) {
+        FeedListContent(
+            feedItems = feedItems,
+            nextFeedState = nextFeedState,
+            feedFontSize = feedFontSize,
+            feedLayout = feedLayout,
+            currentFeedFilter = currentFeedFilter,
+            shareMenuLabel = shareMenuLabel,
+            shareCommentsMenuLabel = shareCommentsMenuLabel,
+            swipeActions = swipeActions,
+            onVisibleFeedItemsChanged = onVisibleFeedItemsChanged,
+            requestMoreItems = requestMoreItems,
+            onFeedItemClick = onFeedItemClick,
+            onOpenInBrowser = onOpenInBrowser,
+            onBookmarkClick = onBookmarkClick,
+            onReadStatusClick = onReadStatusClick,
+            onCommentClick = onCommentClick,
+            markAllAsRead = markAllAsRead,
+            onShareClick = onShareClick,
+            onOpenFeedSettings = onOpenFeedSettings,
+            onOpenFeedWebsite = onOpenFeedWebsite,
+            onNavigateNext = onNavigateNext,
+            modifier = modifier,
+            onGridArrangementChanged = onGridArrangementChanged,
+            listState = listState,
+            gridState = gridState,
+            contentPadding = contentPadding,
+            showNextFeedButton = showNextFeedButton,
+            isGridLayoutEnabled = isGridLayoutEnabled,
+            isGridLayoutAllowed = isGridLayoutAllowed,
+            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+            feedItemDisplaySettings = feedItemDisplaySettings,
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Suppress("MagicNumber")
+@Composable
+private fun FeedListContent(
     feedItems: ImmutableList<FeedItem>,
     nextFeedState: NextFeedDisplayState,
     feedFontSize: FeedFontSizes,

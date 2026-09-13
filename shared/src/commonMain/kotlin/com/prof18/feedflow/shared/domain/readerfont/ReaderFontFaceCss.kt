@@ -10,22 +10,6 @@ import kotlin.io.encoding.ExperimentalEncodingApi
  */
 internal expect fun readerFontFaceSrc(fileName: String): String?
 
-fun ReaderFontFamily.resourceFileName(): String? = when (this) {
-    ReaderFontFamily.SYSTEM -> null
-    ReaderFontFamily.OUTFIT -> "Outfit-Regular.ttf"
-    ReaderFontFamily.INTER -> "Inter-Regular.ttf"
-    ReaderFontFamily.ATKINSON_HYPERLEGIBLE -> "AtkinsonHyperlegible-Regular.ttf"
-    ReaderFontFamily.LITERATA -> "Literata-Regular.ttf"
-    ReaderFontFamily.SOURCE_SERIF_4 -> "SourceSerif4-Regular.ttf"
-    ReaderFontFamily.LIBRE_BASKERVILLE -> "LibreBaskerville-Regular.ttf"
-    ReaderFontFamily.LORA -> "Lora-Regular.ttf"
-}
-
-fun ReaderFontFamily.boldResourceFileName(): String? = when (this) {
-    ReaderFontFamily.ATKINSON_HYPERLEGIBLE -> "AtkinsonHyperlegible-Bold.ttf"
-    else -> null
-}
-
 private val fontFaceCssCache = mutableMapOf<ReaderFontFamily, String>()
 
 fun readerFontFaceCss(vararg families: ReaderFontFamily): String {

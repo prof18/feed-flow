@@ -84,17 +84,17 @@ internal fun AppearanceScreenContent(
 
             item {
                 ReaderFontFamilyDropdownRow(
-                    title = strings.readerModeBodyFont,
-                    currentFont = bodyFont,
-                    onFontSelected = onBodyFontSelected,
+                    title = strings.readerModeHeadlineFont,
+                    currentFont = headlineFont,
+                    onFontSelected = onHeadlineFontSelected,
                 )
             }
 
             item {
                 ReaderFontFamilyDropdownRow(
-                    title = strings.readerModeHeadlineFont,
-                    currentFont = headlineFont,
-                    onFontSelected = onHeadlineFontSelected,
+                    title = strings.readerModeBodyFont,
+                    currentFont = bodyFont,
+                    onFontSelected = onBodyFontSelected,
                 )
             }
 

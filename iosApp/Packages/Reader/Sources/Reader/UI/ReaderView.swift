@@ -441,20 +441,20 @@ public struct ReaderView: View {
                     Divider()
 
                     fontFamilyPickerRow(
-                        title: actions.strings.bodyFont,
-                        selection: bodyFontId,
-                        onSelectionChange: { newBodyFontId in
-                            updateFontFamilyWithJS(bodyFontId: newBodyFontId, headlineFontId: headlineFontId)
-                            actions.onBodyFontChange(newBodyFontId)
-                        }
-                    )
-
-                    fontFamilyPickerRow(
                         title: actions.strings.headlineFont,
                         selection: headlineFontId,
                         onSelectionChange: { newHeadlineFontId in
                             updateFontFamilyWithJS(bodyFontId: bodyFontId, headlineFontId: newHeadlineFontId)
                             actions.onHeadlineFontChange(newHeadlineFontId)
+                        }
+                    )
+
+                    fontFamilyPickerRow(
+                        title: actions.strings.bodyFont,
+                        selection: bodyFontId,
+                        onSelectionChange: { newBodyFontId in
+                            updateFontFamilyWithJS(bodyFontId: newBodyFontId, headlineFontId: headlineFontId)
+                            actions.onBodyFontChange(newBodyFontId)
                         }
                     )
 

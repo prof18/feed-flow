@@ -186,7 +186,7 @@
     <string name="settings_description_lines_no_limit">No limit</string>
     <string name="reader_mode_font_size">Font Size</string>
     <string name="reader_mode_line_height">Line Height</string>
-    <string name="reader_mode_body_font">Article body font</string>
+    <string name="reader_mode_body_font">Body font</string>
     <string name="reader_mode_headline_font">Headline font</string>
     <string name="reader_font_system">System</string>
     <string name="reader_font_outfit">Outfit</string>

@@ -52,15 +52,15 @@ internal fun GeneralPane(
         )
 
         ReaderFontFamilyDropdownRow(
-            title = strings.readerModeBodyFont,
-            currentFont = bodyFont,
-            onFontSelected = onBodyFontSelected,
-        )
-
-        ReaderFontFamilyDropdownRow(
             title = strings.readerModeHeadlineFont,
             currentFont = headlineFont,
             onFontSelected = onHeadlineFontSelected,
+        )
+
+        ReaderFontFamilyDropdownRow(
+            title = strings.readerModeBodyFont,
+            currentFont = bodyFont,
+            onFontSelected = onBodyFontSelected,
         )
 
         SettingSwitchItem(

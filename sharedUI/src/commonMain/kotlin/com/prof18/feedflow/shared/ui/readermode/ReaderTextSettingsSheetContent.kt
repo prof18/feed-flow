@@ -73,16 +73,16 @@ fun ReaderTextSettingsSheetContent(
         )
 
         ReaderFontFamilyDropdownRow(
-            title = strings.readerModeBodyFont,
-            currentFont = bodyFont,
-            onFontSelected = onBodyFontChange,
+            title = strings.readerModeHeadlineFont,
+            currentFont = headlineFont,
+            onFontSelected = onHeadlineFontChange,
             contentPadding = PaddingValues(vertical = Spacing.xsmall),
         )
 
         ReaderFontFamilyDropdownRow(
-            title = strings.readerModeHeadlineFont,
-            currentFont = headlineFont,
-            onFontSelected = onHeadlineFontChange,
+            title = strings.readerModeBodyFont,
+            currentFont = bodyFont,
+            onFontSelected = onBodyFontChange,
             contentPadding = PaddingValues(vertical = Spacing.xsmall),
         )
 

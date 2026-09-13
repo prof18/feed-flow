@@ -44,18 +44,6 @@ struct AppearanceScreen: View {
                 .accessibilityIdentifier(AppearanceAccessibilityIdentifiers.themePicker)
 
                 Picker(selection: Binding(
-                    get: { settingsState.bodyFont },
-                    set: { vmStoreOwner.instance.updateBodyFont(font: $0) }
-                )) {
-                    ForEach(Self.readerFontFamilies, id: \.name) { font in
-                        Text(Self.displayName(for: font, strings: feedFlowStrings))
-                            .tag(font)
-                    }
-                } label: {
-                    Label(feedFlowStrings.readerModeBodyFont, systemImage: "textformat")
-                }
-
-                Picker(selection: Binding(
                     get: { settingsState.headlineFont },
                     set: { vmStoreOwner.instance.updateHeadlineFont(font: $0) }
                 )) {
@@ -65,6 +53,18 @@ struct AppearanceScreen: View {
                     }
                 } label: {
                     Label(feedFlowStrings.readerModeHeadlineFont, systemImage: "textformat.size")
+                }
+
+                Picker(selection: Binding(
+                    get: { settingsState.bodyFont },
+                    set: { vmStoreOwner.instance.updateBodyFont(font: $0) }
+                )) {
+                    ForEach(Self.readerFontFamilies, id: \.name) { font in
+                        Text(Self.displayName(for: font, strings: feedFlowStrings))
+                            .tag(font)
+                    }
+                } label: {
+                    Label(feedFlowStrings.readerModeBodyFont, systemImage: "textformat")
                 }
 
                 Toggle(isOn: Binding(

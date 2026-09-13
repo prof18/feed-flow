@@ -42,8 +42,8 @@ appId: com.prof18.feedflow.dev
 - tapOn: "Text Settings"
 - assertVisible:
     id: reader_text_settings_sheet
-- assertVisible: "Article body font"
 - assertVisible: "Headline font"
+- assertVisible: "Body font"
 - assertVisible: "Line Height"
 - assertVisible: "Reset to default"
 - assertVisible:

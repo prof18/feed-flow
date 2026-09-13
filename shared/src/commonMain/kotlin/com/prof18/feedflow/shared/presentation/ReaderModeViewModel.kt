@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ParsingResult
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderFontSettings
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeState
@@ -50,6 +51,8 @@ class ReaderModeViewModel internal constructor(
         ReaderFontSettings(
             fontSize = settingsRepository.getReaderModeFontSize(),
             lineHeight = settingsRepository.getReaderModeLineHeight(),
+            bodyFont = settingsRepository.getReaderModeBodyFont(),
+            headlineFont = settingsRepository.getReaderModeHeadlineFont(),
         ),
     )
     val readerFontSettingsState = readerFontSettingsMutableState.asStateFlow()
@@ -208,6 +211,8 @@ class ReaderModeViewModel internal constructor(
         baseUrl = baseUrl,
         fontSize = settingsRepository.getReaderModeFontSize(),
         lineHeight = settingsRepository.getReaderModeLineHeight(),
+        bodyFont = settingsRepository.getReaderModeBodyFont(),
+        headlineFont = settingsRepository.getReaderModeHeadlineFont(),
         isBookmarked = urlInfo.isBookmarked,
         commentsUrl = urlInfo.commentsUrl,
         imageUrl = urlInfo.imageUrl,
@@ -249,6 +254,16 @@ class ReaderModeViewModel internal constructor(
     fun updateLineHeight(newLineHeight: Int) {
         settingsRepository.setReaderModeLineHeight(newLineHeight)
         readerFontSettingsMutableState.update { it.copy(lineHeight = newLineHeight) }
+    }
+
+    fun updateBodyFont(font: ReaderFontFamily) {
+        settingsRepository.setReaderModeBodyFont(font)
+        readerFontSettingsMutableState.update { it.copy(bodyFont = font) }
+    }
+
+    fun updateHeadlineFont(font: ReaderFontFamily) {
+        settingsRepository.setReaderModeHeadlineFont(font)
+        readerFontSettingsMutableState.update { it.copy(headlineFont = font) }
     }
 
     fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {

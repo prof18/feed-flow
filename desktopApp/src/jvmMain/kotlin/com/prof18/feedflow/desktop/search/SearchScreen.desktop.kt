@@ -48,6 +48,8 @@ internal fun SearchScreen(
     val searchFilter by viewModel.searchFilterState.collectAsState()
     val currentFeedFilter by viewModel.searchFeedFilterState.collectAsState()
     val feedFontSizes by viewModel.feedFontSizeState.collectAsState()
+    val bodyFont by viewModel.bodyFontState.collectAsState()
+    val headlineFont by viewModel.headlineFontState.collectAsState()
     val feedItemDisplaySettings by viewModel.feedItemDisplaySettings.collectAsState()
     val isMultiPaneLayoutEnabled by desktopHomeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
     val strings = LocalFeedFlowStrings.current
@@ -101,6 +103,8 @@ internal fun SearchScreen(
         searchFilter = searchFilter,
         currentFeedFilter = currentFeedFilter,
         feedFontSizes = feedFontSizes,
+        bodyFont = bodyFont,
+        headlineFont = headlineFont,
         shareMenuLabel = strings.menuCopyLink,
         shareCommentsMenuLabel = strings.menuCopyLinkComments,
         updateSearchQuery = { query ->

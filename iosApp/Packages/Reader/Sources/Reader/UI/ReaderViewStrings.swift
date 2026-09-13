@@ -8,6 +8,8 @@ public struct ReaderViewStrings {
     public let openComments: String
     public let fontSize: String
     public let lineHeight: String
+    public let bodyFont: String
+    public let headlineFont: String
     public let textSettings: String
     public let resetToDefault: String
     public let done: String
@@ -25,6 +27,8 @@ public struct ReaderViewStrings {
         openComments: String,
         fontSize: String,
         lineHeight: String,
+        bodyFont: String,
+        headlineFont: String,
         textSettings: String,
         resetToDefault: String,
         done: String,
@@ -41,6 +45,8 @@ public struct ReaderViewStrings {
         self.openComments = openComments
         self.fontSize = fontSize
         self.lineHeight = lineHeight
+        self.bodyFont = bodyFont
+        self.headlineFont = headlineFont
         self.textSettings = textSettings
         self.resetToDefault = resetToDefault
         self.done = done

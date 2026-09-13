@@ -17,6 +17,8 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.core.model.ReaderFontFamily
+import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.VisibleFeedItem
 import kotlinx.collections.immutable.ImmutableList
@@ -29,6 +31,8 @@ data class HomeDisplayState(
     val isUnreadCountHidden: Boolean,
     val feedUpdateStatus: FeedUpdateStatus,
     val feedFontSizes: FeedFontSizes,
+    val bodyFont: ReaderFontFamily = ReaderModeDefaults.BODY_FONT,
+    val headlineFont: ReaderFontFamily = ReaderModeDefaults.HEADLINE_FONT,
     val currentFeedFilter: FeedFilter,
     val nextFeedDisplayState: NextFeedDisplayState,
     val swipeActions: SwipeActions,

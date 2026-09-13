@@ -57,11 +57,13 @@ import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
+import com.prof18.feedflow.shared.domain.readerFontFamilyJs
 import com.prof18.feedflow.shared.domain.readerLineHeightJs
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
@@ -78,6 +80,10 @@ internal fun ReaderModeScreen(
     onUpdateFontSize: (Int) -> Unit,
     lineHeight: Int,
     onUpdateLineHeight: (Int) -> Unit,
+    bodyFont: ReaderFontFamily,
+    onUpdateBodyFont: (ReaderFontFamily) -> Unit,
+    headlineFont: ReaderFontFamily,
+    onUpdateHeadlineFont: (ReaderFontFamily) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     navigateBack: () -> Unit,
     canNavigatePrevious: Boolean,
@@ -94,6 +100,10 @@ internal fun ReaderModeScreen(
     val navigator = rememberWebViewNavigator()
     var fullscreenImageUrl by remember { mutableStateOf<String?>(null) }
     var toolbarExpanded by rememberSaveable { mutableStateOf(true) }
+    var currentBodyFont by remember(bodyFont) { mutableStateOf(bodyFont) }
+    var currentHeadlineFont by remember(headlineFont) { mutableStateOf(headlineFont) }
+    LaunchedEffect(bodyFont) { currentBodyFont = bodyFont }
+    LaunchedEffect(headlineFont) { currentHeadlineFont = headlineFont }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -182,6 +192,22 @@ internal fun ReaderModeScreen(
                             navigator.evaluateJavaScript(readerLineHeightJs(newLineHeight))
                             onUpdateLineHeight(newLineHeight)
                         },
+                        bodyFont = currentBodyFont,
+                        onBodyFontChange = { newBodyFont ->
+                            currentBodyFont = newBodyFont
+                            navigator.evaluateJavaScript(
+                                readerFontFamilyJs(newBodyFont, currentHeadlineFont),
+                            )
+                            onUpdateBodyFont(newBodyFont)
+                        },
+                        headlineFont = currentHeadlineFont,
+                        onHeadlineFontChange = { newHeadlineFont ->
+                            currentHeadlineFont = newHeadlineFont
+                            navigator.evaluateJavaScript(
+                                readerFontFamilyJs(currentBodyFont, newHeadlineFont),
+                            )
+                            onUpdateHeadlineFont(newHeadlineFont)
+                        },
                         onBookmarkClick = onBookmarkClick,
                         onToggleContentSource = onToggleContentSource,
                         canNavigatePrevious = canNavigatePrevious,
@@ -222,6 +248,10 @@ internal fun ReaderModeScreen(
                     is ReaderModeState.Success -> {
                         ReaderMode(
                             readerModeState = readerModeState,
+                            fontSize = fontSize,
+                            lineHeight = lineHeight,
+                            bodyFont = currentBodyFont,
+                            headlineFont = currentHeadlineFont,
                             openInBrowser = { url ->
                                 if (isValidUrl(url)) {
                                     browserManager.openUrlWithFavoriteBrowser(url, context)
@@ -321,6 +351,10 @@ private fun FallbackWebView(
 @Composable
 private fun ReaderMode(
     readerModeState: ReaderModeState.Success,
+    fontSize: Int,
+    lineHeight: Int,
+    bodyFont: ReaderFontFamily,
+    headlineFont: ReaderFontFamily,
     themeMode: ThemeMode,
     openInBrowser: (String) -> Unit,
     onImageClick: (String) -> Unit,
@@ -370,18 +404,35 @@ private fun ReaderMode(
     @Suppress("MagicNumber")
     val spacerHeightDp = (contentPadding.calculateTopPadding().value - 40f).toInt().coerceAtLeast(0)
 
-    val content = getReaderModeStyledHtml(
-        colors = colors,
-        content = readerModeState.readerModeData.content,
-        fontSize = readerModeState.readerModeData.fontSize,
-        lineHeight = readerModeState.readerModeData.lineHeight,
-        title = readerModeState.readerModeData.title.takeIf {
-            readerModeState.readerModeData.shownContentSource == ShownContentSource.FEED
-        },
-        imageUrl = readerModeState.readerModeData.imageUrl,
-        leadingContent = "<div id=\"__feedflow_top_spacer\" style=\"height: ${spacerHeightDp}px;\"></div>",
-        siteName = readerModeState.readerModeData.siteName,
-    )
+    // Key HTML on document identity + chrome colors only. Font size, line height, and
+    // font families are applied live via JS so the WebView does not full-reload (and lose
+    // scroll) when the reader text sheet changes — matching iOS contentId behavior.
+    val feedTitle = readerModeState.readerModeData.title.takeIf {
+        readerModeState.readerModeData.shownContentSource == ShownContentSource.FEED
+    }
+    val content = remember(
+        readerModeState.readerModeData.id,
+        readerModeState.readerModeData.content,
+        readerModeState.readerModeData.shownContentSource,
+        readerModeState.readerModeData.imageUrl,
+        readerModeState.readerModeData.siteName,
+        feedTitle,
+        colors,
+        spacerHeightDp,
+    ) {
+        getReaderModeStyledHtml(
+            colors = colors,
+            content = readerModeState.readerModeData.content,
+            fontSize = fontSize,
+            lineHeight = lineHeight,
+            title = feedTitle,
+            imageUrl = readerModeState.readerModeData.imageUrl,
+            leadingContent = "<div id=\"__feedflow_top_spacer\" style=\"height: ${spacerHeightDp}px;\"></div>",
+            siteName = readerModeState.readerModeData.siteName,
+            bodyFont = bodyFont,
+            headlineFont = headlineFont,
+        )
+    }
 
     val jsBridge = rememberWebViewJsBridge()
     LaunchedEffect(jsBridge) {

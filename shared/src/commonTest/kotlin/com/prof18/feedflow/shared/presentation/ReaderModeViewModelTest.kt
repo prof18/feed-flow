@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.ParsingResult
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
@@ -315,6 +316,24 @@ class ReaderModeViewModelTest : KoinTestBase() {
 
             assertEquals(4, awaitItem().lineHeight)
         }
+    }
+
+    @Test
+    fun `initial body and headline fonts are system`() = runTest {
+        assertEquals(ReaderFontFamily.SYSTEM, viewModel.readerFontSettingsState.value.bodyFont)
+        assertEquals(ReaderFontFamily.SYSTEM, viewModel.readerFontSettingsState.value.headlineFont)
+    }
+
+    @Test
+    fun `updateBodyFont updates settings and state`() = runTest {
+        viewModel.updateBodyFont(ReaderFontFamily.OUTFIT)
+        assertEquals(ReaderFontFamily.OUTFIT, viewModel.readerFontSettingsState.value.bodyFont)
+    }
+
+    @Test
+    fun `updateHeadlineFont updates settings and state`() = runTest {
+        viewModel.updateHeadlineFont(ReaderFontFamily.LITERATA)
+        assertEquals(ReaderFontFamily.LITERATA, viewModel.readerFontSettingsState.value.headlineFont)
     }
 
     @Test

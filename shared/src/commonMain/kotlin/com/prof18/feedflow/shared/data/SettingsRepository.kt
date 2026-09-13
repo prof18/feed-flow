@@ -73,6 +73,11 @@ class SettingsRepository(
     private val hideReadItemsMutableFlow = MutableStateFlow(getHideReadItems())
     internal val hideReadItemsFlow: StateFlow<Boolean> = hideReadItemsMutableFlow.asStateFlow()
 
+    private val volumeButtonsScrollEnabledMutableFlow =
+        MutableStateFlow(getVolumeButtonsScrollEnabled())
+    val volumeButtonsScrollEnabledFlow: StateFlow<Boolean> =
+        volumeButtonsScrollEnabledMutableFlow.asStateFlow()
+
     private val uncategorizedPositionMutableFlow = MutableStateFlow(getUncategorizedPosition())
     internal val uncategorizedPositionFlow: StateFlow<Int> = uncategorizedPositionMutableFlow.asStateFlow()
 
@@ -107,6 +112,14 @@ class SettingsRepository(
     internal fun setHideReadItems(value: Boolean) {
         settings.set(SettingsFields.HIDE_READ_ITEMS.name, value)
         hideReadItemsMutableFlow.update { value }
+    }
+
+    fun getVolumeButtonsScrollEnabled(): Boolean =
+        settings.getBoolean(SettingsFields.VOLUME_BUTTONS_SCROLL_ENABLED.name, false)
+
+    fun setVolumeButtonsScrollEnabled(value: Boolean) {
+        settings[SettingsFields.VOLUME_BUTTONS_SCROLL_ENABLED.name] = value
+        volumeButtonsScrollEnabledMutableFlow.update { value }
     }
 
     internal fun getUncategorizedPosition(): Int =
@@ -350,4 +363,5 @@ private enum class SettingsFields {
     REFRESH_FEEDS_ON_LAUNCH,
     NOTIFICATION_MODE,
     UNCATEGORIZED_CATEGORY_POSITION,
+    VOLUME_BUTTONS_SCROLL_ENABLED,
 }

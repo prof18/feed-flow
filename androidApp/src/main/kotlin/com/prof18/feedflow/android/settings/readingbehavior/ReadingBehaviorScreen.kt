@@ -31,5 +31,6 @@ internal fun ReadingBehaviorScreen(
         setMarkReadWhenScrolling = viewModel::updateMarkReadWhenScrolling,
         setShowReadItem = viewModel::updateShowReadItemsOnTimeline,
         setHideReadItems = viewModel::updateHideReadItems,
+        setVolumeButtonsScrollEnabled = viewModel::updateVolumeButtonsScrollEnabled,
     )
 }

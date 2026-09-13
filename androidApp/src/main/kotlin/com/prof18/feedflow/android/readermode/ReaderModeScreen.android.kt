@@ -56,6 +56,9 @@ import com.multiplatform.webview.web.rememberWebViewState
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.openShareSheet
+import com.prof18.feedflow.android.volume.RememberVolumeScrollHandler
+import com.prof18.feedflow.android.volume.VolumeScrollDirection
+import com.prof18.feedflow.android.volume.VolumeScrollHandler
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
@@ -69,6 +72,8 @@ import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 import kotlin.time.Duration.Companion.milliseconds
+
+private const val VOLUME_SCROLL_VIEWPORT_FRACTION = 0.8f
 
 @Composable
 internal fun ReaderModeScreen(
@@ -430,6 +435,23 @@ private fun ReaderMode(
     var scrollRange by remember { mutableIntStateOf(0) }
     var scrollExtent by remember { mutableIntStateOf(0) }
     var scrollEventCount by remember { mutableIntStateOf(0) }
+    val nativeWebViewState = remember { mutableStateOf<android.webkit.WebView?>(null) }
+
+    val volumeScrollHandler = remember {
+        VolumeScrollHandler { direction ->
+            val webView = nativeWebViewState.value ?: return@VolumeScrollHandler false
+            val pageStep = (webView.height * VOLUME_SCROLL_VIEWPORT_FRACTION)
+                .toInt()
+                .coerceAtLeast(1)
+            val deltaY = when (direction) {
+                VolumeScrollDirection.DOWN -> pageStep
+                VolumeScrollDirection.UP -> -pageStep
+            }
+            webView.scrollBy(0, deltaY)
+            true
+        }
+    }
+    RememberVolumeScrollHandler(volumeScrollHandler)
 
     val layoutDir = LocalLayoutDirection.current
     Box(modifier = modifier.fillMaxSize()) {
@@ -442,6 +464,7 @@ private fun ReaderMode(
             navigator = navigator,
             webViewJsBridge = jsBridge,
             onCreated = { webView ->
+                nativeWebViewState.value = webView
                 CookieManager.getInstance().setAcceptCookie(true)
                 CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
                 webView.isVerticalScrollBarEnabled = false

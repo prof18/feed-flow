@@ -10,5 +10,6 @@ data class ReadingBehaviorState(
     val isMarkReadWhenScrollingEnabled: Boolean = true,
     val isShowReadItemsEnabled: Boolean = false,
     val isHideReadItemsEnabled: Boolean = false,
+    val isVolumeButtonsScrollEnabled: Boolean = false,
     val articleOpenMode: ArticleOpenMode = ArticleOpenMode.FULL_ARTICLE,
 )

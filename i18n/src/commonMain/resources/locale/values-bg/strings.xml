@@ -426,4 +426,5 @@
     <string name="server_account_replace_local_title">Да се заменят ли локалните абонаменти?</string>
     <string name="server_account_replace_local_message">Свързването замества емисиите, които в момента се съхраняват на това устройство, с абонаментите от сървъра. По-късно прекъсване на връзката няма да възстанови локалните емисии. Първо ги изнесете в OPML, ако искате да запазите копие.</string>
     <string name="server_account_replace_and_connect_button">Сменете и свържете</string>
+    <string name="feed_already_exists_message">%s вече е във вашите емисии.</string>
 </resources>

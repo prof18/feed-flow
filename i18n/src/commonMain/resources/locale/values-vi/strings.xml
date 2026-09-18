@@ -426,4 +426,5 @@
     <string name="support_paywall_title">Giúp FeedFlow tiếp tục phát triển 💙</string>
     <string name="support_purchase_thank_you_title">Bạn thật tuyệt vời! 🎉</string>
     <string name="support_purchase_thank_you_message">Tiền ủng hộ của bạn giúp FeedFlow tiếp tục phát triển 💙 Cảm ơn bạn đã hỗ trợ quá trình phát triển không ngừng, cải tiến chu đáo và sửa lỗi. 🙏</string>
+    <string name="feed_already_exists_message">%s đã có sẵn trong nguồn tin của bạn.</string>
 </resources>

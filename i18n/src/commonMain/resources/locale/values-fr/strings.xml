@@ -416,7 +416,7 @@
     <string name="reader_content_source_web_subtitle">Récupérer et nettoyer la page originale</string>
     <string name="reader_content_source_feed">Contenu depuis le flux</string>
     <string name="reader_content_source_feed_subtitle">Utiliser le texte inclus dans le flux RSS</string>
-    <string name="feed_already_exists_message">% est déjà dans vos flux.</string>
+    <string name="feed_already_exists_message">%s est déjà dans vos flux.</string>
     <string name="settings_new_reader_mode_engine_confirmation_message">Le nouveau moteur est conçu pour extraire les articles avec plus de précision et charger le mode Lecture plus rapidement. Il est encore au stade expérimental, donc certaines pages peuvent présenter du contenu manquant, un formatage incorrect ou ne pas se charger du tout. N\'hésitez pas à nous signaler tout problème rencontré. Vos retours nous aideront à améliorer le mode Lecture pour tout le monde avant que ce moteur ne devienne la version par défaut.</string>
     <string name="settings_new_reader_mode_engine_confirmation_title">Essayer le nouveau moteur du mode Lecture ?</string>
     <string name="settings_use_new_article_parser">Nouveau moteur du mode Lecture</string>

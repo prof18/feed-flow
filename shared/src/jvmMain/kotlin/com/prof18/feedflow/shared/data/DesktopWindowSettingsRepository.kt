@@ -36,6 +36,12 @@ class DesktopWindowSettingsRepository(
     fun setDesktopWindowYPositionDp(value: Float) =
         settings.set(DesktopWindowSettingsFields.DESKTOP_WINDOW_Y_POSITION_DP.name, value)
 
+    fun getDesktopWindowPlacement(): String? =
+        settings.getStringOrNull(DesktopWindowSettingsFields.DESKTOP_WINDOW_PLACEMENT.name)
+
+    fun setDesktopWindowPlacement(value: String) =
+        settings.set(DesktopWindowSettingsFields.DESKTOP_WINDOW_PLACEMENT.name, value)
+
     private companion object {
         const val DEFAULT_DESKTOP_WINDOW_WIDTH_DP = 800
         const val DEFAULT_DESKTOP_WINDOW_HEIGHT_DP = 600
@@ -47,4 +53,5 @@ private enum class DesktopWindowSettingsFields {
     DESKTOP_WINDOW_HEIGHT_DP,
     DESKTOP_WINDOW_X_POSITION_DP,
     DESKTOP_WINDOW_Y_POSITION_DP,
+    DESKTOP_WINDOW_PLACEMENT,
 }

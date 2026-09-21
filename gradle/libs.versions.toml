@@ -50,7 +50,7 @@ jsoup = "1.23.1"
 # https://github.com/java-native-access/jna
 jsystem-theme-detector = "3.9.1"
 junit = "4.13.2"
-kermit = "2.1.0"
+kermit = "2.2.0"
 klead = "0.0.1-alpha07"
 koin-bom = "4.2.2"
 kotlin = "2.4.10"

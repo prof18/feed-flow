@@ -106,8 +106,11 @@
 
 
 # Compose Markdown
+# Reader mode calls markdownComponents() with most parameters defaulted, so the defaults are
+# loaded from the generated ComposableSingletons lambda classes. Shrinking those away crashes
+# reader mode with NoClassDefFoundError (Sentry JAVA-M2), so keep the whole renderer.
 
--keep class com.mikepenz.markdown.model.** { *; }
+-keep class com.mikepenz.markdown.** { *; }
 
 # Ktor
 

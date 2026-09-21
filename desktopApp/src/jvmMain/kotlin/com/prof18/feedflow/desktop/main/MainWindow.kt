@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
+import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
@@ -190,16 +191,34 @@ private fun MainWindowEffects(
     }
 
     LaunchedEffect(windowState) {
-        snapshotFlow { windowState.size }
-            .collect { size ->
+        snapshotFlow { windowState.placement }
+            .collect { placement ->
+                // The window reports Floating again while it is being disposed on exit,
+                // so ignore placement changes that happen after it stopped showing.
+                if (!composeWindow.isShowing) {
+                    return@collect
+                }
+                desktopWindowSettingsRepository.setDesktopWindowPlacement(placement.name)
+            }
+    }
+
+    LaunchedEffect(windowState) {
+        snapshotFlow { windowState.placement to windowState.size }
+            .collect { (placement, size) ->
+                if (placement != WindowPlacement.Floating) {
+                    return@collect
+                }
                 desktopWindowSettingsRepository.setDesktopWindowWidthDp(size.width.value.roundToInt())
                 desktopWindowSettingsRepository.setDesktopWindowHeightDp(size.height.value.roundToInt())
             }
     }
 
     LaunchedEffect(windowState) {
-        snapshotFlow { windowState.position }
-            .collect { position ->
+        snapshotFlow { windowState.placement to windowState.position }
+            .collect { (placement, position) ->
+                if (placement != WindowPlacement.Floating) {
+                    return@collect
+                }
                 desktopWindowSettingsRepository.setDesktopWindowXPositionDp(position.x.value)
                 desktopWindowSettingsRepository.setDesktopWindowYPositionDp(position.y.value)
             }

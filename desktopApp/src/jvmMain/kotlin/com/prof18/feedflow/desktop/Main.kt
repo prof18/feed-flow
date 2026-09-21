@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
@@ -292,8 +293,16 @@ private fun windowState(desktopWindowSettingsRepository: DesktopWindowSettingsRe
     return rememberWindowState(
         size = DpSize(width, height),
         position = position,
+        placement = savedPlacement(desktopWindowSettingsRepository),
     )
 }
+
+private fun savedPlacement(desktopWindowSettingsRepository: DesktopWindowSettingsRepository): WindowPlacement =
+    when (desktopWindowSettingsRepository.getDesktopWindowPlacement()) {
+        WindowPlacement.Maximized.name -> WindowPlacement.Maximized
+        WindowPlacement.Fullscreen.name -> WindowPlacement.Fullscreen
+        else -> WindowPlacement.Floating
+    }
 
 data class DesktopConfig(
     val sentryDns: String?,

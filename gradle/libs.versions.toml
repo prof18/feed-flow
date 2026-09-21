@@ -76,7 +76,7 @@ revenuecat = "10.15.1"
 saket-swipe = "1.3.0"
 sentry = "8.51.0"
 skie = "0.10.14"
-slf4jNop = "2.0.18"
+slf4jNop = "2.0.19"
 # When updating, check the version of sqlite-jdbc in the following link:
 # https://github.com/cashapp/sqldelight/blob/master/gradle/libs.versions.toml#L74
 # if necessry, dowload again the native library here

@@ -269,6 +269,7 @@ When creating commits:
 - Avoid `AnyView` unless it is absolutely required.
 - Avoid force unwraps and force `try` unless it is unrecoverable.
 - For SwiftUI screens that use `BrowserSelector`, pass the same environment instance into nested `NavigationLink` destinations and sheets so link-opening and reader-mode settings do not reset while navigating.
+- In the SwiftUI feed list, keep row callbacks narrowly captured and put `.refreshable` at the screen boundary; broad environment captures or nested refresh wrappers can invalidate every visible row while scrolling. Validate changes with a warmed-up Instruments capture on a physical iPad as described in `e2e/maestro/maestro-e2e-tests.md`.
 
 ### Reader mode
 - Use `ReaderModeEligibility.canOpenReaderMode` / `FeedItemUrlInfo.canOpenWebReaderMode()` as the shared gate before opening reader mode on Android, Desktop, and iOS. Ineligible links such as blank, non-http(s), media/PDF/download URLs, YouTube, and Telegram should fall back to the configured browser or `HtmlNotAvailable` behavior instead of attempting reader parsing.

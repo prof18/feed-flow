@@ -144,7 +144,7 @@
     <string name="settings_auto_delete_period_one_week">Eine Woche alt</string>
     <string name="settings_auto_delete_period_two_weeks">Zwei Wochen alt</string>
     <string name="settings_auto_delete_period_one_month">Ein Monat alt</string>
-    <string name="feed_url_help_text">Jede Feed-Adresse, Webseite oder Link zum Youtube-Kanal hinzufügen. Der Feed wird, wenn möglich, automatisch erkannt</string>
+    <string name="feed_url_help_text">Jede Feed-Adresse, Webseite oder Link zu einem Youtube-Kanal hinzufügen. Der Feed wird, wenn möglich, automatisch erkannt</string>
     <string name="settings_hide_description">Artikelbeschreibung ausblenden</string>
     <string name="settings_hide_images">Artikelbild ausblenden</string>
     <string name="menu_remove_from_pinned">Nicht anpinnen</string>

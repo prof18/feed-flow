@@ -92,7 +92,7 @@ internal fun ReaderModeScreen(
 
     val context = LocalContext.current
     val navigator = rememberWebViewNavigator()
-    var fullscreenImageUrl by remember { mutableStateOf<String?>(null) }
+    var fullscreenImageUrl by rememberSaveable { mutableStateOf<String?>(null) }
     var toolbarExpanded by rememberSaveable { mutableStateOf(true) }
 
     Box(

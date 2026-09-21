@@ -23,8 +23,14 @@
         android:theme="@style/Theme.FeedFlow"
         android:usesCleartextTraffic="true">
 
+        <!--
+            Size and orientation changes are absorbed by the composition instead of recreating the
+            activity (issue #1401): a recreated web view reloads the reader article and loses the
+            reading position. density and uiMode are left out on purpose and still recreate.
+        -->
         <activity
             android:name="com.prof18.feedflow.android.MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:exported="true"
             android:launchMode="singleTop">
             <intent-filter>

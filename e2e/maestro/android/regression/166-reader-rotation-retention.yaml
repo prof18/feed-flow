@@ -1,0 +1,78 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+# Never inherit the orientation a previous flow left behind.
+- setOrientation: PORTRAIT
+- openLink: feedflow://e2e/reset-and-seed?profile=reader-mode
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+
+# The article keeps its reading position across a rotation. MainActivity declares the size and
+# orientation config changes itself, so the web view is never recreated. Without that, the reader
+# reloads its loadDataWithBaseURL document and the article jumps back to the top.
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_long
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_long
+- extendedWaitUntil:
+    visible: "E2E long reader head anchor."
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      text: "E2E long reader tail anchor."
+    direction: DOWN
+    speed: 80
+    timeout: 30000
+- assertNotVisible: "E2E long reader head anchor."
+
+# The article must still be deep in its content after the rotation. The assertions deliberately
+# do not demand the tail anchor again: the text reflows at the new width, so the exact anchoring
+# can shift by a paragraph. What the bug did was send the reader all the way back to the top,
+# where the head anchor is the first thing on screen.
+- setOrientation: LANDSCAPE_LEFT
+- waitForAnimationToEnd
+- assertNotVisible: "E2E long reader head anchor."
+- assertVisible: ".*E2E long reader filler paragraph 12\\..*"
+
+- setOrientation: PORTRAIT
+- waitForAnimationToEnd
+- assertNotVisible: "E2E long reader head anchor."
+- assertVisible: ".*E2E long reader filler paragraph 12\\..*"
+
+# The full-screen image viewer survives a rotation as well: its state is saveable and the
+# activity is not recreated, so rotating no longer dismisses the viewer.
+- back
+- assertVisible:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: reader_article_e2e_article_reader_success
+- tapOn:
+    point: 50%,20%
+- assertVisible:
+    id: reader_image_viewer
+
+- setOrientation: LANDSCAPE_LEFT
+- waitForAnimationToEnd
+- assertVisible:
+    id: reader_image_viewer
+
+# Leave the device upright for the flows that run after this one.
+- setOrientation: PORTRAIT
+- waitForAnimationToEnd
+- assertVisible:
+    id: reader_image_viewer
+- tapOn:
+    id: reader_image_viewer_close_button
+- assertVisible:
+    id: reader_article_e2e_article_reader_success

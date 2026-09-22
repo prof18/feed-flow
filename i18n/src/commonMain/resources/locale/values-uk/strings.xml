@@ -426,4 +426,5 @@
     <string name="reader_mode_no_content_message">Ця стаття не містить жодного вмісту, і немає посилання для її відкриття в Інтернеті.</string>
     <string name="reorder_drag_handle">Змінити порядок</string>
     <string name="reorder_mode_enter">Змінити порядок</string>
+    <string name="feed_already_exists_message">%s вже є у ваших стрічках.</string>
 </resources>

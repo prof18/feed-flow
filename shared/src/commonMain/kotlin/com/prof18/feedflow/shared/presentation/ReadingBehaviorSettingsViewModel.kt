@@ -79,6 +79,9 @@ class ReadingBehaviorSettingsViewModel internal constructor(
         stateMutableFlow.update {
             it.copy(isMarkReadWhenScrollingEnabled = value)
         }
+        if (!value) {
+            feedStateRepository.reapplyAutoHideToCurrentList()
+        }
     }
 
     fun updateShowReadItemsOnTimeline(value: Boolean) {

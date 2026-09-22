@@ -104,6 +104,9 @@ class SettingsRepository(
     internal fun getHideReadItems(): Boolean =
         settings.getBoolean(SettingsFields.HIDE_READ_ITEMS.name, false)
 
+    internal fun getEffectiveHideReadItems(): Boolean =
+        getHideReadItems() && !getMarkFeedAsReadWhenScrolling()
+
     internal fun setHideReadItems(value: Boolean) {
         settings.set(SettingsFields.HIDE_READ_ITEMS.name, value)
         hideReadItemsMutableFlow.update { value }

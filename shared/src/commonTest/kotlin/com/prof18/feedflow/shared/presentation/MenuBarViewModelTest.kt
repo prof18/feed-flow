@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.presentation
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.ThemeMode
@@ -16,6 +17,7 @@ import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.test.ContentPrefetchRepositoryFake
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -69,6 +71,23 @@ class MenuBarViewModelTest : KoinTestBase() {
     fun `updateMarkReadWhenScrolling updates state`() = runTest {
         viewModel.updateMarkReadWhenScrolling(false)
         assertFalse(viewModel.state.value.isMarkReadWhenScrollingEnabled)
+    }
+
+    @Test
+    fun `disabling scroll marking reapplies saved auto hide to current list`() = runTest {
+        populateDatabase()
+        settingsRepository.setHideReadItems(true)
+        feedStateRepository.getFeeds()
+        val itemId = FeedItemId(feedStateRepository.feedState.value.single().id)
+        databaseHelper.updateReadStatus(itemId, isRead = true)
+        feedStateRepository.markAsRead(hashSetOf(itemId))
+        assertEquals(1, feedStateRepository.feedState.value.size)
+
+        viewModel.updateMarkReadWhenScrolling(false)
+        advanceUntilIdle()
+
+        assertTrue(settingsRepository.getHideReadItems())
+        assertTrue(feedStateRepository.feedState.value.isEmpty())
     }
 
     @Test

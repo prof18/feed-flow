@@ -50,4 +50,27 @@ class SettingsRepositoryShowReadArticlesTest : KoinTestBase() {
             assertFalse(awaitItem())
         }
     }
+
+    @Test
+    fun `auto hide is effective only when scroll marking is disabled`() = runTest {
+        repository.setMarkFeedAsReadWhenScrolling(true)
+        repository.setHideReadItems(false)
+        assertFalse(repository.getEffectiveHideReadItems())
+
+        repository.setHideReadItems(true)
+        assertFalse(repository.getEffectiveHideReadItems())
+        assertTrue(repository.getHideReadItems())
+
+        repository.setMarkFeedAsReadWhenScrolling(false)
+        assertTrue(repository.getEffectiveHideReadItems())
+        assertTrue(repository.getHideReadItems())
+
+        repository.setHideReadItems(false)
+        assertFalse(repository.getEffectiveHideReadItems())
+
+        repository.setHideReadItems(true)
+        repository.setMarkFeedAsReadWhenScrolling(true)
+        assertFalse(repository.getEffectiveHideReadItems())
+        assertTrue(repository.getHideReadItems())
+    }
 }

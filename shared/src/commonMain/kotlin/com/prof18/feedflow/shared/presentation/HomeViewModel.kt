@@ -330,7 +330,7 @@ class HomeViewModel internal constructor(
             feedListVersion = currentFeedListVersion,
             listShapeKey = ScrollReadListShapeKey(
                 showReadArticlesTimeline = settingsRepository.showReadArticlesTimelineFlow.value,
-                hideReadItems = settingsRepository.hideReadItemsFlow.value,
+                hideReadItems = settingsRepository.getEffectiveHideReadItems(),
                 feedLayout = feedAppearanceSettingsRepository.feedLayout.value,
                 isGridLayoutEnabled = feedAppearanceSettingsRepository.gridLayoutEnabled.value,
             ),
@@ -680,7 +680,7 @@ class HomeViewModel internal constructor(
     }
 
     private fun enqueueScrollReadIds(idsToMark: Set<FeedItemId>) {
-        if (!settingsRepository.hideReadItemsFlow.value) {
+        if (!settingsRepository.getEffectiveHideReadItems()) {
             feedStateRepository.markAsRead(idsToMark.toHashSet())
         }
         pendingScrollReadIds.addAll(idsToMark)

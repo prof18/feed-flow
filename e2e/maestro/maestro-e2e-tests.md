@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 60 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 61 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -41,7 +41,7 @@ Fast confidence subset. Flow files live in `e2e/maestro/{android,ios}/smoke/`.
 | SM-007 | `007-reader-mode-core.yaml` | `reader-mode` | Open article in reader, long-press toolbar tooltip (Android), next-article button, more menu, Text Settings sheet opens. |
 | SM-008 | `008-feed-edit-core.yaml` | `content-rich` | Drawer feed-source long-press → Feed settings, toggle hide and pin, change category, save. Android also exercises the inline rename via `inputText`; iOS skips the rename (SwiftUI text input is flaky in Maestro) and only verifies the feed lands in the new category. |
 | SM-009 | `009-feed-list-settings-persist.yaml` | `content-rich` | Feed list settings: layout, image visibility, order — mutated and persisted across relaunch. |
-| SM-010 | `010-reading-behavior-settings-persist.yaml` | `content-rich` | Reading behaviour: article open mode, show-read, auto-hide read — mutated and persisted across relaunch. |
+| SM-010 | `010-reading-behavior-settings-persist.yaml` | `content-rich` | Reading behaviour: article open mode, show-read, and auto-hide read persist across relaunch; scroll marking disables auto-hide with an explanation and restores the saved preference when turned off. |
 | SM-011 | `011-import-export-smoke.yaml` | `empty` + fixtures | OPML import (Android Downloads / iOS Files), CSV import, end-to-end success. |
 | SM-012 | `012-blocked-words.yaml` | `content-rich` | Add blocked word, blocked article disappears from Timeline; iOS covers the deterministic settings add/delete path. |
 | SM-013 | `013-relaunch-persistence.yaml` | `content-rich` | Reader-mode + bookmark mutations survive app relaunch. |
@@ -116,6 +116,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-164 | `164-drawer-swipe-gesture.yaml` | `swipe-disabled` | Android | A mostly vertical drag over the timeline scrolls without opening the drawer or falling through to the article, a deliberate horizontal content swipe opens the drawer in every system navigation mode, and drag-to-close still works once it is open. FeedFlow keeps Material3's outer full-screen drag handle disabled while the drawer is closed and handles unclaimed horizontal drags inside the content, after the feed list and configured row swipe actions get priority. iOS uses a separate SwiftUI drawer and is unaffected. |
 | REG-165 | `165-ios-reader-scroll-retention.yaml` | `reader-mode` | iOS | Reader mode keeps its scroll position across a background/foreground cycle. Backgrounding makes iOS render the app-switcher snapshot in both appearances, flipping the SwiftUI color scheme twice; the reader must restyle the loaded document with JS instead of regenerating its HTML, because any HTML change reloads the web view and sends the article back to the top. Android is not covered: its reader web view is driven by separate Compose code and never regenerated from the color scheme. |
 | REG-166 | `166-reader-rotation-retention.yaml` | `reader-mode` | Android | Guards issue #1401: rotating while reading keeps the reading position, and an open full-screen image viewer survives the rotation instead of being dismissed. `MainActivity` declares the size and orientation config changes, so the activity is not recreated and the reader's `loadDataWithBaseURL` document is never reloaded; the image URL is held in `rememberSaveable`. The post-rotation assertions check that the head anchor is gone and a late paragraph is on screen rather than re-asserting the tail anchor, because the text reflows at the new width and the anchoring can shift by a paragraph. The flow sets `PORTRAIT` before seeding so it does not inherit an orientation from an earlier flow. iOS is not covered: its reader is separate SwiftUI code, and REG-165 covers its own scroll-retention path. |
+| REG-167 | `167-scroll-read-auto-hide.yaml` | `pagination-scroll-read` | Android, iOS | With both preferences saved on, scrolling marks articles read while keeping earlier rows reachable in the current list. Scrolling onward still loads the next page and reaches Article 050. |
 
 ## Known Limitations
 

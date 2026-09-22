@@ -19,6 +19,9 @@ appId: com.prof18.feedflow.dev
     id: article_open_mode_feed_content
 - assertVisible: "Reader \\(feed\\)"
 - tapOn:
+    id: reading_behavior_mark_read_when_scrolling
+    point: "90%,50%"
+- tapOn:
     id: reading_behavior_show_read
     point: "90%,50%"
 - scrollUntilVisible:
@@ -29,6 +32,48 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: reading_behavior_hide_read
     point: "90%,50%"
+- scrollUntilVisible:
+    element:
+      id: reading_behavior_mark_read_when_scrolling
+    direction: UP
+    timeout: 10000
+- tapOn:
+    id: reading_behavior_mark_read_when_scrolling
+    point: "90%,50%"
+- scrollUntilVisible:
+    element:
+      id: reading_behavior_hide_read
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: reading_behavior_hide_read
+    enabled: false
+    checked: true
+- assertVisible: "Auto-hide is disabled when.*articles stay in place as you scroll.*"
+- tapOn:
+    id: reading_behavior_hide_read
+    point: "90%,50%"
+- assertVisible:
+    id: reading_behavior_hide_read
+    enabled: false
+    checked: true
+- scrollUntilVisible:
+    element:
+      id: reading_behavior_mark_read_when_scrolling
+    direction: UP
+    timeout: 10000
+- tapOn:
+    id: reading_behavior_mark_read_when_scrolling
+    point: "90%,50%"
+- scrollUntilVisible:
+    element:
+      id: reading_behavior_hide_read
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: reading_behavior_hide_read
+    enabled: true
+    checked: true
 - tapOn:
     id: BackButton
 - tapOn:

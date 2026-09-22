@@ -86,6 +86,12 @@ internal fun ReadingPane(
             title = LocalFeedFlowStrings.current.settingsHideReadItems,
             isChecked = isHideReadItemsEnabled,
             onCheckedChange = onHideReadItemsToggled,
+            enabled = !isMarkReadWhenScrollingEnabled,
+            supportingText = if (isMarkReadWhenScrollingEnabled) {
+                LocalFeedFlowStrings.current.settingsHideReadItemsDisabledWhileScrolling
+            } else {
+                null
+            },
         )
     }
 }

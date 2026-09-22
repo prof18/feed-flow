@@ -83,6 +83,10 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
+      - name: Refresh translations
+        shell: bash
+        run: bash .scripts/refresh-translations.sh
+
       - name: Run desktop tests
         shell: bash
         run: ./gradlew --quiet --console=plain jvmTest

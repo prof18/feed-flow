@@ -80,7 +80,14 @@ struct ReadingBehaviorScreenContent: View {
                 Toggle(isOn: $isHideReadItemsEnabled) {
                     Text(feedFlowStrings.settingsHideReadItems)
                 }
+                .disabled(isMarkReadWhenScrollingEnabled)
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.hideReadToggle)
+
+                if isMarkReadWhenScrollingEnabled {
+                    Text(feedFlowStrings.settingsHideReadItemsDisabledWhileScrolling)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .scrollContentBackground(.hidden)

@@ -329,6 +329,7 @@
       "android/regression/161-reader-no-url-no-content.yaml",
       "android/regression/162-pagination-scroll-read.yaml",
       "android/regression/164-drawer-swipe-gesture.yaml",
+      "android/regression/167-scroll-read-auto-hide.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -403,6 +404,7 @@
       "ios/regression/159-reader-feed-content-no-url.yaml",
       "ios/regression/160-reader-content-source-navigation.yaml",
       "ios/regression/161-reader-no-url-no-content.yaml",
+      "ios/regression/167-scroll-read-auto-hide.yaml",
       "ios/smoke/001-first-launch-empty.yaml",
       "ios/smoke/002-seeded-timeline-loads.yaml",
       "ios/smoke/003-library-filters.yaml",
@@ -506,7 +508,8 @@
       "regression/159": "URL-less article opens in the styled feed-content reader without unavailable actions.",
       "regression/160": "Switching between cached web and RSS content preserves the reader Back destination.",
       "regression/162": "Pagination keeps loading pages while mark-as-read-on-scroll flushes scrolled-past items (issue #1319).",
-      "regression/164": "A drag over the timeline neither opens the drawer nor falls through to the article, and drag-to-close still works once it is open."
+      "regression/164": "A drag over the timeline neither opens the drawer nor falls through to the article, and drag-to-close still works once it is open.",
+      "regression/167": "With scroll marking and saved auto-hide on, earlier articles remain reachable in the current list while the next page still loads."
     };
 
     const sections = document.querySelector("#sections");

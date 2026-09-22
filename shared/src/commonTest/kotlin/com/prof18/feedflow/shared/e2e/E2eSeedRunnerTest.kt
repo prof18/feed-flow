@@ -147,7 +147,7 @@ class E2eSeedRunnerTest : KoinTestBase() {
         assertTrue("E2E Scroll Read Article 090" in scrollReadTitles)
 
         assertTrue(settingsRepository.getMarkFeedAsReadWhenScrolling())
-        assertFalse(settingsRepository.getHideReadItems())
+        assertTrue(settingsRepository.getHideReadItems())
         assertFalse(settingsRepository.getShowReadArticlesTimeline())
     }
 

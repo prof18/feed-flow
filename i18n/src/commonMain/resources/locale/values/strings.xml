@@ -99,6 +99,7 @@
     <string name="settings_desktop_multi_pane_layout">Use multi-pane home layout</string>
     <string name="select_article_to_read">Select an article to read</string>
     <string name="settings_hide_read_items">Auto-hide articles when marked as read</string>
+    <string name="settings_hide_read_items_disabled_while_scrolling">Auto-hide is disabled when “Mark as read when scrolling” is on, so articles stay in place as you scroll. Turn it off to use auto-hide.</string>
     <string name="menu_add_to_bookmark">Add to bookmarks</string>
     <string name="menu_remove_from_bookmark">Remove from bookmarks</string>
     <string name="drawer_title_bookmarks">Bookmarks</string>

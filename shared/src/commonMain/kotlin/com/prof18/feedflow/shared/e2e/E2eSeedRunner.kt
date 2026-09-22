@@ -399,10 +399,10 @@ class E2eSeedRunner internal constructor(
     }
 
     private suspend fun applyPaginationScrollReadSettings() {
-        // Scrolled-past items must be flushed as read while the timeline keeps hiding read items,
-        // so every new page is requested against a shrinking unread set.
+        // Scrolled-past items stay in the current list, while subsequent pages use the
+        // shrinking unread-only database query.
         settingsRepository.setMarkFeedAsReadWhenScrolling(true)
-        settingsRepository.setHideReadItems(false)
+        settingsRepository.setHideReadItems(true)
         settingsRepository.setShowReadArticlesTimeline(false)
         databaseHelper.insertFeedItems(paginationScrollReadFeedItems, lastSyncTimestamp = SEED_NOW_MILLIS)
     }

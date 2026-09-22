@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.ui.settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,8 @@ fun SettingSwitchItem(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     confirmationDialog: ConfirmationDialogConfig? = null,
+    enabled: Boolean = true,
+    supportingText: String? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     var showConfirmation by remember { mutableStateOf(false) }
@@ -43,7 +46,7 @@ fun SettingSwitchItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .clickable {
+            .clickable(enabled = enabled) {
                 if (!isChecked && confirmationDialog != null) {
                     pendingValue = true
                     showConfirmation = true
@@ -60,18 +63,41 @@ fun SettingSwitchItem(
             Icon(
                 icon,
                 contentDescription = null,
+                tint = if (enabled) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                },
             )
         }
 
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.weight(1f),
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (enabled) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                },
+            )
+            if (supportingText != null) {
+                Text(
+                    text = supportingText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (enabled) {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                    },
+                )
+            }
+        }
 
         Switch(
             interactionSource = interactionSource,
             checked = isChecked,
+            enabled = enabled,
             onCheckedChange = { checked ->
                 if (checked && confirmationDialog != null) {
                     pendingValue = checked

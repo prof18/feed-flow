@@ -814,7 +814,7 @@ class HomeViewModelTest : KoinTestBase() {
         }
 
     @Test
-    fun `onVisibleFeedItemsChanged does not cascade after hidden read items are removed`() =
+    fun `onVisibleFeedItemsChanged keeps read items in place when auto hide is saved`() =
         runTest(testDispatcher) {
             settingsRepository.setMarkFeedAsReadWhenScrolling(true)
             settingsRepository.setHideReadItems(true)
@@ -841,16 +841,20 @@ class HomeViewModelTest : KoinTestBase() {
                     VisibleFeedItem(id = "item-3", index = 2),
                 ),
             )
+            assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
+            assertTrue(viewModel.feedState.value.take(2).all { it.isRead })
             advanceUntilIdle()
             viewModel.onVisibleFeedItemsChanged(
-                listOf(
-                    VisibleFeedItem(id = "item-3", index = 0),
-                ),
+                listOf(VisibleFeedItem(id = "item-3", index = 2)),
             )
             advanceUntilIdle()
 
             val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
             assertEquals(setOf("item-1", "item-2"), readIds)
+            assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
+
+            feedStateRepository.getFeeds()
+            assertEquals(listOf("item-3"), viewModel.feedState.value.map { it.id })
         }
 
     @Test
@@ -1072,6 +1076,7 @@ class HomeViewModelTest : KoinTestBase() {
 
     @Test
     fun `markAsRead removes item from feed list when hideReadItems is enabled`() = runTest(testDispatcher) {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
         settingsRepository.setHideReadItems(true)
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)
@@ -1121,7 +1126,41 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `saved auto hide does not remove read items while scroll marking is enabled`() = runTest(testDispatcher) {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+        settingsRepository.setHideReadItems(true)
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        databaseHelper.insertFeedItems(
+            listOf(
+                buildFeedItem(id = "item-1", title = "Item 1", pubDateMillis = 3000, source = feedSource),
+                buildFeedItem(id = "item-2", title = "Item 2", pubDateMillis = 2000, source = feedSource),
+                buildFeedItem(id = "item-3", title = "Item 3", pubDateMillis = 1000, source = feedSource),
+            ),
+            lastSyncTimestamp = 0,
+        )
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+        viewModel.markAsRead("item-1")
+        advanceUntilIdle()
+
+        assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
+        assertTrue(viewModel.feedState.value.first().isRead)
+        assertTrue(getDbItems().first { it.url_hash == "item-1" }.is_read)
+
+        feedStateRepository.updateReadStatus(FeedItemId("item-2"), isRead = true)
+        assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
+        assertTrue(viewModel.feedState.value[1].isRead)
+
+        feedStateRepository.markItemsBelowAsRead("item-3")
+        assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
+        assertTrue(viewModel.feedState.value.last().isRead)
+    }
+
+    @Test
     fun `markAllAboveAsRead removes items from feed list when hideReadItems is enabled`() = runTest(testDispatcher) {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
         settingsRepository.setHideReadItems(true)
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)
@@ -1146,6 +1185,7 @@ class HomeViewModelTest : KoinTestBase() {
 
     @Test
     fun `markAllBelowAsRead removes items from feed list when hideReadItems is enabled`() = runTest(testDispatcher) {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
         settingsRepository.setHideReadItems(true)
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)

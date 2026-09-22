@@ -1,0 +1,42 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=pagination-scroll-read
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    text: "E2E Scroll Read Article 001"
+- scrollUntilVisible:
+    element:
+      text: "E2E Scroll Read Article 035"
+    direction: DOWN
+    timeout: 60000
+    speed: 50
+    visibilityPercentage: 30
+    waitToSettleTimeoutMs: 500
+
+# Let the scroll-read debounce flush while Article 001 is off screen.
+- extendedWaitUntil:
+    visible:
+      text: "E2E Scroll Read Article 001"
+    timeout: 4000
+    optional: true
+
+# Read articles must stay reachable in the current list even with auto-hide saved as on.
+- scrollUntilVisible:
+    element:
+      text: "E2E Scroll Read Article 001"
+    direction: UP
+    timeout: 60000
+    speed: 50
+    visibilityPercentage: 30
+    waitToSettleTimeoutMs: 500
+- scrollUntilVisible:
+    element:
+      text: "E2E Scroll Read Article 050: Skip Needle"
+    direction: DOWN
+    timeout: 60000
+    speed: 50
+    visibilityPercentage: 30
+    waitToSettleTimeoutMs: 500

@@ -142,6 +142,12 @@ internal fun ReadingBehaviorScreenContent(
                     title = LocalFeedFlowStrings.current.settingsHideReadItems,
                     isChecked = state.isHideReadItemsEnabled,
                     onCheckedChange = setHideReadItems,
+                    enabled = !state.isMarkReadWhenScrollingEnabled,
+                    supportingText = if (state.isMarkReadWhenScrollingEnabled) {
+                        LocalFeedFlowStrings.current.settingsHideReadItemsDisabledWhileScrolling
+                    } else {
+                        null
+                    },
                 )
             }
 

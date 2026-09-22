@@ -232,7 +232,7 @@ internal class FeedStateRepository(
     }
 
     fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
-        val hideReadItems = settingsRepository.getHideReadItems()
+        val hideReadItems = settingsRepository.getEffectiveHideReadItems()
         val currentFilter = currentFeedFilter.value
         val shouldRemoveReadItems = hideReadItems && currentFilter != FeedFilter.Read
         updateFeedState(incrementListVersion = shouldRemoveReadItems) { currentItems ->
@@ -248,6 +248,16 @@ internal class FeedStateRepository(
                     feedItem
                 }
             }.toImmutableList()
+        }
+    }
+
+    // Scroll marking keeps read rows in memory. When it is turned off, hide those rows immediately;
+    // reloading from the database could restore rows whose debounced read writes are still pending.
+    fun reapplyAutoHideToCurrentList() {
+        if (!settingsRepository.getEffectiveHideReadItems() || currentFeedFilter.value == FeedFilter.Read) return
+        val readIds = feedState.value.filter { it.isRead }.map { FeedItemId(it.id) }.toHashSet()
+        if (readIds.isNotEmpty()) {
+            markAsRead(readIds)
         }
     }
 
@@ -293,7 +303,7 @@ internal class FeedStateRepository(
     }
 
     fun updateReadStatus(feedItemId: FeedItemId, isRead: Boolean) {
-        val hideReadItems = settingsRepository.getHideReadItems()
+        val hideReadItems = settingsRepository.getEffectiveHideReadItems()
         val currentFilter = currentFeedFilter.value
         updateFeedState { currentItems ->
             currentItems.mapNotNull { feedItem ->
@@ -316,7 +326,7 @@ internal class FeedStateRepository(
     }
 
     fun markItemsAboveAsRead(targetItemId: String) {
-        val hideReadItems = settingsRepository.getHideReadItems()
+        val hideReadItems = settingsRepository.getEffectiveHideReadItems()
         val currentFilter = currentFeedFilter.value
         updateFeedState { currentItems ->
             val targetIndex = currentItems.indexOfFirst { it.id == targetItemId }
@@ -340,7 +350,7 @@ internal class FeedStateRepository(
     }
 
     fun markItemsBelowAsRead(targetItemId: String) {
-        val hideReadItems = settingsRepository.getHideReadItems()
+        val hideReadItems = settingsRepository.getEffectiveHideReadItems()
         val currentFilter = currentFeedFilter.value
         updateFeedState { currentItems ->
             val targetIndex = currentItems.indexOfFirst { it.id == targetItemId }

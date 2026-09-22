@@ -251,8 +251,6 @@ internal class FeedStateRepository(
         }
     }
 
-    // Scroll marking keeps read rows in memory. When it is turned off, hide those rows immediately;
-    // reloading from the database could restore rows whose debounced read writes are still pending.
     fun reapplyAutoHideToCurrentList() {
         if (!settingsRepository.getEffectiveHideReadItems() || currentFeedFilter.value == FeedFilter.Read) return
         val readIds = feedState.value.filter { it.isRead }.map { FeedItemId(it.id) }.toHashSet()

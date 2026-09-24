@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.data
 
-import com.prof18.feedflow.core.utils.AppEnvironment
 import com.russhwolf.settings.MapSettings
 import com.russhwolf.settings.Settings
 import kotlin.test.Test
@@ -15,7 +14,7 @@ class SettingsRepositoryKleadParserTest {
         val settings = CountingSettings().apply {
             putBoolean(KLEAD_PARSER_KEY, true)
         }
-        val repository = SettingsRepository(settings, AppEnvironment.Release)
+        val repository = SettingsRepository(settings)
 
         assertTrue(repository.isKleadParserEnabled())
         assertTrue(repository.isKleadParserEnabled())
@@ -26,7 +25,7 @@ class SettingsRepositoryKleadParserTest {
     @Test
     fun `setting Klead parser updates the cached value`() {
         val settings = CountingSettings()
-        val repository = SettingsRepository(settings, AppEnvironment.Release)
+        val repository = SettingsRepository(settings)
 
         repository.setKleadParserEnabled(true)
         assertTrue(repository.isKleadParserEnabled())
@@ -37,25 +36,18 @@ class SettingsRepositoryKleadParserTest {
     }
 
     @Test
-    fun `Klead parser defaults to enabled in debug environment`() {
-        val repository = SettingsRepository(MapSettings(), AppEnvironment.Debug)
+    fun `Klead parser defaults to enabled`() {
+        val repository = SettingsRepository(MapSettings())
 
         assertTrue(repository.isKleadParserEnabled())
     }
 
     @Test
-    fun `Klead parser defaults to disabled in release environment`() {
-        val repository = SettingsRepository(MapSettings(), AppEnvironment.Release)
-
-        assertFalse(repository.isKleadParserEnabled())
-    }
-
-    @Test
-    fun `stored Klead parser setting overrides debug default`() {
+    fun `stored Klead parser setting overrides default`() {
         val settings = MapSettings().apply {
             putBoolean(KLEAD_PARSER_KEY, false)
         }
-        val repository = SettingsRepository(settings, AppEnvironment.Debug)
+        val repository = SettingsRepository(settings)
 
         assertFalse(repository.isKleadParserEnabled())
     }

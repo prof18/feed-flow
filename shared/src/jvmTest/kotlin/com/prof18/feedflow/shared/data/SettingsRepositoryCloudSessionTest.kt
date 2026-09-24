@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.data
 
-import com.prof18.feedflow.core.utils.AppEnvironment
 import com.russhwolf.settings.MapSettings
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -13,7 +12,7 @@ import kotlin.test.assertTrue
 class SettingsRepositoryCloudSessionTest {
     @Test
     fun `rotating cloud session waits for active cloud session block`() {
-        val repository = SettingsRepository(MapSettings(), AppEnvironment.Debug)
+        val repository = SettingsRepository(MapSettings())
         val entered = CountDownLatch(1)
         val release = CountDownLatch(1)
         val rotated = AtomicBoolean(false)

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feeds_title">Стрічки</string>
-    <string name="no_feeds_add_one_message">Немає стрічок, будь ласка, додайте одну</string>
+    <string name="no_feeds_add_one_message">Стрічки відсутні, будь ласка, додайте одну</string>
     <string name="delete_feed">Видалити</string>
-    <string name="empty_feed_message">Більше тут нічого читати!</string>
+    <string name="empty_feed_message">Тут більше нічого читати!</string>
     <string name="no_feeds_found_message">Поки немає стрічок. Будь ласка, додайте нову стрічку!</string>
     <string name="loading_feed_message">Завантаження стрічок %s</string>
     <string name="mark_all_read_button">Позначити все прочитаним</string>
@@ -427,4 +427,5 @@
     <string name="reorder_drag_handle">Змінити порядок</string>
     <string name="reorder_mode_enter">Змінити порядок</string>
     <string name="feed_already_exists_message">%s вже є у ваших стрічках.</string>
+    <string name="settings_hide_read_items_disabled_while_scrolling">Автоприховування вимкнено, доки активна опція «Позначати як прочитане під час гортання», тому статті залишаються на місці під час прокручування. Вимкніть її, щоб використовувати автоприховування.</string>
 </resources>

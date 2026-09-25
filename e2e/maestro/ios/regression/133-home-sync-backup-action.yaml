@@ -1,7 +1,7 @@
 appId: com.prof18.feedflow.dev
 ---
 - launchApp
-- openLink: feedflow://e2e/reset-and-seed?profile=sync-upload-required&account=fresh_rss
+- openLink: feedflow://e2e/reset-and-seed?profile=sync-upload-required&account=icloud
 - tapOn:
     text: "^Open$"
     optional: true

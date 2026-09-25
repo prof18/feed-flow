@@ -1,7 +1,7 @@
 appId: com.prof18.feedflow.debug
 ---
 - launchApp
-- openLink: feedflow://e2e/reset-and-seed?profile=sync-upload-required&account=fresh_rss
+- openLink: feedflow://e2e/reset-and-seed?profile=sync-upload-required&account=dropbox
 - assertVisible: "E2E seed complete"
 - tapOn:
     id: e2e_open_app

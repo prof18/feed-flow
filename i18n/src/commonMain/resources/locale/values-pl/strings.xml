@@ -427,4 +427,5 @@
     <string name="support_purchase_thank_you_message">Twoja darowizna pomaga w dalszym rozwoju FeedFlow 💙 Dziękujemy za wsparcie ciągłego rozwoju, przemyślanych ulepszeń i naprawy błędów. 🙏</string>
     <string name="reader_mode_no_content_title">Brak dostępnych treści</string>
     <string name="reader_mode_no_content_message">Ten artykuł nie zawiera żadnej treści i nie ma linku umożliwiającego jego otwarcie w sieci.</string>
+    <string name="settings_hide_read_items_disabled_while_scrolling">Funkcja automatycznego ukrywania jest wyłączona, gdy włączona jest opcja „Oznaczaj jako przeczytane podczas przewijania”, dzięki czemu artykuły pozostają na swoim miejscu podczas przewijania. Wyłącz tę opcję, aby korzystać z automatycznego ukrywania.</string>
 </resources>

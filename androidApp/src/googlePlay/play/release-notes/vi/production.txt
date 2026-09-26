@@ -1,2 +1,5 @@
-• Thử Engine chế độ đọc mới mang tính thử nghiệm để trích xuất bài viết nhanh và chính xác hơn. Hãy giúp tôi cải thiện bằng cách báo nội dung bị thiếu hoặc lỗi định dạng.
-• Cải thiện hình ảnh, nội dung nhúng, bài ngắn hoặc chỉ có hình, thao tác dấu trang và ngắt kết nối Dropbox.
+• Chế độ đọc có công cụ hoàn toàn mới cho bài viết gọn gàng và ổn định hơn. Nếu trang nào hiển thị chưa đúng, mình rất mong nhận được phản hồi của bạn!
+• Chế độ đọc giờ hỗ trợ video toàn màn hình và giữ nguyên vị trí khi bạn xoay thiết bị
+• Đồng bộ Google Drive và Dropbox ổn định hơn nhiều, không mất chỉnh sửa hay trạng thái đã đọc
+• Tải nguồn cấp tốt hơn từ các trang chặn yêu cầu và thêm kênh YouTube dễ dàng hơn
+• Danh sách bài viết không còn bị nhảy khi đánh dấu đã đọc lúc cuộn

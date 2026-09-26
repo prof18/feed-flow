@@ -1,2 +1,5 @@
-• Teste die experimentelle neue Lesemodus-Engine für eine schnellere, genauere Artikelextraktion. Hilf mir, sie zu verbessern, indem du fehlende Inhalte oder Formatierungsfehler meldest.
-• Verbessert wurden Bilder, eingebettete Inhalte, kurze und reine Bildartikel, Lesezeichenaktionen und das Trennen von Dropbox.
+• Der Lesemodus hat eine neue Engine für sauberere, zuverlässigere Artikel. Sieht eine Seite falsch aus, freue ich mich über Feedback!
+• Vollbildvideos im Lesemodus; die Position bleibt beim Drehen erhalten
+• Viel zuverlässigere Synchronisierung mit Google Drive und Dropbox ohne verlorene Änderungen
+• Besseres Laden blockierender Websites und einfacheres Hinzufügen von YouTube-Kanälen
+• Die Liste springt beim Als-gelesen-Markieren durch Scrollen nicht mehr

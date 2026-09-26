@@ -1,104 +1,254 @@
 {
   "notes": {
     "bg": [
-      "• Изпробвайте експерименталния нов механизъм за режим на четене за по-бързо и точно извличане. Помогнете ми да го подобря, като докладвате липсващо съдържание или грешно форматиране.",
-      "• Подобрени са изображенията, вграденото съдържание, кратките и изцяло визуалните статии, отметките и прекъсването на връзката с Dropbox."
+      "• Нов механизъм за режим на четене за по-чисти и надеждни статии. Ако страница не изглежда добре, ще се радвам на отзив!",
+      "• По-лесно откриване на YouTube канали при добавяне на емисии",
+      "• По-надеждна синхронизация с Dropbox, която запазва чакащите промени и състоянията на прочитане",
+      "• По-добро зареждане на емисии и статии от сайтове, които блокират заявки",
+      "• Предупреждение при добавяне на емисия, която вече следвате",
+      "• Прозорецът се отваря увеличен, ако е бил затворен така",
+      "• Списъкът със статии вече не подскача при маркиране като прочетено при превъртане",
+      "• Поправен е входът в Google Drive"
     ],
     "cs": [
-      "• Vyzkoušejte nový experimentální modul režimu čtení pro rychlejší a přesnější získávání článků. Pomozte mi jej zlepšit hlášením chybějícího obsahu nebo chyb formátování.",
-      "• Vylepšeny obrázky, vložený obsah, krátké a obrázkové články, záložky a odpojení Dropboxu."
+      "• Nový modul režimu čtení pro čistší a spolehlivější články. Pokud stránka nevypadá správně, rád si přečtu vaši zpětnou vazbu!",
+      "• Snazší vyhledání kanálů YouTube při přidávání zdrojů",
+      "• Spolehlivější synchronizace s Dropboxem, která zachová čekající úpravy a stav přečtení",
+      "• Lepší načítání zdrojů a článků z webů, které blokují požadavky",
+      "• Upozornění při přidání zdroje, který už sledujete",
+      "• Okno se znovu otevře maximalizované, pokud bylo tak zavřeno",
+      "• Seznam článků už neposkakuje při označování jako přečtené během posouvání",
+      "• Opraveno přihlášení do Google Drive"
     ],
     "de": [
-      "• Teste die experimentelle neue Lesemodus-Engine für eine schnellere, genauere Artikelextraktion. Hilf mir, sie zu verbessern, indem du fehlende Inhalte oder Formatierungsfehler meldest.",
-      "• Verbessert wurden Bilder, eingebettete Inhalte, kurze und reine Bildartikel, Lesezeichenaktionen und das Trennen von Dropbox."
+      "• Neue Lesemodus-Engine für sauberere, zuverlässigere Artikel. Sieht eine Seite falsch aus, freue ich mich über dein Feedback!",
+      "• Einfacheres Finden von YouTube-Kanälen beim Hinzufügen von Feeds",
+      "• Zuverlässigere Dropbox-Synchronisierung, die ausstehende Änderungen und Lesestatus behält",
+      "• Besseres Laden von Feeds und Artikeln von Websites, die Anfragen blockieren",
+      "• Warnung beim Hinzufügen eines Feeds, dem du bereits folgst",
+      "• Das Fenster öffnet sich maximiert, wenn es so geschlossen wurde",
+      "• Die Artikelliste springt beim Als-gelesen-Markieren durch Scrollen nicht mehr",
+      "• Anmeldung bei Google Drive behoben"
     ],
     "de-de": [
-      "• Teste die experimentelle neue Lesemodus-Engine für eine schnellere, genauere Artikelextraktion. Hilf mir, sie zu verbessern, indem du fehlende Inhalte oder Formatierungsfehler meldest.",
-      "• Verbessert wurden Bilder, eingebettete Inhalte, kurze und reine Bildartikel, Lesezeichenaktionen und das Trennen von Dropbox."
+      "• Neue Lesemodus-Engine für sauberere, zuverlässigere Artikel. Sieht eine Seite falsch aus, freue ich mich über dein Feedback!",
+      "• Einfacheres Finden von YouTube-Kanälen beim Hinzufügen von Feeds",
+      "• Zuverlässigere Dropbox-Synchronisierung, die ausstehende Änderungen und Lesestatus behält",
+      "• Besseres Laden von Feeds und Artikeln von Websites, die Anfragen blockieren",
+      "• Warnung beim Hinzufügen eines Feeds, dem du bereits folgst",
+      "• Das Fenster öffnet sich maximiert, wenn es so geschlossen wurde",
+      "• Die Artikelliste springt beim Als-gelesen-Markieren durch Scrollen nicht mehr",
+      "• Anmeldung bei Google Drive behoben"
     ],
     "en-us": [
-      "• Try the experimental new Reader Mode engine for faster, more accurate article extraction. Help me improve it by reporting missing content or formatting issues.",
-      "• Improved Reader Mode images, embedded content, short and image-only articles, bookmark actions, and Dropbox unlinking."
+      "• New Reader Mode engine for cleaner, more reliable articles. If a page doesn't look right, I'd love your feedback!",
+      "• Easier YouTube channel discovery when adding feeds",
+      "• More reliable Dropbox sync that keeps pending edits and read states",
+      "• Better loading of feeds and articles from sites that block requests",
+      "• Warning when adding a feed you already follow",
+      "• The window reopens maximized if it was closed that way",
+      "• The article list no longer jumps while marking as read on scroll",
+      "• Fixed Google Drive sign-in"
     ],
     "es": [
-      "• Prueba el nuevo motor experimental del modo de lectura para extraer artículos con más rapidez y precisión. Ayúdame a mejorarlo informando de contenido ausente o errores de formato.",
-      "• Mejoras en imágenes, contenido incrustado, artículos breves o solo con imágenes, marcadores y desconexión de Dropbox."
+      "• Nuevo motor del modo lectura para artículos más limpios y fiables. Si una página no se ve bien, ¡me encantará tu opinión!",
+      "• Más fácil encontrar canales de YouTube al añadir feeds",
+      "• Sincronización con Dropbox más fiable que conserva los cambios pendientes y los estados de lectura",
+      "• Mejor carga de feeds y artículos de sitios que bloquean solicitudes",
+      "• Aviso al añadir un feed que ya sigues",
+      "• La ventana se vuelve a abrir maximizada si se cerró así",
+      "• La lista de artículos ya no salta al marcarlos como leídos al desplazarte",
+      "• Se corrigió el inicio de sesión en Google Drive"
     ],
     "es-es": [
-      "• Prueba el nuevo motor experimental del modo de lectura para extraer artículos con más rapidez y precisión. Ayúdame a mejorarlo informando de contenido ausente o errores de formato.",
-      "• Mejoras en imágenes, contenido incrustado, artículos breves o solo con imágenes, marcadores y desconexión de Dropbox."
+      "• Nuevo motor del modo lectura para artículos más limpios y fiables. Si una página no se ve bien, ¡me encantará tu opinión!",
+      "• Más fácil encontrar canales de YouTube al añadir feeds",
+      "• Sincronización con Dropbox más fiable que conserva los cambios pendientes y los estados de lectura",
+      "• Mejor carga de feeds y artículos de sitios que bloquean solicitudes",
+      "• Aviso al añadir un feed que ya sigues",
+      "• La ventana se vuelve a abrir maximizada si se cerró así",
+      "• La lista de artículos ya no salta al marcarlos como leídos al desplazarte",
+      "• Se corrigió el inicio de sesión en Google Drive"
     ],
     "et": [
-      "• Proovi uut katselist lugemisvaate lahendust, et artikleid kiiremini ja täpsemalt eraldada. Aita seda parandada, teatades puuduvast sisust või vormindusvigadest.",
-      "• Parandatud on pildid, manustatud sisu, lühikesed ja ainult pildiga artiklid, järjehoidjad ning Dropboxi lahtiühendamine."
+      "• Uus lugemisrežiimi mootor puhtamate ja usaldusväärsemate artiklite jaoks. Kui leht ei näe õige välja, ootan hea meelega tagasisidet!",
+      "• Lihtsam YouTube'i kanalite leidmine voogude lisamisel",
+      "• Usaldusväärsem Dropboxi sünkroonimine, mis säilitab ootel muudatused ja lugemisolekud",
+      "• Parem voogude ja artiklite laadimine päringuid blokeerivatelt saitidelt",
+      "• Hoiatus, kui lisad voo, mida juba jälgid",
+      "• Aken avaneb maksimeerituna, kui see nii suleti",
+      "• Artiklite loend ei hüppa enam kerimisel loetuks märkimise ajal",
+      "• Parandatud Google Drive'i sisselogimine"
     ],
     "fr": [
-      "• Testez le nouveau moteur expérimental du mode Lecture pour extraire les articles plus vite et plus précisément. Aidez-moi à l’améliorer en signalant le contenu manquant ou les erreurs de formatage.",
-      "• Amélioration des images, du contenu intégré, des articles courts ou composés d’images, des favoris et de la déconnexion Dropbox."
+      "• Nouveau moteur du mode lecture pour des articles plus propres et fiables. Une page mal affichée ? Vos retours me seront précieux !",
+      "• Découverte simplifiée des chaînes YouTube lors de l'ajout de flux",
+      "• Synchronisation Dropbox plus fiable qui conserve les modifications en attente et les états de lecture",
+      "• Meilleur chargement des flux et articles des sites qui bloquent les requêtes",
+      "• Avertissement lors de l'ajout d'un flux déjà suivi",
+      "• La fenêtre se rouvre agrandie si elle a été fermée ainsi",
+      "• La liste d'articles ne saute plus lors du marquage comme lu au défilement",
+      "• Correction de la connexion à Google Drive"
     ],
     "gl": [
-      "• Proba o novo motor experimental do modo de lectura para extraer artigos con máis rapidez e precisión. Axúdame a melloralo informando de contido ausente ou erros de formato.",
-      "• Melloras nas imaxes, contido inserido, artigos breves ou só con imaxes, marcadores e desconexión de Dropbox."
+      "• Novo motor do modo de lectura para artigos máis limpos e fiables. Se unha páxina non se ve ben, encantaríame a túa opinión!",
+      "• Máis doado atopar canles de YouTube ao engadir fontes",
+      "• Sincronización con Dropbox máis fiable que conserva os cambios pendentes e os estados de lectura",
+      "• Mellor carga de fontes e artigos de sitios que bloquean solicitudes",
+      "• Aviso ao engadir unha fonte que xa segues",
+      "• A xanela ábrese de novo maximizada se se pechou así",
+      "• A lista de artigos xa non salta ao marcalos como lidos ao desprazarte",
+      "• Corrixiuse o inicio de sesión en Google Drive"
     ],
     "gl-es": [
-      "• Proba o novo motor experimental do modo de lectura para extraer artigos con máis rapidez e precisión. Axúdame a melloralo informando de contido ausente ou erros de formato.",
-      "• Melloras nas imaxes, contido inserido, artigos breves ou só con imaxes, marcadores e desconexión de Dropbox."
+      "• Novo motor do modo de lectura para artigos máis limpos e fiables. Se unha páxina non se ve ben, encantaríame a túa opinión!",
+      "• Máis doado atopar canles de YouTube ao engadir fontes",
+      "• Sincronización con Dropbox máis fiable que conserva os cambios pendentes e os estados de lectura",
+      "• Mellor carga de fontes e artigos de sitios que bloquean solicitudes",
+      "• Aviso ao engadir unha fonte que xa segues",
+      "• A xanela ábrese de novo maximizada se se pechou así",
+      "• A lista de artigos xa non salta ao marcalos como lidos ao desprazarte",
+      "• Corrixiuse o inicio de sesión en Google Drive"
     ],
     "he": [
-      "• נסו את מנוע מצב הקריאה הניסיוני החדש לחילוץ מהיר ומדויק יותר. עזרו לי לשפר אותו בדיווח על תוכן חסר או בעיות עיצוב.",
-      "• שופרו תמונות, תוכן מוטמע, מאמרים קצרים או מבוססי תמונות, פעולות סימניות וניתוק Dropbox."
+      "• מנוע חדש למצב קריאה למאמרים נקיים ואמינים יותר. אם עמוד לא נראה כמו שצריך, אשמח למשוב שלכם!",
+      "• גילוי קל יותר של ערוצי YouTube בעת הוספת פידים",
+      "• סנכרון Dropbox אמין יותר ששומר שינויים ממתינים ומצבי קריאה",
+      "• טעינה טובה יותר של פידים ומאמרים מאתרים שחוסמים בקשות",
+      "• אזהרה בעת הוספת פיד שאתם כבר עוקבים אחריו",
+      "• החלון נפתח מוגדל אם נסגר כך",
+      "• רשימת המאמרים כבר לא קופצת בזמן סימון כנקרא בגלילה",
+      "• תוקנה ההתחברות ל-Google Drive"
     ],
     "hu": [
-      "• Próbáld ki a kísérleti új olvasási mód motort a gyorsabb, pontosabb cikkkinyeréshez. Segíts nekem továbbfejleszteni a hiányzó tartalom vagy formázási hibák jelentésével.",
-      "• Javultak a képek, beágyazások, rövid és csak képes cikkek, könyvjelzőműveletek és a Dropbox leválasztása."
+      "• Új olvasó mód motor a tisztább, megbízhatóbb cikkekért. Ha egy oldal nem jól jelenik meg, szívesen fogadom a visszajelzést!",
+      "• Egyszerűbb YouTube-csatorna-keresés hírcsatornák hozzáadásakor",
+      "• Megbízhatóbb Dropbox-szinkron, amely megőrzi a függő módosításokat és az olvasási állapotokat",
+      "• Jobb hírcsatorna- és cikkbetöltés a kéréseket blokkoló oldalakról",
+      "• Figyelmeztetés, ha már követett hírcsatornát adsz hozzá",
+      "• Az ablak teljes méretben nyílik meg, ha úgy zártad be",
+      "• A cikklista már nem ugrál görgetés közbeni olvasottnak jelöléskor",
+      "• Javítva a Google Drive-bejelentkezés"
     ],
     "it": [
-      "• Prova il nuovo motore sperimentale della modalità Lettura per estrarre gli articoli più rapidamente e con maggiore precisione. Aiutami a migliorarlo segnalando contenuti mancanti o errori di formattazione.",
-      "• Migliorati immagini, contenuti incorporati, articoli brevi o di sole immagini, azioni dei segnalibri e scollegamento di Dropbox."
+      "• Nuovo motore della modalità lettura per articoli più puliti e affidabili. Se una pagina non si vede bene, mi farebbe piacere il tuo feedback!",
+      "• Ricerca più semplice dei canali YouTube quando aggiungi feed",
+      "• Sincronizzazione Dropbox più affidabile che conserva modifiche in sospeso e stati di lettura",
+      "• Caricamento migliore di feed e articoli dai siti che bloccano le richieste",
+      "• Avviso quando aggiungi un feed che segui già",
+      "• La finestra si riapre ingrandita se è stata chiusa così",
+      "• L'elenco degli articoli non salta più segnando come letti durante lo scorrimento",
+      "• Corretto l'accesso a Google Drive"
     ],
     "ja": [
-      "• 実験的な新しいリーダーモードエンジンで、記事をより高速かつ正確に抽出できます。コンテンツの欠落や表示の問題をご報告いただき、改善にご協力ください。",
-      "• 画像、埋め込みコンテンツ、短い記事や画像のみの記事、ブックマーク操作、Dropboxのリンク解除を改善しました。"
+      "• リーダーモードに、よりきれいで信頼性の高い記事表示を実現する新エンジンを搭載しました。正しく表示されないページがあれば、ぜひフィードバックをお寄せください！",
+      "• フィード追加時に YouTube チャンネルを見つけやすくなりました",
+      "• Dropbox 同期の信頼性が向上し、保留中の編集や既読状態が保持されます",
+      "• リクエストをブロックするサイトのフィードと記事の読み込みを改善しました",
+      "• すでにフォローしているフィードを追加すると警告が表示されます",
+      "• 最大化したまま閉じたウィンドウは、最大化した状態で再び開きます",
+      "• スクロールで既読にする際に記事リストが跳ねなくなりました",
+      "• Google Drive へのサインインを修正しました"
     ],
     "pl": [
-      "• Wypróbuj nowy eksperymentalny silnik trybu czytania, aby szybciej i dokładniej wyodrębniać artykuły. Pomóż mi go ulepszyć, zgłaszając brakującą treść lub błędy formatowania.",
-      "• Ulepszono obrazy, osadzone treści, krótkie i obrazkowe artykuły, zakładki oraz odłączanie Dropbox."
+      "• Nowy silnik trybu czytania zapewnia czystsze i bardziej niezawodne artykuły. Jeśli strona nie wygląda dobrze, chętnie poznam Twoją opinię!",
+      "• Łatwiejsze wyszukiwanie kanałów YouTube przy dodawaniu kanałów",
+      "• Bardziej niezawodna synchronizacja z Dropboxem, która zachowuje oczekujące zmiany i stan przeczytania",
+      "• Lepsze wczytywanie kanałów i artykułów ze stron blokujących żądania",
+      "• Ostrzeżenie przy dodawaniu kanału, który już obserwujesz",
+      "• Okno otwiera się zmaksymalizowane, jeśli tak zostało zamknięte",
+      "• Lista artykułów nie skacze już podczas oznaczania jako przeczytane przy przewijaniu",
+      "• Naprawiono logowanie do Google Drive"
     ],
     "pt-br": [
-      "• Teste o novo mecanismo experimental do modo Leitura para extrair artigos com mais rapidez e precisão. Ajude-me a melhorar reportando conteúdo ausente ou erros de formatação.",
-      "• Melhorias em imagens, conteúdo incorporado, artigos curtos ou só com imagens, ações de favoritos e desvinculação do Dropbox."
+      "• Novo mecanismo do modo de leitura para artigos mais limpos e confiáveis. Se uma página não ficar certa, adoraria seu feedback!",
+      "• Mais fácil encontrar canais do YouTube ao adicionar feeds",
+      "• Sincronização com Dropbox mais confiável, que mantém edições pendentes e status de leitura",
+      "• Melhor carregamento de feeds e artigos de sites que bloqueiam solicitações",
+      "• Aviso ao adicionar um feed que você já segue",
+      "• A janela reabre maximizada se foi fechada assim",
+      "• A lista de artigos não pula mais ao marcar como lido durante a rolagem",
+      "• Corrigido o login no Google Drive"
     ],
     "ru": [
-      "• Попробуйте новый экспериментальный движок режима чтения для более быстрого и точного извлечения статей. Помогите мне улучшить его, сообщая о пропущенном содержимом или ошибках форматирования.",
-      "• Улучшены изображения, встроенные материалы, короткие статьи, закладки и отвязка Dropbox."
+      "• Новый движок режима чтения для более чистых и надёжных статей. Если страница выглядит неправильно, буду рад вашему отзыву!",
+      "• Проще находить каналы YouTube при добавлении лент",
+      "• Более надёжная синхронизация с Dropbox, сохраняющая ожидающие изменения и статусы прочтения",
+      "• Улучшена загрузка лент и статей с сайтов, блокирующих запросы",
+      "• Предупреждение при добавлении ленты, на которую вы уже подписаны",
+      "• Окно открывается развёрнутым, если было так закрыто",
+      "• Список статей больше не прыгает при отметке прочитанного во время прокрутки",
+      "• Исправлен вход в Google Drive"
     ],
     "sk": [
-      "• Vyskúšajte nový experimentálny mechanizmus režimu čítania na rýchlejšie a presnejšie získavanie článkov. Pomôžte mi ho zlepšiť nahlasovaním chýbajúceho obsahu alebo chýb formátovania.",
-      "• Zlepšili sa obrázky, vložený obsah, krátke a obrazové články, záložky aj odpojenie Dropboxu."
+      "• Nový engine režimu čítania pre čistejšie a spoľahlivejšie články. Ak stránka nevyzerá správne, rád si prečítam vašu spätnú väzbu!",
+      "• Jednoduchšie vyhľadanie kanálov YouTube pri pridávaní zdrojov",
+      "• Spoľahlivejšia synchronizácia s Dropboxom, ktorá zachová čakajúce úpravy a stavy prečítania",
+      "• Lepšie načítanie zdrojov a článkov zo stránok, ktoré blokujú požiadavky",
+      "• Upozornenie pri pridaní zdroja, ktorý už sledujete",
+      "• Okno sa znova otvorí maximalizované, ak bolo tak zatvorené",
+      "• Zoznam článkov už neposkakuje pri označovaní ako prečítané počas posúvania",
+      "• Opravené prihlásenie do Google Drive"
     ],
     "ta": [
-      "• வேகமாகவும் துல்லியமாகவும் கட்டுரைகளைப் பிரித்தெடுக்க புதிய சோதனை வாசிப்பு முறை இயந்திரத்தை முயலுங்கள். விடுபட்ட உள்ளடக்கம் அல்லது வடிவமைப்புப் பிழைகளைப் புகாரளித்து மேம்படுத்த உதவுங்கள்.",
-      "• படங்கள், உட்பொதிகள், குறுகிய மற்றும் படம் மட்டுமே உள்ள கட்டுரைகள், புத்தகக்குறிகள், Dropbox இணைப்பு நீக்கம் மேம்படுத்தப்பட்டன."
+      "• சுத்தமான, நம்பகமான கட்டுரைகளுக்கு வாசிப்பு பயன்முறையில் புதிய எஞ்சின். பக்கம் சரியாகத் தெரியவில்லை எனில் உங்கள் கருத்தை அறிய விரும்புகிறேன்!",
+      "• ஊட்டங்களைச் சேர்க்கும்போது YouTube சேனல்களைக் கண்டறிவது எளிது",
+      "• நிலுவையிலுள்ள மாற்றங்களையும் படித்த நிலைகளையும் வைத்திருக்கும் நம்பகமான Dropbox ஒத்திசைவு",
+      "• கோரிக்கைகளைத் தடுக்கும் தளங்களிலிருந்து ஊட்டங்களும் கட்டுரைகளும் சிறப்பாக ஏற்றப்படும்",
+      "• ஏற்கனவே பின்தொடரும் ஊட்டத்தைச் சேர்க்கும்போது எச்சரிக்கை",
+      "• பெரிதாக்கிய நிலையில் மூடிய சாளரம் அவ்வாறே மீண்டும் திறக்கும்",
+      "• உருட்டும்போது படித்ததாகக் குறிக்கையில் கட்டுரைப் பட்டியல் இனி குதிக்காது",
+      "• Google Drive உள்நுழைவு சரிசெய்யப்பட்டது"
     ],
     "tr": [
-      "• Daha hızlı ve doğru makale çıkarımı için yeni deneysel Okuma Modu motorunu deneyin. Eksik içerik veya biçimlendirme sorunlarını bildirerek geliştirmeme yardım edin.",
-      "• Görseller, gömülü içerik, kısa ve yalnızca görsel içeren makaleler, yer imleri ve Dropbox bağlantısını kaldırma iyileştirildi."
+      "• Daha temiz ve güvenilir makaleler için yeni Okuma Modu motoru. Bir sayfa düzgün görünmüyorsa geri bildiriminizi almaktan memnuniyet duyarım!",
+      "• Akış eklerken YouTube kanallarını bulmak daha kolay",
+      "• Bekleyen düzenlemeleri ve okunma durumlarını koruyan daha güvenilir Dropbox eşitlemesi",
+      "• İstekleri engelleyen sitelerden akış ve makalelerin daha iyi yüklenmesi",
+      "• Zaten takip ettiğiniz bir akışı eklerken uyarı",
+      "• Pencere büyütülmüş olarak kapatıldıysa büyütülmüş açılır",
+      "• Kaydırarak okundu olarak işaretlerken makale listesi artık zıplamıyor",
+      "• Google Drive oturum açma sorunu düzeltildi"
     ],
     "uk": [
-      "• Спробуйте новий експериментальний рушій режиму читання для швидшого й точнішого вилучення статей. Допоможіть мені покращити його, повідомляючи про відсутній вміст чи помилки форматування.",
-      "• Покращено зображення, вбудований вміст, короткі статті, закладки та від’єднання Dropbox."
+      "• Новий рушій режиму читання для чистіших і надійніших статей. Якщо сторінка виглядає неправильно, буду радий вашому відгуку!",
+      "• Простіше знаходити канали YouTube під час додавання стрічок",
+      "• Надійніша синхронізація з Dropbox, що зберігає незавершені зміни та статуси прочитання",
+      "• Краще завантаження стрічок і статей із сайтів, що блокують запити",
+      "• Попередження під час додавання стрічки, на яку ви вже підписані",
+      "• Вікно відкривається розгорнутим, якщо його так закрили",
+      "• Список статей більше не стрибає під час позначення прочитаним при прокручуванні",
+      "• Виправлено вхід у Google Drive"
     ],
     "vi": [
-      "• Thử Engine chế độ đọc mới mang tính thử nghiệm để trích xuất bài viết nhanh và chính xác hơn. Hãy giúp tôi cải thiện bằng cách báo nội dung bị thiếu hoặc lỗi định dạng.",
-      "• Cải thiện hình ảnh, nội dung nhúng, bài ngắn hoặc chỉ có hình, thao tác dấu trang và ngắt kết nối Dropbox."
+      "• Công cụ chế độ đọc mới cho bài viết gọn gàng và ổn định hơn. Nếu trang nào hiển thị chưa đúng, mình rất mong nhận được phản hồi của bạn!",
+      "• Tìm kênh YouTube dễ hơn khi thêm nguồn cấp",
+      "• Đồng bộ Dropbox ổn định hơn, giữ lại các chỉnh sửa đang chờ và trạng thái đã đọc",
+      "• Tải nguồn cấp và bài viết tốt hơn từ các trang chặn yêu cầu",
+      "• Cảnh báo khi thêm nguồn cấp bạn đã theo dõi",
+      "• Cửa sổ mở lại ở dạng phóng to nếu được đóng như vậy",
+      "• Danh sách bài viết không còn bị nhảy khi đánh dấu đã đọc lúc cuộn",
+      "• Đã sửa lỗi đăng nhập Google Drive"
     ],
     "zh-cn": [
-      "• 试用实验性的新阅读模式引擎，更快、更准确地提取文章。如遇内容缺失或格式问题，请反馈并帮助我改进。",
-      "• 改进了图片、嵌入内容、短文和纯图文章、书签操作以及 Dropbox 解绑。"
+      "• 阅读模式采用全新引擎，文章显示更整洁、更可靠。如果有页面显示不正常，欢迎向我反馈！",
+      "• 添加订阅源时更容易发现 YouTube 频道",
+      "• Dropbox 同步更可靠，会保留待处理的编辑和已读状态",
+      "• 改进了对屏蔽请求的网站的订阅源和文章加载",
+      "• 添加已关注的订阅源时会显示警告",
+      "• 窗口以最大化状态关闭后，重新打开时仍保持最大化",
+      "• 滚动标记为已读时，文章列表不再跳动",
+      "• 修复了 Google Drive 登录问题"
     ],
     "zh-hans": [
-      "• 试用实验性的新阅读模式引擎，更快、更准确地提取文章。如遇内容缺失或格式问题，请反馈并帮助我改进。",
-      "• 改进了图片、嵌入内容、短文和纯图文章、书签操作以及 Dropbox 解绑。"
+      "• 阅读模式采用全新引擎，文章显示更整洁、更可靠。如果有页面显示不正常，欢迎向我反馈！",
+      "• 添加订阅源时更容易发现 YouTube 频道",
+      "• Dropbox 同步更可靠，会保留待处理的编辑和已读状态",
+      "• 改进了对屏蔽请求的网站的订阅源和文章加载",
+      "• 添加已关注的订阅源时会显示警告",
+      "• 窗口以最大化状态关闭后，重新打开时仍保持最大化",
+      "• 滚动标记为已读时，文章列表不再跳动",
+      "• 修复了 Google Drive 登录问题"
     ]
   }
 }

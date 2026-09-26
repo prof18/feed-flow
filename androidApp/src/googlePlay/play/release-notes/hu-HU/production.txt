@@ -1,2 +1,5 @@
-• Próbáld ki a kísérleti új olvasási mód motort a gyorsabb, pontosabb cikkkinyeréshez. Segíts nekem továbbfejleszteni a hiányzó tartalom vagy formázási hibák jelentésével.
-• Javultak a képek, beágyazások, rövid és csak képes cikkek, könyvjelzőműveletek és a Dropbox leválasztása.
+• Az olvasó mód új motort kapott a tisztább, megbízhatóbb cikkekért. Ha egy oldal hibás, szívesen fogadom a visszajelzést!
+• Teljes képernyős videók olvasó módban, forgatáskor megmarad a pozíció
+• Sokkal megbízhatóbb Google Drive- és Dropbox-szinkron, elveszett módosítások nélkül
+• Jobb betöltés a kéréseket blokkoló oldalakról és egyszerűbb YouTube-csatorna-hozzáadás
+• A lista már nem ugrál görgetés közbeni olvasottnak jelöléskor

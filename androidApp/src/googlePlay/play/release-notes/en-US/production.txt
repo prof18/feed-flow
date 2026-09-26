@@ -1,2 +1,5 @@
-• Try the experimental new Reader Mode engine for faster, more accurate article extraction. Help me improve it by reporting missing content or formatting issues.
-• Improved Reader Mode images, embedded content, short and image-only articles, bookmark actions, and Dropbox unlinking.
+• Reader Mode has a brand-new engine for cleaner, more reliable articles. If a page doesn't look right, I'd love your feedback!
+• Reader Mode now supports fullscreen videos and keeps your position when you rotate the device
+• Much more reliable Google Drive and Dropbox sync, with no lost edits or read states
+• Better feed loading for sites that block requests, plus easier YouTube channel adding
+• The article list no longer jumps while marking as read on scroll

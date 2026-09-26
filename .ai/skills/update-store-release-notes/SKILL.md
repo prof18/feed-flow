@@ -36,6 +36,7 @@ Respect a user request to translate store copy even if general project localizat
 ## iOS and macOS: App Store Connect
 
 - Treat iOS and macOS as separate products: accept and maintain separate platform copy.
+- The committed source is `assets/storecopy/app-store-release-notes.json` (`ios`/`macos` → locale → bullet array); update it first, then push each locale's bullets joined with `\n` as `whatsNew`.
 - Inspect App Store Connect first to discover the version and its actual localization set. Use `asc` to pull the relevant version localizations, update each locale's `whatsNew`, then pull/validate again to confirm the remote result.
 - Use `en-US` as the source locale and translate only into locales exposed for that specific product/version. Do not create an App Store task for a locale App Store Connect does not support.
 - Use the platform's field limits reported by `asc`; shorten translations as needed while retaining all material points.

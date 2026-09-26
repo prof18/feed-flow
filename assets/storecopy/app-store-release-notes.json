@@ -1,0 +1,258 @@
+{
+  "ios": {
+    "en-US": [
+      "• Reader Mode has a brand-new engine that gives cleaner, more reliable articles. If a page doesn't look right, I'd love to hear your feedback.",
+      "• Adding a YouTube channel is easier: paste the channel link and FeedFlow finds its feed.",
+      "• Smoother scrolling in the article list, especially on iPad.",
+      "• iCloud, Dropbox and Google Drive sync is much more reliable: pending edits, read states and category changes are no longer lost.",
+      "• Feeds and articles from sites that block requests now load more reliably.",
+      "• FeedFlow now tells you when you try to add a feed you already follow.",
+      "• The article list no longer jumps while articles are marked as read on scroll."
+    ],
+    "de-DE": [
+      "• Der Lesemodus hat eine brandneue Engine für sauberere, zuverlässigere Artikel. Wenn eine Seite nicht richtig aussieht, freue ich mich über dein Feedback.",
+      "• YouTube-Kanäle lassen sich leichter hinzufügen: Füge den Kanallink ein und FeedFlow findet den Feed.",
+      "• Flüssigeres Scrollen in der Artikelliste, besonders auf dem iPad.",
+      "• Die Synchronisierung mit iCloud, Dropbox und Google Drive ist viel zuverlässiger: Ausstehende Änderungen, Lesestatus und Kategorieänderungen gehen nicht mehr verloren.",
+      "• Feeds und Artikel von Websites, die Anfragen blockieren, laden jetzt zuverlässiger.",
+      "• FeedFlow weist dich jetzt darauf hin, wenn du einen Feed hinzufügen möchtest, dem du bereits folgst.",
+      "• Die Artikelliste springt nicht mehr, während Artikel beim Scrollen als gelesen markiert werden."
+    ],
+    "es-ES": [
+      "• El modo lectura estrena un motor totalmente nuevo que ofrece artículos más limpios y fiables. Si una página no se ve bien, me encantará conocer tu opinión.",
+      "• Añadir un canal de YouTube es más fácil: pega el enlace del canal y FeedFlow encontrará su feed.",
+      "• Desplazamiento más fluido en la lista de artículos, sobre todo en el iPad.",
+      "• La sincronización con iCloud, Dropbox y Google Drive es mucho más fiable: ya no se pierden cambios pendientes, estados de lectura ni cambios de categorías.",
+      "• Los feeds y artículos de sitios que bloquean solicitudes ahora se cargan de forma más fiable.",
+      "• FeedFlow ahora te avisa cuando intentas añadir un feed que ya sigues.",
+      "• La lista de artículos ya no salta mientras se marcan como leídos al desplazarte."
+    ],
+    "fr-FR": [
+      "• Le mode lecture adopte un tout nouveau moteur pour des articles plus propres et plus fiables. Si une page ne s'affiche pas correctement, vos retours me seront précieux.",
+      "• Ajouter une chaîne YouTube est plus simple : collez le lien de la chaîne et FeedFlow trouve son flux.",
+      "• Défilement plus fluide dans la liste d'articles, surtout sur iPad.",
+      "• La synchronisation iCloud, Dropbox et Google Drive est bien plus fiable : les modifications en attente, les états de lecture et les changements de catégories ne sont plus perdus.",
+      "• Les flux et articles des sites qui bloquent les requêtes se chargent désormais de manière plus fiable.",
+      "• FeedFlow vous prévient désormais lorsque vous essayez d'ajouter un flux que vous suivez déjà.",
+      "• La liste d'articles ne saute plus pendant le marquage comme lu au défilement."
+    ],
+    "he": [
+      "• למצב הקריאה יש מנוע חדש לגמרי שמציג מאמרים נקיים ואמינים יותר. אם עמוד לא נראה כמו שצריך, אשמח לשמוע את המשוב שלכם.",
+      "• קל יותר להוסיף ערוץ YouTube: הדביקו את קישור הערוץ ו-FeedFlow ימצא את הפיד שלו.",
+      "• גלילה חלקה יותר ברשימת המאמרים, במיוחד ב-iPad.",
+      "• הסנכרון עם iCloud, ‏Dropbox ו-Google Drive אמין הרבה יותר: שינויים ממתינים, מצבי קריאה ושינויי קטגוריות כבר לא הולכים לאיבוד.",
+      "• פידים ומאמרים מאתרים שחוסמים בקשות נטענים כעת בצורה אמינה יותר.",
+      "• FeedFlow מודיע לכם כעת כשאתם מנסים להוסיף פיד שאתם כבר עוקבים אחריו.",
+      "• רשימת המאמרים כבר לא קופצת בזמן שמאמרים מסומנים כנקראו בגלילה."
+    ],
+    "hu": [
+      "• Az olvasó mód vadonatúj motort kapott, amely tisztább és megbízhatóbb cikkeket jelenít meg. Ha egy oldal nem jól néz ki, szívesen fogadom a visszajelzésedet.",
+      "• Egyszerűbb YouTube-csatornát hozzáadni: illeszd be a csatorna linkjét, és a FeedFlow megtalálja a hírcsatornáját.",
+      "• Gördülékenyebb görgetés a cikklistában, különösen iPaden.",
+      "• Az iCloud-, Dropbox- és Google Drive-szinkronizálás sokkal megbízhatóbb: a függő módosítások, az olvasási állapotok és a kategóriaváltozások már nem vesznek el.",
+      "• A kéréseket blokkoló oldalak hírcsatornái és cikkei mostantól megbízhatóbban töltődnek be.",
+      "• A FeedFlow mostantól szól, ha olyan hírcsatornát próbálsz hozzáadni, amelyet már követsz.",
+      "• A cikklista már nem ugrál, miközben a cikkek görgetéskor olvasottként jelölődnek."
+    ],
+    "it": [
+      "• La modalità lettura ha un motore completamente nuovo che offre articoli più puliti e affidabili. Se una pagina non si vede bene, mi farebbe piacere ricevere il tuo feedback.",
+      "• Aggiungere un canale YouTube è più semplice: incolla il link del canale e FeedFlow trova il suo feed.",
+      "• Scorrimento più fluido nell'elenco degli articoli, soprattutto su iPad.",
+      "• La sincronizzazione con iCloud, Dropbox e Google Drive è molto più affidabile: modifiche in sospeso, stati di lettura e modifiche alle categorie non vanno più persi.",
+      "• Feed e articoli dai siti che bloccano le richieste ora si caricano in modo più affidabile.",
+      "• FeedFlow ora ti avvisa quando provi ad aggiungere un feed che segui già.",
+      "• L'elenco degli articoli non salta più mentre gli articoli vengono segnati come letti durante lo scorrimento."
+    ],
+    "ja": [
+      "• リーダーモードに新しいエンジンを搭載し、記事をよりきれいに、より確実に表示できるようになりました。正しく表示されないページがあれば、ぜひフィードバックをお寄せください。",
+      "• YouTube チャンネルの追加が簡単になりました。チャンネルのリンクを貼り付けるだけで、FeedFlow がフィードを見つけます。",
+      "• 記事リストのスクロールがよりなめらかになりました。特に iPad で効果的です。",
+      "• iCloud、Dropbox、Google Drive の同期が大幅に安定しました。保留中の編集、既読状態、カテゴリの変更が失われなくなりました。",
+      "• リクエストをブロックするサイトのフィードや記事を、より確実に読み込めるようになりました。",
+      "• すでにフォローしているフィードを追加しようとすると、FeedFlow がお知らせするようになりました。",
+      "• スクロールで記事を既読にしている間、記事リストが跳ねなくなりました。"
+    ],
+    "pt-BR": [
+      "• O modo de leitura ganhou um mecanismo totalmente novo, com artigos mais limpos e confiáveis. Se uma página não aparecer direito, adoraria receber seu feedback.",
+      "• Adicionar um canal do YouTube ficou mais fácil: cole o link do canal e o FeedFlow encontra o feed.",
+      "• Rolagem mais suave na lista de artigos, principalmente no iPad.",
+      "• A sincronização com iCloud, Dropbox e Google Drive está muito mais confiável: edições pendentes, status de leitura e alterações de categorias não se perdem mais.",
+      "• Feeds e artigos de sites que bloqueiam solicitações agora carregam de forma mais confiável.",
+      "• O FeedFlow agora avisa quando você tenta adicionar um feed que já segue.",
+      "• A lista de artigos não pula mais enquanto os artigos são marcados como lidos na rolagem."
+    ],
+    "ru": [
+      "• В режиме чтения появился совершенно новый движок: статьи выглядят чище и отображаются надёжнее. Если страница выглядит неправильно, буду рад вашему отзыву.",
+      "• Добавлять каналы YouTube стало проще: вставьте ссылку на канал, и FeedFlow найдёт его ленту.",
+      "• Более плавная прокрутка списка статей, особенно на iPad.",
+      "• Синхронизация с iCloud, Dropbox и Google Drive стала гораздо надёжнее: ожидающие изменения, статусы прочтения и изменения категорий больше не теряются.",
+      "• Ленты и статьи с сайтов, блокирующих запросы, теперь загружаются надёжнее.",
+      "• FeedFlow теперь предупреждает, если вы пытаетесь добавить ленту, на которую уже подписаны.",
+      "• Список статей больше не прыгает, пока статьи отмечаются прочитанными при прокрутке."
+    ],
+    "sk": [
+      "• Režim čítania má úplne nový engine, ktorý prináša čistejšie a spoľahlivejšie články. Ak stránka nevyzerá správne, rád si prečítam vašu spätnú väzbu.",
+      "• Pridanie kanála YouTube je jednoduchšie: vložte odkaz na kanál a FeedFlow nájde jeho zdroj.",
+      "• Plynulejšie posúvanie v zozname článkov, najmä na iPade.",
+      "• Synchronizácia s iCloud, Dropbox a Google Drive je oveľa spoľahlivejšia: čakajúce úpravy, stavy prečítania ani zmeny kategórií sa už nestratia.",
+      "• Zdroje a články zo stránok, ktoré blokujú požiadavky, sa teraz načítavajú spoľahlivejšie.",
+      "• FeedFlow vás teraz upozorní, keď sa pokúsite pridať zdroj, ktorý už sledujete.",
+      "• Zoznam článkov už neposkakuje, keď sa články pri posúvaní označujú ako prečítané."
+    ],
+    "uk": [
+      "• Режим читання отримав абсолютно новий рушій: статті виглядають чистіше й відображаються надійніше. Якщо сторінка виглядає неправильно, буду радий вашому відгуку.",
+      "• Додавати канали YouTube стало простіше: вставте посилання на канал, і FeedFlow знайде його стрічку.",
+      "• Плавніше прокручування списку статей, особливо на iPad.",
+      "• Синхронізація з iCloud, Dropbox і Google Drive стала набагато надійнішою: незавершені зміни, статуси прочитання та зміни категорій більше не втрачаються.",
+      "• Стрічки й статті з сайтів, що блокують запити, тепер завантажуються надійніше.",
+      "• FeedFlow тепер попереджає, якщо ви намагаєтеся додати стрічку, на яку вже підписані.",
+      "• Список статей більше не стрибає, поки статті позначаються прочитаними під час прокручування."
+    ],
+    "vi": [
+      "• Chế độ đọc có công cụ hoàn toàn mới, cho bài viết gọn gàng và ổn định hơn. Nếu trang nào hiển thị chưa đúng, mình rất mong nhận được phản hồi của bạn.",
+      "• Thêm kênh YouTube dễ hơn: dán liên kết kênh và FeedFlow sẽ tìm nguồn cấp của kênh.",
+      "• Cuộn danh sách bài viết mượt mà hơn, đặc biệt trên iPad.",
+      "• Đồng bộ iCloud, Dropbox và Google Drive ổn định hơn nhiều: chỉnh sửa đang chờ, trạng thái đã đọc và thay đổi danh mục không còn bị mất.",
+      "• Nguồn cấp và bài viết từ các trang chặn yêu cầu giờ tải ổn định hơn.",
+      "• FeedFlow giờ sẽ báo cho bạn khi bạn thêm một nguồn cấp đã theo dõi.",
+      "• Danh sách bài viết không còn bị nhảy khi bài viết được đánh dấu đã đọc lúc cuộn."
+    ],
+    "zh-Hans": [
+      "• 阅读模式采用全新引擎，文章显示更整洁、更可靠。如果有页面显示不正常，欢迎向我反馈。",
+      "• 添加 YouTube 频道更简单了：粘贴频道链接，FeedFlow 就会找到它的订阅源。",
+      "• 文章列表滚动更流畅，在 iPad 上尤为明显。",
+      "• iCloud、Dropbox 和 Google Drive 同步更加可靠：待处理的编辑、已读状态和分类更改不会再丢失。",
+      "• 来自屏蔽请求的网站的订阅源和文章现在加载更可靠。",
+      "• 当你尝试添加已关注的订阅源时，FeedFlow 现在会提醒你。",
+      "• 滚动标记已读时，文章列表不再跳动。"
+    ]
+  },
+  "macos": {
+    "en-US": [
+      "• Reader Mode has a brand-new engine that gives cleaner, more reliable articles. If a page doesn't look right, I'd love to hear your feedback.",
+      "• Adding a YouTube channel is easier: paste the channel link and FeedFlow finds its feed.",
+      "• FeedFlow now reopens maximized if you closed it that way.",
+      "• iCloud, Dropbox and Google Drive sync is much more reliable: pending edits, read states and category changes are no longer lost.",
+      "• Feeds and articles from sites that block requests now load more reliably.",
+      "• FeedFlow now tells you when you try to add a feed you already follow.",
+      "• The article list no longer jumps while articles are marked as read on scroll."
+    ],
+    "de-DE": [
+      "• Der Lesemodus hat eine brandneue Engine für sauberere, zuverlässigere Artikel. Wenn eine Seite nicht richtig aussieht, freue ich mich über dein Feedback.",
+      "• YouTube-Kanäle lassen sich leichter hinzufügen: Füge den Kanallink ein und FeedFlow findet den Feed.",
+      "• FeedFlow öffnet sich jetzt maximiert, wenn du es so geschlossen hast.",
+      "• Die Synchronisierung mit iCloud, Dropbox und Google Drive ist viel zuverlässiger: Ausstehende Änderungen, Lesestatus und Kategorieänderungen gehen nicht mehr verloren.",
+      "• Feeds und Artikel von Websites, die Anfragen blockieren, laden jetzt zuverlässiger.",
+      "• FeedFlow weist dich jetzt darauf hin, wenn du einen Feed hinzufügen möchtest, dem du bereits folgst.",
+      "• Die Artikelliste springt nicht mehr, während Artikel beim Scrollen als gelesen markiert werden."
+    ],
+    "es-ES": [
+      "• El modo lectura estrena un motor totalmente nuevo que ofrece artículos más limpios y fiables. Si una página no se ve bien, me encantará conocer tu opinión.",
+      "• Añadir un canal de YouTube es más fácil: pega el enlace del canal y FeedFlow encontrará su feed.",
+      "• FeedFlow ahora se vuelve a abrir maximizado si lo cerraste así.",
+      "• La sincronización con iCloud, Dropbox y Google Drive es mucho más fiable: ya no se pierden cambios pendientes, estados de lectura ni cambios de categorías.",
+      "• Los feeds y artículos de sitios que bloquean solicitudes ahora se cargan de forma más fiable.",
+      "• FeedFlow ahora te avisa cuando intentas añadir un feed que ya sigues.",
+      "• La lista de artículos ya no salta mientras se marcan como leídos al desplazarte."
+    ],
+    "fr-FR": [
+      "• Le mode lecture adopte un tout nouveau moteur pour des articles plus propres et plus fiables. Si une page ne s'affiche pas correctement, vos retours me seront précieux.",
+      "• Ajouter une chaîne YouTube est plus simple : collez le lien de la chaîne et FeedFlow trouve son flux.",
+      "• FeedFlow se rouvre désormais en plein écran si vous l'avez fermé ainsi.",
+      "• La synchronisation iCloud, Dropbox et Google Drive est bien plus fiable : les modifications en attente, les états de lecture et les changements de catégories ne sont plus perdus.",
+      "• Les flux et articles des sites qui bloquent les requêtes se chargent désormais de manière plus fiable.",
+      "• FeedFlow vous prévient désormais lorsque vous essayez d'ajouter un flux que vous suivez déjà.",
+      "• La liste d'articles ne saute plus pendant le marquage comme lu au défilement."
+    ],
+    "he": [
+      "• למצב הקריאה יש מנוע חדש לגמרי שמציג מאמרים נקיים ואמינים יותר. אם עמוד לא נראה כמו שצריך, אשמח לשמוע את המשוב שלכם.",
+      "• קל יותר להוסיף ערוץ YouTube: הדביקו את קישור הערוץ ו-FeedFlow ימצא את הפיד שלו.",
+      "• FeedFlow נפתח כעת במצב מוגדל אם סגרתם אותו כך.",
+      "• הסנכרון עם iCloud, ‏Dropbox ו-Google Drive אמין הרבה יותר: שינויים ממתינים, מצבי קריאה ושינויי קטגוריות כבר לא הולכים לאיבוד.",
+      "• פידים ומאמרים מאתרים שחוסמים בקשות נטענים כעת בצורה אמינה יותר.",
+      "• FeedFlow מודיע לכם כעת כשאתם מנסים להוסיף פיד שאתם כבר עוקבים אחריו.",
+      "• רשימת המאמרים כבר לא קופצת בזמן שמאמרים מסומנים כנקראו בגלילה."
+    ],
+    "hu": [
+      "• Az olvasó mód vadonatúj motort kapott, amely tisztább és megbízhatóbb cikkeket jelenít meg. Ha egy oldal nem jól néz ki, szívesen fogadom a visszajelzésedet.",
+      "• Egyszerűbb YouTube-csatornát hozzáadni: illeszd be a csatorna linkjét, és a FeedFlow megtalálja a hírcsatornáját.",
+      "• A FeedFlow mostantól teljes méretben nyílik meg, ha úgy zártad be.",
+      "• Az iCloud-, Dropbox- és Google Drive-szinkronizálás sokkal megbízhatóbb: a függő módosítások, az olvasási állapotok és a kategóriaváltozások már nem vesznek el.",
+      "• A kéréseket blokkoló oldalak hírcsatornái és cikkei mostantól megbízhatóbban töltődnek be.",
+      "• A FeedFlow mostantól szól, ha olyan hírcsatornát próbálsz hozzáadni, amelyet már követsz.",
+      "• A cikklista már nem ugrál, miközben a cikkek görgetéskor olvasottként jelölődnek."
+    ],
+    "it": [
+      "• La modalità lettura ha un motore completamente nuovo che offre articoli più puliti e affidabili. Se una pagina non si vede bene, mi farebbe piacere ricevere il tuo feedback.",
+      "• Aggiungere un canale YouTube è più semplice: incolla il link del canale e FeedFlow trova il suo feed.",
+      "• FeedFlow ora si riapre ingrandito se l'hai chiuso così.",
+      "• La sincronizzazione con iCloud, Dropbox e Google Drive è molto più affidabile: modifiche in sospeso, stati di lettura e modifiche alle categorie non vanno più persi.",
+      "• Feed e articoli dai siti che bloccano le richieste ora si caricano in modo più affidabile.",
+      "• FeedFlow ora ti avvisa quando provi ad aggiungere un feed che segui già.",
+      "• L'elenco degli articoli non salta più mentre gli articoli vengono segnati come letti durante lo scorrimento."
+    ],
+    "ja": [
+      "• リーダーモードに新しいエンジンを搭載し、記事をよりきれいに、より確実に表示できるようになりました。正しく表示されないページがあれば、ぜひフィードバックをお寄せください。",
+      "• YouTube チャンネルの追加が簡単になりました。チャンネルのリンクを貼り付けるだけで、FeedFlow がフィードを見つけます。",
+      "• 最大化したまま閉じた場合、FeedFlow は最大化した状態で再び開くようになりました。",
+      "• iCloud、Dropbox、Google Drive の同期が大幅に安定しました。保留中の編集、既読状態、カテゴリの変更が失われなくなりました。",
+      "• リクエストをブロックするサイトのフィードや記事を、より確実に読み込めるようになりました。",
+      "• すでにフォローしているフィードを追加しようとすると、FeedFlow がお知らせするようになりました。",
+      "• スクロールで記事を既読にしている間、記事リストが跳ねなくなりました。"
+    ],
+    "pt-BR": [
+      "• O modo de leitura ganhou um mecanismo totalmente novo, com artigos mais limpos e confiáveis. Se uma página não aparecer direito, adoraria receber seu feedback.",
+      "• Adicionar um canal do YouTube ficou mais fácil: cole o link do canal e o FeedFlow encontra o feed.",
+      "• O FeedFlow agora reabre maximizado se você o fechou assim.",
+      "• A sincronização com iCloud, Dropbox e Google Drive está muito mais confiável: edições pendentes, status de leitura e alterações de categorias não se perdem mais.",
+      "• Feeds e artigos de sites que bloqueiam solicitações agora carregam de forma mais confiável.",
+      "• O FeedFlow agora avisa quando você tenta adicionar um feed que já segue.",
+      "• A lista de artigos não pula mais enquanto os artigos são marcados como lidos na rolagem."
+    ],
+    "ru": [
+      "• В режиме чтения появился совершенно новый движок: статьи выглядят чище и отображаются надёжнее. Если страница выглядит неправильно, буду рад вашему отзыву.",
+      "• Добавлять каналы YouTube стало проще: вставьте ссылку на канал, и FeedFlow найдёт его ленту.",
+      "• FeedFlow теперь открывается развёрнутым, если вы закрыли его в таком виде.",
+      "• Синхронизация с iCloud, Dropbox и Google Drive стала гораздо надёжнее: ожидающие изменения, статусы прочтения и изменения категорий больше не теряются.",
+      "• Ленты и статьи с сайтов, блокирующих запросы, теперь загружаются надёжнее.",
+      "• FeedFlow теперь предупреждает, если вы пытаетесь добавить ленту, на которую уже подписаны.",
+      "• Список статей больше не прыгает, пока статьи отмечаются прочитанными при прокрутке."
+    ],
+    "sk": [
+      "• Režim čítania má úplne nový engine, ktorý prináša čistejšie a spoľahlivejšie články. Ak stránka nevyzerá správne, rád si prečítam vašu spätnú väzbu.",
+      "• Pridanie kanála YouTube je jednoduchšie: vložte odkaz na kanál a FeedFlow nájde jeho zdroj.",
+      "• FeedFlow sa teraz znova otvorí maximalizovaný, ak ste ho tak zatvorili.",
+      "• Synchronizácia s iCloud, Dropbox a Google Drive je oveľa spoľahlivejšia: čakajúce úpravy, stavy prečítania ani zmeny kategórií sa už nestratia.",
+      "• Zdroje a články zo stránok, ktoré blokujú požiadavky, sa teraz načítavajú spoľahlivejšie.",
+      "• FeedFlow vás teraz upozorní, keď sa pokúsite pridať zdroj, ktorý už sledujete.",
+      "• Zoznam článkov už neposkakuje, keď sa články pri posúvaní označujú ako prečítané."
+    ],
+    "uk": [
+      "• Режим читання отримав абсолютно новий рушій: статті виглядають чистіше й відображаються надійніше. Якщо сторінка виглядає неправильно, буду радий вашому відгуку.",
+      "• Додавати канали YouTube стало простіше: вставте посилання на канал, і FeedFlow знайде його стрічку.",
+      "• FeedFlow тепер відкривається розгорнутим, якщо ви закрили його так.",
+      "• Синхронізація з iCloud, Dropbox і Google Drive стала набагато надійнішою: незавершені зміни, статуси прочитання та зміни категорій більше не втрачаються.",
+      "• Стрічки й статті з сайтів, що блокують запити, тепер завантажуються надійніше.",
+      "• FeedFlow тепер попереджає, якщо ви намагаєтеся додати стрічку, на яку вже підписані.",
+      "• Список статей більше не стрибає, поки статті позначаються прочитаними під час прокручування."
+    ],
+    "vi": [
+      "• Chế độ đọc có công cụ hoàn toàn mới, cho bài viết gọn gàng và ổn định hơn. Nếu trang nào hiển thị chưa đúng, mình rất mong nhận được phản hồi của bạn.",
+      "• Thêm kênh YouTube dễ hơn: dán liên kết kênh và FeedFlow sẽ tìm nguồn cấp của kênh.",
+      "• FeedFlow giờ mở lại ở dạng phóng to nếu bạn đã đóng như vậy.",
+      "• Đồng bộ iCloud, Dropbox và Google Drive ổn định hơn nhiều: chỉnh sửa đang chờ, trạng thái đã đọc và thay đổi danh mục không còn bị mất.",
+      "• Nguồn cấp và bài viết từ các trang chặn yêu cầu giờ tải ổn định hơn.",
+      "• FeedFlow giờ sẽ báo cho bạn khi bạn thêm một nguồn cấp đã theo dõi.",
+      "• Danh sách bài viết không còn bị nhảy khi bài viết được đánh dấu đã đọc lúc cuộn."
+    ],
+    "zh-Hans": [
+      "• 阅读模式采用全新引擎，文章显示更整洁、更可靠。如果有页面显示不正常，欢迎向我反馈。",
+      "• 添加 YouTube 频道更简单了：粘贴频道链接，FeedFlow 就会找到它的订阅源。",
+      "• 如果你在最大化状态下关闭 FeedFlow，现在重新打开时会保持最大化。",
+      "• iCloud、Dropbox 和 Google Drive 同步更加可靠：待处理的编辑、已读状态和分类更改不会再丢失。",
+      "• 来自屏蔽请求的网站的订阅源和文章现在加载更可靠。",
+      "• 当你尝试添加已关注的订阅源时，FeedFlow 现在会提醒你。",
+      "• 滚动标记已读时，文章列表不再跳动。"
+    ]
+  }
+}

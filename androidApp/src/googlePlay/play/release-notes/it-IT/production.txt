@@ -1,2 +1,5 @@
-• Prova il nuovo motore sperimentale della modalità Lettura per estrarre gli articoli più rapidamente e con maggiore precisione. Aiutami a migliorarlo segnalando contenuti mancanti o errori di formattazione.
-• Migliorati immagini, contenuti incorporati, articoli brevi o di sole immagini, azioni dei segnalibri e scollegamento di Dropbox.
+• La modalità lettura ha un nuovo motore per articoli più puliti e affidabili. Se una pagina non si vede bene, scrivimi!
+• Video a schermo intero in modalità lettura e posizione mantenuta alla rotazione
+• Sincronizzazione Google Drive e Dropbox molto più affidabile, senza modifiche perse
+• Caricamento migliore dai siti che bloccano le richieste e canali YouTube più facili da aggiungere
+• L'elenco non salta più segnando come letto durante lo scorrimento

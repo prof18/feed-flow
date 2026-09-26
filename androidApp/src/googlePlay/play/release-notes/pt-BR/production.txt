@@ -1,2 +1,5 @@
-• Teste o novo mecanismo experimental do modo Leitura para extrair artigos com mais rapidez e precisão. Ajude-me a melhorar reportando conteúdo ausente ou erros de formatação.
-• Melhorias em imagens, conteúdo incorporado, artigos curtos ou só com imagens, ações de favoritos e desvinculação do Dropbox.
+• O modo de leitura ganhou um novo mecanismo para artigos mais limpos e confiáveis. Se uma página não ficar certa, adoraria seu feedback!
+• Vídeos em tela cheia no modo de leitura e posição mantida ao girar
+• Sincronização com Google Drive e Dropbox bem mais confiável, sem perder edições
+• Melhor carregamento de sites que bloqueiam solicitações e canais do YouTube mais fáceis de adicionar
+• A lista não pula mais ao marcar como lido na rolagem

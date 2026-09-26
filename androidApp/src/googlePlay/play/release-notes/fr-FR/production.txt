@@ -1,2 +1,5 @@
-• Testez le nouveau moteur expérimental du mode Lecture pour extraire les articles plus vite et plus précisément. Aidez-moi à l’améliorer en signalant le contenu manquant ou les erreurs de formatage.
-• Amélioration des images, du contenu intégré, des articles courts ou composés d’images, des favoris et de la déconnexion Dropbox.
+• Le mode lecture a un nouveau moteur pour des articles plus propres et fiables. Une page mal affichée ? Vos retours me seront précieux !
+• Vidéos en plein écran en mode lecture et position conservée à la rotation
+• Synchronisation Google Drive et Dropbox bien plus fiable, sans perte de modifications
+• Meilleur chargement des sites qui bloquent les requêtes et ajout facile des chaînes YouTube
+• La liste ne saute plus lors du marquage comme lu au défilement

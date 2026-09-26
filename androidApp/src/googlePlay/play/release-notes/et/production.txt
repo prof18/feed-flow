@@ -1,2 +1,5 @@
-• Proovi uut katselist lugemisvaate lahendust, et artikleid kiiremini ja täpsemalt eraldada. Aita mul seda parandada, teatades puuduvast sisust või vormindusvigadest.
-• Parandatud on pildid, manustatud sisu, lühikesed ja ainult pildiga artiklid, järjehoidjad ning Dropboxi lahtiühendamine.
+• Lugemisrežiimil on uus mootor puhtamate ja usaldusväärsemate artiklite jaoks. Kui leht ei näe õige välja, ootan tagasisidet!
+• Täisekraanvideod lugemisrežiimis ja asukoht säilib pööramisel
+• Palju usaldusväärsem Google Drive'i ja Dropboxi sünkroonimine ilma kaotatud muudatusteta
+• Parem laadimine päringuid blokeerivatelt saitidelt ja lihtsam YouTube'i kanalite lisamine
+• Loend ei hüppa enam kerimisel loetuks märkimise ajal

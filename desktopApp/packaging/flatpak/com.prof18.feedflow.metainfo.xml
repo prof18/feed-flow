@@ -87,6 +87,17 @@
   </content_rating>
 
   <releases>
+  <release version="1.18.0" date="2026-09-26">
+      <description>
+          <p>New Reader Mode engine for cleaner, more reliable articles. Feedback on pages that don't look right is welcome</p>
+          <p>Easier YouTube channel discovery when adding feeds</p>
+          <p>More reliable Dropbox sync that keeps pending edits and read states</p>
+          <p>Better loading of feeds and articles from sites that block requests</p>
+          <p>Warning when adding a feed you already follow</p>
+          <p>The window reopens maximized if it was closed that way</p>
+          <p>The article list no longer jumps while marking as read on scroll</p>
+      </description>
+  </release>
   <release version="1.17.0" date="2026-09-01">
       <description>
           <p>Try the experimental new Reader Mode engine for faster, more accurate article extraction. Help me improve it by reporting missing content or formatting issues.</p>

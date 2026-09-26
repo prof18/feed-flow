@@ -1,2 +1,5 @@
-• Proba o novo motor experimental do modo de lectura para extraer artigos con máis rapidez e precisión. Axúdame a melloralo informando de contido ausente ou erros de formato.
-• Melloras nas imaxes, contido inserido, artigos breves ou só con imaxes, marcadores e desconexión de Dropbox.
+• O modo de lectura estrea motor para artigos máis limpos e fiables. Se unha páxina non se ve ben, encantaríame a túa opinión!
+• Vídeos a pantalla completa no modo de lectura e posición conservada ao xirar
+• Sincronización con Google Drive e Dropbox moito máis fiable, sen perder cambios
+• Mellor carga de sitios que bloquean solicitudes e máis doado engadir canles de YouTube
+• A lista xa non salta ao marcar como lido ao desprazarte

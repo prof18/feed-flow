@@ -190,7 +190,7 @@
     <string name="new_articles_notification_title">Neue Artikel sind verfügbar</string>
     <string name="notification_channel_name">Neue Artikel</string>
     <string name="settings_notifications_title">Benachrichtigungen</string>
-    <string name="settings_notifications_warning_reliability">Benachrichtigungen auf deinem Gerät werden geprüft, aber die Lieferung hängt von Hintergrundaktivitäten ab, die vom System und Apps erlaubt und von FeedFlow nicht beeinflusst werden können.</string>
+    <string name="settings_notifications_warning_reliability">Benachrichtigungen auf deinem Gerät werden geprüft, doch die Zustellung hängt von den vom System zugelassenen Hintergrundaktivitäten und der App-Nutzung ab, worauf FeedFlow keinen Einfluss hat.</string>
     <string name="marking_all_read_dialog_title">Alle als gelesen markieren...</string>
     <string name="date_format_title">Datumsformat</string>
     <string name="date_format_american">Monat/Tag</string>
@@ -324,7 +324,7 @@
     <string name="notification_category_body">Du hast neue Artikel in %s</string>
     <string name="notification_grouped_body">Du hast neue, zum Lesen vorbereitete Artikel!</string>
     <string name="settings_notification_mode">Gruppierung der Benachrichtigungen</string>
-    <string name="settings_notification_mode_desc">Benachrichtigungen gruppieren nach Feed und Kategorie, oder eine kombinierte Benachrichtigung anzeigen</string>
+    <string name="settings_notification_mode_desc">Benachrichtigungen nach Feed und Kategorie gruppieren oder eine kombinierte Benachrichtigung anzeigen</string>
     <string name="settings_notification_mode_feed_source">Nach Feed</string>
     <string name="settings_notification_mode_category">Nach Kategorie</string>
     <string name="settings_notification_mode_grouped">Alles zusammengefasst</string>
@@ -427,4 +427,5 @@
     <string name="support_purchase_thank_you_title">Du bist fantastisch! 🎉</string>
     <string name="support_purchase_thank_you_message">Der Tip hilft, FeedFlow weiter wachsen zu lassen.💙 Danke für die Unterstützung der laufenden Weiterentwicklung, durchdachten Verbesserungen und Fehlerbehebungen.🙏</string>
     <string name="feed_already_exists_message">%s ist schon in ihren Feeds.</string>
+    <string name="settings_hide_read_items_disabled_while_scrolling">Automatisches Ausblenden ist inaktiv, wenn \"Beim Scrollen als gelesen markieren\" aktiv ist, daher bleiben Artikel beim Scrollen an ihrem Platz. Schalten sie es aus, um automatisches Ausblenden zu nutzen.</string>
 </resources>

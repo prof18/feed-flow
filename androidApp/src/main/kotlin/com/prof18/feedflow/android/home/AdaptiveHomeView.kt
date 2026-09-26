@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.home
 
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitHorizontalTouchSlopOrCancellation
@@ -20,6 +21,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -33,6 +35,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.home.drawer.AndroidDrawer
+import com.prof18.feedflow.android.volume.RememberVolumeScrollHandler
+import com.prof18.feedflow.android.volume.VolumeScrollDirection
+import com.prof18.feedflow.android.volume.VolumeScrollHandler
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType.NONE
@@ -45,6 +50,8 @@ import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+
+private const val VOLUME_SCROLL_VIEWPORT_FRACTION = 0.8f
 
 @Suppress("MultipleEmitters")
 @Composable
@@ -71,6 +78,23 @@ fun AdaptiveHomeView(
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
     val drawerListState = rememberLazyListState()
+
+    val volumeScrollHandler = remember(listState, scope) {
+        VolumeScrollHandler { direction ->
+            val viewportHeight = listState.layoutInfo.viewportSize.height
+            if (viewportHeight <= 0) return@VolumeScrollHandler false
+            val pageStep = viewportHeight * VOLUME_SCROLL_VIEWPORT_FRACTION
+            val delta = when (direction) {
+                VolumeScrollDirection.DOWN -> pageStep
+                VolumeScrollDirection.UP -> -pageStep
+            }
+            scope.launch {
+                listState.animateScrollBy(delta)
+            }
+            true
+        }
+    }
+    RememberVolumeScrollHandler(volumeScrollHandler)
 
     @Composable
     fun HomeContentInternal(

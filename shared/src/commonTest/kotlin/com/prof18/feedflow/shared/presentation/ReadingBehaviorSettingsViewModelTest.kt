@@ -41,6 +41,7 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
             assertTrue(initialState.isMarkReadWhenScrollingEnabled)
             assertFalse(initialState.isShowReadItemsEnabled)
             assertFalse(initialState.isHideReadItemsEnabled)
+            assertFalse(initialState.isVolumeButtonsScrollEnabled)
         }
     }
 
@@ -168,6 +169,19 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
             awaitItem()
             viewModel.updateShowReadItemsOnTimeline(true)
             awaitItem()
+        }
+    }
+
+    @Test
+    fun `updateVolumeButtonsScrollEnabled updates state`() = runTest {
+        viewModel.state.test {
+            awaitItem()
+
+            viewModel.updateVolumeButtonsScrollEnabled(true)
+            assertTrue(awaitItem().isVolumeButtonsScrollEnabled)
+
+            viewModel.updateVolumeButtonsScrollEnabled(false)
+            assertFalse(awaitItem().isVolumeButtonsScrollEnabled)
         }
     }
 

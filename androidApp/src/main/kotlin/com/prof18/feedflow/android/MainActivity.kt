@@ -62,6 +62,8 @@ import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.Notificati
 import com.prof18.feedflow.android.settings.readingbehavior.ReadingBehaviorScreen
 import com.prof18.feedflow.android.settings.syncstorage.SyncAndStorageScreen
 import com.prof18.feedflow.android.settings.widget.WidgetSettingsScreen
+import com.prof18.feedflow.android.volume.VolumeScrollController
+import com.prof18.feedflow.android.volume.VolumeScrollDirection
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -70,6 +72,7 @@ import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.parser.ReaderModeParserWarmer
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
@@ -93,6 +96,7 @@ class MainActivity : BaseThemeActivity() {
     private val homeViewModel by viewModel<HomeViewModel>()
     private val browserManager by inject<BrowserManager>()
     private val readerModeParserWarmer by inject<ReaderModeParserWarmer>()
+    private val settingsRepository by inject<SettingsRepository>()
 
     private var currentIntent by mutableStateOf<Intent?>(null)
 
@@ -117,6 +121,24 @@ class MainActivity : BaseThemeActivity() {
                 }
             }
         }
+    }
+
+    override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
+        if (
+            settingsRepository.getVolumeButtonsScrollEnabled() &&
+            event.action == android.view.KeyEvent.ACTION_DOWN &&
+            !event.isCanceled
+        ) {
+            val direction = when (event.keyCode) {
+                android.view.KeyEvent.KEYCODE_VOLUME_DOWN -> VolumeScrollDirection.DOWN
+                android.view.KeyEvent.KEYCODE_VOLUME_UP -> VolumeScrollDirection.UP
+                else -> null
+            }
+            if (direction != null && VolumeScrollController.dispatch(direction)) {
+                return true
+            }
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     override fun onNewIntent(intent: Intent) {

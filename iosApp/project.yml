@@ -74,7 +74,7 @@ packages:
     exactVersion: 13.2.0
   Collections:
     url: https://github.com/apple/swift-collections
-    exactVersion: 1.7.0
+    exactVersion: 1.7.1
   GoogleSignIn:
     url: https://github.com/google/GoogleSignIn-iOS
     exactVersion: 10.0.0

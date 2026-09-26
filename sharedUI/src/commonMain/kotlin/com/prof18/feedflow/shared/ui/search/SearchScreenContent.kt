@@ -35,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,12 +59,16 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.ReaderFontFamily
+import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.i18n.FeedFlowStrings
+import com.prof18.feedflow.shared.ui.home.LocalFeedContentTypography
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemContainer
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemView
 import com.prof18.feedflow.shared.ui.home.components.list.FeedListMaxContentWidth
+import com.prof18.feedflow.shared.ui.home.rememberFeedContentTypography
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -80,6 +85,68 @@ private val SearchBigImageGridMinCellWidth = SearchCardGridMinCellWidth -
 
 @Composable
 fun SearchScreenContent(
+    searchState: SearchState,
+    searchQuery: String,
+    searchFilter: SearchFilter,
+    currentFeedFilter: FeedFilter?,
+    feedFontSizes: FeedFontSizes,
+    shareMenuLabel: String,
+    shareCommentsMenuLabel: String,
+    updateSearchQuery: (String) -> Unit,
+    onSearchFilterSelected: (SearchFilter) -> Unit,
+    navigateBack: () -> Unit,
+    onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onMarkAllAboveAsRead: (String) -> Unit,
+    onMarkAllBelowAsRead: (String) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
+    onOpenFeedWebsite: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    isGridLayoutEnabled: Boolean = true,
+    feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
+    bodyFont: ReaderFontFamily = ReaderModeDefaults.BODY_FONT,
+    headlineFont: ReaderFontFamily = ReaderModeDefaults.HEADLINE_FONT,
+    snackbarHost: @Composable () -> Unit = {
+    },
+) {
+    val feedContentTypography = rememberFeedContentTypography(
+        headlineFont = headlineFont,
+        bodyFont = bodyFont,
+    )
+    CompositionLocalProvider(LocalFeedContentTypography provides feedContentTypography) {
+        SearchScreenContentBody(
+            searchState = searchState,
+            searchQuery = searchQuery,
+            searchFilter = searchFilter,
+            currentFeedFilter = currentFeedFilter,
+            feedFontSizes = feedFontSizes,
+            shareMenuLabel = shareMenuLabel,
+            shareCommentsMenuLabel = shareCommentsMenuLabel,
+            updateSearchQuery = updateSearchQuery,
+            onSearchFilterSelected = onSearchFilterSelected,
+            navigateBack = navigateBack,
+            onFeedItemClick = onFeedItemClick,
+            onBookmarkClick = onBookmarkClick,
+            onReadStatusClick = onReadStatusClick,
+            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+            onCommentClick = onCommentClick,
+            onShareClick = onShareClick,
+            onOpenFeedSettings = onOpenFeedSettings,
+            onOpenFeedWebsite = onOpenFeedWebsite,
+            modifier = modifier,
+            isGridLayoutEnabled = isGridLayoutEnabled,
+            feedItemDisplaySettings = feedItemDisplaySettings,
+            snackbarHost = snackbarHost,
+        )
+    }
+}
+
+@Composable
+private fun SearchScreenContentBody(
     searchState: SearchState,
     searchQuery: String,
     searchFilter: SearchFilter,

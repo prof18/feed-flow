@@ -1069,6 +1069,7 @@ Compose:
     active: true
     allowedCompositionLocals:
       - LocalComposeWindow
+      - LocalFeedContentTypography
       - LocalFeedFlowStrings
       - LocalReduceMotion
   CompositionLocalNaming:

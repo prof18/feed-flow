@@ -76,6 +76,7 @@ import com.mikepenz.markdown.m3.markdownTypography
 import com.mikepenz.markdown.model.markdownAnimations
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
@@ -111,6 +112,8 @@ internal fun ReaderModeScreen(
     val fontSettings by readerModeViewModel.readerFontSettingsState.collectAsState()
     val fontSize = fontSettings.fontSize
     val lineHeight = fontSettings.lineHeight
+    val bodyFont = fontSettings.bodyFont
+    val headlineFont = fontSettings.headlineFont
 
     LaunchedEffect(feedItemUrlInfo.id) {
         readerModeViewModel.getReaderModeHtml(feedItemUrlInfo)
@@ -193,6 +196,10 @@ internal fun ReaderModeScreen(
                         onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
                         lineHeight = lineHeight,
                         onLineHeightChange = { readerModeViewModel.updateLineHeight(it) },
+                        bodyFont = bodyFont,
+                        onBodyFontChange = { readerModeViewModel.updateBodyFont(it) },
+                        headlineFont = headlineFont,
+                        onHeadlineFontChange = { readerModeViewModel.updateHeadlineFont(it) },
                         onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
                             readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
                         },
@@ -251,8 +258,10 @@ internal fun ReaderModeScreen(
                                 Column(
                                     modifier = contentModifier,
                                 ) {
-                                    key(s.readerModeData.content, fontSize, lineHeight) {
+                                    key(s.readerModeData.content, fontSize, lineHeight, bodyFont, headlineFont) {
                                         val bodyLineHeight = readerLineHeightToTextLineHeightSp(fontSize, lineHeight).sp
+                                        val bodyComposeFont = rememberReaderComposeFontFamily(bodyFont)
+                                        val headlineComposeFont = rememberReaderComposeFontFamily(headlineFont)
                                         SelectionContainer {
                                             Markdown(
                                                 modifier = Modifier
@@ -273,34 +282,42 @@ internal fun ReaderModeScreen(
                                                     h1 = MaterialTheme.typography.displaySmall.copy(
                                                         fontSize = (fontSize + 20).sp,
                                                         lineHeight = (fontSize + 32).sp,
+                                                        fontFamily = headlineComposeFont,
                                                     ),
                                                     h2 = MaterialTheme.typography.titleLarge.copy(
                                                         fontSize = (fontSize + 6).sp,
                                                         lineHeight = (fontSize + 16).sp,
+                                                        fontFamily = headlineComposeFont,
                                                     ),
                                                     h3 = MaterialTheme.typography.titleLarge.copy(
                                                         fontSize = (fontSize + 6).sp,
                                                         lineHeight = (fontSize + 16).sp,
+                                                        fontFamily = headlineComposeFont,
                                                     ),
                                                     h4 = MaterialTheme.typography.titleMedium.copy(
                                                         fontSize = fontSize.sp,
                                                         lineHeight = (fontSize + 12).sp,
+                                                        fontFamily = headlineComposeFont,
                                                     ),
                                                     h5 = MaterialTheme.typography.titleMedium.copy(
                                                         fontSize = fontSize.sp,
                                                         lineHeight = (fontSize + 12).sp,
+                                                        fontFamily = headlineComposeFont,
                                                     ),
                                                     h6 = MaterialTheme.typography.titleMedium.copy(
                                                         fontSize = fontSize.sp,
                                                         lineHeight = (fontSize + 12).sp,
+                                                        fontFamily = headlineComposeFont,
                                                     ),
                                                     paragraph = MaterialTheme.typography.bodyLarge.copy(
                                                         fontSize = fontSize.sp,
                                                         lineHeight = bodyLineHeight,
+                                                        fontFamily = bodyComposeFont,
                                                     ),
                                                     text = MaterialTheme.typography.bodyLarge.copy(
                                                         fontSize = fontSize.sp,
                                                         lineHeight = bodyLineHeight,
+                                                        fontFamily = bodyComposeFont,
                                                     ),
                                                     code = MaterialTheme.typography.bodyMedium.copy(
                                                         fontSize = (fontSize - 2).sp,
@@ -309,11 +326,13 @@ internal fun ReaderModeScreen(
                                                     list = MaterialTheme.typography.bodyLarge.copy(
                                                         fontSize = fontSize.sp,
                                                         lineHeight = bodyLineHeight,
+                                                        fontFamily = bodyComposeFont,
                                                     ),
                                                     textLink = TextLinkStyles(
                                                         style = MaterialTheme.typography.bodyLarge.copy(
                                                             fontSize = fontSize.sp,
                                                             lineHeight = bodyLineHeight,
+                                                            fontFamily = bodyComposeFont,
                                                             fontWeight = FontWeight.Bold,
                                                             textDecoration = TextDecoration.Underline,
                                                         ).toSpanStyle(),
@@ -476,6 +495,10 @@ private fun ReaderModeToolbar(
     onFontSizeChange: (Int) -> Unit,
     lineHeight: Int,
     onLineHeightChange: (Int) -> Unit,
+    bodyFont: ReaderFontFamily,
+    onBodyFontChange: (ReaderFontFamily) -> Unit,
+    headlineFont: ReaderFontFamily,
+    onHeadlineFontChange: (ReaderFontFamily) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onToggleContentSource: () -> Unit,
 ) {
@@ -705,6 +728,10 @@ private fun ReaderModeToolbar(
                                 onFontSizeChange = onFontSizeChange,
                                 lineHeight = lineHeight,
                                 onLineHeightChange = onLineHeightChange,
+                                bodyFont = bodyFont,
+                                onBodyFontChange = onBodyFontChange,
+                                headlineFont = headlineFont,
+                                onHeadlineFontChange = onHeadlineFontChange,
                             )
                         }
                     }

@@ -260,6 +260,8 @@ fun AndroidHomeScreenContent(
                                             gridState = gridState,
                                             contentPadding = PaddingValues(top = feedListTopPadding),
                                             feedFontSize = displayState.feedFontSizes,
+                                            bodyFont = displayState.bodyFont,
+                                            headlineFont = displayState.headlineFont,
                                             nextFeedState = displayState.nextFeedDisplayState,
                                             shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
                                             shareMenuLabel = shareBehavior.shareLinkTitle,

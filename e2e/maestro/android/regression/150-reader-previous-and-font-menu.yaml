@@ -39,6 +39,8 @@ appId: com.prof18.feedflow.debug
     id: reader_more_menu_button
 - tapOn: "Text Settings"
 - assertVisible: "Text Settings"
+- assertVisible: "Headline font"
+- assertVisible: "Body font"
 - assertVisible: "Line Height"
 - assertVisible: "Reset to default"
 - assertVisible: "20"

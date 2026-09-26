@@ -15,6 +15,10 @@ import SwiftUI
 struct FeedItemView: View {
     @Environment(\.layoutDirection)
     private var localeLayoutDirection
+    @Environment(\.feedBodyFont)
+    private var bodyFont
+    @Environment(\.feedHeadlineFont)
+    private var headlineFont
 
     let feedItem: FeedItem
     let index: Int
@@ -117,8 +121,10 @@ struct FeedItemView: View {
 
                 if let title = feedItem.title {
                     Text(title)
-                        .font(.system(size: CGFloat(feedFontSizes.feedTitleFontSize)))
-                        .bold()
+                        .font(FeedContentFont.title(
+                            family: headlineFont,
+                            size: CGFloat(feedFontSizes.feedTitleFontSize)
+                        ))
                         .lineLimit(isGridCell ? 2 : 3)
                         .foregroundStyle(.primary)
                         .opacity(readTextOpacity)
@@ -131,7 +137,10 @@ struct FeedItemView: View {
                         : Int(feedItemDisplaySettings.descriptionLineLimit.lines)
                     Text(subtitle)
                         .lineLimit(lineLimit)
-                        .font(.system(size: CGFloat(feedFontSizes.feedDescFontSize)))
+                        .font(FeedContentFont.body(
+                            family: bodyFont,
+                            size: CGFloat(feedFontSizes.feedDescFontSize)
+                        ))
                         .foregroundStyle(.secondary)
                         .opacity(readTextOpacity)
                         .padding(.top, feedItem.title == nil ? 0 : Spacing.small)
@@ -286,8 +295,10 @@ struct FeedItemView: View {
         VStack(alignment: .leading) {
             if let title = feedItem.title {
                 Text(title)
-                    .font(.system(size: CGFloat(feedFontSizes.feedTitleFontSize)))
-                    .bold()
+                    .font(FeedContentFont.title(
+                        family: headlineFont,
+                        size: CGFloat(feedFontSizes.feedTitleFontSize)
+                    ))
                     .opacity(readTextOpacity)
             }
 
@@ -297,7 +308,10 @@ struct FeedItemView: View {
                     : Int(feedItemDisplaySettings.descriptionLineLimit.lines)
                 Text(subtitle)
                     .lineLimit(lineLimit)
-                    .font(.system(size: CGFloat(feedFontSizes.feedDescFontSize)))
+                    .font(FeedContentFont.body(
+                        family: bodyFont,
+                        size: CGFloat(feedFontSizes.feedDescFontSize)
+                    ))
                     .padding(.top, getPaddingTop(feedItem: feedItem))
                     .opacity(readTextOpacity)
             }

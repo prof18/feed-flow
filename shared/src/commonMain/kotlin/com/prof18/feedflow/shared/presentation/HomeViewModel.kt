@@ -21,6 +21,7 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.VisibleFeedItem
 import com.prof18.feedflow.core.model.canonical
@@ -138,6 +139,9 @@ class HomeViewModel internal constructor(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, FeedItemDisplaySettings())
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
+
+    val bodyFontState: StateFlow<ReaderFontFamily> = settingsRepository.readerModeBodyFontFlow
+    val headlineFontState: StateFlow<ReaderFontFamily> = settingsRepository.readerModeHeadlineFontFlow
 
     val viewMenuState: StateFlow<HomeViewMenuState> = combine(
         feedAppearanceSettingsRepository.feedOrder,

@@ -7,7 +7,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.shared.ui.readermode.ReaderFontFamilyDropdownRow
 import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
@@ -19,6 +21,10 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun GeneralPane(
     themeMode: ThemeMode,
     onThemeModeSelected: (ThemeMode) -> Unit,
+    bodyFont: ReaderFontFamily,
+    onBodyFontSelected: (ReaderFontFamily) -> Unit,
+    headlineFont: ReaderFontFamily,
+    onHeadlineFontSelected: (ReaderFontFamily) -> Unit,
     isMultiPaneEnabled: Boolean,
     onMultiPaneToggled: (Boolean) -> Unit,
     isReduceMotionEnabled: Boolean,
@@ -43,6 +49,18 @@ internal fun GeneralPane(
                 SettingDropdownOption(ThemeMode.OLED, strings.settingsThemeOled),
             ),
             onOptionSelected = onThemeModeSelected,
+        )
+
+        ReaderFontFamilyDropdownRow(
+            title = strings.readerModeHeadlineFont,
+            currentFont = headlineFont,
+            onFontSelected = onHeadlineFontSelected,
+        )
+
+        ReaderFontFamilyDropdownRow(
+            title = strings.readerModeBodyFont,
+            currentFont = bodyFont,
+            onFontSelected = onBodyFontSelected,
         )
 
         SettingSwitchItem(
@@ -72,6 +90,10 @@ private fun GeneralPanePreview() {
         GeneralPane(
             themeMode = ThemeMode.SYSTEM,
             onThemeModeSelected = {},
+            bodyFont = ReaderFontFamily.SYSTEM,
+            onBodyFontSelected = {},
+            headlineFont = ReaderFontFamily.SYSTEM,
+            onHeadlineFontSelected = {},
             isMultiPaneEnabled = false,
             onMultiPaneToggled = {},
             isReduceMotionEnabled = false,

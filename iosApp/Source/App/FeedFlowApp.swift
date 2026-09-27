@@ -186,10 +186,12 @@ struct FeedFlowApp: App {
             let accountName = components?.queryItems?
                 .first { $0.name == "account" }?
                 .value
+            // iOS truncates opened URLs to 2047 characters, so a full subscription list does not fit
+            // in the link: the restore script copies it into Documents instead.
             let developmentOpml = components?.queryItems?
                 .first { $0.name == "opml" }?
                 .value
-                .flatMap(decodeDevelopmentOPML)
+                .flatMap(decodeDevelopmentOPML) ?? readDevelopmentOPMLFile()
             appState.e2eSeedMessage = nil
             Task {
                 do {
@@ -229,6 +231,14 @@ private func decodeDevelopmentOPML(_ urlSafeBase64: String) -> String? {
         return nil
     }
     return String(data: data, encoding: .utf8)
+}
+
+private func readDevelopmentOPMLFile() -> String? {
+    guard let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+        return nil
+    }
+    let fileURL = documents.appendingPathComponent("e2e-restore/development.opml")
+    return try? String(contentsOf: fileURL, encoding: .utf8)
 }
 
 func scheduleAppRefresh() {

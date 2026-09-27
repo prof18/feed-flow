@@ -81,6 +81,7 @@ import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.openUriSafely
+import com.prof18.feedflow.shared.domain.buildReaderModeMarkdown
 import com.prof18.feedflow.shared.domain.readerLineHeightToTextLineHeightSp
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
@@ -253,12 +254,20 @@ internal fun ReaderModeScreen(
                                 ) {
                                     key(s.readerModeData.content, fontSize, lineHeight) {
                                         val bodyLineHeight = readerLineHeightToTextLineHeightSp(fontSize, lineHeight).sp
+                                        val markdown = remember(s.readerModeData) {
+                                            buildReaderModeMarkdown(
+                                                content = s.readerModeData.content,
+                                                title = s.readerModeData.title,
+                                                imageUrl = s.readerModeData.imageUrl,
+                                                siteName = s.readerModeData.siteName,
+                                            )
+                                        }
                                         SelectionContainer {
                                             Markdown(
                                                 modifier = Modifier
                                                     .padding(Spacing.regular)
                                                     .padding(bottom = 64.dp),
-                                                content = s.readerModeData.content,
+                                                content = markdown,
                                                 imageTransformer = Coil3ImageTransformerImpl,
                                                 components = desktopReaderModeMarkdownComponents(
                                                     onHoveredLinkChange = { hoveredLink = it },

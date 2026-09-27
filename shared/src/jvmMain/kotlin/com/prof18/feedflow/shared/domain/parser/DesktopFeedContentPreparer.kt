@@ -14,19 +14,8 @@ internal class DesktopFeedContentPreparer(
     private val dispatcherProvider: DispatcherProvider,
 ) : FeedContentPreparer {
 
-    override suspend fun prepare(
-        html: String,
-        baseUrl: String?,
-        title: String?,
-        imageUrl: String?,
-        siteName: String?,
-    ): String = withContext(dispatcherProvider.io) {
-        buildFeedReaderMarkdown(
-            content = convertToMarkdown(html, baseUrl) ?: html,
-            title = title,
-            imageUrl = imageUrl,
-            siteName = siteName,
-        )
+    override suspend fun prepare(html: String, baseUrl: String?): String = withContext(dispatcherProvider.io) {
+        convertToMarkdown(html, baseUrl) ?: html
     }
 
     private suspend fun convertToMarkdown(html: String, baseUrl: String?): String? = try {
@@ -43,33 +32,4 @@ internal class DesktopFeedContentPreparer(
     }
 }
 
-internal fun buildFeedReaderMarkdown(
-    content: String,
-    title: String?,
-    imageUrl: String?,
-    siteName: String? = null,
-): String = buildString {
-    if (!title.isNullOrBlank()) {
-        appendLine("# $title")
-        appendLine()
-    }
-    if (!siteName.isNullOrBlank()) {
-        appendLine("**$siteName**")
-        appendLine()
-    }
-    if (!imageUrl.isNullOrBlank() && !hasLeadingImage(content)) {
-        appendLine("![]($imageUrl)")
-        appendLine()
-    }
-    append(content)
-}
-
-private const val LEADING_IMAGE_SCAN_WINDOW = 1000
 private const val FALLBACK_BASE_URL = "https://localhost/"
-private val leadingImageRegex = Regex(
-    pattern = "!\\[[^]]*]\\([^)]+\\)|<img\\b",
-    option = RegexOption.IGNORE_CASE,
-)
-
-private fun hasLeadingImage(content: String): Boolean =
-    leadingImageRegex.containsMatchIn(content.take(LEADING_IMAGE_SCAN_WINDOW))

@@ -6,7 +6,6 @@ import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
-import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.model.ReaderFontSettings
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeState
@@ -131,62 +130,46 @@ class ReaderModeViewModel internal constructor(
     private suspend fun loadWebContent(urlInfo: FeedItemUrlInfo, requestedArticleId: String): ReaderModeData? {
         if (!urlInfo.canOpenWebReaderMode()) return null
 
-        val cachedContent = feedItemContentFileHandler.loadFeedItemContent(requestedArticleId)
-        if (!cachedContent.isNullOrBlank()) {
-            return buildReaderModeData(
-                urlInfo = urlInfo,
-                content = cachedContent,
-                title = urlInfo.title,
-                shownContentSource = ShownContentSource.WEB,
-                canToggleContentSource = hasAvailableFeedContent(urlInfo.id),
-            )
-        }
-
-        val result = withTimeoutOrNull(PARSE_TIMEOUT) {
-            feedItemParserWorker.parse(requestedArticleId, urlInfo.url, urlInfo.imageUrl)
-        }
-        val parsedContent = (result as? ParsingResult.Success)?.htmlContent
-        if (!parsedContent.isNullOrBlank() && settingsRepository.isSaveItemContentOnOpenEnabled()) {
-            feedItemContentFileHandler.saveFeedItemContentToFile(requestedArticleId, parsedContent)
-        }
+        val content = feedItemContentFileHandler.loadFeedItemContent(requestedArticleId)
+            ?.takeIf { it.isNotBlank() }
+            ?: parseWebContent(urlInfo, requestedArticleId)
+            ?: return null
         if (currentArticleId != requestedArticleId) return null
 
-        val successResult = result as? ParsingResult.Success ?: return null
-        val htmlContent = successResult.htmlContent?.takeIf { it.isNotBlank() } ?: return null
         return buildReaderModeData(
             urlInfo = urlInfo,
-            content = htmlContent,
-            title = successResult.title ?: urlInfo.title,
+            content = content,
             shownContentSource = ShownContentSource.WEB,
             canToggleContentSource = hasAvailableFeedContent(urlInfo.id),
         )
+    }
+
+    private suspend fun parseWebContent(urlInfo: FeedItemUrlInfo, requestedArticleId: String): String? {
+        val content = withTimeoutOrNull(PARSE_TIMEOUT) {
+            feedItemParserWorker.parse(urlInfo.url)
+        }?.takeIf { it.isNotBlank() } ?: return null
+        if (settingsRepository.isSaveItemContentOnOpenEnabled()) {
+            feedItemContentFileHandler.saveFeedItemContentToFile(requestedArticleId, content)
+        }
+        return content
     }
 
     private suspend fun loadFeedContent(urlInfo: FeedItemUrlInfo): ReaderModeData? {
         val feedContent = databaseHelper.getFeedItemContent(urlInfo.id)
         if (feedContent.isNullOrBlank()) return null
         val storedUrlInfo = databaseHelper.getFeedItemUrlInfo(urlInfo.id)
-        val siteName = storedUrlInfo?.feedSourceTitle ?: urlInfo.feedSourceTitle
         // Not every entry point carries the feed source base url, so fall back to the stored one:
         // without it relative links and images in feed-provided content cannot resolve.
         val feedBaseUrl = urlInfo.url.ifBlank {
             (urlInfo.feedSourceBaseUrl ?: storedUrlInfo?.feedSourceBaseUrl).orEmpty()
         }
-        val prepared = feedContentPreparer.prepare(
-            html = feedContent,
-            baseUrl = feedBaseUrl,
-            title = urlInfo.title,
-            imageUrl = urlInfo.imageUrl,
-            siteName = siteName,
-        )
+        val prepared = feedContentPreparer.prepare(html = feedContent, baseUrl = feedBaseUrl)
         if (prepared.isBlank()) return null
         return buildReaderModeData(
             urlInfo = urlInfo,
             content = prepared,
-            title = urlInfo.title,
             shownContentSource = ShownContentSource.FEED,
             canToggleContentSource = urlInfo.canOpenWebReaderMode(),
-            siteName = siteName,
             baseUrl = feedBaseUrl,
         )
     }
@@ -196,17 +179,15 @@ class ReaderModeViewModel internal constructor(
         return !feedContent.isNullOrBlank()
     }
 
-    private fun buildReaderModeData(
+    private suspend fun buildReaderModeData(
         urlInfo: FeedItemUrlInfo,
         content: String,
-        title: String?,
         shownContentSource: ShownContentSource,
         canToggleContentSource: Boolean,
-        siteName: String? = null,
         baseUrl: String = urlInfo.getBaseUrl(),
     ): ReaderModeData = ReaderModeData(
         id = FeedItemId(urlInfo.id),
-        title = title,
+        title = urlInfo.title,
         content = content,
         url = urlInfo.url,
         baseUrl = baseUrl,
@@ -217,7 +198,7 @@ class ReaderModeViewModel internal constructor(
         imageUrl = urlInfo.imageUrl,
         shownContentSource = shownContentSource,
         canToggleContentSource = canToggleContentSource,
-        siteName = siteName,
+        siteName = databaseHelper.getFeedItemUrlInfo(urlInfo.id)?.feedSourceTitle ?: urlInfo.feedSourceTitle,
     )
 
     fun toggleContentSource() {

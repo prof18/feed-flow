@@ -274,10 +274,10 @@ struct ReaderModeScreen: View {
             content: content,
             fontSize: Int32(fontSize),
             lineHeight: Int32(lineHeight),
-            title: isShowingFeedContent ? feedItemTitle : nil,
+            title: feedItemTitle,
             imageUrl: currentImageUrl,
             leadingContent: "",
-            siteName: isShowingFeedContent ? currentSiteName : nil
+            siteName: currentSiteName
         )
 
         self.readerStatus = .extractedContent(

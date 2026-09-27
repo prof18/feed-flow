@@ -25,6 +25,9 @@ import com.prof18.feedflow.shared.data.ReviewRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DateFormatterImpl
 import com.prof18.feedflow.shared.domain.HtmlRetriever
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryImpl
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetcher
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
@@ -37,11 +40,15 @@ import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentCacheMigration
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
+import com.prof18.feedflow.shared.domain.parser.KleadFeedItemParserWorker
+import com.prof18.feedflow.shared.domain.parser.readerContentFormat
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
@@ -191,6 +198,41 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
+    single<FeedItemParserWorker> {
+        KleadFeedItemParserWorker(
+            contentFormat = readerContentFormat,
+            htmlRetriever = get(),
+            logger = getWith("KleadFeedItemParserWorker"),
+        )
+    }
+
+    factory {
+        ReaderContentCacheMigration(
+            settingsRepository = get(),
+            feedItemContentFileHandler = get(),
+            logger = getWith("ReaderContentCacheMigration"),
+        )
+    }
+
+    single {
+        ContentPrefetcher(
+            logger = getWith("ContentPrefetcher"),
+            databaseHelper = get(),
+            feedItemParserWorker = get(),
+            feedItemContentFileHandler = get(),
+        )
+    }
+
+    single<ContentPrefetchRepository> {
+        ContentPrefetchRepositoryImpl(
+            logger = getWith("ContentPrefetchRepository"),
+            settingsRepository = get(),
+            databaseHelper = get(),
+            contentPrefetcher = get(),
+            backgroundPrefetchScheduler = get(),
+        )
+    }
+
     single {
         PendingReadStatusActionRetrier(
             feedActionsRepository = get(),
@@ -224,6 +266,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedStateRepository = get(),
             feedFetcherRepository = get(),
             getNextFeedFilterOrNullUseCase = get(),
+            readerContentCacheMigration = get(),
         )
     }
 

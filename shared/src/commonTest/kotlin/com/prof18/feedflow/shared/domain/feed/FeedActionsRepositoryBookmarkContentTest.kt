@@ -3,7 +3,6 @@ package com.prof18.feedflow.shared.domain.feed
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
@@ -31,13 +30,9 @@ class FeedActionsRepositoryBookmarkContentTest : KoinTestBase() {
     override fun getTestModules(): List<Module> = super.getTestModules() + module {
         single<FeedItemParserWorker> {
             object : FeedItemParserWorker {
-                override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
+                override suspend fun parse(url: String): String {
                     parseCount++
-                    return ParsingResult.Success(
-                        htmlContent = "Parsed",
-                        title = "T",
-                        siteName = "S",
-                    )
+                    return "Parsed"
                 }
             }
         }

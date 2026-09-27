@@ -1,7 +1,9 @@
 package com.prof18.feedflow.shared.domain.feeditem
 
-import com.prof18.feedflow.core.model.ParsingResult
-
 interface FeedItemParserWorker {
-    suspend fun parse(feedItemId: String, url: String, imageUrl: String? = null): ParsingResult
+    /**
+     * Returns the article body extracted from [url], or null when the page cannot be turned into
+     * reader content. The reader adds title, site name and hero image when it renders it.
+     */
+    suspend fun parse(url: String): String?
 }

@@ -59,7 +59,6 @@ import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
-import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
@@ -377,9 +376,7 @@ private fun ReaderMode(
         content = readerModeState.readerModeData.content,
         fontSize = readerModeState.readerModeData.fontSize,
         lineHeight = readerModeState.readerModeData.lineHeight,
-        title = readerModeState.readerModeData.title.takeIf {
-            readerModeState.readerModeData.shownContentSource == ShownContentSource.FEED
-        },
+        title = readerModeState.readerModeData.title,
         imageUrl = readerModeState.readerModeData.imageUrl,
         leadingContent = "<div id=\"__feedflow_top_spacer\" style=\"height: ${spacerHeightDp}px;\"></div>",
         siteName = readerModeState.readerModeData.siteName,

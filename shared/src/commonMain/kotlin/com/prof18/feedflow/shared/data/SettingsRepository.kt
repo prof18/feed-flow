@@ -182,6 +182,12 @@ class SettingsRepository(
     fun setReaderModeFontSize(value: Int) =
         settings.set(SettingsFields.READER_MODE_FONT_SIZE.name, value)
 
+    internal fun getReaderContentCacheVersion(): Int =
+        settings.getInt(SettingsFields.READER_CONTENT_CACHE_VERSION.name, 0)
+
+    internal fun setReaderContentCacheVersion(value: Int) =
+        settings.set(SettingsFields.READER_CONTENT_CACHE_VERSION.name, value)
+
     fun getReaderModeLineHeight(): Int =
         settings.getInt(SettingsFields.READER_MODE_LINE_HEIGHT.name, ReaderModeDefaults.LINE_HEIGHT)
 
@@ -311,6 +317,7 @@ class SettingsRepository(
 }
 
 private enum class SettingsFields {
+    READER_CONTENT_CACHE_VERSION,
     FAVOURITE_BROWSER_ID,
     MARK_FEED_AS_READ_WHEN_SCROLLING,
     SHOW_READ_ARTICLES_TIMELINE,

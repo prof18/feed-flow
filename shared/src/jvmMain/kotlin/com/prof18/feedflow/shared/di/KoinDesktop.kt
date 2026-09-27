@@ -17,14 +17,13 @@ import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.DesktopAutoRefreshScheduler
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
+import com.prof18.feedflow.shared.domain.contentprefetch.BackgroundPrefetchScheduler
+import com.prof18.feedflow.shared.domain.contentprefetch.CoroutineBackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
@@ -35,8 +34,6 @@ import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerJvm
 import com.prof18.feedflow.shared.domain.parser.DesktopFeedContentPreparer
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerDesktop
-import com.prof18.feedflow.shared.domain.parser.KleadContentFormat
-import com.prof18.feedflow.shared.domain.parser.KleadFeedItemParserWorker
 import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
@@ -148,14 +145,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single<FeedItemParserWorker> {
-        KleadFeedItemParserWorker(
-            contentFormat = KleadContentFormat.MARKDOWN,
-            htmlRetriever = get(),
-            logger = getWith("KleadFeedItemParserWorker"),
-        )
-    }
-
     single<FeedContentPreparer> {
         DesktopFeedContentPreparer(
             logger = getWith("FeedContentPreparer"),
@@ -225,14 +214,11 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single<ContentPrefetchRepository> {
-        ContentPrefetchRepositoryIosDesktop(
+    single<BackgroundPrefetchScheduler> {
+        CoroutineBackgroundPrefetchScheduler(
+            logger = getWith("CoroutineBackgroundPrefetchScheduler"),
+            contentPrefetcher = get(),
             dispatcherProvider = get(),
-            settingsRepository = get(),
-            databaseHelper = get(),
-            feedItemParserWorker = get(),
-            feedItemContentFileHandler = get(),
-            logger = getWith("ContentPrefetchRepositoryIosDesktop"),
         )
     }
 

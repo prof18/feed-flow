@@ -22,15 +22,15 @@ import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
+import com.prof18.feedflow.shared.domain.contentprefetch.BackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
+import com.prof18.feedflow.shared.domain.contentprefetch.CoroutineBackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feeditem.HtmlFeedContentPreparer
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -44,8 +44,6 @@ import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerIos
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
-import com.prof18.feedflow.shared.domain.parser.KleadContentFormat
-import com.prof18.feedflow.shared.domain.parser.KleadFeedItemParserWorker
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
@@ -122,13 +120,6 @@ fun initKoinIos(
             single { dropboxDataSource }
             single { googleDrivePlatformClient }
             single { telemetry }
-            single<FeedItemParserWorker> {
-                KleadFeedItemParserWorker(
-                    contentFormat = KleadContentFormat.HTML,
-                    htmlRetriever = get(),
-                    logger = getWith("KleadFeedItemParserWorker"),
-                )
-            }
             single<FeedContentPreparer> { HtmlFeedContentPreparer() }
             single<Notifier> { notifier }
             single<RssParserWrapper> {
@@ -278,14 +269,11 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single<ContentPrefetchRepository> {
-        ContentPrefetchRepositoryIosDesktop(
+    single<BackgroundPrefetchScheduler> {
+        CoroutineBackgroundPrefetchScheduler(
+            logger = getWith("CoroutineBackgroundPrefetchScheduler"),
+            contentPrefetcher = get(),
             dispatcherProvider = get(),
-            settingsRepository = get(),
-            databaseHelper = get(),
-            feedItemParserWorker = get(),
-            feedItemContentFileHandler = get(),
-            logger = getWith("ContentPrefetchRepositoryIosDesktop"),
         )
     }
 

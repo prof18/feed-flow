@@ -24,20 +24,12 @@ fun getReaderModeStyledHtml(
     } else {
         ""
     }
-    val contentWithSubtitle = subtitleTag + content
-
-    val processedContent = if (imageUrl != null && !hasLeadingImage(content)) {
-        val heroTag = "<img class=\"__hero\" src=\"${imageUrl.escapeHtml()}\" alt=\"\" />"
-        val h4CloseIndex = contentWithSubtitle.indexOf("</h4>", ignoreCase = true)
-        if (h4CloseIndex >= 0) {
-            val insertAt = h4CloseIndex + "</h4>".length
-            contentWithSubtitle.substring(0, insertAt) + heroTag + contentWithSubtitle.substring(insertAt)
-        } else {
-            heroTag + contentWithSubtitle
-        }
+    val heroTag = if (imageUrl != null && !hasLeadingImage(content)) {
+        "<img class=\"__hero\" src=\"${imageUrl.escapeHtml()}\" alt=\"\" />"
     } else {
-        contentWithSubtitle
+        ""
     }
+    val processedContent = subtitleTag + heroTag + content
 
     // language=html
     return """

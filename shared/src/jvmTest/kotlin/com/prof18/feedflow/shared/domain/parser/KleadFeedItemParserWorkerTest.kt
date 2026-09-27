@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.domain.parser
 
-import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.test.testLogger
 import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
@@ -12,48 +11,34 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class KleadFeedItemParserWorkerTest {
 
     @Test
-    fun `returns decorated Markdown`() = runTest {
+    fun `returns the article Markdown without reader decorations`() = runTest {
         val worker = worker(html = articleHtml)
 
-        val result = worker.parse(
-            feedItemId = "item-1",
-            url = "https://example.com/articles/klead",
-            imageUrl = "https://example.com/feed-hero.png",
-        )
+        val content = assertNotNull(worker.parse("https://example.com/articles/klead"))
 
-        val success = assertIs<ParsingResult.Success>(result)
-        val content = assertNotNull(success.htmlContent)
-        assertEquals("Klead Reader Mode", success.title)
-        assertEquals("Example Daily", success.siteName)
-        assertTrue(content.startsWith("# Klead Reader Mode"))
-        assertTrue(content.contains("**Example Daily**"))
-        assertTrue(content.contains("![](https://example.com/feed-hero.png)"))
-        assertTrue(content.contains("Klead extracts article prose"))
-        assertTrue(content.contains("**Markdown emphasis**"))
+        assertFalse(content.startsWith("# Klead Reader Mode"), content)
+        assertFalse(content.contains("**Example Daily**"), content)
+        assertTrue(content.contains("Klead extracts article prose"), content)
+        assertTrue(content.contains("**Markdown emphasis**"), content)
     }
 
     @Test
-    fun `does not duplicate an extracted leading image`() = runTest {
-        val worker = worker(html = articleHtmlWithLeadingImage)
+    fun `returns the article HTML without reader decorations`() = runTest {
+        val worker = worker(html = articleHtml, contentFormat = KleadContentFormat.HTML)
 
-        val result = worker.parse(
-            feedItemId = "item-2",
-            url = "https://example.com/articles/klead-leading-image",
-            imageUrl = "https://example.com/feed-hero.png",
-        )
+        val content = assertNotNull(worker.parse("https://example.com/articles/klead-html"))
 
-        val content = assertNotNull(assertIs<ParsingResult.Success>(result).htmlContent)
-        assertFalse(content.contains("![](https://example.com/feed-hero.png)"))
-        assertTrue(content.contains("https://example.com/article-hero.png"))
+        assertFalse(content.contains("<h1>Klead Reader Mode</h1>"), content)
+        assertFalse(content.contains("<h4>Example Daily</h4>"), content)
+        assertTrue(content.contains("<strong>Markdown emphasis</strong>"), content)
     }
 
     @Test
@@ -62,30 +47,29 @@ class KleadFeedItemParserWorkerTest {
             html = "<html><body><article><p>Too short.</p></article></body></html>",
         )
 
-        assertIs<ParsingResult.Error>(
-            worker.parse("item-3", "https://example.com/short"),
-        )
+        assertNull(worker.parse("https://example.com/short"))
     }
 
     @Test
-    fun `returns decorated HTML for mobile readers`() = runTest {
+    fun `link and image urls do not count towards the Markdown minimum length`() = runTest {
+        val longUrl = "https://example.com/" + "a".repeat(300)
         val worker = worker(
-            html = articleHtml,
-            contentFormat = KleadContentFormat.HTML,
+            html = "<html><body><article><p><a href=\"$longUrl\">Tiny link</a></p>" +
+                "<p><img src=\"$longUrl.png\" alt=\"\"></p></article></body></html>",
         )
 
-        val result = worker.parse(
-            feedItemId = "item-4",
-            url = "https://example.com/articles/klead-html",
-            imageUrl = "https://example.com/feed-hero.png",
+        assertNull(worker.parse("https://example.com/links-only"))
+    }
+
+    @Test
+    fun `returns null when the page cannot be fetched`() = runTest {
+        val worker = KleadFeedItemParserWorker(
+            contentFormat = KleadContentFormat.MARKDOWN,
+            htmlRetriever = htmlRetriever(html = "", status = HttpStatusCode.NotFound),
+            logger = testLogger,
         )
 
-        val content = assertNotNull(assertIs<ParsingResult.Success>(result).htmlContent)
-        assertTrue(content.startsWith("<h1>Klead Reader Mode</h1>"))
-        assertTrue(content.contains("<h4>Example Daily</h4>"))
-        assertTrue(content.contains("<strong>Markdown emphasis</strong>"))
-        assertFalse(content.contains("# Klead Reader Mode"))
-        assertFalse(content.contains("feed-hero.png"))
+        assertNull(worker.parse("https://example.com/missing"))
     }
 
     private fun worker(
@@ -97,14 +81,17 @@ class KleadFeedItemParserWorkerTest {
         logger = testLogger,
     )
 
-    private fun htmlRetriever(html: String): HtmlRetriever = HtmlRetriever(
+    private fun htmlRetriever(
+        html: String,
+        status: HttpStatusCode = HttpStatusCode.OK,
+    ): HtmlRetriever = HtmlRetriever(
         logger = testLogger,
         client = HttpClient(MockEngine) {
             engine {
                 addHandler {
                     respond(
                         content = html,
-                        status = HttpStatusCode.OK,
+                        status = status,
                         headers = headersOf(HttpHeaders.ContentType, "text/html; charset=utf-8"),
                     )
                 }
@@ -130,24 +117,6 @@ class KleadFeedItemParserWorkerTest {
                 <nav>Navigation should not appear.</nav>
                 <article>
                   <h1>Klead Reader Mode</h1>
-                  <p>$articleBody</p>
-                  <p><strong>Markdown emphasis</strong> should survive conversion.</p>
-                </article>
-              </body>
-            </html>
-        """.trimIndent()
-
-        private val articleHtmlWithLeadingImage = """
-            <!doctype html>
-            <html>
-              <head>
-                <title>Klead Leading Image - Example Daily</title>
-                <meta property="og:title" content="Klead Leading Image">
-                <meta property="og:site_name" content="Example Daily">
-              </head>
-              <body>
-                <article>
-                  <figure><img src="https://example.com/article-hero.png" alt=""></figure>
                   <p>$articleBody</p>
                   <p><strong>Markdown emphasis</strong> should survive conversion.</p>
                 </article>

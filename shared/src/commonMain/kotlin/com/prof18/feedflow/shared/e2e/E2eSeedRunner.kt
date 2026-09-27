@@ -949,7 +949,6 @@ class E2eSeedRunner internal constructor(
 
         private const val READER_SUCCESS_HTML = """
             <article>
-              <h1>E2E Reader Mode Success Article</h1>
               <p>E2E cached reader content loaded from the seed fixture.</p>
             </article>
         """
@@ -980,7 +979,6 @@ class E2eSeedRunner internal constructor(
 
         private const val READER_FALLBACK_HTML = """
             <article>
-              <h1>E2E Reader Mode Fallback Article</h1>
               <p>E2E fallback reader content loaded from the seed fixture.</p>
             </article>
         """

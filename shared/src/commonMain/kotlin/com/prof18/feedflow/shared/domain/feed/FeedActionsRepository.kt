@@ -5,7 +5,6 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSyncError
-import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.canOpenWebReaderMode
 import com.prof18.feedflow.core.model.isSuccess
@@ -339,8 +338,7 @@ internal class FeedActionsRepository(
         if (isBookmarked && !feedItemContentFileHandler.isContentAvailable(feedItemId.id)) {
             val urlInfo = databaseHelper.getFeedItemUrlInfo(feedItemId.id)
             if (urlInfo != null && urlInfo.canOpenWebReaderMode()) {
-                val result = feedItemParserWorker.parse(urlInfo.id, urlInfo.url, urlInfo.imageUrl)
-                val content = (result as? ParsingResult.Success)?.htmlContent
+                val content = feedItemParserWorker.parse(urlInfo.url)
                 if (!content.isNullOrBlank()) {
                     feedItemContentFileHandler.saveFeedItemContentToFile(urlInfo.id, content)
                 }

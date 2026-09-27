@@ -2,7 +2,6 @@ package com.prof18.feedflow.shared.domain.contentprefetch
 
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
@@ -26,7 +25,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
+class ContentPrefetchRepositoryImplTest : KoinTestBase() {
 
     private val fakeParserWorker = FakeFeedItemParserWorker()
 
@@ -39,15 +38,25 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
             single<FeedItemParserWorker> { fakeParserWorker }
         }
 
-    private fun createRepository(): ContentPrefetchRepositoryIosDesktop =
-        ContentPrefetchRepositoryIosDesktop(
+    private fun createRepository(): ContentPrefetchRepositoryImpl {
+        val contentPrefetcher = ContentPrefetcher(
             logger = testLogger,
-            settingsRepository = settingsRepository,
             databaseHelper = databaseHelper,
             feedItemParserWorker = fakeParserWorker,
             feedItemContentFileHandler = feedItemContentFileHandler,
-            dispatcherProvider = TestDispatcherProvider,
         )
+        return ContentPrefetchRepositoryImpl(
+            logger = testLogger,
+            settingsRepository = settingsRepository,
+            databaseHelper = databaseHelper,
+            contentPrefetcher = contentPrefetcher,
+            backgroundPrefetchScheduler = CoroutineBackgroundPrefetchScheduler(
+                logger = testLogger,
+                contentPrefetcher = contentPrefetcher,
+                dispatcherProvider = TestDispatcherProvider,
+            ),
+        )
+    }
 
     @Test
     fun `prefetchContent does nothing when prefetch is disabled`() = runTest(TestDispatcherProvider.testDispatcher) {
@@ -81,11 +90,7 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
         settingsRepository.setPrefetchArticleContent(true)
         fakeParserWorker.setResult(
             feedItemId = "item-1",
-            result = ParsingResult.Success(
-                htmlContent = "Content",
-                title = "Title",
-                siteName = "Site",
-            ),
+            content = "Content",
         )
 
         val feedSource = createFeedSource("source-1")
@@ -122,11 +127,7 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
             val id = "item-$index"
             fakeParserWorker.setResult(
                 feedItemId = id,
-                result = ParsingResult.Success(
-                    htmlContent = "Content $index",
-                    title = "Title $index",
-                    siteName = "Site",
-                ),
+                content = "Content $index",
             )
             buildFeedItem(
                 id = id,
@@ -151,7 +152,7 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
         settingsRepository.setPrefetchArticleContent(true)
         fakeParserWorker.setResult(
             feedItemId = "item-1",
-            result = ParsingResult.Error,
+            content = null,
         )
 
         val feedSource = createFeedSource("source-1")
@@ -199,6 +200,37 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
             assertFalse(feedItemContentFileHandler.isContentAvailable("item-1"))
         }
 
+    @Test
+    fun `background fetching is delegated to the platform scheduler`() =
+        runTest(TestDispatcherProvider.testDispatcher) {
+            val scheduler = RecordingBackgroundPrefetchScheduler()
+            val repository = ContentPrefetchRepositoryImpl(
+                logger = testLogger,
+                settingsRepository = settingsRepository,
+                databaseHelper = databaseHelper,
+                contentPrefetcher = ContentPrefetcher(
+                    logger = testLogger,
+                    databaseHelper = databaseHelper,
+                    feedItemParserWorker = fakeParserWorker,
+                    feedItemContentFileHandler = feedItemContentFileHandler,
+                ),
+                backgroundPrefetchScheduler = scheduler,
+            )
+
+            settingsRepository.setPrefetchArticleContent(false)
+            repository.startBackgroundFetching()
+            assertEquals(0, scheduler.startCount)
+
+            settingsRepository.setPrefetchArticleContent(true)
+            repository.startBackgroundFetching()
+            repository.pauseFetching()
+            repository.cancelFetching()
+
+            assertEquals(1, scheduler.startCount)
+            assertEquals(1, scheduler.pauseCount)
+            assertEquals(1, scheduler.cancelCount)
+        }
+
     private suspend fun insertFeedItem(id: String) {
         val feedSource = createFeedSource("source-1")
         databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
@@ -231,18 +263,36 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
         isHideImagesEnabled = false,
     )
 
-    private class FakeFeedItemParserWorker : FeedItemParserWorker {
-        private val results = mutableMapOf<String, ParsingResult>()
-        var onParse: suspend (String) -> Unit = {}
+    private class RecordingBackgroundPrefetchScheduler : BackgroundPrefetchScheduler {
+        var startCount = 0
+        var pauseCount = 0
+        var cancelCount = 0
 
-        fun setResult(feedItemId: String, result: ParsingResult) {
-            results[feedItemId] = result
+        override fun start() {
+            startCount++
         }
 
-        override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
-            val result = results[feedItemId] ?: ParsingResult.Error
-            onParse(feedItemId)
-            return result
+        override fun pause() {
+            pauseCount++
+        }
+
+        override suspend fun cancel() {
+            cancelCount++
+        }
+    }
+
+    private class FakeFeedItemParserWorker : FeedItemParserWorker {
+        private val contentByUrl = mutableMapOf<String, String?>()
+        var onParse: suspend (String) -> Unit = {}
+
+        fun setResult(feedItemId: String, content: String?) {
+            contentByUrl["https://example.com/$feedItemId"] = content
+        }
+
+        override suspend fun parse(url: String): String? {
+            val content = contentByUrl[url]
+            onParse(url)
+            return content
         }
     }
 }

@@ -5,7 +5,6 @@ import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Severity
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.domain.ParsedFeedContent
-import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
@@ -101,12 +100,7 @@ object TestModules {
         }
         single<FeedItemParserWorker> {
             object : FeedItemParserWorker {
-                override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult =
-                    ParsingResult.Success(
-                        htmlContent = "Content",
-                        title = "Title",
-                        siteName = "Site Name",
-                    )
+                override suspend fun parse(url: String): String = "Content"
             }
         }
         single<FeedItemContentFileHandler> { FeedItemContentFileHandlerTestImpl() }

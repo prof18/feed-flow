@@ -34,6 +34,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentCacheMigration
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
@@ -77,6 +78,7 @@ class HomeViewModel internal constructor(
     private val feedStateRepository: FeedStateRepository,
     private val feedFetcherRepository: FeedFetcherRepository,
     private val getNextFeedFilterOrNullUseCase: GetNextFeedFilterOrNullUseCase,
+    private val readerContentCacheMigration: ReaderContentCacheMigration,
 ) : ViewModel() {
 
     // Loading
@@ -165,6 +167,9 @@ class HomeViewModel internal constructor(
             return
         }
         hasTriggeredAppLaunch = true
+        viewModelScope.launch {
+            readerContentCacheMigration.clearOutdatedContent()
+        }
         viewModelScope.launch {
             feedStateRepository.getFeeds()
         }

@@ -14,13 +14,7 @@ class HtmlFeedContentPreparerTest {
             <a href="https://example.com/story">safe</a>
         """.trimIndent()
 
-        val prepared = HtmlFeedContentPreparer().prepare(
-            html = html,
-            baseUrl = "https://example.com",
-            title = "Article",
-            imageUrl = null,
-            siteName = "Example",
-        )
+        val prepared = HtmlFeedContentPreparer().prepare(html = html, baseUrl = "https://example.com")
 
         assertEquals(html, prepared)
     }

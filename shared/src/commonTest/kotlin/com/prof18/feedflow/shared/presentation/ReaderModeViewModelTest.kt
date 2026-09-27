@@ -9,7 +9,6 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.ParsedFeedSource
-import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
@@ -53,36 +52,17 @@ class ReaderModeViewModelTest : KoinTestBase() {
     override fun getTestModules(): List<Module> = super.getTestModules() + module {
         single<FeedItemParserWorker> {
             object : FeedItemParserWorker {
-                override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
-                    val currentParserBehavior = parserBehavior
-                    return when (currentParserBehavior) {
-                        ParserBehavior.Success -> ParsingResult.Success(
-                            htmlContent = "Content",
-                            title = "Title",
-                            siteName = "Site Name",
-                        )
-                        ParserBehavior.HtmlNull -> ParsingResult.Success(
-                            htmlContent = null,
-                            title = "Title",
-                            siteName = "Site Name",
-                        )
-                        ParserBehavior.HtmlBlank -> ParsingResult.Success(
-                            htmlContent = "   ",
-                            title = "Title",
-                            siteName = "Site Name",
-                        )
-                        ParserBehavior.Error -> ParsingResult.Error
-                        is ParserBehavior.DelayedSuccessById -> {
-                            val delayMillis = currentParserBehavior.delaysByArticleId[feedItemId] ?: 0
-                            delay(delayMillis)
-                            ParsingResult.Success(
-                                htmlContent = "Content-$feedItemId",
-                                title = "Title-$feedItemId",
-                                siteName = "Site Name",
-                            )
+                override suspend fun parse(url: String): String? =
+                    when (val currentParserBehavior = parserBehavior) {
+                        ParserBehavior.Success -> "Content"
+                        ParserBehavior.HtmlBlank -> "   "
+                        ParserBehavior.Error -> null
+                        is ParserBehavior.DelayedSuccessByUrlPath -> {
+                            val pathSegment = url.substringAfterLast('/')
+                            delay(currentParserBehavior.delaysByUrlPathSegment[pathSegment] ?: 0)
+                            "Content-$pathSegment"
                         }
                     }
-                }
             }
         }
     }
@@ -193,7 +173,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
 
             val successState = awaitItem() as ReaderModeState.Success
             assertEquals("Content", successState.readerModeData.content)
-            assertEquals("Title", successState.readerModeData.title)
+            assertEquals("Original title", successState.readerModeData.title)
             assertEquals(urlInfo.id, successState.readerModeData.id.id)
         }
     }
@@ -214,26 +194,6 @@ class ReaderModeViewModelTest : KoinTestBase() {
 
         viewModel.setLoading()
         assertEquals(ReaderModeState.Loading, viewModel.readerModeState.value)
-    }
-
-    @Test
-    fun `getReaderModeHtml sets HtmlNotAvailable when parser returns null html`() = runTest {
-        parserBehavior = ParserBehavior.HtmlNull
-        val urlInfo = FeedItemUrlInfo(
-            id = "null-html-1",
-            url = "https://example.com/articles/null-html",
-            title = "Null Html Article",
-            isBookmarked = false,
-            articleOpenMode = ArticleOpenMode.FULL_ARTICLE,
-            commentsUrl = null,
-        )
-
-        viewModel.getReaderModeHtml(urlInfo)
-
-        val state = viewModel.readerModeState.value
-        assertIs<ReaderModeState.HtmlNotAvailable>(state)
-        assertEquals(urlInfo.url, state.url)
-        assertEquals(urlInfo.id, state.id)
     }
 
     @Test
@@ -258,10 +218,10 @@ class ReaderModeViewModelTest : KoinTestBase() {
 
     @Test
     fun `getReaderModeHtml keeps latest requested article when previous request finishes later`() = runTest {
-        parserBehavior = ParserBehavior.DelayedSuccessById(
-            delaysByArticleId = mapOf(
-                "slow-article" to 300,
-                "fast-article" to 10,
+        parserBehavior = ParserBehavior.DelayedSuccessByUrlPath(
+            delaysByUrlPathSegment = mapOf(
+                "slow" to 300,
+                "fast" to 10,
             ),
         )
 
@@ -318,8 +278,8 @@ class ReaderModeViewModelTest : KoinTestBase() {
     @Test
     fun `only the latest requested article is saved when requests overlap`() = runTest {
         settingsRepository.setSaveItemContentOnOpen(true)
-        parserBehavior = ParserBehavior.DelayedSuccessById(
-            delaysByArticleId = mapOf(
+        parserBehavior = ParserBehavior.DelayedSuccessByUrlPath(
+            delaysByUrlPathSegment = mapOf(
                 "slow-article" to 300,
                 "fast-article" to 10,
             ),
@@ -628,10 +588,24 @@ class ReaderModeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `web content shows the feed item title and feed source name`() = runTest {
+        val item = seedItemWithContent("web-meta", "https://example.com/a/web-meta", SUBSTANTIAL_CONTENT)
+
+        viewModel.getReaderModeHtml(item.toUrlInfo(ArticleOpenMode.FULL_ARTICLE))
+        advanceUntilIdle()
+
+        val state = assertIs<ReaderModeState.Success>(viewModel.readerModeState.value)
+        assertEquals(ShownContentSource.WEB, state.readerModeData.shownContentSource)
+        assertEquals("Title web-meta", state.readerModeData.title)
+        assertEquals("Content Feed web-meta", state.readerModeData.siteName)
+        assertEquals("Content", state.readerModeData.content)
+    }
+
+    @Test
     fun `web preference falls back to feed content when parsing times out`() = runTest {
         val item = seedItemWithContent("web-timeout", "https://example.com/a/web-timeout", SUBSTANTIAL_CONTENT)
-        parserBehavior = ParserBehavior.DelayedSuccessById(
-            delaysByArticleId = mapOf(item.id to 21_000),
+        parserBehavior = ParserBehavior.DelayedSuccessByUrlPath(
+            delaysByUrlPathSegment = mapOf(item.id to 21_000),
         )
 
         viewModel.getReaderModeHtml(item.toUrlInfo(ArticleOpenMode.FULL_ARTICLE))
@@ -973,11 +947,10 @@ class ReaderModeViewModelTest : KoinTestBase() {
 
     private sealed interface ParserBehavior {
         data object Success : ParserBehavior
-        data object HtmlNull : ParserBehavior
         data object HtmlBlank : ParserBehavior
         data object Error : ParserBehavior
-        data class DelayedSuccessById(
-            val delaysByArticleId: Map<String, Long>,
+        data class DelayedSuccessByUrlPath(
+            val delaysByUrlPathSegment: Map<String, Long>,
         ) : ParserBehavior
     }
 
@@ -994,13 +967,9 @@ class ReaderModeViewModelTimeoutTest : KoinTestBase() {
     override fun getTestModules(): List<Module> = super.getTestModules() + module {
         single<FeedItemParserWorker> {
             object : FeedItemParserWorker {
-                override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
+                override suspend fun parse(url: String): String? {
                     delay(2.minutes)
-                    return ParsingResult.Success(
-                        htmlContent = "Content",
-                        title = "Title",
-                        siteName = "Site Name",
-                    )
+                    return "Content"
                 }
             }
         }

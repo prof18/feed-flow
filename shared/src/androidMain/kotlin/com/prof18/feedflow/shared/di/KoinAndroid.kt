@@ -15,15 +15,14 @@ import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.FeedDownloadWorker
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryAndroid
+import com.prof18.feedflow.shared.domain.contentprefetch.BackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchWorker
+import com.prof18.feedflow.shared.domain.contentprefetch.WorkManagerBackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feeditem.HtmlFeedContentPreparer
 import com.prof18.feedflow.shared.domain.feedsync.AndroidSyncDatabaseFileProvider
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
@@ -38,8 +37,6 @@ import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerAndroid
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerAndroid
-import com.prof18.feedflow.shared.domain.parser.KleadContentFormat
-import com.prof18.feedflow.shared.domain.parser.KleadFeedItemParserWorker
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
@@ -115,14 +112,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             appContext = get(),
             dispatcherProvider = get(),
             logger = getWith("FeedItemContentFileHandler"),
-        )
-    }
-
-    single<FeedItemParserWorker> {
-        KleadFeedItemParserWorker(
-            contentFormat = KleadContentFormat.HTML,
-            htmlRetriever = get(),
-            logger = getWith("KleadFeedItemParserWorker"),
         )
     }
 
@@ -210,23 +199,17 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     worker {
         ContentPrefetchWorker(
+            contentPrefetcher = get(),
+            logger = getWith("ContentPrefetchWorker"),
             appContext = get(),
             workerParams = get(),
-            databaseHelper = get(),
-            kleadFeedItemParserWorker = get(),
-            feedItemContentFileHandler = get(),
-            logger = getWith("ContentPrefetchWorker"),
         )
     }
 
-    single<ContentPrefetchRepository> {
-        ContentPrefetchRepositoryAndroid(
-            logger = getWith("ContentPrefetchRepositoryAndroid"),
-            settingsRepository = get(),
-            databaseHelper = get(),
+    single<BackgroundPrefetchScheduler> {
+        WorkManagerBackgroundPrefetchScheduler(
             appContext = get(),
-            feedItemContentFileHandler = get(),
-            kleadFeedItemParserWorker = get(),
+            logger = getWith("WorkManagerBackgroundPrefetchScheduler"),
         )
     }
 

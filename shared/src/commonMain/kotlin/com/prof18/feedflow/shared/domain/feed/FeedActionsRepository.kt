@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSyncError
+import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.isSuccess
 import com.prof18.feedflow.core.model.onErrorSuspend
@@ -13,6 +14,8 @@ import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
+import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -30,6 +33,8 @@ internal class FeedActionsRepository(
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
     private val feedStateRepository: FeedStateRepository,
     private val feedItemParserWorker: FeedItemParserWorker,
+    private val settingsRepository: SettingsRepository,
+    private val feedItemContentFileHandler: FeedItemContentFileHandler,
 ) {
     suspend fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
         feedStateRepository.markAsRead(itemsToUpdates)
@@ -332,10 +337,14 @@ internal class FeedActionsRepository(
             }
         }
 
-        if (isBookmarked) {
+        if (isBookmarked && settingsRepository.isSaveItemContentOnOpenEnabled()) {
             val urlInfo = databaseHelper.getFeedItemUrlInfo(feedItemId.id)
             if (urlInfo != null) {
-                feedItemParserWorker.parse(urlInfo.id, urlInfo.url, urlInfo.imageUrl)
+                val result = feedItemParserWorker.parse(urlInfo.id, urlInfo.url, urlInfo.imageUrl)
+                val content = (result as? ParsingResult.Success)?.htmlContent
+                if (!content.isNullOrBlank()) {
+                    feedItemContentFileHandler.saveFeedItemContentToFile(urlInfo.id, content)
+                }
             }
         }
     }

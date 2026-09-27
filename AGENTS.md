@@ -102,7 +102,7 @@ Use the MCP tools when you need to interact with the running Desktop app: check 
 
 ### Desktop reader parser bundles
 
-The desktop reader bundles `readability-es5.js` and `turndown-es5.js` in `shared/src/jvmMain/resources/` are committed pre-built ES5 artifacts; do not hand-edit them (the generator tool has been removed from the repo). `reader-content-parser.js` is hand-written glue and can be edited normally.
+The desktop feed-content bundle `turndown-es5.js` in `shared/src/jvmMain/resources/` is a committed pre-built ES5 artifact; do not hand-edit it (the generator tool has been removed from the repo). `reader-content-parser.js` is hand-written glue and can be edited normally.
 
 ### Local Klead development
 

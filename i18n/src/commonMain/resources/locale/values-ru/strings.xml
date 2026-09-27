@@ -400,9 +400,6 @@
     <string name="mark_all_above_as_read_confirmation_message">Все статьи выше этой будут помечены как прочитанные.</string>
     <string name="mark_all_below_as_read_confirmation_title">Пометить всё ниже как прочитанное?</string>
     <string name="mark_all_below_as_read_confirmation_message">Все статьи ниже этой будут помечены как прочитанные.</string>
-    <string name="settings_use_new_article_parser">Новый движок режима чтения</string>
-    <string name="settings_new_reader_mode_engine_confirmation_title">Попробовать новый движок режима чтения?</string>
-    <string name="settings_new_reader_mode_engine_confirmation_message">Новый движок предназначен для более точного извлечения статей и ускорения загрузки режима чтения. Он всё ещё находится на стадии эксперимента, поэтому на некоторых страницах часть содержимого может отсутствовать, форматирование может отображаться неправильно или страницы могут вообще не загружаться. Сообщайте обо всех обнаруженных проблемах. Ваши отзывы помогут нам улучшить режим чтения для всех, прежде чем этот движок станет стандартным.</string>
     <string name="server_account_subscriptions_warning">Эта учётная запись использует подписки, сохранённые на её сервере.</string>
     <string name="server_account_replace_local_title">Заменить локальные подписки?</string>
     <string name="server_account_replace_local_message">Подключение заменит ленты, сохранённые на этом устройстве, подписками с сервера. Последующее отключение не восстановит локальные ленты. Сначала экспортируйте их в OPML, если хотите сохранить копию.</string>

@@ -145,6 +145,10 @@ class ReaderModeViewModel internal constructor(
         val result = withTimeoutOrNull(PARSE_TIMEOUT) {
             feedItemParserWorker.parse(requestedArticleId, urlInfo.url, urlInfo.imageUrl)
         }
+        val parsedContent = (result as? ParsingResult.Success)?.htmlContent
+        if (!parsedContent.isNullOrBlank() && settingsRepository.isSaveItemContentOnOpenEnabled()) {
+            feedItemContentFileHandler.saveFeedItemContentToFile(requestedArticleId, parsedContent)
+        }
         if (currentArticleId != requestedArticleId) return null
 
         val successResult = result as? ParsingResult.Success ?: return null

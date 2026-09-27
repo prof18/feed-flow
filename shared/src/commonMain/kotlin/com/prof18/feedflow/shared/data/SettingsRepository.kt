@@ -25,7 +25,6 @@ class SettingsRepository(
     private var articleOpenMode: ArticleOpenMode? = null
     private var saveItemContentOnOpenEnabled: Boolean? = null
     private var prefetchArticleContentEnabled: Boolean? = null
-    private var kleadParserEnabled: Boolean? = null
 
     internal fun cloudSyncSession(): String = syncUploadLock.withLock {
         settings.getStringOrNull(SettingsFields.CLOUD_SYNC_SESSION.name) ?: Uuid.random().toString().also {
@@ -146,21 +145,6 @@ class SettingsRepository(
     fun setPrefetchArticleContent(value: Boolean) {
         prefetchArticleContentEnabled = value
         settings[SettingsFields.PREFETCH_ARTICLE_CONTENT.name] = value
-    }
-
-    fun isKleadParserEnabled(): Boolean {
-        kleadParserEnabled?.let { return it }
-        val value = settings.getBoolean(
-            SettingsFields.USE_KLEAD_READER_PARSER.name,
-            true,
-        )
-        kleadParserEnabled = value
-        return value
-    }
-
-    fun setKleadParserEnabled(value: Boolean) {
-        kleadParserEnabled = value
-        settings.set(SettingsFields.USE_KLEAD_READER_PARSER.name, value)
     }
 
     internal fun getIsSyncUploadRequired(): Boolean = syncUploadLock.withLock {
@@ -334,7 +318,6 @@ private enum class SettingsFields {
     USE_READER_MODE,
     SAVE_ITEM_CONTENT_ON_OPEN,
     PREFETCH_ARTICLE_CONTENT,
-    USE_KLEAD_READER_PARSER,
     IS_SYNC_UPLOAD_REQUIRED,
     SYNC_UPLOAD_GENERATION,
     CLOUD_SYNC_SESSION,

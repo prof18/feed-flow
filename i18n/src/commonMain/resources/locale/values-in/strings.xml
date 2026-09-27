@@ -397,9 +397,6 @@
     <string name="mark_all_above_as_read_confirmation_message">Semua artikel di atas ini akan ditandai sebagai sudah dibaca.</string>
     <string name="mark_all_below_as_read_confirmation_title">Tandai semua di bawah sebagai sudah dibaca?</string>
     <string name="mark_all_below_as_read_confirmation_message">Semua artikel di bawah ini akan ditandai sebagai sudah dibaca.</string>
-    <string name="settings_use_new_article_parser">Mesin mode pembaca baru</string>
-    <string name="settings_new_reader_mode_engine_confirmation_title">Coba mesin mode pembaca baru?</string>
-    <string name="settings_new_reader_mode_engine_confirmation_message">Mesin baru dirancang untuk mengekstrak artikel lebih akurat dan memuat Mode Pembaca lebih cepat. Ini masih eksperimental, jadi beberapa halaman mungkin memiliki konten yang hilang, pemformatan yang salah, atau mungkin tidak dimuat sama sekali. Silakan laporkan masalah apa pun yang Anda temukan. Umpan balik Anda akan membantu kami meningkatkan Mode Pembaca untuk semua orang sebelum mesin ini menjadi bawaan.</string>
     <string name="server_account_subscriptions_warning">Akun ini menggunakan langganan yang disimpan di servernya.</string>
     <string name="server_account_replace_local_title">Ganti langganan lokal?</string>
     <string name="server_account_replace_local_message">Menghubungkan akan mengganti feed yang saat ini disimpan di perangkat ini dengan langganan dari server. Memutuskan koneksi nanti tidak akan memulihkan feed lokal. Ekspor ke OPML terlebih dahulu jika Anda ingin menyimpan salinannya.</string>

@@ -55,7 +55,6 @@ class MenuBarViewModel internal constructor(
         val articleOpenMode = settingsRepository.getArticleOpenMode()
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
-        val isKleadParserEnabled = settingsRepository.isKleadParserEnabled()
         val isRefreshFeedsOnLaunchEnabled = settingsRepository.getRefreshFeedsOnLaunch()
         val syncPeriod = settingsRepository.getSyncPeriod()
         val isReduceMotionEnabled = settingsRepository.getReduceMotionEnabled()
@@ -73,7 +72,6 @@ class MenuBarViewModel internal constructor(
                 articleOpenMode = articleOpenMode,
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
-                isKleadParserEnabled = isKleadParserEnabled,
                 isRefreshFeedsOnLaunchEnabled = isRefreshFeedsOnLaunchEnabled,
                 syncPeriod = syncPeriod,
                 isReduceMotionEnabled = isReduceMotionEnabled,
@@ -151,13 +149,6 @@ class MenuBarViewModel internal constructor(
             if (!value) {
                 contentPrefetchRepository.cancelFetching()
             }
-        }
-    }
-
-    fun updateKleadParserEnabled(value: Boolean) {
-        settingsRepository.setKleadParserEnabled(value)
-        stateMutableFlow.update {
-            it.copy(isKleadParserEnabled = value)
         }
     }
 

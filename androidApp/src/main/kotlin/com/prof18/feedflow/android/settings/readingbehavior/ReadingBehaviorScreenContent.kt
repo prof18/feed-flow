@@ -39,7 +39,6 @@ internal fun ReadingBehaviorScreenContent(
     setArticleOpenMode: (ArticleOpenMode) -> Unit,
     setSaveReaderModeContent: (Boolean) -> Unit,
     setPrefetchArticleContent: (Boolean) -> Unit,
-    setKleadParserEnabled: (Boolean) -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setHideReadItems: (Boolean) -> Unit,
@@ -91,19 +90,6 @@ internal fun ReadingBehaviorScreenContent(
                     title = LocalFeedFlowStrings.current.settingsSaveReaderModeContent,
                     isChecked = state.isSaveReaderModeContentEnabled,
                     onCheckedChange = setSaveReaderModeContent,
-                )
-            }
-
-            item {
-                SettingSwitchItem(
-                    modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_NEW_PARSER),
-                    title = LocalFeedFlowStrings.current.settingsUseNewArticleParser,
-                    isChecked = state.isKleadParserEnabled,
-                    onCheckedChange = setKleadParserEnabled,
-                    confirmationDialog = ConfirmationDialogConfig(
-                        title = LocalFeedFlowStrings.current.settingsNewReaderModeEngineConfirmationTitle,
-                        message = LocalFeedFlowStrings.current.settingsNewReaderModeEngineConfirmationMessage,
-                    ),
                 )
             }
 
@@ -176,7 +162,6 @@ private fun ReadingBehaviorScreenContentPreview() {
             setArticleOpenMode = {},
             setSaveReaderModeContent = {},
             setPrefetchArticleContent = {},
-            setKleadParserEnabled = {},
             setMarkReadWhenScrolling = {},
             setShowReadItem = {},
             setHideReadItems = {},

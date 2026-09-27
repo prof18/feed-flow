@@ -22,7 +22,6 @@ import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
-import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
@@ -44,11 +43,9 @@ import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerIos
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
-import com.prof18.feedflow.shared.domain.parser.CachingFeedItemParserWorker
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
 import com.prof18.feedflow.shared.domain.parser.KleadContentFormat
 import com.prof18.feedflow.shared.domain.parser.KleadFeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.ParserSelectingFeedItemParserWorker
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
@@ -105,7 +102,6 @@ fun initKoinIos(
     googleDrivePlatformClient: GoogleDrivePlatformClientIos,
     appVersion: String,
     telemetry: Telemetry,
-    feedItemParserWorker: FeedItemParserWorker,
     notifier: Notifier,
     feedUrlProtocolClasses: List<*>,
 ): KoinApplication = initKoin(
@@ -127,22 +123,10 @@ fun initKoinIos(
             single { googleDrivePlatformClient }
             single { telemetry }
             single<FeedItemParserWorker> {
-                val kleadParser = KleadFeedItemParserWorker(
+                KleadFeedItemParserWorker(
                     contentFormat = KleadContentFormat.HTML,
                     htmlRetriever = get(),
                     logger = getWith("KleadFeedItemParserWorker"),
-                    feedItemContentFileHandler = get(),
-                    settingsRepository = get(),
-                    cacheResultWhenEnabled = false,
-                )
-                ParserSelectingFeedItemParserWorker(
-                    settingsRepository = get(),
-                    legacyParser = feedItemParserWorker,
-                    kleadParser = CachingFeedItemParserWorker(
-                        parser = kleadParser,
-                        settingsRepository = get(),
-                        feedItemContentFileHandler = get(),
-                    ),
                 )
             }
             single<FeedContentPreparer> { HtmlFeedContentPreparer() }
@@ -364,7 +348,6 @@ object Deps : KoinComponent {
     fun getNotificationsViewModel() = getKoin().get<NotificationsViewModel>()
     fun getNotifier() = getKoin().get<Notifier>()
     fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()
-    fun getHtmlRetriever() = getKoin().get<HtmlRetriever>()
     fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()
     fun getUserFeedbackReporter() = getKoin().get<UserFeedbackReporter>()
     fun getChangeFeedCategoryViewModel() = getKoin().get<ChangeFeedCategoryViewModel>()

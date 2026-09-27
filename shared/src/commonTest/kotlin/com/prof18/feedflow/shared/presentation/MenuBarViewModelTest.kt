@@ -52,7 +52,6 @@ class MenuBarViewModelTest : KoinTestBase() {
         assertEquals(ArticleOpenMode.FULL_ARTICLE, state.articleOpenMode)
         assertFalse(state.isSaveReaderModeContentEnabled)
         assertFalse(state.isPrefetchArticleContentEnabled)
-        assertTrue(state.isKleadParserEnabled)
         assertTrue(state.isRefreshFeedsOnLaunchEnabled)
         assertEquals(SyncPeriod.NEVER, state.syncPeriod)
         assertFalse(state.isReduceMotionEnabled)
@@ -124,20 +123,6 @@ class MenuBarViewModelTest : KoinTestBase() {
         viewModel.updatePrefetchArticleContent(false)
         assertFalse(viewModel.state.value.isPrefetchArticleContentEnabled)
         assertTrue(prefetchRepository.cancelFetchingCalled)
-    }
-
-    @Test
-    fun `update Klead parser updates state`() = runTest {
-        populateDatabase()
-        val feedItemId = databaseHelper.getFirstUnfetchedItemsBatch(1).single().feedItemId
-        databaseHelper.updateContentFetchedStatus(feedItemId, fetched = true)
-        feedItemContentFileHandler.saveFeedItemContentToFile("cached-item", "cached")
-        viewModel.updateKleadParserEnabled(true)
-        assertTrue(viewModel.state.value.isKleadParserEnabled)
-        assertTrue(settingsRepository.isKleadParserEnabled())
-        assertTrue(feedItemContentFileHandler.isContentAvailable("cached-item"))
-        assertTrue(databaseHelper.getFirstUnfetchedItemsBatch(1).isEmpty())
-        assertFalse((contentPrefetchRepository as ContentPrefetchRepositoryFake).cancelFetchingCalled)
     }
 
     @Test

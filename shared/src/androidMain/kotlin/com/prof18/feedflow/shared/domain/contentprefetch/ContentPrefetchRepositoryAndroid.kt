@@ -10,10 +10,8 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedItemToPrefetch
 import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.model.PrefetchQueueItem
-import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository.Companion.FIRST_PAGE_SIZE
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
@@ -24,8 +22,6 @@ internal class ContentPrefetchRepositoryAndroid(
     private val logger: Logger,
     private val settingsRepository: SettingsRepository,
     private val databaseHelper: DatabaseHelper,
-    private val dispatcherProvider: DispatcherProvider,
-    private val htmlRetriever: HtmlRetriever,
     private val appContext: Context,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val kleadFeedItemParserWorker: FeedItemParserWorker,
@@ -35,18 +31,12 @@ internal class ContentPrefetchRepositoryAndroid(
             logger.d { "Content prefetch is disabled" }
             return
         }
-        val legacyParser = LegacyContentPrefetchParser(
-            htmlRetriever = htmlRetriever,
-            appContext = appContext,
-            logger = logger,
-            dispatcherProvider = dispatcherProvider,
-        )
         try {
             val immediateItems = databaseHelper.getFirstUnfetchedItemsBatch(pageSize = FIRST_PAGE_SIZE)
             logger.d { "Found ${immediateItems.size} items for immediate prefetch" }
 
             for (item in immediateItems) {
-                prefetchItem(item, legacyParser)
+                prefetchItem(item)
             }
             val allUnfetched = databaseHelper.getUnfetchedItems()
 
@@ -67,23 +57,14 @@ internal class ContentPrefetchRepositoryAndroid(
             throw e
         } catch (e: Exception) {
             logger.e(e) { "Error in onFeedSyncCompleted" }
-        } finally {
-            legacyParser.close()
         }
     }
 
-    private suspend fun prefetchItem(
-        item: FeedItemToPrefetch,
-        legacyParser: LegacyContentPrefetchParser,
-    ) {
-        val result = if (settingsRepository.isKleadParserEnabled()) {
-            kleadFeedItemParserWorker.parse(
-                feedItemId = item.feedItemId,
-                url = item.url,
-            )
-        } else {
-            legacyParser.parse(item.url)
-        }
+    private suspend fun prefetchItem(item: FeedItemToPrefetch) {
+        val result = kleadFeedItemParserWorker.parse(
+            feedItemId = item.feedItemId,
+            url = item.url,
+        )
         commitPrefetchResult(item, result)
     }
 

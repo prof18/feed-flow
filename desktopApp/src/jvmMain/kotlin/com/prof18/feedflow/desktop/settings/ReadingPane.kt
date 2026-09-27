@@ -21,14 +21,12 @@ internal fun ReadingPane(
     articleOpenMode: ArticleOpenMode,
     isSaveReaderModeContentEnabled: Boolean,
     isPrefetchArticleContentEnabled: Boolean,
-    isKleadParserEnabled: Boolean,
     isMarkReadWhenScrollingEnabled: Boolean,
     isShowReadItemsEnabled: Boolean,
     isHideReadItemsEnabled: Boolean,
     onArticleOpenModeSelected: (ArticleOpenMode) -> Unit,
     onSaveReaderModeContentToggled: (Boolean) -> Unit,
     onPrefetchToggled: (Boolean) -> Unit,
-    onKleadParserToggled: (Boolean) -> Unit,
     onMarkReadWhenScrollingToggled: (Boolean) -> Unit,
     onShowReadItemsToggled: (Boolean) -> Unit,
     onHideReadItemsToggled: (Boolean) -> Unit,
@@ -57,16 +55,6 @@ internal fun ReadingPane(
             confirmationDialog = ConfirmationDialogConfig(
                 title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
                 message = LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning,
-            ),
-        )
-
-        SettingSwitchItem(
-            title = LocalFeedFlowStrings.current.settingsUseNewArticleParser,
-            isChecked = isKleadParserEnabled,
-            onCheckedChange = onKleadParserToggled,
-            confirmationDialog = ConfirmationDialogConfig(
-                title = LocalFeedFlowStrings.current.settingsNewReaderModeEngineConfirmationTitle,
-                message = LocalFeedFlowStrings.current.settingsNewReaderModeEngineConfirmationMessage,
             ),
         )
 
@@ -104,14 +92,12 @@ private fun ReadingPanePreview() {
             articleOpenMode = ArticleOpenMode.FULL_ARTICLE,
             isSaveReaderModeContentEnabled = false,
             isPrefetchArticleContentEnabled = false,
-            isKleadParserEnabled = false,
             isMarkReadWhenScrollingEnabled = false,
             isShowReadItemsEnabled = false,
             isHideReadItemsEnabled = false,
             onArticleOpenModeSelected = {},
             onSaveReaderModeContentToggled = {},
             onPrefetchToggled = {},
-            onKleadParserToggled = {},
             onMarkReadWhenScrollingToggled = {},
             onShowReadItemsToggled = {},
             onHideReadItemsToggled = {},

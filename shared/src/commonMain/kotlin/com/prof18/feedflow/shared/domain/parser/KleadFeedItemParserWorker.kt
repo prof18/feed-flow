@@ -2,9 +2,7 @@ package com.prof18.feedflow.shared.domain.parser
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ParsingResult
-import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.klead.Klead
 import com.prof18.klead.KleadOptions
@@ -16,9 +14,6 @@ internal class KleadFeedItemParserWorker(
     private val contentFormat: KleadContentFormat,
     private val htmlRetriever: HtmlRetriever,
     private val logger: Logger,
-    private val feedItemContentFileHandler: FeedItemContentFileHandler,
-    private val settingsRepository: SettingsRepository,
-    private val cacheResultWhenEnabled: Boolean = true,
 ) : FeedItemParserWorker {
 
     override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult {
@@ -50,11 +45,7 @@ internal class KleadFeedItemParserWorker(
                 rawContent = rawContent,
                 imageUrl = imageUrl,
             )
-            if (cacheResultWhenEnabled && settingsRepository.isSaveItemContentOnOpenEnabled()) {
-                feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, content)
-                logger.d { "Successfully parsed and cached with Klead: $url" }
-            }
-
+            logger.d { "Successfully parsed with Klead: $url" }
             ParsingResult.Success(
                 htmlContent = content,
                 title = parseResult.metadata.title,

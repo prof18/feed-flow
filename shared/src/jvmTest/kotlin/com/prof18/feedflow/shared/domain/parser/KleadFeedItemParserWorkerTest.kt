@@ -1,12 +1,9 @@
 package com.prof18.feedflow.shared.domain.parser
 
 import com.prof18.feedflow.core.model.ParsingResult
-import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.test.testLogger
 import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
-import com.russhwolf.settings.MapSettings
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -24,17 +21,8 @@ import kotlin.test.assertTrue
 class KleadFeedItemParserWorkerTest {
 
     @Test
-    fun `returns decorated Markdown and caches it when enabled`() = runTest {
-        val fileHandler = RecordingFeedItemContentFileHandler()
-        val settingsRepository = SettingsRepository(MapSettings()).apply {
-            setKleadParserEnabled(true)
-            setSaveItemContentOnOpen(true)
-        }
-        val worker = worker(
-            html = articleHtml,
-            fileHandler = fileHandler,
-            settingsRepository = settingsRepository,
-        )
+    fun `returns decorated Markdown`() = runTest {
+        val worker = worker(html = articleHtml)
 
         val result = worker.parse(
             feedItemId = "item-1",
@@ -51,7 +39,6 @@ class KleadFeedItemParserWorkerTest {
         assertTrue(content.contains("![](https://example.com/feed-hero.png)"))
         assertTrue(content.contains("Klead extracts article prose"))
         assertTrue(content.contains("**Markdown emphasis**"))
-        assertEquals(content, fileHandler.savedContentById["item-1"])
     }
 
     @Test
@@ -101,39 +88,13 @@ class KleadFeedItemParserWorkerTest {
         assertFalse(content.contains("feed-hero.png"))
     }
 
-    @Test
-    fun `prefetch parser leaves cache writes to its caller`() = runTest {
-        val fileHandler = RecordingFeedItemContentFileHandler()
-        val settingsRepository = SettingsRepository(MapSettings()).apply {
-            setSaveItemContentOnOpen(true)
-        }
-        val worker = worker(
-            html = articleHtml,
-            contentFormat = KleadContentFormat.HTML,
-            fileHandler = fileHandler,
-            settingsRepository = settingsRepository,
-            cacheResultWhenEnabled = false,
-        )
-
-        assertIs<ParsingResult.Success>(
-            worker.parse("item-5", "https://example.com/articles/klead-prefetch"),
-        )
-        assertFalse("item-5" in fileHandler.savedContentById)
-    }
-
     private fun worker(
         html: String,
         contentFormat: KleadContentFormat = KleadContentFormat.MARKDOWN,
-        fileHandler: FeedItemContentFileHandler = RecordingFeedItemContentFileHandler(),
-        settingsRepository: SettingsRepository = SettingsRepository(MapSettings()),
-        cacheResultWhenEnabled: Boolean = true,
     ) = KleadFeedItemParserWorker(
         contentFormat = contentFormat,
         htmlRetriever = htmlRetriever(html),
         logger = testLogger,
-        feedItemContentFileHandler = fileHandler,
-        settingsRepository = settingsRepository,
-        cacheResultWhenEnabled = cacheResultWhenEnabled,
     )
 
     private fun htmlRetriever(html: String): HtmlRetriever = HtmlRetriever(
@@ -151,26 +112,6 @@ class KleadFeedItemParserWorkerTest {
         },
         forbiddenFallbackClient = unexpectedRequestHttpClient(),
     )
-
-    private class RecordingFeedItemContentFileHandler : FeedItemContentFileHandler {
-        val savedContentById = mutableMapOf<String, String>()
-
-        override suspend fun saveFeedItemContentToFile(feedItemId: String, content: String) {
-            savedContentById[feedItemId] = content
-        }
-
-        override suspend fun loadFeedItemContent(feedItemId: String): String? = savedContentById[feedItemId]
-
-        override suspend fun isContentAvailable(feedItemId: String): Boolean = feedItemId in savedContentById
-
-        override suspend fun deleteFeedItemContent(feedItemId: String) {
-            savedContentById.remove(feedItemId)
-        }
-
-        override suspend fun clearAllContent() {
-            savedContentById.clear()
-        }
-    }
 
     private companion object {
         private val articleBody = List(12) { index ->

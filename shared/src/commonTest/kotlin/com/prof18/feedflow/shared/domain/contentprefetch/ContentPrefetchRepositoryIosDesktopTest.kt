@@ -199,41 +199,6 @@ class ContentPrefetchRepositoryIosDesktopTest : KoinTestBase() {
             assertFalse(feedItemContentFileHandler.isContentAvailable("item-1"))
         }
 
-    @Test
-    fun `prefetchContent keeps result when parser changes during parsing`() =
-        runTest(TestDispatcherProvider.testDispatcher) {
-            settingsRepository.setPrefetchArticleContent(true)
-            fakeParserWorker.setResult(
-                feedItemId = "item-1",
-                result = ParsingResult.Success(
-                    htmlContent = "Old parser content",
-                    title = "Title",
-                    siteName = "Site",
-                ),
-            )
-            var parserChanged = false
-            fakeParserWorker.onParse = {
-                if (!parserChanged) {
-                    parserChanged = true
-                    settingsRepository.setKleadParserEnabled(true)
-                    fakeParserWorker.setResult(
-                        feedItemId = "item-1",
-                        result = ParsingResult.Success(
-                            htmlContent = "New parser content",
-                            title = "Title",
-                            siteName = "Site",
-                        ),
-                    )
-                }
-            }
-            insertFeedItem("item-1")
-
-            createRepository().prefetchContent()
-            advanceUntilIdle()
-
-            assertEquals("Old parser content", feedItemContentFileHandler.loadFeedItemContent("item-1"))
-        }
-
     private suspend fun insertFeedItem(id: String) {
         val feedSource = createFeedSource("source-1")
         databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))

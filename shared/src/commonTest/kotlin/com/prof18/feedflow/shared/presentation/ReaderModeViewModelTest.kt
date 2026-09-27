@@ -292,6 +292,57 @@ class ReaderModeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `getReaderModeHtml saves parsed content when save on open is enabled`() = runTest {
+        settingsRepository.setSaveItemContentOnOpen(true)
+        val urlInfo = webArticle(id = "save-enabled")
+
+        viewModel.getReaderModeHtml(urlInfo)
+        advanceUntilIdle()
+
+        assertIs<ReaderModeState.Success>(viewModel.readerModeState.value)
+        assertEquals("Content", feedItemContentFileHandler.loadFeedItemContent(urlInfo.id))
+    }
+
+    @Test
+    fun `getReaderModeHtml does not save parsed content when save on open is disabled`() = runTest {
+        settingsRepository.setSaveItemContentOnOpen(false)
+        val urlInfo = webArticle(id = "save-disabled")
+
+        viewModel.getReaderModeHtml(urlInfo)
+        advanceUntilIdle()
+
+        assertIs<ReaderModeState.Success>(viewModel.readerModeState.value)
+        assertFalse(feedItemContentFileHandler.isContentAvailable(urlInfo.id))
+    }
+
+    @Test
+    fun `only the latest requested article is saved when requests overlap`() = runTest {
+        settingsRepository.setSaveItemContentOnOpen(true)
+        parserBehavior = ParserBehavior.DelayedSuccessById(
+            delaysByArticleId = mapOf(
+                "slow-article" to 300,
+                "fast-article" to 10,
+            ),
+        )
+
+        viewModel.getReaderModeHtml(webArticle(id = "slow-article"))
+        viewModel.getReaderModeHtml(webArticle(id = "fast-article"))
+        advanceUntilIdle()
+
+        assertFalse(feedItemContentFileHandler.isContentAvailable("slow-article"))
+        assertEquals("Content-fast-article", feedItemContentFileHandler.loadFeedItemContent("fast-article"))
+    }
+
+    private fun webArticle(id: String) = FeedItemUrlInfo(
+        id = id,
+        url = "https://example.com/articles/$id",
+        title = "Article $id",
+        isBookmarked = false,
+        articleOpenMode = ArticleOpenMode.FULL_ARTICLE,
+        commentsUrl = null,
+    )
+
+    @Test
     fun `updateFontSize updates settings and state`() = runTest {
         viewModel.updateFontSize(22)
 

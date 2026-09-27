@@ -34,11 +34,9 @@ import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerJvm
 import com.prof18.feedflow.shared.domain.parser.DesktopFeedContentPreparer
-import com.prof18.feedflow.shared.domain.parser.DesktopFeedItemParserWorker
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerDesktop
 import com.prof18.feedflow.shared.domain.parser.KleadContentFormat
 import com.prof18.feedflow.shared.domain.parser.KleadFeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.ParserSelectingFeedItemParserWorker
 import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
@@ -151,24 +149,10 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     single<FeedItemParserWorker> {
-        val legacyParser = DesktopFeedItemParserWorker(
-            htmlRetriever = get(),
-            logger = getWith("FeedItemParserWorker"),
-            dispatcherProvider = get(),
-            feedItemContentFileHandler = get(),
-            settingsRepository = get(),
-        )
-        val kleadParser = KleadFeedItemParserWorker(
+        KleadFeedItemParserWorker(
             contentFormat = KleadContentFormat.MARKDOWN,
             htmlRetriever = get(),
             logger = getWith("KleadFeedItemParserWorker"),
-            feedItemContentFileHandler = get(),
-            settingsRepository = get(),
-        )
-        ParserSelectingFeedItemParserWorker(
-            settingsRepository = get(),
-            legacyParser = legacyParser,
-            kleadParser = kleadParser,
         )
     }
 

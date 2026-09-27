@@ -6,10 +6,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.test.ContentPrefetchRepositoryFake
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -25,9 +22,7 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
     private val viewModel: ReadingBehaviorSettingsViewModel by inject()
     private val feedStateRepository: FeedStateRepository by inject()
     private val settingsRepository: SettingsRepository by inject()
-    private val feedItemContentFileHandler: FeedItemContentFileHandler by inject()
     private val databaseHelper: DatabaseHelper by inject()
-    private val contentPrefetchRepository: ContentPrefetchRepository by inject()
 
     @Test
     fun `state is loaded from settings repository on init`() = runTest {
@@ -37,7 +32,6 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
             assertEquals(ArticleOpenMode.FULL_ARTICLE, initialState.articleOpenMode)
             assertFalse(initialState.isSaveReaderModeContentEnabled)
             assertFalse(initialState.isPrefetchArticleContentEnabled)
-            assertTrue(initialState.isKleadParserEnabled)
             assertTrue(initialState.isMarkReadWhenScrollingEnabled)
             assertFalse(initialState.isShowReadItemsEnabled)
             assertFalse(initialState.isHideReadItemsEnabled)
@@ -80,26 +74,6 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
 
             viewModel.updatePrefetchArticleContent(false)
             assertFalse(awaitItem().isPrefetchArticleContentEnabled)
-        }
-    }
-
-    @Test
-    fun `update Klead parser updates state`() = runTest {
-        populateDatabase()
-        val feedItemId = databaseHelper.getFirstUnfetchedItemsBatch(1).single().feedItemId
-        databaseHelper.updateContentFetchedStatus(feedItemId, fetched = true)
-        feedItemContentFileHandler.saveFeedItemContentToFile("cached-item", "cached")
-        viewModel.state.test {
-            awaitItem()
-
-            viewModel.updateKleadParserEnabled(false)
-            assertFalse(awaitItem().isKleadParserEnabled)
-
-            viewModel.updateKleadParserEnabled(true)
-            assertTrue(awaitItem().isKleadParserEnabled)
-            assertTrue(feedItemContentFileHandler.isContentAvailable("cached-item"))
-            assertTrue(databaseHelper.getFirstUnfetchedItemsBatch(1).isEmpty())
-            assertFalse((contentPrefetchRepository as ContentPrefetchRepositoryFake).cancelFetchingCalled)
         }
     }
 

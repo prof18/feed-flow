@@ -402,9 +402,6 @@
     <string name="mark_all_above_as_read_confirmation_message">Wszystkie artykuły znajdujące się powyżej tego artykułu zostaną oznaczone jako przeczytane.</string>
     <string name="mark_all_below_as_read_confirmation_title">Oznaczyć wszystkie poniższe jako przeczytane?</string>
     <string name="mark_all_below_as_read_confirmation_message">Wszystkie artykuły poniżej tego zostaną oznaczone jako przeczytane.</string>
-    <string name="settings_use_new_article_parser">Nowy silnik trybu czytania</string>
-    <string name="settings_new_reader_mode_engine_confirmation_title">Chcesz wypróbować nowy silnik trybu czytania?</string>
-    <string name="settings_new_reader_mode_engine_confirmation_message">Nowy silnik został zaprojektowany tak, aby dokładniej wyodrębniać artykuły i szybciej ładować tryb czytania. Jest on nadal w fazie testów, więc na niektórych stronach mogą występować braki w treści, nieprawidłowe formatowanie lub strony mogą w ogóle się nie ładować. Prosimy o zgłaszanie wszelkich zauważonych problemów. Wasze opinie pomogą nam ulepszyć tryb czytania dla wszystkich użytkowników, zanim ten silnik stanie się domyślnym rozwiązaniem.</string>
     <string name="server_account_subscriptions_warning">To konto korzysta z subskrypcji zapisanych na swoim serwerze.</string>
     <string name="server_account_replace_local_title">Czy zastąpić lokalne subskrypcje?</string>
     <string name="server_account_replace_local_message">Po nawiązaniu połączenia kanały przechowywane obecnie na tym urządzeniu zostaną zastąpione subskrypcjami z serwera. Późniejsze rozłączenie nie spowoduje przywrócenia lokalnych kanałów. Jeśli chcesz zachować ich kopię, najpierw wyeksportuj je do formatu OPML.</string>

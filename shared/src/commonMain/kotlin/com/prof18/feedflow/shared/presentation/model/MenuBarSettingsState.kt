@@ -15,7 +15,6 @@ data class MenuBarSettingsState(
     val articleOpenMode: ArticleOpenMode = ArticleOpenMode.FULL_ARTICLE,
     val isSaveReaderModeContentEnabled: Boolean = false,
     val isPrefetchArticleContentEnabled: Boolean = false,
-    val isKleadParserEnabled: Boolean = false,
     val isRefreshFeedsOnLaunchEnabled: Boolean = true,
     val syncPeriod: SyncPeriod = SyncPeriod.NEVER,
     val isReduceMotionEnabled: Boolean = false,

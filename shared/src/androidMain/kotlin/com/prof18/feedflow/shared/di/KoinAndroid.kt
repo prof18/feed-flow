@@ -37,12 +37,9 @@ import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerAndroid
-import com.prof18.feedflow.shared.domain.parser.AndroidFeedItemParserWorker
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerAndroid
 import com.prof18.feedflow.shared.domain.parser.KleadContentFormat
 import com.prof18.feedflow.shared.domain.parser.KleadFeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.ParserSelectingFeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.ReaderModeParserWarmer
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
@@ -52,7 +49,6 @@ import org.koin.androidx.workmanager.dsl.worker
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -122,45 +118,11 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single {
-        AndroidFeedItemParserWorker(
-            htmlRetriever = get(),
-            appContext = get(),
-            logger = getWith("FeedItemParserWorker"),
-            dispatcherProvider = get(),
-            feedItemContentFileHandler = get(),
-            settingsRepository = get(),
-        )
-    }
-
     single<FeedItemParserWorker> {
-        val kleadParser = KleadFeedItemParserWorker(
-            contentFormat = KleadContentFormat.HTML,
-            htmlRetriever = get(),
-            logger = getWith("KleadFeedItemParserWorker"),
-            feedItemContentFileHandler = get(),
-            settingsRepository = get(),
-            cacheResultWhenEnabled = true,
-        )
-        ParserSelectingFeedItemParserWorker(
-            settingsRepository = get(),
-            legacyParser = get<AndroidFeedItemParserWorker>(),
-            kleadParser = kleadParser,
-        )
-    }
-
-    single<ReaderModeParserWarmer> {
-        get<AndroidFeedItemParserWorker>()
-    }
-
-    factory<FeedItemParserWorker>(KLEAD_PREFETCH_PARSER) {
         KleadFeedItemParserWorker(
             contentFormat = KleadContentFormat.HTML,
             htmlRetriever = get(),
-            logger = getWith("KleadPrefetchParserWorker"),
-            feedItemContentFileHandler = get(),
-            settingsRepository = get(),
-            cacheResultWhenEnabled = false,
+            logger = getWith("KleadFeedItemParserWorker"),
         )
     }
 
@@ -251,11 +213,8 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             appContext = get(),
             workerParams = get(),
             databaseHelper = get(),
-            dispatcherProvider = get(),
-            htmlRetriever = get(),
-            kleadFeedItemParserWorker = get(KLEAD_PREFETCH_PARSER),
+            kleadFeedItemParserWorker = get(),
             feedItemContentFileHandler = get(),
-            settingsRepository = get(),
             logger = getWith("ContentPrefetchWorker"),
         )
     }
@@ -265,11 +224,9 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("ContentPrefetchRepositoryAndroid"),
             settingsRepository = get(),
             databaseHelper = get(),
-            dispatcherProvider = get(),
-            htmlRetriever = get(),
             appContext = get(),
             feedItemContentFileHandler = get(),
-            kleadFeedItemParserWorker = get(KLEAD_PREFETCH_PARSER),
+            kleadFeedItemParserWorker = get(),
         )
     }
 
@@ -282,5 +239,3 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
 internal actual fun platformLogWriters(): List<LogWriter> =
     listOf(platformLogWriter())
-
-private val KLEAD_PREFETCH_PARSER = named("kleadPrefetchParser")

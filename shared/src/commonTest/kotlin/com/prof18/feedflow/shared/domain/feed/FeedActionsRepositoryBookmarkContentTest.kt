@@ -55,9 +55,30 @@ class FeedActionsRepositoryBookmarkContentTest : KoinTestBase() {
     }
 
     @Test
-    fun `bookmarking does not parse when save on open is disabled`() = runTest(testDispatcher) {
+    fun `bookmarking saves parsed content even when save on open is disabled`() = runTest(testDispatcher) {
         settingsRepository.setSaveItemContentOnOpen(false)
         insertFeedItem()
+
+        feedActionsRepository.updateBookmarkStatus(FeedItemId(ITEM_ID), isBookmarked = true)
+
+        assertEquals(1, parseCount)
+        assertEquals("Parsed", feedItemContentFileHandler.loadFeedItemContent(ITEM_ID))
+    }
+
+    @Test
+    fun `bookmarking does not parse when content is already saved`() = runTest(testDispatcher) {
+        insertFeedItem()
+        feedItemContentFileHandler.saveFeedItemContentToFile(ITEM_ID, "Cached")
+
+        feedActionsRepository.updateBookmarkStatus(FeedItemId(ITEM_ID), isBookmarked = true)
+
+        assertEquals(0, parseCount)
+        assertEquals("Cached", feedItemContentFileHandler.loadFeedItemContent(ITEM_ID))
+    }
+
+    @Test
+    fun `bookmarking does not parse links that reader mode cannot open`() = runTest(testDispatcher) {
+        insertFeedItem(url = "https://www.youtube.com/watch?v=abc")
 
         feedActionsRepository.updateBookmarkStatus(FeedItemId(ITEM_ID), isBookmarked = true)
 
@@ -76,7 +97,7 @@ class FeedActionsRepositoryBookmarkContentTest : KoinTestBase() {
         assertFalse(feedItemContentFileHandler.isContentAvailable(ITEM_ID))
     }
 
-    private suspend fun insertFeedItem() {
+    private suspend fun insertFeedItem(url: String? = null) {
         val feedSource = FeedSource(
             id = "source-1",
             url = "https://example.com/source-1/feed.xml",
@@ -94,7 +115,11 @@ class FeedActionsRepositoryBookmarkContentTest : KoinTestBase() {
         )
         databaseHelper.insertFeedSourceWithCategory(feedSource)
         databaseHelper.insertFeedItems(
-            listOf(buildFeedItem(ITEM_ID, "Article", 10_000L, feedSource)),
+            listOf(
+                buildFeedItem(ITEM_ID, "Article", 10_000L, feedSource).let { item ->
+                    if (url == null) item else item.copy(url = url)
+                },
+            ),
             lastSyncTimestamp = 0,
         )
     }

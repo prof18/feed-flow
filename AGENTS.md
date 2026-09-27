@@ -100,10 +100,6 @@ Use the Gradle daemon for manual local runs so repeated desktop iterations stay 
 
 Use the MCP tools when you need to interact with the running Desktop app: check status, reload code changes, list windows, capture screenshots, inspect the semantic tree, click/type/scroll, or resize windows. The MCP server is experimental in Compose Hot Reload; if it is unavailable or not connected, fall back to `./gradlew --quiet --console=plain desktopApp:run` and note the limitation in handoff.
 
-### Desktop reader parser bundles
-
-The desktop feed-content bundle `turndown-es5.js` in `shared/src/jvmMain/resources/` is a committed pre-built ES5 artifact; do not hand-edit it (the generator tool has been removed from the repo). `reader-content-parser.js` is hand-written glue and can be edited normally.
-
 ### Local Klead development
 
 Klead resolves from Maven Central by default. Its composite-build substitution in `settings.gradle.kts` is deliberately commented out; only enable it for explicit local Klead work, using `-Pfeedflow.kleadPath=<checkout>` (default: `../../klead`), and do not commit that local substitution.

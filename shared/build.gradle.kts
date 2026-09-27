@@ -202,8 +202,6 @@ kotlin {
 
             dependencies {
                 implementation(libs.kotlinx.coroutines.swing)
-                implementation(libs.htmlunit)
-                implementation(libs.kotlinx.serialization.json)
                 api(libs.sentry)
             }
         }

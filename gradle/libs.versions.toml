@@ -38,7 +38,6 @@ google-oauth-client-jetty = "1.39.0"
 google-identity-googleid = "1.2.1"
 google-play-services-auth = "22.0.0"
 haze = "1.7.3"
-htmlunit = "5.5.0"
 glance = "1.2.0"
 google-services = "4.5.0"
 immutable-collections = "0.5.2"
@@ -143,7 +142,6 @@ firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 flatlaf = { module = "com.formdev:flatlaf", version.ref = "flatlaf" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
-htmlunit = { module = "org.htmlunit:htmlunit", version.ref = "htmlunit" }
 glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 glance-material = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
 google-api-client = { module = "com.google.api-client:google-api-client", version.ref = "google-api-client" }

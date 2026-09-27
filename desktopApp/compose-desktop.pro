@@ -255,27 +255,9 @@
 -dontnote sun.misc.Unsafe
 -dontwarn sun.misc.Unsafe
 
-# HtmlUnit + Apache Commons Logging
-# Commons Logging uses reflection to find LogFactoryImpl at runtime
+# Apache Commons Logging uses reflection to find LogFactoryImpl at runtime
 -keep class org.apache.commons.logging.** { *; }
--keep class org.htmlunit.** { *; }
--dontwarn org.htmlunit.**
 -dontwarn org.apache.commons.logging.**
-
-# HtmlUnit transitive dependencies loaded via reflection/ServiceLoader
--dontwarn net.sourceforge.htmlunit.**
--dontwarn org.apache.http.**
--dontwarn org.eclipse.jetty.**
-
-# HtmlUnit + Apache Commons Logging
-# Commons Logging uses reflection to find LogFactoryImpl at runtime
--keep class org.apache.commons.logging.** { *; }
--keep class org.htmlunit.** { *; }
--dontwarn org.htmlunit.**
--dontwarn org.apache.commons.logging.**
-
-# HtmlUnit transitive dependencies loaded via reflection/ServiceLoader
--dontwarn net.sourceforge.htmlunit.**
 -dontwarn org.apache.http.**
 -dontwarn org.eclipse.jetty.**
 

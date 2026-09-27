@@ -3,42 +3,16 @@ package com.prof18.feedflow.shared.domain.parser
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
+import com.prof18.klead.Klead
+import com.prof18.klead.KleadOptions
+import com.prof18.klead.KleadOutput
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import org.htmlunit.BrowserVersion
-import org.htmlunit.WebClient
-import org.htmlunit.corejs.javascript.Undefined
-import org.htmlunit.html.HtmlPage
 
 internal class DesktopFeedContentPreparer(
     private val logger: Logger,
     private val dispatcherProvider: DispatcherProvider,
 ) : FeedContentPreparer {
-
-    private fun loadResource(name: String): String =
-        DesktopFeedContentPreparer::class.java
-            .getResourceAsStream("/$name")
-            ?.bufferedReader()
-            ?.readText()
-            ?: error("Could not load $name")
-
-    private val htmlShell: String by lazy {
-        val turndownJs = loadResource("turndown-es5.js")
-        val readerContentParserJs = loadResource("reader-content-parser.js")
-        // language=HTML
-        """
-        <html dir='auto'>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <script>$turndownJs</script>
-          <script>$readerContentParserJs</script>
-        </head>
-        <body></body>
-        </html>
-        """.trimIndent()
-    }
 
     override suspend fun prepare(
         html: String,
@@ -47,62 +21,25 @@ internal class DesktopFeedContentPreparer(
         imageUrl: String?,
         siteName: String?,
     ): String = withContext(dispatcherProvider.io) {
-        val htmlEscaped = Json.encodeToString(html)
-        val baseUrlEscaped = baseUrl?.let { Json.encodeToString(it) } ?: "null"
-
-        val convertedContent = WebClient(BrowserVersion.CHROME).use { webClient ->
-            webClient.options.apply {
-                isCssEnabled = false
-                isDownloadImages = false
-                isThrowExceptionOnFailingStatusCode = false
-                isThrowExceptionOnScriptError = true
-            }
-
-            val page: HtmlPage = webClient.loadHtmlCodeIntoCurrentWindow(htmlShell)
-
-            val script = """
-                var conversionResult = null;
-                var conversionError = null;
-                try {
-                    conversionResult = convertFeedContentToMarkdown($htmlEscaped, $baseUrlEscaped);
-                    var parsed = JSON.parse(conversionResult);
-                    if (parsed.error) {
-                        conversionError = parsed.error;
-                        conversionResult = null;
-                    }
-                } catch(e) {
-                    conversionError = e.toString();
-                }
-            """.trimIndent()
-
-            try {
-                page.executeJavaScript(script)
-            } catch (e: Exception) {
-                logger.d(e) { "JS error converting feed content to markdown" }
-                return@use html
-            }
-
-            val errorObj = page.executeJavaScript("conversionError").javaScriptResult
-            if (errorObj != null && errorObj != Undefined.instance) {
-                logger.d { "Feed content conversion JS error: $errorObj" }
-                return@use html
-            }
-
-            val resultObj = page.executeJavaScript("conversionResult").javaScriptResult
-            if (resultObj == null || resultObj == Undefined.instance) {
-                return@use html
-            }
-
-            val jsObject = Json.parseToJsonElement(resultObj.toString()).jsonObject
-            jsObject["content"]?.jsonPrimitive?.content ?: html
-        }
-
         buildFeedReaderMarkdown(
-            content = convertedContent,
+            content = convertToMarkdown(html, baseUrl) ?: html,
             title = title,
             imageUrl = imageUrl,
             siteName = siteName,
         )
+    }
+
+    private suspend fun convertToMarkdown(html: String, baseUrl: String?): String? = try {
+        Klead.parseHtml(
+            html = "<html><body><article>$html</article></body></html>",
+            url = baseUrl?.takeIf { it.isNotBlank() } ?: FALLBACK_BASE_URL,
+            options = KleadOptions(outputs = setOf(KleadOutput.MARKDOWN)),
+        ).content.requireMarkdown().trim().takeIf { it.isNotEmpty() }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Throwable) {
+        logger.d(e) { "Error converting feed content to markdown with Klead" }
+        null
     }
 }
 
@@ -128,6 +65,7 @@ internal fun buildFeedReaderMarkdown(
 }
 
 private const val LEADING_IMAGE_SCAN_WINDOW = 1000
+private const val FALLBACK_BASE_URL = "https://localhost/"
 private val leadingImageRegex = Regex(
     pattern = "!\\[[^]]*]\\([^)]+\\)|<img\\b",
     option = RegexOption.IGNORE_CASE,

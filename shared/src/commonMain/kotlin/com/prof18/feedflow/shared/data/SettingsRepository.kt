@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.NotificationMode
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.model.appDefaultArticleOpenMode
@@ -73,6 +74,13 @@ class SettingsRepository(
 
     private val uncategorizedPositionMutableFlow = MutableStateFlow(getUncategorizedPosition())
     internal val uncategorizedPositionFlow: StateFlow<Int> = uncategorizedPositionMutableFlow.asStateFlow()
+
+    private val readerModeBodyFontMutableFlow = MutableStateFlow(getReaderModeBodyFont())
+    val readerModeBodyFontFlow: StateFlow<ReaderFontFamily> = readerModeBodyFontMutableFlow.asStateFlow()
+
+    private val readerModeHeadlineFontMutableFlow = MutableStateFlow(getReaderModeHeadlineFont())
+    val readerModeHeadlineFontFlow: StateFlow<ReaderFontFamily> =
+        readerModeHeadlineFontMutableFlow.asStateFlow()
 
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
@@ -203,6 +211,26 @@ class SettingsRepository(
 
     fun setReaderModeLineHeight(value: Int) =
         settings.set(SettingsFields.READER_MODE_LINE_HEIGHT.name, value)
+
+    fun getReaderModeBodyFont(): ReaderFontFamily =
+        ReaderFontFamily.fromStorageName(
+            settings.getStringOrNull(SettingsFields.READER_MODE_BODY_FONT.name),
+        )
+
+    fun setReaderModeBodyFont(value: ReaderFontFamily) {
+        settings[SettingsFields.READER_MODE_BODY_FONT.name] = value.name
+        readerModeBodyFontMutableFlow.update { value }
+    }
+
+    fun getReaderModeHeadlineFont(): ReaderFontFamily =
+        ReaderFontFamily.fromStorageName(
+            settings.getStringOrNull(SettingsFields.READER_MODE_HEADLINE_FONT.name),
+        )
+
+    fun setReaderModeHeadlineFont(value: ReaderFontFamily) {
+        settings[SettingsFields.READER_MODE_HEADLINE_FONT.name] = value.name
+        readerModeHeadlineFontMutableFlow.update { value }
+    }
 
     /**
      * The app-wide default, always a concrete mode. [ArticleOpenMode.DEFAULT] only means "follow the
@@ -340,6 +368,8 @@ private enum class SettingsFields {
     CLOUD_SYNC_SESSION,
     READER_MODE_FONT_SIZE,
     READER_MODE_LINE_HEIGHT,
+    READER_MODE_BODY_FONT,
+    READER_MODE_HEADLINE_FONT,
     ARTICLE_OPEN_MODE,
     AUTO_DELETE_PERIOD,
     CRASH_REPORTING_ENABLED,

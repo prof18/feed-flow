@@ -16,6 +16,8 @@ struct SearchScreen: View {
     @State private var currentFeedFilter: FeedFilter?
 
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
+    @State private var bodyFont: ReaderFontFamily = .system
+    @State private var headlineFont: ReaderFontFamily = .system
 
     @State private var feedItemDisplaySettings = FeedItemDisplaySettings(
         isHideUnreadDotEnabled: false,
@@ -62,6 +64,8 @@ struct SearchScreen: View {
                 vmStoreOwner.instance.markAllBelowAsRead(targetItemId: feedItemId)
             }
         )
+        .environment(\.feedBodyFont, bodyFont)
+        .environment(\.feedHeadlineFont, headlineFont)
         .snackbar(messageQueue: $appState.snackbarQueue)
         .onChange(of: searchText) {
             vmStoreOwner.instance.updateSearchQuery(query: searchText)
@@ -79,6 +83,16 @@ struct SearchScreen: View {
         .task {
             for await state in vmStoreOwner.instance.feedFontSizeState {
                 self.feedFontSizes = state
+            }
+        }
+        .task {
+            for await state in vmStoreOwner.instance.bodyFontState {
+                self.bodyFont = state
+            }
+        }
+        .task {
+            for await state in vmStoreOwner.instance.headlineFontState {
+                self.headlineFont = state
             }
         }
         .task {

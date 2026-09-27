@@ -20,9 +20,13 @@ internal fun AppearanceScreen(
     AppearanceScreenContent(
         navigateBack = navigateBack,
         themeMode = settingsState.themeMode,
+        bodyFont = settingsState.bodyFont,
+        headlineFont = settingsState.headlineFont,
         isReduceMotionEnabled = extrasState.isReduceMotionEnabled,
         isHideUnreadCountEnabled = settingsState.isHideUnreadCountEnabled,
         onThemeModeSelected = mainSettingsViewModel::updateThemeMode,
+        onBodyFontSelected = mainSettingsViewModel::updateBodyFont,
+        onHeadlineFontSelected = mainSettingsViewModel::updateHeadlineFont,
         onReduceMotionToggled = extrasSettingsViewModel::updateReduceMotionEnabled,
         onHideUnreadCountToggled = mainSettingsViewModel::updateHideUnreadCount,
     )

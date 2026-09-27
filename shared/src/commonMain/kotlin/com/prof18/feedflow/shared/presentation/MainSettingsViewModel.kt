@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -28,6 +29,8 @@ class MainSettingsViewModel internal constructor(
                 MainSettingsState(
                     themeMode = themeMode,
                     isHideUnreadCountEnabled = isHideUnreadCountEnabled,
+                    bodyFont = settingsRepository.getReaderModeBodyFont(),
+                    headlineFont = settingsRepository.getReaderModeHeadlineFont(),
                 )
             }
         }
@@ -44,6 +47,20 @@ class MainSettingsViewModel internal constructor(
         feedAppearanceSettingsRepository.setHideUnreadCount(value)
         settingsMutableState.update {
             it.copy(isHideUnreadCountEnabled = value)
+        }
+    }
+
+    fun updateBodyFont(font: ReaderFontFamily) {
+        settingsRepository.setReaderModeBodyFont(font)
+        settingsMutableState.update {
+            it.copy(bodyFont = font)
+        }
+    }
+
+    fun updateHeadlineFont(font: ReaderFontFamily) {
+        settingsRepository.setReaderModeHeadlineFont(font)
+        settingsMutableState.update {
+            it.copy(headlineFont = font)
         }
     }
 }

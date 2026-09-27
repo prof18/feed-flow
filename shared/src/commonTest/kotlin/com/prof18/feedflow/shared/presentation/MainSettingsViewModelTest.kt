@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.test.KoinTestBase
 import kotlinx.coroutines.test.runTest
@@ -43,5 +44,17 @@ class MainSettingsViewModelTest : KoinTestBase() {
     fun `updateHideUnreadCount updates state`() = runTest {
         viewModel.updateHideUnreadCount(true)
         assertTrue(viewModel.settingsState.value.isHideUnreadCountEnabled)
+    }
+
+    @Test
+    fun `updateBodyFont updates appearance state`() = runTest {
+        viewModel.updateBodyFont(ReaderFontFamily.OUTFIT)
+        assertEquals(ReaderFontFamily.OUTFIT, viewModel.settingsState.value.bodyFont)
+    }
+
+    @Test
+    fun `updateHeadlineFont updates appearance state`() = runTest {
+        viewModel.updateHeadlineFont(ReaderFontFamily.SOURCE_SERIF_4)
+        assertEquals(ReaderFontFamily.SOURCE_SERIF_4, viewModel.settingsState.value.headlineFont)
     }
 }

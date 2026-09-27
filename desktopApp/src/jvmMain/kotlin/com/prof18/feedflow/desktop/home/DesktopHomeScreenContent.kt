@@ -234,6 +234,8 @@ fun DesktopHomeScreenContent(
                                             end = displayState.feedLayout.endContentInset(),
                                         ),
                                         feedFontSize = displayState.feedFontSizes,
+                                        bodyFont = displayState.bodyFont,
+                                        headlineFont = displayState.headlineFont,
                                         nextFeedState = displayState.nextFeedDisplayState,
                                         shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
                                         shareMenuLabel = shareBehavior.shareLinkTitle,

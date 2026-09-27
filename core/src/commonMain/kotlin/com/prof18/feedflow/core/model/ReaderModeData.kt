@@ -8,6 +8,8 @@ data class ReaderModeData(
     val baseUrl: String,
     val fontSize: Int,
     val lineHeight: Int,
+    val bodyFont: ReaderFontFamily = ReaderFontFamily.SYSTEM,
+    val headlineFont: ReaderFontFamily = ReaderFontFamily.SYSTEM,
     val isBookmarked: Boolean,
     val commentsUrl: String? = null,
     val imageUrl: String? = null,

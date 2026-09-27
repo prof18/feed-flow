@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.domain
 
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -7,6 +8,43 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ReaderModeHtmlAndCssTest {
+
+    @Test
+    fun `readerModeCss uses system font stack by default`() {
+        val css = readerModeCss(colors = null, fontSize = 18, lineHeight = 0)
+
+        assertTrue(css.contains(ReaderFontFamily.SYSTEM_FONT_STACK))
+        assertFalse(css.contains("@font-face"))
+    }
+
+    @Test
+    fun `readerModeCss applies bundled body and headline fonts`() {
+        val css = readerModeCss(
+            colors = null,
+            fontSize = 18,
+            lineHeight = 0,
+            bodyFont = ReaderFontFamily.OUTFIT,
+            headlineFont = ReaderFontFamily.LITERATA,
+        )
+
+        assertTrue(css.contains("FeedFlow Outfit"))
+        assertTrue(css.contains("FeedFlow Literata"))
+        // @font-face needs platform font bytes (JVM/iOS resources). Android host tests
+        // without Application assets still get the correct family names above.
+        if (css.contains("@font-face")) {
+            assertTrue(css.contains("font-weight: 400"))
+            assertFalse(css.contains("font-weight: 100 900"))
+        }
+    }
+
+    @Test
+    fun `readerFontFamilyJs updates body and headline families`() {
+        val js = readerFontFamilyJs(ReaderFontFamily.INTER, ReaderFontFamily.LORA)
+
+        assertTrue(js.contains("__feedflow_font_family_style"))
+        assertTrue(js.contains("FeedFlow Inter"))
+        assertTrue(js.contains("FeedFlow Lora"))
+    }
 
     @Test
     fun `reader mode css hides images that failed to load`() {

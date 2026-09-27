@@ -28,6 +28,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.notification.Notifier
+import com.prof18.feedflow.shared.domain.readerfont.ReaderFontAndroidContext
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import kotlinx.coroutines.launch
@@ -50,6 +51,8 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
 
     override fun onCreate() {
         super.onCreate()
+
+        ReaderFontAndroidContext.appContext = applicationContext
 
         val isGooglePlayFlavor = when (BuildConfig.FLAVOR) {
             "googlePlay" -> true

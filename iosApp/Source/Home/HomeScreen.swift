@@ -34,6 +34,8 @@ struct HomeScreen: View {
     @State private var showFeedSyncButton = false
 
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
+    @State private var bodyFont: ReaderFontFamily = .system
+    @State private var headlineFont: ReaderFontFamily = .system
 
     @State private var swipeActions: SwipeActions = .init(leftSwipeAction: .none, rightSwipeAction: .none)
 
@@ -144,6 +146,8 @@ struct HomeScreen: View {
                 homeViewModel.reloadFeedState()
             }
         )
+        .environment(\.feedBodyFont, bodyFont)
+        .environment(\.feedHeadlineFont, headlineFont)
         .refreshable { [homeViewModel] in
             homeViewModel.refreshCurrentFilter()
         }
@@ -217,6 +221,16 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.feedFontSizeState {
                 self.feedFontSizes = state
+            }
+        }
+        .task {
+            for await state in homeViewModel.bodyFontState {
+                self.bodyFont = state
+            }
+        }
+        .task {
+            for await state in homeViewModel.headlineFontState {
+                self.headlineFont = state
             }
         }
         .task {

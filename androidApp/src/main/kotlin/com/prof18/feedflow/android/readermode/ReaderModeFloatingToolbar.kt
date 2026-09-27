@@ -52,6 +52,7 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.i18n.FeedFlowStrings
@@ -102,6 +103,10 @@ fun ReaderModeFloatingToolbar(
     onFontSizeChange: (Int) -> Unit,
     lineHeight: Int,
     onLineHeightChange: (Int) -> Unit,
+    bodyFont: ReaderFontFamily,
+    onBodyFontChange: (ReaderFontFamily) -> Unit,
+    headlineFont: ReaderFontFamily,
+    onHeadlineFontChange: (ReaderFontFamily) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showFontSizeMenu by remember { mutableStateOf(false) }
@@ -318,6 +323,10 @@ fun ReaderModeFloatingToolbar(
                 onFontSizeChange = onFontSizeChange,
                 lineHeight = lineHeight,
                 onLineHeightChange = onLineHeightChange,
+                bodyFont = bodyFont,
+                onBodyFontChange = onBodyFontChange,
+                headlineFont = headlineFont,
+                onHeadlineFontChange = onHeadlineFontChange,
                 resetButtonModifier = Modifier.testTag(ReaderModeE2eIds.TEXT_SETTINGS_RESET_BUTTON),
             )
         }

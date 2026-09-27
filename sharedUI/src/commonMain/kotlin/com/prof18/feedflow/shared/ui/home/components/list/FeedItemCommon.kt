@@ -32,6 +32,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
+import com.prof18.feedflow.shared.ui.home.LocalFeedContentTypography
 import com.prof18.feedflow.shared.ui.home.components.FeedItemHeroImage
 import com.prof18.feedflow.shared.ui.home.components.FeedItemImage
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -115,6 +116,7 @@ internal fun TitleSubtitleAndImageRow(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val contentTypography = LocalFeedContentTypography.current
         Column(
             modifier = Modifier
                 .weight(1f),
@@ -124,6 +126,7 @@ internal fun TitleSubtitleAndImageRow(
                     text = title,
                     fontSize = feedFontSize.feedTitleFontSize.sp,
                     fontWeight = FontWeight.Bold,
+                    fontFamily = contentTypography.titleFontFamily,
                     style = MaterialTheme.typography.titleSmall,
                     lineHeight = (feedFontSize.feedTitleFontSize + 4).sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(
@@ -152,6 +155,7 @@ internal fun TitleSubtitleAndImageRow(
                     overflow = TextOverflow.Ellipsis,
                     fontSize = feedFontSize.feedDescFontSize.sp,
                     lineHeight = (feedFontSize.feedDescFontSize + 6).sp,
+                    fontFamily = contentTypography.bodyFontFamily,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(
                         alpha = if (feedItem.isRead &&
@@ -196,6 +200,7 @@ internal fun FeedItemImageCardContent(
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
+        val contentTypography = LocalFeedContentTypography.current
         feedItem.imageUrl?.let { url ->
             FeedItemHeroImage(
                 modifier = Modifier.testTag(FeedItemE2eIds.image(feedItem.id)),
@@ -229,6 +234,7 @@ internal fun FeedItemImageCardContent(
                     overflow = TextOverflow.Ellipsis,
                     fontSize = feedFontSize.feedTitleFontSize.sp,
                     fontWeight = FontWeight.Bold,
+                    fontFamily = contentTypography.titleFontFamily,
                     style = MaterialTheme.typography.titleSmall,
                     lineHeight = (feedFontSize.feedTitleFontSize + 4).sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(
@@ -245,6 +251,7 @@ internal fun FeedItemImageCardContent(
                     overflow = TextOverflow.Ellipsis,
                     fontSize = feedFontSize.feedDescFontSize.sp,
                     lineHeight = (feedFontSize.feedDescFontSize + 6).sp,
+                    fontFamily = contentTypography.bodyFontFamily,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                         alpha = feedItem.readAlpha(currentFeedFilter),

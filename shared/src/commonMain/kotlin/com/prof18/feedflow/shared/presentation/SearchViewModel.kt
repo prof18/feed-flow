@@ -8,9 +8,11 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -44,6 +46,7 @@ class SearchViewModel internal constructor(
     private val feedFontSizeRepository: FeedFontSizeRepository,
     private val feedStateRepository: FeedStateRepository,
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val searchMutableState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState.EmptyState)
@@ -65,6 +68,8 @@ class SearchViewModel internal constructor(
 
     private val mappingSettings = feedAppearanceSettingsRepository.getFeedItemMappingSettings()
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
+    val bodyFontState: StateFlow<ReaderFontFamily> = settingsRepository.readerModeBodyFontFlow
+    val headlineFontState: StateFlow<ReaderFontFamily> = settingsRepository.readerModeHeadlineFontFlow
     val feedItemDisplaySettings: StateFlow<FeedItemDisplaySettings> = combine(
         feedAppearanceSettingsRepository.hideUnreadDot,
         feedAppearanceSettingsRepository.hideFeedSource,

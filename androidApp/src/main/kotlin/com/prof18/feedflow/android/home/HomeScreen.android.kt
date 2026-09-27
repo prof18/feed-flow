@@ -65,6 +65,8 @@ internal fun HomeScreen(
     val unReadCount by homeViewModel.unreadCountFlow.collectAsStateWithLifecycle(initialValue = 0)
     val isUnreadCountHidden by homeViewModel.isUnreadCountHidden.collectAsStateWithLifecycle()
     val feedFontSizes by homeViewModel.feedFontSizeState.collectAsStateWithLifecycle()
+    val bodyFont by homeViewModel.bodyFontState.collectAsStateWithLifecycle()
+    val headlineFont by homeViewModel.headlineFontState.collectAsStateWithLifecycle()
     val swipeActions by homeViewModel.swipeActions.collectAsStateWithLifecycle()
     val feedOperation by homeViewModel.feedOperationState.collectAsStateWithLifecycle()
     val feedLayout by homeViewModel.feedLayout.collectAsStateWithLifecycle()
@@ -127,6 +129,8 @@ internal fun HomeScreen(
         isUnreadCountHidden,
         loadingState,
         feedFontSizes,
+        bodyFont,
+        headlineFont,
         currentFeedFilter,
         swipeActions,
         feedLayout,
@@ -142,6 +146,8 @@ internal fun HomeScreen(
             isUnreadCountHidden = isUnreadCountHidden,
             feedUpdateStatus = loadingState,
             feedFontSizes = feedFontSizes,
+            bodyFont = bodyFont,
+            headlineFont = headlineFont,
             currentFeedFilter = currentFeedFilter,
             swipeActions = swipeActions,
             feedLayout = feedLayout,

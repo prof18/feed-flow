@@ -34,6 +34,8 @@ class FeedActionsRepositoryBookmarkContentTest : KoinTestBase() {
                     parseCount++
                     return "Parsed"
                 }
+
+                override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = html
             }
         }
     }

@@ -1,3 +1,5 @@
 package com.prof18.feedflow.shared.domain.parser
 
-internal actual val readerContentFormat: KleadContentFormat = KleadContentFormat.HTML
+import com.prof18.klead.KleadOutput
+
+internal actual val readerContentFormat: KleadOutput = KleadOutput.HTML

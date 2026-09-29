@@ -42,6 +42,7 @@ import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feeditem.ReaderContentCacheMigration
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
@@ -193,7 +194,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             accountsRepository = get(),
             feedAppearanceSettingsRepository = get(),
             feedStateRepository = get(),
-            feedItemParserWorker = get(),
+            readerContentFetcher = get(),
             feedItemContentFileHandler = get(),
         )
     }
@@ -203,6 +204,13 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             contentFormat = readerContentFormat,
             htmlRetriever = get(),
             logger = getWith("KleadFeedItemParserWorker"),
+        )
+    }
+
+    factory {
+        ReaderContentFetcher(
+            feedItemParserWorker = get(),
+            feedItemContentFileHandler = get(),
         )
     }
 
@@ -218,8 +226,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         ContentPrefetcher(
             logger = getWith("ContentPrefetcher"),
             databaseHelper = get(),
-            feedItemParserWorker = get(),
-            feedItemContentFileHandler = get(),
+            readerContentFetcher = get(),
         )
     }
 
@@ -419,10 +426,10 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             settingsRepository = get(),
             feedActionsRepository = get(),
             feedItemParserWorker = get(),
+            readerContentFetcher = get(),
             feedItemContentFileHandler = get(),
             feedStateRepository = get(),
             databaseHelper = get(),
-            feedContentPreparer = get(),
         )
     }
 

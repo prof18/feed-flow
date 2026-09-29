@@ -63,6 +63,8 @@ class ReaderModeViewModelTest : KoinTestBase() {
                             "Content-$pathSegment"
                         }
                     }
+
+                override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = html
             }
         }
     }
@@ -1008,6 +1010,8 @@ class ReaderModeViewModelTimeoutTest : KoinTestBase() {
                     delay(2.minutes)
                     return "Content"
                 }
+
+                override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = html
             }
         }
     }

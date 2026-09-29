@@ -1,24 +1,22 @@
 package com.prof18.feedflow.shared.domain.parser
 
-import android.content.Context
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import kotlinx.coroutines.withContext
 import java.io.File
 
-internal class FeedItemContentFileHandlerAndroid(
-    private val appContext: Context,
+internal class JvmFeedItemContentFileHandler(
+    private val articlesDirectory: File,
     private val dispatcherProvider: DispatcherProvider,
     private val logger: Logger,
 ) : FeedItemContentFileHandler {
 
     private fun getArticlesDirectory(): File {
-        val dir = File(appContext.filesDir, ARTICLES_DIR)
-        if (!dir.exists()) {
-            dir.mkdirs()
+        if (!articlesDirectory.exists()) {
+            articlesDirectory.mkdirs()
         }
-        return dir
+        return articlesDirectory
     }
 
     private fun getArticleFile(feedItemId: String): File {
@@ -95,6 +93,6 @@ internal class FeedItemContentFileHandlerAndroid(
     }
 
     companion object {
-        private const val ARTICLES_DIR = "articles"
+        internal const val ARTICLES_DIR = "articles"
     }
 }

@@ -21,9 +21,7 @@ import com.prof18.feedflow.shared.domain.contentprefetch.WorkManagerBackgroundPr
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
-import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.HtmlFeedContentPreparer
 import com.prof18.feedflow.shared.domain.feedsync.AndroidSyncDatabaseFileProvider
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
@@ -36,7 +34,7 @@ import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerAndroid
-import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerAndroid
+import com.prof18.feedflow.shared.domain.parser.JvmFeedItemContentFileHandler
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
@@ -48,6 +46,7 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import java.io.File
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
     single<SyncDatabaseFileProvider> {
@@ -108,15 +107,11 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     single<FeedItemContentFileHandler> {
-        FeedItemContentFileHandlerAndroid(
-            appContext = get(),
+        JvmFeedItemContentFileHandler(
+            articlesDirectory = File(get<Context>().filesDir, JvmFeedItemContentFileHandler.ARTICLES_DIR),
             dispatcherProvider = get(),
             logger = getWith("FeedItemContentFileHandler"),
         )
-    }
-
-    single<FeedContentPreparer> {
-        HtmlFeedContentPreparer()
     }
 
     viewModel {

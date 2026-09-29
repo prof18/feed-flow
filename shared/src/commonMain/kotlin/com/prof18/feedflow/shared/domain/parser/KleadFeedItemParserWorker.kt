@@ -9,7 +9,7 @@ import com.prof18.klead.KleadOutput
 import kotlinx.coroutines.CancellationException
 
 internal class KleadFeedItemParserWorker(
-    private val contentFormat: KleadContentFormat,
+    private val contentFormat: KleadOutput,
     private val htmlRetriever: HtmlRetriever,
     private val logger: Logger,
 ) : FeedItemParserWorker {
@@ -27,11 +27,11 @@ internal class KleadFeedItemParserWorker(
             val content = Klead.parseHtml(
                 html = html,
                 url = url,
-                options = KleadOptions(outputs = setOf(contentFormat.toKleadOutput())),
+                options = KleadOptions(outputs = setOf(contentFormat)),
             ).content.let { kleadContent ->
                 when (contentFormat) {
-                    KleadContentFormat.HTML -> kleadContent.requireHtml()
-                    KleadContentFormat.MARKDOWN -> kleadContent.requireMarkdown()
+                    KleadOutput.HTML -> kleadContent.requireHtml()
+                    KleadOutput.MARKDOWN -> kleadContent.requireMarkdown()
                 }
             }.trim()
 
@@ -50,22 +50,36 @@ internal class KleadFeedItemParserWorker(
             null
         }
     }
+
+    override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = when (contentFormat) {
+        KleadOutput.HTML -> html
+        KleadOutput.MARKDOWN -> convertFeedHtmlToMarkdown(html, baseUrl) ?: html
+    }
+
+    private suspend fun convertFeedHtmlToMarkdown(html: String, baseUrl: String?): String? = try {
+        Klead.parseHtml(
+            html = "<html><body><article>$html</article></body></html>",
+            url = baseUrl?.takeIf { it.isNotBlank() } ?: FALLBACK_BASE_URL,
+            options = KleadOptions(outputs = setOf(KleadOutput.MARKDOWN)),
+        ).content.requireMarkdown().trim().takeIf { it.isNotEmpty() }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Throwable) {
+        logger.d(e) { "Error converting feed content to markdown with Klead" }
+        null
+    }
 }
 
-private fun KleadContentFormat.toKleadOutput(): KleadOutput = when (this) {
-    KleadContentFormat.HTML -> KleadOutput.HTML
-    KleadContentFormat.MARKDOWN -> KleadOutput.MARKDOWN
-}
-
-private fun String.visibleLength(contentFormat: KleadContentFormat): Int {
+private fun String.visibleLength(contentFormat: KleadOutput): Int {
     val visibleText = when (contentFormat) {
-        KleadContentFormat.HTML -> replace(HTML_TAG_REGEX, " ")
-        KleadContentFormat.MARKDOWN -> replace(MARKDOWN_IMAGE_REGEX, " ").replace(MARKDOWN_LINK_REGEX, "$1")
+        KleadOutput.HTML -> replace(HTML_TAG_REGEX, " ")
+        KleadOutput.MARKDOWN -> replace(MARKDOWN_IMAGE_REGEX, " ").replace(MARKDOWN_LINK_REGEX, "$1")
     }
     return visibleText.replace(WHITESPACE_REGEX, " ").trim().length
 }
 
 private const val MIN_CONTENT_LENGTH = 200
+private const val FALLBACK_BASE_URL = "https://localhost/"
 private val HTML_TAG_REGEX = Regex("<[^>]*>")
 private val MARKDOWN_IMAGE_REGEX = Regex("!\\[[^]]*]\\([^)]*\\)")
 private val MARKDOWN_LINK_REGEX = Regex("\\[([^]]*)]\\([^)]*\\)")

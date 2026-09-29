@@ -5,6 +5,7 @@ import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppConfig
+import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
@@ -22,7 +23,6 @@ import com.prof18.feedflow.shared.domain.contentprefetch.CoroutineBackgroundPref
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
-import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
@@ -32,8 +32,7 @@ import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerJvm
-import com.prof18.feedflow.shared.domain.parser.DesktopFeedContentPreparer
-import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerDesktop
+import com.prof18.feedflow.shared.domain.parser.JvmFeedItemContentFileHandler
 import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
@@ -46,6 +45,7 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import java.io.File
 import java.util.prefs.Preferences
 
 fun initKoinDesktop(
@@ -138,17 +138,13 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     single<FeedItemContentFileHandler> {
-        FeedItemContentFileHandlerDesktop(
+        JvmFeedItemContentFileHandler(
+            articlesDirectory = File(
+                AppDataPathBuilder.getAppDataPath(appEnvironment),
+                JvmFeedItemContentFileHandler.ARTICLES_DIR,
+            ),
             dispatcherProvider = get(),
             logger = getWith("FeedItemContentFileHandler"),
-            appEnvironment = appEnvironment,
-        )
-    }
-
-    single<FeedContentPreparer> {
-        DesktopFeedContentPreparer(
-            logger = getWith("FeedContentPreparer"),
-            dispatcherProvider = get(),
         )
     }
 

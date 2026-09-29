@@ -18,9 +18,9 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
-import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
 import io.ktor.http.Url
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,10 +34,10 @@ class ReaderModeViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val feedActionsRepository: FeedActionsRepository,
     private val feedItemParserWorker: FeedItemParserWorker,
+    private val readerContentFetcher: ReaderContentFetcher,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val feedStateRepository: FeedStateRepository,
     private val databaseHelper: DatabaseHelper,
-    private val feedContentPreparer: FeedContentPreparer,
 ) : ViewModel() {
 
     private val readerModeMutableState: MutableStateFlow<ReaderModeState> = MutableStateFlow(
@@ -144,15 +144,14 @@ class ReaderModeViewModel internal constructor(
         )
     }
 
-    private suspend fun parseWebContent(urlInfo: FeedItemUrlInfo, requestedArticleId: String): String? {
-        val content = withTimeoutOrNull(PARSE_TIMEOUT) {
-            feedItemParserWorker.parse(urlInfo.url)
-        }?.takeIf { it.isNotBlank() } ?: return null
-        if (settingsRepository.isSaveItemContentOnOpenEnabled()) {
-            feedItemContentFileHandler.saveFeedItemContentToFile(requestedArticleId, content)
+    private suspend fun parseWebContent(urlInfo: FeedItemUrlInfo, requestedArticleId: String): String? =
+        withTimeoutOrNull(PARSE_TIMEOUT) {
+            readerContentFetcher.fetch(
+                feedItemId = requestedArticleId,
+                url = urlInfo.url,
+                save = settingsRepository.isSaveItemContentOnOpenEnabled(),
+            )
         }
-        return content
-    }
 
     private suspend fun loadFeedContent(urlInfo: FeedItemUrlInfo): ReaderModeData? {
         val feedContent = databaseHelper.getFeedItemContent(urlInfo.id)
@@ -163,7 +162,7 @@ class ReaderModeViewModel internal constructor(
         val feedBaseUrl = urlInfo.url.ifBlank {
             (urlInfo.feedSourceBaseUrl ?: storedUrlInfo?.feedSourceBaseUrl).orEmpty()
         }
-        val prepared = feedContentPreparer.prepare(html = feedContent, baseUrl = feedBaseUrl)
+        val prepared = feedItemParserWorker.prepareFeedContent(html = feedContent, baseUrl = feedBaseUrl)
         if (prepared.isBlank()) return null
         return buildReaderModeData(
             urlInfo = urlInfo,

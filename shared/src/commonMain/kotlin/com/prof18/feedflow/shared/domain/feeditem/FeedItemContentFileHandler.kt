@@ -1,11 +1,7 @@
 package com.prof18.feedflow.shared.domain.feeditem
 
 /**
- *
- * Implementations handle platform-specific file I/O:
- * - Android: context.filesDir
- * - iOS: App Group container
- * - Desktop: user.home/.feedflow/articles
+ * Android and Desktop share `JvmFeedItemContentFileHandler`; iOS stores files in the App Group container.
  */
 interface FeedItemContentFileHandler {
     suspend fun saveFeedItemContentToFile(feedItemId: String, content: String)

@@ -6,6 +6,7 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.buildFeedItem
@@ -38,12 +39,16 @@ class ContentPrefetchRepositoryImplTest : KoinTestBase() {
             single<FeedItemParserWorker> { fakeParserWorker }
         }
 
+    private fun readerContentFetcher() = ReaderContentFetcher(
+        feedItemParserWorker = fakeParserWorker,
+        feedItemContentFileHandler = feedItemContentFileHandler,
+    )
+
     private fun createRepository(): ContentPrefetchRepositoryImpl {
         val contentPrefetcher = ContentPrefetcher(
             logger = testLogger,
             databaseHelper = databaseHelper,
-            feedItemParserWorker = fakeParserWorker,
-            feedItemContentFileHandler = feedItemContentFileHandler,
+            readerContentFetcher = readerContentFetcher(),
         )
         return ContentPrefetchRepositoryImpl(
             logger = testLogger,
@@ -211,8 +216,7 @@ class ContentPrefetchRepositoryImplTest : KoinTestBase() {
                 contentPrefetcher = ContentPrefetcher(
                     logger = testLogger,
                     databaseHelper = databaseHelper,
-                    feedItemParserWorker = fakeParserWorker,
-                    feedItemContentFileHandler = feedItemContentFileHandler,
+                    readerContentFetcher = readerContentFetcher(),
                 ),
                 backgroundPrefetchScheduler = scheduler,
             )
@@ -294,5 +298,7 @@ class ContentPrefetchRepositoryImplTest : KoinTestBase() {
             onParse(url)
             return content
         }
+
+        override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = html
     }
 }

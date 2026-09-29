@@ -29,9 +29,7 @@ import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
-import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.HtmlFeedContentPreparer
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
@@ -120,7 +118,6 @@ fun initKoinIos(
             single { dropboxDataSource }
             single { googleDrivePlatformClient }
             single { telemetry }
-            single<FeedContentPreparer> { HtmlFeedContentPreparer() }
             single<Notifier> { notifier }
             single<RssParserWrapper> {
                 RssParserWrapperImpl(

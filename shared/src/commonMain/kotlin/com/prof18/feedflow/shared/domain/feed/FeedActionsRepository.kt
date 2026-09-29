@@ -15,7 +15,7 @@ import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.SyncError
@@ -31,7 +31,7 @@ internal class FeedActionsRepository(
     private val accountsRepository: AccountsRepository,
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
     private val feedStateRepository: FeedStateRepository,
-    private val feedItemParserWorker: FeedItemParserWorker,
+    private val readerContentFetcher: ReaderContentFetcher,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
 ) {
     suspend fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
@@ -338,10 +338,7 @@ internal class FeedActionsRepository(
         if (isBookmarked && !feedItemContentFileHandler.isContentAvailable(feedItemId.id)) {
             val urlInfo = databaseHelper.getFeedItemUrlInfo(feedItemId.id)
             if (urlInfo != null && urlInfo.canOpenWebReaderMode()) {
-                val content = feedItemParserWorker.parse(urlInfo.url)
-                if (!content.isNullOrBlank()) {
-                    feedItemContentFileHandler.saveFeedItemContentToFile(urlInfo.id, content)
-                }
+                readerContentFetcher.fetch(urlInfo.id, urlInfo.url)
             }
         }
     }

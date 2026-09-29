@@ -42,7 +42,6 @@ glance = "1.2.0"
 google-services = "4.5.0"
 immutable-collections = "0.5.2"
 io-coil = "3.6.3"
-jsoup = "1.23.2"
 # When updating, check the version of jna in the following link:
 # https://github.com/Dansoftowner/jSystemThemeDetector/blob/master/build.gradle
 # if necessary, download again the native library here and uzip the jar: unzip jna-5.15.0/dist/darwin-aarch64.jar
@@ -56,6 +55,7 @@ kotlin = "2.4.10"
 # Because of telemetry deck still using version 0.6.x
 kotlinx-date-time = "0.8.0-0.6.x-compat"
 kotlinx-serialization = "1.11.0"
+ksoup = "0.2.6"
 ksp = "2.3.10"
 ktor = "3.6.0"
 lifecycle = "2.11.0"
@@ -153,7 +153,6 @@ google-play-services-auth = { module = "com.google.android.gms:play-services-aut
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
 io-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "io-coil" }
 io-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "io-coil" }
-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
 junit = { module = "junit:junit", version.ref = "junit" }
 koin-android = { module = "io.insert-koin:koin-android" }
@@ -173,6 +172,7 @@ kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-date-time = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-date-time" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }

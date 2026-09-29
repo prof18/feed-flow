@@ -26,7 +26,6 @@ func startKoin(notifier: (any Notifier)? = nil) {
     let regionCode = currentLocale.region?.identifier
 
     _ = doInitKoinIos(
-        htmlParser: IosHtmlParser(),
         appEnvironment: appEnvironment,
         languageCode: languageCode,
         regionCode: regionCode,

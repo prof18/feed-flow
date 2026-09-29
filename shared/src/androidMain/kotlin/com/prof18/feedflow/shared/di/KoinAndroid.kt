@@ -4,7 +4,6 @@ import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.platformLogWriter
-import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
 import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
@@ -14,7 +13,6 @@ import com.prof18.feedflow.shared.domain.AppForegroundState
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.FeedDownloadWorker
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
-import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.contentprefetch.BackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchWorker
 import com.prof18.feedflow.shared.domain.contentprefetch.WorkManagerBackgroundPrefetchScheduler
@@ -80,12 +78,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     factory<OpmlFeedHandler> {
         OpmlFeedHandlerAndroid(
             dispatcherProvider = get(),
-        )
-    }
-
-    factory<HtmlParser> {
-        JvmHtmlParser(
-            logger = getWith("JvmHtmlParser"),
         )
     }
 

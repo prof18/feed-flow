@@ -66,9 +66,6 @@ packages:
   SwiftyDropbox:
     url: https://github.com/dropbox/SwiftyDropbox
     exactVersion: 10.2.4
-  SwiftSoup:
-    url: https://github.com/scinfu/SwiftSoup
-    exactVersion: 2.13.9
   Nuke:
     url: https://github.com/kean/Nuke
     exactVersion: 13.2.0
@@ -217,7 +214,6 @@ targets:
       - package: Firebase
         product: FirebaseCrashlytics
       - package: SwiftyDropbox
-      - package: SwiftSoup
       - package: Nuke
       - package: Nuke
         product: NukeUI
@@ -276,7 +272,6 @@ targets:
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClient.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClientImpl.swift
       - path: Source/UI/Style/Spacing.swift
-      - path: Source/Utils/IosHtmlParser.swift
     settings:
       base:
         PRODUCT_NAME: $(TARGET_NAME)
@@ -332,7 +327,6 @@ targets:
       - package: Firebase
         product: FirebaseCrashlytics
       - package: SwiftyDropbox
-      - package: SwiftSoup
       - package: Nuke
       - package: GoogleSignIn
       - package: GoogleAPIClientForREST
@@ -361,7 +355,6 @@ targets:
       - path: Source/DI/Koin.swift
       - path: Source/UI/Style/Spacing.swift
       - path: Source/Utils/FeedConditionalGetURLProtocol.swift
-      - path: Source/Utils/IosHtmlParser.swift
       - path: Source/Utils/TelemetryReporter.swift
       - path: Source/Utils/VMStoreOwner.swift
     settings:
@@ -412,7 +405,6 @@ targets:
       - package: Firebase
         product: FirebaseCrashlytics
       - package: SwiftyDropbox
-      - package: SwiftSoup
       - package: TelemetryDeck
       - package: GoogleSignIn
       - package: GoogleAPIClientForREST

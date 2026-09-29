@@ -5,7 +5,6 @@ import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.NSLogWriter
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
-import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
@@ -90,7 +89,6 @@ import platform.Foundation.dataUsingEncoding
 import platform.UIKit.UIDevice
 
 fun initKoinIos(
-    htmlParser: HtmlParser,
     appEnvironment: AppEnvironment,
     languageCode: String?,
     regionCode: String?,
@@ -114,7 +112,6 @@ fun initKoinIos(
     crashReportingLogWriter = CrashlyticsLogWriter(),
     modules = listOf(
         module {
-            factory { htmlParser }
             single { dropboxDataSource }
             single { googleDrivePlatformClient }
             single { telemetry }

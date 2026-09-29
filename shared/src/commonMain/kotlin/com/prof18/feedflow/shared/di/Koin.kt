@@ -6,6 +6,7 @@ import co.touchlab.kermit.Severity
 import co.touchlab.kermit.StaticConfig
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
+import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
@@ -25,6 +26,7 @@ import com.prof18.feedflow.shared.data.ReviewRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DateFormatterImpl
 import com.prof18.feedflow.shared.domain.HtmlRetriever
+import com.prof18.feedflow.shared.domain.KsoupHtmlParser
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryImpl
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetcher
@@ -204,6 +206,12 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             contentFormat = readerContentFormat,
             htmlRetriever = get(),
             logger = getWith("KleadFeedItemParserWorker"),
+        )
+    }
+
+    factory<HtmlParser> {
+        KsoupHtmlParser(
+            logger = getWith("KsoupHtmlParser"),
         )
     }
 

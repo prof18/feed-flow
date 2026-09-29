@@ -3,7 +3,6 @@ package com.prof18.feedflow.shared.di
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.platformLogWriter
-import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
@@ -17,7 +16,6 @@ import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.DesktopAutoRefreshScheduler
-import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.contentprefetch.BackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.contentprefetch.CoroutineBackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
@@ -106,12 +104,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedbinRepository = get(),
             dispatcherProvider = get(),
             logger = getWith("FeedbinHistorySyncSchedulerIosDesktop"),
-        )
-    }
-
-    factory<HtmlParser> {
-        JvmHtmlParser(
-            logger = getWith("JvmHtmlParser"),
         )
     }
 

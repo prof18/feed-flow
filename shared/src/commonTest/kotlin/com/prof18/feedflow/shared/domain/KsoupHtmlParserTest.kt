@@ -5,10 +5,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
-class JvmHtmlParserTest {
+class KsoupHtmlParserTest {
 
-    private val parser = JvmHtmlParser(Logger.withTag("JvmHtmlParserTest"))
+    private val parser = KsoupHtmlParser(Logger.withTag("KsoupHtmlParserTest"))
 
     @Test
     fun `getTextFromHTML strips HTML tags from text`() {
@@ -242,5 +243,55 @@ class JvmHtmlParserTest {
 
         val result = parser.parseFeedContent(html, baseUrl = null)
         assertNull(result.commentsUrl)
+    }
+
+    @Test
+    fun `getTextFromHTML tolerates null bytes`() {
+        val text = parser.getTextFromHTML("<p>Hel\u0000lo</p>")
+
+        assertNotNull(text)
+        assertTrue("Hel" in text && "lo" in text, text)
+    }
+
+    @Test
+    fun `getTextFromHTML tolerates a leading byte order mark`() {
+        val text = parser.getTextFromHTML("\uFEFF<p>Hello</p>")
+
+        assertNotNull(text)
+        assertEquals("Hello", text.trim { it == '\uFEFF' || it.isWhitespace() })
+    }
+
+    @Test
+    fun `getTextFromHTML tolerates a truncated tag`() {
+        val text = parser.getTextFromHTML("<p>Hello</p><a hre")
+
+        assertNotNull(text)
+        assertTrue("Hello" in text, text)
+    }
+
+    @Test
+    fun `parseFeedContent tolerates an unterminated attribute`() {
+        val parsed = parser.parseFeedContent("<p>Hello</p><img srcset=\"a.jpg 1x, b.jp", null)
+
+        val text = assertNotNull(parsed.text)
+        assertTrue("Hello" in text, text)
+    }
+
+    @Test
+    fun `parseFeedContent handles unclosed tags`() {
+        val parsed = parser.parseFeedContent(
+            html = "<div><p><a href=\"https://example.com/c\">Comments",
+            baseUrl = "https://example.com",
+        )
+
+        assertEquals("https://example.com/c", parsed.commentsUrl)
+    }
+
+    @Test
+    fun `getTextFromHTML handles large input`() {
+        val text = parser.getTextFromHTML("<p>" + "a".repeat(2_000_000) + "</p>")
+
+        assertNotNull(text)
+        assertEquals(2_000_000, text.length)
     }
 }

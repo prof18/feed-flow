@@ -52,7 +52,6 @@ kotlin {
                 implementation(libs.compose.multiplatform.components.resources)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.bundles.about.libraries)
-                implementation(libs.jsoup)
                 implementation(libs.slf4j.nop)
 
                 implementation(project.dependencies.platform(libs.koin.bom))

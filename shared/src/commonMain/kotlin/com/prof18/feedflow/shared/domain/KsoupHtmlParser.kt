@@ -1,16 +1,16 @@
 package com.prof18.feedflow.shared.domain
 
 import co.touchlab.kermit.Logger
+import com.fleeksoft.ksoup.Ksoup
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.domain.ParsedFeedContent
-import org.jsoup.Jsoup
 
-internal class JvmHtmlParser(
+internal class KsoupHtmlParser(
     private val logger: Logger,
 ) : HtmlParser {
     override fun getTextFromHTML(html: String): String? {
         return try {
-            val doc = Jsoup.parse(html)
+            val doc = Ksoup.parse(html, "")
             doc.text()
         } catch (e: Throwable) {
             logger.d(e) { "Unable to get text from HTML, skipping" }
@@ -19,7 +19,7 @@ internal class JvmHtmlParser(
     }
 
     override fun getFaviconUrl(html: String): String? {
-        val doc = Jsoup.parse(html)
+        val doc = Ksoup.parse(html, "")
 
         val faviconLink = doc.select("link[rel~=(?i)^(shortcut|icon)$][href]").firstOrNull()
 
@@ -27,7 +27,7 @@ internal class JvmHtmlParser(
     }
 
     override fun getRssUrl(html: String): String? {
-        val doc = Jsoup.parse(html)
+        val doc = Ksoup.parse(html, "")
         val queries = listOf(
             "link[type='application/rss+xml']",
             "link[type='application/atom+xml']",
@@ -45,7 +45,7 @@ internal class JvmHtmlParser(
     }
 
     override fun getCanonicalUrl(html: String): String? {
-        return Jsoup.parse(html)
+        return Ksoup.parse(html, "")
             .select("link[rel=canonical][href]")
             .firstOrNull()
             ?.attr("href")
@@ -55,7 +55,7 @@ internal class JvmHtmlParser(
 
     override fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent {
         return try {
-            val doc = Jsoup.parse(html, baseUrl.orEmpty())
+            val doc = Ksoup.parse(html, baseUrl.orEmpty())
             val commentsUrl = doc.select("a")
                 .firstOrNull { it.text().trim().equals("comments", ignoreCase = true) }
                 ?.absUrl("href")

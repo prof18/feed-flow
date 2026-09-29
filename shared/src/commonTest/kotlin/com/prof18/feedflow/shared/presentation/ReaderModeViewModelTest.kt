@@ -515,6 +515,43 @@ class ReaderModeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `web reader does not reinsert an inline feed thumbnail removed by extraction`() = runTest {
+        val imageUrl = "https://example.com/masthead.png?width=600&format=png"
+        val item = seedItemWithContent(
+            "inline-thumbnail",
+            "https://example.com/article",
+            """<img src="${imageUrl.replace("&", "&amp;")}">$SUBSTANTIAL_CONTENT""",
+        )
+        val urlInfo = item.toUrlInfo(ArticleOpenMode.FULL_ARTICLE).copy(imageUrl = imageUrl)
+
+        viewModel.getReaderModeHtml(urlInfo)
+        advanceUntilIdle()
+
+        val state = assertIs<ReaderModeState.Success>(viewModel.readerModeState.value)
+        assertNull(state.readerModeData.imageUrl)
+        assertEquals("Content", state.readerModeData.content)
+
+        viewModel.toggleContentSource()
+        advanceUntilIdle()
+
+        val feedState = assertIs<ReaderModeState.Success>(viewModel.readerModeState.value)
+        assertEquals(ShownContentSource.FEED, feedState.readerModeData.shownContentSource)
+        assertEquals(imageUrl, feedState.readerModeData.imageUrl)
+    }
+
+    @Test
+    fun `web reader retains independently supplied feed hero metadata`() = runTest {
+        val imageUrl = "https://example.com/hero.jpg"
+        val item = seedItemWithContent("metadata-hero", "https://example.com/article", SUBSTANTIAL_CONTENT)
+
+        viewModel.getReaderModeHtml(item.toUrlInfo(ArticleOpenMode.FULL_ARTICLE).copy(imageUrl = imageUrl))
+        advanceUntilIdle()
+
+        val state = assertIs<ReaderModeState.Success>(viewModel.readerModeState.value)
+        assertEquals(imageUrl, state.readerModeData.imageUrl)
+    }
+
+    @Test
     fun `web preference falls back to feed content when parsing fails`() = runTest {
         parserBehavior = ParserBehavior.Error
         val item = seedItemWithContent("web-fallback", "https://example.com/a/web-fallback", SUBSTANTIAL_CONTENT)

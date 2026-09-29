@@ -195,11 +195,22 @@ class ReaderModeViewModel internal constructor(
         lineHeight = settingsRepository.getReaderModeLineHeight(),
         isBookmarked = urlInfo.isBookmarked,
         commentsUrl = urlInfo.commentsUrl,
-        imageUrl = urlInfo.imageUrl,
+        imageUrl = readerImageUrl(urlInfo, shownContentSource),
         shownContentSource = shownContentSource,
         canToggleContentSource = canToggleContentSource,
         siteName = databaseHelper.getFeedItemUrlInfo(urlInfo.id)?.feedSourceTitle ?: urlInfo.feedSourceTitle,
     )
+
+    private suspend fun readerImageUrl(urlInfo: FeedItemUrlInfo, source: ShownContentSource): String? {
+        val imageUrl = urlInfo.imageUrl ?: return null
+        if (source == ShownContentSource.FEED) return imageUrl
+        val feedContent = databaseHelper.getFeedItemContent(urlInfo.id).orEmpty()
+        // Inline feed images may be mastheads or tracking pixels rejected by extraction.
+        // Let the parsed article own those images instead of adding them back as a hero.
+        return imageUrl.takeUnless {
+            feedContent.contains(imageUrl) || feedContent.contains(imageUrl.replace("&", "&amp;"))
+        }
+    }
 
     fun toggleContentSource() {
         val urlInfo = currentArticleMutableState.value ?: return

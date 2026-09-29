@@ -263,14 +263,14 @@ struct HomeScreen: View {
         if let navigate = onReaderModeNavigate {
             return { [homeViewModel, readerModeViewModel, navigate] urlInfo in
                 homeViewModel.markAsRead(feedItemId: urlInfo.id)
-                readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                readerModeViewModel.loadReaderContent(urlInfo: urlInfo)
                 navigate()
             }
         }
 
         return { [homeViewModel, readerModeViewModel, appState] urlInfo in
             homeViewModel.markAsRead(feedItemId: urlInfo.id)
-            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+            readerModeViewModel.loadReaderContent(urlInfo: urlInfo)
             appState.navigate(route: CommonViewRoute.readerMode)
         }
     }

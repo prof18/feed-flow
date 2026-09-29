@@ -57,7 +57,7 @@ Located at `shared/src/commonTest/.../test/koin/TestModules.kt`. Provides test i
 - `SqlDriver` - In-memory database
 - `DispatcherProvider` - Test dispatchers (`UnconfinedTestDispatcher`)
 - `Settings` - `MapSettings` for in-memory preferences
-- `FeedSyncWorker`, `FeedItemParserWorker`, etc. - No-op or controllable fakes
+- `FeedSyncWorker`, `ArticleContentParser`, etc. - No-op or controllable fakes
 - `HtmlRetriever`, `HtmlParser` - Mock HTTP client implementations
 
 **Adding a new fake:**

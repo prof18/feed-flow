@@ -28,7 +28,6 @@
     <string name="action_save">保存</string>
     <string name="about_menu_contribute_translations">帮助翻译</string>
     <string name="in_app_browser">应用内浏览器</string>
-    <string name="settings_reader_mode">以阅读模式打开文章</string>
     <string name="search_placeholder">搜索…</string>
     <string name="search_hint_title">开始输入…</string>
     <string name="search_hint_subtitle">结果将自动显示</string>
@@ -387,8 +386,6 @@
     <string name="reader_mode_line_height">行高</string>
     <string name="reader_mode_text_settings">文本设置</string>
     <string name="reader_mode_reset_to_default">重置为默认</string>
-    <string name="increase_line_height_button_content_description">增大行高</string>
-    <string name="decrease_line_height_button_content_description">减小行高</string>
     <string name="settings_feed_layout_big_image">大图卡片</string>
     <string name="settings_feed_layout_grid">网格</string>
     <string name="settings_feed_layout_grid_toggle">在宽屏上使用网格</string>

@@ -86,7 +86,6 @@
     <string name="empty_screen_back_to_timeline">Tagasi ajajoonele</string>
     <string name="menu_mark_as_unread">Märgi mitteloetuks</string>
     <string name="rename_feed_source_name_button">Muuda nime</string>
-    <string name="settings_reader_mode">Ava artiklid lugemisvaates</string>
     <string name="search_hint_subtitle">tulemused ilmuvad automaatselt</string>
     <string name="link_copied_success">Lingi kopeerimine õnnestus!</string>
     <string name="accounts_description">Lisa kasutajakonto ning sünkrooni uudisvoogusid, kategooriaid, lugemise olekuid ja järjehoidjatesse salvestatud artikleid oma nutiseadmete vahel. \n \nTegemist on veel beetafunktsionaalsusega ning üht-teist võib ikka juhtuda (näiteks loetud artiklite teave ei pruugi olla korralikult sünkroonis). Täiendavate teenuste tugi lisandub tulevikus. \n \nSamaaegselt saad pruukida vaid ühte kasutajakontot.</string>
@@ -387,8 +386,6 @@
     <string name="reader_mode_line_height">Rea kõrgus</string>
     <string name="reader_mode_text_settings">Tekstiseadistused</string>
     <string name="reader_mode_reset_to_default">Lähtesta vaikimisi väärtusteks</string>
-    <string name="increase_line_height_button_content_description">Suurenda reakõrgust</string>
-    <string name="decrease_line_height_button_content_description">Vähenda reakõrgust</string>
     <string name="settings_feed_layout_big_image">Suure pildiga kaart</string>
     <string name="settings_feed_layout_grid">Ruudustik</string>
     <string name="settings_feed_layout_grid_toggle">Näita laiadel ekraanidel ruudustikuvaadet</string>

@@ -70,7 +70,6 @@
     <string name="about_menu_contribute_translations">Bantuan dengan terjemahan</string>
     <string name="rename_feed_source_name_button">Ganti nama</string>
     <string name="in_app_browser">Peramban dalam aplikasi</string>
-    <string name="settings_reader_mode">Buka artikel dalam mode pembaca</string>
     <string name="search_no_data">Tidak ada kecocokan untuk %s.</string>
     <string name="search_placeholder">Mencari…</string>
     <string name="search_hint_title">Mulai mengetik…</string>
@@ -387,8 +386,6 @@
     <string name="settings_feed_layout_grid">Grid</string>
     <string name="settings_feed_layout_grid_toggle">Gunakan grid pada layar lebar</string>
     <string name="article_bookmarked_content_description">Ditandai markah</string>
-    <string name="increase_line_height_button_content_description">Tambah tinggi baris</string>
-    <string name="decrease_line_height_button_content_description">Kurangi tinggi baris</string>
     <string name="sort_and_filter_button">Urut &amp; filter</string>
     <string name="about_the_app">FeedFlow adalah pembaca RSS minimal untuk linimasa kronologis yang bersih — tanpa algoritma, tanpa kekacauan. Buka artikel di browser favorit Anda, atau baca bebas gangguan dengan Mode Pembaca. Ambil dan cache artikel lengkap untuk dibaca offline di mana saja.\nSinkronkan feed, status baca, dan bookmark Anda di Android, iOS, macOS, Windows, dan Linux menggunakan iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin, atau BazQux. Atur feed ke dalam kategori, blokir kata kunci yang berisik, dan impor atau ekspor semuanya dengan OPML.</string>
     <string name="invalid_rss_url_with_retry_hint">Tidak dapat memvalidasi feed ini. Mungkin ini bukan feed RSS yang valid, atau server mungkin tidak tersedia sementara.</string>

@@ -42,7 +42,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.ReaderContentCacheMigration
 import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
@@ -50,7 +50,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
-import com.prof18.feedflow.shared.domain.parser.KleadFeedItemParserWorker
+import com.prof18.feedflow.shared.domain.parser.KleadArticleContentParser
 import com.prof18.feedflow.shared.domain.parser.readerContentFormat
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
@@ -201,11 +201,11 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
-    single<FeedItemParserWorker> {
-        KleadFeedItemParserWorker(
+    single<ArticleContentParser> {
+        KleadArticleContentParser(
             contentFormat = readerContentFormat,
             htmlRetriever = get(),
-            logger = getWith("KleadFeedItemParserWorker"),
+            logger = getWith("KleadArticleContentParser"),
         )
     }
 
@@ -217,7 +217,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     factory {
         ReaderContentFetcher(
-            feedItemParserWorker = get(),
+            articleContentParser = get(),
             feedItemContentFileHandler = get(),
         )
     }
@@ -433,7 +433,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         ReaderModeViewModel(
             settingsRepository = get(),
             feedActionsRepository = get(),
-            feedItemParserWorker = get(),
+            articleContentParser = get(),
             readerContentFetcher = get(),
             feedItemContentFileHandler = get(),
             feedStateRepository = get(),

@@ -509,6 +509,17 @@ fun readerLineHeightToTextLineHeightSp(fontSize: Int, step: Int): Int =
             LINE_HEIGHT_DESKTOP_ROUNDING_OFFSET
         ) / LINE_HEIGHT_TENTHS_DIVISOR
 
+fun readerFontSizeJs(fontSize: Int): String =
+    """document.getElementById("container").style.fontSize = "$fontSize" + "px";"""
+
+fun readerLineHeightLabel(step: Int): String = readerLineHeightToCss(step)
+
+fun readerCodeBlockColors(isDarkMode: Boolean): ReaderCodeBlockColors = if (isDarkMode) {
+    ReaderCodeBlockColors(backgroundColor = "#1e1e1e", borderColor = "#444444")
+} else {
+    ReaderCodeBlockColors(backgroundColor = "#f6f8fa", borderColor = "#d1d9e0")
+}
+
 // Live update injected into the reader WebView (Android & iOS use the same rule string).
 fun readerLineHeightJs(step: Int): String {
     val lineHeight = readerLineHeightToCss(step)
@@ -531,4 +542,9 @@ data class ReaderColors(
     val linkColor: String,
     val backgroundColor: String,
     val borderColor: String? = null,
+)
+
+data class ReaderCodeBlockColors(
+    val backgroundColor: String,
+    val borderColor: String,
 )

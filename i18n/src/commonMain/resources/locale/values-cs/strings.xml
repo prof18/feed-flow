@@ -169,7 +169,6 @@
     <string name="menu_remove_from_pinned">Odepnout</string>
     <string name="link_with_error_report_title">Následující zdroje nebyly přidány kvůli chybě</string>
     <string name="database_error">Při načítání zdrojů něco pokazilo. Zkuste to prosím znovu nebo aplikaci restartujte - error code: %s :(</string>
-    <string name="settings_reader_mode">Otevřít články v režimu čtečky</string>
     <string name="settings_notification_no_feed">Vypadá to, že jste dosud nepřidali žádné zdroje. Přidejte nějaké, abyste začali odebírat upozornění!</string>
     <string name="settings_notification_check_period">Frekvence kontroly upozornění</string>
     <string name="settings_notifications_enable_all_title">Povolit všechna upozornění</string>
@@ -393,8 +392,6 @@
     <string name="settings_feed_layout_big_image">Karta s velkým obrázkem</string>
     <string name="settings_feed_layout_grid">Mřížka</string>
     <string name="settings_feed_layout_grid_toggle">Použijte mřížku na široké obrazovky</string>
-    <string name="increase_line_height_button_content_description">Zvětšit výšku řádku</string>
-    <string name="decrease_line_height_button_content_description">Zmenšit výšku řádku</string>
     <string name="expand_category_button_content_description">Rozbalit %s</string>
     <string name="collapse_category_button_content_description">Sbalit %s</string>
     <string name="mark_all_above_as_read_confirmation_title">Označte všechno výše jako přečtené?</string>

@@ -79,7 +79,6 @@
     <string name="about_menu_contribute_translations">Pomoc z tłumaczeniami</string>
     <string name="rename_feed_source_name_button">Zmień nazwę</string>
     <string name="in_app_browser">Przeglądarka w aplikacji</string>
-    <string name="settings_reader_mode">Otwórz artykuły w trybie czytania</string>
     <string name="search_no_data">Brak wyników dla %s.</string>
     <string name="search_placeholder">Szukaj…</string>
     <string name="search_hint_title">Rozpocznij pisanie…</string>
@@ -387,8 +386,6 @@
     <string name="reader_mode_line_height">Wysokość wiersza</string>
     <string name="reader_mode_text_settings">Ustawienia tekstu</string>
     <string name="reader_mode_reset_to_default">Przywróć ustawienia domyślne</string>
-    <string name="increase_line_height_button_content_description">Zwiększ wysokość wiersza</string>
-    <string name="decrease_line_height_button_content_description">Zmniejsz wysokość wiersza</string>
     <string name="settings_feed_layout_big_image">Karta z dużym obrazkiem</string>
     <string name="settings_feed_layout_grid">Siatka</string>
     <string name="settings_feed_layout_grid_toggle">Włącz siatkę na szerokich ekranach</string>

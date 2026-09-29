@@ -74,7 +74,6 @@
     <string name="menu_open_comments">Abrir comentários</string>
     <string name="rename_feed_source_name_button">Renomear</string>
     <string name="in_app_browser">Navegador interno</string>
-    <string name="settings_reader_mode">Abrir artigos no modo leitor</string>
     <string name="clear_old_articles_button">Apague notícias com publicadas há mais de sete dias</string>
     <string name="browser_launch_error">Não foi possível abrir o link. Por favor, verifique as configurações do seu navegador.</string>
     <string name="open_feed_website_button">Abra o website</string>
@@ -337,8 +336,6 @@
     <string name="drawer_menu_button_content_description">Abrir menu de navegação</string>
     <string name="increase_font_size_button_content_description">Aumentar tamanho da fonte</string>
     <string name="decrease_font_size_button_content_description">Diminuir tamanho da fonte</string>
-    <string name="increase_line_height_button_content_description">Aumentar altura da linha</string>
-    <string name="decrease_line_height_button_content_description">Diminuir altura da linha</string>
     <string name="scroll_to_top_button_content_description">Rolar para cima</string>
     <string name="expand_category_button_content_description">Expandir %s</string>
     <string name="collapse_category_button_content_description">Colapsar %s</string>

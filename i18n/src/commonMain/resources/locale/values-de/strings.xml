@@ -70,7 +70,6 @@
     <string name="action_done">Fertig</string>
     <string name="settings_app_title">Allgemeines</string>
     <string name="menu_open_comments">Kommentare öffnen</string>
-    <string name="settings_reader_mode">Artikel im Lesemodus öffnen</string>
     <string name="reader_mode_font_size">Textgröße</string>
     <string name="search_hint_subtitle">die Ergebnisse werden automatisch angezeigt</string>
     <string name="settings_title_feed">Feed</string>
@@ -387,8 +386,6 @@
     <string name="reader_mode_line_height">Zeilenhöhe</string>
     <string name="reader_mode_text_settings">Texteinstellungen</string>
     <string name="reader_mode_reset_to_default">Auf Grundeinstellungen setzen</string>
-    <string name="increase_line_height_button_content_description">Zeilenhöhe vergrössern</string>
-    <string name="decrease_line_height_button_content_description">Zeilenhöhe verkleinern</string>
     <string name="settings_feed_layout_grid_toggle">Raster bei großen Bildschirmen verwenden</string>
     <string name="settings_feed_layout_big_image">Große Bildkarte</string>
     <string name="settings_feed_layout_grid">Raster</string>

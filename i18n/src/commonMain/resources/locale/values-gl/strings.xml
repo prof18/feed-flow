@@ -99,7 +99,6 @@
     <string name="settings_toggle_show_read_articles">Mostrar nas listas os artigos lidos</string>
     <string name="no_feed_modal_message">Podes engadir manualmente unha canle, tamén podes importar as túas subscricións desde outro lector RSS, ou tamén podes sincronizar a conta con outro dispositivo (ferramenta en fase beta).</string>
     <string name="read_articles_empty_screen_message">Nada por aquí, hora de comezar a ler!</string>
-    <string name="settings_reader_mode">Abrir artigos no propio lector</string>
     <string name="search_hint_subtitle">os resultados aparecerán automaticamente</string>
     <string name="account_connect_button">Conectar</string>
     <string name="backup_button">Copia de apoio</string>
@@ -387,8 +386,6 @@
     <string name="reader_mode_reset_to_default">Restablecer predeterminados</string>
     <string name="greader_bad_token_sync_error_message">O servidor rexeitou o token de sincronización. Se o teu servizo compatible con Google Reader está detrás dun mandatario inverso, comproba que reenvía a cabeceira Authorization.</string>
     <string name="miniflux_bad_token_error_message">Acceso correcto, pero Miniflux rexeitou o token de sincronización. Se Miniflux está detrás dun mandatario inverso, comproba que reenvía a cabeceira Authorization.</string>
-    <string name="increase_line_height_button_content_description">Aumentar altura da liña</string>
-    <string name="decrease_line_height_button_content_description">Diminuír altura da liña</string>
     <string name="settings_feed_layout_big_image">Tarxeta con imaxe grande</string>
     <string name="settings_feed_layout_grid">Grella</string>
     <string name="settings_feed_layout_grid_toggle">Usar grella en pantallas anchas</string>

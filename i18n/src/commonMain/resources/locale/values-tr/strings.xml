@@ -79,7 +79,6 @@
     <string name="about_menu_contribute_translations">Çevirilere yardım et</string>
     <string name="rename_feed_source_name_button">Yeniden adlandır</string>
     <string name="in_app_browser">Uygulama içi tarayıcı</string>
-    <string name="settings_reader_mode">Makaleleri okuyucu modunda aç</string>
     <string name="search_no_data">\"%s\" için eşleşme bulunamadı.</string>
     <string name="search_placeholder">Ara…</string>
     <string name="search_hint_title">Yazmaya başlayın…</string>

@@ -65,6 +65,11 @@ struct ReaderModeScreen: View {
                 }
             ),
             themeColors: themeColors,
+            scripts: ReaderViewScripts(
+                fontSize: { readerFontSizeJs(fontSize: Int32($0)) },
+                lineHeight: { readerLineHeightJs(step: Int32($0)) },
+                lineHeightLabel: { readerLineHeightLabel(step: Int32($0)) }
+            ),
             actions: ReaderViewActions(
                 strings: ReaderViewStrings(
                     share: feedFlowStrings.menuShare,
@@ -196,7 +201,7 @@ struct ReaderModeScreen: View {
         .task {
             for await state in viewModel.readerModeState {
                 switch onEnum(of: state) {
-                case let .htmlNotAvailable(data):
+                case let .contentNotAvailable(data):
                     self.feedItemId = data.id
                     self.hasArticleUrl = !data.url.isEmpty
                     self.canToggleContentSource = false
@@ -303,11 +308,12 @@ struct ReaderModeScreen: View {
     }
 
     private var themeColors: ReaderThemeColors {
-        ReaderThemeColors(
+        let codeBlockColors = readerCodeBlockColors(isDarkMode: isDarkMode)
+        return ReaderThemeColors(
             textColor: isDarkMode ? "#FFFFFF" : "#000000",
             linkColor: isDarkMode ? "#3B82F6" : "#2563EB",
-            backgroundColor: isDarkMode ? "#1e1e1e" : "#f6f8fa",
-            borderColor: isDarkMode ? "#444444" : "#d1d9e0"
+            backgroundColor: codeBlockColors.backgroundColor,
+            borderColor: codeBlockColors.borderColor
         )
     }
 }

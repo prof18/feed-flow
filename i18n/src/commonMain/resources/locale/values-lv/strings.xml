@@ -70,7 +70,6 @@
     <string name="in_app_browser">Lietotnes pārlūkā</string>
     <string name="link_copied_success">Saite veiksmīgi nokopēta!</string>
     <string name="search_placeholder">Meklēt…</string>
-    <string name="settings_reader_mode">Atvērt rakstus iebūvētajā lasītājā</string>
     <string name="feed_sync_in_progress">Notiek sinhronizācija. Kad pabeigs, lietotni automātiski aizvērs.</string>
     <string name="link_opening_preference_internal_browser">Lietotnes pārlūkā</string>
     <string name="link_opening_preference_preferred_browser">Iecienītākajā pārlūkā</string>

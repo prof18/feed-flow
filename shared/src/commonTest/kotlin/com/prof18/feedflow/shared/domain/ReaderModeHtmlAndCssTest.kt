@@ -114,6 +114,32 @@ class ReaderModeHtmlAndCssTest {
     }
 
     @Test
+    fun `readerFontSizeJs sets the container font size`() {
+        val js = readerFontSizeJs(18)
+
+        assertTrue(js.contains("style.fontSize = \"18\" + \"px\""), js)
+        assertTrue(js.contains("getElementById(\"container\")"), js)
+    }
+
+    @Test
+    fun `readerLineHeightLabel maps steps`() {
+        assertEquals("1.6", readerLineHeightLabel(1))
+        assertEquals("3.0", readerLineHeightLabel(15))
+    }
+
+    @Test
+    fun `readerCodeBlockColors depends on dark mode`() {
+        assertEquals(
+            ReaderCodeBlockColors(backgroundColor = "#1e1e1e", borderColor = "#444444"),
+            readerCodeBlockColors(isDarkMode = true),
+        )
+        assertEquals(
+            ReaderCodeBlockColors(backgroundColor = "#f6f8fa", borderColor = "#d1d9e0"),
+            readerCodeBlockColors(isDarkMode = false),
+        )
+    }
+
+    @Test
     fun `readerLineHeightToCss maps steps`() {
         assertEquals("1.5", readerLineHeightToCss(0))
         assertEquals("1.6", readerLineHeightToCss(ReaderModeDefaults.LINE_HEIGHT))

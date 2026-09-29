@@ -18,8 +18,8 @@ import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
+import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.test.ContentPrefetchRepositoryFake
@@ -96,8 +96,8 @@ object TestModules {
                 override suspend fun syncFeedItems(): SyncResult = SyncResult.Success
             }
         }
-        single<FeedItemParserWorker> {
-            object : FeedItemParserWorker {
+        single<ArticleContentParser> {
+            object : ArticleContentParser {
                 override suspend fun parse(url: String): String = "Content"
                 override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = html
             }

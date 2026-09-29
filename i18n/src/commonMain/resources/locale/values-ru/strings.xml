@@ -96,7 +96,6 @@
     <string name="rename_feed_source_name_button">Переименовать</string>
     <string name="in_app_browser">Встроенный браузер</string>
     <string name="search_no_data">Нет совпадений для %s.</string>
-    <string name="settings_reader_mode">Открыть статьи в режиме чтения</string>
     <string name="link_copied_success">Ссылка успешно скопирована!</string>
     <string name="settings_title_feed">Лента</string>
     <string name="accounts_description">Подключите аккаунт для синхронизации подписок на ленты, категорий, прочитанных и сохранённых статей между вашими устройствами.\n\nЭта функция находится в бета-стадии, могут возникнуть проблемы (например, прочитанные статьи могут не полностью синхронизироваться). В дальнейшем будет поддерживаться больше сервисов.\n\nПоддерживается только один аккаунт одновременно.</string>
@@ -390,8 +389,6 @@
     <string name="settings_feed_layout_big_image">Большая карточка с изображением</string>
     <string name="settings_feed_layout_grid">Сетка</string>
     <string name="settings_feed_layout_grid_toggle">Использовать сетку на широких экранах</string>
-    <string name="increase_line_height_button_content_description">Увеличить высоту строки</string>
-    <string name="decrease_line_height_button_content_description">Уменьшить высоту строки</string>
     <string name="reorder_drag_handle">Изменить порядок</string>
     <string name="reorder_mode_enter">Изменить порядок</string>
     <string name="reorder_mode_done">Готово</string>

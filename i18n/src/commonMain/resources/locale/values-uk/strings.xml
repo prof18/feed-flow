@@ -62,7 +62,6 @@
     <string name="bookmarked_articles_empty_screen_message">Тут нічого немає, час додати щось у закладки!</string>
     <string name="empty_screen_back_to_timeline">Повернутись до хронології</string>
     <string name="rename_feed_source_name_button">Перейменувати</string>
-    <string name="settings_reader_mode">Відкривати статті в режимі читання</string>
     <string name="search_no_data">Немає збігів для %s.</string>
     <string name="search_placeholder">Шукати…</string>
     <string name="search_hint_title">Почніть друкувати…</string>
@@ -389,8 +388,6 @@
     <string name="settings_feed_layout_big_image">Картка з великим зображенням</string>
     <string name="settings_feed_layout_grid">Сітка</string>
     <string name="settings_feed_layout_grid_toggle">Використовувати сітку на широких екранах</string>
-    <string name="increase_line_height_button_content_description">Збільшити висоту рядка</string>
-    <string name="decrease_line_height_button_content_description">Зменшити висоту рядка</string>
     <string name="reader_mode_reset_to_default">Скинути налаштування до стандартних</string>
     <string name="reorder_mode_done">Готово</string>
     <string name="mark_all_above_as_read_confirmation_title">Позначити все вищезазначене як прочитане?</string>

@@ -8,7 +8,6 @@
     <string name="menu_open_comments">கருத்துக்களைத் திறந்து விடுங்கள்</string>
     <string name="empty_screen_back_to_timeline">காலவரிசைக்குத் திரும்பு</string>
     <string name="in_app_browser">பயன்பாட்டு உலாவி</string>
-    <string name="settings_reader_mode">வாசகர் பயன்முறையில் கட்டுரைகளைத் திறக்கவும்</string>
     <string name="search_no_data">%s க்கு போட்டிகள் இல்லை.</string>
     <string name="settings_title_feed">தீவனம்</string>
     <string name="settings_help_title">உதவி</string>

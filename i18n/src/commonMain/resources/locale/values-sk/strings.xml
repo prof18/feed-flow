@@ -74,7 +74,6 @@
     <string name="bookmarked_articles_empty_screen_message">Nie je tu nič, je čas si niečo pridať do záložiek!</string>
     <string name="rename_feed_source_name_button">Premenovať</string>
     <string name="in_app_browser">Prehliadač v aplikácii</string>
-    <string name="settings_reader_mode">Otvárať články v režime čítačky</string>
     <string name="search_hint_title">Začni písať…</string>
     <string name="search_hint_subtitle">výsledky sa zobrazia automaticky</string>
     <string name="search_no_data">Žiadne zhody pre %s.</string>

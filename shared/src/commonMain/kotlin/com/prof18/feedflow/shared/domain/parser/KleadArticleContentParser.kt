@@ -2,17 +2,17 @@ package com.prof18.feedflow.shared.domain.parser
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.shared.domain.HtmlRetriever
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.klead.Klead
 import com.prof18.klead.KleadOptions
 import com.prof18.klead.KleadOutput
 import kotlinx.coroutines.CancellationException
 
-internal class KleadFeedItemParserWorker(
+internal class KleadArticleContentParser(
     private val contentFormat: KleadOutput,
     private val htmlRetriever: HtmlRetriever,
     private val logger: Logger,
-) : FeedItemParserWorker {
+) : ArticleContentParser {
 
     override suspend fun parse(url: String): String? {
         logger.d { "Parsing with Klead: $url" }

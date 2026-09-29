@@ -4,8 +4,8 @@ import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 
 class ContentPrefetchRepositoryImplTest : KoinTestBase() {
 
-    private val fakeParserWorker = FakeFeedItemParserWorker()
+    private val fakeArticleContentParser = FakeArticleContentParser()
 
     private val databaseHelper: DatabaseHelper by inject()
     private val settingsRepository: SettingsRepository by inject()
@@ -36,11 +36,11 @@ class ContentPrefetchRepositoryImplTest : KoinTestBase() {
 
     override fun getTestModules(): List<Module> =
         super.getTestModules() + module {
-            single<FeedItemParserWorker> { fakeParserWorker }
+            single<ArticleContentParser> { fakeArticleContentParser }
         }
 
     private fun readerContentFetcher() = ReaderContentFetcher(
-        feedItemParserWorker = fakeParserWorker,
+        articleContentParser = fakeArticleContentParser,
         feedItemContentFileHandler = feedItemContentFileHandler,
     )
 
@@ -93,7 +93,7 @@ class ContentPrefetchRepositoryImplTest : KoinTestBase() {
     @Test
     fun `prefetchContent fetches and saves immediate items`() = runTest(TestDispatcherProvider.testDispatcher) {
         settingsRepository.setPrefetchArticleContent(true)
-        fakeParserWorker.setResult(
+        fakeArticleContentParser.setResult(
             feedItemId = "item-1",
             content = "Content",
         )
@@ -130,7 +130,7 @@ class ContentPrefetchRepositoryImplTest : KoinTestBase() {
 
         val items = (1..16).map { index ->
             val id = "item-$index"
-            fakeParserWorker.setResult(
+            fakeArticleContentParser.setResult(
                 feedItemId = id,
                 content = "Content $index",
             )
@@ -155,7 +155,7 @@ class ContentPrefetchRepositoryImplTest : KoinTestBase() {
     @Test
     fun `prefetchContent marks items fetched when parsing fails`() = runTest(TestDispatcherProvider.testDispatcher) {
         settingsRepository.setPrefetchArticleContent(true)
-        fakeParserWorker.setResult(
+        fakeArticleContentParser.setResult(
             feedItemId = "item-1",
             content = null,
         )
@@ -188,7 +188,7 @@ class ContentPrefetchRepositoryImplTest : KoinTestBase() {
         runTest(TestDispatcherProvider.testDispatcher) {
             settingsRepository.setPrefetchArticleContent(true)
             val parserStarted = CompletableDeferred<Unit>()
-            fakeParserWorker.onParse = {
+            fakeArticleContentParser.onParse = {
                 parserStarted.complete(Unit)
                 awaitCancellation()
             }
@@ -285,7 +285,7 @@ class ContentPrefetchRepositoryImplTest : KoinTestBase() {
         }
     }
 
-    private class FakeFeedItemParserWorker : FeedItemParserWorker {
+    private class FakeArticleContentParser : ArticleContentParser {
         private val contentByUrl = mutableMapOf<String, String?>()
         var onParse: suspend (String) -> Unit = {}
 

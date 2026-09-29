@@ -18,8 +18,8 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
+import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
 import io.ktor.http.Url
 import kotlinx.coroutines.Job
@@ -33,7 +33,7 @@ import kotlin.time.Duration.Companion.seconds
 class ReaderModeViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val feedActionsRepository: FeedActionsRepository,
-    private val feedItemParserWorker: FeedItemParserWorker,
+    private val articleContentParser: ArticleContentParser,
     private val readerContentFetcher: ReaderContentFetcher,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val feedStateRepository: FeedStateRepository,
@@ -72,7 +72,7 @@ class ReaderModeViewModel internal constructor(
         readerModeMutableState.value = ReaderModeState.Loading
     }
 
-    fun getReaderModeHtml(urlInfo: FeedItemUrlInfo) {
+    fun loadReaderContent(urlInfo: FeedItemUrlInfo) {
         val effectiveSource = urlInfo.effectiveContentSource()
         val isSameArticle = selectArticle(urlInfo) && lastRequestedSource == effectiveSource
         if (!isSameArticle) {
@@ -121,7 +121,7 @@ class ReaderModeViewModel internal constructor(
             val state = if (data != null) {
                 ReaderModeState.Success(data)
             } else {
-                htmlNotAvailableFor(urlInfo)
+                contentNotAvailableFor(urlInfo)
             }
             emitIfStillCurrent(requestedArticleId, state)
         }
@@ -162,7 +162,7 @@ class ReaderModeViewModel internal constructor(
         val feedBaseUrl = urlInfo.url.ifBlank {
             (urlInfo.feedSourceBaseUrl ?: storedUrlInfo?.feedSourceBaseUrl).orEmpty()
         }
-        val prepared = feedItemParserWorker.prepareFeedContent(html = feedContent, baseUrl = feedBaseUrl)
+        val prepared = articleContentParser.prepareFeedContent(html = feedContent, baseUrl = feedBaseUrl)
         if (prepared.isBlank()) return null
         return buildReaderModeData(
             urlInfo = urlInfo,
@@ -228,7 +228,7 @@ class ReaderModeViewModel internal constructor(
             val state = when {
                 data != null -> ReaderModeState.Success(data)
                 // Full article parsing failed: fall back to the website, like the initial load does.
-                shownSource == ShownContentSource.FEED -> htmlNotAvailableFor(urlInfo)
+                shownSource == ShownContentSource.FEED -> contentNotAvailableFor(urlInfo)
                 // The toggle is hidden when the feed ships no content, so keep what is on screen.
                 else -> previousState
             }
@@ -271,10 +271,10 @@ class ReaderModeViewModel internal constructor(
         loadReaderModeJob?.cancel()
         selectArticle(urlInfo)
         currentShownSource = null
-        readerModeMutableState.value = htmlNotAvailableFor(urlInfo)
+        readerModeMutableState.value = contentNotAvailableFor(urlInfo)
     }
 
-    private fun htmlNotAvailableFor(urlInfo: FeedItemUrlInfo) = ReaderModeState.HtmlNotAvailable(
+    private fun contentNotAvailableFor(urlInfo: FeedItemUrlInfo) = ReaderModeState.ContentNotAvailable(
         url = urlInfo.url,
         id = urlInfo.id,
         isBookmarked = urlInfo.isBookmarked,
@@ -297,7 +297,7 @@ class ReaderModeViewModel internal constructor(
             if (nextArticle != null) {
                 feedActionsRepository.markAsRead(hashSetOf(FeedItemId(nextArticle.id)))
                 if (nextArticle.hasNoUrl() || nextArticle.canOpenWebReaderMode()) {
-                    getReaderModeHtml(nextArticle)
+                    loadReaderContent(nextArticle)
                 } else {
                     showFallbackForArticle(nextArticle)
                 }
@@ -318,7 +318,7 @@ class ReaderModeViewModel internal constructor(
                 feedActionsRepository.markAsRead(hashSetOf(FeedItemId(prevArticle.id)))
             }
             if (prevArticle.hasNoUrl() || prevArticle.canOpenWebReaderMode()) {
-                getReaderModeHtml(prevArticle)
+                loadReaderContent(prevArticle)
             } else {
                 showFallbackForArticle(prevArticle)
             }
@@ -330,7 +330,7 @@ class ReaderModeViewModel internal constructor(
     private fun ReaderModeState.isForArticle(articleId: String): Boolean = when (this) {
         ReaderModeState.Loading -> false
         is ReaderModeState.Success -> readerModeData.id.id == articleId
-        is ReaderModeState.HtmlNotAvailable -> id == articleId
+        is ReaderModeState.ContentNotAvailable -> id == articleId
     }
 
     private fun FeedItem.toFeedItemUrlInfo() = FeedItemUrlInfo(

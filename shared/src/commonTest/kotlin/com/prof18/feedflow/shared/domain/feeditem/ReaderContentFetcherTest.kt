@@ -48,7 +48,7 @@ class ReaderContentFetcherTest {
     }
 
     private fun fetcher(parsed: String?) = ReaderContentFetcher(
-        feedItemParserWorker = object : FeedItemParserWorker {
+        articleContentParser = object : ArticleContentParser {
             override suspend fun parse(url: String): String? = parsed
             override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = html
         },

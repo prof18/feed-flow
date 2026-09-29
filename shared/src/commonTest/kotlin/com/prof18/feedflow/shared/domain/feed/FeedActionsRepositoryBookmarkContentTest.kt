@@ -5,8 +5,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.buildFeedItem
@@ -28,8 +28,8 @@ class FeedActionsRepositoryBookmarkContentTest : KoinTestBase() {
     private var parseCount = 0
 
     override fun getTestModules(): List<Module> = super.getTestModules() + module {
-        single<FeedItemParserWorker> {
-            object : FeedItemParserWorker {
+        single<ArticleContentParser> {
+            object : ArticleContentParser {
                 override suspend fun parse(url: String): String {
                     parseCount++
                     return "Parsed"

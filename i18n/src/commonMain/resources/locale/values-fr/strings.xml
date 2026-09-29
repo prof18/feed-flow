@@ -79,7 +79,6 @@
     <string name="menu_open_comments">Ouvrir les commentaires</string>
     <string name="read_articles_empty_screen_message">Rien ici, il est temps de commencer à lire !</string>
     <string name="bookmarked_articles_empty_screen_message">Rien ici, il est temps d\'ajouter quelque chose aux favoris !</string>
-    <string name="settings_reader_mode">Ouvrir les articles en mode lecture</string>
     <string name="about_menu_contribute_translations">Aidez avec les traductions</string>
     <string name="feed_added_message">Flux %s ajouté</string>
     <string name="drawer_title_read">Lus</string>
@@ -392,8 +391,6 @@
     <string name="miniflux_bad_token_error_message">La connexion a réussi, mais Miniflux a rejeté le jeton de synchronisation. Si Miniflux est derrière un proxy inverse, assurez-vous que celui-ci transmet l\'en-tête « Authorization ».</string>
     <string name="settings_feed_layout_grid">Grille</string>
     <string name="settings_feed_layout_grid_toggle">Utiliser la grille sur les écrans larges</string>
-    <string name="increase_line_height_button_content_description">Augmenter la hauteur de ligne</string>
-    <string name="decrease_line_height_button_content_description">Réduire la hauteur de ligne</string>
     <string name="settings_feed_layout_big_image">Carte avec grande image</string>
     <string name="mark_all_above_as_read_confirmation_title">Marquer tout ce qui précède comme lu ?</string>
     <string name="mark_all_above_as_read_confirmation_message">Tous les articles qui précèdent celui-ci seront marqués comme lus.</string>

@@ -264,7 +264,7 @@ class MainActivity : BaseThemeActivity() {
                         onAddFeedClick = { backStack.add(AddFeed) },
                         onImportExportClick = { backStack.add(ImportExport) },
                         navigateToReaderMode = { url ->
-                            readerModeViewModel.getReaderModeHtml(url)
+                            readerModeViewModel.loadReaderContent(url)
                             backStack.add(ReaderMode)
                         },
                         onSearchClick = { backStack.add(Search) },
@@ -429,7 +429,7 @@ class MainActivity : BaseThemeActivity() {
                     SearchScreen(
                         navigateBack = navigateBack,
                         navigateToReaderMode = { urlInfo ->
-                            readerModeViewModel.getReaderModeHtml(urlInfo)
+                            readerModeViewModel.loadReaderContent(urlInfo)
                             backStack.add(ReaderMode)
                         },
                         navigateToEditFeed = { feedSource ->
@@ -546,7 +546,7 @@ class MainActivity : BaseThemeActivity() {
         feedUrlInfo: FeedItemUrlInfo,
         backStack: NavBackStack<NavKey>,
     ) {
-        readerModeViewModel.getReaderModeHtml(feedUrlInfo)
+        readerModeViewModel.loadReaderContent(feedUrlInfo)
         backStack.add(ReaderMode)
     }
 }

@@ -18,7 +18,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class KleadFeedItemParserWorkerTest {
+class KleadArticleContentParserTest {
 
     @Test
     fun `returns the article Markdown without reader decorations`() = runTest {
@@ -65,7 +65,7 @@ class KleadFeedItemParserWorkerTest {
 
     @Test
     fun `returns null when the page cannot be fetched`() = runTest {
-        val worker = KleadFeedItemParserWorker(
+        val worker = KleadArticleContentParser(
             contentFormat = KleadOutput.MARKDOWN,
             htmlRetriever = htmlRetriever(html = "", status = HttpStatusCode.NotFound),
             logger = testLogger,
@@ -169,7 +169,7 @@ class KleadFeedItemParserWorkerTest {
     private fun worker(
         html: String,
         contentFormat: KleadOutput = KleadOutput.MARKDOWN,
-    ) = KleadFeedItemParserWorker(
+    ) = KleadArticleContentParser(
         contentFormat = contentFormat,
         htmlRetriever = htmlRetriever(html),
         logger = testLogger,

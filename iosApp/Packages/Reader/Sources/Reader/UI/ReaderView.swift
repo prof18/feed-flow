@@ -51,6 +51,7 @@ public struct ReaderView: View {
     @Binding var readerStatus: ReaderStatus
     var options: ReaderViewOptions
     var themeColors: ReaderThemeColors
+    var scripts: ReaderViewScripts
     var actions: ReaderViewActions
     var isBookmarked: Bool
     var fontSize: Double
@@ -66,6 +67,7 @@ public struct ReaderView: View {
         readerStatus: Binding<ReaderStatus>,
         options: ReaderViewOptions,
         themeColors: ReaderThemeColors,
+        scripts: ReaderViewScripts,
         actions: ReaderViewActions,
         isBookmarked: Bool,
         fontSize: Double,
@@ -78,6 +80,7 @@ public struct ReaderView: View {
         self._readerStatus = readerStatus
         self.options = options
         self.themeColors = themeColors
+        self.scripts = scripts
         self.actions = actions
         self.isBookmarked = isBookmarked
         self.fontSize = fontSize
@@ -504,36 +507,17 @@ public struct ReaderView: View {
     }
 
     private func lineHeightValueLabel(_ lineHeight: Double) -> String {
-        let tenths = 15 + Int(lineHeight)
-        return "\(tenths / 10).\(tenths % 10)"
+        scripts.lineHeightLabel(Int(lineHeight))
     }
 
     private func updateFontSizeWithJS(_ newFontSize: Double) {
         guard let webContent = webContent else { return }
-        let script = """
-            document.getElementById("container").style.fontSize = "\(Int(newFontSize))" + "px";
-        """
-        webContent.evaluateJavaScript(script)
+        webContent.evaluateJavaScript(scripts.fontSize(Int(newFontSize)))
     }
 
-    // Mirror of Kotlin readerLineHeightToCss + readerLineHeightJs - keep in sync.
     private func updateLineHeightWithJS(_ lineHeight: Double) {
         guard let webContent = webContent else { return }
-        let tenths = 15 + Int(lineHeight)
-        let lineHeightCss = "\(tenths / 10).\(tenths % 10)"
-        let script = """
-            (function() {
-              var styleId = "__feedflow_line_height_style";
-              var style = document.getElementById(styleId);
-              if (!style) {
-                style = document.createElement("style");
-                style.id = styleId;
-                document.head.appendChild(style);
-              }
-              style.textContent = "body, #__content { line-height: \(lineHeightCss); }";
-            })();
-        """
-        webContent.evaluateJavaScript(script)
+        webContent.evaluateJavaScript(scripts.lineHeight(Int(lineHeight)))
     }
 
     @ViewBuilder

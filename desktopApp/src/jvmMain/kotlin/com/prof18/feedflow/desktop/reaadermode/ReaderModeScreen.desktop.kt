@@ -114,7 +114,7 @@ internal fun ReaderModeScreen(
     val lineHeight = fontSettings.lineHeight
 
     LaunchedEffect(feedItemUrlInfo.id) {
-        readerModeViewModel.getReaderModeHtml(feedItemUrlInfo)
+        readerModeViewModel.loadReaderContent(feedItemUrlInfo)
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -214,7 +214,7 @@ internal fun ReaderModeScreen(
                     .fillMaxWidth()
 
                 when (val s = state) {
-                    is ReaderModeState.HtmlNotAvailable -> {
+                    is ReaderModeState.ContentNotAvailable -> {
                         ReaderModeFallbackContent(
                             modifier = contentModifier
                                 .fillMaxHeight(),
@@ -374,7 +374,7 @@ internal fun ReaderModeScreen(
             }
         }
 
-        if (state is ReaderModeState.Success || state is ReaderModeState.HtmlNotAvailable) {
+        if (state is ReaderModeState.Success || state is ReaderModeState.ContentNotAvailable) {
             val strings = LocalFeedFlowStrings.current
 
             Surface(
@@ -445,7 +445,7 @@ private fun handleKeyEvent(
     onNavigatePrevious: () -> Unit,
     onNavigateNext: () -> Unit,
 ): Boolean {
-    val canNavigate = state is ReaderModeState.Success || state is ReaderModeState.HtmlNotAvailable
+    val canNavigate = state is ReaderModeState.Success || state is ReaderModeState.ContentNotAvailable
     if (keyEvent.type == KeyEventType.KeyDown && canNavigate) {
         return when (keyEvent.key) {
             Key.DirectionLeft -> {

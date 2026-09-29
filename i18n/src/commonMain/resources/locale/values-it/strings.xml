@@ -77,7 +77,6 @@
     <string name="in_app_browser">Browser integrato</string>
     <string name="search_no_data">Impossibile trovare \"%s\".</string>
     <string name="search_hint_subtitle">i risultati appariranno automaticamente</string>
-    <string name="settings_reader_mode">Apri gli articoli in modalità lettura</string>
     <string name="link_copied_success">Link copiato!</string>
     <string name="search_placeholder">Cerca…</string>
     <string name="search_hint_title">Inizia a scrivere…</string>
@@ -381,8 +380,6 @@
     <string name="settings_notifications_open_settings_button">Apri Impostazioni</string>
     <string name="date_format_iso">Anno-Mese-Giorno</string>
     <string name="article_bookmarked_content_description">Salvato nei segnalibri</string>
-    <string name="increase_line_height_button_content_description">Aumenta interlinea</string>
-    <string name="decrease_line_height_button_content_description">Diminuisci interlinea</string>
     <string name="next">Successivo</string>
     <string name="delete_all_feeds_in_category">Elimina tutti i feed</string>
     <string name="delete_all_feeds_confirmation_title">Eliminare tutti i feed in questa categoria?</string>

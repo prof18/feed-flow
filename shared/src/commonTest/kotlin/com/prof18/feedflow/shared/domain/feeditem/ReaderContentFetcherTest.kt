@@ -35,7 +35,7 @@ class ReaderContentFetcherTest {
     fun `blank content returns null and saves nothing`() = runTest {
         val fetcher = fetcher(parsed = "   ")
 
-        assertNull(fetcher.fetch(feedItemId = "id", url = "https://example.com"))
+        assertNull(fetcher.fetch(feedItemId = "id", url = "https://example.com", save = true))
         assertFalse(fileHandler.isContentAvailable("id"))
     }
 
@@ -43,7 +43,7 @@ class ReaderContentFetcherTest {
     fun `null parse result returns null`() = runTest {
         val fetcher = fetcher(parsed = null)
 
-        assertNull(fetcher.fetch(feedItemId = "id", url = "https://example.com"))
+        assertNull(fetcher.fetch(feedItemId = "id", url = "https://example.com", save = true))
         assertFalse(fileHandler.isContentAvailable("id"))
     }
 

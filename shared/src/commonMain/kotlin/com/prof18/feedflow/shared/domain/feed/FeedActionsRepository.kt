@@ -338,7 +338,7 @@ internal class FeedActionsRepository(
         if (isBookmarked && !feedItemContentFileHandler.isContentAvailable(feedItemId.id)) {
             val urlInfo = databaseHelper.getFeedItemUrlInfo(feedItemId.id)
             if (urlInfo != null && urlInfo.canOpenWebReaderMode()) {
-                readerContentFetcher.fetch(urlInfo.id, urlInfo.url)
+                readerContentFetcher.fetch(urlInfo.id, urlInfo.url, save = true)
             }
         }
     }

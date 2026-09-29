@@ -20,7 +20,7 @@ internal class ContentPrefetcher(
 
     suspend fun prefetch(item: PrefetchQueueItem) {
         logger.d { "Prefetching: ${item.feedItemId}" }
-        val content = readerContentFetcher.fetch(item.feedItemId, item.url)
+        val content = readerContentFetcher.fetch(item.feedItemId, item.url, save = true)
         if (content != null) {
             logger.d { "Prefetched successfully: ${item.feedItemId}" }
         } else {

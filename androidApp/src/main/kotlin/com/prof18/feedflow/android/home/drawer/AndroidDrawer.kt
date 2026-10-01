@@ -172,16 +172,9 @@ fun AndroidDrawer(
             }
 
             item {
-                val bookmarksItem = remember(displayState.navDrawerState.bookmarks) {
-                    displayState.navDrawerState.bookmarks
-                        .filterIsInstance<DrawerItem.Bookmarks>()
-                        .firstOrNull()
-                        ?: DrawerItem.Bookmarks(unreadCount = 0)
-                }
                 DrawerBookmarksItem(
                     currentFeedFilter = displayState.currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
-                    drawerItem = bookmarksItem,
                     drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
                 )
             }

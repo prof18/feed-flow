@@ -17,7 +17,7 @@ struct BookmarksSection: View {
     let onFeedFilterSelected: (FeedFilter) -> Void
 
     var body: some View {
-        if let bookmarksItem = bookmarks.first as? DrawerItem.Bookmarks {
+        if bookmarks.first is DrawerItem.Bookmarks {
             Button {
                 onSelect()
                 onFeedFilterSelected(FeedFilter.Bookmarks())
@@ -25,15 +25,6 @@ struct BookmarksSection: View {
                 HStack {
                     Label(feedFlowStrings.drawerTitleBookmarks, systemImage: "bookmark.square")
                     Spacer()
-                    if bookmarksItem.unreadCount > 0 {
-                        Text("\(bookmarksItem.unreadCount)")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.secondary.opacity(0.15))
-                            .clipShape(Capsule())
-                    }
                 }
                 .contentShape(Rectangle())
             }

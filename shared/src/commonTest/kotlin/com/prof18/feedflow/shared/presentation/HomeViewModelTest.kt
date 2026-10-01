@@ -110,7 +110,7 @@ class HomeViewModelTest : KoinTestBase() {
 
         val state = viewModel.navDrawerState.value
         assertEquals(2L, (state.timeline.first() as DrawerItem.Timeline).unreadCount)
-        assertEquals(1L, (state.bookmarks.first() as DrawerItem.Bookmarks).unreadCount)
+        assertEquals(DrawerItem.Bookmarks, state.bookmarks.single())
         assertEquals(1, state.pinnedFeedSources.size)
         assertEquals(2, state.feedSourcesWithoutCategory.size)
         assertTrue(state.feedSourcesByCategory.isEmpty())

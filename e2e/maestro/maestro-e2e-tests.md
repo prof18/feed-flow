@@ -28,6 +28,10 @@ maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/smoke/<fl
 
 ## Smoke
 
+Google Drive disconnect with an unavailable credential provider is covered by Android Robolectric tests
+(`GoogleDriveAuthHelperTest`). Maestro cannot deterministically force credential-provider failures
+through the current seed tooling; seeded account state does not control the system credential provider.
+
 Fast confidence subset. Flow files live in `e2e/maestro/{android,ios}/smoke/`.
 
 | ID | Flow | Profile | Coverage |

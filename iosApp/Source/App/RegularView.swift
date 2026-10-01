@@ -43,7 +43,7 @@ struct RegularView: View {
 
     @State private var showEditFeedSheet = false
     @State private var feedSourceToEdit: FeedSource?
-    @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
+    @State private var columnVisibility: NavigationSplitViewVisibility
 
     @State private var showFeedOperationDialog = false
     @State private var feedOperationLoadingMessage: String?
@@ -55,6 +55,10 @@ struct RegularView: View {
     ) {
         _selectedSidebarItem = selectedSidebarItem
         _indexHolder = State(initialValue: HomeListIndexHolder(homeViewModel: homeViewModel))
+        let sidebarVisible = homeViewModel.getLargeScreenSidebarVisible()
+        _columnVisibility = State(initialValue: sidebarVisible.map {
+            $0.boolValue ? .all : .detailOnly
+        } ?? .automatic)
         self.homeViewModel = homeViewModel
         self.readerModeViewModel = readerModeViewModel
     }
@@ -166,6 +170,13 @@ struct RegularView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .navigationSplitViewStyle(.balanced)
+        .onChange(of: columnVisibility) { _, visibility in
+            if visibility == .detailOnly {
+                homeViewModel.setLargeScreenSidebarVisible(value: false)
+            } else if visibility == .all || visibility == .doubleColumn {
+                homeViewModel.setLargeScreenSidebarVisible(value: true)
+            }
+        }
         .background(Color(.systemGroupedBackground))
         .loadingDialog(isLoading: showFeedOperationDialog, message: feedOperationLoadingMessage)
         .task {

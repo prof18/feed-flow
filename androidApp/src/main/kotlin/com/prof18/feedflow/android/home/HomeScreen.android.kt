@@ -56,6 +56,9 @@ internal fun HomeScreen(
 ) {
     val browserManager = koinInject<BrowserManager>()
     val changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = koinInject()
+    var isDockedDrawerVisible by rememberSaveable {
+        mutableStateOf(homeViewModel.getLargeScreenSidebarVisible() ?: true)
+    }
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
@@ -253,6 +256,11 @@ internal fun HomeScreen(
         feedListActions = feedListActions,
         feedManagementActions = feedManagementActions,
         useDockedDrawer = useDockedDrawer,
+        isDockedDrawerVisible = isDockedDrawerVisible,
+        onDockedDrawerVisibilityChange = { visible ->
+            homeViewModel.setLargeScreenSidebarVisible(visible)
+            isDockedDrawerVisible = visible
+        },
         shareBehavior = shareBehavior,
         onBackupClick = homeViewModel::enqueueBackup,
         onFeedSuggestionsClick = onFeedSuggestionsClick,

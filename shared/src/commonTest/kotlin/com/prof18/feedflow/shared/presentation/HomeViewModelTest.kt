@@ -46,6 +46,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
@@ -1854,6 +1855,24 @@ class HomeViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         assertEquals(ThemeMode.DARK, viewModel.getCurrentThemeMode())
+    }
+
+    @Test
+    fun `sidebar uses the platform default before a user choice`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+
+        assertNull(viewModel.getLargeScreenSidebarVisible())
+    }
+
+    @Test
+    fun `sidebar choice persists across view model recreation`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+
+        for (visible in listOf(false, true, false)) {
+            viewModel.setLargeScreenSidebarVisible(visible)
+
+            assertEquals(visible, getViewModel().getLargeScreenSidebarVisible())
+        }
     }
 
     @Test

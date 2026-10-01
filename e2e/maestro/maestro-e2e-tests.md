@@ -121,6 +121,14 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-165 | `165-ios-reader-scroll-retention.yaml` | `reader-mode` | iOS | Reader mode keeps its scroll position across a background/foreground cycle. Backgrounding makes iOS render the app-switcher snapshot in both appearances, flipping the SwiftUI color scheme twice; the reader must restyle the loaded document with JS instead of regenerating its HTML, because any HTML change reloads the web view and sends the article back to the top. Android is not covered: its reader web view is driven by separate Compose code and never regenerated from the color scheme. |
 | REG-166 | `166-reader-rotation-retention.yaml` | `reader-mode` | Android | Guards issue #1401: rotating while reading keeps the reading position, and an open full-screen image viewer survives the rotation instead of being dismissed. `MainActivity` declares the size and orientation config changes, so the activity is not recreated and the reader's `loadDataWithBaseURL` document is never reloaded; the image URL is held in `rememberSaveable`. The post-rotation assertions check that the head anchor is gone and a late paragraph is on screen rather than re-asserting the tail anchor, because the text reflows at the new width and the anchoring can shift by a paragraph. The flow sets `PORTRAIT` before seeding so it does not inherit an orientation from an earlier flow. iOS is not covered: its reader is separate SwiftUI code, and REG-165 covers its own scroll-retention path. |
 | REG-167 | `167-scroll-read-auto-hide.yaml` | `pagination-scroll-read` | Android, iOS | With both preferences saved on, scrolling marks articles read while keeping earlier rows reachable in the current list. Scrolling onward still loads the next page and reaches Article 050. |
+| REG-168 | `168-sidebar-visibility-persistence.yaml` | `content-rich` | Android tablet/foldable, iPad | Opt in with `-e LARGE_SCREEN=true` on a large-screen device. Close the docked sidebar, terminate and relaunch, verify it stays closed; reopen it and verify it stays open after another relaunch. Phone runs skip this flow because their modal drawers are transient. |
+
+Run REG-168 explicitly on a tablet-sized Android device or an iPad simulator in landscape:
+
+```bash
+maestro --platform android --device "$ANDROID_SERIAL" test -e LARGE_SCREEN=true e2e/maestro/android/regression/168-sidebar-visibility-persistence.yaml
+maestro --platform ios --device "$IPAD_UDID" test -e LARGE_SCREEN=true e2e/maestro/ios/regression/168-sidebar-visibility-persistence.yaml
+```
 
 ## Known Limitations
 

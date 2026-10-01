@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.feed.httpcache
 import co.touchlab.kermit.Logger
 import co.touchlab.stately.concurrency.Lock
 import co.touchlab.stately.concurrency.withLock
+import com.prof18.feedflow.core.model.FeedFetchTier
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -19,6 +20,17 @@ class FeedHttpCacheStore(
     private val validators = mutableMapOf<String, FeedHttpValidators>()
     private val responses = mutableMapOf<String, FeedHttpResponseInfo>()
     private val lastSuccessTimestamps = mutableMapOf<String, Long>()
+    private val tiers = mutableMapOf<String, FeedFetchTier>()
+
+    fun seedTiers(urlToTiers: Map<String, FeedFetchTier>): Unit = lock.withLock {
+        tiers.putAll(urlToTiers)
+    }
+
+    fun tierFor(url: String): FeedFetchTier? = lock.withLock { tiers[url] }
+
+    fun recordSuccessfulTier(url: String, tier: FeedFetchTier): Unit = lock.withLock {
+        tiers[url] = tier
+    }
 
     fun seedValidators(urlToValidators: Map<String, FeedHttpValidators>): Unit = lock.withLock {
         validators.clear()

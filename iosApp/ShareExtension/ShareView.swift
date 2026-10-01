@@ -98,6 +98,8 @@ struct ShareView: View {
                         errorMessage = feedFlowStrings.missingTitleAndLink
                     case .genericError:
                         errorMessage = feedFlowStrings.addFeedGenericError
+                    case let .fetchFailed(failure):
+                        errorMessage = feedFlowStrings.feedFetchRefusedError(String(failure.statusCode))
                     }
 
                     self.uiState = .error(message: errorMessage)

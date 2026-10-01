@@ -11,6 +11,11 @@ sealed class FeedAddedState {
     sealed class Error : FeedAddedState() {
         abstract val canForceAdd: Boolean
 
+        data class FetchFailed(
+            val statusCode: Int,
+            override val canForceAdd: Boolean = true,
+        ) : Error()
+
         data class InvalidUrl(override val canForceAdd: Boolean) : Error()
         data class InvalidTitleLink(override val canForceAdd: Boolean) : Error()
         data class GenericError(override val canForceAdd: Boolean) : Error()

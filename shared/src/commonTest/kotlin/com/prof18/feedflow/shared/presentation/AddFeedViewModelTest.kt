@@ -281,7 +281,7 @@ class AddFeedViewModelTest : KoinTestBase() {
         private val rssUrl: String,
         private val channel: RssChannel,
     ) : RssParserWrapper {
-        override suspend fun getRssChannel(url: String): RssChannel {
+        override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
             check(url == rssUrl) { "Unsupported url: $url" }
             return channel
         }

@@ -135,6 +135,9 @@ struct EditFeedScreen: View {
 
                         case .genericError:
                             errorMessage = feedFlowStrings.editFeedGenericError
+
+                        case let .fetchFailed(failure):
+                            errorMessage = feedFlowStrings.feedFetchRefusedError(String(failure.statusCode))
                         }
 
                         isAddingFeed = false

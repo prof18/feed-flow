@@ -34,7 +34,7 @@ Fast confidence subset. Flow files live in `e2e/maestro/{android,ios}/smoke/`.
 | --- | --- | --- | --- |
 | SM-001 | `001-first-launch-empty.yaml` | `empty` | App launches, empty timeline message visible, seed marker stable. |
 | SM-002 | `002-seeded-timeline-loads.yaml` | `content-rich` | Seeded timeline renders newest article, unread count, hidden feed excluded from Timeline. |
-| SM-003 | `003-library-filters.yaml` | `content-rich` | Drawer filters: Timeline, Read, Bookmarks, source filter, category filter, uncategorized. |
+| SM-003 | `003-library-filters.yaml` | `content-rich` | Drawer filters: Timeline, Read, Bookmarks, source filter, category filter, uncategorized. Bookmarks has no drawer count even with unread saved articles. |
 | SM-004 | `004-article-read-bookmark-state.yaml` | `content-rich` | Open article, bookmark via reader toolbar, article appears under Read/Bookmarks filters. |
 | SM-005 | `005-mark-all-read.yaml` | `content-rich` | Home overflow → Mark all as read confirmation, articles move to Read filter. |
 | SM-006 | `006-search-core.yaml` (+ iOS `006-search-bookmark-filter.yaml`) | `content-rich` | Search query, filter chips (All / Read / Bookmarks). iOS uses seeded query/filter deeplink. |

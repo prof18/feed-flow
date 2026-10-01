@@ -666,6 +666,10 @@ class HomeViewModel internal constructor(
 
     fun getCurrentThemeMode() = settingsRepository.getThemeMode()
 
+    fun getLargeScreenSidebarVisible(): Boolean? = settingsRepository.getLargeScreenSidebarVisible()
+
+    fun setLargeScreenSidebarVisible(value: Boolean) = settingsRepository.setLargeScreenSidebarVisible(value)
+
     fun updateFeedOrder(order: com.prof18.feedflow.core.model.FeedOrder) {
         launchAfterFlushingScrollReadState {
             feedAppearanceSettingsRepository.setFeedOrder(order)

@@ -1,0 +1,44 @@
+appId: com.prof18.feedflow.debug
+---
+# Opt in on a tablet or unfolded foldable; the phone suite uses a modal drawer.
+- runFlow:
+    when:
+      true: ${typeof LARGE_SCREEN !== 'undefined' && LARGE_SCREEN == 'true'}
+    commands:
+      - stopApp
+      - setOrientation: LANDSCAPE_LEFT
+      - openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+      - extendedWaitUntil:
+          visible:
+            id: e2e_seed_complete
+          timeout: 30000
+      - tapOn:
+          id: e2e_open_app
+      - runFlow:
+          when:
+            notVisible:
+              id: drawer_timeline
+          commands:
+            - tapOn:
+                id: drawer_menu_button
+      - assertVisible:
+          id: drawer_timeline
+      - tapOn:
+          id: drawer_menu_button
+      - assertNotVisible:
+          id: drawer_timeline
+      - stopApp
+      - launchApp
+      - assertVisible:
+          id: drawer_menu_button
+      - assertNotVisible:
+          id: drawer_timeline
+      - tapOn:
+          id: drawer_menu_button
+      - assertVisible:
+          id: drawer_timeline
+      - stopApp
+      - launchApp
+      - assertVisible:
+          id: drawer_timeline
+      - setOrientation: PORTRAIT

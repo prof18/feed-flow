@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.utils.openDesktopMailSafely
 import com.prof18.feedflow.shared.presentation.MenuBarViewModel
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
@@ -39,14 +40,12 @@ fun FrameWindowScope.FeedFlowMenuBar(
     )
     val helpMenuCallbacks = HelpMenuCallbacks(
         onBugReportClick = {
-            val desktop = java.awt.Desktop.getDesktop()
-            val uri = java.net.URI.create(
+            openDesktopMailSafely(
                 userFeedbackReporter.getEmailUrl(
                     subject = emailSubject,
                     content = emailContent,
                 ),
             )
-            desktop.mail(uri)
         },
     )
 

@@ -208,11 +208,6 @@ internal class FeedStateRepository(
             )
         }
 
-    fun getUnreadBookmarksCountFlow(): Flow<Long> =
-        databaseHelper.getUnreadFeedCountFlow(
-            feedFilter = FeedFilter.Bookmarks,
-        )
-
     fun getUnreadTimelineCountFlow(): Flow<Long> =
         databaseHelper.getUnreadFeedCountFlow(
             feedFilter = FeedFilter.Timeline,

@@ -182,14 +182,12 @@ class HomeViewModel internal constructor(
                 feedSourcesRepository.observeFeedSourcesByCategoryWithUnreadCount(),
                 feedCategoryRepository.observeCategoriesWithUnreadCount(),
                 feedStateRepository.getUnreadTimelineCountFlow(),
-                feedStateRepository.getUnreadBookmarksCountFlow(),
                 feedAppearanceSettingsRepository.hideUnreadCount,
-            ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, bookmarksCount, hideUnreadCount ->
+            ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, hideUnreadCount ->
                 DrawerDataSnapshot(
                     feedSourceByCategoryWithCount = feedSourceByCategoryWithCount,
                     categoriesWithCount = categoriesWithCount,
                     timelineCount = timelineCount,
-                    bookmarksCount = bookmarksCount,
                     hideUnreadCount = hideUnreadCount,
                 )
             },
@@ -198,7 +196,6 @@ class HomeViewModel internal constructor(
             val feedSourceByCategoryWithCount = snapshot.feedSourceByCategoryWithCount
             val categoriesWithCount = snapshot.categoriesWithCount
             val timelineCount = snapshot.timelineCount
-            val bookmarksCount = snapshot.bookmarksCount
             val hideUnreadCount = snapshot.hideUnreadCount
             val containsOnlyNullKey = feedSourceByCategoryWithCount.keys.all { it == null }
 
@@ -225,7 +222,7 @@ class HomeViewModel internal constructor(
             NavDrawerState(
                 timeline = persistentListOf(DrawerItem.Timeline(unreadCount = displayCount(timelineCount))),
                 read = persistentListOf(DrawerItem.Read),
-                bookmarks = persistentListOf(DrawerItem.Bookmarks(unreadCount = displayCount(bookmarksCount))),
+                bookmarks = persistentListOf(DrawerItem.Bookmarks),
                 categories = categoriesWithCount.map { categoryWithCount ->
                     DrawerCategory(
                         category = categoryWithCount.category,
@@ -269,7 +266,6 @@ class HomeViewModel internal constructor(
         val feedSourceByCategoryWithCount: Map<FeedSourceCategory?, List<FeedSourceWithUnreadCount>>,
         val categoriesWithCount: List<CategoryWithUnreadCount>,
         val timelineCount: Long,
-        val bookmarksCount: Long,
         val hideUnreadCount: Boolean,
     )
 

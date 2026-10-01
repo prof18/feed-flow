@@ -8,6 +8,8 @@ sealed class FeedEditedState {
     ) : FeedEditedState()
 
     sealed class Error : FeedEditedState() {
+        data class FetchFailed(val statusCode: Int) : Error()
+
         data object InvalidUrl : Error()
         data object InvalidTitleLink : Error()
         data object GenericError : Error()

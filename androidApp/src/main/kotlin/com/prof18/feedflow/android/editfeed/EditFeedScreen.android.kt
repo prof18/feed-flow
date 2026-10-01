@@ -70,6 +70,8 @@ internal fun EditScreen(
                         FeedEditedState.Error.InvalidUrl -> strings.invalidRssUrl
                         FeedEditedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
                         FeedEditedState.Error.GenericError -> strings.editFeedGenericError
+                        is FeedEditedState.Error.FetchFailed ->
+                            strings.feedFetchRefusedError
                     }
                 }
 

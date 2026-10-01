@@ -1,6 +1,8 @@
 package com.prof18.feedflow.shared.domain.feed.httpcache
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.FeedFetchTier
+import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -134,4 +136,61 @@ class FeedHttpCacheStoreTest {
         assertEquals(429, response?.statusCode)
         assertEquals("3600", response?.retryAfter)
     }
+
+    @Test
+    fun `tiers seed and successful fetch overwrites the remembered value`() {
+        store.seedTiers(mapOf(feedUrl to FeedFetchTier.LINK_FREE))
+        assertEquals(FeedFetchTier.LINK_FREE, store.tierFor(feedUrl))
+        store.recordSuccessfulTier(feedUrl, FeedFetchTier.BROWSER)
+        assertEquals(FeedFetchTier.BROWSER, store.tierFor(feedUrl))
+    }
+
+    @Test
+    fun `tier and validator seeds are independent and preserve newly added feeds`() {
+        val addedUrl = "https://new.example/feed"
+        store.seedValidators(mapOf(feedUrl to FeedHttpValidators("etag", null)))
+        store.recordSuccessfulTier(addedUrl, FeedFetchTier.BROWSER)
+        store.seedTiers(mapOf(feedUrl to FeedFetchTier.PRIMARY))
+        assertEquals("etag", store.validatorsFor(feedUrl)?.etag)
+        assertEquals(FeedFetchTier.BROWSER, store.tierFor(addedUrl))
+        store.seedValidators(emptyMap())
+        store.seedTiers(emptyMap())
+        assertEquals(FeedFetchTier.BROWSER, store.tierFor(addedUrl))
+        assertEquals(FeedFetchTier.PRIMARY, store.tierFor(feedUrl))
+    }
+
+    @Test
+    fun `failed fetch preserves previous tier and not modified falls back to it`() {
+        val previous = FeedSourceCacheInfo(
+            feedSourceId = "id",
+            etag = null,
+            lastModified = null,
+            validatorsTimestamp = null,
+            nextFetchTimestamp = null,
+            backoffTimestamp = null,
+            userAgentTier = FeedFetchTier.LINK_FREE,
+        )
+        store.recordSuccessfulTier(feedUrl, FeedFetchTier.BROWSER)
+        val failed = createCacheInfo(fetchSucceeded = false, previous = previous)
+        assertEquals(FeedFetchTier.LINK_FREE, failed.userAgentTier)
+        val freshStore = FeedHttpCacheStore({ nowMillis }, Logger.withTag("CacheFactoryTest"))
+        val notModified = createCacheInfo(fetchSucceeded = true, previous = previous, cacheStore = freshStore)
+        assertEquals(FeedFetchTier.LINK_FREE, notModified.userAgentTier)
+        assertEquals(FeedFetchTier.BROWSER, createCacheInfo(true, previous).userAgentTier)
+    }
+
+    private fun createCacheInfo(
+        fetchSucceeded: Boolean,
+        previous: FeedSourceCacheInfo,
+        cacheStore: FeedHttpCacheStore = store,
+    ) = FeedSourceCacheInfoFactory.create(
+        store = cacheStore,
+        feedSourceId = "id",
+        feedUrl = feedUrl,
+        fetchSucceeded = fetchSucceeded,
+        refreshValidatorsTimestamp = false,
+        previousCacheInfo = previous,
+        now = nowMillis,
+        logger = Logger.withTag("CacheFactoryTest"),
+    )
 }

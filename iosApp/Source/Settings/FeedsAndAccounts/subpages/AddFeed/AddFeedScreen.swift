@@ -120,6 +120,9 @@ struct AddFeedScreen: View {
 
                     case .genericError:
                         errorMessage = feedFlowStrings.addFeedGenericError
+
+                    case .fetchFailed:
+                        errorMessage = feedFlowStrings.feedFetchRefusedError
                     }
 
                     isAddingFeed = false

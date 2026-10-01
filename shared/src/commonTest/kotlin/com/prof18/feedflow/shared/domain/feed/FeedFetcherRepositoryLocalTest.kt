@@ -1,8 +1,10 @@
 package com.prof18.feedflow.shared.domain.feed
 
 import app.cash.turbine.test
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.core.model.FeedFetchTier
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
@@ -60,6 +62,71 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     fun resetParserState() {
         fakeRssParserWrapper.reset()
         fakeRssParserWrapper.validatorsFor = { feedHttpCacheStore.validatorsFor(it) }
+    }
+
+    @Test
+    fun `browser tier survives database round trip and skips earlier identities`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val source = createFeedSource(id = "tier-source", title = "Tier Feed")
+        databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource()))
+        val attempted = mutableListOf<FeedFetchTier>()
+        bindTieredFetcher(attempted).fetchFeeds(forceRefresh = true)
+        advanceUntilIdle()
+        assertEquals(FeedFetchTier.entries.toList(), attempted)
+        assertEquals(FeedFetchTier.BROWSER, databaseHelper.getFeedSourcesCacheInfo().single().userAgentTier)
+
+        attempted.clear()
+        // A fresh store proves the second refresh loads its tier from the database.
+        bindTieredFetcher(attempted).fetchFeeds(forceRefresh = true)
+        advanceUntilIdle()
+        assertEquals(listOf(FeedFetchTier.BROWSER), attempted)
+    }
+
+    private fun bindTieredFetcher(attempted: MutableList<FeedFetchTier>): FeedFetcherRepository {
+        val store = FeedHttpCacheStore(
+            currentTimeMillis = { dateFormatter.currentTimeMillis() },
+            logger = Logger.withTag("TierRoundTrip"),
+        )
+        val parsers: Map<FeedFetchTier, suspend (String) -> RssChannel> =
+            FeedFetchTier.entries.associateWith { tier ->
+                {
+                        _: String ->
+                    attempted.add(tier)
+                    if (tier != FeedFetchTier.BROWSER) {
+                        throw HttpException(code = 403, message = "Forbidden")
+                    }
+                    createRssChannel(title = "Tier Feed", link = "https://example.com", items = emptyList())
+                }
+            }
+        getKoin().loadModules(
+            listOf(
+                module {
+                    single<FeedHttpCacheStore> { store }
+                    single<RssParserWrapper> {
+                        RssParserWrapperImpl(parsers = parsers, feedHttpCacheStore = get())
+                    }
+                    factory {
+                        FeedFetcherRepository(
+                            dispatcherProvider = get(),
+                            feedStateRepository = get(),
+                            gReaderRepository = get(),
+                            feedbinRepository = get(),
+                            databaseHelper = get(),
+                            feedSyncRepository = get(),
+                            settingsRepository = get(),
+                            contentPrefetchRepository = get(),
+                            logger = Logger.withTag("TierRoundTrip"),
+                            rssParserWrapper = get(),
+                            rssChannelMapper = get(),
+                            dateFormatter = get(),
+                            feedSourceLogoRetriever = get(),
+                            feedHttpCacheStore = get(),
+                        )
+                    }
+                },
+            ),
+        )
+        return getKoin().get()
     }
 
     private fun setupLocalAccount() {
@@ -1031,7 +1098,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
             notModifiedUrls.add(url)
         }
 
-        override suspend fun getRssChannel(url: String): RssChannel {
+        override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
             callCount += 1
             requestedUrls.add(url)
             validatorsSeenByUrl[url] = validatorsFor(url)

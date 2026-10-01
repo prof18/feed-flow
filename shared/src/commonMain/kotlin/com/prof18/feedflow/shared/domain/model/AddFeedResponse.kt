@@ -9,6 +9,8 @@ internal sealed interface AddFeedResponse {
         val parsedFeedSource: ParsedFeedSource,
     ) : AddFeedResponse
 
+    data class FetchError(val statusCode: Int) : AddFeedResponse
+
     data object EmptyFeed : AddFeedResponse
 
     data object NotRssFeed : AddFeedResponse

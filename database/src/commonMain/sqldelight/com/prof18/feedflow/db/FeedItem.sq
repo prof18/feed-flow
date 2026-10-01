@@ -278,6 +278,16 @@ WHERE url_hash IN :urlHash;
 selectNewerItems:
 SELECT url_hash FROM feed_item
 WHERE is_read = 0
+AND (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
+AND is_blocked = 0
+AND EXISTS (
+    SELECT 1 FROM feed_source
+    LEFT JOIN feed_source_preferences
+    ON feed_source.url_hash = feed_source_preferences.feed_source_id
+    WHERE feed_source.url_hash = feed_item.feed_source_id
+    AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
+)
 AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
 AND (
     (
@@ -310,6 +320,16 @@ AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
 selectOlderItems:
 SELECT url_hash FROM feed_item
 WHERE is_read = 0
+AND (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
+AND is_blocked = 0
+AND EXISTS (
+    SELECT 1 FROM feed_source
+    LEFT JOIN feed_source_preferences
+    ON feed_source.url_hash = feed_source_preferences.feed_source_id
+    WHERE feed_source.url_hash = feed_item.feed_source_id
+    AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
+)
 AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
 AND (
     (
@@ -341,6 +361,16 @@ markAllNewerAsRead:
 UPDATE feed_item
 SET is_read = 1, notification_sent = 1
 WHERE is_read = 0
+AND (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
+AND is_blocked = 0
+AND EXISTS (
+    SELECT 1 FROM feed_source
+    LEFT JOIN feed_source_preferences
+    ON feed_source.url_hash = feed_source_preferences.feed_source_id
+    WHERE feed_source.url_hash = feed_item.feed_source_id
+    AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
+)
 AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
 AND (
     (
@@ -374,6 +404,16 @@ markAllOlderAsRead:
 UPDATE feed_item
 SET is_read = 1, notification_sent = 1
 WHERE is_read = 0
+AND (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
+AND is_blocked = 0
+AND EXISTS (
+    SELECT 1 FROM feed_source
+    LEFT JOIN feed_source_preferences
+    ON feed_source.url_hash = feed_source_preferences.feed_source_id
+    WHERE feed_source.url_hash = feed_item.feed_source_id
+    AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
+)
 AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
 AND (
     (

@@ -283,6 +283,17 @@ class FeedFetcherRepository internal constructor(
         data class Failure(override val feedSource: FeedSource) : FeedFetchResult
     }
 
+    private fun seedFeedTiers(
+        feedSources: List<FeedSource>,
+        cacheInfoById: Map<String, FeedSourceCacheInfo>,
+    ) {
+        feedHttpCacheStore.seedTiers(
+            feedSources.mapNotNull { source ->
+                cacheInfoById[source.id]?.userAgentTier?.let { source.url to it }
+            }.toMap(),
+        )
+    }
+
     @Suppress("LongMethod")
     private suspend fun parseFeeds(
         feedSourceUrls: List<FeedSource>,
@@ -296,6 +307,7 @@ class FeedFetcherRepository internal constructor(
 
         val currentTime = dateFormatter.currentTimeMillis()
         val cacheInfoById = databaseHelper.getFeedSourcesCacheInfo().associateBy { it.feedSourceId }
+        seedFeedTiers(feedSourceUrls, cacheInfoById)
         feedHttpCacheStore.seedValidators(
             feedSourceUrls.mapNotNull { feedSource ->
                 val cacheInfo = cacheInfoById[feedSource.id] ?: return@mapNotNull null

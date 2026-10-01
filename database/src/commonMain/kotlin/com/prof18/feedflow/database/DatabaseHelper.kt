@@ -38,6 +38,7 @@ import com.prof18.feedflow.db.Cloud_pending_feed_or_category_change
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item_status
 import com.prof18.feedflow.db.Feed_source
+import com.prof18.feedflow.db.Feed_source_cache_info
 import com.prof18.feedflow.db.Feed_source_category
 import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.db.GetFeedSourcesWithUnreadCount
@@ -69,6 +70,9 @@ class DatabaseHelper(
         cloud_pending_feed_or_category_changeAdapter = Cloud_pending_feed_or_category_change.Adapter(
             entityAdapter = EnumColumnAdapter(),
             field_Adapter = EnumColumnAdapter(),
+        ),
+        feed_source_cache_infoAdapter = Feed_source_cache_info.Adapter(
+            user_agent_tierAdapter = EnumColumnAdapter(),
         ),
         feed_sourceAdapter = Feed_source.Adapter(
             positionAdapter = IntColumnAdapter,
@@ -567,6 +571,9 @@ class DatabaseHelper(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isUncategorized = feedFilter.getIsUncategorized(),
+                isRead = feedFilter.getIsReadFlag(showReadItems = true),
+                isBookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             ).executeAsList()
         }
 
@@ -577,6 +584,9 @@ class DatabaseHelper(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isUncategorized = feedFilter.getIsUncategorized(),
+                isRead = feedFilter.getIsReadFlag(showReadItems = true),
+                isBookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             ).executeAsList()
         }
 
@@ -594,6 +604,9 @@ class DatabaseHelper(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isUncategorized = feedFilter.getIsUncategorized(),
+                isRead = feedFilter.getIsReadFlag(showReadItems = true),
+                isBookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             ).executeAsList()
         }
         dbRef.feedItemQueries.markAllNewerAsRead(
@@ -601,6 +614,9 @@ class DatabaseHelper(
             feedSourceId = feedFilter.getFeedSourceId(),
             feedSourceCategoryId = feedFilter.getCategoryId(),
             isUncategorized = feedFilter.getIsUncategorized(),
+            isRead = feedFilter.getIsReadFlag(showReadItems = true),
+            isBookmarked = feedFilter.getBookmarkFlag(),
+            isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
         )
         recordCloudPendingArticleFlags(cloudSessionId, affectedItemIds, CloudArticleFlag.READ, true)
     }
@@ -619,6 +635,9 @@ class DatabaseHelper(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isUncategorized = feedFilter.getIsUncategorized(),
+                isRead = feedFilter.getIsReadFlag(showReadItems = true),
+                isBookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             ).executeAsList()
         }
         dbRef.feedItemQueries.markAllOlderAsRead(
@@ -626,6 +645,9 @@ class DatabaseHelper(
             feedSourceId = feedFilter.getFeedSourceId(),
             feedSourceCategoryId = feedFilter.getCategoryId(),
             isUncategorized = feedFilter.getIsUncategorized(),
+            isRead = feedFilter.getIsReadFlag(showReadItems = true),
+            isBookmarked = feedFilter.getBookmarkFlag(),
+            isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
         )
         recordCloudPendingArticleFlags(cloudSessionId, affectedItemIds, CloudArticleFlag.READ, true)
     }
@@ -711,6 +733,7 @@ class DatabaseHelper(
                     validatorsTimestamp = cacheInfo.validators_timestamp,
                     nextFetchTimestamp = cacheInfo.next_fetch_timestamp,
                     backoffTimestamp = cacheInfo.backoff_timestamp,
+                    userAgentTier = cacheInfo.user_agent_tier,
                 )
             }
     }
@@ -725,6 +748,7 @@ class DatabaseHelper(
                     validators_timestamp = cacheInfo.validatorsTimestamp,
                     next_fetch_timestamp = cacheInfo.nextFetchTimestamp,
                     backoff_timestamp = cacheInfo.backoffTimestamp,
+                    user_agent_tier = cacheInfo.userAgentTier,
                 )
             }
         }

@@ -198,6 +198,7 @@
     <string name="deleting_feed_dialog_title">Deleting...</string>
     <string name="add_feed_generic_error">There was an error while adding the feed. Please retry</string>
     <string name="edit_feed_generic_error">Something went wrong while editing the feed. Please retry.</string>
+    <string name="feed_fetch_refused_error">Couldn\'t reach this feed. The website might be blocking RSS readers. Please try again later.</string>
     <string name="open_feed_settings">Feed settings</string>
     <string name="feed_added_message_without_name">Feed added</string>
     <string name="sync_error_message">There was an error while syncing the feeds - error code: %s :(. Please retry.</string>

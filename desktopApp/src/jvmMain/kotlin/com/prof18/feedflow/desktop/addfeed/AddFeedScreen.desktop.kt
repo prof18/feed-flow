@@ -73,6 +73,8 @@ fun AddFeedScreenContent(
                         is FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrlWithRetryHint
                         is FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
                         is FeedAddedState.Error.GenericError -> strings.addFeedGenericError
+                        is FeedAddedState.Error.FetchFailed ->
+                            strings.feedFetchRefusedError
                     }
                 }
 

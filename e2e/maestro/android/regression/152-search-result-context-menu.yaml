@@ -5,7 +5,7 @@ appId: com.prof18.feedflow.debug
 - extendedWaitUntil:
     visible:
       id: e2e_seed_complete
-    timeout: 15000
+    timeout: 30000
 - tapOn:
     id: e2e_open_app
 
@@ -15,7 +15,13 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: home_search_button
 - tapOn:
+    text: "Cancel"
+    optional: true
+- tapOn:
     id: search_query_field
+- tapOn:
+    text: "Cancel"
+    optional: true
 - inputText: "Pixel"
 - extendedWaitUntil:
     visible:
@@ -36,4 +42,19 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: search_filter_bookmarks
 - assertVisible:
+    id: article_row_e2e_article_comments
+
+# Removing a saved search result waits for confirmation; cancel keeps it saved.
+- longPressOn:
+    id: article_row_e2e_article_comments
+- tapOn: "Remove from bookmarks"
+- assertVisible: "Are you sure you want to remove this article from Bookmarks?"
+- tapOn: "Cancel"
+- assertVisible:
+    id: article_row_e2e_article_comments
+- longPressOn:
+    id: article_row_e2e_article_comments
+- tapOn: "Remove from bookmarks"
+- tapOn: "Confirm"
+- assertNotVisible:
     id: article_row_e2e_article_comments

@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.components.rememberConfirmedBookmarkAction
 import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFontSizes
@@ -48,6 +49,10 @@ internal fun SearchScreen(
     val context = LocalContext.current
 
     val strings = LocalFeedFlowStrings.current
+    val onBookmarkClick = rememberConfirmedBookmarkAction(
+        scopeKey = currentFeedFilter to searchFilter,
+        onBookmarkClick = viewModel::onBookmarkClick,
+    )
 
     val snackbarHostState = remember { SnackbarHostState() }
     val resetAndNavigateBack = {
@@ -108,9 +113,7 @@ internal fun SearchScreen(
             )
             viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
         },
-        onBookmarkClick = { feedItemId, isBookmarked ->
-            viewModel.onBookmarkClick(feedItemId, isBookmarked)
-        },
+        onBookmarkClick = onBookmarkClick,
         onReadStatusClick = { feedItemId, isRead ->
             viewModel.onReadStatusClick(feedItemId, isRead)
         },

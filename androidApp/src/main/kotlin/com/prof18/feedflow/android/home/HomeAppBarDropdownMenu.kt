@@ -44,14 +44,23 @@ fun HomeAppBarDropdownMenu(
     onViewOptionsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showMarkAllReadDialog by remember { mutableStateOf(false) }
+    var showMarkAllReadDialog by remember(feedFilter) { mutableStateOf(false) }
     var showClearOldArticlesDialog by remember { mutableStateOf(false) }
 
     if (showMarkAllReadDialog) {
         AlertDialog(
             onDismissRequest = { showMarkAllReadDialog = false },
             title = { Text(LocalFeedFlowStrings.current.markAllReadButton) },
-            text = { Text(LocalFeedFlowStrings.current.markAllReadDialogMessage) },
+            text = {
+                val strings = LocalFeedFlowStrings.current
+                Text(
+                    if (feedFilter is FeedFilter.Bookmarks) {
+                        strings.markAllBookmarksReadDialogMessage
+                    } else {
+                        strings.markAllReadDialogMessage
+                    },
+                )
+            },
             confirmButton = {
                 TextButton(
                     modifier = Modifier.testTag(HomeToolbarE2eIds.MARK_ALL_READ_CONFIRM_BUTTON),
@@ -132,9 +141,7 @@ fun HomeAppBarDropdownMenu(
 
         DropdownMenuItem(
             modifier = Modifier.testTag(HomeToolbarE2eIds.MARK_ALL_READ_MENU_ITEM),
-            onClick = {
-                showMarkAllReadDialog = true
-            },
+            onClick = { showMarkAllReadDialog = true },
             text = {
                 Text(LocalFeedFlowStrings.current.markAllReadButton)
             },

@@ -354,6 +354,43 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
         assertFalse(updatedItem.is_read, "Item should be marked as unread")
     }
 
+    @Test
+    fun `bookmark range actions leave unbookmarked remote account articles unread`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
+        val source = createFeedSource("source-1", "Test Feed")
+        databaseHelper.insertFeedSourceWithCategory(source)
+        val items = listOf(
+            buildFeedItem("5031084432", "New bookmark", 10000L, source),
+            buildFeedItem("5050623384", "New unbookmarked", 9000L, source),
+            buildFeedItem("5050623385", "Target bookmark", 8000L, source),
+            buildFeedItem("5058157281", "Old bookmark", 7000L, source),
+            buildFeedItem("5058832279", "Old unbookmarked", 6000L, source),
+        )
+        databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+        listOf(items[0], items[2], items[3]).forEach {
+            databaseHelper.updateBookmarkStatus(FeedItemId(it.id), isBookmarked = true)
+        }
+        feedStateRepository.updateFeedFilter(FeedFilter.Bookmarks)
+        advanceUntilIdle()
+
+        feedActionsRepository.markAllAboveAsRead(items[2].id)
+        advanceUntilIdle()
+
+        assertEquals(
+            setOf(items[0].id, items[2].id),
+            databaseHelper.getAllFeedItemFlagsForCloud().filter { it.isRead }.map { it.id }.toSet(),
+        )
+
+        databaseHelper.updateReadStatus(items.map { FeedItemId(it.id) }, isRead = false)
+        feedActionsRepository.markAllBelowAsRead(items[2].id)
+        advanceUntilIdle()
+
+        assertEquals(
+            setOf(items[2].id, items[3].id),
+            databaseHelper.getAllFeedItemFlagsForCloud().filter { it.isRead }.map { it.id }.toSet(),
+        )
+    }
+
     private fun createFeedSource(
         id: String,
         title: String,

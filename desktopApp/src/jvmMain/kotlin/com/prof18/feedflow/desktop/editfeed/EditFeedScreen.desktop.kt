@@ -82,7 +82,7 @@ private fun EditFeedScreenContent(
                         FeedEditedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
                         FeedEditedState.Error.GenericError -> strings.editFeedGenericError
                         is FeedEditedState.Error.FetchFailed ->
-                            strings.feedFetchRefusedError(feedAddedState.statusCode.toString())
+                            strings.feedFetchRefusedError
                     }
                 }
 

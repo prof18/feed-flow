@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 69 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 70 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -125,6 +125,14 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-169 | `169-bookmarks-mark-all-read-confirmation.yaml` | `content-rich` | Android | Toolbar and footer each show the Bookmarks-specific bulk-read confirmation; cancel preserves unread state, confirm marks saved articles read and retains their bookmarks, and an unbookmarked Timeline article remains unread. |
 | REG-170 | `170-force-english.yaml` | `content-rich` | Android | Force English updates the interface immediately, survives a process restart, and can be disabled. iOS uses the system per-app language setting. |
 | REG-171 | `171-search-reader-navigation.yaml` | `reader-mode` | Android | Cached search results follow Success → Fallback → Long at both reader boundaries; Back preserves the query/results, and leaving Search restores Home timeline navigation for the overlapping Success article. |
+| REG-172 | `172-sidebar-visibility-persistence.yaml` | `content-rich` | Android tablet/foldable, iPad | Opt in with `-e LARGE_SCREEN=true` on a large-screen device. Close the docked sidebar, terminate and relaunch, verify it stays closed; reopen it and verify it stays open after another relaunch. Phone runs skip this flow because their modal drawers are transient. |
+
+Run REG-172 explicitly on a tablet-sized Android device or an iPad simulator in landscape:
+
+```bash
+maestro --platform android --device "$ANDROID_SERIAL" test -e LARGE_SCREEN=true e2e/maestro/android/regression/172-sidebar-visibility-persistence.yaml
+maestro --platform ios --device "$IPAD_UDID" test -e LARGE_SCREEN=true e2e/maestro/ios/regression/172-sidebar-visibility-persistence.yaml
+```
 
 ## Known Limitations
 

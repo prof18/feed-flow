@@ -26,6 +26,12 @@ class SettingsRepository(
     private var saveItemContentOnOpenEnabled: Boolean? = null
     private var prefetchArticleContentEnabled: Boolean? = null
 
+    fun getLargeScreenSidebarVisible(): Boolean? =
+        settings.getBooleanOrNull(SettingsFields.LARGE_SCREEN_SIDEBAR_VISIBLE.name)
+
+    fun setLargeScreenSidebarVisible(value: Boolean) =
+        settings.set(SettingsFields.LARGE_SCREEN_SIDEBAR_VISIBLE.name, value)
+
     internal fun cloudSyncSession(): String = syncUploadLock.withLock {
         settings.getStringOrNull(SettingsFields.CLOUD_SYNC_SESSION.name) ?: Uuid.random().toString().also {
             settings[SettingsFields.CLOUD_SYNC_SESSION.name] = it
@@ -328,6 +334,7 @@ class SettingsRepository(
 }
 
 private enum class SettingsFields {
+    LARGE_SCREEN_SIDEBAR_VISIBLE,
     READER_CONTENT_CACHE_VERSION,
     FAVOURITE_BROWSER_ID,
     MARK_FEED_AS_READ_WHEN_SCROLLING,

@@ -528,13 +528,13 @@ class DatabaseHelper(
     ) = cloudMutation(withCurrentSession) {
         val affectedItemIds = when {
             cloudSessionId == null -> emptyList()
-            feedFilter == FeedFilter.Read || feedFilter == FeedFilter.Bookmarks -> emptyList()
+            feedFilter == FeedFilter.Read -> emptyList()
             else -> {
                 dbRef.feedItemQueries.selectFeedUrlsForFilter(
                     feedSourceId = feedFilter.getFeedSourceId(),
                     feedSourceCategoryId = feedFilter.getCategoryId(),
                     isRead = false,
-                    isBookmarked = null,
+                    isBookmarked = feedFilter.getBookmarkFlag(),
                     isUncategorized = feedFilter.getIsUncategorized(),
                     isHidden = null,
                 ).executeAsList()
@@ -557,7 +557,11 @@ class DatabaseHelper(
                 dbRef.feedItemQueries.markAllReadUncategorized()
             }
 
-            FeedFilter.Read, FeedFilter.Bookmarks -> {
+            FeedFilter.Bookmarks -> {
+                dbRef.feedItemQueries.markAllReadBookmarked()
+            }
+
+            FeedFilter.Read -> {
                 // Do nothing
             }
         }

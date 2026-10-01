@@ -2,7 +2,10 @@ appId: com.prof18.feedflow.debug
 ---
 - launchApp
 - openLink: feedflow://e2e/reset-and-seed?profile=swipe-actions
-- assertVisible: "E2E seed complete"
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 30000
 - tapOn:
     id: e2e_open_app
 - assertVisible:
@@ -38,8 +41,31 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: drawer_bookmarks
 - assertVisible: "E2E Article With Image.*"
+- swipe:
+    from:
+      id: article_row_e2e_article_image
+    direction: RIGHT
+    duration: 700
+- waitForAnimationToEnd
+- assertVisible: "Are you sure you want to remove this article from Bookmarks?"
+- tapOn: "Cancel"
+- assertVisible:
+    id: article_row_e2e_article_image
+- swipe:
+    from:
+      id: article_row_e2e_article_image
+    direction: RIGHT
+    duration: 700
+- waitForAnimationToEnd
+- assertVisible: "Are you sure you want to remove this article from Bookmarks?"
+- tapOn: "Confirm"
+- assertNotVisible:
+    id: article_row_e2e_article_image
 - openLink: feedflow://e2e/reset-and-seed?profile=swipe-disabled
-- assertVisible: "E2E seed complete"
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 30000
 - tapOn:
     id: e2e_open_app
 - assertVisible:
@@ -70,7 +96,10 @@ appId: com.prof18.feedflow.debug
 # When only the left row action is configured, it retains priority in that
 # direction while the disabled right direction opens the drawer.
 - openLink: feedflow://e2e/reset-and-seed?profile=swipe-left-only
-- assertVisible: "E2E seed complete"
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 30000
 - tapOn:
     id: e2e_open_app
 - assertVisible:

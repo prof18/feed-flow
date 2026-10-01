@@ -51,11 +51,13 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
 import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
+import com.prof18.feedflow.shared.ui.components.ConfirmationDialog
 import com.prof18.feedflow.shared.ui.home.FeedListActions
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
@@ -66,6 +68,7 @@ import com.prof18.feedflow.shared.ui.home.components.ScrollToTopButton
 import com.prof18.feedflow.shared.ui.home.components.list.FeedList
 import com.prof18.feedflow.shared.ui.home.components.list.FeedListMaxContentWidth
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
@@ -105,6 +108,10 @@ fun AndroidHomeScreenContent(
         !hasFeedItems
     var scrollToTopWhenItemsReturn by remember { mutableStateOf(isShowingEmptyFeed) }
     var isGridArrangement by remember { mutableStateOf(false) }
+    val markAllReadWithConfirmation = rememberMarkAllReadWithConfirmation(
+        feedFilter = displayState.currentFeedFilter,
+        onMarkAllRead = feedListActions.markAllRead,
+    )
 
     @Suppress("MagicNumber")
     val showScrollToTopButton by remember {
@@ -279,7 +286,7 @@ fun AndroidHomeScreenContent(
                                                 feedListActions.markAsRead(FeedItemId(feedInfo.id))
                                             },
                                             onVisibleFeedItemsChanged = feedListActions.onVisibleFeedItemsChanged,
-                                            markAllAsRead = feedListActions.markAllRead,
+                                            markAllAsRead = markAllReadWithConfirmation,
                                             onShareClick = shareBehavior.onShareClick,
                                             onOpenFeedSettings = feedManagementActions.onEditFeedClick,
                                             onOpenFeedWebsite = feedManagementActions.onOpenWebsite,
@@ -365,6 +372,32 @@ fun AndroidHomeScreenContent(
                 onFeedOrderChange = onFeedOrderChange,
                 onShowReadArticlesTimelineChange = onShowReadArticlesTimelineChange,
             )
+        }
+    }
+}
+
+@Composable
+private fun rememberMarkAllReadWithConfirmation(
+    feedFilter: FeedFilter,
+    onMarkAllRead: () -> Unit,
+): () -> Unit {
+    var showMarkBookmarksReadDialog by remember(feedFilter) { mutableStateOf(false) }
+    if (showMarkBookmarksReadDialog) {
+        val strings = LocalFeedFlowStrings.current
+        ConfirmationDialog(
+            title = strings.markAllReadButton,
+            message = strings.markAllBookmarksReadDialogMessage,
+            onConfirm = onMarkAllRead,
+            onDismiss = { showMarkBookmarksReadDialog = false },
+        )
+    }
+    return remember(feedFilter, onMarkAllRead) {
+        {
+            if (feedFilter is FeedFilter.Bookmarks) {
+                showMarkBookmarksReadDialog = true
+            } else {
+                onMarkAllRead()
+            }
         }
     }
 }

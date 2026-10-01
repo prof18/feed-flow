@@ -1,0 +1,57 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=oldest-first
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_bookmarks
+- assertVisible:
+    id: article_row_e2e_article_bookmarked_unread
+- longPressOn:
+    id: article_row_e2e_article_bookmarked_unread
+- tapOn:
+    text: "Mark all above as read"
+- tapOn: "Confirm"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_read
+- assertVisible:
+    id: article_row_e2e_article_bookmarked_unread
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_timeline
+- assertVisible:
+    id: article_row_e2e_article_old
+
+- openLink: feedflow://e2e/reset-and-seed?profile=oldest-first
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_bookmarks
+- assertVisible:
+    id: article_row_e2e_article_bookmarked_read
+- longPressOn:
+    id: article_row_e2e_article_bookmarked_read
+- tapOn:
+    text: "Mark all below as read"
+- tapOn: "Confirm"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_timeline
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_newest_unread
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: article_row_e2e_article_newest_unread

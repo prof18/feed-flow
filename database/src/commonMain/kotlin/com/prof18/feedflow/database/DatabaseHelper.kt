@@ -571,6 +571,9 @@ class DatabaseHelper(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isUncategorized = feedFilter.getIsUncategorized(),
+                isRead = feedFilter.getIsReadFlag(showReadItems = true),
+                isBookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             ).executeAsList()
         }
 
@@ -581,6 +584,9 @@ class DatabaseHelper(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isUncategorized = feedFilter.getIsUncategorized(),
+                isRead = feedFilter.getIsReadFlag(showReadItems = true),
+                isBookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             ).executeAsList()
         }
 
@@ -598,6 +604,9 @@ class DatabaseHelper(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isUncategorized = feedFilter.getIsUncategorized(),
+                isRead = feedFilter.getIsReadFlag(showReadItems = true),
+                isBookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             ).executeAsList()
         }
         dbRef.feedItemQueries.markAllNewerAsRead(
@@ -605,6 +614,9 @@ class DatabaseHelper(
             feedSourceId = feedFilter.getFeedSourceId(),
             feedSourceCategoryId = feedFilter.getCategoryId(),
             isUncategorized = feedFilter.getIsUncategorized(),
+            isRead = feedFilter.getIsReadFlag(showReadItems = true),
+            isBookmarked = feedFilter.getBookmarkFlag(),
+            isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
         )
         recordCloudPendingArticleFlags(cloudSessionId, affectedItemIds, CloudArticleFlag.READ, true)
     }
@@ -623,6 +635,9 @@ class DatabaseHelper(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isUncategorized = feedFilter.getIsUncategorized(),
+                isRead = feedFilter.getIsReadFlag(showReadItems = true),
+                isBookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             ).executeAsList()
         }
         dbRef.feedItemQueries.markAllOlderAsRead(
@@ -630,6 +645,9 @@ class DatabaseHelper(
             feedSourceId = feedFilter.getFeedSourceId(),
             feedSourceCategoryId = feedFilter.getCategoryId(),
             isUncategorized = feedFilter.getIsUncategorized(),
+            isRead = feedFilter.getIsReadFlag(showReadItems = true),
+            isBookmarked = feedFilter.getBookmarkFlag(),
+            isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
         )
         recordCloudPendingArticleFlags(cloudSessionId, affectedItemIds, CloudArticleFlag.READ, true)
     }

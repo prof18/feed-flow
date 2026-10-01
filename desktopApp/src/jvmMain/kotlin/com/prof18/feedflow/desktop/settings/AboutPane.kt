@@ -32,6 +32,7 @@ import com.prof18.feedflow.desktop.about.LicensesScreen
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.disableSentry
 import com.prof18.feedflow.desktop.utils.initSentry
+import com.prof18.feedflow.desktop.utils.openDesktopMailSafely
 import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.ui.about.AboutButtonItem
 import com.prof18.feedflow.shared.ui.about.AboutTextItem
@@ -43,8 +44,6 @@ import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.coroutines.launch
-import java.awt.Desktop
-import java.net.URI
 
 @Composable
 internal fun AboutPane(
@@ -97,15 +96,15 @@ internal fun AboutPane(
             SettingItem(
                 title = strings.reportIssueButton,
                 onClick = {
-                    runCatching {
-                        val uri = URI.create(
-                            userFeedbackReporter.getEmailUrl(
-                                subject = strings.issueContentTitle,
-                                content = strings.issueContentTemplate,
-                            ),
-                        )
-                        Desktop.getDesktop().mail(uri)
-                    }.onFailure { showExternalOpenError() }
+                    val opened = openDesktopMailSafely(
+                        userFeedbackReporter.getEmailUrl(
+                            subject = strings.issueContentTitle,
+                            content = strings.issueContentTemplate,
+                        ),
+                    )
+                    if (!opened) {
+                        showExternalOpenError()
+                    }
                 },
             )
 

@@ -5,8 +5,10 @@ import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.NSLogWriter
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
+import com.prof18.feedflow.core.model.FeedFetchTier
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.FEEDFLOW_BROWSER_FALLBACK_HEADERS
 import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
 import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.database.createDatabaseDriver
@@ -118,14 +120,21 @@ fun initKoinIos(
             single<Notifier> { notifier }
             single<RssParserWrapper> {
                 RssParserWrapperImpl(
-                    primaryParser = createRssParser(
-                        userAgent = FEEDFLOW_USER_AGENT,
-                        feedUrlProtocolClasses = feedUrlProtocolClasses,
-                    )::getRssChannel,
-                    forbiddenFallbackParser = createRssParser(
-                        userAgent = FEEDFLOW_FALLBACK_USER_AGENT,
-                        feedUrlProtocolClasses = feedUrlProtocolClasses,
-                    )::getRssChannel,
+                    feedHttpCacheStore = get(),
+                    parsers = mapOf(
+                        FeedFetchTier.PRIMARY to createRssParser(
+                            headers = mapOf("User-Agent" to FEEDFLOW_USER_AGENT),
+                            feedUrlProtocolClasses = feedUrlProtocolClasses,
+                        )::getRssChannel,
+                        FeedFetchTier.LINK_FREE to createRssParser(
+                            headers = mapOf("User-Agent" to FEEDFLOW_FALLBACK_USER_AGENT),
+                            feedUrlProtocolClasses = feedUrlProtocolClasses,
+                        )::getRssChannel,
+                        FeedFetchTier.BROWSER to createRssParser(
+                            headers = FEEDFLOW_BROWSER_FALLBACK_HEADERS,
+                            feedUrlProtocolClasses = feedUrlProtocolClasses,
+                        )::getRssChannel,
+                    ),
                 )
             }
             single<FeedFlowStrings> {
@@ -277,14 +286,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 }
 
 private fun createRssParser(
-    userAgent: String,
+    headers: Map<String, String>,
     feedUrlProtocolClasses: List<*>,
 ) = RssParserBuilder(
     nsUrlSession = NSURLSession.sessionWithConfiguration(
         NSURLSessionConfiguration.defaultSessionConfiguration().apply {
-            HTTPAdditionalHeaders = mapOf(
-                "User-Agent" to userAgent,
-            )
+            HTTPAdditionalHeaders = headers.toMap<Any?, String>()
             protocolClasses = feedUrlProtocolClasses
         },
     ),

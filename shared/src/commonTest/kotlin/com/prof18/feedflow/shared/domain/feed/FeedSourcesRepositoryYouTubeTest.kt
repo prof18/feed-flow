@@ -119,7 +119,7 @@ class FeedSourcesRepositoryYouTubeTest : KoinTestBase() {
         var fail = false
         val requestedUrls = mutableListOf<String>()
 
-        override suspend fun getRssChannel(url: String): RssChannel {
+        override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
             requestedUrls += url
             if (fail || url != supportedUrl) error("Unsupported RSS URL: $url")
             return RssChannelGenerator.rssChannel(link = null)

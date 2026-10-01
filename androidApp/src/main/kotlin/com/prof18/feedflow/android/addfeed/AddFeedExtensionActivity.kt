@@ -71,6 +71,8 @@ class AddFeedExtensionActivity : BaseThemeActivity() {
                             is FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
                             is FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
                             is FeedAddedState.Error.GenericError -> strings.addFeedGenericError
+                            is FeedAddedState.Error.FetchFailed ->
+                                strings.feedFetchRefusedError(feedAddedState.statusCode.toString())
                         }
                         delay(2.seconds)
                         finish()

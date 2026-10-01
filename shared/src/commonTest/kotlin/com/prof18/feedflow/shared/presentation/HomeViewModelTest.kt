@@ -1971,7 +1971,7 @@ class HomeViewModelTest : KoinTestBase() {
             channelByUrl[url] = channel
         }
 
-        override suspend fun getRssChannel(url: String): RssChannel {
+        override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
             callCount += 1
             requestedUrls.add(url)
             return requireNotNull(channelByUrl[url]) { "Missing channel for $url" }

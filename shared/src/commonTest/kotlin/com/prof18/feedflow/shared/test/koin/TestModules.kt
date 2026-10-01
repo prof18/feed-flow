@@ -127,7 +127,7 @@ object TestModules {
         }
         single<RssParserWrapper> {
             object : RssParserWrapper {
-                override suspend fun getRssChannel(url: String): RssChannel =
+                override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel =
                     error("No test RSS parser configured for $url")
             }
         }

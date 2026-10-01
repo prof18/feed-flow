@@ -116,6 +116,11 @@ class SerialFeedFetcherRepository internal constructor(
     ) {
         val currentTime = dateFormatter.currentTimeMillis()
         val cacheInfoById = databaseHelper.getFeedSourcesCacheInfo().associateBy { it.feedSourceId }
+        feedHttpCacheStore.seedTiers(
+            feedSourceUrls.mapNotNull { source ->
+                cacheInfoById[source.id]?.userAgentTier?.let { source.url to it }
+            }.toMap(),
+        )
         feedHttpCacheStore.seedValidators(
             feedSourceUrls.mapNotNull { feedSource ->
                 val cacheInfo = cacheInfoById[feedSource.id] ?: return@mapNotNull null

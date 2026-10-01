@@ -4,7 +4,9 @@ import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.platformLogWriter
+import com.prof18.feedflow.core.model.FeedFetchTier
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.FEEDFLOW_BROWSER_FALLBACK_HEADERS
 import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
 import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.database.createDatabaseDriver
@@ -57,14 +59,21 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     single<RssParserWrapper> {
         val feedHttpCacheStore = get<FeedHttpCacheStore>()
         RssParserWrapperImpl(
-            primaryParser = createRssParser(
-                userAgent = FEEDFLOW_USER_AGENT,
-                feedHttpCacheStore = feedHttpCacheStore,
-            )::getRssChannel,
-            forbiddenFallbackParser = createRssParser(
-                userAgent = FEEDFLOW_FALLBACK_USER_AGENT,
-                feedHttpCacheStore = feedHttpCacheStore,
-            )::getRssChannel,
+            feedHttpCacheStore = feedHttpCacheStore,
+            parsers = mapOf(
+                FeedFetchTier.PRIMARY to createRssParser(
+                    headers = mapOf("User-Agent" to FEEDFLOW_USER_AGENT),
+                    feedHttpCacheStore = feedHttpCacheStore,
+                )::getRssChannel,
+                FeedFetchTier.LINK_FREE to createRssParser(
+                    headers = mapOf("User-Agent" to FEEDFLOW_FALLBACK_USER_AGENT),
+                    feedHttpCacheStore = feedHttpCacheStore,
+                )::getRssChannel,
+                FeedFetchTier.BROWSER to createRssParser(
+                    headers = FEEDFLOW_BROWSER_FALLBACK_HEADERS,
+                    feedHttpCacheStore = feedHttpCacheStore,
+                )::getRssChannel,
+            ),
         )
     }
 

@@ -30,6 +30,7 @@ import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.sanitizeUrl
+import com.prof18.rssparser.exception.HttpException
 import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -281,6 +282,8 @@ internal class FeedSourcesRepository(
                 addFeedSource(feedResponse, isNotificationEnabled)
             }
 
+            is AddFeedResponse.FetchError -> FeedAddedState.Error.FetchFailed(feedResponse.statusCode)
+
             AddFeedResponse.EmptyFeed -> {
                 FeedAddedState.Error.InvalidTitleLink(canForceAdd = true)
             }
@@ -341,8 +344,11 @@ internal class FeedSourcesRepository(
         url: String,
         category: FeedSourceCategory?,
     ): AddFeedResponse = withContext(dispatcherProvider.io) {
-        val addResult = guessLinkAndParseFeed(url)
-            ?: return@withContext AddFeedResponse.NotRssFeed
+        val addResult = when (val outcome = guessLinkAndParseFeed(url)) {
+            is GuessOutcome.Found -> outcome.result
+            is GuessOutcome.HttpFailure -> return@withContext AddFeedResponse.FetchError(outcome.statusCode)
+            GuessOutcome.NotFound -> return@withContext AddFeedResponse.NotRssFeed
+        }
         val rssChannel = addResult.channel
         val urlToSave = addResult.usedUrl
 
@@ -395,6 +401,8 @@ internal class FeedSourcesRepository(
                     )
                     FeedEditedState.FeedEdited(newName)
                 }
+
+                is AddFeedResponse.FetchError -> FeedEditedState.Error.FetchFailed(response.statusCode)
 
                 AddFeedResponse.EmptyFeed -> {
                     FeedEditedState.Error.InvalidTitleLink
@@ -544,34 +552,36 @@ internal class FeedSourcesRepository(
         feedSyncRepository.performBackup()
     }
 
-    private suspend fun guessLinkAndParseFeed(originalUrl: String): AddResult? {
+    private suspend fun guessLinkAndParseFeed(originalUrl: String): GuessOutcome {
+        var originalHttpStatus: Int? = null
         for (actualUrl in getCandidateFeedUrls(originalUrl)) {
             logger.d { "Trying with actualUrl: $actualUrl" }
             try {
-                val channel = rssParserWrapper.getRssChannel(actualUrl)
-                return AddResult(
-                    channel = channel,
-                    usedUrl = actualUrl,
+                val channel = rssParserWrapper.getRssChannel(
+                    actualUrl,
+                    allowBrowserTier = actualUrl == originalUrl.trim(),
                 )
+                return GuessOutcome.Found(AddResult(channel = channel, usedUrl = actualUrl))
             } catch (e: Throwable) {
-                // Do nothing
+                if (actualUrl == originalUrl.trim()) {
+                    originalHttpStatus = (e as? HttpException)?.code
+                }
                 logger.d(e) { "Failed to parse rssChannel: $actualUrl" }
             }
         }
 
         logger.d { "Trying to get: $originalUrl" }
-        val url = discoverFeedUrlAfterGuessing(originalUrl) ?: return null
-        logger.d { "Found url: $url" }
-        return try {
-            val channel = rssParserWrapper.getRssChannel(url)
-            AddResult(
-                channel = channel,
-                usedUrl = url,
-            )
-        } catch (_: Throwable) {
-            // Do nothing
-            null
+        val url = discoverFeedUrlAfterGuessing(originalUrl)
+        if (url != null) {
+            logger.d { "Found url: $url" }
+            try {
+                val channel = rssParserWrapper.getRssChannel(url, allowBrowserTier = true)
+                return GuessOutcome.Found(AddResult(channel = channel, usedUrl = url))
+            } catch (e: Throwable) {
+                logger.d(e) { "Failed to parse discovered rssChannel: $url" }
+            }
         }
+        return originalHttpStatus?.let { GuessOutcome.HttpFailure(it) } ?: GuessOutcome.NotFound
     }
 
     private suspend fun getCandidateFeedUrls(
@@ -656,6 +666,12 @@ internal class FeedSourcesRepository(
                 feedSyncRepository.performBackup()
             }
         }
+    }
+
+    private sealed interface GuessOutcome {
+        data class Found(val result: AddResult) : GuessOutcome
+        data class HttpFailure(val statusCode: Int) : GuessOutcome
+        data object NotFound : GuessOutcome
     }
 
     private data class AddResult(

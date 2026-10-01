@@ -11,6 +11,7 @@ import com.prof18.feedflow.db.Cloud_pending_feed_or_category_change
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item_status
 import com.prof18.feedflow.db.Feed_source
+import com.prof18.feedflow.db.Feed_source_cache_info
 import com.prof18.feedflow.db.Feed_source_category
 import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
@@ -41,6 +42,9 @@ fun getFeedItems(appEnvironment: AppEnvironment): List<FeedItemWidget> {
         cloud_pending_feed_or_category_changeAdapter = Cloud_pending_feed_or_category_change.Adapter(
             entityAdapter = EnumColumnAdapter(),
             field_Adapter = EnumColumnAdapter(),
+        ),
+        feed_source_cache_infoAdapter = Feed_source_cache_info.Adapter(
+            user_agent_tierAdapter = EnumColumnAdapter(),
         ),
         feed_sourceAdapter = Feed_source.Adapter(
             positionAdapter = IntColumnAdapter,

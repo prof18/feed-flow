@@ -42,6 +42,7 @@ internal object FeedSourceCacheInfoFactory {
                 ),
                 nextFetchTimestamp = nextFetchTimestamp,
                 backoffTimestamp = null,
+                userAgentTier = store.tierFor(feedUrl) ?: previousCacheInfo?.userAgentTier,
             )
         } else {
             val backoffTimestamp = FeedRefreshScheduler.computeBackoffTimestamp(
@@ -62,6 +63,7 @@ internal object FeedSourceCacheInfoFactory {
                 validatorsTimestamp = previousCacheInfo?.validatorsTimestamp,
                 nextFetchTimestamp = previousCacheInfo?.nextFetchTimestamp,
                 backoffTimestamp = backoffTimestamp,
+                userAgentTier = previousCacheInfo?.userAgentTier,
             )
         }
     }

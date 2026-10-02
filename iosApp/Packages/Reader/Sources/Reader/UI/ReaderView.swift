@@ -257,7 +257,7 @@ public struct ReaderView: View {
                     Button {
                         actions.onArchive()
                     } label: {
-                        Label(actions.strings.openInArchive, systemImage: "hammer.fill")
+                        Label(actions.strings.openInArchive, systemImage: "lock.open")
                     }
                 }
 
@@ -322,7 +322,7 @@ public struct ReaderView: View {
                     Button {
                         actions.onArchive()
                     } label: {
-                        Label(actions.strings.openInArchive, systemImage: "hammer.fill")
+                        Label(actions.strings.openInArchive, systemImage: "lock.open")
                     }
                 }
 

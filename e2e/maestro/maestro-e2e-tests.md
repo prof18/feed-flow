@@ -128,6 +128,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 
 These are features intentionally not covered, with the reason recorded so they aren't re-investigated:
 
+- **Reader archive shortcut icon** — Maestro sees the localized "Open in archive.is" label, but cannot distinguish the open-padlock glyph from another icon. Check the rendered icon visually on Android, iOS, and Desktop; SM-007 covers the surrounding reader toolbar behavior.
 - **Feed fetch refusal fallback** — browser fallback and server refusal have no Maestro coverage because live WAF/IP behavior varies. Deterministic unit coverage lives in `RssParserWrapperTest`, `RssParserFactoryTest`, and `FeedSourcesRepositoryLocalSuffixLookupTest`.
 - **Desktop report-issue email fallback** — Maestro targets mobile and cannot simulate Java Desktop mail support. `DesktopMailHandlerTest` covers mail-launch and fallback failures; manually check Help and About report actions with and without a configured mail client.
 - **iOS scrolling frame timing and row invalidation** — Maestro checks article/read/bookmark behavior (SM-004) and swipe actions (REG-107), but cannot assert SwiftUI update causes or missed frame deadlines. Validate callback and refresh-action performance changes with a warmed-up SwiftUI Instruments capture on a physical iPad; compare row-update causes and hitch timing using the same theme, read-on-scroll setting, and article journey.

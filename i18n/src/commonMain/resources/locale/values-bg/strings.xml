@@ -421,4 +421,8 @@
     <string name="server_account_replace_local_message">Свързването замества емисиите, които в момента се съхраняват на това устройство, с абонаментите от сървъра. По-късно прекъсване на връзката няма да възстанови локалните емисии. Първо ги изнесете в OPML, ако искате да запазите копие.</string>
     <string name="server_account_replace_and_connect_button">Сменете и свържете</string>
     <string name="feed_already_exists_message">%s вече е във вашите емисии.</string>
+    <string name="settings_hide_read_items_disabled_while_scrolling">Автоматичното скриване е деактивирано, когато е включено „Маркирай като прочетено при превъртане“, така че статиите остават на мястото си, докато превъртате. Изключете го, за да използвате автоматично скриване.</string>
+    <string name="feed_fetch_refused_error">Не можах да достигна тази емисия. Възможно е уебсайтът да блокира RSS четците. Моля, опитайте отново по-късно.</string>
+    <string name="mark_all_bookmarks_read_dialog_message">Сигурни ли сте, че искате да маркирате всички статии с отметки като прочетени?</string>
+    <string name="remove_bookmark_dialog_message">Сигурни ли сте, че искате да премахнете тази статия от отметките?</string>
 </resources>

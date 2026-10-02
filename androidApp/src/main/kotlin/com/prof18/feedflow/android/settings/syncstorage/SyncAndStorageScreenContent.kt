@@ -106,6 +106,7 @@ internal fun SyncAndStorageScreenContent(
                     syncOnlyWhenCharging = backgroundSyncRestrictions.syncOnlyWhenCharging,
                     onSyncOnlyOnWifiChange = onSyncOnlyOnWifiToggle,
                     onSyncOnlyWhenChargingChange = onSyncOnlyWhenChargingToggle,
+                    enabled = syncPeriod != SyncPeriod.NEVER,
                     showHeader = false,
                 )
             }

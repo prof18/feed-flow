@@ -6,7 +6,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -18,6 +20,7 @@ fun BackgroundSyncRestrictionsSection(
     onSyncOnlyOnWifiChange: (Boolean) -> Unit,
     onSyncOnlyWhenChargingChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     showHeader: Boolean = true,
 ) {
     val strings = LocalFeedFlowStrings.current
@@ -41,15 +44,19 @@ fun BackgroundSyncRestrictionsSection(
         }
 
         SettingSwitchItem(
+            modifier = Modifier.testTag(SettingsE2eIds.SYNC_WIFI_ONLY),
             title = strings.settingsBackgroundSyncWifiOnly,
             isChecked = syncOnlyOnWifi,
             onCheckedChange = onSyncOnlyOnWifiChange,
+            enabled = enabled,
         )
 
         SettingSwitchItem(
+            modifier = Modifier.testTag(SettingsE2eIds.SYNC_CHARGING_ONLY),
             title = strings.settingsBackgroundSyncChargingOnly,
             isChecked = syncOnlyWhenCharging,
             onCheckedChange = onSyncOnlyWhenChargingChange,
+            enabled = enabled,
         )
     }
 }

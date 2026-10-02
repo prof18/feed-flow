@@ -176,6 +176,13 @@ SET is_read = 1, notification_sent = 1
 WHERE feed_source_id = :feedSourceId
 AND is_read = 0;
 
+markAllReadBookmarked:
+UPDATE feed_item
+SET is_read = 1, notification_sent = 1
+WHERE is_bookmarked = 1
+AND is_read = 0
+AND is_blocked = 0;
+
 markAllReadByCategory:
 UPDATE feed_item
 SET is_read = 1, notification_sent = 1

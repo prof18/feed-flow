@@ -44,6 +44,7 @@ import org.koin.test.get
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -976,6 +977,39 @@ class HomeViewModelTest : KoinTestBase() {
         val dbItems = getDbItems()
         assertTrue(dbItems.all { it.is_read })
     }
+
+    @Test
+    fun `markAllRead in Bookmarks marks saved articles read and preserves other unread articles`() =
+        runTest(testDispatcher) {
+            val source = createFeedSource(id = "source-1", title = "Source 1")
+            insertFeedSources(source)
+            databaseHelper.insertFeedItems(
+                listOf(
+                    buildFeedItem("saved-unread", "Saved unread", 3L, source),
+                    buildFeedItem("saved-read", "Saved read", 2L, source),
+                    buildFeedItem("other-unread", "Other unread", 1L, source),
+                ),
+                lastSyncTimestamp = 0,
+            )
+            databaseHelper.updateBookmarkStatus(FeedItemId("saved-unread"), isBookmarked = true)
+            databaseHelper.updateBookmarkStatus(FeedItemId("saved-read"), isBookmarked = true)
+            databaseHelper.updateReadStatus(FeedItemId("saved-read"), isRead = true)
+
+            val viewModel = getViewModel()
+            advanceUntilIdle()
+            viewModel.onFeedFilterSelected(FeedFilter.Bookmarks)
+            advanceUntilIdle()
+
+            viewModel.markAllRead()
+            advanceUntilIdle()
+
+            val items = getDbItems().associateBy { it.url_hash }
+            assertTrue(items.getValue("saved-unread").is_read)
+            assertTrue(items.getValue("saved-read").is_read)
+            assertFalse(items.getValue("other-unread").is_read)
+            assertEquals(setOf("saved-unread", "saved-read"), viewModel.feedState.value.map { it.id }.toSet())
+            assertTrue(viewModel.feedState.value.all { it.isRead && it.isBookmarked })
+        }
 
     @Test
     fun `markAllReadForFeedSource marks only that source as read`() = runTest(testDispatcher) {

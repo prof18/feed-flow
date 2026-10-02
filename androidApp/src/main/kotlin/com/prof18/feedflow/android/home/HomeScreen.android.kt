@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
+import com.prof18.feedflow.android.components.rememberConfirmedBookmarkAction
 import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
@@ -86,6 +87,10 @@ internal fun HomeScreen(
     val context = LocalContext.current
     val strings = LocalFeedFlowStrings.current
 
+    val updateBookmarkStatus = rememberConfirmedBookmarkAction(
+        scopeKey = currentFeedFilter,
+        onBookmarkClick = homeViewModel::updateBookmarkStatus,
+    )
     if (feedOperation != FeedOperation.None) {
         LoadingOperationDialog(feedOperation)
     }
@@ -157,6 +162,7 @@ internal fun HomeScreen(
 
     val feedListActions = remember(
         homeViewModel,
+        updateBookmarkStatus,
         navigateToReaderMode,
         browserManager,
         context,
@@ -166,7 +172,7 @@ internal fun HomeScreen(
             onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
             refreshData = { homeViewModel.refreshCurrentFilter() },
             requestNewData = { homeViewModel.requestNewFeedsPage() },
-            markAllRead = { homeViewModel.markAllRead() },
+            markAllRead = homeViewModel::markAllRead,
             onBackToTimelineClick = { homeViewModel.onFeedFilterSelected(FeedFilter.Timeline) },
             onVisibleFeedItemsChanged = homeViewModel::onVisibleFeedItemsChanged,
             markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
@@ -179,9 +185,7 @@ internal fun HomeScreen(
                 )
             },
             openInBrowser = { urlInfo -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context) },
-            updateBookmarkStatus = { feedItemId, isBookmarked ->
-                homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
-            },
+            updateBookmarkStatus = updateBookmarkStatus,
             updateReadStatus = { feedItemId, isRead -> homeViewModel.updateReadStatus(feedItemId, isRead) },
             markAllAboveAsRead = { feedItemId -> homeViewModel.markAllAboveAsRead(feedItemId) },
             markAllBelowAsRead = { feedItemId -> homeViewModel.markAllBelowAsRead(feedItemId) },

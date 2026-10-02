@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 61 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 67 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -39,7 +39,7 @@ Fast confidence subset. Flow files live in `e2e/maestro/{android,ios}/smoke/`.
 | SM-001 | `001-first-launch-empty.yaml` | `empty` | App launches, empty timeline message visible, seed marker stable. |
 | SM-002 | `002-seeded-timeline-loads.yaml` | `content-rich` | Seeded timeline renders newest article, unread count, hidden feed excluded from Timeline. |
 | SM-003 | `003-library-filters.yaml` | `content-rich` | Drawer filters: Timeline, Read, Bookmarks, source filter, category filter, uncategorized. Bookmarks has no drawer count even with unread saved articles. |
-| SM-004 | `004-article-read-bookmark-state.yaml` | `content-rich` | Open article, bookmark via reader toolbar, article appears under Read/Bookmarks filters. |
+| SM-004 | `004-article-read-bookmark-state.yaml` | `content-rich` | Open article, bookmark via reader toolbar, article appears under Read/Bookmarks filters. Android also verifies cancellation and confirmation of reader bookmark removal. |
 | SM-005 | `005-mark-all-read.yaml` | `content-rich` | Home overflow → Mark all as read confirmation, articles move to Read filter. |
 | SM-006 | `006-search-core.yaml` (+ iOS `006-search-bookmark-filter.yaml`) | `content-rich` | Search query, filter chips (All / Read / Bookmarks). iOS uses seeded query/filter deeplink. |
 | SM-007 | `007-reader-mode-core.yaml` | `reader-mode` | Open article in reader, long-press toolbar tooltip (Android), next-article button, more menu, Text Settings sheet opens. |
@@ -61,7 +61,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-104 | `104-feed-source-list-management.yaml` | `content-rich` | Android, iOS | Settings → Feeds: expand/collapse category, inline rename (Android), delete confirmation, fetch-failed warning. |
 | REG-105 | `105-category-management.yaml` (+ iOS `105-category-add-validation.yaml`) | `content-rich` | Android, iOS | Add Feed category sheet: create new category, duplicate-name validation. Drawer category menu: rename, delete all feeds. The drawer "Delete category" path is dropped on both platforms — neither drawer renders categories that no longer own a feed source. iOS now drives the category name inputs through `inputText` rather than DEBUG hooks. |
 | REG-106 | `106-article-context-menu.yaml` | `content-rich` | Android, iOS | Article long-press: Mark as read/unread, Add/Remove bookmark mutations. |
-| REG-107 | `107-swipe-actions.yaml` | `swipe-actions`, `swipe-left-only`, `swipe-disabled` | Android, iOS | Left = toggle read, right = toggle bookmark swipes. Android also verifies direction-specific arbitration: a configured row direction keeps priority, while a disabled right direction opens the drawer; with both row directions disabled, a rightward content swipe also opens the drawer. |
+| REG-107 | `107-swipe-actions.yaml` | `swipe-actions`, `swipe-left-only`, `swipe-disabled` | Android, iOS | Left = toggle read, right = toggle bookmark swipes. Android confirms right-swipe removal from Bookmarks, including cancel and confirm; it also verifies direction-specific arbitration: a configured row direction keeps priority, while a disabled right direction opens the drawer; with both row directions disabled, a rightward content swipe also opens the drawer. |
 | REG-108 | `108-feed-layout-matrix-card.yaml`, `108-feed-layout-matrix-big-image.yaml`, `108-feed-layout-matrix-grid.yaml`, `108-feed-layout-matrix-compact.yaml` | `card-layout`, `big-image-layout`, `grid-layout`, `compact-list` | Android, iOS | Card, Big Image, Grid, and Compact feed-list layouts render the seeded items. |
 | REG-109 | `109-feed-order-mark-above-below.yaml` | `oldest-first` | Android, iOS | Oldest-first ordering profile, Mark all above / below as read article context-menu actions. |
 | REG-110 | `110-reader-fallback.yaml` | `reader-mode` | Android, iOS | Reader fallback path: article fails extraction, fallback web view + Open in browser button visible. |
@@ -105,9 +105,9 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-149 | `149-drawer-category-mark-all-read.yaml` | `content-rich` | Android, iOS | Drawer category long-press → Mark all as read, category Timeline becomes empty. |
 | REG-150 | `150-reader-previous-and-font-menu.yaml` | `reader-mode` | Android, iOS | Reader Previous/Next buttons, Text Settings sheet opens with Line Height, Reset, and current value labels. |
 | REG-151 | `151-feed-source-list-delete-all-in-category.yaml` | `content-rich` | Android, iOS | Settings → Feeds: category-header long-press, Delete all feeds + confirmation. |
-| REG-152 | `152-search-result-context-menu.yaml` | `content-rich` | Android, iOS | Android: full long-press menu (Mark all above/below, Open comments, Add to bookmarks, Mark as read) + bookmark-filter follow-up. iOS: result-row visibility only (`.searchable` snapshot budget). |
+| REG-152 | `152-search-result-context-menu.yaml` | `content-rich` | Android, iOS | Android: full long-press menu (Mark all above/below, Open comments, Add to bookmarks, Mark as read), bookmark-filter follow-up, and cancel/confirm removal. iOS: result-row visibility only (`.searchable` snapshot budget). |
 | REG-153 | `153-drawer-add-import-feed-entries.yaml` | `content-rich` | Android, iOS | Drawer "+" → Add feed / Feed Suggestions / Import feed from OPML entries reach their destinations. |
-| REG-154 | `154-empty-bookmarks-back-to-timeline.yaml` | `content-rich` | Android, iOS | Unbookmark every seeded item, empty Bookmarks message + Back to timeline shortcut returns to Timeline. |
+| REG-154 | `154-empty-bookmarks-back-to-timeline.yaml` | `content-rich` | Android, iOS | Android verifies cancel and confirm for bookmark removal before emptying the list; both platforms verify the empty Bookmarks message + Back to timeline shortcut returns to Timeline. |
 | REG-155 | `155-empty-home-open-another-feed.yaml` | `empty` | Android, iOS | EmptyFeedView Open another feed button opens the drawer. |
 | REG-156 | `156-feed-source-reorder-smoke.yaml` | `content-rich` | Android | Settings → Feeds: drag uncategorized feed sources, categories (including the Uncategorized group), and Technology feed sources, then verify the list remains usable. Shared/database tests assert the exact ordering semantics. |
 | REG-157 | `157-drawer-reorder-smoke.yaml` | `reorder-drag` | Android | Drawer: drag pinned feed sources, categories (including the Uncategorized group), and feed sources inside Technology, then verify the drawer remains usable. Shared/database tests assert the exact ordering semantics. |
@@ -122,13 +122,14 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-166 | `166-reader-rotation-retention.yaml` | `reader-mode` | Android | Guards issue #1401: rotating while reading keeps the reading position, and an open full-screen image viewer survives the rotation instead of being dismissed. `MainActivity` declares the size and orientation config changes, so the activity is not recreated and the reader's `loadDataWithBaseURL` document is never reloaded; the image URL is held in `rememberSaveable`. The post-rotation assertions check that the head anchor is gone and a late paragraph is on screen rather than re-asserting the tail anchor, because the text reflows at the new width and the anchoring can shift by a paragraph. The flow sets `PORTRAIT` before seeding so it does not inherit an orientation from an earlier flow. iOS is not covered: its reader is separate SwiftUI code, and REG-165 covers its own scroll-retention path. |
 | REG-167 | `167-scroll-read-auto-hide.yaml` | `pagination-scroll-read` | Android, iOS | With both preferences saved on, scrolling marks articles read while keeping earlier rows reachable in the current list. Scrolling onward still loads the next page and reaches Article 050. |
 | REG-168 | `168-mark-read-filter-boundaries.yaml` | `oldest-first` | Android, iOS | Mark all above/below from Bookmarks: the bookmarked unread article moves into Read, while unbookmarked old/new articles stay unread and visible on Timeline with Show read articles disabled. |
-| REG-169 | `169-sidebar-visibility-persistence.yaml` | `content-rich` | Android tablet/foldable, iPad | Opt in with `-e LARGE_SCREEN=true` on a large-screen device. Close the docked sidebar, terminate and relaunch, verify it stays closed; reopen it and verify it stays open after another relaunch. Phone runs skip this flow because their modal drawers are transient. |
+| REG-169 | `169-bookmarks-mark-all-read-confirmation.yaml` | `content-rich` | Android | Toolbar and footer each show the Bookmarks-specific bulk-read confirmation; cancel preserves unread state, confirm marks saved articles read and retains their bookmarks, and an unbookmarked Timeline article remains unread. |
+| REG-170 | `170-sidebar-visibility-persistence.yaml` | `content-rich` | Android tablet/foldable, iPad | Opt in with `-e LARGE_SCREEN=true` on a large-screen device. Close the docked sidebar, terminate and relaunch, verify it stays closed; reopen it and verify it stays open after another relaunch. Phone runs skip this flow because their modal drawers are transient. |
 
-Run REG-169 explicitly on a tablet-sized Android device or an iPad simulator in landscape:
+Run REG-170 explicitly on a tablet-sized Android device or an iPad simulator in landscape:
 
 ```bash
-maestro --platform android --device "$ANDROID_SERIAL" test -e LARGE_SCREEN=true e2e/maestro/android/regression/169-sidebar-visibility-persistence.yaml
-maestro --platform ios --device "$IPAD_UDID" test -e LARGE_SCREEN=true e2e/maestro/ios/regression/169-sidebar-visibility-persistence.yaml
+maestro --platform android --device "$ANDROID_SERIAL" test -e LARGE_SCREEN=true e2e/maestro/android/regression/170-sidebar-visibility-persistence.yaml
+maestro --platform ios --device "$IPAD_UDID" test -e LARGE_SCREEN=true e2e/maestro/ios/regression/170-sidebar-visibility-persistence.yaml
 ```
 
 ## Known Limitations

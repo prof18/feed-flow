@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -46,6 +47,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BuildConfig
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.settings.components.BackgroundSyncRestrictionsSection
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.NotificationMode
@@ -214,6 +216,7 @@ private fun NotificationSettingsScreenContent(
                         onSyncOnlyOnWifiChange = onSyncOnlyOnWifiToggle,
                         onSyncOnlyWhenChargingChange = onSyncOnlyWhenChargingToggle,
                         modifier = Modifier.padding(vertical = Spacing.small),
+                        enabled = syncPeriodState != SyncPeriod.NEVER,
                     )
 
                     if (BuildConfig.DEBUG) {
@@ -236,6 +239,7 @@ private fun NotificationSettingsScreenContent(
                     Spacer(modifier = Modifier.height(Spacing.xsmall))
 
                     NotificationToggleRow(
+                        modifier = Modifier.testTag(SettingsE2eIds.NOTIFICATIONS_ENABLE_ALL),
                         title = strings.settingsNotificationsEnableAllTitle,
                         isChecked = notificationState.isEnabledForAll,
                         onCheckedChange = {
@@ -253,6 +257,7 @@ private fun NotificationSettingsScreenContent(
                     key = { it.feedSourceId },
                 ) { feedSource ->
                     NotificationToggleRow(
+                        modifier = Modifier.testTag(SettingsE2eIds.NOTIFICATIONS_FEED_PREFIX + feedSource.feedSourceId),
                         title = feedSource.feedSourceTitle,
                         isChecked = feedSource.isEnabled,
                         onCheckedChange = { isEnabled ->

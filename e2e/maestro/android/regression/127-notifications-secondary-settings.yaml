@@ -4,6 +4,16 @@ appId: com.prof18.feedflow.debug
     permissions:
       notifications: allow
 - openLink: feedflow://e2e/reset-and-seed?profile=notifications
+- runFlow:
+    when:
+      visible: "Open with.*"
+    commands:
+      - runFlow:
+          when:
+            visible: "^FeedFlow$"
+          commands:
+            - tapOn: "^FeedFlow$"
+      - tapOn: "Just once"
 - assertVisible: "E2E seed complete"
 - tapOn:
     id: e2e_open_app
@@ -15,13 +25,106 @@ appId: com.prof18.feedflow.debug
     id: settings_feeds_accounts
 - tapOn: "Notifications"
 - tapOn: "Notification check frequency"
+- tapOn: "Never"
+- assertVisible:
+    childOf:
+      id: background_sync_wifi_only
+    rightOf:
+      text: "Background sync only on Wi-Fi"
+    enabled: false
+- assertVisible:
+    childOf:
+      id: background_sync_charging_only
+    rightOf:
+      text: "Background sync only while charging"
+    enabled: false
+- tapOn:
+    childOf:
+      id: notifications_enable_all
+    rightOf:
+      text: "Enable All Notifications"
+    checked: false
+- assertVisible: "Every hour"
+- assertVisible:
+    childOf:
+      id: background_sync_wifi_only
+    rightOf:
+      text: "Background sync only on Wi-Fi"
+    enabled: true
+- assertVisible:
+    childOf:
+      id: background_sync_charging_only
+    rightOf:
+      text: "Background sync only while charging"
+    enabled: true
+- tapOn: "Notification check frequency"
 - tapOn: "Every 6 hours"
 - assertVisible: "Every 6 hours"
 - tapOn: "Background sync only on Wi-Fi"
+- assertVisible:
+    childOf:
+      id: background_sync_wifi_only
+    rightOf:
+      text: "Background sync only on Wi-Fi"
+    checked: true
 - tapOn: "Background sync only while charging"
-- tapOn: "Enable All Notifications"
+- assertVisible:
+    childOf:
+      id: background_sync_charging_only
+    rightOf:
+      text: "Background sync only while charging"
+    checked: true
+- tapOn: "Notification check frequency"
+- tapOn: "Never"
+- assertVisible:
+    childOf:
+      id: background_sync_wifi_only
+    rightOf:
+      text: "Background sync only on Wi-Fi"
+    enabled: false
+    checked: true
+- assertVisible:
+    childOf:
+      id: background_sync_charging_only
+    rightOf:
+      text: "Background sync only while charging"
+    enabled: false
+    checked: true
+- tapOn: "Notification check frequency"
+- tapOn: "Every 6 hours"
+- assertVisible:
+    childOf:
+      id: background_sync_wifi_only
+    rightOf:
+      text: "Background sync only on Wi-Fi"
+    enabled: true
+    checked: true
+- assertVisible:
+    childOf:
+      id: background_sync_charging_only
+    rightOf:
+      text: "Background sync only while charging"
+    enabled: true
+    checked: true
+- tapOn:
+    childOf:
+      id: notifications_enable_all
+    rightOf:
+      text: "Enable All Notifications"
+    checked: true
 - scrollUntilVisible:
     element: "Android Central RSS Feed"
     direction: DOWN
     timeout: 10000
-- tapOn: "Android Central RSS Feed"
+- tapOn:
+    childOf:
+      id: notifications_feed_e2e-feed-android-weekly
+    rightOf:
+      text: "Android Central RSS Feed"
+    checked: false
+- assertVisible:
+    childOf:
+      id: notifications_feed_e2e-feed-android-weekly
+    rightOf:
+      text: "Android Central RSS Feed"
+    checked: true

@@ -422,4 +422,7 @@
     <string name="support_purchase_thank_you_message">Tiền ủng hộ của bạn giúp FeedFlow tiếp tục phát triển 💙 Cảm ơn bạn đã hỗ trợ quá trình phát triển không ngừng, cải tiến chu đáo và sửa lỗi. 🙏</string>
     <string name="feed_already_exists_message">%s đã có sẵn trong nguồn tin của bạn.</string>
     <string name="settings_hide_read_items_disabled_while_scrolling">Tính năng tự động ẩn sẽ bị tắt khi bật tùy chọn “Đánh dấu là đã đọc khi cuộn”, nhờ đó các bài viết sẽ giữ nguyên vị trí trong khi bạn cuộn trang. Hãy tắt tùy chọn này để sử dụng tính năng tự động ẩn.</string>
+    <string name="feed_fetch_refused_error">Không thể truy cập nguồn tin này. Trang web có thể đang chặn các trình đọc RSS. Vui lòng thử lại sau.</string>
+    <string name="mark_all_bookmarks_read_dialog_message">Bạn có chắc muốn đánh dấu tất cả các bài viết đã lưu là đã đọc?</string>
+    <string name="remove_bookmark_dialog_message">Bạn có chắc muốn xóa bài viết này khỏi mục Đã lưu?</string>
 </resources>

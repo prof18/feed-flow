@@ -247,7 +247,7 @@
     <section class="summary" aria-label="Summary">
       <div class="metric"><strong id="total-count">0</strong><span>automated flow files</span></div>
       <div class="metric"><strong>13</strong><span>smoke coverage IDs</span></div>
-      <div class="metric"><strong>67</strong><span>regression coverage IDs</span></div>
+      <div class="metric"><strong>68</strong><span>regression coverage IDs</span></div>
     </section>
 
     <div class="toolbar">
@@ -332,6 +332,7 @@
       "android/regression/167-scroll-read-auto-hide.yaml",
       "android/regression/168-mark-read-filter-boundaries.yaml",
       "android/regression/169-bookmarks-mark-all-read-confirmation.yaml",
+      "android/regression/170-sidebar-visibility-persistence.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -408,6 +409,7 @@
       "ios/regression/161-reader-no-url-no-content.yaml",
       "ios/regression/167-scroll-read-auto-hide.yaml",
       "ios/regression/168-mark-read-filter-boundaries.yaml",
+      "ios/regression/170-sidebar-visibility-persistence.yaml",
       "ios/smoke/001-first-launch-empty.yaml",
       "ios/smoke/002-seeded-timeline-loads.yaml",
       "ios/smoke/003-library-filters.yaml",
@@ -514,7 +516,8 @@
       "regression/164": "A drag over the timeline neither opens the drawer nor falls through to the article, and drag-to-close still works once it is open.",
       "regression/167": "With scroll marking and saved auto-hide on, earlier articles remain reachable in the current list while the next page still loads.",
       "regression/168": "Mark-all-above/below from Bookmarks moves the bookmarked unread item to Read and keeps unbookmarked boundary articles unread on Timeline.",
-      "regression/169": "Toolbar and footer confirm before marking saved articles read; cancellation preserves state and unbookmarked articles stay unread."
+      "regression/169": "Toolbar and footer confirm before marking saved articles read; cancellation preserves state and unbookmarked articles stay unread.",
+      "regression/170": "Opt-in tablet/iPad check: closed and open sidebars survive app termination and relaunch (-e LARGE_SCREEN=true)."
     };
 
     const sections = document.querySelector("#sections");

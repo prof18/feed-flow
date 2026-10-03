@@ -1,0 +1,42 @@
+appId: com.prof18.feedflow.dev
+---
+# Opt in on an iPad; the phone suite uses a separate compact drawer.
+- runFlow:
+    when:
+      true: ${typeof LARGE_SCREEN !== 'undefined' && LARGE_SCREEN == 'true'}
+    commands:
+      - launchApp
+      - setOrientation: LANDSCAPE_LEFT
+      - openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+      - tapOn:
+          text: "^Open$"
+          optional: true
+      - extendedWaitUntil:
+          visible:
+            id: e2e_seed_complete
+          timeout: 30000
+      - runFlow:
+          when:
+            notVisible:
+              id: drawer_timeline
+          commands:
+            - tapOn: "(Show|Hide|Toggle) Sidebar"
+      - assertVisible:
+          id: drawer_timeline
+      - tapOn: "(Show|Hide|Toggle) Sidebar"
+      - assertNotVisible:
+          id: drawer_timeline
+      - stopApp
+      - launchApp
+      - assertVisible:
+          id: home_more_menu_button
+      - assertNotVisible:
+          id: drawer_timeline
+      - tapOn: "(Show|Hide|Toggle) Sidebar"
+      - assertVisible:
+          id: drawer_timeline
+      - stopApp
+      - launchApp
+      - assertVisible:
+          id: drawer_timeline
+      - setOrientation: PORTRAIT

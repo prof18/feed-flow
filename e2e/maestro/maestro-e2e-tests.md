@@ -123,6 +123,14 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-167 | `167-scroll-read-auto-hide.yaml` | `pagination-scroll-read` | Android, iOS | With both preferences saved on, scrolling marks articles read while keeping earlier rows reachable in the current list. Scrolling onward still loads the next page and reaches Article 050. |
 | REG-168 | `168-mark-read-filter-boundaries.yaml` | `oldest-first` | Android, iOS | Mark all above/below from Bookmarks: the bookmarked unread article moves into Read, while unbookmarked old/new articles stay unread and visible on Timeline with Show read articles disabled. |
 | REG-169 | `169-bookmarks-mark-all-read-confirmation.yaml` | `content-rich` | Android | Toolbar and footer each show the Bookmarks-specific bulk-read confirmation; cancel preserves unread state, confirm marks saved articles read and retains their bookmarks, and an unbookmarked Timeline article remains unread. |
+| REG-170 | `170-sidebar-visibility-persistence.yaml` | `content-rich` | Android tablet/foldable, iPad | Opt in with `-e LARGE_SCREEN=true` on a large-screen device. Close the docked sidebar, terminate and relaunch, verify it stays closed; reopen it and verify it stays open after another relaunch. Phone runs skip this flow because their modal drawers are transient. |
+
+Run REG-170 explicitly on a tablet-sized Android device or an iPad simulator in landscape:
+
+```bash
+maestro --platform android --device "$ANDROID_SERIAL" test -e LARGE_SCREEN=true e2e/maestro/android/regression/170-sidebar-visibility-persistence.yaml
+maestro --platform ios --device "$IPAD_UDID" test -e LARGE_SCREEN=true e2e/maestro/ios/regression/170-sidebar-visibility-persistence.yaml
+```
 
 ## Known Limitations
 

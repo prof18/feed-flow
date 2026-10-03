@@ -92,8 +92,8 @@ cannot silently drop a Store language.
 ## Store limits pcenter checks before creating a submission
 
 - `shortDescription` ≤ **500** characters — Microsoft's published docs wrongly say 1,000.
-- At most **21 locales may carry keywords** at all. Not per locale, not a keyword total: a
-  22nd locale with keywords is rejected outright, so one must be cleared to make room.
+- Per locale, use at most **7 keywords**, **40 characters per keyword**, and **21 words
+  across all keywords**. Partner Center reports the word limit as `KeywordsTotalCount`.
 - `description` ≤ 10,000; `features` ≤ 20 items.
 
 ## When something is stuck

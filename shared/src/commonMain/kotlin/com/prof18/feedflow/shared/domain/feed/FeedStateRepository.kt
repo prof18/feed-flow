@@ -421,11 +421,6 @@ internal class FeedStateRepository(
         }
     }
 
-    data class ArticlePosition(
-        val currentPosition: Int,
-        val totalArticles: Int,
-    )
-
     companion object {
         internal const val FEED_DB_PAGE_SIZE = 40L
         private const val PAGINATION_THRESHOLD = 5

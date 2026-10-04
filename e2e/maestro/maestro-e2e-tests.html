@@ -247,7 +247,7 @@
     <section class="summary" aria-label="Summary">
       <div class="metric"><strong id="total-count">0</strong><span>automated flow files</span></div>
       <div class="metric"><strong>13</strong><span>smoke coverage IDs</span></div>
-      <div class="metric"><strong>68</strong><span>regression coverage IDs</span></div>
+      <div class="metric"><strong>69</strong><span>regression coverage IDs</span></div>
     </section>
 
     <div class="toolbar">
@@ -291,10 +291,7 @@
       "android/regression/123-sync-storage-advanced-settings.yaml",
       "android/regression/124-home-overflow-secondary-actions.yaml",
       "android/regression/125-about-support-navigation.yaml",
-      "android/regression/126-deep-link-routing-article.yaml",
-      "android/regression/126-deep-link-routing-category.yaml",
-      "android/regression/126-deep-link-routing-feed-source.yaml",
-      "android/regression/126-deep-link-routing-seed.yaml",
+      "android/regression/126-deep-link-routing.yaml",
       "android/regression/127-notifications-secondary-settings.yaml",
       "android/regression/128-notifications-empty-state.yaml",
       "android/regression/129-edit-feed-secondary-options.yaml",
@@ -328,11 +325,14 @@
       "android/regression/160-reader-content-source-navigation.yaml",
       "android/regression/161-reader-no-url-no-content.yaml",
       "android/regression/162-pagination-scroll-read.yaml",
+      "android/regression/163-rtl-content-direction.yaml",
       "android/regression/164-drawer-swipe-gesture.yaml",
+      "android/regression/166-reader-rotation-retention.yaml",
       "android/regression/167-scroll-read-auto-hide.yaml",
       "android/regression/168-mark-read-filter-boundaries.yaml",
       "android/regression/169-bookmarks-mark-all-read-confirmation.yaml",
       "android/regression/170-force-english.yaml",
+      "android/regression/171-search-reader-navigation.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -407,6 +407,8 @@
       "ios/regression/159-reader-feed-content-no-url.yaml",
       "ios/regression/160-reader-content-source-navigation.yaml",
       "ios/regression/161-reader-no-url-no-content.yaml",
+      "ios/regression/163-ios-rtl-content-direction.yaml",
+      "ios/regression/165-ios-reader-scroll-retention.yaml",
       "ios/regression/167-scroll-read-auto-hide.yaml",
       "ios/regression/168-mark-read-filter-boundaries.yaml",
       "ios/smoke/001-first-launch-empty.yaml",
@@ -516,7 +518,8 @@
       "regression/167": "With scroll marking and saved auto-hide on, earlier articles remain reachable in the current list while the next page still loads.",
       "regression/168": "Mark-all-above/below from Bookmarks moves the bookmarked unread item to Read and keeps unbookmarked boundary articles unread on Timeline.",
       "regression/169": "Toolbar and footer confirm before marking saved articles read; cancellation preserves state and unbookmarked articles stay unread.",
-      "regression/170": "Force English on Android updates labels, persists across a restart, and can be disabled. iOS uses the system per-app language setting."
+      "regression/170": "Force English on Android updates labels, persists across a restart, and can be disabled. iOS uses the system per-app language setting.",
+      "regression/171": "Cached search reader follows result order and boundaries, preserves results on return, and restores Home timeline navigation after leaving Search."
     };
 
     const sections = document.querySelector("#sections");

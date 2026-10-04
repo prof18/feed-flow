@@ -1,0 +1,126 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=reader-mode
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 30000
+- tapOn:
+    id: e2e_open_app
+
+# Search's three deterministic reader-mode results in descending publication order.
+- tapOn:
+    id: home_search_button
+- tapOn:
+    id: search_query_field
+- inputText: "Reader"
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_reader_success
+    timeout: 10000
+- hideKeyboard
+- assertVisible:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: article_row_e2e_article_reader_fallback
+- assertVisible:
+    id: article_row_e2e_article_reader_long
+- tapOn:
+    id: article_row_e2e_article_reader_success
+
+# Search order is Success -> Fallback -> Long; both ends enforce search boundaries.
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_article_reader_success
+    timeout: 10000
+- assertVisible:
+    id: reader_previous_button
+    enabled: false
+- assertVisible:
+    id: reader_next_button
+    enabled: true
+- tapOn:
+    id: reader_next_button
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_article_reader_fallback
+    timeout: 10000
+- assertVisible:
+    id: reader_previous_button
+    enabled: true
+- assertVisible:
+    id: reader_next_button
+    enabled: true
+- tapOn:
+    id: reader_next_button
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_article_reader_long
+    timeout: 10000
+- assertVisible:
+    id: reader_previous_button
+    enabled: true
+- assertVisible:
+    id: reader_next_button
+    enabled: false
+
+# Previous follows the same search result order in reverse and returns to its boundary.
+- tapOn:
+    id: reader_previous_button
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_article_reader_fallback
+    timeout: 10000
+- tapOn:
+    id: reader_previous_button
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_article_reader_success
+    timeout: 10000
+- assertVisible:
+    id: reader_previous_button
+    enabled: false
+- assertVisible:
+    id: reader_next_button
+    enabled: true
+
+# Returning to Search preserves its query and result membership. Leaving Search clears
+# its navigation snapshot, so the overlapping Home article follows Timeline neighbors.
+- back
+- assertVisible:
+    id: search_query_field
+    text: "Reader"
+- assertVisible:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: article_row_e2e_article_reader_fallback
+- assertVisible:
+    id: article_row_e2e_article_reader_long
+- tapOn:
+    id: search_back_button
+- assertVisible:
+    id: home_search_button
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_article_reader_success
+    timeout: 10000
+- assertVisible:
+    id: reader_previous_button
+    enabled: true
+- assertVisible:
+    id: reader_next_button
+    enabled: true
+- tapOn:
+    id: reader_next_button
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_article_reader_fallback
+    timeout: 10000

@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.presentation
 
+import androidx.lifecycle.ViewModelStore
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
@@ -13,6 +14,8 @@ import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.domain.feed.ArticleNavigationRepository
+import com.prof18.feedflow.shared.domain.feed.ArticlePosition
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
@@ -21,6 +24,7 @@ import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -28,6 +32,7 @@ import org.koin.test.get
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.milliseconds
 import com.prof18.feedflow.core.model.DatabaseError as DatabaseErrorCode
 
@@ -545,6 +550,169 @@ class SearchViewModelTest : KoinTestBase() {
             assertEquals(UIErrorState.DeleteFeedSourceError, awaitItem())
             deleteJob.cancel()
         }
+    }
+
+    @Test
+    fun `search navigation uses displayed order without home items`() = runTest(testDispatcher) {
+        val items = seedNavigationItems()
+        val viewModel = getViewModel()
+        viewModel.updateSearchQuery("NavigationMatch")
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+
+        val displayed = assertIs<SearchState.DataFound>(viewModel.searchState.value).items
+        assertEquals(items.map { it.id }, displayed.map { it.id })
+        assertNavigationOrder(displayed)
+    }
+
+    @Test
+    fun `reset clears search navigation immediately and cancels updates`() = runTest(testDispatcher) {
+        val items = seedNavigationItems()
+        val viewModel = getViewModel()
+        viewModel.updateSearchQuery("NavigationMatch")
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+        assertNavigationOrder(items)
+
+        viewModel.resetSearch()
+        assertEquals(SearchState.EmptyState, viewModel.searchState.value)
+        assertNull(get<ArticleNavigationRepository>().getArticlePosition(items.first().id))
+        getDatabaseHelper().updateReadStatus(FeedItemId(items.first().id), true)
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+        assertEquals(SearchState.EmptyState, viewModel.searchState.value)
+        assertNull(get<ArticleNavigationRepository>().getArticlePosition(items.first().id))
+    }
+
+    @Test
+    fun `blank query clears search navigation after debounce`() = runTest(testDispatcher) {
+        assertBlankQueryClearsNavigation("")
+    }
+
+    @Test
+    fun `whitespace query clears search navigation after debounce`() = runTest(testDispatcher) {
+        assertBlankQueryClearsNavigation("   ")
+    }
+
+    @Test
+    fun `no matches clear the previous search navigation`() = runTest(testDispatcher) {
+        val items = seedNavigationItems()
+        val viewModel = getViewModel()
+        viewModel.updateSearchQuery("NavigationMatch")
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+        assertNavigationOrder(items)
+
+        viewModel.updateSearchQuery("NoMatches")
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+        assertEquals(SearchState.NoDataFound("NoMatches"), viewModel.searchState.value)
+        assertNull(get<ArticleNavigationRepository>().getArticlePosition(items.first().id))
+    }
+
+    @Test
+    fun `filter replaces search navigation membership`() = runTest(testDispatcher) {
+        val items = seedNavigationItems()
+        val bookmarked = items.last()
+        getDatabaseHelper().updateBookmarkStatus(FeedItemId(bookmarked.id), true)
+        val viewModel = getViewModel()
+        viewModel.updateSearchQuery("NavigationMatch")
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+        assertNavigationOrder(items)
+
+        viewModel.updateSearchFilter(SearchFilter.Bookmarks)
+        advanceUntilIdle()
+        val displayed = assertIs<SearchState.DataFound>(viewModel.searchState.value).items
+        assertEquals(listOf(bookmarked.id), displayed.map { it.id })
+        assertNavigationOrder(displayed)
+        assertNull(get<ArticleNavigationRepository>().getArticlePosition(items.first().id))
+    }
+
+    @Test
+    fun `read mutation preserves All search order and updates displayed flags`() = runTest(testDispatcher) {
+        val items = seedNavigationItems()
+        val viewModel = getViewModel()
+        viewModel.updateSearchQuery("NavigationMatch")
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+
+        viewModel.onReadStatusClick(FeedItemId(items.first().id), read = true)
+        advanceUntilIdle()
+        val displayed = assertIs<SearchState.DataFound>(viewModel.searchState.value).items
+        assertEquals(items.map { it.id }, displayed.map { it.id })
+        assertEquals(true, displayed.first().isRead)
+        assertNavigationOrder(displayed)
+    }
+
+    @Test
+    fun `bookmark removal clears Bookmarks search navigation`() = runTest(testDispatcher) {
+        val item = seedNavigationItems().first()
+        getDatabaseHelper().updateBookmarkStatus(FeedItemId(item.id), true)
+        val viewModel = getViewModel()
+        viewModel.updateSearchFilter(SearchFilter.Bookmarks)
+        viewModel.updateSearchQuery("NavigationMatch")
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+        assertNavigationOrder(listOf(item))
+
+        viewModel.onBookmarkClick(FeedItemId(item.id), bookmarked = false)
+        advanceUntilIdle()
+        assertEquals(SearchState.NoDataFound("NavigationMatch"), viewModel.searchState.value)
+        assertNull(get<ArticleNavigationRepository>().getArticlePosition(item.id))
+    }
+
+    @Test
+    fun `disposing search view model clears navigation and stops publication`() = runTest(testDispatcher) {
+        val items = seedNavigationItems()
+        val viewModel = getViewModel()
+        val store = ViewModelStore()
+        store.put("search-navigation", viewModel)
+        viewModel.updateSearchQuery("NavigationMatch")
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+        assertNavigationOrder(items)
+
+        store.clear()
+        assertNull(get<ArticleNavigationRepository>().getArticlePosition(items.first().id))
+        getDatabaseHelper().updateReadStatus(FeedItemId(items.first().id), true)
+        advanceUntilIdle()
+        assertNull(get<ArticleNavigationRepository>().getArticlePosition(items.first().id))
+    }
+
+    private suspend fun seedNavigationItems(): List<FeedItem> {
+        val source = createFeedSource(id = "navigation-source", title = "Navigation Feed")
+        val databaseHelper = getDatabaseHelper()
+        insertFeedSources(databaseHelper, source)
+        val items = listOf(
+            createFeedItem("navigation-a", "NavigationMatch A", source, pubDateMillis = 2000),
+            createFeedItem("navigation-b", "NavigationMatch B", source, pubDateMillis = 1000),
+        )
+        databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+        return items
+    }
+
+    private suspend fun assertNavigationOrder(items: List<FeedItem>) {
+        val navigation = get<ArticleNavigationRepository>()
+        items.forEachIndexed { index, item ->
+            assertEquals(ArticlePosition(index + 1, items.size), navigation.getArticlePosition(item.id))
+            assertEquals(items.getOrNull(index - 1)?.id, navigation.getPreviousArticle(item.id)?.id)
+            assertEquals(items.getOrNull(index + 1)?.id, navigation.getNextArticle(item.id)?.id)
+        }
+    }
+
+    private suspend fun TestScope.assertBlankQueryClearsNavigation(query: String) {
+        val items = seedNavigationItems()
+        val viewModel = getViewModel()
+        viewModel.updateSearchQuery("NavigationMatch")
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+        assertNavigationOrder(items)
+        viewModel.updateSearchQuery(query)
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+        assertEquals(SearchState.EmptyState, viewModel.searchState.value)
+        assertNull(get<ArticleNavigationRepository>().getArticlePosition(items.first().id))
     }
 
     private suspend fun insertFeedSources(databaseHelper: DatabaseHelper, vararg sources: FeedSource) {

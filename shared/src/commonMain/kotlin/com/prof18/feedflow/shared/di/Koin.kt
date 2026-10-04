@@ -30,6 +30,7 @@ import com.prof18.feedflow.shared.domain.KsoupHtmlParser
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryImpl
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetcher
+import com.prof18.feedflow.shared.domain.feed.ArticleNavigationRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
@@ -419,6 +420,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedAppearanceSettingsRepository = get(),
             feedFontSizeRepository = get(),
             feedStateRepository = get(),
+            articleNavigationRepository = get(),
         )
     }
 
@@ -436,7 +438,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             articleContentParser = get(),
             readerContentFetcher = get(),
             feedItemContentFileHandler = get(),
-            feedStateRepository = get(),
+            articleNavigationRepository = get(),
             databaseHelper = get(),
         )
     }
@@ -597,6 +599,10 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             rssChannelMapper = get(),
             settingsRepository = get(),
         )
+    }
+
+    single {
+        ArticleNavigationRepository(feedStateRepository = get())
     }
 
     single {

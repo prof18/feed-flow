@@ -11,6 +11,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
+import com.prof18.feedflow.shared.domain.feed.ArticleNavigationRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -43,6 +44,7 @@ class SearchViewModel internal constructor(
     private val dateFormatter: DateFormatter,
     private val feedFontSizeRepository: FeedFontSizeRepository,
     private val feedStateRepository: FeedStateRepository,
+    private val articleNavigationRepository: ArticleNavigationRepository,
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
 ) : ViewModel() {
 
@@ -195,7 +197,13 @@ class SearchViewModel internal constructor(
     private fun clearSearch() {
         searchJob?.cancel()
         searchJob = null
+        articleNavigationRepository.clearSearchResults()
         searchMutableState.update { SearchState.EmptyState }
+    }
+
+    override fun onCleared() {
+        articleNavigationRepository.clearSearchResults()
+        super.onCleared()
     }
 
     private fun refreshSearchContext() {
@@ -218,8 +226,21 @@ class SearchViewModel internal constructor(
                 feedFilter = feedFilter,
             )
             .onEach { foundFeed ->
+                val items = foundFeed.map { feedItem ->
+                    feedItem.toFeedItem(
+                        dateFormatter = dateFormatter,
+                        settings = mappingSettings,
+                    )
+                }.toImmutableList()
+
+                if (items.isEmpty()) {
+                    articleNavigationRepository.clearSearchResults()
+                } else {
+                    articleNavigationRepository.setSearchResults(items)
+                }
+
                 searchMutableState.update {
-                    if (foundFeed.isEmpty()) {
+                    if (items.isEmpty()) {
                         SearchState.NoDataFound(
                             searchQuery = query,
                         )
@@ -227,12 +248,7 @@ class SearchViewModel internal constructor(
                         SearchState.DataFound(
                             feedLayout = feedAppearanceSettingsRepository.getFeedLayout(),
                             isGridLayoutEnabled = feedAppearanceSettingsRepository.getGridLayoutEnabled(),
-                            items = foundFeed.map { feedItem ->
-                                feedItem.toFeedItem(
-                                    dateFormatter = dateFormatter,
-                                    settings = mappingSettings,
-                                )
-                            }.toImmutableList(),
+                            items = items,
                         )
                     }
                 }

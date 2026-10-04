@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 68 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 69 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -124,6 +124,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-168 | `168-mark-read-filter-boundaries.yaml` | `oldest-first` | Android, iOS | Mark all above/below from Bookmarks: the bookmarked unread article moves into Read, while unbookmarked old/new articles stay unread and visible on Timeline with Show read articles disabled. |
 | REG-169 | `169-bookmarks-mark-all-read-confirmation.yaml` | `content-rich` | Android | Toolbar and footer each show the Bookmarks-specific bulk-read confirmation; cancel preserves unread state, confirm marks saved articles read and retains their bookmarks, and an unbookmarked Timeline article remains unread. |
 | REG-170 | `170-force-english.yaml` | `content-rich` | Android | Force English updates the interface immediately, survives a process restart, and can be disabled. iOS uses the system per-app language setting. |
+| REG-171 | `171-search-reader-navigation.yaml` | `reader-mode` | Android | Cached search results follow Success → Fallback → Long at both reader boundaries; Back preserves the query/results, and leaving Search restores Home timeline navigation for the overlapping Success article. |
 
 ## Known Limitations
 
@@ -144,6 +145,7 @@ These are features intentionally not covered, with the reason recorded so they a
 - **iOS scroll-read pagination (REG-162)** — intentionally Android-only. The keyset pagination and the scroll-read flush both live in shared code, and the Android flow already exercises that wiring end to end; a second platform run would only re-test SwiftUI list scrolling.
 - **Per-source refresh network scoping** — the existing seed profiles contain real feed URLs, and no deterministic RSS transport is available to Maestro. A pull-to-refresh flow would therefore make live requests; `FeedFetcherRepositoryLocalTest` verifies the exact requested source URLs instead.
 - **iOS search-result context-menu mutations (REG-152)** — `.searchable` view hierarchy exceeds Maestro's 30s main-thread snapshot budget. Android covers the menu; iOS is row-visibility only.
+- **iOS search-reader navigation (REG-170)** — SwiftUI `.searchable` row interactions exceed Maestro’s hierarchy snapshot budget documented by REG-152. Android Maestro covers the navigation journey and shared Kotlin tests verify lifecycle disposal; iOS UI navigation remains manual coverage.
 - **iOS SwiftUI text input on the FreshRSS connect form (REG-117)** — Maestro stalls on `setClipboard` / `pasteText` into the form. FreshRSS filled-form coverage stays Android-only.
 - **OS browser launches (REG-112 / REG-137 / open-website actions)** — Default / internal / preferred-browser destinations leave the app. Only the in-app preference mutation and per-feed Reader Mode override are asserted.
 - **iOS swipe actions for disabled and open-in-browser (REG-107)** — full-width gestures open the row or escape to OS/browser surfaces.

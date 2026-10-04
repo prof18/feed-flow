@@ -16,8 +16,8 @@ import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveWith
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.feed.ArticleNavigationRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
-import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
@@ -36,7 +36,7 @@ class ReaderModeViewModel internal constructor(
     private val articleContentParser: ArticleContentParser,
     private val readerContentFetcher: ReaderContentFetcher,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
-    private val feedStateRepository: FeedStateRepository,
+    private val articleNavigationRepository: ArticleNavigationRepository,
     private val databaseHelper: DatabaseHelper,
 ) : ViewModel() {
 
@@ -97,7 +97,7 @@ class ReaderModeViewModel internal constructor(
     }
 
     private fun updateNavigationFlags() {
-        val position = currentArticleId?.let { feedStateRepository.getArticlePosition(it) }
+        val position = currentArticleId?.let { articleNavigationRepository.getArticlePosition(it) }
         canNavigateToPreviousMutableState.value = position != null && position.currentPosition > 1
         canNavigateToNextMutableState.value = position != null && position.currentPosition < position.totalArticles
     }
@@ -293,7 +293,7 @@ class ReaderModeViewModel internal constructor(
                 canNavigateToNextMutableState.value = false
                 return@launch
             }
-            val nextArticle = feedStateRepository.getNextArticle(articleId)?.toFeedItemUrlInfo()
+            val nextArticle = articleNavigationRepository.getNextArticle(articleId)?.toFeedItemUrlInfo()
             if (nextArticle != null) {
                 feedActionsRepository.markAsRead(hashSetOf(FeedItemId(nextArticle.id)))
                 if (nextArticle.hasNoUrl() || nextArticle.canOpenWebReaderMode()) {
@@ -312,7 +312,7 @@ class ReaderModeViewModel internal constructor(
             canNavigateToPreviousMutableState.value = false
             return
         }
-        val prevArticle = feedStateRepository.getPreviousArticle(articleId)?.toFeedItemUrlInfo()
+        val prevArticle = articleNavigationRepository.getPreviousArticle(articleId)?.toFeedItemUrlInfo()
         if (prevArticle != null) {
             viewModelScope.launch {
                 feedActionsRepository.markAsRead(hashSetOf(FeedItemId(prevArticle.id)))

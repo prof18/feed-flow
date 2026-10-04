@@ -11,14 +11,19 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository.Companion.DEFAULT_READER_MODE_FONT_SIZE
+import com.prof18.feedflow.shared.domain.feed.ArticleNavigationRepository
+import com.prof18.feedflow.shared.domain.feed.ArticlePosition
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.test.KoinTestBase
+import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -29,6 +34,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import org.koin.test.get
 import org.koin.test.inject
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -38,6 +44,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
 class ReaderModeViewModelTest : KoinTestBase() {
@@ -45,6 +52,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
     private val viewModel: ReaderModeViewModel by inject()
     private val databaseHelper: DatabaseHelper by inject()
     private val feedStateRepository: FeedStateRepository by inject()
+    private val articleNavigationRepository: ArticleNavigationRepository by inject()
     private val feedItemContentFileHandler: FeedItemContentFileHandler by inject()
     private val settingsRepository: SettingsRepository by inject()
     private var parserBehavior: ParserBehavior = ParserBehavior.Success
@@ -840,12 +848,138 @@ class ReaderModeViewModelTest : KoinTestBase() {
         assertIs<ReaderModeState.ContentNotAvailable>(viewModel.readerModeState.value)
     }
 
+    @Test
+    fun `reader follows overlapping search results in both directions`() = runTest(testDispatcher) {
+        keepReadNavigationItems()
+        val items = seedFeedItems()
+        articleNavigationRepository.setSearchResults(listOf(items[2], items[0]).toImmutableList())
+
+        viewModel.loadReaderContent(items[2].toUrlInfo())
+        advanceUntilIdle()
+        assertReaderSelection(items[2], previous = false, next = true)
+        viewModel.navigateToNextArticle()
+        advanceUntilIdle()
+        assertReaderSelection(items[0], previous = true, next = false)
+        viewModel.navigateToPreviousArticle()
+        advanceUntilIdle()
+        assertReaderSelection(items[2], previous = false, next = true)
+    }
+
+    @Test
+    fun `reader navigates search results absent from the loaded home list`() = runTest(testDispatcher) {
+        keepReadNavigationItems()
+        val home = seedFeedItems()
+        val source = home.first().feedSource
+        val results = listOf(
+            createFeedItem("search-x", "https://example.com/search-x", "Search X", 5000, source),
+            createFeedItem("search-y", "https://example.com/search-y", "Search Y", 4000, source),
+        )
+        databaseHelper.insertFeedItems(results, lastSyncTimestamp = 0)
+        articleNavigationRepository.setSearchResults(results.toImmutableList())
+
+        viewModel.loadReaderContent(results[0].toUrlInfo())
+        advanceUntilIdle()
+        assertReaderSelection(results[0], previous = false, next = true)
+        viewModel.navigateToNextArticle()
+        advanceUntilIdle()
+        assertReaderSelection(results[1], previous = true, next = false)
+        viewModel.navigateToPreviousArticle()
+        advanceUntilIdle()
+        assertReaderSelection(results[0], previous = false, next = true)
+        assertEquals(home.map { it.id }, feedStateRepository.feedState.value.map { it.id })
+    }
+
+    @Test
+    fun `clearing search restores reader home navigation`() = runTest(testDispatcher) {
+        keepReadNavigationItems()
+        val items = seedFeedItems()
+        articleNavigationRepository.setSearchResults(listOf(items[2], items[0]).toImmutableList())
+        articleNavigationRepository.clearSearchResults()
+
+        viewModel.loadReaderContent(items[1].toUrlInfo())
+        advanceUntilIdle()
+        assertReaderSelection(items[1], previous = true, next = true)
+        viewModel.navigateToNextArticle()
+        advanceUntilIdle()
+        assertReaderSelection(items[2], previous = true, next = false)
+        viewModel.navigateToPreviousArticle()
+        advanceUntilIdle()
+        assertReaderSelection(items[1], previous = true, next = true)
+    }
+
+    @Test
+    fun `reader uses home neighbors when current item is not a search result`() = runTest(testDispatcher) {
+        keepReadNavigationItems()
+        val items = seedFeedItems()
+        articleNavigationRepository.setSearchResults(listOf(items[2], items[0]).toImmutableList())
+
+        viewModel.loadReaderContent(items[1].toUrlInfo())
+        advanceUntilIdle()
+        assertReaderSelection(items[1], previous = true, next = true)
+        viewModel.navigateToNextArticle()
+        advanceUntilIdle()
+        assertReaderSelection(items[2], previous = false, next = true)
+        viewModel.loadReaderContent(items[1].toUrlInfo())
+        advanceUntilIdle()
+        viewModel.navigateToPreviousArticle()
+        advanceUntilIdle()
+        assertReaderSelection(items[0], previous = true, next = false)
+    }
+
+    @Test
+    fun `published search navigation survives reader mark-read emissions`() = runTest(testDispatcher) {
+        keepReadNavigationItems()
+        val items = seedFeedItems(item1Title = "NavigationMatch A", item3Title = "NavigationMatch C")
+        val searchViewModel = get<SearchViewModel>()
+        searchViewModel.updateSearchQuery("NavigationMatch")
+        advanceTimeBy(500.milliseconds)
+        advanceUntilIdle()
+        assertEquals(
+            listOf(items[0].id, items[2].id),
+            assertIs<SearchState.DataFound>(searchViewModel.searchState.value).items.map { it.id },
+        )
+
+        viewModel.loadReaderContent(items[0].toUrlInfo())
+        advanceUntilIdle()
+        assertReaderSelection(items[0], previous = false, next = true)
+        viewModel.navigateToNextArticle()
+        advanceUntilIdle()
+        assertReaderSelection(items[2], previous = true, next = false)
+        viewModel.navigateToPreviousArticle()
+        advanceUntilIdle()
+        assertReaderSelection(items[0], previous = false, next = true)
+        assertEquals(ArticlePosition(1, 2), articleNavigationRepository.getArticlePosition(items[0].id))
+        assertEquals(ArticlePosition(2, 2), articleNavigationRepository.getArticlePosition(items[2].id))
+        val dbItems = databaseHelper.getFeedItems(
+            feedFilter = FeedFilter.Timeline,
+            pageSize = 10,
+            showReadItems = true,
+            sortOrder = FeedOrder.NEWEST_FIRST,
+        ).associateBy { it.url_hash }
+        assertTrue(dbItems.getValue(items[0].id).is_read)
+        assertTrue(dbItems.getValue(items[2].id).is_read)
+    }
+
+    private fun keepReadNavigationItems() {
+        settingsRepository.setShowReadArticlesTimeline(true)
+        settingsRepository.setHideReadItems(false)
+    }
+
+    private fun assertReaderSelection(item: FeedItem, previous: Boolean, next: Boolean) {
+        assertEquals(item.id, viewModel.currentArticleState.value?.id)
+        assertEquals(item.id, assertIs<ReaderModeState.Success>(viewModel.readerModeState.value).readerModeData.id.id)
+        assertEquals(previous, viewModel.canNavigateToPreviousState.value)
+        assertEquals(next, viewModel.canNavigateToNextState.value)
+    }
+
     private suspend fun seedFeedItems(
         item1Url: String = "https://example.com/articles/1",
         item2Url: String = "https://example.com/articles/2",
         item3Url: String = "https://example.com/articles/3",
         item1Content: String? = null,
         item3Content: String? = null,
+        item1Title: String = "Article 1",
+        item3Title: String = "Article 3",
     ): List<FeedItem> {
         val feedSource = FeedSource(
             id = "source-1",
@@ -880,7 +1014,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
             createFeedItem(
                 id = "item-1",
                 url = item1Url,
-                title = "Article 1",
+                title = item1Title,
                 pubDateMillis = 3000,
                 feedSource = feedSource,
             ).copy(content = item1Content),
@@ -894,7 +1028,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
             createFeedItem(
                 id = "item-3",
                 url = item3Url,
-                title = "Article 3",
+                title = item3Title,
                 pubDateMillis = 1000,
                 feedSource = feedSource,
             ).copy(content = item3Content),

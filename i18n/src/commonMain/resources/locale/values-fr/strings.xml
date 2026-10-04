@@ -208,7 +208,7 @@
     <string name="icloud_connection_error">Navré, nous n\'avons pu nous connecter à iCloud. Veuillez vérifier si vous êtes bien connecté, si iCloud Drive est activé, et si il vous reste de l\'espace de stockage - error code : %s.</string>
     <string name="feed_fetch_failed_tooltip_short">Échec de l\'actualisation des flux</string>
     <string name="support_the_project">Soutenez le projet</string>
-    <string name="open_feed_settings">Ouvrir les paramètres du flux</string>
+    <string name="open_feed_settings">Paramètres du flux</string>
     <string name="reader_mode_browser_button_content_description">Ouvrir dans le navigateur</string>
     <string name="delete_feed_confirmation_title">Supprimer le flux ?</string>
     <string name="delete_feed_confirmation_message">Êtes-vous sûr.e de vouloir supprimer ce flux ? Cette action est irréversible.</string>
@@ -422,4 +422,9 @@
     <string name="support_purchase_thank_you_title">Vous êtes formidable ! 🎉</string>
     <string name="support_purchase_thank_you_message">Votre don aide FeedFlow à grandir 💙 Merci de soutenir le développement continu, les améliorations apportées et la correction des bugs. 🙏</string>
     <string name="settings_hide_read_items_disabled_while_scrolling">Le masquage automatique est désactivé si « Marquer comme lu lors du défilement » est activé, ainsi les articles restent à leur place pendant le défilement. Désactivez cette option pour utiliser le masquage automatique.</string>
+    <string name="settings_force_english">Forcer l\'anglais</string>
+    <string name="settings_force_english_description">Utiliser l\'anglais comme langue d\'interface au lieu de la langue du système.</string>
+    <string name="feed_fetch_refused_error">Impossible d\'atteindre ce flux. Le site bloque peut être les lecteurs RSS. Veuillez réessayer plus tard.</string>
+    <string name="mark_all_bookmarks_read_dialog_message">Êtes-vous sûr de vouloir marquer tous les articles sauvegardés comme lus ?</string>
+    <string name="remove_bookmark_dialog_message">Êtes-vous sûr de vouloir supprimer cet articles des favoris ?</string>
 </resources>

@@ -23,6 +23,8 @@ internal fun GeneralPane(
     onMultiPaneToggled: (Boolean) -> Unit,
     isReduceMotionEnabled: Boolean,
     onReduceMotionToggled: (Boolean) -> Unit,
+    isForceEnglishEnabled: Boolean,
+    onForceEnglishToggled: (Boolean) -> Unit,
     isHideUnreadCountEnabled: Boolean,
     onHideUnreadCountToggled: (Boolean) -> Unit,
 ) {
@@ -62,6 +64,13 @@ internal fun GeneralPane(
             isChecked = isReduceMotionEnabled,
             onCheckedChange = onReduceMotionToggled,
         )
+
+        SettingSwitchItem(
+            title = strings.settingsForceEnglish,
+            supportingText = strings.settingsForceEnglishDescription,
+            isChecked = isForceEnglishEnabled,
+            onCheckedChange = onForceEnglishToggled,
+        )
     }
 }
 
@@ -76,6 +85,8 @@ private fun GeneralPanePreview() {
             onMultiPaneToggled = {},
             isReduceMotionEnabled = false,
             onReduceMotionToggled = {},
+            isForceEnglishEnabled = false,
+            onForceEnglishToggled = {},
             isHideUnreadCountEnabled = false,
             onHideUnreadCountToggled = {},
         )

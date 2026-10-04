@@ -13,13 +13,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.prof18.feedflow.android.util.isSystemInDarkTheme
+import com.prof18.feedflow.android.util.rememberAndroidFeedFlowStrings
 import com.prof18.feedflow.android.util.rememberSystemReducedMotionEnabled
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -27,7 +30,6 @@ import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
@@ -93,6 +95,7 @@ abstract class BaseThemeActivity : ComponentActivity() {
 
         setContent {
             val reduceMotionOverride by settingsRepository.reduceMotionEnabledFlow.collectAsStateWithLifecycle()
+            val forceEnglishEnabled by settingsRepository.forceEnglishEnabledFlow.collectAsStateWithLifecycle()
             val systemReducedMotion = rememberSystemReducedMotionEnabled()
             val reduceMotionEnabled = reduceMotionOverride || systemReducedMotion
 
@@ -100,9 +103,16 @@ abstract class BaseThemeActivity : ComponentActivity() {
                 darkTheme = darkTheme,
                 useOledTheme = useOledTheme,
             ) {
-                val lyricist = rememberFeedFlowStrings()
+                val lyricist = rememberAndroidFeedFlowStrings(settingsRepository)
                 ProvideFeedFlowStrings(lyricist) {
-                    CompositionLocalProvider(LocalReduceMotion provides reduceMotionEnabled) {
+                    CompositionLocalProvider(
+                        LocalReduceMotion provides reduceMotionEnabled,
+                        LocalLayoutDirection provides if (forceEnglishEnabled) {
+                            LayoutDirection.Ltr
+                        } else {
+                            LocalLayoutDirection.current
+                        },
+                    ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()

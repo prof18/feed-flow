@@ -60,6 +60,9 @@ class SettingsRepository(
     private val reduceMotionEnabledMutableFlow = MutableStateFlow(getReduceMotionEnabled())
     val reduceMotionEnabledFlow: StateFlow<Boolean> = reduceMotionEnabledMutableFlow.asStateFlow()
 
+    private val forceEnglishEnabledMutableFlow = MutableStateFlow(getForceEnglishEnabled())
+    val forceEnglishEnabledFlow: StateFlow<Boolean> = forceEnglishEnabledMutableFlow.asStateFlow()
+
     private val showReadArticlesTimelineMutableFlow = MutableStateFlow(getShowReadArticlesTimeline())
     internal val showReadArticlesTimelineFlow: StateFlow<Boolean> = showReadArticlesTimelineMutableFlow.asStateFlow()
 
@@ -307,6 +310,14 @@ class SettingsRepository(
         settings.getString(SettingsFields.NOTIFICATION_MODE.name, NotificationMode.FEED_SOURCE.name)
             .let { NotificationMode.valueOf(it) }
 
+    fun getForceEnglishEnabled(): Boolean =
+        settings.getBoolean(SettingsFields.FORCE_ENGLISH_ENABLED.name, false)
+
+    fun setForceEnglishEnabled(value: Boolean) {
+        settings[SettingsFields.FORCE_ENGLISH_ENABLED.name] = value
+        forceEnglishEnabledMutableFlow.value = value
+    }
+
     fun setNotificationMode(mode: NotificationMode) =
         settings.set(SettingsFields.NOTIFICATION_MODE.name, mode.name)
 
@@ -338,6 +349,7 @@ private enum class SettingsFields {
     BACKGROUND_SYNC_CHARGING_ONLY,
     THEME_MODE,
     REDUCE_MOTION_ENABLED,
+    FORCE_ENGLISH_ENABLED,
     REFRESH_FEEDS_ON_LAUNCH,
     NOTIFICATION_MODE,
     UNCATEGORIZED_CATEGORY_POSITION,

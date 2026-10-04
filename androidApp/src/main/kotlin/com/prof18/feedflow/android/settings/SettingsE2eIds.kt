@@ -28,4 +28,5 @@ internal object SettingsE2eIds {
     const val APPEARANCE_THEME = "appearance_theme"
     const val APPEARANCE_HIDE_UNREAD_COUNT = "appearance_hide_unread_count"
     const val APPEARANCE_REDUCE_MOTION = "appearance_reduce_motion"
+    const val APPEARANCE_FORCE_ENGLISH = "appearance_force_english"
 }

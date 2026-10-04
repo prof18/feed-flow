@@ -40,7 +40,10 @@ class E2eSeedRunnerTest : KoinTestBase() {
 
     @Test
     fun `content-rich profile seeds deterministic content and settings`() = runTest {
+        settingsRepository.setForceEnglishEnabled(true)
         seedRunner.resetAndSeed(E2eSeedProfile.CONTENT_RICH)
+
+        assertFalse(settingsRepository.getForceEnglishEnabled())
 
         assertEquals(3, databaseHelper.getFeedSourceCategories().size)
         assertEquals(7, databaseHelper.getFeedSources().size)

@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 67 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 68 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -123,12 +123,14 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-167 | `167-scroll-read-auto-hide.yaml` | `pagination-scroll-read` | Android, iOS | With both preferences saved on, scrolling marks articles read while keeping earlier rows reachable in the current list. Scrolling onward still loads the next page and reaches Article 050. |
 | REG-168 | `168-mark-read-filter-boundaries.yaml` | `oldest-first` | Android, iOS | Mark all above/below from Bookmarks: the bookmarked unread article moves into Read, while unbookmarked old/new articles stay unread and visible on Timeline with Show read articles disabled. |
 | REG-169 | `169-bookmarks-mark-all-read-confirmation.yaml` | `content-rich` | Android | Toolbar and footer each show the Bookmarks-specific bulk-read confirmation; cancel preserves unread state, confirm marks saved articles read and retains their bookmarks, and an unbookmarked Timeline article remains unread. |
+| REG-170 | `170-force-english.yaml` | `content-rich` | Android | Force English updates the interface immediately, survives a process restart, and can be disabled. iOS uses the system per-app language setting. |
 
 ## Known Limitations
 
 These are features intentionally not covered, with the reason recorded so they aren't re-investigated:
 
 - **Reader archive shortcut icon** — Maestro sees the localized "Open in archive.is" label, but cannot distinguish the open-padlock glyph from another icon. Check the rendered icon visually on Android, iOS, and Desktop; SM-007 covers the surrounding reader toolbar behavior.
+- **Android language override (REG-170)** — Maestro does not configure the OS-owned app language. With Japanese selected for the app, run the flow with `-e DEVICE_SETTINGS_TITLE=設定` to assert Japanese → English → Japanese labels as well as persistence after a process restart. The default expects an English device. Shared unit tests cover preference defaults, change emissions, and persistence across repository recreation.
 - **Feed fetch refusal fallback** — browser fallback and server refusal have no Maestro coverage because live WAF/IP behavior varies. Deterministic unit coverage lives in `RssParserWrapperTest`, `RssParserFactoryTest`, and `FeedSourcesRepositoryLocalSuffixLookupTest`.
 - **Desktop report-issue email fallback** — Maestro targets mobile and cannot simulate Java Desktop mail support. `DesktopMailHandlerTest` covers mail-launch and fallback failures; manually check Help and About report actions with and without a configured mail client.
 - **iOS scrolling frame timing and row invalidation** — Maestro checks article/read/bookmark behavior (SM-004) and swipe actions (REG-107), but cannot assert SwiftUI update causes or missed frame deadlines. Validate callback and refresh-action performance changes with a warmed-up SwiftUI Instruments capture on a physical iPad; compare row-update causes and hitch timing using the same theme, read-on-scroll setting, and article journey.

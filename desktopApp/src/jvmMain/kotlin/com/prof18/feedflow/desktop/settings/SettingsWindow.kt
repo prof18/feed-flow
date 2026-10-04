@@ -38,6 +38,7 @@ import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.desktop.ui.components.MacToolbarTitleAreaHeight
 import com.prof18.feedflow.desktop.ui.components.drawerHazeStyle
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.MenuBarViewModel
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -63,8 +64,10 @@ internal fun SettingsWindow(
         val menuBarViewModel = koinViewModel<MenuBarViewModel>()
         val feedListSettingsViewModel = koinViewModel<FeedListSettingsViewModel>()
         val desktopHomeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
+        val settingsRepository = remember { DI.koin.get<SettingsRepository>() }
 
         val settingsState by menuBarViewModel.state.collectAsState()
+        val isForceEnglishEnabled by settingsRepository.forceEnglishEnabledFlow.collectAsState()
         val isMultiPaneEnabled by desktopHomeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
         val fontSizesState by feedListSettingsViewModel.feedFontSizeState.collectAsState()
         val feedListSettingsState by feedListSettingsViewModel.state.collectAsState()
@@ -161,6 +164,8 @@ internal fun SettingsWindow(
                         onMultiPaneToggled = desktopHomeSettingsRepository::setMultiPaneLayoutEnabled,
                         isReduceMotionEnabled = settingsState.isReduceMotionEnabled,
                         onReduceMotionToggled = menuBarViewModel::updateReduceMotionEnabled,
+                        isForceEnglishEnabled = isForceEnglishEnabled,
+                        onForceEnglishToggled = settingsRepository::setForceEnglishEnabled,
                         isHideUnreadCountEnabled = settingsState.isHideUnreadCountEnabled,
                         onHideUnreadCountToggled = menuBarViewModel::updateHideUnreadCount,
                     )

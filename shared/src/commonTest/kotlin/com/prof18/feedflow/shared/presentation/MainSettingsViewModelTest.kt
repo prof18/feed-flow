@@ -7,6 +7,7 @@ import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class MainSettingsViewModelTest : KoinTestBase() {
@@ -43,5 +44,18 @@ class MainSettingsViewModelTest : KoinTestBase() {
     fun `updateHideUnreadCount updates state`() = runTest {
         viewModel.updateHideUnreadCount(true)
         assertTrue(viewModel.settingsState.value.isHideUnreadCountEnabled)
+    }
+
+    @Test
+    fun `updateForceEnglishEnabled updates state and settings`() = runTest {
+        viewModel.settingsState.test {
+            assertFalse(awaitItem().isForceEnglishEnabled)
+
+            viewModel.updateForceEnglishEnabled(true)
+            assertTrue(awaitItem().isForceEnglishEnabled)
+
+            viewModel.updateForceEnglishEnabled(false)
+            assertFalse(awaitItem().isForceEnglishEnabled)
+        }
     }
 }

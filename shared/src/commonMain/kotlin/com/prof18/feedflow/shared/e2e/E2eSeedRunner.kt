@@ -124,6 +124,7 @@ class E2eSeedRunner internal constructor(
         )
         settingsRepository.setThemeMode(ThemeMode.SYSTEM)
         settingsRepository.setReduceMotionEnabled(true)
+        settingsRepository.setForceEnglishEnabled(false)
         settingsRepository.setRefreshFeedsOnLaunch(false)
         settingsRepository.setNotificationMode(NotificationMode.FEED_SOURCE)
 

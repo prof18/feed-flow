@@ -425,4 +425,6 @@
     <string name="feed_fetch_refused_error">Uudisvoog pole kättesaadav. Võib-olla veebisait blokeerib uudisvoogude lugejaid. Palun proovi hiljem uuesti.</string>
     <string name="mark_all_bookmarks_read_dialog_message">Kas oled kindel, et soovid kõik järjehoidjaga märgitud artiklid märkida loetuks?</string>
     <string name="remove_bookmark_dialog_message">Kas oled kindel, et soovid sellelt artiklilt eemaldada järjehoidja?</string>
+    <string name="settings_force_english">Kasuta sundkorras inglise keelt</string>
+    <string name="settings_force_english_description">Seadme keele asemel kuva rakenduse kasutajaliides inglisekeelsena.</string>
 </resources>

@@ -30,9 +30,11 @@ internal fun AppearanceScreenContent(
     navigateBack: () -> Unit,
     themeMode: ThemeMode,
     isReduceMotionEnabled: Boolean,
+    isForceEnglishEnabled: Boolean,
     isHideUnreadCountEnabled: Boolean,
     onThemeModeSelected: (ThemeMode) -> Unit,
     onReduceMotionToggled: (Boolean) -> Unit,
+    onForceEnglishToggled: (Boolean) -> Unit,
     onHideUnreadCountToggled: (Boolean) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
@@ -95,6 +97,16 @@ internal fun AppearanceScreenContent(
             }
 
             item {
+                SettingSwitchItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.APPEARANCE_FORCE_ENGLISH),
+                    title = strings.settingsForceEnglish,
+                    supportingText = strings.settingsForceEnglishDescription,
+                    isChecked = isForceEnglishEnabled,
+                    onCheckedChange = onForceEnglishToggled,
+                )
+            }
+
+            item {
                 Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
             }
         }
@@ -109,9 +121,11 @@ private fun AppearanceScreenContentPreview() {
             navigateBack = {},
             themeMode = ThemeMode.SYSTEM,
             isReduceMotionEnabled = false,
+            isForceEnglishEnabled = false,
             isHideUnreadCountEnabled = false,
             onThemeModeSelected = {},
             onReduceMotionToggled = {},
+            onForceEnglishToggled = {},
             onHideUnreadCountToggled = {},
         )
     }

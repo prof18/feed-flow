@@ -146,7 +146,7 @@ class AndroidNotifier(
         notificationManager.getNotificationChannel(CHANNEL_ID)?.importance != NotificationManager.IMPORTANCE_NONE
 
     private fun feedFlowStrings(): FeedFlowStrings {
-        val languageTag = Locale.getDefault().toLanguageTag()
+        val languageTag = if (settingsRepository.getForceEnglishEnabled()) "en" else Locale.getDefault().toLanguageTag()
         val feedFlowStrings = feedFlowStrings[languageTag] ?: EnFeedFlowStrings
         return feedFlowStrings
     }

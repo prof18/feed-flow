@@ -19,6 +19,7 @@ import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveAndroidDataSourceImpl
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceAndroid
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoin
@@ -43,6 +44,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
     private val feedSyncRepo by inject<FeedSyncRepository>()
     private val widgetRepository by inject<FeedWidgetRepository>()
     private val widgetSettingsRepository by inject<WidgetSettingsRepository>()
+    private val settingsRepository by inject<SettingsRepository>()
     private val feedDownloadWorkerEnqueuer by inject<FeedDownloadWorkerEnqueuer>()
     private val appForegroundState by inject<AppForegroundState>()
     private val browserManager by inject<BrowserManager>()
@@ -117,6 +119,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                         widgetRepository,
                                         widgetSettingsRepository,
                                         get<BrowserManager>(),
+                                        get<SettingsRepository>(),
                                     ).update(this@FeedFlowApp, id)
                                 }
                         }
@@ -170,6 +173,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                         widgetRepository,
                                         widgetSettingsRepository,
                                         browserManager,
+                                        settingsRepository,
                                     ).update(this@FeedFlowApp, id)
                                 }
                         }

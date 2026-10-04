@@ -8,16 +8,18 @@ import androidx.glance.GlanceTheme
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.provideContent
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.util.rememberAndroidFeedFlowStrings
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import kotlinx.coroutines.flow.first
 
 internal class FeedFlowWidget(
     private val repository: FeedWidgetRepository,
     private val widgetSettingsRepository: WidgetSettingsRepository,
     private val browserManager: BrowserManager,
+    private val settingsRepository: SettingsRepository,
 ) : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val feedItemsFlow = repository.getFeeds()
@@ -26,7 +28,7 @@ internal class FeedFlowWidget(
         val initialFeedItems = feedItemsFlow.first()
 
         provideContent {
-            val lyricist = rememberFeedFlowStrings()
+            val lyricist = rememberAndroidFeedFlowStrings(settingsRepository)
 
             ProvideFeedFlowStrings(lyricist) {
                 val feedItems by feedItemsFlow.collectAsState(initialFeedItems)

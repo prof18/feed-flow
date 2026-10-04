@@ -5,8 +5,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowState
 import coil3.ImageLoader
@@ -49,6 +53,7 @@ internal fun FrameWindowScope.AppContent(
     val settingsRepository = DI.koin.get<SettingsRepository>()
     val themeMode by settingsRepository.themeModeFlow.collectAsState()
     val reduceMotionEnabled by settingsRepository.reduceMotionEnabledFlow.collectAsState()
+    val forceEnglishEnabled by settingsRepository.forceEnglishEnabledFlow.collectAsState()
     val isDarkTheme = when (themeMode) {
         ThemeMode.SYSTEM -> rememberDesktopDarkTheme()
         ThemeMode.LIGHT -> false
@@ -69,10 +74,21 @@ internal fun FrameWindowScope.AppContent(
             }
         }
 
-        val lyricist = rememberFeedFlowStrings()
+        val languageTag = if (forceEnglishEnabled) "en" else Locale.current.toLanguageTag()
+        val lyricist = key(languageTag) {
+            rememberFeedFlowStrings(currentLanguageTag = languageTag)
+        }
+        val deviceLayoutDirection = LocalLayoutDirection.current
         ProvideFeedFlowStrings(lyricist) {
-            WindowsSafeClipboardProvider {
-                CompositionLocalProvider(LocalReduceMotion provides reduceMotionEnabled) {
+            CompositionLocalProvider(
+                LocalReduceMotion provides reduceMotionEnabled,
+                LocalLayoutDirection provides if (forceEnglishEnabled) {
+                    LayoutDirection.Ltr
+                } else {
+                    deviceLayoutDirection
+                },
+            ) {
+                WindowsSafeClipboardProvider {
                     this.MainWindow(
                         showBackupLoader = showBackupLoader,
                         isDarkTheme = isDarkTheme,

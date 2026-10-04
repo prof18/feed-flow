@@ -1,0 +1,56 @@
+appId: com.prof18.feedflow.debug
+env:
+  DEVICE_SETTINGS_TITLE: ${DEVICE_SETTINGS_TITLE || "Settings"}
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- assertVisible: ${DEVICE_SETTINGS_TITLE}
+- tapOn:
+    id: settings_appearance
+- assertVisible:
+    checked: false
+    childOf:
+      id: appearance_force_english
+- tapOn:
+    id: appearance_force_english
+- assertVisible: "Appearance"
+- assertVisible: "Force English"
+- assertVisible:
+    checked: true
+    childOf:
+      id: appearance_force_english
+- tapOn:
+    id: settings_back_button
+- assertVisible: "Settings"
+- tapOn:
+    id: settings_back_button
+- back
+- stopApp
+- launchApp
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_appearance
+- assertVisible: "Appearance"
+- assertVisible:
+    checked: true
+    childOf:
+      id: appearance_force_english
+- tapOn:
+    id: appearance_force_english
+- assertVisible:
+    checked: false
+    childOf:
+      id: appearance_force_english
+- tapOn:
+    id: settings_back_button
+- assertVisible: ${DEVICE_SETTINGS_TITLE}

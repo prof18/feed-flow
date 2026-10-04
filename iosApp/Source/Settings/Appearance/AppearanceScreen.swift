@@ -11,7 +11,11 @@ struct AppearanceScreen: View {
 
     private let feedFlowStrings = Deps.shared.getStrings()
 
-    @State private var settingsState = MainSettingsState(themeMode: .system, isHideUnreadCountEnabled: false)
+    @State private var settingsState = MainSettingsState(
+        themeMode: .system,
+        isHideUnreadCountEnabled: false,
+        isForceEnglishEnabled: false
+    )
 
     var body: some View {
         @Bindable var appState = appState

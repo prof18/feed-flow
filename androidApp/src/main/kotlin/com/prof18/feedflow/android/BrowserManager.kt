@@ -54,7 +54,7 @@ class BrowserManager(
     }
 
     private fun getCurrentStrings(): FeedFlowStrings {
-        val languageCode = Locale.getDefault().language
+        val languageCode = if (settingsRepository.getForceEnglishEnabled()) "en" else Locale.getDefault().language
         return feedFlowStrings[languageCode] ?: EnFeedFlowStrings
     }
 

@@ -395,7 +395,7 @@
     <string name="mark_all_above_as_read_confirmation_title">Marquer tout ce qui précède comme lu ?</string>
     <string name="mark_all_above_as_read_confirmation_message">Tous les articles qui précèdent celui-ci seront marqués comme lus.</string>
     <string name="mark_all_below_as_read_confirmation_title">Marquer tout ce qui précède comme lu ?</string>
-    <string name="mark_all_below_as_read_confirmation_message">Tous les articles qui suivent celui-ci seront marqués comme lus.</string>
+    <string name="mark_all_below_as_read_confirmation_message">Tous les articles qui suivent seront marqués comme lus.</string>
     <string name="link_opening_preference_default_short">Paramètres de l\'application</string>
     <string name="link_opening_preference_system_browser">Navigateur par défaut</string>
     <string name="article_open_mode">Ouvrir les articles avec</string>
@@ -411,7 +411,7 @@
     <string name="reader_mode_no_content_message">Cet article ne contient aucun contenu et il n\'y a pas de lien pour l\'ouvrir sur internet.</string>
     <string name="reader_content_source_web">Article du site internet</string>
     <string name="reader_content_source_web_subtitle">Récupérer et nettoyer la page originale</string>
-    <string name="reader_content_source_feed">Contenu depuis le flux</string>
+    <string name="reader_content_source_feed">Contenu du flux</string>
     <string name="reader_content_source_feed_subtitle">Utiliser le texte inclus dans le flux RSS</string>
     <string name="feed_already_exists_message">%s est déjà dans vos flux.</string>
     <string name="server_account_subscriptions_warning">Ce compte utilise les abonnements enregistrés sur le serveur.</string>

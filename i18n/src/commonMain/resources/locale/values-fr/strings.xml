@@ -129,7 +129,7 @@
     <string name="fresh_rss_last_sync">Dernière synchronisation : %s</string>
     <string name="fresh_rss_password_hint">Le mot de passe de l\'API FreshRSS (Paramètres &gt; Profil)</string>
     <string name="fresh_rss_url_hint">L\'endpoint de FreshRSS API, par exemple %s</string>
-    <string name="link_opening_preference_default">Identique au paramètre de l\'application</string>
+    <string name="link_opening_preference_default">Identique aux paramètres de l\'application</string>
     <string name="settings_auto_delete">Supprimer automatiquement les anciens articles</string>
     <string name="settings_auto_delete_period_disabled">Désactivé</string>
     <string name="settings_auto_delete_period_one_week">Vieux d\'une semaine</string>
@@ -267,7 +267,7 @@
     <string name="google_drive_desktop_sync_description">Cliquez sur le bouton ci-dessous pour connecter votre compte Google Drive. Une fenêtre de navigateur s’ouvrira pour l’authentification. Une fois la connexion terminée, vous pourrez revenir à cette application.</string>
     <string name="settings_hide_date">Masquer la date de l\'article</string>
     <string name="settings_hide_unread_dot">Masquer la vignette \"non lu\"</string>
-    <string name="settings_description_max_lines">Nombre maximal de lignes pour la description</string>
+    <string name="settings_description_max_lines">Nombre de lignes maximal pour la description</string>
     <string name="settings_description_lines_three">Description sur 3 lignes</string>
     <string name="settings_description_lines_five">Description sur 5 lignes</string>
     <string name="settings_description_lines_no_limit">Aucune limite de lignes</string>
@@ -395,7 +395,7 @@
     <string name="mark_all_above_as_read_confirmation_title">Marquer tout ce qui précède comme lu ?</string>
     <string name="mark_all_above_as_read_confirmation_message">Tous les articles qui précèdent celui-ci seront marqués comme lus.</string>
     <string name="mark_all_below_as_read_confirmation_title">Marquer tout ce qui précède comme lu ?</string>
-    <string name="mark_all_below_as_read_confirmation_message">Tous les articles qui suivent seront marqués comme lus.</string>
+    <string name="mark_all_below_as_read_confirmation_message">Tous les articles qui suivent celui-ci seront marqués comme lus.</string>
     <string name="link_opening_preference_default_short">Paramètres de l\'application</string>
     <string name="link_opening_preference_system_browser">Navigateur par défaut</string>
     <string name="article_open_mode">Ouvrir les articles avec</string>
@@ -409,9 +409,9 @@
     <string name="collapse_category_button_content_description">Réduire %s</string>
     <string name="reader_mode_no_content_title">Aucun contenu disponible</string>
     <string name="reader_mode_no_content_message">Cet article ne contient aucun contenu et il n\'y a pas de lien pour l\'ouvrir sur internet.</string>
-    <string name="reader_content_source_web">Article du site internet</string>
-    <string name="reader_content_source_web_subtitle">Récupérer et nettoyer la page originale</string>
-    <string name="reader_content_source_feed">Contenu du flux</string>
+    <string name="reader_content_source_web">Article issu du site internet</string>
+    <string name="reader_content_source_web_subtitle">Récupérer et nettoyer la page d\'origine</string>
+    <string name="reader_content_source_feed">Contenu issu du flux</string>
     <string name="reader_content_source_feed_subtitle">Utiliser le texte inclus dans le flux RSS</string>
     <string name="feed_already_exists_message">%s est déjà dans vos flux.</string>
     <string name="server_account_subscriptions_warning">Ce compte utilise les abonnements enregistrés sur le serveur.</string>
@@ -421,7 +421,7 @@
     <string name="support_paywall_title">Soutenez le développement de FeedFlow 💙</string>
     <string name="support_purchase_thank_you_title">Vous êtes formidable ! 🎉</string>
     <string name="support_purchase_thank_you_message">Votre don aide FeedFlow à grandir 💙 Merci de soutenir le développement continu, les améliorations apportées et la correction des bugs. 🙏</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Le masquage automatique est désactivé si « Marquer comme lu lors du défilement » est activé, ainsi les articles restent à leur place pendant le défilement. Désactivez cette option pour utiliser le masquage automatique.</string>
+    <string name="settings_hide_read_items_disabled_while_scrolling">Le masquage automatique est désactivé lorsque « Marquer comme lu lors du défilement » est activé, ainsi les articles restent en place lors du défilement. Le désactiver pour utiliser le masquage automatique.</string>
     <string name="settings_force_english">Forcer l\'anglais</string>
     <string name="settings_force_english_description">Utiliser l\'anglais comme langue d\'interface au lieu de la langue du système.</string>
     <string name="feed_fetch_refused_error">Impossible d\'atteindre ce flux. Le site bloque peut être les lecteurs RSS. Veuillez réessayer plus tard.</string>

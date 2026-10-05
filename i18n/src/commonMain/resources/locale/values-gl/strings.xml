@@ -206,7 +206,7 @@
     <string name="settings_theme_light">Claro</string>
     <string name="settings_theme_dark">Escuro</string>
     <string name="icloud_connection_error">Lamentamos non poder conectar con iCloud. Comproba se iniciaches sesión, iCloud Drive está activada e tes espazo abondo - error code: %s.</string>
-    <string name="open_feed_settings">Abrir axustes da canle</string>
+    <string name="open_feed_settings">Axustes da canle</string>
     <string name="reader_mode_browser_button_content_description">Abrir no navegador</string>
     <string name="delete_feed_confirmation_title">Eliminar canle?</string>
     <string name="delete_feed_confirmation_message">Tes certeza de querer eliminar esta canle? Esta acción non se pode desfacer.</string>
@@ -413,4 +413,18 @@
     <string name="new_articles_button">%s artigos novos</string>
     <string name="reader_mode_no_content_title">Sen contido dispoñible</string>
     <string name="reader_mode_no_content_message">Este artigo non ten ningún contido, e non hai unha ligazón para abrila na web.</string>
+    <string name="feed_already_exists_message">%s xa é unha das túas canles.</string>
+    <string name="settings_hide_read_items_disabled_while_scrolling">A auto-ocultación está desactivada se «Marcar como lido ao desprazarse» está activa, polo que os artigos permanecen no sitio ao desprazarte. Desactívaa para usar auto-ocultar.</string>
+    <string name="settings_force_english">Fozar o inglés</string>
+    <string name="settings_force_english_description">Usar o idioma inglés para a interface da app e non o idioma do dispositivo.</string>
+    <string name="server_account_subscriptions_warning">Esta conta utiliza as subscricións gardadas no seu servidor.</string>
+    <string name="server_account_replace_local_title">Substituír as subscricións locais?</string>
+    <string name="server_account_replace_local_message">Ao conectarte substitúes as canles que actualmente tes no dispositivo coas subscricións obtidas desde o servidor. Se posteriormente te desconectas non restablecerás as canles locais. Primeiro expórtaas como OPML para manter unha copia.</string>
+    <string name="server_account_replace_and_connect_button">Substituír e conectar</string>
+    <string name="feed_fetch_refused_error">Non se obtivo esta canle. A páxina web podería estar bloqueando os lectores RSS. Inténtao máis tarde.</string>
+    <string name="support_paywall_title">Axuda a FeedFlow 💙</string>
+    <string name="support_purchase_thank_you_title">Es moi amable! 🎉</string>
+    <string name="support_purchase_thank_you_message">A túa aportación permite que FeedFlow siga mellorando 💙 Grazas por apoiar o desenvolvemento, as melloras incorporadas e arranxo de problemas. 🙏</string>
+    <string name="mark_all_bookmarks_read_dialog_message">Tes certeza de querer marcar todos os artigos marcados como lidos?</string>
+    <string name="remove_bookmark_dialog_message">Tes certeza de querer eliminar este artigo dos Marcadores?</string>
 </resources>

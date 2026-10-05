@@ -425,4 +425,6 @@
     <string name="feed_fetch_refused_error">Impossibile raggiungere questo feed. Il sito potrebbe bloccare i lettori RSS. Riprova più tardi.</string>
     <string name="mark_all_bookmarks_read_dialog_message">Sei sicuro di voler contrassegnare come letti tutti gli articoli salvati nei segnalibri?</string>
     <string name="remove_bookmark_dialog_message">Sei sicuro di voler rimuovere questo articolo dai segnalibri?</string>
+    <string name="settings_force_english">Forza inglese</string>
+    <string name="settings_force_english_description">Utilizza l\'inglese per l\'interfaccia dell\'apparato invece della lingua del dispositivo.</string>
 </resources>

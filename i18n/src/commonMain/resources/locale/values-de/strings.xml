@@ -422,4 +422,9 @@
     <string name="support_purchase_thank_you_message">Der Tip hilft, FeedFlow weiter wachsen zu lassen.💙 Danke für die Unterstützung der laufenden Weiterentwicklung, durchdachten Verbesserungen und Fehlerbehebungen.🙏</string>
     <string name="feed_already_exists_message">%s ist schon in ihren Feeds.</string>
     <string name="settings_hide_read_items_disabled_while_scrolling">Automatisches Ausblenden ist inaktiv, wenn \"Beim Scrollen als gelesen markieren\" aktiv ist, daher bleiben Artikel beim Scrollen an ihrem Platz. Schalten sie es aus, um automatisches Ausblenden zu nutzen.</string>
+    <string name="settings_force_english">Englisch erzwingen</string>
+    <string name="settings_force_english_description">Englisch anstelle der Gerätesprache für die App-Schnittstelle erzwingen.</string>
+    <string name="feed_fetch_refused_error">Feed konnte nicht erreicht werden. Vielleicht blockiert die Webseite RSS-Reader. Bitte versuchen sie es später erneut.</string>
+    <string name="mark_all_bookmarks_read_dialog_message">Möchten sie wirklich alle Artikel mit Lesezeichen als gelesen markieren?</string>
+    <string name="remove_bookmark_dialog_message">Möchten sie wirklich diesen Artikel aus den Lesezeichen entfernen?</string>
 </resources>

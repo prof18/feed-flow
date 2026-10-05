@@ -425,4 +425,6 @@
     <string name="feed_fetch_refused_error">无法访问此订阅源。该网站可能正在屏蔽 RSS 阅读器。请稍后重试。</string>
     <string name="mark_all_bookmarks_read_dialog_message">确定要将所有已收藏的文章标记为已读吗？</string>
     <string name="remove_bookmark_dialog_message">确定要将此文章从收藏中移除吗？</string>
+    <string name="settings_force_english">强制使用英语</string>
+    <string name="settings_force_english_description">应用界面使用英语，而不是设备语言。</string>
 </resources>

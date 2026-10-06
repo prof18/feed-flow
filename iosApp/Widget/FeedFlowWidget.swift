@@ -14,15 +14,13 @@ struct FeedFlowWidget: Widget {
     let kind: String = "com.prof18.feedflow.widget.main"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            if #available(iOS 17.0, *) {
-                WidgetEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
-            } else {
-                WidgetEntryView(entry: entry)
-                    .padding()
-                    .background()
-            }
+        AppIntentConfiguration(
+            kind: kind,
+            intent: FeedFlowWidgetConfigurationIntent.self,
+            provider: Provider()
+        ) { entry in
+            WidgetEntryView(entry: entry)
+                .containerBackground(.fill.tertiary, for: .widget)
         }
         .configurationDisplayName("FeedFlow")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])

@@ -1,0 +1,18 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "widget_content_section_title" : {
+      "comment" : "Label for the content selector in the system's Edit Widget screen. Uses the same key as the shared widget content section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Content"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

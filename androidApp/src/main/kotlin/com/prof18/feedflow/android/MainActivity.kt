@@ -61,6 +61,7 @@ import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.ImportExpo
 import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.NotificationsSettingsScreen
 import com.prof18.feedflow.android.settings.readingbehavior.ReadingBehaviorScreen
 import com.prof18.feedflow.android.settings.syncstorage.SyncAndStorageScreen
+import com.prof18.feedflow.android.settings.widget.WidgetInstanceSettingsScreen
 import com.prof18.feedflow.android.settings.widget.WidgetSettingsScreen
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
@@ -336,6 +337,17 @@ class MainActivity : BaseThemeActivity() {
                 entry<WidgetSettings> {
                     WidgetSettingsScreen(
                         navigateBack = navigateBack,
+                        navigateToWidgetInstanceSettings = { appWidgetId ->
+                            backStack.add(WidgetInstanceSettings(appWidgetId))
+                        },
+                    )
+                }
+
+                entry<WidgetInstanceSettings> { key ->
+                    WidgetInstanceSettingsScreen(
+                        appWidgetId = key.appWidgetId,
+                        navigateBack = navigateBack,
+                        navigateToSyncSettings = { backStack.add(SyncAndStorage) },
                     )
                 }
 

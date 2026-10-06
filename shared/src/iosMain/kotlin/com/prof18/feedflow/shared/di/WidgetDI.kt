@@ -17,12 +17,12 @@ import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
 
-fun getFeedItems(appEnvironment: AppEnvironment): List<FeedItemWidget> {
+private fun createWidgetDatabase(appEnvironment: AppEnvironment): FeedFlowDB {
     val sqlDriver = NativeSqliteDriver(
         schema = FeedFlowDB.Schema,
-        onConfiguration = { conf ->
-            conf.copy(
-                extendedConfig = conf.extendedConfig.copy(
+        onConfiguration = { configuration ->
+            configuration.copy(
+                extendedConfig = configuration.extendedConfig.copy(
                     basePath = getAppGroupDatabasePath(),
                 ),
             )
@@ -34,7 +34,7 @@ fun getFeedItems(appEnvironment: AppEnvironment): List<FeedItemWidget> {
         },
     )
 
-    val dbRef = FeedFlowDB(
+    return FeedFlowDB(
         sqlDriver,
         cloud_pending_article_flagAdapter = Cloud_pending_article_flag.Adapter(
             field_Adapter = EnumColumnAdapter(),
@@ -60,8 +60,24 @@ fun getFeedItems(appEnvironment: AppEnvironment): List<FeedItemWidget> {
             typeAdapter = EnumColumnAdapter(),
         ),
     )
+}
 
-    return dbRef.feedItemQueries.selectFeedsForWidget(pageSize = 6).executeAsList()
+fun getFeedItems(
+    appEnvironment: AppEnvironment,
+    filterType: String,
+    filterId: String?,
+): List<FeedItemWidget> {
+    val isBookmarksFilter = filterType == "bookmarks"
+    return createWidgetDatabase(appEnvironment)
+        .feedItemQueries
+        .selectFeedsForWidget(
+            isBookmarked = true.takeIf { isBookmarksFilter },
+            isRead = false.takeUnless { isBookmarksFilter },
+            feedSourceId = filterId.takeIf { filterType == "source" },
+            feedSourceCategoryId = filterId.takeIf { filterType == "category" },
+            pageSize = 6,
+        )
+        .executeAsList()
         .map { item ->
             FeedItemWidget(
                 id = item.url_hash,
@@ -73,11 +89,39 @@ fun getFeedItems(appEnvironment: AppEnvironment): List<FeedItemWidget> {
         }
 }
 
+fun getWidgetContentOptions(appEnvironment: AppEnvironment): List<WidgetContentOption> {
+    val dbRef = createWidgetDatabase(appEnvironment)
+    val categories = dbRef.feedSourceCategoryQueries
+        .selectAll()
+        .executeAsList()
+        .map { category ->
+            WidgetContentOption(
+                id = category.id,
+                title = category.title,
+                subtitle = null,
+                isCategory = true,
+            )
+        }
+    val sources = dbRef.feedSourceQueries
+        .selectFeedUrls()
+        .executeAsList()
+        .map { source ->
+            WidgetContentOption(
+                id = source.url_hash,
+                title = source.feed_source_title,
+                subtitle = source.url,
+                isCategory = false,
+                logoUrl = source.feed_source_logo_url,
+            )
+        }
+    return categories + sources
+}
+
 fun getWidgetStrings(
     languageCode: String?,
     regionCode: String?,
 ): WidgetStrings {
-    val feedFlowStrings = when {
+    val strings = when {
         languageCode == null -> EnFeedFlowStrings
         regionCode == null -> feedFlowStrings[languageCode] ?: EnFeedFlowStrings
         else -> {
@@ -86,9 +130,15 @@ fun getWidgetStrings(
         }
     }
     return WidgetStrings(
-        widgetTitle = feedFlowStrings.widgetLatestItems,
-        widgetEmptyScreenTitle = feedFlowStrings.emptyFeedMessage,
-        widgetEmptyScreenContent = feedFlowStrings.widgetCheckFeedSources,
+        widgetTitle = strings.widgetLatestItems,
+        widgetEmptyScreenTitle = strings.emptyFeedMessage,
+        widgetEmptyScreenContent = strings.widgetCheckFeedSources,
+        widgetContentTimeline = strings.widgetLatestItems,
+        widgetContentBookmarks = strings.drawerTitleBookmarks,
+        widgetContentSectionTitle = strings.widgetContentSectionTitle,
+        widgetContentCategory = strings.drawerTitleCategories,
+        widgetContentFeedSource = strings.drawerTitleFeedSources,
+        widgetBookmarksEmptyMessage = strings.bookmarkedArticlesEmptyScreenMessage,
     )
 }
 
@@ -100,8 +150,22 @@ data class FeedItemWidget(
     val feedSourceTitle: String,
 )
 
+data class WidgetContentOption(
+    val id: String,
+    val title: String,
+    val subtitle: String?,
+    val isCategory: Boolean,
+    val logoUrl: String? = null,
+)
+
 data class WidgetStrings(
     val widgetTitle: String,
     val widgetEmptyScreenTitle: String,
     val widgetEmptyScreenContent: String,
+    val widgetContentTimeline: String,
+    val widgetContentBookmarks: String,
+    val widgetContentSectionTitle: String,
+    val widgetContentCategory: String,
+    val widgetContentFeedSource: String,
+    val widgetBookmarksEmptyMessage: String,
 )

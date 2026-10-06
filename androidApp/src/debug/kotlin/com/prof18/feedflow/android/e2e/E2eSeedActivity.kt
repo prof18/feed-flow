@@ -26,9 +26,12 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.lifecycleScope
 import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.android.base.BaseThemeActivity
+import com.prof18.feedflow.android.widget.FeedFlowWidget
+import com.prof18.feedflow.core.model.WidgetContentFilter
 import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
@@ -36,6 +39,7 @@ import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.e2e.E2eSeedProfile
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
+import com.prof18.feedflow.shared.presentation.WidgetUpdater
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.io.ByteArrayInputStream
@@ -45,6 +49,7 @@ class E2eSeedActivity : BaseThemeActivity() {
     private val seedRunner by inject<E2eSeedRunner>()
     private val opmlFeedHandler by inject<OpmlFeedHandler>()
     private val widgetSettingsRepository by inject<WidgetSettingsRepository>()
+    private val widgetUpdater by inject<WidgetUpdater>()
 
     private var uiState by mutableStateOf<E2eSeedUiState>(E2eSeedUiState.Running)
 
@@ -158,6 +163,7 @@ class E2eSeedActivity : BaseThemeActivity() {
                 if (action != E2eSeedRunner.ACTION_RESET && profile == E2eSeedProfile.ANDROID_WIDGET) {
                     applyAndroidWidgetProfile()
                 }
+                widgetUpdater.update()
                 uiState = E2eSeedUiState.Success(profile.queryValue)
             } catch (throwable: Throwable) {
                 uiState = E2eSeedUiState.Error(
@@ -167,24 +173,42 @@ class E2eSeedActivity : BaseThemeActivity() {
         }
     }
 
-    private fun resetWidgetSettings() {
-        widgetSettingsRepository.setFeedWidgetLayout(WidgetFeedLayout.LIST)
-        widgetSettingsRepository.setWidgetShowHeader(true)
-        widgetSettingsRepository.setWidgetFontScaleFactor(0)
-        widgetSettingsRepository.setWidgetBackgroundColor(null)
-        widgetSettingsRepository.setWidgetBackgroundOpacityPercent(100)
-        widgetSettingsRepository.setWidgetTextColorMode(WidgetTextColorMode.AUTOMATIC)
-        widgetSettingsRepository.setWidgetHideImages(false)
+    private suspend fun resetWidgetSettings() {
+        E2eWidgetSettingsSeedHelper.resetLegacyFallbacks(
+            getSharedPreferences("feedflow.shared.pref", MODE_PRIVATE),
+        )
+        forEachWidget { appWidgetId ->
+            widgetSettingsRepository.setWidgetContentFilter(appWidgetId, WidgetContentFilter.Timeline)
+            widgetSettingsRepository.setWidgetFeedLayout(appWidgetId, WidgetFeedLayout.LIST)
+            widgetSettingsRepository.setWidgetShowHeader(appWidgetId, true)
+            widgetSettingsRepository.setWidgetFontScaleFactor(appWidgetId, 0)
+            widgetSettingsRepository.setWidgetBackgroundColor(appWidgetId, null)
+            widgetSettingsRepository.setWidgetBackgroundOpacityPercent(appWidgetId, 100)
+            widgetSettingsRepository.setWidgetTextColorMode(appWidgetId, WidgetTextColorMode.AUTOMATIC)
+            widgetSettingsRepository.setWidgetHideImages(appWidgetId, false)
+        }
     }
 
-    private fun applyAndroidWidgetProfile() {
-        widgetSettingsRepository.setFeedWidgetLayout(WidgetFeedLayout.CARD)
-        widgetSettingsRepository.setWidgetShowHeader(true)
-        widgetSettingsRepository.setWidgetFontScaleFactor(2)
-        widgetSettingsRepository.setWidgetBackgroundColor(0xFF1E3A5F.toInt())
-        widgetSettingsRepository.setWidgetBackgroundOpacityPercent(85)
-        widgetSettingsRepository.setWidgetTextColorMode(WidgetTextColorMode.LIGHT)
-        widgetSettingsRepository.setWidgetHideImages(false)
+    private suspend fun applyAndroidWidgetProfile() {
+        E2eWidgetSettingsSeedHelper.applyAndroidWidgetLegacyFallbacks(
+            getSharedPreferences("feedflow.shared.pref", MODE_PRIVATE),
+        )
+        forEachWidget { appWidgetId ->
+            widgetSettingsRepository.setWidgetFeedLayout(appWidgetId, WidgetFeedLayout.CARD)
+            widgetSettingsRepository.setWidgetShowHeader(appWidgetId, true)
+            widgetSettingsRepository.setWidgetFontScaleFactor(appWidgetId, 2)
+            widgetSettingsRepository.setWidgetBackgroundColor(appWidgetId, 0xFF1E3A5F.toInt())
+            widgetSettingsRepository.setWidgetBackgroundOpacityPercent(appWidgetId, 85)
+            widgetSettingsRepository.setWidgetTextColorMode(appWidgetId, WidgetTextColorMode.LIGHT)
+            widgetSettingsRepository.setWidgetHideImages(appWidgetId, false)
+        }
+    }
+
+    private suspend fun forEachWidget(block: (Int) -> Unit) {
+        val manager = GlanceAppWidgetManager(this)
+        manager.getGlanceIds(FeedFlowWidget::class.java)
+            .map(manager::getAppWidgetId)
+            .forEach(block)
     }
 
     private fun openMainActivity(deepLinkUrl: String? = null) {

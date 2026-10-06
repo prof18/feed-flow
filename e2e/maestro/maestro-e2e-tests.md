@@ -178,3 +178,53 @@ These are features intentionally not covered, with the reason recorded so they a
 - **Force Add feed (formerly REG-102)** — dropped: required a DEBUG-only "trigger force-add failure" hook in production to deterministically reach the force-add UI without depending on network errors.
 - **Delete-category from drawer (formerly part of REG-105 on both platforms)** — dropped: production drawers on both Android and iOS only list categories that still own at least one feed source, so an empty category can't be long-pressed. A test that needs the empty branch would require production drawer changes solely to surface them.
 - **Cloud sync after upgrade** — there is no special migration or recovery UI. Existing Maestro seeds cannot create old unsynced changes with a deterministic cloud snapshot; the platform cloud harness verifies ordinary cloud-first convergence, quiet retries, and preservation of precisely tracked new edits.
+
+### Android widgets
+
+Widget placement and launcher reconfiguration are not covered by the Maestro suite. Maestro
+cannot reliably invoke the host launcher's app-widget picker or provide the platform callback
+used to configure an AppWidget instance. Validate widget placement and per-instance settings
+manually on an Android device. The in-app Settings → Widget list is also excluded because it
+is reachable only when a widget has already been placed.
+
+The `android-widget` seed supports seeding before placement; its legacy fallback defaults
+and reset behavior are covered by `E2eWidgetSettingsSeedHelperTest`.
+
+Widget-selection UX manual checklist (both platforms use the normal OS-owned widget editor):
+
+- Android: confirm the compact preview comes before Content and Appearance. Open the preview
+  info dialog and dismiss it; check the background toggle, card layout, long titles, and large
+  font scales without clipping. The wallpaper caveat must not occupy space in the main form.
+- Android: scroll to the compact sync status. With sync disabled, Enable sync opens Sync & Storage
+  without changing the interval. Select an interval and return using both the toolbar and system
+  back; confirm the status updates and content/appearance selections are preserved. Repeat from
+  launcher configuration and the in-app editor, keeping Done reachable in launcher configuration.
+- Android: choose content, search by feed title or URL, select a category/feed/bookmarks,
+  and confirm the choice appears in both the preview and the placed widget. Check no-match
+  and empty-library states, long titles, keyboard-visible selection, and a long scrolling list.
+  Check full-color source logos in the picker and selected-source summary; missing/failed logos
+  must retain the RSS fallback. Reopen with cached logos offline. This is a visual manual check:
+  decorative images have no accessibility text, so Maestro's row assertions cannot prove the
+  loaded image or its colors without a separate screenshot comparison harness.
+- Android: confirm Done remains reachable while appearance controls scroll; Settings → Widget
+  identifies each instance by its content and preserves other widgets when editing one.
+- Android: immediately after a widget refresh, edit its content and appearance, then return
+  to the launcher within 45 seconds. Confirm the placed widget uses the new selection and
+  appearance without waiting for another refresh. Repository observer emissions are covered
+  by `WidgetSettingsRepositoryTest`; the active Glance session still needs this manual check.
+- Android: restore an OS backup containing two differently configured widgets and confirm
+  both retain their content and appearance. Widget-ID remapping is covered by
+  `WidgetSettingsRepositoryTest`; the OS restore broadcast is not automated by Maestro.
+- iOS: open Edit Widget, then Content. Check grouped Content/Categories/Feed Sources suggestions,
+  feed-URL subtitles, and existing widgets retaining their selection. Where the OS presents a search
+  interface, check name/URL search; small libraries may use the native quick-selection menu instead.
+  Check feed logos retain their original colors, while feeds with missing or failed logos show the
+  generic broadcast symbol. Reopen the picker offline to check cached logos, and search to confirm
+  only matching feeds are loaded. Image validation, resizing, and cache reuse are covered by
+  `WidgetContentLogoLoaderTests` in the Swift simulator test target.
+  SpringBoard's editor cannot be driven reliably by the current Maestro suite; do not count
+  app deep-link coverage as coverage of this system picker.
+  On iOS 26.5 Simulator, an ad-hoc-signed build may keep rendering Most Recent despite a saved
+  selection: `linkd` cannot obtain the extension's team ID and rejects its AppEntity identifier.
+  Validate with a development-signed test build (or a signed device build) before treating this
+  as a filtering defect; leave production signing settings unchanged.

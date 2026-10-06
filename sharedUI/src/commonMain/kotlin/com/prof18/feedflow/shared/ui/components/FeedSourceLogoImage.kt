@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -26,6 +27,7 @@ fun FeedSourceLogoImage(
     size: Dp,
     modifier: Modifier = Modifier,
     cornerRadius: Dp = Spacing.small,
+    fallbackIcon: ImageVector = Icons.Default.Category,
 ) {
     if (LocalInspectionMode.current) {
         Box(
@@ -40,9 +42,9 @@ fun FeedSourceLogoImage(
                 .data(imageUrl)
                 .size(with(density) { size.roundToPx() })
                 .build(),
-            placeholder = rememberVectorPainter(Icons.Default.Category),
-            fallback = rememberVectorPainter(Icons.Default.Category),
-            error = rememberVectorPainter(Icons.Default.Category),
+            placeholder = rememberVectorPainter(fallbackIcon),
+            fallback = rememberVectorPainter(fallbackIcon),
+            error = rememberVectorPainter(fallbackIcon),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = modifier

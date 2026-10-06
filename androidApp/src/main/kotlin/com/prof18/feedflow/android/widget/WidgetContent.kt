@@ -30,6 +30,7 @@ import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.android.widget.components.WidgetFeedItemCard
 import com.prof18.feedflow.android.widget.components.WidgetFeedItemList
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.WidgetContentFilter
 import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -48,6 +49,8 @@ internal fun WidgetContent(
     backgroundOpacityPercent: Int,
     textColorMode: WidgetTextColorMode,
     hideImages: Boolean,
+    headerTitle: String?,
+    filter: WidgetContentFilter,
 ) {
     val context = LocalContext.current
     val openAppAction = createOpenAppAction(context)
@@ -90,12 +93,16 @@ internal fun WidgetContent(
                         .padding(horizontal = Spacing.medium)
                         .fillMaxWidth()
                         .clickable(openAppAction),
-                    text = LocalFeedFlowStrings.current.widgetLatestItems,
+                    text = headerTitle ?: when (filter) {
+                        WidgetContentFilter.Bookmarks -> LocalFeedFlowStrings.current.drawerTitleBookmarks
+                        else -> LocalFeedFlowStrings.current.widgetLatestItems
+                    },
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = fontSizes.header.sp,
                         color = primaryTextColor,
                     ),
+                    maxLines = 1,
                 )
             }
         } else {
@@ -117,7 +124,11 @@ internal fun WidgetContent(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = LocalFeedFlowStrings.current.emptyFeedMessage,
+                    text = if (filter is WidgetContentFilter.Bookmarks) {
+                        LocalFeedFlowStrings.current.bookmarkedArticlesEmptyScreenMessage
+                    } else {
+                        LocalFeedFlowStrings.current.emptyFeedMessage
+                    },
                     style = TextStyle(
                         fontWeight = FontWeight.Normal,
                         fontSize = fontSizes.empty.sp,

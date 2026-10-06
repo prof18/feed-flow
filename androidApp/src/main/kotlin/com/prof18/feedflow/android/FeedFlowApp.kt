@@ -12,9 +12,8 @@ import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.prof18.feedflow.android.billing.RevenueCatSupport
 import com.prof18.feedflow.android.notifications.AndroidNotifier
-import com.prof18.feedflow.android.settings.widget.WidgetSettingsViewModel
 import com.prof18.feedflow.android.widget.FeedFlowWidget
-import com.prof18.feedflow.android.widget.WidgetConfigurationViewModel
+import com.prof18.feedflow.android.widget.WidgetInstanceSettingsViewModel
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveAndroidDataSourceImpl
@@ -124,16 +123,12 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                 }
                         }
                     }
-                    viewModel {
-                        WidgetConfigurationViewModel(
+                    viewModel { (appWidgetId: Int) ->
+                        WidgetInstanceSettingsViewModel(
+                            appWidgetId = appWidgetId,
                             settingsRepository = get(),
                             widgetSettingsRepository = get(),
-                        )
-                    }
-                    viewModel {
-                        WidgetSettingsViewModel(
-                            settingsRepository = get(),
-                            widgetSettingsRepository = get(),
+                            feedWidgetRepository = get(),
                             widgetUpdater = get(),
                         )
                     }

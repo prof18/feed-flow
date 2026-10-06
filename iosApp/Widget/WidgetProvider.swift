@@ -1,66 +1,88 @@
-//
-//  WidgetProvider.swift
-//  FeedFlow
-//
-//  Created by Marco Gomiero on 02/03/25.
-//  Copyright © 2025 FeedFlow. All rights reserved.
-//
-
 import FeedFlowKit
-import SwiftUI
+import Foundation
 import WidgetKit
 
-struct Provider: TimelineProvider {
-    let feedFlowStrings: WidgetStrings
-    let appEnvironment: AppEnvironment
-
-    init() {
-        #if DEBUG
-            appEnvironment = AppEnvironment.Debug()
-        #else
-            appEnvironment = AppEnvironment.Release()
-        #endif
-
-        let currentLocale = Locale.current
-        let languageCode = currentLocale.language.languageCode?.identifier
-        let regionCode = currentLocale.region?.identifier
-
-        feedFlowStrings = getWidgetStrings(languageCode: languageCode, regionCode: regionCode)
-    }
-
+struct Provider: AppIntentTimelineProvider {
     func placeholder(in _: Context) -> WidgetEntry {
-        WidgetEntry(
+        let strings = WidgetSupport.strings
+        return WidgetEntry(
             date: Date(),
             feedItems: [],
-            widgetTitle: feedFlowStrings.widgetTitle,
-            widgetEmptyScreenTitle: feedFlowStrings.widgetEmptyScreenTitle,
-            widgetEmptyScreenContent: feedFlowStrings.widgetEmptyScreenContent
+            widgetTitle: strings.widgetTitle,
+            widgetEmptyScreenTitle: strings.widgetEmptyScreenTitle,
+            widgetEmptyScreenContent: strings.widgetEmptyScreenContent
         )
     }
 
-    func getSnapshot(in _: Context, completion: @escaping (WidgetEntry) -> Void) {
-        let entry = WidgetEntry(
-            date: Date(),
-            feedItems: getFeedItems(appEnvironment: appEnvironment),
-            widgetTitle: feedFlowStrings.widgetTitle,
-            widgetEmptyScreenTitle: feedFlowStrings.widgetEmptyScreenTitle,
-            widgetEmptyScreenContent: feedFlowStrings.widgetEmptyScreenContent
-        )
-        completion(entry)
+    func snapshot(
+        for configuration: FeedFlowWidgetConfigurationIntent,
+        in _: Context
+    ) async -> WidgetEntry {
+        makeEntry(for: configuration.content)
     }
 
-    func getTimeline(in _: Context, completion: @escaping (Timeline<WidgetEntry>) -> Void) {
+    func timeline(
+        for configuration: FeedFlowWidgetConfigurationIntent,
+        in _: Context
+    ) async -> Timeline<WidgetEntry> {
         let currentDate = Date()
-        let refreshDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate) ?? currentDate
-        let entry = WidgetEntry(
-            date: currentDate,
-            feedItems: getFeedItems(appEnvironment: appEnvironment),
-            widgetTitle: feedFlowStrings.widgetTitle,
-            widgetEmptyScreenTitle: feedFlowStrings.widgetEmptyScreenTitle,
-            widgetEmptyScreenContent: feedFlowStrings.widgetEmptyScreenContent
-        )
+        let refreshDate = Calendar.current.date(
+            byAdding: .hour,
+            value: 1,
+            to: currentDate
+        ) ?? currentDate
+        let entry = makeEntry(for: configuration.content, date: currentDate)
+        return Timeline(entries: [entry], policy: .after(refreshDate))
+    }
 
-        let timeline = Timeline(entries: [entry], policy: .after(refreshDate))
-        completion(timeline)
+    private func makeEntry(
+        for selection: WidgetContentEntity?,
+        date: Date = Date()
+    ) -> WidgetEntry {
+        let strings = WidgetSupport.strings
+        let (filterType, filterId) = Self.parse(selectionId: selection?.id)
+        let items = getFeedItems(
+            appEnvironment: WidgetSupport.appEnvironment,
+            filterType: filterType,
+            filterId: filterId
+        )
+        let title = switch filterType {
+        case "bookmarks":
+            strings.widgetContentBookmarks
+        case "category", "source":
+            selection?.title ?? strings.widgetTitle
+        default:
+            strings.widgetTitle
+        }
+        let emptyTitle = filterType == "bookmarks"
+            ? strings.widgetBookmarksEmptyMessage
+            : strings.widgetEmptyScreenTitle
+        return WidgetEntry(
+            date: date,
+            feedItems: items,
+            widgetTitle: title,
+            widgetEmptyScreenTitle: emptyTitle,
+            widgetEmptyScreenContent: strings.widgetEmptyScreenContent
+        )
+    }
+
+    private static func parse(selectionId: String?) -> (String, String?) {
+        guard let selectionId else {
+            return ("timeline", nil)
+        }
+        if selectionId == "timeline" || selectionId == "bookmarks" {
+            return (selectionId, nil)
+        }
+
+        let categoryPrefix = "category:"
+        if selectionId.hasPrefix(categoryPrefix) {
+            return ("category", String(selectionId.dropFirst(categoryPrefix.count)))
+        }
+
+        let sourcePrefix = "source:"
+        if selectionId.hasPrefix(sourcePrefix) {
+            return ("source", String(selectionId.dropFirst(sourcePrefix.count)))
+        }
+        return ("timeline", nil)
     }
 }

@@ -5,6 +5,8 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.WidgetContentFilter
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
@@ -116,6 +118,115 @@ class FeedWidgetRepositoryTest : KoinTestBase() {
         assertEquals("https://example.com/item-1", info.url)
         assertEquals("Item", info.title)
         assertEquals(ArticleOpenMode.DEFAULT, info.articleOpenMode)
+    }
+
+    @Test
+    fun `source filter returns only unread items from source`() = runTest(testDispatcher) {
+        val source = createFeedSource(id = "source-1", title = "One")
+        val other = createFeedSource(id = "source-2", title = "Two")
+        databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource(), other.toParsedFeedSource()))
+        databaseHelper.insertFeedItems(
+            listOf(
+                buildFeedItem(id = "one", title = "One", pubDateMillis = 2, source = source),
+                buildFeedItem(id = "read", title = "Read", pubDateMillis = 3, source = source),
+                buildFeedItem(id = "two", title = "Two", pubDateMillis = 1, source = other),
+            ),
+            lastSyncTimestamp = 0,
+        )
+        databaseHelper.updateReadStatus(FeedItemId("read"), isRead = true)
+
+        createRepository().getFeeds(WidgetContentFilter.Source(source.id)).test {
+            assertEquals(listOf("one"), awaitItem().map { it.id })
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `category filter returns only category items`() = runTest(testDispatcher) {
+        val category = FeedSourceCategory(id = "cat", title = "Category")
+        val source = createFeedSource(id = "source-1", title = "One").copy(category = category)
+        val other = createFeedSource(id = "source-2", title = "Two")
+        databaseHelper.insertCategories(listOf(category))
+        databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource(), other.toParsedFeedSource()))
+        databaseHelper.insertFeedItems(
+            listOf(
+                buildFeedItem(id = "one", title = "One", pubDateMillis = 2, source = source),
+                buildFeedItem(id = "two", title = "Two", pubDateMillis = 1, source = other),
+            ),
+            lastSyncTimestamp = 0,
+        )
+
+        createRepository().getFeeds(WidgetContentFilter.Category(category.id)).test {
+            assertEquals(listOf("one"), awaitItem().map { it.id })
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `bookmarks filter includes read items`() = runTest(testDispatcher) {
+        val source = createFeedSource(id = "source-1", title = "One")
+        databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource()))
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "one", title = "One", pubDateMillis = 1, source = source)),
+            lastSyncTimestamp = 0,
+        )
+        databaseHelper.updateReadStatus(FeedItemId("one"), true)
+        databaseHelper.updateBookmarkStatus(FeedItemId("one"), true)
+
+        createRepository().getFeeds(WidgetContentFilter.Bookmarks).test {
+            assertEquals(listOf("one"), awaitItem().map { it.id })
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `resolve and title handle missing and existing targets`() = runTest(testDispatcher) {
+        val source = createFeedSource(id = "source-1", title = "One")
+        databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource()))
+
+        val repository = createRepository()
+
+        assertEquals(
+            WidgetContentFilter.Timeline,
+            repository.resolveFilter(WidgetContentFilter.Category("missing")),
+        )
+        assertEquals(
+            WidgetContentFilter.Source(source.id),
+            repository.resolveFilter(WidgetContentFilter.Source(source.id)),
+        )
+        assertEquals("One", repository.getWidgetTitle(WidgetContentFilter.Source(source.id)))
+        assertNull(repository.getWidgetTitle(WidgetContentFilter.Timeline))
+    }
+
+    @Test
+    fun `render state follows category rename and falls back after deletion`() = runTest(testDispatcher) {
+        val category = FeedSourceCategory(id = "cat", title = "Original")
+        val source = createFeedSource(id = "source-1", title = "One").copy(category = category)
+        databaseHelper.insertCategories(listOf(category))
+        databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource()))
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "one", title = "One", pubDateMillis = 1, source = source)),
+            lastSyncTimestamp = 0,
+        )
+
+        createRepository().getWidgetRenderState(WidgetContentFilter.Category(category.id)).test {
+            val initialState = awaitItem()
+            assertEquals(WidgetContentFilter.Category(category.id), initialState.contentFilter)
+            assertEquals("Original", initialState.title)
+            assertEquals(listOf("one"), initialState.feedItems.map { it.id })
+
+            databaseHelper.updateCategoryName(category.id, "Renamed")
+            assertEquals("Renamed", awaitItem().title)
+
+            databaseHelper.deleteCategory(category.id)
+            var fallbackState = awaitItem()
+            while (fallbackState.contentFilter != WidgetContentFilter.Timeline) {
+                fallbackState = awaitItem()
+            }
+            assertNull(fallbackState.title)
+            assertEquals(listOf("one"), fallbackState.feedItems.map { it.id })
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     private fun createFeedSource(

@@ -415,6 +415,8 @@ targets:
     platform: iOS
     sources:
       - path: Tests/CloudSync
+      - path: Tests/Widget
+      - path: Widget/WidgetContentLogoLoader.swift
       - path: Source/Accounts/Dropbox/Data
       - path: Source/Accounts/GoogleDrive/Data
     settings:
@@ -430,6 +432,7 @@ targets:
       - target: FeedFlowKitBuilder
         embed: false
         link: false
+      - package: Nuke
       - package: SwiftyDropbox
       - package: GoogleSignIn
       - package: Firebase

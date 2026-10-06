@@ -31,6 +31,7 @@ import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.PrefetchQueueItem
 import com.prof18.feedflow.core.model.SyncedFeedItem
+import com.prof18.feedflow.core.model.WidgetContentFilter
 import com.prof18.feedflow.core.model.applyCloudFeedAndCategoryChanges
 import com.prof18.feedflow.core.utils.withSuspensionGuard
 import com.prof18.feedflow.db.Cloud_pending_article_flag
@@ -173,16 +174,17 @@ class DatabaseHelper(
 
     fun getFeedWidgetItems(
         pageSize: Long,
+        filter: WidgetContentFilter = WidgetContentFilter.Timeline,
     ): Flow<List<SelectFeeds>> =
         dbRef.feedItemQueries
             .selectFeeds(
                 sortOrder = "DESC", // Default for widget, or make it configurable if needed
-                feedSourceId = null,
-                feedSourceCategoryId = null,
-                isRead = false,
-                isBookmarked = null,
+                feedSourceId = (filter as? WidgetContentFilter.Source)?.feedSourceId,
+                feedSourceCategoryId = (filter as? WidgetContentFilter.Category)?.categoryId,
+                isRead = if (filter is WidgetContentFilter.Bookmarks) null else false,
+                isBookmarked = if (filter is WidgetContentFilter.Bookmarks) true else null,
                 isUncategorized = null,
-                isHidden = 0,
+                isHidden = if (filter is WidgetContentFilter.Timeline) 0 else null,
                 lastUrlHash = null,
                 lastPubDate = null,
                 pageSize = pageSize,

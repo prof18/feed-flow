@@ -462,7 +462,10 @@ selectFeedsForWidget:
 SELECT feed_item.url_hash, feed_item.title, subtitle, image_url, pub_date, feed_source.title AS feed_source_title FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
-WHERE is_read = 0
+WHERE (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
+AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
+AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCategoryId)
 AND is_blocked = 0
 ORDER BY pub_date DESC
 LIMIT :pageSize;

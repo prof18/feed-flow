@@ -220,7 +220,7 @@
     <string name="blocked_words_description">Статиите, съдържащи тези думи в заглавието или описанието, ще бъдат скрити.</string>
     <string name="mark_all_read_dialog_message">Сигурни ли сте, че искате да маркирате всички статии като прочетени?</string>
     <string name="clear_old_articles_dialog_message">Сигурни ли сте, че искате да изтриете стари статии?</string>
-    <string name="confirm_button">Потвърдете</string>
+    <string name="confirm_button">Потвърди</string>
     <string name="cancel_button">Отказ</string>
     <string name="reader_mode_comments_button_content_description">Отваряне на коментари</string>
     <string name="settings_save_reader_mode_content">Запазване на съдържанието на статията при отваряне за четене офлайн</string>
@@ -425,4 +425,20 @@
     <string name="feed_fetch_refused_error">Не можах да достигна тази емисия. Възможно е уебсайтът да блокира RSS четците. Моля, опитайте отново по-късно.</string>
     <string name="mark_all_bookmarks_read_dialog_message">Сигурни ли сте, че искате да маркирате всички статии с отметки като прочетени?</string>
     <string name="remove_bookmark_dialog_message">Сигурни ли сте, че искате да премахнете тази статия от отметките?</string>
+    <string name="settings_force_english">Принудителен Английски</string>
+    <string name="settings_force_english_description">Използвайте Английски език за интерфейса на приложението, вместо езика на устройството.</string>
+    <string name="widget_preview_info">Относно този преглед</string>
+    <string name="widget_sync_disabled">Автоматичните актуализации са изключени</string>
+    <string name="widget_enable_sync">Активиране на синхронизирането</string>
+    <string name="widget_sync_settings_action">Промяна</string>
+    <string name="widget_content_section_title">Съдържание</string>
+    <string name="widget_content_choose">Избиране на съдържание</string>
+    <string name="widget_content_timeline_description">Непрочетени статии от всички емисии</string>
+    <string name="widget_content_bookmarks_description">Вашите запазени статии</string>
+    <string name="widget_content_no_categories">Все още няма категории. Създайте си във FeedFlow, за да я използвате тук.</string>
+    <string name="widget_content_category">Категория</string>
+    <string name="widget_content_feed_source">Източник на емисия</string>
+    <string name="widget_list_item_title">Приспособление %s</string>
+    <string name="widget_list_item_description">Приспособление %s · %s</string>
+    <string name="widget_list_empty">Все още не са добавени приспособления. Добавете приспособление FeedFlow от началния екран.</string>
 </resources>

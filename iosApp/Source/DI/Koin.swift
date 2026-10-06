@@ -14,6 +14,9 @@ private class NoOpNotifier: Notifier {
 }
 
 func startKoin(notifier: (any Notifier)? = nil) {
+    // The share extension process is reused across shares, so viewDidLoad can run more than once.
+    guard _feedFlowStrings == nil else { return }
+
     let appEnvironment: AppEnvironment
     #if DEBUG
         appEnvironment = AppEnvironment.Debug()

@@ -415,7 +415,7 @@ class DatabaseHelper(
         snapshot: CloudFeedAndCategorySnapshot,
         sessionId: String,
         withCurrentSession: (() -> Unit) -> Unit = { it() },
-    ) = dbRef.transactionWithContext(backgroundDispatcher) {
+    ) = dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Applying cloud feed changes") {
         val merged = snapshot.applyCloudFeedAndCategoryChanges(selectCloudPendingFeedAndCategoryChanges(sessionId))
         withCurrentSession {
             reconcileCategories(merged.categories)
@@ -1157,7 +1157,7 @@ class DatabaseHelper(
         cloudSessionId: String? = null,
         replaceAll: Boolean = false,
         withCurrentSession: (() -> Unit) -> Unit = { it() },
-    ) = cloudMutation(withCurrentSession) {
+    ) = cloudMutation(withCurrentSession, suspensionGuardReason = "Syncing article status") {
         if (replaceAll) {
             dbRef.feedItemQueries.resetAllFeedItemFlags()
         }

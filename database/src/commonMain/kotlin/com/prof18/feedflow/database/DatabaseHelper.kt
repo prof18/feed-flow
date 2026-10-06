@@ -343,7 +343,7 @@ class DatabaseHelper(
         isRead: Boolean,
         cloudSessionId: String? = null,
         withCurrentSession: (() -> Unit) -> Unit = { it() },
-    ) = cloudMutation(withCurrentSession) {
+    ) = cloudMutation(withCurrentSession, suspensionGuardReason = "Updating read status") {
         dbRef.feedItemQueries.updateAllReadStatus(urlHash = feedItemId.map { it.id }, isRead = isRead)
         recordCloudPendingArticleFlags(cloudSessionId, feedItemId.map { it.id }, CloudArticleFlag.READ, isRead)
     }
@@ -484,7 +484,7 @@ class DatabaseHelper(
         feedItemIds: List<FeedItemId>,
         isRead: Boolean,
         syncAccount: String,
-    ) = dbRef.transactionWithContext(backgroundDispatcher) {
+    ) = dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Saving pending read status") {
         feedItemIds.forEach { feedItemId ->
             dbRef.readStatusPendingActionQueries.upsertReadStatusPendingAction(
                 feed_item_id = feedItemId.id,
@@ -527,7 +527,7 @@ class DatabaseHelper(
         feedFilter: FeedFilter,
         cloudSessionId: String? = null,
         withCurrentSession: (() -> Unit) -> Unit = { it() },
-    ) = cloudMutation(withCurrentSession) {
+    ) = cloudMutation(withCurrentSession, suspensionGuardReason = "Marking articles as read") {
         val affectedItemIds = when {
             cloudSessionId == null -> emptyList()
             feedFilter == FeedFilter.Read -> emptyList()
@@ -707,7 +707,7 @@ class DatabaseHelper(
 
     suspend fun cleanupOldDeletedItems(monthsToKeep: Int = 6) =
         try {
-            dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Clearing deleted articles") {
                 val thresholdTime = Clock.System.now()
                     .minus(duration = (monthsToKeep * 30).days)
                     .toEpochMilliseconds()
@@ -763,7 +763,7 @@ class DatabaseHelper(
         feedSourceId: String,
         cloudSessionId: String? = null,
         withCurrentSession: (() -> Unit) -> Unit = { it() },
-    ) = cloudMutation(withCurrentSession) {
+    ) = cloudMutation(withCurrentSession, suspensionGuardReason = "Removing feed") {
         val exists = dbRef.feedSourceQueries.selectCloudFieldsById(feedSourceId).executeAsOneOrNull() != null
         dbRef.readStatusPendingActionQueries.deleteReadStatusPendingActionsForFeedSource(feedSourceId)
         dbRef.feedItemQueries.deleteAllWithFeedSource(feedSourceId)
@@ -1091,7 +1091,7 @@ class DatabaseHelper(
         feedItems: List<FeedItemImportData>,
         existingFeedSourceIds: Set<String>,
     ) {
-        dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Importing articles") {
             feedItems.forEach { item ->
                 if (!existingFeedSourceIds.contains(item.feedSourceId)) {
                     logger.d { "Skipping feed item with title: ${item.title} due to missing feed source" }
@@ -1218,7 +1218,7 @@ class DatabaseHelper(
 
     suspend fun updateFeedItemReadStatus(feedItemIds: List<String>) =
         try {
-            dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Syncing read status") {
                 // in the feed item tables are set unread by default.
                 feedItemIds.forEach { feedItemId ->
                     dbRef.feedItemStatusQueries.insertFeedItemStatus(
@@ -1234,7 +1234,7 @@ class DatabaseHelper(
         }
 
     suspend fun updateFeedItemBookmarkStatus(feedItemIds: List<String>) =
-        dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Syncing bookmarks") {
             feedItemIds.forEach { feedItemId ->
                 dbRef.feedItemStatusQueries.insertFeedItemStatus(
                     feed_item_id = feedItemId,
@@ -1248,7 +1248,7 @@ class DatabaseHelper(
     suspend fun deleteAllCloudSubscriptions(
         sessionId: String,
         withCurrentSession: (() -> Unit) -> Unit = { it() },
-    ) = cloudMutation(withCurrentSession) {
+    ) = cloudMutation(withCurrentSession, suspensionGuardReason = "Removing all feeds") {
         val sourceIds = dbRef.feedSourceQueries.selectAllUrlHashes().executeAsList()
         val categoryIds = dbRef.feedSourceCategoryQueries.selectAllIds().executeAsList()
         recordCloudFeedAndCategoryDeletions(
@@ -1263,7 +1263,10 @@ class DatabaseHelper(
         dbRef.feedSourceQueries.deleteAll()
     }
 
-    suspend fun deleteAll() = dbRef.transactionWithContext(backgroundDispatcher) {
+    suspend fun deleteAll() = dbRef.transactionWithContext(
+        coroutineContext = backgroundDispatcher,
+        suspensionGuardReason = "Removing all data",
+    ) {
         dbRef.readStatusPendingActionQueries.deleteAllReadStatusPendingActions()
         dbRef.cloudPendingArticleFlagQueries.deleteAllCloudPendingArticleFlags()
         dbRef.cloudPendingFeedOrCategoryChangeQueries.deleteAllCloudPendingFeedAndCategoryChanges()
@@ -1890,7 +1893,7 @@ class DatabaseHelper(
         }
 
     suspend fun insertPrefetchQueueItems(items: List<PrefetchQueueItem>, currentTimeMillis: Long) =
-        dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Queueing article prefetch") {
             items.forEach { item ->
                 dbRef.contentPrefetchQueueQueries.insertQueueItem(
                     feed_item_id = item.feedItemId,

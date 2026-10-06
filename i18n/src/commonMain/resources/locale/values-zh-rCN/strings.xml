@@ -427,4 +427,17 @@
     <string name="remove_bookmark_dialog_message">确定要将此文章从收藏中移除吗？</string>
     <string name="settings_force_english">强制使用英语</string>
     <string name="settings_force_english_description">应用界面使用英语，而不是设备语言。</string>
+    <string name="widget_preview_info">关于此预览</string>
+    <string name="widget_sync_disabled">自动更新关闭</string>
+    <string name="widget_enable_sync">启用同步</string>
+    <string name="widget_sync_settings_action">更改</string>
+    <string name="widget_content_section_title">内容</string>
+    <string name="widget_content_choose">选择内容</string>
+    <string name="widget_content_timeline_description">所有源的未读文章</string>
+    <string name="widget_content_bookmarks_description">已保存的文章</string>
+    <string name="widget_content_no_categories">尚无分类。在 Feedflow 中创建一个在此使用。</string>
+    <string name="widget_content_category">分类</string>
+    <string name="widget_list_item_title">小组件 %s</string>
+    <string name="widget_list_item_description">小组件 %s · %s</string>
+    <string name="widget_list_empty">还没有添加小组件。从启动器添加一个 Feedflow 小组件。</string>
 </resources>

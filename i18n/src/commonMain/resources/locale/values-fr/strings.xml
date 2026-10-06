@@ -427,4 +427,18 @@
     <string name="feed_fetch_refused_error">Impossible d\'atteindre ce flux. Le site bloque peut être les lecteurs RSS. Veuillez réessayer plus tard.</string>
     <string name="mark_all_bookmarks_read_dialog_message">Êtes-vous sûr de vouloir marquer tous les articles sauvegardés comme lus ?</string>
     <string name="remove_bookmark_dialog_message">Êtes-vous sûr de vouloir supprimer cet articles des favoris ?</string>
+    <string name="widget_preview_info">À propos de cette prévisualisation</string>
+    <string name="widget_sync_disabled">Mises à jours automatiques désactivées</string>
+    <string name="widget_enable_sync">Activer la synchronisation</string>
+    <string name="widget_sync_settings_action">Changer</string>
+    <string name="widget_content_section_title">Contenu</string>
+    <string name="widget_content_choose">Choisir le contenu</string>
+    <string name="widget_content_timeline_description">Articles non-lus depuis tous les flux</string>
+    <string name="widget_content_bookmarks_description">Vos articles sauvegardés</string>
+    <string name="widget_content_no_categories">Aucune catégorie pour l\'instant. Créez-en une dans FeedFlow pour l\'utiliser ici.</string>
+    <string name="widget_content_category">Catégorie</string>
+    <string name="widget_content_feed_source">Source de flux</string>
+    <string name="widget_list_item_title">Widget %s</string>
+    <string name="widget_list_item_description">Widget %s · %s</string>
+    <string name="widget_list_empty">Aucun widget ajouté pour l\'instant. Ajoutez un widget FeedFlow depuis votre lanceur.</string>
 </resources>

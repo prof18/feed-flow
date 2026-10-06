@@ -427,4 +427,18 @@
     <string name="remove_bookmark_dialog_message">Kas oled kindel, et soovid sellelt artiklilt eemaldada järjehoidja?</string>
     <string name="settings_force_english">Kasuta sundkorras inglise keelt</string>
     <string name="settings_force_english_description">Seadme keele asemel kuva rakenduse kasutajaliides inglisekeelsena.</string>
+    <string name="widget_preview_info">Selle eelvaate teave</string>
+    <string name="widget_sync_disabled">Automaatne uuendamine on lülitatud välja</string>
+    <string name="widget_enable_sync">Kasuta sünkroonimist</string>
+    <string name="widget_sync_settings_action">Muuda</string>
+    <string name="widget_content_section_title">Sisu</string>
+    <string name="widget_content_choose">Vali sisu</string>
+    <string name="widget_content_timeline_description">Lugemata artiklid kõikidest uudisvoogudest</string>
+    <string name="widget_content_bookmarks_description">Sinu salvestatud artiklid</string>
+    <string name="widget_content_no_categories">Kategooriaid veel pole. Siin kasutamiseks lisa FeedFlows mõni kategooria.</string>
+    <string name="widget_content_category">Kategooria</string>
+    <string name="widget_content_feed_source">Uudisvoo allikas</string>
+    <string name="widget_list_item_title">„%s“ vidin</string>
+    <string name="widget_list_item_description">Vidin %s · %s</string>
+    <string name="widget_list_empty">Ühtegi vidinat veel pole. Lisa FeedFlow vidin oma käivitajast.</string>
 </resources>

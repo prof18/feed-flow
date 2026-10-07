@@ -38,6 +38,9 @@ class WidgetSettingsRepository(
             showHeader = settings.getBooleanOrNull(
                 perWidgetKey(WidgetSettingsFields.WIDGET_SHOW_HEADER, widgetId),
             ) ?: getWidgetShowHeader(),
+            showRefreshButton = settings.getBooleanOrNull(
+                perWidgetKey(WidgetSettingsFields.WIDGET_SHOW_REFRESH_BUTTON, widgetId),
+            ) ?: getWidgetShowRefreshButton(),
             fontScale = settings.getIntOrNull(
                 perWidgetKey(WidgetSettingsFields.WIDGET_FONT_SCALE_FACTOR, widgetId),
             ) ?: getWidgetFontScaleFactor(),
@@ -71,6 +74,11 @@ class WidgetSettingsRepository(
 
     fun setWidgetShowHeader(widgetId: Int, showHeader: Boolean) {
         settings[perWidgetKey(WidgetSettingsFields.WIDGET_SHOW_HEADER, widgetId)] = showHeader
+        configurationRevision.update { it + 1 }
+    }
+
+    fun setWidgetShowRefreshButton(widgetId: Int, showRefreshButton: Boolean) {
+        settings[perWidgetKey(WidgetSettingsFields.WIDGET_SHOW_REFRESH_BUTTON, widgetId)] = showRefreshButton
         configurationRevision.update { it + 1 }
     }
 
@@ -131,6 +139,8 @@ class WidgetSettingsRepository(
                 configuration.feedLayout.name
             settings[perWidgetKey(WidgetSettingsFields.WIDGET_SHOW_HEADER, newWidgetId)] =
                 configuration.showHeader
+            settings[perWidgetKey(WidgetSettingsFields.WIDGET_SHOW_REFRESH_BUTTON, newWidgetId)] =
+                configuration.showRefreshButton
             settings[perWidgetKey(WidgetSettingsFields.WIDGET_FONT_SCALE_FACTOR, newWidgetId)] =
                 configuration.fontScale
             settings[perWidgetKey(WidgetSettingsFields.WIDGET_BACKGROUND_COLOR, newWidgetId)] =
@@ -154,6 +164,9 @@ class WidgetSettingsRepository(
 
     private fun getWidgetShowHeader(): Boolean =
         settings.getBoolean(WidgetSettingsFields.WIDGET_SHOW_HEADER.name, true)
+
+    private fun getWidgetShowRefreshButton(): Boolean =
+        settings.getBoolean(WidgetSettingsFields.WIDGET_SHOW_REFRESH_BUTTON.name, false)
 
     private fun getWidgetFontScaleFactor(): Int =
         settings.getInt(
@@ -190,6 +203,7 @@ data class WidgetConfiguration(
     val contentFilter: WidgetContentFilter,
     val feedLayout: WidgetFeedLayout,
     val showHeader: Boolean,
+    val showRefreshButton: Boolean = false,
     val fontScale: Int,
     val backgroundColor: Int?,
     val backgroundOpacityPercent: Int,
@@ -200,6 +214,7 @@ data class WidgetConfiguration(
 private enum class WidgetSettingsFields {
     FEED_WIDGET_LAYOUT,
     WIDGET_SHOW_HEADER,
+    WIDGET_SHOW_REFRESH_BUTTON,
     WIDGET_FONT_SCALE_FACTOR,
     WIDGET_BACKGROUND_COLOR,
     WIDGET_BACKGROUND_OPACITY_PERCENT,

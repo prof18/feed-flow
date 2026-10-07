@@ -73,7 +73,7 @@ Supported profiles:
 
 `audio-episode` adds an audio episode and a plain control article above the existing content-rich items.
 Both open from stored feed content. Feed source and unread indicators are hidden so the flow exercises
-the independent audio badge. REG-173 uses the seed's inert enclosure URL; REG-174 and REG-176 use the
+the independent audio badge. REG-177 uses the seed's inert enclosure URL; REG-174 and REG-176 use the
 local WAV URL supplied by `e2e/scripts/run-audio-playback.sh`. REG-176 generates speech from the
 seeded article and uses the podcast player to check visible duration, pause/seek/speed, source switching,
 position retention, background/foreground return, and close behavior.
@@ -122,6 +122,8 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: e2e_open_app
 ```
+
+The Android `android-widget` profile also exposes `e2e_open_widget_settings`, which opens the widget configuration screen with test widget ID 1. REG-177 uses this entry point to exercise settings and the preview without requiring a launcher host; the seed resets that per-widget configuration before each run. It does not validate the home-screen widget refresh action.
 
 iOS handles the seed link inside the app. The simulator may show a system confirmation dialog for custom schemes, so keep the `Open` tap optional.
 

@@ -1,0 +1,40 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=android-widget
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 60000
+- tapOn:
+    id: e2e_open_widget_settings
+- assertVisible:
+    rightOf:
+      text: "Show refresh button"
+    checked: false
+- tapOn: "Show refresh button"
+- assertVisible:
+    rightOf:
+      text: "Show refresh button"
+    checked: true
+- tapOn: "Show header title"
+- assertVisible:
+    rightOf:
+      text: "Show header title"
+    checked: false
+- back
+- tapOn:
+    id: e2e_open_widget_settings
+- assertVisible:
+    rightOf:
+      text: "Show refresh button"
+    checked: true
+- assertVisible:
+    rightOf:
+      text: "Show header title"
+    checked: false
+- tapOn: "Show refresh button"
+- assertVisible:
+    rightOf:
+      text: "Show refresh button"
+    checked: false

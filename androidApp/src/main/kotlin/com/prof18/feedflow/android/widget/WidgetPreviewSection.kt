@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -116,6 +117,7 @@ internal fun WidgetPreviewSection(
             headerTitle = settingsState.widgetContentTitle(),
             feedLayout = settingsState.feedLayout,
             showWidgetHeader = settingsState.showHeader,
+            showRefreshButton = settingsState.showRefreshButton,
             hideImages = settingsState.hideImages,
             fontSizes = fontSizes,
             backgroundColor = previewBackgroundColor,
@@ -154,6 +156,7 @@ private fun WidgetPreviewWallpaper(
     headerTitle: String,
     feedLayout: WidgetFeedLayout,
     showWidgetHeader: Boolean,
+    showRefreshButton: Boolean,
     hideImages: Boolean,
     fontSizes: WidgetFontSizes,
     backgroundColor: Color,
@@ -177,6 +180,7 @@ private fun WidgetPreviewWallpaper(
             headerTitle = headerTitle,
             feedLayout = feedLayout,
             showWidgetHeader = showWidgetHeader,
+            showRefreshButton = showRefreshButton,
             hideImages = hideImages,
             fontSizes = fontSizes,
             backgroundColor = backgroundColor,
@@ -234,6 +238,7 @@ private fun WidgetPreview(
     headerTitle: String,
     feedLayout: WidgetFeedLayout,
     showWidgetHeader: Boolean,
+    showRefreshButton: Boolean,
     hideImages: Boolean,
     fontSizes: WidgetFontSizes,
     backgroundColor: Color,
@@ -255,17 +260,34 @@ private fun WidgetPreview(
                 .fillMaxWidth()
                 .padding(Spacing.small),
         ) {
-            if (showWidgetHeader) {
-                Text(
-                    text = headerTitle,
-                    maxLines = 1,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontSize = fontSizes.header.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = primaryTextColor,
-                )
-
+            if (showWidgetHeader || showRefreshButton) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (showWidgetHeader) {
+                        Text(
+                            text = headerTitle,
+                            modifier = Modifier.weight(1f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontSize = fontSizes.header.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = primaryTextColor,
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                    if (showRefreshButton) {
+                        Icon(
+                            imageVector = Icons.Outlined.Refresh,
+                            contentDescription = strings.refreshFeeds,
+                            tint = primaryTextColor,
+                            modifier = Modifier.size(width = 24.dp, height = 24.dp),
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(Spacing.xsmall))
             }
 

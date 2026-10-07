@@ -13,6 +13,7 @@ data class WidgetSettingsState(
     val syncPeriod: SyncPeriod = SyncPeriod.ONE_HOUR,
     val feedLayout: WidgetFeedLayout = WidgetFeedLayout.LIST,
     val showHeader: Boolean = true,
+    val showRefreshButton: Boolean = false,
     val fontScale: Int = 0,
     val backgroundColor: Int? = null,
     val backgroundOpacityPercent: Int = 100,

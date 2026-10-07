@@ -338,6 +338,7 @@
       "android/regression/174-podcast-audio-playback.yaml",
       "android/regression/175-now-playing-navigation.yaml",
       "android/regression/176-reader-speech-playback.yaml",
+      "android/regression/177-widget-refresh-settings.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -535,7 +536,8 @@
       "regression/173": "Audio badge, Play audio and external-opening actions; navigating to a plain article clears its audio card. Passed on Pixel and iPhone 17 Pro simulator, 2026-10-04.",
       "regression/174": "Local WAV playback, pause/resume, speed selection, seek, close/reopen position retention, and active episode persistence across article navigation, using adb reverse on Android and simulator loopback on iOS. Android also checks the native media notification, its pause button, and the reader overflow menu while playback controls are open. iOS verifies the card's Pause audio state when returning to the playing episode. Passed on Pixel and iPhone 17 Pro simulator, 2026-10-06.",
       "regression/175": "Compact active-episode indicator on timeline and search, mini play/pause, direct episode return from another article and search in feed-content mode, position retention, no duplicate indicator in the reader, and removal after closing playback. Global/per-feed browser-mode resolution is covered by shared tests; browser return and app handoff need manual validation because the seeded article URL is remote and browser UI varies by platform. Passed on Pixel and iPhone 17 Pro Simulator on 2026-10-08, including Android reader Back and iOS search with the keyboard visible.",
-      "regression/176": "Implemented automated coverage: generate speech from the seeded article, wait for nonzero player duration, pause and seek, change speed, switch between speech and the seeded podcast and back while retaining speech position, background/foreground the app, and close the player. Maestro verifies visible player state; it does not prove audible output, system media controls, or temporary-file cleanup."
+      "regression/176": "Implemented automated coverage: generate speech from the seeded article, wait for nonzero player duration, pause and seek, change speed, switch between speech and the seeded podcast and back while retaining speech position, background/foreground the app, and close the player. Maestro verifies visible player state; it does not prove audible output, system media controls, or temporary-file cleanup.",
+      "regression/177": "Widget refresh button defaults off and persists with the header hidden through the Android debug widget editor."
     };
 
     const sections = document.querySelector("#sections");

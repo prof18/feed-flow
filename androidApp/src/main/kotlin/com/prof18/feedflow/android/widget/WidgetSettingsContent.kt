@@ -53,6 +53,7 @@ fun WidgetSettingsContent(
     settingsState: WidgetSettingsState,
     onFeedLayoutSelected: (WidgetFeedLayout) -> Unit,
     onShowHeaderSelected: (Boolean) -> Unit,
+    onShowRefreshButtonSelected: (Boolean) -> Unit,
     onFontScaleSelected: (Int) -> Unit,
     onBackgroundColorSelected: (Int?) -> Unit,
     onBackgroundOpacitySelected: (Int) -> Unit,
@@ -92,6 +93,12 @@ fun WidgetSettingsContent(
             title = strings.widgetShowHeaderTitle,
             isChecked = settingsState.showHeader,
             onCheckedChange = onShowHeaderSelected,
+        )
+
+        SettingSwitchItem(
+            title = strings.widgetShowRefreshButton,
+            isChecked = settingsState.showRefreshButton,
+            onCheckedChange = onShowRefreshButtonSelected,
         )
 
         SettingSwitchItem(
@@ -373,6 +380,7 @@ private fun WidgetSettingsContentPreview() {
                 ),
                 onFeedLayoutSelected = {},
                 onShowHeaderSelected = {},
+                onShowRefreshButtonSelected = {},
                 onFontScaleSelected = {},
                 onBackgroundColorSelected = {},
                 onBackgroundOpacitySelected = {},

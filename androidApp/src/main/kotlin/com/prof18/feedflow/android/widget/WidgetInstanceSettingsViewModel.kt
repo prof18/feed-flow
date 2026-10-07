@@ -97,6 +97,15 @@ class WidgetInstanceSettingsViewModel(
         updateWidgets()
     }
 
+    fun updateShowRefreshButton(showRefreshButton: Boolean) {
+        if (_settingsState.value.showRefreshButton == showRefreshButton) {
+            return
+        }
+        _settingsState.update { it.copy(showRefreshButton = showRefreshButton) }
+        widgetSettingsRepository.setWidgetShowRefreshButton(appWidgetId, showRefreshButton)
+        updateWidgets()
+    }
+
     fun updateFontScale(scaleFactor: Int) {
         if (_settingsState.value.fontScale == scaleFactor) {
             return
@@ -152,6 +161,7 @@ class WidgetInstanceSettingsViewModel(
 private fun WidgetConfiguration.toSettingsState() = WidgetSettingsState(
     feedLayout = feedLayout,
     showHeader = showHeader,
+    showRefreshButton = showRefreshButton,
     fontScale = fontScale,
     backgroundColor = backgroundColor,
     backgroundOpacityPercent = backgroundOpacityPercent,

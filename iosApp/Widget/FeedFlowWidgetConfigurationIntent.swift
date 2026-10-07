@@ -5,4 +5,7 @@ struct FeedFlowWidgetConfigurationIntent: WidgetConfigurationIntent {
 
     @Parameter(title: LocalizedStringResource("widget_content_section_title", table: "Widget"))
     var content: WidgetContentEntity?
+
+    @Parameter(title: LocalizedStringResource("widget_show_refresh_button", table: "Widget"), default: false)
+    var showRefreshButton: Bool
 }

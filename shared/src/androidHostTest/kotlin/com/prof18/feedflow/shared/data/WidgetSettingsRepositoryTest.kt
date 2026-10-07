@@ -32,12 +32,30 @@ class WidgetSettingsRepositoryTest : KoinTestBase() {
         val settings = MapSettings().apply {
             this["FEED_WIDGET_LAYOUT"] = WidgetFeedLayout.CARD.name
             this["WIDGET_TEXT_COLOR_MODE"] = WidgetTextColorMode.DARK.name
+            this["WIDGET_SHOW_REFRESH_BUTTON"] = true
         }
 
         val configuration = WidgetSettingsRepository(settings).getWidgetConfiguration(WIDGET_ID)
 
         assertEquals(WidgetFeedLayout.CARD, configuration.feedLayout)
         assertEquals(WidgetTextColorMode.DARK, configuration.textColorMode)
+        assertEquals(true, configuration.showRefreshButton)
+    }
+
+    @Test
+    fun `refresh button is disabled by default and per-widget setting overrides legacy value`() {
+        val settings = MapSettings()
+        val repository = WidgetSettingsRepository(settings)
+
+        assertEquals(false, repository.getWidgetConfiguration(WIDGET_ID).showRefreshButton)
+
+        settings["WIDGET_SHOW_REFRESH_BUTTON"] = true
+        assertEquals(true, repository.getWidgetConfiguration(WIDGET_ID).showRefreshButton)
+
+        repository.setWidgetShowRefreshButton(WIDGET_ID, false)
+
+        assertEquals(false, repository.getWidgetConfiguration(WIDGET_ID).showRefreshButton)
+        assertEquals(true, repository.getWidgetConfiguration(OTHER_WIDGET_ID).showRefreshButton)
     }
 
     @Test
@@ -75,6 +93,7 @@ class WidgetSettingsRepositoryTest : KoinTestBase() {
             contentFilter = WidgetContentFilter.Category("technology"),
             feedLayout = WidgetFeedLayout.CARD,
             showHeader = false,
+            showRefreshButton = true,
             fontScale = 3,
             backgroundColor = 0xFF112233.toInt(),
             backgroundOpacityPercent = 65,
@@ -85,6 +104,7 @@ class WidgetSettingsRepositoryTest : KoinTestBase() {
             contentFilter = WidgetContentFilter.Bookmarks,
             feedLayout = WidgetFeedLayout.LIST,
             showHeader = true,
+            showRefreshButton = false,
             fontScale = 1,
             backgroundColor = null,
             backgroundOpacityPercent = 90,
@@ -114,6 +134,7 @@ class WidgetSettingsRepositoryTest : KoinTestBase() {
         val settings = MapSettings().apply {
             this["FEED_WIDGET_LAYOUT"] = WidgetFeedLayout.CARD.name
             this["WIDGET_SHOW_HEADER"] = false
+            this["WIDGET_SHOW_REFRESH_BUTTON"] = true
             this["WIDGET_FONT_SCALE_FACTOR"] = 4
             this["WIDGET_BACKGROUND_COLOR"] = 0xFF345678.toInt()
             this["WIDGET_BACKGROUND_OPACITY_PERCENT"] = 72
@@ -130,6 +151,7 @@ class WidgetSettingsRepositoryTest : KoinTestBase() {
 
         settings["FEED_WIDGET_LAYOUT"] = WidgetFeedLayout.LIST.name
         settings["WIDGET_SHOW_HEADER"] = true
+        settings["WIDGET_SHOW_REFRESH_BUTTON"] = false
         settings["WIDGET_FONT_SCALE_FACTOR"] = 0
         settings.remove("WIDGET_BACKGROUND_COLOR")
         settings["WIDGET_BACKGROUND_OPACITY_PERCENT"] = 100
@@ -237,6 +259,9 @@ class WidgetSettingsRepositoryTest : KoinTestBase() {
             repository.setWidgetShowHeader(WIDGET_ID, false)
             assertEquals(false, awaitItem().showHeader)
 
+            repository.setWidgetShowRefreshButton(WIDGET_ID, true)
+            assertEquals(true, awaitItem().showRefreshButton)
+
             repository.setWidgetFontScaleFactor(WIDGET_ID, 2)
             assertEquals(2, awaitItem().fontScale)
 
@@ -257,6 +282,7 @@ class WidgetSettingsRepositoryTest : KoinTestBase() {
             assertEquals(WidgetContentFilter.Timeline, clearedConfiguration.contentFilter)
             assertEquals(WidgetFeedLayout.LIST, clearedConfiguration.feedLayout)
             assertEquals(true, clearedConfiguration.showHeader)
+            assertEquals(false, clearedConfiguration.showRefreshButton)
             assertEquals(0, clearedConfiguration.fontScale)
             assertNull(clearedConfiguration.backgroundColor)
             assertEquals(100, clearedConfiguration.backgroundOpacityPercent)
@@ -305,6 +331,7 @@ class WidgetSettingsRepositoryTest : KoinTestBase() {
         repository.setWidgetContentFilter(widgetId, configuration.contentFilter)
         repository.setWidgetFeedLayout(widgetId, configuration.feedLayout)
         repository.setWidgetShowHeader(widgetId, configuration.showHeader)
+        repository.setWidgetShowRefreshButton(widgetId, configuration.showRefreshButton)
         repository.setWidgetFontScaleFactor(widgetId, configuration.fontScale)
         repository.setWidgetBackgroundColor(widgetId, configuration.backgroundColor)
         repository.setWidgetBackgroundOpacityPercent(widgetId, configuration.backgroundOpacityPercent)

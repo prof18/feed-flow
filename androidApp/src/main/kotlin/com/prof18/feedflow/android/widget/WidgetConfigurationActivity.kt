@@ -67,6 +67,7 @@ class WidgetConfigurationActivity : BaseThemeActivity() {
                 settingsState = settingsState,
                 onFeedLayoutSelected = viewModel::updateFeedLayout,
                 onShowHeaderSelected = viewModel::updateShowHeader,
+                onShowRefreshButtonSelected = viewModel::updateShowRefreshButton,
                 onFontScaleSelected = viewModel::updateFontScale,
                 onBackgroundColorSelected = viewModel::updateBackgroundColor,
                 onBackgroundOpacitySelected = viewModel::updateBackgroundOpacityPercent,

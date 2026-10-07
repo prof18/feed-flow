@@ -2,6 +2,7 @@
 
 package com.prof18.feedflow.android.e2e
 
+import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
@@ -32,6 +33,7 @@ import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.android.audio.AndroidAudioPlayer
 import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.android.widget.FeedFlowWidget
+import com.prof18.feedflow.android.widget.WidgetConfigurationActivity
 import com.prof18.feedflow.core.model.WidgetContentFilter
 import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
@@ -106,6 +108,19 @@ class E2eSeedActivity : BaseThemeActivity() {
                         onClick = ::openMainActivity,
                     ) {
                         Text("Open FeedFlow")
+                    }
+                    if (state.profileName == "android-widget") {
+                        Button(
+                            modifier = Modifier.testTag("e2e_open_widget_settings"),
+                            onClick = {
+                                startActivity(
+                                    Intent(this@E2eSeedActivity, WidgetConfigurationActivity::class.java)
+                                        .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, E2E_WIDGET_ID),
+                                )
+                            },
+                        ) {
+                            Text("Open widget settings")
+                        }
                     }
                 }
 
@@ -190,6 +205,7 @@ class E2eSeedActivity : BaseThemeActivity() {
             widgetSettingsRepository.setWidgetContentFilter(appWidgetId, WidgetContentFilter.Timeline)
             widgetSettingsRepository.setWidgetFeedLayout(appWidgetId, WidgetFeedLayout.LIST)
             widgetSettingsRepository.setWidgetShowHeader(appWidgetId, true)
+            widgetSettingsRepository.setWidgetShowRefreshButton(appWidgetId, false)
             widgetSettingsRepository.setWidgetFontScaleFactor(appWidgetId, 0)
             widgetSettingsRepository.setWidgetBackgroundColor(appWidgetId, null)
             widgetSettingsRepository.setWidgetBackgroundOpacityPercent(appWidgetId, 100)
@@ -205,6 +221,7 @@ class E2eSeedActivity : BaseThemeActivity() {
         forEachWidget { appWidgetId ->
             widgetSettingsRepository.setWidgetFeedLayout(appWidgetId, WidgetFeedLayout.CARD)
             widgetSettingsRepository.setWidgetShowHeader(appWidgetId, true)
+            widgetSettingsRepository.setWidgetShowRefreshButton(appWidgetId, false)
             widgetSettingsRepository.setWidgetFontScaleFactor(appWidgetId, 2)
             widgetSettingsRepository.setWidgetBackgroundColor(appWidgetId, 0xFF1E3A5F.toInt())
             widgetSettingsRepository.setWidgetBackgroundOpacityPercent(appWidgetId, 85)
@@ -217,6 +234,8 @@ class E2eSeedActivity : BaseThemeActivity() {
         val manager = GlanceAppWidgetManager(this)
         manager.getGlanceIds(FeedFlowWidget::class.java)
             .map(manager::getAppWidgetId)
+            .plus(E2E_WIDGET_ID)
+            .distinct()
             .forEach(block)
     }
 
@@ -234,6 +253,7 @@ class E2eSeedActivity : BaseThemeActivity() {
     private companion object {
         const val ACTION_OPEN_DEEP_LINK = "open-deep-link"
         const val ACTION_RESTORE_DEVELOPMENT = "restore-development"
+        const val E2E_WIDGET_ID = 1
     }
 }
 

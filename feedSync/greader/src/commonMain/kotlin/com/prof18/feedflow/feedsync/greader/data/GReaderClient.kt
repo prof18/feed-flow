@@ -2,6 +2,8 @@ package com.prof18.feedflow.feedsync.greader.data
 
 import co.touchlab.kermit.Logger
 import co.touchlab.stately.concurrency.AtomicReference
+import co.touchlab.stately.concurrency.Lock
+import co.touchlab.stately.concurrency.withLock
 import com.prof18.feedflow.core.model.BazquxLoginFailure
 import com.prof18.feedflow.core.model.DataNotFound
 import com.prof18.feedflow.core.model.DataResult
@@ -24,6 +26,7 @@ import com.prof18.feedflow.feedsync.networkcore.executeNetwork
 import com.prof18.feedflow.feedsync.networkcore.isMissingConnectionError
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -51,9 +54,12 @@ internal class GReaderClient internal constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val appVersion: String,
     private val providedHttpClient: HttpClient? = null,
+    private val httpClientEngine: HttpClientEngine? = null,
 ) {
 
     private var httpClient: HttpClient? = providedHttpClient
+    private var clientIdentity: ClientIdentity? = null
+    private val clientLock = Lock()
     private var postToken = AtomicReference<String?>(null)
 
     suspend fun login(
@@ -61,11 +67,13 @@ internal class GReaderClient internal constructor(
         password: String,
         baseURL: String,
     ): DataResult<String> = withContext(dispatcherProvider.io) {
-        val client = providedHttpClient ?: run {
-            val oldClient = httpClient
-            oldClient?.close()
-            createHttpClient(baseURL).also {
+        val client = providedHttpClient ?: clientLock.withLock {
+            val identity = ClientIdentity(baseURL, token = "")
+            httpClient?.close()
+            createHttpClient(identity).also {
                 httpClient = it
+                clientIdentity = identity
+                postToken.set(null)
             }
         }
 
@@ -277,6 +285,7 @@ internal class GReaderClient internal constructor(
     }
 
     private suspend fun <T> withPostToken(block: suspend () -> DataResult<T>): DataResult<T> {
+        getOrCreateHttpClient()
         if (postToken.get() == null) {
             fetchToken()
         }
@@ -301,23 +310,29 @@ internal class GReaderClient internal constructor(
     }
 
     private fun getOrCreateHttpClient(): HttpClient {
-        val baseURL = networkSettings.getSyncUrl()
-        return httpClient ?: createHttpClient(baseURL).also {
-            httpClient = it
+        providedHttpClient?.let { return it }
+        return clientLock.withLock {
+            val identity = ClientIdentity(networkSettings.getSyncUrl(), networkSettings.getSyncPwd())
+            httpClient?.takeIf { clientIdentity == identity } ?: createHttpClient(identity).also {
+                httpClient?.close()
+                httpClient = it
+                clientIdentity = identity
+                postToken.set(null)
+            }
         }
     }
 
     private fun createHttpClient(
-        baseURL: String,
+        identity: ClientIdentity,
     ): HttpClient {
-        val finalBaseURL = with(baseURL) {
+        val finalBaseURL = with(identity.baseURL) {
             if (endsWith("/")) {
                 this
             } else {
                 "$this/"
             }
         }
-        return HttpClient {
+        val configure: io.ktor.client.HttpClientConfig<*>.() -> Unit = {
             install(ContentNegotiation) {
                 json(
                     Json {
@@ -337,7 +352,9 @@ internal class GReaderClient internal constructor(
             install(Resources)
             defaultRequest {
                 url(finalBaseURL)
-                header("Authorization", "GoogleLogin auth=${networkSettings.getSyncPwd()}")
+                if (identity.token.isNotEmpty()) {
+                    header("Authorization", "GoogleLogin auth=${identity.token}")
+                }
                 header(HttpHeaders.UserAgent, feedFlowUserAgent(appVersion))
             }
             if (appEnvironment.isDebug()) {
@@ -350,7 +367,8 @@ internal class GReaderClient internal constructor(
                     }
                 }
             }
-        }.rejectUnsafeHosts()
+        }
+        return (httpClientEngine?.let { HttpClient(it, configure) } ?: HttpClient(configure)).rejectUnsafeHosts()
     }
 
     private suspend fun executeLogin(
@@ -396,3 +414,5 @@ internal class GReaderClient internal constructor(
         private const val BAZQUX_LOGIN_ERROR_HEADER = "X-BQ-LoginErrorReason"
     }
 }
+
+private data class ClientIdentity(val baseURL: String, val token: String)

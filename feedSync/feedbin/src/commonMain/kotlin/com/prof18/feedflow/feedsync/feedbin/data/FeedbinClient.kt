@@ -1,6 +1,8 @@
 package com.prof18.feedflow.feedsync.feedbin.data
 
 import co.touchlab.kermit.Logger
+import co.touchlab.stately.concurrency.Lock
+import co.touchlab.stately.concurrency.withLock
 import com.prof18.feedflow.core.model.DataNotFound
 import com.prof18.feedflow.core.model.DataResult
 import com.prof18.feedflow.core.model.NetworkFailure
@@ -27,6 +29,7 @@ import com.prof18.feedflow.feedsync.networkcore.executeNetwork
 import com.prof18.feedflow.feedsync.networkcore.isMissingConnectionError
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
 import io.ktor.client.plugins.auth.providers.basic
@@ -56,20 +59,24 @@ internal class FeedbinClient internal constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val appVersion: String,
     private val providedHttpClient: HttpClient? = null,
+    private val httpClientEngine: HttpClientEngine? = null,
 ) {
 
     private var httpClient: HttpClient? = providedHttpClient
+    private var clientIdentity: ClientIdentity? = null
+    private val clientLock = Lock()
 
     suspend fun login(
         username: String,
         password: String,
     ): DataResult<Unit> = withContext(dispatcherProvider.io) {
         val baseURL = "https://api.feedbin.com/"
-        val client = providedHttpClient ?: run {
-            val oldClient = httpClient
-            oldClient?.close()
-            createHttpClient(baseURL, username, password).also {
+        val client = providedHttpClient ?: clientLock.withLock {
+            val identity = ClientIdentity(username, password)
+            httpClient?.close()
+            createHttpClient(baseURL, identity).also {
                 httpClient = it
+                clientIdentity = identity
             }
         }
 
@@ -319,20 +326,23 @@ internal class FeedbinClient internal constructor(
     }
 
     private fun getOrCreateHttpClient(): HttpClient {
+        providedHttpClient?.let { return it }
         val baseURL = "https://api.feedbin.com/"
-        val username = networkSettings.getSyncUsername()
-        val password = networkSettings.getSyncPwd()
-        return httpClient ?: createHttpClient(baseURL, username, password).also {
-            httpClient = it
+        return clientLock.withLock {
+            val identity = ClientIdentity(networkSettings.getSyncUsername(), networkSettings.getSyncPwd())
+            httpClient?.takeIf { clientIdentity == identity } ?: createHttpClient(baseURL, identity).also {
+                httpClient?.close()
+                httpClient = it
+                clientIdentity = identity
+            }
         }
     }
 
     private fun createHttpClient(
         baseURL: String,
-        username: String,
-        password: String,
-    ): HttpClient =
-        HttpClient {
+        identity: ClientIdentity,
+    ): HttpClient {
+        val configure: io.ktor.client.HttpClientConfig<*>.() -> Unit = {
             install(ContentNegotiation) {
                 json(
                     Json {
@@ -344,7 +354,7 @@ internal class FeedbinClient internal constructor(
             install(Auth) {
                 basic {
                     credentials {
-                        BasicAuthCredentials(username = username, password = password)
+                        BasicAuthCredentials(username = identity.username, password = identity.password)
                     }
                     sendWithoutRequest { true }
                 }
@@ -371,7 +381,9 @@ internal class FeedbinClient internal constructor(
                     }
                 }
             }
-        }.rejectUnsafeHosts()
+        }
+        return (httpClientEngine?.let { HttpClient(it, configure) } ?: HttpClient(configure)).rejectUnsafeHosts()
+    }
 
     private fun parseNextPage(linkHeader: String?): Int? {
         if (linkHeader.isNullOrBlank()) {
@@ -390,6 +402,8 @@ internal class FeedbinClient internal constructor(
         }
     }
 }
+
+private data class ClientIdentity(val username: String, val password: String)
 
 internal data class FeedbinEntriesPage(
     val entries: List<EntryDTO>,

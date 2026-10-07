@@ -7,11 +7,16 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpValidators
 import com.prof18.feedflow.shared.test.KoinTestBase
+import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
 import com.prof18.feedflow.shared.test.toParsedFeedSource
 import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -19,6 +24,7 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 
 class SerialFeedFetcherRepositoryTest : KoinTestBase() {
@@ -53,7 +59,7 @@ class SerialFeedFetcherRepositoryTest : KoinTestBase() {
     )
 
     @Test
-    fun `force refresh bypasses scheduled cache while keeping validators`() = runTest {
+    fun `force refresh bypasses scheduled cache while keeping validators`() = runTest(testDispatcher) {
         val now = dateFormatter.currentTimeMillis()
         val source = FeedSourceGenerator.feedSource(id = "forced", lastSyncTimestamp = now)
         databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource()))
@@ -80,7 +86,7 @@ class SerialFeedFetcherRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `automatic refresh skips feed inside scheduled cache window`() = runTest {
+    fun `automatic refresh skips feed inside scheduled cache window`() = runTest(testDispatcher) {
         val now = dateFormatter.currentTimeMillis()
         val source = FeedSourceGenerator.feedSource(id = "scheduled", lastSyncTimestamp = now)
         databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource()))
@@ -103,7 +109,7 @@ class SerialFeedFetcherRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `force refresh still respects Retry-After backoff`() = runTest {
+    fun `force refresh still respects Retry-After backoff`() = runTest(testDispatcher) {
         val now = dateFormatter.currentTimeMillis()
         val source = FeedSourceGenerator.feedSource(id = "backoff", lastSyncTimestamp = now)
         databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource()))
@@ -126,7 +132,7 @@ class SerialFeedFetcherRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `cancellation from parser propagates out of serial feed loop`() = runTest {
+    fun `cancellation from parser propagates out of serial feed loop`() = runTest(testDispatcher) {
         val source = FeedSourceGenerator.feedSource(id = "cancelled")
         databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource()))
         fakeRssParser.error = CancellationException("test cancellation")
@@ -138,15 +144,44 @@ class SerialFeedFetcherRepositoryTest : KoinTestBase() {
         assertEquals("test cancellation", thrown.message)
     }
 
+    @Test
+    fun `cancelled fetch stops the active parser before requesting the next source`() =
+        runTest(testDispatcher) {
+            val sources = listOf(
+                FeedSourceGenerator.feedSource(id = "first", url = "https://example.com/first.xml"),
+                FeedSourceGenerator.feedSource(id = "second", url = "https://example.com/second.xml"),
+            )
+            databaseHelper.insertFeedSource(sources.map { it.toParsedFeedSource() })
+            val parserEntered = CompletableDeferred<Unit>()
+            var parserObservedCancellation = false
+            fakeRssParser.onRequest = {
+                parserEntered.complete(Unit)
+                try {
+                    awaitCancellation()
+                } finally {
+                    parserObservedCancellation = true
+                }
+            }
+
+            val fetchJob = launch { repository().fetchFeeds(forceRefresh = true) }
+            parserEntered.await()
+            fetchJob.cancelAndJoin()
+
+            assertTrue(parserObservedCancellation)
+            assertEquals(1, fakeRssParser.requestedUrls.size)
+        }
+
     private class FakeRssParser : RssParserWrapper {
         val requestedUrls = mutableListOf<String>()
         val validatorsSeenByUrl = mutableMapOf<String, FeedHttpValidators?>()
         var error: Throwable? = null
+        var onRequest: (suspend () -> Unit)? = null
 
         override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
             requestedUrls += url
             validatorsSeenByUrl[url] = feedHttpCacheStoreForTest?.validatorsFor(url)
             error?.let { throw it }
+            onRequest?.invoke()
             return RssChannelGenerator.rssChannel(title = "Test Feed", items = emptyList())
         }
 

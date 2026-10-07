@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.feed
 
 import co.touchlab.kermit.Logger
+import co.touchlab.skie.configuration.annotations.SuspendInterop
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCacheInfo
@@ -47,6 +48,7 @@ class SerialFeedFetcherRepository internal constructor(
     suspend fun markItemsAsNotified() =
         databaseHelper.markFeedItemsAsNotified()
 
+    @SuspendInterop.Enabled
     suspend fun fetchFeeds(forceRefresh: Boolean = false) {
         return withContext(dispatcherProvider.io) {
             withSuspensionGuard("FeedFlow serial feed fetch") {

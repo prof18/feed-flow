@@ -427,4 +427,18 @@
     <string name="remove_bookmark_dialog_message">Sei sicuro di voler rimuovere questo articolo dai segnalibri?</string>
     <string name="settings_force_english">Forza inglese</string>
     <string name="settings_force_english_description">Utilizza l\'inglese per l\'interfaccia dell\'apparato invece della lingua del dispositivo.</string>
+    <string name="widget_preview_info">Informazioni su questa anteprima</string>
+    <string name="widget_sync_disabled">Aggiornamenti automatici disattivati</string>
+    <string name="widget_enable_sync">Abilita sincronizzazione</string>
+    <string name="widget_sync_settings_action">Cambia</string>
+    <string name="widget_content_section_title">Contenuto</string>
+    <string name="widget_content_choose">Scegli contenuto</string>
+    <string name="widget_content_timeline_description">Articoli non letti da tutti i feed</string>
+    <string name="widget_content_bookmarks_description">I tuoi articoli salvati</string>
+    <string name="widget_content_no_categories">Nessuna categoria presente. Creane una in FeedFlow per utilizzarla qui.</string>
+    <string name="widget_content_category">Categoria</string>
+    <string name="widget_content_feed_source">Sorgente feed</string>
+    <string name="widget_list_item_title">Widget %s</string>
+    <string name="widget_list_item_description">Widget %s · %s</string>
+    <string name="widget_list_empty">Nessun widget aggiunto. Aggiungi un widget di FeedFlow dal tuo launcher.</string>
 </resources>

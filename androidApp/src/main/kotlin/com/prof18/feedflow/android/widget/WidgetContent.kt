@@ -191,19 +191,21 @@ private fun WidgetHeader(
 ) {
     Row(
         modifier = GlanceModifier.fillMaxWidth()
-            .padding(top = Spacing.regular, bottom = Spacing.small)
             .padding(horizontal = Spacing.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (showHeader) {
             Text(
-                modifier = GlanceModifier.defaultWeight().clickable(openAppAction),
+                modifier = GlanceModifier.defaultWeight()
+                    .padding(top = Spacing.regular, bottom = Spacing.small)
+                    .clickable(openAppAction),
                 text = headerTitle,
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize = headerFontSize.sp,
                     color = textColor,
                 ),
+                maxLines = 1,
             )
         } else {
             Spacer(modifier = GlanceModifier.defaultWeight())

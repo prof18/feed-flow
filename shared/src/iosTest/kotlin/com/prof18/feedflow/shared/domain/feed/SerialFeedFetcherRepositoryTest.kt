@@ -11,6 +11,7 @@ import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
 import com.prof18.feedflow.shared.test.toParsedFeedSource
+import com.prof18.rssparser.exception.HttpException
 import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
@@ -24,6 +25,7 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 
@@ -171,17 +173,66 @@ class SerialFeedFetcherRepositoryTest : KoinTestBase() {
             assertEquals(1, fakeRssParser.requestedUrls.size)
         }
 
+    @Test
+    fun `retry after backoff is saved when a later source is cancelled`() = runTest(testDispatcher) {
+        val first = FeedSourceGenerator.feedSource(
+            id = "throttled",
+            title = "A Throttled",
+            url = "https://example.com/a.xml",
+        )
+        val second = FeedSourceGenerator.feedSource(
+            id = "blocked",
+            title = "B Blocked",
+            url = "https://example.com/b.xml",
+        )
+        databaseHelper.insertFeedSource(listOf(first, second).map { it.toParsedFeedSource() })
+        val secondSourceEntered = CompletableDeferred<Unit>()
+        fakeRssParser.onRequest = { url ->
+            if (url == first.url) {
+                feedHttpCacheStore.recordResponse(
+                    url = url,
+                    statusCode = 429,
+                    etag = null,
+                    lastModified = null,
+                    cacheControl = null,
+                    expires = null,
+                    date = null,
+                    retryAfter = "3600",
+                )
+                throw HttpException(code = 429, message = "Too Many Requests")
+            }
+            secondSourceEntered.complete(Unit)
+            awaitCancellation()
+        }
+
+        val fetchJob = launch { repository().fetchFeeds(forceRefresh = true) }
+        secondSourceEntered.await()
+        fetchJob.cancelAndJoin()
+
+        val firstCacheInfo = databaseHelper.getFeedSourcesCacheInfo().singleOrNull {
+            it.feedSourceId == first.id
+        }
+        val backoffTimestamp = assertNotNull(firstCacheInfo?.backoffTimestamp)
+        assertTrue(backoffTimestamp > dateFormatter.currentTimeMillis())
+
+        fakeRssParser.onRequest = null
+        fakeRssParser.requestedUrls.clear()
+        repository().fetchFeeds(forceRefresh = true)
+
+        assertEquals(listOf(second.url), fakeRssParser.requestedUrls)
+    }
+
     private class FakeRssParser : RssParserWrapper {
         val requestedUrls = mutableListOf<String>()
         val validatorsSeenByUrl = mutableMapOf<String, FeedHttpValidators?>()
         var error: Throwable? = null
-        var onRequest: (suspend () -> Unit)? = null
+        var onRequest: (suspend (String) -> Unit)? = null
 
         override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
             requestedUrls += url
             validatorsSeenByUrl[url] = feedHttpCacheStoreForTest?.validatorsFor(url)
             error?.let { throw it }
-            onRequest?.invoke()
+            onRequest?.invoke(url)
             return RssChannelGenerator.rssChannel(title = "Test Feed", items = emptyList())
         }
 

@@ -168,8 +168,6 @@ class SerialFeedFetcherRepository internal constructor(
             }
         }
 
-        val updatedCacheInfo = mutableListOf<FeedSourceCacheInfo>()
-
         // Process feeds one at a time
         for (feedSource in feedsToProcess) {
             logger.d { "-> Getting ${feedSource.url}" }
@@ -204,22 +202,20 @@ class SerialFeedFetcherRepository internal constructor(
             } catch (e: Throwable) {
                 logger.d { "Error, skip: ${feedSource.url}. Error: $e" }
             }
-            updatedCacheInfo.add(
-                FeedSourceCacheInfoFactory.create(
-                    store = feedHttpCacheStore,
-                    feedSourceId = feedSource.id,
-                    feedUrl = feedSource.url,
-                    fetchSucceeded = fetchSucceeded,
-                    refreshValidatorsTimestamp = receivedFullResponse,
-                    previousCacheInfo = cacheInfoById[feedSource.id],
-                    now = dateFormatter.currentTimeMillis(),
-                    logger = logger,
+            databaseHelper.updateFeedSourcesCacheInfo(
+                listOf(
+                    FeedSourceCacheInfoFactory.create(
+                        store = feedHttpCacheStore,
+                        feedSourceId = feedSource.id,
+                        feedUrl = feedSource.url,
+                        fetchSucceeded = fetchSucceeded,
+                        refreshValidatorsTimestamp = receivedFullResponse,
+                        previousCacheInfo = cacheInfoById[feedSource.id],
+                        now = dateFormatter.currentTimeMillis(),
+                        logger = logger,
+                    ),
                 ),
             )
-        }
-
-        if (updatedCacheInfo.isNotEmpty()) {
-            databaseHelper.updateFeedSourcesCacheInfo(updatedCacheInfo)
         }
     }
 

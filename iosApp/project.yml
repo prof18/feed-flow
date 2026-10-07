@@ -305,6 +305,7 @@ targets:
           DEBUG_INFORMATION_FORMAT: dwarf
           DEVELOPMENT_TEAM: Q7CUB3RNAK
           PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.Widget
+          FEEDFLOW_HOST_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev
           PROVISIONING_PROFILE_SPECIFIER: ""
           SWIFT_ACTIVE_COMPILATION_CONDITIONS: "DEBUG $(inherited) APP_EXTENSION"
         Release:
@@ -313,6 +314,7 @@ targets:
           DEVELOPMENT_TEAM[sdk=iphoneos*]: Q7CUB3RNAK
           CODE_SIGN_IDENTITY[sdk=iphoneos*]: "Apple Development"
           PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.Widget
+          FEEDFLOW_HOST_BUNDLE_IDENTIFIER: com.prof18.feedflow
           PROVISIONING_PROFILE_SPECIFIER: ""
           PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]: FeedFlowWidgetGHActionDevProvisioning
           SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_EXTENSION

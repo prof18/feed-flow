@@ -17,7 +17,7 @@ import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
 
-private fun createWidgetDatabase(appEnvironment: AppEnvironment): FeedFlowDB {
+private fun createWidgetDatabase(appEnvironment: AppEnvironment): Pair<FeedFlowDB, NativeSqliteDriver> {
     val sqlDriver = NativeSqliteDriver(
         schema = FeedFlowDB.Schema,
         onConfiguration = { configuration ->
@@ -34,7 +34,7 @@ private fun createWidgetDatabase(appEnvironment: AppEnvironment): FeedFlowDB {
         },
     )
 
-    return FeedFlowDB(
+    val database = FeedFlowDB(
         sqlDriver,
         cloud_pending_article_flagAdapter = Cloud_pending_article_flag.Adapter(
             field_Adapter = EnumColumnAdapter(),
@@ -60,6 +60,7 @@ private fun createWidgetDatabase(appEnvironment: AppEnvironment): FeedFlowDB {
             typeAdapter = EnumColumnAdapter(),
         ),
     )
+    return database to sqlDriver
 }
 
 fun getFeedItems(
@@ -67,54 +68,62 @@ fun getFeedItems(
     filterType: String,
     filterId: String?,
 ): List<FeedItemWidget> {
-    val isBookmarksFilter = filterType == "bookmarks"
-    return createWidgetDatabase(appEnvironment)
-        .feedItemQueries
-        .selectFeedsForWidget(
-            isBookmarked = true.takeIf { isBookmarksFilter },
-            isRead = false.takeUnless { isBookmarksFilter },
-            feedSourceId = filterId.takeIf { filterType == "source" },
-            feedSourceCategoryId = filterId.takeIf { filterType == "category" },
-            pageSize = 6,
-        )
-        .executeAsList()
-        .map { item ->
-            FeedItemWidget(
-                id = item.url_hash,
-                title = item.title,
-                subtitle = item.subtitle,
-                imageUrl = item.image_url,
-                feedSourceTitle = item.feed_source_title,
+    val (database, sqlDriver) = createWidgetDatabase(appEnvironment)
+    try {
+        val isBookmarksFilter = filterType == "bookmarks"
+        return database.feedItemQueries
+            .selectFeedsForWidget(
+                isBookmarked = true.takeIf { isBookmarksFilter },
+                isRead = false.takeUnless { isBookmarksFilter },
+                feedSourceId = filterId.takeIf { filterType == "source" },
+                feedSourceCategoryId = filterId.takeIf { filterType == "category" },
+                pageSize = 6,
             )
-        }
+            .executeAsList()
+            .map { item ->
+                FeedItemWidget(
+                    id = item.url_hash,
+                    title = item.title,
+                    subtitle = item.subtitle,
+                    imageUrl = item.image_url,
+                    feedSourceTitle = item.feed_source_title,
+                )
+            }
+    } finally {
+        sqlDriver.close()
+    }
 }
 
 fun getWidgetContentOptions(appEnvironment: AppEnvironment): List<WidgetContentOption> {
-    val dbRef = createWidgetDatabase(appEnvironment)
-    val categories = dbRef.feedSourceCategoryQueries
-        .selectAll()
-        .executeAsList()
-        .map { category ->
-            WidgetContentOption(
-                id = category.id,
-                title = category.title,
-                subtitle = null,
-                isCategory = true,
-            )
-        }
-    val sources = dbRef.feedSourceQueries
-        .selectFeedUrls()
-        .executeAsList()
-        .map { source ->
-            WidgetContentOption(
-                id = source.url_hash,
-                title = source.feed_source_title,
-                subtitle = source.url,
-                isCategory = false,
-                logoUrl = source.feed_source_logo_url,
-            )
-        }
-    return categories + sources
+    val (dbRef, sqlDriver) = createWidgetDatabase(appEnvironment)
+    try {
+        val categories = dbRef.feedSourceCategoryQueries
+            .selectAll()
+            .executeAsList()
+            .map { category ->
+                WidgetContentOption(
+                    id = category.id,
+                    title = category.title,
+                    subtitle = null,
+                    isCategory = true,
+                )
+            }
+        val sources = dbRef.feedSourceQueries
+            .selectFeedUrls()
+            .executeAsList()
+            .map { source ->
+                WidgetContentOption(
+                    id = source.url_hash,
+                    title = source.feed_source_title,
+                    subtitle = source.url,
+                    isCategory = false,
+                    logoUrl = source.feed_source_logo_url,
+                )
+            }
+        return categories + sources
+    } finally {
+        sqlDriver.close()
+    }
 }
 
 fun getWidgetStrings(
@@ -130,6 +139,7 @@ fun getWidgetStrings(
         }
     }
     return WidgetStrings(
+        widgetRefresh = strings.refreshFeeds,
         widgetTitle = strings.widgetLatestItems,
         widgetEmptyScreenTitle = strings.emptyFeedMessage,
         widgetEmptyScreenContent = strings.widgetCheckFeedSources,
@@ -159,6 +169,7 @@ data class WidgetContentOption(
 )
 
 data class WidgetStrings(
+    val widgetRefresh: String,
     val widgetTitle: String,
     val widgetEmptyScreenTitle: String,
     val widgetEmptyScreenContent: String,

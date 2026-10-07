@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 74 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 75 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -130,6 +130,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-174 | `174-podcast-audio-playback.yaml` | `audio-episode` + local WAV | Android, iOS | Local audio playback, pause/resume, speed selection, seek, close/reopen position retention, and active episode persistence while navigating to a plain article. Android also checks the native media notification, its pause button, and the reader overflow menu while playback controls are open; iOS returns to the playing episode and verifies and taps the card's Pause audio action. Uses `adb reverse` on Android and simulator loopback on iOS. Passed on Pixel and iPhone 17 Pro simulator, 2026-10-06. |
 | REG-175 | `175-now-playing-navigation.yaml` | `audio-episode` + local WAV | Android, iOS | Compact active-episode indicator on timeline and search, mini play/pause, direct return from another article and from search, position retention, no duplicate indicator in the reader, and removal after closing playback. Passed on Pixel and iPhone 17 Pro Simulator on 2026-10-08, including Android reader Back and iOS search with the keyboard visible. |
 | REG-176 | `176-reader-speech-playback.yaml` | `audio-episode` + local WAV | Android, iOS | Implemented automated coverage: generate speech from the seeded article, wait for nonzero player duration, pause and seek, change speed, switch between speech and the seeded podcast and back while retaining speech position, background/foreground the app, and close the player. Maestro verifies visible player state; it does not prove audible output, system media controls, or temporary-file cleanup. Run with `e2e/scripts/run-audio-playback.sh` to serve the local WAV fixture. |
+| REG-177 | `177-widget-refresh-settings.yaml` | `android-widget` | Android | Widget configuration refresh toggle defaults off and persists on/off with the header hidden via the debug editor entry point. |
 
 Run REG-172 explicitly on a tablet-sized Android device or an iPad simulator in landscape:
 
@@ -180,7 +181,7 @@ These are features intentionally not covered, with the reason recorded so they a
 - **Real OS notification taps and feed-source/category notification delegate routes** — Need OS notification automation. The app-owned deep-link routing is covered by REG-126.
 - **In-app review prompt** — `ReviewViewModel` request flow is OS/timing-driven; not exercised.
 - **iPad / macOS menu commands and keyboard shortcuts** — Cmd-R, Cmd-Shift-A, Cmd-N, etc. from `FeedFlowApp+Menu.swift`. Maestro can drive iPad keyboard chords, but no flow added yet.
-- **Android in-app Widget Settings screen** — Settings → Widget Settings exposes widget controls, but it is not part of the automated Maestro suite.
+- **Widget refresh on Android home screen / iOS WidgetKit** — The real launcher refresh action, spinner, iOS Edit Widget configuration and extension memory remain manual checks. REG-173 covers the shared Android configuration controls through the debug seed helper; the in-app route requires an installed launcher widget. Worker behavior and serial fetching are covered by platform unit tests.
 - **Background sync / notification delivery** — WorkManager scheduling, iOS background refresh, notification delivery, and notification deep-link routing remain manual / nightly candidates.
 - **Desktop background refresh and new-articles pill** — Maestro coverage is mobile-only. Desktop timer scheduling, silent snapshot preservation, pending-count calculation, and pill publishing are covered by shared/JVM tests; desktop presentation remains a manual smoke check.
 - **HTTP conditional GET / cache-aware refresh scheduling** — the per-feed `ETag`/`Last-Modified`/`Cache-Control` handling (304 skip, `next_fetch_timestamp` window, `Retry-After` backoff) lives below the UI in the HTTP layer and needs a server emitting real caching headers and 304/429 responses; smoke/regression flows use seeded local data without live feeds. Covered by unit tests instead (`FeedRefreshSchedulerTest`, `FeedHttpCacheStoreTest`, `FeedFetcherRepositoryLocalTest`).

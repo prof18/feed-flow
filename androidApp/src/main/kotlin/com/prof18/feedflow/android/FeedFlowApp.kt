@@ -32,6 +32,7 @@ import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
+import com.prof18.feedflow.shared.presentation.WidgetRefreshState
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import kotlinx.coroutines.launch
@@ -49,6 +50,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
     private val widgetRepository by inject<FeedWidgetRepository>()
     private val widgetSettingsRepository by inject<WidgetSettingsRepository>()
     private val settingsRepository by inject<SettingsRepository>()
+    private val widgetRefreshState by inject<WidgetRefreshState>()
     private val feedDownloadWorkerEnqueuer by inject<FeedDownloadWorkerEnqueuer>()
     private val appForegroundState by inject<AppForegroundState>()
     private val browserManager by inject<BrowserManager>()
@@ -129,6 +131,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                         widgetSettingsRepository,
                                         get<BrowserManager>(),
                                         get<SettingsRepository>(),
+                                        get<WidgetRefreshState>(),
                                     ).update(this@FeedFlowApp, id)
                                 }
                         }
@@ -180,6 +183,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                         widgetSettingsRepository,
                                         browserManager,
                                         settingsRepository,
+                                        widgetRefreshState,
                                     ).update(this@FeedFlowApp, id)
                                 }
                         }

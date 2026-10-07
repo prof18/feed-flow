@@ -6,6 +6,8 @@ struct Provider: AppIntentTimelineProvider {
     func placeholder(in _: Context) -> WidgetEntry {
         let strings = WidgetSupport.strings
         return WidgetEntry(
+            showRefreshButton: false,
+            refreshLabel: strings.widgetRefresh,
             date: Date(),
             feedItems: [],
             widgetTitle: strings.widgetTitle,
@@ -18,7 +20,7 @@ struct Provider: AppIntentTimelineProvider {
         for configuration: FeedFlowWidgetConfigurationIntent,
         in _: Context
     ) async -> WidgetEntry {
-        makeEntry(for: configuration.content)
+        makeEntry(for: configuration)
     }
 
     func timeline(
@@ -31,15 +33,16 @@ struct Provider: AppIntentTimelineProvider {
             value: 1,
             to: currentDate
         ) ?? currentDate
-        let entry = makeEntry(for: configuration.content, date: currentDate)
+        let entry = makeEntry(for: configuration, date: currentDate)
         return Timeline(entries: [entry], policy: .after(refreshDate))
     }
 
     private func makeEntry(
-        for selection: WidgetContentEntity?,
+        for configuration: FeedFlowWidgetConfigurationIntent,
         date: Date = Date()
     ) -> WidgetEntry {
         let strings = WidgetSupport.strings
+        let selection = configuration.content
         let (filterType, filterId) = Self.parse(selectionId: selection?.id)
         let items = getFeedItems(
             appEnvironment: WidgetSupport.appEnvironment,
@@ -58,6 +61,8 @@ struct Provider: AppIntentTimelineProvider {
             ? strings.widgetBookmarksEmptyMessage
             : strings.widgetEmptyScreenTitle
         return WidgetEntry(
+            showRefreshButton: configuration.showRefreshButton,
+            refreshLabel: strings.widgetRefresh,
             date: date,
             feedItems: items,
             widgetTitle: title,

@@ -70,7 +70,7 @@ struct FeedFlowApp: App {
 
                 // Phase 1: Fetch feeds (expensive, may be interrupted)
                 do {
-                    try await repo.fetchFeeds()
+                    try await repo.fetchFeeds(forceRefresh: false)
                     fetchSucceeded = true
                 } catch is CancellationError {
                     // System cancelled — items carry over to next run

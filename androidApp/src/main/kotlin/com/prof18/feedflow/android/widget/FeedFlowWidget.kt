@@ -15,6 +15,7 @@ import com.prof18.feedflow.shared.data.WidgetConfiguration
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.WidgetRenderState
+import com.prof18.feedflow.shared.presentation.WidgetRefreshState
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -25,6 +26,7 @@ internal class FeedFlowWidget(
     private val widgetSettingsRepository: WidgetSettingsRepository,
     private val browserManager: BrowserManager,
     private val settingsRepository: SettingsRepository,
+    private val widgetRefreshState: WidgetRefreshState,
 ) : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
@@ -43,12 +45,15 @@ internal class FeedFlowWidget(
 
             ProvideFeedFlowStrings(lyricist) {
                 val widgetState by widgetStateFlow.collectAsState(initialWidgetState)
+                val isRefreshing by widgetRefreshState.isRefreshing.collectAsState()
                 GlanceTheme {
                     WidgetContent(
                         feedItems = widgetState.renderState.feedItems,
                         feedLayout = widgetState.configuration.feedLayout,
                         browserManager = browserManager,
                         showHeader = widgetState.configuration.showHeader,
+                        showRefreshButton = widgetState.configuration.showRefreshButton,
+                        isRefreshing = isRefreshing,
                         headerTitle = widgetState.renderState.title,
                         filter = widgetState.renderState.contentFilter,
                         fontScale = widgetState.configuration.fontScale,

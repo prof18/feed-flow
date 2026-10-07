@@ -5,16 +5,25 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
+import androidx.glance.ColorFilter
+import androidx.glance.Image
+import androidx.glance.ImageProvider
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.CircularProgressIndicator
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.Row
+import androidx.glance.layout.size
 import androidx.glance.layout.Column
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
@@ -27,6 +36,7 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.MainActivity
+import com.prof18.feedflow.android.R
 import com.prof18.feedflow.android.widget.components.WidgetFeedItemCard
 import com.prof18.feedflow.android.widget.components.WidgetFeedItemList
 import com.prof18.feedflow.core.model.FeedItem
@@ -44,6 +54,8 @@ internal fun WidgetContent(
     feedLayout: WidgetFeedLayout,
     browserManager: BrowserManager,
     showHeader: Boolean,
+    showRefreshButton: Boolean,
+    isRefreshing: Boolean,
     fontScale: Int,
     backgroundColor: Int?,
     backgroundOpacityPercent: Int,
@@ -84,25 +96,19 @@ internal fun WidgetContent(
     val secondaryTextColor = textColors?.secondary?.let(::ColorProvider) ?: GlanceTheme.colors.onSurface
 
     Scaffold(
-        titleBar = if (showHeader) {
+        titleBar = if (showHeader || showRefreshButton) {
             {
-                Text(
-                    modifier = GlanceModifier
-                        .padding(top = Spacing.regular)
-                        .padding(bottom = Spacing.small)
-                        .padding(horizontal = Spacing.medium)
-                        .fillMaxWidth()
-                        .clickable(openAppAction),
-                    text = headerTitle ?: when (filter) {
+                WidgetHeader(
+                    showHeader = showHeader,
+                    showRefreshButton = showRefreshButton,
+                    isRefreshing = isRefreshing,
+                    headerTitle = headerTitle ?: when (filter) {
                         WidgetContentFilter.Bookmarks -> LocalFeedFlowStrings.current.drawerTitleBookmarks
                         else -> LocalFeedFlowStrings.current.widgetLatestItems
                     },
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = fontSizes.header.sp,
-                        color = primaryTextColor,
-                    ),
-                    maxLines = 1,
+                    headerFontSize = fontSizes.header,
+                    textColor = primaryTextColor,
+                    openAppAction = openAppAction,
                 )
             }
         } else {
@@ -148,7 +154,7 @@ internal fun WidgetContent(
             }
         } else {
             LazyColumn {
-                if (!showHeader) {
+                if (!showHeader && !showRefreshButton) {
                     item { Spacer(modifier = GlanceModifier.height(Spacing.small)) }
                 }
 
@@ -167,6 +173,65 @@ internal fun WidgetContent(
                 }
 
                 item { Spacer(modifier = GlanceModifier.height(Spacing.small)) }
+            }
+        }
+    }
+}
+
+@SuppressLint("RestrictedApi")
+@Composable
+private fun WidgetHeader(
+    showHeader: Boolean,
+    headerTitle: String,
+    showRefreshButton: Boolean,
+    isRefreshing: Boolean,
+    headerFontSize: Int,
+    textColor: ColorProvider,
+    openAppAction: Action,
+) {
+    Row(
+        modifier = GlanceModifier.fillMaxWidth()
+            .padding(top = Spacing.regular, bottom = Spacing.small)
+            .padding(horizontal = Spacing.medium),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (showHeader) {
+            Text(
+                modifier = GlanceModifier.defaultWeight().clickable(openAppAction),
+                text = headerTitle,
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = headerFontSize.sp,
+                    color = textColor,
+                ),
+            )
+        } else {
+            Spacer(modifier = GlanceModifier.defaultWeight())
+        }
+        if (showRefreshButton) {
+            val refreshModifier = if (isRefreshing) {
+                GlanceModifier
+            } else {
+                GlanceModifier.clickable(actionRunCallback<RefreshFeedsAction>())
+            }
+            Box(
+                modifier = GlanceModifier.size(width = 48.dp, height = 48.dp)
+                    .then(refreshModifier),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (isRefreshing) {
+                    CircularProgressIndicator(
+                        modifier = GlanceModifier.size(width = 24.dp, height = 24.dp),
+                        color = textColor,
+                    )
+                } else {
+                    Image(
+                        provider = ImageProvider(R.drawable.ic_widget_refresh),
+                        contentDescription = LocalFeedFlowStrings.current.refreshFeeds,
+                        colorFilter = ColorFilter.tint(textColor),
+                        modifier = GlanceModifier.size(width = 24.dp, height = 24.dp),
+                    )
+                }
             }
         }
     }

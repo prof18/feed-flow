@@ -9,6 +9,8 @@ import FeedFlowKit
 import WidgetKit
 
 struct WidgetEntry: TimelineEntry {
+    let showRefreshButton: Bool
+    let refreshLabel: String
     let date: Date
     let feedItems: [FeedItemWidget]
     let widgetTitle: String

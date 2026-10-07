@@ -38,6 +38,7 @@ import com.prof18.feedflow.shared.domain.parser.JvmFeedItemContentFileHandler
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
+import com.prof18.feedflow.shared.presentation.WidgetRefreshState
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
 import org.koin.androidx.workmanager.dsl.worker
@@ -164,6 +165,8 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     workerOf(::SyncWorkManager)
     workerOf(::FeedbinHistorySyncWorker)
 
+    single { WidgetRefreshState() }
+
     worker {
         FeedDownloadWorker(
             feedFetcherRepository = get(),
@@ -171,6 +174,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             databaseHelper = get(),
             notifier = get(),
             appForegroundState = get(),
+            widgetRefreshState = get(),
             appContext = get(),
             workerParams = get(),
         )

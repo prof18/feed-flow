@@ -272,6 +272,7 @@ targets:
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClient.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClientImpl.swift
       - path: Source/UI/Style/Spacing.swift
+      - path: Source/Utils/FeedConditionalGetURLProtocol.swift
     settings:
       base:
         PRODUCT_NAME: $(TARGET_NAME)

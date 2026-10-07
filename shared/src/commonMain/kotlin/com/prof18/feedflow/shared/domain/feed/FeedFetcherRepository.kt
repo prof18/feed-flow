@@ -383,27 +383,28 @@ class FeedFetcherRepository internal constructor(
             .collect { result ->
                 feedToUpdate.remove(result.feedSource.url)
                 updateRefreshCount()
+                val cacheInfo = buildUpdatedCacheInfo(
+                    result = result,
+                    previousCacheInfo = cacheInfoById[result.feedSource.id],
+                )
                 when (result) {
                     is FeedFetchResult.Success -> {
                         logger.d { "Collected ${result.feedItems.size} items" }
                         allFeedItems.addAll(result.feedItems)
                         syncedFeedSourceIds.add(result.feedSource.id)
+                        updatedCacheInfo.add(cacheInfo)
                     }
 
                     is FeedFetchResult.NotModified -> {
                         syncedFeedSourceIds.add(result.feedSource.id)
+                        updatedCacheInfo.add(cacheInfo)
                     }
 
                     is FeedFetchResult.Failure -> {
-                        // Failure flag already persisted above
+                        // Preserve backoff if another source is cancelled before the article batch is saved.
+                        databaseHelper.updateFeedSourcesCacheInfo(listOf(cacheInfo))
                     }
                 }
-                updatedCacheInfo.add(
-                    buildUpdatedCacheInfo(
-                        result = result,
-                        previousCacheInfo = cacheInfoById[result.feedSource.id],
-                    ),
-                )
             }
 
         val syncTimestamp = dateFormatter.currentTimeMillis()

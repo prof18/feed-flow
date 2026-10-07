@@ -26,6 +26,8 @@ import com.prof18.rssparser.exception.HttpException
 import com.prof18.rssparser.model.RssChannel
 import com.prof18.rssparser.model.RssItem
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
@@ -239,6 +241,110 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         assertEquals(2, fakeRssParserWrapper.callCount)
         assertEquals(FinishedFeedUpdateStatus, feedStateRepository.updateState.value)
     }
+
+    @Test
+    fun `retry after backoff is saved when another concurrent source is cancelled`() =
+        runTest(testDispatcher) {
+            setupLocalAccount()
+            val throttled = createFeedSource(id = "throttled", title = "A Throttled")
+            val blocked = createFeedSource(id = "blocked", title = "B Blocked")
+            databaseHelper.insertFeedSource(
+                listOf(throttled, blocked).map { it.toParsedFeedSource() },
+            )
+            val blockedSourceEntered = CompletableDeferred<Unit>()
+            fakeRssParserWrapper.onRequest = { url ->
+                if (url == throttled.url) {
+                    feedHttpCacheStore.recordResponse(
+                        url = url,
+                        statusCode = 429,
+                        etag = null,
+                        lastModified = null,
+                        cacheControl = null,
+                        expires = null,
+                        date = null,
+                        retryAfter = "3600",
+                    )
+                    throw HttpException(code = 429, message = "Too Many Requests")
+                }
+                blockedSourceEntered.complete(Unit)
+                awaitCancellation()
+            }
+
+            val fetchJob = launch { feedFetcherRepository.fetchFeeds(forceRefresh = true) }
+            blockedSourceEntered.await()
+            runCurrent()
+            fetchJob.cancelAndJoin()
+
+            val throttledCacheInfo = databaseHelper.getFeedSourcesCacheInfo().singleOrNull {
+                it.feedSourceId == throttled.id
+            }
+            val backoffTimestamp = assertNotNull(throttledCacheInfo?.backoffTimestamp)
+            assertTrue(backoffTimestamp > dateFormatter.currentTimeMillis())
+
+            fakeRssParserWrapper.onRequest = {}
+            fakeRssParserWrapper.setChannel(
+                blocked.url,
+                createRssChannel(title = blocked.title, link = "https://example.com", items = emptyList()),
+            )
+            fakeRssParserWrapper.requestedUrls.clear()
+            feedFetcherRepository.fetchFeeds(forceRefresh = true)
+            advanceUntilIdle()
+
+            assertEquals(listOf(blocked.url), fakeRssParserWrapper.requestedUrls)
+        }
+
+    @Test
+    fun `successful response cache waits until the concurrent item batch is persisted`() =
+        runTest(testDispatcher) {
+            setupLocalAccount()
+            val successful = createFeedSource(id = "successful", title = "A Successful")
+            val blocked = createFeedSource(id = "blocked", title = "B Blocked")
+            databaseHelper.insertFeedSource(
+                listOf(successful, blocked).map { it.toParsedFeedSource() },
+            )
+            fakeRssParserWrapper.setChannel(
+                successful.url,
+                createRssChannel(
+                    title = successful.title,
+                    link = "https://example.com",
+                    items = listOf(
+                        createRssItem(
+                            id = "pending-article",
+                            title = "Pending article",
+                            link = "https://example.com/pending-article",
+                        ),
+                    ),
+                ),
+            )
+            val blockedSourceEntered = CompletableDeferred<Unit>()
+            fakeRssParserWrapper.onRequest = { url ->
+                if (url == successful.url) {
+                    feedHttpCacheStore.recordResponse(
+                        url = url,
+                        statusCode = 200,
+                        etag = "\"feed-v1\"",
+                        lastModified = null,
+                        cacheControl = null,
+                        expires = null,
+                        date = null,
+                        retryAfter = null,
+                    )
+                } else {
+                    blockedSourceEntered.complete(Unit)
+                    awaitCancellation()
+                }
+            }
+
+            val fetchJob = launch { feedFetcherRepository.fetchFeeds(forceRefresh = true) }
+            blockedSourceEntered.await()
+            runCurrent()
+            fetchJob.cancelAndJoin()
+
+            assertTrue(
+                databaseHelper.getFeedSourcesCacheInfo().none { it.feedSourceId == successful.id },
+            )
+            assertTrue(getTimelineItems().isEmpty())
+        }
 
     @Test
     fun `fetchFeeds with filter matching no source finishes instead of hanging`() = runTest(testDispatcher) {

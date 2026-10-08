@@ -337,10 +337,9 @@ struct ReaderModeScreen: View {
     }
 
     private var isCurrentSpeechSelected: Bool {
-        let title = feedItemTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         return audioPlayback.isSpeechFor(
             itemId: feedItemId,
-            title: title.isEmpty ? feedFlowStrings.audioEpisodeUntitled : title,
+            title: feedItemTitle,
             content: currentContent
         )
     }
@@ -351,7 +350,8 @@ struct ReaderModeScreen: View {
         let title = feedItemTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         audioPlayback.toggleSpeech(
             itemId: itemId,
-            title: title.isEmpty ? feedFlowStrings.audioEpisodeUntitled : title,
+            title: feedItemTitle,
+            displayTitle: title.isEmpty ? feedFlowStrings.audioEpisodeUntitled : title,
             content: content,
             subtitle: currentSiteName,
             artworkURL: (currentAudioImageUrl ?? currentImageUrl).flatMap(URL.init(string:))

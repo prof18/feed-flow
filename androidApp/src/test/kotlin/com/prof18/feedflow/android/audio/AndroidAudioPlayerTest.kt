@@ -34,6 +34,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.File
 import java.lang.reflect.Proxy
+import java.security.MessageDigest
 import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -47,6 +48,7 @@ class AndroidAudioPlayerTest {
     private lateinit var audio: AndroidAudioPlayer
     private lateinit var positions: AudioPlaybackPositionRepository
     private lateinit var fake: FakePlayer
+    private var capturedSpeechTitle: String? = null
 
     @Before
     fun setUp() {
@@ -124,6 +126,38 @@ class AndroidAudioPlayerTest {
         assertFalse(speech.playbackId == episode("article").playbackId)
         assertEquals(speech.playbackId, fake.item?.mediaId)
         assertTrue(generator.files.single().isFile)
+    }
+
+    @Test
+    fun `missing title uses episode label only for display and preserves raw speech title`() = playerTest {
+        replaceAudioWithSpeechGenerator(TestSpeechGenerator())
+        audio.playReaderSpeech(readerArticle(title = null), "Audio episode")
+        runCurrent()
+        assertEquals("Audio episode", audio.state.value.episode?.title)
+        assertNull(capturedSpeechTitle)
+        assertTrue(audio.isSpeechFor(readerArticle(title = null)))
+    }
+
+    @Test
+    fun `missing and blank titles have separate speech identities`() = playerTest {
+        replaceAudioWithSpeechGenerator(TestSpeechGenerator())
+        audio.playReaderSpeech(readerArticle(title = null), "Audio episode")
+        val missingId = audio.state.value.episode?.playbackId
+        audio.playReaderSpeech(readerArticle(title = ""), "Audio episode")
+        assertEquals("Audio episode", audio.state.value.episode?.title)
+        assertFalse(missingId == audio.state.value.episode?.playbackId)
+        runCurrent()
+        assertEquals("", capturedSpeechTitle)
+    }
+
+    @Test
+    fun `normal title retains its existing speech identity`() = playerTest {
+        val article = readerArticle()
+        audio.playReaderSpeech(article, "Audio episode")
+        val oldKey = MessageDigest.getInstance("SHA-256")
+            .digest("Article title\u0000Article body.".toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+        assertEquals("speech:article:$oldKey", audio.state.value.episode?.playbackId)
     }
 
     @Test
@@ -637,9 +671,9 @@ class AndroidAudioPlayerTest {
         }
     }
 
-    private fun readerArticle(content: String = "Article body.") = ReaderModeData(
+    private fun readerArticle(content: String = "Article body.", title: String? = "Article title") = ReaderModeData(
         id = FeedItemId("article"),
-        title = "Article title",
+        title = title,
         content = content,
         url = "https://example.com/article",
         baseUrl = "https://example.com/",
@@ -656,7 +690,10 @@ class AndroidAudioPlayerTest {
             context = context,
             positions = positions,
             speechGenerator = generator,
-            speechText = { _, _ -> listOf("prepared segment") },
+            speechText = { title, _ ->
+                capturedSpeechTitle = title
+                listOf("prepared segment")
+            },
         )
         fake = FakePlayer()
         audio.attach(fake.player)

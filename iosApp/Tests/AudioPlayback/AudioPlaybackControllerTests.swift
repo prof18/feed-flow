@@ -1,4 +1,5 @@
 import AVFoundation
+import CryptoKit
 import Foundation
 import MediaPlayer
 import XCTest
@@ -530,6 +531,52 @@ final class AudioPlaybackControllerTests: XCTestCase {
 
         XCTAssertEqual(generator.requests.count, 2)
         XCTAssertEqual(controller.episode?.url, secondURL)
+    }
+
+    @MainActor
+    func testMissingSpeechTitleKeepsDisplayFallbackOutOfNarration() async throws {
+        let generator = TestSpeechAudioGenerator()
+        var capturedTitle: String? = "unobserved"
+        let controller = AudioPlaybackController(
+            positionStore: TestAudioPlaybackPositionStore(),
+            speechGenerator: generator,
+            speechText: { title, _ in
+                capturedTitle = title
+                return ["Article body"]
+            }
+        )
+        defer { controller.stop() }
+        controller.toggleSpeech(
+            itemId: "article", title: nil, displayTitle: "Audio episode", content: "Article body",
+            subtitle: nil, artworkURL: nil
+        )
+        try await generator.waitForRequestCount(1)
+        XCTAssertEqual(controller.episode?.title, "Audio episode")
+        XCTAssertNil(capturedTitle)
+        XCTAssertTrue(controller.isSpeechFor(itemId: "article", title: nil, content: "Article body"))
+    }
+
+    func testMissingAndBlankSpeechTitlesHaveDifferentContentKeys() {
+        let missing = SpeechPlaybackRequest(
+            itemId: "article", title: nil, displayTitle: "Audio episode", content: "body",
+            subtitle: nil, artworkURL: nil
+        )
+        let blank = SpeechPlaybackRequest(
+            itemId: "article", title: "", displayTitle: "Audio episode", content: "body",
+            subtitle: nil, artworkURL: nil
+        )
+        XCTAssertNotEqual(missing.episode.playbackId, blank.episode.playbackId)
+        XCTAssertNil(missing.title)
+        XCTAssertEqual(blank.title, "")
+    }
+
+    func testNormalSpeechTitleKeepsExistingContentKey() {
+        let request = SpeechPlaybackRequest(
+            itemId: "article", title: "Article", content: "body", subtitle: nil, artworkURL: nil
+        )
+        let previousKey = SHA256.hash(data: Data("Article\u{0000}body".utf8))
+            .map { String(format: "%02x", $0) }.joined()
+        XCTAssertEqual(request.episode.contentKey, previousKey)
     }
 
     @MainActor

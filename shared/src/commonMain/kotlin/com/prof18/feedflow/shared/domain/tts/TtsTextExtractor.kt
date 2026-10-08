@@ -80,27 +80,28 @@ internal object TtsTextExtractor {
             if (traversalNode.isClosing) {
                 output.append(SEGMENT_BREAK)
             } else {
-                appendNode(traversalNode.node, stack, output, headingInfo, context)
+                appendNode(traversalNode, stack, output, headingInfo, context)
             }
         }
         return output.toString()
     }
 
     private suspend fun appendNode(
-        node: Node,
+        traversalNode: TraversalNode,
         stack: ArrayDeque<TraversalNode>,
         output: StringBuilder,
         headingInfo: HeadingInfo,
         context: kotlin.coroutines.CoroutineContext,
     ) {
-        when (node) {
-            is TextNode -> output.append(node.getWholeText())
-            is Element -> appendElement(node, stack, output, headingInfo, context)
+        when (val node = traversalNode.node) {
+            is TextNode -> if (traversalNode.isVisible) output.append(node.getWholeText())
+            is Element -> appendElement(node, traversalNode.isVisible, stack, output, headingInfo, context)
         }
     }
 
     private suspend fun appendElement(
         element: Element,
+        inheritedVisibility: Boolean,
         stack: ArrayDeque<TraversalNode>,
         output: StringBuilder,
         headingInfo: HeadingInfo,
@@ -108,14 +109,21 @@ internal object TtsTextExtractor {
     ) {
         val tag = element.normalName()
         if (isSkipped(element, tag, headingInfo, context)) return
+        val inlineStyle = InlineSpeechStyle.parse(element.attr("style"))
+        if (inlineStyle.display == "none") return
+        val isVisible = when (inlineStyle.visibility) {
+            "hidden", "collapse" -> false
+            "visible", "initial" -> true
+            else -> inheritedVisibility
+        }
         if (tag == "br" || tag == "hr") {
-            output.append(SEGMENT_BREAK)
+            if (isVisible) output.append(SEGMENT_BREAK)
         } else {
-            if (tag == "td" || tag == "th") output.append(' ')
+            if (isVisible && (tag == "td" || tag == "th")) output.append(' ')
             val isBlock = tag in blockTags
             if (isBlock) output.append(SEGMENT_BREAK)
             if (isBlock) stack.addLast(TraversalNode(element, isClosing = true))
-            element.childNodes().asReversed().forEach { stack.addLast(TraversalNode(it)) }
+            element.childNodes().asReversed().forEach { stack.addLast(TraversalNode(it, isVisible = isVisible)) }
         }
     }
 
@@ -253,8 +261,137 @@ internal object TtsTextExtractor {
 
     private data class HeadingInfo(val reference: String?, val firstHeading: Element?)
 
-    private data class TraversalNode(val node: Node, val isClosing: Boolean = false)
+    private data class TraversalNode(val node: Node, val isClosing: Boolean = false, val isVisible: Boolean = true)
 
     private const val CHECK_INTERVAL = 128
     private const val SEGMENT_BREAK = '\u0000'
+}
+
+private data class InlineSpeechStyle(val display: String?, val visibility: String?) {
+    companion object {
+        private val importantSuffix = Regex("\\s*!\\s*important\\s*$", RegexOption.IGNORE_CASE)
+        private val displayValues = setOf(
+            "none", "block", "inline", "inline-block", "flow-root", "list-item", "flex", "inline-flex",
+            "grid", "inline-grid", "table", "inline-table", "table-caption", "table-row", "table-cell",
+            "table-row-group", "table-header-group", "table-footer-group", "table-column", "table-column-group",
+            "ruby", "ruby-base", "ruby-text", "contents", "initial", "inherit", "unset", "revert", "revert-layer",
+        )
+        private val outerDisplayValues = setOf("block", "inline")
+        private val innerDisplayValues = setOf("flow", "flow-root", "flex", "grid", "table", "ruby")
+        private val visibilityValues = setOf(
+            "visible",
+            "hidden",
+            "collapse",
+            "initial",
+            "inherit",
+            "unset",
+            "revert",
+            "revert-layer",
+        )
+
+        fun parse(style: String): InlineSpeechStyle {
+            var display: Declaration? = null
+            var visibility: Declaration? = null
+            for (part in declarations(style)) {
+                val (property, declaration) = readDeclaration(part) ?: continue
+                when (property) {
+                    "display" -> if (isDisplayValue(declaration.value) &&
+                        (display?.important != true || declaration.important)
+                    ) {
+                        display = declaration
+                    }
+                    "visibility" -> if (declaration.value in visibilityValues &&
+                        (visibility?.important != true || declaration.important)
+                    ) {
+                        visibility = declaration
+                    }
+                }
+            }
+            return InlineSpeechStyle(display?.value, visibility?.value)
+        }
+
+        private fun readDeclaration(part: String): Pair<String, Declaration>? {
+            val colon = part.indexOf(':')
+            if (colon < 0) return null
+            val property = part.substring(0, colon).trim().lowercase()
+            val value = part.substring(colon + 1).trim()
+            val important = importantSuffix.containsMatchIn(value)
+            return property to Declaration(value.replace(importantSuffix, "").trim().lowercase(), important)
+        }
+
+        private fun isDisplayValue(value: String): Boolean {
+            if (value in displayValues) return true
+            val tokens = value.split(Regex("\\s+"))
+            return tokens.size == 2 && tokens[0] in outerDisplayValues && tokens[1] in innerDisplayValues
+        }
+
+        private fun declarations(style: String): List<String> {
+            val scanner = DeclarationScanner()
+            var index = 0
+            while (index < style.length) {
+                index = scanner.consume(style, index)
+            }
+            return scanner.finish()
+        }
+    }
+
+    private data class Declaration(val value: String, val important: Boolean)
+
+    private class DeclarationScanner {
+        private val result = mutableListOf<String>()
+        private val part = StringBuilder()
+        private var quote: Char? = null
+        private var depth = 0
+        private var inComment = false
+
+        fun consume(style: String, index: Int): Int = when {
+            inComment -> consumeComment(style, index)
+            quote != null -> consumeQuoted(style, index)
+            else -> consumePlain(style, index)
+        }
+
+        fun finish(): List<String> {
+            result.add(part.toString())
+            return result
+        }
+
+        private fun consumeComment(style: String, index: Int): Int {
+            if (style[index] == '*' && style.getOrNull(index + 1) == '/') {
+                inComment = false
+                return index + 2
+            }
+            return index + 1
+        }
+
+        private fun consumeQuoted(style: String, index: Int): Int {
+            val char = style[index]
+            part.append(char)
+            if (char == '\\' && index + 1 < style.length) {
+                part.append(style[index + 1])
+                return index + 2
+            }
+            if (char == quote) quote = null
+            return index + 1
+        }
+
+        private fun consumePlain(style: String, index: Int): Int {
+            val char = style[index]
+            if (char == '/' && style.getOrNull(index + 1) == '*') {
+                inComment = true
+                return index + 2
+            }
+            when (char) {
+                '"', '\'' -> quote = char
+                '(' -> depth++
+                ')' -> depth = (depth - 1).coerceAtLeast(0)
+                ';' -> if (depth == 0) {
+                    result.add(part.toString())
+                    part.clear()
+                    return index + 1
+                }
+            }
+            part.append(char)
+            return index + 1
+        }
+    }
 }

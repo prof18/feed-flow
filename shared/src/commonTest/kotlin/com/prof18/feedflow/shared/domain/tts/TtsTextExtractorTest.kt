@@ -93,7 +93,66 @@ class TtsTextExtractorTest {
     @Test
     fun `empty content emits title only and image only emits nothing`() = runTest {
         assertEquals(emptyList(), TtsTextExtractor.extract("  ", "<img src='x'>"))
+        assertEquals(emptyList(), TtsTextExtractor.extract(null, "<img src='x'>"))
         assertEquals(listOf("Only title"), TtsTextExtractor.extract("Only title", "<img src='x'>"))
+    }
+
+    @Test
+    fun `missing and blank titles retain distinct duplicate heading rules`() = runTest {
+        val html = "<h1>Article</h1><h2>Article</h2><p>Body</p>"
+        assertEquals(listOf("Article", "Body"), TtsTextExtractor.extract(null, html))
+        assertEquals(listOf("Article", "Article", "Body"), TtsTextExtractor.extract("", html))
+    }
+
+    @Test
+    fun `inline display and visibility omit hidden text but allow visible descendants`() = runTest {
+        val html = """
+            <p>Before</p><div style='display:none'>Absent</div>
+            <div style='visibility:hidden'>Hidden <span style='visibility:visible'>Restored</span></div>
+            <p>After</p>
+        """.trimIndent()
+        assertEquals(listOf("Before", "Restored", "After"), TtsTextExtractor.extract(null, html))
+        assertEquals(
+            listOf("Restored", "After"),
+            TtsTextExtractor.extract(
+                null,
+                "<div style='visibility:hidden'>" +
+                    "<span style='visibility:visible'>Restored</span></div><span>After</span>",
+            ),
+        )
+    }
+
+    @Test
+    fun `inline declarations follow last value and important precedence`() = runTest {
+        val html = """
+            <p style='display:none; display:block'>Shown</p>
+            <p style='display:block; display:none'>Gone</p>
+            <p style='display:none !important; display:block'>Still gone</p>
+            <p style='display:none; display:block !important'>Important shown</p>
+            <p style='visibility:hidden !important; visibility:visible'>Invisible</p>
+            <p style='visibility:hidden; visibility:visible !important'>Visible</p>
+            <p style='background:url("a;b"); display:block'>URL shown</p>
+            <p style='background:url("a;b;display:none"); color:red'>URL still shown</p>
+            <p style='/* display:none */ color:red'>Comment shown</p>
+            <p style='display:/* comment */none'><span style='visibility:visible'>Display subtree gone</span></p>
+            <p style='display:none; display:bogus'>Invalid display hidden</p>
+            <p style='visibility:hidden; visibility:bogus'>Invalid visibility hidden</p>
+            <p style='visibility:hidden; visibility:initial'>Initial visible</p>
+            <p style='display:none; display:inline flow'>Compound shown</p>
+        """.trimIndent()
+        assertEquals(
+            listOf(
+                "Shown",
+                "Important shown",
+                "Visible",
+                "URL shown",
+                "URL still shown",
+                "Comment shown",
+                "Initial visible",
+                "Compound shown",
+            ),
+            TtsTextExtractor.extract(null, html),
+        )
     }
 
     @Test

@@ -1,10 +1,12 @@
 # Reader speech playback
 
-Reader speech turns the displayed article title and body into a temporary audio file on Android and iOS. The title is spoken first, followed by the article body. Feed-content and URL-less reader items use the same flow. Desktop has no speech control, and there is no voice picker: both platforms use the system's default voice.
+Reader speech turns the displayed article title and body into a temporary audio file on Android and iOS. When present, the article title is spoken first, followed by the article body. The player's fallback label for an absent or blank title is not spoken. Missing and blank titles retain the renderer's distinct duplicate-heading rules and have distinct speech identities. Feed-content and URL-less reader items use the same flow. Desktop has no speech control, and there is no voice picker: both platforms use the system's default voice.
 
 Speech is synthesized silently during initial preparation. Once the file is ready, the app plays it through the existing podcast player. This gives speech a real duration and supports seek, pause/resume, playback speed, background playback, and the platform's system media controls. Only one audio source is active at a time. Starting a podcast or another speech item replaces the current source. Speech progress is keyed by article identity and a hash of its title and content, so different text does not reuse the same saved position. The generated file is a single cached temporary file; closing playback or replacing the cached narration removes its file and temporary directory. The first preparation in a new app process also removes orphaned speech directories left by a forced termination.
 
 Generation uses the captured title and displayed body text, not a fresh page fetch. Shared extraction decodes body entities once, preserves inline text and narrative content inside figures, and skips metadata, comments, captions, hidden content, scripts, styles, and media or embedded-object subtrees. The title is treated as plain text. Matching duplicate `h1` and `h2` subtrees are suppressed using the reader renderer's rule; repeated paragraphs are preserved and cached content is unchanged. Text is split at no more than 500 UTF-16 code units per native request, preferring sentence and whitespace boundaries and backing off when a boundary would split a surrogate pair. This preserves code points, not full grapheme clusters.
+
+Static inline `display:none` hides the whole subtree. Inline `visibility:hidden` and `visibility:collapse` hide inherited text while allowing explicitly visible descendants. Declaration order and `!important` precedence are respected for recognized literal values. Extraction does not resolve stylesheets, CSS variables, or dynamic styles.
 
 Android uses `TextToSpeech.synthesizeToFile` and iOS uses the native synthesizer to write audio before playback. Both enforce a 256 MiB output limit and a five-minute overall generation timeout. Android also applies a 15-second native initialization timeout. Generation errors leave a retryable failure state. Cancellation, replacement, and close clean up incomplete or owned temporary output. After preparation, playback follows the podcast player's normal lifecycle, including its background and system-control behavior.
 
@@ -17,6 +19,8 @@ If Android removes a completed speech cache file, Retry regenerates the captured
 ## Validation
 
 Focused deterministic tests cover text extraction, native generation, and shared player behavior:
+
+Extractor tests cover missing/blank title semantics and static inline visibility. Android and iOS player tests verify that display fallbacks never enter narration and that titled articles retain their existing saved-position keys.
 
 ```sh
 ./gradlew --quiet --console=plain :shared:jvmTest --tests "com.prof18.feedflow.shared.domain.tts.ReaderSpeechTextTest"

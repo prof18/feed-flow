@@ -42,7 +42,7 @@ final class AudioPlaybackController {
     @ObservationIgnored private var hasEnded = false
 
     @ObservationIgnored private let speechGenerator: SpeechAudioGenerating
-    @ObservationIgnored private let speechText: (String, String) async throws -> [String]
+    @ObservationIgnored private let speechText: (String?, String) async throws -> [String]
     @ObservationIgnored private var speechTask: Task<Void, Never>?
     @ObservationIgnored private var speechGeneration = UUID()
     @ObservationIgnored private var speechRequest: SpeechPlaybackRequest?
@@ -53,7 +53,7 @@ final class AudioPlaybackController {
         positionStore: AudioPlaybackPositionStore,
         player: AVPlayer = AVPlayer(),
         speechGenerator: SpeechAudioGenerating? = nil,
-        speechText: @escaping (String, String) async throws -> [String] = { _, _ in
+        speechText: @escaping (String?, String) async throws -> [String] = { _, _ in
             throw SpeechAudioGenerationError.synthesisFailed
         }
     ) {
@@ -377,14 +377,26 @@ extension AudioPlaybackController {
 }
 
 extension AudioPlaybackController {
-    func isSpeechFor(itemId: String?, title: String, content: String?) -> Bool {
+    func isSpeechFor(itemId: String?, title: String?, content: String?) -> Bool {
         episode?.kind == .speech && speechRequest?.episode.itemId == itemId &&
-            speechRequest?.episode.title == title && speechRequest?.content == content
+            speechRequest?.title == title && speechRequest?.content == content
     }
 
-    func toggleSpeech(itemId: String, title: String, content: String, subtitle: String?, artworkURL: URL?) {
+    func toggleSpeech(
+        itemId: String,
+        title: String?,
+        displayTitle: String? = nil,
+        content: String,
+        subtitle: String?,
+        artworkURL: URL?
+    ) {
         let request = SpeechPlaybackRequest(
-            itemId: itemId, title: title, content: content, subtitle: subtitle, artworkURL: artworkURL
+            itemId: itemId,
+            title: title,
+            displayTitle: displayTitle,
+            content: content,
+            subtitle: subtitle,
+            artworkURL: artworkURL
         )
         if episode?.playbackId == request.episode.playbackId, !hasFailed {
             togglePlayback()
@@ -425,7 +437,7 @@ extension AudioPlaybackController {
                 if let output { self.deleteSpeechFile(output) }
             }
             do {
-                let segments = try await self.speechText(request.episode.title, request.content)
+                let segments = try await self.speechText(request.title, request.content)
                 try Task.checkCancellation()
                 output = try await self.speechGenerator.generate(segments: segments)
                 try Task.checkCancellation()

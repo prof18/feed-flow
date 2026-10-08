@@ -99,8 +99,13 @@ class AndroidAudioPlayer(
 
     fun playReaderSpeech(article: ReaderModeData, untitledTitle: String) {
         val title = article.title?.takeIf { it.isNotBlank() } ?: untitledTitle
+        val source = if (article.title == null) {
+            byteArrayOf((-1).toByte()) + "\u0000${article.content}".toByteArray(Charsets.UTF_8)
+        } else {
+            "${article.title}\u0000${article.content}".toByteArray(Charsets.UTF_8)
+        }
         val key = MessageDigest.getInstance("SHA-256")
-            .digest((title + "\u0000" + article.content).toByteArray(Charsets.UTF_8))
+            .digest(source)
             .joinToString("") { "%02x".format(it) }
         val request = SpeechRequest(article, title, key)
         if (state.value.episode?.playbackId == request.episode.playbackId && !state.value.failed) {
@@ -136,7 +141,7 @@ class AndroidAudioPlayer(
         speechJob = scope.launch {
             var output: File? = null
             try {
-                val segments = speechText(request.title, request.article.content)
+                val segments = speechText(request.article.title, request.article.content)
                 output = speechGenerator.generate(segments)
                 if (generation != speechGeneration) return@launch
                 val shouldPlay = state.value.isPlaying

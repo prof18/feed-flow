@@ -170,6 +170,67 @@ class AndroidAudioPlayerTest {
     }
 
     @Test
+    fun `service detach cancels pending speech and discards late generated file`() = playerTest {
+        val gate = CompletableDeferred<File>()
+        val generator = TestSpeechGenerator { _, _ -> awaitAfterCancellation(gate) }
+        replaceAudioWithSpeechGenerator(generator)
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        audio.detach(fake.player)
+        val lateFile = generator.newFile()
+        gate.complete(lateFile)
+        runCurrent()
+
+        assertNull(audio.state.value.episode)
+        assertNull(fake.item)
+        assertFalse(lateFile.exists())
+    }
+
+    @Test
+    fun `service detach deletes cached speech and preserves its saved position`() = playerTest {
+        val generator = TestSpeechGenerator()
+        replaceAudioWithSpeechGenerator(generator)
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        fake.ready()
+        val speech = requireNotNull(audio.state.value.episode)
+        val speechFile = generator.files.single()
+        audio.seek(14_000)
+
+        audio.detach(fake.player)
+
+        assertFalse(speechFile.exists())
+        assertEquals(14_000, positions.getPosition(speech.playbackId))
+        assertNull(audio.state.value.episode)
+        assertNull(fake.item)
+    }
+
+    @Test
+    fun `stale service detach does not cancel speech prepared by replacement player`() = playerTest {
+        val gate = CompletableDeferred<File>()
+        val generator = TestSpeechGenerator { _, _ -> awaitAfterCancellation(gate) }
+        replaceAudioWithSpeechGenerator(generator)
+        val oldPlayer = fake.player
+        audio.detach(oldPlayer)
+
+        val nextPlayer = FakePlayer()
+        fake = nextPlayer
+        audio.attach(nextPlayer.player)
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        audio.detach(oldPlayer)
+        val file = generator.newFile()
+        gate.complete(file)
+        runCurrent()
+
+        assertEquals(AudioSourceKind.SPEECH, audio.state.value.episode?.kind)
+        assertEquals(audio.state.value.episode?.playbackId, nextPlayer.item?.mediaId)
+        assertTrue(file.isFile)
+    }
+
+    @Test
     fun `replacement speech cancels old generation and ignores late output`() = playerTest {
         val oldGate = CompletableDeferred<File>()
         val replacementGate = CompletableDeferred<File>()

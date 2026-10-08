@@ -10,6 +10,8 @@ Android uses `TextToSpeech.synthesizeToFile` and iOS uses the native synthesizer
 
 Android uses the installed system TTS engine to generate each bounded text segment, then combines the resulting PCM WAV files into one Media3 item. Direct [`TextToSpeech.speak()`](https://developer.android.com/reference/android/speech/tts/TextToSpeech) uses the system speech queue, which exposes no seek or pause/resume API. The generated file lets the shared player provide measured duration, seeking, saved progress and the same media controls as podcasts.
 
+On Android, audio-service teardown cancels pending speech preparation and releases its cached audio after saving progress. A late synthesis result cannot reopen playback after the service has stopped. Deterministic player tests cover this teardown race; native synthesis timing does not provide a reliable preparation window for a Maestro task-dismissal test.
+
 ## Validation
 
 Focused deterministic tests cover text extraction, native generation, and shared player behavior:

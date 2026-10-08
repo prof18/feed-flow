@@ -427,4 +427,18 @@
     <string name="feed_fetch_refused_error">Feed konnte nicht erreicht werden. Vielleicht blockiert die Webseite RSS-Reader. Bitte versuchen sie es später erneut.</string>
     <string name="mark_all_bookmarks_read_dialog_message">Möchten sie wirklich alle Artikel mit Lesezeichen als gelesen markieren?</string>
     <string name="remove_bookmark_dialog_message">Möchten sie wirklich diesen Artikel aus den Lesezeichen entfernen?</string>
+    <string name="widget_preview_info">Über diese Voransicht</string>
+    <string name="widget_sync_disabled">Automatische Updates aus</string>
+    <string name="widget_enable_sync">Sync aktivieren</string>
+    <string name="widget_sync_settings_action">Ändern</string>
+    <string name="widget_content_section_title">Inhalt</string>
+    <string name="widget_content_choose">Inhalt auswählen</string>
+    <string name="widget_content_timeline_description">Ungelesene Artikel aus allen Feeds</string>
+    <string name="widget_content_bookmarks_description">Ihre gespeicherten Artikel</string>
+    <string name="widget_content_no_categories">Noch keine Kategorien vorhanden. Erstellen sie welche in FeedFlow, um sie hier zu verwenden.</string>
+    <string name="widget_content_category">Kategorie</string>
+    <string name="widget_content_feed_source">Quelle des Feeds</string>
+    <string name="widget_list_item_title">Widget %s</string>
+    <string name="widget_list_item_description">Widget %s · %s</string>
+    <string name="widget_list_empty">Noch wurden keine Widgets hinzugefügt. Fügen sie ein Widget von ihrem Launcher hinzu.</string>
 </resources>

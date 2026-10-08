@@ -3,7 +3,7 @@
 A catalog of every Maestro flow currently in the suite. For how to author, run, and debug flows see [`maestro-e2e-guide.md`](./maestro-e2e-guide.md). For a browser-friendly physical flow inventory, open [`maestro-e2e-tests.html`](./maestro-e2e-tests.html).
 
 - **Smoke** — 13 logical coverage flows, both platforms, useful as a fast confidence subset (`e2e/scripts/run-android-smoke.sh` and `e2e/scripts/run-ios-smoke.sh`). iOS has one extra physical YAML for the bookmark-filter search variant.
-- **Regression Suite** — 70 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
+- **Regression Suite** — 73 logical coverage flows for broader local/CI validation. Some IDs split into platform-specific variants or seed helper YAML files.
 - **Release Validation** — run smoke plus regression with `e2e/scripts/run-android.sh` and `e2e/scripts/run-ios.sh`.
 - **Known Limitations** — what is intentionally not covered and why
 
@@ -126,6 +126,9 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-170 | `170-force-english.yaml` | `content-rich` | Android | Force English updates the interface immediately, survives a process restart, and can be disabled. iOS uses the system per-app language setting. |
 | REG-171 | `171-search-reader-navigation.yaml` | `reader-mode` | Android | Cached search results follow Success → Fallback → Long at both reader boundaries; Back preserves the query/results, and leaving Search restores Home timeline navigation for the overlapping Success article. |
 | REG-172 | `172-sidebar-visibility-persistence.yaml` | `content-rich` | Android tablet/foldable, iPad | Opt in with `-e LARGE_SCREEN=true` on a large-screen device. Close the docked sidebar, terminate and relaunch, verify it stays closed; reopen it and verify it stays open after another relaunch. Phone runs skip this flow because their modal drawers are transient. |
+| REG-173 | `173-podcast-audio-banner.yaml` | `audio-episode` | Android, iOS | Audio badge with source/unread metadata hidden, episode title, Play audio and Open in another app actions in the feed-content reader, and disappearance of the audio card after navigating to a plain article. Passed on Pixel and iPhone 17 Pro simulator, 2026-10-04. |
+| REG-174 | `174-podcast-audio-playback.yaml` | `audio-episode` + local WAV | Android, iOS | Local audio playback, pause/resume, speed selection, seek, close/reopen position retention, and active episode persistence while navigating to a plain article. Android also checks the native media notification, its pause button, and the reader overflow menu while playback controls are open; iOS returns to the playing episode and verifies and taps the card's Pause audio action. Uses `adb reverse` on Android and simulator loopback on iOS. Passed on Pixel and iPhone 17 Pro simulator, 2026-10-06. |
+| REG-175 | `175-now-playing-navigation.yaml` | `audio-episode` + local WAV | Android, iOS | Compact active-episode indicator on timeline and search, mini play/pause, direct return from another article and from search, position retention, no duplicate indicator in the reader, and removal after closing playback. Passed on Pixel and iPhone 17 Pro Simulator on 2026-10-08, including Android reader Back and iOS search with the keyboard visible. |
 
 Run REG-172 explicitly on a tablet-sized Android device or an iPad simulator in landscape:
 
@@ -134,7 +137,13 @@ maestro --platform android --device "$ANDROID_SERIAL" test -e LARGE_SCREEN=true 
 maestro --platform ios --device "$IPAD_UDID" test -e LARGE_SCREEN=true e2e/maestro/ios/regression/172-sidebar-visibility-persistence.yaml
 ```
 
+
+
 ## Known Limitations
+
+- **External audio handoff and visual acceptance** — REG-173 checks the Play and external-opening actions, while REG-174 covers local in-app playback and resume using a deterministic WAV; both passed on Android and iOS on 2026-10-04. System handler choice, saved defaults, external app behavior, real network streams, and visual acceptance across layouts, RTL, larger text, narrow windows, and font-change scroll retention remain manual. See [PODCAST_AUDIO.md](../../docs/PODCAST_AUDIO.md).
+- **iOS background audio output** — Native playback tests verify the media audio-session category and spoken-audio mode on first Play and retry, and player-scoped Now Playing duration/elapsed/rate, remote scrubbing availability, pause/close and session reset. Maestro can check playback controls but cannot reliably assert audible output or the physical silent switch; background and locked-screen playback, interruptions, and lock-screen controls remain physical-device checks.
+- **iOS playback identity after display metadata changes** — Native tests verify that changed titles, feed names and artwork still pause/resume the same player item, while a changed audio URL replaces it. REG-174 taps the reader card's Pause action. A Simulator feed-rename extension failed before that action: saving refreshed the timeline, and the reopened reader retained its original feed name. That setup is not reliable coverage for metadata changes; the native regression supplies the deterministic check.
 
 These are features intentionally not covered, with the reason recorded so they aren't re-investigated:
 
@@ -154,9 +163,10 @@ These are features intentionally not covered, with the reason recorded so they a
 - **iOS scroll-read pagination (REG-162)** — intentionally Android-only. The keyset pagination and the scroll-read flush both live in shared code, and the Android flow already exercises that wiring end to end; a second platform run would only re-test SwiftUI list scrolling.
 - **Per-source refresh network scoping** — the existing seed profiles contain real feed URLs, and no deterministic RSS transport is available to Maestro. A pull-to-refresh flow would therefore make live requests; `FeedFetcherRepositoryLocalTest` verifies the exact requested source URLs instead.
 - **iOS search-result context-menu mutations (REG-152)** — `.searchable` view hierarchy exceeds Maestro's 30s main-thread snapshot budget. Android covers the menu; iOS is row-visibility only.
-- **iOS search-reader navigation (REG-170)** — SwiftUI `.searchable` row interactions exceed Maestro’s hierarchy snapshot budget documented by REG-152. Android Maestro covers the navigation journey and shared Kotlin tests verify lifecycle disposal; iOS UI navigation remains manual coverage.
+- **iOS search-reader navigation (REG-171)** — SwiftUI `.searchable` row interactions exceed Maestro’s hierarchy snapshot budget documented by REG-152. Android Maestro covers the navigation journey and shared Kotlin tests verify lifecycle disposal; iOS UI navigation remains manual coverage.
 - **iOS SwiftUI text input on the FreshRSS connect form (REG-117)** — Maestro stalls on `setClipboard` / `pasteText` into the form. FreshRSS filled-form coverage stays Android-only.
 - **OS browser launches (REG-112 / REG-137 / open-website actions)** — Default / internal / preferred-browser destinations leave the app. Only the in-app preference mutation and per-feed Reader Mode override are asserted.
+- **Now playing browser-preference return (REG-175)** — REG-175 covers return to the episode in feed-content mode. Shared tests cover global and per-feed mode resolution, including browser modes. Browser return and app handoff need manual validation because the seeded episode article URL is remote (`example.com`) and browser UI varies by platform.
 - **iOS swipe actions for disabled and open-in-browser (REG-107)** — full-width gestures open the row or escape to OS/browser surfaces.
 - **Android RTL asymmetric swipe arbitration (REG-107)** — Maestro cannot change an Android per-app locale from within a YAML flow. The LTR asymmetric case is automated; validate its RTL mirror manually under an RTL app locale, where a physical-left swipe opens the drawer when `rightSwipeAction` is disabled and the configured `leftSwipeAction` runs on a physical-right swipe.
 - **OPML partial-failure reporting (REG-119)** — local OPML imports don't produce `feedSourceWithError` / `notValidFeedSources` entries; only invalid-OPML rejection is exercised.

@@ -23,6 +23,7 @@ import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
+import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.BackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.CoroutineBackgroundPrefetchScheduler
@@ -318,6 +319,7 @@ object Deps : KoinComponent {
     fun getFeedFlowStrings() = getKoin().get<FeedFlowStrings>()
     fun getStrings() = getKoin().get<FeedFlowStrings>()
     fun getSettingsRepository() = getKoin().get<SettingsRepository>()
+    fun getAudioPlaybackPositionRepository() = getKoin().get<AudioPlaybackPositionRepository>()
     fun getSearchViewModel() = getKoin().get<SearchViewModel>()
     fun getAccountsViewModel() = getKoin().get<AccountsViewModel>()
     fun getDropboxDataSource() = getKoin().get<DropboxDataSource>()
@@ -347,6 +349,7 @@ object Deps : KoinComponent {
         profileName: String?,
         accountName: String?,
         developmentOpml: String?,
+        audioUrl: String? = null,
     ): String? =
         runCatching {
             if (action == ACTION_RESTORE_DEVELOPMENT) {
@@ -359,6 +362,7 @@ object Deps : KoinComponent {
                     action = action,
                     profileName = profileName,
                     accountName = accountName,
+                    audioUrl = audioUrl,
                 )
             }
         }.exceptionOrNull()?.message

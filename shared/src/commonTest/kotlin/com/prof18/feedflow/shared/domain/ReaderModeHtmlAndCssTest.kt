@@ -170,6 +170,121 @@ class ReaderModeHtmlAndCssTest {
     }
 
     @Test
+    fun `audio banner is omitted for ordinary reader content`() {
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = "<p>Content</p>",
+            fontSize = 18,
+            title = "Article",
+        )
+
+        assertTrue(html.contains("<h1>Article</h1>"))
+        assertTrue(html.contains("<p>Content</p>"))
+        assertFalse(html.contains("reader_audio_banner"))
+        assertFalse(html.contains("reader_open_audio"))
+        assertFalse(html.contains("feedflow-audio://episode/open"))
+    }
+
+    @Test
+    fun `audio banner follows heading inside content and preserves leading spacer`() {
+        val banner = ReaderAudioBanner(
+            title = "Episode title",
+            audioLabel = "Audio",
+            openAudioLabel = "Open audio",
+            untitledAudioLabel = "Audio episode",
+        )
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = "<p>Show notes</p>",
+            fontSize = 18,
+            title = "Article heading",
+            leadingContent = "<div id=\"spacer\"></div>",
+            audioBanner = banner,
+        )
+
+        assertTrue(html.indexOf("id=\"spacer\"") < html.indexOf("<h1>Article heading</h1>"))
+        assertTrue(html.indexOf("<h1>Article heading</h1>") < html.indexOf("id=\"reader_audio_banner\""))
+        assertTrue(html.indexOf("id=\"reader_audio_banner\"") < html.indexOf("<p>Show notes</p>"))
+        val contentStart = html.indexOf("<div id=\"__content\">") + "<div id=\"__content\">".length
+        assertTrue(html.substring(contentStart).trimStart().startsWith("<a id=\"reader_audio_banner\""))
+        assertTrue(html.contains("href=\"feedflow-audio://episode/open\""))
+        assertTrue(html.contains("id=\"reader_open_audio\""))
+        assertTrue(html.contains("aria-label=\"Audio: Episode title. Open audio\""))
+        assertTrue(html.contains("aria-hidden=\"true\""))
+        val bannerHtml = html.substringAfter("id=\"reader_audio_banner\"")
+            .substringBefore("</a>")
+        assertFalse(bannerHtml.contains("https://"))
+    }
+
+    @Test
+    fun `audio banner escapes labels and falls back for a blank title`() {
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = "<p>Show notes</p>",
+            fontSize = 18,
+            audioBanner = ReaderAudioBanner(
+                title = "  ",
+                audioLabel = "Audio <label> & more",
+                openAudioLabel = "Open <audio> & more",
+                untitledAudioLabel = "Episode <untitled> & more",
+            ),
+        )
+
+        assertTrue(html.contains("Audio &lt;label&gt; &amp; more"))
+        assertTrue(html.contains("Episode &lt;untitled&gt; &amp; more"))
+        assertTrue(html.contains("Open &lt;audio&gt; &amp; more"))
+        assertFalse(html.contains("Audio <label>"))
+        assertFalse(html.contains("Episode <untitled>"))
+    }
+
+    @Test
+    fun `audio banner escapes hostile episode title in content and accessible label`() {
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = "<p>Show notes</p>",
+            fontSize = 18,
+            audioBanner = ReaderAudioBanner(
+                title = "Episode <script>alert('x')</script> & more",
+                audioLabel = "Audio",
+                openAudioLabel = "Open audio",
+                untitledAudioLabel = "Audio episode",
+            ),
+        )
+
+        assertTrue(html.contains("Episode &lt;script&gt;alert(&#39;x&#39;)&lt;/script&gt; &amp; more"))
+        assertTrue(
+            html.contains(
+                "aria-label=\"Audio: Episode &lt;script&gt;alert(&#39;x&#39;)&lt;/script&gt; " +
+                    "&amp; more. Open audio\"",
+            ),
+        )
+        assertFalse(html.contains("<script>alert('x')</script>"))
+    }
+
+    @Test
+    fun `audio banner preserves long and rtl text and declares wrapping styles`() {
+        val longTitle = "א".repeat(300)
+        val html = getReaderModeStyledHtml(
+            colors = null,
+            content = "<p>Show notes</p>",
+            fontSize = 18,
+            audioBanner = ReaderAudioBanner(
+                title = longTitle,
+                audioLabel = "Audio",
+                openAudioLabel = "Open audio",
+                untitledAudioLabel = "Audio episode",
+            ),
+        )
+
+        assertTrue(html.contains(longTitle))
+        assertTrue(html.contains("min-width: 0"))
+        assertTrue(html.contains("overflow-wrap: anywhere"))
+        assertTrue(html.contains("text-align: start"))
+        assertTrue(html.contains("min-height: 44px"))
+        assertTrue(html.contains(":focus-visible"))
+    }
+
+    @Test
     fun `getReaderModeStyledHtml includes line height`() {
         val html = getReaderModeStyledHtml(
             colors = null,

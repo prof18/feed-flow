@@ -6,6 +6,9 @@ internal object FeedItemE2eIds {
 
     fun image(feedItemId: String): String =
         "article_image_${feedItemId.toE2eIdSuffix()}"
+
+    fun audio(feedItemId: String): String =
+        "feed_audio_${feedItemId.toE2eIdSuffix()}"
 }
 
 private fun String.toE2eIdSuffix(): String =

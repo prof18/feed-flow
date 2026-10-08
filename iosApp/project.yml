@@ -410,6 +410,24 @@ targets:
       - package: GoogleAPIClientForREST
         product: GoogleAPIClientForREST_Drive
 
+  AudioPlaybackTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/AudioPlayback
+      - path: Source/Audio/AudioEpisode.swift
+      - path: Source/Audio/AudioPlaybackPositionStore.swift
+      - path: Source/Audio/AudioPlaybackProgress.swift
+      - path: Source/Audio/AudioPlaybackController.swift
+      - path: Source/Audio/AudioPlaybackController+System.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.AudioPlaybackTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_PREPROCESS: "NO"
+        INFOPLIST_PREFIX_HEADER: ""
+        TEST_HOST: ""
+
   CloudSyncTests:
     type: bundle.unit-test
     platform: iOS
@@ -441,6 +459,15 @@ targets:
         product: GoogleAPIClientForREST_Drive
 
 schemes:
+  AudioPlaybackTests:
+    build:
+      targets:
+        AudioPlaybackTests: all
+    test:
+      config: Debug
+      targets:
+        - AudioPlaybackTests
+
   FeedFlow:
     build:
       parallelizeBuild: true
@@ -502,10 +529,12 @@ schemes:
       buildImplicitDependencies: true
       targets:
         CloudSyncTests: all
+        AudioPlaybackTests: all
     test:
       config: Debug
       targets:
         - CloudSyncTests
+        - AudioPlaybackTests
 
   ShareExtension:
     build:

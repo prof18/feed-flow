@@ -50,7 +50,8 @@ struct FeedPreviewSection: View {
                         dateString: previewDateString(dateFormat: dateFormat),
                         commentsUrl: nil,
                         isBookmarked: false,
-                        contentDirection: nil
+                        contentDirection: nil,
+                        audioUrl: nil
                     ),
                     index: 0,
                     feedFontSizes: feedFontSizes

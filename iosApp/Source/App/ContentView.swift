@@ -5,6 +5,12 @@ import SwiftUI
 struct ContentView: View {
     @Environment(AppState.self)
     private var appState
+    @Environment(AudioPlaybackController.self)
+    private var audioPlayback
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(\.openURL)
+    private var openURL
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
     @Environment(\.horizontalSizeClass)
@@ -16,6 +22,7 @@ struct ContentView: View {
         Deps.shared.getReaderModeViewModel())
 
     @State private var hasTriggeredLaunch = false
+    @State private var openingAudioEpisode = false
 
     @State private var selectedSidebarItem: SidebarSelection? = .timeline
     @State private var navDrawerState: NavDrawerState = .init(
@@ -39,13 +46,15 @@ struct ContentView: View {
                 CompactView(
                     selectedSidebarItem: $selectedSidebarItem,
                     homeViewModel: vmStoreOwner.instance,
-                    readerModeViewModel: readerModeVmStoreOwner.instance
+                    readerModeViewModel: readerModeVmStoreOwner.instance,
+                    onOpenAudioEpisode: openAudioEpisode
                 )
             } else {
                 RegularView(
                     selectedSidebarItem: $selectedSidebarItem,
                     homeViewModel: vmStoreOwner.instance,
-                    readerModeViewModel: readerModeVmStoreOwner.instance
+                    readerModeViewModel: readerModeVmStoreOwner.instance,
+                    onOpenAudioEpisode: openAudioEpisode
                 )
             }
         }
@@ -111,6 +120,9 @@ struct ContentView: View {
                         .padding(.vertical, 10)
                         .background(.regularMaterial, in: Capsule())
                         .padding(.bottom, 18)
+                        .onTapGesture {
+                            appState.e2eSeedMessage = nil
+                        }
                         .accessibilityIdentifier(
                             e2eSeedMessage == "E2E seed complete" ? "e2e_seed_complete" : "e2e_seed_error"
                         )
@@ -142,6 +154,45 @@ struct ContentView: View {
             }
         default:
             break
+        }
+    }
+
+    private func openAudioEpisode(_ episode: AudioEpisode) {
+        guard !openingAudioEpisode else { return }
+        openingAudioEpisode = true
+        Task { @MainActor in
+            defer { openingAudioEpisode = false }
+            do {
+                let info = try await readerModeVmStoreOwner.instance.getAudioEpisodeReaderInfo(
+                    feedItemId: FeedItemId(id: episode.itemId)
+                )
+                guard audioPlayback.episode?.itemId == episode.itemId else { return }
+                guard let info else {
+                    appState.emitGenericError()
+                    return
+                }
+                let openMode = browserSelector.resolvedOpenMode(for: info)
+                switch openMode {
+                case .fullArticle, .feedContent:
+                    readerModeVmStoreOwner.instance.loadReaderContent(urlInfo: info)
+                    appState.navigate(route: CommonViewRoute.readerMode)
+                default:
+                    guard let url = URL(string: info.url) else {
+                        appState.emitGenericError()
+                        return
+                    }
+                    if openMode == .internalBrowser || browserSelector.openInAppBrowser(),
+                       browserSelector.isValidForInAppBrowser(url) {
+                        appState.openInAppBrowser(url: url)
+                    } else {
+                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: info.url))
+                    }
+                }
+            } catch is CancellationError {
+                return
+            } catch {
+                appState.emitGenericError()
+            }
         }
     }
 

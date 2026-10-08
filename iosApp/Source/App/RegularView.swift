@@ -40,6 +40,7 @@ struct RegularView: View {
     @State private var indexHolder: HomeListIndexHolder
     let homeViewModel: HomeViewModel
     let readerModeViewModel: ReaderModeViewModel
+    let onOpenAudioEpisode: (AudioEpisode) -> Void
 
     @State private var showEditFeedSheet = false
     @State private var feedSourceToEdit: FeedSource?
@@ -51,7 +52,8 @@ struct RegularView: View {
     init(
         selectedSidebarItem: Binding<SidebarSelection?>,
         homeViewModel: HomeViewModel,
-        readerModeViewModel: ReaderModeViewModel
+        readerModeViewModel: ReaderModeViewModel,
+        onOpenAudioEpisode: @escaping (AudioEpisode) -> Void
     ) {
         _selectedSidebarItem = selectedSidebarItem
         _indexHolder = State(initialValue: HomeListIndexHolder(homeViewModel: homeViewModel))
@@ -61,6 +63,7 @@ struct RegularView: View {
         } ?? .automatic)
         self.homeViewModel = homeViewModel
         self.readerModeViewModel = readerModeViewModel
+        self.onOpenAudioEpisode = onOpenAudioEpisode
     }
 
     var body: some View {
@@ -157,6 +160,7 @@ struct RegularView: View {
                         selectedSidebarItem = sidebarSelection(from: feedFilter)
                     }
                 )
+                .modifier(NowPlayingAccessoryModifier(onOpenEpisode: onOpenAudioEpisode))
                 .environment(indexHolder)
                 .environment(appState)
                 .environment(browserSelector)
@@ -285,6 +289,7 @@ struct RegularView: View {
                     .navigationBarBackButtonHidden(true)
             }
         }
+        .modifier(NowPlayingAccessoryModifier(route: route, onOpenEpisode: onOpenAudioEpisode))
         .environment(appState)
         .environment(browserSelector)
         .onAppear {

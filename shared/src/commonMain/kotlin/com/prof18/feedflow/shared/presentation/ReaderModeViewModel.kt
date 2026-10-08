@@ -81,6 +81,9 @@ class ReaderModeViewModel internal constructor(
         }
     }
 
+    suspend fun getAudioEpisodeReaderInfo(feedItemId: FeedItemId): FeedItemUrlInfo? =
+        databaseHelper.getFeedItemUrlInfo(feedItemId.id)
+
     fun clearSelection() {
         currentArticleMutableState.value = null
     }
@@ -198,6 +201,8 @@ class ReaderModeViewModel internal constructor(
         shownContentSource = shownContentSource,
         canToggleContentSource = canToggleContentSource,
         siteName = databaseHelper.getFeedItemUrlInfo(urlInfo.id)?.feedSourceTitle ?: urlInfo.feedSourceTitle,
+        audioUrl = databaseHelper.getFeedItemAudioUrl(urlInfo.id),
+        audioImageUrl = databaseHelper.getFeedItemAudioArtwork(urlInfo.id),
     )
 
     private suspend fun readerImageUrl(urlInfo: FeedItemUrlInfo, source: ShownContentSource): String? {

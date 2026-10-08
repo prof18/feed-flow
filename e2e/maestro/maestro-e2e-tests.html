@@ -247,7 +247,7 @@
     <section class="summary" aria-label="Summary">
       <div class="metric"><strong id="total-count">0</strong><span>automated flow files</span></div>
       <div class="metric"><strong>13</strong><span>smoke coverage IDs</span></div>
-      <div class="metric"><strong>69</strong><span>regression coverage IDs</span></div>
+      <div class="metric"><strong>73</strong><span>regression coverage IDs</span></div>
     </section>
 
     <div class="toolbar">
@@ -334,6 +334,9 @@
       "android/regression/170-force-english.yaml",
       "android/regression/171-search-reader-navigation.yaml",
       "android/regression/172-sidebar-visibility-persistence.yaml",
+      "android/regression/173-podcast-audio-banner.yaml",
+      "android/regression/174-podcast-audio-playback.yaml",
+      "android/regression/175-now-playing-navigation.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -413,6 +416,9 @@
       "ios/regression/167-scroll-read-auto-hide.yaml",
       "ios/regression/168-mark-read-filter-boundaries.yaml",
       "ios/regression/172-sidebar-visibility-persistence.yaml",
+      "ios/regression/173-podcast-audio-banner.yaml",
+      "ios/regression/174-podcast-audio-playback.yaml",
+      "ios/regression/175-now-playing-navigation.yaml",
       "ios/smoke/001-first-launch-empty.yaml",
       "ios/smoke/002-seeded-timeline-loads.yaml",
       "ios/smoke/003-library-filters.yaml",
@@ -522,7 +528,10 @@
       "regression/169": "Toolbar and footer confirm before marking saved articles read; cancellation preserves state and unbookmarked articles stay unread.",
       "regression/170": "Force English on Android updates labels, persists across a restart, and can be disabled. iOS uses the system per-app language setting.",
       "regression/171": "Cached search reader follows result order and boundaries, preserves results on return, and restores Home timeline navigation after leaving Search.",
-      "regression/172": "Opt-in tablet/iPad check: closed and open sidebars survive app termination and relaunch (-e LARGE_SCREEN=true)."
+      "regression/172": "Opt-in tablet/iPad check: closed and open sidebars survive app termination and relaunch (-e LARGE_SCREEN=true).",
+      "regression/173": "Audio badge, Play audio and external-opening actions; navigating to a plain article clears its audio card. Passed on Pixel and iPhone 17 Pro simulator, 2026-10-04.",
+      "regression/174": "Local WAV playback, pause/resume, speed selection, seek, close/reopen position retention, and active episode persistence across article navigation, using adb reverse on Android and simulator loopback on iOS. Android also checks the native media notification, its pause button, and the reader overflow menu while playback controls are open. iOS verifies the card's Pause audio state when returning to the playing episode. Passed on Pixel and iPhone 17 Pro simulator, 2026-10-06.",
+      "regression/175": "Compact active-episode indicator on timeline and search, mini play/pause, direct episode return from another article and search in feed-content mode, position retention, no duplicate indicator in the reader, and removal after closing playback. Global/per-feed browser-mode resolution is covered by shared tests; browser return and app handoff need manual validation because the seeded article URL is remote and browser UI varies by platform. Passed on Pixel and iPhone 17 Pro Simulator on 2026-10-08, including Android reader Back and iOS search with the keyboard visible."
     };
 
     const sections = document.querySelector("#sections");

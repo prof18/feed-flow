@@ -69,6 +69,21 @@ Supported profiles:
 - `reorder-drag`
 - `feed-content`
 - `rtl-content`
+- `audio-episode`
+
+`audio-episode` adds an audio episode and a plain control article above the existing content-rich items.
+Both open from stored feed content. Feed source and unread indicators are hidden so the flow exercises
+the independent audio badge. REG-173 uses the seed's inert enclosure URL; REG-174 overrides it with a
+local WAV URL supplied by `e2e/scripts/run-audio-playback.sh`.
+
+The focused playback runner starts `e2e/scripts/serve-audio-fixture.py` on an ephemeral port and
+passes the URL to Maestro as `AUDIO_URL`. The local server supports HTTP byte ranges for native
+players. On Android, the runner targets the first device from `adb devices` and maps its localhost
+to the host server with `adb reverse`. iOS Simulator reaches the server at `127.0.0.1`. Runner logs
+remain under `.tmp/audio-playback/` for diagnostics.
+
+`e2e/scripts/run-audio-playback.sh android 175-now-playing-navigation` (or `ios`) runs
+the focused compact-player navigation flow with the same local fixture and development-feed restoration.
 
 Seed deep links:
 
@@ -85,6 +100,9 @@ The stable completion marker is:
 
 - visible text: `E2E seed complete`
 - accessibility id: `e2e_seed_complete`
+
+On iOS, tap the completion marker after asserting it when testing bottom controls. This dismisses
+the debug-only status banner so it cannot intercept playback-indicator taps.
 
 ## Seeding In Flows
 

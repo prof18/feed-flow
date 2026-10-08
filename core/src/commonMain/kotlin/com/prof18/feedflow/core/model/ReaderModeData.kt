@@ -14,4 +14,6 @@ data class ReaderModeData(
     val shownContentSource: ShownContentSource = ShownContentSource.WEB,
     val canToggleContentSource: Boolean = false,
     val siteName: String? = null,
+    val audioUrl: String? = null,
+    val audioImageUrl: String? = null,
 )

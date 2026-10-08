@@ -33,6 +33,7 @@ class FeedbinV2Resource {
         val read: Boolean? = null,
         val starred: Boolean? = null,
         val per_page: Int? = null,
+        val include_enclosure: Boolean? = null,
     )
 
     @Resource("entries")

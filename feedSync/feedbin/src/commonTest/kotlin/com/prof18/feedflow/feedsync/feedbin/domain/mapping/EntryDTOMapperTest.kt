@@ -9,6 +9,8 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.feedsync.feedbin.data.dto.EntryDTO
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -62,6 +64,56 @@ class EntryDTOMapperTest {
         assertEquals(false, result.isBookmarked)
         assertEquals("formatted-date", result.dateString)
         assertEquals(Instant.parse(published).toEpochMilliseconds() / 1000, dateFormatter.lastMillis)
+    }
+
+    @Test
+    fun `wire enclosure keys deserialize and map audio while preserving article url`() {
+        val entryDTO = Json.decodeFromString<EntryDTO>(ENTRY_WITH_ENCLOSURE_JSON)
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertEquals("https://example.com/article", result.url)
+        assertEquals("https://cdn.example.com/episode?signature=a%2Fb", result.audioUrl)
+    }
+
+    @Test
+    fun `absent and null wire enclosures deserialize without audio`() {
+        val enclosureProperty = Regex(
+            """,\s*"enclosure"\s*:\s*\{.*?\}""",
+            RegexOption.DOT_MATCHES_ALL,
+        )
+        val absentEnclosureJson = ENTRY_WITH_ENCLOSURE_JSON.replace(enclosureProperty, "")
+        val nullEnclosureJson = ENTRY_WITH_ENCLOSURE_JSON.replace(
+            Regex(""""enclosure"\s*:\s*\{.*?\}""", RegexOption.DOT_MATCHES_ALL),
+            "\"enclosure\": null",
+        )
+        val absentEnclosure = Json.decodeFromString<EntryDTO>(absentEnclosureJson)
+        val nullEnclosure = Json.decodeFromString<EntryDTO>(nullEnclosureJson)
+
+        assertNull(absentEnclosure.enclosure)
+        assertNull(nullEnclosure.enclosure)
+        assertNull(mapper.mapToFeedItem(absentEnclosure, feedSource, false, false).audioUrl)
+        assertNull(mapper.mapToFeedItem(nullEnclosure, feedSource, false, false).audioUrl)
+    }
+
+    @Test
+    fun `declared image and video enclosures do not become audio`() {
+        for (mimeType in listOf("image/jpeg", "video/mp4")) {
+            val entry = createEntryDTO(
+                id = 42,
+                published = "2023-11-14T10:00:00Z",
+                summary = "Summary",
+                content = null,
+            ).copy(
+                enclosure = EntryDTO.Enclosure(url = "https://example.com/episode.mp3", type = mimeType),
+            )
+            assertNull(mapper.mapToFeedItem(entry, feedSource, false, false).audioUrl)
+        }
     }
 
     @Test
@@ -219,6 +271,27 @@ class EntryDTOMapperTest {
         published = published,
         createdAt = "2023-11-14T10:00:00Z",
     )
+
+    private companion object {
+        const val ENTRY_WITH_ENCLOSURE_JSON = """
+            {
+              "id": 42,
+              "feed_id": 20,
+              "title": "Episode title",
+              "author": "Podcast host",
+              "content": "<p>Episode notes</p>",
+              "summary": "Summary",
+              "url": "https://example.com/article",
+              "extracted_content_url": null,
+              "published": "2023-11-14T10:00:00Z",
+              "created_at": "2023-11-14T10:00:00Z",
+              "enclosure": {
+                "enclosure_url": "https://cdn.example.com/episode?signature=a%2Fb",
+                "enclosure_type": "audio/mpeg"
+              }
+            }
+        """
+    }
 
     private class FakeHtmlParser : HtmlParser {
         override fun getTextFromHTML(html: String): String? = "Parsed Summary"

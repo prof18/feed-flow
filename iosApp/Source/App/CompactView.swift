@@ -41,6 +41,7 @@ struct CompactView: View {
     @State private var indexHolder: HomeListIndexHolder
     let homeViewModel: HomeViewModel
     let readerModeViewModel: ReaderModeViewModel
+    let onOpenAudioEpisode: (AudioEpisode) -> Void
 
     @State private var feedSourceToEdit: FeedSource?
 
@@ -50,12 +51,14 @@ struct CompactView: View {
     init(
         selectedSidebarItem: Binding<SidebarSelection?>,
         homeViewModel: HomeViewModel,
-        readerModeViewModel: ReaderModeViewModel
+        readerModeViewModel: ReaderModeViewModel,
+        onOpenAudioEpisode: @escaping (AudioEpisode) -> Void
     ) {
         _selectedSidebarItem = selectedSidebarItem
         _indexHolder = State(initialValue: HomeListIndexHolder(homeViewModel: homeViewModel))
         self.homeViewModel = homeViewModel
         self.readerModeViewModel = readerModeViewModel
+        self.onOpenAudioEpisode = onOpenAudioEpisode
     }
 
     var body: some View {
@@ -63,6 +66,7 @@ struct CompactView: View {
 
         NavigationStack(path: $appState.compactNavigationPath) {
             sidebar
+                .modifier(NowPlayingAccessoryModifier(onOpenEpisode: onOpenAudioEpisode))
                 .navigationDestination(for: CompactViewRoute.self) { route in
                     switch route {
                     case .feed:
@@ -171,6 +175,7 @@ struct CompactView: View {
                 selectedSidebarItem = sidebarSelection(from: feedFilter)
             }
         )
+        .modifier(NowPlayingAccessoryModifier(onOpenEpisode: onOpenAudioEpisode))
         .environment(indexHolder)
         .environment(appState)
         .environment(browserSelector)
@@ -283,6 +288,7 @@ struct CompactView: View {
                     .navigationBarBackButtonHidden(true)
             }
         }
+        .modifier(NowPlayingAccessoryModifier(route: route, onOpenEpisode: onOpenAudioEpisode))
         .environment(appState)
         .environment(browserSelector)
         .onAppear {

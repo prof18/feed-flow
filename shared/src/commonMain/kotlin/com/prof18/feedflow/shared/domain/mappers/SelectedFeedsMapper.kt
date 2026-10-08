@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.mappers
 
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -67,5 +68,6 @@ internal fun SelectFeeds.toFeedItem(
         isRead = is_read,
         commentsUrl = comments_url?.let { sanitizeUrl(it) },
         isBookmarked = is_bookmarked,
+        audioUrl = AudioEnclosure.validatedUrl(audio_url),
     )
 }

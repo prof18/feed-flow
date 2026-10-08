@@ -18,4 +18,5 @@ data class FeedItem(
     val commentsUrl: String?,
     val isBookmarked: Boolean,
     val contentDirection: ContentDirection? = null,
+    val audioUrl: String? = null,
 )

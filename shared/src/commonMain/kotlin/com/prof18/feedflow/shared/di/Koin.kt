@@ -27,6 +27,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DateFormatterImpl
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.KsoupHtmlParser
+import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryImpl
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetcher
@@ -316,6 +317,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             settings = get(),
         )
     }
+
+    single { AudioPlaybackPositionRepository(settings = get()) }
 
     single {
         FeedAppearanceSettingsRepository(
@@ -628,6 +631,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             googleDriveSettings = get(),
             icloudSettings = get(),
             networkSettings = get(),
+            audioPositions = get(),
         )
     }
 

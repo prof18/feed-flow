@@ -427,4 +427,18 @@
     <string name="remove_bookmark_dialog_message">Bạn có chắc muốn xóa bài viết này khỏi mục Đã lưu?</string>
     <string name="settings_force_english">Luôn dùng Tiếng Anh</string>
     <string name="settings_force_english_description">Dùng tiếng Anh cho giao diện ứng dụng thay vì ngôn ngữ của thiết bị.</string>
+    <string name="widget_preview_info">Về bản xem trước này</string>
+    <string name="widget_sync_disabled">Tắt cập nhật tự động</string>
+    <string name="widget_enable_sync">Bật đồng bộ</string>
+    <string name="widget_sync_settings_action">Thay đổi</string>
+    <string name="widget_content_section_title">Nội dung</string>
+    <string name="widget_content_choose">Chọn nội dung</string>
+    <string name="widget_content_timeline_description">Bài viết chưa đọc từ tất cả các nguồn tin</string>
+    <string name="widget_content_bookmarks_description">Những bài viết đã lưu của bạn</string>
+    <string name="widget_content_no_categories">Chưa có danh mục nào. Hãy tạo một danh mục trong FeedFlow để sử dụng ở đây.</string>
+    <string name="widget_content_category">Danh mục</string>
+    <string name="widget_content_feed_source">Nguồn tin</string>
+    <string name="widget_list_item_title">Widget %s</string>
+    <string name="widget_list_item_description">Widget %s · %s</string>
+    <string name="widget_list_empty">Chưa thêm widget nào. Thêm widget FeedFlow từ trình launcher của bạn.</string>
 </resources>

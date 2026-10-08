@@ -235,13 +235,17 @@ class AndroidAudioPlayer(
     internal fun detach(expectedPlayer: Player? = player) {
         if (player !== expectedPlayer) return
         savePosition()
+        cancelSpeechPreparation()
         ticker?.cancel()
         ticker = null
         listener?.let { player?.removeListener(it) }
         listener = null
+        player?.clearMediaItems()
         player = null
         pendingEpisode = null
         mutableState.value = AudioPlaybackState(playbackSpeed = selectedSpeed)
+        clearSpeechFile()
+        speechRequest = null
     }
 
     private fun preparePendingEpisode() {

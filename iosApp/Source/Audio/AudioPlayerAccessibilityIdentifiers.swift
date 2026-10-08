@@ -8,6 +8,8 @@ enum AudioPlayerAccessibilityIdentifiers {
     static let close = "audio_close_player"
     static let seek = "audio_seek"
     static let position = "audio_position"
+    static let duration = "audio_duration"
+    static let retrySpeech = "audio_retry_speech"
     static let external = "reader_audio_player_external"
     static let speed = "audio_playback_speed"
     static let nowPlaying = "audio_now_playing"

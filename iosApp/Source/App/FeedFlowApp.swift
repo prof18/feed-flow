@@ -29,7 +29,10 @@ struct FeedFlowApp: App {
         _audioPlayback = State(initialValue: AudioPlaybackController(
             positionStore: RepositoryAudioPlaybackPositionStore(
                 repository: Deps.shared.getAudioPlaybackPositionRepository()
-            )
+            ),
+            speechText: { title, content in
+                try await Deps.shared.getReaderSpeechText().segments(title: title, content: content)
+            }
         ))
 
         if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {

@@ -440,7 +440,11 @@ def run_flows(
                 ]
             else:
                 args = ["maestro", "--platform", "android", "test", str(relative_flow)]
-            if flow_path.name in {"174-podcast-audio-playback.yaml", "175-now-playing-navigation.yaml"}:
+            if flow_path.name in {
+                "174-podcast-audio-playback.yaml",
+                "175-now-playing-navigation.yaml",
+                "176-reader-speech-playback.yaml",
+            }:
                 args = ["bash", "e2e/scripts/run-audio-playback.sh", platform, flow_path.stem]
             command_result = run_maestro_command(
                 f"{platform} {suite} {flow_path.name}",

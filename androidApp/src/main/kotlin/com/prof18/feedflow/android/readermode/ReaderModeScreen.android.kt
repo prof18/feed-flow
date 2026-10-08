@@ -221,6 +221,11 @@ internal fun ReaderModeScreen(
                         },
                         onBookmarkClick = onBookmarkClick,
                         onToggleContentSource = onToggleContentSource,
+                        onListenClick = {
+                            playReaderSpeech(readerModeState, audioPlayer, strings.audioEpisodeUntitled)
+                        },
+                        isPreparingSpeech = audioPlayer.isPreparingSpeechFor(readerModeState, audioState),
+                        isSpeechPlaying = audioPlayer.isSpeechPlayingFor(readerModeState, audioState),
                         canNavigatePrevious = canNavigatePrevious,
                         canNavigateNext = canNavigateNext,
                         onNavigateToPrevious = onNavigateToPrevious,
@@ -302,6 +307,24 @@ internal fun ReaderModeScreen(
         }
     }
 }
+
+private fun playReaderSpeech(
+    state: ReaderModeState,
+    player: AndroidAudioPlayer,
+    untitledTitle: String,
+) {
+    val article = (state as? ReaderModeState.Success)?.readerModeData ?: return
+    player.playReaderSpeech(article, untitledTitle)
+}
+
+private fun AndroidAudioPlayer.isSpeechFor(state: ReaderModeState): Boolean =
+    (state as? ReaderModeState.Success)?.readerModeData?.let(::isSpeechFor) == true
+
+private fun AndroidAudioPlayer.isPreparingSpeechFor(state: ReaderModeState, playback: AudioPlaybackState): Boolean =
+    playback.isPreparingSpeech && isSpeechFor(state)
+
+private fun AndroidAudioPlayer.isSpeechPlayingFor(state: ReaderModeState, playback: AudioPlaybackState): Boolean =
+    playback.isPlaying && isSpeechFor(state)
 
 @Composable
 private fun ReaderContentUnavailable(modifier: Modifier = Modifier) {

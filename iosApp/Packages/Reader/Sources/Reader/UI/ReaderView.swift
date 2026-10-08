@@ -13,6 +13,9 @@ public struct ReaderViewActions {
     public let onNavigateToNext: (() -> Void)?
     public let onNavigateToPrevious: (() -> Void)?
     public let onToggleContentSource: (() -> Void)?
+    public let onToggleSpeech: (() -> Void)?
+    public let isPreparingSpeech: Bool
+    public let isSpeechPlaying: Bool
     public let isShowingFeedContent: Bool
     public let hasUrl: Bool
 
@@ -28,6 +31,9 @@ public struct ReaderViewActions {
         onNavigateToNext: (() -> Void)? = nil,
         onNavigateToPrevious: (() -> Void)? = nil,
         onToggleContentSource: (() -> Void)? = nil,
+        onToggleSpeech: (() -> Void)? = nil,
+        isPreparingSpeech: Bool = false,
+        isSpeechPlaying: Bool = false,
         isShowingFeedContent: Bool = false,
         hasUrl: Bool = true
     ) {
@@ -42,6 +48,9 @@ public struct ReaderViewActions {
         self.onNavigateToNext = onNavigateToNext
         self.onNavigateToPrevious = onNavigateToPrevious
         self.onToggleContentSource = onToggleContentSource
+        self.onToggleSpeech = onToggleSpeech
+        self.isPreparingSpeech = isPreparingSpeech
+        self.isSpeechPlaying = isSpeechPlaying
         self.isShowingFeedContent = isShowingFeedContent
         self.hasUrl = hasUrl
     }
@@ -306,6 +315,19 @@ public struct ReaderView<BottomAccessory: View>: View {
                 }
 
                 if case .extractedContent = readerStatus {
+                    if let onToggleSpeech = actions.onToggleSpeech {
+                        Button {
+                            onToggleSpeech()
+                        } label: {
+                            Label(
+                                speechActionTitle,
+                                systemImage: actions.isSpeechPlaying ? "pause.fill" : "headphones"
+                            )
+                        }
+                        .disabled(actions.isPreparingSpeech)
+                        .accessibilityIdentifier(ReaderAccessibilityIdentifiers.ttsButton)
+                    }
+
                     Button {
                         actions.onFontSizeMenuToggle()
                     } label: {
@@ -373,6 +395,19 @@ public struct ReaderView<BottomAccessory: View>: View {
                 }
 
                 if case .extractedContent = readerStatus {
+                    if let onToggleSpeech = actions.onToggleSpeech {
+                        Button {
+                            onToggleSpeech()
+                        } label: {
+                            Label(
+                                speechActionTitle,
+                                systemImage: actions.isSpeechPlaying ? "pause.fill" : "headphones"
+                            )
+                        }
+                        .disabled(actions.isPreparingSpeech)
+                        .accessibilityIdentifier(ReaderAccessibilityIdentifiers.ttsButton)
+                    }
+
                     Button {
                         actions.onFontSizeMenuToggle()
                     } label: {
@@ -409,6 +444,13 @@ public struct ReaderView<BottomAccessory: View>: View {
             get: { actions.isShowingFeedContent },
             set: { _ in onToggle() }
         )
+    }
+
+    private var speechActionTitle: String {
+        if actions.isPreparingSpeech {
+            return actions.strings.ttsPreparing
+        }
+        return actions.isSpeechPlaying ? actions.strings.ttsStop : actions.strings.ttsListen
     }
 
     @ViewBuilder

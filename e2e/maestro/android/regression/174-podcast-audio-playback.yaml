@@ -11,26 +11,30 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: article_row_e2e_audio_episode
 - assertVisible:
-    id: reader_play_audio
+    text: "^Play audio: E2E Audio Episode: Language Notes$"
 - tapOn:
-    id: reader_play_audio
+    text: "^Play audio: E2E Audio Episode: Language Notes$"
 - extendedWaitUntil:
     visible:
       id: audio_player
     timeout: 10000
 - assertVisible:
     id: audio_pause
+- pressKey: Home
 - swipe:
-    start: 50%, 1%
+    start: 50%, 0%
     end: 50%, 60%
     duration: 500
 - extendedWaitUntil:
-    visible: "E2E Audio Episode.*"
+    visible:
+      id: com.android.systemui:id/actionPlayPause
     timeout: 10000
 - takeScreenshot: .tmp/audio-playback/android-media-notification
 - tapOn:
     id: com.android.systemui:id/actionPlayPause
 - pressKey: Back
+- launchApp:
+    stopApp: false
 - assertVisible:
     id: audio_play
 - tapOn:
@@ -82,7 +86,7 @@ appId: com.prof18.feedflow.debug
 - assertNotVisible:
     id: audio_player
 - tapOn:
-    id: reader_play_audio
+    text: "^Play audio: E2E Audio Episode: Language Notes$"
 - assertVisible:
     id: audio_player
 - assertVisible:

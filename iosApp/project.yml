@@ -420,6 +420,15 @@ targets:
       - path: Source/Audio/AudioPlaybackProgress.swift
       - path: Source/Audio/AudioPlaybackController.swift
       - path: Source/Audio/AudioPlaybackController+System.swift
+      - path: Source/Audio/AudioSourceKind.swift
+      - path: Source/Audio/SpeechPlaybackRequest.swift
+      - path: Source/Audio/SpeechAudioGenerating.swift
+      - path: Source/Audio/SpeechAudioGenerationError.swift
+      - path: Source/Audio/SpeechAudioGenerator.swift
+      - path: Source/Audio/SpeechSynthesizerDriving.swift
+      - path: Source/Audio/SpeechAudioWriting.swift
+      - path: Source/Audio/NativeSpeechSynthesizer.swift
+      - path: Source/Audio/NativeSpeechAudioWriter.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.AudioPlaybackTests

@@ -7,12 +7,12 @@ PLATFORM="${1:-}"
 FLOW_NAME="${2:-174-podcast-audio-playback}"
 
 if [[ "$PLATFORM" != android && "$PLATFORM" != ios ]]; then
-  echo "Usage: $0 android|ios [174-podcast-audio-playback|175-now-playing-navigation]" >&2
+  echo "Usage: $0 android|ios [174-podcast-audio-playback|175-now-playing-navigation|176-reader-speech-playback]" >&2
   exit 2
 fi
 
 case "$FLOW_NAME" in
-  174-podcast-audio-playback|175-now-playing-navigation) ;;
+  174-podcast-audio-playback|175-now-playing-navigation|176-reader-speech-playback) ;;
   *) echo "Unknown audio flow: $FLOW_NAME" >&2; exit 2 ;;
 esac
 
@@ -27,7 +27,7 @@ SERVER_LOG="$TEMP_DIR/server.log"
 SERVER_PID=""
 MAESTRO_PID=""
 MAESTRO_STARTED=false
-ANDROID_SERIAL=""
+ANDROID_SERIAL="${ANDROID_SERIAL:-}"
 ANDROID_REVERSE_ACTIVE=false
 PORT=""
 
@@ -51,7 +51,15 @@ cleanup() {
       feedflow-restore-dev-feeds --platform ios --simulator "$SIMULATOR_UDID" || \
         echo "Warning: development-feed restore failed; run feedflow-restore-dev-feeds --platform ios --simulator $SIMULATOR_UDID manually." >&2
     else
-      feedflow-restore-dev-feeds --platform android || \
+      (
+        export FEEDFLOW_AUDIO_MAESTRO_BIN="$(command -v maestro)"
+        export FEEDFLOW_AUDIO_ANDROID_SERIAL="$ANDROID_SERIAL"
+        maestro() {
+          "$FEEDFLOW_AUDIO_MAESTRO_BIN" --device "$FEEDFLOW_AUDIO_ANDROID_SERIAL" "$@"
+        }
+        export -f maestro
+        feedflow-restore-dev-feeds --platform android
+      ) || \
         echo "Warning: development-feed restore failed; run feedflow-restore-dev-feeds --platform android manually." >&2
     fi
   elif [[ "$MAESTRO_STARTED" == true ]]; then
@@ -80,7 +88,7 @@ fi
 PORT="$(cat "$PORT_FILE")"
 case "$PLATFORM" in
   android)
-    ANDROID_SERIAL="$(adb devices | awk 'NR > 1 && $2 == "device" { print $1; exit }')"
+    ANDROID_SERIAL="${ANDROID_SERIAL:-$(adb devices | awk 'NR > 1 && $2 == "device" { print $1; exit }')}"
     [[ -n "$ANDROID_SERIAL" ]] || { echo "No Android device or emulator is connected" >&2; exit 1; }
     adb -s "$ANDROID_SERIAL" reverse "tcp:$PORT" "tcp:$PORT"
     ANDROID_REVERSE_ACTIVE=true

@@ -247,7 +247,7 @@
     <section class="summary" aria-label="Summary">
       <div class="metric"><strong id="total-count">0</strong><span>automated flow files</span></div>
       <div class="metric"><strong>13</strong><span>smoke coverage IDs</span></div>
-      <div class="metric"><strong>73</strong><span>regression coverage IDs</span></div>
+      <div class="metric"><strong>74</strong><span>regression coverage IDs</span></div>
     </section>
 
     <div class="toolbar">
@@ -337,6 +337,7 @@
       "android/regression/173-podcast-audio-banner.yaml",
       "android/regression/174-podcast-audio-playback.yaml",
       "android/regression/175-now-playing-navigation.yaml",
+      "android/regression/176-reader-speech-playback.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -419,6 +420,7 @@
       "ios/regression/173-podcast-audio-banner.yaml",
       "ios/regression/174-podcast-audio-playback.yaml",
       "ios/regression/175-now-playing-navigation.yaml",
+      "ios/regression/176-reader-speech-playback.yaml",
       "ios/smoke/001-first-launch-empty.yaml",
       "ios/smoke/002-seeded-timeline-loads.yaml",
       "ios/smoke/003-library-filters.yaml",
@@ -456,7 +458,7 @@
       "smoke/004": "Article open, read state, bookmark state, and filtered lists.",
       "smoke/005": "Mark all as read confirmation and movement into the Read filter.",
       "smoke/006": "Core search plus All, Read, and Bookmarks filters.",
-      "smoke/007": "Reader mode open, next article, more menu, and Text Settings sheet.",
+      "smoke/007": "Reader mode open, Listen on both successful cached articles (including Android overflow), next article, more menu, and Text Settings sheet.",
       "smoke/008": "Feed settings, hide, pin, category change, and save behavior.",
       "smoke/009": "Feed list layout, image visibility, and ordering persistence.",
       "smoke/010": "Reader mode, show-read, and auto-hide-read settings persistence.",
@@ -523,6 +525,7 @@
       "regression/160": "Switching between cached web and RSS content preserves the reader Back destination; Android also checks the toolbar toggle in both states and captures screenshots.",
       "regression/162": "Pagination keeps loading pages while mark-as-read-on-scroll flushes scrolled-past items (issue #1319).",
       "regression/164": "A drag over the timeline neither opens the drawer nor falls through to the article, and drag-to-close still works once it is open.",
+      "regression/165": "iOS reader retains its tail position and Listen action after backgrounding and returning to the foreground.",
       "regression/167": "With scroll marking and saved auto-hide on, earlier articles remain reachable in the current list while the next page still loads.",
       "regression/168": "Mark-all-above/below from Bookmarks moves the bookmarked unread item to Read and keeps unbookmarked boundary articles unread on Timeline.",
       "regression/169": "Toolbar and footer confirm before marking saved articles read; cancellation preserves state and unbookmarked articles stay unread.",
@@ -531,7 +534,8 @@
       "regression/172": "Opt-in tablet/iPad check: closed and open sidebars survive app termination and relaunch (-e LARGE_SCREEN=true).",
       "regression/173": "Audio badge, Play audio and external-opening actions; navigating to a plain article clears its audio card. Passed on Pixel and iPhone 17 Pro simulator, 2026-10-04.",
       "regression/174": "Local WAV playback, pause/resume, speed selection, seek, close/reopen position retention, and active episode persistence across article navigation, using adb reverse on Android and simulator loopback on iOS. Android also checks the native media notification, its pause button, and the reader overflow menu while playback controls are open. iOS verifies the card's Pause audio state when returning to the playing episode. Passed on Pixel and iPhone 17 Pro simulator, 2026-10-06.",
-      "regression/175": "Compact active-episode indicator on timeline and search, mini play/pause, direct episode return from another article and search in feed-content mode, position retention, no duplicate indicator in the reader, and removal after closing playback. Global/per-feed browser-mode resolution is covered by shared tests; browser return and app handoff need manual validation because the seeded article URL is remote and browser UI varies by platform. Passed on Pixel and iPhone 17 Pro Simulator on 2026-10-08, including Android reader Back and iOS search with the keyboard visible."
+      "regression/175": "Compact active-episode indicator on timeline and search, mini play/pause, direct episode return from another article and search in feed-content mode, position retention, no duplicate indicator in the reader, and removal after closing playback. Global/per-feed browser-mode resolution is covered by shared tests; browser return and app handoff need manual validation because the seeded article URL is remote and browser UI varies by platform. Passed on Pixel and iPhone 17 Pro Simulator on 2026-10-08, including Android reader Back and iOS search with the keyboard visible.",
+      "regression/176": "Implemented automated coverage: generate speech from the seeded article, wait for nonzero player duration, pause and seek, change speed, switch between speech and the seeded podcast and back while retaining speech position, background/foreground the app, and close the player. Maestro verifies visible player state; it does not prove audible output, system media controls, or temporary-file cleanup."
     };
 
     const sections = document.querySelector("#sections");

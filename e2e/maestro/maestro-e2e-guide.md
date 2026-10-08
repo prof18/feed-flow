@@ -73,8 +73,10 @@ Supported profiles:
 
 `audio-episode` adds an audio episode and a plain control article above the existing content-rich items.
 Both open from stored feed content. Feed source and unread indicators are hidden so the flow exercises
-the independent audio badge. REG-173 uses the seed's inert enclosure URL; REG-174 overrides it with a
-local WAV URL supplied by `e2e/scripts/run-audio-playback.sh`.
+the independent audio badge. REG-173 uses the seed's inert enclosure URL; REG-174 and REG-176 use the
+local WAV URL supplied by `e2e/scripts/run-audio-playback.sh`. REG-176 generates speech from the
+seeded article and uses the podcast player to check visible duration, pause/seek/speed, source switching,
+position retention, background/foreground return, and close behavior.
 
 The focused playback runner starts `e2e/scripts/serve-audio-fixture.py` on an ephemeral port and
 passes the URL to Maestro as `AUDIO_URL`. The local server supports HTTP byte ranges for native
@@ -84,6 +86,9 @@ remain under `.tmp/audio-playback/` for diagnostics.
 
 `e2e/scripts/run-audio-playback.sh android 175-now-playing-navigation` (or `ios`) runs
 the focused compact-player navigation flow with the same local fixture and development-feed restoration.
+Use `e2e/scripts/run-audio-playback.sh android 176-reader-speech-playback` or the corresponding `ios`
+command for speech playback coverage. Android uses the first connected device by default; set
+`ANDROID_SERIAL=<device-serial>` to target a specific connected device.
 
 Seed deep links:
 

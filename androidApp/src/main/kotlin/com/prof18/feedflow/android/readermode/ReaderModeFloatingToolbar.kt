@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.MoreVert
@@ -91,6 +92,22 @@ private fun contentSourceToolbarAction(
     onClick = onClick,
 )
 
+private fun speechToolbarAction(
+    isPreparingSpeech: Boolean,
+    isSpeechPlaying: Boolean,
+    strings: FeedFlowStrings,
+    onClick: () -> Unit,
+) = ToolbarAction(
+    icon = Icons.Default.Headphones,
+    label = when {
+        isPreparingSpeech -> strings.readerModeTtsPreparing
+        isSpeechPlaying -> strings.audioPause
+        else -> strings.readerModeTtsListen
+    },
+    testTag = ReaderModeE2eIds.TTS_BUTTON,
+    onClick = onClick,
+)
+
 @Composable
 fun ReaderModeFloatingToolbar(
     readerModeState: ReaderModeState,
@@ -106,6 +123,9 @@ fun ReaderModeFloatingToolbar(
     onArchiveClick: (String) -> Unit,
     onCommentsClick: (String) -> Unit,
     onToggleContentSource: () -> Unit,
+    onListenClick: () -> Unit,
+    isPreparingSpeech: Boolean,
+    isSpeechPlaying: Boolean,
     onFontSizeChange: (Int) -> Unit,
     lineHeight: Int,
     onLineHeightChange: (Int) -> Unit,
@@ -135,6 +155,7 @@ fun ReaderModeFloatingToolbar(
     val latestOnArchiveClick by rememberUpdatedState(onArchiveClick)
     val latestOnCommentsClick by rememberUpdatedState(onCommentsClick)
     val latestOnToggleContentSource by rememberUpdatedState(onToggleContentSource)
+    val latestOnListenClick by rememberUpdatedState(onListenClick)
     var isBookmarked by remember(readerModeState) {
         mutableStateOf(readerModeState.getIsBookmarked)
     }
@@ -187,6 +208,8 @@ fun ReaderModeFloatingToolbar(
         isBookmarked,
         shownContentSource,
         confirmedBookmarkAction,
+        isPreparingSpeech,
+        isSpeechPlaying,
     ) {
         buildList {
             if (id != null) {
@@ -232,6 +255,7 @@ fun ReaderModeFloatingToolbar(
                 )
             }
             if (readerModeState is ReaderModeState.Success) {
+                add(speechToolbarAction(isPreparingSpeech, isSpeechPlaying, strings) { latestOnListenClick() })
                 add(
                     ToolbarAction(
                         icon = Icons.Outlined.TextFields,

@@ -1,6 +1,9 @@
 import Foundation
 
 public struct ReaderViewStrings {
+    public let ttsListen: String
+    public let ttsStop: String
+    public let ttsPreparing: String
     public let share: String
     public let addBookmark: String
     public let removeBookmark: String
@@ -32,8 +35,14 @@ public struct ReaderViewStrings {
         nextArticle: String,
         feedContent: String = "",
         contentUnavailableTitle: String = "",
-        contentUnavailableMessage: String = ""
+        contentUnavailableMessage: String = "",
+        ttsListen: String = "",
+        ttsStop: String = "",
+        ttsPreparing: String = ""
     ) {
+        self.ttsListen = ttsListen
+        self.ttsStop = ttsStop
+        self.ttsPreparing = ttsPreparing
         self.share = share
         self.addBookmark = addBookmark
         self.removeBookmark = removeBookmark

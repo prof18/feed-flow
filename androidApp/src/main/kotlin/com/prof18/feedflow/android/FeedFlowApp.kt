@@ -11,6 +11,8 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.prof18.feedflow.android.audio.AndroidAudioPlayer
+import com.prof18.feedflow.android.audio.AndroidSpeechAudioGenerator
+import com.prof18.feedflow.android.audio.SpeechAudioGenerating
 import com.prof18.feedflow.android.billing.RevenueCatSupport
 import com.prof18.feedflow.android.notifications.AndroidNotifier
 import com.prof18.feedflow.android.widget.FeedFlowWidget
@@ -29,6 +31,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.notification.Notifier
+import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import kotlinx.coroutines.launch
@@ -109,7 +112,11 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                             dispatcherProvider = get(),
                         )
                     }
-                    single { AndroidAudioPlayer(this@FeedFlowApp, get()) }
+                    single<SpeechAudioGenerating> { AndroidSpeechAudioGenerator(this@FeedFlowApp, get()) }
+                    single {
+                        val speechText: ReaderSpeechText = get()
+                        AndroidAudioPlayer(this@FeedFlowApp, get(), get(), speechText = speechText::segments)
+                    }
                     single { appConfig }
                     factory<WidgetUpdater> {
                         WidgetUpdater {

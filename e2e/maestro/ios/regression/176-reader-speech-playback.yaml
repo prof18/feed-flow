@@ -1,0 +1,78 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=audio-episode&audioUrl=${AUDIO_URL}
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_seed_complete
+- tapOn:
+    id: article_row_e2e_audio_episode
+- runFlow:
+    when:
+      notVisible:
+        id: reader_tts_button
+    commands:
+      - tapOn:
+          id: reader_more_menu_button
+- tapOn:
+    id: reader_tts_button
+- tapOn:
+    id: reader_audio_player_expand
+- extendedWaitUntil:
+    visible:
+      id: audio_duration
+      text: "^(?!0:00$).+$"
+    timeout: 60000
+- pressKey: Home
+- launchApp:
+    stopApp: false
+- assertVisible:
+    id: audio_pause
+- tapOn:
+    id: audio_pause
+- swipe:
+    start: 10%, 80%
+    end: 50%, 80%
+    duration: 800
+- assertVisible:
+    id: audio_position
+    text: "^(?!0:00$).+$"
+- tapOn:
+    text: "^Play audio: E2E Audio Episode: Language Notes$"
+- assertVisible:
+    id: audio_pause
+- runFlow:
+    when:
+      notVisible:
+        id: reader_tts_button
+    commands:
+      - tapOn:
+          id: reader_more_menu_button
+- tapOn:
+    id: reader_tts_button
+- extendedWaitUntil:
+    visible:
+      text: "^Play audio: E2E Audio Episode: Language Notes$"
+    timeout: 10000
+- assertVisible:
+    id: audio_position
+    text: "^(?!0:00$).+$"
+- tapOn:
+    id: audio_playback_speed
+- tapOn:
+    id: audio_playback_speed_1_5
+    retryTapIfNoChange: true
+- assertNotVisible:
+    id: audio_playback_speed_1_5
+- assertVisible:
+    id: audio_pause
+- tapOn:
+    id: audio_close_player
+- assertNotVisible:
+    id: audio_player

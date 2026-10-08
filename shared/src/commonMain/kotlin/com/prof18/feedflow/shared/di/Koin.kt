@@ -54,6 +54,7 @@ import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.parser.KleadArticleContentParser
 import com.prof18.feedflow.shared.domain.parser.readerContentFormat
+import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
@@ -445,6 +446,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             databaseHelper = get(),
         )
     }
+
+    single { ReaderSpeechText(dispatcherProvider = get()) }
 
     factory {
         FeedUrlRetriever(

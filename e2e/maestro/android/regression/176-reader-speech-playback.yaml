@@ -1,0 +1,71 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=audio-episode&audioUrl=${AUDIO_URL}
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 30000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: article_row_e2e_audio_episode
+- runFlow:
+    when:
+      notVisible:
+        id: reader_tts_button
+    commands:
+      - tapOn:
+          id: reader_more_menu_button
+- tapOn:
+    id: reader_tts_button
+- extendedWaitUntil:
+    visible:
+      id: audio_duration
+      text: "^(?!0:00$).+$"
+    timeout: 60000
+- pressKey: Home
+- launchApp:
+    stopApp: false
+- assertVisible:
+    id: audio_pause
+- tapOn:
+    id: audio_pause
+- tapOn:
+    id: audio_seek
+- assertVisible:
+    id: audio_position
+    text: "^(?!0:00$).+$"
+- tapOn:
+    text: "^Play audio: E2E Audio Episode: Language Notes$"
+- assertVisible:
+    id: audio_pause
+# The web podcast card switches back to Play when speech owns the player.
+- runFlow:
+    when:
+      notVisible:
+        id: reader_tts_button
+    commands:
+      - tapOn:
+          id: reader_more_menu_button
+- tapOn:
+    id: reader_tts_button
+- extendedWaitUntil:
+    visible:
+      text: "^Play audio: E2E Audio Episode: Language Notes$"
+    timeout: 10000
+- assertVisible:
+    id: audio_position
+    text: "^(?!0:00$).+$"
+- tapOn:
+    id: audio_speed
+- tapOn:
+    id: audio_speed_1.5
+- assertNotVisible:
+    id: audio_speed_1.5
+- assertVisible:
+    id: audio_pause
+- tapOn:
+    id: audio_close_player
+- assertNotVisible:
+    id: audio_player

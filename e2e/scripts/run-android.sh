@@ -37,7 +37,9 @@ for suite in $E2E_ANDROID_SUITES; do
   while IFS= read -r flow_file; do
     maestro_started=true
     flow_name="${flow_file##*/}"
-    if [[ "$flow_name" == "174-podcast-audio-playback.yaml" || "$flow_name" == "175-now-playing-navigation.yaml" ]]; then
+    if [[ "$flow_name" == "174-podcast-audio-playback.yaml" ||
+          "$flow_name" == "175-now-playing-navigation.yaml" ||
+          "$flow_name" == "176-reader-speech-playback.yaml" ]]; then
       "$REPO_ROOT/e2e/scripts/run-audio-playback.sh" android "${flow_name%.yaml}"
     else
       maestro --platform android test "$flow_file"

@@ -55,7 +55,7 @@ internal fun AudioPlayerDock(
 ) {
     val episode = state.episode ?: return
     val strings = LocalFeedFlowStrings.current
-    var seekPosition by remember(episode.itemId) { mutableStateOf<Float?>(null) }
+    var seekPosition by remember(episode.playbackId) { mutableStateOf<Float?>(null) }
     Column(modifier = modifier.testTag("audio_player")) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -102,8 +102,11 @@ internal fun AudioPlayerDock(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                if (state.isLoading) {
-                    Text(strings.audioLoading, style = MaterialTheme.typography.labelSmall)
+                if (state.isLoading || state.isPreparingSpeech) {
+                    Text(
+                        if (state.isPreparingSpeech) strings.readerModeTtsPreparing else strings.audioLoading,
+                        style = MaterialTheme.typography.labelSmall,
+                    )
                 }
             }
             IconButton(
@@ -131,18 +134,7 @@ internal fun AudioPlayerDock(
             }
         }
         if (state.failed) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    strings.audioPlaybackFailed,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.weight(1f),
-                )
-                TextButton(onClick = { onOpenExternal(episode.url) }) { Text(strings.audioOpenExternal) }
-            }
+            AudioFailureRow(episode, onToggle, onOpenExternal)
         }
         Slider(
             value = seekPosition ?: state.positionMs.toFloat(),
@@ -167,9 +159,39 @@ internal fun AudioPlayerDock(
                 modifier = Modifier.testTag("audio_position"),
             )
             PlaybackSpeedSelector(state.playbackSpeed, onPlaybackSpeedChange)
-            Text(audioTime(state.durationMs), style = MaterialTheme.typography.labelSmall)
+            Text(
+                audioTime(state.durationMs),
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.testTag("audio_duration"),
+            )
         }
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+    }
+}
+
+@Composable
+private fun AudioFailureRow(
+    episode: AudioEpisode,
+    onRetry: () -> Unit,
+    onOpenExternal: (String) -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    val isSpeech = episode.kind == AudioSourceKind.SPEECH
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = if (isSpeech) strings.readerModeTtsError else strings.audioPlaybackFailed,
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(1f),
+        )
+        if (isSpeech) {
+            TextButton(onClick = onRetry) { Text(strings.retryButton) }
+        } else {
+            TextButton(onClick = { onOpenExternal(episode.url) }) { Text(strings.audioOpenExternal) }
+        }
     }
 }
 

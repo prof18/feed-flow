@@ -70,7 +70,11 @@ struct AudioPlayerAccessory: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(episode.title).font(.subheadline.weight(.semibold)).lineLimit(1)
                         if playback.hasFailed {
-                            Text(feedFlowStrings.audioPlaybackFailed)
+                            Text(episode.kind == .speech
+                                ? feedFlowStrings.readerModeTtsError : feedFlowStrings.audioPlaybackFailed)
+                                .font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                        } else if episode.kind == .speech, playback.isPreparingSpeech {
+                            Text(feedFlowStrings.readerModeTtsPreparing)
                                 .font(.caption).foregroundStyle(.secondary).lineLimit(1)
                         } else if let subtitle = episode.subtitle {
                             Text(subtitle).font(.caption).foregroundStyle(.secondary).lineLimit(1)
@@ -98,6 +102,12 @@ struct AudioPlayerAccessory: View {
             .accessibilityLabel(playback.isPlaying ? feedFlowStrings.audioPause : feedFlowStrings.audioPlay)
             .accessibilityIdentifier(playback.isPlaying
                 ? AudioPlayerAccessibilityIdentifiers.pause : AudioPlayerAccessibilityIdentifiers.play)
+
+            if episode.kind == .speech, playback.hasFailed {
+                Button(feedFlowStrings.retryButton) { playback.togglePlayback() }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier(AudioPlayerAccessibilityIdentifiers.retrySpeech)
+            }
 
             Button { playback.stop() } label: {
                 Image(systemName: "xmark").font(.system(size: 16)).frame(width: 44, height: 44)
@@ -140,22 +150,25 @@ struct AudioPlayerAccessory: View {
                     .accessibilityIdentifier(AudioPlayerAccessibilityIdentifiers.position)
                 Spacer()
                 Text(timeLabel(playback.duration))
+                    .accessibilityIdentifier(AudioPlayerAccessibilityIdentifiers.duration)
             }
             .font(.caption2.monospacedDigit())
             .foregroundStyle(.secondary)
             .padding(.bottom, 5)
             HStack(spacing: 8) {
                 speedSelector
-                Button {
-                    playback.pause()
-                    openExternal(episode.url)
-                } label: {
-                    Label(feedFlowStrings.audioOpenExternal, systemImage: "arrow.up.forward.square")
-                        .font(.caption)
-                        .frame(maxWidth: .infinity, minHeight: 44)
+                if episode.kind != .speech {
+                    Button {
+                        playback.pause()
+                        openExternal(episode.url)
+                    } label: {
+                        Label(feedFlowStrings.audioOpenExternal, systemImage: "arrow.up.forward.square")
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier(AudioPlayerAccessibilityIdentifiers.external)
                 }
-                .buttonStyle(.plain)
-                .accessibilityIdentifier(AudioPlayerAccessibilityIdentifiers.external)
             }
         }
     }

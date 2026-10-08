@@ -8,11 +8,15 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.test.core.app.ApplicationProvider
+import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
 import com.russhwolf.settings.MapSettings
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
@@ -28,8 +32,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.File
 import java.lang.reflect.Proxy
-
+import java.util.UUID
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 @OptIn(ExperimentalCoroutinesApi::class)
 @androidx.annotation.OptIn(UnstableApi::class)
 @RunWith(RobolectricTestRunner::class)
@@ -44,15 +52,216 @@ class AndroidAudioPlayerTest {
     fun setUp() {
         Dispatchers.setMain(dispatcher)
         positions = AudioPlaybackPositionRepository(MapSettings())
-        audio = AndroidAudioPlayer(ApplicationProvider.getApplicationContext(), positions)
+        audio = AndroidAudioPlayer(ApplicationProvider.getApplicationContext(), positions, TestSpeechGenerator())
         fake = FakePlayer()
         audio.attach(fake.player)
     }
 
     @After
     fun tearDown() {
+        audio.close()
         audio.detach()
         Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `speech preparation clears podcast player and saves podcast position`() = playerTest {
+        val gate = CompletableDeferred<File>()
+        val generator = TestSpeechGenerator { _, _ -> awaitAfterCancellation(gate) }
+        replaceAudioWithSpeechGenerator(generator)
+        audio.playEpisode(episode("article"))
+        fake.ready()
+        fake.position = 18_000
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+
+        val speech = requireNotNull(audio.state.value.episode)
+        assertEquals(AudioSourceKind.SPEECH, speech.kind)
+        assertTrue(audio.state.value.isPreparingSpeech)
+        assertNull(fake.item)
+        assertEquals(18_000, positions.getPosition("article"))
+        assertEquals(listOf("prepared segment"), generator.lastSegments)
+        gate.complete(generator.newFile())
+        runCurrent()
+        assertEquals(speech.playbackId, fake.item?.mediaId)
+    }
+
+    @Test
+    fun `pause during speech generation prevents autoplay when generated file is ready`() = playerTest {
+        val gate = CompletableDeferred<File>()
+        val generator = TestSpeechGenerator { _, _ ->
+            awaitAfterCancellation(gate)
+        }
+        replaceAudioWithSpeechGenerator(generator)
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        assertTrue(audio.state.value.isPreparingSpeech)
+        audio.togglePlayback()
+        assertFalse(audio.state.value.isPlaying)
+        gate.complete(generator.newFile())
+        runCurrent()
+
+        assertFalse(audio.state.value.isPreparingSpeech)
+        assertFalse(audio.state.value.isPlaying)
+        assertFalse(fake.playWhenReady)
+        assertEquals(audio.state.value.episode?.playbackId, fake.item?.mediaId)
+    }
+
+    @Test
+    fun `prepared speech has its own playback identity from podcast for same article`() = playerTest {
+        val generator = TestSpeechGenerator()
+        replaceAudioWithSpeechGenerator(generator)
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        fake.ready()
+
+        val speech = requireNotNull(audio.state.value.episode)
+        assertEquals(AudioSourceKind.SPEECH, speech.kind)
+        assertTrue(speech.playbackId.startsWith("speech:article:"))
+        assertFalse(speech.playbackId == episode("article").playbackId)
+        assertEquals(speech.playbackId, fake.item?.mediaId)
+        assertTrue(generator.files.single().isFile)
+    }
+
+    @Test
+    fun `cached speech resumes saved position after switching to podcast for same article`() = playerTest {
+        val generator = TestSpeechGenerator()
+        replaceAudioWithSpeechGenerator(generator)
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        fake.ready()
+        audio.seek(14_000)
+        val speechPlaybackId = requireNotNull(audio.state.value.episode).playbackId
+        assertEquals(14_000, positions.getPosition(speechPlaybackId))
+
+        audio.playEpisode(episode("article"))
+        fake.ready()
+        assertEquals("article", fake.item?.mediaId)
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+
+        assertEquals(1, generator.callCount)
+        assertEquals(speechPlaybackId, fake.item?.mediaId)
+        assertEquals(14_000, fake.position)
+        assertTrue(audio.state.value.episode?.url?.startsWith("file:") == true)
+    }
+
+    @Test
+    fun `close cancels pending speech and late generated file is discarded`() = playerTest {
+        val gate = CompletableDeferred<File>()
+        val generator = TestSpeechGenerator { _, _ ->
+            awaitAfterCancellation(gate)
+        }
+        replaceAudioWithSpeechGenerator(generator)
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        audio.close()
+        val lateFile = generator.newFile()
+        gate.complete(lateFile)
+        runCurrent()
+
+        assertNull(audio.state.value.episode)
+        assertNull(fake.item)
+        assertFalse(lateFile.exists())
+    }
+
+    @Test
+    fun `replacement speech cancels old generation and ignores late output`() = playerTest {
+        val oldGate = CompletableDeferred<File>()
+        val replacementGate = CompletableDeferred<File>()
+        val generator = TestSpeechGenerator { _, call ->
+            awaitAfterCancellation(if (call == 1) oldGate else replacementGate)
+        }
+        replaceAudioWithSpeechGenerator(generator)
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        audio.playReaderSpeech(readerArticle(content = "Replacement article body."), "Untitled")
+        runCurrent()
+        val oldFile = generator.newFile()
+        oldGate.complete(oldFile)
+        runCurrent()
+        assertTrue(audio.state.value.isPreparingSpeech)
+        assertNull(fake.item)
+
+        val replacementFile = generator.newFile()
+        replacementGate.complete(replacementFile)
+        runCurrent()
+
+        assertEquals(2, generator.callCount)
+        assertEquals(AudioSourceKind.SPEECH, audio.state.value.episode?.kind)
+        assertEquals("article", audio.state.value.episode?.itemId)
+        assertEquals(audio.state.value.episode?.playbackId, fake.item?.mediaId)
+        assertFalse(oldFile.exists())
+        assertTrue(replacementFile.isFile)
+    }
+
+    @Test
+    fun `speech generation failure can be retried`() = playerTest {
+        val generator = TestSpeechGenerator { _, call ->
+            if (call == 1) error("generator failed") else newFile()
+        }
+        replaceAudioWithSpeechGenerator(generator)
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        assertTrue(audio.state.value.failed)
+
+        audio.togglePlayback()
+        runCurrent()
+
+        assertEquals(2, generator.callCount)
+        assertFalse(audio.state.value.failed)
+        assertFalse(audio.state.value.isPreparingSpeech)
+        assertEquals(AudioSourceKind.SPEECH, audio.state.value.episode?.kind)
+        assertEquals(audio.state.value.episode?.playbackId, fake.item?.mediaId)
+    }
+
+    @Test
+    fun `changed article content generates new speech key and replaces cached file`() = playerTest {
+        val generator = TestSpeechGenerator()
+        replaceAudioWithSpeechGenerator(generator)
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        val originalEpisode = requireNotNull(audio.state.value.episode)
+        val originalFile = generator.files.single()
+        fake.ready()
+
+        audio.playReaderSpeech(readerArticle(content = "Updated article body."), "Untitled")
+        runCurrent()
+
+        val updatedEpisode = requireNotNull(audio.state.value.episode)
+        assertEquals(2, generator.callCount)
+        assertFalse(originalEpisode.playbackId == updatedEpisode.playbackId)
+        assertFalse(originalFile.exists())
+        assertTrue(generator.files.last().isFile)
+    }
+
+    @Test
+    fun `public podcast playback rejects speech file episodes`() {
+        val injectedFile = File(
+            ApplicationProvider.getApplicationContext<Application>().cacheDir,
+            "reader-speech-${UUID.randomUUID()}/speech.mp3",
+        )
+        audio.playEpisode(
+            AudioEpisode(
+                itemId = "article",
+                url = injectedFile.toURI().toString(),
+                title = "Injected speech",
+                feedName = null,
+                artworkUrl = null,
+                kind = AudioSourceKind.SPEECH,
+                contentKey = "injected",
+            ),
+        )
+
+        assertNull(audio.state.value.episode)
+        assertNull(fake.item)
     }
 
     @Test
@@ -306,6 +515,77 @@ class AndroidAudioPlayerTest {
     }
 
     private fun episode(id: String) = AudioEpisode(id, "https://example.com/$id.mp3", id, "Feed", null)
+
+    private fun playerTest(block: suspend TestScope.() -> Unit) = runTest(dispatcher) {
+        try {
+            block()
+        } finally {
+            audio.close()
+        }
+    }
+
+    private fun readerArticle(content: String = "Article body.") = ReaderModeData(
+        id = FeedItemId("article"),
+        title = "Article title",
+        content = content,
+        url = "https://example.com/article",
+        baseUrl = "https://example.com/",
+        fontSize = 16,
+        lineHeight = 0,
+        isBookmarked = false,
+        siteName = "Example Feed",
+    )
+
+    private fun replaceAudioWithSpeechGenerator(generator: TestSpeechGenerator) {
+        audio.close()
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        audio = AndroidAudioPlayer(
+            context = context,
+            positions = positions,
+            speechGenerator = generator,
+            speechText = { _, _ -> listOf("prepared segment") },
+        )
+        fake = FakePlayer()
+        audio.attach(fake.player)
+    }
+
+    private suspend fun awaitAfterCancellation(
+        gate: CompletableDeferred<File>,
+    ): File = suspendCoroutine { continuation ->
+        gate.invokeOnCompletion { error ->
+            if (error == null) {
+                continuation.resume(gate.getCompleted())
+            } else {
+                continuation.resumeWithException(error)
+            }
+        }
+    }
+
+    private class TestSpeechGenerator(
+        private val handler: suspend TestSpeechGenerator.(List<String>, Int) -> File = { _, _ -> newFile() },
+    ) : SpeechAudioGenerating {
+        var callCount = 0
+            private set
+        var lastSegments: List<String>? = null
+            private set
+        val files = mutableListOf<File>()
+
+        override suspend fun generate(segments: List<String>): File {
+            callCount++
+            lastSegments = segments
+            return handler(segments, callCount)
+        }
+
+        fun newFile(): File {
+            val context = ApplicationProvider.getApplicationContext<Application>()
+            val directory = File(context.cacheDir, "reader-speech-${UUID.randomUUID()}")
+            directory.mkdirs()
+            val file = File(directory, "speech.mp3")
+            file.writeBytes(byteArrayOf(1, 2, 3))
+            files += file
+            return file
+        }
+    }
 
     private class FakePlayer {
         private val listeners = mutableListOf<Player.Listener>()

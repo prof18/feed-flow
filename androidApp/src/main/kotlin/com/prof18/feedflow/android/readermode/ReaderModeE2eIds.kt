@@ -6,6 +6,7 @@ internal object ReaderModeE2eIds {
     const val BROWSER_BUTTON = "reader_browser_button"
     const val CONTENT_SOURCE_BUTTON = "reader_content_source_button"
     const val FONT_SIZE_BUTTON = "reader_font_size_button"
+    const val TTS_BUTTON = "reader_tts_button"
     const val TEXT_SETTINGS_SHEET = "reader_text_settings_sheet"
     const val TEXT_SETTINGS_RESET_BUTTON = "reader_text_settings_reset_button"
     const val MORE_MENU_BUTTON = "reader_more_menu_button"

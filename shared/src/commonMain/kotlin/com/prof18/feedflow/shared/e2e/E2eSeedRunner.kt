@@ -677,7 +677,15 @@ class E2eSeedRunner internal constructor(
                 "hides the open-in-browser, share, and archive actions that only make sense for a " +
                 "real web address.</p>"
 
-        private const val AUDIO_EPISODE_HTML = "<p>Listen to this episode about language notes.</p>"
+        private val AUDIO_EPISODE_HTML = "<p>Listen to this episode about language notes.</p>" +
+            (
+                "<p>A familiar story becomes easier to follow when we listen carefully. " +
+                    "The speaker pauses between ideas and explains how each example connects to the next. " +
+                    "Reading and listening offer different ways to explore the same article. " +
+                    "We can move to an earlier passage, change the speaking speed, or pause and return later. " +
+                    "These language notes describe everyday conversations, interesting questions, " +
+                    "and the small details that help us understand one another.</p>"
+                ).repeat(6)
         private const val AUDIO_CONTROL_HTML = "<p>This plain article is the non-audio control.</p>"
 
         private const val TECHNOLOGY_CATEGORY_ID = "e2e-category-technology"

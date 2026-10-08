@@ -44,6 +44,7 @@ import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerIos
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
+import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
@@ -328,6 +329,7 @@ object Deps : KoinComponent {
     fun getFeedSyncRepository() = getKoin().get<FeedSyncRepository>()
     fun getICloudSyncViewModel() = getKoin().get<ICloudSyncViewModel>()
     fun getReaderModeViewModel() = getKoin().get<ReaderModeViewModel>()
+    fun getReaderSpeechText() = getKoin().get<ReaderSpeechText>()
     fun getEditFeedViewModel() = getKoin().get<EditFeedViewModel>()
     fun getFreshRssSyncViewModel() = getKoin().get<FreshRssSyncViewModel>()
     fun getMinifluxSyncViewModel() = getKoin().get<MinifluxSyncViewModel>()

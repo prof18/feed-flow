@@ -18,6 +18,7 @@ import org.koin.dsl.module
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.File
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @RunWith(RobolectricTestRunner::class)
@@ -27,7 +28,20 @@ class AudioPlaybackServiceTest {
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Application>()
         startKoin {
-            modules(module { single { AndroidAudioPlayer(context, AudioPlaybackPositionRepository(MapSettings())) } })
+            modules(
+                module {
+                    single {
+                        AndroidAudioPlayer(
+                            context,
+                            AudioPlaybackPositionRepository(MapSettings()),
+                            object : SpeechAudioGenerating {
+                                override suspend fun generate(segments: List<String>): File =
+                                    error("Speech generation is not used in service tests")
+                            },
+                        )
+                    }
+                },
+            )
         }
     }
 

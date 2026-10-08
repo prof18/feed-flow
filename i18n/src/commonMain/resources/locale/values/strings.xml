@@ -457,4 +457,8 @@
     <string name="settings_notification_mode_category">By category</string>
     <string name="settings_notification_mode_grouped">All combined</string>
     <string name="sort_and_filter_button">Sort &amp; filter</string>
+    <string name="reader_mode_tts_listen">Listen to article</string>
+    <string name="reader_mode_tts_stop">Stop listening</string>
+    <string name="reader_mode_tts_error">Unable to read this article aloud. Try again.</string>
+    <string name="reader_mode_tts_preparing">Preparing article audio…</string>
 </resources>

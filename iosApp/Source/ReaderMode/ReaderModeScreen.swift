@@ -103,7 +103,10 @@ struct ReaderModeScreen: View {
                     nextArticle: feedFlowStrings.nextArticle,
                     feedContent: feedFlowStrings.readerContentSourceFeed,
                     contentUnavailableTitle: feedFlowStrings.readerModeNoContentTitle,
-                    contentUnavailableMessage: feedFlowStrings.readerModeNoContentMessage
+                    contentUnavailableMessage: feedFlowStrings.readerModeNoContentMessage,
+                    ttsListen: feedFlowStrings.readerModeTtsListen,
+                    ttsStop: feedFlowStrings.audioPause,
+                    ttsPreparing: feedFlowStrings.readerModeTtsPreparing
                 ),
                 onBookmarkToggle: { newBookmarkState in
                     if let id = feedItemId {
@@ -179,6 +182,9 @@ struct ReaderModeScreen: View {
                 onToggleContentSource: canToggleContentSource ? {
                     viewModel.toggleContentSource()
                 } : nil,
+                onToggleSpeech: toggleCurrentSpeech,
+                isPreparingSpeech: audioPlayback.isPreparingSpeech && isCurrentSpeechSelected,
+                isSpeechPlaying: audioPlayback.isPlaying && isCurrentSpeechSelected,
                 isShowingFeedContent: isShowingFeedContent,
                 hasUrl: hasArticleUrl
             ),
@@ -330,6 +336,28 @@ struct ReaderModeScreen: View {
         ))
     }
 
+    private var isCurrentSpeechSelected: Bool {
+        let title = feedItemTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return audioPlayback.isSpeechFor(
+            itemId: feedItemId,
+            title: title.isEmpty ? feedFlowStrings.audioEpisodeUntitled : title,
+            content: currentContent
+        )
+    }
+
+    private func toggleCurrentSpeech() {
+        guard let itemId = feedItemId,
+              let content = currentContent else { return }
+        let title = feedItemTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        audioPlayback.toggleSpeech(
+            itemId: itemId,
+            title: title.isEmpty ? feedFlowStrings.audioEpisodeUntitled : title,
+            content: content,
+            subtitle: currentSiteName,
+            artworkURL: (currentAudioImageUrl ?? currentImageUrl).flatMap(URL.init(string:))
+        )
+    }
+
     private var readerAudioBanner: ReaderAudioBanner? {
         guard currentAudioUrl != nil else { return nil }
         return ReaderAudioBanner(
@@ -346,7 +374,7 @@ struct ReaderModeScreen: View {
     }
 
     private var isCurrentAudioPlaying: Bool {
-        audioPlayback.episode?.itemId == feedItemId && audioPlayback.isPlaying
+        audioPlayback.episode?.kind == .podcast && audioPlayback.episode?.itemId == feedItemId && audioPlayback.isPlaying
     }
 
     private func updateReaderHTML() {

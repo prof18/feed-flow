@@ -32,3 +32,13 @@ appId: com.prof18.feedflow.dev
     stopApp: false
 - assertVisible: "E2E long reader tail anchor."
 - assertNotVisible: "E2E long reader head anchor."
+- runFlow:
+    when:
+      notVisible:
+        id: reader_tts_button
+    commands:
+      - tapOn:
+          id: reader_more_menu_button
+- assertVisible:
+    id: reader_tts_button
+- assertVisible: "Listen to article"

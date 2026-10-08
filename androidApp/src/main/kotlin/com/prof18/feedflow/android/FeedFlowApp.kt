@@ -10,6 +10,7 @@ import androidx.lifecycle.coroutineScope
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import com.prof18.feedflow.android.audio.AndroidAudioPlayer
 import com.prof18.feedflow.android.billing.RevenueCatSupport
 import com.prof18.feedflow.android.notifications.AndroidNotifier
 import com.prof18.feedflow.android.widget.FeedFlowWidget
@@ -40,6 +41,7 @@ import org.koin.dsl.module
 
 class FeedFlowApp : Application(), SingletonImageLoader.Factory {
 
+    private val audioPlayer by inject<AndroidAudioPlayer>()
     private val feedSyncRepo by inject<FeedSyncRepository>()
     private val widgetRepository by inject<FeedWidgetRepository>()
     private val widgetSettingsRepository by inject<WidgetSettingsRepository>()
@@ -107,6 +109,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                             dispatcherProvider = get(),
                         )
                     }
+                    single { AndroidAudioPlayer(this@FeedFlowApp, get()) }
                     single { appConfig }
                     factory<WidgetUpdater> {
                         WidgetUpdater {
@@ -155,6 +158,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                     override fun onStop(owner: LifecycleOwner) {
                         super.onStop(owner)
                         appForegroundState.onAppBackgrounded()
+                        audioPlayer.savePosition()
                         lifecycle.coroutineScope.launch {
                             pendingReadStatusActionRetrier.retryPendingReadStatusActions()
                         }

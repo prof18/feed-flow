@@ -2,6 +2,7 @@ package com.prof18.feedflow.feedsync.feedbin.domain.mapping
 
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
@@ -39,6 +40,10 @@ internal class EntryDTOMapper(
             subtitle = entryDTO.summary?.let { htmlParser.getTextFromHTML(it) },
             content = entryDTO.content?.takeIf { it.isNotBlank() } ?: entryDTO.summary,
             imageUrl = ContentImageUrlExtractor.extractImageUrl(entryDTO.content ?: entryDTO.summary),
+            audioUrl = AudioEnclosure.audioUrlOrNull(
+                url = entryDTO.enclosure?.url,
+                mimeType = entryDTO.enclosure?.type,
+            ),
             feedSource = feedSource,
             pubDateMillis = pubDateMillis,
             isRead = isRead,

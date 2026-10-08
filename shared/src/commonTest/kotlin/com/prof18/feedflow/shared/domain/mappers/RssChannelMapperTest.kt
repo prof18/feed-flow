@@ -9,6 +9,7 @@ import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
 import com.prof18.feedflow.shared.test.generators.RssItemGenerator
 import com.prof18.feedflow.shared.test.testLogger
+import com.prof18.rssparser.model.RawEnclosure
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -46,6 +47,66 @@ class RssChannelMapperTest {
 
         assertEquals("<article>Full feed content</article>", result.single().content)
         assertEquals("Short summary", result.single().subtitle)
+    }
+
+    @Test
+    fun `getFeedItems stores valid audio enclosure without replacing article link`() {
+        val enclosureUrl = "https://cdn.example.com/episode?token=a%2Fb&part=1"
+        val rssItem = RssItemGenerator.rssItem(
+            link = "https://example.com/article",
+        ).copy(rawEnclosure = RawEnclosure(url = enclosureUrl, type = "audio/mpeg", length = null))
+
+        val result = mapper.getFeedItems(
+            RssChannelGenerator.rssChannel(items = listOf(rssItem)),
+            FeedSourceGenerator.feedSource(),
+        ).single()
+
+        assertEquals("https://example.com/article", result.url)
+        assertEquals(enclosureUrl, result.audioUrl)
+    }
+
+    @Test
+    fun `getFeedItems rejects non-audio and missing enclosures`() {
+        val feedSource = FeedSourceGenerator.feedSource()
+        val items = listOf(
+            RssItemGenerator.rssItem().copy(
+                rawEnclosure = RawEnclosure(
+                    url = "https://example.com/episode.mp3",
+                    type = "image/jpeg",
+                    length = null,
+                ),
+            ),
+            RssItemGenerator.rssItem().copy(
+                rawEnclosure = RawEnclosure(
+                    url = "https://example.com/episode.mp3",
+                    type = "video/mp4",
+                    length = null,
+                ),
+            ),
+            RssItemGenerator.rssItem(),
+        )
+
+        val results = mapper.getFeedItems(RssChannelGenerator.rssChannel(items = items), feedSource)
+
+        assertEquals(listOf(null, null, null), results.map { it.audioUrl })
+    }
+
+    @Test
+    fun `getFeedItems uses valid audio enclosure as fallback article url`() {
+        val enclosureUrl = "https://cdn.example.com/episode.mp3?signature=signed"
+        val rssItem = RssItemGenerator.rssItem(
+            link = null,
+            description = null,
+            content = "<article>Episode notes</article>",
+        ).copy(rawEnclosure = RawEnclosure(url = enclosureUrl, type = "audio/mpeg", length = null))
+
+        val result = mapper.getFeedItems(
+            RssChannelGenerator.rssChannel(items = listOf(rssItem)),
+            FeedSourceGenerator.feedSource(),
+        ).single()
+
+        assertEquals(enclosureUrl, result.url)
+        assertEquals(enclosureUrl, result.audioUrl)
     }
 
     @Test

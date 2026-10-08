@@ -18,11 +18,13 @@ internal data class EntryDTO(
     val published: String,
     @SerialName("created_at")
     val createdAt: String,
+    val enclosure: Enclosure? = null,
 ) {
     @Serializable
     data class Enclosure(
-        val url: String,
-        val type: String,
-        val length: Long? = null,
+        @SerialName("enclosure_url")
+        val url: String? = null,
+        @SerialName("enclosure_type")
+        val type: String? = null,
     )
 }

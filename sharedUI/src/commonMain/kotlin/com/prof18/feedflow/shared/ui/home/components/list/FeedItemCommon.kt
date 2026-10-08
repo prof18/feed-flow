@@ -52,8 +52,9 @@ internal fun FeedSourceAndUnreadDotRow(
     val showUnreadDot = !feedItem.isRead && !isHideUnreadDotEnabled
     val showFeedSource = !isHideFeedSourceEnabled
     val showBookmark = feedItem.isBookmarked
+    val showAudio = feedItem.audioUrl != null
 
-    if (!showUnreadDot && !showFeedSource && !showBookmark) return
+    if (!showUnreadDot && !showFeedSource && !showBookmark && !showAudio) return
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -88,6 +89,13 @@ internal fun FeedSourceAndUnreadDotRow(
             )
         } else {
             Spacer(modifier = Modifier.weight(1f))
+        }
+
+        if (showAudio) {
+            FeedItemAudioBadge(
+                feedItemId = feedItem.id,
+                modifier = Modifier.padding(bottom = Spacing.small, end = Spacing.small),
+            )
         }
 
         if (showBookmark) {
@@ -270,7 +278,8 @@ internal fun FeedItemImageCardContent(
 internal fun FeedItem.hasCardSourceRow(
     isHideUnreadDotEnabled: Boolean,
     isHideFeedSourceEnabled: Boolean,
-): Boolean = (!isRead && !isHideUnreadDotEnabled) || !isHideFeedSourceEnabled || isBookmarked
+): Boolean =
+    (!isRead && !isHideUnreadDotEnabled) || !isHideFeedSourceEnabled || isBookmarked || audioUrl != null
 
 @Composable
 internal fun FeedItemCardSourceRow(
@@ -283,8 +292,9 @@ internal fun FeedItemCardSourceRow(
     val showUnreadDot = !feedItem.isRead && !isHideUnreadDotEnabled
     val showFeedSource = !isHideFeedSourceEnabled
     val showBookmark = feedItem.isBookmarked
+    val showAudio = feedItem.audioUrl != null
 
-    if (!showUnreadDot && !showFeedSource && !showBookmark) return
+    if (!showUnreadDot && !showFeedSource && !showBookmark && !showAudio) return
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -310,6 +320,13 @@ internal fun FeedItemCardSourceRow(
             )
         } else {
             Spacer(modifier = Modifier.weight(1f))
+        }
+
+        if (showAudio) {
+            FeedItemAudioBadge(
+                feedItemId = feedItem.id,
+                modifier = Modifier.padding(end = Spacing.small),
+            )
         }
 
         if (showBookmark) {

@@ -1,0 +1,274 @@
+package com.prof18.feedflow.android.audio
+
+import android.content.Context
+import android.content.Intent
+import android.widget.Toast
+import androidx.core.net.toUri
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import com.prof18.feedflow.android.AudioUrlOpener
+import com.prof18.feedflow.core.model.AudioEnclosure
+import com.prof18.feedflow.core.model.ReaderModeData
+import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+class AndroidAudioPlayer(
+    private val context: Context,
+    private val positions: AudioPlaybackPositionRepository,
+) {
+    private val mutableState = MutableStateFlow(AudioPlaybackState())
+    val state = mutableState.asStateFlow()
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var ticker: Job? = null
+    private var player: Player? = null
+    private var pendingEpisode: AudioEpisode? = null
+    private var completed = false
+    private var hasValidPosition = false
+    private var selectedSpeed = AudioPlaybackSpeed.NORMAL
+
+    private var listener: Player.Listener? = null
+
+    private fun playerListener(sourcePlayer: Player): Player.Listener = object : Player.Listener {
+        override fun onEvents(player: Player, events: Player.Events) {
+            if (player !== this@AndroidAudioPlayer.player) return
+            if (player.currentMediaItem?.mediaId != state.value.episode?.itemId) return
+            if (player.playbackState == Player.STATE_READY) hasValidPosition = true
+            if (player.playbackState == Player.STATE_ENDED) {
+                completed = true
+                state.value.episode?.let { positions.savePosition(it.itemId, 0) }
+            }
+            publishState()
+            if (events.contains(Player.EVENT_PLAY_WHEN_READY_CHANGED) ||
+                events.contains(Player.EVENT_POSITION_DISCONTINUITY)
+            ) {
+                savePosition()
+            }
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            if (sourcePlayer !== player) return
+            savePosition()
+            player?.pause()
+            mutableState.value = state.value.copy(isPlaying = false, isLoading = false, canSeek = false, failed = true)
+        }
+    }
+
+    fun playReaderEpisode(article: ReaderModeData, untitledTitle: String) {
+        AudioEnclosure.validatedUrl(article.audioUrl)?.let { audioUrl ->
+            playEpisode(
+                AudioEpisode(
+                    itemId = article.id.id,
+                    url = audioUrl,
+                    title = article.title?.takeIf { it.isNotBlank() } ?: untitledTitle,
+                    feedName = article.siteName,
+                    artworkUrl = article.audioImageUrl,
+                ),
+            )
+        }
+    }
+
+    internal fun openExternal(context: Context, opener: AudioUrlOpener, url: String, failedLabel: String) {
+        pause()
+        if (!opener.open(url)) Toast.makeText(context, failedLabel, Toast.LENGTH_SHORT).show()
+    }
+
+    fun playEpisode(episode: AudioEpisode) {
+        if (AudioEnclosure.validatedUrl(episode.url) == null) return
+        if (state.value.episode?.itemId == episode.itemId && state.value.episode?.url == episode.url) {
+            togglePlayback()
+            return
+        }
+        savePosition()
+        completed = false
+        hasValidPosition = false
+        pendingEpisode = episode
+        mutableState.value = AudioPlaybackState(
+            episode = episode,
+            isPlaying = true,
+            isLoading = true,
+            playbackSpeed = selectedSpeed,
+        )
+        if (player != null) {
+            preparePendingEpisode()
+        } else {
+            startPlaybackService()
+        }
+    }
+
+    internal fun attach(player: Player) {
+        if (this.player === player) return
+        listener?.let { this.player?.removeListener(it) }
+        ticker?.cancel()
+        this.player = player
+        val newListener = playerListener(player)
+        listener = newListener
+        player.addListener(newListener)
+        player.setPlaybackSpeed(selectedSpeed.rate)
+        preparePendingEpisode()
+        ticker = scope.launch {
+            var ticks = 0
+            while (true) {
+                delay(TICK_MS)
+                publishState()
+                ticks++
+                if (ticks % SAVE_TICKS == 0) savePosition()
+            }
+        }
+    }
+
+    internal fun detach(expectedPlayer: Player? = player) {
+        if (player !== expectedPlayer) return
+        savePosition()
+        ticker?.cancel()
+        ticker = null
+        listener?.let { player?.removeListener(it) }
+        listener = null
+        player = null
+        pendingEpisode = null
+        mutableState.value = AudioPlaybackState(playbackSpeed = selectedSpeed)
+    }
+
+    private fun preparePendingEpisode() {
+        val episode = pendingEpisode ?: return
+        val currentPlayer = player ?: return
+        val shouldPlay = state.value.isPlaying
+        pendingEpisode = null
+        val media = MediaItem.Builder()
+            .setMediaId(episode.itemId)
+            .setUri(episode.url.toUri().normalizeScheme())
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(episode.title)
+                    .setArtist(episode.feedName)
+                    .setArtworkUri(episode.artworkUrl?.toUri())
+                    .build(),
+            )
+            .build()
+        currentPlayer.setMediaItem(media, positions.getPosition(episode.itemId))
+        currentPlayer.prepare()
+        if (shouldPlay) currentPlayer.play() else currentPlayer.pause()
+    }
+
+    fun togglePlayback() {
+        val currentPlayer = player
+        if (currentPlayer == null) {
+            val episode = state.value.episode ?: return
+            pendingEpisode = episode
+            if (state.value.isPlaying) {
+                pause()
+            } else {
+                val retryServiceStart = state.value.failed
+                mutableState.value = state.value.copy(isPlaying = true, isLoading = true, failed = false)
+                if (retryServiceStart) startPlaybackService()
+            }
+            return
+        }
+        if (currentPlayer.currentMediaItem == null) {
+            pendingEpisode = state.value.episode
+            if (state.value.isPlaying) {
+                pause()
+            } else {
+                mutableState.value = state.value.copy(isPlaying = true, isLoading = true, failed = false)
+                preparePendingEpisode()
+            }
+            return
+        }
+        if (currentPlayer.playWhenReady && !state.value.failed && !completed) {
+            pause()
+        } else {
+            if (completed) {
+                completed = false
+                currentPlayer.seekTo(0)
+            }
+            if (state.value.failed) {
+                mutableState.value = state.value.copy(failed = false)
+                currentPlayer.prepare()
+            }
+            currentPlayer.play()
+        }
+    }
+
+    fun pause() {
+        mutableState.value = state.value.copy(isPlaying = false, isLoading = false)
+        player?.pause()
+        savePosition()
+    }
+
+    fun setPlaybackSpeed(speed: AudioPlaybackSpeed) {
+        selectedSpeed = speed
+        mutableState.value = state.value.copy(playbackSpeed = speed)
+        player?.setPlaybackSpeed(speed.rate)
+    }
+
+    private fun startPlaybackService() {
+        try {
+            context.startService(Intent(context, AudioPlaybackService::class.java))
+        } catch (_: IllegalStateException) {
+            mutableState.value = state.value.copy(isPlaying = false, isLoading = false, failed = true)
+        } catch (_: SecurityException) {
+            mutableState.value = state.value.copy(isPlaying = false, isLoading = false, failed = true)
+        }
+    }
+
+    fun seek(positionMs: Long) {
+        val currentPlayer = player ?: return
+        if (!state.value.canSeek) return
+        completed = false
+        hasValidPosition = true
+        currentPlayer.seekTo(positionMs.coerceIn(0, state.value.durationMs))
+        savePosition()
+        publishState()
+    }
+
+    fun close() {
+        savePosition()
+        pendingEpisode = null
+        player?.stop()
+        player?.clearMediaItems()
+        mutableState.value = AudioPlaybackState(playbackSpeed = selectedSpeed)
+        detach()
+        context.stopService(Intent(context, AudioPlaybackService::class.java))
+    }
+
+    fun savePosition() {
+        val episode = state.value.episode ?: return
+        val currentPlayer = player ?: return
+        // A replacement may update the UI before the old player's final callback is delivered.
+        if (currentPlayer.currentMediaItem?.mediaId != episode.itemId || !hasValidPosition && !completed) return
+        positions.savePosition(
+            episode.itemId,
+            if (completed) 0 else currentPlayer.currentPosition,
+            currentPlayer.duration.coerceAtLeast(0),
+        )
+    }
+
+    private fun publishState() {
+        val currentPlayer = player ?: return
+        val episode = state.value.episode ?: return
+        if (currentPlayer.currentMediaItem?.mediaId != episode.itemId) return
+        val duration = currentPlayer.duration.coerceAtLeast(0)
+        mutableState.value = state.value.copy(
+            isPlaying = currentPlayer.playWhenReady && currentPlayer.playbackState != Player.STATE_ENDED &&
+                currentPlayer.playerError == null && !state.value.failed,
+            isLoading = currentPlayer.playbackState == Player.STATE_BUFFERING,
+            positionMs = if (completed) 0 else currentPlayer.currentPosition.coerceAtLeast(0),
+            durationMs = duration,
+            canSeek = currentPlayer.isCurrentMediaItemSeekable && duration > 0,
+            failed = currentPlayer.playerError != null || state.value.failed,
+        )
+    }
+
+    private companion object {
+        const val TICK_MS = 1000L
+        const val SAVE_TICKS = 5
+    }
+}

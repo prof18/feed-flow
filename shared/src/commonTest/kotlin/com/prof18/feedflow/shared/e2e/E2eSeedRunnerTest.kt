@@ -15,6 +15,7 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
@@ -29,6 +30,28 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class E2eSeedRunnerTest : KoinTestBase() {
+
+    @Test
+    fun `audio seed accepts a validated fixture URL override only for audio profile`() = runTest {
+        val fixture = "http://127.0.0.1:18765/episode.wav"
+        val positions: AudioPlaybackPositionRepository by inject()
+        positions.savePosition(E2eSeedRunner.SEED_AUDIO_ID, 55_000, 60_000)
+        positions.savePosition("user-episode", 42_000)
+        seedRunner.run(
+            action = E2eSeedRunner.ACTION_RESET_AND_SEED,
+            profileName = "audio-episode",
+            audioUrl = fixture,
+        )
+        assertEquals(fixture, databaseHelper.getFeedItemAudioUrl(E2eSeedRunner.SEED_AUDIO_ID))
+        assertEquals(0L, positions.getPosition(E2eSeedRunner.SEED_AUDIO_ID))
+        assertEquals(42_000L, positions.getPosition("user-episode"))
+        seedRunner.run(
+            action = E2eSeedRunner.ACTION_RESET_AND_SEED,
+            profileName = "audio-episode",
+            audioUrl = "file:///episode.wav",
+        )
+        assertEquals(E2eSeedRunner.SEED_AUDIO_URL, databaseHelper.getFeedItemAudioUrl(E2eSeedRunner.SEED_AUDIO_ID))
+    }
 
     private val seedRunner: E2eSeedRunner by inject()
     private val databaseHelper: DatabaseHelper by inject()
@@ -79,6 +102,68 @@ class E2eSeedRunnerTest : KoinTestBase() {
         assertTrue(
             feedItemContentFileHandler.isContentAvailable(E2eSeedRunner.READER_SUCCESS_ARTICLE_ID),
         )
+    }
+
+    @Test
+    fun `audio-episode profile seeds an audio item and a plain control without changing base items`() = runTest {
+        seedRunner.resetAndSeed(E2eSeedProfile.CONTENT_RICH)
+
+        val baselineRows = databaseHelper.getFeedItems(
+            feedFilter = FeedFilter.Timeline,
+            pageSize = 50,
+            showReadItems = true,
+            sortOrder = FeedOrder.NEWEST_FIRST,
+        ).map { it.url_hash to it.title }
+
+        seedRunner.resetAndSeed(E2eSeedProfile.AUDIO_EPISODE)
+
+        val seededRows = databaseHelper.getFeedItems(
+            feedFilter = FeedFilter.Timeline,
+            pageSize = 50,
+            showReadItems = true,
+            sortOrder = FeedOrder.NEWEST_FIRST,
+        )
+        val audioItem = seededRows.single { it.url_hash == E2eSeedRunner.SEED_AUDIO_ID }
+        val controlItem = seededRows.single { it.url_hash == E2eSeedRunner.SEED_PLAIN_ID }
+        val audioUrlInfo = requireNotNull(
+            databaseHelper.getFeedItemUrlInfo(E2eSeedRunner.SEED_AUDIO_ID),
+        )
+        val controlUrlInfo = requireNotNull(
+            databaseHelper.getFeedItemUrlInfo(E2eSeedRunner.SEED_PLAIN_ID),
+        )
+
+        assertEquals("audio-episode", E2eSeedProfile.AUDIO_EPISODE.queryValue)
+        assertEquals(E2eSeedProfile.AUDIO_EPISODE, E2eSeedProfile.fromQueryValue("audio-episode"))
+        assertEquals(E2eSeedRunner.SEED_AUDIO_TITLE, audioItem.title)
+        assertEquals(E2eSeedRunner.SEED_PLAIN_TITLE, controlItem.title)
+        assertEquals(E2eSeedRunner.SEED_ARTICLE_URL, audioUrlInfo.url)
+        assertEquals(E2eSeedRunner.SEED_CONTROL_URL, controlUrlInfo.url)
+        assertEquals(E2eSeedRunner.SEED_AUDIO_URL, audioItem.audio_url)
+        assertNull(controlItem.audio_url)
+        assertNull(audioItem.image_url)
+        assertNull(controlItem.image_url)
+        assertEquals(audioItem.pub_date?.minus(1), controlItem.pub_date)
+        assertFalse(audioItem.is_read)
+        assertFalse(audioItem.is_bookmarked)
+        assertNotNull(
+            databaseHelper.getFeedItemContent(E2eSeedRunner.SEED_AUDIO_ID)?.takeIf { it.isNotBlank() },
+        )
+        assertNotNull(
+            databaseHelper.getFeedItemContent(E2eSeedRunner.SEED_PLAIN_ID)?.takeIf { it.isNotBlank() },
+        )
+        assertEquals(ArticleOpenMode.FEED_CONTENT, settingsRepository.getArticleOpenMode())
+        assertTrue(feedAppearanceSettingsRepository.getHideFeedSource())
+        assertTrue(feedAppearanceSettingsRepository.getHideUnreadDot())
+        assertEquals(3, databaseHelper.getFeedSourceCategories().size)
+        assertEquals(7, databaseHelper.getFeedSources().size)
+        assertEquals(2, seededRows.size - baselineRows.size)
+        assertEquals(
+            baselineRows,
+            seededRows.filterNot {
+                it.url_hash == E2eSeedRunner.SEED_AUDIO_ID || it.url_hash == E2eSeedRunner.SEED_PLAIN_ID
+            }.map { it.url_hash to it.title },
+        )
+        assertTrue(seededRows.indexOf(audioItem) < seededRows.indexOf(controlItem))
     }
 
     @Test

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.lifecycleScope
 import com.prof18.feedflow.android.MainActivity
+import com.prof18.feedflow.android.audio.AndroidAudioPlayer
 import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.android.widget.FeedFlowWidget
 import com.prof18.feedflow.core.model.WidgetContentFilter
@@ -46,6 +47,7 @@ import java.io.ByteArrayInputStream
 
 class E2eSeedActivity : BaseThemeActivity() {
 
+    private val audioPlayer by inject<AndroidAudioPlayer>()
     private val seedRunner by inject<E2eSeedRunner>()
     private val opmlFeedHandler by inject<OpmlFeedHandler>()
     private val widgetSettingsRepository by inject<WidgetSettingsRepository>()
@@ -130,6 +132,7 @@ class E2eSeedActivity : BaseThemeActivity() {
         val accountName = uri?.getQueryParameter("account")
         val deepLinkUrl = uri?.getQueryParameter("url")
         val opmlPayload = uri?.getQueryParameter("opml")
+        val audioUrl = uri?.getQueryParameter("audioUrl")
 
         if (action == null) {
             uiState = E2eSeedUiState.Error("Missing E2E seed action")
@@ -147,6 +150,7 @@ class E2eSeedActivity : BaseThemeActivity() {
         uiState = E2eSeedUiState.Running
         lifecycleScope.launch {
             try {
+                audioPlayer.close()
                 resetWidgetSettings()
                 if (action == ACTION_RESTORE_DEVELOPMENT) {
                     val opmlBytes = Base64.decode(
@@ -158,7 +162,12 @@ class E2eSeedActivity : BaseThemeActivity() {
                     )
                     seedRunner.resetAndSeedDevelopmentFeeds(feedSources)
                 } else {
-                    seedRunner.run(action = action, profileName = profileName, accountName = accountName)
+                    seedRunner.run(
+                        action = action,
+                        profileName = profileName,
+                        accountName = accountName,
+                        audioUrl = audioUrl,
+                    )
                 }
                 if (action != E2eSeedRunner.ACTION_RESET && profile == E2eSeedProfile.ANDROID_WIDGET) {
                     applyAndroidWidgetProfile()

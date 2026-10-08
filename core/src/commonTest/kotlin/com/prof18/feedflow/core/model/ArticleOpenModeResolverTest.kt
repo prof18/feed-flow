@@ -74,6 +74,24 @@ class ArticleOpenModeResolverTest {
     }
 
     @Test
+    fun `enclosure-only audio article urls fall back but separate article urls remain reader eligible`() {
+        val enclosureOnlyUrl = "https://example.com/episode.mp3?token=signed"
+
+        for (readerMode in listOf(ArticleOpenMode.FULL_ARTICLE, ArticleOpenMode.FEED_CONTENT)) {
+            assertEquals(
+                ArticleOpenMode.PREFERRED_BROWSER,
+                urlInfo(url = enclosureOnlyUrl, articleOpenMode = readerMode)
+                    .resolveArticleOpenMode(ArticleOpenMode.FULL_ARTICLE),
+            )
+            assertEquals(
+                readerMode,
+                urlInfo(url = ELIGIBLE_URL, articleOpenMode = readerMode)
+                    .resolveArticleOpenMode(ArticleOpenMode.FULL_ARTICLE),
+            )
+        }
+    }
+
+    @Test
     fun `browser modes are unaffected by reader eligibility`() {
         for (browserMode in listOf(ArticleOpenMode.INTERNAL_BROWSER, ArticleOpenMode.PREFERRED_BROWSER)) {
             assertEquals(

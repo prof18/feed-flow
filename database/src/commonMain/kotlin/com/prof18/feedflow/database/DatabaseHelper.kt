@@ -11,6 +11,7 @@ import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ArticleExportFilter
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.CloudFeedAndCategorySnapshot
 import com.prof18.feedflow.core.model.CloudFeedOrCategoryEntity
@@ -280,6 +281,7 @@ class DatabaseHelper(
                     val isDeleted = dbRef.deletedFeedItemsQueries.isItemDeleted(id).executeAsOne()
 
                     if (!isDeleted) {
+                        val validatedAudioUrl = AudioEnclosure.validatedUrl(audioUrl)
                         dbRef.feedItemQueries.insertFeedItem(
                             url_hash = id,
                             url = url,
@@ -290,7 +292,16 @@ class DatabaseHelper(
                             feed_source_id = feedSource.id,
                             pub_date = pubDateMillis,
                             comments_url = commentsUrl,
+                            audio_url = validatedAudioUrl,
                         )
+                        // INSERT OR IGNORE leaves existing items untouched; enrich or rotate their audio URL.
+                        validatedAudioUrl?.let {
+                            dbRef.feedItemQueries.updateFeedItemAudioUrl(
+                                audioUrl = validatedAudioUrl,
+                                urlHash = id,
+                                feedSourceId = feedSource.id,
+                            )
+                        }
                     }
                 }
             }
@@ -308,6 +319,17 @@ class DatabaseHelper(
 
     suspend fun getFeedItemContent(urlHash: String): String? = withContext(backgroundDispatcher) {
         dbRef.feedItemQueries.selectFeedItemContent(urlHash).executeAsOneOrNull()?.content
+    }
+
+    suspend fun getFeedItemAudioUrl(feedId: String): String? = withContext(backgroundDispatcher) {
+        AudioEnclosure.validatedUrl(
+            dbRef.feedItemQueries.selectFeedItemAudioUrl(feedId).executeAsOneOrNull()?.audio_url,
+        )
+    }
+
+    suspend fun getFeedItemAudioArtwork(feedId: String): String? = withContext(backgroundDispatcher) {
+        val artwork = dbRef.feedItemQueries.selectFeedItemAudioArtwork(feedId).executeAsOneOrNull()
+        AudioEnclosure.validatedUrl(artwork?.image_url) ?: AudioEnclosure.validatedUrl(artwork?.logo_url)
     }
 
     suspend fun getMissingFeedItemIds(feedItemIds: List<String>): Set<String> =

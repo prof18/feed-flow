@@ -75,6 +75,7 @@ import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
 import com.mikepenz.markdown.model.markdownAnimations
+import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
@@ -252,12 +253,20 @@ internal fun ReaderModeScreen(
                                 Column(
                                     modifier = contentModifier,
                                 ) {
+                                    val audioUrl = AudioEnclosure.validatedUrl(s.readerModeData.audioUrl)
+                                    if (audioUrl != null) {
+                                        AudioEpisodeBanner(
+                                            title = s.readerModeData.title,
+                                            fontSize = fontSize,
+                                            onOpenAudio = { openExternalUrl(audioUrl) },
+                                        )
+                                    }
                                     key(s.readerModeData.content, fontSize, lineHeight) {
                                         val bodyLineHeight = readerLineHeightToTextLineHeightSp(fontSize, lineHeight).sp
                                         val markdown = remember(s.readerModeData) {
                                             buildReaderModeMarkdown(
                                                 content = s.readerModeData.content,
-                                                title = s.readerModeData.title,
+                                                title = s.readerModeData.title.takeIf { audioUrl == null },
                                                 imageUrl = s.readerModeData.imageUrl,
                                                 siteName = s.readerModeData.siteName,
                                             )

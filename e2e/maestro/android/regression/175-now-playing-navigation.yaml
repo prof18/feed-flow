@@ -1,0 +1,70 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=audio-episode&audioUrl=${AUDIO_URL}
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: article_row_e2e_audio_episode
+- tapOn:
+    id: reader_play_audio
+- extendedWaitUntil:
+    visible:
+      id: audio_pause
+    timeout: 10000
+- tapOn:
+    id: audio_pause
+- tapOn:
+    id: audio_seek
+- assertVisible:
+    id: audio_position
+    text: "^0:[2-4][0-9]$"
+- tapOn:
+    id: reader_next_button
+- assertVisible:
+    id: reader_article_e2e_audio_control
+- tapOn:
+    id: audio_dock_return_to_episode
+- assertVisible:
+    id: reader_article_e2e_audio_episode
+- assertVisible:
+    id: audio_play
+- pressKey: Back
+- assertVisible:
+    id: audio_now_playing
+- assertVisible:
+    id: audio_mini_play
+- takeScreenshot: .tmp/audio-playback/android-now-playing
+- tapOn:
+    id: audio_mini_play
+- assertVisible:
+    id: audio_mini_pause
+- tapOn:
+    id: audio_mini_pause
+- assertVisible:
+    id: audio_mini_play
+- tapOn:
+    id: home_search_button
+- assertVisible:
+    id: audio_now_playing
+- takeScreenshot: .tmp/audio-playback/android-now-playing-search
+- tapOn:
+    id: audio_return_to_episode
+- assertVisible:
+    id: reader_article_e2e_audio_episode
+- assertVisible:
+    id: audio_play
+- assertVisible:
+    id: audio_position
+    text: "^0:[2-4][0-9]$"
+- assertNotVisible:
+    id: audio_now_playing
+- tapOn:
+    id: audio_close_player
+- pressKey: Back
+- assertNotVisible:
+    id: audio_now_playing

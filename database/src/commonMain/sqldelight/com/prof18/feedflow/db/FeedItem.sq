@@ -14,7 +14,8 @@ CREATE TABLE feed_item (
     comments_url TEXT,
     notification_sent INTEGER AS Boolean NOT NULL DEFAULT 0,
     is_blocked INTEGER AS Boolean NOT NULL DEFAULT 0,
-    content_fetched INTEGER AS Boolean NOT NULL DEFAULT 0
+    content_fetched INTEGER AS Boolean NOT NULL DEFAULT 0,
+    audio_url TEXT
 );
 
 CREATE INDEX idx_feed_item_feed_source_id ON feed_item(feed_source_id);
@@ -23,8 +24,21 @@ CREATE INDEX idx_feed_item_read_blocked ON feed_item(is_read, is_blocked);
 CREATE INDEX idx_feed_item_timeline ON feed_item(feed_source_id, is_read, is_blocked, pub_date DESC);
 
 insertFeedItem:
-INSERT OR IGNORE INTO feed_item(url_hash, url, title, subtitle, content, image_url, feed_source_id, pub_date, comments_url)
-VALUES (?,?,?,?,?,?,?,?, ?);
+INSERT OR IGNORE INTO feed_item(url_hash, url, title, subtitle, content, image_url, feed_source_id, pub_date, comments_url, audio_url)
+VALUES (?,?,?,?,?,?,?,?,?,?);
+
+updateFeedItemAudioUrl:
+UPDATE feed_item SET audio_url = :audioUrl
+WHERE url_hash = :urlHash AND feed_source_id = :feedSourceId
+AND (audio_url IS NULL OR audio_url != :audioUrl);
+
+selectFeedItemAudioUrl:
+SELECT audio_url FROM feed_item WHERE url_hash = :urlHash;
+
+selectFeedItemAudioArtwork:
+SELECT feed_item.image_url, feed_source.logo_url
+FROM feed_item INNER JOIN feed_source ON feed_item.feed_source_id = feed_source.url_hash
+WHERE feed_item.url_hash = :urlHash;
 
 countFeedItems:
 SELECT COUNT(*) FROM feed_item;
@@ -51,7 +65,7 @@ AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHi
 AND is_blocked = 0;
 
 selectFeeds:
-SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, comments_url, is_read, is_bookmarked, notification_sent, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp, feed_source_category.id AS feed_source_category_id, feed_source_category.title AS feed_source_category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.article_open_mode AS feed_source_article_open_mode, feed_source_preferences.is_hidden AS feed_source_is_hidden, feed_source_preferences.is_pinned AS feed_source_is_pinned, feed_source_preferences.notifications_enabled AS feed_source_notifications_enabled, feed_source_preferences.hide_images AS feed_source_hide_images, feed_source.fetch_failed AS feed_source_fetch_failed FROM feed_item
+SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, comments_url, is_read, is_bookmarked, notification_sent, audio_url, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp, feed_source_category.id AS feed_source_category_id, feed_source_category.title AS feed_source_category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.article_open_mode AS feed_source_article_open_mode, feed_source_preferences.is_hidden AS feed_source_is_hidden, feed_source_preferences.is_pinned AS feed_source_is_pinned, feed_source_preferences.notifications_enabled AS feed_source_notifications_enabled, feed_source_preferences.hide_images AS feed_source_hide_images, feed_source.fetch_failed AS feed_source_fetch_failed FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category
@@ -156,8 +170,14 @@ INSERT OR REPLACE INTO feed_item(
     comments_url,
     notification_sent,
     is_blocked,
-    content_fetched
-) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+    content_fetched,
+    audio_url
+) VALUES (
+    :url_hash, :url, :title, :subtitle, :content, :image_url,
+    :feed_source_id, :is_read, :is_bookmarked, :pub_date,
+    :comments_url, :notification_sent, :is_blocked, :content_fetched,
+    (SELECT audio_url FROM feed_item WHERE url_hash = :url_hash AND feed_source_id = :feed_source_id)
+);
 
 updateReadStatus:
 UPDATE feed_item

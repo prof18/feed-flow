@@ -149,6 +149,7 @@ internal class FeedbinClient internal constructor(
                     ids = idsParam,
                     mode = mode,
                     per_page = perPage,
+                    include_enclosure = true,
                 ),
             )
         }
@@ -172,6 +173,7 @@ internal class FeedbinClient internal constructor(
                     ids = idsParam,
                     mode = mode,
                     per_page = perPage,
+                    include_enclosure = true,
                 ),
             )
 

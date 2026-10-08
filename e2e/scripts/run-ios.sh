@@ -49,6 +49,11 @@ E2E_IOS_SUITES="${E2E_IOS_SUITES:-smoke regression}"
 for suite in $E2E_IOS_SUITES; do
   while IFS= read -r flow_file; do
     maestro_started=true
-    maestro --platform ios --device "$SIMULATOR_UDID" test "$flow_file"
+    flow_name="${flow_file##*/}"
+    if [[ "$flow_name" == "174-podcast-audio-playback.yaml" || "$flow_name" == "175-now-playing-navigation.yaml" ]]; then
+      SIMULATOR_UDID="$SIMULATOR_UDID" "$REPO_ROOT/e2e/scripts/run-audio-playback.sh" ios "${flow_name%.yaml}"
+    else
+      maestro --platform ios --device "$SIMULATOR_UDID" test "$flow_file"
+    fi
   done < <(find "$REPO_ROOT/e2e/maestro/ios/$suite" -name '*.yaml' | sort)
 done

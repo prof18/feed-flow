@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.domain
 
+import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 
 // Last export: 2025-12-21T11:48:48.756Z
@@ -12,6 +13,7 @@ fun getReaderModeStyledHtml(
     imageUrl: String? = null,
     leadingContent: String = "",
     siteName: String? = null,
+    audioBanner: ReaderAudioBanner? = null,
 ): String {
     val titleTag = if (title != null) {
         "<h1>${title.escapeHtml()}</h1>"
@@ -30,6 +32,7 @@ fun getReaderModeStyledHtml(
         ""
     }
     val processedContent = subtitleTag + heroTag + content
+    val audioBannerTag = audioBanner?.let(::renderAudioBanner).orEmpty()
 
     // language=html
     return """
@@ -45,10 +48,19 @@ fun getReaderModeStyledHtml(
     $titleTag
     <div id="container">
         <div id="__content">
+            $audioBannerTag
             $processedContent
         </div>
     </div>
     <script>
+        window.feedflowUpdateAudioState = function(isPlaying) {
+            var button = document.getElementById("reader_play_audio");
+            if (!button) return;
+            var label = button.getAttribute(isPlaying ? "data-pause-label" : "data-play-label");
+            if (label) button.setAttribute("aria-label", label);
+            var path = button.querySelector("svg path");
+            if (path) path.setAttribute("d", isPlaying ? "M6 5h4v14H6zM14 5h4v14h-4z" : "M8 5v14l11-7z");
+        };
         // Instagram sends JSON MEASURE messages as its media and caption finish loading.
         window.addEventListener("message", function(event) {
             if (event.origin !== "https://www.instagram.com") return;
@@ -183,6 +195,68 @@ fun getReaderModeStyledHtml(
     </html>
         """
         .trimIndent()
+}
+
+private fun renderAudioBanner(banner: ReaderAudioBanner): String {
+    if (banner.enablePlayback) return renderPlayableAudioBanner(banner)
+    val title = banner.title?.takeIf { it.isNotBlank() } ?: banner.untitledAudioLabel
+    val audioLabel = banner.audioLabel.escapeHtml()
+    val escapedTitle = title.escapeHtml()
+    val openAudioLabel = banner.openAudioLabel.escapeHtml()
+    val accessibleLabel = "$audioLabel: $escapedTitle. $openAudioLabel"
+
+    return """
+        <a id="reader_audio_banner" class="__audio_banner"
+            href="${AudioEnclosure.ACTION_URL}" aria-label="$accessibleLabel">
+            <svg class="__audio_banner_icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M3 14v-3a9 9 0 0 1 18 0v3" />
+                <path d="M3 13h3v7H5a2 2 0 0 1-2-2v-5Zm18 0h-3v7h1a2 2 0 0 0 2-2v-5Z" />
+            </svg>
+            <span class="__audio_banner_copy">
+                <span class="__audio_banner_label">$audioLabel</span>
+                <span class="__audio_banner_title">$escapedTitle</span>
+            </span>
+            <span id="reader_open_audio" class="__audio_banner_action">
+                $openAudioLabel
+                <svg class="__audio_banner_arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                    <path d="M6 3h7v7M13 3 5 11M11 9v4H3V5h4" />
+                </svg>
+            </span>
+        </a>
+    """.trimIndent()
+}
+
+private fun renderPlayableAudioBanner(banner: ReaderAudioBanner): String {
+    val title = (banner.title?.takeIf { it.isNotBlank() } ?: banner.untitledAudioLabel).escapeHtml()
+    val subtitle = banner.subtitle?.takeIf { it.isNotBlank() }?.escapeHtml() ?: banner.audioLabel.escapeHtml()
+    val artwork = AudioEnclosure.validatedUrl(banner.imageUrl)?.let {
+        "<img class=\"__audio_artwork\" src=\"${it.escapeHtml()}\" alt=\"\" />"
+    }.orEmpty()
+    return """
+        <aside id="reader_audio_banner" class="__audio_banner __audio_player_card"
+            aria-label="${banner.audioLabel.escapeHtml()}">
+            <span class="__audio_artwork_container">
+                <svg class="__audio_banner_icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M3 14v-3a9 9 0 0 1 18 0v3" />
+                    <path d="M3 13h3v7H5a2 2 0 0 1-2-2v-5Zm18 0h-3v7h1a2 2 0 0 0 2-2v-5Z" />
+                </svg>
+                $artwork
+            </span>
+            <span class="__audio_banner_copy">
+                <span class="__audio_banner_title">$title</span>
+                <span class="__audio_banner_label">$subtitle</span>
+            </span>
+            <a id="reader_play_audio" class="__audio_play" href="${AudioEnclosure.PLAY_ACTION_URL}"
+                data-play-label="${banner.playAudioLabel.escapeHtml()}: $title"
+                data-pause-label="${banner.pauseAudioLabel.escapeHtml()}: $title"
+                role="button" aria-label="${banner.playAudioLabel.escapeHtml()}: $title">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" /></svg>
+                <span>${banner.playAudioLabel.escapeHtml()}</span>
+            </a>
+            <a id="reader_open_audio" class="__audio_banner_action __audio_external"
+                href="${AudioEnclosure.ACTION_URL}">${banner.openAudioLabel.escapeHtml()} ↗</a>
+        </aside>
+    """.trimIndent()
 }
 
 private fun String.escapeHtml(): String =
@@ -402,6 +476,124 @@ aside.callout[data-callout] .callout-label {
     letter-spacing: 0.04em;
     text-transform: uppercase;
     opacity: 0.7;
+}
+
+.__audio_banner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 16px;
+    padding: 16px;
+    border: 1px solid var(--reader-border);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--reader-link) 7%, var(--reader-bg));
+    color: inherit;
+    text-align: start;
+    text-decoration: none;
+}
+
+.__audio_banner:focus-visible {
+    outline: 3px solid var(--reader-link);
+    outline-offset: 3px;
+}
+
+.__audio_banner_icon {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: var(--reader-link);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.__audio_banner_copy {
+    display: grid;
+    min-width: 0;
+    gap: 2px;
+    overflow-wrap: anywhere;
+}
+
+.__audio_banner_label {
+    font-size: 0.75em;
+    letter-spacing: 0.04em;
+    opacity: 0.7;
+}
+
+.__audio_banner_title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-weight: 600;
+}
+
+.__audio_banner_action {
+    display: inline-flex;
+    min-width: 0;
+    min-height: 44px;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    overflow-wrap: anywhere;
+    color: var(--reader-link);
+    font-weight: 600;
+    text-align: start;
+}
+
+.__audio_banner_arrow {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+}
+
+.__audio_player_card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.__audio_artwork_container {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--reader-link) 12%, var(--reader-bg));
+}
+
+.__audio_artwork_container > * { grid-area: 1 / 1; }
+.__audio_artwork { width: 100%; height: 100%; object-fit: cover; }
+.__audio_play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    color: var(--reader-bg);
+    background: var(--reader-link);
+}
+.__audio_play svg { width: 24px; height: 24px; fill: var(--reader-bg); }
+.__audio_play span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.__audio_play:focus-visible, .__audio_external:focus-visible { outline: 3px solid var(--reader-link); outline-offset: 3px; }
+.__audio_external { grid-column: 1 / -1; justify-content: flex-start; border-top: 1px solid var(--reader-border); }
+
+@media (max-width: 420px) {
+    .__audio_banner {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .__audio_banner_action {
+        grid-column: 2;
+        justify-content: flex-start;
+    }
+    .__audio_player_card { grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; padding: 12px; }
+    .__audio_player_card .__audio_external { grid-column: 1 / -1; }
+    .__audio_player_card .__audio_artwork_container { width: 44px; height: 44px; }
 }
 
 .__subtitle {

@@ -440,6 +440,8 @@ def run_flows(
                 ]
             else:
                 args = ["maestro", "--platform", "android", "test", str(relative_flow)]
+            if flow_path.name in {"174-podcast-audio-playback.yaml", "175-now-playing-navigation.yaml"}:
+                args = ["bash", "e2e/scripts/run-audio-playback.sh", platform, flow_path.stem]
             command_result = run_maestro_command(
                 f"{platform} {suite} {flow_path.name}",
                 args,
@@ -504,9 +506,12 @@ def run_platform_tests(
     flow_results = run_flows(repo_root, output_dir, platform, suites, env)
     restore_result: CommandResult | None = None
     if command_exists("feedflow-restore-dev-feeds"):
+        restore_args = ["feedflow-restore-dev-feeds", "--platform", platform]
+        if platform == "ios" and env.get("SIMULATOR_UDID"):
+            restore_args.extend(["--simulator", env["SIMULATOR_UDID"]])
         restore_result = run_command(
             f"{platform} development-feed restore",
-            ["feedflow-restore-dev-feeds", "--platform", platform],
+            restore_args,
             repo_root,
             output_dir / f"restore/{platform}.log",
             env=env,

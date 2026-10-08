@@ -274,9 +274,7 @@ class AndroidAudioPlayer(
             mutableState.value = state.value.copy(isPlaying = !state.value.isPlaying)
             return
         }
-        if (state.value.failed && state.value.episode?.kind == AudioSourceKind.SPEECH &&
-            state.value.episode?.url.isNullOrBlank()
-        ) {
+        if (shouldRegenerateSpeech()) {
             speechRequest?.let(::prepareSpeech)
             return
         }
@@ -317,6 +315,10 @@ class AndroidAudioPlayer(
             currentPlayer.play()
         }
     }
+
+    private fun shouldRegenerateSpeech(): Boolean =
+        state.value.failed && state.value.episode?.kind == AudioSourceKind.SPEECH &&
+            (state.value.episode?.url.isNullOrBlank() || speechFile?.isFile != true)
 
     fun pause() {
         mutableState.value = state.value.copy(isPlaying = false, isLoading = state.value.isPreparingSpeech)

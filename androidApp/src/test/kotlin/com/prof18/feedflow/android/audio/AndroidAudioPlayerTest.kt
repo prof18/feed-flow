@@ -283,6 +283,58 @@ class AndroidAudioPlayerTest {
     }
 
     @Test
+    fun `failed speech with deleted cache regenerates and restores saved position`() = playerTest {
+        val generator = TestSpeechGenerator()
+        replaceAudioWithSpeechGenerator(generator)
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        fake.ready()
+        audio.seek(14_000)
+        val speech = requireNotNull(audio.state.value.episode)
+        val firstFile = generator.files.single()
+        assertTrue(firstFile.delete())
+
+        fake.fail()
+        audio.togglePlayback()
+        runCurrent()
+
+        val retriedSpeech = requireNotNull(audio.state.value.episode)
+        assertEquals(2, generator.callCount)
+        assertEquals(speech.playbackId, retriedSpeech.playbackId)
+        assertEquals(speech.playbackId, fake.item?.mediaId)
+        assertTrue(retriedSpeech.url.startsWith("file:"))
+        assertFalse(retriedSpeech.url == speech.url)
+        assertEquals(14_000, fake.position)
+        assertEquals(14_000, positions.getPosition(speech.playbackId))
+        assertTrue(generator.files.last().isFile)
+    }
+
+    @Test
+    fun `failed speech with existing cache retries the same file`() = playerTest {
+        val generator = TestSpeechGenerator()
+        replaceAudioWithSpeechGenerator(generator)
+
+        audio.playReaderSpeech(readerArticle(), "Untitled")
+        runCurrent()
+        fake.ready()
+        audio.seek(14_000)
+        val speech = requireNotNull(audio.state.value.episode)
+        val originalMediaItem = fake.item
+        val originalFile = generator.files.single()
+
+        fake.fail()
+        audio.togglePlayback()
+
+        assertEquals(1, generator.callCount)
+        assertTrue(originalFile.isFile)
+        assertEquals(originalMediaItem, fake.item)
+        assertEquals(speech.url, audio.state.value.episode?.url)
+        assertEquals(14_000, fake.position)
+        assertTrue(fake.playWhenReady)
+    }
+
+    @Test
     fun `changed article content generates new speech key and replaces cached file`() = playerTest {
         val generator = TestSpeechGenerator()
         replaceAudioWithSpeechGenerator(generator)

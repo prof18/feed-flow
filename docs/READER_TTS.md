@@ -12,6 +12,8 @@ Android uses the installed system TTS engine to generate each bounded text segme
 
 On Android, audio-service teardown cancels pending speech preparation and releases its cached audio after saving progress. A late synthesis result cannot reopen playback after the service has stopped. Deterministic player tests cover this teardown race; native synthesis timing does not provide a reliable preparation window for a Maestro task-dismissal test.
 
+If Android removes a completed speech cache file, Retry regenerates the captured narration and restores its saved speech position. A playback failure with the file still present retries the existing file. Cache eviction is covered by deterministic player tests.
+
 ## Validation
 
 Focused deterministic tests cover text extraction, native generation, and shared player behavior:

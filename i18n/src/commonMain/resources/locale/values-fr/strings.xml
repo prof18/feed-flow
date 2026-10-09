@@ -425,8 +425,8 @@
     <string name="settings_force_english">Forcer l\'anglais</string>
     <string name="settings_force_english_description">Utiliser l\'anglais comme langue d\'interface au lieu de la langue du système.</string>
     <string name="feed_fetch_refused_error">Impossible d\'atteindre ce flux. Le site bloque peut être les lecteurs RSS. Veuillez réessayer plus tard.</string>
-    <string name="mark_all_bookmarks_read_dialog_message">Êtes-vous sûr de vouloir marquer tous les articles sauvegardés comme lus ?</string>
-    <string name="remove_bookmark_dialog_message">Êtes-vous sûr de vouloir supprimer cet articles des favoris ?</string>
+    <string name="mark_all_bookmarks_read_dialog_message">Êtes-vous sûr de vouloir marquer tous les articles sauvegardés comme lus ?</string>
+    <string name="remove_bookmark_dialog_message">Êtes-vous sûr de vouloir supprimer cet articles des favoris ?</string>
     <string name="widget_preview_info">À propos de cette prévisualisation</string>
     <string name="widget_sync_disabled">Mises à jours automatiques désactivées</string>
     <string name="widget_enable_sync">Activer la synchronisation</string>

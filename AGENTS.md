@@ -161,10 +161,7 @@ Do not set `derivedDataPath` in `.xcodebuildmcp/config.yaml` by default. Leaving
 
 ### Build Verification Process
 
-IMPORTANT: When editing code, you MUST:
-1. Build the project after making changes
-2. Fix any compilation errors before proceeding
-   Be sure to build ONLY for the platform you are working on to save time.
+After editing code, build the platform you changed (only that one, to save time) and fix compilation errors before moving on.
 
 ## Handing off
 
@@ -234,9 +231,9 @@ For Miniflux/GReader sync failures, compare FeedFlow's exact requests and header
 
 - For cloud-backup sync, follow `docs/CLOUD_SYNC_TESTING.md`; the deterministic harness runs through `allTests`. For live provider checks or adding a provider, use `.ai/skills/validate-cloud-sync/SKILL.md` and `docs/CLOUD_SYNC_LIVE_TESTING.md`. The optional physical-iPhone controller in `tools/cloud-sync-live/` does not replace that Gradle gate.
 
-- DO NOT write comments for every function or class. Only write comments when the code is not self-explanatory.
+- Write comments only where the code is not self-explanatory, not on every function or class.
 - If you touch or create any business logic, ensure it's thoroughly tested with unit tests.
-- DO NOT excessively use try/catch blocks for every function. Use them only for the top caller or the bottom callers, depending on the cases.
+- Put try/catch only at the top caller or the bottom callers, not around every function.
 - ALWAYS run gradle tasks with the following flag: `--quiet --console=plain`
 - Prefer keeping data classes and other simple model types at the bottom of a file, or in a dedicated model file when they are shared by multiple classes.
 - Android app modules use AGP 9's built-in Kotlin support; do not re-add `org.jetbrains.kotlin.android`. Android and Desktop app version values come from the `com.feedflow.versioning` convention plugin, not `versioning.gradle.kts`.
@@ -270,7 +267,7 @@ When creating commits:
 ### iOS Development
 - ALWAYS build with xcodebuild with -quiet flag when building for iOS. If the command returns errors you may run xcodebuild again without the -quiet flag.
 - Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet`
-- IMPORTANT: The project now supports iOS 26 SDK (June 2025) while maintaining iOS 18 as the minimum deployment target. Use #available checks when adopting iOS 26+ APIs.
+- The app builds against the iOS 26 SDK with a minimum deployment target of iOS 17 (`iosApp/project.yml`). Gate newer APIs with `#available` checks.
 - Keep app-group database work that may outlive an iOS foreground interval inside `withSuspensionGuard`; it uses `NSProcessInfo` and also works in the widget and share extensions.
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
 - Keep accessibility identifier enums in separate `*AccessibilityIdentifiers.swift` files, not appended to view files.

@@ -9,10 +9,8 @@ Generates the App Store / Play Store screenshots from the copy in this repo.
 No design tool is involved — `tools/screenshots/` is the source of truth.
 
 **All six platforms are here**: `android_phone`, `android_tablet`, `iphone`,
-`ipad`, `macos`, `windows`. The Figma blueprint is no longer authored — do not
-edit its boards. (The old `figma-screenshot-localization` skill was removed;
-`git log -- .ai/skills/figma-screenshot-localization` recovers it if ever
-needed.)
+`ipad`, `macos`, `windows`. The Figma English board is a frozen geometry
+reference — do not edit it.
 
 ## The rule this skill exists to enforce
 

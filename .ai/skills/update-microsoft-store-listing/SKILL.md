@@ -5,8 +5,7 @@ description: Read or change FeedFlow's Microsoft Store listing with pcenter — 
 
 # Update the Microsoft Store listing
 
-The Store is driven by [`pcenter`](https://github.com/prof18/pcenter-cli), which replaced the
-PowerShell scripts that used to live in `.github/scripts/`. Install locally with
+The Store is driven by [`pcenter`](https://github.com/prof18/pcenter-cli). Install locally with
 `brew install prof18/tap/pcenter`.
 
 ## Before anything else
@@ -98,7 +97,7 @@ cannot silently drop a Store language.
 
 ## When something is stuck
 
-- **Rollout** (the 2026-07-08 class of failure): `pcenter rollout status`, then
+- **Rollout**: `pcenter rollout status`, then
   `pcenter rollout finalize`. Every mutation verifies the resulting state, because the Store
   API returns 504 for operations that in fact succeeded.
 - **A failed submission** (`CommitFailed`, `CertificationFailed`) still occupies the single

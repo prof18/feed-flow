@@ -549,7 +549,7 @@ internal class FeedSourcesRepository(
             withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
         )
         feedSyncRepository.localEditCommitted(cloudSessionId)
-        feedSyncRepository.performBackup()
+        feedSyncRepository.enqueueBackup()
     }
 
     private suspend fun guessLinkAndParseFeed(originalUrl: String): GuessOutcome {

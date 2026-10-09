@@ -24,6 +24,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -262,6 +263,7 @@ private fun AddButton(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
             ) {
                 CircularProgressIndicator(
+                    color = LocalContentColor.current,
                     modifier = Modifier.size(16.dp),
                     strokeWidth = 2.dp,
                 )

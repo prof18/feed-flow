@@ -11,11 +11,11 @@ import SwiftUI
 import WidgetKit
 
 struct FeedFlowWidget: Widget {
-    let kind: String = "com.prof18.feedflow.widget.main"
+    nonisolated static let kind = "com.prof18.feedflow.widget.main"
 
     var body: some WidgetConfiguration {
         AppIntentConfiguration(
-            kind: kind,
+            kind: Self.kind,
             intent: FeedFlowWidgetConfigurationIntent.self,
             provider: Provider()
         ) { entry in

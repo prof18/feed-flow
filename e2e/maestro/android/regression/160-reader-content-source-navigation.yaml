@@ -1,6 +1,7 @@
 appId: com.prof18.feedflow.debug
 ---
 - launchApp
+- setOrientation: PORTRAIT
 - openLink: feedflow://e2e/reset-and-seed?profile=reader-mode
 - extendedWaitUntil:
     visible:
@@ -16,12 +17,30 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: article_row_e2e_article_reader_success
 - assertVisible: "E2E cached reader content loaded from the seed fixture."
+- setOrientation: LANDSCAPE_LEFT
+- assertVisible:
+    id: reader_content_source_button
+    checked: false
+- takeScreenshot: reader-rss-inactive
 - tapOn:
-    id: reader_more_menu_button
-- tapOn:
-    text: "Content from the feed"
+    id: reader_content_source_button
+- assertVisible:
+    id: reader_content_source_button
+    checked: true
+- takeScreenshot: reader-rss-active
+- setOrientation: PORTRAIT
 - extendedWaitUntil:
     visible: "This article ships no link at all.*"
+    timeout: 5000
+- setOrientation: LANDSCAPE_LEFT
+- tapOn:
+    id: reader_content_source_button
+- assertVisible:
+    id: reader_content_source_button
+    checked: false
+- setOrientation: PORTRAIT
+- extendedWaitUntil:
+    visible: "E2E cached reader content loaded from the seed fixture."
     timeout: 5000
 - tapOn:
     id: reader_back_button

@@ -1,7 +1,11 @@
 appId: com.prof18.feedflow.debug
+env:
+  WIDGET_HEADER_TITLE: ${WIDGET_HEADER_TITLE || "Show header title"}
 ---
 - launchApp
-- openLink: feedflow://e2e/reset-and-seed?profile=android-widget
+- openLink:
+    link: feedflow://e2e/reset-and-seed?profile=android-widget
+    autoVerify: true
 - extendedWaitUntil:
     visible:
       id: e2e_seed_complete
@@ -17,10 +21,10 @@ appId: com.prof18.feedflow.debug
     rightOf:
       text: "Show refresh button"
     checked: true
-- tapOn: "Show header title"
+- tapOn: ${WIDGET_HEADER_TITLE}
 - assertVisible:
     rightOf:
-      text: "Show header title"
+      text: ${WIDGET_HEADER_TITLE}
     checked: false
 - back
 - tapOn:
@@ -31,7 +35,7 @@ appId: com.prof18.feedflow.debug
     checked: true
 - assertVisible:
     rightOf:
-      text: "Show header title"
+      text: ${WIDGET_HEADER_TITLE}
     checked: false
 - tapOn: "Show refresh button"
 - assertVisible:

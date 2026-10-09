@@ -125,6 +125,8 @@ appId: com.prof18.feedflow.debug
 
 The Android `android-widget` profile also exposes `e2e_open_widget_settings`, which opens the widget configuration screen with test widget ID 1. REG-177 uses this entry point to exercise settings and the preview without requiring a launcher host; the seed resets that per-widget configuration before each run. It does not validate the home-screen widget refresh action.
 
+REG-173 defaults to an English UI. For a localized device, pass `-e WIDGET_HEADER_TITLE="<localized Show header title label>"` to Maestro.
+
 iOS handles the seed link inside the app. The simulator may show a system confirmation dialog for custom schemes, so keep the `Open` tap optional.
 
 ```yaml

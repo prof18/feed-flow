@@ -20,14 +20,14 @@ import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
-import androidx.glance.layout.Row
-import androidx.glance.layout.size
 import androidx.glance.layout.Column
+import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -100,10 +100,7 @@ internal fun WidgetContent(
                     showHeader = showHeader,
                     showRefreshButton = showRefreshButton,
                     isRefreshing = isRefreshing,
-                    headerTitle = headerTitle ?: when (filter) {
-                        WidgetContentFilter.Bookmarks -> LocalFeedFlowStrings.current.drawerTitleBookmarks
-                        else -> LocalFeedFlowStrings.current.widgetLatestItems
-                    },
+                    headerTitle = headerTitle ?: defaultWidgetHeaderTitle(filter),
                     headerFontSize = fontSizes.header,
                     textColor = primaryTextColor,
                     openAppAction = openAppAction,
@@ -174,6 +171,12 @@ internal fun WidgetContent(
             }
         }
     }
+}
+
+@Composable
+private fun defaultWidgetHeaderTitle(filter: WidgetContentFilter): String = when (filter) {
+    WidgetContentFilter.Bookmarks -> LocalFeedFlowStrings.current.drawerTitleBookmarks
+    else -> LocalFeedFlowStrings.current.widgetLatestItems
 }
 
 @SuppressLint("RestrictedApi")

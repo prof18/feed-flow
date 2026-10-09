@@ -198,6 +198,20 @@ For compile-only local/CI iOS builds without real sync credentials, you can use 
 
 For Google Play listing/bootstrap checks, prefer `FEEDFLOW_PLAY_CONFIG_JSON=/path/to/play_config.json ./gradlew --quiet --console=plain :androidApp:bootstrapGooglePlayReleaseListing`. Do not assume an uncommitted repo-root `play_config.json` exists in automation worktrees.
 
+## Adding a feature
+
+Generic patterns (Screen/ScreenContent split, ViewModel shape, events, SwiftUI flow observation) are in the global `kmp-feature-development` skill. This section has the FeedFlow wiring.
+
+- **ViewModel:** `shared/src/commonMain/kotlin/com/prof18/feedflow/shared/presentation/`. Register it with `viewModel { }` in `shared/src/commonMain/.../shared/di/Koin.kt` (iOS-only ViewModels go in `shared/src/iosMain/.../shared/di/KoinIOS.kt`).
+- **iOS access:** add `fun getXxxViewModel()` to `object Deps` in `shared/src/iosMain/.../shared/di/KoinIOS.kt`.
+- **Shared Compose UI:** `XxxScreenContent` goes in `sharedUI/src/commonMain/kotlin/com/prof18/feedflow/shared/ui/<feature>/` when Android and Desktop both use it. Reuse preview data from `sharedUI/.../ui/preview/PreviewItems.kt` and the `@PreviewPhone`/`@PreviewFoldable`/`@PreviewTablet` annotations (`sharedUI/src/androidMain/.../ui/preview/FeedFlowPreview.kt`).
+- **Android:** wrapper `androidApp/.../android/<feature>/XxxScreen.android.kt`, route (`@Serializable ... : NavKey`) in `androidApp/.../android/Screen.kt`, `entry<Route>` in `MainActivity.FeedFlowNavigation()`. Go back with `popBackStackOrFinish(backStack)` (the `navigateBack` lambda).
+- **Desktop:** wrapper `desktopApp/.../desktop/<feature>/XxxScreen.desktop.kt`. In-window pages get a `NavKey` in `desktopApp/.../desktop/Screen.kt` and an `entry<Route>` in `screens()` in `desktop/main/MainWindow.kt`. Settings/detail pages are dialog windows instead (see "Desktop screens/windows").
+- **ViewModel scope:** no Navigation 3 ViewModel entry decorator is installed, so `koinViewModel()` inside an entry is scoped to the Activity/window. The ViewModel outlives the screen and is reused next time; reset per-screen state explicitly (as `SearchScreen` does with `resetSearch()`).
+- **iOS:** `iosApp/Source/<Feature>/XxxScreen.swift` + `XxxScreenContent.swift`. Add a case to `CommonViewRoute` (`iosApp/Source/App/Model/CommonViewRoute.swift`) and handle it in the `.navigationDestination(for: CommonViewRoute.self)` of **both** `RegularView.swift` and `CompactView.swift`. Navigate with `appState.navigate(route:)`. Surface errors via `appState.snackbarQueue` + `.snackbar(messageQueue:)`.
+- **Strings:** `LocalFeedFlowStrings.current` in Compose, `feedFlowStrings` in Swift.
+- **No SwiftUI previews:** the Kotlin framework can't load in Xcode previews.
+
 ## Testing
 
 Project documentation lives in **`docs/`**; start with [the documentation index](docs/README.md). Keep agent skills in `.ai/skills/`.
@@ -260,7 +274,7 @@ When creating commits:
 - Keep app-group database work that may outlive an iOS foreground interval inside `withSuspensionGuard`; it uses `NSProcessInfo` and also works in the widget and share extensions.
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
 - Keep accessibility identifier enums in separate `*AccessibilityIdentifiers.swift` files, not appended to view files.
-- Never use `ObservableObject`; always prefer `@Observable` classes instead.
+- Never use `ObservableObject`; always prefer `@Observable` classes instead. The one exception is `VMStoreOwner` held with `@StateObject`: its autoclosure creates the Kotlin ViewModel once per view identity, while `@State` would rebuild it on every parent update.
 - Never use `Task.sleep(nanoseconds:)`; always use `Task.sleep(for:)` instead.
 - Avoid `AnyView` unless it is absolutely required.
 - Avoid force unwraps and force `try` unless it is unrecoverable.

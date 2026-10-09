@@ -440,4 +440,5 @@
     <string name="widget_list_item_title">小组件 %s</string>
     <string name="widget_list_item_description">小组件 %s · %s</string>
     <string name="widget_list_empty">还没有添加小组件。从启动器添加一个 Feedflow 小组件。</string>
+    <string name="widget_content_feed_source"></string>
 </resources>

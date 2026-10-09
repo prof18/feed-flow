@@ -203,12 +203,12 @@ data class WidgetConfiguration(
     val contentFilter: WidgetContentFilter,
     val feedLayout: WidgetFeedLayout,
     val showHeader: Boolean,
-    val showRefreshButton: Boolean = false,
     val fontScale: Int,
     val backgroundColor: Int?,
     val backgroundOpacityPercent: Int,
     val textColorMode: WidgetTextColorMode,
     val hideImages: Boolean,
+    val showRefreshButton: Boolean = false,
 )
 
 private enum class WidgetSettingsFields {

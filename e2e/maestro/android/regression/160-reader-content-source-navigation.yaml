@@ -18,6 +18,7 @@ appId: com.prof18.feedflow.debug
     id: article_row_e2e_article_reader_success
 - assertVisible: "E2E cached reader content loaded from the seed fixture."
 - setOrientation: LANDSCAPE_LEFT
+- waitForAnimationToEnd
 - assertVisible:
     id: reader_content_source_button
     checked: false
@@ -33,12 +34,14 @@ appId: com.prof18.feedflow.debug
     visible: "This article ships no link at all.*"
     timeout: 5000
 - setOrientation: LANDSCAPE_LEFT
+- waitForAnimationToEnd
 - tapOn:
     id: reader_content_source_button
 - assertVisible:
     id: reader_content_source_button
     checked: false
 - setOrientation: PORTRAIT
+- waitForAnimationToEnd
 - extendedWaitUntil:
     visible: "E2E cached reader content loaded from the seed fixture."
     timeout: 5000

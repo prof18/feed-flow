@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -130,7 +131,7 @@ fun AddFeedContent(
                     ) {
                         if (showLoading) {
                             CircularProgressIndicator(
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = LocalContentColor.current,
                                 modifier = Modifier.size(ButtonDefaults.IconSize),
                             )
                         } else {

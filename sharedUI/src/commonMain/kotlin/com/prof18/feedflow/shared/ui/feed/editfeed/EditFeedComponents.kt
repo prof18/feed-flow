@@ -12,6 +12,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -80,6 +81,7 @@ fun EditFeedContent(
                 ) {
                     if (deleteInProgressState) {
                         CircularProgressIndicator(
+                            color = LocalContentColor.current,
                             modifier = Modifier.size(ButtonDefaults.IconSize),
                         )
                     } else {
@@ -243,7 +245,7 @@ fun EditFeedContent(
             ) {
                 if (showLoading) {
                     CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = LocalContentColor.current,
                         modifier = Modifier.size(ButtonDefaults.IconSize),
                     )
                 } else {

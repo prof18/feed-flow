@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,7 +56,7 @@ fun ServerAccountConnectButton(
             enabled = !isLoginLoading && isEnabled,
         ) {
             if (isLoginLoading) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = LocalContentColor.current)
             } else {
                 Text(strings.accountConnectButton)
             }

@@ -1,6 +1,6 @@
 ---
 name: sentry-note-crash-fix
-description: Investigate and fix FeedFlow crashes from Sentry triage notes. Use when the user provides a local note path, note URL, Gmail-exported note, Sentry issue URL, Sentry issue ID, or event ID and asks Codex to check why a crash is happening, explain the root cause, propose or implement a fix, validate it, commit it, or close/resolve the Sentry issue.
+description: Investigate and fix FeedFlow crashes from Sentry triage notes. Use when the user provides a local note path, note URL, Gmail-exported note, Sentry issue URL, Sentry issue ID, or event ID and asks to check why a crash is happening, explain the root cause, propose or implement a fix, validate it, commit it, or close/resolve the Sentry issue.
 ---
 
 # Sentry Note Crash Fix
@@ -13,7 +13,7 @@ description: Investigate and fix FeedFlow crashes from Sentry triage notes. Use 
    - Treat the note as a lead, not ground truth. Confirm with Sentry whenever possible.
 
 2. Fetch live Sentry context.
-   - Prefer the Sentry MCP tools when available. If the namespace is not visible, use `tool_search` for `sentry issue details update issue`.
+   - Prefer the Sentry MCP tools when available; if they are deferred, load them through the agent's tool search first.
    - Fetch the issue with `get_sentry_resource` or `get_issue_details`.
    - Fetch the specific event when the note includes an event ID.
    - Use `search_issue_events`/`search_events` only when you need recurrence, release, environment, or tag distribution.
@@ -42,7 +42,6 @@ description: Investigate and fix FeedFlow crashes from Sentry triage notes. Use 
    - Follow existing project patterns and AGENTS.md rules.
    - If the fix is a dependency migration, import only the required new module and remove unused old dependencies.
    - If the fix changes business logic, add or update focused tests.
-   - Use `apply_patch` for manual edits.
 
 7. Validate.
    - Build only the affected platform first for fast feedback.

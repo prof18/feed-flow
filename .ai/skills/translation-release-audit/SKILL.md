@@ -54,7 +54,7 @@ Optional live-store checks:
    - Store listing screenshot images changed: store screenshots may need upload.
    - Website screenshot assets changed: website screenshot gallery/hero may need deploy.
 6. If live store checking is requested or this is the weekly automation, compare against current store state when credentials are available.
-   - Google Play: do not use Gradle Play Publisher bootstrap for the recurring audit until its graphics download hang is fixed. Report Google Play live state as unavailable when no other reliable read-only path exists, and continue with checked-in listing output/source-copy checks.
+   - Google Play: read live state with `.scripts/pull-google-play-listing.py` (see Live Store Checks), never with Gradle Play Publisher bootstrap. If the script's config is unavailable, report the live check as unavailable and continue with checked-in listing output/source-copy checks.
    - App Store: pull metadata/screenshots into a temp directory and compare against FeedFlow's source store/screenshot copy where mapping is clear.
    - Microsoft Store: read the live listing with `pcenter listing show` and compare against `assets/storecopy/<locale>/`.
 7. Add follow-up TODOs to the FeedFlow Obsidian board when the audit finds actionable store release work.
@@ -191,7 +191,7 @@ Three things will produce false findings unless you handle them:
    an **untranslated placeholder**. Never create a sync card for one — pushing it would
    replace a correctly translated live listing with English.
 3. **Titles are per-locale and optional.** Some locales carry a `title` and some return
-   `""` — as of 2026-08-11, 9 of 25 did. An empty title is normal and must not be reported
+   `""`. An empty title is normal and must not be reported
    as drift, and neither must a locale whose title differs from the repo: the Microsoft Store
    title is a *reserved product name* chosen in Partner Center, not free text, so a
    difference is something to confirm with the user rather than a field to sync. (A locale

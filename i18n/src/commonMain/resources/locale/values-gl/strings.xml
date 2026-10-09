@@ -427,4 +427,18 @@
     <string name="support_purchase_thank_you_message">A túa aportación permite que FeedFlow siga mellorando 💙 Grazas por apoiar o desenvolvemento, as melloras incorporadas e arranxo de problemas. 🙏</string>
     <string name="mark_all_bookmarks_read_dialog_message">Tes certeza de querer marcar todos os artigos marcados como lidos?</string>
     <string name="remove_bookmark_dialog_message">Tes certeza de querer eliminar este artigo dos Marcadores?</string>
+    <string name="widget_preview_info"></string>
+    <string name="widget_content_no_categories"></string>
+    <string name="widget_content_category"></string>
+    <string name="widget_list_item_description"></string>
+    <string name="widget_sync_settings_action"></string>
+    <string name="widget_content_section_title"></string>
+    <string name="widget_list_item_title"></string>
+    <string name="widget_content_choose"></string>
+    <string name="widget_content_bookmarks_description"></string>
+    <string name="widget_content_feed_source"></string>
+    <string name="widget_list_empty"></string>
+    <string name="widget_content_timeline_description"></string>
+    <string name="widget_sync_disabled"></string>
+    <string name="widget_enable_sync"></string>
 </resources>

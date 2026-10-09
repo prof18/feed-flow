@@ -4,17 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import androidx.glance.ColorFilter
-import androidx.glance.Image
-import androidx.glance.ImageProvider
+import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
-import androidx.glance.appwidget.CircularProgressIndicator
+import androidx.glance.appwidget.AndroidRemoteViews
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.Scaffold
@@ -214,26 +212,26 @@ private fun WidgetHeader(
             val refreshModifier = if (isRefreshing) {
                 GlanceModifier
             } else {
-                GlanceModifier.clickable(actionRunCallback<RefreshFeedsAction>())
+                GlanceModifier.clickable(
+                    actionRunCallback<RefreshFeedsAction>(),
+                    rippleOverride = R.drawable.widget_refresh_ripple,
+                )
             }
             Box(
                 modifier = GlanceModifier.size(width = 48.dp, height = 48.dp)
                     .then(refreshModifier),
                 contentAlignment = Alignment.Center,
             ) {
-                if (isRefreshing) {
-                    CircularProgressIndicator(
-                        modifier = GlanceModifier.size(width = 24.dp, height = 24.dp),
-                        color = textColor,
-                    )
-                } else {
-                    Image(
-                        provider = ImageProvider(R.drawable.ic_widget_refresh),
+                val context = LocalContext.current
+                AndroidRemoteViews(
+                    remoteViews = widgetRefreshButtonViews(
+                        context = context,
+                        textColor = textColor.getColor(context).toArgb(),
                         contentDescription = LocalFeedFlowStrings.current.refreshFeeds,
-                        colorFilter = ColorFilter.tint(textColor),
-                        modifier = GlanceModifier.size(width = 24.dp, height = 24.dp),
-                    )
-                }
+                        isRefreshing = isRefreshing,
+                    ),
+                    modifier = GlanceModifier.size(width = 48.dp, height = 48.dp),
+                )
             }
         }
     }

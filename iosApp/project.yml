@@ -413,6 +413,20 @@ targets:
       - package: GoogleAPIClientForREST
         product: GoogleAPIClientForREST_Drive
 
+  WidgetTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/Widget/WidgetRefreshCoordinatorTests.swift
+      - path: Widget/WidgetRefreshCoordinator.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.WidgetTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_PREPROCESS: "NO"
+        INFOPLIST_PREFIX_HEADER: ""
+        TEST_HOST: ""
+
   AudioPlaybackTests:
     type: bundle.unit-test
     platform: iOS
@@ -446,6 +460,8 @@ targets:
     sources:
       - path: Tests/CloudSync
       - path: Tests/Widget
+        excludes:
+          - WidgetRefreshCoordinatorTests.swift
       - path: Widget/WidgetContentLogoLoader.swift
       - path: Source/Accounts/Dropbox/Data
       - path: Source/Accounts/GoogleDrive/Data
@@ -471,6 +487,15 @@ targets:
         product: GoogleAPIClientForREST_Drive
 
 schemes:
+  WidgetTests:
+    build:
+      targets:
+        WidgetTests: all
+    test:
+      config: Debug
+      targets:
+        - WidgetTests
+
   AudioPlaybackTests:
     build:
       targets:

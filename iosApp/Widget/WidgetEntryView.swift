@@ -66,7 +66,6 @@ struct WidgetEntryView: View {
                     }
                 }
             }
-            .invalidatableContent()
         }
         .padding(.bottom, Spacing.small)
     }
@@ -94,7 +93,6 @@ struct WidgetEntryView: View {
                 }
             }
             .padding(.horizontal, Spacing.medium)
-            .invalidatableContent()
         }
     }
 
@@ -110,12 +108,12 @@ struct WidgetEntryView: View {
     }
 
     private var refreshButton: some View {
-        Button(intent: RefreshFeedsIntent()) {
+        // WidgetKit renders both toggle states, so loading feedback appears before the intent starts.
+        Toggle(isOn: false, intent: RefreshFeedsIntent()) {
             Image(systemName: "arrow.clockwise")
                 .font(.subheadline)
-                .frame(minWidth: 32, minHeight: 32)
         }
-        .buttonStyle(.plain)
+        .toggleStyle(WidgetRefreshButtonStyle(refreshingLabel: entry.refreshingLabel))
         .accessibilityLabel(entry.refreshLabel)
     }
 

@@ -132,6 +132,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                         get<BrowserManager>(),
                                         get<SettingsRepository>(),
                                         get<WidgetRefreshState>(),
+                                        get<FeedDownloadWorkerEnqueuer>(),
                                     ).update(this@FeedFlowApp, id)
                                 }
                         }
@@ -184,6 +185,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                         browserManager,
                                         settingsRepository,
                                         widgetRefreshState,
+                                        feedDownloadWorkerEnqueuer,
                                     ).update(this@FeedFlowApp, id)
                                 }
                         }

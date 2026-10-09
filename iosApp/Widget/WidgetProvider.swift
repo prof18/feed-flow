@@ -8,6 +8,7 @@ struct Provider: AppIntentTimelineProvider {
         return WidgetEntry(
             showRefreshButton: false,
             refreshLabel: strings.widgetRefresh,
+            refreshingLabel: strings.widgetRefreshing,
             date: Date(),
             feedItems: [],
             widgetTitle: strings.widgetTitle,
@@ -63,6 +64,7 @@ struct Provider: AppIntentTimelineProvider {
         return WidgetEntry(
             showRefreshButton: configuration.showRefreshButton,
             refreshLabel: strings.widgetRefresh,
+            refreshingLabel: strings.widgetRefreshing,
             date: date,
             feedItems: items,
             widgetTitle: title,

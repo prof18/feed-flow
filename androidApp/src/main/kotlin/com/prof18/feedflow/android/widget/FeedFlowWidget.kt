@@ -13,6 +13,7 @@ import com.prof18.feedflow.android.util.rememberAndroidFeedFlowStrings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetConfiguration
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
+import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.WidgetRenderState
 import com.prof18.feedflow.shared.presentation.WidgetRefreshState
@@ -27,6 +28,7 @@ internal class FeedFlowWidget(
     private val browserManager: BrowserManager,
     private val settingsRepository: SettingsRepository,
     private val widgetRefreshState: WidgetRefreshState,
+    private val feedDownloadWorkerEnqueuer: FeedDownloadWorkerEnqueuer,
 ) : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
@@ -39,6 +41,8 @@ internal class FeedFlowWidget(
         // Glance rebuilds can briefly render the collectAsState initial value before the DB flow emits.
         // Preloading the current items avoids flashing the widget empty state during refreshes.
         val initialWidgetState = widgetStateFlow.first()
+        val refreshQueuedFlow = feedDownloadWorkerEnqueuer.widgetRefreshQueued
+        val initialRefreshQueued = refreshQueuedFlow.first()
 
         provideContent {
             val lyricist = rememberAndroidFeedFlowStrings(settingsRepository)
@@ -46,6 +50,7 @@ internal class FeedFlowWidget(
             ProvideFeedFlowStrings(lyricist) {
                 val widgetState by widgetStateFlow.collectAsState(initialWidgetState)
                 val isRefreshing by widgetRefreshState.isRefreshing.collectAsState()
+                val isRefreshQueued by refreshQueuedFlow.collectAsState(initialRefreshQueued)
                 GlanceTheme {
                     WidgetContent(
                         feedItems = widgetState.renderState.feedItems,
@@ -53,7 +58,7 @@ internal class FeedFlowWidget(
                         browserManager = browserManager,
                         showHeader = widgetState.configuration.showHeader,
                         showRefreshButton = widgetState.configuration.showRefreshButton,
-                        isRefreshing = isRefreshing,
+                        isRefreshing = isRefreshQueued || isRefreshing,
                         headerTitle = widgetState.renderState.title,
                         filter = widgetState.renderState.contentFilter,
                         fontScale = widgetState.configuration.fontScale,

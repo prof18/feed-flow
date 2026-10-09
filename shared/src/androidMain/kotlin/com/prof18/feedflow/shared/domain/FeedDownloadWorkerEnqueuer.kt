@@ -9,17 +9,30 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import androidx.work.await
 import androidx.work.workDataOf
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import java.util.concurrent.TimeUnit.MINUTES
 
 class FeedDownloadWorkerEnqueuer internal constructor(
     private val settingsRepository: SettingsRepository,
     private val context: Context,
 ) {
+    val widgetRefreshQueued: Flow<Boolean>
+        get() = WorkManager.getInstance(context)
+            .getWorkInfosForUniqueWorkFlow(WIDGET_REFRESH_WORK_NAME)
+            .map { workInfos ->
+                workInfos.any { it.state == WorkInfo.State.ENQUEUED || it.state == WorkInfo.State.BLOCKED }
+            }
+            .distinctUntilChanged()
+
     fun enqueueWork() {
         updateWorker()
     }
@@ -66,7 +79,7 @@ class FeedDownloadWorkerEnqueuer internal constructor(
         WorkManager.getInstance(context).enqueue(workRequest)
     }
 
-    fun enqueueWidgetRefresh() {
+    suspend fun enqueueWidgetRefresh() {
         val request = OneTimeWorkRequestBuilder<FeedDownloadWorker>()
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
             .setInputData(workDataOf(FeedDownloadWorker.IS_MANUAL_REFRESH_KEY to true))
@@ -80,7 +93,7 @@ class FeedDownloadWorkerEnqueuer internal constructor(
             WIDGET_REFRESH_WORK_NAME,
             ExistingWorkPolicy.KEEP,
             request,
-        )
+        ).await()
     }
 
     private fun cancel() {

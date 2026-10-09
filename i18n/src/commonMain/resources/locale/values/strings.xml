@@ -12,6 +12,7 @@
     <string name="refresh_feeds">Refresh feeds</string>
     <string name="no_feeds_found_message">No feeds found. Please add a new feed!</string>
     <string name="loading_feed_message">Loading feeds %s</string>
+    <string name="widget_refreshing">Refreshing…</string>
     <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">Mark all as read</string>
     <string name="clear_old_articles_button">Delete week-old articles</string>

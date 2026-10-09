@@ -392,9 +392,9 @@
     <string name="settings_feed_layout_grid">Grille</string>
     <string name="settings_feed_layout_grid_toggle">Utiliser la grille sur les écrans larges</string>
     <string name="settings_feed_layout_big_image">Carte avec grande image</string>
-    <string name="mark_all_above_as_read_confirmation_title">Marquer tout ce qui précède comme lu ?</string>
+    <string name="mark_all_above_as_read_confirmation_title">Marquer tout ce qui précède comme lu ?</string>
     <string name="mark_all_above_as_read_confirmation_message">Tous les articles qui précèdent celui-ci seront marqués comme lus.</string>
-    <string name="mark_all_below_as_read_confirmation_title">Marquer tout ce qui précède comme lu ?</string>
+    <string name="mark_all_below_as_read_confirmation_title">Marquer tout ce qui précède comme lu ?</string>
     <string name="mark_all_below_as_read_confirmation_message">Tous les articles qui suivent celui-ci seront marqués comme lus.</string>
     <string name="link_opening_preference_default_short">Paramètres de l\'application</string>
     <string name="link_opening_preference_system_browser">Navigateur par défaut</string>

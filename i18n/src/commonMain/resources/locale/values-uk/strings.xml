@@ -422,23 +422,4 @@
     <string name="reorder_mode_enter">Змінити порядок</string>
     <string name="feed_already_exists_message">%s вже є у ваших стрічках.</string>
     <string name="settings_hide_read_items_disabled_while_scrolling">Автоприховування вимкнено, доки активна опція «Позначати як прочитане під час гортання», тому статті залишаються на місці під час прокручування. Вимкніть її, щоб використовувати автоприховування.</string>
-    <string name="widget_preview_info"></string>
-    <string name="widget_content_no_categories"></string>
-    <string name="widget_content_category"></string>
-    <string name="widget_list_item_description"></string>
-    <string name="widget_sync_settings_action"></string>
-    <string name="widget_content_section_title"></string>
-    <string name="widget_list_item_title"></string>
-    <string name="remove_bookmark_dialog_message"></string>
-    <string name="settings_force_english_description"></string>
-    <string name="widget_content_choose"></string>
-    <string name="widget_content_bookmarks_description"></string>
-    <string name="mark_all_bookmarks_read_dialog_message"></string>
-    <string name="feed_fetch_refused_error"></string>
-    <string name="widget_content_feed_source"></string>
-    <string name="widget_list_empty"></string>
-    <string name="widget_content_timeline_description"></string>
-    <string name="widget_sync_disabled"></string>
-    <string name="widget_enable_sync"></string>
-    <string name="settings_force_english"></string>
 </resources>

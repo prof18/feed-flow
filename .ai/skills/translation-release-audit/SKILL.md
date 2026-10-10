@@ -64,7 +64,7 @@ Optional live-store checks:
    - Keep TODO text short and concrete, but include the exact thing to change: store, locale, and field or asset type. Examples:
      - `- [ ] Sync App Store Russian subtitle, keywords, and promotional text`
      - `- [ ] Generate Google Play Latvian listing text output`
-     - `- [ ] Upload App Store Latvian metadata`
+     - `- [ ] Upload App Store Finnish metadata`
      - `- [ ] Regenerate App Store Russian iPhone/iPad screenshots`
      - `- [ ] Update checked-in Google Play Russian title, short description, and full description from live/source`
    - Do not add TODOs just because a translation was created or changed. Add TODOs only after verifying the relevant source copy is complete in the repo: store metadata cards require complete `assets/storecopy/<locale>/` content; screenshot cards require complete `assets/screenshotcopy/<locale>/` content.
@@ -96,7 +96,7 @@ release notes. Never run any `publish*` task during this audit.
 
 - `Google Play live check: unavailable - FEEDFLOW_PLAY_CONFIG_JSON is unavailable or invalid`
 
-Latvian source store copy is currently incomplete, so report it without creating store or screenshot follow-up. Reassess supported App Store locales only after the source is complete.
+Latvian (`lv`) is supported by Google Play but is not a supported App Store Connect metadata locale. Exclude Latvian from App Store metadata, field-limit, and screenshot checks and follow-up cards; Latvia uses English (U.K.). Audit Latvian Play copy and screenshots according to their own source completeness. Verify Apple locale support before flagging a missing App Store localization.
 
 Still compare local source and checked-in generated Play output:
 

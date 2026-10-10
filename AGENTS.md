@@ -71,6 +71,8 @@ Use the [Android CLI](https://developer.android.com/tools/agents/android-cli) (`
 
 **Precondition — a device/emulator must be running.** Check with `adb devices`. Do not assume an emulator: use the first device returned by `adb devices` (real device or emulator — both are fine). If none is connected, default to the resizable emulator: `android emulator start Resizable_Experimental` (verify the exact AVD name with `android emulator list` if it fails).
 
+Devices are shared with other worktrees and agents, and every debug build installs over the same app. A build whose database schema is older than the installed one crashes on launch with `Can't downgrade database from version N to M`. If the user says a device is in use, pick another one. Before clearing the app's data to install an older-schema build, ask, then restore the development feeds afterwards.
+
 **Resizable emulator display mode.** When testing with the resizable emulator and the task needs a specific form factor, set it before building/running:
 
 ```bash
@@ -83,6 +85,8 @@ Validate a UI change end to end:
 1. Build + deploy: `./gradlew --quiet --console=plain :androidApp:assembleGooglePlayDebug`, then `android run --apks=androidApp/build/outputs/apk/googlePlay/debug/androidApp-googlePlay-debug.apk` (`--device=<serial>` to pick a device; `.scripts/run-android.sh` covers the routine install+launch loop).
 2. Inspect structure/text/state with `android layout --pretty`. To confirm a specific change, capture the layout before and after the change, then use `android layout --diff` to see only what moved.
 3. For purely visual changes the layout tree can't show (color, spacing, fonts), use `android screen capture --output=ui.png --annotate`. Use `android screen resolve --screenshot=ui.png --string="input tap #<n>"` to turn a labeled element into tap coordinates when you need to drive the UI to the screen under test.
+
+When the user asks to deploy "with my usual feeds" (or "classic set of feeds"), install the build and then run `feedflow-restore-dev-feeds --platform android` (or `--platform ios`). It loads the development subscriptions, categories included, through the debug seeder; `.scripts/add-android-feed.sh` is only for adding individual URLs.
 
 For Android API/library questions, `android docs search '<query>'` before falling back to web search.
 
@@ -193,7 +197,7 @@ cp iosApp/Assets/Config.xcconfig.template iosApp/Assets/Config.xcconfig
 
 For compile-only local/CI iOS builds without real sync credentials, you can use `cp config/dummy-config.xcconfig iosApp/Assets/Config.xcconfig` instead.
 
-For Google Play listing/bootstrap checks, prefer `FEEDFLOW_PLAY_CONFIG_JSON=/path/to/play_config.json ./gradlew --quiet --console=plain :androidApp:bootstrapGooglePlayReleaseListing`. Do not assume an uncommitted repo-root `play_config.json` exists in automation worktrees.
+To read the live Google Play listing, run `.scripts/pull-google-play-listing.py` (reads `FEEDFLOW_PLAY_CONFIG_JSON`). Run `FEEDFLOW_PLAY_CONFIG_JSON=/path/to/play_config.json ./gradlew --quiet --console=plain :androidApp:bootstrapGooglePlayReleaseListing` only when you deliberately want to overwrite `androidApp/src/googlePlay/play/` from the live store: it resets that directory, including tracked graphics and release notes. Do not assume an uncommitted repo-root `play_config.json` exists in automation worktrees.
 
 ## Adding a feature
 
@@ -234,7 +238,7 @@ For Miniflux/GReader sync failures, compare FeedFlow's exact requests and header
 - Write comments only where the code is not self-explanatory, not on every function or class.
 - If you touch or create any business logic, ensure it's thoroughly tested with unit tests.
 - Put try/catch only at the top caller or the bottom callers, not around every function.
-- ALWAYS run gradle tasks with the following flag: `--quiet --console=plain`
+- Run Gradle tasks with `--quiet --console=plain`.
 - Prefer keeping data classes and other simple model types at the bottom of a file, or in a dedicated model file when they are shared by multiple classes.
 - Android app modules use AGP 9's built-in Kotlin support; do not re-add `org.jetbrains.kotlin.android`. Android and Desktop app version values come from the `com.feedflow.versioning` convention plugin, not `versioning.gradle.kts`.
 - Detekt is still on the `1.23.x` line, so keep `io.nlopez.compose.rules:detekt` on `0.4.x` unless the repo migrates to Detekt 2; `0.5.0+` is Detekt 2-only for this repo.
@@ -265,7 +269,7 @@ When creating commits:
 - Verify with: `codesign -dvvv <path>`
 
 ### iOS Development
-- ALWAYS build with xcodebuild with -quiet flag when building for iOS. If the command returns errors you may run xcodebuild again without the -quiet flag.
+- Build iOS with `xcodebuild … -quiet`; rerun without `-quiet` only when you need the full diagnostics.
 - Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet`
 - The app builds against the iOS 26 SDK with a minimum deployment target of iOS 17 (`iosApp/project.yml`). Gate newer APIs with `#available` checks.
 - Keep app-group database work that may outlive an iOS foreground interval inside `withSuspensionGuard`; it uses `NSProcessInfo` and also works in the widget and share extensions.
@@ -291,6 +295,7 @@ When creating commits:
 - The cursor predicate must mirror the query's `ORDER BY` exactly, including SQLite NULL placement for nullable `pub_date`; invalidate the cursor only after a query succeeds.
 
 ### Internationalization
+- Main-to-`localization` sync uses rebase (`.github/workflows/sync-main-to-localization.yml`); resolve translation conflicts during the rebase rather than switching the workflow to merge commits.
 - String resources are located in `i18n/src/commonMain/resources/locale/values-[language]/`
 - Run .scripts/refresh-translations.sh after adding a new translation, to re-generate the kotlin code
 - Store screenshots for **all** platforms (Android phone/tablet, iPhone, iPad, macOS, Windows) are rendered from repo code by `tools/screenshots/` (`node render.mjs --all`, then `node verify.mjs`), not Figma. Use the repo-local `render-store-screenshots` skill when translations change; it enforces the spacing/padding floors.
@@ -334,8 +339,8 @@ pcenter" step to move the pinned version.
 The MSIX itself is built by `.scripts/package-msix.ps1`, which packs the jpackage app image
 (`createReleaseDistributable`) with `makeappx` against `.github/msix-manifest-template.xml`.
 Do not reintroduce the MSIX Packaging Tool / MSI-conversion route: it needs the
-`Msix.PackagingTool.Driver` FOD, which stopped installing on the hosted Windows image in
-August 2026, and the tool's own DISM call times out after 10 minutes with no way to extend it.
+`Msix.PackagingTool.Driver` FOD, which cannot be installed on the hosted Windows image,
+and the tool's own DISM call times out after 10 minutes with no way to extend it.
 Package languages still come from `.github/msix-resources-template.xml`. `Identity/Name` and
 `Identity/Publisher` in the manifest must match Partner Center or the upload is rejected.
 

@@ -441,4 +441,24 @@
     <string name="widget_list_item_title">Widget %s</string>
     <string name="widget_list_item_description">Widget %s · %s</string>
     <string name="widget_list_empty">Chưa thêm widget nào. Thêm widget FeedFlow từ trình launcher của bạn.</string>
+    <string name="audio_episode_badge_content_description">Tập âm thanh</string>
+    <string name="audio_episode_label">Âm thanh</string>
+    <string name="menu_open_audio">Mở âm thanh</string>
+    <string name="audio_episode_untitled">Tập âm thanh</string>
+    <string name="audio_open_failed">Không thể mở liên kết âm thanh.</string>
+    <string name="audio_play">Phát âm thanh</string>
+    <string name="audio_pause">Tạm dừng âm thanh</string>
+    <string name="audio_close_player">Đóng trình phát</string>
+    <string name="audio_seek">Vị trí đang phát</string>
+    <string name="audio_playback_failed">Không thể phát âm thanh này. Hãy thử mở nó trong một ứng dụng khác.</string>
+    <string name="audio_open_external">Mở trong ứng dụng khác</string>
+    <string name="audio_loading">Đang tải âm thanh</string>
+    <string name="audio_playback_speed">Tốc độ phát</string>
+    <string name="audio_now_playing">Đang phát</string>
+    <string name="audio_paused">Đã tạm dừng</string>
+    <string name="audio_return_to_episode">Quay lại tập</string>
+    <string name="reader_mode_tts_listen">Nghe bài viết này</string>
+    <string name="reader_mode_tts_stop">Dừng hẳn</string>
+    <string name="reader_mode_tts_error">Không thể đọc to bài viết này. Hãy thử lại.</string>
+    <string name="reader_mode_tts_preparing">Đang chuẩn bị âm thanh bài viết…</string>
 </resources>

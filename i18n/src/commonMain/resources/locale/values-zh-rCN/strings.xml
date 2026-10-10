@@ -440,4 +440,24 @@
     <string name="widget_list_item_title">小组件 %s</string>
     <string name="widget_list_item_description">小组件 %s · %s</string>
     <string name="widget_list_empty">还没有添加小组件。从启动器添加一个 Feedflow 小组件。</string>
+    <string name="audio_episode_badge_content_description">音频节目</string>
+    <string name="audio_episode_label">音频</string>
+    <string name="menu_open_audio">打开音频</string>
+    <string name="audio_episode_untitled">音频节目</string>
+    <string name="audio_open_failed">无法打开音频链接。</string>
+    <string name="audio_play">播放音频</string>
+    <string name="audio_pause">暂停音频</string>
+    <string name="audio_close_player">关闭播放器</string>
+    <string name="audio_seek">播放位置</string>
+    <string name="audio_playback_failed">无法播放此音频。尝试再别的应用中打开它。</string>
+    <string name="audio_open_external">在别的应用中打开</string>
+    <string name="audio_loading">加载音频中</string>
+    <string name="audio_playback_speed">播放速度</string>
+    <string name="audio_now_playing">正在播放</string>
+    <string name="audio_paused">已暂停</string>
+    <string name="audio_return_to_episode">回到节目</string>
+    <string name="reader_mode_tts_listen">聆听文章</string>
+    <string name="reader_mode_tts_stop">停止聆听</string>
+    <string name="reader_mode_tts_error">无法将文章读出来。请重试。</string>
+    <string name="reader_mode_tts_preparing">正在准备文章音频…</string>
 </resources>

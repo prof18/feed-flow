@@ -3,9 +3,7 @@ env:
   WIDGET_HEADER_TITLE: ${WIDGET_HEADER_TITLE || "Show header title"}
 ---
 - launchApp
-- openLink:
-    link: feedflow://e2e/reset-and-seed?profile=android-widget
-    autoVerify: true
+- openLink: feedflow://e2e/reset-and-seed?profile=android-widget
 - extendedWaitUntil:
     visible:
       id: e2e_seed_complete

@@ -460,4 +460,7 @@
     <string name="reader_mode_tts_stop">停止聆听</string>
     <string name="reader_mode_tts_error">无法将文章读出来。请重试。</string>
     <string name="reader_mode_tts_preparing">正在准备文章音频…</string>
+    <string name="widget_refreshing">刷新中…</string>
+    <string name="widget_show_refresh_button">显示刷新按钮</string>
+    <string name="widget_content_feed_source">Feed源</string>
 </resources>

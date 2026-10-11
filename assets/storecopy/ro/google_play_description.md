@@ -1,61 +1,73 @@
-FeedFlow is a minimal RSS reader for people who want a clean, chronological
-timeline — no algorithms, no clutter, no noise. Just your feeds, in order.
+FeedFlow este un cititor RSS minimalist destinat celor care doresc un flux
+simplu și ordonat cronologic — fără algoritmi, fără elemente care să aglomereze
+ecranul și fără zgomot. Doar fluxurile tale, în ordine.
 
-Whether you follow news sites, blogs, or YouTube channels via RSS, FeedFlow
-gives you a fast, distraction-free way to keep up with everything you care
-about.
+Indiferent dacă urmărești site-uri de știri, bloguri sau canale YouTube prin
+RSS, FeedFlow îți oferă o modalitate rapidă și fără distrageri de a fi la curent
+cu tot ce te interesează.
 
-Read Articles Your Way
-- Open articles in your default browser, or pick a dedicated browser for reading
-  sessions.
-- Use Reader Mode for a distraction-free article view with adjustable text size
-  and spacing.
-- Prefetch and cache full article content for offline reading — read articles
-  anywhere, even without an internet connection.
-- View the original web page or switch to a clean, readable format — the choice
-  is yours.
+Citiți articole așa cum vă place
+- Deschide articole în browserul tău implicit sau alege un browser special
+  pentru sesiunile de lectură.
+- Folosește „Modul Cititor” pentru a citi articolul fără distrageri, cu
+  dimensiunea textului și spațierea reglabile.
+- Preîncarcă și salvează în cache conținutul integral al articolelor pentru
+  citire offline — citește articolele oriunde, chiar și fără conexiune la
+  internet.
+- Vizualizează pagina web originală sau treci la un format simplu și ușor de
+  citit — alegerea îți aparține.
 
-Sync Feeds Across All Your Devices
-- Keep everything local, or sync feeds across devices with multiple backends.
-- Cloud storage sync with Dropbox or Google Drive.
-- Self-hosted and server sync with FreshRSS, Miniflux, Feedbin, or BazQux.
-- Your feeds, read status, and bookmarks stay in sync across Android, iOS,
-  macOS, Windows, and Linux.
-- Switch between phone, tablet, and desktop without losing your place.
+Sincronizați-vă fluxurile pe toate dispozitivele dumneavoastră
+- Păstrați-vă totul la nivel local sau sincronizați-vă fluxurile între
+  dispozitive folosind mai multe servere de fundal.
+- Sincronizați spațiul de stocare în cloud cu Dropbox sau Google Drive.
+- Găzduire proprie și sincronizare cu serverul prin FreshRSS, Miniflux, Feedbin
+  sau BazQux.
+- Fluxurile, starea de citire și marcajele rămân sincronizate pe Android, iOS,
+  macOS, Windows și Linux.
+- Schimbați între telefon, tabletă și computerul de birou fără a pierde locul în
+  care vă aflați.
 
-Stay Organized with Feeds and Categories
-- Import and export feeds with OPML — migrate from any other RSS reader or news
-  reader in minutes.
-- Block noisy keywords to filter out unwanted content from your feed.
-- Organize RSS feeds into categories and bookmark articles to read later.
-- Search across all your feeds and articles to quickly find the content you
-  need.
+Păstrează-ți lucrurile organizate cu fluxuri și categorii
+- Importați și exportați fluxuri cu OPML — migrați de la orice alt cititor RSS
+  sau de știri în doar câteva minute.
+- Blocați cuvintele-cheie cu multă activitate pentru a elimina conținutul
+  nedorit din fluxul dumneavoastră.
+- Organizați fluxurile RSS pe categorii și adăugați articole la marcaje pentru a
+  le citi mai târziu.
+- Căutați în toate fluxurile și articolele dumnravoastră pentru a găsi rapid
+  conținutul de care aveți nevoie.
 
-A News Reading Experience You Control
-- Dark mode, light mode, and OLED black theme for comfortable reading day and
-  night.
-- Background refresh keeps your feed list up to date with new articles and
-  posts.
+O experiență de citire a știrilor pe care o controlați
+- Modul întunecat, modul luminos și tema neagră OLED pentru o lectură
+  confortabilă atât ziua, cât și noaptea.
+- Actualizarea în fundal menține lista de știri la zi cu articole și postări
+  noi.
 
-Built for RSS, Atom, and the Open Web
-- Full support for RSS 2.0, RSS 1.0, and Atom feed formats.
-- Subscribe to blogs, news sites, YouTube channels, and more.
-- No account required — add feeds directly by URL or browse curated feed
-  suggestions to get started.
-- OPML import and export means you're never locked in to any single app.
+Conceput pentru RSS, Atom și Open Web
+- Suport complet pentru formatele de flux RSS 2.0, RSS 1.0 și Atom.
+- Abonați-vă la bloguri, site-uri de știri, canale YouTube și multe altele.
+- Nu este necesar un cont — adăugați fluxuri direct prin URL sau răsfoiți
+  sugestiile de fluxuri selectate cu grijă pentru a începe.
+- Importarea și exportarea în format OPML înseamnă că nu sunteți niciodată
+  limitat la o singură aplicație.
 
-Perfect For
-- News enthusiasts who want a chronological feed without algorithmic
-  recommendations.
-- Blog readers who want all their favorite sites in one clean timeline.
-- Self-hosted enthusiasts running FreshRSS, Miniflux, or similar services.
-- Anyone switching from another feed reader — OPML import makes migration
-  simple.
+Ideal pentru
+- Pasionații de știri care doresc un flux cronologic, fără recomandări
+  algoritmice.
+- Cititorii de blogului care doresc să aibă toate site-urile preferate într-o
+  cronologie simplă și clară.
+- Pasionații care își găzduiesc singuri serviciile FreshRSS, Miniflux sau alte
+  servicii similare.
+- Pentru cei care trec de la un alt cititor de fluxuri — importarea OPML
+  simplifică procesul de migrare.
 
-Why FeedFlow?
-- No algorithmic feed — your timeline is always chronological.
-- Open source with an active community and regular updates.
-- Available on Android, iOS, macOS, Windows, and Linux.
-- Translated into 25+ languages by contributors worldwide.
+De ce FeedFlow?
+- Nu există un flux algoritmic — fluxurile sunt întotdeauna în ordine
+  cronologică.
+- Aplicație cu sursă deschisă, cu o comunitate activă și actualizări periodice.
+- Disponibilă pe Android, iOS, macOS, Windows și Linux.
+- Tradusă în peste 25 de limbi de către colaboratori din întreaga lume.
 
-Take back control of your news and reading — download FeedFlow today.
+Preluați din nou controlul asupra știrilor și lecturilor preferate — descărcați
+FeedFlow chiar azi.

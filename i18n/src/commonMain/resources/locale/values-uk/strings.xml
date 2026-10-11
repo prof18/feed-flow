@@ -441,4 +441,26 @@
     <string name="widget_list_empty">Ще не додано жодного віджета. Додайте віджет FeedFlow з головного екрана.</string>
     <string name="mark_all_bookmarks_read_dialog_message">Ви впевнені, що бажаєте позначити всі збережені статті як прочитані?</string>
     <string name="remove_bookmark_dialog_message">Ви впевнені, що бажаєте вилучити цю статтю із закладок?</string>
+    <string name="widget_refreshing">Оновлення…</string>
+    <string name="audio_episode_badge_content_description">Аудіоепізод</string>
+    <string name="audio_episode_label">Аудіо</string>
+    <string name="menu_open_audio">Відкрити аудіо</string>
+    <string name="audio_episode_untitled">Аудіоепізод</string>
+    <string name="audio_open_failed">Не вдалося відкрити аудіопосилання.</string>
+    <string name="audio_play">Відтворити аудіо</string>
+    <string name="audio_pause">Призупинити аудіо</string>
+    <string name="audio_close_player">Закрити програвач</string>
+    <string name="audio_seek">Позиція відтворення</string>
+    <string name="audio_playback_failed">Не вдалося відтворити це аудіо. Спробуйте відкрити його в іншому додатку.</string>
+    <string name="audio_open_external">Відкрити в іншому додатку</string>
+    <string name="audio_loading">Завантаження аудіо</string>
+    <string name="audio_playback_speed">Швидкість відтворення</string>
+    <string name="audio_now_playing">Відтворюється</string>
+    <string name="audio_paused">Призупинено</string>
+    <string name="audio_return_to_episode">Повернутися до епізоду</string>
+    <string name="widget_show_refresh_button">Відображати кнопку оновлення</string>
+    <string name="reader_mode_tts_listen">Прослухати статтю</string>
+    <string name="reader_mode_tts_stop">Зупинити прослуховування</string>
+    <string name="reader_mode_tts_error">Не вдається прочитати цю статтю вголос. Спробуйте ще раз.</string>
+    <string name="reader_mode_tts_preparing">Підготовка озвучення статті…</string>
 </resources>

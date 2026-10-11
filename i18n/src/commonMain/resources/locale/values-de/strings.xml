@@ -333,7 +333,7 @@
     <string name="exit_menu">Beenden</string>
     <string name="delete_all_feeds_confirmation_message">Möchtest du wirklich alle Feeds in dieser Kategorie löschen? Das kann nicht mehr rückgängig gemacht werden.</string>
     <string name="browser_launch_error">Der Link kann nicht geöffnet werden. Bitte prüfe deine Browser-Einstellungen.</string>
-    <string name="choose_another_file_button">Wähle eine andere Datei</string>
+    <string name="choose_another_file_button">Eine andere Datei wählen</string>
     <string name="invalid_opml_import_title">Diese Datei kann nicht importiert werden</string>
     <string name="invalid_opml_import_description">Das sieht nicht wie eine gültige OPML-Datei aus. Versuche, deine Feeds als OPML aus deiner RSS-App zu exportieren und neu zu importieren.</string>
     <string name="drawer_title_library">Bibliothek</string>
@@ -441,4 +441,26 @@
     <string name="widget_list_item_title">Widget %s</string>
     <string name="widget_list_item_description">Widget %s · %s</string>
     <string name="widget_list_empty">Noch wurden keine Widgets hinzugefügt. Fügen sie ein Widget von ihrem Launcher hinzu.</string>
+    <string name="widget_refreshing">Auffrischen…</string>
+    <string name="audio_episode_badge_content_description">Audioepisode</string>
+    <string name="audio_episode_label">Audio</string>
+    <string name="menu_open_audio">Audio öffnen</string>
+    <string name="audio_episode_untitled">Audioepisode</string>
+    <string name="audio_open_failed">Der Audio-Link konnte nicht geöffnet werden.</string>
+    <string name="audio_play">Audio abspielen</string>
+    <string name="audio_pause">Audio pausieren</string>
+    <string name="audio_close_player">Wiedergabe schliessen</string>
+    <string name="audio_seek">Wiedergabeposition</string>
+    <string name="audio_playback_failed">Dieses Audio konnte nicht abgespielt werden. Versuchen sie es in einer anderen App.</string>
+    <string name="audio_open_external">In anderer App öffnen</string>
+    <string name="audio_loading">Audio wird geladen</string>
+    <string name="audio_playback_speed">Wiedergabegeschwindigkeit</string>
+    <string name="audio_now_playing">Wiedergabe läuft</string>
+    <string name="audio_paused">Angehalten</string>
+    <string name="audio_return_to_episode">Zur Episode zurückgehen</string>
+    <string name="widget_show_refresh_button">Refresh-Taste anzeigen</string>
+    <string name="reader_mode_tts_listen">Artikel anhören</string>
+    <string name="reader_mode_tts_stop">Anhören anhalten</string>
+    <string name="reader_mode_tts_error">Dieser Artikel kann nicht vorgelesen werden. Nochmals versuchen.</string>
+    <string name="reader_mode_tts_preparing">Audio für den Artikel wird vorbereitet…</string>
 </resources>

@@ -441,4 +441,26 @@
     <string name="widget_list_item_title">Widget %s</string>
     <string name="widget_list_item_description">Widget %s · %s</string>
     <string name="widget_list_empty">Nessun widget aggiunto. Aggiungi un widget di FeedFlow dal tuo launcher.</string>
+    <string name="widget_refreshing">Aggiornamento…</string>
+    <string name="audio_episode_badge_content_description">Episodio audio</string>
+    <string name="audio_episode_label">Audio</string>
+    <string name="menu_open_audio">Apri audio</string>
+    <string name="audio_episode_untitled">Episodio audio</string>
+    <string name="audio_open_failed">Impossibile aprire il link audio.</string>
+    <string name="audio_play">Riproduci audio</string>
+    <string name="audio_pause">Pausa audio</string>
+    <string name="audio_paused">In pausa</string>
+    <string name="audio_close_player">Chiudi player</string>
+    <string name="audio_seek">Posizione di riproduzione</string>
+    <string name="audio_playback_failed">Impossibile riprodurre questo audio. Prova ad aprirlo in un\'altra app.</string>
+    <string name="audio_open_external">Apri in un\'altra app</string>
+    <string name="audio_loading">Caricamento audio</string>
+    <string name="audio_playback_speed">Velocità di riproduzione</string>
+    <string name="audio_now_playing">In riproduzione</string>
+    <string name="audio_return_to_episode">Ritorna all\'episodio</string>
+    <string name="widget_show_refresh_button">Mostra pulsante di aggiornamento</string>
+    <string name="reader_mode_tts_listen">Ascolta articolo</string>
+    <string name="reader_mode_tts_stop">Interrompi ascolto</string>
+    <string name="reader_mode_tts_error">Impossibile leggere questo articolo ad alta voce. Riprova.</string>
+    <string name="reader_mode_tts_preparing">Preparazione audio dell\'articolo…</string>
 </resources>

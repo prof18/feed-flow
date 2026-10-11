@@ -441,4 +441,26 @@
     <string name="widget_list_item_title">„%s“ vidin</string>
     <string name="widget_list_item_description">Vidin %s · %s</string>
     <string name="widget_list_empty">Ühtegi vidinat veel pole. Lisa FeedFlow vidin oma käivitajast.</string>
+    <string name="widget_refreshing">Andmed on uuendamisel…</string>
+    <string name="audio_play">Esita heliriba</string>
+    <string name="audio_pause">Peata heliriba esitus</string>
+    <string name="audio_close_player">Sulge pleier</string>
+    <string name="audio_seek">Taasesituse järg</string>
+    <string name="audio_playback_failed">Selle heliriba esitamine ei õnnestunud. Proovi kasutada muud rakendust.</string>
+    <string name="audio_open_external">Ava muus rakenduses</string>
+    <string name="audio_loading">Laadin heliriba</string>
+    <string name="audio_playback_speed">Taasesituse kiirus</string>
+    <string name="audio_now_playing">Hetkel esitamisel</string>
+    <string name="audio_paused">Peatatud</string>
+    <string name="audio_return_to_episode">Tagasi osa juurde</string>
+    <string name="widget_show_refresh_button">Näita uuesti laadimise nuppu</string>
+    <string name="reader_mode_tts_listen">Kuula artiklit</string>
+    <string name="reader_mode_tts_stop">Lõpeta kuulamine</string>
+    <string name="reader_mode_tts_error">Selle artikli ettelugemine ei õnnestu. Proovi uuesti.</string>
+    <string name="reader_mode_tts_preparing">Valmistan artikli ettelugemist…</string>
+    <string name="audio_episode_badge_content_description">Heliriba uus osa</string>
+    <string name="audio_episode_label">Heliriba</string>
+    <string name="menu_open_audio">Ava heliriba</string>
+    <string name="audio_episode_untitled">Heliriba osa</string>
+    <string name="audio_open_failed">Heliriba lingi avamine ei õnnestunud.</string>
 </resources>

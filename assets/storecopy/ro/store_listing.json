@@ -1,19 +1,19 @@
 {
-    "title": "",
-    "google_play_short_description": "",
-    "app_store_subtitle": "",
-    "app_store_promotional_text": "",
-    "app_store_keywords": "",
-    "microsoft_store_short_description": "",
-    "microsoft_store_keywords": "",
+    "title": "FeedFlow - Cititor de fluxuri RSS",
+    "google_play_short_description": "Cititor RSS minimalist cu funcție de citire offline, mod de citire și opțiuni flexibile de sincronizare.",
+    "app_store_subtitle": "Citiți offline. Sincronizați cum doriți.",
+    "app_store_promotional_text": "Minimalist și cu sursă deschisă. Citiți direct în browser sau în „Modul Cititor”, salvați articolele în cache pentru a le citi offline și sincronizați fluxurile RSS pe toate dispozitivele. Fără fluxuri generate algoritmic.",
+    "app_store_keywords": "citire,mod,opml,filtru,blog,articol,marcaj,conținut,abonare,web,iCloud,cronologie,categorie",
+    "microsoft_store_short_description": "FeedFlow este un cititor RSS cu sursă deschisă pentru desktop: o cronologie rapidă și ordonată pentru știri și bloguri. Interfață cu trei panouri și comenzi rapide de la tastatură pentru o citire eficientă. Deschideți articolele în browser sau utilizați „Modul Cititor”. Salvați articolele complete în cache pentru acces offline. Importați și exportați fluxuri prin OPML. Sincronizați între dispozitive folosind spațiul de stocare în cloud (Dropbox, Google Drive) sau servicii auto-găzduite (FreshRSS, Miniflux, Feedbin, BazQux).",
+    "microsoft_store_keywords": "cititor rss, cititor de fluxuri rss, mod de citire offline, import și export opml, cititor de știri, agregator de fluxuri, sincronizare freshr ss cu feedbin",
     "microsoft_store_product_features": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "O cronologie clară și ordonată — fără algoritmi, fără elemente care să o aglomereze",
+        "„Modul Cititor” pentru o lectură fără distrageri, cu dimensiunea textului reglabilă",
+        "Citire offline — articole complete preîncărcate și stocate în memoria cache",
+        "Aranjare a desktopului în trei panouri cu comenzi rapide de la tastatură",
+        "Sincronizare cu Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin sau BazQux",
+        "Organizarea conținutul folosind categorii, marcaje și căutarea în textul complet",
+        "Importarea și exportarea fluxurilor cu OPML",
+        "Aplicație cu sursă deschisă — fără reclame, fără urmărire, nu este necesar un cont"
     ]
 }

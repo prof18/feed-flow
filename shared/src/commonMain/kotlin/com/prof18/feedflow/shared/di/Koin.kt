@@ -444,6 +444,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedItemContentFileHandler = get(),
             articleNavigationRepository = get(),
             databaseHelper = get(),
+            dispatcherProvider = get(),
         )
     }
 

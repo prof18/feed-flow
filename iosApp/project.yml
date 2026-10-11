@@ -425,6 +425,7 @@ targets:
       - path: Source/Audio/SpeechAudioGenerating.swift
       - path: Source/Audio/SpeechAudioGenerationError.swift
       - path: Source/Audio/SpeechAudioGenerator.swift
+      - path: Source/Audio/SpeechLanguageDetector.swift
       - path: Source/Audio/SpeechSynthesizerDriving.swift
       - path: Source/Audio/SpeechAudioWriting.swift
       - path: Source/Audio/NativeSpeechSynthesizer.swift

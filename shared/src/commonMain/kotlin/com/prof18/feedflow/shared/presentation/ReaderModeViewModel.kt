@@ -14,8 +14,10 @@ import com.prof18.feedflow.core.model.canOpenWebReaderMode
 import com.prof18.feedflow.core.model.hasNoUrl
 import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveWith
+import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.ReaderContentLanguage
 import com.prof18.feedflow.shared.domain.feed.ArticleNavigationRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
@@ -27,6 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.seconds
 
@@ -38,6 +41,7 @@ class ReaderModeViewModel internal constructor(
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val articleNavigationRepository: ArticleNavigationRepository,
     private val databaseHelper: DatabaseHelper,
+    private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
     private val readerModeMutableState: MutableStateFlow<ReaderModeState> = MutableStateFlow(
@@ -203,6 +207,7 @@ class ReaderModeViewModel internal constructor(
         siteName = databaseHelper.getFeedItemUrlInfo(urlInfo.id)?.feedSourceTitle ?: urlInfo.feedSourceTitle,
         audioUrl = databaseHelper.getFeedItemAudioUrl(urlInfo.id),
         audioImageUrl = databaseHelper.getFeedItemAudioArtwork(urlInfo.id),
+        languageTag = withContext(dispatcherProvider.default) { ReaderContentLanguage.fromHtml(content) },
     )
 
     private suspend fun readerImageUrl(urlInfo: FeedItemUrlInfo, source: ShownContentSource): String? {

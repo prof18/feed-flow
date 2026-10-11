@@ -151,13 +151,32 @@ class AndroidAudioPlayerTest {
     }
 
     @Test
-    fun `normal title retains its existing speech identity`() = playerTest {
+    fun `language aware speech identity does not reuse previous default voice audio`() = playerTest {
         val article = readerArticle()
         audio.playReaderSpeech(article, "Audio episode")
-        val oldKey = MessageDigest.getInstance("SHA-256")
-            .digest("Article title\u0000Article body.".toByteArray(Charsets.UTF_8))
+        val expectedKey = MessageDigest.getInstance("SHA-256")
+            .digest("speech-language-v1\u0000Article title\u0000Article body.\u0000".toByteArray(Charsets.UTF_8))
             .joinToString("") { "%02x".format(it) }
-        assertEquals("speech:article:$oldKey", audio.state.value.episode?.playbackId)
+        assertEquals("speech:article:$expectedKey", audio.state.value.episode?.playbackId)
+    }
+
+    @Test
+    fun `changing article language forwards the hint and replaces cached speech`() = playerTest {
+        val generator = TestSpeechGenerator()
+        replaceAudioWithSpeechGenerator(generator)
+        val italian = readerArticle().copy(languageTag = "it-IT")
+        audio.playReaderSpeech(italian, "Untitled")
+        runCurrent()
+        val originalId = audio.state.value.episode?.playbackId
+        val firstFile = generator.files.single()
+        val english = italian.copy(languageTag = "en-US")
+        audio.playReaderSpeech(english, "Untitled")
+        runCurrent()
+        assertEquals(listOf("it-IT", "en-US"), generator.languageTags)
+        assertFalse(originalId == audio.state.value.episode?.playbackId)
+        assertFalse(firstFile.exists())
+        assertFalse(audio.isSpeechFor(italian))
+        assertTrue(audio.isSpeechFor(english))
     }
 
     @Test
@@ -719,10 +738,12 @@ class AndroidAudioPlayerTest {
         var lastSegments: List<String>? = null
             private set
         val files = mutableListOf<File>()
+        val languageTags = mutableListOf<String?>()
 
-        override suspend fun generate(segments: List<String>): File {
+        override suspend fun generate(segments: List<String>, languageTag: String?): File {
             callCount++
             lastSegments = segments
+            languageTags += languageTag
             return handler(segments, callCount)
         }
 

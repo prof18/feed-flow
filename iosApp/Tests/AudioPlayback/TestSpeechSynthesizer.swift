@@ -5,9 +5,18 @@ import Foundation
 final class TestSpeechSynthesizer: SpeechSynthesizerDriving {
     private(set) var texts: [String] = []
     private(set) var stopped = false
+    private(set) var preparedLanguages: [String?] = []
+    var preparationError: Error?
     private var callback: (@MainActor (AVAudioPCMBuffer) throws -> Void)?
     private var continuation: CheckedContinuation<Bool, Error>?
     var lastOutputPath: String?
+
+    func prepare(languageTag: String?) async throws {
+        preparedLanguages.append(languageTag)
+        if let preparationError {
+            throw preparationError
+        }
+    }
 
     func synthesize(_ text: String, receive: @escaping @MainActor (AVAudioPCMBuffer) throws -> Void) async throws -> Bool {
         texts.append(text)
@@ -19,11 +28,15 @@ final class TestSpeechSynthesizer: SpeechSynthesizerDriving {
         }
     }
 
-    func send(_ buffer: AVAudioPCMBuffer) { try? callback?(buffer) }
+    func send(_ buffer: AVAudioPCMBuffer) {
+        try? callback?(buffer)
+    }
 
     func finishCurrent(with buffer: AVAudioPCMBuffer) {
         try? callback?(buffer)
-        if let endBuffer = Self.endBuffer(format: buffer.format) { try? callback?(endBuffer) }
+        if let endBuffer = Self.endBuffer(format: buffer.format) {
+            try? callback?(endBuffer)
+        }
         continuation?.resume(returning: true)
         continuation = nil
     }
@@ -39,8 +52,10 @@ final class TestSpeechSynthesizer: SpeechSynthesizerDriving {
     }
 
     func waitForCallCount(_ count: Int) async throws {
-        for _ in 0 ..< 10_000 {
-            if texts.count >= count { return }
+        for _ in 0 ..< 10000 {
+            if texts.count >= count {
+                return
+            }
             await Task.yield()
         }
         throw SpeechAudioGenerationError.timedOut

@@ -376,7 +376,7 @@ final class AudioPlaybackControllerTests: XCTestCase {
 
         XCTAssertNil(controller.player.currentItem)
         XCTAssertEqual(controller.episode?.kind, .speech)
-        XCTAssertEqual(store.positions["article"], 2_000)
+        XCTAssertEqual(store.positions["article"], 2000)
         XCTAssertTrue(controller.isPreparingSpeech)
         try await generator.waitForRequestCount(1)
         generator.fail(request: 0)
@@ -443,7 +443,7 @@ final class AudioPlaybackControllerTests: XCTestCase {
         try await waitUntilCanSeek(controller)
         let originalSpeechEpisode = try XCTUnwrap(controller.episode)
         controller.seek(to: 3)
-        XCTAssertEqual(store.positions[originalSpeechEpisode.playbackId], 3_000)
+        XCTAssertEqual(store.positions[originalSpeechEpisode.playbackId], 3000)
 
         let podcastEpisode = AudioEpisode(itemId: request.itemId, url: podcastURL, title: request.title, subtitle: nil, artworkURL: nil)
         controller.start(podcastEpisode, autoplay: false)
@@ -489,7 +489,9 @@ final class AudioPlaybackControllerTests: XCTestCase {
         controller.toggleSpeech(itemId: "article", title: "Article", content: "body", subtitle: nil, artworkURL: nil)
         try await generator.waitForRequestCount(1)
         generator.fail(request: 0)
-        for _ in 0 ..< 100 where !controller.hasFailed { try await Task.sleep(for: .milliseconds(10)) }
+        for _ in 0 ..< 100 where !controller.hasFailed {
+            try await Task.sleep(for: .milliseconds(10))
+        }
         XCTAssertTrue(controller.hasFailed)
 
         controller.play()
@@ -570,13 +572,46 @@ final class AudioPlaybackControllerTests: XCTestCase {
         XCTAssertEqual(blank.title, "")
     }
 
-    func testNormalSpeechTitleKeepsExistingContentKey() {
+    func testSpeechLanguagePolicyUsesNewContentKey() {
         let request = SpeechPlaybackRequest(
             itemId: "article", title: "Article", content: "body", subtitle: nil, artworkURL: nil
         )
-        let previousKey = SHA256.hash(data: Data("Article\u{0000}body".utf8))
+        let expectedKey = SHA256.hash(data: Data("speech-language-v1\u{0000}Article\u{0000}body\u{0000}".utf8))
             .map { String(format: "%02x", $0) }.joined()
-        XCTAssertEqual(request.episode.contentKey, previousKey)
+        XCTAssertEqual(request.episode.contentKey, expectedKey)
+    }
+
+    @MainActor
+    func testLanguageHintIsForwardedAndChangingItReplacesNarration() async throws {
+        let firstURL = try waveURL()
+        let secondURL = try waveURL()
+        defer {
+            try? FileManager.default.removeItem(at: firstURL)
+            try? FileManager.default.removeItem(at: secondURL)
+        }
+        let generator = TestSpeechAudioGenerator()
+        let controller = speechController(store: TestAudioPlaybackPositionStore(), generator: generator)
+        defer { controller.stop() }
+        controller.toggleSpeech(
+            itemId: "article", title: "Article", content: "body", subtitle: nil,
+            artworkURL: nil, languageTag: "it-IT"
+        )
+        try await generator.waitForRequestCount(1)
+        generator.complete(request: 0, with: firstURL)
+        try await waitUntilCanSeek(controller)
+        let originalId = controller.episode?.playbackId
+
+        controller.toggleSpeech(
+            itemId: "article", title: "Article", content: "body", subtitle: nil,
+            artworkURL: nil, languageTag: "en-US"
+        )
+        try await generator.waitForRequestCount(2)
+        generator.complete(request: 1, with: secondURL)
+        try await waitUntilCanSeek(controller)
+        XCTAssertEqual(generator.languageTags, ["it-IT", "en-US"])
+        XCTAssertNotEqual(controller.episode?.playbackId, originalId)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: firstURL.path))
+        XCTAssertFalse(controller.isSpeechFor(itemId: "article", title: "Article", content: "body", languageTag: "it-IT"))
     }
 
     @MainActor
@@ -609,7 +644,9 @@ final class AudioPlaybackControllerTests: XCTestCase {
     @MainActor
     private func waitUntilCanSeek(_ controller: AudioPlaybackController) async throws {
         for _ in 0 ..< 200 {
-            if controller.canSeek { return }
+            if controller.canSeek {
+                return
+            }
             try await Task.sleep(for: .milliseconds(10))
         }
         XCTFail("Timed out waiting for prepared audio to become seekable")
@@ -618,7 +655,9 @@ final class AudioPlaybackControllerTests: XCTestCase {
     @MainActor
     private func waitUntilFailed(_ controller: AudioPlaybackController) async throws {
         for _ in 0 ..< 100 {
-            if controller.hasFailed { return }
+            if controller.hasFailed {
+                return
+            }
             try await Task.sleep(for: .milliseconds(10))
         }
         XCTFail("Timed out waiting for speech generation failure")
@@ -626,7 +665,9 @@ final class AudioPlaybackControllerTests: XCTestCase {
 
     @MainActor
     private func waitForScheduledCallbacks() async throws {
-        for _ in 0 ..< 50 { try await Task.sleep(for: .milliseconds(10)) }
+        for _ in 0 ..< 50 {
+            try await Task.sleep(for: .milliseconds(10))
+        }
     }
 
     private func waveURL() throws -> URL {

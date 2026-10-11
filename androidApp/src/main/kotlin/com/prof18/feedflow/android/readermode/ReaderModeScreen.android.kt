@@ -459,6 +459,7 @@ private fun ReaderMode(
         imageUrl = readerModeState.readerModeData.imageUrl,
         leadingContent = "<div id=\"__feedflow_top_spacer\" style=\"height: ${spacerHeightDp}px;\"></div>",
         siteName = readerModeState.readerModeData.siteName,
+        languageTag = readerModeState.readerModeData.languageTag,
         audioBanner = AudioEnclosure.validatedUrl(readerModeState.readerModeData.audioUrl)?.let {
             ReaderAudioBanner(
                 title = readerModeState.readerModeData.title,

@@ -11,6 +11,7 @@ final class SpeechAudioGenerator: SpeechAudioGenerating {
     private let synthesizerFactory: @MainActor () -> SpeechSynthesizerDriving
     private let writerFactory: @MainActor (URL, AVAudioFormat) throws -> SpeechAudioWriting
     private let voiceAvailable: () async -> Bool
+    private let languageDetector: @Sendable (String) async -> String?
     private var generationID = UUID()
     private var cleanedTemporaryFiles = false
     private var activeSynthesizer: SpeechSynthesizerDriving?
@@ -21,14 +22,16 @@ final class SpeechAudioGenerator: SpeechAudioGenerating {
         writerFactory: @escaping @MainActor (URL, AVAudioFormat) throws -> SpeechAudioWriting = { url, format in
             try NativeSpeechAudioWriter(url: url, format: format)
         },
-        voiceAvailable: @escaping () async -> Bool = { true }
+        voiceAvailable: @escaping () async -> Bool = { true },
+        languageDetector: @escaping @Sendable (String) async -> String? = { await SpeechLanguageDetector.detect($0) }
     ) {
         self.synthesizerFactory = synthesizerFactory
         self.writerFactory = writerFactory
         self.voiceAvailable = voiceAvailable
+        self.languageDetector = languageDetector
     }
 
-    func generate(segments: [String]) async throws -> URL {
+    func generate(segments: [String], languageTag: String? = nil) async throws -> URL {
         generationID = UUID()
         let requestID = generationID
         let startedAt = ContinuousClock.now
@@ -62,6 +65,13 @@ final class SpeechAudioGenerator: SpeechAudioGenerating {
                 requestSynthesizer = synthesizer
                 self.activeSynthesizer = synthesizer
                 self.activeGenerationID = requestID
+                let language: String?
+                if let languageTag {
+                    language = languageTag
+                } else {
+                    language = await self.languageDetector(Self.languageSample(from: segments))
+                }
+                try await synthesizer.prepare(languageTag: language)
                 for segment in segments where !segment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     try Task.checkCancellation()
                     guard self.generationID == requestID else { throw CancellationError() }
@@ -96,7 +106,9 @@ final class SpeechAudioGenerator: SpeechAudioGenerating {
             Self.logger.info("bytes=\(bytes, privacy: .public); segments=\(completedSegments, privacy: .public)")
             return outputURL
         } catch {
-            if generationID == requestID { generationID = UUID() }
+            if generationID == requestID {
+                generationID = UUID()
+            }
             requestSynthesizer?.stop()
             if activeGenerationID == requestID {
                 activeSynthesizer = nil
@@ -107,7 +119,18 @@ final class SpeechAudioGenerator: SpeechAudioGenerating {
         }
     }
 
-    // Voice discovery can synchronously wait on system services; keep it off the main actor.
+    private nonisolated static func languageSample(from segments: [String]) -> String {
+        var sample = ""
+        for segment in segments {
+            let candidate = sample.isEmpty ? segment : " \(segment)"
+            let remaining = 4_000 - sample.count
+            guard remaining > 0 else { break }
+            sample += String(candidate.prefix(remaining))
+        }
+        return sample
+    }
+
+    /// Voice discovery can synchronously wait on system services; keep it off the main actor.
     private func withTimeout<T: Sendable>(_ operation: @escaping @MainActor () async throws -> T) async throws -> T {
         try await withThrowingTaskGroup(of: T.self) { group in
             group.addTask { try await operation() }

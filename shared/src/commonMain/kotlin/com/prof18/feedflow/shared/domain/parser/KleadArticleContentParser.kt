@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.parser
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.shared.domain.HtmlRetriever
+import com.prof18.feedflow.shared.domain.ReaderContentLanguage
 import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.klead.Klead
 import com.prof18.klead.KleadOptions
@@ -24,11 +25,12 @@ internal class KleadArticleContentParser(
                 return null
             }
 
-            val content = Klead.parseHtml(
+            val result = Klead.parseHtml(
                 html = html,
                 url = url,
                 options = KleadOptions(outputs = setOf(contentFormat)),
-            ).content.let { kleadContent ->
+            )
+            val content = result.content.let { kleadContent ->
                 when (contentFormat) {
                     KleadOutput.HTML -> kleadContent.requireHtml()
                     KleadOutput.MARKDOWN -> kleadContent.requireMarkdown()
@@ -42,7 +44,11 @@ internal class KleadArticleContentParser(
             }
 
             logger.d { "Successfully parsed with Klead: $url" }
-            content
+            if (contentFormat == KleadOutput.HTML) {
+                ReaderContentLanguage.preserve(content, result.metadata.language)
+            } else {
+                content
+            }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Throwable) {

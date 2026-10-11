@@ -50,6 +50,19 @@ import kotlin.time.Duration.Companion.minutes
 
 class ReaderModeViewModelTest : KoinTestBase() {
 
+    @Test
+    fun `feed content reader carries the declared article language`() = runTest {
+        val item = seedItemWithContent(
+            id = "italian-feed",
+            url = "https://example.com/italian-feed",
+            content = "<div lang='it-IT'><p>$SUBSTANTIAL_CONTENT</p></div>",
+        )
+        viewModel.loadReaderContent(item.toUrlInfo(ArticleOpenMode.FEED_CONTENT))
+        advanceUntilIdle()
+        val data = assertIs<ReaderModeState.Success>(viewModel.readerModeState.value).readerModeData
+        assertEquals("it-IT", data.languageTag)
+    }
+
     private val viewModel: ReaderModeViewModel by inject()
     private val databaseHelper: DatabaseHelper by inject()
     private val feedStateRepository: FeedStateRepository by inject()

@@ -10,6 +10,33 @@ final class NativeSpeechSynthesizer: SpeechSynthesizerDriving {
     private var activeUtteranceID: UUID?
     private var utterance = AVSpeechUtterance(string: "")
     private var finished = false
+    private var selectedVoice: AVSpeechSynthesisVoice?
+
+    func prepare(languageTag: String?) async throws {
+        selectedVoice = nil
+        guard let languageTag else { return }
+        let voiceIdentifier = await Task.detached(priority: .userInitiated) { () -> String? in
+            guard let requestedPrimaryLanguage = Self.primaryLanguage(for: languageTag),
+                  let voice = AVSpeechSynthesisVoice(language: languageTag),
+                  Self.primaryLanguage(for: voice.language) == requestedPrimaryLanguage
+            else {
+                return nil
+            }
+            return voice.identifier
+        }.value
+        try Task.checkCancellation()
+        guard let voiceIdentifier,
+              let voice = AVSpeechSynthesisVoice(identifier: voiceIdentifier),
+              Self.primaryLanguage(for: voice.language) == Self.primaryLanguage(for: languageTag)
+        else {
+            throw SpeechAudioGenerationError.voiceUnavailable
+        }
+        selectedVoice = voice
+    }
+
+    private nonisolated static func primaryLanguage(for languageTag: String) -> String? {
+        languageTag.split(whereSeparator: { $0 == "-" || $0 == "_" }).first.map { String($0).lowercased() }
+    }
 
     func synthesize(_ text: String, receive: @escaping @MainActor (AVAudioPCMBuffer) throws -> Void) async throws -> Bool {
         let utteranceID = UUID()
@@ -20,6 +47,7 @@ final class NativeSpeechSynthesizer: SpeechSynthesizerDriving {
                 activeUtteranceID = utteranceID
                 finished = false
                 utterance = AVSpeechUtterance(string: text)
+                utterance.voice = selectedVoice
                 synthesizer.write(utterance) { [weak self] audioBuffer in
                     guard let pcmBuffer = audioBuffer as? AVAudioPCMBuffer else { return }
                     let isEnd = pcmBuffer.frameLength == 0
@@ -67,7 +95,7 @@ final class NativeSpeechSynthesizer: SpeechSynthesizerDriving {
         receiveBuffer = nil
     }
 
-    nonisolated private static func copyBuffer(_ source: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {
+    private nonisolated static func copyBuffer(_ source: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {
         guard let copy = AVAudioPCMBuffer(pcmFormat: source.format, frameCapacity: source.frameLength) else { return nil }
         copy.frameLength = source.frameLength
         let sourceList = UnsafeMutablePointer(mutating: source.audioBufferList)

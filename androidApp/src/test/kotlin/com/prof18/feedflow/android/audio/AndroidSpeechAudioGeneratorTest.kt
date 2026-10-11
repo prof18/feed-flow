@@ -67,6 +67,70 @@ class AndroidSpeechAudioGeneratorTest {
     }
 
     @Test
+    fun `declared language is configured once before all segments`() = runTest {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val fake = FakeSpeechEngine()
+        var detectorCalls = 0
+        val generator = AndroidSpeechAudioGenerator(
+            context,
+            testDispatchers(ioDispatcher = UnconfinedTestDispatcher(testScheduler)),
+            fake.factory(),
+            SpeechLanguageDetector {
+                detectorCalls++
+                "fr"
+            },
+        )
+
+        val output = generator.generate(listOf("Ciao", "Buongiorno"), languageTag = "it-IT")
+
+        try {
+            assertEquals(listOf("it-IT"), fake.configuredLanguages)
+            assertEquals(0, detectorCalls)
+            assertEquals(listOf("Ciao", "Buongiorno"), fake.segments)
+        } finally {
+            output.parentFile?.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun `detected language is used when no language is declared`() = runTest {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val fake = FakeSpeechEngine()
+        val generator = AndroidSpeechAudioGenerator(
+            context,
+            testDispatchers(ioDispatcher = UnconfinedTestDispatcher(testScheduler)),
+            fake.factory(),
+            SpeechLanguageDetector { "es" },
+        )
+
+        val output = generator.generate(listOf("Hola"))
+
+        try {
+            assertEquals(listOf("es"), fake.configuredLanguages)
+        } finally {
+            output.parentFile?.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun `unsupported declared language fails and removes owned files`() = runTest {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val fake = FakeSpeechEngine().apply { supportsLanguage = false }
+        val generator = AndroidSpeechAudioGenerator(
+            context,
+            testDispatchers(ioDispatcher = UnconfinedTestDispatcher(testScheduler)),
+            fake.factory(),
+            SpeechLanguageDetector { error("Declared language must bypass detection") },
+        )
+
+        expectFailure<IllegalStateException> { generator.generate(listOf("Ciao"), languageTag = "it") }
+
+        assertEquals(listOf("it"), fake.configuredLanguages)
+        assertEquals(1, fake.closeCount)
+        assertTrue(speechTempDirectories(context).isEmpty())
+    }
+
+    @Test
     fun `native initialization uses the injected main dispatcher`() = runTest {
         val context = ApplicationProvider.getApplicationContext<Application>()
         val fake = FakeSpeechEngine()
@@ -427,11 +491,13 @@ class AndroidSpeechAudioGeneratorTest {
 
     private inner class FakeSpeechEngine {
         val segments = mutableListOf<String>()
+        val configuredLanguages = mutableListOf<String>()
         var closeCount = 0
         var createCount = 0
         var failSynthesis = false
         var initializationStatus = android.speech.tts.TextToSpeech.SUCCESS
         var oversizedOutput = false
+        var supportsLanguage = true
         var blockSynthesis: CompletableDeferred<Unit>? = null
         var cancelJobOnCreate: Job? = null
         var cancelJobOnClose: Job? = null
@@ -440,6 +506,11 @@ class AndroidSpeechAudioGeneratorTest {
         fun factory() = SpeechSynthesisEngineFactory { _, onInitialized ->
             createCount++
             val engine = object : SpeechSynthesisEngine {
+                override fun configureLanguage(languageTag: String): Boolean {
+                    configuredLanguages += languageTag
+                    return supportsLanguage
+                }
+
                 override suspend fun synthesize(text: String, destination: File) {
                     synthesisStarted.complete(Unit)
                     blockSynthesis?.await()

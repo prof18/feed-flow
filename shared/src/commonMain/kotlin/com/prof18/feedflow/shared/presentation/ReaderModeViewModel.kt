@@ -16,6 +16,7 @@ import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveWith
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.ReaderContentLanguage
 import com.prof18.feedflow.shared.domain.feed.ArticleNavigationRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
@@ -203,6 +204,7 @@ class ReaderModeViewModel internal constructor(
         siteName = databaseHelper.getFeedItemUrlInfo(urlInfo.id)?.feedSourceTitle ?: urlInfo.feedSourceTitle,
         audioUrl = databaseHelper.getFeedItemAudioUrl(urlInfo.id),
         audioImageUrl = databaseHelper.getFeedItemAudioArtwork(urlInfo.id),
+        languageTag = ReaderContentLanguage.fromCachedContent(content),
     )
 
     private suspend fun readerImageUrl(urlInfo: FeedItemUrlInfo, source: ShownContentSource): String? {

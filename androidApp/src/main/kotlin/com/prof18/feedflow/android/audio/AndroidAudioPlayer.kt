@@ -94,7 +94,7 @@ class AndroidAudioPlayer(
         val request = speechRequest ?: return false
         return state.value.episode?.kind == AudioSourceKind.SPEECH &&
             request.article.id == article.id && request.article.title == article.title &&
-            request.article.content == article.content
+            request.article.content == article.content && request.article.languageTag == article.languageTag
     }
 
     fun playReaderSpeech(article: ReaderModeData, untitledTitle: String) {
@@ -104,8 +104,10 @@ class AndroidAudioPlayer(
         } else {
             "${article.title}\u0000${article.content}".toByteArray(Charsets.UTF_8)
         }
+        val languageSource = "speech-language-v1\u0000".toByteArray(Charsets.UTF_8) + source +
+            "\u0000${article.languageTag.orEmpty()}".toByteArray(Charsets.UTF_8)
         val key = MessageDigest.getInstance("SHA-256")
-            .digest(source)
+            .digest(languageSource)
             .joinToString("") { "%02x".format(it) }
         val request = SpeechRequest(article, title, key)
         if (state.value.episode?.playbackId == request.episode.playbackId && !state.value.failed) {
@@ -142,7 +144,7 @@ class AndroidAudioPlayer(
             var output: File? = null
             try {
                 val segments = speechText(request.article.title, request.article.content)
-                output = speechGenerator.generate(segments)
+                output = speechGenerator.generate(segments, languageTag = request.article.languageTag)
                 if (generation != speechGeneration) return@launch
                 val shouldPlay = state.value.isPlaying
                 clearSpeechFile()

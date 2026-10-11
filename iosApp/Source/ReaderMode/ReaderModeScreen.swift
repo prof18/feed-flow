@@ -26,6 +26,7 @@ struct ReaderModeScreen: View {
     @State private var isBookmarked = false
     @State private var readerStatus = ReaderStatus.fetching
     @State private var currentContent: String?
+    @State private var currentLanguageTag: String?
     @State private var currentBaseUrl: String?
     @State private var articleUrl: URL?
     @State private var feedItemId: String?
@@ -42,9 +43,9 @@ struct ReaderModeScreen: View {
     @State private var isShowingFeedContent = false
     @State private var hasArticleUrl = true
     @State private var canToggleContentSource = false
-    // Mirrors the environment color scheme: `updateReaderHTML` runs inside a long-lived `.task`,
-    // which captures the view value and with it a stale `@Environment` copy. `@State` is read
-    // through its storage, so it stays current there.
+    /// Mirrors the environment color scheme: `updateReaderHTML` runs inside a long-lived `.task`,
+    /// which captures the view value and with it a stale `@Environment` copy. `@State` is read
+    /// through its storage, so it stays current there.
     @State private var isDarkMode = false
 
     let viewModel: ReaderModeViewModel
@@ -73,7 +74,9 @@ struct ReaderModeScreen: View {
                     } else {
                         openURL(
                             browserSelector.getUrlForDefaultBrowser(
-                                stringUrl: url.absoluteString))
+                                stringUrl: url.absoluteString
+                            )
+                        )
                     }
                 },
                 onImageClicked: { url in
@@ -134,7 +137,9 @@ struct ReaderModeScreen: View {
                             if let archiveUrl = URL(string: archiveUrlString) {
                                 openURL(
                                     browserSelector.getUrlForDefaultBrowser(
-                                        stringUrl: archiveUrl.absoluteString))
+                                        stringUrl: archiveUrl.absoluteString
+                                    )
+                                )
                             }
                         }
                     }
@@ -158,7 +163,9 @@ struct ReaderModeScreen: View {
                         } else {
                             openURL(
                                 browserSelector.getUrlForDefaultBrowser(
-                                    stringUrl: commUrl.absoluteString))
+                                    stringUrl: commUrl.absoluteString
+                                )
+                            )
                         }
                     }
                 } : nil,
@@ -208,7 +215,11 @@ struct ReaderModeScreen: View {
         .fullScreenCover(
             isPresented: Binding(
                 get: { imageViewerUrl != nil },
-                set: { if !$0 { imageViewerUrl = nil } }
+                set: {
+                    if !$0 {
+                        imageViewerUrl = nil
+                    }
+                }
             )
         ) {
             if let imageUrl = imageViewerUrl {
@@ -258,6 +269,7 @@ struct ReaderModeScreen: View {
                     self.feedItemTitle = readerModeData.title
                     self.commentsUrl = readerModeData.commentsUrl
                     self.currentContent = readerModeData.content
+                    self.currentLanguageTag = readerModeData.languageTag
                     self.currentBaseUrl = readerModeData.baseUrl
                     self.currentImageUrl = readerModeData.imageUrl
                     self.currentSiteName = readerModeData.siteName
@@ -336,28 +348,6 @@ struct ReaderModeScreen: View {
         ))
     }
 
-    private var isCurrentSpeechSelected: Bool {
-        return audioPlayback.isSpeechFor(
-            itemId: feedItemId,
-            title: feedItemTitle,
-            content: currentContent
-        )
-    }
-
-    private func toggleCurrentSpeech() {
-        guard let itemId = feedItemId,
-              let content = currentContent else { return }
-        let title = feedItemTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        audioPlayback.toggleSpeech(
-            itemId: itemId,
-            title: feedItemTitle,
-            displayTitle: title.isEmpty ? feedFlowStrings.audioEpisodeUntitled : title,
-            content: content,
-            subtitle: currentSiteName,
-            artworkURL: (currentAudioImageUrl ?? currentImageUrl).flatMap(URL.init(string:))
-        )
-    }
-
     private var readerAudioBanner: ReaderAudioBanner? {
         guard currentAudioUrl != nil else { return nil }
         return ReaderAudioBanner(
@@ -397,10 +387,11 @@ struct ReaderModeScreen: View {
             imageUrl: currentImageUrl,
             leadingContent: "",
             siteName: currentSiteName,
-            audioBanner: readerAudioBanner
+            audioBanner: readerAudioBanner,
+            languageTag: currentLanguageTag
         )
 
-        self.readerStatus = .extractedContent(
+        readerStatus = .extractedContent(
             html: html,
             baseURL: URL(string: baseUrlString) ?? URL(fileURLWithPath: ""),
             url: url,
@@ -416,6 +407,7 @@ struct ReaderModeScreen: View {
         hasher.combine(feedItemId)
         hasher.combine(isShowingFeedContent)
         hasher.combine(content)
+        hasher.combine(currentLanguageTag)
         hasher.combine(feedItemTitle)
         hasher.combine(currentSiteName)
         hasher.combine(currentImageUrl)
@@ -436,6 +428,30 @@ struct ReaderModeScreen: View {
 }
 
 private extension ReaderModeScreen {
+    private var isCurrentSpeechSelected: Bool {
+        return audioPlayback.isSpeechFor(
+            itemId: feedItemId,
+            title: feedItemTitle,
+            content: currentContent,
+            languageTag: currentLanguageTag
+        )
+    }
+
+    private func toggleCurrentSpeech() {
+        guard let itemId = feedItemId,
+              let content = currentContent else { return }
+        let title = feedItemTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        audioPlayback.toggleSpeech(
+            itemId: itemId,
+            title: feedItemTitle,
+            displayTitle: title.isEmpty ? feedFlowStrings.audioEpisodeUntitled : title,
+            content: content,
+            subtitle: currentSiteName,
+            artworkURL: (currentAudioImageUrl ?? currentImageUrl).flatMap(URL.init(string:)),
+            languageTag: currentLanguageTag
+        )
+    }
+
     func returnToAudioEpisode(_ episode: AudioEpisode) {
         Task { @MainActor in
             do {

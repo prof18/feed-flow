@@ -3,10 +3,12 @@ import Foundation
 @MainActor
 final class TestSpeechAudioGenerator: SpeechAudioGenerating {
     private(set) var requests: [[String]] = []
+    private(set) var languageTags: [String?] = []
     private var continuations: [CheckedContinuation<URL, Error>?] = []
 
-    func generate(segments: [String]) async throws -> URL {
+    func generate(segments: [String], languageTag: String?) async throws -> URL {
         requests.append(segments)
+        languageTags.append(languageTag)
         continuations.append(nil)
         let index = requests.count - 1
         return try await withCheckedThrowingContinuation { continuations[index] = $0 }
@@ -25,8 +27,10 @@ final class TestSpeechAudioGenerator: SpeechAudioGenerating {
     }
 
     func waitForRequestCount(_ count: Int) async throws {
-        for _ in 0 ..< 10_000 {
-            if requests.count >= count { return }
+        for _ in 0 ..< 10000 {
+            if requests.count >= count {
+                return
+            }
             await Task.yield()
         }
         throw SpeechAudioGenerationError.timedOut

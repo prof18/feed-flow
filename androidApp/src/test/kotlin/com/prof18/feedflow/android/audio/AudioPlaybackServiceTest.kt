@@ -35,7 +35,7 @@ class AudioPlaybackServiceTest {
                             context,
                             AudioPlaybackPositionRepository(MapSettings()),
                             object : SpeechAudioGenerating {
-                                override suspend fun generate(segments: List<String>): File =
+                                override suspend fun generate(segments: List<String>, languageTag: String?): File =
                                     error("Speech generation is not used in service tests")
                             },
                         )

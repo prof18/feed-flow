@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.parser
 
 import com.prof18.feedflow.shared.domain.HtmlRetriever
+import com.prof18.feedflow.shared.domain.ReaderContentLanguage
 import com.prof18.feedflow.shared.test.testLogger
 import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
 import com.prof18.klead.KleadOutput
@@ -19,6 +20,17 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class KleadArticleContentParserTest {
+
+    @Test
+    fun `HTML reader keeps the original page language after Klead extraction`() = runTest {
+        val worker = worker(
+            html = articleHtml.replace("<html>", "<html lang='it-IT'>"),
+            contentFormat = KleadOutput.HTML,
+        )
+        val content = assertNotNull(worker.parse("https://example.com/italian-article"))
+        assertEquals("it-IT", ReaderContentLanguage.fromCachedContent(content))
+        assertTrue(content.contains("Klead extracts article prose"))
+    }
 
     @Test
     fun `returns the article Markdown without reader decorations`() = runTest {
@@ -153,6 +165,17 @@ class KleadArticleContentParserTest {
             .prepareFeedContent(html = html, baseUrl = "https://example.com")
 
         assertEquals(html, prepared)
+    }
+
+    @Test
+    fun `HTML feed content keeps its markup and uses Klead language metadata`() = runTest {
+        val html = "<div lang='IT-it'><p>Breve testo &amp; dettagli.</p>" +
+            "<aside>Contenuto aggiuntivo del feed.</aside></div>"
+        val prepared = worker(html = "", contentFormat = KleadOutput.HTML)
+            .prepareFeedContent(html = html, baseUrl = "https://example.com")
+
+        assertEquals("it-IT", ReaderContentLanguage.fromCachedContent(prepared))
+        assertTrue(prepared.endsWith("$html</div>"), prepared)
     }
 
     @Test

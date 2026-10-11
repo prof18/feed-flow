@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.parser
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.shared.domain.HtmlRetriever
+import com.prof18.feedflow.shared.domain.ReaderContentLanguage
 import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.klead.Klead
 import com.prof18.klead.KleadOptions
@@ -24,11 +25,12 @@ internal class KleadArticleContentParser(
                 return null
             }
 
-            val content = Klead.parseHtml(
+            val result = Klead.parseHtml(
                 html = html,
                 url = url,
                 options = KleadOptions(outputs = setOf(contentFormat)),
-            ).content.let { kleadContent ->
+            )
+            val content = result.content.let { kleadContent ->
                 when (contentFormat) {
                     KleadOutput.HTML -> kleadContent.requireHtml()
                     KleadOutput.MARKDOWN -> kleadContent.requireMarkdown()
@@ -42,7 +44,11 @@ internal class KleadArticleContentParser(
             }
 
             logger.d { "Successfully parsed with Klead: $url" }
-            content
+            if (contentFormat == KleadOutput.HTML) {
+                ReaderContentLanguage.preserve(content, result.metadata.language)
+            } else {
+                content
+            }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Throwable) {
@@ -51,22 +57,25 @@ internal class KleadArticleContentParser(
         }
     }
 
-    override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = when (contentFormat) {
-        KleadOutput.HTML -> html
-        KleadOutput.MARKDOWN -> convertFeedHtmlToMarkdown(html, baseUrl) ?: html
-    }
-
-    private suspend fun convertFeedHtmlToMarkdown(html: String, baseUrl: String?): String? = try {
-        Klead.parseHtml(
-            html = "<html><body><article>$html</article></body></html>",
+    override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = try {
+        val source = when (contentFormat) {
+            KleadOutput.HTML -> html
+            KleadOutput.MARKDOWN -> "<html><body><article>$html</article></body></html>"
+        }
+        val result = Klead.parseHtml(
+            html = source,
             url = baseUrl?.takeIf { it.isNotBlank() } ?: FALLBACK_BASE_URL,
-            options = KleadOptions(outputs = setOf(KleadOutput.MARKDOWN)),
-        ).content.requireMarkdown().trim().takeIf { it.isNotEmpty() }
+            options = KleadOptions(outputs = setOf(contentFormat)),
+        )
+        when (contentFormat) {
+            KleadOutput.HTML -> ReaderContentLanguage.preserve(html, result.metadata.language)
+            KleadOutput.MARKDOWN -> result.content.requireMarkdown().trim().takeIf { it.isNotEmpty() } ?: html
+        }
     } catch (e: CancellationException) {
         throw e
     } catch (e: Throwable) {
-        logger.d(e) { "Error converting feed content to markdown with Klead" }
-        null
+        logger.d(e) { "Error preparing feed content with Klead" }
+        html
     }
 }
 

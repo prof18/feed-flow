@@ -8,6 +8,7 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.shared.domain.ReaderContentLanguage
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
@@ -20,6 +21,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.io.File
 import java.io.RandomAccessFile
+import java.util.Locale
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.resume
@@ -27,6 +29,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.system.measureTimeMillis
 
 private const val MAX_SEGMENT_LENGTH = 500
+private const val MAX_LANGUAGE_SAMPLE_LENGTH = 4_000
 private const val MAX_OUTPUT_BYTES = 256L * 1024L * 1024L
 private const val TAG = "SpeechAudioGenerator"
 private const val WAV_RIFF_HEADER_BYTES = 12L
@@ -46,6 +49,7 @@ class AndroidSpeechAudioGenerator internal constructor(
     context: Context,
     private val dispatcherProvider: DispatcherProvider,
     private val engineFactory: SpeechSynthesisEngineFactory = AndroidSpeechSynthesisEngineFactory,
+    private val languageDetector: SpeechLanguageDetector = AndroidSpeechLanguageDetector(context),
 ) : SpeechAudioGenerating {
     constructor(context: Context, dispatcherProvider: DispatcherProvider) :
         this(context, dispatcherProvider, AndroidSpeechSynthesisEngineFactory)
@@ -54,7 +58,7 @@ class AndroidSpeechAudioGenerator internal constructor(
     private val cachePreparationMutex = Mutex()
     private var cachePrepared = false
 
-    override suspend fun generate(segments: List<String>): File {
+    override suspend fun generate(segments: List<String>, languageTag: String?): File {
         require(segments.isNotEmpty()) { "At least one speech segment is required" }
         require(segments.all { it.isNotBlank() && it.length <= MAX_SEGMENT_LENGTH }) {
             "Speech segments must be non-empty and at most $MAX_SEGMENT_LENGTH UTF-16 units"
@@ -68,6 +72,16 @@ class AndroidSpeechAudioGenerator internal constructor(
         try {
             val generatedFile = withTimeout(timeMillis = 5 * 60 * 1_000L) {
                 engine = createEngineAndAwaitInit()
+                val selectedLanguageTag = ReaderContentLanguage.normalize(languageTag)
+                    ?: withContext(dispatcherProvider.default) {
+                        ReaderContentLanguage.normalize(languageDetector.detectLanguage(languageSample(segments)))
+                    }
+                if (selectedLanguageTag != null) {
+                    val languageConfigured = withContext(dispatcherProvider.main) {
+                        engine!!.configureLanguage(selectedLanguageTag)
+                    }
+                    check(languageConfigured) { "Speech engine does not support language: $selectedLanguageTag" }
+                }
                 var outputBytes = 0L
                 val elapsed = measureTimeMillis {
                     val wavSegments = withContext(dispatcherProvider.io) {
@@ -163,6 +177,15 @@ class AndroidSpeechAudioGenerator internal constructor(
             throw failure
         }
     }
+
+    private fun languageSample(segments: List<String>): String = buildString {
+        for (segment in segments) {
+            if (isNotEmpty() && length < MAX_LANGUAGE_SAMPLE_LENGTH) append(' ')
+            val remaining = MAX_LANGUAGE_SAMPLE_LENGTH - length
+            append(segment, 0, minOf(segment.length, remaining))
+            if (length >= MAX_LANGUAGE_SAMPLE_LENGTH) break
+        }
+    }
 }
 
 private const val SPEECH_DIRECTORY_PREFIX = "reader-speech-"
@@ -172,6 +195,7 @@ internal fun interface SpeechSynthesisEngineFactory {
 }
 
 internal interface SpeechSynthesisEngine {
+    fun configureLanguage(languageTag: String): Boolean
     suspend fun synthesize(text: String, destination: File)
     fun close()
 }
@@ -187,6 +211,13 @@ internal class AndroidSpeechSynthesisEngine(
     private val tts: TextToSpeech,
 ) : SpeechSynthesisEngine {
     private val mainHandler = Handler(Looper.getMainLooper())
+
+    override fun configureLanguage(languageTag: String): Boolean {
+        val requestedLocale = Locale.forLanguageTag(languageTag)
+        val result = tts.setLanguage(requestedLocale)
+        val selectedLocale = tts.voice?.locale
+        return result >= 0 && selectedLocale?.language == requestedLocale.language
+    }
 
     override suspend fun synthesize(text: String, destination: File) {
         withContext(Dispatchers.Main.immediate) {

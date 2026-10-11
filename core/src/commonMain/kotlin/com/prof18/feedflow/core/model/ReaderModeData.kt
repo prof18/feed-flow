@@ -16,4 +16,5 @@ data class ReaderModeData(
     val siteName: String? = null,
     val audioUrl: String? = null,
     val audioImageUrl: String? = null,
+    val languageTag: String? = null,
 )

@@ -2,5 +2,5 @@ import Foundation
 
 @MainActor
 protocol SpeechAudioGenerating {
-    func generate(segments: [String]) async throws -> URL
+    func generate(segments: [String], languageTag: String?) async throws -> URL
 }

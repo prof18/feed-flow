@@ -3,6 +3,8 @@ import XCTest
 
 @MainActor
 final class SpeechAudioGeneratorTests: XCTestCase {
+    private let noDetectedLanguage: @Sendable (String) async -> String? = { _ in nil }
+
     func testSegmentsAreSynthesizedInOrderIntoPlayableAudioFile() async throws {
         let synth = TestSpeechSynthesizer()
         var testWriter: TestSpeechAudioWriter?
@@ -14,14 +16,14 @@ final class SpeechAudioGeneratorTests: XCTestCase {
                 synth.lastOutputPath = url.path
                 return writer
             },
-            voiceAvailable: { true }
+            voiceAvailable: { true }, languageDetector: noDetectedLanguage
         )
 
         let generation = Task { try await generator.generate(segments: ["first", "second"]) }
         try await synth.waitForCallCount(1)
-        synth.finishCurrent(with: try Self.buffer(frames: 8_000))
+        try synth.finishCurrent(with: Self.buffer(frames: 8000))
         try await synth.waitForCallCount(2)
-        synth.finishCurrent(with: try Self.buffer(frames: 8_000))
+        try synth.finishCurrent(with: Self.buffer(frames: 8000))
         let url = try await generation.value
 
         XCTAssertEqual(synth.texts, ["first", "second"])
@@ -39,11 +41,11 @@ final class SpeechAudioGeneratorTests: XCTestCase {
                 synth.lastOutputPath = url.path
                 return try TestSpeechAudioWriter(url: url, format: format)
             },
-            voiceAvailable: { true }
+            voiceAvailable: { true }, languageDetector: noDetectedLanguage
         )
         let task = Task { try await generator.generate(segments: ["one", "two"]) }
         try await synth.waitForCallCount(1)
-        synth.send(try Self.buffer(frames: 32))
+        try synth.send(Self.buffer(frames: 32))
         task.cancel()
         do {
             _ = try await task.value
@@ -65,15 +67,15 @@ final class SpeechAudioGeneratorTests: XCTestCase {
                 synth.lastOutputPath = url.path
                 return writer
             },
-            voiceAvailable: { true }
+            voiceAvailable: { true }, languageDetector: noDetectedLanguage
         )
         let task = Task { try await generator.generate(segments: ["one"]) }
         try await synth.waitForCallCount(1)
-        synth.send(try Self.buffer(frames: 16))
+        try synth.send(Self.buffer(frames: 16))
         let appendCountBeforeCancellation = testWriter?.appendCount
         task.cancel()
         _ = try? await task.value
-        synth.sendLate(try Self.buffer(frames: 16))
+        try synth.sendLate(Self.buffer(frames: 16))
         await Task.yield()
         XCTAssertEqual(testWriter?.appendCount, appendCountBeforeCancellation)
         XCTAssertFalse(FileManager.default.fileExists(atPath: synth.lastOutputPath ?? ""))
@@ -81,7 +83,7 @@ final class SpeechAudioGeneratorTests: XCTestCase {
 
     func testMissingVoiceFailsBeforeSynthesis() async {
         let synth = TestSpeechSynthesizer()
-        let generator = SpeechAudioGenerator(synthesizerFactory: { synth }, voiceAvailable: { false })
+        let generator = SpeechAudioGenerator(synthesizerFactory: { synth }, voiceAvailable: { false }, languageDetector: noDetectedLanguage)
         do {
             _ = try await generator.generate(segments: ["hello"])
             XCTFail("Expected voice failure")
@@ -94,14 +96,77 @@ final class SpeechAudioGeneratorTests: XCTestCase {
 
     func testDefaultAvailabilityUsesTheSynthesizersImplicitVoice() async throws {
         let synth = TestSpeechSynthesizer()
-        let generator = SpeechAudioGenerator(synthesizerFactory: { synth })
+        let generator = SpeechAudioGenerator(synthesizerFactory: { synth }, languageDetector: noDetectedLanguage)
         let task = Task { try await generator.generate(segments: ["hello"]) }
         try await synth.waitForCallCount(1)
-        synth.finishCurrent(with: try Self.buffer(frames: 8_000))
+        try synth.finishCurrent(with: Self.buffer(frames: 8000))
         let url = try await task.value
 
         XCTAssertEqual(synth.texts, ["hello"])
         try FileManager.default.removeItem(at: url.deletingLastPathComponent())
+    }
+
+    func testProvidedLanguageIsPreparedOnceAndBypassesDetection() async throws {
+        let synth = TestSpeechSynthesizer()
+        let detector = RecordingSpeechLanguageDetector(result: "fr")
+        let generator = SpeechAudioGenerator(
+            synthesizerFactory: { synth },
+            languageDetector: { sample in await detector.detect(sample) }
+        )
+        let task = Task { try await generator.generate(segments: ["Ciao", "come stai"], languageTag: "it") }
+        try await synth.waitForCallCount(1)
+        try synth.finishCurrent(with: Self.buffer(frames: 8000))
+        try await synth.waitForCallCount(2)
+        try synth.finishCurrent(with: Self.buffer(frames: 8000))
+        let url = try await task.value
+
+        XCTAssertEqual(synth.preparedLanguages.count, 1)
+        XCTAssertEqual(try XCTUnwrap(synth.preparedLanguages.first), "it")
+        let detectedSamples = await detector.samples
+        XCTAssertTrue(detectedSamples.isEmpty)
+        try FileManager.default.removeItem(at: url.deletingLastPathComponent())
+    }
+
+    func testLanguageDetectionRunsOnceWhenNoHintIsProvided() async throws {
+        let synth = TestSpeechSynthesizer()
+        let detector = RecordingSpeechLanguageDetector(result: "it")
+        let generator = SpeechAudioGenerator(
+            synthesizerFactory: { synth },
+            languageDetector: { sample in await detector.detect(sample) }
+        )
+        let task = Task { try await generator.generate(segments: ["Buongiorno", "Benvenuti"]) }
+        try await synth.waitForCallCount(1)
+        try synth.finishCurrent(with: Self.buffer(frames: 8000))
+        try await synth.waitForCallCount(2)
+        try synth.finishCurrent(with: Self.buffer(frames: 8000))
+        let url = try await task.value
+
+        XCTAssertEqual(synth.preparedLanguages.count, 1)
+        XCTAssertEqual(try XCTUnwrap(synth.preparedLanguages.first), "it")
+        let detectedSamples = await detector.samples
+        XCTAssertEqual(detectedSamples.count, 1)
+        XCTAssertTrue(detectedSamples[0].contains("Buongiorno"))
+        try FileManager.default.removeItem(at: url.deletingLastPathComponent())
+    }
+
+    func testMissingKnownVoiceFailsAndRemovesTemporaryOutput() async {
+        let directoriesBefore = speechTemporaryDirectories()
+        let synth = TestSpeechSynthesizer()
+        synth.preparationError = SpeechAudioGenerationError.voiceUnavailable
+        let generator = SpeechAudioGenerator(
+            synthesizerFactory: { synth },
+            languageDetector: { _ in nil }
+        )
+
+        do {
+            _ = try await generator.generate(segments: ["hello"], languageTag: "it")
+            XCTFail("Expected voice failure")
+        } catch SpeechAudioGenerationError.voiceUnavailable {
+            XCTAssertTrue(synth.texts.isEmpty)
+            XCTAssertEqual(speechTemporaryDirectories(), directoriesBefore)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
     }
 
     func testCancellationDuringVoiceAvailabilityCreatesNoSynthesizerOrAudioOutput() async throws {
@@ -119,7 +184,7 @@ final class SpeechAudioGeneratorTests: XCTestCase {
                 writerFactoryCalls += 1
                 throw SpeechAudioGenerationError.synthesisFailed
             },
-            voiceAvailable: { await gate.wait() }
+            voiceAvailable: { await gate.wait() }, languageDetector: noDetectedLanguage
         )
         defer { gate.resume(true) }
 
@@ -144,7 +209,7 @@ final class SpeechAudioGeneratorTests: XCTestCase {
         let synth = TestSpeechSynthesizer()
         let generator = SpeechAudioGenerator(
             synthesizerFactory: { synth },
-            voiceAvailable: { await availability.check() }
+            voiceAvailable: { await availability.check() }, languageDetector: noDetectedLanguage
         )
         defer { availability.resumeFirstCall(true) }
 
@@ -163,7 +228,7 @@ final class SpeechAudioGeneratorTests: XCTestCase {
             XCTAssertFalse(synth.stopped)
         }
 
-        synth.finishCurrent(with: try Self.buffer(frames: 8_000))
+        try synth.finishCurrent(with: Self.buffer(frames: 8000))
         let outputURL = try await newTask.value
         XCTAssertEqual(synth.texts, ["new generation"])
         XCTAssertFalse(synth.stopped)
@@ -171,8 +236,10 @@ final class SpeechAudioGeneratorTests: XCTestCase {
     }
 
     private func waitUntilVoiceAvailabilityIsWaiting(_ gate: AsyncVoiceAvailabilityGate) async throws {
-        for _ in 0 ..< 10_000 {
-            if gate.isWaiting { return }
+        for _ in 0 ..< 10000 {
+            if gate.isWaiting {
+                return
+            }
             await Task.yield()
         }
         throw SpeechAudioGenerationError.timedOut
@@ -195,32 +262,47 @@ final class SpeechAudioGeneratorTests: XCTestCase {
             try? FileManager.default.removeItem(at: unrelated)
         }
         let synth = TestSpeechSynthesizer()
-        let generator = SpeechAudioGenerator(synthesizerFactory: { synth }, voiceAvailable: { true })
+        let generator = SpeechAudioGenerator(synthesizerFactory: { synth }, voiceAvailable: { true }, languageDetector: noDetectedLanguage)
         let first = Task { try await generator.generate(segments: ["first"]) }
         try await synth.waitForCallCount(1)
         XCTAssertFalse(FileManager.default.fileExists(atPath: orphan.path))
         XCTAssertTrue(FileManager.default.fileExists(atPath: unrelated.path))
-        synth.finishCurrent(with: try Self.buffer(frames: 8_000))
+        try synth.finishCurrent(with: Self.buffer(frames: 8000))
         let firstURL = try await first.value
         defer { try? FileManager.default.removeItem(at: firstURL.deletingLastPathComponent()) }
 
         let second = Task { try await generator.generate(segments: ["second"]) }
         try await synth.waitForCallCount(2)
         XCTAssertTrue(FileManager.default.fileExists(atPath: firstURL.path))
-        synth.finishCurrent(with: try Self.buffer(frames: 8_000))
+        try synth.finishCurrent(with: Self.buffer(frames: 8000))
         let secondURL = try await second.value
         defer { try? FileManager.default.removeItem(at: secondURL.deletingLastPathComponent()) }
         XCTAssertTrue(FileManager.default.fileExists(atPath: firstURL.path))
     }
 
     private static func buffer(frames: AVAudioFrameCount) throws -> AVAudioPCMBuffer {
-        guard let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16_000, channels: 1, interleaved: false),
+        guard let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16000, channels: 1, interleaved: false),
               let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frames),
-              let channel = buffer.floatChannelData?[0] else {
+              let channel = buffer.floatChannelData?[0]
+        else {
             throw SpeechAudioGenerationError.synthesisFailed
         }
         buffer.frameLength = frames
         channel.initialize(repeating: 0, count: Int(frames))
         return buffer
+    }
+}
+
+private actor RecordingSpeechLanguageDetector {
+    private let result: String?
+    private(set) var samples: [String] = []
+
+    init(result: String?) {
+        self.result = result
+    }
+
+    func detect(_ sample: String) -> String? {
+        samples.append(sample)
+        return result
     }
 }

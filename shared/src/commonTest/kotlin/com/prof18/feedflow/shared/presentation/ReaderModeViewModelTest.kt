@@ -17,6 +17,7 @@ import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository.Companion.DEFAULT_READER_MODE_FONT_SIZE
+import com.prof18.feedflow.shared.domain.ReaderContentLanguage
 import com.prof18.feedflow.shared.domain.feed.ArticleNavigationRepository
 import com.prof18.feedflow.shared.domain.feed.ArticlePosition
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -50,6 +51,34 @@ import kotlin.time.Duration.Companion.minutes
 
 class ReaderModeViewModelTest : KoinTestBase() {
 
+    @Test
+    fun `feed content reader carries language prepared by the parser`() = runTest {
+        preparedFeedLanguage = "it-IT"
+        val item = seedItemWithContent(
+            id = "italian-feed",
+            url = "https://example.com/italian-feed",
+            content = "<div lang='it-IT'><p>$SUBSTANTIAL_CONTENT</p></div>",
+        )
+        viewModel.loadReaderContent(item.toUrlInfo(ArticleOpenMode.FEED_CONTENT))
+        advanceUntilIdle()
+        val data = assertIs<ReaderModeState.Success>(viewModel.readerModeState.value).readerModeData
+        assertEquals("it-IT", data.languageTag)
+    }
+
+    @Test
+    fun `cached web content carries persisted Klead language without detecting body declarations`() = runTest {
+        val item = seedItemWithContent("cached-italian", "https://example.com/italian", content = null)
+        val content = ReaderContentLanguage.preserve("<article lang='fr'>$SUBSTANTIAL_CONTENT</article>", "it-IT")
+        feedItemContentFileHandler.saveFeedItemContentToFile(item.id, content)
+
+        viewModel.loadReaderContent(item.toUrlInfo(ArticleOpenMode.FULL_ARTICLE))
+        advanceUntilIdle()
+
+        val data = assertIs<ReaderModeState.Success>(viewModel.readerModeState.value).readerModeData
+        assertEquals("it-IT", data.languageTag)
+        assertEquals(content, data.content)
+    }
+
     private val viewModel: ReaderModeViewModel by inject()
     private val databaseHelper: DatabaseHelper by inject()
     private val feedStateRepository: FeedStateRepository by inject()
@@ -57,6 +86,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
     private val feedItemContentFileHandler: FeedItemContentFileHandler by inject()
     private val settingsRepository: SettingsRepository by inject()
     private var parserBehavior: ParserBehavior = ParserBehavior.Success
+    private var preparedFeedLanguage: String? = null
 
     override fun getTestModules(): List<Module> = super.getTestModules() + module {
         single<ArticleContentParser> {
@@ -77,7 +107,8 @@ class ReaderModeViewModelTest : KoinTestBase() {
                         }
                     }
 
-                override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = html
+                override suspend fun prepareFeedContent(html: String, baseUrl: String?): String =
+                    ReaderContentLanguage.preserve(html, preparedFeedLanguage)
             }
         }
     }
@@ -85,6 +116,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
     @BeforeTest
     fun resetParserBehavior() {
         parserBehavior = ParserBehavior.Success
+        preparedFeedLanguage = null
     }
 
     @Test

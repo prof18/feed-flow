@@ -14,6 +14,7 @@ fun getReaderModeStyledHtml(
     leadingContent: String = "",
     siteName: String? = null,
     audioBanner: ReaderAudioBanner? = null,
+    languageTag: String? = null,
 ): String {
     val titleTag = if (title != null) {
         "<h1>${title.escapeHtml()}</h1>"
@@ -33,10 +34,11 @@ fun getReaderModeStyledHtml(
     }
     val processedContent = subtitleTag + heroTag + content
     val audioBannerTag = audioBanner?.let(::renderAudioBanner).orEmpty()
+    val languageAttribute = ReaderContentLanguage.normalize(languageTag)?.let { " lang=\"$it\"" }.orEmpty()
 
     // language=html
     return """
-    <html lang="en" dir='auto'>
+    <html$languageAttribute dir='auto'>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>

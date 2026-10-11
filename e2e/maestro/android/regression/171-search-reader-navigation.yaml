@@ -19,7 +19,8 @@ appId: com.prof18.feedflow.debug
     visible:
       id: article_row_e2e_article_reader_success
     timeout: 10000
-- hideKeyboard
+# The field's Done action clears focus without issuing Back when the IME is already hidden.
+- pressKey: Enter
 - assertVisible:
     id: article_row_e2e_article_reader_success
 - assertVisible:
@@ -64,6 +65,30 @@ appId: com.prof18.feedflow.debug
 - assertVisible:
     id: reader_next_button
     enabled: false
+
+# Toolbar Back leaves the reader even after switching through several articles.
+- tapOn:
+    id: reader_back_button
+- assertVisible:
+    id: search_query_field
+    text: "Reader"
+- tapOn:
+    id: search_query_field
+- pressKey: Enter
+- assertVisible:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: article_row_e2e_article_reader_fallback
+- assertVisible:
+    id: article_row_e2e_article_reader_long
+- assertNotVisible:
+    id: reader_article_e2e_article_reader_long
+- tapOn:
+    id: article_row_e2e_article_reader_long
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_article_reader_long
+    timeout: 10000
 
 # Previous follows the same search result order in reverse and returns to its boundary.
 - tapOn:

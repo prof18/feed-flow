@@ -51,3 +51,23 @@ appId: com.prof18.feedflow.debug
     id: article_row_e2e_article_reader_success
 - assertNotVisible:
     id: reader_article_e2e_article_reader_success
+
+# System Back exits the reader after a same-article HTML replacement too.
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- extendedWaitUntil:
+    visible: "E2E cached reader content loaded from the seed fixture."
+    timeout: 5000
+- tapOn:
+    id: reader_more_menu_button
+- tapOn: "Content from the feed"
+- extendedWaitUntil:
+    notVisible: "E2E cached reader content loaded from the seed fixture."
+    timeout: 5000
+- assertVisible:
+    id: reader_article_e2e_article_reader_success
+- back
+- assertVisible:
+    id: article_row_e2e_article_reader_success
+- assertNotVisible:
+    id: reader_article_e2e_article_reader_success

@@ -6,6 +6,7 @@ Architecture, implementation, and testing guides for FeedFlow:
 - [Cloud sync regression harness](CLOUD_SYNC_TESTING.md): deterministic scenarios, platform bindings, and the `allTests` gate.
 - [Live cloud sync testing](CLOUD_SYNC_LIVE_TESTING.md): real-provider setup, device scenarios, troubleshooting, and adding a provider.
 - [Testing guide](TESTING.md): test structure, dependency injection, fakes, generators, and Flow testing.
+- [Date formatting](DATE_FORMATTING.md): explicit article date formats, settings persistence, and display rules.
 - [Timeline pagination](PAGINATION.md): keyset pagination and its interaction with changing read status.
 - [Podcast audio](PODCAST_AUDIO.md): enclosure detection, local storage, reader banners, platform handoff, and verification limits.
 - [Reader text to speech](READER_TTS.md): extraction, playback ownership, lifecycle limits, and validation.

@@ -94,6 +94,8 @@ private func previewDateString(dateFormat: DateFormat) -> String {
     switch dateFormat {
     case .normal:
         "25/12"
+    case .dayMonthDot:
+        "25.12"
     case .american:
         "12/25"
     case .iso:

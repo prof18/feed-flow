@@ -370,6 +370,7 @@
     <string name="marking_all_read_dialog_title">Marking all as read...</string>
     <string name="date_format_title">Date format</string>
     <string name="date_format_normal">Day/Month</string>
+    <string name="date_format_day_month_dot">Day.Month</string>
     <string name="date_format_american">Month/Day</string>
     <string name="date_format_iso">Year-Month-Day</string>
     <string name="time_format_title">Time format</string>

@@ -9,4 +9,7 @@ enum class DateFormat {
 
     // YYYY-MM-DD
     ISO,
+
+    // DD.MM
+    DAY_MONTH_DOT,
 }

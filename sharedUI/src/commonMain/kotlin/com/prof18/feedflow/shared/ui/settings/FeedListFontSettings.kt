@@ -93,6 +93,7 @@ fun FeedItemPreview(
                     } else {
                         val datePart = when (dateFormat) {
                             DateFormat.NORMAL -> "25/12"
+                            DateFormat.DAY_MONTH_DOT -> "25.12"
                             DateFormat.AMERICAN -> "12/25"
                             DateFormat.ISO -> "2025-12-25"
                         }

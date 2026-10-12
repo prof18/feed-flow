@@ -799,7 +799,7 @@ class DateFormatterImpl(
                         yearMonthDay()
                     } else {
                         dayAndMonth(dateFormat)
-                        char('/')
+                        char(if (dateFormat == DateFormat.DAY_MONTH_DOT) '.' else '/')
                         year()
                     }
                     chars(" - ")
@@ -940,6 +940,12 @@ class DateFormatterImpl(
                 monthNumber()
                 char('/')
                 day()
+            }
+
+            DateFormat.DAY_MONTH_DOT -> {
+                day()
+                char('.')
+                monthNumber()
             }
 
             DateFormat.ISO -> {

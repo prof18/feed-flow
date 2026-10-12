@@ -223,6 +223,7 @@ internal fun FeedListSettingsScreenContent(
                         currentValue = state.dateFormat,
                         options = persistentListOf(
                             SettingDropdownOption(DateFormat.NORMAL, strings.dateFormatNormal),
+                            SettingDropdownOption(DateFormat.DAY_MONTH_DOT, strings.dateFormatDayMonthDot),
                             SettingDropdownOption(DateFormat.AMERICAN, strings.dateFormatAmerican),
                             SettingDropdownOption(DateFormat.ISO, strings.dateFormatIso),
                         ),

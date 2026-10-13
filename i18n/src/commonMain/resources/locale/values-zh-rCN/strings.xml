@@ -463,4 +463,5 @@
     <string name="widget_refreshing">刷新中…</string>
     <string name="widget_show_refresh_button">显示刷新按钮</string>
     <string name="widget_content_feed_source">Feed源</string>
+    <string name="date_format_day_month_dot">日期.月份</string>
 </resources>

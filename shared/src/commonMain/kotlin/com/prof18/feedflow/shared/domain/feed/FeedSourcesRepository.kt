@@ -32,6 +32,9 @@ import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 import com.prof18.rssparser.exception.HttpException
 import com.prof18.rssparser.model.RssChannel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
@@ -218,16 +221,34 @@ internal class FeedSourcesRepository(
         feedUrl: String,
         categoryName: FeedSourceCategory?,
         isNotificationEnabled: Boolean,
+        hideYouTubeShorts: Boolean = false,
+    ): FeedAddedState {
+        val sanitizedUrl = sanitizeUrl(feedUrl.trim())
+        val url = YouTubeChannelUrl.normalizePlaylistUrl(sanitizedUrl)
+            ?: YouTubeChannelUrl.normalizeFeedUrl(sanitizedUrl) ?: sanitizedUrl
+        if (hideYouTubeShorts &&
+            (YouTubeChannelUrl.parse(url) != null || YouTubeChannelUrl.channelIdFromFeedUrl(url) != null)
+        ) {
+            return addChannelWithoutShorts(url, categoryName, isNotificationEnabled)
+        }
+        return addResolvedFeed(url, categoryName, isNotificationEnabled)
+    }
+
+    private suspend fun addResolvedFeed(
+        url: String,
+        categoryName: FeedSourceCategory?,
+        isNotificationEnabled: Boolean,
+        fetchedFeed: AddFeedResponse.FeedFound? = null,
     ): FeedAddedState =
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> addFeedSourceForFreshRss(
-                sanitizeUrl(feedUrl),
+                url,
                 categoryName,
                 isNotificationEnabled,
             )
 
             SyncAccounts.FEEDBIN -> addFeedSourceForFeedbin(
-                sanitizeUrl(feedUrl),
+                url,
                 categoryName,
                 isNotificationEnabled,
             )
@@ -235,12 +256,57 @@ internal class FeedSourcesRepository(
             SyncAccounts.DROPBOX,
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
-            -> addFeedSourceForLocalAccount(
-                sanitizeUrl(feedUrl),
-                categoryName,
-                isNotificationEnabled,
-            )
+            -> if (fetchedFeed != null) {
+                addFeedSource(fetchedFeed, isNotificationEnabled)
+            } else {
+                addFeedSourceForLocalAccount(url, categoryName, isNotificationEnabled)
+            }
         }
+
+    private suspend fun addChannelWithoutShorts(
+        originalUrl: String,
+        category: FeedSourceCategory?,
+        notifications: Boolean,
+    ): FeedAddedState {
+        val channelUrl = YouTubeChannelUrl.normalizeFeedUrl(originalUrl)
+            ?: feedUrlRetriever.getFeedUrl(originalUrl)
+        val id = channelUrl?.let(YouTubeChannelUrl::channelIdFromFeedUrl)
+        val fullFeed = channelUrl?.let { fetchSingleFeed(it, category) } as? AddFeedResponse.FeedFound
+        val filteredUrl = id?.let(YouTubeChannelUrl::noShortsFeedUrl)
+        val filteredFeed = if (fullFeed != null && filteredUrl != null) {
+            fetchSingleFeed(filteredUrl, category) as? AddFeedResponse.FeedFound
+        } else {
+            null
+        }
+        currentCoroutineContext().ensureActive()
+        if (fullFeed == null || filteredFeed == null || filteredFeed.rssChannel.items.isEmpty() ||
+            fullFeed.parsedFeedSource.title.isBlank()
+        ) {
+            return addFullChannelFallback(originalUrl, fullFeed, category, notifications)
+        }
+        val title = fullFeed.parsedFeedSource.title
+        return addResolvedFeed(
+            filteredFeed.parsedFeedSource.url,
+            category,
+            notifications,
+            fetchedFeed = filteredFeed.copy(parsedFeedSource = filteredFeed.parsedFeedSource.copy(title = title)),
+        )
+    }
+
+    private suspend fun addFullChannelFallback(
+        originalUrl: String,
+        fullFeed: AddFeedResponse.FeedFound?,
+        category: FeedSourceCategory?,
+        notifications: Boolean,
+    ): FeedAddedState {
+        val result = addResolvedFeed(
+            fullFeed?.parsedFeedSource?.url ?: originalUrl,
+            category,
+            notifications,
+            fetchedFeed = fullFeed,
+        )
+        return if (result is FeedAddedState.FeedAdded) result.copy(shortsFilterFallback = true) else result
+    }
 
     suspend fun editFeedSource(
         newFeedSource: FeedSource,
@@ -308,7 +374,7 @@ internal class FeedSourcesRepository(
                 isNotificationEnabled = isNotificationEnabled,
             )
             if (addResult.isSuccess()) {
-                if (YouTubeChannelUrl.parse(originalUrl) != null) {
+                if (YouTubeChannelUrl.parse(originalUrl) != null || isYouTubeFeedUrl(originalUrl)) {
                     finalizeFreshRssFeedAddition()
                 }
                 return FeedAddedState.FeedAdded()
@@ -562,6 +628,8 @@ internal class FeedSourcesRepository(
                     allowBrowserTier = actualUrl == originalUrl.trim(),
                 )
                 return GuessOutcome.Found(AddResult(channel = channel, usedUrl = actualUrl))
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Throwable) {
                 if (actualUrl == originalUrl.trim()) {
                     originalHttpStatus = (e as? HttpException)?.code
@@ -577,6 +645,8 @@ internal class FeedSourcesRepository(
             try {
                 val channel = rssParserWrapper.getRssChannel(url, allowBrowserTier = true)
                 return GuessOutcome.Found(AddResult(channel = channel, usedUrl = url))
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Throwable) {
                 logger.d(e) { "Failed to parse discovered rssChannel: $url" }
             }
@@ -588,7 +658,9 @@ internal class FeedSourcesRepository(
         originalUrl: String,
         allowServerDiscovery: Boolean = false,
     ): List<String> =
-        if (YouTubeChannelUrl.parse(originalUrl) != null) {
+        if (isYouTubeFeedUrl(originalUrl)) {
+            listOf(originalUrl)
+        } else if (YouTubeChannelUrl.parse(originalUrl) != null) {
             listOfNotNull(
                 feedUrlRetriever.getFeedUrl(originalUrl),
                 originalUrl.takeIf { allowServerDiscovery },
@@ -598,11 +670,14 @@ internal class FeedSourcesRepository(
         }
 
     private suspend fun discoverFeedUrlAfterGuessing(originalUrl: String): String? =
-        if (YouTubeChannelUrl.parse(originalUrl) != null) {
+        if (YouTubeChannelUrl.parse(originalUrl) != null || isYouTubeFeedUrl(originalUrl)) {
             null
         } else {
             feedUrlRetriever.getFeedUrl(originalUrl)
         }
+
+    private fun isYouTubeFeedUrl(url: String): Boolean =
+        YouTubeChannelUrl.normalizeFeedUrl(url) != null || YouTubeChannelUrl.normalizePlaylistUrl(url) != null
 
     private fun String.buildUrl(originalUrl: String) =
         when {

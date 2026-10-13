@@ -4,6 +4,9 @@
     <string name="feed_already_exists_message">%s is already in your feeds.</string>
     <string name="feed_url">Feed URL</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
+    <string name="hide_youtube_shorts">Hide Shorts</string>
+    <string name="hide_youtube_shorts_description">Only regular videos from this channel will be included. Shorts and live streams are excluded.</string>
+    <string name="hide_youtube_shorts_fallback">Shorts couldn&#39;t be hidden for this channel, so the full feed was added instead.</string>
     <string name="add_feed">Add feed</string>
     <string name="feeds_title">Feeds</string>
     <string name="no_feeds_add_one_message">No feeds, please add one</string>

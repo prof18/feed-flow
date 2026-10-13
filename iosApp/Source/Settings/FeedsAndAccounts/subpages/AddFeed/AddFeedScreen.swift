@@ -23,6 +23,7 @@ struct AddFeedScreen: View {
     @State private var feedURL = ""
     @State private var showNotificationToggle = false
     @State private var isNotificationEnabled = false
+    @State private var youTubeOptionsState: YouTubeOptionsState?
     @State private var canForceAdd = false
 
     var showCloseButton: Bool
@@ -41,6 +42,7 @@ struct AddFeedScreen: View {
                 errorMessage: errorMessage,
                 isAddingFeed: $isAddingFeed,
                 showNotificationToggle: showNotificationToggle,
+                youTubeOptionsState: youTubeOptionsState,
                 isNotificationEnabled: $isNotificationEnabled,
                 canForceAdd: canForceAdd,
                 categorySelectorObserver: categorySelectorObserver,
@@ -51,6 +53,9 @@ struct AddFeedScreen: View {
                 },
                 onNotificationToggled: { enabled in
                     vmStoreOwner.instance.updateNotificationStatus(status: enabled)
+                },
+                onHideShortsToggled: { enabled in
+                    vmStoreOwner.instance.updateHideShortsStatus(status: enabled)
                 },
                 addFeed: {
                     vmStoreOwner.instance.addFeed()
@@ -71,7 +76,9 @@ struct AddFeedScreen: View {
                 switch onEnum(of: state) {
                 case let .feedAdded(addedState):
                     let message: String
-                    if let feedName = addedState.feedName {
+                    if addedState.shortsFilterFallback {
+                        message = feedFlowStrings.hideYoutubeShortsFallback
+                    } else if let feedName = addedState.feedName {
                         message = feedFlowStrings.feedAddedMessage(feedName)
                     } else {
                         message = feedFlowStrings.feedAddedMessageWithoutName
@@ -131,6 +138,14 @@ struct AddFeedScreen: View {
                 case .loading:
                     break
                 }
+            }
+        }
+        .task {
+            vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: feedURL)
+        }
+        .task {
+            for await state in vmStoreOwner.instance.youTubeOptionsState {
+                self.youTubeOptionsState = state
             }
         }
         .task {

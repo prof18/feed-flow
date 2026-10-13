@@ -52,21 +52,23 @@ fun AddFeedScreenContent(
 ) {
     var feedUrl by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
-    var showLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
     var canForceAdd by remember { mutableStateOf(false) }
+    var isCompletingAdd by remember { mutableStateOf(false) }
 
     val viewModel = koinViewModel<AddFeedViewModel>()
+    val isAddingFeed by viewModel.isAddingFeedState.collectAsState()
+    val showLoading = isAddingFeed || isCompletingAdd
 
     val snackbarHostState = remember { SnackbarHostState() }
 
     val latestOnFeedAdded by rememberUpdatedState(onFeedAdded)
     val strings = LocalFeedFlowStrings.current
     LaunchedEffect(Unit) {
+        viewModel.updateFeedUrlTextFieldValue(feedUrl)
         viewModel.feedAddedState.collect { feedAddedState ->
             when (feedAddedState) {
                 is FeedAddedState.Error -> {
-                    showLoading = false
                     showError = true
                     canForceAdd = feedAddedState.canForceAdd
                     errorMessage = when (feedAddedState) {
@@ -79,9 +81,13 @@ fun AddFeedScreenContent(
                 }
 
                 is FeedAddedState.FeedAdded, is FeedAddedState.FeedAlreadyExists -> {
-                    val feedName = (feedAddedState as? FeedAddedState.FeedAdded)?.feedName
+                    isCompletingAdd = true
+                    val addedState = feedAddedState as? FeedAddedState.FeedAdded
+                    val feedName = addedState?.feedName
                     val message = if (feedAddedState is FeedAddedState.FeedAlreadyExists) {
                         strings.feedAlreadyExistsMessage(feedAddedState.feedName)
+                    } else if (addedState?.shortsFilterFallback == true) {
+                        strings.hideYoutubeShortsFallback
                     } else if (feedName != null) {
                         strings.feedAddedMessage(feedName)
                     } else {
@@ -93,24 +99,22 @@ fun AddFeedScreenContent(
                         duration = SnackbarDuration.Short,
                     )
 
-                    showLoading = false
                     feedUrl = ""
+                    viewModel.updateFeedUrlTextFieldValue(feedUrl)
                     showError = false
                     errorMessage = ""
                     canForceAdd = false
                     latestOnFeedAdded()
+                    isCompletingAdd = false
                 }
 
                 FeedAddedState.FeedNotAdded -> {
-                    showLoading = false
                     showError = false
                     errorMessage = ""
                     canForceAdd = false
                 }
 
-                FeedAddedState.Loading -> {
-                    showLoading = true
-                }
+                FeedAddedState.Loading -> Unit
             }
         }
     }
@@ -118,6 +122,7 @@ fun AddFeedScreenContent(
     val categoriesState by viewModel.categoriesState.collectAsState()
     val showNotificationToggle by viewModel.showNotificationToggleState.collectAsState()
     val isNotificationEnabled by viewModel.isNotificationEnabledState.collectAsState()
+    val youTubeOptions by viewModel.youTubeOptionsState.collectAsState()
 
     var showCategoryDialog by remember { mutableStateOf(false) }
 
@@ -143,6 +148,8 @@ fun AddFeedScreenContent(
         onNotificationToggleChanged = { enabled ->
             viewModel.updateNotificationStatus(enabled)
         },
+        youTubeOptions = youTubeOptions,
+        onHideShortsToggleChanged = viewModel::updateHideShortsStatus,
         canForceAdd = canForceAdd,
         onForceAddFeed = {
             viewModel.forceAddFeed()

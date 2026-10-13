@@ -28,7 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.prof18.feedflow.core.model.CategoriesState
+import com.prof18.feedflow.core.model.YouTubeOptionsState
 import com.prof18.feedflow.shared.ui.feed.CategoriesSelector
 import com.prof18.feedflow.shared.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.shared.ui.feed.FeedUrlTextField
@@ -51,6 +54,8 @@ fun AddFeedContent(
     modifier: Modifier = Modifier,
     showNotificationToggle: Boolean = false,
     onNotificationToggleChanged: (Boolean) -> Unit = {},
+    youTubeOptions: YouTubeOptionsState = YouTubeOptionsState(),
+    onHideShortsToggleChanged: (Boolean) -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
     topAppBar: @Composable () -> Unit = {},
 ) {
@@ -90,7 +95,7 @@ fun AddFeedContent(
             item {
                 CategoriesSelector(
                     modifier = Modifier
-                        .padding(vertical = Spacing.regular),
+                        .padding(top = Spacing.regular),
                     categoriesState = categoriesState,
                     onClick = onCategorySelectorClick,
                 )
@@ -101,11 +106,12 @@ fun AddFeedContent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = Spacing.small),
+                            .padding(bottom = Spacing.small),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
+                            modifier = Modifier.weight(1f).padding(end = Spacing.regular),
                             text = LocalFeedFlowStrings.current.enableNotificationsForFeed,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurface,
@@ -113,6 +119,45 @@ fun AddFeedContent(
                         Switch(
                             checked = isNotificationEnabled,
                             onCheckedChange = onNotificationToggleChanged,
+                        )
+                    }
+                }
+            }
+
+            item {
+                if (youTubeOptions.showHideShortsToggle) {
+                    val hideShortsLabel = LocalFeedFlowStrings.current.hideYoutubeShorts
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = Spacing.small),
+                        verticalArrangement = Arrangement.spacedBy(Spacing.xsmall),
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier.weight(1f).padding(end = Spacing.regular),
+                                text = hideShortsLabel,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                            Switch(
+                                modifier = Modifier
+                                    .testTag(FeedFormE2eIds.ADD_FEED_HIDE_YOUTUBE_SHORTS)
+                                    .semantics { contentDescription = hideShortsLabel },
+                                checked = youTubeOptions.hideShorts,
+                                enabled = !showLoading,
+                                onCheckedChange = onHideShortsToggleChanged,
+                            )
+                        }
+                        Text(
+                            text = LocalFeedFlowStrings.current.hideYoutubeShortsDescription,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }

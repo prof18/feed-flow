@@ -10,6 +10,7 @@ import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
+import com.prof18.feedflow.shared.test.generators.RssItemGenerator
 import com.prof18.feedflow.shared.test.koin.TestModules
 import com.prof18.rssparser.model.RssChannel
 import io.ktor.client.HttpClient
@@ -18,12 +19,14 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 
 class FeedSourcesRepositoryYouTubeTest : KoinTestBase() {
@@ -31,6 +34,87 @@ class FeedSourcesRepositoryYouTubeTest : KoinTestBase() {
     private val databaseHelper: DatabaseHelper by inject()
     private val rss: RecordingRssParser by inject()
     private val html: RecordingHtml by inject()
+
+    @Test
+    fun `cancelled derived request never adds a fallback subscription`() = runTest(testDispatcher) {
+        setupLocal()
+        rss.supportedUrl = FEED_URL
+        rss.cancelledUrl = FILTERED_URL
+        assertFailsWith<CancellationException> {
+            repository.addFeedSource(CHANNEL_URL, null, false, hideYouTubeShorts = true)
+        }
+        assertEquals(emptyList(), databaseHelper.getFeedSources())
+        assertEquals(listOf(FEED_URL, FILTERED_URL), rss.requestedUrls)
+    }
+
+    @Test
+    fun `playlist page is saved as canonical RSS without HTML discovery`() = runTest(testDispatcher) {
+        setupLocal()
+        val feed = "https://www.youtube.com/feeds/videos.xml?playlist_id=PL_test"
+        rss.supportedUrl = feed
+        assertIs<FeedAddedState.FeedAdded>(repository.addFeedSource("youtube.com/watch?v=x&list=PL_test", null, false))
+        assertEquals(feed, databaseHelper.getFeedSources().single().url)
+        assertEquals(listOf(feed), rss.requestedUrls)
+        assertEquals(emptyList(), html.requestedUrls)
+    }
+
+    @Test
+    fun `filtered channel keeps channel name and can coexist with full feed`() = runTest(testDispatcher) {
+        setupLocal()
+        rss.channels[FEED_URL] = RssChannelGenerator.rssChannel(title = "Channel name")
+        rss.channels[FILTERED_URL] = RssChannelGenerator.rssChannel(
+            title = "Videos",
+            items = listOf(RssItemGenerator.rssItem()),
+        )
+        repository.addFeedSource(FEED_URL, null, false)
+        rss.requestedUrls.clear()
+
+        val result = repository.addFeedSource(FEED_URL, null, true, hideYouTubeShorts = true)
+
+        assertEquals(FeedAddedState.FeedAdded("Channel name"), result)
+        val source = databaseHelper.getFeedSources().single { it.url == FILTERED_URL }
+        assertEquals("Channel name", source.title)
+        assertEquals(true, source.isNotificationEnabled)
+        assertEquals(2, databaseHelper.getFeedSources().size)
+        assertEquals(listOf(FEED_URL, FILTERED_URL), rss.requestedUrls)
+        assertEquals(
+            FeedAddedState.FeedAlreadyExists("Channel name"),
+            repository.addFeedSource(CHANNEL_URL, null, false, hideYouTubeShorts = true),
+        )
+        assertEquals(true, databaseHelper.getFeedSources().single { it.url == FILTERED_URL }.isNotificationEnabled)
+    }
+
+    @Test
+    fun `unavailable derived feed falls back after one request`() = runTest(testDispatcher) {
+        setupLocal()
+        rss.supportedUrl = FEED_URL
+
+        val result = repository.addFeedSource(CHANNEL_URL, null, false, hideYouTubeShorts = true)
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        assertEquals(true, result.shortsFilterFallback)
+        assertEquals(FEED_URL, databaseHelper.getFeedSources().single().url)
+        assertEquals(listOf(FEED_URL, FILTERED_URL), rss.requestedUrls)
+    }
+
+    @Test
+    fun `empty derived feed falls back without misinterpreting its title`() = runTest(testDispatcher) {
+        setupLocal()
+        rss.channels[FEED_URL] = RssChannelGenerator.rssChannel(title = "Channel name")
+        rss.channels[FILTERED_URL] = RssChannelGenerator.rssChannel(title = "Videos").copy(items = emptyList())
+        val result = repository.addFeedSource(CHANNEL_URL, null, false, hideYouTubeShorts = true)
+        assertEquals(FeedAddedState.FeedAdded("Channel name", shortsFilterFallback = true), result)
+        assertEquals(FEED_URL, databaseHelper.getFeedSources().single().url)
+    }
+
+    @Test
+    fun `failing canonical playlist feed never probes suffixes or HTML`() = runTest(testDispatcher) {
+        setupLocal()
+        val result = repository.addFeedSource("https://youtube.com/playlist?list=PL_test", null, false)
+        assertIs<FeedAddedState.Error.InvalidUrl>(result)
+        assertEquals(listOf("https://www.youtube.com/feeds/videos.xml?playlist_id=PL_test"), rss.requestedUrls)
+        assertEquals(emptyList(), html.requestedUrls)
+    }
 
     override fun getTestModules(): List<Module> = TestModules.createTestModules() + module {
         single { RecordingRssParser() }
@@ -117,10 +201,14 @@ class FeedSourcesRepositoryYouTubeTest : KoinTestBase() {
     private class RecordingRssParser : RssParserWrapper {
         var supportedUrl: String? = null
         var fail = false
+        var cancelledUrl: String? = null
         val requestedUrls = mutableListOf<String>()
+        val channels = mutableMapOf<String, RssChannel>()
 
         override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
             requestedUrls += url
+            if (url == cancelledUrl) throw CancellationException("Cancelled request")
+            channels[url]?.let { return it }
             if (fail || url != supportedUrl) error("Unsupported RSS URL: $url")
             return RssChannelGenerator.rssChannel(link = null)
         }
@@ -128,7 +216,9 @@ class FeedSourcesRepositoryYouTubeTest : KoinTestBase() {
         fun reset() {
             supportedUrl = null
             fail = false
+            cancelledUrl = null
             requestedUrls.clear()
+            channels.clear()
         }
     }
 
@@ -176,5 +266,6 @@ class FeedSourcesRepositoryYouTubeTest : KoinTestBase() {
         const val CHANNEL_ID = "UCsBjURrPoezykLs9EqgamOA"
         const val CHANNEL_URL = "https://www.youtube.com/channel/$CHANNEL_ID"
         const val FEED_URL = "https://www.youtube.com/feeds/videos.xml?channel_id=$CHANNEL_ID"
+        const val FILTERED_URL = "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFsBjURrPoezykLs9EqgamOA"
     }
 }

@@ -18,6 +18,64 @@ appId: com.prof18.feedflow.dev
 - tapOn: "Add feed"
 - assertVisible:
     id: add_feed_url_input
+- assertNotVisible:
+    id: add_feed_hide_youtube_shorts
+- tapOn:
+    id: add_feed_url_input
+- inputText: "https://www.youtube.com/@mkbhd"
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://www.youtube.com/@mkbhd"
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: false
+- tapOn:
+    id: add_feed_hide_youtube_shorts
+    point: "90%,50%"
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: true
+- assertVisible: "Only regular videos from this channel will be included. Shorts and live streams are excluded."
+- tapOn:
+    id: add_feed_url_input
+    point: "95%,50%"
+- eraseText: 100
+- inputText: "https://example.com/rss.xml"
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://example.com/rss.xml"
+- assertNotVisible:
+    id: add_feed_hide_youtube_shorts
+- tapOn:
+    id: add_feed_url_input
+    point: "95%,50%"
+- eraseText: 100
+- inputText: "https://www.youtube.com/@mkbhd"
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://www.youtube.com/@mkbhd"
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: false
+- tapOn:
+    id: add_feed_hide_youtube_shorts
+    point: "90%,50%"
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: true
+- tapOn: "Feeds & Accounts"
+- tapOn: "Add feed"
+- assertNotVisible:
+    id: add_feed_hide_youtube_shorts
+- tapOn:
+    id: add_feed_url_input
+- inputText: "https://www.youtube.com/@mkbhd"
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://www.youtube.com/@mkbhd"
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: false
 - tapOn:
     id: edit_feed_category_selector
 - assertVisible: "Categories"

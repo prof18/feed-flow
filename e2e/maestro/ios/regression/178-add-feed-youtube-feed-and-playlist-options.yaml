@@ -1,0 +1,68 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp:
+    permissions:
+      notifications: allow
+- openLink: feedflow://e2e/reset-and-seed?profile=notifications
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn: "Add feed"
+- tapOn:
+    id: add_feed_url_input
+- inputText: "https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ"
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ"
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: false
+- tapOn:
+    id: add_feed_url_input
+    point: "95%,50%"
+- eraseText: 100
+- inputText: "https://www.youtube.com/playlist?list=PLbpi6ZahtOH7MBdd2q811v_7Tu31vnsyq"
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://www.youtube.com/playlist?list=PLbpi6ZahtOH7MBdd2q811v_7Tu31vnsyq"
+- assertNotVisible:
+    id: add_feed_hide_youtube_shorts
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=sync-linked-mock&account=miniflux
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 30000
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn: "Add feed"
+- tapOn:
+    id: add_feed_url_input
+- inputText: "https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ"
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ"
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: false
+- tapOn:
+    id: add_feed_hide_youtube_shorts
+    point: "90%,50%"
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: true

@@ -21,6 +21,7 @@ struct AddFeedScreenContent: View {
     let errorMessage: String
     @Binding var isAddingFeed: Bool
     var showNotificationToggle: Bool
+    var youTubeOptionsState: YouTubeOptionsState?
     @Binding var isNotificationEnabled: Bool
     let canForceAdd: Bool
     @State private var acknowledged: Bool = false
@@ -31,6 +32,7 @@ struct AddFeedScreenContent: View {
     let showCloseButton: Bool
     let updateFeedUrlTextFieldValue: (String) -> Void
     let onNotificationToggled: (Bool) -> Void
+    let onHideShortsToggled: (Bool) -> Void
     let addFeed: () -> Void
     let forceAddFeed: () -> Void
 
@@ -79,7 +81,7 @@ struct AddFeedScreenContent: View {
 
                                 Text(
                                     categorySelectorObserver.selectedCategory?.name ??
-                                    feedFlowStrings.noCategorySelectedHeader
+                                        feedFlowStrings.noCategorySelectedHeader
                                 )
                                 .font(.body)
                                 .foregroundColor(.primary)
@@ -106,6 +108,22 @@ struct AddFeedScreenContent: View {
                     .onChange(of: isNotificationEnabled) {
                         onNotificationToggled(isNotificationEnabled)
                     }
+                }
+            }
+
+            if let options = youTubeOptionsState, options.showHideShortsToggle {
+                Section {
+                    Toggle(
+                        feedFlowStrings.hideYoutubeShorts,
+                        isOn: Binding(
+                            get: { options.hideShorts },
+                            set: onHideShortsToggled
+                        )
+                    )
+                    .disabled(isAddingFeed)
+                    .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.hideYoutubeShorts)
+                } footer: {
+                    Text(feedFlowStrings.hideYoutubeShortsDescription)
                 }
             }
 
@@ -186,7 +204,7 @@ struct AddFeedScreenContent: View {
     private var saveButton: some View {
         Button {
             isTextFieldFocused = false
-            isAddingFeed.toggle()
+            isAddingFeed = true
             addFeed()
         } label: {
             if isAddingFeed {
@@ -195,7 +213,7 @@ struct AddFeedScreenContent: View {
                 Text(feedFlowStrings.actionSave).bold()
             }
         }
-        .disabled(feedURL.isEmpty)
+        .disabled(feedURL.isEmpty || isAddingFeed)
         .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.saveButton)
     }
 }

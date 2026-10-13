@@ -6,6 +6,7 @@ sealed class FeedAddedState {
     data class FeedAlreadyExists(val feedName: String) : FeedAddedState()
     data class FeedAdded(
         val feedName: String? = null,
+        val shortsFilterFallback: Boolean = false,
     ) : FeedAddedState()
 
     sealed class Error : FeedAddedState() {

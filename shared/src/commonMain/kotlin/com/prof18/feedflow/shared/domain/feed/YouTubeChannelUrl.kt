@@ -11,6 +11,7 @@ internal data class YouTubeChannelUrl(
         private val channelIdPattern = Regex("UC[A-Za-z0-9_-]{22}")
         private val channelTabs = setOf("videos", "shorts", "streams", "featured", "playlists", "community", "about")
         private val channelHosts = setOf("youtube.com", "www.youtube.com", "m.youtube.com")
+        private val playlistIdPattern = Regex("[A-Za-z0-9_-]+")
 
         fun parse(value: String): YouTubeChannelUrl? {
             val url = parseYouTubeUrl(value) ?: return null
@@ -40,10 +41,33 @@ internal data class YouTubeChannelUrl(
             "https://www.youtube.com/feeds/videos.xml?channel_id=$channelId"
 
         fun normalizeFeedUrl(value: String): String? {
+            val id = channelIdFromFeedUrl(value) ?: return null
+            return feedUrl(id)
+        }
+
+        fun channelIdFromFeedUrl(value: String): String? {
             val url = parseYouTubeUrl(value) ?: return null
             if (url.encodedPath != "/feeds/videos.xml") return null
-            val id = url.parameters["channel_id"]?.takeIf(channelIdPattern::matches) ?: return null
-            return feedUrl(id)
+            if (url.parameters.contains("playlist_id")) return null
+            return url.parameters.getAll("channel_id")?.singleOrNull()?.takeIf(channelIdPattern::matches)
+        }
+
+        fun normalizePlaylistUrl(value: String): String? {
+            val url = parseYouTubeUrl(value) ?: return null
+            val key = when (url.encodedPath) {
+                "/playlist", "/watch" -> "list"
+                "/feeds/videos.xml" -> "playlist_id"
+                else -> return null
+            }
+            if (url.parameters.contains("channel_id")) return null
+            val id = url.parameters.getAll(key)?.singleOrNull()?.takeIf(playlistIdPattern::matches) ?: return null
+            if (id.startsWith("RD") || id in setOf("WL", "LL")) return null
+            return "https://www.youtube.com/feeds/videos.xml?playlist_id=$id"
+        }
+
+        fun noShortsFeedUrl(channelId: String): String {
+            require(channelIdPattern.matches(channelId))
+            return "https://www.youtube.com/feeds/videos.xml?playlist_id=UULF${channelId.drop(2)}"
         }
 
         private fun parseYouTubeUrl(value: String): Url? {

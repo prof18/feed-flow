@@ -6,14 +6,18 @@ import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
+import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
+import com.prof18.feedflow.shared.test.generators.RssItemGenerator
 import com.prof18.feedflow.shared.test.toParsedFeedSource
 import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
 import com.prof18.rssparser.model.RssChannel
@@ -23,6 +27,7 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
@@ -37,6 +42,120 @@ import kotlin.test.assertTrue
 class AddFeedViewModelTest : KoinTestBase() {
 
     private val databaseHelper: DatabaseHelper by inject()
+
+    @Test
+    fun `Shorts option is available for every remote sync account`() = runTest(testDispatcher) {
+        val settings: NetworkSettings = get()
+        val viewModel = getViewModel()
+        val channelUrl = "https://youtube.com/@channel/videos"
+
+        listOf(
+            SyncAccounts.FEEDBIN,
+            SyncAccounts.FRESH_RSS,
+            SyncAccounts.MINIFLUX,
+            SyncAccounts.BAZQUX,
+        ).forEach { account ->
+            settings.setSyncAccountType(account)
+            settings.setSyncPwd("password")
+            settings.setSyncUrl("https://sync.example.com/")
+            assertEquals(account, get<AccountsRepository>().getCurrentSyncAccount())
+
+            viewModel.updateFeedUrlTextFieldValue("")
+            viewModel.updateFeedUrlTextFieldValue(channelUrl)
+            assertEquals(true, viewModel.youTubeOptionsState.value.showHideShortsToggle, account.name)
+            assertEquals(false, viewModel.youTubeOptionsState.value.hideShorts, account.name)
+            viewModel.updateHideShortsStatus(true)
+            assertEquals(true, viewModel.youTubeOptionsState.value.hideShorts, account.name)
+        }
+    }
+
+    @Test
+    fun `submission snapshots channel options and prevents concurrent adds`() = runTest(testDispatcher) {
+        val parser = get<RssParserWrapper>() as FakeRssParserWrapper
+        val channelUrl = "https://youtube.com/channel/UCsBjURrPoezykLs9EqgamOA"
+        val channelFeed = "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"
+        val filteredFeed = "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFsBjURrPoezykLs9EqgamOA"
+        parser.channels[channelFeed] = RssChannelGenerator.rssChannel(title = "Channel name")
+        parser.channels[filteredFeed] = RssChannelGenerator.rssChannel(
+            title = "Videos", items = listOf(RssItemGenerator.rssItem()),
+        )
+        parser.gate = CompletableDeferred()
+        val viewModel = getViewModel()
+        viewModel.feedAddedState.test {
+            viewModel.updateFeedUrlTextFieldValue(channelUrl)
+            assertEquals(FeedAddedState.FeedNotAdded, awaitItem())
+            viewModel.updateNotificationStatus(true)
+            viewModel.updateHideShortsStatus(true)
+            viewModel.addFeed()
+            assertEquals(FeedAddedState.Loading, awaitItem())
+            viewModel.isAddingFeedState.test {
+                assertEquals(true, awaitItem())
+            }
+            viewModel.addFeed()
+            viewModel.updateNotificationStatus(false)
+            viewModel.updateFeedUrlTextFieldValue("https://example.com/another")
+            expectNoEvents()
+            assertEquals(true, viewModel.isAddingFeedState.value)
+            parser.gate?.complete(Unit)
+            assertEquals(FeedAddedState.FeedAdded("Channel name"), awaitItem())
+            expectNoEvents()
+        }
+        val source = databaseHelper.getFeedSources().single()
+        assertEquals(filteredFeed, source.url)
+        assertEquals(true, source.isNotificationEnabled)
+        assertEquals(listOf(channelFeed, filteredFeed), parser.requestedUrls)
+        assertEquals(false, viewModel.youTubeOptionsState.value.hideShorts)
+        advanceUntilIdle()
+        assertEquals(false, viewModel.isAddingFeedState.value)
+    }
+
+    @Test
+    fun `failed channel add retains selection and force add saves original URL`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        val channelUrl = "https://youtube.com/channel/UCsBjURrPoezykLs9EqgamOA"
+        viewModel.feedAddedState.test {
+            viewModel.updateFeedUrlTextFieldValue(channelUrl)
+            assertEquals(FeedAddedState.FeedNotAdded, awaitItem())
+            viewModel.updateHideShortsStatus(true)
+            viewModel.addFeed()
+            assertEquals(FeedAddedState.Loading, awaitItem())
+            assertIs<FeedAddedState.Error>(awaitItem())
+            assertEquals(true, viewModel.youTubeOptionsState.value.hideShorts)
+            advanceUntilIdle()
+            val parser = get<RssParserWrapper>() as FakeRssParserWrapper
+            parser.requestedUrls.clear()
+            viewModel.forceAddFeed()
+            assertEquals(FeedAddedState.Loading, awaitItem())
+            assertIs<FeedAddedState.FeedAdded>(awaitItem())
+            assertEquals(emptyList(), parser.requestedUrls)
+        }
+        assertEquals(channelUrl, databaseHelper.getFeedSources().single().url)
+        assertEquals(false, viewModel.youTubeOptionsState.value.hideShorts)
+    }
+
+    @Test
+    fun `YouTube options are opt in and reset when switching channels or playlists`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+        assertEquals(false, viewModel.youTubeOptionsState.value.showHideShortsToggle)
+        viewModel.updateFeedUrlTextFieldValue("youtube.com/@channel/videos")
+        assertEquals(true, viewModel.youTubeOptionsState.value.showHideShortsToggle)
+        assertEquals(false, viewModel.youTubeOptionsState.value.hideShorts)
+        viewModel.updateHideShortsStatus(true)
+        viewModel.updateFeedUrlTextFieldValue("https://www.youtube.com/@channel/streams")
+        assertEquals(true, viewModel.youTubeOptionsState.value.hideShorts)
+        viewModel.updateFeedUrlTextFieldValue("https://youtube.com/@other")
+        assertEquals(false, viewModel.youTubeOptionsState.value.hideShorts)
+        viewModel.updateHideShortsStatus(true)
+        viewModel.updateFeedUrlTextFieldValue("https://youtube.com/playlist?list=PL_test")
+        assertEquals(false, viewModel.youTubeOptionsState.value.showHideShortsToggle)
+        assertEquals(false, viewModel.youTubeOptionsState.value.hideShorts)
+        viewModel.updateHideShortsStatus(true)
+        assertEquals(false, viewModel.youTubeOptionsState.value.hideShorts)
+        viewModel.updateFeedUrlTextFieldValue(
+            "https://youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA",
+        )
+        assertEquals(true, viewModel.youTubeOptionsState.value.showHideShortsToggle)
+    }
     private val rssUrl = "https://example.com/rss.xml"
     private val mockHtml = """
         <html>
@@ -281,7 +400,14 @@ class AddFeedViewModelTest : KoinTestBase() {
         private val rssUrl: String,
         private val channel: RssChannel,
     ) : RssParserWrapper {
+        val channels = mutableMapOf<String, RssChannel>()
+        val requestedUrls = mutableListOf<String>()
+        var gate: CompletableDeferred<Unit>? = null
+
         override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
+            requestedUrls += url
+            gate?.await()
+            channels[url]?.let { return it }
             check(url == rssUrl) { "Unsupported url: $url" }
             return channel
         }

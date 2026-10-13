@@ -16,15 +16,21 @@ import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
+import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
+import com.prof18.feedflow.shared.test.generators.RssItemGenerator
 import com.prof18.feedflow.shared.test.insertFeedSourceWithCategory
 import com.prof18.feedflow.shared.test.koin.TestModules
+import com.prof18.rssparser.model.RssChannel
 import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.plugins.HttpSend
+import io.ktor.client.plugins.plugin
 import io.ktor.client.request.forms.FormDataContent
 import io.ktor.http.HttpMethod
 import io.ktor.http.parseQueryString
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -37,6 +43,7 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
     private val feedSourcesRepository: FeedSourcesRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
     private val feedStateRepository: FeedStateRepository by inject()
+    private val rssParser: RecordingRssParser by inject()
 
     private val recordingClient by lazy {
         createMockGReaderHttpClient(
@@ -52,7 +59,10 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
             gReaderConfig = {
                 configureFreshRssMocks()
             },
-        ) + getGReaderTestModule(recordingClient)
+        ) + getGReaderTestModule(recordingClient) + module {
+            single { RecordingRssParser() }
+            single<RssParserWrapper> { get<RecordingRssParser>() }
+        }
 
     fun setupFreshRssAccount() {
         val settings: NetworkSettings = getKoin().get()
@@ -63,17 +73,46 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
     }
 
     @Test
-    fun `YouTube channel subscribes once with canonical RSS URL`() = runTest(testDispatcher) {
+    fun `playlist watch URL is normalized to canonical RSS`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
+        val playlistUrl = "https://youtube.com/watch?v=video&list=PL_test"
+        val result = feedSourcesRepository.addFeedSource(
+            playlistUrl,
+            null,
+            false,
+            hideYouTubeShorts = true,
+        )
+        assertIs<FeedAddedState.FeedAdded>(result)
+        val request = (recordingClient.engine as MockEngine).requestHistory.single {
+            it.method == HttpMethod.Post && it.url.encodedPath.endsWith("/subscription/quickadd")
+        }
+        val body = parseQueryString((request.body as FormDataContent).bytes().decodeToString())
+        assertEquals("https://www.youtube.com/feeds/videos.xml?playlist_id=PL_test", body["quickadd"])
+    }
+
+    @Test
+    fun `YouTube channel with Shorts filter subscribes only to derived RSS`() = runTest(testDispatcher) {
         setupFreshRssAccount()
         val channelId = "UCsBjURrPoezykLs9EqgamOA"
-        val result = feedSourcesRepository.addFeedSource("https://youtube.com/channel/$channelId", null, false)
+        rssParser.channels[FULL_URL] = RssChannelGenerator.rssChannel(title = "Channel title")
+        rssParser.channels[FILTERED_URL] = RssChannelGenerator.rssChannel(
+            title = "Videos",
+            items = listOf(RssItemGenerator.rssItem()),
+        )
+        val result = feedSourcesRepository.addFeedSource(
+            "https://youtube.com/channel/$channelId",
+            null,
+            false,
+            hideYouTubeShorts = true,
+        )
 
         assertIs<FeedAddedState.FeedAdded>(result)
         val request = (recordingClient.engine as MockEngine).requestHistory.single {
             it.method == HttpMethod.Post && it.url.encodedPath.endsWith("/subscription/quickadd")
         }
         val body = parseQueryString((request.body as FormDataContent).bytes().decodeToString())
-        assertEquals("https://www.youtube.com/feeds/videos.xml?channel_id=$channelId", body["quickadd"])
+        assertEquals(FILTERED_URL, body["quickadd"])
+        assertEquals(listOf(FULL_URL, FILTERED_URL), rssParser.requestedUrls)
 
         val streamRequests = (recordingClient.engine as MockEngine).requestHistory.count {
             it.method == HttpMethod.Get &&
@@ -92,6 +131,60 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
             ).isNotEmpty(),
             "Adding a YouTube channel should fetch articles",
         )
+    }
+
+    @Test
+    fun `YouTube channel defaults to normal full RSS subscription`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
+        val result = feedSourcesRepository.addFeedSource(CHANNEL_URL, null, false)
+        assertIs<FeedAddedState.FeedAdded>(result)
+        val posts = (recordingClient.engine as MockEngine).requestHistory.filter {
+            it.method == HttpMethod.Post && it.url.encodedPath.endsWith("/subscription/quickadd")
+        }
+        assertEquals(1, posts.size)
+        val body = parseQueryString((posts.single().body as FormDataContent).bytes().decodeToString())
+        assertEquals(FULL_URL, body["quickadd"])
+    }
+
+    @Test
+    fun `rejected derived feed falls back to one full RSS subscription`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
+        rssParser.channels[FULL_URL] = RssChannelGenerator.rssChannel(title = "Channel title")
+        val result = feedSourcesRepository.addFeedSource(CHANNEL_URL, null, false, hideYouTubeShorts = true)
+        assertIs<FeedAddedState.FeedAdded>(result)
+        val posts = (recordingClient.engine as MockEngine).requestHistory.filter {
+            it.method == HttpMethod.Post && it.url.encodedPath.endsWith("/subscription/quickadd")
+        }
+        assertEquals(1, posts.size)
+        val body = parseQueryString((posts.single().body as FormDataContent).bytes().decodeToString())
+        assertEquals(FULL_URL, body["quickadd"])
+        assertEquals(listOf(FULL_URL, FILTERED_URL), rssParser.requestedUrls)
+    }
+
+    @Test
+    fun `failed filtered subscription never attempts a second full feed subscription`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
+        val attemptedSubscriptions = mutableListOf<String>()
+        recordingClient.plugin(HttpSend).intercept { request ->
+            if (request.method == HttpMethod.Post &&
+                request.url.build().encodedPath.endsWith("/subscription/quickadd")
+            ) {
+                val body = parseQueryString((request.body as FormDataContent).bytes().decodeToString())
+                attemptedSubscriptions += body["quickadd"].orEmpty()
+                error("Simulated subscription transport failure")
+            }
+            execute(request)
+        }
+        rssParser.channels[FULL_URL] = RssChannelGenerator.rssChannel(title = "Channel title")
+        rssParser.channels[FILTERED_URL] = RssChannelGenerator.rssChannel(
+            title = "Videos",
+            items = listOf(RssItemGenerator.rssItem()),
+        )
+
+        val result = feedSourcesRepository.addFeedSource(CHANNEL_URL, null, false, hideYouTubeShorts = true)
+
+        assertIs<FeedAddedState.Error>(result)
+        assertEquals(listOf(FILTERED_URL), attemptedSubscriptions)
     }
 
     @Test
@@ -203,4 +296,21 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
         isNotificationEnabled = false,
         isHideImagesEnabled = false,
     )
+
+    private class RecordingRssParser : RssParserWrapper {
+        val requestedUrls = mutableListOf<String>()
+        val channels = mutableMapOf<String, RssChannel>()
+
+        override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
+            requestedUrls += url
+            return requireNotNull(channels[url]) { "Unexpected RSS request: $url" }
+        }
+    }
+
+    private companion object {
+        const val CHANNEL_ID = "UCsBjURrPoezykLs9EqgamOA"
+        const val CHANNEL_URL = "https://youtube.com/channel/$CHANNEL_ID"
+        const val FULL_URL = "https://www.youtube.com/feeds/videos.xml?channel_id=$CHANNEL_ID"
+        const val FILTERED_URL = "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFsBjURrPoezykLs9EqgamOA"
+    }
 }

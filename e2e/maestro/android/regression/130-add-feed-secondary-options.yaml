@@ -16,6 +16,74 @@ appId: com.prof18.feedflow.debug
 - tapOn: "Add feed"
 - assertVisible:
     id: add_feed_url_input
+- assertNotVisible:
+    id: add_feed_hide_youtube_shorts
+- tapOn:
+    id: add_feed_url_input
+- inputText: "https://www.youtube.com/@mkbhd"
+- hideKeyboard
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://www.youtube.com/@mkbhd"
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: false
+- assertVisible:
+    text: "Hide Shorts"
+    childOf:
+      id: add_feed_hide_youtube_shorts
+- tapOn:
+    id: add_feed_hide_youtube_shorts
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: true
+- assertVisible: "Only regular videos from this channel will be included. Shorts and live streams are excluded."
+- longPressOn:
+    id: add_feed_url_input
+- inputText: "https://example.com/rss.xml"
+- hideKeyboard
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://example.com/rss.xml"
+- assertNotVisible:
+    id: add_feed_hide_youtube_shorts
+- longPressOn:
+    id: add_feed_url_input
+- inputText: "https://www.youtube.com/@mkbhd"
+- hideKeyboard
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://www.youtube.com/@mkbhd"
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: false
+- assertVisible:
+    text: "Hide Shorts"
+    childOf:
+      id: add_feed_hide_youtube_shorts
+- tapOn:
+    id: add_feed_hide_youtube_shorts
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: true
+- back
+- tapOn: "Add feed"
+- assertNotVisible:
+    id: add_feed_hide_youtube_shorts
+- tapOn:
+    id: add_feed_url_input
+- inputText: "https://www.youtube.com/@mkbhd"
+- hideKeyboard
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://www.youtube.com/@mkbhd"
+- assertVisible:
+    id: add_feed_hide_youtube_shorts
+    checked: false
+- assertVisible:
+    text: "Hide Shorts"
+    childOf:
+      id: add_feed_hide_youtube_shorts
 - tapOn:
     id: edit_feed_category_selector
 - assertVisible: "Categories"

@@ -38,7 +38,7 @@ fun AddFeedScreen(
     val viewModel = koinViewModel<AddFeedViewModel>()
     var feedUrl by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
-    var showLoading by remember { mutableStateOf(false) }
+    val showLoading by viewModel.isAddingFeedState.collectAsStateWithLifecycle()
     var errorMessage by remember { mutableStateOf("") }
     var canForceAdd by remember { mutableStateOf(false) }
 
@@ -47,17 +47,18 @@ fun AddFeedScreen(
 
     val showNotificationToggle by viewModel.showNotificationToggleState.collectAsStateWithLifecycle()
     val isNotificationEnabled by viewModel.isNotificationEnabledState.collectAsStateWithLifecycle()
+    val youTubeOptions by viewModel.youTubeOptionsState.collectAsStateWithLifecycle()
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showCategorySheet by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        viewModel.updateFeedUrlTextFieldValue(feedUrl)
         viewModel.feedAddedState.collect { feedAddedState ->
             when (feedAddedState) {
                 is FeedAddedState.Error -> {
                     showError = true
-                    showLoading = false
                     canForceAdd = feedAddedState.canForceAdd
                     errorMessage = when (feedAddedState) {
                         is FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrlWithRetryHint
@@ -70,13 +71,15 @@ fun AddFeedScreen(
 
                 is FeedAddedState.FeedAdded, is FeedAddedState.FeedAlreadyExists -> {
                     feedUrl = ""
-                    showLoading = false
                     showError = false
                     errorMessage = ""
                     canForceAdd = false
-                    val feedName = (feedAddedState as? FeedAddedState.FeedAdded)?.feedName
+                    val addedState = feedAddedState as? FeedAddedState.FeedAdded
+                    val feedName = addedState?.feedName
                     val message = if (feedAddedState is FeedAddedState.FeedAlreadyExists) {
                         strings.feedAlreadyExistsMessage(feedAddedState.feedName)
+                    } else if (addedState?.shortsFilterFallback == true) {
+                        strings.hideYoutubeShortsFallback
                     } else if (feedName != null) {
                         strings.feedAddedMessage(feedName)
                     } else {
@@ -87,15 +90,12 @@ fun AddFeedScreen(
                 }
 
                 FeedAddedState.FeedNotAdded -> {
-                    showLoading = false
                     showError = false
                     errorMessage = ""
                     canForceAdd = false
                 }
 
-                FeedAddedState.Loading -> {
-                    showLoading = true
-                }
+                FeedAddedState.Loading -> Unit
             }
         }
     }
@@ -124,6 +124,8 @@ fun AddFeedScreen(
         onNotificationToggleChanged = { enabled ->
             viewModel.updateNotificationStatus(enabled)
         },
+        youTubeOptions = youTubeOptions,
+        onHideShortsToggleChanged = viewModel::updateHideShortsStatus,
         canForceAdd = canForceAdd,
         onForceAddFeed = {
             viewModel.forceAddFeed()

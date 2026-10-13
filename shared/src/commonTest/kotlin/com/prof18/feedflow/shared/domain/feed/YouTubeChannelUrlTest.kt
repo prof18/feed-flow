@@ -10,6 +10,57 @@ class YouTubeChannelUrlTest : KoinTestBase() {
     private val channelId = "UCsBjURrPoezykLs9EqgamOA"
 
     @Test
+    fun `playlist URLs normalize to one safe RSS endpoint`() {
+        listOf(
+            "https://youtube.com/playlist?list=PL_test-123",
+            "https://m.youtube.com/watch?v=video&list=PL_test-123#fragment",
+            "http://www.youtube.com/feeds/videos.xml?playlist_id=PL_test-123&extra=ignored",
+        ).forEach {
+            assertEquals(
+                "https://www.youtube.com/feeds/videos.xml?playlist_id=PL_test-123",
+                YouTubeChannelUrl.normalizePlaylistUrl(it),
+                it,
+            )
+        }
+    }
+
+    @Test
+    fun `playlist normalization rejects personalized and ambiguous URLs`() {
+        listOf(
+            "https://youtube.com/playlist?list=RDmix",
+            "https://youtube.com/playlist?list=WL",
+            "https://youtube.com/playlist?list=LL",
+            "https://youtube.com/playlist?list=",
+            "https://youtube.com/playlist?list=PL%2Fbad",
+            "https://youtube.com/playlist?list=PLone&list=PLtwo",
+            "https://youtube.com/feeds/videos.xml?playlist_id=PLone&channel_id=$channelId",
+            "https://youtube.com/feeds/videos.xml?playlist_id=PLone&playlist_id=PLtwo",
+            "https://youtube.com.evil.example/playlist?list=PLone",
+            "https://user:password@youtube.com/playlist?list=PLone",
+            "ftp://youtube.com/playlist?list=PLone",
+            "https://youtube.com/other?list=PLone",
+        ).forEach { assertNull(YouTubeChannelUrl.normalizePlaylistUrl(it), it) }
+    }
+
+    @Test
+    fun `channel feed validation rejects conflicting keys and builds derived feed`() {
+        assertNull(
+            YouTubeChannelUrl.normalizeFeedUrl(
+                "https://youtube.com/feeds/videos.xml?channel_id=$channelId&playlist_id=PLone",
+            ),
+        )
+        assertNull(
+            YouTubeChannelUrl.normalizeFeedUrl(
+                "https://youtube.com/feeds/videos.xml?channel_id=$channelId&channel_id=$channelId",
+            ),
+        )
+        assertEquals(
+            "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFsBjURrPoezykLs9EqgamOA",
+            YouTubeChannelUrl.noShortsFeedUrl(channelId),
+        )
+    }
+
+    @Test
     fun `parse supports channel URL variants and normalizes page URL`() {
         val cases = mapOf(
             "https://youtube.com/channel/$channelId" to "https://www.youtube.com/channel/$channelId",

@@ -463,4 +463,5 @@
     <string name="reader_mode_tts_stop">Interrompi ascolto</string>
     <string name="reader_mode_tts_error">Impossibile leggere questo articolo ad alta voce. Riprova.</string>
     <string name="reader_mode_tts_preparing">Preparazione audio dell\'articolo…</string>
+    <string name="date_format_day_month_dot">Giorno.Mese</string>
 </resources>

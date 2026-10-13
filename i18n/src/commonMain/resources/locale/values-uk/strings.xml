@@ -463,4 +463,5 @@
     <string name="reader_mode_tts_stop">Зупинити прослуховування</string>
     <string name="reader_mode_tts_error">Не вдається прочитати цю статтю вголос. Спробуйте ще раз.</string>
     <string name="reader_mode_tts_preparing">Підготовка озвучення статті…</string>
+    <string name="date_format_day_month_dot">День.Місяць</string>
 </resources>

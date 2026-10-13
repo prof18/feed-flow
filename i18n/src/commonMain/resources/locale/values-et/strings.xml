@@ -463,4 +463,5 @@
     <string name="menu_open_audio">Ava heliriba</string>
     <string name="audio_episode_untitled">Heliriba osa</string>
     <string name="audio_open_failed">Heliriba lingi avamine ei õnnestunud.</string>
+    <string name="date_format_day_month_dot">Päev.Kuu</string>
 </resources>

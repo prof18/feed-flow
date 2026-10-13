@@ -441,4 +441,26 @@
     <string name="widget_list_item_title">Widget %s</string>
     <string name="widget_list_item_description">Widget %s · %s</string>
     <string name="widget_list_empty">Aucun widget ajouté pour l\'instant. Ajoutez un widget FeedFlow depuis votre lanceur.</string>
+    <string name="widget_refreshing">Rafraîchissement…</string>
+    <string name="audio_episode_badge_content_description">Episode audio</string>
+    <string name="audio_episode_label">Audio</string>
+    <string name="menu_open_audio">Ouvrir l\'audio</string>
+    <string name="audio_episode_untitled">Episode audio</string>
+    <string name="audio_open_failed">Impossible d\'ouvrir le lien audio.</string>
+    <string name="audio_play">Jouer l\'audio</string>
+    <string name="audio_pause">Mettre l\'audio en pause</string>
+    <string name="audio_close_player">Fermer le lecteur</string>
+    <string name="audio_seek">Position du playback</string>
+    <string name="audio_playback_failed">Impossible de lire cet audio. Essayer de l\'ouvrir dans une autre application.</string>
+    <string name="audio_open_external">Ouvrir dans une autre application</string>
+    <string name="audio_loading">Chargement de l\'audio</string>
+    <string name="audio_playback_speed">Vitesse de lecture</string>
+    <string name="audio_now_playing">En cours de lecture</string>
+    <string name="audio_paused">Mis en pause</string>
+    <string name="audio_return_to_episode">Retourner à l\'épisode</string>
+    <string name="date_format_day_month_dot">Jour.Mois</string>
+    <string name="reader_mode_tts_listen">Ecouter l\'article</string>
+    <string name="reader_mode_tts_stop">Arrêter l\'écoute</string>
+    <string name="reader_mode_tts_error">Impossible de lire cet article. Veuillez réessayer.</string>
+    <string name="reader_mode_tts_preparing">Préparation de l\'article audio…</string>
 </resources>

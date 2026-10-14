@@ -464,4 +464,7 @@
     <string name="reader_mode_tts_error">Impossibile leggere questo articolo ad alta voce. Riprova.</string>
     <string name="reader_mode_tts_preparing">Preparazione audio dell\'articolo…</string>
     <string name="date_format_day_month_dot">Giorno.Mese</string>
+    <string name="hide_youtube_shorts">Nascondi Short</string>
+    <string name="hide_youtube_shorts_description">Verranno inclusi solo i video normali di questo canale. Short e dirette sono esclusi.</string>
+    <string name="hide_youtube_shorts_fallback">Non è stato possibile nascondere gli Short di questo canale, quindi è stato aggiunto il feed completo.</string>
 </resources>

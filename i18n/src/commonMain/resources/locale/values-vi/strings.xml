@@ -463,4 +463,8 @@
     <string name="reader_mode_tts_preparing">Đang chuẩn bị âm thanh bài viết…</string>
     <string name="widget_refreshing">Đang làm mới…</string>
     <string name="widget_show_refresh_button">Hiện nút làm mới</string>
+    <string name="hide_youtube_shorts">Ẩn Shorts</string>
+    <string name="hide_youtube_shorts_description">Chỉ những video thường từ kênh này mới được đưa vào. Không bao gồm video ngắn và phát trực tiếp.</string>
+    <string name="hide_youtube_shorts_fallback">Không thể ẩn các video Shorts của kênh này nên toàn bộ nguồn tin đã được thêm vào.</string>
+    <string name="date_format_day_month_dot">Day.Month</string>
 </resources>

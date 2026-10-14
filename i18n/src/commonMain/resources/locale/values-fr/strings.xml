@@ -464,4 +464,7 @@
     <string name="reader_mode_tts_error">Impossible de lire cet article. Veuillez réessayer.</string>
     <string name="reader_mode_tts_preparing">Préparation de l\'article audio…</string>
     <string name="widget_show_refresh_button">Afficher le bouton « Actualiser »</string>
+    <string name="hide_youtube_shorts">Masquer les shorts</string>
+    <string name="hide_youtube_shorts_description">Seules les vidéos de cette chaînes seront inclues. Les shorts et streams seront exclus.</string>
+    <string name="hide_youtube_shorts_fallback">Les shorts n\'ont pas pu être masqués pour cette chaîne, le flux entier sera donc ajouté.</string>
 </resources>

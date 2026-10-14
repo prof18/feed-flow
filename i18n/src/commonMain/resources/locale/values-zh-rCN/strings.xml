@@ -464,4 +464,7 @@
     <string name="widget_show_refresh_button">显示刷新按钮</string>
     <string name="widget_content_feed_source">Feed源</string>
     <string name="date_format_day_month_dot">日期.月份</string>
+    <string name="hide_youtube_shorts">隐藏短视频</string>
+    <string name="hide_youtube_shorts_description">只会包含该频道的常规视频。短视频和直播被排除。</string>
+    <string name="hide_youtube_shorts_fallback">无法隐藏该频道的短视频，因此添加了完整的源。</string>
 </resources>

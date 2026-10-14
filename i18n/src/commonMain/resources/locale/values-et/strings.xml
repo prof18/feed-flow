@@ -464,4 +464,7 @@
     <string name="audio_episode_untitled">Heliriba osa</string>
     <string name="audio_open_failed">Heliriba lingi avamine ei õnnestunud.</string>
     <string name="date_format_day_month_dot">Päev.Kuu</string>
+    <string name="hide_youtube_shorts">Peida lühivideod</string>
+    <string name="hide_youtube_shorts_description">Kaasatud on vaid selle kanali tavavideod. Lühivideod ja otse-eeter jäävad välja.</string>
+    <string name="hide_youtube_shorts_fallback">Selle kanali lühivideote peitmine pole võimalik, seega selle asemel lisati täismahus uudisvoog.</string>
 </resources>

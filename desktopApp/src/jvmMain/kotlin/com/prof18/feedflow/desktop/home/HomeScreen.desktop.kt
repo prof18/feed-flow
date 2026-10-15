@@ -1,8 +1,6 @@
 package com.prof18.feedflow.desktop.home
 
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -10,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
@@ -22,26 +21,29 @@ import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.FeedListActions
+import com.prof18.feedflow.desktop.ui.FeedManagementActions
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.LocalReduceMotion
+import com.prof18.feedflow.desktop.ui.ShareBehavior
+import com.prof18.feedflow.desktop.ui.components.DesktopFeedManagementDialog
+import com.prof18.feedflow.desktop.ui.components.DesktopLoadingOperationDialog
+import com.prof18.feedflow.desktop.ui.desktopExternalLinkAction
+import com.prof18.feedflow.desktop.ui.scrollToItemConditionally
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
+import com.prof18.feedflow.shared.presentation.model.NextFeedDisplayState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewDisabledState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewEnabledState
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.prof18.feedflow.shared.ui.home.FeedListActions
-import com.prof18.feedflow.shared.ui.home.FeedManagementActions
-import com.prof18.feedflow.shared.ui.home.HomeDisplayState
-import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
-import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
-import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
-import com.prof18.feedflow.shared.ui.utils.syncErrorMessage
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -49,7 +51,7 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun HomeScreen(
     homeViewModel: HomeViewModel,
     listStateStore: DesktopHomeListStateStore,
-    snackbarHostState: SnackbarHostState,
+    snackbarHostState: DesktopFeedbackState,
     onImportExportClick: () -> Unit,
     onSearchClick: () -> Unit,
     onAccountsClick: () -> Unit,
@@ -80,6 +82,7 @@ internal fun HomeScreen(
     val nextFeedPreviewState by homeViewModel.nextFeedPreviewState.collectAsState()
     val refreshTrigger by homeViewModel.refreshTriggerState.collectAsState()
     val pendingNewArticlesCount by homeViewModel.pendingNewArticlesState.collectAsState()
+    val commands = desktopWorkspaceCommandAvailability(loadingState, feedOperation)
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsState()
     val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
@@ -90,18 +93,20 @@ internal fun HomeScreen(
 
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
+    val currentErrorStrings by rememberUpdatedState(strings)
+    val currentOnAccountsClick by rememberUpdatedState(onAccountsClick)
     val uriHandler = LocalUriHandler.current
     fun showBrowserLaunchError() {
         scope.launch {
-            snackbarHostState.showSnackbar(
-                strings.browserLaunchError,
-                duration = SnackbarDuration.Short,
+            snackbarHostState.showFeedback(
+                message = strings.browserLaunchError,
+                duration = DesktopFeedbackDuration.Short,
             )
         }
     }
 
     if (feedOperation != FeedOperation.None) {
-        LoadingOperationDialog(feedOperation)
+        DesktopLoadingOperationDialog(feedOperation)
     }
 
     LaunchedEffect(Unit) {
@@ -110,27 +115,34 @@ internal fun HomeScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(homeViewModel, snackbarHostState) {
         homeViewModel.errorState.collect { errorState ->
             when (errorState) {
                 is UIErrorState.DatabaseError -> {
-                    snackbarHostState.showSnackbar(
-                        strings.databaseError(errorState.errorCode.code),
-                        duration = SnackbarDuration.Short,
+                    snackbarHostState.showFeedback(
+                        message = strings.databaseError(errorState.errorCode.code),
+                        duration = DesktopFeedbackDuration.Short,
                     )
                 }
 
                 is UIErrorState.SyncError -> {
-                    snackbarHostState.showSnackbar(
-                        strings.syncErrorMessage(errorState.errorCode),
-                        duration = SnackbarDuration.Short,
+                    showDesktopSyncFailureFeedback(
+                        state = snackbarHostState,
+                        errorCode = errorState.errorCode,
+                        strings = currentErrorStrings,
+                        onRetryRefresh = desktopWorkspaceAction(
+                            DesktopWorkspaceCommand.Refresh,
+                            homeViewModel::desktopWorkspaceCommandAvailability,
+                            homeViewModel::refreshFeeds,
+                        ),
+                        onOpenAccounts = { currentOnAccountsClick() },
                     )
                 }
 
                 is UIErrorState.DeleteFeedSourceError -> {
-                    snackbarHostState.showSnackbar(
-                        strings.deleteFeedSourceError,
-                        duration = SnackbarDuration.Short,
+                    snackbarHostState.showFeedback(
+                        message = strings.deleteFeedSourceError,
+                        duration = DesktopFeedbackDuration.Short,
                     )
                 }
             }
@@ -201,13 +213,30 @@ internal fun HomeScreen(
         snackbarHostState,
         strings,
         listState,
+        commands,
     ) {
         FeedListActions(
-            onClearOldArticlesClicked = { homeViewModel.deleteOldFeedItems() },
-            onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
-            refreshData = { homeViewModel.refreshFeeds() },
+            onClearOldArticlesClicked = desktopWorkspaceAction(
+                DesktopWorkspaceCommand.BulkAction,
+                homeViewModel::desktopWorkspaceCommandAvailability,
+                homeViewModel::deleteOldFeedItems,
+            ),
+            onDeleteDatabaseClick = desktopWorkspaceAction(
+                DesktopWorkspaceCommand.BulkAction,
+                homeViewModel::desktopWorkspaceCommandAvailability,
+                homeViewModel::deleteAllFeeds,
+            ),
+            refreshData = desktopWorkspaceAction(
+                DesktopWorkspaceCommand.Refresh,
+                homeViewModel::desktopWorkspaceCommandAvailability,
+                homeViewModel::refreshFeeds,
+            ),
             requestNewData = { homeViewModel.requestNewFeedsPage() },
-            markAllRead = { homeViewModel.markAllRead() },
+            markAllRead = desktopWorkspaceAction(
+                DesktopWorkspaceCommand.BulkAction,
+                homeViewModel::desktopWorkspaceCommandAvailability,
+                homeViewModel::markAllRead,
+            ),
             onBackToTimelineClick = {
                 resetReaderArticle()
                 homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
@@ -242,6 +271,8 @@ internal fun HomeScreen(
                 scope.launch { listState.scrollToItem(0) }
                 homeViewModel.onNavigateToNextFeed()
             },
+            refreshEnabled = commands.refreshEnabled,
+            bulkActionsEnabled = commands.bulkActionsEnabled,
         )
     }
 
@@ -272,11 +303,7 @@ internal fun HomeScreen(
                 changeFeedCategoryViewModel.loadFeedSource(feedSource)
                 showChangeCategorySheet = true
             },
-            onOpenWebsite = { url ->
-                if (!uriHandler.openUriSafely(url)) {
-                    showBrowserLaunchError()
-                }
-            },
+            onOpenWebsite = desktopExternalLinkAction(uriHandler, ::showBrowserLaunchError),
             onMoveFeedSourcesToCategory = { feedSources, category ->
                 changeFeedCategoryViewModel.moveFeedSourcesToCategory(feedSources, category)
             },
@@ -309,13 +336,19 @@ internal fun HomeScreen(
             onShareClick = { urlTitle ->
                 copyToClipboard(urlTitle.url)
                 scope.launch {
-                    snackbarHostState.showSnackbar(message = strings.linkCopiedSuccess)
+                    snackbarHostState.showFeedback(message = strings.linkCopiedSuccess)
                 }
             },
             shareLinkTitle = strings.menuCopyLink,
             shareCommentsTitle = strings.menuCopyLinkComments,
         )
     }
+    DesktopFeedManagementDialog(
+        displayState = homeDisplayState,
+        feedManagementActions = feedManagementActions,
+        onFeedSuggestionsClick = onFeedSuggestionsClick,
+        onImportExportClick = onImportExportClick,
+    )
     if (isMultiPaneLayoutEnabled) {
         DesktopHomeScaffold(
             listState = listState,

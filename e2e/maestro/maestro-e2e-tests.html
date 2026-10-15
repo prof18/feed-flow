@@ -264,6 +264,10 @@
 
   <script>
     const flows = [
+      "android/fdroid/regression/118-cloud-provider-mock-states.yaml",
+      "android/fdroid/regression/132-about-support-secondary-options.yaml",
+      "android/fdroid/regression/133-home-sync-backup-action.yaml",
+      "android/fdroid/regression/147-no-feeds-empty-state-cta.yaml",
       "android/regression/101-add-feed-form-validation.yaml",
       "android/regression/103-feed-suggestions.yaml",
       "android/regression/104-feed-source-list-management.yaml",
@@ -340,6 +344,7 @@
       "android/regression/176-reader-speech-playback.yaml",
       "android/regression/177-widget-refresh-settings.yaml",
       "android/regression/178-add-feed-youtube-feed-and-playlist-options.yaml",
+      "android/regression/179-share-existing-feed.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -444,6 +449,7 @@
       "android/smoke",
       "ios/smoke",
       "android/regression",
+      "android/fdroid",
       "ios/regression"
     ];
 
@@ -451,6 +457,7 @@
       "android/smoke": "Android smoke",
       "ios/smoke": "iOS smoke",
       "android/regression": "Android regression",
+      "android/fdroid": "F-Droid regression alternatives (replace four canonical journeys)",
       "ios/regression": "iOS regression"
     };
 
@@ -484,7 +491,7 @@
       "regression/115": "Seeded notifications profile, per-feed toggle, and grouping picker.",
       "regression/116": "One-account sync constraint, disabled providers, and disconnect unlock.",
       "regression/117": "GReader provider form validation across FreshRSS, Miniflux, BazQux, and Feedbin.",
-      "regression/118": "Mock cloud-provider linked states for Dropbox and iCloud where available.",
+      "regression/118": "Linked cloud states where available; F-Droid excludes cloud providers and checks connected Miniflux.",
       "regression/119": "Invalid OPML import error and choose-another-file recovery.",
       "regression/120": "CSV article import and read/bookmarked state assertions.",
       "regression/121": "Secondary reading behavior settings: browser, saved content, prefetch, and scroll marking.",
@@ -498,8 +505,8 @@
       "regression/129": "Feed settings secondary options from article context menu.",
       "regression/130": "YouTube channel Hide Shorts defaults off, toggles on, and resets across URL changes and reopening; category selection and notifications remain available.",
       "regression/131": "Source-filter selection and edit entry from Home overflow.",
-      "regression/132": "About/support secondary options, crash reporting, and support links.",
-      "regression/133": "Pending sync upload backup action with linked mock account.",
+      "regression/132": "About/support options; F-Droid excludes crash reporting and retains About navigation.",
+      "regression/133": "Pending cloud backup where supported; F-Droid server/local accounts have no backup action.",
       "regression/134": "Large-content pagination and Android large-dataset search.",
       "regression/135": "Feed-list secondary settings persistence across relaunch.",
       "regression/136": "Sync/storage secondary settings persistence across relaunch.",
@@ -526,6 +533,10 @@
       "regression/158": "Empty single-source filter renders the next-feed affordance and moves to the next unread source.",
       "regression/159": "URL-less article opens in the styled feed-content reader without unavailable actions.",
       "regression/160": "Switching between cached web and RSS content preserves the reader Back destination; Android also checks the toolbar toggle in both states and captures screenshots.",
+            "regression/161": "URL-less items with no feed content show the unavailable-content state without a browser action.",
+      "regression/163": "RTL article content retains its text direction.",
+      "regression/166": "Reader content and scroll position survive Android rotation.",
+      "regression/179": "The Android share resolver opens FeedFlow, shows an existing-feed result, and returns to the timeline.",
       "regression/162": "Pagination keeps loading pages while mark-as-read-on-scroll flushes scrolled-past items (issue #1319).",
       "regression/164": "A drag over the timeline neither opens the drawer nor falls through to the article, and drag-to-close still works once it is open.",
       "regression/165": "iOS reader retains its tail position and Listen action after backgrounding and returning to the foreground.",
@@ -555,8 +566,8 @@
 
     function coverageKeyOf(path) {
       const parts = path.split("/");
-      const id = parts[2].match(/^\d+/)?.[0];
-      return `${parts[1]}/${id}`;
+      const id = parts.at(-1).match(/^\d+/)?.[0];
+      return `${parts.at(-2)}/${id}`;
     }
 
     function coverageOf(path) {
@@ -600,7 +611,7 @@
         for (const path of items) {
           const parts = path.split("/");
           const platform = parts[0];
-          const suite = parts[1];
+          const suite = parts.at(-2);
           const filename = parts[parts.length - 1];
           const coverage = coverageOf(path);
           const row = document.createElement("tr");

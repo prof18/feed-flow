@@ -1,28 +1,18 @@
 package com.prof18.feedflow.desktop.settings
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
@@ -30,20 +20,15 @@ import com.prof18.feedflow.core.utils.Websites.TRANSLATION_WEBSITE
 import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.about.LicensesScreen
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.utils.disableSentry
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.desktop.utils.openDesktopMailSafely
 import com.prof18.feedflow.desktop.utils.openUriSafely
-import com.prof18.feedflow.shared.ui.about.AboutButtonItem
-import com.prof18.feedflow.shared.ui.about.AboutTextItem
-import com.prof18.feedflow.shared.ui.about.AuthorText
-import com.prof18.feedflow.shared.ui.settings.SettingItem
-import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
-import kotlinx.coroutines.launch
+import org.jetbrains.jewel.ui.component.DefaultButton
+import org.jetbrains.jewel.ui.component.Link
+import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 internal fun AboutPane(
@@ -54,141 +39,83 @@ internal fun AboutPane(
     val appConfig = remember { DI.koin.get<DesktopConfig>() }
     val userFeedbackReporter = remember { DI.koin.get<UserFeedbackReporter>() }
     val uriHandler = LocalUriHandler.current
-    val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
     var showLicenses by remember { mutableStateOf(false) }
-    fun showExternalOpenError() {
-        scope.launch {
-            snackbarHostState.showSnackbar(
-                message = strings.browserLaunchError,
-                duration = SnackbarDuration.Short,
-            )
-        }
-    }
+    var showOpenError by remember { mutableStateOf(false) }
+    val licensesFocus = remember { FocusRequester() }
 
     fun openExternalUrl(url: String) {
-        if (!uriHandler.openUriSafely(url)) {
-            showExternalOpenError()
-        }
+        showOpenError = !uriHandler.openUriSafely(url)
     }
 
     if (showLicenses) {
-        LicensesScreen(
-            onBackClick = { showLicenses = false },
-        )
-        return
+        LicensesScreen(onBackClick = {
+            showLicenses = false
+            licensesFocus.requestFocus()
+        })
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-        ) {
-            if (appConfig.appEnvironment.isRelease()) {
-                SettingSwitchItem(
-                    title = strings.settingsCrashReporting,
-                    isChecked = isCrashReportingEnabled,
-                    onCheckedChange = onCrashReportingToggled,
-                )
-            }
-
-            SettingItem(
-                title = strings.reportIssueButton,
-                onClick = {
-                    val opened = openDesktopMailSafely(
-                        userFeedbackReporter.getEmailUrl(
-                            subject = strings.issueContentTitle,
-                            content = strings.issueContentTemplate,
-                        ),
-                    )
-                    if (!opened) {
-                        showExternalOpenError()
-                    }
-                },
-            )
-
-            if (FeatureFlags.ENABLE_FAQ) {
-                SettingItem(
-                    title = strings.aboutMenuFaq,
-                    onClick = {
-                        val languageCode = java.util.Locale.getDefault().language
-                        openExternalUrl("https://feedflow.dev/$languageCode/faq")
-                    },
-                )
-            }
-
-            AboutTextItem(modifier = Modifier.padding(Spacing.regular))
-
-            AboutButtonItem(
-                onClick = { openExternalUrl(FEED_FLOW_WEBSITE) },
-                buttonText = strings.openWebsiteButton,
-            )
-
-            AboutButtonItem(
-                onClick = { openExternalUrl(TRANSLATION_WEBSITE) },
-                buttonText = strings.aboutMenuContributeTranslations,
-            )
-
-            AboutButtonItem(
-                onClick = { showLicenses = true },
-                buttonText = strings.openSourceLicenses,
-            )
-
-            val versionLabel = appConfig.version?.let { strings.aboutAppVersion(it) } ?: ""
-            if (versionLabel.isNotEmpty()) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(Spacing.regular),
-                    text = versionLabel,
-                    style = MaterialTheme.typography.labelSmall,
-                    textAlign = TextAlign.Center,
-                )
-            }
-
-            AuthorText(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = Spacing.medium),
-                nameClicked = { openExternalUrl(MG_WEBSITE) },
+    SettingsScrollPane(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        SettingsGroup(strings.settingsAboutAndSupport)
+        if (showOpenError) Text(strings.browserLaunchError, modifier = Modifier.padding(12.dp))
+        if (appConfig.appEnvironment.isRelease()) {
+            SettingsCheckbox(
+                title = strings.settingsCrashReporting,
+                checked = isCrashReportingEnabled,
+                onCheckedChange = onCrashReportingToggled,
             )
         }
-
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter),
+        DefaultButton(
+            onClick = {
+                val opened = openDesktopMailSafely(
+                    userFeedbackReporter.getEmailUrl(
+                        subject = strings.issueContentTitle,
+                        content = strings.issueContentTemplate,
+                    ),
+                )
+                if (!opened) showOpenError = true
+            },
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        ) { Text(strings.reportIssueButton) }
+        if (FeatureFlags.ENABLE_FAQ) {
+            Link(
+                text = strings.aboutMenuFaq,
+                onClick = {
+                    val languageCode = java.util.Locale.getDefault().language
+                    openExternalUrl("https://feedflow.dev/$languageCode/faq")
+                },
+                modifier = Modifier.padding(vertical = 8.dp),
+            )
+        }
+        Text(strings.aboutTheApp, modifier = Modifier.padding(vertical = 12.dp))
+        Link(strings.openWebsiteButton, onClick = {
+            openExternalUrl(FEED_FLOW_WEBSITE)
+        }, modifier = Modifier.padding(vertical = 8.dp))
+        Link(
+            strings.aboutMenuContributeTranslations,
+            onClick = { openExternalUrl(TRANSLATION_WEBSITE) },
+            modifier = Modifier.padding(vertical = 8.dp),
         )
+        Link(
+            strings.openSourceLicenses,
+            onClick = { showLicenses = true },
+            modifier = Modifier.padding(vertical = 8.dp).focusRequester(licensesFocus),
+        )
+        appConfig.version?.let { version ->
+            Text(strings.aboutAppVersion(version), modifier = Modifier.padding(vertical = 12.dp))
+        }
+        Link("${strings.authorLabel} Marco Gomiero", onClick = {
+            openExternalUrl(MG_WEBSITE)
+        }, modifier = Modifier.padding(vertical = 8.dp))
     }
 }
 
 internal fun updateDesktopCrashReporting(enabled: Boolean) {
     val appConfig = DI.koin.get<DesktopConfig>()
-
     if (!enabled) {
         disableSentry()
         return
     }
-
-    if (
-        appConfig.appEnvironment.isRelease() &&
-        appConfig.sentryDns != null &&
-        appConfig.version != null
-    ) {
-        initSentry(
-            dns = appConfig.sentryDns,
-            version = appConfig.version,
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun AboutPanePreview() {
-    FeedFlowTheme {
-        AboutPane(
-            isCrashReportingEnabled = false,
-            onCrashReportingToggled = {},
-        )
+    if (appConfig.appEnvironment.isRelease() && appConfig.sentryDns != null && appConfig.version != null) {
+        initSentry(dns = appConfig.sentryDns, version = appConfig.version)
     }
 }

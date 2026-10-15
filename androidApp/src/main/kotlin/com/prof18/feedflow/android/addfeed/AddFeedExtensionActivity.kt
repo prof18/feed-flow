@@ -1,7 +1,6 @@
 package com.prof18.feedflow.android.addfeed
 
 import android.content.Intent
-import android.os.Bundle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -23,10 +22,10 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import com.prof18.feedflow.android.base.BaseThemeActivity
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.delay
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.time.Duration.Companion.seconds
@@ -34,9 +33,7 @@ import kotlin.time.Duration.Companion.seconds
 class AddFeedExtensionActivity : BaseThemeActivity() {
     val viewModel by viewModel<AddFeedViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    private fun startSharedFeedRequest() {
         when (intent?.action) {
             Intent.ACTION_SEND -> {
                 when {
@@ -63,7 +60,10 @@ class AddFeedExtensionActivity : BaseThemeActivity() {
         val strings = LocalFeedFlowStrings.current
 
         LaunchedEffect(Unit) {
-            viewModel.feedAddedState.collect { feedAddedState ->
+            observeShareFeedResults(
+                results = viewModel.feedAddedState,
+                startRequest = ::startSharedFeedRequest,
+            ).collect { feedAddedState ->
                 when (feedAddedState) {
                     is FeedAddedState.Error -> {
                         showLoading = false

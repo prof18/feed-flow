@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel>
+<title>Local Pagination Fixture</title><link>http://127.0.0.1:18765/</link>
+<description>120 local articles spanning three database pages.</description>
+    <item>
+      <title>Fixture article 001</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=001</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=001</guid>
+      <pubDate>Thu, 01 Oct 2026 19:59:00 +0000</pubDate>
+      <description>Deterministic item 001 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 001.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 002</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=002</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=002</guid>
+      <pubDate>Thu, 01 Oct 2026 19:58:00 +0000</pubDate>
+      <description>Deterministic item 002 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 002.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 003</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=003</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=003</guid>
+      <pubDate>Thu, 01 Oct 2026 19:57:00 +0000</pubDate>
+      <description>Deterministic item 003 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 003.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 004</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=004</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=004</guid>
+      <pubDate>Thu, 01 Oct 2026 19:56:00 +0000</pubDate>
+      <description>Deterministic item 004 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 004.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 005</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=005</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=005</guid>
+      <pubDate>Thu, 01 Oct 2026 19:55:00 +0000</pubDate>
+      <description>Deterministic item 005 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 005.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 006</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=006</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=006</guid>
+      <pubDate>Thu, 01 Oct 2026 19:54:00 +0000</pubDate>
+      <description>Deterministic item 006 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 006.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 007</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=007</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=007</guid>
+      <pubDate>Thu, 01 Oct 2026 19:53:00 +0000</pubDate>
+      <description>Deterministic item 007 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 007.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 008</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=008</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=008</guid>
+      <pubDate>Thu, 01 Oct 2026 19:52:00 +0000</pubDate>
+      <description>Deterministic item 008 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 008.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 009</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=009</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=009</guid>
+      <pubDate>Thu, 01 Oct 2026 19:51:00 +0000</pubDate>
+      <description>Deterministic item 009 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 009.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 010</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=010</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=010</guid>
+      <pubDate>Thu, 01 Oct 2026 19:50:00 +0000</pubDate>
+      <description>Deterministic item 010 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 010.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 011</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=011</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=011</guid>
+      <pubDate>Thu, 01 Oct 2026 19:49:00 +0000</pubDate>
+      <description>Deterministic item 011 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 011.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 012</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=012</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=012</guid>
+      <pubDate>Thu, 01 Oct 2026 19:48:00 +0000</pubDate>
+      <description>Deterministic item 012 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 012.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 013</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=013</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=013</guid>
+      <pubDate>Thu, 01 Oct 2026 19:47:00 +0000</pubDate>
+      <description>Deterministic item 013 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 013.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 014</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=014</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=014</guid>
+      <pubDate>Thu, 01 Oct 2026 19:46:00 +0000</pubDate>
+      <description>Deterministic item 014 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 014.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 015</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=015</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=015</guid>
+      <pubDate>Thu, 01 Oct 2026 19:45:00 +0000</pubDate>
+      <description>Deterministic item 015 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 015.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 016</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=016</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=016</guid>
+      <pubDate>Thu, 01 Oct 2026 19:44:00 +0000</pubDate>
+      <description>Deterministic item 016 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 016.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 017</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=017</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=017</guid>
+      <pubDate>Thu, 01 Oct 2026 19:43:00 +0000</pubDate>
+      <description>Deterministic item 017 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 017.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 018</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=018</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=018</guid>
+      <pubDate>Thu, 01 Oct 2026 19:42:00 +0000</pubDate>
+      <description>Deterministic item 018 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 018.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 019</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=019</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=019</guid>
+      <pubDate>Thu, 01 Oct 2026 19:41:00 +0000</pubDate>
+      <description>Deterministic item 019 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 019.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 020</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=020</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=020</guid>
+      <pubDate>Thu, 01 Oct 2026 19:40:00 +0000</pubDate>
+      <description>Deterministic item 020 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 020.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 021</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=021</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=021</guid>
+      <pubDate>Thu, 01 Oct 2026 19:39:00 +0000</pubDate>
+      <description>Deterministic item 021 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 021.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 022</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=022</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=022</guid>
+      <pubDate>Thu, 01 Oct 2026 19:38:00 +0000</pubDate>
+      <description>Deterministic item 022 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 022.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 023</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=023</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=023</guid>
+      <pubDate>Thu, 01 Oct 2026 19:37:00 +0000</pubDate>
+      <description>Deterministic item 023 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 023.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 024</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=024</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=024</guid>
+      <pubDate>Thu, 01 Oct 2026 19:36:00 +0000</pubDate>
+      <description>Deterministic item 024 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 024.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 025</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=025</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=025</guid>
+      <pubDate>Thu, 01 Oct 2026 19:35:00 +0000</pubDate>
+      <description>Deterministic item 025 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 025.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 026</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=026</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=026</guid>
+      <pubDate>Thu, 01 Oct 2026 19:34:00 +0000</pubDate>
+      <description>Deterministic item 026 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 026.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 027</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=027</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=027</guid>
+      <pubDate>Thu, 01 Oct 2026 19:33:00 +0000</pubDate>
+      <description>Deterministic item 027 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 027.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 028</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=028</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=028</guid>
+      <pubDate>Thu, 01 Oct 2026 19:32:00 +0000</pubDate>
+      <description>Deterministic item 028 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 028.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 029</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=029</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=029</guid>
+      <pubDate>Thu, 01 Oct 2026 19:31:00 +0000</pubDate>
+      <description>Deterministic item 029 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 029.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 030</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=030</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=030</guid>
+      <pubDate>Thu, 01 Oct 2026 19:30:00 +0000</pubDate>
+      <description>Deterministic item 030 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 030.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 031</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=031</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=031</guid>
+      <pubDate>Thu, 01 Oct 2026 19:29:00 +0000</pubDate>
+      <description>Deterministic item 031 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 031.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 032</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=032</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=032</guid>
+      <pubDate>Thu, 01 Oct 2026 19:28:00 +0000</pubDate>
+      <description>Deterministic item 032 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 032.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 033</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=033</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=033</guid>
+      <pubDate>Thu, 01 Oct 2026 19:27:00 +0000</pubDate>
+      <description>Deterministic item 033 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 033.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 034</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=034</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=034</guid>
+      <pubDate>Thu, 01 Oct 2026 19:26:00 +0000</pubDate>
+      <description>Deterministic item 034 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 034.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 035</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=035</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=035</guid>
+      <pubDate>Thu, 01 Oct 2026 19:25:00 +0000</pubDate>
+      <description>Deterministic item 035 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 035.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 036</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=036</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=036</guid>
+      <pubDate>Thu, 01 Oct 2026 19:24:00 +0000</pubDate>
+      <description>Deterministic item 036 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 036.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 037</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=037</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=037</guid>
+      <pubDate>Thu, 01 Oct 2026 19:23:00 +0000</pubDate>
+      <description>Deterministic item 037 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 037.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 038</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=038</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=038</guid>
+      <pubDate>Thu, 01 Oct 2026 19:22:00 +0000</pubDate>
+      <description>Deterministic item 038 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 038.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 039</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=039</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=039</guid>
+      <pubDate>Thu, 01 Oct 2026 19:21:00 +0000</pubDate>
+      <description>Deterministic item 039 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 039.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 040</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=040</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=040</guid>
+      <pubDate>Thu, 01 Oct 2026 19:20:00 +0000</pubDate>
+      <description>Deterministic item 040 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 040.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 041</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=041</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=041</guid>
+      <pubDate>Thu, 01 Oct 2026 19:19:00 +0000</pubDate>
+      <description>Deterministic item 041 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 041.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 042</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=042</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=042</guid>
+      <pubDate>Thu, 01 Oct 2026 19:18:00 +0000</pubDate>
+      <description>Deterministic item 042 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 042.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 043</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=043</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=043</guid>
+      <pubDate>Thu, 01 Oct 2026 19:17:00 +0000</pubDate>
+      <description>Deterministic item 043 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 043.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 044</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=044</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=044</guid>
+      <pubDate>Thu, 01 Oct 2026 19:16:00 +0000</pubDate>
+      <description>Deterministic item 044 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 044.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 045</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=045</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=045</guid>
+      <pubDate>Thu, 01 Oct 2026 19:15:00 +0000</pubDate>
+      <description>Deterministic item 045 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 045.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 046</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=046</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=046</guid>
+      <pubDate>Thu, 01 Oct 2026 19:14:00 +0000</pubDate>
+      <description>Deterministic item 046 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 046.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 047</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=047</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=047</guid>
+      <pubDate>Thu, 01 Oct 2026 19:13:00 +0000</pubDate>
+      <description>Deterministic item 047 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 047.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 048</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=048</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=048</guid>
+      <pubDate>Thu, 01 Oct 2026 19:12:00 +0000</pubDate>
+      <description>Deterministic item 048 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 048.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 049</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=049</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=049</guid>
+      <pubDate>Thu, 01 Oct 2026 19:11:00 +0000</pubDate>
+      <description>Deterministic item 049 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 049.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 050</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=050</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=050</guid>
+      <pubDate>Thu, 01 Oct 2026 19:10:00 +0000</pubDate>
+      <description>Deterministic item 050 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 050.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 051</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=051</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=051</guid>
+      <pubDate>Thu, 01 Oct 2026 19:09:00 +0000</pubDate>
+      <description>Deterministic item 051 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 051.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 052</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=052</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=052</guid>
+      <pubDate>Thu, 01 Oct 2026 19:08:00 +0000</pubDate>
+      <description>Deterministic item 052 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 052.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 053</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=053</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=053</guid>
+      <pubDate>Thu, 01 Oct 2026 19:07:00 +0000</pubDate>
+      <description>Deterministic item 053 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 053.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 054</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=054</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=054</guid>
+      <pubDate>Thu, 01 Oct 2026 19:06:00 +0000</pubDate>
+      <description>Deterministic item 054 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 054.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 055</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=055</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=055</guid>
+      <pubDate>Thu, 01 Oct 2026 19:05:00 +0000</pubDate>
+      <description>Deterministic item 055 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 055.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 056</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=056</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=056</guid>
+      <pubDate>Thu, 01 Oct 2026 19:04:00 +0000</pubDate>
+      <description>Deterministic item 056 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 056.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 057</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=057</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=057</guid>
+      <pubDate>Thu, 01 Oct 2026 19:03:00 +0000</pubDate>
+      <description>Deterministic item 057 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 057.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 058</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=058</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=058</guid>
+      <pubDate>Thu, 01 Oct 2026 19:02:00 +0000</pubDate>
+      <description>Deterministic item 058 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 058.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 059</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=059</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=059</guid>
+      <pubDate>Thu, 01 Oct 2026 19:01:00 +0000</pubDate>
+      <description>Deterministic item 059 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 059.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 060</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=060</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=060</guid>
+      <pubDate>Thu, 01 Oct 2026 19:00:00 +0000</pubDate>
+      <description>Deterministic item 060 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 060.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 061</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=061</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=061</guid>
+      <pubDate>Thu, 01 Oct 2026 18:59:00 +0000</pubDate>
+      <description>Deterministic item 061 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 061.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 062</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=062</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=062</guid>
+      <pubDate>Thu, 01 Oct 2026 18:58:00 +0000</pubDate>
+      <description>Deterministic item 062 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 062.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 063</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=063</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=063</guid>
+      <pubDate>Thu, 01 Oct 2026 18:57:00 +0000</pubDate>
+      <description>Deterministic item 063 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 063.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 064</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=064</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=064</guid>
+      <pubDate>Thu, 01 Oct 2026 18:56:00 +0000</pubDate>
+      <description>Deterministic item 064 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 064.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 065</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=065</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=065</guid>
+      <pubDate>Thu, 01 Oct 2026 18:55:00 +0000</pubDate>
+      <description>Deterministic item 065 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 065.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 066</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=066</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=066</guid>
+      <pubDate>Thu, 01 Oct 2026 18:54:00 +0000</pubDate>
+      <description>Deterministic item 066 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 066.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 067</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=067</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=067</guid>
+      <pubDate>Thu, 01 Oct 2026 18:53:00 +0000</pubDate>
+      <description>Deterministic item 067 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 067.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 068</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=068</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=068</guid>
+      <pubDate>Thu, 01 Oct 2026 18:52:00 +0000</pubDate>
+      <description>Deterministic item 068 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 068.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 069</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=069</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=069</guid>
+      <pubDate>Thu, 01 Oct 2026 18:51:00 +0000</pubDate>
+      <description>Deterministic item 069 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 069.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 070</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=070</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=070</guid>
+      <pubDate>Thu, 01 Oct 2026 18:50:00 +0000</pubDate>
+      <description>Deterministic item 070 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 070.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 071</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=071</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=071</guid>
+      <pubDate>Thu, 01 Oct 2026 18:49:00 +0000</pubDate>
+      <description>Deterministic item 071 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 071.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 072</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=072</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=072</guid>
+      <pubDate>Thu, 01 Oct 2026 18:48:00 +0000</pubDate>
+      <description>Deterministic item 072 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 072.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 073</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=073</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=073</guid>
+      <pubDate>Thu, 01 Oct 2026 18:47:00 +0000</pubDate>
+      <description>Deterministic item 073 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 073.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 074</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=074</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=074</guid>
+      <pubDate>Thu, 01 Oct 2026 18:46:00 +0000</pubDate>
+      <description>Deterministic item 074 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 074.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 075</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=075</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=075</guid>
+      <pubDate>Thu, 01 Oct 2026 18:45:00 +0000</pubDate>
+      <description>Deterministic item 075 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 075.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 076</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=076</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=076</guid>
+      <pubDate>Thu, 01 Oct 2026 18:44:00 +0000</pubDate>
+      <description>Deterministic item 076 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 076.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 077</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=077</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=077</guid>
+      <pubDate>Thu, 01 Oct 2026 18:43:00 +0000</pubDate>
+      <description>Deterministic item 077 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 077.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 078</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=078</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=078</guid>
+      <pubDate>Thu, 01 Oct 2026 18:42:00 +0000</pubDate>
+      <description>Deterministic item 078 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 078.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 079</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=079</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=079</guid>
+      <pubDate>Thu, 01 Oct 2026 18:41:00 +0000</pubDate>
+      <description>Deterministic item 079 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 079.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 080</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=080</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=080</guid>
+      <pubDate>Thu, 01 Oct 2026 18:40:00 +0000</pubDate>
+      <description>Deterministic item 080 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 080.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 081</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=081</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=081</guid>
+      <pubDate>Thu, 01 Oct 2026 18:39:00 +0000</pubDate>
+      <description>Deterministic item 081 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 081.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 082</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=082</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=082</guid>
+      <pubDate>Thu, 01 Oct 2026 18:38:00 +0000</pubDate>
+      <description>Deterministic item 082 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 082.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 083</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=083</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=083</guid>
+      <pubDate>Thu, 01 Oct 2026 18:37:00 +0000</pubDate>
+      <description>Deterministic item 083 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 083.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 084</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=084</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=084</guid>
+      <pubDate>Thu, 01 Oct 2026 18:36:00 +0000</pubDate>
+      <description>Deterministic item 084 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 084.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 085</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=085</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=085</guid>
+      <pubDate>Thu, 01 Oct 2026 18:35:00 +0000</pubDate>
+      <description>Deterministic item 085 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 085.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 086</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=086</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=086</guid>
+      <pubDate>Thu, 01 Oct 2026 18:34:00 +0000</pubDate>
+      <description>Deterministic item 086 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 086.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 087</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=087</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=087</guid>
+      <pubDate>Thu, 01 Oct 2026 18:33:00 +0000</pubDate>
+      <description>Deterministic item 087 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 087.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 088</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=088</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=088</guid>
+      <pubDate>Thu, 01 Oct 2026 18:32:00 +0000</pubDate>
+      <description>Deterministic item 088 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 088.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 089</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=089</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=089</guid>
+      <pubDate>Thu, 01 Oct 2026 18:31:00 +0000</pubDate>
+      <description>Deterministic item 089 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 089.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 090</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=090</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=090</guid>
+      <pubDate>Thu, 01 Oct 2026 18:30:00 +0000</pubDate>
+      <description>Deterministic item 090 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 090.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 091</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=091</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=091</guid>
+      <pubDate>Thu, 01 Oct 2026 18:29:00 +0000</pubDate>
+      <description>Deterministic item 091 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 091.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 092</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=092</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=092</guid>
+      <pubDate>Thu, 01 Oct 2026 18:28:00 +0000</pubDate>
+      <description>Deterministic item 092 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 092.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 093</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=093</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=093</guid>
+      <pubDate>Thu, 01 Oct 2026 18:27:00 +0000</pubDate>
+      <description>Deterministic item 093 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 093.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 094</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=094</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=094</guid>
+      <pubDate>Thu, 01 Oct 2026 18:26:00 +0000</pubDate>
+      <description>Deterministic item 094 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 094.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 095</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=095</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=095</guid>
+      <pubDate>Thu, 01 Oct 2026 18:25:00 +0000</pubDate>
+      <description>Deterministic item 095 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 095.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 096</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=096</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=096</guid>
+      <pubDate>Thu, 01 Oct 2026 18:24:00 +0000</pubDate>
+      <description>Deterministic item 096 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 096.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 097</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=097</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=097</guid>
+      <pubDate>Thu, 01 Oct 2026 18:23:00 +0000</pubDate>
+      <description>Deterministic item 097 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 097.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 098</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=098</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=098</guid>
+      <pubDate>Thu, 01 Oct 2026 18:22:00 +0000</pubDate>
+      <description>Deterministic item 098 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 098.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 099</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=099</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=099</guid>
+      <pubDate>Thu, 01 Oct 2026 18:21:00 +0000</pubDate>
+      <description>Deterministic item 099 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 099.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 100</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=100</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=100</guid>
+      <pubDate>Thu, 01 Oct 2026 18:20:00 +0000</pubDate>
+      <description>Deterministic item 100 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 100.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 101</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=101</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=101</guid>
+      <pubDate>Thu, 01 Oct 2026 18:19:00 +0000</pubDate>
+      <description>Deterministic item 101 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 101.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 102</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=102</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=102</guid>
+      <pubDate>Thu, 01 Oct 2026 18:18:00 +0000</pubDate>
+      <description>Deterministic item 102 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 102.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 103</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=103</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=103</guid>
+      <pubDate>Thu, 01 Oct 2026 18:17:00 +0000</pubDate>
+      <description>Deterministic item 103 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 103.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 104</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=104</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=104</guid>
+      <pubDate>Thu, 01 Oct 2026 18:16:00 +0000</pubDate>
+      <description>Deterministic item 104 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 104.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 105</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=105</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=105</guid>
+      <pubDate>Thu, 01 Oct 2026 18:15:00 +0000</pubDate>
+      <description>Deterministic item 105 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 105.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 106</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=106</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=106</guid>
+      <pubDate>Thu, 01 Oct 2026 18:14:00 +0000</pubDate>
+      <description>Deterministic item 106 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 106.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 107</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=107</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=107</guid>
+      <pubDate>Thu, 01 Oct 2026 18:13:00 +0000</pubDate>
+      <description>Deterministic item 107 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 107.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 108</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=108</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=108</guid>
+      <pubDate>Thu, 01 Oct 2026 18:12:00 +0000</pubDate>
+      <description>Deterministic item 108 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 108.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 109</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=109</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=109</guid>
+      <pubDate>Thu, 01 Oct 2026 18:11:00 +0000</pubDate>
+      <description>Deterministic item 109 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 109.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 110</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=110</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=110</guid>
+      <pubDate>Thu, 01 Oct 2026 18:10:00 +0000</pubDate>
+      <description>Deterministic item 110 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 110.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 111</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=111</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=111</guid>
+      <pubDate>Thu, 01 Oct 2026 18:09:00 +0000</pubDate>
+      <description>Deterministic item 111 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 111.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 112</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=112</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=112</guid>
+      <pubDate>Thu, 01 Oct 2026 18:08:00 +0000</pubDate>
+      <description>Deterministic item 112 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 112.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 113</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=113</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=113</guid>
+      <pubDate>Thu, 01 Oct 2026 18:07:00 +0000</pubDate>
+      <description>Deterministic item 113 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 113.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 114</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=114</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=114</guid>
+      <pubDate>Thu, 01 Oct 2026 18:06:00 +0000</pubDate>
+      <description>Deterministic item 114 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 114.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 115</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=115</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=115</guid>
+      <pubDate>Thu, 01 Oct 2026 18:05:00 +0000</pubDate>
+      <description>Deterministic item 115 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 115.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 116</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=116</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=116</guid>
+      <pubDate>Thu, 01 Oct 2026 18:04:00 +0000</pubDate>
+      <description>Deterministic item 116 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 116.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 117</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=117</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=117</guid>
+      <pubDate>Thu, 01 Oct 2026 18:03:00 +0000</pubDate>
+      <description>Deterministic item 117 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 117.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 118</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=118</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=118</guid>
+      <pubDate>Thu, 01 Oct 2026 18:02:00 +0000</pubDate>
+      <description>Deterministic item 118 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 118.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 119</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=119</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=119</guid>
+      <pubDate>Thu, 01 Oct 2026 18:01:00 +0000</pubDate>
+      <description>Deterministic item 119 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 119.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fixture article 120</title>
+      <link>http://127.0.0.1:18765/article-1.html?item=120</link><guid isPermaLink="true">http://127.0.0.1:18765/article-1.html?item=120</guid>
+      <pubDate>Thu, 01 Oct 2026 18:00:00 +0000</pubDate>
+      <description>Deterministic item 120 for pagination, stable scroll anchors and read-on-scroll validation.</description>
+      <content:encoded><![CDATA[<p>Local fixture article 120.</p><p>This content stays available offline after caching.</p>]]></content:encoded>
+    </item>
+</channel></rss>

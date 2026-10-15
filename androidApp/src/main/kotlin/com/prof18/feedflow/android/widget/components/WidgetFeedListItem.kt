@@ -47,12 +47,12 @@ import coil3.size.Precision
 import coil3.size.Scale
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.MainActivity
+import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.widget.WidgetFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.ReaderModeEligibility
 import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveWith
-import com.prof18.feedflow.shared.ui.style.Spacing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

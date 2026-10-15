@@ -1,54 +1,40 @@
+@file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+
 package com.prof18.feedflow.desktop.reaadermode
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.automirrored.filled.Comment
-import androidx.compose.material.icons.filled.Fullscreen
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.LockOpen
-import androidx.compose.material.icons.filled.RssFeed
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.automirrored.outlined.Comment
+import androidx.compose.material.icons.outlined.Bookmark
+import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Fullscreen
+import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.LockOpen
+import androidx.compose.material.icons.outlined.RssFeed
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.TextFields
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.FilledIconToggleButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,48 +43,46 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.composeunstyled.rememberScrollbarState
-import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
-import com.mikepenz.markdown.m3.Markdown
-import com.mikepenz.markdown.m3.markdownTypography
-import com.mikepenz.markdown.model.markdownAnimations
-import com.prof18.feedflow.core.model.AudioEnclosure
+import coil3.ImageLoader
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
-import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
+import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.home.toolbarHeight
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
+import com.prof18.feedflow.desktop.ui.components.SnackbarHost
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.openUriSafely
-import com.prof18.feedflow.shared.domain.buildReaderModeMarkdown
-import com.prof18.feedflow.shared.domain.readerLineHeightToTextLineHeightSp
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
-import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
-import com.prof18.feedflow.shared.ui.icons.BookmarkIcon
-import com.prof18.feedflow.shared.ui.icons.BookmarkOffIcon
-import com.prof18.feedflow.shared.ui.readermode.ReaderTextSettingsSheetContent
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import kotlinx.coroutines.launch
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.IconButton
+import org.jetbrains.jewel.ui.component.SelectableIconButton
+import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.Tooltip
+import org.jetbrains.jewel.ui.icon.IconKey
+import org.jetbrains.jewel.ui.icons.AllIconsKeys.Actions
+import org.jetbrains.jewel.ui.icons.AllIconsKeys.FileTypes
+import org.jetbrains.jewel.ui.icons.AllIconsKeys.General
+import org.jetbrains.jewel.ui.icons.AllIconsKeys.Toolwindows
 import org.koin.compose.viewmodel.koinViewModel
 
-private val readerModeMaxContentWidth = 720.dp
-private val readerPaneTopContentFadeHeight = 30.dp
-private val readerTextSettingsMenuWidth = 420.dp
+private val readerToolbarActionSize = 32.dp
 
 @Composable
 internal fun ReaderModeScreen(
@@ -109,6 +93,7 @@ internal fun ReaderModeScreen(
     onToggleDetailFullscreen: (() -> Unit)? = null,
 ) {
     val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
+    val imageLoader = remember { DI.koin.get<ImageLoader>() }
     val state by readerModeViewModel.readerModeState.collectAsState()
     val fontSettings by readerModeViewModel.readerFontSettingsState.collectAsState()
     val fontSize = fontSettings.fontSize
@@ -118,17 +103,16 @@ internal fun ReaderModeScreen(
         readerModeViewModel.loadReaderContent(feedItemUrlInfo)
     }
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-
     val strings = LocalFeedFlowStrings.current
+    val snackbarHostState = remember { DesktopFeedbackState() }
+    val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
     fun openExternalUrl(url: String) {
         if (!uriHandler.openUriSafely(url)) {
             scope.launch {
-                snackbarHostState.showSnackbar(
+                snackbarHostState.showFeedback(
                     message = strings.browserLaunchError,
-                    duration = SnackbarDuration.Short,
+                    duration = DesktopFeedbackDuration.Short,
                 )
             }
         }
@@ -152,6 +136,7 @@ internal fun ReaderModeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(JewelTheme.globalColors.panelBackground)
             .focusRequester(focusRequester)
             .focusable()
             .onKeyEvent { keyEvent ->
@@ -165,280 +150,102 @@ internal fun ReaderModeScreen(
                 )
             },
     ) {
-        Scaffold(
-            topBar = {
-                Surface(shadowElevation = 2.dp) {
-                    ReaderModeToolbar(
-                        readerModeState = state,
-                        fontSize = fontSize,
-                        navigateBack = navigateBack,
-                        showBackButton = showBackButton,
-                        onToggleDetailFullscreen = onToggleDetailFullscreen,
-                        isDetailFullscreen = isDetailFullscreen,
-                        openInBrowser = ::openExternalUrl,
-                        onShareClick = { url ->
-                            val result = copyToClipboard(url)
-                            if (result) {
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        message = strings.linkCopiedSuccess,
-                                        duration = SnackbarDuration.Short,
-                                    )
-                                }
-                            }
-                        },
-                        onArchiveClick = { articleUrl ->
-                            val archiveUrl = getArchiveISUrl(articleUrl)
-                            openExternalUrl(archiveUrl)
-                        },
-                        onCommentsClick = ::openExternalUrl,
-                        onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
-                        lineHeight = lineHeight,
-                        onLineHeightChange = { readerModeViewModel.updateLineHeight(it) },
-                        onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
-                            readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
-                        },
-                        onToggleContentSource = { readerModeViewModel.toggleContentSource() },
-                    )
-                }
-            },
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-        ) { contentPadding ->
+        Column(Modifier.fillMaxSize()) {
+            ReaderModeToolbar(
+                readerModeState = state,
+                fontSize = fontSize,
+                navigateBack = navigateBack,
+                showBackButton = showBackButton,
+                onToggleDetailFullscreen = onToggleDetailFullscreen,
+                isDetailFullscreen = isDetailFullscreen,
+                openInBrowser = ::openExternalUrl,
+                onShareClick = { url ->
+                    if (copyToClipboard(url)) {
+                        scope.launch {
+                            snackbarHostState.showFeedback(
+                                message = strings.linkCopiedSuccess,
+                                duration = DesktopFeedbackDuration.Short,
+                            )
+                        }
+                    }
+                },
+                onArchiveClick = { articleUrl -> openExternalUrl(getArchiveISUrl(articleUrl)) },
+                onCommentsClick = ::openExternalUrl,
+                onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
+                lineHeight = lineHeight,
+                onLineHeightChange = { readerModeViewModel.updateLineHeight(it) },
+                onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
+                    readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+                },
+                onToggleContentSource = { readerModeViewModel.toggleContentSource() },
+            )
             Box(
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.TopCenter,
-            ) {
-                val contentModifier = Modifier
-                    .widthIn(max = readerModeMaxContentWidth)
-                    .fillMaxWidth()
-
-                when (val s = state) {
-                    is ReaderModeState.ContentNotAvailable -> {
-                        ReaderModeFallbackContent(
-                            modifier = contentModifier
-                                .fillMaxHeight(),
-                            onOpenInBrowser = s.url.takeIf { it.isNotBlank() }?.let { url ->
-                                {
-                                    openExternalUrl(url)
-                                }
-                            },
-                        )
-                    }
-
-                    ReaderModeState.Loading -> {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillMaxSize(),
-                        ) {
-                            androidx.compose.material3.CircularProgressIndicator()
-                        }
-                    }
-
-                    is ReaderModeState.Success -> {
-                        val scrollState = rememberScrollState()
-                        val scrollbarState = rememberScrollbarState(scrollState)
-
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .verticalScroll(scrollState),
-                                contentAlignment = Alignment.TopCenter,
-                            ) {
-                                Column(
-                                    modifier = contentModifier,
-                                ) {
-                                    val audioUrl = AudioEnclosure.validatedUrl(s.readerModeData.audioUrl)
-                                    if (audioUrl != null) {
-                                        AudioEpisodeBanner(
-                                            title = s.readerModeData.title,
-                                            fontSize = fontSize,
-                                            onOpenAudio = { openExternalUrl(audioUrl) },
-                                        )
-                                    }
-                                    key(s.readerModeData.content, fontSize, lineHeight) {
-                                        val bodyLineHeight = readerLineHeightToTextLineHeightSp(fontSize, lineHeight).sp
-                                        val markdown = remember(s.readerModeData) {
-                                            buildReaderModeMarkdown(
-                                                content = s.readerModeData.content,
-                                                title = s.readerModeData.title.takeIf { audioUrl == null },
-                                                imageUrl = s.readerModeData.imageUrl,
-                                                siteName = s.readerModeData.siteName,
-                                            )
-                                        }
-                                        SelectionContainer {
-                                            Markdown(
-                                                modifier = Modifier
-                                                    .padding(Spacing.regular)
-                                                    .padding(bottom = 64.dp),
-                                                content = markdown,
-                                                imageTransformer = Coil3ImageTransformerImpl,
-                                                components = desktopReaderModeMarkdownComponents(
-                                                    onHoveredLinkChange = { hoveredLink = it },
-                                                ),
-                                                animations = markdownAnimations(
-                                                    animateTextSize = {
-                                                        this
-                                                        /** No animation */
-                                                    },
-                                                ),
-                                                typography = markdownTypography(
-                                                    h1 = MaterialTheme.typography.displaySmall.copy(
-                                                        fontSize = (fontSize + 20).sp,
-                                                        lineHeight = (fontSize + 32).sp,
-                                                    ),
-                                                    h2 = MaterialTheme.typography.titleLarge.copy(
-                                                        fontSize = (fontSize + 6).sp,
-                                                        lineHeight = (fontSize + 16).sp,
-                                                    ),
-                                                    h3 = MaterialTheme.typography.titleLarge.copy(
-                                                        fontSize = (fontSize + 6).sp,
-                                                        lineHeight = (fontSize + 16).sp,
-                                                    ),
-                                                    h4 = MaterialTheme.typography.titleMedium.copy(
-                                                        fontSize = fontSize.sp,
-                                                        lineHeight = (fontSize + 12).sp,
-                                                    ),
-                                                    h5 = MaterialTheme.typography.titleMedium.copy(
-                                                        fontSize = fontSize.sp,
-                                                        lineHeight = (fontSize + 12).sp,
-                                                    ),
-                                                    h6 = MaterialTheme.typography.titleMedium.copy(
-                                                        fontSize = fontSize.sp,
-                                                        lineHeight = (fontSize + 12).sp,
-                                                    ),
-                                                    paragraph = MaterialTheme.typography.bodyLarge.copy(
-                                                        fontSize = fontSize.sp,
-                                                        lineHeight = bodyLineHeight,
-                                                    ),
-                                                    text = MaterialTheme.typography.bodyLarge.copy(
-                                                        fontSize = fontSize.sp,
-                                                        lineHeight = bodyLineHeight,
-                                                    ),
-                                                    code = MaterialTheme.typography.bodyMedium.copy(
-                                                        fontSize = (fontSize - 2).sp,
-                                                        lineHeight = (fontSize + 8).sp,
-                                                    ),
-                                                    list = MaterialTheme.typography.bodyLarge.copy(
-                                                        fontSize = fontSize.sp,
-                                                        lineHeight = bodyLineHeight,
-                                                    ),
-                                                    textLink = TextLinkStyles(
-                                                        style = MaterialTheme.typography.bodyLarge.copy(
-                                                            fontSize = fontSize.sp,
-                                                            lineHeight = bodyLineHeight,
-                                                            fontWeight = FontWeight.Bold,
-                                                            textDecoration = TextDecoration.Underline,
-                                                        ).toSpanStyle(),
-                                                    ),
-                                                ),
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-
-                            FeedFlowVerticalScrollbar(scrollbarState)
-                        }
-                    }
-                }
-
-                TopToolbarContentFade(
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    height = readerPaneTopContentFadeHeight,
-                    color = MaterialTheme.colorScheme.surface,
-                )
-            }
+                Modifier.fillMaxWidth().height(1.dp)
+                    .background(JewelTheme.globalColors.borders.normal.copy(alpha = 0.35f)),
+            )
+            DesktopReaderContent(
+                state = state,
+                fontSize = fontSize,
+                lineHeight = lineHeight,
+                imageLoader = imageLoader,
+                onOpenInBrowser = ::openExternalUrl,
+                onHoveredLinkChange = { hoveredLink = it },
+                modifier = Modifier.weight(1f).fillMaxSize(),
+            )
         }
 
         hoveredLink?.let { hoveredUrl ->
-            Surface(
+            Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(start = Spacing.regular, bottom = Spacing.regular),
-                shape = RoundedCornerShape(18.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                tonalElevation = 2.dp,
-                shadowElevation = 4.dp,
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                ),
+                    .padding(start = DesktopDesignTokens.spaceSection, bottom = DesktopDesignTokens.spaceSection)
+                    .background(JewelTheme.globalColors.panelBackground)
+                    .padding(horizontal = DesktopDesignTokens.spaceSection, vertical = DesktopDesignTokens.spaceMedium),
             ) {
                 Text(
                     text = hoveredUrl,
                     modifier = Modifier
                         .widthIn(max = 420.dp)
-                        .padding(horizontal = Spacing.regular, vertical = Spacing.small),
+                        .padding(
+                            horizontal = DesktopDesignTokens.spaceSection,
+                            vertical = DesktopDesignTokens.spaceMedium,
+                        ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }
 
+        SnackbarHost(
+            state = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter),
+        )
+
         if (state is ReaderModeState.Success || state is ReaderModeState.ContentNotAvailable) {
             val strings = LocalFeedFlowStrings.current
 
-            Surface(
+            Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = Spacing.regular, bottom = Spacing.regular),
-                shape = RoundedCornerShape(18.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                tonalElevation = 2.dp,
-                shadowElevation = 4.dp,
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                ),
+                    .padding(end = DesktopDesignTokens.spaceSection, bottom = DesktopDesignTokens.spaceSection),
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = Spacing.small),
+                    modifier = Modifier
+                        .background(JewelTheme.globalColors.panelBackground, RoundedCornerShape(8.dp))
+                        .border(
+                            width = 1.dp,
+                            color = JewelTheme.globalColors.borders.normal.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                        .padding(4.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(Spacing.small),
+                    horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
                 ) {
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                            positioning = TooltipAnchorPosition.Above,
-                        ),
-                        state = rememberTooltipState(),
-                        tooltip = { PlainTooltip { Text(strings.previousArticle) } },
-                    ) {
-                        IconButton(
-                            onClick = { readerModeViewModel.navigateToPreviousArticle() },
-                            enabled = canNavigatePrevious,
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = strings.previousArticle,
-                            )
-                        }
+                    ReaderToolbarAction(Actions.Back, strings.previousArticle, canNavigatePrevious) {
+                        readerModeViewModel.navigateToPreviousArticle()
                     }
-
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                            positioning = TooltipAnchorPosition.Above,
-                        ),
-                        state = rememberTooltipState(),
-                        tooltip = { PlainTooltip { Text(strings.nextArticle) } },
-                    ) {
-                        IconButton(
-                            onClick = { readerModeViewModel.navigateToNextArticle() },
-                            enabled = canNavigateNext,
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                contentDescription = strings.nextArticle,
-                            )
-                        }
+                    ReaderToolbarAction(Actions.Forward, strings.nextArticle, canNavigateNext) {
+                        readerModeViewModel.navigateToNextArticle()
                     }
                 }
             }
@@ -480,7 +287,7 @@ private fun handleKeyEvent(
 }
 
 @Composable
-private fun ReaderModeToolbar(
+internal fun ReaderModeToolbar(
     readerModeState: ReaderModeState,
     fontSize: Int,
     navigateBack: () -> Unit,
@@ -497,323 +304,168 @@ private fun ReaderModeToolbar(
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onToggleContentSource: () -> Unit,
 ) {
-    var showMenu by remember { mutableStateOf(false) }
+    val strings = LocalFeedFlowStrings.current
+    var showTextSettings by remember { mutableStateOf(false) }
+    var isBookmarked by remember(readerModeState) { mutableStateOf(readerModeState.getIsBookmarked) }
+    val url = readerModeState.getUrl?.takeIf(String::isNotBlank)
+    val itemId = readerModeState.getId
+    val contentSource = (readerModeState as? ReaderModeState.Success)?.readerModeData?.shownContentSource
+    val canToggleContentSource = (readerModeState as? ReaderModeState.Success)
+        ?.readerModeData?.canToggleContentSource == true
 
-    TopAppBar(
-        expandedHeight = 48.dp,
-        title = {},
-        navigationIcon = when {
-            onToggleDetailFullscreen != null -> {
-                {
-                    IconButton(
-                        onClick = onToggleDetailFullscreen,
-                    ) {
-                        Icon(
-                            imageVector = if (isDetailFullscreen) {
-                                Icons.AutoMirrored.Filled.ArrowBack
-                            } else {
-                                Icons.Default.Fullscreen
-                            },
-                            contentDescription = null,
-                        )
-                    }
-                }
-            }
-            showBackButton -> {
-                {
-                    IconButton(
-                        onClick = navigateBack,
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                        )
-                    }
-                }
-            }
-            else -> {
-                { }
-            }
-        },
-        actions = {
-            Row {
-                if (readerModeState !is ReaderModeState.Loading) {
-                    // URL-less items (shown from feed content) have a blank url; hide URL-dependent actions.
-                    val url = readerModeState.getUrl?.takeIf { it.isNotBlank() }
-                    val id = readerModeState.getId
-                    var isBookmarked by remember(readerModeState) {
-                        mutableStateOf(readerModeState.getIsBookmarked)
-                    }
-
-                    if (id != null) {
-                        BookmarkButton(
-                            isBookmarked = isBookmarked,
-                            onClick = {
-                                isBookmarked = !isBookmarked
-                                onBookmarkClick(FeedItemId(id), isBookmarked)
-                            },
-                        )
-                    }
-
-                    val shownContentSource =
-                        (readerModeState as? ReaderModeState.Success)?.readerModeData?.shownContentSource
-                    val canToggleContentSource =
-                        (readerModeState as? ReaderModeState.Success)
-                            ?.readerModeData
-                            ?.canToggleContentSource == true
-                    if (shownContentSource != null && canToggleContentSource) {
-                        val isFeedContent = shownContentSource == ShownContentSource.FEED
-                        val contentSourceLabel = LocalFeedFlowStrings.current.readerContentSourceFeed
-                        if (readerModeState.readerModeData.url.isNotBlank()) {
-                            TooltipBox(
-                                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                                    positioning = TooltipAnchorPosition.Above,
-                                ),
-                                state = rememberTooltipState(),
-                                tooltip = { PlainTooltip { Text(contentSourceLabel) } },
-                            ) {
-                                FilledIconToggleButton(
-                                    checked = isFeedContent,
-                                    onCheckedChange = { onToggleContentSource() },
-                                    colors = IconButtonDefaults.filledIconToggleButtonColors(
-                                        containerColor = Color.Transparent,
-                                        contentColor = MaterialTheme.colorScheme.onSurface,
-                                        checkedContainerColor = MaterialTheme.colorScheme.primary,
-                                        checkedContentColor = MaterialTheme.colorScheme.onPrimary,
-                                    ),
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.RssFeed,
-                                        contentDescription = contentSourceLabel,
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    if (url != null) {
-                        TooltipBox(
-                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                                positioning = TooltipAnchorPosition.Above,
-                            ),
-                            state = rememberTooltipState(),
-                            tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.menuShare) } },
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    onShareClick(url)
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Share,
-                                    contentDescription = null,
-                                )
-                            }
-                        }
-
-                        TooltipBox(
-                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                                positioning = TooltipAnchorPosition.Above,
-                            ),
-                            state = rememberTooltipState(),
-                            tooltip = {
-                                PlainTooltip {
-                                    Text(
-                                        LocalFeedFlowStrings.current.readerModeArchiveButton,
-                                    )
-                                }
-                            },
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    onArchiveClick(url)
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.LockOpen,
-                                    contentDescription = LocalFeedFlowStrings.current.readerModeArchiveButton,
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                )
-                            }
-                        }
-                    }
-
-                    if (readerModeState is ReaderModeState.Success) {
-                        readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
-                            TooltipBox(
-                                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                                    positioning = TooltipAnchorPosition.Above,
-                                ),
-                                state = rememberTooltipState(),
-                                tooltip = {
-                                    PlainTooltip {
-                                        Text(
-                                            LocalFeedFlowStrings.current.readerModeCommentsButtonContentDescription,
-                                        )
-                                    }
-                                },
-                            ) {
-                                IconButton(
-                                    onClick = {
-                                        onCommentsClick(commentsUrl)
-                                    },
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.Comment,
-                                        contentDescription = null,
-                                    )
-                                }
-                            }
-                        }
-
-                        TooltipBox(
-                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                                positioning = TooltipAnchorPosition.Above,
-                            ),
-                            state = rememberTooltipState(),
-                            tooltip = {
-                                PlainTooltip {
-                                    Text(
-                                        LocalFeedFlowStrings.current.readerModeBrowserButtonContentDescription,
-                                    )
-                                }
-                            },
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    openInBrowser(readerModeState.readerModeData.url)
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Language,
-                                    contentDescription = null,
-                                )
-                            }
-                        }
-
-                        TooltipBox(
-                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                                positioning = TooltipAnchorPosition.Above,
-                            ),
-                            state = rememberTooltipState(),
-                            tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.readerModeTextSettings) } },
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    showMenu = true
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.TextFields,
-                                    contentDescription = null,
-                                )
-                            }
-                        }
-
-                        DropdownMenu(
-                            expanded = showMenu,
-                            onDismissRequest = {
-                                showMenu = false
-                            },
-                            shape = MaterialTheme.shapes.large,
-                        ) {
-                            ReaderTextSettingsSheetContent(
-                                modifier = Modifier.width(readerTextSettingsMenuWidth),
-                                fontSize = fontSize,
-                                onFontSizeChange = onFontSizeChange,
-                                lineHeight = lineHeight,
-                                onLineHeightChange = onLineHeightChange,
-                            )
-                        }
-                    }
-                }
-            }
-        },
-    )
-}
-
-@Composable
-private fun BookmarkButton(
-    isBookmarked: Boolean,
-    onClick: () -> Unit,
-) {
-    val tooltipText = if (isBookmarked) {
-        LocalFeedFlowStrings.current.menuRemoveFromBookmark
-    } else {
-        LocalFeedFlowStrings.current.menuAddToBookmark
-    }
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Above,
-        ),
-        state = rememberTooltipState(),
-        tooltip = { PlainTooltip { Text(tooltipText) } },
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(toolbarHeight)
+            .background(JewelTheme.globalColors.panelBackground)
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        IconButton(
-            onClick = onClick,
-        ) {
-            Icon(
-                imageVector = if (isBookmarked) {
-                    BookmarkOffIcon
+        ReaderNavigationActions(
+            navigateBack = navigateBack,
+            showBackButton = showBackButton,
+            onToggleDetailFullscreen = onToggleDetailFullscreen,
+            isDetailFullscreen = isDetailFullscreen,
+        )
+        Spacer(Modifier.weight(1f))
+        if (readerModeState !is ReaderModeState.Loading) {
+            if (itemId != null) {
+                val description = if (isBookmarked) {
+                    strings.menuRemoveFromBookmark
                 } else {
-                    BookmarkIcon
-                },
-                contentDescription = null,
-            )
+                    strings.menuAddToBookmark
+                }
+                Tooltip(tooltip = { Text(description) }) {
+                    SelectableIconButton(
+                        selected = isBookmarked,
+                        modifier = Modifier.size(readerToolbarActionSize),
+                        onClick = {
+                            isBookmarked = !isBookmarked
+                            onBookmarkClick(FeedItemId(itemId), isBookmarked)
+                        },
+                    ) {
+                        Icon(
+                            painter = rememberVectorPainter(
+                                if (isBookmarked) Icons.Outlined.Bookmark else Icons.Outlined.BookmarkBorder,
+                            ),
+                            contentDescription = description,
+                            tint = JewelTheme.globalColors.text.normal,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                }
+            }
+            if (contentSource != null && canToggleContentSource && readerModeState.getUrl?.isNotBlank() == true) {
+                Tooltip(tooltip = { Text(strings.readerContentSourceFeed) }) {
+                    SelectableIconButton(
+                        selected = contentSource == ShownContentSource.FEED,
+                        modifier = Modifier.size(readerToolbarActionSize),
+                        onClick = onToggleContentSource,
+                    ) {
+                        Icon(
+                            painter = rememberVectorPainter(Icons.Outlined.RssFeed),
+                            contentDescription = strings.readerContentSourceFeed,
+                            tint = JewelTheme.globalColors.text.normal,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                }
+            }
+            if (url != null) {
+                ReaderToolbarAction(Actions.Share, strings.menuShare) { onShareClick(url) }
+                ReaderToolbarAction(FileTypes.Archive, strings.readerModeArchiveButton) { onArchiveClick(url) }
+            }
+            if (readerModeState is ReaderModeState.Success) {
+                readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
+                    ReaderToolbarAction(
+                        Toolwindows.ToolWindowMessages,
+                        strings.readerModeCommentsButtonContentDescription,
+                    ) {
+                        onCommentsClick(commentsUrl)
+                    }
+                }
+                if (url != null) {
+                    ReaderToolbarAction(General.Language, strings.readerModeBrowserButtonContentDescription) {
+                        openInBrowser(url)
+                    }
+                }
+                ReaderToolbarAction(General.Settings, strings.readerModeTextSettings) {
+                    showTextSettings = true
+                }
+            }
         }
     }
+
+    if (showTextSettings) {
+        ReaderTextSettingsDialog(
+            fontSize = fontSize,
+            lineHeight = lineHeight,
+            onFontSizeChange = onFontSizeChange,
+            onLineHeightChange = onLineHeightChange,
+            onDismiss = { showTextSettings = false },
+        )
+    }
 }
 
 @Composable
-private fun ReaderModeFallbackContent(
-    modifier: Modifier = Modifier,
-    onOpenInBrowser: (() -> Unit)?,
+private fun ReaderNavigationActions(
+    navigateBack: () -> Unit,
+    showBackButton: Boolean,
+    onToggleDetailFullscreen: (() -> Unit)?,
+    isDetailFullscreen: Boolean,
 ) {
     val strings = LocalFeedFlowStrings.current
-
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = Icons.Default.Language,
-            contentDescription = null,
-            modifier = Modifier.padding(bottom = Spacing.regular),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+    if (onToggleDetailFullscreen != null) {
+        ReaderToolbarAction(
+            iconKey = General.Close,
+            description = strings.closeButtonContentDescription,
+            onClick = navigateBack,
         )
-
-        // No browser action means the item carries no url at all: nothing was parsed and there is
-        // no page to send the reader to, so the parsing-failure copy would be misleading.
-        val hasUrl = onOpenInBrowser != null
-
-        Text(
-            text = if (hasUrl) strings.readerModeFallbackTitle else strings.readerModeNoContentTitle,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = Spacing.small),
+        ReaderToolbarAction(
+            iconKey = if (isDetailFullscreen) Actions.Back else General.OpenInToolWindow,
+            description = if (isDetailFullscreen) {
+                strings.desktopRestoreReaderLayout
+            } else {
+                strings.desktopExpandReader
+            },
+            onClick = onToggleDetailFullscreen,
         )
-
-        Text(
-            text = if (hasUrl) strings.readerModeFallbackMessage else strings.readerModeNoContentMessage,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .padding(start = Spacing.large, end = Spacing.large)
-                .padding(bottom = Spacing.regular),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+    } else if (showBackButton) {
+        ReaderToolbarAction(
+            iconKey = Actions.Back,
+            description = strings.desktopSearchBackButton,
+            onClick = navigateBack,
         )
+    }
+}
 
-        if (onOpenInBrowser != null) {
-            androidx.compose.material3.Button(
-                onClick = onOpenInBrowser,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Language,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = Spacing.small),
-                )
-                Text(strings.readerModeFallbackOpenBrowserButton)
+@Composable
+private fun ReaderToolbarAction(
+    iconKey: IconKey,
+    description: String,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+) {
+    Tooltip(tooltip = { Text(description) }) {
+        IconButton(onClick = onClick, enabled = enabled, modifier = Modifier.size(readerToolbarActionSize)) {
+            val vector = when (iconKey) {
+                Actions.Back -> Icons.AutoMirrored.Outlined.ArrowBack
+                Actions.Forward -> Icons.AutoMirrored.Outlined.ArrowForward
+                Actions.Share -> Icons.Outlined.Share
+                FileTypes.Archive -> Icons.Outlined.LockOpen
+                Toolwindows.ToolWindowMessages -> Icons.AutoMirrored.Outlined.Comment
+                General.Language -> Icons.Outlined.Language
+                General.Settings -> Icons.Outlined.TextFields
+                General.Close -> Icons.Outlined.Close
+                else -> Icons.Outlined.Fullscreen
             }
+            Icon(
+                painter = rememberVectorPainter(vector),
+                contentDescription = description,
+                tint = if (enabled) JewelTheme.globalColors.text.normal else JewelTheme.globalColors.text.disabled,
+                modifier = Modifier.size(20.dp),
+            )
         }
     }
 }

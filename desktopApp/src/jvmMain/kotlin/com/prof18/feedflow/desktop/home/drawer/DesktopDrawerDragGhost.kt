@@ -1,64 +1,57 @@
 package com.prof18.feedflow.desktop.home.drawer
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
-import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import kotlin.math.roundToInt
 
 private const val DragGhostPointerOffsetDp = 12
 
 @Composable
-internal fun DragGhost(
-    dragState: DesktopDrawerDragState,
-    drawerCoordinates: LayoutCoordinates?,
-) {
+internal fun DragGhost(dragState: DesktopDrawerDragState, drawerCoordinates: LayoutCoordinates?) {
     val payload = dragState.dragPayload ?: return
-    if (payload is DrawerDragPayload.FeedSources && payload.feedSources.isEmpty()) {
-        return
-    }
-    val containerCoordinates = drawerCoordinates ?: return
-    val offset = dragState.dragOffsetInContainer(containerCoordinates) ?: return
-    val density = LocalDensity.current
-    val pointerOffsetPx = with(density) { DragGhostPointerOffsetDp.dp.toPx() }
-    val offsetX = (offset.x + pointerOffsetPx).roundToInt()
-    val offsetY = (offset.y + pointerOffsetPx).roundToInt()
-
-    Surface(
-        modifier = Modifier
-            .zIndex(1f)
-            .offset { IntOffset(offsetX, offsetY) },
-        shape = MaterialTheme.shapes.medium,
-        tonalElevation = 4.dp,
-        shadowElevation = 8.dp,
+    if (payload is DrawerDragPayload.FeedSources && payload.feedSources.isEmpty()) return
+    val coordinates = drawerCoordinates ?: return
+    val offset = dragState.dragOffsetInContainer(coordinates) ?: return
+    val pointerOffset = with(LocalDensity.current) { DragGhostPointerOffsetDp.dp.toPx() }
+    Row(
+        modifier = Modifier.zIndex(
+            1f,
+        ).offset { IntOffset((offset.x + pointerOffset).roundToInt(), (offset.y + pointerOffset).roundToInt()) }
+            .clip(RoundedCornerShape(9.dp)).background(JewelTheme.globalColors.panelBackground)
+            .padding(horizontal = DesktopDesignTokens.spaceSection, vertical = DesktopDesignTokens.spaceMedium),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         when (payload) {
             is DrawerDragPayload.FeedSources -> {
-                val feedSource = payload.feedSources.first()
-                FeedSourceDragGhostContent(
-                    feedSource = feedSource,
-                    dragCount = dragState.dragCount(),
-                )
+                val source = payload.feedSources.first()
+                FeedSourceDragGhostContent(source, dragState.dragCount())
             }
             is DrawerDragPayload.Category -> CategoryDragGhostContent(payload.title)
         }
@@ -66,73 +59,39 @@ internal fun DragGhost(
 }
 
 @Composable
-private fun FeedSourceDragGhostContent(
-    feedSource: FeedSource,
-    dragCount: Int,
-) {
-    Row(
-        modifier = Modifier
-            .padding(horizontal = Spacing.regular, vertical = Spacing.small),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        val imageUrl = feedSource.logoUrl
-        if (imageUrl != null) {
-            FeedSourceLogoImage(
-                size = 20.dp,
-                imageUrl = imageUrl,
+private fun FeedSourceDragGhostContent(feedSource: FeedSource, dragCount: Int) {
+    val url = feedSource.logoUrl
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        if (url != null) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalPlatformContext.current).data(url).build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(20.dp).clip(RoundedCornerShape(4.dp)),
             )
         } else {
-            Icon(
-                imageVector = Icons.Default.Category,
-                contentDescription = null,
-            )
+            Icon(AllIconsKeys.Nodes.Bookmark, null)
         }
-
-        Spacer(Modifier.width(Spacing.small))
-
-        Text(
-            text = feedSource.title,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-
+        Spacer(Modifier.width(DesktopDesignTokens.spaceMedium))
+        Text(feedSource.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
         if (dragCount > 1) {
-            Spacer(Modifier.width(Spacing.small))
-
-            Surface(
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-            ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = Spacing.small, vertical = 2.dp),
-                    text = dragCount.toString(),
-                    style = MaterialTheme.typography.labelSmall,
-                )
-            }
+            Spacer(Modifier.width(DesktopDesignTokens.spaceMedium))
+            Text(
+                dragCount.toString(),
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(JewelTheme.globalColors.outlines.focused.copy(alpha = 0.16f))
+                    .padding(horizontal = DesktopDesignTokens.spaceMedium, vertical = 2.dp),
+            )
         }
     }
 }
 
 @Composable
 private fun CategoryDragGhostContent(title: String) {
-    Row(
-        modifier = Modifier
-            .padding(horizontal = Spacing.regular, vertical = Spacing.small),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = Icons.Default.Category,
-            contentDescription = null,
-        )
-
-        Spacer(Modifier.width(Spacing.small))
-
-        Text(
-            text = title,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(AllIconsKeys.Nodes.Folder, null)
+        Spacer(Modifier.width(DesktopDesignTokens.spaceMedium))
+        Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }

@@ -19,6 +19,7 @@ import com.prof18.feedflow.shared.utils.executeWithRetry
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,8 +63,12 @@ internal class FeedStateRepository(
     private var isLoadingMore: Boolean = false
 
     suspend fun getFeeds() {
+        reloadFeeds()
+    }
+
+    suspend fun reloadFeeds(): Boolean {
         pendingNewArticlesMutableState.update { 0 }
-        try {
+        return try {
             val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
 
             val feeds = executeWithRetry {
@@ -88,9 +93,13 @@ internal class FeedStateRepository(
                     )
                 }.toImmutableList()
             }
+            true
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Throwable) {
             logger.d(e) { "Something wrong while getting data from Database" }
             errorMutableState.emit(DatabaseError(DatabaseErrorCode.FeedRetrievalFailed))
+            false
         }
     }
 

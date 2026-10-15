@@ -23,17 +23,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import com.prof18.feedflow.android.ui.components.AddCategoryButton
+import com.prof18.feedflow.android.ui.components.CategoryFlowRow
+import com.prof18.feedflow.android.ui.components.CategoryLoadingOverlay
+import com.prof18.feedflow.android.ui.components.EditCategoryDialogs
+import com.prof18.feedflow.android.ui.feed.FeedFormE2eIds
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
-import com.prof18.feedflow.shared.ui.components.AddCategoryButton
-import com.prof18.feedflow.shared.ui.components.CategoryFlowRow
-import com.prof18.feedflow.shared.ui.components.CategoryLoadingOverlay
-import com.prof18.feedflow.shared.ui.components.EditCategoryDialogs
-import com.prof18.feedflow.shared.ui.feed.FeedFormE2eIds
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun EditCategorySheet(

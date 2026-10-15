@@ -15,6 +15,7 @@ import com.prof18.feedflow.android.audio.AndroidSpeechAudioGenerator
 import com.prof18.feedflow.android.audio.SpeechAudioGenerating
 import com.prof18.feedflow.android.billing.RevenueCatSupport
 import com.prof18.feedflow.android.notifications.AndroidNotifier
+import com.prof18.feedflow.android.ui.utils.coilImageLoader
 import com.prof18.feedflow.android.widget.FeedFlowWidget
 import com.prof18.feedflow.android.widget.WidgetInstanceSettingsViewModel
 import com.prof18.feedflow.core.utils.AppConfig
@@ -34,7 +35,6 @@ import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.presentation.WidgetRefreshState
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
-import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext

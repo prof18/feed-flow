@@ -23,11 +23,15 @@ import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.koin.test.get
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -732,6 +736,42 @@ class SearchViewModelTest : KoinTestBase() {
                 )
             },
         )
+    }
+
+    @Test
+    fun `query change cancels queued bulk actions from the previous search`() = runTest(testDispatcher) {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        try {
+            listOf(true, false).forEach { markAbove ->
+                val viewModel = getViewModel()
+                val databaseHelper = getDatabaseHelper()
+                val source = createFeedSource(id = "queued-$markAbove", title = "Queued source")
+                insertFeedSources(databaseHelper, source)
+                val item = createFeedItem(
+                    id = "queued-item-$markAbove",
+                    title = "Previous query",
+                    feedSource = source,
+                    pubDateMillis = 1000,
+                )
+                databaseHelper.insertFeedItems(listOf(item), lastSyncTimestamp = 0)
+                viewModel.updateSearchQuery("Previous")
+                advanceTimeBy(500.milliseconds)
+                runCurrent()
+                assertIs<SearchState.DataFound>(viewModel.searchState.value)
+                if (markAbove) viewModel.markAllAboveAsRead(item.id) else viewModel.markAllBelowAsRead(item.id)
+                viewModel.updateSearchQuery("Next")
+                runCurrent()
+                val stored = databaseHelper.getFeedItems(
+                    feedFilter = FeedFilter.Timeline,
+                    pageSize = 10,
+                    showReadItems = true,
+                    sortOrder = FeedOrder.NEWEST_FIRST,
+                ).single { it.url_hash == item.id }
+                assertEquals(false, stored.is_read)
+            }
+        } finally {
+            Dispatchers.setMain(testDispatcher)
+        }
     }
 
     private fun createFeedSource(

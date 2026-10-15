@@ -68,6 +68,7 @@ import com.prof18.feedflow.android.audio.AudioPlaybackState
 import com.prof18.feedflow.android.audio.isPlayingItem
 import com.prof18.feedflow.android.audio.readerAudioDockContent
 import com.prof18.feedflow.android.openShareSheet
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
@@ -78,7 +79,6 @@ import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.domain.readerCodeBlockColors
 import com.prof18.feedflow.shared.domain.readerFontSizeJs
 import com.prof18.feedflow.shared.domain.readerLineHeightJs
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.Dispatchers
@@ -134,11 +134,12 @@ internal fun ReaderModeScreen(
             topBar = {
                 ReaderModeToolbar(
                     navigateBack = {
-                        if (readerModeState is ReaderModeState.ContentNotAvailable && navigator.canGoBack) {
-                            navigator.navigateBack()
-                        } else {
-                            navigateBack()
-                        }
+                        navigateReaderBack(
+                            state = readerModeState,
+                            canGoBack = navigator.canGoBack,
+                            navigateHistory = navigator::navigateBack,
+                            leaveReader = navigateBack,
+                        )
                     },
                     isDetailFullscreen = isDetailFullscreen,
                     onToggleDetailFullscreen = onToggleDetailFullscreen,

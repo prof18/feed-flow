@@ -14,9 +14,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.accounts.dropbox.DropboxSyncActivity
 import com.prof18.feedflow.android.accounts.googledrive.GoogleDriveSyncActivity
+import com.prof18.feedflow.android.ui.accounts.AccountsContent
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
-import com.prof18.feedflow.shared.ui.accounts.AccountsContent
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.toPersistentList
 import org.koin.compose.viewmodel.koinViewModel
 

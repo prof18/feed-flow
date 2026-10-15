@@ -20,7 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.prof18.feedflow.android.billing.RevenueCatSupportPaywall
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun SupportPaywallScreen(

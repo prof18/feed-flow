@@ -19,14 +19,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.android.base.BaseThemeActivity
+import com.prof18.feedflow.android.ui.accounts.AccountE2eIds
+import com.prof18.feedflow.android.ui.accounts.dropbox.DropboxSyncContent
+import com.prof18.feedflow.android.ui.settings.SettingItem
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.DropboxSynMessages
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.startDropboxAuth
-import com.prof18.feedflow.shared.ui.accounts.AccountE2eIds
-import com.prof18.feedflow.shared.ui.accounts.dropbox.DropboxSyncContent
-import com.prof18.feedflow.shared.ui.settings.SettingItem
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

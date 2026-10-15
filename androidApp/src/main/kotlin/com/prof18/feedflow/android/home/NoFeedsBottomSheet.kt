@@ -8,11 +8,11 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.prof18.feedflow.shared.ui.home.components.NoFeedsInfoContent
-import com.prof18.feedflow.shared.ui.preview.PreviewPhone
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import md_theme_dark_background
-import md_theme_light_background
+import com.prof18.feedflow.android.ui.home.components.NoFeedsInfoContent
+import com.prof18.feedflow.android.ui.preview.PreviewPhone
+import com.prof18.feedflow.android.ui.style.md_theme_dark_background
+import com.prof18.feedflow.android.ui.style.md_theme_light_background
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 
 @Composable
 internal fun NoFeedsBottomSheet(

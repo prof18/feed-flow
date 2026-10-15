@@ -60,15 +60,15 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.components.rememberConfirmedBookmarkAction
+import com.prof18.feedflow.android.ui.icons.BookmarkIcon
+import com.prof18.feedflow.android.ui.icons.BookmarkOffIcon
+import com.prof18.feedflow.android.ui.readermode.ReaderTextSettingsSheetContent
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.exposeTestTagsAsResourceIds
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.i18n.FeedFlowStrings
-import com.prof18.feedflow.shared.ui.icons.BookmarkIcon
-import com.prof18.feedflow.shared.ui.icons.BookmarkOffIcon
-import com.prof18.feedflow.shared.ui.readermode.ReaderTextSettingsSheetContent
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.exposeTestTagsAsResourceIds
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 

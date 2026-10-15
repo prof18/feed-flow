@@ -43,16 +43,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.home.drawer.DrawerE2eIds
+import com.prof18.feedflow.android.ui.icons.CloseSidebar
+import com.prof18.feedflow.android.ui.icons.CloseSidebarReversed
+import com.prof18.feedflow.android.ui.icons.OpenSidebar
+import com.prof18.feedflow.android.ui.icons.OpenSidebarReversed
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
 import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
-import com.prof18.feedflow.shared.ui.home.HomeDisplayState
-import com.prof18.feedflow.shared.ui.icons.CloseSidebar
-import com.prof18.feedflow.shared.ui.icons.CloseSidebarReversed
-import com.prof18.feedflow.shared.ui.icons.OpenSidebar
-import com.prof18.feedflow.shared.ui.icons.OpenSidebarReversed
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,26 +18,17 @@ import com.composeunstyled.ScrollbarState
 import com.composeunstyled.Thumb
 import com.composeunstyled.ThumbVisibility
 import com.composeunstyled.UnstyledVerticalScrollbar
-import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
+import org.jetbrains.jewel.foundation.theme.JewelTheme
 
 @Composable
 internal fun scrollbarStyle(): ScrollbarStyle {
-    val isInDarkTheme = rememberDesktopDarkTheme()
     return ScrollbarStyle(
         minimalHeight = 16.dp,
         thickness = 8.dp,
         shape = RoundedCornerShape(4.dp),
         hoverDurationMillis = 300,
-        unhoverColor = if (isInDarkTheme) {
-            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-        } else {
-            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-        },
-        hoverColor = if (isInDarkTheme) {
-            MaterialTheme.colorScheme.surface.copy(alpha = 0.50f)
-        } else {
-            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.50f)
-        },
+        unhoverColor = JewelTheme.globalColors.text.info,
+        hoverColor = JewelTheme.globalColors.text.normal,
     )
 }
 
@@ -60,7 +50,7 @@ fun BoxScope.FeedFlowVerticalScrollbar(
                 .padding(2.dp)
                 .height(16.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)),
+                .background(JewelTheme.globalColors.text.info),
             thumbVisibility = ThumbVisibility.AlwaysVisible,
         )
     }

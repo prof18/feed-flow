@@ -25,6 +25,7 @@ struct ContentView: View {
         Deps.shared.getFeedRefreshVerificationViewModel()
     )
 
+    @State private var notificationLinks = NotificationDeepLinkStore.shared
     @State private var hasTriggeredLaunch = false
     @State private var openingAudioEpisode = false
     @State private var isAppForeground = false
@@ -95,10 +96,12 @@ struct ContentView: View {
         .onAppear {
             let savedThemeMode = vmStoreOwner.instance.getCurrentThemeMode()
             appState.updateTheme(savedThemeMode)
+            consumePendingNotificationLinkIfActive()
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
             case .active:
+                consumePendingNotificationLinkIfActive()
                 if !hasTriggeredLaunch {
                     hasTriggeredLaunch = true
                     vmStoreOwner.instance.onAppLaunch()
@@ -157,11 +160,8 @@ struct ContentView: View {
                 }
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { notification in
-            guard let urlString = notification.userInfo?["url"] as? String,
-                  let url = URL(string: urlString),
-                  url.scheme == "feedflow" else { return }
-            handleFeedFlowNotificationURL(url)
+        .onChange(of: notificationLinks.pendingURL) {
+            consumePendingNotificationLinkIfActive()
         }
         #if DEBUG
             .overlay(alignment: .bottom) {
@@ -215,11 +215,21 @@ private extension ContentView {
         }
     }
 
+    private func consumePendingNotificationLinkIfActive() {
+        guard scenePhase == .active, let url = notificationLinks.consume() else { return }
+        handleFeedFlowNotificationURL(url)
+    }
+
     private func handleFeedFlowNotificationURL(_ url: URL) {
         let host = url.host ?? ""
         let pathComponents = url.pathComponents.filter { $0 != "/" }
 
         switch host {
+        case "feed":
+            if let itemId = pathComponents.first {
+                showFeedScreen()
+                appState.navigate(route: CommonViewRoute.deepLinkFeed(itemId))
+            }
         case "feedsourcefilter":
             if let feedSourceId = pathComponents.first {
                 showFeedScreen()

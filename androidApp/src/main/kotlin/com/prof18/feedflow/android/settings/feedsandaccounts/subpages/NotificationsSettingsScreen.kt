@@ -236,6 +236,15 @@ private fun NotificationSettingsScreenContent(
                         onModeSelected = onNotificationModeSelected,
                     )
 
+                    if (notificationState.notificationMode == NotificationMode.ARTICLE) {
+                        Text(
+                            text = strings.settingsNotificationModeArticleDesc,
+                            modifier = Modifier.padding(horizontal = Spacing.regular),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(Spacing.xsmall))
 
                     NotificationToggleRow(
@@ -398,6 +407,10 @@ private fun NotificationModeSelector(
             SettingDropdownOption(
                 NotificationMode.GROUPED,
                 strings.settingsNotificationModeGrouped,
+            ),
+            SettingDropdownOption(
+                NotificationMode.ARTICLE,
+                strings.settingsNotificationModeArticle,
             ),
         ),
         onOptionSelected = onModeSelected,

@@ -87,17 +87,32 @@ struct FeedFlowApp: App {
                 if !Task.isCancelled {
                     let authStatus = await UNUserNotificationCenter.current().notificationSettings()
                     if authStatus.authorizationStatus == .authorized || authStatus.authorizationStatus == .provisional {
-                        do {
-                            let itemsToNotify = try await repo.getFeedSourceToNotify()
-                            if !itemsToNotify.isEmpty {
-                                let notifier = Deps.shared.getNotifier()
-                                let hasShown = notifier.showNewArticlesNotification(feedSourcesToNotify: itemsToNotify)
-                                if hasShown {
-                                    try await repo.markItemsAsNotified()
+                        let mode = Deps.shared.getSettingsRepository().getNotificationMode()
+                        if mode == .article {
+                            do {
+                                let articles = Deps.shared.getArticleNotificationRepository()
+                                let batch = try await articles.prepareBatch()
+                                let notifier = IOSArticleNotifier(strings: feedFlowStrings)
+                                try await notifier.showArticleNotifications(batch: batch) { ids in
+                                    try await articles.acknowledge(ids: ids)
                                 }
+                            } catch {
+                                finish(success: false)
+                                return
                             }
-                        } catch {
-                            // Best effort — items will be picked up next run
+                        } else {
+                            do {
+                                let itemsToNotify = try await repo.getFeedSourceToNotify()
+                                if !itemsToNotify.isEmpty {
+                                    let notifier = Deps.shared.getNotifier()
+                                    let hasShown = notifier.showNewArticlesNotification(feedSourcesToNotify: itemsToNotify)
+                                    if hasShown {
+                                        try await repo.markItemsAsNotified()
+                                    }
+                                }
+                            } catch {
+                                // Best effort — items will be picked up next run
+                            }
                         }
                     }
                 }
@@ -294,14 +309,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         let userInfo = response.notification.request.content.userInfo
-        if let urlString = userInfo["url"] as? String {
-            NotificationCenter.default.post(
-                name: .didReceiveNotificationDeepLink,
-                object: nil,
-                userInfo: ["url": urlString]
-            )
+        let url = (userInfo["url"] as? String).flatMap(URL.init(string:))
+        Task { @MainActor in
+            if let url { NotificationDeepLinkStore.shared.enqueue(url) }
+            completionHandler()
         }
-        completionHandler()
     }
 
     func userNotificationCenter(

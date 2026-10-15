@@ -495,6 +495,31 @@ targets:
         INFOPLIST_PREFIX_HEADER: ""
         TEST_HOST: ""
 
+  NotificationTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/Notifications
+      - path: Source/Notifications/IOSArticleNotifier.swift
+      - path: Source/Notifications/NotificationImageAttachmentLoader.swift
+      - path: Source/Notifications/NotificationDeepLinkStore.swift
+      - path: Source/Utils/CustomNotification.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.NotificationTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_PREPROCESS: "NO"
+        INFOPLIST_PREFIX_HEADER: ""
+        TEST_HOST: ""
+        OTHER_LDFLAGS: ["$(inherited)", "-framework", FeedFlowKit, "-lsqlite3"]
+    dependencies:
+      - target: FeedFlowKitBuilder
+        embed: false
+        link: false
+      - package: Nuke
+      - package: Firebase
+        product: FirebaseCrashlytics
+
   CloudSyncTests:
     type: bundle.unit-test
     platform: iOS
@@ -528,6 +553,16 @@ targets:
         product: GoogleAPIClientForREST_Drive
 
 schemes:
+  NotificationTests:
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        NotificationTests: all
+    test:
+      config: Debug
+      targets:
+        - NotificationTests
   WidgetTests:
     build:
       targets:

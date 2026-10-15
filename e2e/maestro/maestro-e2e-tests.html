@@ -241,6 +241,7 @@
   <header>
     <h1>FeedFlow Maestro E2E Tests</h1>
     <p class="lede">Renderable list of user-facing tasks covered by automated Maestro flows. The Markdown catalogue remains the source for known limitations and run instructions.</p>
+    <p class="lede">Notification settings flows cover selection and persistence. Deep-link flows exercise destination routing only; shared/native tests cover notification payloads and acknowledgement. OS notification taps, shade/Notification Center presentation, and background scheduling remain for human device validation and are not certified by these flows.</p>
   </header>
 
   <main>
@@ -493,7 +494,7 @@
       "regression/112": "Per-feed link-opening override against global external-browser preference.",
       "regression/113": "Sync/storage settings including refresh, parsing errors, auto-delete, and clear-downloaded.",
       "regression/114": "Appearance settings for theme, unread count, black theme, and reduce motion.",
-      "regression/115": "Seeded notifications profile, per-feed toggle, and grouping picker.",
+      "regression/115": "Seeded notification defaults, per-article description, navigation and relaunch persistence, grouped-mode fallback, per-feed toggle, and permission state.",
       "regression/116": "One-account sync constraint, disabled providers, and disconnect unlock.",
       "regression/117": "GReader provider form validation across FreshRSS, Miniflux, BazQux, and Feedbin.",
       "regression/118": "Linked cloud states where available; F-Droid excludes cloud providers and checks connected Miniflux.",
@@ -504,8 +505,8 @@
       "regression/123": "Advanced sync/storage confirmations, Wi-Fi/charging restrictions, and image cache clearing.",
       "regression/124": "Home overflow actions: sort/filter, show read, and old-article cleanup.",
       "regression/125": "About and Support navigation plus open-source licenses.",
-      "regression/126": "Deep-link routing to article reader, feed-source filters, and category filters.",
-      "regression/127": "Notification enable-all, per-feed toggle, grouping, and platform restrictions.",
+      "regression/126": "Deep-link destination routing to article reader, feed-source filters, and category filters; does not exercise notification taps.",
+      "regression/127": "Per-article description and grouping persistence across navigation/relaunch, all-combined fallback, enable-all and per-feed mutations, and platform restrictions.",
       "regression/128": "Notifications empty/no-feeds state.",
       "regression/129": "Feed settings secondary options from article context menu.",
       "regression/130": "YouTube channel Hide Shorts defaults off, toggles on, and resets across URL changes and reopening; category selection and notifications remain available.",

@@ -39,6 +39,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerIosDesktop
 import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
+import com.prof18.feedflow.shared.domain.notification.ArticleNotificationRepository
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerIos
@@ -354,6 +355,7 @@ object Deps : KoinComponent {
     fun getFeedFlowStrings() = getKoin().get<FeedFlowStrings>()
     fun getStrings() = getKoin().get<FeedFlowStrings>()
     fun getSettingsRepository() = getKoin().get<SettingsRepository>()
+    fun getArticleNotificationRepository() = getKoin().get<ArticleNotificationRepository>()
     fun getAudioPlaybackPositionRepository() = getKoin().get<AudioPlaybackPositionRepository>()
     fun getSearchViewModel() = getKoin().get<SearchViewModel>()
     fun getAccountsViewModel() = getKoin().get<AccountsViewModel>()

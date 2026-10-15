@@ -10,6 +10,7 @@ Architecture, implementation, and testing guides for FeedFlow:
 - [Desktop UI contract](DESKTOP_UI.md): Jewel typography, density, interaction, windows and native validation requirements.
 - [Timeline pagination](PAGINATION.md): keyset pagination and its interaction with changing read status.
 - [Podcast audio](PODCAST_AUDIO.md): enclosure detection, local storage, reader banners, platform handoff, and verification limits.
+- [Article notifications](NOTIFICATIONS.md): modes, per-article payloads, image limits, acknowledgement, and verification boundaries.
 - [Reader text to speech](READER_TTS.md): extraction, playback ownership, lifecycle limits, and validation.
 - [Adaptive iOS layout](IOS_ADAPTIVE_LAYOUT.md): Duo folding, window navigation, native toolbars, and validation limits.
 - [Cloudflare recovery](CLOUDFLARE_FEED_RECOVERY.md): verification flow, saved website sessions, reader integration, and regression checks.

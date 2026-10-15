@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -30,6 +31,7 @@ internal fun FeedItemImage(
     width: Dp,
     modifier: Modifier = Modifier,
     imageAlpha: Float = 1f,
+    colorFilter: ColorFilter? = null,
 ) {
     if (LocalInspectionMode.current) {
         Box(
@@ -47,6 +49,7 @@ internal fun FeedItemImage(
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
+            colorFilter = colorFilter,
             modifier = modifier
                 .size(width)
                 .alpha(imageAlpha)
@@ -61,6 +64,7 @@ internal fun FeedItemHeroImage(
     modifier: Modifier = Modifier,
     aspectRatio: Float = HERO_IMAGE_ASPECT_RATIO_WIDTH / HERO_IMAGE_ASPECT_RATIO_HEIGHT,
     imageAlpha: Float = 1f,
+    colorFilter: ColorFilter? = null,
 ) {
     val imageModifier = modifier
         .fillMaxWidth()
@@ -79,6 +83,7 @@ internal fun FeedItemHeroImage(
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
+            colorFilter = colorFilter,
             modifier = imageModifier,
         )
     }

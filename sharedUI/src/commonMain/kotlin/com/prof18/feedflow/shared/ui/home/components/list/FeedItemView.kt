@@ -182,15 +182,7 @@ internal fun FeedItemView(
                         text = dateString,
                         fontSize = feedFontSize.feedMetaFontSize.sp,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(
-                            alpha = if (feedItem.isRead &&
-                                currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
-                            ) {
-                                0.6f
-                            } else {
-                                1f
-                            },
-                        ),
+                        color = feedItem.textColor(currentFeedFilter),
                     )
                 }
             }

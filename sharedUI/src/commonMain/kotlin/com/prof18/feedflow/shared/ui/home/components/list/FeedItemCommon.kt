@@ -38,8 +38,6 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 private val ImageCardUnreadDotSize = 9.dp
-private const val ReadTextAlpha = 0.6f
-private const val ReadImageAlpha = 0.76f
 
 @Composable
 internal fun FeedSourceAndUnreadDotRow(
@@ -77,15 +75,7 @@ internal fun FeedSourceAndUnreadDotRow(
                 text = feedItem.feedSource.title,
                 fontSize = feedFontSize.feedMetaFontSize.sp,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = if (feedItem.isRead &&
-                        currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
-                    ) {
-                        0.6f
-                    } else {
-                        1f
-                    },
-                ),
+                color = feedItem.textColor(currentFeedFilter),
             )
         } else {
             Spacer(modifier = Modifier.weight(1f))
@@ -134,15 +124,7 @@ internal fun TitleSubtitleAndImageRow(
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,
                     lineHeight = (feedFontSize.feedTitleFontSize + 4).sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = if (feedItem.isRead &&
-                            currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
-                        ) {
-                            0.6f
-                        } else {
-                            1f
-                        },
-                    ),
+                    color = feedItem.textColor(currentFeedFilter),
                 )
             }
 
@@ -161,15 +143,7 @@ internal fun TitleSubtitleAndImageRow(
                     fontSize = feedFontSize.feedDescFontSize.sp,
                     lineHeight = (feedFontSize.feedDescFontSize + 6).sp,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = if (feedItem.isRead &&
-                            currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
-                        ) {
-                            0.6f
-                        } else {
-                            1f
-                        },
-                    ),
+                    color = feedItem.textColor(currentFeedFilter),
                 )
             }
         }
@@ -182,6 +156,7 @@ internal fun TitleSubtitleAndImageRow(
                 url = url,
                 width = 96.dp,
                 imageAlpha = feedItem.imageAlpha(currentFeedFilter),
+                colorFilter = feedItem.imageColorFilter(currentFeedFilter),
             )
         }
     }
@@ -210,6 +185,7 @@ internal fun FeedItemImageCardContent(
                 url = url,
                 aspectRatio = heroImageAspectRatio,
                 imageAlpha = feedItem.imageAlpha(currentFeedFilter),
+                colorFilter = feedItem.imageColorFilter(currentFeedFilter),
             )
         }
 
@@ -239,9 +215,7 @@ internal fun FeedItemImageCardContent(
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,
                     lineHeight = (feedFontSize.feedTitleFontSize + 4).sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = feedItem.readAlpha(currentFeedFilter),
-                    ),
+                    color = feedItem.textColor(currentFeedFilter),
                 )
             }
 
@@ -254,8 +228,9 @@ internal fun FeedItemImageCardContent(
                     fontSize = feedFontSize.feedDescFontSize.sp,
                     lineHeight = (feedFontSize.feedDescFontSize + 6).sp,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                        alpha = feedItem.readAlpha(currentFeedFilter),
+                    color = feedItem.textColor(
+                        currentFeedFilter = currentFeedFilter,
+                        unreadColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     ),
                 )
             }
@@ -266,9 +241,7 @@ internal fun FeedItemImageCardContent(
                     text = dateString,
                     fontSize = feedFontSize.feedMetaFontSize.sp,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = feedItem.readAlpha(currentFeedFilter),
-                    ),
+                    color = feedItem.textColor(currentFeedFilter),
                 )
             }
         }
@@ -314,8 +287,9 @@ internal fun FeedItemCardSourceRow(
                 fontSize = feedFontSize.feedMetaFontSize.sp,
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                    alpha = feedItem.readAlpha(currentFeedFilter),
+                color = feedItem.textColor(
+                    currentFeedFilter = currentFeedFilter,
+                    unreadColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 ),
             )
         } else {
@@ -373,20 +347,6 @@ private fun FeedSourceLogo(
         )
     }
 }
-
-private fun FeedItem.readAlpha(currentFeedFilter: FeedFilter): Float =
-    if (isRead && currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks) {
-        ReadTextAlpha
-    } else {
-        1f
-    }
-
-private fun FeedItem.imageAlpha(currentFeedFilter: FeedFilter): Float =
-    if (isRead && currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks) {
-        ReadImageAlpha
-    } else {
-        1f
-    }
 
 @Composable
 private fun UnreadDot(

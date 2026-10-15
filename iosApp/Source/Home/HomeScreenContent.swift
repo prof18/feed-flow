@@ -18,6 +18,8 @@ struct HomeContent: View {
     private var browserSelector
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass
+    @Environment(\.verticalSizeClass)
+    var verticalSizeClass
     @Environment(\.dynamicTypeSize)
     var dynamicTypeSize
 
@@ -70,11 +72,19 @@ struct HomeContent: View {
     let onSettingsDone: () -> Void
 
     var isCompactPhone: Bool {
-        horizontalSizeClass == .compact && UIDevice.current.userInterfaceIdiom == .phone
+        horizontalSizeClass == .compact
     }
 
     var shouldUseSystemNavigationTitle: Bool {
-        isiOS26OrLater() && !isCompactPhone
+        isiOS26OrLater()
+    }
+
+    func showDrawer() {
+        if isCompactPhone {
+            dismiss()
+        } else {
+            openDrawer()
+        }
     }
 
     var body: some View {
@@ -169,7 +179,7 @@ private extension HomeContent {
             onBackToTimelineClick: onBackToTimelineClick,
             onNavigateToNextFeed: onNavigateToNextFeed,
             onMarkAllAsReadClick: onMarkAllReadClick,
-            openDrawer: openDrawer,
+            openDrawer: showDrawer,
             onScrollPositionChanged: { shouldShow in
                 guard showScrollToTop != shouldShow else { return }
                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -193,6 +203,7 @@ private extension HomeContent {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isCompactPhone)
+            .toolbar(removing: isCompactPhone ? .sidebarToggle : nil)
             .navigationTitle(
                 shouldUseSystemNavigationTitle
                     ? getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount)
@@ -200,7 +211,11 @@ private extension HomeContent {
             )
             .toolbar {
                 if isCompactPhone {
-                    makeCompactPhoneToolbarContent(proxy: proxy)
+                    if #available(iOS 26.0, *) {
+                        makeAdaptiveCompactToolbarContent(proxy: proxy)
+                    } else {
+                        makeCompactPhoneToolbarContent(proxy: proxy)
+                    }
                 } else if isiOS26OrLater() {
                     makeIOS26ToolbarContent(proxy: proxy)
                 } else {

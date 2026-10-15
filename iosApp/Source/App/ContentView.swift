@@ -13,8 +13,8 @@ struct ContentView: View {
     private var openURL
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass: UserInterfaceSizeClass?
+    @Environment(\.requestReview)
+    private var requestReview
 
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
     @StateObject private var reviewVmStoreOwner = VMStoreOwner<ReviewViewModel>(Deps.shared.getReviewViewModel())
@@ -38,35 +38,15 @@ struct ContentView: View {
     @State private var pendingNotificationSelection: NotificationSelectionTarget?
 
     var body: some View {
-        @Bindable var appState = appState
-        let effectiveSizeClass = appState.sizeClass ?? horizontalSizeClass
-
-        Group {
-            if effectiveSizeClass == .compact {
-                CompactView(
-                    selectedSidebarItem: $selectedSidebarItem,
-                    homeViewModel: vmStoreOwner.instance,
-                    readerModeViewModel: readerModeVmStoreOwner.instance,
-                    onOpenAudioEpisode: openAudioEpisode
-                )
-            } else {
-                RegularView(
-                    selectedSidebarItem: $selectedSidebarItem,
-                    homeViewModel: vmStoreOwner.instance,
-                    readerModeViewModel: readerModeVmStoreOwner.instance,
-                    onOpenAudioEpisode: openAudioEpisode
-                )
-            }
-        }
+        RegularView(
+            selectedSidebarItem: $selectedSidebarItem,
+            homeViewModel: vmStoreOwner.instance,
+            readerModeViewModel: readerModeVmStoreOwner.instance,
+            onOpenAudioEpisode: openAudioEpisode
+        )
         .onAppear {
-            if appState.sizeClass == nil {
-                appState.sizeClass = horizontalSizeClass
-            }
             let savedThemeMode = vmStoreOwner.instance.getCurrentThemeMode()
             appState.updateTheme(savedThemeMode)
-        }
-        .onChange(of: horizontalSizeClass) {
-            synchronizeSizeClassIfActive()
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
@@ -79,19 +59,11 @@ struct ContentView: View {
                 break
             }
         }
-        .task(id: scenePhase) {
-            guard scenePhase == .active else { return }
-            await Task.yield()
-            synchronizeSizeClassIfActive()
-        }
         .task {
             for await state in reviewVmStoreOwner.instance.canShowReviewDialog {
                 let showReview = state as? Bool ?? false
                 if showReview {
-                    guard let currentScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
-                        return
-                    }
-                    AppStore.requestReview(in: currentScene)
+                    requestReview()
                     reviewVmStoreOwner.instance.onReviewShown()
                 }
             }
@@ -197,33 +169,7 @@ struct ContentView: View {
     }
 
     private func showFeedScreen() {
-        appState.currentCommonRoute = nil
         appState.regularNavigationPath = NavigationPath()
-        appState.compactNavigationPath = NavigationPath()
-        appState.compactNavigationPath.append(CompactViewRoute.feed)
-    }
-
-    private func synchronizeSizeClassIfActive() {
-        // Replacing the navigation root while iPadOS detaches the scene can move one navigation item between bars.
-        guard scenePhase == .active, horizontalSizeClass != appState.sizeClass else { return }
-        preserveVisibleRoute(from: appState.sizeClass, to: horizontalSizeClass)
-        appState.sizeClass = horizontalSizeClass
-    }
-
-    private func preserveVisibleRoute(
-        from oldSizeClass: UserInterfaceSizeClass?,
-        to newSizeClass: UserInterfaceSizeClass?
-    ) {
-        guard let currentCommonRoute = appState.currentCommonRoute else { return }
-
-        if oldSizeClass == .compact, newSizeClass != .compact {
-            appState.regularNavigationPath = NavigationPath()
-            appState.regularNavigationPath.append(currentCommonRoute)
-        } else if oldSizeClass != .compact, newSizeClass == .compact {
-            appState.compactNavigationPath = NavigationPath()
-            appState.compactNavigationPath.append(CompactViewRoute.feed)
-            appState.compactNavigationPath.append(currentCommonRoute)
-        }
     }
 
     private func sidebarSelection(for target: NotificationSelectionTarget) -> SidebarSelection {

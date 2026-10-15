@@ -13,13 +13,19 @@ import SwiftUI
 
 @Observable
 class AppState {
+    private let appearance: AppAppearance
+
+    init(appearance: AppAppearance = AppAppearance()) {
+        self.appearance = appearance
+    }
+
     var snackbarQueue: Deque<SnackbarData> = Deque()
     var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
     var regularNavigationPath = NavigationPath()
-    var compactNavigationPath = NavigationPath()
-    var currentCommonRoute: CommonViewRoute?
-    var sizeClass: UserInterfaceSizeClass?
-    var colorScheme: ColorScheme?
+    var colorScheme: ColorScheme? {
+        get { appearance.colorScheme }
+        set { appearance.colorScheme = newValue }
+    }
 
     var redrawAfterFeedSourceEdit = false
     var pendingBrowserURL: URL?
@@ -29,23 +35,8 @@ class AppState {
         var e2eSeedMessage: String?
     #endif
 
-    init() {
-        compactNavigationPath.append(CompactViewRoute.feed)
-    }
-
     func navigate(route: any Hashable) {
-        if let commonRoute = route as? CommonViewRoute {
-            currentCommonRoute = commonRoute
-        }
-
-        if sizeClass == .compact {
-            if route is CommonViewRoute, compactNavigationPath.isEmpty {
-                compactNavigationPath.append(CompactViewRoute.feed)
-            }
-            compactNavigationPath.append(route)
-        } else {
-            regularNavigationPath.append(route)
-        }
+        regularNavigationPath.append(route)
     }
 
     func openInAppBrowser(url: URL) {

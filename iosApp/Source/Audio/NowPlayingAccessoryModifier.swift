@@ -5,6 +5,7 @@ struct NowPlayingAccessoryModifier: ViewModifier {
     private var playback
 
     var route: CommonViewRoute?
+    var isEnabled = true
     let onOpenEpisode: (AudioEpisode) -> Void
 
     func body(content: Content) -> some View {
@@ -20,7 +21,7 @@ struct NowPlayingAccessoryModifier: ViewModifier {
     }
 
     @ViewBuilder private var indicator: some View {
-        if playback.episode != nil, isVisible {
+        if isEnabled, playback.episode != nil, isVisible {
             NowPlayingIndicator(onOpenEpisode: onOpenEpisode)
                 .padding(.vertical, 8)
         }

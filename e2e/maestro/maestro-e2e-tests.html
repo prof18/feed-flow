@@ -431,6 +431,7 @@
       "ios/regression/176-reader-speech-playback.yaml",
       "ios/regression/178-add-feed-youtube-feed-and-playlist-options.yaml",
       "ios/regression/180-reader-report.yaml",
+      "ios/regression/181-adaptive-navigation.yaml",
       "ios/smoke/001-first-launch-empty.yaml",
       "ios/smoke/002-seeded-timeline-loads.yaml",
       "ios/smoke/003-library-filters.yaml",
@@ -554,7 +555,8 @@
       "regression/176": "Implemented automated coverage: generate speech from the seeded article, wait for nonzero player duration, pause and seek, change speed, switch between speech and the seeded podcast and back while retaining speech position, background/foreground the app, and close the player. Maestro verifies visible player state; it does not prove audible output, system media controls, or temporary-file cleanup.",
       "regression/177": "Widget refresh button defaults off and persists with the header hidden through the Android debug widget editor.",
       "regression/178": "Raw YouTube channel RSS reveals Hide Shorts OFF; playlist URLs hide the option.",
-      "regression/179": "Every report request, including manual retry, shows confirmation; Cancel sends nothing, Send shows fake acceptance or the failure response; Android result snackbars have no close button and disappear automatically. Passed on Pixel 4 XL and iPhone 18 Pro simulator on 16 October 2026 using shared fake HTTP responses."
+      "regression/179": "Every report request, including manual retry, shows confirmation; Cancel sends nothing, Send shows fake acceptance or the failure response; Android result snackbars have no close button and disappear automatically. Passed on Pixel 4 XL and iPhone 18 Pro simulator on 16 October 2026 using shared fake HTTP responses.",
+      "regression/180": "Search query and matching results stay visible through portrait, landscape and back on iPhone, iPad and Duo."
     };
 
     const sections = document.querySelector("#sections");

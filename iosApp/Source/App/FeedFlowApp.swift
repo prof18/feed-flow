@@ -15,7 +15,7 @@ struct FeedFlowApp: App {
     private var delegate
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
-    @State private var appState: AppState = .init()
+    @State private var appearance: AppAppearance
     @State private var browserSelector: BrowserSelector
     @State private var audioPlayback: AudioPlaybackController
 
@@ -26,6 +26,7 @@ struct FeedFlowApp: App {
         RevenueCatSupport.configure()
         setupTelemetry()
         _browserSelector = State(initialValue: BrowserSelector())
+        _appearance = State(initialValue: AppAppearance())
         _audioPlayback = State(initialValue: AudioPlaybackController(
             positionStore: RepositoryAudioPlaybackPositionStore(
                 repository: Deps.shared.getAudioPlaybackPositionRepository()
@@ -113,15 +114,14 @@ struct FeedFlowApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(appState)
+            FeedFlowScene(appearance: appearance) { appState in
+                ContentView()
                 .environment(browserSelector)
                 .environment(audioPlayback)
                 .toggleStyle(BlueToggleStyle())
-                .preferredColorScheme(appState.colorScheme)
                 .onOpenURL { url in
                     if url.scheme == "feedflow" {
-                        handleFeedFlowURL(url)
+                        handleFeedFlowURL(url, appState: appState)
                     } else {
                         Deps.shared.getDropboxDataSource().handleOAuthResponse {
                             DropboxDataSourceIos.handleOAuthResponse(
@@ -165,16 +165,17 @@ struct FeedFlowApp: App {
                         break
                     }
                 }
+            }
         }
         .commands {
             appMenu
         }
     }
 
-    private func handleFeedFlowURL(_ url: URL) {
+    private func handleFeedFlowURL(_ url: URL, appState: AppState) {
         #if DEBUG
             if url.host == "e2e" {
-                handleE2eURL(url)
+                handleE2eURL(url, appState: appState)
                 return
             }
         #endif
@@ -187,7 +188,7 @@ struct FeedFlowApp: App {
     }
 
     #if DEBUG
-        private func handleE2eURL(_ url: URL) {
+        private func handleE2eURL(_ url: URL, appState: AppState) {
             let action = url.pathComponents
                 .first { $0 != "/" } ?? "reset-and-seed"
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
@@ -221,10 +222,7 @@ struct FeedFlowApp: App {
                         if let seedError {
                             appState.e2eSeedMessage = "E2E seed failed: \(seedError)"
                         } else {
-                            appState.currentCommonRoute = nil
                             appState.regularNavigationPath = NavigationPath()
-                            appState.compactNavigationPath = NavigationPath()
-                            appState.compactNavigationPath.append(CompactViewRoute.feed)
                             appState.e2eSeedMessage = "E2E seed complete"
                         }
                     }

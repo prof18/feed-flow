@@ -20,6 +20,8 @@ struct SidebarDrawer: View {
 
     @Environment(\.openURL)
     var openURL
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
 
     @Binding var selectedSidebarItem: SidebarSelection?
 
@@ -64,7 +66,7 @@ struct SidebarDrawer: View {
     let onReorderFeedSources: ([FeedSource]) -> Void
 
     var isCompactPhone: Bool {
-        UIDevice.current.userInterfaceIdiom == .phone
+        horizontalSizeClass == .compact
     }
 
     @ViewBuilder private var styledList: some View {
@@ -134,7 +136,7 @@ struct SidebarDrawer: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(
                         action: onShowSettingsClick,
-                        label: { Image(systemName: "gear") }
+                        label: { Label(feedFlowStrings.settingsTitle, systemImage: "gear") }
                     )
                     .accessibilityIdentifier(DrawerAccessibilityIdentifiers.settingsButton)
                 }
@@ -156,7 +158,7 @@ struct SidebarDrawer: View {
                                 label: { Label(feedFlowStrings.importFeedButton, systemImage: "square.and.arrow.down") }
                             )
                         },
-                        label: { Image(systemName: "plus") }
+                        label: { Label(feedFlowStrings.addFeed, systemImage: "plus") }
                     )
                     .accessibilityIdentifier(FeedSuggestionsIds.menuButton)
                 }

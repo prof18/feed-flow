@@ -18,6 +18,8 @@ struct RegularView: View {
     private var browserSelector
     @Environment(\.openURL)
     private var openURL
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
 
     @Binding var selectedSidebarItem: SidebarSelection?
 
@@ -45,6 +47,7 @@ struct RegularView: View {
     @State private var showEditFeedSheet = false
     @State private var feedSourceToEdit: FeedSource?
     @State private var columnVisibility: NavigationSplitViewVisibility
+    @State private var preferredCompactColumn: NavigationSplitViewColumn = .detail
 
     @State private var showFeedOperationDialog = false
     @State private var feedOperationLoadingMessage: String?
@@ -67,15 +70,18 @@ struct RegularView: View {
     }
 
     var body: some View {
-        NavigationSplitView(columnVisibility: $columnVisibility) {
+        NavigationSplitView(
+            columnVisibility: $columnVisibility,
+            preferredCompactColumn: $preferredCompactColumn
+        ) {
             SidebarDrawer(
                 selectedSidebarItem: $selectedSidebarItem,
                 navDrawerState: navDrawerState,
                 onFeedFilterSelected: { feedFilter in
                     indexHolder.clear()
                     scrollUpTrigger.toggle()
-                    appState.currentCommonRoute = nil
                     appState.regularNavigationPath = NavigationPath()
+                    preferredCompactColumn = .detail
                     homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
                 },
                 onMarkAllReadClick: {
@@ -140,6 +146,10 @@ struct RegularView: View {
                     homeViewModel.reorderFeedSources(feedSources: feedSources)
                 }
             )
+            .modifier(NowPlayingAccessoryModifier(
+                isEnabled: horizontalSizeClass == .compact,
+                onOpenEpisode: onOpenAudioEpisode
+            ))
             .environment(appState)
             .environment(browserSelector)
             .navigationBarTitleDisplayMode(.inline)
@@ -155,6 +165,7 @@ struct RegularView: View {
                     onReaderModeNavigate: nil,
                     openDrawer: {
                         columnVisibility = .all
+                        preferredCompactColumn = .sidebar
                     },
                     onSidebarSelectionChanged: { feedFilter in
                         selectedSidebarItem = sidebarSelection(from: feedFilter)
@@ -164,9 +175,6 @@ struct RegularView: View {
                 .environment(indexHolder)
                 .environment(appState)
                 .environment(browserSelector)
-                .onAppear {
-                    appState.currentCommonRoute = nil
-                }
                 .navigationDestination(for: CommonViewRoute.self) { route in
                     commonDestination(route)
                 }
@@ -174,7 +182,13 @@ struct RegularView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .navigationSplitViewStyle(.balanced)
+        .onChange(of: horizontalSizeClass) { oldSizeClass, newSizeClass in
+            if oldSizeClass == .regular, newSizeClass == .compact {
+                preferredCompactColumn = .detail
+            }
+        }
         .onChange(of: columnVisibility) { _, visibility in
+            guard horizontalSizeClass != .compact else { return }
             if visibility == .detailOnly {
                 homeViewModel.setLargeScreenSidebarVisible(value: false)
             } else if visibility == .all || visibility == .doubleColumn {
@@ -231,7 +245,6 @@ struct RegularView: View {
         .onChange(of: appState.pendingBrowserURL) { _, newURL in
             if let url = newURL {
                 appState.pendingBrowserURL = nil
-                appState.currentCommonRoute = CommonViewRoute.inAppBrowser(url: url)
                 appState.regularNavigationPath.append(CommonViewRoute.inAppBrowser(url: url))
             }
         }
@@ -242,8 +255,8 @@ struct RegularView: View {
             }
         }
         .onChange(of: appState.regularNavigationPath.count) { _, newCount in
-            if newCount == 0 {
-                appState.currentCommonRoute = nil
+            if newCount > 0 {
+                preferredCompactColumn = .detail
             }
         }
         .task {
@@ -256,8 +269,8 @@ struct RegularView: View {
             showEditFeedSheet = false
             showSettings = false
             showSidebarSettingsSheet = false
-            appState.currentCommonRoute = nil
             appState.regularNavigationPath = NavigationPath()
+            preferredCompactColumn = .detail
         }
     }
 
@@ -292,9 +305,6 @@ struct RegularView: View {
         .modifier(NowPlayingAccessoryModifier(route: route, onOpenEpisode: onOpenAudioEpisode))
         .environment(appState)
         .environment(browserSelector)
-        .onAppear {
-            appState.currentCommonRoute = route
-        }
     }
 
     private func sidebarSelection(from filter: FeedFilter) -> SidebarSelection? {

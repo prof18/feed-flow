@@ -11,6 +11,17 @@ import SwiftUI
 
 extension HomeContent {
     @ToolbarContentBuilder
+    func makeAdaptiveCompactToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button(action: showDrawer) {
+                Label(feedFlowStrings.drawerMenuButtonContentDescription, systemImage: "sidebar.leading")
+            }
+            .accessibilityIdentifier(DrawerAccessibilityIdentifiers.menuButton)
+        }
+        makeIOS26ToolbarContent(proxy: proxy)
+    }
+
+    @ToolbarContentBuilder
     func makeIOS26ToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
         if #available(iOS 26.0, *) {
             ToolbarSpacer(.fixed)
@@ -22,7 +33,7 @@ extension HomeContent {
                     route: searchRoute
                 )
             } label: {
-                Image(systemName: "magnifyingglass")
+                Label(feedFlowStrings.searchButtonContentDescription, systemImage: "magnifyingglass")
             }
             .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
         }
@@ -49,7 +60,7 @@ extension HomeContent {
                         route: searchRoute
                     )
                 } label: {
-                    Image(systemName: "magnifyingglass")
+                    Label(feedFlowStrings.searchButtonContentDescription, systemImage: "magnifyingglass")
                 }
                 .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
             }
@@ -77,9 +88,10 @@ extension HomeContent {
         ToolbarItem(placement: .navigationBarLeading) {
             HStack(spacing: Spacing.small) {
                 Button {
-                    openDrawer()
+                    showDrawer()
                 } label: {
-                    Image(systemName: "sidebar.leading")
+                    Label(feedFlowStrings.drawerMenuButtonContentDescription, systemImage: "sidebar.leading")
+                        .labelStyle(.iconOnly)
                 }
                 .accessibilityIdentifier(DrawerAccessibilityIdentifiers.menuButton)
 
@@ -108,14 +120,7 @@ extension HomeContent {
             dynamicTypeWidth = 0
         }
 
-        switch getDeviceType() {
-        case .iphonePortrait:
-            return 148 + dynamicTypeWidth
-        case .iphoneLandscape:
-            return 320 + dynamicTypeWidth
-        case .ipad:
-            return 220 + dynamicTypeWidth
-        }
+        return compactToolbarHeaderWidth(verticalSizeClass: verticalSizeClass) + dynamicTypeWidth
     }
 
     private var searchRoute: CommonViewRoute {
@@ -166,6 +171,8 @@ extension HomeContent {
             HStack {
                 Text(getNavBarName(feedFilter: currentFeedFilter))
                     .font(.title2)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
 
                 if shouldShowUnreadCount {
                     Text("(\(unreadCount))")
@@ -184,7 +191,7 @@ extension HomeContent {
                     route: searchRoute
                 )
             } label: {
-                Image(systemName: "magnifyingglass")
+                Label(feedFlowStrings.searchButtonContentDescription, systemImage: "magnifyingglass")
             }
             .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
         }
@@ -196,11 +203,10 @@ extension HomeContent {
             Menu {
                 makeMenuActions(proxy: proxy)
             } label: {
-                if isiOS26OrLater() {
-                    Image(systemName: "ellipsis")
-                } else {
-                    Image(systemName: "ellipsis.circle")
-                }
+                Label(
+                    feedFlowStrings.moreOptionsButtonContentDescription,
+                    systemImage: isiOS26OrLater() ? "ellipsis" : "ellipsis.circle"
+                )
             }
             .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.moreMenuButton)
         }
@@ -282,23 +288,12 @@ extension HomeContent {
     }
 
     func getNavBarName(feedFilter: FeedFilter) -> String {
-        let deviceType = getDeviceType()
-
-        func getTruncatedTitle(_ title: String) -> String {
-            switch deviceType {
-            case .iphonePortrait:
-                return title.truncate(maxChar: 12)
-            case .ipad, .iphoneLandscape:
-                return title.truncate(maxChar: 40)
-            }
-        }
-
         switch feedFilter {
         case let category as FeedFilter.Category:
-            return getTruncatedTitle(category.feedCategory.title)
+            return category.feedCategory.title
 
         case let source as FeedFilter.Source:
-            return getTruncatedTitle(source.feedSource.title)
+            return source.feedSource.title
 
         case is FeedFilter.Timeline:
             return feedFlowStrings.drawerTitleTimeline

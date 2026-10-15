@@ -111,7 +111,9 @@ struct ReaderModeScreen: View {
                     ttsListen: feedFlowStrings.readerModeTtsListen,
                     ttsStop: feedFlowStrings.audioPause,
                     ttsPreparing: feedFlowStrings.readerModeTtsPreparing,
-                    reportArticle: feedFlowStrings.articleReportAction
+                    reportArticle: feedFlowStrings.articleReportAction,
+                    openInBrowser: feedFlowStrings.readerModeFallbackOpenBrowserButton,
+                    moreOptions: feedFlowStrings.moreOptionsButtonContentDescription
                 ),
                 onBookmarkToggle: { newBookmarkState in
                     if let id = feedItemId {

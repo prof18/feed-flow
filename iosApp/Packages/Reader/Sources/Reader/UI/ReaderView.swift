@@ -180,20 +180,22 @@ public struct ReaderView<BottomAccessory: View>: View {
                 Button {
                     openInBrowser(url)
                 } label: {
-                    Image(systemName: "globe")
+                    Label(actions.strings.openInBrowser, systemImage: "globe")
                 }
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.browserButton)
             }
         }
 
         // Bottom bar - right edge (navigation arrows)
-        ToolbarItemGroup(placement: .bottomBar) {
-            Spacer()
+        if #available(iOS 26.0, *) {
+            ToolbarSpacer(.flexible, placement: .bottomBar)
+        }
 
+        ToolbarItemGroup(placement: .bottomBar) {
             Button {
                 actions.onNavigateToPrevious?()
             } label: {
-                Image(systemName: "chevron.left")
+                Label(actions.strings.previousArticle, systemImage: "chevron.left")
             }
             .disabled(actions.onNavigateToPrevious == nil)
             .accessibilityIdentifier(ReaderAccessibilityIdentifiers.previousButton)
@@ -201,7 +203,7 @@ public struct ReaderView<BottomAccessory: View>: View {
             Button {
                 actions.onNavigateToNext?()
             } label: {
-                Image(systemName: "chevron.right")
+                Label(actions.strings.nextArticle, systemImage: "chevron.right")
             }
             .disabled(actions.onNavigateToNext == nil)
             .accessibilityIdentifier(ReaderAccessibilityIdentifiers.nextButton)
@@ -295,7 +297,7 @@ public struct ReaderView<BottomAccessory: View>: View {
                     contentSourceMenuToggle(onToggle: onToggleContentSource)
                 }
             } label: {
-                Image(systemName: "ellipsis.circle")
+                Label(actions.strings.moreOptions, systemImage: "ellipsis.circle")
                     .accessibilityIdentifier(ReaderAccessibilityIdentifiers.moreMenuButton)
             }
         }

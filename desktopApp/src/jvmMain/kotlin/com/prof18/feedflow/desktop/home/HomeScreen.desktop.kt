@@ -2,6 +2,7 @@ package com.prof18.feedflow.desktop.home
 
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -9,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
@@ -19,8 +21,9 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.desktop.BrowserManager
-import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.main.LocalDesktopMenuCommands
+import com.prof18.feedflow.desktop.search.SearchScreen
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.FeedListActions
@@ -28,7 +31,6 @@ import com.prof18.feedflow.desktop.ui.FeedManagementActions
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.LocalReduceMotion
 import com.prof18.feedflow.desktop.ui.ShareBehavior
-import com.prof18.feedflow.desktop.ui.components.DesktopFeedManagementDialog
 import com.prof18.feedflow.desktop.ui.components.DesktopLoadingOperationDialog
 import com.prof18.feedflow.desktop.ui.desktopExternalLinkAction
 import com.prof18.feedflow.desktop.ui.scrollToItemConditionally
@@ -84,11 +86,9 @@ internal fun HomeScreen(
     val pendingNewArticlesCount by homeViewModel.pendingNewArticlesState.collectAsState()
     val commands = desktopWorkspaceCommandAvailability(loadingState, feedOperation)
 
-    val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsState()
     val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
     val currentReaderArticle by readerModeViewModel.currentArticleState.collectAsState()
 
-    var showChangeCategorySheet by remember { mutableStateOf(false) }
     var showNoFeedsBottomSheet by remember { mutableStateOf(false) }
 
     val browserManager = DI.koin.get<BrowserManager>()
@@ -107,12 +107,6 @@ internal fun HomeScreen(
 
     if (feedOperation != FeedOperation.None) {
         DesktopLoadingOperationDialog(feedOperation)
-    }
-
-    LaunchedEffect(Unit) {
-        changeFeedCategoryViewModel.categoryChangedState.collect {
-            showChangeCategorySheet = false
-        }
     }
 
     LaunchedEffect(homeViewModel, snackbarHostState) {
@@ -187,6 +181,16 @@ internal fun HomeScreen(
     }
 
     val reduceMotionEnabled = LocalReduceMotion.current
+    var inlineSearch by rememberSaveable { mutableStateOf(false) }
+    val startSearch: () -> Unit = {
+        if (isMultiPaneLayoutEnabled) inlineSearch = true else onSearchClick()
+    }
+    val menuCommands = LocalDesktopMenuCommands.current
+    val latestSearch by rememberUpdatedState(startSearch)
+    DisposableEffect(menuCommands) {
+        menuCommands.search = { latestSearch() }
+        onDispose { menuCommands.search = null }
+    }
 
     LaunchedEffect(refreshTrigger, isMultiPaneLayoutEnabled) {
         if (refreshTrigger > 0) {
@@ -280,6 +284,8 @@ internal fun HomeScreen(
         homeViewModel,
         resetReaderArticle,
         onAddFeedClick,
+        onFeedSuggestionsClick,
+        onImportExportClick,
         onEditFeedClick,
         changeFeedCategoryViewModel,
         uriHandler,
@@ -299,10 +305,6 @@ internal fun HomeScreen(
             onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
             validateCategoryName = homeViewModel::validateCategoryName,
             onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
-            onChangeFeedCategoryClick = { feedSource ->
-                changeFeedCategoryViewModel.loadFeedSource(feedSource)
-                showChangeCategorySheet = true
-            },
             onOpenWebsite = desktopExternalLinkAction(uriHandler, ::showBrowserLaunchError),
             onMoveFeedSourcesToCategory = { feedSources, category ->
                 changeFeedCategoryViewModel.moveFeedSourcesToCategory(feedSources, category)
@@ -328,6 +330,8 @@ internal fun HomeScreen(
             onMarkAllReadForCategoryClick = { category ->
                 homeViewModel.markAllReadForCategory(category)
             },
+            onFeedSuggestionsClick = onFeedSuggestionsClick,
+            onImportFeedsClick = onImportExportClick,
         )
     }
 
@@ -343,17 +347,23 @@ internal fun HomeScreen(
             shareCommentsTitle = strings.menuCopyLinkComments,
         )
     }
-    DesktopFeedManagementDialog(
-        displayState = homeDisplayState,
-        feedManagementActions = feedManagementActions,
-        onFeedSuggestionsClick = onFeedSuggestionsClick,
-        onImportExportClick = onImportExportClick,
-    )
+
     if (isMultiPaneLayoutEnabled) {
         DesktopHomeScaffold(
             listState = listState,
             gridState = gridState,
-            onSearchClick = onSearchClick,
+            onSearchClick = startSearch,
+            searchContent = if (inlineSearch) {
+                {
+                    SearchScreen(
+                        navigateBack = { inlineSearch = false },
+                        navigateToReaderMode = openReaderArticle,
+                        navigateToEditFeed = onEditFeedClick,
+                    )
+                }
+            } else {
+                null
+            },
             pendingNewArticlesCount = pendingNewArticlesCount,
             onShowNewArticlesClicked = homeViewModel::onShowNewArticlesClicked,
             displayState = homeDisplayState,
@@ -361,7 +371,6 @@ internal fun HomeScreen(
             feedManagementActions = feedManagementActions,
             snackbarHostState = snackbarHostState,
             shareBehavior = shareBehavior,
-            onFeedSuggestionsClick = onFeedSuggestionsClick,
             onImportExportClick = onImportExportClick,
             currentReaderArticle = currentReaderArticle,
             onReaderClosed = { readerModeViewModel.resetState() },
@@ -381,33 +390,9 @@ internal fun HomeScreen(
             feedManagementActions = feedManagementActions,
             snackbarHostState = snackbarHostState,
             shareBehavior = shareBehavior,
-            onFeedSuggestionsClick = onFeedSuggestionsClick,
             onImportExportClick = onImportExportClick,
             onEmptyStateClick = {
                 showNoFeedsBottomSheet = true
-            },
-        )
-    }
-
-    if (showChangeCategorySheet) {
-        EditCategoryDialog(
-            categoryState = categoriesState,
-            onCategorySelected = { categoryId ->
-                changeFeedCategoryViewModel.onCategorySelected(categoryId)
-            },
-            onAddCategory = { categoryName ->
-                changeFeedCategoryViewModel.addNewCategory(categoryName)
-            },
-            onDeleteCategory = { categoryId ->
-                changeFeedCategoryViewModel.deleteCategory(categoryId.value)
-            },
-            onEditCategory = { categoryId, newName ->
-                changeFeedCategoryViewModel.editCategory(categoryId, newName)
-            },
-            validateCategoryName = changeFeedCategoryViewModel::validateCategoryName,
-            onDismiss = {
-                changeFeedCategoryViewModel.saveCategory()
-                showChangeCategorySheet = false
             },
         )
     }

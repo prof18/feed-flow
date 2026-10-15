@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -19,6 +21,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.main.LocalDesktopMenuCommands
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.FeedListActions
@@ -45,11 +48,11 @@ internal fun DesktopHomeScaffold(
     onSearchClick: () -> Unit,
     pendingNewArticlesCount: Int,
     onShowNewArticlesClicked: () -> Unit,
-    onFeedSuggestionsClick: () -> Unit,
     currentReaderArticle: FeedItemUrlInfo?,
     onReaderClosed: () -> Unit,
     onEmptyStateClick: () -> Unit,
     onImportExportClick: () -> Unit = {},
+    searchContent: (@Composable () -> Unit)? = null,
 ) {
     DesktopHomeWorkspace(
         displayState = displayState,
@@ -62,12 +65,12 @@ internal fun DesktopHomeScaffold(
         onSearchClick = onSearchClick,
         pendingNewArticlesCount = pendingNewArticlesCount,
         onShowNewArticlesClicked = onShowNewArticlesClicked,
-        onFeedSuggestionsClick = onFeedSuggestionsClick,
         currentReaderArticle = currentReaderArticle,
         onReaderClosed = onReaderClosed,
         onEmptyStateClick = onEmptyStateClick,
         onImportExportClick = onImportExportClick,
         multiPane = true,
+        searchContent = searchContent,
     )
 }
 
@@ -83,12 +86,12 @@ internal fun DesktopHomeWorkspace(
     onSearchClick: () -> Unit,
     pendingNewArticlesCount: Int,
     onShowNewArticlesClicked: () -> Unit,
-    onFeedSuggestionsClick: () -> Unit,
     onEmptyStateClick: () -> Unit,
     onImportExportClick: () -> Unit,
     multiPane: Boolean,
     currentReaderArticle: FeedItemUrlInfo? = null,
     onReaderClosed: () -> Unit = {},
+    searchContent: (@Composable () -> Unit)? = null,
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotion = LocalReduceMotion.current
@@ -105,34 +108,47 @@ internal fun DesktopHomeWorkspace(
         )
     }
     val drawerState = rememberDrawerState()
+    // Each pane pads itself below the transparent macOS title bar so its own background reaches the top edge.
     val topPadding = if (getDesktopOS().isMacOs()) 16.dp else 0.dp
-    BoxWithConstraints(Modifier.fillMaxSize().padding(top = topPadding)) {
+    // The sidebar's first row sits right under the traffic lights, so it needs extra clearance.
+    val sidebarTopPadding = if (getDesktopOS().isMacOs()) 28.dp else 0.dp
+    BoxWithConstraints(Modifier.fillMaxSize()) {
         val layout = state.layout(maxWidth, multiPane, readerSelected = currentReaderArticle != null)
         LaunchedEffect(maxWidth, multiPane, state.isDrawerVisible) { state.seedListWidth(maxWidth, multiPane) }
         LaunchedEffect(layout.isSidebarDocked) { if (layout.isSidebarDocked) drawerState.close() }
         LaunchedEffect(currentReaderArticle) {
             if (currentReaderArticle == null && state.isReaderFullscreen) state.toggleReaderFullscreen()
         }
+        val toggleSidebar: () -> Unit = {
+            if (layout.canDockSidebar) {
+                state.toggleDrawer()
+            } else {
+                scope.launch {
+                    if (drawerState.isOpen) drawerState.close() else drawerState.open()
+                }
+            }
+        }
+        val menuCommands = LocalDesktopMenuCommands.current
+        SideEffect { menuCommands.toggleSidebar = toggleSidebar }
+        DisposableEffect(menuCommands) { onDispose { menuCommands.toggleSidebar = null } }
         val drawerContent: @Composable () -> Unit = {
-            DesktopFeedSidebar(
-                displayState = displayState,
-                feedManagementActions = feedManagementActions,
-                onFeedFilterSelected = { filter: FeedFilter ->
-                    feedManagementActions.onFeedFilterSelected(filter)
-                    scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotion)
-                        drawerState.close()
-                    }
-                },
-                onFeedSuggestionsClick = {
-                    scope.launch { drawerState.close() }
-                    onFeedSuggestionsClick()
-                },
-                onImportExportClick = {
-                    scope.launch { drawerState.close() }
-                    onImportExportClick()
-                },
-            )
+            Box(
+                Modifier.fillMaxSize()
+                    .background(JewelTheme.globalColors.toolwindowBackground)
+                    .padding(top = sidebarTopPadding),
+            ) {
+                DesktopFeedSidebar(
+                    displayState = displayState,
+                    feedManagementActions = feedManagementActions,
+                    onFeedFilterSelected = { filter: FeedFilter ->
+                        feedManagementActions.onFeedFilterSelected(filter)
+                        scope.launch {
+                            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotion)
+                            drawerState.close()
+                        }
+                    },
+                )
+            }
         }
         ModalDrawer(
             isOpen = drawerState.isOpen && !layout.isSidebarDocked,
@@ -151,7 +167,15 @@ internal fun DesktopHomeWorkspace(
                     },
                     sidebarContent = drawerContent,
                     listContent = {
-                        Box(Modifier.fillMaxSize().clipToBounds().background(JewelTheme.globalColors.panelBackground)) {
+                        Box(
+                            Modifier.fillMaxSize().clipToBounds()
+                                .background(JewelTheme.globalColors.panelBackground)
+                                .padding(top = topPadding),
+                        ) {
+                            if (searchContent != null) {
+                                searchContent()
+                                return@Box
+                            }
                             DesktopHomeScreenContent(
                                 displayState = displayState,
                                 feedListActions = feedListActions,
@@ -166,15 +190,7 @@ internal fun DesktopHomeWorkspace(
                                 onImportExportClick = onImportExportClick,
                                 isGridLayoutAllowed = !multiPane,
                                 isDrawerOpen = layout.isSidebarDocked || drawerState.isOpen,
-                                onDrawerMenuClick = {
-                                    if (layout.canDockSidebar) {
-                                        state.toggleDrawer()
-                                    } else {
-                                        scope.launch {
-                                            if (drawerState.isOpen) drawerState.close() else drawerState.open()
-                                        }
-                                    }
-                                },
+                                onDrawerMenuClick = toggleSidebar,
                                 onEmptyStateClick = onEmptyStateClick,
                                 selectedArticleId = currentReaderArticle?.id,
                                 modifier = Modifier.fillMaxSize(),
@@ -182,21 +198,37 @@ internal fun DesktopHomeWorkspace(
                         }
                     },
                     readerContent = {
-                        if (currentReaderArticle != null) {
-                            ReaderModeScreen(
-                                feedItemUrlInfo = currentReaderArticle,
-                                navigateBack = onReaderClosed,
-                                showBackButton = !layout.canSplit,
-                                isDetailFullscreen = state.isReaderFullscreen,
-                                onToggleDetailFullscreen = state::toggleReaderFullscreen.takeIf { layout.canSplit },
-                            )
-                        } else {
-                            ReaderEmptyState()
+                        Box(
+                            Modifier.fillMaxSize()
+                                .background(JewelTheme.globalColors.panelBackground)
+                                .padding(top = topPadding),
+                        ) {
+                            ReaderPane(currentReaderArticle, onReaderClosed, layout.canSplit, state)
                         }
                     },
                 )
             },
         )
+    }
+}
+
+@Composable
+private fun ReaderPane(
+    currentReaderArticle: FeedItemUrlInfo?,
+    onReaderClosed: () -> Unit,
+    canSplit: Boolean,
+    state: DesktopWorkspaceState,
+) {
+    if (currentReaderArticle != null) {
+        ReaderModeScreen(
+            feedItemUrlInfo = currentReaderArticle,
+            navigateBack = onReaderClosed,
+            showBackButton = !canSplit,
+            isDetailFullscreen = state.isReaderFullscreen,
+            onToggleDetailFullscreen = state::toggleReaderFullscreen.takeIf { canSplit },
+        )
+    } else {
+        ReaderEmptyState()
     }
 }
 

@@ -8,12 +8,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalUriHandler
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.DropboxSynMessages
-import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.desktop.accounts.AccountScreen
 import com.prof18.feedflow.desktop.accounts.CloudAccountContent
 import com.prof18.feedflow.desktop.accounts.CredentialsState
 import com.prof18.feedflow.desktop.accounts.DropboxAuthorizationForm
-import com.prof18.feedflow.desktop.accounts.ObserveJewelAccountConnection
+import com.prof18.feedflow.desktop.accounts.ObserveAccountConnection
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -24,8 +23,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun DropboxSyncScreen(
-    navigateBack: () -> Unit,
-    showNavigateBack: Boolean = true,
     credentialsState: CredentialsState? = null,
 ) {
     val viewModel = koinViewModel<DropboxSyncViewModel>()
@@ -45,7 +42,7 @@ internal fun DropboxSyncScreen(
         scope.launch { snackbarHostState.showFeedback(message, duration = DesktopFeedbackDuration.Short) }
     }
 
-    ObserveJewelAccountConnection(
+    ObserveAccountConnection(
         draft = draft,
         uiState = viewModel.dropboxConnectionUiState,
         messages = viewModel.dropboxSyncMessageState,
@@ -61,7 +58,7 @@ internal fun DropboxSyncScreen(
         }
     }
 
-    AccountScreen(SyncAccounts.DROPBOX, navigateBack, showNavigateBack, snackbarHostState) {
+    AccountScreen(snackbarHostState) {
         DropboxAccountContent(
             uiState = uiState,
             credentialsState = draft,

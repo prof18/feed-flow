@@ -29,7 +29,7 @@ internal fun DesktopLoadingOperationDialog(feedOperation: FeedOperation) {
         FeedOperation.MarkingAllRead -> strings.markingAllReadDialogTitle
         FeedOperation.None -> return
     }
-    Dialog(title = title, onCloseRequest = {}) {
+    Dialog(title = title, onCloseRequest = {}, alertStyle = true) {
         Row(
             Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,

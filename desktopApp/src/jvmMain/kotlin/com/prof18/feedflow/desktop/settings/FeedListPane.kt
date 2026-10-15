@@ -1,12 +1,14 @@
 package com.prof18.feedflow.desktop.settings
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -16,22 +18,26 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.DescriptionLineLimit
-import com.prof18.feedflow.core.model.FEED_DESC_FONT_SIZE
-import com.prof18.feedflow.core.model.FEED_META_FONT_SIZE
-import com.prof18.feedflow.core.model.FEED_TITLE_FONT_SIZE
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedListSettingsState
 import com.prof18.feedflow.core.model.FeedOrder
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.components.ArticleRow
+import com.prof18.feedflow.desktop.ui.components.articleCardContainerColor
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import org.jetbrains.jewel.foundation.theme.LocalTextStyle
+import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.Slider
 import org.jetbrains.jewel.ui.component.Text
@@ -57,68 +63,37 @@ internal fun FeedListPane(
     onHideUnreadDotUpdate: (Boolean) -> Unit,
     onHideFeedSourceUpdate: (Boolean) -> Unit,
     onDescriptionLineLimitUpdate: (DescriptionLineLimit) -> Unit,
+    isShowReadItemsEnabled: Boolean = false,
+    isHideReadItemsEnabled: Boolean = false,
+    isMarkReadWhenScrollingEnabled: Boolean = false,
+    onShowReadItemsToggled: (Boolean) -> Unit = {},
+    onHideReadItemsToggled: (Boolean) -> Unit = {},
 ) {
     val strings = LocalFeedFlowStrings.current
     val scale = fontSizesState.scaleFactor
     val latestScale by rememberUpdatedState(scale)
     val latestFontScaleUpdate by rememberUpdatedState(onFontScaleUpdate)
-    SettingsScrollPane(modifier = Modifier.fillMaxSize()) {
-        FeedItemPreview(
-            fontScale = scale,
-            layout = settingsState.feedLayout,
-            showDescription = !settingsState.isHideDescriptionEnabled,
-            showImage = !settingsState.isHideImagesEnabled,
-            showDate = !settingsState.isHideDateEnabled,
-            dateFormat = settingsState.dateFormat,
-            timeFormat = settingsState.timeFormat,
-            showFeedSource = !settingsState.isHideFeedSourceEnabled,
-            showUnreadDot = !settingsState.isHideUnreadDotEnabled,
-            descriptionLines = settingsState.descriptionLineLimit,
-        )
-
-        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-            SettingsGroup(strings.settingsAppearance)
-            Text(strings.settingsFeedListScaleTitle, modifier = Modifier.padding(vertical = 8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Tooltip(tooltip = { Text(strings.decreaseFontSizeButtonContentDescription) }) {
-                    OutlinedButton(
-                        onClick = {
-                            if (latestScale > FONT_SCALE_MIN) latestFontScaleUpdate(latestScale - 1)
-                        },
-                        enabled = scale > FONT_SCALE_MIN,
-                        modifier = Modifier.semantics {
-                            contentDescription = strings.decreaseFontSizeButtonContentDescription
-                        },
-                    ) { Text("−") }
-                }
-                Slider(
-                    value = scale.toFloat(),
-                    onValueChange = { onFontScaleUpdate(it.toInt()) },
-                    modifier = Modifier.weight(1f).semantics {
-                        contentDescription = strings.settingsFeedListScaleTitle
-                    },
-                    valueRange = FONT_SCALE_MIN.toFloat()..FONT_SCALE_MAX.toFloat(),
-                    steps = FONT_SCALE_STEPS,
-                )
-                Tooltip(tooltip = { Text(strings.increaseFontSizeButtonContentDescription) }) {
-                    OutlinedButton(
-                        onClick = {
-                            if (latestScale < FONT_SCALE_MAX) latestFontScaleUpdate(latestScale + 1)
-                        },
-                        enabled = scale < FONT_SCALE_MAX,
-                        modifier = Modifier.semantics {
-                            contentDescription = strings.increaseFontSizeButtonContentDescription
-                        },
-                    ) { Text("+") }
-                }
-                Text(scale.toString())
-            }
-
-            JewelSettingsChoice(
+    SettingsPage(
+        title = strings.settingsFeedListTitle,
+        preview = {
+            FeedItemPreview(
+                fontSizes = fontSizesState,
+                layout = settingsState.feedLayout,
+                showDescription = !settingsState.isHideDescriptionEnabled,
+                showImage = !settingsState.isHideImagesEnabled,
+                showDate = !settingsState.isHideDateEnabled,
+                dateFormat = settingsState.dateFormat,
+                timeFormat = settingsState.timeFormat,
+                displaySettings = FeedItemDisplaySettings(
+                    isHideUnreadDotEnabled = settingsState.isHideUnreadDotEnabled,
+                    isHideFeedSourceEnabled = settingsState.isHideFeedSourceEnabled,
+                    descriptionLineLimit = settingsState.descriptionLineLimit,
+                ),
+            )
+        },
+    ) {
+        SettingsSection(title = strings.settingsAppearance) {
+            SettingsChoice(
                 title = strings.feedLayoutTitle,
                 selected = settingsState.feedLayout,
                 choices = persistentListOf(
@@ -129,35 +104,56 @@ internal fun FeedListPane(
                 onSelected = onFeedLayoutUpdate,
             )
             if (settingsState.feedLayout.supportsGridToggle()) {
-                SettingsCheckbox(
-                    strings.settingsFeedLayoutGridToggle,
-                    settingsState.isGridLayoutEnabled,
-                    onGridLayoutEnabledUpdate,
+                SettingsSwitch(
+                    title = strings.settingsFeedLayoutGridToggle,
+                    checked = settingsState.isGridLayoutEnabled,
+                    onCheckedChange = onGridLayoutEnabledUpdate,
                 )
             }
-            SettingsCheckbox(
-                strings.settingsHideDescription,
-                settingsState.isHideDescriptionEnabled,
-                onHideDescriptionUpdate,
-            )
-            SettingsCheckbox(strings.settingsHideImages, settingsState.isHideImagesEnabled, onHideImagesUpdate)
-            SettingsCheckbox(strings.settingsHideDate, settingsState.isHideDateEnabled, onHideDateUpdate)
-            SettingsCheckbox(
-                strings.settingsHideUnreadDot,
-                settingsState.isHideUnreadDotEnabled,
-                onHideUnreadDotUpdate,
-            )
-            SettingsCheckbox(
-                strings.settingsHideFeedSource,
-                settingsState.isHideFeedSourceEnabled,
-                onHideFeedSourceUpdate,
-            )
-            SettingsCheckbox(
-                strings.settingsHideDuplicatedTitleFromDesc,
-                settingsState.isRemoveTitleFromDescriptionEnabled,
-                onRemoveTitleFromDescUpdate,
-            )
-            JewelSettingsChoice(
+            SettingsBlock {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(strings.settingsFeedListScaleTitle, modifier = Modifier.weight(1f))
+                    Text(scale.toString(), color = JewelTheme.globalColors.text.info)
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Tooltip(tooltip = { Text(strings.decreaseFontSizeButtonContentDescription) }) {
+                        OutlinedButton(
+                            onClick = {
+                                if (latestScale > FONT_SCALE_MIN) latestFontScaleUpdate(latestScale - 1)
+                            },
+                            enabled = scale > FONT_SCALE_MIN,
+                            modifier = Modifier.width(FONT_SCALE_BUTTON_WIDTH).semantics {
+                                contentDescription = strings.decreaseFontSizeButtonContentDescription
+                            },
+                        ) { Text("A", fontSize = 11.sp) }
+                    }
+                    Slider(
+                        value = scale.toFloat(),
+                        onValueChange = { onFontScaleUpdate(it.toInt()) },
+                        modifier = Modifier.weight(1f).semantics {
+                            contentDescription = strings.settingsFeedListScaleTitle
+                        },
+                        valueRange = FONT_SCALE_MIN.toFloat()..FONT_SCALE_MAX.toFloat(),
+                        steps = FONT_SCALE_STEPS,
+                    )
+                    Tooltip(tooltip = { Text(strings.increaseFontSizeButtonContentDescription) }) {
+                        OutlinedButton(
+                            onClick = {
+                                if (latestScale < FONT_SCALE_MAX) latestFontScaleUpdate(latestScale + 1)
+                            },
+                            enabled = scale < FONT_SCALE_MAX,
+                            modifier = Modifier.width(FONT_SCALE_BUTTON_WIDTH).semantics {
+                                contentDescription = strings.increaseFontSizeButtonContentDescription
+                            },
+                        ) { Text("A", fontSize = 17.sp) }
+                    }
+                }
+            }
+            SettingsChoice(
                 title = strings.settingsDescriptionMaxLines,
                 selected = settingsState.descriptionLineLimit,
                 choices = persistentListOf(
@@ -167,7 +163,40 @@ internal fun FeedListPane(
                 ),
                 onSelected = onDescriptionLineLimitUpdate,
             )
-            JewelSettingsChoice(
+        }
+
+        SettingsSection {
+            SettingsSwitch(
+                title = strings.settingsHideDescription,
+                checked = settingsState.isHideDescriptionEnabled,
+                onCheckedChange = onHideDescriptionUpdate,
+            )
+            SettingsSwitch(
+                title = strings.settingsHideImages,
+                checked = settingsState.isHideImagesEnabled,
+                onCheckedChange = onHideImagesUpdate,
+            )
+            SettingsSwitch(
+                title = strings.settingsHideDate,
+                checked = settingsState.isHideDateEnabled,
+                onCheckedChange = onHideDateUpdate,
+            )
+            SettingsSwitch(
+                title = strings.settingsHideUnreadDot,
+                checked = settingsState.isHideUnreadDotEnabled,
+                onCheckedChange = onHideUnreadDotUpdate,
+            )
+            SettingsSwitch(
+                title = strings.settingsHideFeedSource,
+                checked = settingsState.isHideFeedSourceEnabled,
+                onCheckedChange = onHideFeedSourceUpdate,
+            )
+            SettingsSwitch(
+                title = strings.settingsHideDuplicatedTitleFromDesc,
+                checked = settingsState.isRemoveTitleFromDescriptionEnabled,
+                onCheckedChange = onRemoveTitleFromDescUpdate,
+            )
+            SettingsChoice(
                 title = strings.dateFormatTitle,
                 selected = settingsState.dateFormat,
                 choices = persistentListOf(
@@ -178,7 +207,7 @@ internal fun FeedListPane(
                 ),
                 onSelected = onDateFormatUpdate,
             )
-            JewelSettingsChoice(
+            SettingsChoice(
                 title = strings.timeFormatTitle,
                 selected = settingsState.timeFormat,
                 choices = persistentListOf(
@@ -187,8 +216,17 @@ internal fun FeedListPane(
                 ),
                 onSelected = onTimeFormatUpdate,
             )
-            SettingsGroup(strings.settingsReadingBehavior)
-            JewelSettingsChoice(
+        }
+
+        SettingsSection(title = strings.settingsReadingBehavior) {
+            FeedVisibilitySettings(
+                isShowReadItemsEnabled = isShowReadItemsEnabled,
+                isHideReadItemsEnabled = isHideReadItemsEnabled,
+                isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
+                onShowReadItemsToggled = onShowReadItemsToggled,
+                onHideReadItemsToggled = onHideReadItemsToggled,
+            )
+            SettingsChoice(
                 title = strings.settingsFeedOrderTitle,
                 selected = feedOrder,
                 choices = persistentListOf(
@@ -197,13 +235,13 @@ internal fun FeedListPane(
                 ),
                 onSelected = onFeedOrderSelected,
             )
-            JewelSettingsChoice(
+            SettingsChoice(
                 title = strings.settingsLeftSwipeAction,
                 selected = settingsState.leftSwipeActionType,
                 choices = swipeActionOptions(strings),
                 onSelected = { onSwipeActionUpdate(SwipeDirection.LEFT, it) },
             )
-            JewelSettingsChoice(
+            SettingsChoice(
                 title = strings.settingsRightSwipeAction,
                 selected = settingsState.rightSwipeActionType,
                 choices = swipeActionOptions(strings),
@@ -214,59 +252,108 @@ internal fun FeedListPane(
 }
 
 @Composable
+internal fun FeedVisibilitySettings(
+    isShowReadItemsEnabled: Boolean,
+    isHideReadItemsEnabled: Boolean,
+    isMarkReadWhenScrollingEnabled: Boolean,
+    onShowReadItemsToggled: (Boolean) -> Unit,
+    onHideReadItemsToggled: (Boolean) -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    SettingsSwitch(
+        title = strings.settingsToggleShowReadArticles,
+        checked = isShowReadItemsEnabled,
+        onCheckedChange = onShowReadItemsToggled,
+    )
+    SettingsSwitch(
+        title = strings.settingsHideReadItems,
+        checked = isHideReadItemsEnabled,
+        onCheckedChange = onHideReadItemsToggled,
+        enabled = !isMarkReadWhenScrollingEnabled,
+        supportingText = if (isMarkReadWhenScrollingEnabled) {
+            strings.settingsHideReadItemsDisabledWhileScrolling
+        } else {
+            null
+        },
+    )
+}
+
+// Renders the same row the article list uses, so every option below previews exactly as it will look.
+@Composable
 private fun FeedItemPreview(
-    fontScale: Int,
+    fontSizes: FeedFontSizes,
     layout: FeedLayout,
     showDescription: Boolean,
     showImage: Boolean,
     showDate: Boolean,
     dateFormat: DateFormat,
     timeFormat: TimeFormat,
-    showFeedSource: Boolean,
-    showUnreadDot: Boolean,
-    descriptionLines: DescriptionLineLimit,
+    displaySettings: FeedItemDisplaySettings,
 ) {
     val strings = LocalFeedFlowStrings.current
-    val titleFontSize = (FEED_TITLE_FONT_SIZE + fontScale).coerceAtLeast(1).sp
-    val descriptionFontSize = (FEED_DESC_FONT_SIZE + fontScale).coerceAtLeast(1).sp
-    val metadataFontSize = (FEED_META_FONT_SIZE + fontScale).coerceAtLeast(1).sp
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-        SettingsGroup(strings.settingsFeedListTitle)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (showUnreadDot) Text("•  ")
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = strings.settingsFontScaleTitleExample,
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    style = LocalTextStyle.current.copy(fontSize = titleFontSize),
-                )
-                if (showFeedSource) {
-                    Text(
-                        strings.settingsFontScaleFeedSourceExample,
-                        style = LocalTextStyle.current.copy(fontSize = metadataFontSize),
-                    )
-                }
-                if (showDate) {
-                    Text(
-                        feedPreviewDate(dateFormat, timeFormat),
-                        style = LocalTextStyle.current.copy(fontSize = metadataFontSize),
-                    )
-                }
-                if (showDescription) {
-                    Text(
-                        text = strings.settingsFontScaleSubtitleExample,
-                        modifier = Modifier.padding(top = 4.dp),
-                        style = LocalTextStyle.current.copy(fontSize = descriptionFontSize),
-                        maxLines = descriptionLines.lines,
-                    )
-                }
-            }
-            if (showImage && layout != FeedLayout.LIST) Text("▧")
-        }
+    val rowLayout = if (layout == FeedLayout.GRID) FeedLayout.BIG_IMAGE else layout
+    val item = FeedItem(
+        id = "settings-preview",
+        url = "https://www.example.com",
+        title = strings.settingsFontScaleTitleExample,
+        subtitle = strings.settingsFontScaleSubtitleExample.takeIf { showDescription },
+        content = null,
+        imageUrl = PREVIEW_IMAGE_URL.takeIf { showImage },
+        feedSource = FeedSource(
+            id = "settings-preview-source",
+            url = "https://www.example.com",
+            title = strings.settingsFontScaleFeedSourceExample,
+            category = null,
+            lastSyncTimestamp = null,
+            logoUrl = null,
+            websiteUrl = null,
+            fetchFailed = false,
+            articleOpenMode = ArticleOpenMode.DEFAULT,
+            isHiddenFromTimeline = false,
+            isPinned = false,
+            isNotificationEnabled = false,
+            isHideImagesEnabled = false,
+        ),
+        pubDateMillis = null,
+        isRead = false,
+        dateString = feedPreviewDate(dateFormat, timeFormat).takeIf { showDate },
+        commentsUrl = null,
+        isBookmarked = false,
+    )
+    Box(
+        modifier = Modifier.fillMaxWidth()
+            .then(if (rowLayout != FeedLayout.LIST) Modifier.background(articleCardContainerColor()) else Modifier)
+            .padding(12.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        ArticleRow(
+            feedItem = item,
+            feedFontSize = fontSizes,
+            shareMenuLabel = strings.menuShare,
+            shareCommentsMenuLabel = strings.menuShareComments,
+            feedLayout = rowLayout,
+            currentFeedFilter = FeedFilter.Timeline,
+            feedItemDisplaySettings = displaySettings,
+            onFeedItemClick = {},
+            onOpenInBrowser = {},
+            onBookmarkClick = { _, _ -> },
+            onReadStatusClick = { _, _ -> },
+            onCommentClick = {},
+            onOpenFeedSettings = {},
+            onOpenFeedWebsite = {},
+            onShareClick = {},
+            onMarkAllAboveAsRead = {},
+            onMarkAllBelowAsRead = {},
+            modifier = Modifier.widthIn(
+                max = if (rowLayout == FeedLayout.BIG_IMAGE) 300.dp else 560.dp,
+            ),
+        )
     }
 }
 
+private const val PREVIEW_IMAGE_URL = "https://picsum.photos/seed/feedflow/800/450"
 private const val FONT_SCALE_MIN = -4
+private val FONT_SCALE_BUTTON_WIDTH = 40.dp
 private const val FONT_SCALE_MAX = 16
 private const val FONT_SCALE_STEPS = 19
 

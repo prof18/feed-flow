@@ -99,13 +99,13 @@ class ArticleLongFeedTest(private val layout: FeedLayout) {
 
             rule.runOnIdle {
                 val loadedIds = items.value.map { it.id }.toSet()
-                val keys = if (layout == FeedLayout.LIST) {
-                    listState.layoutInfo.visibleItemsInfo.map { it.key }
+                val indexes = if (layout == FeedLayout.LIST) {
+                    listState.layoutInfo.visibleItemsInfo.map { it.index }
                 } else {
-                    gridState.layoutInfo.visibleItemsInfo.map { it.key }
+                    gridState.layoutInfo.visibleItemsInfo.map { it.index }
                 }
-                val visibleIds = keys.filterIsInstance<ArticleKey>().map { it.id }
-                assertTrue(visibleIds.isNotEmpty(), "No article keys observed for $layout")
+                val visibleIds = indexes.mapNotNull { items.value.getOrNull(it)?.id }
+                assertTrue(visibleIds.isNotEmpty(), "No articles observed for $layout")
                 assertTrue(
                     visibleIds.all { it in loadedIds },
                     "Visible article key was absent from loaded data for $layout",

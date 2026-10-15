@@ -5,8 +5,10 @@ import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.runtime.Composable
@@ -45,7 +47,9 @@ import kotlinx.collections.immutable.ImmutableSet
 import org.jetbrains.jewel.foundation.theme.LocalContentColor
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.Tooltip
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun DesktopDrawerFeedSourcesList(
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
@@ -92,11 +96,13 @@ internal fun DesktopDrawerFeedSourcesList(
 
             DesktopFeedSourceDrawerItem(
                 label = {
-                    Text(
-                        text = feedSourceWrapper.feedSource.title,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    Tooltip(tooltip = { Text(feedSourceWrapper.feedSource.title) }) {
+                        Text(
+                            text = feedSourceWrapper.feedSource.title,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 },
                 selected = currentFeedFilter is FeedFilter.Source &&
                     currentFeedFilter.feedSource == feedSourceWrapper.feedSource,
@@ -111,7 +117,8 @@ internal fun DesktopDrawerFeedSourcesList(
                     val imageUrl = feedSourceWrapper.feedSource.logoUrl
                     if (imageUrl != null) {
                         FeedSourceLogoImage(
-                            size = 24.dp,
+                            size = 16.dp,
+                            cornerRadius = 4.dp,
                             imageUrl = imageUrl,
                         )
                     } else {
@@ -119,6 +126,7 @@ internal fun DesktopDrawerFeedSourcesList(
                             imageVector = Icons.Default.Category,
                             contentDescription = null,
                             tint = LocalContentColor.current,
+                            modifier = Modifier.size(16.dp),
                         )
                     }
                 },

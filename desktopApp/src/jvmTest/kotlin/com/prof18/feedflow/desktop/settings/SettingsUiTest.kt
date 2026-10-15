@@ -22,7 +22,7 @@ class SettingsUiTest {
     val rule = createComposeRule()
 
     @Test
-    fun `general pane exposes Jewel checkbox and routes preference change`() {
+    fun `general pane exposes switch and routes preference change`() {
         val reduceMotion = mutableStateOf(false)
         val forceEnglish = mutableStateOf(false)
         rule.setContent {
@@ -46,7 +46,7 @@ class SettingsUiTest {
 
         val reduceMotionCheckbox = rule.onNode(
             hasText(EnFeedFlowStrings.settingsReduceMotion) and
-                SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox),
+                SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Switch),
         )
         reduceMotionCheckbox.assertExists()
         reduceMotionCheckbox.performClick()
@@ -55,7 +55,7 @@ class SettingsUiTest {
 
         rule.onNode(
             hasText(EnFeedFlowStrings.settingsForceEnglish) and
-                SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox),
+                SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Switch),
         ).performClick()
 
         rule.runOnIdle { assertTrue(forceEnglish.value) }

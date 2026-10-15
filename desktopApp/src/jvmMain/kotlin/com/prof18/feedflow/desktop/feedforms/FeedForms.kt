@@ -1,12 +1,12 @@
 package com.prof18.feedflow.desktop.feedforms
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -35,7 +35,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoriesState
@@ -44,26 +43,26 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.YouTubeOptionsState
-import com.prof18.feedflow.desktop.settings.SettingsCheckbox
+import com.prof18.feedflow.desktop.settings.SettingsChoice
+import com.prof18.feedflow.desktop.settings.SettingsSection
+import com.prof18.feedflow.desktop.settings.SettingsSwitch
 import com.prof18.feedflow.desktop.testing.FeedFormE2eIds
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
-import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
+import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import com.prof18.feedflow.desktop.ui.components.Dialog
+import com.prof18.feedflow.desktop.ui.components.ProgressButtonLabel
 import com.prof18.feedflow.desktop.ui.components.SnackbarHost
+import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Outline
 import org.jetbrains.jewel.ui.component.CheckboxRow
 import org.jetbrains.jewel.ui.component.CircularProgressIndicator
 import org.jetbrains.jewel.ui.component.DefaultButton
-import org.jetbrains.jewel.ui.component.Icon
-import org.jetbrains.jewel.ui.component.IconButton
 import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
-import org.jetbrains.jewel.ui.component.Tooltip
-import org.jetbrains.jewel.ui.icons.AllIconsKeys
 
 internal const val ForceAddFeedTag = "force-add-feed"
 
@@ -80,12 +79,13 @@ internal fun AddFeedForm(
     canForceAdd: Boolean,
     onFeedUrlUpdated: (String) -> Unit,
     onAddFeed: () -> Unit,
-    onCategorySelectorClick: () -> Unit,
+    categoryActions: FeedCategoryActions,
     onNotificationToggleChanged: (Boolean) -> Unit,
     onForceAddFeed: () -> Unit,
     modifier: Modifier = Modifier,
     youTubeOptions: YouTubeOptionsState = YouTubeOptionsState(),
     onHideShortsToggleChanged: (Boolean) -> Unit = {},
+    onCancel: (() -> Unit)? = null,
     completionRevision: Int = 0,
     statusMessage: String? = null,
     topAppBar: @Composable () -> Unit = {},
@@ -126,19 +126,18 @@ internal fun AddFeedForm(
                     },
                     onSubmit = submit,
                 )
-                Text(strings.feedUrlHelpText)
+                FeedFormHint(strings.feedUrlHelpText)
                 FeedFormError(errorMessage.takeIf { showError })
-                FeedCategorySelector(categoriesState, !submission.busy) {
-                    if (!submission.busy) onCategorySelectorClick()
-                }
-                if (showNotificationToggle) {
-                    CheckboxRow(
-                        text = strings.enableNotificationsForFeed,
-                        checked = isNotificationEnabled,
-                        onCheckedChange = { if (!submission.busy) onNotificationToggleChanged(it) },
-                        enabled = !submission.busy,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                SettingsSection {
+                    FeedCategoryChoice(categoriesState, !submission.busy, categoryActions)
+                    if (showNotificationToggle) {
+                        SettingsSwitch(
+                            title = strings.enableNotificationsForFeed,
+                            checked = isNotificationEnabled,
+                            onCheckedChange = { if (!submission.busy) onNotificationToggleChanged(it) },
+                            enabled = !submission.busy,
+                        )
+                    }
                 }
                 HideShortsOption(youTubeOptions, enabled = !submission.busy, onToggle = onHideShortsToggleChanged)
                 statusMessage?.let { Text(it) }
@@ -153,6 +152,12 @@ internal fun AddFeedForm(
                 }
             },
             actions = {
+                onCancel?.let { cancel ->
+                    OutlinedButton(
+                        onClick = cancel,
+                        modifier = Modifier.heightIn(min = actionHeight),
+                    ) { Text(strings.cancelButton) }
+                }
                 DefaultButton(
                     onClick = submit,
                     modifier = Modifier.heightIn(min = actionHeight)
@@ -202,7 +207,7 @@ internal fun EditFeedForm(
     onPinnedToggled: (Boolean) -> Unit,
     showNotificationToggle: Boolean,
     onNotificationToggleChanged: (Boolean) -> Unit,
-    onCategorySelectorClick: () -> Unit,
+    categoryActions: FeedCategoryActions,
     editFeed: () -> Unit,
     onShowDeleteDialog: () -> Unit,
     showDeleteDialog: Boolean,
@@ -210,6 +215,7 @@ internal fun EditFeedForm(
     onConfirmDelete: () -> Unit,
     modifier: Modifier = Modifier,
     completionRevision: Int = 0,
+    onCancel: (() -> Unit)? = null,
 ) {
     val strings = LocalFeedFlowStrings.current
     var nameValue by remember { mutableStateOf(TextFieldValue(feedName)) }
@@ -260,43 +266,53 @@ internal fun EditFeedForm(
                 )
             }
             FeedFormError(errorMessage.takeIf { showError })
-            FeedCategorySelector(categoriesState, !submission.busy) {
-                if (!submission.busy) onCategorySelectorClick()
+            SettingsSection {
+                FeedCategoryChoice(categoriesState, !submission.busy, categoryActions)
+                articleOpenModeSelector(Modifier.fillMaxWidth(), !submission.busy)
             }
-            articleOpenModeSelector(Modifier.fillMaxWidth(), !submission.busy)
-            SettingsCheckbox(
-                title = strings.hideFeedFromTimelineDescription,
-                checked = feedSourceSettings.isHiddenFromTimeline,
-                onCheckedChange = { if (!submission.busy) onHiddenToggled(it) },
-                enabled = !submission.busy,
-            )
-            SettingsCheckbox(
-                title = strings.hideImagesForFeedDescription,
-                checked = feedSourceSettings.isHideImagesEnabled,
-                onCheckedChange = { if (!submission.busy) onHideImagesToggled(it) },
-                enabled = !submission.busy,
-            )
-            SettingsCheckbox(
-                title = strings.pinFeedSourceDescription,
-                checked = feedSourceSettings.isPinned,
-                onCheckedChange = { if (!submission.busy) onPinnedToggled(it) },
-                enabled = !submission.busy,
-            )
-            if (showNotificationToggle) {
-                SettingsCheckbox(
-                    title = strings.enableNotificationsForFeed,
-                    checked = feedSourceSettings.isNotificationEnabled,
-                    onCheckedChange = { if (!submission.busy) onNotificationToggleChanged(it) },
+            SettingsSection {
+                SettingsSwitch(
+                    title = strings.hideFeedFromTimelineDescription,
+                    checked = feedSourceSettings.isHiddenFromTimeline,
+                    onCheckedChange = { if (!submission.busy) onHiddenToggled(it) },
                     enabled = !submission.busy,
                 )
+                SettingsSwitch(
+                    title = strings.hideImagesForFeedDescription,
+                    checked = feedSourceSettings.isHideImagesEnabled,
+                    onCheckedChange = { if (!submission.busy) onHideImagesToggled(it) },
+                    enabled = !submission.busy,
+                )
+                SettingsSwitch(
+                    title = strings.pinFeedSourceDescription,
+                    checked = feedSourceSettings.isPinned,
+                    onCheckedChange = { if (!submission.busy) onPinnedToggled(it) },
+                    enabled = !submission.busy,
+                )
+                if (showNotificationToggle) {
+                    SettingsSwitch(
+                        title = strings.enableNotificationsForFeed,
+                        checked = feedSourceSettings.isNotificationEnabled,
+                        onCheckedChange = { if (!submission.busy) onNotificationToggleChanged(it) },
+                        enabled = !submission.busy,
+                    )
+                }
             }
         },
-        actions = {
+        leadingAction = {
             OutlinedButton(
                 onClick = { if (!submission.busy) onShowDeleteDialog() },
                 modifier = Modifier.heightIn(min = actionHeight),
                 enabled = !submission.busy,
-            ) { Text(strings.deleteFeedButton) }
+            ) { Text(strings.deleteFeedButton, color = JewelTheme.globalColors.text.error) }
+        },
+        actions = {
+            onCancel?.let { cancel ->
+                OutlinedButton(
+                    onClick = cancel,
+                    modifier = Modifier.heightIn(min = actionHeight),
+                ) { Text(strings.cancelButton) }
+            }
             DefaultButton(
                 onClick = submit,
                 modifier = Modifier.heightIn(min = actionHeight),
@@ -313,19 +329,27 @@ private fun FeedFormLayout(
     actions: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     topAppBar: @Composable () -> Unit = {},
+    leadingAction: (@Composable () -> Unit)? = null,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         topAppBar()
         Column(
-            modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
+                .padding(start = 24.dp, end = 24.dp, top = 20.dp, bottom = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
             content = body,
         )
-        FlowRow(
-            modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) { actions() }
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            leadingAction?.invoke()
+            Spacer(Modifier.weight(1f))
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) { actions() }
+        }
     }
 }
 
@@ -359,27 +383,64 @@ private fun FeedFormTextField(
     }
 }
 
+/** Inline category picker with a "New category…" entry, replacing the separate category window. */
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
-private fun FeedCategorySelector(state: CategoriesState, enabled: Boolean, onClick: () -> Unit) {
+private fun FeedCategoryChoice(state: CategoriesState, enabled: Boolean, actions: FeedCategoryActions) {
     val strings = LocalFeedFlowStrings.current
-    val name = state.categories.firstOrNull { it.isSelected }?.name ?: strings.noCategorySelectedHeader
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(strings.addFeedCategoryTitle)
-        Tooltip(tooltip = { Text(name) }) {
-            OutlinedButton(
-                onClick = onClick,
-                enabled = enabled,
-                modifier = Modifier.fillMaxWidth().heightIn(min = feedFormActionHeight())
-                    .semantics { contentDescription = "${strings.addFeedCategoryTitle}: $name" },
-            ) { Text(name, maxLines = 1, overflow = TextOverflow.Ellipsis) }
-        }
-    }
+    var showNewCategory by remember { mutableStateOf(false) }
+    val selectedId = state.categories.firstOrNull { it.isSelected }?.id
+        ?: state.categories.firstOrNull { it.name == null }?.id
+        ?: NEW_CATEGORY_KEY
+    val choices = (
+        state.categories.map { it.id to (it.name ?: strings.noCategorySelectedHeader) } +
+            (NEW_CATEGORY_KEY to strings.desktopNewCategoryMenu)
+        ).toPersistentList()
+    SettingsChoice(
+        title = strings.addFeedCategoryTitle,
+        choices = choices,
+        selected = selectedId,
+        enabled = enabled && !state.isLoading,
+        onSelected = { id ->
+            if (id == NEW_CATEGORY_KEY) showNewCategory = true else actions.onSelect(CategoryId(id))
+        },
+    )
+    CategoryNameDialog(
+        visible = showNewCategory,
+        title = strings.desktopNewCategoryMenu.trimEnd('…', '.'),
+        initialName = "",
+        categoryId = null,
+        validateCategoryName = actions.validate,
+        enabled = !state.isLoading,
+        onDismiss = { showNewCategory = false },
+        onSave = { name ->
+            actions.onAdd(name)
+            showNewCategory = false
+        },
+    )
 }
 
 @Composable
+private fun FeedFormHint(text: String) {
+    Text(text, style = DesktopDesignTokens.metadataText, color = JewelTheme.globalColors.text.info)
+}
+
+internal data class FeedCategoryActions(
+    val onSelect: (CategoryId) -> Unit,
+    val onAdd: (CategoryName) -> Unit,
+    val validate: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
+)
+
+private const val NEW_CATEGORY_KEY = "feedflow-new-category"
+
+@Composable
 private fun FeedFormError(message: String?) {
-    if (!message.isNullOrBlank()) Text(message, modifier = Modifier.semantics { error(message) })
+    if (!message.isNullOrBlank()) {
+        Text(
+            message,
+            color = JewelTheme.globalColors.text.error,
+            modifier = Modifier.semantics { error(message) },
+        )
+    }
 }
 
 @Composable
@@ -425,9 +486,13 @@ internal fun DeleteFeedConfirmation(
     if (!visible) return
     val strings = LocalFeedFlowStrings.current
     var deleting by remember(visible) { mutableStateOf(false) }
-    Dialog(title = strings.deleteFeedConfirmationTitle, onCloseRequest = { if (!deleting) onDismiss() }) {
+    Dialog(
+        title = strings.deleteFeedConfirmationTitle,
+        onCloseRequest = { if (!deleting) onDismiss() },
+        alertStyle = true,
+    ) {
         Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(strings.deleteFeedConfirmationTitle)
+            Text(strings.deleteFeedConfirmationTitle, style = DesktopDesignTokens.sectionHeading)
             Text(strings.deleteFeedConfirmationMessage)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = onDismiss, enabled = !deleting) {
@@ -442,140 +507,9 @@ internal fun DeleteFeedConfirmation(
                     },
                     enabled = !deleting,
                 ) {
-                    if (deleting) CircularProgressIndicator() else Text(strings.deleteFeed)
+                    ProgressButtonLabel(strings.deleteFeed, deleting)
                 }
             }
-        }
-    }
-}
-
-@Composable
-@OptIn(ExperimentalFoundationApi::class)
-internal fun CategoryEditorDialog(
-    categoryState: CategoriesState,
-    onCategorySelected: (CategoryId) -> Unit,
-    onAddCategory: (CategoryName) -> Unit,
-    onDeleteCategory: (CategoryId) -> Unit,
-    onEditCategory: (CategoryId, CategoryName) -> Unit,
-    validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
-    onDismiss: () -> Unit,
-) {
-    val strings = LocalFeedFlowStrings.current
-    val categoryActionsEnabled = !categoryState.isLoading
-    var showAddDialog by remember { mutableStateOf(false) }
-    var editingCategory by remember { mutableStateOf<CategoriesState.CategoryItem?>(null) }
-    var deletingCategory by remember { mutableStateOf<CategoryId?>(null) }
-    val actionHeight = feedFormActionHeight()
-    Dialog(title = strings.addFeedCategoriesTitle, onCloseRequest = onDismiss) {
-        FeedFormLayout(
-            body = {
-                categoryState.categories.forEach { category ->
-                    val name = category.name ?: strings.noCategorySelectedHeader
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Tooltip(modifier = Modifier.weight(1f), tooltip = { Text(name) }) {
-                            CheckboxRow(
-                                text = name,
-                                checked = category.isSelected,
-                                onCheckedChange = {
-                                    if (!categoryState.isLoading) onCategorySelected(CategoryId(category.id))
-                                },
-                                modifier = Modifier.fillMaxWidth().testTag(FeedFormE2eIds.categoryChip(name)),
-                                enabled = categoryActionsEnabled,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                        if (category.name != null) {
-                            Tooltip(tooltip = { Text(strings.editCategory) }) {
-                                IconButton(
-                                    onClick = { if (!categoryState.isLoading) editingCategory = category },
-                                    enabled = categoryActionsEnabled,
-                                    modifier = Modifier.size(actionHeight)
-                                        .testTag(categoryActionTag(category.id, "edit"))
-                                        .semantics { contentDescription = strings.editCategory },
-                                ) { Icon(AllIconsKeys.Actions.Edit, null) }
-                            }
-                            Tooltip(tooltip = { Text(strings.deleteCategory) }) {
-                                IconButton(
-                                    onClick = {
-                                        if (!categoryState.isLoading) deletingCategory = CategoryId(category.id)
-                                    },
-                                    enabled = categoryActionsEnabled,
-                                    modifier = Modifier.size(actionHeight)
-                                        .testTag(categoryActionTag(category.id, "delete"))
-                                        .semantics { contentDescription = strings.deleteCategory },
-                                ) { Icon(AllIconsKeys.General.Delete, null) }
-                            }
-                        }
-                    }
-                }
-                if (categoryState.isLoading) CircularProgressIndicator()
-            },
-            actions = {
-                OutlinedButton(
-                    onClick = { if (!categoryState.isLoading) showAddDialog = true },
-                    modifier = Modifier.heightIn(min = actionHeight).testTag(FeedFormE2eIds.CATEGORY_SHEET_ADD),
-                    enabled = categoryActionsEnabled,
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Icon(AllIconsKeys.General.Add, null)
-                        Text(strings.addFeedCategoryTitle)
-                    }
-                }
-                DefaultButton(onClick = onDismiss, modifier = Modifier.heightIn(min = actionHeight)) {
-                    Text(strings.actionDone)
-                }
-            },
-        )
-        CategoryNameDialog(
-            visible = showAddDialog,
-            title = strings.addFeedCategoryTitle,
-            initialName = "",
-            categoryId = null,
-            validateCategoryName = validateCategoryName,
-            enabled = categoryActionsEnabled,
-            onDismiss = { showAddDialog = false },
-            onSave = { name ->
-                if (!categoryState.isLoading) {
-                    onAddCategory(name)
-                    showAddDialog = false
-                }
-            },
-        )
-        editingCategory?.let { category ->
-            CategoryNameDialog(
-                visible = true,
-                title = strings.editCategory,
-                initialName = category.name.orEmpty(),
-                categoryId = CategoryId(category.id),
-                validateCategoryName = validateCategoryName,
-                enabled = categoryActionsEnabled,
-                onDismiss = { editingCategory = null },
-                onSave = { name ->
-                    if (!categoryState.isLoading) {
-                        onEditCategory(CategoryId(category.id), name)
-                        editingCategory = null
-                    }
-                },
-            )
-        }
-        deletingCategory?.let { categoryId ->
-            ConfirmationDialog(
-                title = strings.deleteCategoryConfirmationTitle,
-                message = strings.deleteCategoryConfirmationMessage,
-                confirmLabel = strings.deleteCategory,
-                onConfirm = {
-                    if (!categoryState.isLoading) onDeleteCategory(categoryId)
-                    deletingCategory = null
-                },
-                onDismiss = { deletingCategory = null },
-            )
         }
     }
 }
@@ -673,9 +607,6 @@ internal fun CategoryNameDialog(
         }
     }
 }
-
-private fun categoryActionTag(categoryId: String, action: String): String =
-    "edit_feed_category_${action}_$categoryId"
 
 private fun canSaveCategoryName(
     enabled: Boolean,

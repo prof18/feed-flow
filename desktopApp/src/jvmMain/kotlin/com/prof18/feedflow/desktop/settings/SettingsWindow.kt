@@ -7,12 +7,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogWindowScope
+import com.prof18.feedflow.desktop.accounts.rememberAccountDrafts
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.importexport.ImportExportFilePickers
+import com.prof18.feedflow.desktop.importexport.ImportExportScreen
+import com.prof18.feedflow.desktop.importexport.rememberImportExportFilePickerState
+import com.prof18.feedflow.desktop.main.DesktopDialogWindowNavigator
+import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
+import com.prof18.feedflow.desktop.settings.blocked.rememberBlockedWordDraft
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
+import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.MenuBarViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -22,7 +31,8 @@ private val SETTINGS_WINDOW_MINIMUM_SIZE = DpSize(width = 680.dp, height = 520.d
 @Composable
 internal fun DesktopSettingsDialog(
     onCloseRequest: () -> Unit,
-    content: @Composable (Modifier) -> Unit,
+    activationRequest: Int = 0,
+    content: @Composable DialogWindowScope.(Modifier) -> Unit,
 ) {
     DesktopDialogWindow(
         title = LocalFeedFlowStrings.current.settingsTitle,
@@ -30,25 +40,41 @@ internal fun DesktopSettingsDialog(
         minimumSize = SETTINGS_WINDOW_MINIMUM_SIZE,
         onCloseRequest = onCloseRequest,
         resizable = true,
+        extendBehindTitleBar = true,
+        activationRequest = activationRequest,
     ) { modifier -> content(modifier) }
 }
 
 @Composable
 internal fun SettingsWindow(
+    navigator: DesktopDialogWindowNavigator,
     onCloseRequest: () -> Unit,
-    initialCategory: DesktopSettingsCategory = DesktopSettingsCategory.GENERAL,
+    triggerFeedFetch: () -> Unit,
+    onClearOldArticles: () -> Unit,
+    canClearOldArticles: Boolean,
 ) {
-    DesktopSettingsDialog(onCloseRequest) { modifier ->
+    DesktopSettingsDialog(onCloseRequest, activationRequest = navigator.settingsActivationRequest) { modifier ->
         val menuBarViewModel = koinViewModel<MenuBarViewModel>()
         val feedListSettingsViewModel = koinViewModel<FeedListSettingsViewModel>()
         val desktopHomeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
         val settingsRepository = remember { DI.koin.get<SettingsRepository>() }
+        val readerFonts by settingsRepository.readerFontSettingsState.collectAsState()
+        val accountDrafts = rememberAccountDrafts()
+        val blockedWordDraft = rememberBlockedWordDraft()
+        val pickerState = rememberImportExportFilePickerState()
+        val importExportViewModel = koinViewModel<ImportExportViewModel>()
+        ImportExportFilePickers(window, pickerState, importExportViewModel)
         val settingsState by menuBarViewModel.state.collectAsState()
         val isForceEnglishEnabled by settingsRepository.forceEnglishEnabledFlow.collectAsState()
         val isMultiPaneEnabled by desktopHomeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
         val fontSizesState by feedListSettingsViewModel.feedFontSizeState.collectAsState()
         val feedListSettingsState by feedListSettingsViewModel.state.collectAsState()
-        SettingsContent(initialCategory = initialCategory, modifier = modifier) { category ->
+        SettingsContent(
+            initialCategory = navigator.settingsCategory,
+            sectionKey = navigator.settingsSection?.name,
+            onCategorySelected = navigator::selectSettingsCategory,
+            modifier = modifier,
+        ) { category ->
             when (category) {
                 DesktopSettingsCategory.GENERAL -> GeneralPane(
                     themeMode = settingsState.themeMode,
@@ -62,7 +88,7 @@ internal fun SettingsWindow(
                     isHideUnreadCountEnabled = settingsState.isHideUnreadCountEnabled,
                     onHideUnreadCountToggled = menuBarViewModel::updateHideUnreadCount,
                 )
-                DesktopSettingsCategory.ACCOUNTS -> AccountsPane()
+                DesktopSettingsCategory.ACCOUNTS -> AccountsPane(accountDrafts)
                 DesktopSettingsCategory.FEED_LIST -> FeedListPane(
                     fontSizesState = fontSizesState,
                     settingsState = feedListSettingsState,
@@ -81,30 +107,50 @@ internal fun SettingsWindow(
                     onHideUnreadDotUpdate = feedListSettingsViewModel::updateHideUnreadDot,
                     onHideFeedSourceUpdate = feedListSettingsViewModel::updateHideFeedSource,
                     onDescriptionLineLimitUpdate = feedListSettingsViewModel::updateDescriptionLineLimit,
+                    isShowReadItemsEnabled = settingsState.isShowReadItemsEnabled,
+                    isHideReadItemsEnabled = settingsState.isHideReadItemsEnabled,
+                    isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
+                    onShowReadItemsToggled = menuBarViewModel::updateShowReadItemsOnTimeline,
+                    onHideReadItemsToggled = menuBarViewModel::updateHideReadItems,
                 )
                 DesktopSettingsCategory.READING -> ReadingPane(
                     articleOpenMode = settingsState.articleOpenMode,
                     isSaveReaderModeContentEnabled = settingsState.isSaveReaderModeContentEnabled,
                     isPrefetchArticleContentEnabled = settingsState.isPrefetchArticleContentEnabled,
                     isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
-                    isShowReadItemsEnabled = settingsState.isShowReadItemsEnabled,
-                    isHideReadItemsEnabled = settingsState.isHideReadItemsEnabled,
                     onArticleOpenModeSelected = menuBarViewModel::updateArticleOpenMode,
                     onSaveReaderModeContentToggled = menuBarViewModel::updateSaveReaderModeContent,
                     onPrefetchToggled = menuBarViewModel::updatePrefetchArticleContent,
                     onMarkReadWhenScrollingToggled = menuBarViewModel::updateMarkReadWhenScrolling,
-                    onShowReadItemsToggled = menuBarViewModel::updateShowReadItemsOnTimeline,
-                    onHideReadItemsToggled = menuBarViewModel::updateHideReadItems,
+                    readerFontSize = readerFonts.fontSize,
+                    readerLineHeight = readerFonts.lineHeight,
+                    onReaderFontSizeChanged = settingsRepository::setReaderModeFontSize,
+                    onReaderLineHeightChanged = settingsRepository::setReaderModeLineHeight,
                 )
-                DesktopSettingsCategory.SYNC_STORAGE -> SyncStoragePane(
-                    isRefreshFeedsOnLaunchEnabled = settingsState.isRefreshFeedsOnLaunchEnabled,
-                    autoDeletePeriod = settingsState.autoDeletePeriod,
-                    syncPeriod = settingsState.syncPeriod,
-                    onRefreshFeedsOnLaunchToggled = menuBarViewModel::updateRefreshFeedsOnLaunch,
-                    onSyncPeriodSelected = menuBarViewModel::updateSyncPeriod,
-                    onAutoDeletePeriodSelected = menuBarViewModel::updateAutoDeletePeriod,
-                    onClearDownloadedArticles = menuBarViewModel::clearDownloadedArticleContent,
-                )
+                DesktopSettingsCategory.FILTERS -> BlockedWordsScreen(blockedWordDraft)
+                DesktopSettingsCategory.SYNC_STORAGE -> {
+                    if (navigator.settingsSection == DesktopSettingsSection.IMPORT_EXPORT) {
+                        ImportExportScreen(
+                            onCloseRequest = { navigator.selectSettingsSection(null) },
+                            triggerFeedFetch = triggerFeedFetch,
+                            pickerState = pickerState,
+                            viewModel = importExportViewModel,
+                        )
+                    } else {
+                        SyncStoragePane(
+                            isRefreshFeedsOnLaunchEnabled = settingsState.isRefreshFeedsOnLaunchEnabled,
+                            autoDeletePeriod = settingsState.autoDeletePeriod,
+                            syncPeriod = settingsState.syncPeriod,
+                            onRefreshFeedsOnLaunchToggled = menuBarViewModel::updateRefreshFeedsOnLaunch,
+                            onSyncPeriodSelected = menuBarViewModel::updateSyncPeriod,
+                            onAutoDeletePeriodSelected = menuBarViewModel::updateAutoDeletePeriod,
+                            onClearDownloadedArticles = menuBarViewModel::clearDownloadedArticleContent,
+                            onImportExport = { navigator.selectSettingsSection(DesktopSettingsSection.IMPORT_EXPORT) },
+                            onClearOldArticles = onClearOldArticles,
+                            canClearOldArticles = canClearOldArticles,
+                        )
+                    }
+                }
                 DesktopSettingsCategory.ABOUT -> AboutPane(
                     isCrashReportingEnabled = settingsState.isCrashReportingEnabled,
                     onCrashReportingToggled = { enabled ->

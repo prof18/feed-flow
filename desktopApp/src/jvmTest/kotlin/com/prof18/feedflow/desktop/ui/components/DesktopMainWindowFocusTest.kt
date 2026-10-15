@@ -21,6 +21,7 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.window.Window
 import com.prof18.feedflow.desktop.main.MainWindowSurface
+import com.prof18.feedflow.desktop.testing.requestNativeTestAppForeground
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.desktopMainWindowTitle
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
@@ -97,6 +98,7 @@ class DesktopMainWindowFocusTest {
             it.isShowing && it.title == FRAME_TITLE
         }
         SwingUtilities.invokeAndWait {
+            requestNativeTestAppForeground()
             frame.toFront()
             frame.requestFocus()
         }

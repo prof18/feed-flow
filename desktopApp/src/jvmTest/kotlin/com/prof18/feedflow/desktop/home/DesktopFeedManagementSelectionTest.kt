@@ -69,7 +69,7 @@ class DesktopFeedManagementSelectionTest {
         rule.onNodeWithText("Feed 1").assertIsSelected()
         assertEquals(0, activations)
         rule.onNodeWithText("Clear selection").performMouseInput { click() }
-        rule.onNodeWithText("0 selected").assertExists()
+        rule.onNodeWithText("0 selected").assertDoesNotExist()
     }
 
     @Test
@@ -212,10 +212,12 @@ class DesktopFeedManagementSelectionTest {
     fun `pointer reorder dispatches current section IDs exactly once`() {
         val reordered = mutableListOf<List<FeedSource>>()
         setHost(onReorder = reordered::add, onActivate = {})
+        val origin = rule.onNodeWithText("Feed 0").fetchSemanticsNode().boundsInRoot
+        val target = rule.onNodeWithText("Feed 2").fetchSemanticsNode().boundsInRoot
         rule.onNodeWithText("Feed 0").performMouseInput {
             moveTo(center)
             press()
-            moveTo(Offset(center.x, center.y + DRAG_REORDER_DISTANCE))
+            moveTo(Offset(center.x, target.bottom - origin.top - 1f))
             release()
         }
         rule.runOnIdle {
@@ -525,7 +527,7 @@ class DesktopFeedManagementSelectionTest {
                             onAddFeedClick = {}, onFeedFilterSelected = {}, onEditFeedClick = {},
                             onDeleteFeedSourceClick = {}, onPinFeedClick = {}, onEditCategoryClick = { _, _ -> },
                             validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
-                            onDeleteCategoryClick = {}, onChangeFeedCategoryClick = {}, onOpenWebsite = {},
+                            onDeleteCategoryClick = {}, onOpenWebsite = {},
                             onMoveFeedSourcesToCategory = onMove,
                             onReorderFeedSources = onReorder,
                             onReorderCategories = onReorderCategories,

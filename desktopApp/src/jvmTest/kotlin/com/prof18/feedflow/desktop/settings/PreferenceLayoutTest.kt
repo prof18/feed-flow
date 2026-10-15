@@ -42,7 +42,7 @@ class PreferenceLayoutTest(private val direction: LayoutDirection, private val f
             ) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
                     Box(Modifier.requiredSize(width = 280.dp, height = 480.dp).verticalScroll(rememberScrollState())) {
-                        JewelSettingsChoice(
+                        SettingsChoice(
                             title = title,
                             choices = persistentListOf(value, "Never", "Hourly", "Daily", "Weekly")
                                 .mapIndexed { index, label -> index to label }.toPersistentList(),

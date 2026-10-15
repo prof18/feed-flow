@@ -7,12 +7,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.GoogleDriveSynMessages
-import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.desktop.accounts.AccountConnectButton
 import com.prof18.feedflow.desktop.accounts.AccountScreen
 import com.prof18.feedflow.desktop.accounts.CloudAccountContent
 import com.prof18.feedflow.desktop.accounts.CredentialsState
-import com.prof18.feedflow.desktop.accounts.ObserveJewelAccountConnection
+import com.prof18.feedflow.desktop.accounts.ObserveAccountConnection
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -22,8 +21,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun GoogleDriveSyncScreen(
-    navigateBack: () -> Unit,
-    showNavigateBack: Boolean = true,
     credentialsState: CredentialsState? = null,
 ) {
     val viewModel = koinViewModel<GoogleDriveSyncViewModel>()
@@ -34,7 +31,7 @@ internal fun GoogleDriveSyncScreen(
     val fallbackDraft = remember { CredentialsState() }
     val draft = credentialsState ?: fallbackDraft
 
-    ObserveJewelAccountConnection(
+    ObserveAccountConnection(
         draft = draft,
         uiState = viewModel.googleDriveConnectionUiState,
         messages = viewModel.googleDriveSyncMessageState,
@@ -52,7 +49,7 @@ internal fun GoogleDriveSyncScreen(
         }
     }
 
-    AccountScreen(SyncAccounts.GOOGLE_DRIVE, navigateBack, showNavigateBack, snackbarHostState) {
+    AccountScreen(snackbarHostState) {
         GoogleDriveAccountContent(
             uiState = uiState,
             credentialsState = draft,

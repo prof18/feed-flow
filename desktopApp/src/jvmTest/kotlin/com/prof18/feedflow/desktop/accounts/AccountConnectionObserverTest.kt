@@ -30,7 +30,7 @@ class AccountConnectionObserverTest {
                 val rememberedDraft = remember { CredentialsState(ownerScope) }
                 SideEffect { draft = rememberedDraft }
                 if (detailMounted.value) {
-                    ObserveJewelAccountConnection(rememberedDraft, uiState, messages) { message ->
+                    ObserveAccountConnection(rememberedDraft, uiState, messages) { message ->
                         handledMessages++
                         when (message) {
                             is TestConnectionMessage.Failure -> {
@@ -78,7 +78,7 @@ class AccountConnectionObserverTest {
                 val rememberedDraft = remember { CredentialsState(ownerScope) }
                 SideEffect { draft = rememberedDraft }
                 if (detailMounted.value) {
-                    ObserveJewelAccountConnection(rememberedDraft, uiState, messages) { handledMessages++ }
+                    ObserveAccountConnection(rememberedDraft, uiState, messages) { handledMessages++ }
                 }
             }
         }
@@ -116,7 +116,7 @@ class AccountConnectionObserverTest {
                 val rememberedDraft = remember { CredentialsState(ownerScope) }
                 SideEffect { draft = rememberedDraft }
                 if (detailMounted.value) {
-                    ObserveJewelAccountConnection(
+                    ObserveAccountConnection(
                         draft = rememberedDraft,
                         uiState = uiState,
                         messages = messages,
@@ -151,7 +151,7 @@ class AccountConnectionObserverTest {
                 val rememberedDraft = remember { CredentialsState(ownerScope) }
                 SideEffect { draft = rememberedDraft }
                 if (detailMounted.value) {
-                    ObserveJewelAccountConnection(rememberedDraft, uiState, messages) { message ->
+                    ObserveAccountConnection(rememberedDraft, uiState, messages) { message ->
                         if (message == TestConnectionMessage.AuthReady) rememberedDraft.authCodeReady = true
                     }
                 }
@@ -181,7 +181,7 @@ class AccountConnectionObserverTest {
                 val rememberedDraft = remember { CredentialsState(ownerScope) }
                 SideEffect { draft = rememberedDraft }
                 if (detailMounted.value) {
-                    ObserveJewelAccountConnection(rememberedDraft, uiState, messages) { message ->
+                    ObserveAccountConnection(rememberedDraft, uiState, messages) { message ->
                         handledMessages++
                         if (message is TestConnectionMessage.Failure) {
                             rememberedDraft.connectionError = message.message

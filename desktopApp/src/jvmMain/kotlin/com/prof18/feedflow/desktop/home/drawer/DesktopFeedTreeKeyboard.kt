@@ -102,20 +102,23 @@ internal fun desktopTreeRowFocusModifier(key: String, keyboard: DesktopFeedTreeK
 internal fun desktopTreeKeyboardRows(
     tree: DesktopFeedTreeProjection,
     state: DesktopFeedTreeState,
+    retainedCollapsedSections: Set<String> = emptySet(),
 ): List<DesktopFeedTreeKeyboardRow> = buildList {
     var lazyIndex = 0
     listOf("timeline", "read", "bookmarks").forEach { add(DesktopFeedTreeKeyboardRow(it, lazyIndex++)) }
+    lazyIndex++ // Source heading and its actions are not focusable tree rows.
     if (tree.pinned.isNotEmpty()) {
         lazyIndex += 2 // Divider and pinned heading are not focusable rows.
         tree.pinned.forEach { add(DesktopFeedTreeKeyboardRow("feed:${it.feedSource.id}", lazyIndex++)) }
     }
-    lazyIndex++ // Source heading and Add menu.
     tree.sections.forEach { section ->
         add(DesktopFeedTreeKeyboardRow(section.id, lazyIndex++, sectionKey = section.id))
         if (state.isExpanded(section.id)) {
             section.visibleFeeds.forEach {
                 add(DesktopFeedTreeKeyboardRow("feed:${it.feedSource.id}", lazyIndex++, parentKey = section.id))
             }
+        } else if (section.id in retainedCollapsedSections) {
+            lazyIndex += section.visibleFeeds.size
         }
     }
 }

@@ -36,6 +36,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.desktop.settings.DesktopSettingsDialog
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
@@ -170,7 +171,7 @@ class BlockedWordsContentTest {
         var mutations = 0
         content {
             if (visible.value) {
-                BlockedWordsWindow(onCloseRequest = { visible.value = false }) {
+                DesktopSettingsDialog(onCloseRequest = { visible.value = false }) {
                     Words(onAdd = { mutations++ })
                 }
             }
@@ -182,7 +183,7 @@ class BlockedWordsContentTest {
         rule.onNodeWithTag(BlockedWordsE2eIds.INPUT).requestFocus().performTextReplacement("unsaved fixture")
         SwingUtilities.invokeAndWait {
             val window = Window.getWindows().filterIsInstance<Dialog>().single {
-                it.isVisible && it.title == EnFeedFlowStrings.settingsBlockedWords
+                it.isVisible && it.title == EnFeedFlowStrings.settingsTitle
             }
             val input = descendants(window).single { component ->
                 component.keyListeners.any { it.javaClass.name.contains("ComposeSceneMediator") }

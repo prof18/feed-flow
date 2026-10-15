@@ -1,137 +1,89 @@
 package com.prof18.feedflow.desktop.accounts
 
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.Computer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.input.pointer.PointerEvent
-import androidx.compose.ui.input.pointer.isPrimaryPressed
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.composeunstyled.rememberScrollbarState
+import androidx.compose.ui.unit.sp
 import com.prof18.feedflow.core.model.SyncAccounts
-import com.prof18.feedflow.desktop.settings.SettingsGroup
+import com.prof18.feedflow.desktop.settings.SettingsActionRow
+import com.prof18.feedflow.desktop.settings.SettingsPage
+import com.prof18.feedflow.desktop.settings.SettingsRow
+import com.prof18.feedflow.desktop.settings.SettingsSection
 import com.prof18.feedflow.desktop.testing.AccountE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
-import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
-import com.prof18.feedflow.desktop.ui.components.rememberDesktopSidebarItemStyle
 import kotlinx.collections.immutable.ImmutableList
-import org.jetbrains.jewel.foundation.lazy.SelectableColumnKeybindings
-import org.jetbrains.jewel.foundation.lazy.SelectableLazyListKey
-import org.jetbrains.jewel.foundation.lazy.SelectableLazyListState
-import org.jetbrains.jewel.foundation.lazy.SelectionMode
-import org.jetbrains.jewel.foundation.lazy.SingleSelectionLazyColumn
-import org.jetbrains.jewel.foundation.lazy.SingleSelectionLazyListState
-import org.jetbrains.jewel.foundation.lazy.tree.DefaultSelectableLazyColumnEventAction
+import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Icon
-import org.jetbrains.jewel.ui.component.ListItemState
-import org.jetbrains.jewel.ui.component.OutlinedButton
-import org.jetbrains.jewel.ui.component.SimpleListItem
 import org.jetbrains.jewel.ui.component.Text
-import org.jetbrains.jewel.ui.component.styling.SimpleListItemStyle
 
-/** Shared accounts overview and navigation. Selecting a provider only opens its detail slot. */
+/**
+ * Accounts settings page. The overview lists the current account and the available services; opening a
+ * service shows its connection details as a subpage. Opening a service never connects it.
+ */
 @Composable
 internal fun DesktopAccountsContent(
     currentAccount: SyncAccounts,
     supportedAccounts: ImmutableList<SyncAccounts>,
     modifier: Modifier = Modifier,
+    drafts: AccountDrafts = rememberAccountDrafts(),
     detailContent: @Composable (SyncAccounts, () -> Unit, Boolean, CredentialsState) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
     val providers = desktopAccountPresentations(currentAccount, supportedAccounts, strings)
     var selectedName by rememberSaveable { mutableStateOf<String?>(null) }
-    var showServices by rememberSaveable { mutableStateOf(true) }
     val selected = providers.firstOrNull { it.account.name == selectedName && it.isEnabled }
-    val accountScope = rememberCoroutineScope()
-    val credentialDrafts = remember { mutableMapOf<SyncAccounts, CredentialsState>() }
-    val providerScrollState = rememberLazyListState()
-    val providerListState = remember(providerScrollState) {
-        SingleSelectionLazyListState(
-            providerScrollState,
-            selected?.account ?: providers.firstOrNull { it.isEnabled }?.account,
-        )
+    val overviewScrollState = rememberScrollState()
+    val open: (SyncAccounts) -> Unit = { account ->
+        if (providers.any { it.account == account && it.isEnabled }) selectedName = account.name
     }
-    val select: (SyncAccounts) -> Unit = { account ->
-        if (providers.any { it.account == account && it.isEnabled }) {
-            selectedName = account.name
-            showServices = false
-        }
-    }
+    val back = { selectedName = null }
     LaunchedEffect(selectedName, currentAccount, supportedAccounts) {
-        if (selectedName != null && selected == null) {
-            selectedName = null
-            showServices = true
-        }
+        if (selectedName != null && selected == null) selectedName = null
     }
 
-    BoxWithConstraints(modifier.fillMaxSize()) {
-        val wide = maxWidth >= ACCOUNTS_WIDE_BREAKPOINT
-        Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-            if (wide || showServices || selected == null) {
-                AccountsOverview(
-                    currentAccount = currentAccount,
-                    providers = providers,
-                    selectedAccount = selected?.account,
-                    listState = providerListState,
-                    onSelect = select,
-                    modifier = if (wide) Modifier.width(240.dp).fillMaxHeight() else Modifier.fillMaxSize(),
-                )
-            }
-            if (wide || (!showServices && selected != null)) {
-                Column(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (selected == null) {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(strings.desktopAccountsChooseService, Modifier.padding(24.dp))
-                        }
-                    } else {
-                        if (!wide) {
-                            OutlinedButton(onClick = { showServices = true }) {
-                                Text(strings.desktopAccountsBackToServices)
-                            }
-                        }
-                        Text(selected.description, Modifier.padding(horizontal = 16.dp))
-                        Box(Modifier.weight(1f).fillMaxWidth()) {
-                            key(selected.account) {
-                                val credentials = credentialDrafts.getOrPut(selected.account) {
-                                    CredentialsState(accountScope)
-                                }
-                                detailContent(selected.account, { showServices = true }, false, credentials)
-                            }
-                        }
-                    }
+    Box(modifier.fillMaxSize()) {
+        if (selected == null) {
+            AccountsOverview(
+                currentAccount = currentAccount,
+                providers = providers,
+                onOpen = open,
+                scrollState = overviewScrollState,
+            )
+        } else {
+            AccountDetailPage(provider = selected, onBack = back) {
+                key(selected.account) {
+                    detailContent(selected.account, back, false, drafts.forAccount(selected.account))
                 }
             }
         }
@@ -142,158 +94,145 @@ internal fun DesktopAccountsContent(
 private fun AccountsOverview(
     currentAccount: SyncAccounts,
     providers: ImmutableList<DesktopAccountPresentation>,
-    selectedAccount: SyncAccounts?,
-    listState: SingleSelectionLazyListState,
-    onSelect: (SyncAccounts) -> Unit,
-    modifier: Modifier = Modifier,
+    onOpen: (SyncAccounts) -> Unit,
+    scrollState: ScrollState,
 ) {
     val strings = LocalFeedFlowStrings.current
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SettingsGroup(strings.settingsAccounts)
-        Text(currentAccount.desktopTitle(strings), fontWeight = FontWeight.SemiBold)
-        Text(
-            if (currentAccount == SyncAccounts.LOCAL) {
-                strings.desktopAccountsLocalStatus
-            } else {
-                strings.desktopAccountsConnectedStatus
-            },
-            modifier = Modifier.testTag(ACCOUNT_CURRENT_STATUS_TAG),
-        )
-        if (providers.any { it.account == currentAccount }) {
-            OutlinedButton(onClick = { onSelect(currentAccount) }, modifier = Modifier.testTag(ACCOUNT_MANAGE_TAG)) {
-                Text(strings.desktopAccountsManageButton)
-            }
-        }
-        Text(
-            if (currentAccount == SyncAccounts.LOCAL) {
-                strings.desktopAccountsOverviewDescription
-            } else {
-                strings.desktopAccountsSingleProviderExplanation
-            },
-        )
-        SettingsGroup(strings.desktopAccountsServicesTitle)
-        AccountsProviderList(
-            providers = providers,
-            selectedAccount = selectedAccount,
-            listState = listState,
-            onSelect = onSelect,
-            modifier = Modifier.weight(1f).fillMaxWidth(),
-        )
-    }
-}
-
-@Composable
-private fun AccountsProviderList(
-    providers: ImmutableList<DesktopAccountPresentation>,
-    selectedAccount: SyncAccounts?,
-    listState: SingleSelectionLazyListState,
-    onSelect: (SyncAccounts) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val latestProviders by rememberUpdatedState(providers)
-    val latestSelect by rememberUpdatedState(onSelect)
-    val style = rememberDesktopSidebarItemStyle()
-    fun select(key: Any?) {
-        latestProviders.firstOrNull { it.account == key && it.isEnabled }?.let { latestSelect(it.account) }
-    }
-    LaunchedEffect(selectedAccount, providers.map { it.account to it.isEnabled }) {
-        val key = selectedAccount ?: (listState.selectedKeys.firstOrNull() as? SyncAccounts)
-            ?.takeIf { account -> providers.any { it.account == account && it.isEnabled } }
-            ?: providers.firstOrNull { it.isEnabled }?.account
-        listState.selectedKeys = setOfNotNull(key)
-    }
-    val pointerActions = remember {
-        object : DefaultSelectableLazyColumnEventAction() {
-            override fun handlePointerEventPress(
-                pointerEvent: PointerEvent,
-                keybindings: SelectableColumnKeybindings,
-                selectableLazyListState: SelectableLazyListState,
-                selectionMode: SelectionMode,
-                allKeys: List<SelectableLazyListKey>,
-                key: Any,
-            ) {
-                if (!pointerEvent.buttons.isPrimaryPressed || pointerEvent.changes.any { it.isConsumed }) return
-                super.handlePointerEventPress(
-                    pointerEvent,
-                    keybindings,
-                    selectableLazyListState,
-                    selectionMode,
-                    allKeys,
-                    key,
-                )
-                select(key)
-            }
-        }
-    }
-    Box(modifier) {
-        SingleSelectionLazyColumn(
-            state = listState,
-            pointerEventActions = pointerActions,
-            modifier = Modifier.fillMaxSize().padding(end = 12.dp)
-                .testTag(ACCOUNT_PROVIDERS_TAG)
-                .onKeyEvent { event ->
-                    if (event.type == KeyEventType.KeyDown && (event.key == Key.Enter || event.key == Key.Spacebar)) {
-                        select(listState.selectedKeys.firstOrNull())
-                        true
-                    } else {
-                        false
-                    }
-                },
+    val isLocal = currentAccount == SyncAccounts.LOCAL
+    SettingsPage(title = strings.settingsAccounts, scrollState = scrollState) {
+        SettingsSection(
+            footer = if (isLocal) null else strings.desktopAccountsSingleProviderExplanation,
         ) {
-            providers.forEach { provider ->
-                item(key = provider.account, selectable = provider.isEnabled) {
-                    AccountProviderRow(
-                        provider = provider,
-                        state = ListItemState(isSelected = isSelected, isActive = isActive && provider.isEnabled),
-                        style = style,
+            SettingsRow(
+                title = currentAccount.desktopTitle(strings),
+                leading = { AccountIcon(currentAccount, size = CURRENT_ICON_SIZE) },
+                trailing = {
+                    Text(
+                        if (isLocal) strings.desktopAccountsLocalStatus else strings.desktopAccountsConnectedStatus,
+                        modifier = Modifier.testTag(ACCOUNT_CURRENT_STATUS_TAG),
+                        color = JewelTheme.globalColors.text.info,
                     )
-                }
+                },
+            )
+            if (providers.any { it.account == currentAccount }) {
+                SettingsActionRow(
+                    title = strings.desktopAccountsManageButton,
+                    onClick = { onOpen(currentAccount) },
+                    showChevron = true,
+                    modifier = Modifier.testTag(ACCOUNT_MANAGE_TAG),
+                )
             }
         }
-        if (listState.canScrollBackward || listState.canScrollForward) {
-            FeedFlowVerticalScrollbar(rememberScrollbarState(listState.lazyListState))
+
+        Column(Modifier.testTag(ACCOUNT_PROVIDERS_TAG), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+            val (backup, reader) = providers.partition { it.account.isBackupProvider() }
+            ProviderSection(strings.desktopAccountsReaderServicesTitle, reader.toImmutableList(), onOpen)
+            ProviderSection(strings.desktopAccountsBackupServicesTitle, backup.toImmutableList(), onOpen)
         }
     }
 }
 
 @Composable
-private fun AccountProviderRow(
-    provider: DesktopAccountPresentation,
-    state: ListItemState,
-    style: SimpleListItemStyle,
+private fun ProviderSection(
+    title: String,
+    providers: ImmutableList<DesktopAccountPresentation>,
+    onOpen: (SyncAccounts) -> Unit,
 ) {
-    SimpleListItem(
-        state = state,
-        style = style,
-        height = 64.dp,
-        modifier = Modifier.fillMaxWidth()
-            .testTag(AccountE2eIds.providerRow(provider.account))
-            .alpha(if (provider.isEnabled) 1f else DISABLED_PROVIDER_ALPHA)
-            .semantics { if (!provider.isEnabled) disabled() },
-    ) {
+    if (providers.isEmpty()) return
+    SettingsSection(title = title) {
+        providers.forEach { provider ->
+            SettingsActionRow(
+                title = provider.title,
+                supportingText = if (provider.isEnabled) provider.description else provider.status,
+                onClick = { onOpen(provider.account) },
+                enabled = provider.isEnabled,
+                showChevron = provider.isEnabled,
+                leading = { AccountIcon(provider.account, size = PROVIDER_ICON_SIZE) },
+                modifier = Modifier
+                    .testTag(AccountE2eIds.providerRow(provider.account))
+                    .semantics { if (!provider.isEnabled) disabled() },
+            )
+        }
+    }
+}
+
+@Composable
+private fun AccountDetailPage(
+    provider: DesktopAccountPresentation,
+    onBack: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    Column(Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 8.dp)) {
         Row(
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .clickable(role = Role.Button, onClick = onBack)
+                .padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            provider.account.desktopIcon()?.let { icon ->
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                        .testTag("${AccountE2eIds.providerRow(provider.account)}-icon"),
-                    tint = if (provider.account.hasMonochromeIcon()) JewelTheme.contentColor else Color.Unspecified,
+            Icon(
+                Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                contentDescription = null,
+                tint = JewelTheme.globalColors.outlines.focused,
+                modifier = Modifier.size(18.dp),
+            )
+            Text(strings.desktopAccountsBackToServices, color = JewelTheme.globalColors.outlines.focused)
+        }
+        Row(
+            modifier = Modifier.widthIn(max = DETAIL_MAX_WIDTH).fillMaxWidth().padding(top = 16.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            AccountIcon(provider.account, size = DETAIL_ICON_SIZE)
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    provider.title,
+                    style = JewelTheme.defaultTextStyle.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 22.sp,
+                        lineHeight = 28.sp,
+                    ),
                 )
-            }
-            Column(Modifier.weight(1f)) {
-                Text(provider.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(provider.status, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(provider.description, color = JewelTheme.globalColors.text.info)
             }
         }
+        Box(Modifier.weight(1f).widthIn(max = DETAIL_MAX_WIDTH).fillMaxWidth()) {
+            content()
+        }
+    }
+}
+
+@Composable
+private fun AccountIcon(account: SyncAccounts, size: Dp) {
+    val icon: ImageVector = account.desktopIcon() ?: Icons.Outlined.Computer
+    val monochrome = account == SyncAccounts.LOCAL || account.hasMonochromeIcon(JewelTheme.isDark)
+    Box(
+        modifier = Modifier
+            .size(size)
+            .then(
+                if (account == SyncAccounts.LOCAL) {
+                    Modifier
+                } else {
+                    Modifier.testTag("${AccountE2eIds.providerRow(account)}-icon")
+                },
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(size * ICON_GLYPH_RATIO),
+            tint = if (monochrome) JewelTheme.globalColors.text.normal else Color.Unspecified,
+        )
     }
 }
 
 internal const val ACCOUNT_PROVIDERS_TAG = "account-providers"
 internal const val ACCOUNT_CURRENT_STATUS_TAG = "account-current-status"
 internal const val ACCOUNT_MANAGE_TAG = "account-manage-current"
-private val ACCOUNTS_WIDE_BREAKPOINT = 680.dp
-private const val DISABLED_PROVIDER_ALPHA = 0.6f
+private val PROVIDER_ICON_SIZE = 28.dp
+private val CURRENT_ICON_SIZE = 32.dp
+private val DETAIL_ICON_SIZE = 44.dp
+private val DETAIL_MAX_WIDTH = 648.dp
+private const val ICON_GLYPH_RATIO = 0.8f

@@ -17,6 +17,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.requestFocus
 import com.prof18.feedflow.core.model.FeedImportExportState
+import com.prof18.feedflow.desktop.settings.DesktopSettingsDialog
 import com.prof18.feedflow.desktop.testing.ImportExportE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
@@ -46,7 +47,7 @@ class DesktopImportExportWindowTest {
     fun `all four native file picker requests belong to the import export window`() {
         val pickerOwner = AtomicReference<Dialog>()
         content {
-            ImportExportWindow(onCloseRequest = {}) { owner ->
+            SettingsImportExportWindow(onCloseRequest = {}) { owner ->
                 SideEffect { pickerOwner.set(owner) }
                 OutlinedButton(onClick = {}, modifier = Modifier.testTag(CONTENT_TAG)) { Text("Fixture action") }
             }
@@ -79,7 +80,7 @@ class DesktopImportExportWindowTest {
         var operations = 0
         content {
             if (visible.value) {
-                ImportExportWindow(onCloseRequest = { visible.value = false }) {
+                SettingsImportExportWindow(onCloseRequest = { visible.value = false }) {
                     OutlinedButton(onClick = { operations++ }, modifier = Modifier.testTag(CONTENT_TAG)) {
                         Text("Fixture operation")
                     }
@@ -105,7 +106,7 @@ class DesktopImportExportWindowTest {
         val results = mutableListOf<File?>()
         var dismissals = 0
         content {
-            ImportExportWindow(onCloseRequest = { dismissals++ }) { owner ->
+            SettingsImportExportWindow(onCloseRequest = { dismissals++ }) { owner ->
                 OutlinedButton(
                     onClick = { pickerVisible.value = true },
                     modifier = Modifier.testTag(CONTENT_TAG),
@@ -159,7 +160,7 @@ class DesktopImportExportWindowTest {
         var exports = 0
         var dismissals = 0
         content {
-            ImportExportWindow(onCloseRequest = { dismissals++ }) {
+            SettingsImportExportWindow(onCloseRequest = { dismissals++ }) {
                 ImportExportContent(
                     feedImportExportState = FeedImportExportState.Idle,
                     onRetryClick = {},
@@ -206,7 +207,7 @@ class DesktopImportExportWindowTest {
     }
 
     private fun visibleWindow(): Dialog = Window.getWindows().filterIsInstance<Dialog>().single {
-        it.isVisible && it.title == EnFeedFlowStrings.importExportOpmlTitle
+        it.isVisible && it.title == EnFeedFlowStrings.settingsTitle
     }
 
     private fun descendants(component: Component): Sequence<Component> = sequence {
@@ -226,4 +227,9 @@ class DesktopImportExportWindowTest {
         const val CONTENT_TAG = "import-export-window-fixture-action"
         const val CANCEL_PICKER_TITLE = "FeedFlow native cancellation fixture"
     }
+}
+
+@Composable
+private fun SettingsImportExportWindow(onCloseRequest: () -> Unit, content: @Composable (Dialog) -> Unit) {
+    DesktopSettingsDialog(onCloseRequest = onCloseRequest) { content(window) }
 }

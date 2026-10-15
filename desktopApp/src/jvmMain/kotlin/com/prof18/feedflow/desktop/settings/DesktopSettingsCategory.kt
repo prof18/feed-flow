@@ -5,6 +5,11 @@ internal enum class DesktopSettingsCategory {
     ACCOUNTS,
     FEED_LIST,
     READING,
+    FILTERS,
     SYNC_STORAGE,
     ABOUT,
+}
+
+internal enum class DesktopSettingsSection {
+    IMPORT_EXPORT,
 }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
@@ -44,18 +43,13 @@ import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.entity.License
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
-import com.prof18.feedflow.desktop.ui.components.Dialog
 import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import org.junit.Rule
 import org.junit.Test
-import java.awt.Component
-import java.awt.Container
 import java.awt.Dialog
 import java.awt.Window
 import java.awt.datatransfer.DataFlavor
-import java.awt.event.KeyEvent
-import javax.swing.SwingUtilities
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -64,30 +58,29 @@ class DesktopLicensesTest {
     val rule = createComposeRule()
 
     @Test
-    fun `native details belongs to the license window and Escape restores the selected row`() {
-        val visible = mutableStateOf(true)
-        content {
-            if (visible.value) {
-                Dialog(title = EnFeedFlowStrings.openSourceNavBar, onCloseRequest = { visible.value = false }) {
-                    LicensesContent(fixtures(), { visible.value = false })
-                }
-            }
-        }
+    fun `inline details Back restores selected library and Done leaves licenses`() {
+        var closes = 0
+        content { LicensesContent(fixtures(), { closes++ }) }
         rule.onNodeWithText("Fixture library · 1.0").assertIsFocused()
         click("Fixture library · 1.0")
         rule.waitUntilExactlyOneExists(hasTestTag(DesktopLicensesE2eIds.DETAILS_DONE), timeoutMillis = 5_000)
         rule.onNodeWithTag(DesktopLicensesE2eIds.DETAILS_DONE).assertIsFocused()
-        SwingUtilities.invokeAndWait {
-            val details = dialog("Fixture library")
-            assertEquals(dialog(EnFeedFlowStrings.openSourceNavBar), details.owner)
-            escape(details)
+        rule.onNodeWithTag(DesktopLicensesE2eIds.row("Fixture library")).assertDoesNotExist()
+        rule.runOnIdle {
+            assertTrue(
+                Window.getWindows().filterIsInstance<Dialog>()
+                    .none { it.isVisible && it.title == "Fixture library" },
+            )
         }
+        rule.onNodeWithTag(DesktopLicensesE2eIds.DETAILS_DONE)
+            .performSemanticsAction(SemanticsActions.OnClick) { it() }
         rule.waitUntilDoesNotExist(hasTestTag(DesktopLicensesE2eIds.DETAILS_DONE), timeoutMillis = 5_000)
         rule.onNodeWithTag(DesktopLicensesE2eIds.DETAILS_DONE).assertDoesNotExist()
         rule.onNodeWithText("Fixture library · 1.0").assertIsFocused().assertIsSelected()
-        rule.runOnIdle { assertTrue(visible.value) }
-        SwingUtilities.invokeAndWait { escape(dialog(EnFeedFlowStrings.openSourceNavBar)) }
-        rule.waitUntil(timeoutMillis = 5_000) { !visible.value }
+        rule.runOnIdle { assertEquals(0, closes) }
+        rule.onNodeWithTag(DesktopLicensesE2eIds.LIST_DONE)
+            .performSemanticsAction(SemanticsActions.OnClick) { it() }
+        rule.runOnIdle { assertEquals(1, closes) }
     }
 
     @Test
@@ -261,23 +254,6 @@ class DesktopLicensesTest {
 
     private fun click(text: String) {
         rule.onNodeWithText(text).performSemanticsAction(SemanticsActions.OnClick) { it() }
-    }
-
-    private fun dialog(title: String): Dialog = Window.getWindows().filterIsInstance<Dialog>().single {
-        it.isVisible && it.title == title
-    }
-
-    private fun escape(window: Dialog) {
-        val input = descendants(window).single { component ->
-            component.keyListeners.any { it.javaClass.name.contains("ComposeSceneMediator") }
-        }
-        val event = KeyEvent(input, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_ESCAPE)
-        input.keyListeners.forEach { it.keyPressed(event) }
-    }
-
-    private fun descendants(component: Component): Sequence<Component> = sequence {
-        yield(component)
-        if (component is Container) component.components.forEach { yieldAll(descendants(it)) }
     }
 
     private fun fixtures(longText: Boolean = false): Libs {

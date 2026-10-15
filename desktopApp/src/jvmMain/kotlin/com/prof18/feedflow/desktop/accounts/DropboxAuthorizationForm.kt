@@ -1,12 +1,10 @@
 package com.prof18.feedflow.desktop.accounts
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,7 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.Key
@@ -33,8 +30,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.components.ProgressButtonLabel
 import org.jetbrains.jewel.ui.Outline
-import org.jetbrains.jewel.ui.component.CircularProgressIndicator
 import org.jetbrains.jewel.ui.component.DefaultButton
 import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.Text
@@ -64,7 +61,7 @@ internal fun DropboxAuthorizationForm(
     }
     Column(
         modifier = modifier.widthIn(max = 560.dp).fillMaxWidth()
-            .verticalScroll(rememberScrollState()).padding(16.dp),
+            .verticalScroll(rememberScrollState()).padding(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         if (!isCodeEntryReady) {
@@ -161,15 +158,7 @@ private fun DropboxAuthorizationActions(
             enabled = !busy && state.authCode.text.isNotBlank(),
             modifier = Modifier.testTag("dropbox-confirm-auth"),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(strings.dropboxConfirmButton)
-                Box(Modifier.size(16.dp)) {
-                    if (busy) CircularProgressIndicator(Modifier.size(16.dp))
-                }
-            }
+            ProgressButtonLabel(strings.dropboxConfirmButton, busy)
         }
     }
 }

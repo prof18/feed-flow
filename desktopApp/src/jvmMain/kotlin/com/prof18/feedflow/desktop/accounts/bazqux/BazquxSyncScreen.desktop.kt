@@ -8,13 +8,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.BazquxLoginFailure
 import com.prof18.feedflow.core.model.NetworkFailure
-import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.desktop.accounts.AccountLoading
 import com.prof18.feedflow.desktop.accounts.AccountScreen
 import com.prof18.feedflow.desktop.accounts.CloudAccountContent
 import com.prof18.feedflow.desktop.accounts.CredentialsForm
 import com.prof18.feedflow.desktop.accounts.CredentialsState
-import com.prof18.feedflow.desktop.accounts.ObserveJewelAccountConnection
+import com.prof18.feedflow.desktop.accounts.ObserveAccountConnection
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -24,8 +23,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun BazquxSyncScreen(
-    navigateBack: () -> Unit,
-    showNavigateBack: Boolean = true,
     credentialsState: CredentialsState? = null,
 ) {
     val viewModel = koinViewModel<BazquxSyncViewModel>()
@@ -38,7 +35,7 @@ internal fun BazquxSyncScreen(
     val fallbackDraft = remember { CredentialsState() }
     val draft = credentialsState ?: fallbackDraft
 
-    ObserveJewelAccountConnection(
+    ObserveAccountConnection(
         draft = draft,
         uiState = viewModel.uiState,
         messages = viewModel.errorState,
@@ -57,7 +54,7 @@ internal fun BazquxSyncScreen(
         scope.launch { snackbarHostState.showFeedback(message, duration = DesktopFeedbackDuration.Long) }
     }
 
-    AccountScreen(SyncAccounts.BAZQUX, navigateBack, showNavigateBack, snackbarHostState) {
+    AccountScreen(snackbarHostState) {
         BazquxAccountContent(
             uiState = uiState,
             credentialsState = draft,

@@ -4,4 +4,5 @@ enum class NotificationMode {
     FEED_SOURCE,
     CATEGORY,
     GROUPED,
+    ARTICLE,
 }

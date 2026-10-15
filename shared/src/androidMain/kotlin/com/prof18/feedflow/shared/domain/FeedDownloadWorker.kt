@@ -3,8 +3,12 @@ package com.prof18.feedflow.shared.domain
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
+import com.prof18.feedflow.shared.domain.notification.ArticleNotificationRepository
+import com.prof18.feedflow.shared.domain.notification.ArticleNotifier
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.presentation.WidgetRefreshState
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
@@ -17,6 +21,9 @@ class FeedDownloadWorker internal constructor(
     private val widgetUpdater: WidgetUpdater,
     private val databaseHelper: DatabaseHelper,
     private val notifier: Notifier,
+    private val articleNotifier: ArticleNotifier,
+    private val articleNotificationRepository: ArticleNotificationRepository,
+    private val settingsRepository: SettingsRepository,
     private val appForegroundState: AppForegroundState,
     private val widgetRefreshState: WidgetRefreshState,
     appContext: Context,
@@ -34,11 +41,7 @@ class FeedDownloadWorker internal constructor(
             }
             feedFetcherRepository.fetchFeeds(forceRefresh = isManualRefresh)
             if (!isManualRefresh) {
-                val itemsToNotify = databaseHelper.getFeedSourceToNotify()
-                val hasShownNotifications = notifier.showNewArticlesNotification(itemsToNotify)
-                if (hasShownNotifications) {
-                    databaseHelper.markFeedItemsAsNotified()
-                }
+                sendNotifications()
                 widgetUpdater.update()
             }
             Result.success()
@@ -53,6 +56,22 @@ class FeedDownloadWorker internal constructor(
                     widgetUpdater.update()
                 }
             }
+        }
+    }
+
+    private suspend fun sendNotifications() {
+        if (settingsRepository.getNotificationMode() == NotificationMode.ARTICLE) {
+            articleNotifier.showArticleNotifications(
+                prepareBatch = { articleNotificationRepository.prepareBatch() },
+                acknowledge = { ids -> articleNotificationRepository.acknowledge(ids) },
+            )
+            return
+        }
+
+        val itemsToNotify = databaseHelper.getFeedSourceToNotify()
+        val hasShownNotifications = notifier.showNewArticlesNotification(itemsToNotify)
+        if (hasShownNotifications) {
+            databaseHelper.markFeedItemsAsNotified()
         }
     }
 

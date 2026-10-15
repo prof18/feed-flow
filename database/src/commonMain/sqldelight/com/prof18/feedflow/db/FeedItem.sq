@@ -505,6 +505,19 @@ AND is_blocked = 0
 GROUP BY feed_source.url_hash
 ORDER BY pub_date DESC;
 
+selectArticlesToNotify:
+SELECT feed_item.url_hash AS id,
+       feed_item.title,
+       feed_source.title AS feed_source_title,
+       feed_item.image_url
+FROM feed_item
+INNER JOIN feed_source ON feed_item.feed_source_id = feed_source.url_hash
+LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferences.feed_source_id
+WHERE feed_source_preferences.notifications_enabled = 1
+AND feed_item.notification_sent = 0
+AND feed_item.is_blocked = 0
+ORDER BY feed_item.pub_date DESC, feed_item.url_hash DESC;
+
 markFeedItemsNotified:
 UPDATE feed_item
 SET notification_sent = 1
@@ -517,6 +530,11 @@ WHERE url_hash IN (
     AND feed_item.notification_sent = 0
     AND is_blocked = 0
 );
+
+markArticleItemsNotified:
+UPDATE feed_item
+SET notification_sent = 1
+WHERE url_hash IN :ids;
 
 updateReadStatusFromFeedItemStatus:
 UPDATE feed_item

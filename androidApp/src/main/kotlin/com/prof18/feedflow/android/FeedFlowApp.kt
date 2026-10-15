@@ -36,6 +36,7 @@ import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.domain.notification.ArticleNotifier
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
 import com.prof18.feedflow.shared.domain.recovery.WebsiteProfileCleaner
@@ -155,12 +156,14 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                             widgetUpdater = get(),
                         )
                     }
-                    single<Notifier> {
+                    single {
                         AndroidNotifier(
                             context = androidContext(),
                             settingsRepository = get(),
                         )
                     }
+                    single<Notifier> { get<AndroidNotifier>() }
+                    single<ArticleNotifier> { get<AndroidNotifier>() }
                 },
                 websiteRecoveryModule { scope ->
                     AndroidWebsiteIdentityProvider(lazy { scope.get<FeedRecoveryRepository>() })

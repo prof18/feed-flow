@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.test.KoinTestBase
+import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -113,6 +114,27 @@ class NotificationsViewModelTest : KoinTestBase() {
             val state = awaitItem()
             assertEquals(NotificationMode.GROUPED, state.notificationMode)
         }
+    }
+
+    @Test
+    fun `article mode persists independently of feed switches and keeps the fresh default`() = runTest(testDispatcher) {
+        databaseHelper.insertFeedSource(
+            listOf(
+                ParsedFeedSource("id1", "url1", "title1", null, null, null),
+                ParsedFeedSource("id2", "url2", "title2", null, null, null),
+            ),
+        )
+        val first: NotificationsViewModel = getKoin().get()
+        assertEquals(NotificationMode.FEED_SOURCE, first.notificationSettingState.value.notificationMode)
+        first.updateNotificationStatus(true, "id1")
+        first.updateNotificationMode(NotificationMode.ARTICLE)
+
+        val recreated: NotificationsViewModel = getKoin().get()
+        val state = recreated.notificationSettingState.value
+        assertEquals(NotificationMode.ARTICLE, state.notificationMode)
+        assertTrue(state.feedSources.first { it.feedSourceId == "id1" }.isEnabled)
+        assertFalse(state.feedSources.first { it.feedSourceId == "id2" }.isEnabled)
+        assertFalse(state.isEnabledForAll)
     }
 
     @Test

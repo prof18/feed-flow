@@ -534,10 +534,13 @@
     <string name="notification_category_body">You have new articles in "%s"</string>
     <string name="notification_grouped_body">You have new articles ready to be read!</string>
     <string name="settings_notification_mode">Notification grouping</string>
-    <string name="settings_notification_mode_desc">Group notifications by feed, category, or show one combined notification</string>
+    <string name="settings_notification_mode_desc">Show notifications per article, by feed, by category, or all combined.</string>
     <string name="settings_notification_mode_feed_source">By feed</string>
     <string name="settings_notification_mode_category">By category</string>
     <string name="settings_notification_mode_grouped">All combined</string>
+    <string name="settings_notification_mode_article">Per article</string>
+    <string name="settings_notification_mode_article_desc">Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest.</string>
+    <string name="notification_article_overflow_body">More new articles: %s</string>
     <string name="sort_and_filter_button">Sort &amp; filter</string>
     <string name="reader_mode_tts_listen">Listen to article</string>
     <string name="reader_mode_tts_stop">Stop listening</string>

@@ -24,6 +24,26 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: settings_feeds_accounts
 - tapOn: "Notifications"
+- assertVisible: "By feed"
+- tapOn: "Notification grouping"
+- tapOn: "Per article"
+- assertVisible: "Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest."
+- back
+- tapOn: "Notifications"
+- assertVisible: "Per article"
+- stopApp
+- launchApp
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn: "Notifications"
+- assertVisible: "Per article"
+- tapOn: "Notification grouping"
+- tapOn: "All combined"
+- assertNotVisible: "Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest."
 - tapOn: "Notification check frequency"
 - tapOn: "Never"
 - assertVisible:

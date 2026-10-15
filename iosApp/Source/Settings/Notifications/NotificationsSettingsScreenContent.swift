@@ -81,11 +81,17 @@ struct NotificationsSettingsScreenContent: View {
                     .tag(NotificationMode.category)
                 Text(feedFlowStrings.settingsNotificationModeGrouped)
                     .tag(NotificationMode.grouped)
+                Text(feedFlowStrings.settingsNotificationModeArticle)
+                    .tag(NotificationMode.article)
             } label: {
                 Text(feedFlowStrings.settingsNotificationMode)
             }
         } footer: {
-            Text(feedFlowStrings.settingsNotificationModeDesc)
+            if notificationSettingState.notificationMode == .article {
+                Text(feedFlowStrings.settingsNotificationModeArticleDesc)
+            } else {
+                Text(feedFlowStrings.settingsNotificationModeDesc)
+            }
         }
     }
 

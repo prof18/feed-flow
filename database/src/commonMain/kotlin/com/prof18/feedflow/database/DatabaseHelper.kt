@@ -10,7 +10,9 @@ import app.cash.sqldelight.coroutines.mapToOneOrDefault
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ArticleExportFilter
+import com.prof18.feedflow.core.model.ArticleNotificationPolicy
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.ArticleToNotify
 import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.CloudFeedAndCategorySnapshot
@@ -1494,6 +1496,30 @@ class DatabaseHelper(
                     categoryTitle = item.feed_source_category_title,
                 )
             }
+    }
+
+    suspend fun getArticlesToNotify(): List<ArticleToNotify> = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.selectArticlesToNotify().executeAsList().map { item ->
+            ArticleToNotify(
+                id = item.id,
+                title = item.title,
+                feedSourceTitle = item.feed_source_title,
+                imageUrl = item.image_url,
+            )
+        }
+    }
+
+    suspend fun markArticleItemsAsNotified(ids: List<String>) {
+        if (ids.isEmpty()) return
+
+        dbRef.transactionWithContext(
+            coroutineContext = backgroundDispatcher,
+            suspensionGuardReason = "FeedFlow article notification acknowledgement",
+        ) {
+            ids.chunked(ArticleNotificationPolicy.ACK_CHUNK_SIZE).forEach { chunk ->
+                dbRef.feedItemQueries.markArticleItemsNotified(chunk)
+            }
+        }
     }
 
     suspend fun markFeedItemsAsNotified() =

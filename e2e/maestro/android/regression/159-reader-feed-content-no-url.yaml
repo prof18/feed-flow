@@ -5,6 +5,10 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "E2E seed complete"
 - tapOn:
     id: e2e_open_app
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_feed_content_no_url
+    timeout: 10000
 - scrollUntilVisible:
     element:
       id: article_row_e2e_article_feed_content_no_url

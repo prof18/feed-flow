@@ -1,8 +1,5 @@
 package com.prof18.feedflow.desktop.search
 
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,15 +18,18 @@ import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.components.DesktopSearchScreenContent
+import com.prof18.feedflow.desktop.ui.components.DesktopSnackbarHost
+import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.prof18.feedflow.shared.ui.search.SearchScreenContent
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.syncErrorMessage
+import com.prof18.feedflow.shared.presentation.model.syncErrorMessage
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -44,6 +44,7 @@ internal fun SearchScreen(
     val viewModel = koinViewModel<SearchViewModel>()
 
     val state: SearchState by viewModel.searchState.collectAsState()
+    val requestState by viewModel.searchRequestState.collectAsState()
     val searchQuery by viewModel.searchQueryState.collectAsState()
     val searchFilter by viewModel.searchFilterState.collectAsState()
     val currentFeedFilter by viewModel.searchFeedFilterState.collectAsState()
@@ -53,15 +54,15 @@ internal fun SearchScreen(
     val strings = LocalFeedFlowStrings.current
     val uriHandler = LocalUriHandler.current
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarHostState = remember { DesktopFeedbackState() }
     val scope = rememberCoroutineScope()
     fun openExternalUrl(url: String): Boolean {
         val opened = uriHandler.openUriSafely(url)
         if (!opened) {
             scope.launch {
-                snackbarHostState.showSnackbar(
-                    strings.browserLaunchError,
-                    duration = SnackbarDuration.Short,
+                snackbarHostState.showFeedback(
+                    message = strings.browserLaunchError,
+                    duration = DesktopFeedbackDuration.Short,
                 )
             }
         }
@@ -72,31 +73,33 @@ internal fun SearchScreen(
         viewModel.errorState.collect { errorState ->
             when (errorState) {
                 is UIErrorState.DatabaseError -> {
-                    snackbarHostState.showSnackbar(
-                        strings.databaseError(errorState.errorCode.code),
-                        duration = SnackbarDuration.Short,
+                    snackbarHostState.showFeedback(
+                        message = strings.databaseError(errorState.errorCode.code),
+                        duration = DesktopFeedbackDuration.Short,
                     )
                 }
 
                 is UIErrorState.SyncError -> {
-                    snackbarHostState.showSnackbar(
-                        strings.syncErrorMessage(errorState.errorCode),
-                        duration = SnackbarDuration.Short,
+                    snackbarHostState.showFeedback(
+                        message = strings.syncErrorMessage(errorState.errorCode),
+                        duration = DesktopFeedbackDuration.Short,
                     )
                 }
 
                 is UIErrorState.DeleteFeedSourceError -> {
-                    snackbarHostState.showSnackbar(
-                        strings.deleteFeedSourceError,
-                        duration = SnackbarDuration.Short,
+                    snackbarHostState.showFeedback(
+                        message = strings.deleteFeedSourceError,
+                        duration = DesktopFeedbackDuration.Short,
                     )
                 }
             }
         }
     }
 
-    SearchScreenContent(
+    DesktopSearchScreenContent(
         searchState = state,
+        searchRequestState = requestState,
+        onRetrySearch = viewModel::retrySearch,
         searchQuery = searchQuery,
         searchFilter = searchFilter,
         currentFeedFilter = currentFeedFilter,
@@ -114,32 +117,40 @@ internal fun SearchScreen(
             navigateBack()
         },
         onFeedItemClick = { urlInfo ->
-            openSearchResult(
-                urlInfo = urlInfo,
-                browserManager = browserManager,
-                openUri = ::openExternalUrl,
-                navigateToReaderMode = navigateToReaderMode,
-            )
-            viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
+            if (viewModel.isCurrentSearchResult(urlInfo.id)) {
+                openSearchResult(
+                    urlInfo = urlInfo,
+                    browserManager = browserManager,
+                    openUri = ::openExternalUrl,
+                    navigateToReaderMode = navigateToReaderMode,
+                )
+                viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
+            }
         },
         onBookmarkClick = { feedItemId, isBookmarked ->
-            viewModel.onBookmarkClick(feedItemId, isBookmarked)
+            if (viewModel.isCurrentSearchResult(feedItemId.id)) {
+                viewModel.onBookmarkClick(feedItemId, isBookmarked)
+            }
         },
         onReadStatusClick = { feedItemId, isRead ->
-            viewModel.onReadStatusClick(feedItemId, isRead)
+            if (viewModel.isCurrentSearchResult(feedItemId.id)) {
+                viewModel.onReadStatusClick(feedItemId, isRead)
+            }
         },
         onMarkAllAboveAsRead = { feedItemId ->
-            viewModel.markAllAboveAsRead(feedItemId)
+            if (viewModel.isCurrentSearchResult(feedItemId)) viewModel.markAllAboveAsRead(feedItemId)
         },
         onMarkAllBelowAsRead = { feedItemId ->
-            viewModel.markAllBelowAsRead(feedItemId)
+            if (viewModel.isCurrentSearchResult(feedItemId)) viewModel.markAllBelowAsRead(feedItemId)
         },
         onCommentClick = { urlInfo ->
-            openExternalUrl(urlInfo.url)
-            viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
+            if (viewModel.isCurrentSearchResult(urlInfo.id)) {
+                openExternalUrl(urlInfo.url)
+                viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
+            }
         },
         snackbarHost = {
-            SnackbarHost(snackbarHostState)
+            DesktopSnackbarHost(snackbarHostState)
         },
         onShareClick = { titleAndUrl ->
             copyToClipboard(titleAndUrl.url)
@@ -171,7 +182,7 @@ private fun openSearchResult(
 @Composable
 private fun Preview() {
     FeedFlowTheme {
-        SearchScreenContent(
+        DesktopSearchScreenContent(
             searchState = SearchState.EmptyState,
             searchQuery = "",
             searchFilter = SearchFilter.All,

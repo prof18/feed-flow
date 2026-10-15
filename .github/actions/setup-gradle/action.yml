@@ -5,12 +5,16 @@ inputs:
   gradle-cache-encryption-key:
     description: 'The encryption key to use for the Gradle cache'
     required: true
+  desktop-toolchain:
+    description: 'Resolve JBR 25 for desktop while keeping the Gradle/shared/mobile host on Java 21'
+    required: false
+    default: 'false'
 
 
 runs:
   using: 'composite'
   steps:
-    - name: set up JDK
+    - name: Set up Java 21 Gradle host
       uses: actions/setup-java@v6
       with:
         distribution: 'zulu'
@@ -38,4 +42,7 @@ runs:
           ~/.konan
         key: ${{ runner.os }}-konan-v2
 
-
+    - name: Resolve desktop JBR 25 toolchain
+      if: inputs.desktop-toolchain == 'true'
+      shell: bash
+      run: ./gradlew :desktopApp:javaToolchains

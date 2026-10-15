@@ -16,9 +16,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.settings.SettingsE2eIds
+import com.prof18.feedflow.android.ui.settings.BlockedWordsContent
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
-import com.prof18.feedflow.shared.ui.settings.BlockedWordsContent
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

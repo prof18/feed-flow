@@ -98,7 +98,7 @@ internal fun Modifier.feedSourceReorderInsertionIndicator(
     index: Int,
     isLast: Boolean,
 ): Modifier = composed {
-    val color = androidx.compose.material3.MaterialTheme.colorScheme.primary
+    val color = desktopDrawerInsertionColor()
     this.drawWithContent {
         drawContent()
         val decision = dragState.currentDropDecision() as? DrawerDropDecision.ReorderInSection
@@ -132,7 +132,7 @@ internal fun Modifier.categoryReorderInsertionIndicator(
     index: Int,
     isLast: Boolean,
 ): Modifier = composed {
-    val color = androidx.compose.material3.MaterialTheme.colorScheme.primary
+    val color = desktopDrawerInsertionColor()
     this.drawWithContent {
         drawContent()
         val decision = dragState.currentDropDecision() as? DrawerDropDecision.ReorderCategories
@@ -199,8 +199,7 @@ internal fun Modifier.feedSourceDragSource(
                 onDragEnd = {
                     when (val decision = dragState.currentDropDecision()) {
                         is DrawerDropDecision.MoveToCategory -> {
-                            val payload = dragState.dragPayload as? DrawerDragPayload.FeedSources
-                            val draggedFeedSources = payload?.feedSources.orEmpty()
+                            val draggedFeedSources = dragState.draggedFeedSources()
                             val sourcesToMove = draggedFeedSources.filter {
                                 it.category?.id != decision.category?.id
                             }

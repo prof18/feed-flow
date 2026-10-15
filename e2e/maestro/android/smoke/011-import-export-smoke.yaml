@@ -17,29 +17,17 @@ appId: com.prof18.feedflow.debug
     id: settings_import_export
 - tapOn:
     id: import_export_import_feeds
+- tapOn: "Show roots"
 - tapOn:
-    id: com.google.android.documentsui:id/sub_menu_list
-    optional: true
-- tapOn:
-    id: com.google.android.documentsui:id/item_root
-    containsDescendants:
-      - text: "feedflow-e2e"
-    optional: true
-- extendedWaitUntil:
-    visible: "No items"
-    timeout: 5000
-    optional: true
-- tapOn: "Documents"
-- tapOn:
-    id: com.google.android.documentsui:id/sub_menu_list
-    optional: true
+    id: android:id/title
+    text: "^Downloads$"
 - tapOn:
     id: com.google.android.documentsui:id/option_menu_search
 - inputText: feedflow-valid-opml-smoke.xml
 - tapOn:
     id: com.google.android.documentsui:id/item_root
     containsDescendants:
-      - text: "feedflow-valid-opml-smoke\\.xml"
+      - text: "^feedflow-valid-opml-smoke\\.xml$"
 - extendedWaitUntil:
     visible:
       id: import_export_feed_import_success
@@ -48,31 +36,17 @@ appId: com.prof18.feedflow.debug
     id: import_export_done
 - tapOn:
     id: import_export_import_articles
+- tapOn: "Show roots"
 - tapOn:
-    id: com.google.android.documentsui:id/sub_menu_list
-    optional: true
-- tapOn:
-    id: com.google.android.documentsui:id/item_root
-    containsDescendants:
-      - text: "feedflow-e2e"
-    optional: true
-- extendedWaitUntil:
-    visible: "No items"
-    timeout: 5000
-    optional: true
-- tapOn:
-    text: "Documents"
-    optional: true
-- tapOn:
-    id: com.google.android.documentsui:id/sub_menu_list
-    optional: true
+    id: android:id/title
+    text: "^Downloads$"
 - tapOn:
     id: com.google.android.documentsui:id/option_menu_search
 - inputText: feedflow-articles-smoke.csv
 - tapOn:
     id: com.google.android.documentsui:id/item_root
     containsDescendants:
-      - text: "feedflow-articles-smoke\\.csv"
+      - text: "^feedflow-articles-smoke\\.csv$"
 - extendedWaitUntil:
     visible:
       id: import_export_article_import_success

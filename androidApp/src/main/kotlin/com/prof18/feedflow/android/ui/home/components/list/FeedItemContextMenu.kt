@@ -1,0 +1,392 @@
+package com.prof18.feedflow.android.ui.home.components.list
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Forum
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
+import androidx.compose.material.icons.filled.MarkEmailRead
+import androidx.compose.material.icons.filled.MarkEmailUnread
+import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.PopupProperties
+import com.prof18.feedflow.android.ui.components.ConfirmationDialog
+import com.prof18.feedflow.android.ui.home.components.ShareCommentsIcon
+import com.prof18.feedflow.android.ui.icons.BookmarkIcon
+import com.prof18.feedflow.android.ui.icons.BookmarkOffIcon
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedItemUrlTitle
+import com.prof18.feedflow.core.model.FeedSource
+
+@Composable
+internal fun FeedItemContextMenu(
+    showMenu: Boolean,
+    feedItem: FeedItem,
+    shareMenuLabel: String,
+    shareCommentsMenuLabel: String,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
+    closeMenu: () -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    onOpenFeedSettings: (FeedSource) -> Unit,
+    onOpenFeedWebsite: (String) -> Unit,
+    onMarkAllAboveAsRead: (String) -> Unit,
+    onMarkAllBelowAsRead: (String) -> Unit,
+) {
+    var showMarkAllAboveConfirmation by remember { mutableStateOf(false) }
+    var showMarkAllBelowConfirmation by remember { mutableStateOf(false) }
+
+    DropdownMenu(
+        expanded = showMenu,
+        onDismissRequest = closeMenu,
+        shape = MaterialTheme.shapes.large,
+        properties = PopupProperties(
+            focusable = true,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+        ),
+    ) {
+        DropdownMenuItem(
+            text = { Text(LocalFeedFlowStrings.current.openFeedSettings) },
+            leadingIcon = { Icon(imageVector = Icons.Default.Settings, contentDescription = null) },
+            onClick = {
+                onOpenFeedSettings(feedItem.feedSource)
+                closeMenu()
+            },
+        )
+
+        val websiteUrl = feedItem.feedSource.websiteUrlFallback()
+        if (websiteUrl != null) {
+            DropdownMenuItem(
+                text = { Text(LocalFeedFlowStrings.current.openFeedWebsiteButton) },
+                leadingIcon = { Icon(imageVector = Icons.Default.Public, contentDescription = null) },
+                onClick = {
+                    onOpenFeedWebsite(websiteUrl)
+                    closeMenu()
+                },
+            )
+        }
+
+        HorizontalDivider()
+
+        MarkAllAboveAsReadMenuItem(
+            feedItem = feedItem,
+            onMarkAllAboveAsRead = { showMarkAllAboveConfirmation = true },
+            closeMenu = closeMenu,
+        )
+
+        MarkAllBelowAsReadMenuItem(
+            feedItem = feedItem,
+            onMarkAllBelowAsRead = { showMarkAllBelowConfirmation = true },
+            closeMenu = closeMenu,
+        )
+
+        HorizontalDivider()
+
+        if (feedItem.commentsUrl != null) {
+            ShareCommentsMenuItem(
+                feedItem = feedItem,
+                shareCommentsMenuLabel = shareCommentsMenuLabel,
+                onShareClick = onShareClick,
+                closeMenu = closeMenu,
+            )
+
+            OpenCommentsMenuItem(
+                feedItem = feedItem,
+                closeMenu = closeMenu,
+                onCommentClick = onCommentClick,
+            )
+
+            HorizontalDivider()
+        }
+
+        if (feedItem.url.isNotBlank()) {
+            ShareMenuItem(
+                feedItem = feedItem,
+                shareMenuLabel = shareMenuLabel,
+                onShareClick = onShareClick,
+                closeMenu = closeMenu,
+            )
+        }
+
+        ChangeBookmarkStatusMenuItem(
+            feedItem = feedItem,
+            onBookmarkClick = onBookmarkClick,
+            closeMenu = closeMenu,
+        )
+
+        ChangeReadStatusMenuItem(
+            feedItem = feedItem,
+            onReadStatusClick = onReadStatusClick,
+            closeMenu = closeMenu,
+        )
+    }
+
+    if (showMarkAllAboveConfirmation) {
+        ConfirmationDialog(
+            title = LocalFeedFlowStrings.current.markAllAboveAsReadConfirmationTitle,
+            message = LocalFeedFlowStrings.current.markAllAboveAsReadConfirmationMessage,
+            onConfirm = {
+                onMarkAllAboveAsRead(feedItem.id)
+            },
+            onDismiss = {
+                showMarkAllAboveConfirmation = false
+            },
+        )
+    }
+
+    if (showMarkAllBelowConfirmation) {
+        ConfirmationDialog(
+            title = LocalFeedFlowStrings.current.markAllBelowAsReadConfirmationTitle,
+            message = LocalFeedFlowStrings.current.markAllBelowAsReadConfirmationMessage,
+            onConfirm = {
+                onMarkAllBelowAsRead(feedItem.id)
+            },
+            onDismiss = {
+                showMarkAllBelowConfirmation = false
+            },
+        )
+    }
+}
+
+@Composable
+private fun ShareMenuItem(
+    feedItem: FeedItem,
+    shareMenuLabel: String,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = shareMenuLabel,
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            onShareClick(
+                FeedItemUrlTitle(
+                    title = feedItem.title,
+                    url = feedItem.url,
+                ),
+            )
+            closeMenu()
+        },
+    )
+}
+
+@Composable
+private fun ShareCommentsMenuItem(
+    feedItem: FeedItem,
+    shareCommentsMenuLabel: String,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = shareCommentsMenuLabel,
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = ShareCommentsIcon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        },
+        onClick = {
+            onShareClick(
+                FeedItemUrlTitle(
+                    title = feedItem.title,
+                    url = requireNotNull(feedItem.commentsUrl),
+                ),
+            )
+            closeMenu()
+        },
+    )
+}
+
+@Composable
+private fun OpenCommentsMenuItem(
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
+    feedItem: FeedItem,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                LocalFeedFlowStrings.current.menuOpenComments,
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Forum,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            onCommentClick(
+                FeedItemUrlInfo(
+                    id = feedItem.id,
+                    url = requireNotNull(feedItem.commentsUrl),
+                    title = feedItem.title,
+                    openOnlyOnBrowser = true,
+                    isBookmarked = feedItem.isBookmarked,
+                    articleOpenMode = ArticleOpenMode.PREFERRED_BROWSER,
+                    commentsUrl = feedItem.commentsUrl,
+                ),
+            )
+            closeMenu()
+        },
+    )
+}
+
+@Composable
+private fun ChangeBookmarkStatusMenuItem(
+    feedItem: FeedItem,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = if (feedItem.isBookmarked) {
+                    LocalFeedFlowStrings.current.menuRemoveFromBookmark
+                } else {
+                    LocalFeedFlowStrings.current.menuAddToBookmark
+                },
+            )
+        },
+        leadingIcon = {
+            if (feedItem.isBookmarked) {
+                Icon(
+                    imageVector = BookmarkOffIcon,
+                    contentDescription = null,
+                )
+            } else {
+                Icon(
+                    imageVector = BookmarkIcon,
+                    contentDescription = null,
+                )
+            }
+        },
+        onClick = {
+            onBookmarkClick(
+                FeedItemId(feedItem.id),
+                !feedItem.isBookmarked,
+            )
+            closeMenu()
+        },
+    )
+}
+
+@Composable
+private fun ChangeReadStatusMenuItem(
+    feedItem: FeedItem,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = if (feedItem.isRead) {
+                    LocalFeedFlowStrings.current.menuMarkAsUnread
+                } else {
+                    LocalFeedFlowStrings.current.menuMarkAsRead
+                },
+            )
+        },
+        leadingIcon = {
+            if (feedItem.isRead) {
+                Icon(
+                    imageVector = Icons.Default.MarkEmailUnread,
+                    contentDescription = null,
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.MarkEmailRead,
+                    contentDescription = null,
+                )
+            }
+        },
+        onClick = {
+            onReadStatusClick(
+                FeedItemId(feedItem.id),
+                !feedItem.isRead,
+            )
+            closeMenu()
+        },
+    )
+}
+
+@Composable
+private fun MarkAllAboveAsReadMenuItem(
+    feedItem: FeedItem,
+    onMarkAllAboveAsRead: (String) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = LocalFeedFlowStrings.current.menuMarkAllAboveAsRead,
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.KeyboardDoubleArrowUp,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            onMarkAllAboveAsRead(feedItem.id)
+            closeMenu()
+        },
+    )
+}
+
+@Composable
+private fun MarkAllBelowAsReadMenuItem(
+    feedItem: FeedItem,
+    onMarkAllBelowAsRead: (String) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = LocalFeedFlowStrings.current.menuMarkAllBelowAsRead,
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.KeyboardDoubleArrowDown,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            onMarkAllBelowAsRead(feedItem.id)
+            closeMenu()
+        },
+    )
+}

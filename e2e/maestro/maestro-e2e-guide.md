@@ -28,6 +28,15 @@ e2e/
 
 Use platform-specific flow files when the setup or UI differs between Android and iOS. Shared flows are fine only for commands that are identical on both platforms.
 
+Android REG-179 requires the native `android_share_feed.py` bridge in
+`e2e/scripts/run-android.sh`: Maestro seeds the local fixture, ADB sends the real
+text-share intent, then Maestro chooses FeedFlow in the system resolver and checks
+the result and automatic return. The helper splits at the checked-in
+`NATIVE_ACTION_SEND` comment and retains all assertions. Do not run its YAML
+directly: Maestro does not provide an arbitrary ACTION_SEND command. Use an English
+private device with no default text-share target; the parent runner pins the device
+and restores development subscriptions even after failure.
+
 ## App IDs
 
 - Android debug app: `com.prof18.feedflow.debug`
@@ -145,12 +154,18 @@ appId: com.prof18.feedflow.dev
 
 Import/export flows use deterministic files under `e2e/fixtures/`.
 
-- Android fixtures are pushed to `/sdcard/Download/feedflow-e2e` by `e2e/scripts/push-android-fixtures.sh`.
+- Android fixtures are pushed to `/sdcard/Download/` by `e2e/scripts/push-android-fixtures.sh`. Android 15's Downloads provider can show an unindexed nested folder as empty after `adb push`; the Downloads root exposes the raw fixture files. The import flows choose the Downloads navigation root, search the exact filename and select its document row.
 - iOS fixtures are copied into the app Documents directory and the simulator Files provider by `e2e/scripts/push-ios-fixtures.sh`.
 - The OPML fixture is named `feedflow-valid-opml-smoke.xml` so Android DocumentsUI exposes it through the Documents filter, but its contents are OPML.
 - iOS Files may focus a grid item on the first tap; SM-011 deliberately double taps fixture thumbnails.
 
 The wrapper scripts push fixtures after installing the app and before running Maestro flows.
+
+Run Android SM-007 through `e2e/scripts/run-android.sh` (or its smoke wrapper). The runner uses `android_reader_tooltip.py` to preserve the flow's setup, tooltip visibility, five-second disappearance wait and complete reader-action tail. A native hierarchy must confirm the seeded app-owned reader and one app-owned, enabled, clickable, long-clickable browser button with valid bounds. If Android CLI also captures that button, its geometry must agree; duplicate nodes, conflicting bounds or an explicit disabled state fail the check. If the CLI snapshot omits the button, the helper uses the validated native bounds. It holds an SDK touch through the original presence assertion and releases it in guaranteed cleanup before running the original tail. This avoids Maestro 2.7.0's post-gesture hierarchy reads missing the transient tooltip and the original percentage point missing the button on some displays. Driver connections are released between Android CLI/native/Maestro inspection. No production tooltip duration or device accessibility setting changes.
+
+Set `ANDROID_SERIAL` to select a private compatible device when several are connected. The runner binds installation, fixtures, assertions and development-feed restoration to that device; a failed restore makes the run fail. Results and split JUnit reports remain under `.tmp/android-e2e.*/reader-tooltip/`. Directly running the original YAML retains its stationary gesture and can still fail; use the runner for this coverage. The helper requires `--parent-restores` because its caller must arrange restoration even after failure. A tooltip assertion or touch-release failure never passes or skips into the reader tail.
+
+For a device that needs the existing reader-image point override, set `READER_IMAGE_POINT` when invoking the suite runner. It forwards the value as Maestro `-e READER_IMAGE_POINT=...`; a host variable alone is not sufficient for direct Maestro invocation. Unset configuration preserves the YAML defaults. The isolated Pixel7 image-viewer/rotation journeys use `READER_IMAGE_POINT='50%,50%'`; inspect captured command variables before treating configuration as effective.
 
 ## Writing A New Flow
 
@@ -237,6 +252,25 @@ Run the full local automated wrappers before a release. These build, install, pu
 e2e/scripts/run-android.sh
 e2e/scripts/run-ios.sh
 ```
+
+The Android runner defaults to Google Play. To build and install the F-Droid
+debug variant on a selected private device, use
+`E2E_ANDROID_FLAVOR=fdroid ANDROID_SERIAL=<serial> e2e/scripts/run-android.sh`.
+Only `googlePlay` and `fdroid` are accepted; an invalid flavor fails before
+device discovery or installation. Both debug variants share the same app ID, so
+run them sequentially on a compatible test device. `E2E_ANDROID_SUITES=smoke`
+selects the existing smoke subset for either flavor. Restoration remains bound
+to the selected device.
+
+The canonical Android inventory defines 79 logical journeys. F-Droid selects
+four capability-specific alternatives under `android/fdroid/regression` for
+REG-118, REG-132, REG-133 and REG-147. Its existing flavor excludes Dropbox,
+Google Drive and crash reporting. The alternatives check provider/reporting
+absence, connected server-account states, absence of cloud-backup actions for
+server/local accounts, and the same empty-library destinations. All other journeys, including the reader and share
+helpers, use the canonical files. Google Play retains every original cloud
+assertion; alternate files are replacements in the existing sequence, never
+extra flows or skips.
 
 Run the fast smoke subset while iterating:
 

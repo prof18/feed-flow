@@ -1120,6 +1120,9 @@ class DatabaseHelper(
                     return@forEach
                 }
 
+                // SQLite REPLACE does not run delete triggers unless recursive triggers are enabled,
+                // so drop the stale search entry here; the insert trigger indexes the new row.
+                dbRef.feedSearchQueries.deleteSearchEntryForImport(item.urlHash)
                 dbRef.feedItemQueries.insertOrReplaceFeedItem(
                     url_hash = item.urlHash,
                     url = item.url,

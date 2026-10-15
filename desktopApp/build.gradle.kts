@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.desktop.application.tasks.AbstractJPackageTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
@@ -14,8 +15,10 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-val appVersionName: () -> String by extra
-val appVersionCode: () -> Int by extra
+@Suppress("UNCHECKED_CAST")
+val appVersionName = extra["appVersionName"] as () -> String
+@Suppress("UNCHECKED_CAST")
+val appVersionCode = extra["appVersionCode"] as () -> Int
 
 val generateDesktopBuildInfo by tasks.registering {
     val versionName = appVersionName()
@@ -41,23 +44,48 @@ val generateDesktopBuildInfo by tasks.registering {
 
 group = "com.prof18"
 
+val isMacOS = System.getProperty("os.name").lowercase().contains("mac")
+val isLinux = System.getProperty("os.name").lowercase().contains("linux")
+val isWindows = System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
+
+aboutLibraries {
+    collect {
+        configPath.set(file("config/aboutlibraries"))
+    }
+    export {
+        outputFile.set(file("src/jvmMain/resources/aboutlibraries.json"))
+    }
+}
+
+dependencies {
+    components {
+        withModule("de.jangassen:jfa") {
+            allVariants {
+                withDependencies {
+                    // jfa requests an obsolete jpms classifier; Jewel supplies the regular JNA artifact.
+                    removeAll { it.group == "net.java.dev.jna" && it.name == "jna" }
+                }
+            }
+        }
+    }
+    modules {
+        module("org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-core-jvm") {
+            replacedBy("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", "Use the upstream coroutine runtime")
+        }
+    }
+}
+
 java {
     toolchain {
         vendor = JvmVendorSpec.JETBRAINS
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
 kotlin {
     jvmToolchain {
         vendor = JvmVendorSpec.JETBRAINS
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-
-    compilerOptions {
-        optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
-        optIn.add("androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi")
-        optIn.add("androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi")
+        languageVersion = JavaLanguageVersion.of(25)
     }
 
     jvm()
@@ -66,35 +94,42 @@ kotlin {
         jvmMain {
             kotlin.srcDir(generateDesktopBuildInfo)
             dependencies {
+                implementation(libs.jewel.int.ui.standalone)
+                implementation(libs.jewel.platform.icons)
+                implementation(libs.jewel.markdown.core)
+                implementation(libs.jewel.markdown.standalone.styling)
+                implementation(libs.jewel.markdown.images)
+                implementation(libs.jewel.markdown.tables)
+                implementation(libs.jewel.markdown.strikethrough)
+                implementation(libs.jewel.markdown.autolink)
+                implementation(libs.saket.swipe)
+                implementation(libs.about.libraries.core)
+                implementation(project(":i18n"))
+                implementation(libs.lyricist)
+                implementation(libs.io.coil.compose)
+                implementation(libs.io.coil.network)
+                implementation(libs.jsystem.theme.detector)
                 implementation(project(":shared"))
-                implementation(project(":sharedUI"))
-                implementation(compose.desktop.currentOs)
-                implementation(libs.compose.multiplatform.material3)
+                implementation(compose.desktop.currentOs) {
+                    exclude(group = "org.jetbrains.compose.material", module = "material")
+                }
                 implementation(libs.compose.multiplatform.ui.tooling.preview)
                 implementation(libs.compose.multiplatform.material.icons.extended)
                 implementation(libs.compose.multiplatform.components.resources)
                 implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.bundles.about.libraries)
                 implementation(libs.slf4j.nop)
 
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
                 implementation(libs.koin.composeVM)
 
-                implementation(libs.multiplatform.markdown.renderer.m3)
-                implementation(libs.multiplatform.markdown.renderer.coil)
                 implementation(libs.jetbrains.navigation3.ui)
                 implementation(libs.jetbrains.lifecycle.viewmodel.navigation3)
-                implementation(libs.material.window.size)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.flatlaf)
-                implementation(libs.compose.multiplatform.material3.adaptive.layout)
-                implementation(libs.compose.multiplatform.material3.adaptive.navigation)
-                implementation(libs.haze)
-                implementation(libs.haze.materials)
                 implementation(libs.compose.unstyled.scrollbars)
             }
         }
@@ -102,14 +137,45 @@ kotlin {
         jvmTest {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(libs.kotlinx.coroutines.test)
+                implementation(compose.desktop.uiTestJUnit4)
+                implementation(compose.desktop.currentOs) {
+                    exclude(group = "org.jetbrains.compose.material", module = "material")
+                }
+                implementation(libs.spectre.core)
+                implementation(libs.spectre.recording)
+                implementation(libs.spectre.testing)
+                when {
+                    isMacOS -> runtimeOnly(libs.spectre.recording.macos)
+                    isLinux -> runtimeOnly(libs.spectre.recording.linux)
+                    isWindows -> runtimeOnly(libs.spectre.recording.windows)
+                }
+                // Spectre's shared rule lifecycle references the Jupiter API even under JUnit 4.
+                implementation(libs.junit.jupiter.api)
             }
         }
     }
 }
 
+tasks.withType<Test>().configureEach {
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(25)
+        vendor = JvmVendorSpec.JETBRAINS
+    })
+    if (isLinux) {
+        // End each native worker before surfaces from multiple classes accumulate.
+        forkEvery = 1
+        maxParallelForks = 1
+        systemProperty("skiko.renderApi", "SOFTWARE")
+    }
+}
+
+// Detekt 1.23's compiler cannot accept Java 25 as its analysis target.
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    jvmTarget = "21"
+}
+
 val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
-val isMacOS = System.getProperty("os.name").lowercase().contains("mac")
-val isLinux = System.getProperty("os.name").lowercase().contains("linux")
 val macSigningIdentity = "Marco Gomiero"
 // Full identity name for codesign. Compose's MacSigner derives this same form
 // internally (see ValidatedMacOSSigningSettings.fullDeveloperID).
@@ -141,12 +207,17 @@ compose {
         application {
             mainClass = "com.prof18.feedflow.desktop.MainKt"
 
+            javaHome = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(25)
+                vendor = JvmVendorSpec.JETBRAINS
+            }.get().metadata.installationPath.asFile.absolutePath
+
             // Enable only to test translations
 //            jvmArgs.add("-Duser.language=zh")
 //            jvmArgs.add("-Duser.country=CN")
 
             buildTypes.release.proguard {
-                configurationFiles.from(project.file("compose-desktop.pro"))
+                isEnabled = false
             }
 
             nativeDistributions {
@@ -191,7 +262,7 @@ compose {
                     iconFile.set(iconsRoot.resolve("icon.png"))
 
                     rpmLicenseType = "Apache-2.0"
-                    menuGroup = "Marco Gomiero"
+                    menuGroup = "Network;News;"
                     appCategory = "News"
                 }
 
@@ -241,6 +312,28 @@ compose {
                 }
             }
         }
+    }
+}
+
+if (isLinux) {
+    tasks.withType<AbstractJPackageTask>().matching {
+        it.name == "packageRpm" || it.name == "packageReleaseRpm"
+    }.configureEach {
+        freeArgs.addAll(
+            "--linux-package-deps",
+            listOf(
+                "libX11.so.6()(64bit)",
+                "libXext.so.6()(64bit)",
+                "libXi.so.6()(64bit)",
+                "libXrender.so.1()(64bit)",
+                "libXtst.so.6()(64bit)",
+                "libEGL.so.1()(64bit)",
+                "libGL.so.1()(64bit)",
+                "libfontconfig.so.1()(64bit)",
+                "libfreetype.so.6()(64bit)",
+                "libstdc++.so.6()(64bit)",
+            ).joinToString(","),
+        )
     }
 }
 
@@ -308,7 +401,7 @@ val assetsCarSource = if (isAppStoreRelease || isReleaseBuild) {
 // afterward invalidates the signature and notarization rejects the app. After the
 // copy we re-sign the bundle with the same identity and entitlements so the seal
 // matches the final contents.
-val copyAssetsCarDebug by tasks.registering {
+val copyAssetsCarDebug = tasks.register("copyAssetsCarDebug") {
     val appDirProvider = layout.buildDirectory.dir("release/main/app/FeedFlow.app")
     val assetsCarFile = assetsCarSource
     val identity = macCodesignIdentity
@@ -337,7 +430,7 @@ val copyAssetsCarDebug by tasks.registering {
     }
 }
 
-val copyAssetsCarRelease by tasks.registering {
+val copyAssetsCarRelease = tasks.register("copyAssetsCarRelease") {
     val appDirProvider = layout.buildDirectory.dir("release/main-release/app/FeedFlow.app")
     val assetsCarFile = assetsCarSource
     val identity = macCodesignIdentity
@@ -373,10 +466,8 @@ tasks.matching { it.name == "createReleaseDistributable" }
 
 tasks.withType(KotlinCompile::class.java) {
     dependsOn("exportLibraryDefinitions")
+}
 
-    compilerOptions {
-        freeCompilerArgs = listOf(
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-        )
-    }
+tasks.named("jvmProcessResources") {
+    dependsOn("exportLibraryDefinitions")
 }

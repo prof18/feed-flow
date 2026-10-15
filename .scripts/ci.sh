@@ -49,6 +49,9 @@ prepare_ios_cloud_sync_inputs() {
 }
 
 run_checks_job() {
+  step "Checks job: helper script tests"
+  run_cmd python3 -m unittest discover -s .scripts/tests -p 'test_*.py'
+
   step "Checks job: refresh translations"
   run_cmd bash .scripts/refresh-translations.sh
 
@@ -68,7 +71,8 @@ run_android_build_job() {
 
 run_desktop_build_job() {
   step "Desktop build job: package distribution"
-  run_cmd ./gradlew --quiet --console=plain :desktopApp:packageDistributionForCurrentOS
+  run_cmd ./gradlew --quiet --console=plain \
+    :desktopApp:createReleaseDistributable :desktopApp:packageDistributionForCurrentOS
 }
 
 run_ios_build_job() {

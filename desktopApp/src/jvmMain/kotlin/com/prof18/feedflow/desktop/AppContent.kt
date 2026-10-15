@@ -5,12 +5,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowState
 import coil3.ImageLoader
@@ -24,15 +20,15 @@ import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isNotMacOs
 import com.prof18.feedflow.core.utils.isWindows
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.home.DesktopFeedTreeState
+import com.prof18.feedflow.desktop.home.LocalDesktopFeedTreeState
 import com.prof18.feedflow.desktop.main.MainWindow
+import com.prof18.feedflow.desktop.ui.DesktopUiEnvironment
+import com.prof18.feedflow.desktop.ui.rememberDesktopDarkTheme
 import com.prof18.feedflow.desktop.utils.SafeAwtClipboard
+import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
-import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
-import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import javax.swing.SwingUtilities
 import javax.swing.UIManager
 
@@ -61,42 +57,34 @@ internal fun FrameWindowScope.AppContent(
         ThemeMode.OLED -> true
     }
     val useOledTheme = themeMode == ThemeMode.OLED
+    val feedTreeState = remember {
+        val repository = koin.get<DesktopHomeSettingsRepository>()
+        DesktopFeedTreeState(repository.getCollapsedFeedTreeSections(), repository::setCollapsedFeedTreeSections)
+    }
 
-    FeedFlowTheme(
-        darkTheme = isDarkTheme,
-        useOledTheme = useOledTheme,
-    ) {
-        if (getDesktopOS().isNotMacOs()) {
-            LaunchedEffect(isDarkTheme, useOledTheme) {
-                SwingUtilities.invokeLater {
-                    setupLookAndFeel(isDarkTheme, useOledTheme)
-                }
+    if (getDesktopOS().isNotMacOs()) {
+        LaunchedEffect(isDarkTheme, useOledTheme) {
+            SwingUtilities.invokeLater {
+                setupLookAndFeel(isDarkTheme, useOledTheme)
             }
         }
+    }
 
-        val languageTag = if (forceEnglishEnabled) "en" else Locale.current.toLanguageTag()
-        val lyricist = key(languageTag) {
-            rememberFeedFlowStrings(currentLanguageTag = languageTag)
-        }
-        val deviceLayoutDirection = LocalLayoutDirection.current
-        ProvideFeedFlowStrings(lyricist) {
-            CompositionLocalProvider(
-                LocalReduceMotion provides reduceMotionEnabled,
-                LocalLayoutDirection provides if (forceEnglishEnabled) {
-                    LayoutDirection.Ltr
-                } else {
-                    deviceLayoutDirection
-                },
-            ) {
-                WindowsSafeClipboardProvider {
-                    this.MainWindow(
-                        showBackupLoader = showBackupLoader,
-                        isDarkTheme = isDarkTheme,
-                        useOledTheme = useOledTheme,
-                        windowState = windowState,
-                        appConfig = appConfig,
-                    )
-                }
+    DesktopUiEnvironment(
+        darkTheme = isDarkTheme,
+        useOledTheme = useOledTheme,
+        reduceMotionEnabled = reduceMotionEnabled,
+        forceEnglishEnabled = forceEnglishEnabled,
+    ) {
+        WindowsSafeClipboardProvider {
+            CompositionLocalProvider(LocalDesktopFeedTreeState provides feedTreeState) {
+                MainWindow(
+                    showBackupLoader = showBackupLoader,
+                    isDarkTheme = isDarkTheme,
+                    useOledTheme = useOledTheme,
+                    windowState = windowState,
+                    appConfig = appConfig,
+                )
             }
         }
     }

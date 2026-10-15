@@ -39,11 +39,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.android.ui.components.FeedSourceLogoImage
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.exposeTestTagsAsResourceIds
 import com.prof18.feedflow.core.model.WidgetContentFilter
-import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.exposeTestTagsAsResourceIds
 
 @Composable
 fun WidgetContentSelector(

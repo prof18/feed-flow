@@ -1,20 +1,23 @@
 package com.prof18.feedflow.desktop.settings
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.ArticleOpenMode
-import com.prof18.feedflow.desktop.ui.components.ArticleOpenModeSelector
-import com.prof18.feedflow.shared.ui.settings.ConfirmationDialogConfig
-import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.core.model.ArticleOpenMode.FEED_CONTENT
+import com.prof18.feedflow.core.model.ArticleOpenMode.FULL_ARTICLE
+import com.prof18.feedflow.core.model.ArticleOpenMode.INTERNAL_BROWSER
+import com.prof18.feedflow.core.model.ArticleOpenMode.PREFERRED_BROWSER
+import com.prof18.feedflow.core.model.globalArticleOpenModes
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 internal fun ReadingPane(
@@ -31,76 +34,68 @@ internal fun ReadingPane(
     onShowReadItemsToggled: (Boolean) -> Unit,
     onHideReadItemsToggled: (Boolean) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-    ) {
-        ArticleOpenModeSelector(
-            modifier = Modifier.padding(horizontal = Spacing.regular),
-            currentMode = articleOpenMode,
-            onModeSelected = onArticleOpenModeSelected,
+    val strings = LocalFeedFlowStrings.current
+    var showPrefetchConfirmation by remember { mutableStateOf(false) }
+    SettingsScrollPane(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        SettingsGroup(strings.settingsReadingBehavior)
+        val displayedMode = if (articleOpenMode == INTERNAL_BROWSER) PREFERRED_BROWSER else articleOpenMode
+        JewelSettingsChoice(
+            title = strings.articleOpenMode,
+            choices = globalArticleOpenModes.filter { it != INTERNAL_BROWSER }.map { mode ->
+                mode to when (mode) {
+                    FULL_ARTICLE -> strings.readerContentSourceWeb
+                    FEED_CONTENT -> strings.readerContentSourceFeed
+                    PREFERRED_BROWSER -> strings.linkOpeningPreferenceSystemBrowser
+                    else -> strings.linkOpeningPreferenceSystemBrowser
+                }
+            }.toPersistentList(),
+            selected = displayedMode,
+            onSelected = onArticleOpenModeSelected,
         )
-
-        SettingSwitchItem(
-            title = LocalFeedFlowStrings.current.settingsSaveReaderModeContent,
-            isChecked = isSaveReaderModeContentEnabled,
-            onCheckedChange = onSaveReaderModeContentToggled,
+        SettingsCheckbox(
+            strings.settingsSaveReaderModeContent,
+            isSaveReaderModeContentEnabled,
+            onSaveReaderModeContentToggled,
         )
-
-        SettingSwitchItem(
-            title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
-            isChecked = isPrefetchArticleContentEnabled,
-            onCheckedChange = onPrefetchToggled,
-            confirmationDialog = ConfirmationDialogConfig(
-                title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
-                message = LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning,
-            ),
+        SettingsCheckbox(
+            title = strings.settingsPrefetchArticleContent,
+            checked = isPrefetchArticleContentEnabled,
+            onCheckedChange = { enabled ->
+                if (enabled) showPrefetchConfirmation = true else onPrefetchToggled(false)
+            },
         )
-
-        SettingSwitchItem(
-            title = LocalFeedFlowStrings.current.toggleMarkReadWhenScrolling,
-            isChecked = isMarkReadWhenScrollingEnabled,
-            onCheckedChange = onMarkReadWhenScrollingToggled,
+        SettingsCheckbox(
+            strings.toggleMarkReadWhenScrolling,
+            isMarkReadWhenScrollingEnabled,
+            onMarkReadWhenScrollingToggled,
         )
-
-        SettingSwitchItem(
-            title = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
-            isChecked = isShowReadItemsEnabled,
-            onCheckedChange = onShowReadItemsToggled,
+        SettingsCheckbox(
+            strings.settingsToggleShowReadArticles,
+            isShowReadItemsEnabled,
+            onShowReadItemsToggled,
         )
-
-        SettingSwitchItem(
-            title = LocalFeedFlowStrings.current.settingsHideReadItems,
-            isChecked = isHideReadItemsEnabled,
+        SettingsCheckbox(
+            title = strings.settingsHideReadItems,
+            checked = isHideReadItemsEnabled,
             onCheckedChange = onHideReadItemsToggled,
             enabled = !isMarkReadWhenScrollingEnabled,
             supportingText = if (isMarkReadWhenScrollingEnabled) {
-                LocalFeedFlowStrings.current.settingsHideReadItemsDisabledWhileScrolling
+                strings.settingsHideReadItemsDisabledWhileScrolling
             } else {
                 null
             },
         )
     }
-}
 
-@Preview
-@Composable
-private fun ReadingPanePreview() {
-    FeedFlowTheme {
-        ReadingPane(
-            articleOpenMode = ArticleOpenMode.FULL_ARTICLE,
-            isSaveReaderModeContentEnabled = false,
-            isPrefetchArticleContentEnabled = false,
-            isMarkReadWhenScrollingEnabled = false,
-            isShowReadItemsEnabled = false,
-            isHideReadItemsEnabled = false,
-            onArticleOpenModeSelected = {},
-            onSaveReaderModeContentToggled = {},
-            onPrefetchToggled = {},
-            onMarkReadWhenScrollingToggled = {},
-            onShowReadItemsToggled = {},
-            onHideReadItemsToggled = {},
+    if (showPrefetchConfirmation) {
+        ConfirmationDialog(
+            title = strings.settingsPrefetchArticleContent,
+            message = strings.settingsPrefetchArticleContentWarning,
+            onConfirm = {
+                showPrefetchConfirmation = false
+                onPrefetchToggled(true)
+            },
+            onDismiss = { showPrefetchConfirmation = false },
         )
     }
 }

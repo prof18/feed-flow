@@ -9,9 +9,10 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.home.DesktopWorkspaceCommandAvailability
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.utils.openDesktopMailSafely
 import com.prof18.feedflow.shared.presentation.MenuBarViewModel
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -83,10 +84,12 @@ data class MenuBarActions(
     val deleteFeeds: () -> Unit,
     val onBackupClick: () -> Unit,
     val onExitClick: () -> Unit,
+    val onAccountsClick: (() -> Unit)? = null,
 )
 
 data class MenuBarState(
     val showDebugMenu: Boolean,
     val feedFilter: FeedFilter,
     val isSyncUploadRequired: Boolean,
+    val commands: DesktopWorkspaceCommandAvailability = DesktopWorkspaceCommandAvailability(),
 )

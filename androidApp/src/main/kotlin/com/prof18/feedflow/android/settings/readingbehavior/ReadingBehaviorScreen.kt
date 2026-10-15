@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.utils.BrowserIds
 import com.prof18.feedflow.shared.presentation.ReadingBehaviorSettingsViewModel
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel

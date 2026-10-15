@@ -43,6 +43,7 @@ jobs:
         uses: ./.github/actions/setup-gradle
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+          desktop-toolchain: 'true'
 
       - name: Refresh translations
         shell: bash
@@ -60,7 +61,7 @@ jobs:
           "VERSION=$VERSION" >> $env:GITHUB_ENV
 
       - name: Update Licenses file
-        run: ./gradlew desktopApp:exportLibraryDefinitions "-PaboutLibraries.exportPath=src/main/resources/"
+        run: ./gradlew :desktopApp:exportLibraryDefinitions "-PaboutLibraries.exportPath=src/main/resources/"
 
       - name: Create path variables
         id: path_variables
@@ -106,7 +107,7 @@ jobs:
           TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
 
       - name: Create MSI and app image
-        run: ./gradlew packageReleaseMsi createReleaseDistributable
+        run: ./gradlew :desktopApp:packageReleaseMsi :desktopApp:createReleaseDistributable
 
       - name: Package MSIX
         shell: pwsh

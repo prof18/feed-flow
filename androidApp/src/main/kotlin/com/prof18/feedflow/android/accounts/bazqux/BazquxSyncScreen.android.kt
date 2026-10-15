@@ -9,11 +9,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.android.ui.accounts.bazqux.BazquxSyncContent
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.BazquxLoginFailure
 import com.prof18.feedflow.core.model.NetworkFailure
 import com.prof18.feedflow.shared.presentation.BazquxSyncViewModel
-import com.prof18.feedflow.shared.ui.accounts.bazqux.BazquxSyncContent
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 

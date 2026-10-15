@@ -17,11 +17,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.android.ui.components.FeedSourceLogoImage
+import com.prof18.feedflow.android.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
-import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

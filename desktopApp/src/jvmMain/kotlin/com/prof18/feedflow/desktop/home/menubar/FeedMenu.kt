@@ -6,7 +6,7 @@ import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.MenuBarScope
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 
 @Composable
 internal fun MenuBarScope.FeedMenu(

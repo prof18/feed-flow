@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<opml version="2.0">
+  <head>
+    <title>FeedFlow representative synthetic library</title>
+  </head>
+  <body>
+    <outline text="Computing and open tools" fixtureId="fixture-group-1">
+      <outline text="Open tools journal" title="Open tools journal" type="rss" xmlUrl="http://127.0.0.1:18765/feed-reading.xml?source=1" fixtureId="fixture-source-1" unread="1" />
+      <outline text="Systems and small machines" title="Systems and small machines" type="rss" xmlUrl="http://127.0.0.1:18765/feed-technology.xml?source=2" fixtureId="fixture-source-2" unread="2" pinned="true" />
+      <outline text="A very long publication title that exercises desktop navigation truncation, accessible naming and tooltips without hiding the source from keyboard users" title="A very long publication title that exercises desktop navigation truncation, accessible naming and tooltips without hiding the source from keyboard users" type="rss" xmlUrl="http://127.0.0.1:18765/feed-reading.xml?source=3" fixtureId="fixture-source-3" unread="0" />
+    </outline>
+    <outline text="Design and independent publishing" fixtureId="fixture-group-2">
+      <outline text="The design notebook" title="The design notebook" type="rss" xmlUrl="http://127.0.0.1:18765/feed-technology.xml?source=4" fixtureId="fixture-source-4" unread="4" />
+      <outline text="Independent publishing letters" title="Independent publishing letters" type="rss" xmlUrl="http://127.0.0.1:18765/feed-reading.xml?source=5" fixtureId="fixture-source-5" unread="5" />
+      <outline text="Typography and reading" title="Typography and reading" type="rss" xmlUrl="http://127.0.0.1:18765/feed-technology.xml?source=6" fixtureId="fixture-source-6" unread="0" />
+    </outline>
+    <outline text="Science and field research" fixtureId="fixture-group-3">
+      <outline text="Science in the field" title="Science in the field" type="rss" xmlUrl="http://127.0.0.1:18765/feed-reading.xml?source=7" fixtureId="fixture-source-7" unread="0" />
+      <outline text="Research round-up" title="Research round-up" type="rss" xmlUrl="http://127.0.0.1:18765/feed-technology.xml?source=8" fixtureId="fixture-source-8" unread="1" />
+      <outline text="The quiet observatory" title="The quiet observatory" type="rss" xmlUrl="http://127.0.0.1:18765/feed-reading.xml?source=9" fixtureId="fixture-source-9" unread="0" />
+    </outline>
+    <outline text="Culture and long-form writing" fixtureId="fixture-group-4">
+      <outline text="Culture notebook" title="Culture notebook" type="rss" xmlUrl="http://127.0.0.1:18765/feed-technology.xml?source=10" fixtureId="fixture-source-10" unread="3" />
+      <outline text="Essays and reviews" title="Essays and reviews" type="rss" xmlUrl="http://127.0.0.1:18765/feed-reading.xml?source=11" fixtureId="fixture-source-11" unread="4" />
+      <outline text="Weekend reading" title="Weekend reading" type="rss" xmlUrl="http://127.0.0.1:18765/feed-technology.xml?source=12" fixtureId="fixture-source-12" unread="0" />
+    </outline>
+    <outline text="Local projects and reading notes" fixtureId="fixture-group-5">
+      <outline text="Project field notes" title="Project field notes" type="rss" xmlUrl="http://127.0.0.1:18765/feed-reading.xml?source=13" fixtureId="fixture-source-13" unread="6" />
+      <outline text="Small experiments" title="Small experiments" type="rss" xmlUrl="http://127.0.0.1:18765/feed-technology.xml?source=14" fixtureId="fixture-source-14" unread="0" />
+      <outline text="The long feed archive" title="The long feed archive" type="rss" xmlUrl="http://127.0.0.1:18765/feed-long.xml?source=15" fixtureId="fixture-source-15" unread="120" />
+    </outline>
+    <outline text="Uncategorized notes" title="Uncategorized notes" type="rss" xmlUrl="http://127.0.0.1:18765/feed-reading.xml?source=16" fixtureId="fixture-source-16" unread="0" />
+  </body>
+</opml>

@@ -1,9 +1,14 @@
 package com.prof18.feedflow.desktop.home.drawer
 
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
@@ -18,12 +24,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.outlined.Lightbulb
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -32,13 +32,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isSecondaryPressed
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -51,19 +63,22 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.NavDrawerState
-import com.prof18.feedflow.shared.ui.components.DeleteAllFeedsInCategoryDialog
-import com.prof18.feedflow.shared.ui.components.DeleteCategoryDialog
-import com.prof18.feedflow.shared.ui.components.EditCategoryNameDialog
-import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenu
-import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenuEntry
-import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.conditionalAnimateFloatAsState
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
+import com.prof18.feedflow.desktop.ui.components.DesktopPopupMenu
+import com.prof18.feedflow.desktop.ui.components.DesktopPopupMenuEntry
+import com.prof18.feedflow.desktop.ui.conditionalAnimateFloatAsState
+import com.prof18.feedflow.desktop.ui.singleAndLongClickModifier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.foundation.theme.LocalContentColor
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.IconButton
+import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.Tooltip
 
 @Composable
 internal fun DesktopDrawerFeedSourcesByCategories(
@@ -108,8 +123,8 @@ internal fun DesktopDrawerFeedSourcesByCategories(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = Spacing.regular)
-                    .padding(bottom = Spacing.regular),
+                    .padding(start = DesktopDesignTokens.spaceSection)
+                    .padding(bottom = DesktopDesignTokens.spaceSection),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -118,7 +133,7 @@ internal fun DesktopDrawerFeedSourcesByCategories(
                         .weight(1f)
                         .then(headerMenuModifier),
                     text = LocalFeedFlowStrings.current.drawerTitleFeedSources,
-                    style = MaterialTheme.typography.labelLarge,
+
                 )
 
                 Box(
@@ -127,7 +142,7 @@ internal fun DesktopDrawerFeedSourcesByCategories(
                         .clip(CircleShape)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
-                            indication = ripple(),
+                            indication = null,
                         ) { showAddFeedsMenu = true }
                         .padding(12.dp)
                         .semantics { role = Role.Button },
@@ -136,6 +151,7 @@ internal fun DesktopDrawerFeedSourcesByCategories(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = LocalFeedFlowStrings.current.addFeed,
+                        tint = JewelTheme.globalColors.text.normal,
                     )
                 }
             }
@@ -167,7 +183,7 @@ internal fun DesktopDrawerFeedSourcesByCategories(
             },
         )
 
-        DeleteAllFeedsInCategoryDialog(
+        DrawerDeleteAllFeedsDialog(
             showDialog = showDeleteAllUncategorizedDialog,
             onDismiss = { showDeleteAllUncategorizedDialog = false },
             onDeleteAllFeeds = {
@@ -222,6 +238,7 @@ internal fun DesktopDrawerFeedSourcesByCategories(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 internal fun DesktopDrawerFeedSourceByCategoryItem(
     feedSourceCategoryWrapper: DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper,
@@ -232,7 +249,7 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
     onCategoryExpand: () -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     selectedFeedSourceIds: ImmutableSet<String>,
-    onFeedSourceClick: (FeedSource, Boolean) -> Unit,
+    onFeedSourceClick: (FeedSource, Boolean, Boolean) -> Unit,
     selectedFeedSourcesProvider: () -> List<FeedSource>,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
@@ -249,8 +266,10 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
     dragState: DesktopDrawerDragState,
     modifier: Modifier = Modifier,
     headerModifier: Modifier = Modifier,
+    disclosureModifier: Modifier = Modifier,
     showFeedSources: Boolean = true,
 ) {
+    var headerPosition by remember { mutableStateOf(Offset.Zero) }
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
     var showMenu by rememberSaveable { mutableStateOf(false) }
     var menuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
@@ -293,13 +312,24 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
             } else {
                 currentFeedFilter is FeedFilter.Uncategorized
             }
-            val navItemColors = drawerItemColors(drawerItemVisualStyle)
+            val contentColor = drawerItemVisualStyle.selectedContentColor ?: JewelTheme.globalColors.text.normal
             val itemShape = drawerItemVisualStyle.itemShape
+            val interactionSource = remember(category) { MutableInteractionSource() }
+            val isHovered by interactionSource.collectIsHoveredAsState()
+            val isFocused by interactionSource.collectIsFocusedAsState()
+            val categoryBackground = if (isSelected) {
+                drawerItemVisualStyle.selectedContainerColor
+                    ?: JewelTheme.globalColors.outlines.focused.copy(alpha = 0.16f)
+            } else if (isHovered) {
+                JewelTheme.globalColors.outlines.focused.copy(alpha = 0.08f)
+            } else {
+                Color.Transparent
+            }
             val dropTargetModifier = Modifier.dropTargetModifier(
                 dragState = dragState,
                 category = category,
                 isDropTargetActive = isDropTargetActive,
-                highlightColor = MaterialTheme.colorScheme.primary,
+                highlightColor = desktopDrawerInsertionColor(),
                 shape = itemShape,
             )
             val onClick = {
@@ -310,71 +340,74 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
                 }
             }
 
-            Surface(
-                selected = isSelected,
-                onClick = onClick,
-                shape = itemShape,
-                color = navItemColors.containerColor(isSelected).value,
-                modifier = Modifier
+            Box(
+                modifier = headerModifier
+                    .onGloballyPositioned { headerPosition = it.positionInWindow() }
+                    .categoryContextMenu(position = { headerPosition }) { position ->
+                        menuPositionInWindow = position
+                        showMenu = true
+                    }
+                    .clip(itemShape)
+                    .background(categoryBackground)
+                    .selectable(
+                        selected = isSelected,
+                        onClick = onClick,
+                        role = Role.Tab,
+                        interactionSource = interactionSource,
+                        indication = null,
+                    )
                     .weight(1f)
                     .semantics { role = Role.Tab }
                     .heightIn(min = drawerItemVisualStyle.itemMinHeight)
-                    .hoverable(remember { MutableInteractionSource() })
-                    .then(headerModifier)
+                    .hoverable(interactionSource)
+                    .then(
+                        if (isFocused) {
+                            Modifier.border(1.dp, JewelTheme.globalColors.outlines.focused, itemShape)
+                        } else {
+                            Modifier
+                        },
+                    )
                     .then(dropTargetModifier),
             ) {
-                val contentModifier = Modifier.singleAndLongClickModifier(
-                    onClick = onClick,
-                    onLongClick = {
-                        menuPositionInWindow = null
-                        showMenu = true
-                    },
-                    onLongClickPositioned = { position ->
-                        menuPositionInWindow = position
-                        showMenu = true
-                    },
-                )
-
                 Row(
-                    modifier = contentModifier.padding(start = Spacing.regular, end = 24.dp),
+                    modifier = Modifier.padding(start = DesktopDesignTokens.spaceSection, end = 24.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val labelColor = navItemColors.textColor(isSelected).value
+                    val labelColor = contentColor
                     CompositionLocalProvider(LocalContentColor provides labelColor) {
                         Text(
                             text = headerText,
-                            style = MaterialTheme.typography.titleMedium,
+
                             modifier = Modifier.weight(1f),
                         )
                     }
 
                     if (unreadCount > 0) {
                         Text(
-                            modifier = Modifier.padding(start = Spacing.small),
+                            modifier = Modifier.padding(start = DesktopDesignTokens.spaceMedium),
                             text = unreadCount.toString(),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = navItemColors.textColor(isSelected).value,
+
+                            color = contentColor,
                         )
                     }
                 }
             }
 
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = ripple(),
-                    ) { onCategoryExpand() }
-                    .padding(12.dp)
-                    .semantics { role = Role.Button },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                    contentDescription = null,
-                    modifier = Modifier.rotate(degrees),
-                )
+            val strings = LocalFeedFlowStrings.current
+            val disclosureLabel = if (isCategoryExpanded) {
+                strings.desktopCollapseFeedCategory(headerText)
+            } else {
+                strings.desktopExpandFeedCategory(headerText)
+            }
+            Tooltip(tooltip = { Text(disclosureLabel) }) {
+                IconButton(onClick = onCategoryExpand, modifier = disclosureModifier) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                        contentDescription = disclosureLabel,
+                        modifier = Modifier.rotate(degrees),
+                        tint = JewelTheme.globalColors.text.normal,
+                    )
+                }
             }
         }
 
@@ -463,7 +496,7 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
             },
         )
 
-        DeleteCategoryDialog(
+        DrawerDeleteCategoryDialog(
             showDialog = showDeleteDialog,
             categoryId = CategoryId(category.id),
             onDismiss = { showDeleteDialog = false },
@@ -473,7 +506,7 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
             },
         )
 
-        EditCategoryNameDialog(
+        DrawerEditCategoryNameDialog(
             showDialog = showEditDialog,
             categoryId = CategoryId(category.id),
             initialCategoryName = category.title,
@@ -497,7 +530,7 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
         )
     }
 
-    DeleteAllFeedsInCategoryDialog(
+    DrawerDeleteAllFeedsDialog(
         showDialog = showDeleteAllFeedsDialog,
         onDismiss = { showDeleteAllFeedsDialog = false },
         onDeleteAllFeeds = {
@@ -506,3 +539,20 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
         },
     )
 }
+
+@OptIn(ExperimentalComposeUiApi::class)
+private fun Modifier.categoryContextMenu(position: () -> Offset, onShow: (Offset?) -> Unit): Modifier =
+    onPointerEvent(PointerEventType.Press) { event ->
+        if (event.buttons.isSecondaryPressed) {
+            onShow(position() + (event.changes.firstOrNull()?.position ?: Offset.Zero))
+            event.changes.forEach { it.consume() }
+        }
+    }.onPreviewKeyEvent { event ->
+        val contextKey = event.key == Key.Menu || (event.key == Key.F10 && event.isShiftPressed)
+        if (event.type == KeyEventType.KeyDown && contextKey) {
+            onShow(position())
+            true
+        } else {
+            false
+        }
+    }

@@ -1,14 +1,17 @@
 package com.prof18.feedflow.desktop
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.SwingWindow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -28,6 +31,11 @@ import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
+import com.prof18.feedflow.desktop.ui.DesktopWindowBackground
+import com.prof18.feedflow.desktop.ui.components.restoreInitialLinuxWindowSize
+import com.prof18.feedflow.desktop.ui.desktopMainWindowTitle
+import com.prof18.feedflow.desktop.ui.desktopWindowBackgroundColor
+import com.prof18.feedflow.desktop.ui.rememberDesktopDarkTheme
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.desktop.utils.integrateAppImageIfNeeded
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
@@ -35,7 +43,6 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.DesktopAutoRefreshScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
-import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,10 +54,7 @@ import java.io.InputStream
 import java.util.Properties
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val DARK_THEME_BACKGROUND = 0x1A1B1F
-private const val LIGHT_THEME_BACKGROUND = 0xFAFAFA
-private const val OLED_THEME_BACKGROUND = 0x000000
-
+@OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     integrateAppImageIfNeeded()
     setupSandboxEnvironment()
@@ -62,6 +66,7 @@ fun main() {
         var isInitialized by remember { mutableStateOf(false) }
         var showMainWindow by remember { mutableStateOf(false) }
         var initProgress by remember { mutableStateOf(value = 0.1f) }
+        var startupThemeMode by remember { mutableStateOf<ThemeMode?>(null) }
 
         @Suppress("MagicNumber")
         LaunchedEffect(Unit) {
@@ -69,6 +74,8 @@ fun main() {
             initProgress = 0.2f
             launch(Dispatchers.IO) {
                 initializeDependencies(appConfig)
+                val initialThemeMode = DI.koin.get<SettingsRepository>().getThemeMode()
+                withContext(Dispatchers.Main) { startupThemeMode = initialThemeMode }
                 DI.koin.get<DesktopAutoRefreshScheduler>().start()
                 withContext(Dispatchers.Main) { initProgress = 0.6f }
                 setupTelemetryAndCrashReporting(appConfig)
@@ -80,26 +87,15 @@ fun main() {
 
         val scope = rememberCoroutineScope()
         val icon = painterResource(Res.drawable.icon)
-        val isLinux = getDesktopOS() == DesktopOS.LINUX
+        val systemDarkTheme = rememberDesktopDarkTheme()
 
         if (!showMainWindow) {
-            Window(
+            DesktopStartupSplashWindow(
+                themeMode = startupThemeMode,
+                systemDarkTheme = systemDarkTheme,
+                progress = initProgress,
                 onCloseRequest = ::exitApplication,
-                title = "FeedFlow",
-                state = rememberWindowState(
-                    size = DpSize(400.dp, 300.dp),
-                    position = WindowPosition.Aligned(Alignment.Center),
-                ),
-                icon = icon,
-                resizable = false,
-                undecorated = true,
-                transparent = !isLinux,
-            ) {
-                SplashContent(
-                    progress = initProgress,
-                    useRoundedCorners = !isLinux,
-                )
-            }
+            )
         }
 
         if (isInitialized) {
@@ -108,15 +104,15 @@ fun main() {
             val windowState = windowState(desktopWindowSettingsRepository)
             var showBackupLoader by remember { mutableStateOf(false) }
 
-            val themeMode = remember { settingsRepository.getThemeMode() }
+            val themeMode by settingsRepository.themeModeFlow.collectAsState()
             val isDarkTheme = when (themeMode) {
-                ThemeMode.SYSTEM -> rememberDesktopDarkTheme()
+                ThemeMode.SYSTEM -> systemDarkTheme
                 ThemeMode.LIGHT -> false
                 ThemeMode.DARK -> true
                 ThemeMode.OLED -> true
             }
 
-            Window(
+            SwingWindow(
                 onCloseRequest = {
                     scope.launch {
                         showBackupLoader = true
@@ -131,34 +127,18 @@ fun main() {
                         }
                     }
                 },
-                title = if (getDesktopOS().isMacOs()) "" else "FeedFlow",
+                title = desktopMainWindowTitle(),
                 state = windowState,
+                init = { window ->
+                    window.restoreInitialLinuxWindowSize(windowState.size) {
+                        windowState.placement == WindowPlacement.Floating
+                    }
+                },
                 icon = icon,
                 visible = showMainWindow,
                 onPreviewKeyEvent = { false },
             ) {
-                DisposableEffect(themeMode) {
-                    val backgroundColor = when (themeMode) {
-                        ThemeMode.OLED -> java.awt.Color(OLED_THEME_BACKGROUND)
-                        ThemeMode.DARK -> java.awt.Color(DARK_THEME_BACKGROUND)
-                        ThemeMode.LIGHT -> java.awt.Color(LIGHT_THEME_BACKGROUND)
-                        ThemeMode.SYSTEM -> {
-                            if (isDarkTheme) {
-                                java.awt.Color(DARK_THEME_BACKGROUND)
-                            } else {
-                                java.awt.Color(LIGHT_THEME_BACKGROUND)
-                            }
-                        }
-                    }
-
-                    window.background = backgroundColor
-                    window.contentPane.background = backgroundColor
-                    if (getDesktopOS().isMacOs()) {
-                        window.rootPane.background = backgroundColor
-                    }
-
-                    onDispose { }
-                }
+                DesktopWindowBackground(window, desktopWindowBackgroundColor(isDarkTheme, themeMode == ThemeMode.OLED))
 
                 LaunchedEffect(Unit) {
                     initProgress = 1f
@@ -174,6 +154,59 @@ fun main() {
             }
         }
     }
+}
+
+@Composable
+internal fun DesktopStartupSplashWindow(
+    themeMode: ThemeMode?,
+    systemDarkTheme: Boolean,
+    progress: Float,
+    onCloseRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (themeMode == null) return
+    val isLinux = getDesktopOS() == DesktopOS.LINUX
+    Window(
+        onCloseRequest = onCloseRequest,
+        title = "FeedFlow",
+        state = rememberWindowState(
+            size = DpSize(400.dp, 300.dp),
+            position = WindowPosition.Aligned(Alignment.Center),
+        ),
+        icon = painterResource(Res.drawable.icon),
+        resizable = false,
+        undecorated = true,
+        transparent = !isLinux,
+    ) {
+        DesktopStartupSplashContent(
+            themeMode = themeMode,
+            systemDarkTheme = systemDarkTheme,
+            progress = progress,
+            useRoundedCorners = !isLinux,
+            modifier = modifier,
+        )
+    }
+}
+
+@Composable
+internal fun DesktopStartupSplashContent(
+    themeMode: ThemeMode,
+    systemDarkTheme: Boolean,
+    progress: Float,
+    useRoundedCorners: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    SplashContent(
+        modifier = modifier,
+        progress = progress,
+        useRoundedCorners = useRoundedCorners,
+        darkTheme = when (themeMode) {
+            ThemeMode.SYSTEM -> systemDarkTheme
+            ThemeMode.LIGHT -> false
+            ThemeMode.DARK, ThemeMode.OLED -> true
+        },
+        useOledTheme = themeMode == ThemeMode.OLED,
+    )
 }
 
 private fun loadProperties(): Properties {

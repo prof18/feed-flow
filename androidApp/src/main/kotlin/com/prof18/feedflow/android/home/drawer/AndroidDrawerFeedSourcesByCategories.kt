@@ -41,6 +41,13 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
+import com.prof18.feedflow.android.ui.components.DeleteAllFeedsInCategoryDialog
+import com.prof18.feedflow.android.ui.components.DeleteCategoryDialog
+import com.prof18.feedflow.android.ui.components.EditCategoryNameDialog
+import com.prof18.feedflow.android.ui.feedsourcelist.singleAndLongClickModifier
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.conditionalAnimateFloatAsState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
@@ -49,13 +56,6 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.NavDrawerState
-import com.prof18.feedflow.shared.ui.components.DeleteAllFeedsInCategoryDialog
-import com.prof18.feedflow.shared.ui.components.DeleteCategoryDialog
-import com.prof18.feedflow.shared.ui.components.EditCategoryNameDialog
-import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.conditionalAnimateFloatAsState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 

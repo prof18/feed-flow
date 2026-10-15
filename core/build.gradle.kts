@@ -1,6 +1,4 @@
 plugins {
-    alias(libs.plugins.compose.multiplatform)
-    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.feedflow.library)
 }
 
@@ -16,7 +14,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.compose.multiplatform.runtime)
+                implementation(libs.androidx.compose.runtime.annotation)
                 implementation(libs.immutable.collections)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.touchlab.kermit)

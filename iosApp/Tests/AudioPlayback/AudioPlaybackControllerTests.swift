@@ -598,7 +598,8 @@ final class AudioPlaybackControllerTests: XCTestCase {
         )
         try await generator.waitForRequestCount(1)
         generator.complete(request: 0, with: firstURL)
-        try await waitUntilCanSeek(controller)
+        await waitUntilSpeechFileIsInstalled(firstURL, in: controller)
+        XCTAssertEqual(controller.episode?.url, firstURL)
         let originalId = controller.episode?.playbackId
 
         controller.toggleSpeech(
@@ -607,7 +608,8 @@ final class AudioPlaybackControllerTests: XCTestCase {
         )
         try await generator.waitForRequestCount(2)
         generator.complete(request: 1, with: secondURL)
-        try await waitUntilCanSeek(controller)
+        await waitUntilSpeechFileIsInstalled(secondURL, in: controller)
+        XCTAssertEqual(controller.episode?.url, secondURL)
         XCTAssertEqual(generator.languageTags, ["it-IT", "en-US"])
         XCTAssertNotEqual(controller.episode?.playbackId, originalId)
         XCTAssertFalse(FileManager.default.fileExists(atPath: firstURL.path))
@@ -639,6 +641,18 @@ final class AudioPlaybackControllerTests: XCTestCase {
             speechGenerator: generator,
             speechText: { _, content in [content] }
         )
+    }
+
+    @MainActor
+    private func waitUntilSpeechFileIsInstalled(_ url: URL, in controller: AudioPlaybackController) async {
+        let installed = expectation(description: "Generated speech file is installed in the player")
+        let observer = controller.player.observe(\.currentItem, options: [.initial, .new]) { player, _ in
+            if (player.currentItem?.asset as? AVURLAsset)?.url == url {
+                installed.fulfill()
+            }
+        }
+        defer { observer.invalidate() }
+        await fulfillment(of: [installed], timeout: 5)
     }
 
     @MainActor

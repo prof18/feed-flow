@@ -92,7 +92,7 @@ struct HomeContent: View {
         }
         .alert(feedFlowStrings.clearOldArticlesButton, isPresented: $showClearOldArticlesDialog) {
             Button(feedFlowStrings.cancelButton, role: .cancel) {}
-            Button(feedFlowStrings.confirmButton) {
+            Button(feedFlowStrings.confirmButton, role: .destructive) {
                 onDeleteOldFeedClick()
             }
         } message: {

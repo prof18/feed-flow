@@ -239,7 +239,7 @@ extension HomeContent {
 
         Divider()
 
-        Button {
+        Button(role: .destructive) {
             requestClearOldArticlesConfirmation()
         } label: {
             Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")

@@ -24,3 +24,12 @@ appId: com.prof18.feedflow.dev
 - tapOn: "Delete week-old articles"
 - assertVisible: "Are you sure you want to delete old articles?"
 - tapOn: "Cancel"
+- assertVisible:
+    text: "E2E Old Article Eligible For Delete.*"
+- tapOn:
+    id: home_more_menu_button
+- tapOn: "Delete week-old articles"
+- assertVisible: "Are you sure you want to delete old articles?"
+- tapOn: "Confirm"
+- assertNotVisible:
+    text: "E2E Old Article Eligible For Delete.*"

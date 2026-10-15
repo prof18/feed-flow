@@ -11,8 +11,6 @@ import SwiftUI
 
 struct BookmarksSection: View {
     let bookmarks: [DrawerItem]
-    let isSelected: Bool
-    let isCompact: Bool
     let onSelect: () -> Void
     let onFeedFilterSelected: (FeedFilter) -> Void
 
@@ -31,7 +29,6 @@ struct BookmarksSection: View {
             .buttonStyle(.plain)
             .tag(SidebarSelection.bookmarks)
             .accessibilityIdentifier(DrawerAccessibilityIdentifiers.bookmarks)
-            .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))
         }
     }
 }

@@ -7,12 +7,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.hasScrollToIndexAction
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollToIndex
-import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
@@ -94,7 +92,7 @@ class ArticleListMutationTest {
     }
 
     @Test
-    fun `removing read items before the viewport keeps its keyed anchor and focused article`() {
+    fun `list stays at the top when newer articles are prepended or the filter changes`() {
         val items = mutableStateOf(createItems(MUTATION_ITEM_COUNT).toImmutableList())
         val listState = LazyListState()
         rule.setContent {
@@ -132,38 +130,34 @@ class ArticleListMutationTest {
             }
         }
 
-        rule.onNode(hasScrollToIndexAction()).performScrollToIndex(ANCHOR_INDEX)
-        rule.waitForIdle()
-        val anchor = rule.onNodeWithTag(rowTag(ANCHOR_ID))
-        anchor.assertIsDisplayed()
-        anchor.requestFocus()
-        anchor.assertIsFocused()
-        rule.runOnIdle {
-            assertEquals(ArticleKey(ANCHOR_ID), listState.layoutInfo.visibleItemsInfo.first().key)
-        }
+        rule.onNodeWithTag(rowTag(createItems(1).single().id)).assertIsDisplayed()
 
-        rule.runOnIdle {
-            items.value = items.value.drop(REMOVED_PREFIX_COUNT).toImmutableList()
-        }
+        // Startup refresh: newer articles land above the ones already shown.
+        val newer = createItems(PREPENDED_COUNT, startIndex = MUTATION_ITEM_COUNT)
+        rule.runOnIdle { items.value = (newer + items.value).toImmutableList() }
         rule.waitForIdle()
+        rule.onNodeWithTag(rowTag(newer.first().id)).assertIsDisplayed()
+        rule.runOnIdle { assertEquals(0, listState.firstVisibleItemIndex) }
 
-        rule.onNodeWithTag(rowTag(ANCHOR_ID)).assertIsDisplayed().assertIsFocused()
-        rule.runOnIdle {
-            assertEquals(ArticleKey(ANCHOR_ID), listState.layoutInfo.visibleItemsInfo.first().key)
-        }
+        // Filter change: the previous top article is now deep in the new list.
+        val previousTop = items.value.first()
+        val otherFilter = createItems(MUTATION_ITEM_COUNT, startIndex = OTHER_FILTER_START) + previousTop
+        rule.runOnIdle { items.value = otherFilter.toImmutableList() }
+        rule.waitForIdle()
+        rule.onNodeWithTag(rowTag(otherFilter.first().id)).assertIsDisplayed()
+        rule.runOnIdle { assertEquals(0, listState.firstVisibleItemIndex) }
     }
 
     private companion object {
         const val INITIAL_ITEM_COUNT = 30
         const val PAGE_ITEM_COUNT = 10
         const val MUTATION_ITEM_COUNT = 30
-        const val ANCHOR_INDEX = 15
-        const val REMOVED_PREFIX_COUNT = 10
+        const val PREPENDED_COUNT = 5
+        const val OTHER_FILTER_START = 100
         const val LIST_WIDTH_DP = 720
         const val LIST_HEIGHT_DP = 460
         const val LAYOUT_INVALIDATION_COUNT = 3
         const val PAGING_TIMEOUT_MS = 5_000L
-        const val ANCHOR_ID = "article-$ANCHOR_INDEX"
     }
 }
 

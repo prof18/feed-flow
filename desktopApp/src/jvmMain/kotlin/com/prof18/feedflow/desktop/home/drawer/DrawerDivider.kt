@@ -13,7 +13,7 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 @Composable
 internal fun DrawerDivider(modifier: Modifier = Modifier) {
     androidx.compose.foundation.layout.Box(
-        modifier.fillMaxWidth().padding(vertical = DesktopDesignTokens.spaceSection).height(1.dp)
+        modifier.fillMaxWidth().padding(vertical = DesktopDesignTokens.spaceMedium).height(1.dp)
             .background(JewelTheme.globalColors.borders.normal.copy(alpha = 0.55f)),
     )
 }

@@ -7,17 +7,21 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeDialog
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.unit.dp
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -31,11 +35,7 @@ import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import org.junit.After
 import org.junit.Rule
 import org.junit.Test
-import java.awt.Component
-import java.awt.Container
 import java.awt.Window
-import java.awt.event.KeyEvent
-import javax.swing.SwingUtilities
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -46,7 +46,7 @@ class ReaderTextSettingsPositionTest {
     private val imageLoader = ImageLoader.Builder(PlatformContext.INSTANCE).build()
 
     @Test
-    fun `native Escape closes text settings and retains the long document position and live values`() {
+    fun `Escape closes text settings and retains the long document position and live values`() {
         val fontSize = mutableIntStateOf(ReaderModeDefaults.FONT_SIZE)
         val lineHeight = mutableIntStateOf(ReaderModeDefaults.LINE_HEIGHT)
         val readerState = ReaderModeState.Success(
@@ -79,7 +79,8 @@ class ReaderTextSettingsPositionTest {
                             onCommentsClick = {},
                             onFontSizeChange = { fontSize.intValue = it },
                             onLineHeightChange = { lineHeight.intValue = it },
-                            onBookmarkClick = { _, _ -> },
+                            isBookmarked = false,
+                            onToggleBookmark = {},
                             onToggleContentSource = {},
                         )
                         DesktopReaderContent(
@@ -102,34 +103,27 @@ class ReaderTextSettingsPositionTest {
         assertTrue(positionBefore > 0f)
 
         rule.onNodeWithContentDescription(EnFeedFlowStrings.readerModeTextSettings).performClick()
+        rule.runOnIdle {
+            assertTrue(Window.getWindows().none { it.isShowing && it is ComposeDialog })
+        }
         rule.onNodeWithContentDescription(EnFeedFlowStrings.readerModeFontSize)
             .performSemanticsAction(SemanticsActions.SetProgress) { it(NEW_FONT_SIZE.toFloat()) }
+        rule.onNodeWithContentDescription(EnFeedFlowStrings.readerModeFontSize).assertIsFocused()
         rule.waitForIdle()
         val positionWithSettings = documentPosition()
         assertEquals(positionBefore, positionWithSettings)
 
-        SwingUtilities.invokeAndWait {
-            val dialog = Window.getWindows().filterIsInstance<ComposeDialog>()
-                .single { it.isShowing && it.title == EnFeedFlowStrings.readerModeTextSettings }
-            val input = descendants(dialog).single { component ->
-                component.keyListeners.any { it.javaClass.name.contains("ComposeSceneMediator") }
-            }
-            val escape = KeyEvent(input, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_ESCAPE)
-            input.keyListeners.forEach { it.keyPressed(escape) }
-        }
+        rule.onNodeWithContentDescription(EnFeedFlowStrings.readerModeFontSize)
+            .performKeyInput { pressKey(Key.Escape) }
         rule.waitForIdle()
         rule.onNodeWithContentDescription(EnFeedFlowStrings.readerModeFontSize).assertDoesNotExist()
+        rule.onNodeWithContentDescription(EnFeedFlowStrings.readerModeTextSettings).assertIsFocused()
         assertEquals(positionWithSettings, documentPosition())
         rule.runOnIdle { assertEquals(NEW_FONT_SIZE, fontSize.intValue) }
     }
 
     private fun documentPosition(): Float = rule.onNodeWithTag(READER_DOCUMENT_TAG)
         .fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
-
-    private fun descendants(component: Component): Sequence<Component> = sequence {
-        yield(component)
-        if (component is Container) component.components.forEach { yieldAll(descendants(it)) }
-    }
 
     @After
     fun closeImageLoader() { imageLoader.shutdown() }

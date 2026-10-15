@@ -19,8 +19,6 @@ internal fun DesktopFeedManagementToolbar(
     onClear: () -> Unit,
     onMove: () -> Unit,
     onDelete: () -> Unit,
-    onExpandAll: () -> Unit,
-    onCollapseAll: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val strings = LocalFeedFlowStrings.current
@@ -29,17 +27,6 @@ internal fun DesktopFeedManagementToolbar(
         modifier = modifier.padding(bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            OutlinedButton(onClick = onExpandAll, style = wrappingStyle, modifier = Modifier.heightIn(min = 36.dp)) {
-                Text(strings.desktopExpandAllFeeds)
-            }
-            OutlinedButton(onClick = onCollapseAll, style = wrappingStyle, modifier = Modifier.heightIn(min = 36.dp)) {
-                Text(strings.desktopCollapseAllFeeds)
-            }
-        }
         Text(strings.desktopFeedSelectionCount(selectedCount))
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),

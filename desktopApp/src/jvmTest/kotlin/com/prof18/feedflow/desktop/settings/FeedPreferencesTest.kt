@@ -60,7 +60,7 @@ class FeedPreferencesTest {
         increase.performSemanticsAction(SemanticsActions.OnClick) { it() }
         compose.runOnIdle { assertEquals(1, scale.value) }
         val layouts = mutableListOf<TextLayoutResult>()
-        compose.onNodeWithText(EnFeedFlowStrings.settingsFontScaleTitleExample)
+        compose.onNodeWithText(EnFeedFlowStrings.settingsFontScaleTitleExample, useUnmergedTree = true)
             .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
         assertEquals((FEED_TITLE_FONT_SIZE + 1).sp, layouts.single().layoutInput.style.fontSize)
         decrease.performSemanticsAction(SemanticsActions.OnClick) { it() }

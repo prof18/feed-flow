@@ -6,25 +6,22 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onFirst
-import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performSemanticsAction
-import androidx.compose.ui.test.pressKey
-import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
@@ -39,9 +36,6 @@ import com.prof18.feedflow.core.model.NoFeedSourcesStatus
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.ThemeMode
-import com.prof18.feedflow.desktop.main.DesktopDialogWindowDestination
-import com.prof18.feedflow.desktop.main.DesktopDialogWindowNavigator
-import com.prof18.feedflow.desktop.main.LocalDesktopDialogWindowNavigator
 import com.prof18.feedflow.desktop.testing.DesktopLibraryFixture
 import com.prof18.feedflow.desktop.ui.FeedManagementActions
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -60,19 +54,44 @@ class FeedSidebarFooterLayoutTest {
     val rule = createComposeRule()
 
     @Test
-    fun `large footer labels remain readable and activate their actions in a compact sidebar`() {
-        val navigator = DesktopDialogWindowNavigator()
+    fun `sidebar options expand and collapse categories without a management window`() {
+        val library = DesktopLibraryFixture.load()
+        val source = library.sources.first { !it.feedSource.isPinned && it.feedSource.category != null }.feedSource
+        rule.setContent {
+            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                FeedFlowTheme(darkTheme = false) {
+                    Box(Modifier.requiredSize(width = 300.dp, height = 600.dp)) {
+                        FeedSidebar(
+                            displayState = displayState(library.drawerState()),
+                            feedManagementActions = emptyManagementActions {},
+                            onFeedFilterSelected = {},
+                        )
+                    }
+                }
+            }
+        }
+        val heading = hasText(EnFeedFlowStrings.drawerTitleFeedSources)
+        rule.onNode(hasScrollAction()).performScrollToNode(heading)
+        rule.onNode(heading and hasClickAction()).assertDoesNotExist()
+        rule.onNodeWithContentDescription(EnFeedFlowStrings.moreOptionsButtonContentDescription).performClick()
+        rule.onNodeWithText(EnFeedFlowStrings.desktopCollapseAllFeeds).performClick()
+        rule.onNodeWithText(source.title).assertDoesNotExist()
+        rule.onNodeWithContentDescription(EnFeedFlowStrings.moreOptionsButtonContentDescription).performClick()
+        rule.onNodeWithText(EnFeedFlowStrings.desktopExpandAllFeeds).performClick()
+        rule.onNode(hasScrollAction()).performScrollToNode(hasText(source.title))
+        rule.onNodeWithText(source.title).assertIsDisplayed()
+    }
+
+    @Test
+    fun `add button opens the add options menu like mobile and routes every option`() {
         val homeDisplayState = displayState(DesktopLibraryFixture.load().drawerState())
         val theme = mutableStateOf(ThemeMode.LIGHT)
         val direction = mutableStateOf(LayoutDirection.Ltr)
-        var suggestionsOpened = 0
-        var importExportOpened = 0
-        var addFeedOpened = 0
+        val opened = mutableListOf<String>()
         rule.setContent {
             val density = LocalDensity.current
             CompositionLocalProvider(
                 LocalFeedFlowStrings provides EnFeedFlowStrings,
-                LocalDesktopDialogWindowNavigator provides navigator,
                 LocalDensity provides Density(density.density, fontScale = 2f),
                 LocalLayoutDirection provides direction.value,
             ) {
@@ -88,10 +107,11 @@ class FeedSidebarFooterLayoutTest {
                     ) {
                         FeedSidebar(
                             displayState = homeDisplayState,
-                            feedManagementActions = emptyManagementActions { addFeedOpened++ },
+                            feedManagementActions = emptyManagementActions { opened += "add" }.copy(
+                                onFeedSuggestionsClick = { opened += "suggestions" },
+                                onImportFeedsClick = { opened += "import" },
+                            ),
                             onFeedFilterSelected = {},
-                            onFeedSuggestionsClick = { suggestionsOpened++ },
-                            onImportExportClick = { importExportOpened++ },
                         )
                     }
                 }
@@ -106,58 +126,33 @@ class FeedSidebarFooterLayoutTest {
             }
         }
 
-        rule.onAllNodesWithText(EnFeedFlowStrings.drawerTitleFeedSources).onLast().performClick()
-        assertTrue(navigator.isOpen(DesktopDialogWindowDestination.FeedSources))
-        rule.onNodeWithText(EnFeedFlowStrings.feedSuggestionsTitle).performClick()
-        rule.onNodeWithText(EnFeedFlowStrings.importExportLabel).performClick()
-        rule.runOnIdle {
-            assertTrue(suggestionsOpened == 1)
-            assertTrue(importExportOpened == 1)
-        }
+        assertEquals(1, rule.onAllNodesWithText(EnFeedFlowStrings.drawerTitleFeedSources).fetchSemanticsNodes().size)
+        rule.onNodeWithText(EnFeedFlowStrings.feedSuggestionsTitle).assertDoesNotExist()
+        rule.onNodeWithText(EnFeedFlowStrings.importExportLabel).assertDoesNotExist()
 
-        rule.runOnIdle { navigator.close(DesktopDialogWindowDestination.FeedSources) }
-        val header = rule.onAllNodesWithText(EnFeedFlowStrings.drawerTitleFeedSources).onFirst()
-        val footer = rule.onAllNodesWithText(EnFeedFlowStrings.drawerTitleFeedSources).onLast()
-        val suggestions = rule.onNodeWithText(EnFeedFlowStrings.feedSuggestionsTitle)
-        val importExport = rule.onNodeWithText(EnFeedFlowStrings.importExportLabel)
-        header.requestFocus()
-        header.assertIsFocused().performKeyInput { pressKey(Key.Enter) }
-        rule.runOnIdle { assertTrue(navigator.isOpen(DesktopDialogWindowDestination.FeedSources)) }
-        rule.runOnIdle { navigator.close(DesktopDialogWindowDestination.FeedSources) }
-        header.performKeyInput { pressKey(Key.Tab) }
-        val add = rule.onNodeWithContentDescription(EnFeedFlowStrings.addFeed)
-        add.assertIsFocused().performKeyInput { pressKey(Key.Enter) }
-        rule.runOnIdle { assertEquals(1, addFeedOpened) }
-        add.performKeyInput { pressKey(Key.Tab) }
-        footer.assertIsFocused().performKeyInput { pressKey(Key.Spacebar) }
-        rule.runOnIdle { assertTrue(navigator.isOpen(DesktopDialogWindowDestination.FeedSources)) }
-        footer.performKeyInput { pressKey(Key.Tab) }
-        suggestions.assertIsFocused().performKeyInput { pressKey(Key.Enter) }
-        suggestions.performKeyInput { pressKey(Key.Tab) }
-        importExport.assertIsFocused().performKeyInput { pressKey(Key.Spacebar) }
-        importExport.performKeyInput {
-            keyDown(Key.ShiftLeft)
-            pressKey(Key.Tab)
-            keyUp(Key.ShiftLeft)
+        listOf(
+            EnFeedFlowStrings.addFeed to "add",
+            EnFeedFlowStrings.feedSuggestionsTitle to "suggestions",
+            EnFeedFlowStrings.importFeedButton to "import",
+        ).forEach { (label, expected) ->
+            rule.onNodeWithContentDescription(EnFeedFlowStrings.addFeed).performClick()
+            rule.onNodeWithText(label).assertIsDisplayed().performClick()
+            rule.runOnIdle { assertEquals(expected, opened.last()) }
+            rule.onNodeWithText(EnFeedFlowStrings.importFeedButton).assertDoesNotExist()
         }
-        suggestions.assertIsFocused()
-        rule.runOnIdle {
-            assertEquals(2, suggestionsOpened)
-            assertEquals(2, importExportOpened)
-        }
+        rule.runOnIdle { assertEquals(listOf("add", "suggestions", "import"), opened) }
     }
 
     private fun assertLabelsFit(description: String) {
+        rule.onNode(hasScrollAction()).performScrollToNode(hasText(EnFeedFlowStrings.drawerTitleFeedSources))
         val sidebar = rule.onNodeWithTag(SIDEBAR_TAG).fetchSemanticsNode().boundsInRoot
         listOf(
             EnFeedFlowStrings.drawerTitleFeedSources,
-            EnFeedFlowStrings.feedSuggestionsTitle,
-            EnFeedFlowStrings.importExportLabel,
         ).forEach { label ->
             val matches = rule.onAllNodesWithText(label)
             val nodes = if (label == EnFeedFlowStrings.drawerTitleFeedSources) {
-                assertEquals(2, matches.fetchSemanticsNodes().size, "Expected header and footer label")
-                listOf(matches.onFirst(), matches.onLast())
+                assertEquals(1, matches.fetchSemanticsNodes().size, "Expected one Feed Sources header")
+                listOf(rule.onNodeWithText(label))
             } else {
                 listOf(rule.onNodeWithText(label))
             }
@@ -202,7 +197,6 @@ class FeedSidebarFooterLayoutTest {
         onEditCategoryClick = { _: CategoryId, _: CategoryName -> },
         validateCategoryName = { _: CategoryId?, _: CategoryName -> CategoryNameValidationResult.VALID },
         onDeleteCategoryClick = {},
-        onChangeFeedCategoryClick = {},
         onOpenWebsite = {},
     )
 

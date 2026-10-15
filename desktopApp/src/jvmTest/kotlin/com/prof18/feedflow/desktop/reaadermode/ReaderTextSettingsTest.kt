@@ -38,12 +38,13 @@ class ReaderTextSettingsTest {
     val rule = createComposeRule()
 
     @Test
-    fun `font control receives initial focus and arrow keys change the current size`() {
+    fun `font control changes the current size with arrow keys`() {
         val fontSize = mutableIntStateOf(ReaderModeDefaults.FONT_SIZE)
         val lineHeight = mutableIntStateOf(ReaderModeDefaults.LINE_HEIGHT)
         showSettings(fontSize, lineHeight)
 
         val fontControl = rule.onNodeWithContentDescription(EnFeedFlowStrings.readerModeFontSize)
+        fontControl.performSemanticsAction(SemanticsActions.RequestFocus) { it() }
         fontControl.assertIsFocused()
         fontControl.performKeyInput { pressKey(Key.DirectionRight) }
 
@@ -79,23 +80,7 @@ class ReaderTextSettingsTest {
     }
 
     @Test
-    fun `Done dismisses without reverting live preference changes`() {
-        val fontSize = mutableIntStateOf(NEW_FONT_SIZE)
-        val lineHeight = mutableIntStateOf(NEW_LINE_HEIGHT)
-        var dismissals = 0
-        showSettings(fontSize, lineHeight, onDismiss = { dismissals++ })
-
-        rule.onNodeWithText(EnFeedFlowStrings.actionDone).performClick()
-
-        rule.runOnIdle {
-            assertEquals(1, dismissals)
-            assertEquals(NEW_FONT_SIZE, fontSize.intValue)
-            assertEquals(NEW_LINE_HEIGHT, lineHeight.intValue)
-        }
-    }
-
-    @Test
-    fun `large RTL text keeps both footer actions within the compact content width`() {
+    fun `large RTL text keeps reset action within the compact content width`() {
         rule.setContent {
             val density = LocalDensity.current
             CompositionLocalProvider(
@@ -105,19 +90,18 @@ class ReaderTextSettingsTest {
             ) {
                 FeedFlowTheme(darkTheme = true, useOledTheme = true) {
                     Box(Modifier.size(width = 360.dp, height = 520.dp).testTag(COMPACT_TAG)) {
-                        ReaderTextSettingsContent(
+                        ReaderTextSettingsControls(
                             fontSize = NEW_FONT_SIZE,
                             lineHeight = NEW_LINE_HEIGHT,
                             onFontSizeChange = {},
                             onLineHeightChange = {},
-                            onDismiss = {},
                         )
                     }
                 }
             }
         }
         val content = rule.onNodeWithTag(COMPACT_TAG).fetchSemanticsNode().boundsInRoot
-        listOf(EnFeedFlowStrings.readerModeResetToDefault, EnFeedFlowStrings.actionDone).forEach { label ->
+        listOf(EnFeedFlowStrings.readerModeResetToDefault).forEach { label ->
             val bounds = rule.onNodeWithText(label).fetchSemanticsNode().boundsInRoot
             assertTrue(bounds.left >= content.left && bounds.right <= content.right, "$label: $bounds in $content")
             val layouts = mutableListOf<TextLayoutResult>()
@@ -135,17 +119,15 @@ class ReaderTextSettingsTest {
     private fun showSettings(
         fontSize: androidx.compose.runtime.MutableIntState,
         lineHeight: androidx.compose.runtime.MutableIntState,
-        onDismiss: () -> Unit = {},
     ) {
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
-                    ReaderTextSettingsContent(
+                    ReaderTextSettingsControls(
                         fontSize = fontSize.intValue,
                         lineHeight = lineHeight.intValue,
                         onFontSizeChange = { fontSize.intValue = it },
                         onLineHeightChange = { lineHeight.intValue = it },
-                        onDismiss = onDismiss,
                     )
                 }
             }

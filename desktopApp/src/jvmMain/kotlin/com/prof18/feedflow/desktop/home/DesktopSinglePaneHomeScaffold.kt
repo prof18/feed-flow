@@ -23,7 +23,6 @@ internal fun DesktopSinglePaneHomeScaffold(
     onSearchClick: () -> Unit,
     pendingNewArticlesCount: Int,
     onShowNewArticlesClicked: () -> Unit,
-    onFeedSuggestionsClick: () -> Unit,
     onEmptyStateClick: () -> Unit,
     onImportExportClick: () -> Unit = {},
 ) {
@@ -38,7 +37,6 @@ internal fun DesktopSinglePaneHomeScaffold(
         onSearchClick = onSearchClick,
         pendingNewArticlesCount = pendingNewArticlesCount,
         onShowNewArticlesClicked = onShowNewArticlesClicked,
-        onFeedSuggestionsClick = onFeedSuggestionsClick,
         onEmptyStateClick = onEmptyStateClick,
         onImportExportClick = onImportExportClick,
         multiPane = false,

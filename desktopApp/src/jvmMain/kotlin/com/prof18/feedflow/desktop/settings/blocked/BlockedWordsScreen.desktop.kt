@@ -2,7 +2,6 @@ package com.prof18.feedflow.desktop.settings.blocked
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,9 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.TextFieldState
@@ -22,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -36,13 +33,14 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.composeunstyled.rememberScrollbarState
+import com.prof18.feedflow.desktop.settings.SettingsBlock
+import com.prof18.feedflow.desktop.settings.SettingsPage
+import com.prof18.feedflow.desktop.settings.SettingsSection
+import com.prof18.feedflow.desktop.settings.settingsRowSeparator
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
-import com.prof18.feedflow.desktop.ui.components.Dialog
-import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.presentation.model.BlockedWordAction
 import com.prof18.feedflow.shared.presentation.model.BlockedWordOperationState
@@ -61,29 +59,26 @@ import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun BlockedWordsScreen(onCloseRequest: () -> Unit) {
+internal fun BlockedWordsScreen(
+    draft: BlockedWordDraft,
+    modifier: Modifier = Modifier,
+) {
     val viewModel = koinViewModel<BlockedWordsViewModel>()
     val words by viewModel.wordsState.collectAsState()
     val operations by viewModel.operationStates.collectAsState()
-    BlockedWordsWindow(onCloseRequest) {
+    Column(modifier.fillMaxSize()) {
         BlockedWordsContent(
             words,
             viewModel::onAddWord,
             viewModel::onRemoveWord,
-            onCloseRequest,
+            onCloseRequest = {},
+            modifier = Modifier.weight(1f),
+            draft = draft,
+            showCloseButton = false,
             operationStates = operations,
             onRetryOperation = viewModel::retryOperation,
         )
     }
-}
-
-@Composable
-internal fun BlockedWordsWindow(onCloseRequest: () -> Unit, content: @Composable () -> Unit) {
-    Dialog(
-        title = LocalFeedFlowStrings.current.settingsBlockedWords,
-        size = DpSize(500.dp, 700.dp),
-        onCloseRequest = onCloseRequest,
-    ) { content() }
 }
 
 @Composable
@@ -96,75 +91,98 @@ internal fun BlockedWordsContent(
     modifier: Modifier = Modifier,
     operationStates: ImmutableMap<String, BlockedWordOperationState>? = null,
     onRetryOperation: (String) -> Unit = {},
+    draft: BlockedWordDraft = rememberBlockedWordDraft(),
+    showCloseButton: Boolean = true,
 ) {
     val strings = LocalFeedFlowStrings.current
     val inputFocus = remember { FocusRequester() }
-    val listState = rememberLazyListState()
     val actionHeight = with(LocalDensity.current) { JewelTheme.defaultTextStyle.lineHeight.toDp() } + 16.dp
     val currentOperations by rememberUpdatedState(operationStates)
     val currentWords by rememberUpdatedState(words)
     val removeWord by rememberUpdatedState(onRemoveWord)
-    Column(
-        modifier = modifier.fillMaxSize().padding(DesktopDesignTokens.spacePanel),
-        verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection),
-    ) {
-        BlockedWordInput(onAddWord, inputFocus, operationStates)
-        Box(Modifier.fillMaxWidth().weight(1f)) {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize().padding(end = DesktopDesignTokens.spaceSection),
-            ) {
-                item {
-                    Text(strings.blockedWordsDescription, Modifier.padding(bottom = DesktopDesignTokens.spaceSection))
+    val onRemove: (String) -> Unit = { word ->
+        if (!currentOperations.hasPendingOperations() && word in currentWords) {
+            removeWord(word)
+            inputFocus.requestFocus()
+        }
+    }
+    Column(modifier = modifier.fillMaxSize()) {
+        SettingsPage(title = strings.settingsFilters, modifier = Modifier.weight(1f)) {
+            SettingsSection(title = strings.addWordPlaceholder, footer = strings.blockedWordsDescription) {
+                SettingsBlock {
+                    BlockedWordInput(onAddWord, inputFocus, operationStates, draft)
                 }
-                operationStates?.values?.maxByOrNull { it.generation }?.let { operation ->
-                    item {
-                        BlockedWordOperationFeedback(
-                            operation = operation,
-                            hasPendingOperations = operationStates.hasPendingOperations(),
-                            onRetry = onRetryOperation,
-                            modifier = Modifier.padding(bottom = DesktopDesignTokens.spaceSection),
-                        )
-                    }
-                }
+            }
+            operationStates?.values?.maxByOrNull { it.generation }?.let { operation ->
+                BlockedWordOperationFeedback(
+                    operation = operation,
+                    hasPendingOperations = operationStates.hasPendingOperations(),
+                    onRetry = onRetryOperation,
+                )
+            }
+            SettingsSection(title = strings.settingsBlockedWords) {
                 if (words.isEmpty()) {
-                    item { Text(strings.blockedWordsEmptyState) }
+                    SettingsBlock {
+                        Text(strings.blockedWordsEmptyState, color = JewelTheme.globalColors.text.info)
+                    }
                 } else {
-                    items(words, key = { it }) { word ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth().testTag(BlockedWordsE2eIds.row(word))
-                                .padding(vertical = DesktopDesignTokens.spaceMedium),
-                            horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Tooltip(tooltip = { Text(word) }, modifier = Modifier.weight(1f)) {
-                                Text(word, Modifier.fillMaxWidth(), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            }
-                            Tooltip(tooltip = { Text(strings.deleteFeed) }) {
-                                IconButton(
-                                    onClick = {
-                                        if (!currentOperations.hasPendingOperations() && word in currentWords) {
-                                            removeWord(word)
-                                            inputFocus.requestFocus()
-                                        }
-                                    },
-                                    enabled = !operationStates.hasPendingOperations(),
-                                    modifier = Modifier.size(actionHeight)
-                                        .testTag(BlockedWordsE2eIds.deleteButton(word))
-                                        .semantics { contentDescription = strings.deleteFeed },
-                                ) {
-                                    Icon(AllIconsKeys.General.Delete, null)
-                                }
-                            }
+                    words.forEach { word ->
+                        key(word) {
+                            BlockedWordRow(
+                                word = word,
+                                deleteLabel = strings.deleteFeed,
+                                enabled = !operationStates.hasPendingOperations(),
+                                actionSize = actionHeight,
+                                onRemove = { onRemove(word) },
+                            )
                         }
                     }
                 }
             }
-            FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
         }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            DefaultButton(onClick = onCloseRequest, modifier = Modifier.heightIn(min = actionHeight)) {
-                Text(strings.actionDone)
+        if (showCloseButton) {
+            Row(
+                Modifier.fillMaxWidth().padding(DesktopDesignTokens.spaceSection),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                DefaultButton(onClick = onCloseRequest, modifier = Modifier.heightIn(min = actionHeight)) {
+                    Text(strings.actionDone)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalFoundationApi::class)
+private fun BlockedWordRow(
+    word: String,
+    deleteLabel: String,
+    enabled: Boolean,
+    actionSize: Dp,
+    onRemove: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .settingsRowSeparator()
+            .testTag(BlockedWordsE2eIds.row(word))
+            .padding(start = 14.dp, end = 6.dp, top = 4.dp, bottom = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Tooltip(tooltip = { Text(word) }, modifier = Modifier.weight(1f)) {
+            Text(word, Modifier.fillMaxWidth(), maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
+        Tooltip(tooltip = { Text(deleteLabel) }) {
+            IconButton(
+                onClick = onRemove,
+                enabled = enabled,
+                modifier = Modifier.size(actionSize)
+                    .testTag(BlockedWordsE2eIds.deleteButton(word))
+                    .semantics { contentDescription = deleteLabel },
+            ) {
+                Icon(AllIconsKeys.General.Delete, null)
             }
         }
     }
@@ -176,10 +194,11 @@ private fun BlockedWordInput(
     onAddWord: (String) -> Unit,
     focus: FocusRequester,
     operationStates: ImmutableMap<String, BlockedWordOperationState>?,
+    draft: BlockedWordDraft,
 ) {
     val strings = LocalFeedFlowStrings.current
-    val field = rememberTextFieldState()
-    var submitted by remember { mutableStateOf<SubmittedBlockedWord?>(null) }
+    val field = draft.field
+    var submitted by draft.submittedState
     val submittedOperation = submitted?.operationFrom(operationStates)
     val awaitingResult = submitted?.isAwaiting(operationStates) == true
     val currentBusy by rememberUpdatedState(operationStates.hasPendingOperations() || awaitingResult)
@@ -207,7 +226,6 @@ private fun BlockedWordInput(
         confirmBlockedWordResult(submission, operation, field, focus) { submitted = null }
     }
     Column(verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium)) {
-        Text(strings.addWordPlaceholder)
         Row(
             horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
             verticalAlignment = Alignment.CenterVertically,
@@ -248,7 +266,17 @@ private fun confirmBlockedWordResult(
     if (!operation.status.isPending()) focus.requestFocus()
 }
 
-private data class SubmittedBlockedWord(val rawDraft: String, val word: String, val previousGeneration: Long)
+internal class BlockedWordDraft(val field: TextFieldState) {
+    internal val submittedState = mutableStateOf<SubmittedBlockedWord?>(null)
+}
+
+@Composable
+internal fun rememberBlockedWordDraft(): BlockedWordDraft {
+    val field = rememberTextFieldState()
+    return remember(field) { BlockedWordDraft(field) }
+}
+
+internal data class SubmittedBlockedWord(val rawDraft: String, val word: String, val previousGeneration: Long)
 
 private fun SubmittedBlockedWord.operationFrom(operations: ImmutableMap<String, BlockedWordOperationState>?) =
     operations?.get(word)?.takeIf {

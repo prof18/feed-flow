@@ -5,12 +5,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
-import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -18,9 +16,6 @@ import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.pressKey
-import androidx.compose.ui.test.requestFocus
-import androidx.compose.ui.text.TextLayoutResult
-import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
@@ -30,68 +25,18 @@ import com.prof18.feedflow.desktop.testing.FeedFormE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
-import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test
 import java.awt.Component
 import java.awt.Container
 import java.awt.Dialog
 import java.awt.Window
-import java.awt.event.KeyEvent
 import javax.swing.SwingUtilities
 import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 class CategoryDialogTest {
     @get:Rule
     val rule = createComposeRule()
-
-    @Test
-    fun `category actions leave room for a readable Pagination label at default window size`() {
-        content { CategoryManager("Pagination") }
-        val layouts = categoryLabelLayouts("Pagination")
-        assertEquals(1, layouts.single().lineCount)
-        assertTrue(!layouts.single().hasVisualOverflow)
-    }
-
-    @Test
-    fun `long category label is one line while edit and delete remain named and available`() {
-        val name = "A long fixture category name ".repeat(n = 20)
-        content { CategoryManager(name) }
-        assertEquals(1, categoryLabelLayouts(name).single().lineCount)
-        rule.onNodeWithTag("edit_feed_category_edit_fixture")
-            .assertContentDescriptionEquals(EnFeedFlowStrings.editCategory)
-            .assertIsEnabled()
-        rule.onNodeWithTag("edit_feed_category_delete_fixture")
-            .assertContentDescriptionEquals(EnFeedFlowStrings.deleteCategory)
-            .assertIsEnabled()
-        rule.onNodeWithTag("edit_feed_category_edit_fixture").performSemanticsAction(SemanticsActions.OnClick) { it() }
-        rule.waitUntil(timeoutMillis = 5_000) {
-            rule.onAllNodesWithTag(FeedFormE2eIds.CATEGORY_RENAME_INPUT).fetchSemanticsNodes().size == 1
-        }
-        rule.onNodeWithTag(FeedFormE2eIds.CATEGORY_RENAME_INPUT).assertTextEquals(name)
-    }
-
-    private fun categoryLabelLayouts(name: String): List<TextLayoutResult> {
-        val layouts = mutableListOf<TextLayoutResult>()
-        rule.onNodeWithText(name, useUnmergedTree = true)
-            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
-        return layouts
-    }
-
-    @Composable
-    private fun CategoryManager(name: String) {
-        CategoryEditorDialog(
-            categoryState = CategoriesState(persistentListOf(CategoriesState.CategoryItem("fixture", name, false))),
-            onCategorySelected = {},
-            onAddCategory = {},
-            onDeleteCategory = {},
-            onEditCategory = { _, _ -> },
-            validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
-            onDismiss = {},
-        )
-    }
 
     @Test
     fun `category name receives focus and Enter saves the trimmed validated name`() {
@@ -161,77 +106,6 @@ class CategoryDialogTest {
     }
 
     @Test
-    fun `category selection uses Done because selection changes are already applied`() {
-        var mutations = 0
-        var dismissals = 0
-        content {
-            CategoryEditorDialog(
-                categoryState = CategoriesState(),
-                onCategorySelected = { mutations++ },
-                onAddCategory = { mutations++ },
-                onDeleteCategory = { mutations++ },
-                onEditCategory = { _, _ -> mutations++ },
-                validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
-                onDismiss = { dismissals++ },
-            )
-        }
-        rule.onNodeWithText(EnFeedFlowStrings.actionDone).performSemanticsAction(SemanticsActions.OnClick) { it() }
-        rule.runOnIdle {
-            assertEquals(0, mutations)
-            assertEquals(1, dismissals)
-        }
-    }
-
-    @Test
-    fun `category manager owns its name dialog and native Escape restores the initiating focus`() {
-        var mutations = 0
-        var dismissals = 0
-        content {
-            CategoryEditorDialog(
-                categoryState = CategoriesState(),
-                onCategorySelected = { mutations++ },
-                onAddCategory = { mutations++ },
-                onDeleteCategory = { mutations++ },
-                onEditCategory = { _, _ -> mutations++ },
-                validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
-                onDismiss = { dismissals++ },
-            )
-        }
-        val add = rule.onNodeWithTag(FeedFormE2eIds.CATEGORY_SHEET_ADD)
-        add.requestFocus().performSemanticsAction(SemanticsActions.OnClick) { it() }
-        rule.waitUntil(timeoutMillis = 5_000) {
-            rule.onAllNodesWithTag(FeedFormE2eIds.CATEGORY_ADD_INPUT).fetchSemanticsNodes().isNotEmpty()
-        }
-        rule.onNodeWithTag(FeedFormE2eIds.CATEGORY_ADD_INPUT).assertIsFocused()
-        SwingUtilities.invokeAndWait {
-            val parent = visibleDialog(EnFeedFlowStrings.addFeedCategoriesTitle)
-            val child = visibleDialog(EnFeedFlowStrings.addFeedCategoryTitle)
-            assertSame(parent, child.owner)
-            val input = descendants(child).single { component ->
-                component.keyListeners.any { it.javaClass.name.contains("ComposeSceneMediator") }
-            }
-            val escape = KeyEvent(input, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_ESCAPE)
-            input.keyListeners.forEach { it.keyPressed(escape) }
-            assertTrue(escape.isConsumed)
-        }
-        rule.waitUntil(timeoutMillis = 5_000) {
-            var closed = false
-            SwingUtilities.invokeAndWait {
-                closed = Window.getWindows().filterIsInstance<Dialog>().none {
-                    it.isVisible && it.title == EnFeedFlowStrings.addFeedCategoryTitle
-                }
-            }
-            closed
-        }
-        add.assertIsFocused()
-        SwingUtilities.invokeAndWait { assertTrue(visibleDialog(EnFeedFlowStrings.addFeedCategoriesTitle).isVisible) }
-        rule.runOnIdle {
-            assertEquals(0, mutations)
-            assertEquals(0, dismissals)
-        }
-    }
-
-    @Test
     fun `remove category confirmation explicitly preserves feeds and names its action`() {
         var deleted: CategoryId? = null
         val category = CategoryId("news")
@@ -257,10 +131,6 @@ class CategoryDialogTest {
             activate()
             activate()
         }
-    }
-
-    private fun visibleDialog(title: String): Dialog = Window.getWindows().filterIsInstance<Dialog>().single {
-        it.isVisible && it.title == title
     }
 
     private fun descendants(component: Component): Sequence<Component> = sequence {

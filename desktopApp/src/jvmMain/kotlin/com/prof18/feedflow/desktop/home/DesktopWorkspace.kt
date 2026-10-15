@@ -6,7 +6,9 @@ import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -35,6 +37,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.contentDescription
@@ -43,6 +46,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import java.awt.Cursor
@@ -127,11 +131,17 @@ private fun WorkspaceDivider(
     val border = JewelTheme.globalColors.borders.normal
     val color = if (focused) JewelTheme.globalColors.borders.focused else border
     val widthDescription = LocalFeedFlowStrings.current.desktopPaneWidth(width.value.roundToInt().toString())
+    val isHovered by interactionSource.collectIsHoveredAsState()
     Box(
         modifier = Modifier
-            .width(workspaceDividerWidth)
+            // Takes no layout space: only a hairline shows, while the drag target overlaps both pane edges.
+            .zIndex(1f)
+            .layout { measurable, constraints ->
+                val targetWidth = workspaceDividerWidth.roundToPx()
+                val placeable = measurable.measure(constraints.copy(minWidth = targetWidth, maxWidth = targetWidth))
+                layout(0, placeable.height) { placeable.place(-targetWidth / 2, 0) }
+            }
             .fillMaxHeight()
-            .background(JewelTheme.globalColors.panelBackground)
             .semantics {
                 contentDescription = description
                 stateDescription = widthDescription
@@ -152,6 +162,7 @@ private fun WorkspaceDivider(
                     false
                 }
             }
+            .hoverable(interactionSource)
             .clickable(interactionSource = interactionSource, indication = null) { focusRequester.requestFocus() }
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
             .draggable(
@@ -168,7 +179,9 @@ private fun WorkspaceDivider(
         contentAlignment = Alignment.Center,
     ) {
         Box(Modifier.width(1.dp).fillMaxHeight().background(border.copy(alpha = 0.5f)))
-        Box(Modifier.width(2.dp).height(32.dp).background(color))
+        if (focused || isHovered) {
+            Box(Modifier.width(2.dp).height(32.dp).background(color))
+        }
     }
 }
 

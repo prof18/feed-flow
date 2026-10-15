@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.GoogleDriveSynMessages
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceJvm
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDownloadParam
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDownloadResult
@@ -11,6 +12,7 @@ import com.prof18.feedflow.feedsync.googledrive.GoogleDriveException
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadParam
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadResult
+import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
@@ -18,6 +20,7 @@ import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -26,6 +29,7 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
     private val fakeGoogleDriveDataSource = GoogleDriveDataSourceFake()
     private val viewModel: GoogleDriveSyncViewModel by inject()
     private val googleDriveSettings: GoogleDriveSettings by inject()
+    private val accountsRepository: AccountsRepository by inject()
 
     override fun getTestModules(): List<Module> {
         return super.getTestModules() + module {
@@ -74,6 +78,22 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
             assertTrue(state is AccountConnectionUiState.Linked)
             assertEquals(AccountSyncUIState.None, state.syncState)
         }
+    }
+
+    @Test
+    fun `stale link without a stored credential is cleared and reported as Unlinked`() = runTest {
+        resetState()
+        fakeGoogleDriveDataSource.restoreAuthResult = false
+        googleDriveSettings.setGoogleDriveLinked(true)
+        accountsRepository.setGoogleDriveAccount()
+
+        val staleViewModel: GoogleDriveSyncViewModel = getKoin().get()
+
+        staleViewModel.googleDriveConnectionUiState.test {
+            assertTrue(awaitItem() is AccountConnectionUiState.Unlinked)
+        }
+        assertFalse(googleDriveSettings.isGoogleDriveLinked())
+        assertEquals(SyncAccounts.LOCAL, accountsRepository.currentAccountState.value)
     }
 
     @Test

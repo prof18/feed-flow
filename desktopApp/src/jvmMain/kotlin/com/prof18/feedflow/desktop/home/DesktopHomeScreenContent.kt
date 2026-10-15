@@ -50,6 +50,8 @@ import com.prof18.feedflow.desktop.ui.components.DesktopArticleList
 import com.prof18.feedflow.desktop.ui.components.DesktopHomeToolbar
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.desktop.ui.components.SnackbarHost
+import com.prof18.feedflow.desktop.ui.components.articleCardContainerColor
+import com.prof18.feedflow.desktop.ui.components.floatingSurface
 import com.prof18.feedflow.desktop.ui.scrollToItemConditionally
 import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
 import com.prof18.feedflow.shared.presentation.model.NextFeedDisplayState
@@ -158,12 +160,13 @@ internal fun DesktopHomeScreenContent(
                 )
             }
             if (pendingNewArticlesCount > 0) {
-                OutlinedButton(
+                DefaultButton(
                     onClick = {
                         if (newArticlesFocused) toolbarFocusRequester.requestFocus()
                         onShowNewArticlesClicked()
                     },
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = 8.dp).heightIn(min = actionHeight)
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = 8.dp).floatingSurface()
+                        .heightIn(min = actionHeight)
                         .onFocusChanged { newArticlesFocused = it.isFocused },
                 ) {
                     val count = if (pendingNewArticlesCount >= MaxNewArticlesCount) {
@@ -179,7 +182,8 @@ internal fun DesktopHomeScreenContent(
                     onClick = {
                         if (!keepScrollActionVisible) scrollToTop(restoreFocus = scrollActionFocused)
                     },
-                    modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp).heightIn(min = actionHeight)
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp).floatingSurface()
+                        .heightIn(min = actionHeight)
                         .onFocusChanged { scrollActionFocused = it.isFocused },
                 ) {
                     Text(strings.scrollToTopButtonContentDescription)
@@ -273,8 +277,13 @@ private fun HomeArticleList(
     selectedArticleId: String?,
 ) {
     val strings = LocalFeedFlowStrings.current
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-        val cardLayout = displayState.feedLayout != FeedLayout.LIST
+    val cardLayout = displayState.feedLayout != FeedLayout.LIST
+    Box(
+        modifier = Modifier.fillMaxSize().then(
+            if (cardLayout) Modifier.background(articleCardContainerColor()) else Modifier,
+        ),
+        contentAlignment = Alignment.TopCenter,
+    ) {
         val isGridArrangement = displayState.isGridLayoutEnabled && isGridLayoutAllowed && cardLayout
         val listModifier = if (isGridArrangement) {
             Modifier.fillMaxWidth()

@@ -9,6 +9,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
@@ -62,9 +63,11 @@ class DesktopAccountNavigationTest {
         username.performTextInput("first-reader")
         username.performTextInputSelection(TextRange(CURSOR_POSITION))
         compose.onNodeWithTag(AccountE2eIds.PASSWORD_INPUT).performTextInput("synthetic-password")
+        compose.onNodeWithText(EnFeedFlowStrings.desktopAccountsBackToServices).performClick()
         compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.FRESH_RSS)).performClick()
         username.assertTextEquals("")
         username.performTextInput("second-reader")
+        compose.onNodeWithText(EnFeedFlowStrings.desktopAccountsBackToServices).performClick()
         compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.MINIFLUX)).performClick()
         username.assertTextEquals("first-reader")
         assertEquals(
@@ -118,8 +121,10 @@ class DesktopAccountNavigationTest {
         val code = compose.onNodeWithTag("dropbox-auth-code")
         code.performTextInput("synthetic-code")
         code.performTextInputSelection(TextRange(CURSOR_POSITION))
+        compose.onNodeWithText(EnFeedFlowStrings.desktopAccountsBackToServices).performClick()
         compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.GOOGLE_DRIVE)).performClick()
         code.assertDoesNotExist()
+        compose.onNodeWithText(EnFeedFlowStrings.desktopAccountsBackToServices).performClick()
         compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.DROPBOX)).performClick()
         assertEquals(
             TextRange(CURSOR_POSITION),

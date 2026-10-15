@@ -88,8 +88,8 @@ class ReaderModeToolbarTest {
             "Expand reader",
             EnFeedFlowStrings.menuAddToBookmark,
             EnFeedFlowStrings.readerContentSourceFeed,
-            EnFeedFlowStrings.menuShare,
-            EnFeedFlowStrings.readerModeArchiveButton,
+            EnFeedFlowStrings.menuCopyLink,
+            EnFeedFlowStrings.moreOptionsButtonContentDescription,
             EnFeedFlowStrings.readerModeCommentsButtonContentDescription,
             EnFeedFlowStrings.readerModeBrowserButtonContentDescription,
             EnFeedFlowStrings.readerModeTextSettings,
@@ -144,7 +144,8 @@ class ReaderModeToolbarTest {
                             onFontSizeChange = {},
                             lineHeight = ReaderModeDefaults.LINE_HEIGHT,
                             onLineHeightChange = {},
-                            onBookmarkClick = { _, _ -> },
+                            isBookmarked = false,
+                            onToggleBookmark = {},
                             onToggleContentSource = {},
                         )
                     }
@@ -174,9 +175,11 @@ class ReaderModeToolbarTest {
                         onFontSizeChange = {},
                         lineHeight = ReaderModeDefaults.LINE_HEIGHT,
                         onLineHeightChange = {},
-                        onBookmarkClick = { id, isBookmarked ->
-                            bookmarkChanges += id to isBookmarked
-                            readerState.value = createReaderState(isBookmarked)
+                        isBookmarked = readerState.value.getIsBookmarked,
+                        onToggleBookmark = {
+                            val next = !readerState.value.getIsBookmarked
+                            bookmarkChanges += FeedItemId(READER_ITEM_ID) to next
+                            readerState.value = createReaderState(next)
                         },
                         onToggleContentSource = {},
                     )

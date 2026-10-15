@@ -375,7 +375,7 @@ class DesktopSecondaryJourneysTest {
         val categories = List(size = 12) { index ->
             SuggestedFeedCategory("fixture-$index", "Fixture category $index", "", listOf(suggestedFeed))
         }.toImmutableList()
-        compact {
+        content {
             FeedSuggestionsContent(
                 categories = categories,
                 selectedCategoryId = "fixture-11",

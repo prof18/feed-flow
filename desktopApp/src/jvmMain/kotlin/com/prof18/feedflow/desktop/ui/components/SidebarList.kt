@@ -207,11 +207,11 @@ internal fun rememberDesktopSidebarItemStyle(): SimpleListItemStyle {
         if (isDark) {
             SimpleListItemStyle.dark(
                 colors = SimpleListItemColors.dark(backgroundSelected = selectedBackground),
-            )
+            ).withRoundedSelectionCorners()
         } else {
             SimpleListItemStyle.light(
                 colors = SimpleListItemColors.light(backgroundSelected = selectedBackground),
-            )
+            ).withRoundedSelectionCorners()
         }
     }
 }

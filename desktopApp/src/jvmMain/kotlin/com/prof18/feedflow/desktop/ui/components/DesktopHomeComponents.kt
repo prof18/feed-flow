@@ -46,26 +46,11 @@ internal fun DesktopFeedSidebar(
     feedManagementActions: FeedManagementActions,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     modifier: Modifier = Modifier,
-    onFeedSuggestionsClick: () -> Unit = {},
-    onImportExportClick: () -> Unit = {},
 ) {
     FeedSidebar(
         displayState = displayState,
         feedManagementActions = feedManagementActions,
         onFeedFilterSelected = onFeedFilterSelected,
         modifier = modifier,
-        onFeedSuggestionsClick = onFeedSuggestionsClick,
-        onImportExportClick = onImportExportClick,
     )
-}
-
-@Composable
-@Suppress("UnusedParameter")
-internal fun DesktopFeedManagementDialog(
-    displayState: HomeDisplayState,
-    feedManagementActions: FeedManagementActions,
-    onFeedSuggestionsClick: () -> Unit,
-    onImportExportClick: () -> Unit,
-) {
-    FeedManagementDialog(displayState, feedManagementActions, onFeedSuggestionsClick, onImportExportClick)
 }

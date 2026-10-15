@@ -47,7 +47,11 @@ internal fun FeedFlowTheme(
     } else {
         JewelTheme.lightThemeDefinition(colors = globalColors, defaultTextStyle = textStyle)
     }
-    IntUiTheme(theme = theme, styling = ComponentStyling, content = content)
+    IntUiTheme(theme = theme, styling = ComponentStyling) {
+        ProvideButtonStyles {
+            ProvideSelectionStyles(content)
+        }
+    }
 }
 
 internal fun desktopPanelBackground(darkTheme: Boolean, useOledTheme: Boolean): Color = when {

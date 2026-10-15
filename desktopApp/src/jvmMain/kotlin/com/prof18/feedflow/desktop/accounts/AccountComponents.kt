@@ -3,13 +3,14 @@ package com.prof18.feedflow.desktop.accounts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,41 +20,31 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
-import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.desktop.settings.SettingsActionRow
+import com.prof18.feedflow.desktop.settings.SettingsRow
+import com.prof18.feedflow.desktop.settings.SettingsSection
 import com.prof18.feedflow.desktop.testing.AccountE2eIds
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
 import com.prof18.feedflow.desktop.ui.components.SnackbarHost
 import org.jetbrains.jewel.ui.component.CircularProgressIndicator
-import org.jetbrains.jewel.ui.component.OutlinedButton
+import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 internal fun AccountScreen(
-    account: SyncAccounts,
-    onBackClick: () -> Unit,
-    showNavigateBack: Boolean,
     snackbarHostState: DesktopFeedbackState,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    val strings = LocalFeedFlowStrings.current
+    // The Accounts detail page draws the service header and back navigation.
     Column(modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            if (showNavigateBack) {
-                OutlinedButton(onClick = onBackClick) { Text(strings.desktopSearchBackButton) }
-            }
-            Text(account.desktopTitle(strings))
-        }
         Box(Modifier.weight(1f).fillMaxWidth()) {
             content()
             SnackbarHost(snackbarHostState, Modifier.align(Alignment.BottomCenter))
@@ -98,7 +89,7 @@ internal fun CloudAccountContent(
     when (uiState) {
         AccountConnectionUiState.Loading -> AccountLoading(modifier.fillMaxSize())
         AccountConnectionUiState.Unlinked -> {
-            Column(modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(modifier.fillMaxSize().padding(vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (description.isNotBlank()) Text(description)
                 connectContent()
             }
@@ -151,29 +142,46 @@ private fun LinkedAccountDetails(
     lastDownloadMessage: ((String) -> String)?,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-        Column(
-            modifier = Modifier
-                .widthIn(max = 560.dp)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Text(successMessage, Modifier.testTag(AccountE2eIds.CONNECTED_MESSAGE))
+    val strings = LocalFeedFlowStrings.current
+    val idle = uiState.syncState != AccountSyncUIState.Loading
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
+        SettingsSection {
+            SettingsRow(
+                title = successMessage,
+                modifier = Modifier.testTag(AccountE2eIds.CONNECTED_MESSAGE),
+                leading = {
+                    Icon(
+                        Icons.Filled.CheckCircle,
+                        contentDescription = null,
+                        tint = ConnectedColor,
+                        modifier = Modifier.size(18.dp),
+                    )
+                },
+            )
             SyncStatus(uiState.syncState, noSyncMessage, lastUploadMessage, lastDownloadMessage)
+        }
+        SettingsSection {
             if (onBackupClick != null) {
-                OutlinedButton(
+                SettingsActionRow(
+                    title = strings.backupButton,
                     onClick = onBackupClick,
-                    enabled = uiState.syncState != AccountSyncUIState.Loading,
+                    enabled = idle,
                     modifier = Modifier.testTag("account_backup_button"),
-                ) { Text(LocalFeedFlowStrings.current.backupButton) }
+                )
             }
-            OutlinedButton(
+            SettingsActionRow(
+                title = strings.accountDisconnectButton,
                 onClick = onRequestDisconnect,
+                enabled = idle,
+                destructive = true,
                 modifier = Modifier.testTag(AccountE2eIds.DISCONNECT_BUTTON),
-                enabled = uiState.syncState != AccountSyncUIState.Loading,
-            ) { Text(LocalFeedFlowStrings.current.accountDisconnectButton) }
+            )
         }
     }
 }
@@ -185,27 +193,31 @@ private fun SyncStatus(
     lastUploadMessage: ((String) -> String)?,
     lastDownloadMessage: ((String) -> String)?,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    // One emitter: the rows stay inside the parent card, which draws separators between them.
+    Column {
         when (syncState) {
-            AccountSyncUIState.Loading -> Row(verticalAlignment = Alignment.CenterVertically) {
-                CircularProgressIndicator()
-                Text(
-                    LocalFeedFlowStrings.current.accountRefreshProgress,
-                    modifier = Modifier.padding(start = 8.dp),
-                )
-            }
-            AccountSyncUIState.None -> Text(noSyncMessage)
+            AccountSyncUIState.Loading -> SettingsRow(
+                title = LocalFeedFlowStrings.current.accountRefreshProgress,
+                trailing = { CircularProgressIndicator() },
+            )
+            AccountSyncUIState.None -> SettingsRow(title = noSyncMessage)
             is AccountSyncUIState.Synced -> {
                 syncState.lastUploadDate?.let { date ->
-                    lastUploadMessage?.let { Text(it(date), Modifier.testTag(AccountE2eIds.LAST_SYNC_LABEL)) }
+                    lastUploadMessage?.let {
+                        SettingsRow(title = it(date), modifier = Modifier.testTag(AccountE2eIds.LAST_SYNC_LABEL))
+                    }
                 }
                 syncState.lastDownloadDate?.let { date ->
-                    lastDownloadMessage?.let { Text(it(date), Modifier.testTag(AccountE2eIds.LAST_SYNC_LABEL)) }
+                    lastDownloadMessage?.let {
+                        SettingsRow(title = it(date), modifier = Modifier.testTag(AccountE2eIds.LAST_SYNC_LABEL))
+                    }
                 }
             }
         }
     }
 }
+
+private val ConnectedColor = Color(color = 0xFF2F9E6B)
 
 @Composable
 private fun DisconnectConfirmationDialog(

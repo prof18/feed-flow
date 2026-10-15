@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.globalArticleOpenModes
-import com.prof18.feedflow.desktop.settings.JewelSettingsChoice
+import com.prof18.feedflow.desktop.settings.SettingsChoice
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import kotlinx.collections.immutable.toPersistentList
 
@@ -18,7 +18,7 @@ internal fun ArticleOpenModeSelector(
 ) {
     val strings = LocalFeedFlowStrings.current
     val modes = if (allowDefault) ArticleOpenMode.entries else globalArticleOpenModes
-    JewelSettingsChoice(
+    SettingsChoice(
         title = strings.articleOpenMode,
         selected = if (currentMode == ArticleOpenMode.INTERNAL_BROWSER) {
             ArticleOpenMode.PREFERRED_BROWSER

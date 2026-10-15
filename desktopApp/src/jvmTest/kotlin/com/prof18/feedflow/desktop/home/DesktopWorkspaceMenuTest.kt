@@ -18,8 +18,6 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.desktop.home.menubar.FileMenu
 import com.prof18.feedflow.desktop.home.menubar.MenuBarActions
 import com.prof18.feedflow.desktop.home.menubar.MenuBarState
-import com.prof18.feedflow.desktop.main.DesktopDialogWindowDestination
-import com.prof18.feedflow.desktop.main.DesktopDialogWindowNavigator
 import com.prof18.feedflow.desktop.ui.DesktopUiEnvironment
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import org.junit.Rule
@@ -28,7 +26,6 @@ import javax.swing.JMenuItem
 import javax.swing.SwingUtilities
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class DesktopWorkspaceMenuTest {
@@ -36,10 +33,8 @@ class DesktopWorkspaceMenuTest {
     val rule = createComposeRule()
 
     @Test
-    fun `Accounts menu opens its own window once and leaves preferences closed`() {
-        val navigator = DesktopDialogWindowNavigator()
+    fun `File menu leaves Accounts to Settings`() {
         var nativeWindow: ComposeWindow? = null
-        var accountRequests = 0
         rule.setContent {
             DesktopUiEnvironment(darkTheme = false, currentLanguageTag = "en") {
                 Window(onCloseRequest = {}, title = EnFeedFlowStrings.appName) {
@@ -53,13 +48,7 @@ class DesktopWorkspaceMenuTest {
                                 isSyncUploadRequired = false,
                                 commands = DesktopWorkspaceCommandAvailability(false, false),
                             ),
-                            actions = MenuBarActions(
-                                {}, {}, {}, {}, {}, {}, {}, {}, {},
-                                onAccountsClick = {
-                                    accountRequests++
-                                    navigator.open(DesktopDialogWindowDestination.Accounts)
-                                },
-                            ),
+                            actions = MenuBarActions({}, {}, {}, {}, {}, {}, {}, {}),
                         )
                     }
                 }
@@ -69,17 +58,9 @@ class DesktopWorkspaceMenuTest {
 
         SwingUtilities.invokeAndWait {
             val menu = requireNotNull(nativeWindow).jMenuBar.getMenu(0)
-            val accounts = (0 until menu.itemCount).mapNotNull(menu::getItem)
-                .singleOrNull { it.text == EnFeedFlowStrings.settingsAccounts }
-            assertNotNull(accounts, "A direct Accounts entry is required")
-            assertTrue(accounts.isEnabled)
-            accounts.doClick()
-        }
-
-        rule.runOnIdle {
-            assertEquals(1, accountRequests)
-            assertTrue(navigator.isOpen(DesktopDialogWindowDestination.Accounts))
-            assertFalse(navigator.isOpen(DesktopDialogWindowDestination.Settings))
+            val labels = (0 until menu.itemCount).mapNotNull(menu::getItem).map { it.text }
+            assertFalse(EnFeedFlowStrings.settingsAccounts in labels, "Accounts belongs to Settings, not the File menu")
+            assertTrue(EnFeedFlowStrings.importExportLabel in labels)
         }
     }
 
@@ -100,7 +81,7 @@ class DesktopWorkspaceMenuTest {
                         FileMenu(
                             isMacOS = true,
                             state = MenuBarState(false, FeedFilter.Timeline, false, commands.value),
-                            actions = MenuBarActions(refresh, {}, bulk, {}, bulk, {}, {}, {}, {}),
+                            actions = MenuBarActions(refresh, {}, bulk, {}, {}, {}, {}, {}),
                         )
                     }
                     BasicTextField(text.value, { text.value = it }, Modifier.testTag("editor"))
@@ -121,11 +102,14 @@ class DesktopWorkspaceMenuTest {
                 .mapNotNull(menu::getItem).single { it.text == label }
             item(EnFeedFlowStrings.refreshFeeds).doClick()
             item(EnFeedFlowStrings.markAllReadButton).doClick()
-            item(EnFeedFlowStrings.clearOldArticlesButton).doClick()
+            assertFalse(
+                (0 until menu.itemCount).mapNotNull(menu::getItem)
+                    .any { it.text == EnFeedFlowStrings.clearOldArticlesButton },
+            )
         }
         rule.runOnIdle {
             assertEquals(1, refreshes)
-            assertEquals(2, bulkActions)
+            assertEquals(1, bulkActions)
             commands.value = DesktopWorkspaceCommandAvailability(false, false)
         }
         rule.waitUntil(timeoutMillis = 5_000L) {
@@ -142,7 +126,6 @@ class DesktopWorkspaceMenuTest {
             val gatedLabels = setOf(
                 EnFeedFlowStrings.refreshFeeds,
                 EnFeedFlowStrings.markAllReadButton,
-                EnFeedFlowStrings.clearOldArticlesButton,
             )
             (0 until menu.itemCount).mapNotNull(menu::getItem).forEach { item ->
                 if (item.text in gatedLabels) {
@@ -155,7 +138,7 @@ class DesktopWorkspaceMenuTest {
         }
         rule.runOnIdle {
             assertEquals(1, refreshes)
-            assertEquals(2, bulkActions)
+            assertEquals(1, bulkActions)
         }
     }
 }

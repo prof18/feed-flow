@@ -11,10 +11,10 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.click
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -96,26 +96,23 @@ class DesktopAccountsContentTest {
     }
 
     @Test
-    fun `pointer selection shows details without connecting and retains wide service list`() {
+    fun `opening a service shows its subpage without connecting it`() {
         val currentAccount = mutableStateOf(SyncAccounts.LOCAL)
         compose.setContent { TestContent(currentAccount = currentAccount.value) }
 
         compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.MINIFLUX)).performClick()
 
         compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(SyncAccounts.MINIFLUX.name)
-        compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.FRESH_RSS)).assertExists()
+        compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.FRESH_RSS)).assertDoesNotExist()
         compose.runOnIdle { assertEquals(SyncAccounts.LOCAL, currentAccount.value) }
     }
 
     @Test
     fun `keyboard service selection opens the same details as pointer selection`() {
         compose.setContent { TestContent() }
-        val list = compose.onNodeWithTag(ACCOUNT_PROVIDERS_TAG)
-        list.requestFocus()
-        list.performKeyInput {
-            pressKey(Key.DirectionDown)
-            pressKey(Key.Enter)
-        }
+        val row = compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.MINIFLUX))
+        row.requestFocus()
+        row.performKeyInput { pressKey(Key.Enter) }
 
         compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(SyncAccounts.MINIFLUX.name)
     }
@@ -129,22 +126,19 @@ class DesktopAccountsContentTest {
     }
 
     @Test
-    fun `disabled service cannot open by pointer or keyboard`() {
+    fun `disabled service cannot open while the current account remains reachable`() {
         compose.setContent { TestContent(currentAccount = SyncAccounts.FRESH_RSS) }
-        compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.MINIFLUX)).performTouchInput { click() }
+        val disabled = compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.MINIFLUX))
+        disabled.assertIsNotEnabled()
+        disabled.performTouchInput { click() }
         compose.onNodeWithTag(DETAIL_TAG).assertDoesNotExist()
-        val list = compose.onNodeWithTag(ACCOUNT_PROVIDERS_TAG)
-        list.requestFocus()
-        list.performKeyInput {
-            pressKey(Key.DirectionDown)
-            pressKey(Key.Enter)
-        }
 
+        compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.FRESH_RSS)).performClick()
         compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(SyncAccounts.FRESH_RSS.name)
     }
 
     @Test
-    fun `narrow services scroll anchor survives opening a lower service and Back`() {
+    fun `overview scroll position survives opening a lower service and Back`() {
         val accounts = persistentListOf(
             SyncAccounts.ICLOUD,
             SyncAccounts.DROPBOX,
@@ -154,16 +148,18 @@ class DesktopAccountsContentTest {
             SyncAccounts.FEEDBIN,
             SyncAccounts.BAZQUX,
         )
-        compose.setContent { TestContent(supportedAccounts = accounts, narrow = true) }
-        val list = compose.onNodeWithTag(ACCOUNT_PROVIDERS_TAG)
-        list.performScrollToNode(hasTestTag(AccountE2eIds.providerRow(SyncAccounts.BAZQUX)))
-        val anchor = list.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
+        compose.setContent { TestContent(supportedAccounts = accounts, short = true) }
+        val page = compose.onNode(hasScrollAction())
+        page.performScrollToNode(hasTestTag(AccountE2eIds.providerRow(SyncAccounts.ICLOUD)))
+        val anchor = page.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
         assertTrue(anchor > 0)
-        compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.BAZQUX)).performClick()
-        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(SyncAccounts.BAZQUX.name)
+        compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.ICLOUD)).performClick()
+        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(SyncAccounts.ICLOUD.name)
         compose.onNodeWithText(EnFeedFlowStrings.desktopAccountsBackToServices).performClick()
 
-        assertEquals(anchor, list.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value())
+        val restored = compose.onNode(hasScrollAction())
+            .fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
+        assertEquals(anchor, restored)
     }
 
     @Test
@@ -188,17 +184,47 @@ class DesktopAccountsContentTest {
     }
 
     @Test
-    fun `narrow Back returns to services and resizing restores selected detail`() {
-        val narrow = mutableStateOf(false)
-        compose.setContent { TestContent(narrow = narrow.value) }
+    fun `account credential drafts survive leaving and returning to settings page`() {
+        var draft: CredentialsState? = null
+        compose.setContent {
+            TestTheme {
+                val drafts = rememberAccountDrafts()
+                SettingsContent(DesktopSettingsCategory.ACCOUNTS) { category ->
+                    if (category == DesktopSettingsCategory.ACCOUNTS) {
+                        DesktopAccountsContent(
+                            currentAccount = SyncAccounts.LOCAL,
+                            supportedAccounts = SUPPORTED_ACCOUNTS,
+                            drafts = drafts,
+                        ) { _, _, _, credentials ->
+                            draft = credentials
+                            Text(credentials.username.text, Modifier.testTag("account-username-draft"))
+                        }
+                    } else {
+                        Text(category.name)
+                    }
+                }
+            }
+        }
         compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.MINIFLUX)).performClick()
-        compose.runOnIdle { narrow.value = true }
+        compose.runOnIdle {
+            requireNotNull(draft).username = androidx.compose.ui.text.input.TextFieldValue("fixture-user")
+        }
+        compose.onNodeWithTag("account-username-draft").assertTextEquals("fixture-user")
+        compose.onNodeWithText(EnFeedFlowStrings.settingsFeedListTitle).performClick()
+        compose.onNodeWithText(EnFeedFlowStrings.settingsAccounts).performClick()
+        compose.onNodeWithTag("account-username-draft").assertTextEquals("fixture-user")
+    }
+
+    @Test
+    fun `Back returns from a service subpage to the overview`() {
+        compose.setContent { TestContent() }
+        compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.MINIFLUX)).performClick()
+        compose.onNodeWithTag(DETAIL_TAG).assertExists()
+
         compose.onNodeWithText(EnFeedFlowStrings.desktopAccountsBackToServices).performClick()
-        compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.MINIFLUX)).assertIsSelected()
 
-        compose.runOnIdle { narrow.value = false }
-
-        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(SyncAccounts.MINIFLUX.name)
+        compose.onNodeWithTag(DETAIL_TAG).assertDoesNotExist()
+        compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.MINIFLUX)).assertExists()
     }
 
     @Test
@@ -217,10 +243,10 @@ class DesktopAccountsContentTest {
     private fun TestContent(
         currentAccount: SyncAccounts = SyncAccounts.LOCAL,
         supportedAccounts: ImmutableList<SyncAccounts> = SUPPORTED_ACCOUNTS,
-        narrow: Boolean = false,
+        short: Boolean = false,
     ) {
         TestTheme {
-            Box(Modifier.requiredSize(width = if (narrow) 480.dp else 900.dp, height = 600.dp)) {
+            Box(Modifier.requiredSize(width = 900.dp, height = if (short) 360.dp else 600.dp)) {
                 AccountsContent(currentAccount, supportedAccounts)
             }
         }

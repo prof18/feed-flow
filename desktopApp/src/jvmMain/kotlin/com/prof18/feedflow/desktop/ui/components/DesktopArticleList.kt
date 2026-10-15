@@ -113,12 +113,17 @@ internal fun DesktopArticleList(
         if (focusedId !in ids) focusedId = ids.firstOrNull()
     }
 
-    BoxWithConstraints(modifier = modifier.background(JewelTheme.globalColors.panelBackground)) {
+    val listBackground = if (normalizedLayout == FeedLayout.LIST) {
+        JewelTheme.globalColors.panelBackground
+    } else {
+        articleCardContainerColor()
+    }
+    BoxWithConstraints(modifier = modifier.background(listBackground)) {
         val useGrid = isGridLayoutEnabled && isGridLayoutAllowed &&
             normalizedLayout != FeedLayout.LIST && maxWidth >= GridMinimumWidth
         LaunchedEffect(useGrid) { latestGridChanged(useGrid) }
 
-        val visibleKeys = { visibleArticleKeys(useGrid, listState, gridState) }
+        val visibleKeys = { visibleArticleKeys(useGrid, listState, gridState, latestIds) }
         LaunchedEffect(listState, gridState, useGrid, currentFeedFilter) {
             snapshotFlow { visibleArticles(latestIds, visibleKeys()) }
                 .distinctUntilChanged()
@@ -194,13 +199,11 @@ internal fun DesktopArticleList(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalItemSpacing = 16.dp,
             ) {
-                gridItems(
-                    feedItems,
-                    key = { ArticleKey(it.id) },
-                    contentType = { normalizedLayout },
-                ) { Article(it) }
+                // Unkeyed on purpose, like Android: the list keeps its position by index, so it stays at the
+                // top when the filter changes or a refresh prepends newer articles.
+                gridItems(feedItems, contentType = { normalizedLayout }) { Article(it) }
                 if (showFooter) {
-                    item(key = ArticleFooterKey, span = StaggeredGridItemSpan.FullLine) {
+                    item(span = StaggeredGridItemSpan.FullLine) {
                         ArticleFooter(
                             currentFeedFilter,
                             showNextFeedButton,
@@ -214,9 +217,9 @@ internal fun DesktopArticleList(
             }
         } else {
             LazyColumn(modifier = keyboardModifier.fillMaxSize(), state = listState, contentPadding = contentPadding) {
-                items(feedItems, key = { ArticleKey(it.id) }, contentType = { normalizedLayout }) { Article(it) }
+                items(feedItems, contentType = { normalizedLayout }) { Article(it) }
                 if (showFooter) {
-                    item(key = ArticleFooterKey) {
+                    item {
                         ArticleFooter(
                             currentFeedFilter,
                             showNextFeedButton,
@@ -236,10 +239,14 @@ private fun visibleArticleKeys(
     useGrid: Boolean,
     listState: LazyListState,
     gridState: LazyStaggeredGridState,
-): List<Any> = if (useGrid) {
-    gridState.layoutInfo.visibleItemsInfo.sortedWith(compareBy({ it.offset.y }, { it.offset.x })).map { it.key }
-} else {
-    listState.layoutInfo.visibleItemsInfo.sortedBy { it.offset }.map { it.key }
+    ids: List<String>,
+): List<Any> {
+    val indexes = if (useGrid) {
+        gridState.layoutInfo.visibleItemsInfo.sortedWith(compareBy({ it.offset.y }, { it.offset.x })).map { it.index }
+    } else {
+        listState.layoutInfo.visibleItemsInfo.sortedBy { it.offset }.map { it.index }
+    }
+    return indexes.map { index -> ids.getOrNull(index)?.let(::ArticleKey) ?: ArticleFooterKey }
 }
 
 @Composable

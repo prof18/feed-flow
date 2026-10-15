@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun <T> ObserveJewelAccountConnection(
+internal fun <T> ObserveAccountConnection(
     draft: CredentialsState,
     uiState: StateFlow<AccountConnectionUiState>,
     messages: Flow<T>,
@@ -23,7 +23,7 @@ internal fun <T> ObserveJewelAccountConnection(
     val latestOnMessage = rememberUpdatedState(onMessage)
     LaunchedEffect(draft, ownerScope, uiState, messages, loginLoading) {
         draft.connectionObservationJob?.cancel()
-        // Provider navigation removes the detail, but its requests still belong to the Accounts page.
+        // Provider/page navigation removes the detail; requests remain owned by the Settings session.
         draft.connectionObservationJob = ownerScope.launch(start = CoroutineStart.UNDISPATCHED) {
             launch(start = CoroutineStart.UNDISPATCHED) {
                 uiState.collect { current ->

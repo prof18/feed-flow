@@ -48,7 +48,6 @@ import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.Home
 import com.prof18.feedflow.desktop.ReaderMode
 import com.prof18.feedflow.desktop.Search
-import com.prof18.feedflow.desktop.accounts.AccountsWindow
 import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
@@ -62,11 +61,10 @@ import com.prof18.feedflow.desktop.home.menubar.FeedFlowMenuBar
 import com.prof18.feedflow.desktop.home.menubar.MenuBarActions
 import com.prof18.feedflow.desktop.home.menubar.MenuBarState
 import com.prof18.feedflow.desktop.home.rememberDesktopHomeListStateStore
-import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.settings.DesktopSettingsCategory
+import com.prof18.feedflow.desktop.settings.DesktopSettingsSection
 import com.prof18.feedflow.desktop.settings.SettingsWindow
-import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.desktop.toReaderMode
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -260,13 +258,15 @@ private fun FrameWindowScope.MainWindowContent(
         homeViewModel.onAppLaunch()
     }
 
-    CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
+    val menuCommands = remember { DesktopMenuCommands() }
+    CompositionLocalProvider(
+        LocalScrollbarStyle provides scrollbarStyle(),
+        LocalDesktopMenuCommands provides menuCommands,
+    ) {
         val reduceMotionEnabled = LocalReduceMotion.current
 
         var showMarkAllReadDialog by remember { mutableStateOf(false) }
-        var showClearOldArticlesDialog by remember { mutableStateOf(false) }
         val dialogWindowNavigator = rememberDesktopDialogWindowNavigator()
-        var initialSettingsCategory by remember { mutableStateOf(DesktopSettingsCategory.GENERAL) }
 
         MarkAllReadDialog(
             visible = showMarkAllReadDialog,
@@ -280,32 +280,6 @@ private fun FrameWindowScope.MainWindowContent(
                 showMarkAllReadDialog = false
             },
         )
-
-        ClearOldArticlesDialog(
-            visible = showClearOldArticlesDialog,
-            onDismiss = { showClearOldArticlesDialog = false },
-            onConfirm = {
-                desktopWorkspaceAction(
-                    DesktopWorkspaceCommand.BulkAction,
-                    homeViewModel::desktopWorkspaceCommandAvailability,
-                    homeViewModel::deleteOldFeedItems,
-                )()
-                showClearOldArticlesDialog = false
-            },
-        )
-
-        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.BlockedWords)) {
-            BlockedWordsScreen(
-                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.BlockedWords) },
-            )
-        }
-
-        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.ImportExport)) {
-            ImportExportScreen(
-                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.ImportExport) },
-                triggerFeedFetch = { homeViewModel.getNewFeeds() },
-            )
-        }
 
         if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.AddFeed)) {
             AddFeedScreen(
@@ -332,23 +306,24 @@ private fun FrameWindowScope.MainWindowContent(
             )
         }
 
-        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.Settings)) {
-            SettingsWindow(
-                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.Settings) },
-                initialCategory = initialSettingsCategory,
-            )
-        }
-        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.Accounts)) {
-            AccountsWindow(
-                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.Accounts) },
-            )
-        }
-
         val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
         val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsState()
         val loadingState by homeViewModel.loadingState.collectAsState()
         val feedOperation by homeViewModel.feedOperationState.collectAsState()
         val commands = desktopWorkspaceCommandAvailability(loadingState, feedOperation)
+        if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.Settings)) {
+            SettingsWindow(
+                navigator = dialogWindowNavigator,
+                onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.Settings) },
+                triggerFeedFetch = homeViewModel::getNewFeeds,
+                onClearOldArticles = desktopWorkspaceAction(
+                    DesktopWorkspaceCommand.BulkAction,
+                    homeViewModel::desktopWorkspaceCommandAvailability,
+                    homeViewModel::deleteOldFeedItems,
+                ),
+                canClearOldArticles = commands.bulkActionsEnabled,
+            )
+        }
 
         val backStack = remember { mutableStateListOf<NavKey>(Home) }
         val navigateBack: () -> Unit = {
@@ -397,7 +372,7 @@ private fun FrameWindowScope.MainWindowContent(
                                 snackbarHostState = snackbarHostState,
                                 dialogWindowNavigator = dialogWindowNavigator,
                                 onAccountsRequested = {
-                                    dialogWindowNavigator.open(DesktopDialogWindowDestination.Accounts)
+                                    dialogWindowNavigator.openSettings(DesktopSettingsCategory.ACCOUNTS)
                                 },
                                 onEditFeedRequested = { feedSource ->
                                     feedSourceToEdit = feedSource
@@ -413,6 +388,16 @@ private fun FrameWindowScope.MainWindowContent(
                             modifier = Modifier.align(Alignment.BottomCenter),
                         )
                     }
+                }
+            }
+
+            if (getDesktopOS().isMacOs()) {
+                DisposableEffect(dialogWindowNavigator) {
+                    installMacOsAppMenuHandlers(
+                        onSettings = { dialogWindowNavigator.openSettings() },
+                        onAbout = { dialogWindowNavigator.openSettings(DesktopSettingsCategory.ABOUT) },
+                    )
+                    onDispose { uninstallMacOsAppMenuHandlers() }
                 }
             }
 
@@ -439,20 +424,17 @@ private fun FrameWindowScope.MainWindowContent(
                         showMarkAllReadDialog = true
                     },
                     onImportExportClick = {
-                        dialogWindowNavigator.open(DesktopDialogWindowDestination.ImportExport)
-                    },
-                    onClearOldFeedClick = desktopWorkspaceAction(
-                        DesktopWorkspaceCommand.BulkAction,
-                        homeViewModel::desktopWorkspaceCommandAvailability,
-                    ) {
-                        showClearOldArticlesDialog = true
+                        dialogWindowNavigator.openSettings(
+                            DesktopSettingsCategory.SYNC_STORAGE,
+                            DesktopSettingsSection.IMPORT_EXPORT,
+                        )
                     },
                     onSettingsClick = {
-                        initialSettingsCategory = DesktopSettingsCategory.GENERAL
-                        dialogWindowNavigator.open(DesktopDialogWindowDestination.Settings)
+                        dialogWindowNavigator.openSettings()
                     },
-                    onAccountsClick = {
-                        dialogWindowNavigator.open(DesktopDialogWindowDestination.Accounts)
+                    onEditFeedClick = { source ->
+                        feedSourceToEdit = source
+                        dialogWindowNavigator.open(DesktopDialogWindowDestination.EditFeed)
                     },
                     deleteFeeds = {
                         homeViewModel.deleteAllFeeds()
@@ -463,10 +445,10 @@ private fun FrameWindowScope.MainWindowContent(
                     onExitClick = {
                         window.dispatchEvent(WindowEvent(window, WindowEvent.WINDOW_CLOSING))
                     },
+                    onFeedSuggestionsClick = {
+                        dialogWindowNavigator.open(DesktopDialogWindowDestination.FeedSuggestions)
+                    },
                 ),
-                onNavigateToBlockedWords = {
-                    dialogWindowNavigator.open(DesktopDialogWindowDestination.BlockedWords)
-                },
             )
         }
     }
@@ -482,22 +464,6 @@ private fun MarkAllReadDialog(
         ConfirmationDialog(
             title = LocalFeedFlowStrings.current.markAllReadButton,
             message = LocalFeedFlowStrings.current.markAllReadDialogMessage,
-            onConfirm = onConfirm,
-            onDismiss = onDismiss,
-        )
-    }
-}
-
-@Composable
-private fun ClearOldArticlesDialog(
-    visible: Boolean,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-) {
-    if (visible) {
-        ConfirmationDialog(
-            title = LocalFeedFlowStrings.current.clearOldArticlesButton,
-            message = LocalFeedFlowStrings.current.clearOldArticlesDialogMessage,
             onConfirm = onConfirm,
             onDismiss = onDismiss,
         )
@@ -520,7 +486,10 @@ private fun EntryProviderScope<NavKey>.screens(
             listStateStore = homeListStateStore,
             snackbarHostState = snackbarHostState,
             onImportExportClick = {
-                dialogWindowNavigator.open(DesktopDialogWindowDestination.ImportExport)
+                dialogWindowNavigator.openSettings(
+                    DesktopSettingsCategory.SYNC_STORAGE,
+                    DesktopSettingsSection.IMPORT_EXPORT,
+                )
             },
             onSearchClick = { backStack.add(Search) },
             onAccountsClick = onAccountsRequested,

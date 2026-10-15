@@ -26,6 +26,7 @@ import com.prof18.feedflow.desktop.home.NoFeedsDialog
 import com.prof18.feedflow.desktop.home.drawer.DesktopFeedMoveDialog
 import com.prof18.feedflow.desktop.settings.DesktopSettingsDialog
 import com.prof18.feedflow.desktop.testing.DesktopLibraryFixture
+import com.prof18.feedflow.desktop.testing.requestNativeTestAppForeground
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
@@ -208,6 +209,7 @@ class DialogKeyboardTest {
         val owner = dialog(OWNER_TITLE)
         SwingUtilities.invokeAndWait {
             assertTrue(owner.owner is ComposeWindow && owner.owner.isShowing)
+            requestNativeTestAppForeground()
             owner.toFront()
             owner.requestFocus()
         }
@@ -390,6 +392,7 @@ class DialogKeyboardTest {
         val owner = dialog(OWNER_TITLE)
         SwingUtilities.invokeAndWait {
             assertTrue(owner.owner is ComposeWindow && owner.owner.isShowing)
+            requestNativeTestAppForeground()
             owner.toFront()
             owner.requestFocus()
         }

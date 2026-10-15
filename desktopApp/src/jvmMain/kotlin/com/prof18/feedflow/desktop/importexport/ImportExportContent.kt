@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,11 +35,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.core.model.ArticleExportFilter
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.ImportExportContentType
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.desktop.settings.SettingsBlock
+import com.prof18.feedflow.desktop.settings.SettingsSection
 import com.prof18.feedflow.desktop.testing.ImportExportE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
@@ -47,7 +51,6 @@ import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.CircularProgressIndicator
 import org.jetbrains.jewel.ui.component.DefaultButton
-import org.jetbrains.jewel.ui.component.GroupHeader
 import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.RadioButtonRow
 import org.jetbrains.jewel.ui.component.Text
@@ -66,11 +69,11 @@ internal fun ImportExportContent(
     isFilePickerOpen: Boolean = false,
     onCloseClick: () -> Unit = {},
 ) {
-    var showFilterDialog by remember { mutableStateOf(false) }
-    var filter by remember { mutableStateOf(ArticleExportFilter.All) }
-    var requestPending by remember { mutableStateOf(false) }
-    var lastAction by remember { mutableStateOf<ImportExportAction?>(null) }
-    var focusRevision by remember { mutableStateOf(0) }
+    var showFilterDialog by rememberSaveable { mutableStateOf(false) }
+    var filter by rememberSaveable { mutableStateOf(ArticleExportFilter.All) }
+    var requestPending by rememberSaveable { mutableStateOf(false) }
+    var lastAction by rememberSaveable { mutableStateOf<ImportExportAction?>(null) }
+    var focusRevision by rememberSaveable { mutableStateOf(0) }
     val importFeeds by rememberUpdatedState(onImportClick)
     val exportFeeds by rememberUpdatedState(onExportClick)
     val importArticles by rememberUpdatedState(onImportArticlesClick)
@@ -248,6 +251,17 @@ private fun ImportExportIdleContent(
             verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spacePanel),
         ) {
             item {
+                Text(
+                    strings.importExportLabel,
+                    modifier = Modifier.padding(top = 4.dp, start = 4.dp),
+                    style = JewelTheme.defaultTextStyle.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 22.sp,
+                        lineHeight = 28.sp,
+                    ),
+                )
+            }
+            item {
                 ImportExportSection(
                     title = strings.importExportOpmlSectionTitle,
                     description = strings.importExportDescription,
@@ -286,19 +300,21 @@ private fun ImportExportIdleContent(
                 }
             }
         }
-        FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
+        if (listState.canScrollForward || listState.canScrollBackward) {
+            FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
+        }
     }
 }
 
 @Composable
 private fun ImportExportSection(title: String, description: String, actions: @Composable () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection)) {
-        GroupHeader(title)
-        Text(description)
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
-            verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
-        ) { actions() }
+    SettingsSection(title = title, footer = description) {
+        SettingsBlock {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
+                verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
+            ) { actions() }
+        }
     }
 }
 

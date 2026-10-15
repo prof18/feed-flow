@@ -434,7 +434,6 @@ class DesktopHomeActionLayoutTest {
         onEditCategoryClick = { _, _ -> },
         validateCategoryName = { _, _ -> com.prof18.feedflow.core.model.CategoryNameValidationResult.VALID },
         onDeleteCategoryClick = {},
-        onChangeFeedCategoryClick = {},
         onOpenWebsite = {},
     )
 

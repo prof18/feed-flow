@@ -215,7 +215,6 @@ class DesktopFeedManagementIconContrastTest {
         onEditCategoryClick = { _, _ -> },
         validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
         onDeleteCategoryClick = {},
-        onChangeFeedCategoryClick = {},
         onOpenWebsite = {},
         onMoveFeedSourcesToCategory = { _, _ -> },
         onReorderFeedSources = {},

@@ -1,21 +1,29 @@
 package com.prof18.feedflow.desktop.feedsuggestions
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +40,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.liveRegion
@@ -42,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
@@ -49,15 +59,19 @@ import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.core.model.FeedAddState
 import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
+import com.prof18.feedflow.desktop.home.drawer.sidebarRowBackground
+import com.prof18.feedflow.desktop.settings.SettingsChoice
 import com.prof18.feedflow.desktop.testing.FeedSuggestionsE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
+import com.prof18.feedflow.desktop.ui.components.LocalWindowTopInset
 import com.prof18.feedflow.shared.presentation.model.FeedSuggestionOperationState
 import com.prof18.feedflow.shared.presentation.model.FeedSuggestionOperationStatus
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.CircularProgressIndicator
 import org.jetbrains.jewel.ui.component.DefaultButton
@@ -85,77 +99,132 @@ internal fun FeedSuggestionsContent(
     val feedState = rememberLazyListState()
     val categoryFocus = remember { FocusRequester() }
     val closeFocus = remember { FocusRequester() }
-    LaunchedEffect(selected?.id, isLoading) {
-        if (!isLoading && selected != null) {
-            categoryState.scrollToItem(categories.indexOf(selected))
-            categoryFocus.requestFocus()
-            feedState.scrollToItem(0)
-        } else if (!isLoading) {
-            closeFocus.requestFocus()
+    val topInset = LocalWindowTopInset.current
+    BoxWithConstraints(modifier = modifier.fillMaxSize().testTag(FeedSuggestionsE2eIds.SCREEN)) {
+        val wide = maxWidth >= TwoPaneMinWidth
+        val showCategories = !isLoading && selected != null
+        LaunchedEffect(selected?.id, isLoading, wide) {
+            if (!isLoading && selected != null) {
+                if (wide) {
+                    categoryState.scrollToItem(categories.indexOf(selected))
+                    categoryFocus.requestFocus()
+                }
+                feedState.scrollToItem(0)
+            } else if (!isLoading) {
+                closeFocus.requestFocus()
+            }
+        }
+        Row(Modifier.fillMaxSize()) {
+            if (wide && showCategories) {
+                SuggestionCategoryPane(categories, selected, categoryState, categoryFocus, topInset, onCategorySelected)
+            }
+            Column(
+                modifier = Modifier.weight(1f).fillMaxHeight()
+                    .padding(top = topInset)
+                    .padding(DesktopDesignTokens.spacePanel),
+                verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection),
+            ) {
+                if (showCategories && !wide) {
+                    SettingsChoice(
+                        title = strings.addFeedCategoryTitle,
+                        choices = categories.map { it.id to "${it.icon}  ${it.name}" }.toPersistentList(),
+                        selected = selected.id,
+                        onSelected = onCategorySelected,
+                    )
+                }
+                if (showCategories && wide) {
+                    Text(
+                        "${selected.icon}  ${selected.name}",
+                        style = JewelTheme.defaultTextStyle.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp,
+                            lineHeight = 26.sp,
+                        ),
+                    )
+                }
+                Text(
+                    strings.feedSuggestionsDescription,
+                    style = DesktopDesignTokens.metadataText,
+                    color = JewelTheme.globalColors.text.info,
+                )
+                Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
+                    SuggestionFeedArea(isLoading, selected, feedState, feedStates, operationStates, onAddFeed)
+                }
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    DefaultButton(
+                        onClick = onCloseRequest,
+                        modifier = Modifier.heightIn(min = suggestionActionHeight()).focusRequester(closeFocus),
+                    ) {
+                        Text(strings.actionDone)
+                    }
+                }
+            }
         }
     }
-    Column(
-        modifier = modifier.fillMaxSize().testTag(FeedSuggestionsE2eIds.SCREEN)
-            .padding(DesktopDesignTokens.spacePanel),
-        verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection),
+}
+
+@Composable
+private fun SuggestionCategoryPane(
+    categories: ImmutableList<SuggestedFeedCategory>,
+    selected: SuggestedFeedCategory,
+    state: LazyListState,
+    selectedFocus: FocusRequester,
+    topInset: Dp,
+    onCategorySelected: (String) -> Unit,
+) {
+    LazyColumn(
+        state = state,
+        modifier = Modifier
+            .width(SuggestionCategoryPaneWidth)
+            .fillMaxHeight()
+            .background(JewelTheme.globalColors.toolwindowBackground)
+            .padding(top = topInset)
+            .padding(horizontal = 10.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        Text(strings.feedSuggestionsDescription)
-        if (isLoading) {
-            Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else if (selected == null) {
-            Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                Text(strings.feedSuggestionsEmptyCatalog)
-            }
-        } else {
-            LazyRow(
-                state = categoryState,
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
+        items(categories, key = { it.id }) { category ->
+            SuggestionCategory(
+                category = category,
+                isSelected = category.id == selected.id,
+                onSelect = { onCategorySelected(category.id) },
+                modifier = if (category.id == selected.id) Modifier.focusRequester(selectedFocus) else Modifier,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SuggestionFeedArea(
+    isLoading: Boolean,
+    selected: SuggestedFeedCategory?,
+    feedState: LazyListState,
+    feedStates: ImmutableMap<String, FeedAddState>,
+    operationStates: ImmutableMap<String, FeedSuggestionOperationState>,
+    onAddFeed: (SuggestedFeed, String) -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    when {
+        isLoading -> CircularProgressIndicator()
+        selected == null -> Text(strings.feedSuggestionsEmptyCatalog)
+        selected.feeds.isEmpty() -> Text(strings.feedSuggestionsEmptyCategory)
+        else -> Box(Modifier.fillMaxSize()) {
+            LazyColumn(
+                state = feedState,
+                modifier = Modifier.fillMaxSize().padding(end = DesktopDesignTokens.spaceSection),
+                contentPadding = PaddingValues(vertical = DesktopDesignTokens.spaceMedium),
+                verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection),
             ) {
-                items(categories, key = { it.id }) { category ->
-                    SuggestionCategory(
-                        category = category,
-                        isSelected = category.id == selected?.id,
-                        onSelect = { onCategorySelected(category.id) },
-                        modifier = if (category.id == selected?.id) {
-                            Modifier.focusRequester(categoryFocus)
-                        } else {
-                            Modifier
-                        },
+                items(selected.feeds, key = { it.url }) { feed ->
+                    SuggestedFeedRow(
+                        feed = feed,
+                        state = feedStates[feed.url] ?: FeedAddState.NotAdded,
+                        operation = operationStates[feed.url]?.status,
+                        onAdd = { onAddFeed(feed, selected.name) },
                     )
                 }
             }
-            Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                if (selected.feeds.isEmpty()) {
-                    Text(strings.feedSuggestionsEmptyCategory)
-                } else {
-                    LazyColumn(
-                        state = feedState,
-                        modifier = Modifier.fillMaxSize().padding(end = DesktopDesignTokens.spaceSection),
-                        contentPadding = PaddingValues(vertical = DesktopDesignTokens.spaceMedium),
-                        verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection),
-                    ) {
-                        items(selected.feeds, key = { it.url }) { feed ->
-                            SuggestedFeedRow(
-                                feed = feed,
-                                state = feedStates[feed.url] ?: FeedAddState.NotAdded,
-                                operation = operationStates[feed.url]?.status,
-                                onAdd = { onAddFeed(feed, selected.name) },
-                            )
-                        }
-                    }
-                    FeedFlowVerticalScrollbar(rememberScrollbarState(feedState))
-                }
-            }
-        }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            DefaultButton(
-                onClick = onCloseRequest,
-                modifier = Modifier.heightIn(min = suggestionActionHeight()).focusRequester(closeFocus),
-            ) {
-                Text(strings.actionDone)
+            if (feedState.canScrollForward || feedState.canScrollBackward) {
+                FeedFlowVerticalScrollbar(rememberScrollbarState(feedState))
             }
         }
     }
@@ -168,12 +237,35 @@ private fun SuggestionCategory(
     onSelect: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val actionModifier = modifier.heightIn(min = suggestionActionHeight())
-        .testTag(FeedSuggestionsE2eIds.category(category.id)).semantics { selected = isSelected }
-    if (isSelected) {
-        DefaultButton(onClick = onSelect, modifier = actionModifier) { Text("${category.icon}  ${category.name}") }
-    } else {
-        OutlinedButton(onClick = onSelect, modifier = actionModifier) { Text("${category.icon}  ${category.name}") }
+    val interactionSource = remember { MutableInteractionSource() }
+    val hovered by interactionSource.collectIsHoveredAsState()
+    val focused by interactionSource.collectIsFocusedAsState()
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 32.dp)
+            .clip(RoundedCornerShape(DesktopDesignTokens.buttonCornerSize))
+            .background(sidebarRowBackground(selected = isSelected, highlighted = hovered || focused))
+            .hoverable(interactionSource)
+            .selectable(
+                selected = isSelected,
+                onClick = onSelect,
+                role = Role.Tab,
+                interactionSource = interactionSource,
+                indication = null,
+            )
+            .testTag(FeedSuggestionsE2eIds.category(category.id))
+            .padding(horizontal = 10.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Text(category.icon)
+        Text(
+            category.name,
+            fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -329,5 +421,7 @@ private fun FeedSuggestionOperationStatus?.isBusy(): Boolean =
 private fun suggestionActionHeight(): Dp =
     with(LocalDensity.current) { JewelTheme.defaultTextStyle.lineHeight.toDp() } + 16.dp
 
+private val SuggestionCategoryPaneWidth = 200.dp
+private val TwoPaneMinWidth = 560.dp
 private val WideSuggestionRowWidth = 560.dp
 private val SuggestionLogoSize = 40.dp

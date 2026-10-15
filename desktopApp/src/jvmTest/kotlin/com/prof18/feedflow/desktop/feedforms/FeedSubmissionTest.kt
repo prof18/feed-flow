@@ -19,6 +19,7 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -127,11 +128,14 @@ class FeedSubmissionTest {
     fun `article opening selector cannot change the draft while saving`() {
         var modeChanges = 0
         content { EditForm(onModeSelected = { modeChanges++ }, onSave = {}) }
+        val dropdown = rule.onNodeWithContentDescription(EnFeedFlowStrings.articleOpenMode)
+        dropdown.performSemanticsAction(SemanticsActions.OnClick) { it() }
         val option = rule.onNodeWithText(EnFeedFlowStrings.readerContentSourceWeb)
         option.assertIsEnabled()
         val select = option.fetchSemanticsNode().config[SemanticsActions.OnClick].action!!
         activateTwice(EnFeedFlowStrings.actionSave)
-        option.assertIsNotEnabled()
+        dropdown.assertIsNotEnabled()
+        option.assertDoesNotExist()
         rule.runOnIdle {
             select()
             assertEquals(0, modeChanges)
@@ -335,7 +339,7 @@ class FeedSubmissionTest {
             canForceAdd = force,
             onFeedUrlUpdated = onUrlUpdated,
             onAddFeed = onAdd,
-            onCategorySelectorClick = {},
+            categoryActions = TestCategoryActions,
             onNotificationToggleChanged = {},
             onForceAddFeed = onForce,
             completionRevision = revision,
@@ -378,7 +382,7 @@ class FeedSubmissionTest {
             onPinnedToggled = {},
             showNotificationToggle = false,
             onNotificationToggleChanged = {},
-            onCategorySelectorClick = {},
+            categoryActions = TestCategoryActions,
             editFeed = onSave,
             onShowDeleteDialog = {},
             showDeleteDialog = false,
@@ -388,3 +392,9 @@ class FeedSubmissionTest {
         )
     }
 }
+
+private val TestCategoryActions = FeedCategoryActions(
+    onSelect = {},
+    onAdd = {},
+    validate = { _, _ -> com.prof18.feedflow.core.model.CategoryNameValidationResult.VALID },
+)

@@ -5,8 +5,8 @@ import androidx.compose.ui.window.MenuBarScope
 import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isLinux
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.utils.openDesktopUriSafely
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun MenuBarScope.HelpMenu(

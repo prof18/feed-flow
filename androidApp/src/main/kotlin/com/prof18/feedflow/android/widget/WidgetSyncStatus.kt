@@ -16,9 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun WidgetSyncStatus(

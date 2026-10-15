@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun NowPlayingIndicator(

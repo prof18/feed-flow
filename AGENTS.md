@@ -12,13 +12,12 @@ All the business logic is shared via Kotlin Multiplatform.
 ### Module Structure
 - **core/**: Core domain models and utilities shared across all platforms
 - **shared/**: Main business logic, repositories, view models, and data layer
-- **sharedUI/**: Compose UI components shared across Android and Desktop
 - **database/**: SQLDelight database implementation
 - **i18n/**: Internationalization resources
 - **feedSync/**: Feed synchronization modules (Dropbox, FreshRSS, iCloud, etc)
-- **androidApp/**: Android-specific app implementation
+- **androidApp/**: Android-owned Jetpack Compose UI with the AndroidX Compose BOM
 - **iosApp/**: iOS app with SwiftUI
-- **desktopApp/**: Desktop app for Windows, Linux, and macOS
+- **desktopApp/**: Desktop-owned Jewel UI for Windows, Linux, and macOS; ordinary JVM source/test sets
 - **website/**: Hugo-based website
 
 ## Build, Test, and Development Commands
@@ -103,6 +102,8 @@ When you need to run the Desktop app for testing, UI iteration, or user-visible 
 Use the Gradle daemon for manual local runs so repeated desktop iterations stay fast. The checked-in `.mcp.json` may still pass `--no-daemon` because JetBrains' AI-agent example does that for MCP client-managed server processes.
 
 Use the MCP tools when you need to interact with the running Desktop app: check status, reload code changes, list windows, capture screenshots, inspect the semantic tree, click/type/scroll, or resize windows. The MCP server is experimental in Compose Hot Reload; if it is unavailable or not connected, fall back to `./gradlew --quiet --console=plain desktopApp:run` and note the limitation in handoff.
+
+Desktop compiles, tests and packages with JBR 25; Gradle and shared/mobile toolchains remain on Java 21. Desktop controls use Jewel, with Material icon vectors allowed; shared/core remain independent of platform UI. See `docs/DESKTOP_UI.md`.
 
 ### Local Klead development
 
@@ -243,7 +244,7 @@ For Miniflux/GReader sync failures, compare FeedFlow's exact requests and header
 - Android app modules use AGP 9's built-in Kotlin support; do not re-add `org.jetbrains.kotlin.android`. Android and Desktop app version values come from the `com.feedflow.versioning` convention plugin, not `versioning.gradle.kts`.
 - Detekt is still on the `1.23.x` line, so keep `io.nlopez.compose.rules:detekt` on `0.4.x` unless the repo migrates to Detekt 2; `0.5.0+` is Detekt 2-only for this repo.
 - Detekt's `MagicNumber` rule has `ignoreNamedArgument: true`. Do NOT extract a literal into a private constant when it is passed as a named argument (e.g. `Modifier.widthIn(max = 180.dp)`, `shadowElevation = 3.dp`, `.copy(alpha = 0.8f)`) — inline it. Only extract a named constant when the literal is a positional argument that Detekt would flag (e.g. `.zIndex(0.5f)`, `.height(28.dp)`); values in `ignoreNumbers` (`-1, 0, 1, 2`) never need one.
-- Every `DropdownMenu` (Android, shared, and Desktop) must pass `shape = MaterialTheme.shapes.large` so menus stay coherent with the rounded toolbars. There is no shared wrapper — set it explicitly on each new `DropdownMenu`.
+- Every Android Material `DropdownMenu` must pass `shape = MaterialTheme.shapes.large`. Desktop menus use Jewel component styling.
 
 ### Desktop screens/windows
 - For desktop settings/details pages opened from the main screen, prefer a dedicated `DialogWindow` instead of in-window navigation.

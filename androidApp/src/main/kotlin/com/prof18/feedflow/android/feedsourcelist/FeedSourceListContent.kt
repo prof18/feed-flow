@@ -9,13 +9,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.prof18.feedflow.android.ui.preview.PreviewPhone
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
-import com.prof18.feedflow.shared.ui.preview.PreviewPhone
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable

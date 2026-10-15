@@ -1,0 +1,231 @@
+package com.prof18.feedflow.android.ui.feed.addfeed
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import com.prof18.feedflow.android.ui.feed.CategoriesSelector
+import com.prof18.feedflow.android.ui.feed.FeedFormE2eIds
+import com.prof18.feedflow.android.ui.feed.FeedUrlTextField
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.core.model.CategoriesState
+import com.prof18.feedflow.core.model.YouTubeOptionsState
+
+@Composable
+fun AddFeedContent(
+    feedUrl: String,
+    showError: Boolean,
+    showLoading: Boolean,
+    errorMessage: String,
+    categoriesState: CategoriesState,
+    onFeedUrlUpdated: (String) -> Unit,
+    addFeed: () -> Unit,
+    onCategorySelectorClick: () -> Unit,
+    isNotificationEnabled: Boolean,
+    canForceAdd: Boolean,
+    onForceAddFeed: () -> Unit,
+    modifier: Modifier = Modifier,
+    showNotificationToggle: Boolean = false,
+    onNotificationToggleChanged: (Boolean) -> Unit = {},
+    youTubeOptions: YouTubeOptionsState = YouTubeOptionsState(),
+    onHideShortsToggleChanged: (Boolean) -> Unit = {},
+    snackbarHost: @Composable () -> Unit = {},
+    topAppBar: @Composable () -> Unit = {},
+) {
+    Scaffold(
+        modifier = modifier,
+        topBar = topAppBar,
+        snackbarHost = snackbarHost,
+    ) { paddingValues ->
+        val layoutDir = LocalLayoutDirection.current
+        LazyColumn(
+            modifier = Modifier
+                .padding(top = paddingValues.calculateTopPadding())
+                .padding(start = paddingValues.calculateLeftPadding(layoutDir))
+                .padding(end = paddingValues.calculateRightPadding(layoutDir))
+                .padding(horizontal = Spacing.regular),
+        ) {
+            item {
+                Text(
+                    text = LocalFeedFlowStrings.current.feedUrlHelpText,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                FeedUrlTextField(
+                    modifier = Modifier
+                        .padding(top = Spacing.regular)
+                        .fillMaxWidth(),
+                    feedUrl = feedUrl,
+                    showError = showError,
+                    errorMessage = errorMessage,
+                    onFeedUrlUpdated = onFeedUrlUpdated,
+                )
+            }
+
+            item {
+                CategoriesSelector(
+                    modifier = Modifier
+                        .padding(top = Spacing.regular),
+                    categoriesState = categoriesState,
+                    onClick = onCategorySelectorClick,
+                )
+            }
+
+            item {
+                if (showNotificationToggle) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = Spacing.small),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            modifier = Modifier.weight(1f).padding(end = Spacing.regular),
+                            text = LocalFeedFlowStrings.current.enableNotificationsForFeed,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Switch(
+                            checked = isNotificationEnabled,
+                            onCheckedChange = onNotificationToggleChanged,
+                        )
+                    }
+                }
+            }
+
+            item {
+                if (youTubeOptions.showHideShortsToggle) {
+                    val hideShortsLabel = LocalFeedFlowStrings.current.hideYoutubeShorts
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = Spacing.small),
+                        verticalArrangement = Arrangement.spacedBy(Spacing.xsmall),
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier.weight(1f).padding(end = Spacing.regular),
+                                text = hideShortsLabel,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                            Switch(
+                                modifier = Modifier
+                                    .testTag(FeedFormE2eIds.ADD_FEED_HIDE_YOUTUBE_SHORTS)
+                                    .semantics { contentDescription = hideShortsLabel },
+                                checked = youTubeOptions.hideShorts,
+                                enabled = !showLoading,
+                                onCheckedChange = onHideShortsToggleChanged,
+                            )
+                        }
+                        Text(
+                            text = LocalFeedFlowStrings.current.hideYoutubeShortsDescription,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+
+            item {
+                if (!(showError && canForceAdd)) {
+                    Button(
+                        modifier = Modifier
+                            .padding(top = Spacing.small)
+                            .padding(bottom = Spacing.regular)
+                            .fillMaxWidth()
+                            .testTag(FeedFormE2eIds.ADD_FEED_SAVE_BUTTON),
+                        enabled = feedUrl.isNotBlank() && !showLoading,
+                        onClick = addFeed,
+                    ) {
+                        if (showLoading) {
+                            CircularProgressIndicator(
+                                color = LocalContentColor.current,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                            )
+                        } else {
+                            Text(LocalFeedFlowStrings.current.addFeed)
+                        }
+                    }
+                }
+            }
+
+            item {
+                if (showError && canForceAdd) {
+                    var acknowledged by rememberSaveable(showError) { mutableStateOf(false) }
+
+                    Column(
+                        modifier = Modifier
+                            .padding(vertical = Spacing.regular)
+                            .fillMaxWidth(),
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Checkbox(
+                                checked = acknowledged,
+                                onCheckedChange = { acknowledged = it },
+                            )
+                            Text(
+                                text = LocalFeedFlowStrings.current.addFeedAnywayAcknowledgement,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                        OutlinedButton(
+                            modifier = Modifier
+                                .padding(top = Spacing.small)
+                                .fillMaxWidth(),
+                            enabled = acknowledged && !showLoading,
+                            onClick = onForceAddFeed,
+                        ) {
+                            Text(LocalFeedFlowStrings.current.addFeedAnywayButton)
+                        }
+                    }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
+            }
+        }
+    }
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>The Reading Room</title>
+    <link>http://127.0.0.1:18765/</link>
+    <description>Essays and practical reading notes, served locally.</description>
+    <category>Reading</category>
+    <item>
+      <title>Build a Reading Habit That Fits</title>
+      <link>http://127.0.0.1:18765/article-4.html</link>
+      <guid isPermaLink="true">http://127.0.0.1:18765/article-4.html</guid>
+      <pubDate>Thu, 01 Oct 2026 12:00:00 +0000</pubDate>
+      <description>Make reading a natural part of the day.</description>
+      <content:encoded><![CDATA[<p>Attach reading to an existing moment, such as the first cup of tea.</p><p>Keep a short list of <strong>interesting next reads</strong>.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>The Useful Margin</title>
+      <link>http://127.0.0.1:18765/article-5.html</link>
+      <guid isPermaLink="true">http://127.0.0.1:18765/article-5.html</guid>
+      <pubDate>Thu, 01 Oct 2026 10:45:00 +0000</pubDate>
+      <description>Annotations are a conversation with your future self.</description>
+      <content:encoded><![CDATA[<p>A note in the margin can hold a question until you are ready to answer it.</p><p>See <a href="http://127.0.0.1:18765/article-6.html">the companion essay</a>.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Reading Together, Apart</title>
+      <link>http://127.0.0.1:18765/article-6.html</link>
+      <guid isPermaLink="true">http://127.0.0.1:18765/article-6.html</guid>
+      <pubDate>Thu, 01 Oct 2026 09:30:00 +0000</pubDate>
+      <description>A shared list makes room for good conversation.</description>
+      <content:encoded><![CDATA[<p>Trade one article a week with a friend.</p><ol><li>Read at your own pace</li><li>Bring one question</li><li>Enjoy the conversation</li></ol>]]></content:encoded>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,68 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+
+# Keep the same empty timeline, refresh, and no-feeds CTA journey as Google Play.
+- assertVisible: "Nothing else to read here!"
+- tapOn: "Refresh feeds"
+- extendedWaitUntil:
+    visible: "No feeds found. Please add a new feed!"
+    timeout: 10000
+- tapOn: "Add feed"
+- assertVisible: "Add a new feed"
+- assertVisible: "Add feed"
+- assertVisible: "Import and export"
+- assertVisible: "Accounts"
+- assertVisible: "Feed Suggestions"
+
+# Feed Suggestions destination
+- tapOn: "Feed Suggestions"
+- assertVisible:
+    id: feed_suggestions_screen
+- back
+
+# Re-open sheet and check Import and export destination
+- tapOn: "Add feed"
+- extendedWaitUntil:
+    visible: "Add a new feed"
+    timeout: 10000
+- tapOn: "Import and export"
+- assertVisible: "Subscriptions (OPML)"
+- assertVisible: "Articles (CSV)"
+- back
+
+# F-Droid Accounts excludes Dropbox and Google Drive but retains server providers.
+- tapOn: "Add feed"
+- extendedWaitUntil:
+    visible: "Add a new feed"
+    timeout: 10000
+- tapOn: "Accounts"
+- assertNotVisible:
+    id: accounts_provider_dropbox
+- assertNotVisible:
+    id: accounts_provider_google_drive
+- assertVisible:
+    id: accounts_provider_fresh_rss
+- assertVisible:
+    id: accounts_provider_miniflux
+- assertVisible:
+    id: accounts_provider_bazqux
+- assertVisible:
+    id: accounts_provider_feedbin
+- back
+
+# Re-open sheet and check the Add feed destination via the sheet button.
+- tapOn: "Add feed"
+- extendedWaitUntil:
+    visible: "Add a new feed"
+    timeout: 10000
+- tapOn: "Add feed"
+- assertVisible:
+    id: add_feed_url_input

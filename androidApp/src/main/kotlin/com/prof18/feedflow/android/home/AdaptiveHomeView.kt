@@ -29,16 +29,16 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.home.drawer.AndroidDrawer
+import com.prof18.feedflow.android.ui.home.FeedListActions
+import com.prof18.feedflow.android.ui.home.FeedManagementActions
+import com.prof18.feedflow.android.ui.home.ShareBehavior
+import com.prof18.feedflow.android.ui.utils.LocalReduceMotion
+import com.prof18.feedflow.android.ui.utils.scrollToItemConditionally
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType.NONE
+import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
 import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
-import com.prof18.feedflow.shared.ui.home.FeedListActions
-import com.prof18.feedflow.shared.ui.home.FeedManagementActions
-import com.prof18.feedflow.shared.ui.home.HomeDisplayState
-import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
-import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 

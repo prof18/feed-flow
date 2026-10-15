@@ -102,6 +102,7 @@ kotlin {
         commonMain {
             kotlin.srcDir(generateArticleReportBuildInfo)
             dependencies {
+                implementation(libs.androidx.compose.runtime.annotation)
                 implementation(project(":database"))
                 implementation(project(":feedSync:database"))
                 implementation(project(":feedSync:icloud"))

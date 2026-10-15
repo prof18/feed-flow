@@ -21,10 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.ConditionalAnimatedVisibility
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.FeedUpdateStatus
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun FeedRefreshPill(

@@ -1,0 +1,275 @@
+package com.prof18.feedflow.android.ui.feed.editfeed
+
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
+import com.prof18.feedflow.android.ui.feed.CategoriesSelector
+import com.prof18.feedflow.android.ui.feed.FeedFormE2eIds
+import com.prof18.feedflow.android.ui.feed.FeedNameTextField
+import com.prof18.feedflow.android.ui.feed.FeedUrlTextField
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.core.model.CategoriesState
+import com.prof18.feedflow.core.model.FeedSourceSettings
+
+@Composable
+fun EditFeedContent(
+    feedUrl: String,
+    feedName: String,
+    showError: Boolean,
+    showLoading: Boolean,
+    errorMessage: String,
+    canEditUrl: Boolean,
+    categoriesState: CategoriesState,
+    feedSourceSettings: FeedSourceSettings,
+    onFeedUrlUpdated: (String) -> Unit,
+    onFeedNameUpdated: (String) -> Unit,
+    /** Android and Desktop offer different browser options, so each supplies its own selector. */
+    articleOpenModeSelector: @Composable (Modifier) -> Unit,
+    onHiddenToggled: (Boolean) -> Unit,
+    onHideImagesToggled: (Boolean) -> Unit,
+    onPinnedToggled: (Boolean) -> Unit,
+    editFeed: () -> Unit,
+    onCategorySelectorClick: () -> Unit,
+    showDeleteDialog: Boolean,
+    onShowDeleteDialog: () -> Unit,
+    onDismissDeleteDialog: () -> Unit,
+    onConfirmDelete: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
+    onNotificationToggleChanged: (Boolean) -> Unit = {},
+    showNotificationToggle: Boolean = false,
+) {
+    if (showDeleteDialog) {
+        var deleteInProgressState by remember(showDeleteDialog) { mutableStateOf(false) }
+        AlertDialog(
+            onDismissRequest = {
+                if (!deleteInProgressState) onDismissDeleteDialog()
+            },
+            title = { Text(LocalFeedFlowStrings.current.deleteFeedConfirmationTitle) },
+            text = { Text(LocalFeedFlowStrings.current.deleteFeedConfirmationMessage) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        deleteInProgressState = true
+                        onConfirmDelete()
+                    },
+                    enabled = !deleteInProgressState,
+                ) {
+                    if (deleteInProgressState) {
+                        CircularProgressIndicator(
+                            color = LocalContentColor.current,
+                            modifier = Modifier.size(ButtonDefaults.IconSize),
+                        )
+                    } else {
+                        Text(LocalFeedFlowStrings.current.deleteFeed)
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = onDismissDeleteDialog,
+                    enabled = !deleteInProgressState,
+                ) {
+                    Text(LocalFeedFlowStrings.current.deleteCategoryCloseButton)
+                }
+            },
+        )
+    }
+    val layoutDir = LocalLayoutDirection.current
+    LazyColumn(
+        modifier = modifier
+            .padding(top = contentPadding.calculateTopPadding())
+            .padding(start = contentPadding.calculateLeftPadding(layoutDir))
+            .padding(end = contentPadding.calculateRightPadding(layoutDir))
+            .padding(horizontal = Spacing.regular),
+    ) {
+        item {
+            FeedNameTextField(
+                modifier = Modifier
+                    .padding(top = Spacing.regular)
+                    .testTag(FeedFormE2eIds.NAME_INPUT)
+                    .fillMaxWidth(),
+                feedName = feedName,
+                onFeedNameUpdated = onFeedNameUpdated,
+            )
+        }
+
+        if (canEditUrl) {
+            item {
+                FeedUrlTextField(
+                    modifier = Modifier
+                        .padding(top = Spacing.regular)
+                        .fillMaxWidth(),
+                    feedUrl = feedUrl,
+                    showError = showError,
+                    errorMessage = errorMessage,
+                    onFeedUrlUpdated = onFeedUrlUpdated,
+                )
+            }
+        }
+
+        item {
+            articleOpenModeSelector(
+                Modifier
+                    .padding(top = Spacing.regular)
+                    .fillMaxWidth(),
+            )
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .padding(top = Spacing.regular),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = LocalFeedFlowStrings.current.hideFeedFromTimelineDescription,
+                    modifier = Modifier.padding(top = Spacing.xsmall)
+                        .weight(1f),
+                )
+                Switch(
+                    checked = feedSourceSettings.isHiddenFromTimeline,
+                    onCheckedChange = onHiddenToggled,
+                    modifier = Modifier
+                        .testTag(FeedFormE2eIds.HIDDEN_TOGGLE)
+                        .padding(start = Spacing.regular),
+                )
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .padding(top = Spacing.regular),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = LocalFeedFlowStrings.current.hideImagesForFeedDescription,
+                    modifier = Modifier.padding(top = Spacing.xsmall)
+                        .weight(1f),
+                )
+                Switch(
+                    checked = feedSourceSettings.isHideImagesEnabled,
+                    onCheckedChange = onHideImagesToggled,
+                    modifier = Modifier
+                        .testTag(FeedFormE2eIds.HIDE_IMAGES_TOGGLE)
+                        .padding(start = Spacing.regular),
+                )
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .padding(top = Spacing.regular),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = LocalFeedFlowStrings.current.pinFeedSourceDescription,
+                    modifier = Modifier.padding(top = Spacing.xsmall)
+                        .weight(1f),
+                )
+                Switch(
+                    checked = feedSourceSettings.isPinned,
+                    onCheckedChange = onPinnedToggled,
+                    modifier = Modifier
+                        .testTag(FeedFormE2eIds.PINNED_TOGGLE)
+                        .padding(start = Spacing.regular),
+                )
+            }
+        }
+
+        item {
+            if (showNotificationToggle) {
+                Row(
+                    modifier = Modifier
+                        .padding(top = Spacing.regular),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = LocalFeedFlowStrings.current.enableNotificationsForFeed,
+                        modifier = Modifier.padding(top = Spacing.xsmall)
+                            .weight(1f),
+                    )
+                    Switch(
+                        checked = feedSourceSettings.isNotificationEnabled,
+                        onCheckedChange = onNotificationToggleChanged,
+                        modifier = Modifier.padding(start = Spacing.regular),
+                    )
+                }
+            }
+        }
+
+        item {
+            CategoriesSelector(
+                modifier = Modifier
+                    .padding(vertical = Spacing.regular),
+                categoriesState = categoriesState,
+                onClick = onCategorySelectorClick,
+            )
+        }
+
+        item {
+            Button(
+                modifier = Modifier
+                    .padding(top = Spacing.small)
+                    .padding(bottom = Spacing.regular)
+                    .testTag(FeedFormE2eIds.SAVE_BUTTON)
+                    .fillMaxWidth(),
+                enabled = feedUrl.isNotBlank() && !showLoading,
+                onClick = editFeed,
+            ) {
+                if (showLoading) {
+                    CircularProgressIndicator(
+                        color = LocalContentColor.current,
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                    )
+                } else {
+                    Text(LocalFeedFlowStrings.current.actionSave)
+                }
+            }
+        }
+
+        item {
+            TextButton(
+                modifier = Modifier
+                    .padding(bottom = Spacing.regular)
+                    .fillMaxWidth(),
+                onClick = onShowDeleteDialog,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error,
+                ),
+            ) {
+                Text(LocalFeedFlowStrings.current.deleteFeedButton)
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(contentPadding.calculateBottomPadding()))
+        }
+    }
+}

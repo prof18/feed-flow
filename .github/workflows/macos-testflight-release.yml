@@ -51,6 +51,7 @@ jobs:
         uses: ./.github/actions/setup-gradle
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+          desktop-toolchain: 'true'
 
       - name: Refresh translations
         run: bash .scripts/refresh-translations.sh
@@ -80,7 +81,7 @@ jobs:
           RUNTIME_PROVISION: ${{ secrets.RUNTIME_PROVISION }}
 
       - name: Update Licenses file
-        run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
+        run: ./gradlew :desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
 
       - name: Read version from properties
         id: version
@@ -128,7 +129,7 @@ jobs:
           TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
 
       - name: Create PKG
-        run: ./gradlew packageReleasePkg -PmacOsAppStoreRelease=true
+        run: ./gradlew :desktopApp:packageReleasePkg -PmacOsAppStoreRelease=true
 
       - name: Upload reports
         if: failure()

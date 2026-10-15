@@ -14,7 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.android.settings.syncstorage.SyncAndStorageScreen
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 

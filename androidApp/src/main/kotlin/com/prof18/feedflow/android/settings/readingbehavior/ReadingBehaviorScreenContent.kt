@@ -19,14 +19,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.feed.ArticleOpenModeSelector
 import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.settings.components.BrowserSelector
+import com.prof18.feedflow.android.ui.settings.ConfirmationDialogConfig
+import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.Browser
 import com.prof18.feedflow.core.model.ReadingBehaviorState
-import com.prof18.feedflow.shared.ui.settings.ConfirmationDialogConfig
-import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

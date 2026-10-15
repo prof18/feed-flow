@@ -1,0 +1,51 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    id: article_row_e2e_article_newest_unread
+
+# NATIVE_ACTION_SEND: android_share_feed.py opens the real system resolver here.
+- extendedWaitUntil:
+    visible: "^Share( with .+)?$"
+    timeout: 10000
+- copyTextFrom:
+    id: android:id/title
+- evalScript: ${output.shareChooserTitle = maestro.copiedText}
+- evalScript: ${output.freshShareChooser = output.shareChooserTitle === 'Share'}
+- evalScript: ${output.feedFlowPreferred = output.shareChooserTitle === 'Share with FeedFlow'}
+- runFlow:
+    when:
+      true: ${output.freshShareChooser}
+    commands:
+      - assertVisible: "Share"
+- runFlow:
+    when:
+      true: ${!output.feedFlowPreferred}
+    commands:
+      - tapOn:
+          text: "^FeedFlow$"
+          waitToSettleTimeoutMs: 0
+- runFlow:
+    when:
+      true: ${output.freshShareChooser || output.feedFlowPreferred}
+    commands:
+      - assertVisible:
+          id: android:id/button_once
+          enabled: true
+      - tapOn:
+          id: android:id/button_once
+          waitToSettleTimeoutMs: 0
+- assertVisible: "Android Central RSS Feed is already in your feeds."
+- assertNotVisible: "Adding feed…"
+- extendedWaitUntil:
+    notVisible: "Android Central RSS Feed is already in your feeds."
+    timeout: 5000
+- assertVisible:
+    id: article_row_e2e_article_newest_unread

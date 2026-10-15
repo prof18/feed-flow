@@ -19,6 +19,11 @@ import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.android.components.rememberConfirmedBookmarkAction
 import com.prof18.feedflow.android.openShareSheet
+import com.prof18.feedflow.android.ui.home.FeedListActions
+import com.prof18.feedflow.android.ui.home.FeedManagementActions
+import com.prof18.feedflow.android.ui.home.ShareBehavior
+import com.prof18.feedflow.android.ui.home.components.LoadingOperationDialog
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -28,18 +33,13 @@ import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
+import com.prof18.feedflow.shared.presentation.model.NextFeedDisplayState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewDisabledState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewEnabledState
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.prof18.feedflow.shared.ui.home.FeedListActions
-import com.prof18.feedflow.shared.ui.home.FeedManagementActions
-import com.prof18.feedflow.shared.ui.home.HomeDisplayState
-import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
-import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.syncErrorMessage
+import com.prof18.feedflow.shared.presentation.model.syncErrorMessage
 import org.koin.compose.koinInject
 
 @Composable

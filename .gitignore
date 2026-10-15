@@ -155,3 +155,9 @@ tmp
 /.ai/plan/
 .asc
 .pcenter
+
+# Python bytecode from helper scripts
+__pycache__/
+
+# Local implementation plans (not published)
+/plan/

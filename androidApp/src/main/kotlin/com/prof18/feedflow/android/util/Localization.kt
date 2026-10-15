@@ -6,9 +6,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.text.intl.Locale
 import cafe.adriel.lyricist.Lyricist
+import com.prof18.feedflow.android.ui.utils.rememberFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 
 @Composable
 internal fun rememberAndroidFeedFlowStrings(settingsRepository: SettingsRepository): Lyricist<FeedFlowStrings> {

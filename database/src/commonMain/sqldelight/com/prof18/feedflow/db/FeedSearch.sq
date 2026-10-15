@@ -20,6 +20,10 @@ BEFORE DELETE ON feed_item
 BEGIN DELETE FROM feed_search WHERE docid = old.rowid;
 END;
 
+deleteSearchEntryForImport:
+DELETE FROM feed_search
+WHERE url_hash = :urlHash OR docid = (SELECT rowid FROM feed_item WHERE url_hash = :urlHash);
+
 search:
 SELECT
   feed_item.*,
@@ -34,12 +38,12 @@ SELECT
   feed_source_preferences.article_open_mode AS feed_source_article_open_mode,
   feed_source_preferences.hide_images AS feed_source_hide_images
 FROM (
-  SELECT *
+  SELECT docid AS indexed_rowid, url_hash
   FROM feed_search
   WHERE feed_search MATCH :query
 ) AS searched_feeds
 INNER JOIN feed_item
-ON searched_feeds.url_hash = feed_item.url_hash
+ON searched_feeds.indexed_rowid = feed_item.rowid AND searched_feeds.url_hash = feed_item.url_hash
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category

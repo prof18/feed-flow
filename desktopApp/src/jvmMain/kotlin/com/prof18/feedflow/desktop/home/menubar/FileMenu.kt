@@ -7,7 +7,7 @@ import androidx.compose.ui.window.MenuBarScope
 import androidx.compose.ui.window.MenuScope
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isWindows
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 
 @Composable
 internal fun MenuBarScope.FileMenu(
@@ -19,6 +19,7 @@ internal fun MenuBarScope.FileMenu(
         Item(
             text = LocalFeedFlowStrings.current.refreshFeeds,
             onClick = { actions.onRefreshClick() },
+            enabled = state.commands.refreshEnabled,
             shortcut = if (isMacOS) {
                 KeyShortcut(Key.R, meta = true)
             } else {
@@ -44,6 +45,7 @@ internal fun MenuBarScope.FileMenu(
         Item(
             text = LocalFeedFlowStrings.current.markAllReadButton,
             onClick = { actions.onMarkAllReadClick() },
+            enabled = state.commands.bulkActionsEnabled,
             shortcut = if (isMacOS) {
                 KeyShortcut(Key.A, meta = true, shift = true)
             } else {
@@ -54,6 +56,7 @@ internal fun MenuBarScope.FileMenu(
         Item(
             text = LocalFeedFlowStrings.current.clearOldArticlesButton,
             onClick = { actions.onClearOldFeedClick() },
+            enabled = state.commands.bulkActionsEnabled,
             shortcut = if (isMacOS) {
                 KeyShortcut(Key.D, meta = true, shift = true)
             } else {
@@ -82,6 +85,13 @@ internal fun MenuBarScope.FileMenu(
                 KeyShortcut(Key.Comma, ctrl = true)
             },
         )
+
+        actions.onAccountsClick?.let { onAccountsClick ->
+            Item(
+                text = LocalFeedFlowStrings.current.settingsAccounts,
+                onClick = onAccountsClick,
+            )
+        }
 
         if (getDesktopOS().isWindows()) {
             Separator()

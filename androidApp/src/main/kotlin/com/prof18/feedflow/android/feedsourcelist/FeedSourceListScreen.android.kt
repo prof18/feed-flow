@@ -11,13 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.ui.home.components.LoadingOperationDialog
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.syncErrorMessage
+import com.prof18.feedflow.shared.presentation.model.syncErrorMessage
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 

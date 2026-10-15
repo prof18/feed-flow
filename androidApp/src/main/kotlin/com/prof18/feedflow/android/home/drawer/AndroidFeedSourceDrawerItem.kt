@@ -37,11 +37,11 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
+import com.prof18.feedflow.android.ui.components.DeleteFeedSourceDialog
+import com.prof18.feedflow.android.ui.feedsourcelist.singleAndLongClickModifier
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.ui.components.DeleteFeedSourceDialog
-import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun AndroidFeedSourceDrawerItem(

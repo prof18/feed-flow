@@ -6,9 +6,9 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.android.widget.WidgetInstanceSettingsViewModel
 import com.prof18.feedflow.android.widget.WidgetSettingsScaffold
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 

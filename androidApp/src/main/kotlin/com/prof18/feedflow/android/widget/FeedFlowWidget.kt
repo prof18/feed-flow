@@ -9,6 +9,7 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.provideContent
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.android.util.rememberAndroidFeedFlowStrings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetConfiguration
@@ -17,7 +18,6 @@ import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.WidgetRenderState
 import com.prof18.feedflow.shared.presentation.WidgetRefreshState
-import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map

@@ -78,6 +78,8 @@ import com.prof18.feedflow.android.settings.readingbehavior.ReadingBehaviorScree
 import com.prof18.feedflow.android.settings.syncstorage.SyncAndStorageScreen
 import com.prof18.feedflow.android.settings.widget.WidgetInstanceSettingsScreen
 import com.prof18.feedflow.android.settings.widget.WidgetSettingsScreen
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -93,8 +95,6 @@ import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.presentation.model.DeeplinkFeedState
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map

@@ -21,16 +21,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil3.imageLoader
 import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.settings.components.BackgroundSyncRestrictionsSection
+import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
+import com.prof18.feedflow.android.ui.settings.ConfirmationSettingItem
+import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
+import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
-import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
-import com.prof18.feedflow.shared.ui.settings.ConfirmationSettingItem
-import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
-import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable

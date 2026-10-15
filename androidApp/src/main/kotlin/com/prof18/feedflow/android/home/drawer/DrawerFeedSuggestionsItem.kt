@@ -11,9 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
-import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsE2eIds
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.PreviewHelper
+import com.prof18.feedflow.android.ui.feedsuggestions.FeedSuggestionsE2eIds
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.PreviewHelper
 
 @Composable
 internal fun DrawerFeedSuggestionsItem(

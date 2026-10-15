@@ -23,15 +23,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.android.feed.ArticleOpenModeSelector
+import com.prof18.feedflow.android.ui.feed.editfeed.EditFeedContent
+import com.prof18.feedflow.android.ui.preview.PreviewPhone
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
-import com.prof18.feedflow.shared.ui.feed.editfeed.EditFeedContent
-import com.prof18.feedflow.shared.ui.preview.PreviewPhone
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 
 @Composable

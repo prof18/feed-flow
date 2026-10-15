@@ -18,7 +18,17 @@ appId: com.prof18.feedflow.debug
       id: article_row_e2e_article_no_image
     direction: DOWN
     timeout: 10000
+- scrollUntilVisible:
+    element:
+      text: "E2E Article Without Image.*"
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     text: "E2E Article Without Image.*"
+- scrollUntilVisible:
+    element:
+      text: "Seeded item without media"
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     text: "Seeded item without media"

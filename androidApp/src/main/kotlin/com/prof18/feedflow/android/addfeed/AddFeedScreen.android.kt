@@ -20,13 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
+import com.prof18.feedflow.android.ui.feed.addfeed.AddFeedContent
+import com.prof18.feedflow.android.ui.preview.PreviewPhone
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
-import com.prof18.feedflow.shared.ui.feed.addfeed.AddFeedContent
-import com.prof18.feedflow.shared.ui.preview.PreviewPhone
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 

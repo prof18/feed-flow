@@ -28,10 +28,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.shared.ui.preview.PreviewPhone
-import com.prof18.feedflow.shared.ui.settings.SettingItem
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.preview.PreviewPhone
+import com.prof18.feedflow.android.ui.settings.SettingItem
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun SettingsScreenContent(

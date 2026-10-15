@@ -41,6 +41,7 @@ jobs:
         uses: ./.github/actions/setup-gradle
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+          desktop-toolchain: 'true'
 
       - name: Refresh translations
         run: bash .scripts/refresh-translations.sh
@@ -63,7 +64,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Update Licenses file
-        run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
+        run: ./gradlew :desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
 
       - name: Create path variables
         id: path_variables
@@ -101,7 +102,7 @@ jobs:
           TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
 
       - name: Create DMG
-        run: ./gradlew packageReleaseDmg
+        run: ./gradlew :desktopApp:packageReleaseDmg
 
       - name: Upload reports
         if: failure()
@@ -126,4 +127,4 @@ jobs:
         with:
           path: ${{ env.RELEASE_PATH }}
           name: ${{ env.ARTIFACT_NAME }}
-          retention-days: 7 
+          retention-days: 7

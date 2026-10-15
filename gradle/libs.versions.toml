@@ -53,7 +53,7 @@ spectre = "0.7.1"
 junit = "4.13.2"
 junit-jupiter = "5.10.1"
 kermit = "2.2.0"
-klead = "0.0.1-alpha10"
+klead = "0.0.1-alpha11"
 koin-bom = "4.2.2"
 kotlin = "2.4.10"
 # Because of telemetry deck still using version 0.6.x

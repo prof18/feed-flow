@@ -2,12 +2,9 @@ package com.prof18.feedflow.desktop.accounts
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -18,7 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -40,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.desktop.testing.AccountE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
+import com.prof18.feedflow.desktop.ui.components.ProgressButtonLabel
 import org.jetbrains.jewel.ui.Outline
-import org.jetbrains.jewel.ui.component.CircularProgressIndicator
 import org.jetbrains.jewel.ui.component.DefaultButton
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.IconButton
@@ -85,7 +81,7 @@ internal fun CredentialsForm(
     }
     Column(
         modifier = modifier.widthIn(max = 560.dp).fillMaxWidth()
-            .verticalScroll(rememberScrollState()).padding(16.dp)
+            .verticalScroll(rememberScrollState()).padding(vertical = 8.dp)
             .credentialDefaultAction(focus, ::requestConnect),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -238,15 +234,7 @@ private fun CredentialConnectButton(loading: Boolean, enabled: Boolean, onClick:
         },
         enabled = enabled,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(strings.accountConnectButton)
-            Box(Modifier.size(16.dp)) {
-                if (loading) CircularProgressIndicator(Modifier.size(16.dp))
-            }
-        }
+        ProgressButtonLabel(strings.accountConnectButton, loading)
     }
 }
 

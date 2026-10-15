@@ -40,5 +40,6 @@ internal fun FeedSuggestionsWindow(onCloseRequest: () -> Unit, content: @Composa
         title = LocalFeedFlowStrings.current.feedSuggestionsTitle,
         size = DpSize(840.dp, 720.dp),
         onCloseRequest = onCloseRequest,
+        extendBehindTitleBar = true,
     ) { content(Modifier) }
 }

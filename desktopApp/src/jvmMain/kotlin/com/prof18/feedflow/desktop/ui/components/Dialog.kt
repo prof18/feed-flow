@@ -10,11 +10,15 @@ internal fun Dialog(
     title: String,
     onCloseRequest: () -> Unit,
     size: DpSize = DpSize(400.dp, 300.dp),
+    extendBehindTitleBar: Boolean = false,
+    alertStyle: Boolean = false,
     content: @Composable DialogWindowScope.() -> Unit,
 ) {
     DesktopDialogWindow(
         title = title,
         size = size,
         onCloseRequest = onCloseRequest,
+        extendBehindTitleBar = extendBehindTitleBar,
+        alertStyle = alertStyle,
     ) { content() }
 }

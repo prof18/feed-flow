@@ -357,6 +357,17 @@ class ReaderModeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `reader typography observes changes made from another settings surface`() = runTest {
+        viewModel.readerFontSettingsState.test {
+            awaitItem()
+            settingsRepository.setReaderModeFontSize(30)
+            assertEquals(30, awaitItem().fontSize)
+            settingsRepository.setReaderModeLineHeight(6)
+            assertEquals(6, awaitItem().lineHeight)
+        }
+    }
+
+    @Test
     fun `initial line height is default value`() = runTest {
         assertEquals(
             ReaderModeDefaults.LINE_HEIGHT,

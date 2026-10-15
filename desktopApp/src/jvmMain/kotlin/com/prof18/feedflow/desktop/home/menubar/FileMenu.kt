@@ -6,7 +6,7 @@ import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.MenuBarScope
 import androidx.compose.ui.window.MenuScope
 import com.prof18.feedflow.core.utils.getDesktopOS
-import com.prof18.feedflow.core.utils.isWindows
+import com.prof18.feedflow.core.utils.isLinux
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 
 @Composable
@@ -53,17 +53,6 @@ internal fun MenuBarScope.FileMenu(
             },
         )
 
-        Item(
-            text = LocalFeedFlowStrings.current.clearOldArticlesButton,
-            onClick = { actions.onClearOldFeedClick() },
-            enabled = state.commands.bulkActionsEnabled,
-            shortcut = if (isMacOS) {
-                KeyShortcut(Key.D, meta = true, shift = true)
-            } else {
-                KeyShortcut(Key.D, ctrl = true, shift = true)
-            },
-        )
-
         Separator()
 
         Item(
@@ -76,29 +65,23 @@ internal fun MenuBarScope.FileMenu(
             },
         )
 
-        Item(
-            text = LocalFeedFlowStrings.current.settingsTitle,
-            onClick = actions.onSettingsClick,
-            shortcut = if (isMacOS) {
-                KeyShortcut(Key.Comma, meta = true)
-            } else {
-                KeyShortcut(Key.Comma, ctrl = true)
-            },
-        )
-
-        actions.onAccountsClick?.let { onAccountsClick ->
+        // On macOS Settings lives in the application menu (see installMacOsAppMenuHandlers).
+        if (!isMacOS) {
             Item(
-                text = LocalFeedFlowStrings.current.settingsAccounts,
-                onClick = onAccountsClick,
+                text = LocalFeedFlowStrings.current.settingsTitle,
+                onClick = actions.onSettingsClick,
+                shortcut = KeyShortcut(Key.Comma, ctrl = true),
             )
         }
 
-        if (getDesktopOS().isWindows()) {
+        if (!isMacOS) {
             Separator()
 
             Item(
                 text = LocalFeedFlowStrings.current.exitMenu,
                 onClick = actions.onExitClick,
+                // Windows closes with Alt+F4; Ctrl+Q is the Linux convention.
+                shortcut = if (getDesktopOS().isLinux()) KeyShortcut(Key.Q, ctrl = true) else null,
             )
         }
 

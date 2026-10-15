@@ -355,7 +355,6 @@ class DesktopNoFeedsStateTest {
         onEditCategoryClick = { _, _ -> },
         validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
         onDeleteCategoryClick = {},
-        onChangeFeedCategoryClick = {},
         onOpenWebsite = {},
     )
 

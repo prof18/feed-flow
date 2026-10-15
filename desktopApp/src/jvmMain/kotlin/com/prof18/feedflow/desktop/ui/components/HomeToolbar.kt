@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -36,7 +38,6 @@ import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.IconButton
-import org.jetbrains.jewel.ui.component.SelectableIconButton
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.Tooltip
 
@@ -146,16 +147,12 @@ private fun ToolbarIconButton(
                 modifier = Modifier.size(20.dp),
             )
         }
-        if (selected == null) {
-            IconButton(onClick = onClick, enabled = enabled, modifier = Modifier.size(36.dp)) { content() }
-        } else {
-            SelectableIconButton(
-                selected = selected,
-                onClick = onClick,
-                enabled = enabled,
-                modifier = Modifier.size(36.dp),
-            ) { content() }
-        }
+        // Toggle state is exposed to accessibility only: a filled chip on a toolbar reads as a stuck button.
+        IconButton(
+            onClick = onClick,
+            enabled = enabled,
+            modifier = Modifier.size(36.dp).semantics { if (selected != null) this.selected = selected },
+        ) { content() }
     }
 }
 

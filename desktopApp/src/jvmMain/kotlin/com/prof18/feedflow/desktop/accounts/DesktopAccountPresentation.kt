@@ -66,9 +66,13 @@ internal fun SyncAccounts.desktopIcon(): ImageVector? = when (this) {
 internal fun SyncAccounts.isBackupProvider(): Boolean =
     this == SyncAccounts.DROPBOX || this == SyncAccounts.GOOGLE_DRIVE || this == SyncAccounts.ICLOUD
 
-internal fun SyncAccounts.hasMonochromeIcon(): Boolean =
-    this == SyncAccounts.DROPBOX || this == SyncAccounts.ICLOUD ||
-        this == SyncAccounts.MINIFLUX || this == SyncAccounts.FEEDBIN
+// Single-color glyphs follow the theme text color. BazQux keeps its light blue, which reads on both themes;
+// FreshRSS's dark blue gets lost on dark backgrounds, so it switches to the text color there.
+internal fun SyncAccounts.hasMonochromeIcon(isDarkTheme: Boolean): Boolean = when (this) {
+    SyncAccounts.BAZQUX -> false
+    SyncAccounts.FRESH_RSS -> isDarkTheme
+    else -> true
+}
 
 internal data class DesktopAccountPresentation(
     val account: SyncAccounts,

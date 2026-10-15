@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -14,7 +15,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import coil3.ImageLoader
 import coil3.PlatformContext
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ReaderModeState
@@ -26,6 +29,7 @@ import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class DesktopReaderContentTest {
     @get:Rule
@@ -36,6 +40,7 @@ class DesktopReaderContentTest {
     @Test
     fun `loading transitions to actual Jewel content without retaining the spinner`() {
         val state = mutableStateOf<ReaderModeState>(ReaderModeState.Loading)
+        rule.mainClock.autoAdvance = false
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
                 FeedFlowTheme(darkTheme = true, useOledTheme = false) {
@@ -47,12 +52,24 @@ class DesktopReaderContentTest {
                         onOpenInBrowser = {},
                         onHoveredLinkChange = {},
                         modifier = Modifier.fillMaxSize(),
+                        loadingArticle = LOADING_ARTICLE,
                     )
                 }
             }
         }
+        // The selected article's header shows at once; the spinner waits so quick loads never flash.
+        var frames = 0
+        while (frames < HEADER_FRAME_BUDGET && !hasText(LOADING_ARTICLE.title!!)) {
+            rule.mainClock.advanceTimeByFrame()
+            Thread.sleep(10)
+            frames++
+        }
+        assertTrue(hasText(LOADING_ARTICLE.title!!), "The loading header must show the selected article")
+        rule.onNodeWithTag(READER_LOADING_TAG).assertDoesNotExist()
+        rule.mainClock.advanceTimeBy(400)
         rule.onNodeWithTag(READER_LOADING_TAG).assertIsDisplayed()
 
+        rule.mainClock.autoAdvance = true
         rule.runOnIdle { state.value = success() }
         rule.waitUntil(timeoutMillis = 5_000) {
             rule.onAllNodesWithText(BODY_TEXT).fetchSemanticsNodes().isNotEmpty()
@@ -61,6 +78,9 @@ class DesktopReaderContentTest {
         rule.onNodeWithText(BODY_TEXT).assertIsDisplayed()
         rule.onNodeWithTag(READER_LOADING_TAG).assertDoesNotExist()
     }
+
+    private fun hasText(text: String): Boolean =
+        rule.onAllNodesWithText(text, substring = true, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
 
     @Test
     fun `unavailable URL-less content has an honest fallback without a browser action`() {
@@ -111,6 +131,20 @@ class DesktopReaderContentTest {
         rule.onNodeWithContentDescription(EnFeedFlowStrings.readerContentSourceFeed).assertDoesNotExist()
     }
 
+    @Test
+    fun `inline svg markup is left out instead of shown as text`() {
+        val content = "$BODY_TEXT\n\n<svg version=\"1.1\" viewBox=\"0 0 10 10\"><path d=\"M0,0\"></path></svg>" +
+            "\n\nAfter the logo."
+        val state = success()
+        showBody(state.copy(readerModeData = state.readerModeData.copy(content = content)))
+        rule.waitUntil(timeoutMillis = 5_000) {
+            rule.onAllNodesWithText("After the logo.", substring = true).fetchSemanticsNodes().isNotEmpty()
+        }
+
+        rule.onNodeWithText(BODY_TEXT, substring = true).assertIsDisplayed()
+        rule.onAllNodesWithText("<svg", substring = true, useUnmergedTree = true).assertCountEquals(0)
+    }
+
     private fun showBody(state: ReaderModeState, onOpenInBrowser: (String) -> Unit = {}) {
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
@@ -147,7 +181,8 @@ class DesktopReaderContentTest {
                         onCommentsClick = {},
                         onFontSizeChange = {},
                         onLineHeightChange = {},
-                        onBookmarkClick = { _, _ -> },
+                        isBookmarked = false,
+                        onToggleBookmark = {},
                         onToggleContentSource = onToggleContentSource,
                     )
                 }
@@ -178,3 +213,16 @@ class DesktopReaderContentTest {
         const val ARTICLE_URL = "https://example.com/article"
     }
 }
+
+// Fewer than 300ms of frames, so the header must appear before the spinner delay elapses.
+private const val HEADER_FRAME_BUDGET = 15
+
+private val LOADING_ARTICLE = FeedItemUrlInfo(
+    id = "loading-article",
+    url = "https://example.com/loading",
+    title = "Loading article title",
+    isBookmarked = false,
+    articleOpenMode = ArticleOpenMode.DEFAULT,
+    commentsUrl = null,
+    feedSourceTitle = "Example feed",
+)

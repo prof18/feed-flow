@@ -19,6 +19,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
@@ -39,15 +40,17 @@ import java.awt.Window
 import java.util.concurrent.atomic.AtomicReference
 import javax.swing.SwingUtilities
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DesktopSettingsWindowTest {
     private val density = AtomicReference<Float>()
+    private val activationRequest = mutableStateOf(0)
     private val fixture = NativeDesktopWindowFixture {
         CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
             FeedFlowTheme(darkTheme = false, useOledTheme = false) {
                 density.set(LocalDensity.current.density)
-                DesktopSettingsDialog(onCloseRequest = {}) { modifier ->
+                DesktopSettingsDialog(onCloseRequest = {}, activationRequest = activationRequest.value) { modifier ->
                     Text("Settings window content", modifier = modifier.testTag(WINDOW_CONTENT_TAG))
                 }
             }
@@ -88,6 +91,13 @@ class DesktopSettingsWindowTest {
 
         compose.onNodeWithText(EnFeedFlowStrings.settingsFeedListTitle).assertIsSelected()
         compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.FEED_LIST.name)
+    }
+
+    @Test
+    fun `filters has a dedicated settings navigation page`() {
+        compose.setContent { SettingsContent(DesktopSettingsCategory.GENERAL) }
+        compose.onNodeWithText("Filters").performClick()
+        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals("FILTERS")
     }
 
     @Test
@@ -155,19 +165,40 @@ class DesktopSettingsWindowTest {
 
         categoryList.requestFocus()
         categoryList.performKeyInput {
-            repeat(times = 3) { pressKey(Key.DirectionDown) }
+            repeat(times = 4) { pressKey(Key.DirectionDown) }
             pressKey(Key.Enter)
         }
         compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.ABOUT.name)
 
         categoryList.requestFocus()
         categoryList.performKeyInput {
-            repeat(times = 3) { pressKey(Key.DirectionUp) }
+            repeat(times = 4) { pressKey(Key.DirectionUp) }
             pressKey(Key.Enter)
         }
 
         compose.runOnIdle {
             assertEquals(savedPosition, requireNotNull(feedListScrollState.get()).value)
+        }
+    }
+
+    @Test
+    fun `raising Settings preserves the existing native window and user size`() {
+        val window = awaitSettingsWindow()
+        val initialSize = readWindowSize(window)
+        SwingUtilities.invokeAndWait {
+            window.setSize(initialSize.width + RESIZE_WIDTH_DP, initialSize.height + RESIZE_HEIGHT_DP)
+        }
+        val resized = readWindowSize(window)
+        compose.runOnIdle { activationRequest.value++ }
+        compose.waitForIdle()
+        assertSame(window, awaitSettingsWindow())
+        val afterActivation = readWindowSize(window)
+        assertEquals(resized.width, afterActivation.width)
+        assertEquals(resized.height, afterActivation.height)
+        var focused = false
+        compose.waitUntil(timeoutMillis = WINDOW_START_TIMEOUT_MS) {
+            SwingUtilities.invokeAndWait { focused = window.isFocused }
+            focused
         }
     }
 

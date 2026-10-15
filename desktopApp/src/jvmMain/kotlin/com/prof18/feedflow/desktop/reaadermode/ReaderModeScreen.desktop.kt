@@ -3,7 +3,6 @@
 package com.prof18.feedflow.desktop.reaadermode
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,11 +12,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
@@ -27,12 +25,16 @@ import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Fullscreen
 import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.LockOpen
+import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.RssFeed
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,35 +45,51 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import coil3.ImageLoader
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
+import com.prof18.feedflow.core.utils.getDesktopOS
+import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.toolbarHeight
+import com.prof18.feedflow.desktop.main.ArticleMenuCommands
+import com.prof18.feedflow.desktop.main.LocalDesktopMenuCommands
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
+import com.prof18.feedflow.desktop.ui.components.DesktopPopupMenu
+import com.prof18.feedflow.desktop.ui.components.DesktopPopupMenuEntry
 import com.prof18.feedflow.desktop.ui.components.SnackbarHost
+import com.prof18.feedflow.desktop.ui.components.floatingSurface
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.IconButton
+import org.jetbrains.jewel.ui.component.PopupContainer
 import org.jetbrains.jewel.ui.component.SelectableIconButton
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.Tooltip
@@ -123,6 +141,49 @@ internal fun ReaderModeScreen(
     var hoveredLink by remember { mutableStateOf<String?>(null) }
 
     val focusRequester = remember { FocusRequester() }
+    val currentArticle by readerModeViewModel.currentArticleState.collectAsState()
+    // While the content loads, the selected article's own data keeps the toolbar and header in place.
+    val loadingArticle = (currentArticle ?: feedItemUrlInfo).takeIf { state is ReaderModeState.Loading }
+    var isBookmarked by remember(state, loadingArticle) {
+        mutableStateOf(loadingArticle?.isBookmarked ?: state.getIsBookmarked)
+    }
+    val articleId = state.getId ?: loadingArticle?.id
+    val articleUrl = (state.getUrl ?: loadingArticle?.url)?.takeIf(String::isNotBlank)
+    val toggleBookmark: (() -> Unit)? = articleId?.let { id ->
+        {
+            isBookmarked = !isBookmarked
+            readerModeViewModel.updateBookmarkStatus(FeedItemId(id), isBookmarked)
+        }
+    }
+    val copyLink: (String) -> Unit = { url ->
+        if (copyToClipboard(url)) {
+            scope.launch {
+                snackbarHostState.showFeedback(
+                    message = strings.linkCopiedSuccess,
+                    duration = DesktopFeedbackDuration.Short,
+                )
+            }
+        }
+    }
+    val menuCommands = LocalDesktopMenuCommands.current
+    val articleCommands = articleId?.let { id ->
+        ArticleMenuCommands(
+            articleId = id,
+            isBookmarked = isBookmarked,
+            canNavigatePrevious = canNavigatePrevious,
+            canNavigateNext = canNavigateNext,
+            onPrevious = { readerModeViewModel.navigateToPreviousArticle() },
+            onNext = { readerModeViewModel.navigateToNextArticle() },
+            onToggleBookmark = toggleBookmark,
+            onOpenInBrowser = articleUrl?.let { url -> { openExternalUrl(url) } },
+            onCopyLink = articleUrl?.let { url -> { copyLink(url) } },
+            onToggleReaderFullscreen = onToggleDetailFullscreen,
+        )
+    }
+    SideEffect { menuCommands.article = articleCommands }
+    DisposableEffect(menuCommands) {
+        onDispose { menuCommands.article = null }
+    }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -153,30 +214,21 @@ internal fun ReaderModeScreen(
         Column(Modifier.fillMaxSize()) {
             ReaderModeToolbar(
                 readerModeState = state,
+                loadingArticle = loadingArticle,
                 fontSize = fontSize,
                 navigateBack = navigateBack,
                 showBackButton = showBackButton,
                 onToggleDetailFullscreen = onToggleDetailFullscreen,
                 isDetailFullscreen = isDetailFullscreen,
                 openInBrowser = ::openExternalUrl,
-                onShareClick = { url ->
-                    if (copyToClipboard(url)) {
-                        scope.launch {
-                            snackbarHostState.showFeedback(
-                                message = strings.linkCopiedSuccess,
-                                duration = DesktopFeedbackDuration.Short,
-                            )
-                        }
-                    }
-                },
+                onShareClick = copyLink,
                 onArchiveClick = { articleUrl -> openExternalUrl(getArchiveISUrl(articleUrl)) },
                 onCommentsClick = ::openExternalUrl,
                 onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
                 lineHeight = lineHeight,
                 onLineHeightChange = { readerModeViewModel.updateLineHeight(it) },
-                onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
-                    readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
-                },
+                isBookmarked = isBookmarked,
+                onToggleBookmark = toggleBookmark ?: {},
                 onToggleContentSource = { readerModeViewModel.toggleContentSource() },
             )
             Box(
@@ -185,6 +237,7 @@ internal fun ReaderModeScreen(
             )
             DesktopReaderContent(
                 state = state,
+                loadingArticle = loadingArticle,
                 fontSize = fontSize,
                 lineHeight = lineHeight,
                 imageLoader = imageLoader,
@@ -231,12 +284,7 @@ internal fun ReaderModeScreen(
             ) {
                 Row(
                     modifier = Modifier
-                        .background(JewelTheme.globalColors.panelBackground, RoundedCornerShape(8.dp))
-                        .border(
-                            width = 1.dp,
-                            color = JewelTheme.globalColors.borders.normal.copy(alpha = 0.5f),
-                            shape = RoundedCornerShape(8.dp),
-                        )
+                        .floatingSurface()
                         .padding(4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
@@ -301,14 +349,17 @@ internal fun ReaderModeToolbar(
     onFontSizeChange: (Int) -> Unit,
     lineHeight: Int,
     onLineHeightChange: (Int) -> Unit,
-    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    isBookmarked: Boolean,
+    onToggleBookmark: () -> Unit,
     onToggleContentSource: () -> Unit,
+    loadingArticle: FeedItemUrlInfo? = null,
 ) {
     val strings = LocalFeedFlowStrings.current
-    var showTextSettings by remember { mutableStateOf(false) }
-    var isBookmarked by remember(readerModeState) { mutableStateOf(readerModeState.getIsBookmarked) }
-    val url = readerModeState.getUrl?.takeIf(String::isNotBlank)
-    val itemId = readerModeState.getId
+    val url = (readerModeState.getUrl ?: loadingArticle?.url)?.takeIf(String::isNotBlank)
+    val itemId = readerModeState.getId ?: loadingArticle?.id
+    val success = readerModeState as? ReaderModeState.Success
+    val showsArticle = success != null || loadingArticle != null
+    val commentsUrl = success?.readerModeData?.commentsUrl ?: loadingArticle?.commentsUrl
     val contentSource = (readerModeState as? ReaderModeState.Success)?.readerModeData?.shownContentSource
     val canToggleContentSource = (readerModeState as? ReaderModeState.Success)
         ?.readerModeData?.canToggleContentSource == true
@@ -329,33 +380,8 @@ internal fun ReaderModeToolbar(
             isDetailFullscreen = isDetailFullscreen,
         )
         Spacer(Modifier.weight(1f))
-        if (readerModeState !is ReaderModeState.Loading) {
-            if (itemId != null) {
-                val description = if (isBookmarked) {
-                    strings.menuRemoveFromBookmark
-                } else {
-                    strings.menuAddToBookmark
-                }
-                Tooltip(tooltip = { Text(description) }) {
-                    SelectableIconButton(
-                        selected = isBookmarked,
-                        modifier = Modifier.size(readerToolbarActionSize),
-                        onClick = {
-                            isBookmarked = !isBookmarked
-                            onBookmarkClick(FeedItemId(itemId), isBookmarked)
-                        },
-                    ) {
-                        Icon(
-                            painter = rememberVectorPainter(
-                                if (isBookmarked) Icons.Outlined.Bookmark else Icons.Outlined.BookmarkBorder,
-                            ),
-                            contentDescription = description,
-                            tint = JewelTheme.globalColors.text.normal,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    }
-                }
-            }
+        if (readerModeState !is ReaderModeState.Loading || loadingArticle != null) {
+            // Ordered by intent: how the article is shown, what to do with it, where else to open it.
             if (contentSource != null && canToggleContentSource && readerModeState.getUrl?.isNotBlank() == true) {
                 Tooltip(tooltip = { Text(strings.readerContentSourceFeed) }) {
                     SelectableIconButton(
@@ -372,12 +398,24 @@ internal fun ReaderModeToolbar(
                     }
                 }
             }
-            if (url != null) {
-                ReaderToolbarAction(Actions.Share, strings.menuShare) { onShareClick(url) }
-                ReaderToolbarAction(FileTypes.Archive, strings.readerModeArchiveButton) { onArchiveClick(url) }
+            if (showsArticle) {
+                ReaderTextSettingsAction(
+                    fontSize = fontSize,
+                    lineHeight = lineHeight,
+                    onFontSizeChange = onFontSizeChange,
+                    onLineHeightChange = onLineHeightChange,
+                )
             }
-            if (readerModeState is ReaderModeState.Success) {
-                readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
+            if (itemId != null) ReaderBookmarkAction(isBookmarked, onToggleBookmark)
+            if (url != null) {
+                ReaderToolbarAction(
+                    Actions.Share,
+                    strings.menuCopyLink,
+                    shortcutHint = readerShortcut("C", shift = true),
+                ) { onShareClick(url) }
+            }
+            if (showsArticle) {
+                commentsUrl?.let { commentsUrl ->
                     ReaderToolbarAction(
                         Toolwindows.ToolWindowMessages,
                         strings.readerModeCommentsButtonContentDescription,
@@ -386,25 +424,151 @@ internal fun ReaderModeToolbar(
                     }
                 }
                 if (url != null) {
-                    ReaderToolbarAction(General.Language, strings.readerModeBrowserButtonContentDescription) {
+                    ReaderToolbarAction(
+                        General.Language,
+                        strings.readerModeBrowserButtonContentDescription,
+                        shortcutHint = readerShortcut("O", shift = true),
+                    ) {
                         openInBrowser(url)
                     }
-                }
-                ReaderToolbarAction(General.Settings, strings.readerModeTextSettings) {
-                    showTextSettings = true
+                    ReaderOverflowAction(
+                        archiveLabel = strings.readerModeArchiveButton,
+                        moreLabel = strings.moreOptionsButtonContentDescription,
+                        onArchive = { onArchiveClick(url) },
+                    )
                 }
             }
         }
     }
+}
 
-    if (showTextSettings) {
-        ReaderTextSettingsDialog(
-            fontSize = fontSize,
-            lineHeight = lineHeight,
-            onFontSizeChange = onFontSizeChange,
-            onLineHeightChange = onLineHeightChange,
-            onDismiss = { showTextSettings = false },
-        )
+@Composable
+private fun ReaderBookmarkAction(isBookmarked: Boolean, onToggleBookmark: () -> Unit) {
+    val strings = LocalFeedFlowStrings.current
+    val description = if (isBookmarked) {
+        strings.menuRemoveFromBookmark
+    } else {
+        strings.menuAddToBookmark
+    }
+    Tooltip(tooltip = { Text("$description  ${readerShortcut("D")}") }) {
+        // The filled glyph already shows the state; a selected chip would read as a pressed button.
+        IconButton(
+            modifier = Modifier.size(readerToolbarActionSize).semantics { selected = isBookmarked },
+            onClick = onToggleBookmark,
+        ) {
+            Icon(
+                painter = rememberVectorPainter(
+                    if (isBookmarked) Icons.Outlined.Bookmark else Icons.Outlined.BookmarkBorder,
+                ),
+                contentDescription = description,
+                tint = JewelTheme.globalColors.text.normal,
+                modifier = Modifier.size(20.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ReaderOverflowAction(archiveLabel: String, moreLabel: String, onArchive: () -> Unit) {
+    var open by remember { mutableStateOf(false) }
+    var anchor by remember { mutableStateOf<androidx.compose.ui.layout.LayoutCoordinates?>(null) }
+    Box(Modifier.onGloballyPositioned { anchor = it }) {
+        Tooltip(tooltip = { Text(moreLabel) }) {
+            IconButton(onClick = { open = true }, modifier = Modifier.size(readerToolbarActionSize)) {
+                Icon(
+                    painter = rememberVectorPainter(Icons.Outlined.MoreHoriz),
+                    contentDescription = moreLabel,
+                    tint = JewelTheme.globalColors.text.normal,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        }
+    }
+    DesktopPopupMenu(
+        showMenu = open,
+        menuPositionInWindow = anchor?.boundsInWindow()?.let { Offset(it.left, it.bottom) },
+        menuEntries = persistentListOf(
+            DesktopPopupMenuEntry.Action(archiveLabel, icon = Icons.Outlined.LockOpen, onClick = {
+                open = false
+                onArchive()
+            }),
+        ),
+        closeMenu = { open = false },
+    )
+}
+
+private fun readerShortcut(key: String, shift: Boolean = false): String {
+    val mac = getDesktopOS().isMacOs()
+    val modifier = if (mac) "⌘" else "Ctrl+"
+    val shiftLabel = if (shift) { if (mac) "⇧" else "Shift+" } else ""
+    return if (mac) "$shiftLabel$modifier$key" else "$modifier$shiftLabel$key"
+}
+
+@Composable
+private fun ReaderTextSettingsAction(
+    fontSize: Int,
+    lineHeight: Int,
+    onFontSizeChange: (Int) -> Unit,
+    onLineHeightChange: (Int) -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    var showSettings by remember { mutableStateOf(false) }
+    val launcherFocusRequester = remember { FocusRequester() }
+    val popupFocusRequester = remember { FocusRequester() }
+    var popupWasOpen by remember { mutableStateOf(false) }
+    LaunchedEffect(showSettings) {
+        when {
+            showSettings -> popupFocusRequester.requestFocus()
+            popupWasOpen -> launcherFocusRequester.requestFocus()
+        }
+        popupWasOpen = showSettings
+    }
+
+    Box {
+        Tooltip(tooltip = { Text(strings.readerModeTextSettings) }) {
+            IconButton(
+                onClick = { showSettings = true },
+                modifier = Modifier.size(readerToolbarActionSize).focusRequester(launcherFocusRequester),
+            ) {
+                Icon(
+                    painter = rememberVectorPainter(Icons.Outlined.TextFields),
+                    contentDescription = strings.readerModeTextSettings,
+                    tint = JewelTheme.globalColors.text.normal,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        }
+        if (showSettings) {
+            PopupContainer(
+                onDismissRequest = { showSettings = false },
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier.widthIn(max = 360.dp).heightIn(max = 580.dp),
+                popupProperties = PopupProperties(focusable = true),
+            ) {
+                Column {
+                    Text(
+                        strings.readerModeTextSettings,
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                    )
+                    ReaderTextSettingsControls(
+                        fontSize = fontSize,
+                        lineHeight = lineHeight,
+                        onFontSizeChange = onFontSizeChange,
+                        onLineHeightChange = onLineHeightChange,
+                        modifier = Modifier
+                            .focusRequester(popupFocusRequester)
+                            .onPreviewKeyEvent { event ->
+                                if (event.type == KeyEventType.KeyDown && event.key == Key.Escape) {
+                                    showSettings = false
+                                    true
+                                } else {
+                                    false
+                                }
+                            },
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -445,18 +609,18 @@ private fun ReaderToolbarAction(
     iconKey: IconKey,
     description: String,
     enabled: Boolean = true,
+    shortcutHint: String? = null,
     onClick: () -> Unit,
 ) {
-    Tooltip(tooltip = { Text(description) }) {
+    Tooltip(tooltip = { Text(shortcutHint?.let { "$description  $it" } ?: description) }) {
         IconButton(onClick = onClick, enabled = enabled, modifier = Modifier.size(readerToolbarActionSize)) {
             val vector = when (iconKey) {
                 Actions.Back -> Icons.AutoMirrored.Outlined.ArrowBack
                 Actions.Forward -> Icons.AutoMirrored.Outlined.ArrowForward
-                Actions.Share -> Icons.Outlined.Share
+                Actions.Share -> Icons.Outlined.Link
                 FileTypes.Archive -> Icons.Outlined.LockOpen
                 Toolwindows.ToolWindowMessages -> Icons.AutoMirrored.Outlined.Comment
                 General.Language -> Icons.Outlined.Language
-                General.Settings -> Icons.Outlined.TextFields
                 General.Close -> Icons.Outlined.Close
                 else -> Icons.Outlined.Fullscreen
             }

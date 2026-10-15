@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.NotificationMode
+import com.prof18.feedflow.core.model.ReaderFontSettings
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.model.appDefaultArticleOpenMode
@@ -62,6 +63,11 @@ class SettingsRepository(
 
     private val themeModeMutableFlow = MutableStateFlow(getThemeMode())
     val themeModeFlow: StateFlow<ThemeMode> = themeModeMutableFlow.asStateFlow()
+
+    private val readerFontSettingsMutableState = MutableStateFlow(
+        ReaderFontSettings(getReaderModeFontSize(), getReaderModeLineHeight()),
+    )
+    val readerFontSettingsState: StateFlow<ReaderFontSettings> = readerFontSettingsMutableState.asStateFlow()
 
     private val reduceMotionEnabledMutableFlow = MutableStateFlow(getReduceMotionEnabled())
     val reduceMotionEnabledFlow: StateFlow<Boolean> = reduceMotionEnabledMutableFlow.asStateFlow()
@@ -188,8 +194,10 @@ class SettingsRepository(
     fun getReaderModeFontSize(): Int =
         settings.getInt(SettingsFields.READER_MODE_FONT_SIZE.name, ReaderModeDefaults.FONT_SIZE)
 
-    fun setReaderModeFontSize(value: Int) =
+    fun setReaderModeFontSize(value: Int) {
         settings.set(SettingsFields.READER_MODE_FONT_SIZE.name, value)
+        readerFontSettingsMutableState.update { it.copy(fontSize = value) }
+    }
 
     internal fun getReaderContentCacheVersion(): Int =
         settings.getInt(SettingsFields.READER_CONTENT_CACHE_VERSION.name, 0)
@@ -200,8 +208,10 @@ class SettingsRepository(
     fun getReaderModeLineHeight(): Int =
         settings.getInt(SettingsFields.READER_MODE_LINE_HEIGHT.name, ReaderModeDefaults.LINE_HEIGHT)
 
-    fun setReaderModeLineHeight(value: Int) =
+    fun setReaderModeLineHeight(value: Int) {
         settings.set(SettingsFields.READER_MODE_LINE_HEIGHT.name, value)
+        readerFontSettingsMutableState.update { it.copy(lineHeight = value) }
+    }
 
     /**
      * The app-wide default, always a concrete mode. [ArticleOpenMode.DEFAULT] only means "follow the

@@ -46,7 +46,7 @@ internal fun ConfirmationDialog(
             latestDismiss()
         }
     }
-    Dialog(title = title, onCloseRequest = dismiss) {
+    Dialog(title = title, onCloseRequest = dismiss, alertStyle = true) {
         ConfirmationContent(
             title = title,
             message = message,

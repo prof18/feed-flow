@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.feedforms.EditFeedForm
+import com.prof18.feedflow.desktop.feedforms.FeedCategoryActions
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.ArticleOpenModeSelector
 import com.prof18.feedflow.desktop.ui.components.Dialog
@@ -32,7 +32,7 @@ internal fun EditFeedScreen(feedSource: FeedSource?, onCloseRequest: () -> Unit)
 internal fun EditFeedWindow(onCloseRequest: () -> Unit, content: @Composable () -> Unit) {
     Dialog(
         title = LocalFeedFlowStrings.current.openFeedSettings,
-        size = DpSize(560.dp, 700.dp),
+        size = DpSize(560.dp, 560.dp),
         onCloseRequest = onCloseRequest,
     ) { content() }
 }
@@ -53,7 +53,6 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
     var error by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
     var showDelete by remember { mutableStateOf(false) }
-    var showCategories by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         vm.feedEditedState.collect { state ->
             when (state) {
@@ -109,22 +108,16 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
         onPinnedToggled = vm::updateIsPinned,
         showNotificationToggle = showNotifications,
         onNotificationToggleChanged = vm::updateIsNotificationEnabled,
-        onCategorySelectorClick = { showCategories = true },
+        categoryActions = FeedCategoryActions(
+            onSelect = vm::onCategorySelected,
+            onAdd = vm::addNewCategory,
+            validate = vm::validateCategoryName,
+        ),
+        onCancel = onCloseRequest,
         editFeed = vm::editFeed,
         onShowDeleteDialog = { showDelete = true }, showDeleteDialog = showDelete,
         onDismissDeleteDialog = { showDelete = false }, onConfirmDelete = vm::deleteFeed,
         modifier = modifier,
         completionRevision = completionRevision,
     )
-    if (showCategories) {
-        EditCategoryDialog(
-            categoryState = categories,
-            onCategorySelected = vm::onCategorySelected,
-            onAddCategory = vm::addNewCategory,
-            onDeleteCategory = { vm.deleteCategory(it.value) },
-            onEditCategory = vm::editCategory,
-            validateCategoryName = vm::validateCategoryName,
-            onDismiss = { showCategories = false },
-        )
-    }
 }

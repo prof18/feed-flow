@@ -6,7 +6,6 @@
 package com.prof18.feedflow.desktop.home.drawer
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -90,8 +89,7 @@ internal fun DesktopFeedSourceDrawerItem(
     var itemPosition by remember(feedSource.id) { mutableStateOf(Offset.Zero) }
     val strings = LocalFeedFlowStrings.current
     val itemShape = drawerItemVisualStyle.itemShape
-    val selectedColor = drawerItemVisualStyle.selectedContainerColor
-        ?: JewelTheme.globalColors.outlines.focused.copy(alpha = 0.16f)
+    val selectedColor = drawerItemVisualStyle.selectedContainerColor ?: sidebarSelectedColor()
     val websiteUrl = feedSource.websiteUrlFallback()
     val menuEntries = buildFeedSourceMenuEntries(
         feedSource = feedSource,
@@ -110,9 +108,10 @@ internal fun DesktopFeedSourceDrawerItem(
     val finalBackground = feedSourceBackground(
         selected = selected,
         multiSelected = isMultiSelected,
-        hovered = hovered,
+        highlighted = hovered || focused,
         selectedColor = selectedColor,
-        highlight = JewelTheme.globalColors.outlines.focused,
+        multiSelectedColor = sidebarMultiSelectedColor(),
+        highlightColor = sidebarHighlightColor(),
     )
     Row(
         modifier = modifier
@@ -123,17 +122,6 @@ internal fun DesktopFeedSourceDrawerItem(
             .fillMaxWidth()
             .clip(itemShape)
             .background(finalBackground)
-            .then(
-                if (isMultiSelected && !selected || focused) {
-                    Modifier.border(
-                        1.dp,
-                        JewelTheme.globalColors.outlines.focused.copy(alpha = 0.65f),
-                        itemShape,
-                    )
-                } else {
-                    Modifier
-                },
-            )
             .capturePrimaryModifiers(onPointerModifiersChanged)
             .feedSourceKeyboardContextMenu {
                 onContextClick()
@@ -157,11 +145,13 @@ internal fun DesktopFeedSourceDrawerItem(
             }
             .padding(
                 start = if (feedSource.fetchFailed) {
-                    DesktopDesignTokens.spaceSmall
+                    8.dp
                 } else {
-                    DesktopDesignTokens.spaceSection
+                    28.dp
                 },
-                end = 24.dp,
+                end = 8.dp,
+                top = 4.dp,
+                bottom = 4.dp,
             ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -171,13 +161,18 @@ internal fun DesktopFeedSourceDrawerItem(
             val content = drawerItemVisualStyle.selectedContentColor.takeIf { selected }
                 ?: JewelTheme.globalColors.text.normal
             CompositionLocalProvider(LocalContentColor provides content, content = icon)
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(8.dp))
             Box(Modifier.weight(1f)) {
                 CompositionLocalProvider(LocalContentColor provides content, content = label)
             }
         }
         if (unreadCount > 0) {
-            Text(unreadCount.toString(), modifier = Modifier.padding(start = DesktopDesignTokens.spaceMedium))
+            Text(
+                unreadCount.toString(),
+                modifier = Modifier.padding(start = DesktopDesignTokens.spaceMedium),
+                style = DesktopDesignTokens.metadataText,
+                color = JewelTheme.globalColors.text.info,
+            )
         }
     }
     DesktopPopupMenu(
@@ -205,13 +200,14 @@ internal fun DesktopFeedSourceDrawerItem(
 private fun feedSourceBackground(
     selected: Boolean,
     multiSelected: Boolean,
-    hovered: Boolean,
+    highlighted: Boolean,
     selectedColor: Color,
-    highlight: Color,
+    multiSelectedColor: Color,
+    highlightColor: Color,
 ): Color = when {
     selected -> selectedColor
-    multiSelected -> highlight.copy(alpha = 0.16f)
-    hovered -> highlight.copy(alpha = 0.08f)
+    multiSelected -> multiSelectedColor
+    highlighted -> highlightColor
     else -> Color.Transparent
 }
 

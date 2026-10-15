@@ -79,8 +79,30 @@ class ArticleLayoutTest(
             "Date contrast was ${contrastRatio(dateColor, panelBackground)} for $layout/$themeMode",
         )
 
+        listOf(LONG_TITLE, DESCRIPTION).forEach { text ->
+            val contrast = contrastRatio(textColor(text), panelBackground)
+            assertTrue(contrast >= MIN_METADATA_CONTRAST, "Read text contrast was $contrast for $layout/$themeMode")
+        }
+
         rule.runOnIdle { settings.value = settings.value.copy(isHideFeedSourceEnabled = true) }
         rule.onNodeWithText(SOURCE_NAME).assertDoesNotExist()
+    }
+
+    @Test
+    fun `read titles recede clearly from unread ones`() {
+        var panelBackground = Color.Transparent
+        val item = mutableStateOf(article)
+        setRow(item = item, layout = layout, themeMode = themeMode, onPanelBackground = { panelBackground = it })
+        val unread = contrastRatio(textColor(LONG_TITLE), panelBackground)
+
+        rule.runOnIdle { item.value = article.copy(isRead = true) }
+        rule.waitForIdle()
+        val read = contrastRatio(textColor(LONG_TITLE), panelBackground)
+
+        assertTrue(
+            read <= unread * MAX_READ_TO_UNREAD_CONTRAST,
+            "Read title contrast $read is too close to unread $unread for $layout/$themeMode",
+        )
     }
 
     @Test
@@ -121,6 +143,15 @@ class ArticleLayoutTest(
         displaySettings: State<FeedItemDisplaySettings> = mutableStateOf(FeedItemDisplaySettings()),
         onFeedItemClick: (FeedItemUrlInfo) -> Unit = {},
         onPanelBackground: (Color) -> Unit = {},
+    ) = setRow(mutableStateOf(item), layout, themeMode, displaySettings, onFeedItemClick, onPanelBackground)
+
+    private fun setRow(
+        item: State<FeedItem>,
+        layout: FeedLayout,
+        themeMode: ThemeMode,
+        displaySettings: State<FeedItemDisplaySettings> = mutableStateOf(FeedItemDisplaySettings()),
+        onFeedItemClick: (FeedItemUrlInfo) -> Unit = {},
+        onPanelBackground: (Color) -> Unit = {},
     ) {
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
@@ -131,7 +162,7 @@ class ArticleLayoutTest(
                     onPanelBackground(JewelTheme.globalColors.panelBackground)
                     Box(Modifier.width(ROW_WIDTH).testTag(PARENT_TAG)) {
                         ArticleRow(
-                            feedItem = item,
+                            feedItem = item.value,
                             feedFontSize = FeedFontSizes(),
                             shareMenuLabel = EnFeedFlowStrings.menuCopyLink,
                             shareCommentsMenuLabel = EnFeedFlowStrings.menuCopyLinkComments,
@@ -168,11 +199,13 @@ class ArticleLayoutTest(
 
     private fun textColor(text: String): Color {
         var result: androidx.compose.ui.text.TextLayoutResult? = null
-        rule.onNodeWithText(text).performSemanticsAction(SemanticsActions.GetTextLayoutResult) { action ->
-            val layouts = mutableListOf<androidx.compose.ui.text.TextLayoutResult>()
-            action(layouts)
-            result = layouts.single()
-        }
+        // The row merges its texts for accessibility; read the exact text node, not the merged row.
+        rule.onNodeWithText(text, useUnmergedTree = true)
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { action ->
+                val layouts = mutableListOf<androidx.compose.ui.text.TextLayoutResult>()
+                action(layouts)
+                result = layouts.single()
+            }
         return requireNotNull(result).layoutInput.style.color
     }
 
@@ -194,6 +227,11 @@ class ArticleLayoutTest(
         private const val LUMINANCE_OFFSET = 0.05
         private const val MIN_METADATA_CONTRAST = 4.5
 
+        // A read title must have at most 60% of the unread title's contrast, so the two are easy to tell apart.
+        private const val MAX_READ_TO_UNREAD_CONTRAST = 0.6
+        private const val DESCRIPTION =
+            "A detailed description that also needs to remain within the measured row width."
+
         @JvmStatic
         @Parameterized.Parameters(name = "{0}/{1}")
         fun parameters(): List<Array<Any>> = FeedLayout.entries.flatMap { layout ->
@@ -204,7 +242,7 @@ class ArticleLayoutTest(
             id = "layout-test",
             url = "https://example.com/article",
             title = LONG_TITLE,
-            subtitle = "A detailed description that also needs to remain within the measured row width.",
+            subtitle = DESCRIPTION,
             content = null,
             imageUrl = null,
             feedSource = FeedSource(

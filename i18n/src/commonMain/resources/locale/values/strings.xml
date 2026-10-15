@@ -24,6 +24,7 @@
     <string name="feeds_import_done_message">Import done</string>
     <string name="feeds_export_done_message">Export done</string>
     <string name="settings_title">Settings</string>
+    <string name="settings_filters">Filters</string>
     <string name="browser_selection_button">Browser</string>
     <string name="import_feed_button">Import feed from OPML</string>
     <string name="export_feeds_button">Export feeds to OPML</string>
@@ -178,6 +179,8 @@
     <string name="desktop_accounts_single_provider_explanation">FeedFlow supports one sync account at a time. Disconnect your current account to connect a different service.</string>
     <string name="desktop_accounts_overview_description">Select a service to view its connection options. Selecting a service does not connect it.</string>
     <string name="desktop_accounts_services_title">Services</string>
+    <string name="desktop_accounts_reader_services_title">Reader services</string>
+    <string name="desktop_accounts_backup_services_title">Backup services</string>
     <string name="desktop_accounts_manage_button">Manage account</string>
     <string name="desktop_accounts_back_to_services">Back to services</string>
     <string name="desktop_accounts_choose_service">Choose a service to view its connection details.</string>
@@ -398,6 +401,13 @@
     <string name="file_menu">File</string>
     <string name="exit_menu">Exit</string>
     <string name="menu_view">View</string>
+    <string name="menu_article">Article</string>
+    <string name="menu_window">Window</string>
+    <string name="menu_minimize">Minimize</string>
+    <string name="menu_zoom">Zoom</string>
+    <string name="menu_toggle_sidebar">Toggle sidebar</string>
+    <string name="desktop_new_category_menu">New category…</string>
+    <string name="desktop_settings_preview_title">Preview</string>
     <string name="settings_left_swipe_action">Left swipe</string>
     <string name="settings_right_swipe_action">Right swipe</string>
     <string name="settings_swipe_action_toggle_read">Toggle read</string>

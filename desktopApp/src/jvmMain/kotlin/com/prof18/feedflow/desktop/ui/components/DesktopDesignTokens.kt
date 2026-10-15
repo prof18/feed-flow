@@ -27,6 +27,8 @@ internal object DesktopDesignTokens {
     val iconActionMinSize = 32.dp
     val iconActionLargeSize = 36.dp
     val toolbarMinHeight = 56.dp
+    val buttonCornerSize = 8.dp
+    val selectionCornerSize = 12.dp
 
     private fun plexFont(weight: FontWeight) = Font(
         resource = "fonts/IBMPlexSans.ttf",

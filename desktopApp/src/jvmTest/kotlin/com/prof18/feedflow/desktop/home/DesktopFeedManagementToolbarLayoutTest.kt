@@ -74,21 +74,14 @@ class DesktopFeedManagementToolbarLayoutTest {
                             onClear = { actions += "clear" },
                             onMove = { actions += "move" },
                             onDelete = { actions += "delete" },
-                            onExpandAll = { actions += "expand" },
-                            onCollapseAll = { actions += "collapse" },
                         )
                     }
                 }
             }
         }
 
-        listOf(
-            LongEnglishFeedFlowStrings.desktopExpandAllFeeds to "expand",
-            LongEnglishFeedFlowStrings.desktopCollapseAllFeeds to "collapse",
-        ).forEach { (label, callback) ->
-            rule.onNodeWithText(label).assertIsDisplayed().assertIsEnabled().performClick()
-            assertEquals(callback, actions.last())
-        }
+        rule.onNodeWithText(LongEnglishFeedFlowStrings.desktopExpandAllFeeds).assertDoesNotExist()
+        rule.onNodeWithText(LongEnglishFeedFlowStrings.desktopCollapseAllFeeds).assertDoesNotExist()
         listOf(
             LongEnglishFeedFlowStrings.desktopClearFeedSelection,
             LongEnglishFeedFlowStrings.desktopMoveSelectedFeeds,
@@ -121,40 +114,23 @@ class DesktopFeedManagementToolbarLayoutTest {
         }
 
         val keyboardActions = listOf(
-            LongEnglishFeedFlowStrings.desktopExpandAllFeeds to "expand",
-            LongEnglishFeedFlowStrings.desktopCollapseAllFeeds to "collapse",
             LongEnglishFeedFlowStrings.desktopClearFeedSelection to "clear",
             LongEnglishFeedFlowStrings.desktopMoveSelectedFeeds to "move",
             LongEnglishFeedFlowStrings.desktopDeleteSelectedFeeds to "delete",
         )
         rule.runOnIdle { actions.clear() }
-        val expand = rule.onNodeWithText(keyboardActions.first().first)
-        expand.requestFocus()
+        val first = rule.onNodeWithText(keyboardActions.first().first)
+        first.requestFocus()
         keyboardActions.forEach { (label, _) ->
             val action = rule.onNodeWithText(label)
             action.assertIsDisplayed().assertIsFocused().performKeyInput { pressKey(Key.Enter) }
             action.performKeyInput { pressKey(Key.Tab) }
         }
-        expand.assertIsFocused()
+        first.assertIsFocused()
         rule.runOnIdle { assertEquals(keyboardActions.map { it.second }, actions) }
 
-        rule.runOnIdle {
-            selectedCount.intValue = 0
-            actions.clear()
-        }
-        expand.performKeyInput { pressKey(Key.Tab) }
-        val collapse = rule.onNodeWithText(LongEnglishFeedFlowStrings.desktopCollapseAllFeeds)
-        collapse.assertIsFocused().performKeyInput { pressKey(Key.Spacebar) }
-        collapse.performKeyInput { pressKey(Key.Tab) }
-        expand.assertIsFocused().performKeyInput { pressKey(Key.Spacebar) }
-        expand.performKeyInput {
-            keyDown(Key.ShiftLeft)
-            pressKey(Key.Tab)
-            keyUp(Key.ShiftLeft)
-        }
-        collapse.assertIsFocused()
-        keyboardActions.drop(2).forEach { (label, _) -> rule.onNodeWithText(label).assertIsNotEnabled() }
-        rule.runOnIdle { assertEquals(listOf("collapse", "expand"), actions) }
+        rule.runOnIdle { selectedCount.intValue = 0 }
+        keyboardActions.forEach { (label, _) -> rule.onNodeWithText(label).assertIsNotEnabled() }
     }
 
     private fun assertActionLabelsFit(
@@ -164,8 +140,6 @@ class DesktopFeedManagementToolbarLayoutTest {
     ) {
         val contentBounds = rule.onNodeWithTag(CONTENT_TAG).fetchSemanticsNode().boundsInRoot
         listOf(
-            LongEnglishFeedFlowStrings.desktopExpandAllFeeds,
-            LongEnglishFeedFlowStrings.desktopCollapseAllFeeds,
             LongEnglishFeedFlowStrings.desktopClearFeedSelection,
             LongEnglishFeedFlowStrings.desktopMoveSelectedFeeds,
             LongEnglishFeedFlowStrings.desktopDeleteSelectedFeeds,

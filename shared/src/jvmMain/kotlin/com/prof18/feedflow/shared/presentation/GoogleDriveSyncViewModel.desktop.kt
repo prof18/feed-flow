@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.GoogleDriveSynMessages
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceJvm
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveException
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
@@ -69,7 +70,17 @@ class GoogleDriveSyncViewModel internal constructor(
                 AccountConnectionUiState.Linked(syncState = getSyncState())
             }
         } else {
+            if (googleDriveSettings.isGoogleDriveLinked()) clearStaleLink()
             googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
+        }
+    }
+
+    // Marked as linked without a usable stored credential: drop the link so the app stops reporting a
+    // connection that cannot sync, and the user can connect again.
+    private fun clearStaleLink() {
+        googleDriveSettings.clearAll()
+        if (accountsRepository.currentAccountState.value == SyncAccounts.GOOGLE_DRIVE) {
+            viewModelScope.launch { accountsRepository.clearAccount() }
         }
     }
 

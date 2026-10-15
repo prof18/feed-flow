@@ -24,8 +24,13 @@ internal fun MenuBarScope.FeedMenu(
                 KeyShortcut(Key.N, ctrl = true)
             },
         )
+        Item(
+            text = LocalFeedFlowStrings.current.feedSuggestionsTitle,
+            onClick = callbacks.onFeedSuggestionsClick,
+        )
 
         if (state.feedFilter is FeedFilter.Source) {
+            Separator()
             Item(
                 text = LocalFeedFlowStrings.current.openFeedSettings,
                 onClick = { callbacks.onEditFeed(state.feedFilter.feedSource) },
@@ -35,18 +40,12 @@ internal fun MenuBarScope.FeedMenu(
                     KeyShortcut(Key.E, ctrl = true)
                 },
             )
-            Separator()
         }
-
-        Item(
-            text = LocalFeedFlowStrings.current.settingsBlockedWords,
-            onClick = callbacks.onBlockedWordsClick,
-        )
     }
 }
 
 internal data class FeedMenuCallbacks(
     val onAddFeed: () -> Unit,
     val onEditFeed: (FeedSource) -> Unit,
-    val onBlockedWordsClick: () -> Unit,
+    val onFeedSuggestionsClick: () -> Unit,
 )

@@ -32,8 +32,9 @@ import androidx.compose.ui.res.useResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.composeunstyled.rememberScrollbarState
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
@@ -41,7 +42,6 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
-import com.prof18.feedflow.desktop.ui.components.Dialog
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import kotlinx.coroutines.withContext
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -63,13 +63,7 @@ fun LicensesScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier) {
             }
         }
     }
-    Dialog(
-        title = LocalFeedFlowStrings.current.openSourceNavBar,
-        size = DpSize(720.dp, 680.dp),
-        onCloseRequest = onBackClick,
-    ) {
-        LicensesContent(report?.getOrNull(), onBackClick, modifier, loadFailed = report?.isFailure == true)
-    }
+    LicensesContent(report?.getOrNull(), onBackClick, modifier, loadFailed = report?.isFailure == true)
 }
 
 @Composable
@@ -86,6 +80,7 @@ internal fun LicensesContent(
     var details by remember { mutableStateOf<Library?>(null) }
     var selectedId by remember { mutableStateOf<String?>(null) }
     var selectedFocus by remember { mutableStateOf<FocusRequester?>(null) }
+    val focusRequesters = remember { mutableMapOf<String, FocusRequester>() }
     val actionHeight = with(LocalDensity.current) { JewelTheme.defaultTextStyle.lineHeight.toDp() } + 16.dp
     LaunchedEffect(details) {
         if (details == null) selectedFocus?.requestFocus()
@@ -94,66 +89,77 @@ internal fun LicensesContent(
         modifier = modifier.fillMaxSize().padding(DesktopDesignTokens.spacePanel),
         verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection),
     ) {
-        Box(Modifier.fillMaxWidth().weight(1f)) {
-            if (libraries == null && !loadFailed) {
-                CircularProgressIndicator()
-            } else if (libraries == null || libraries.libraries.isEmpty()) {
-                Text(strings.readerModeNoContentTitle)
-            } else {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize().padding(end = DesktopDesignTokens.spaceSection)
-                        .testTag(DesktopLicensesE2eIds.LIST),
-                ) {
-                    itemsIndexed(libraries.libraries, key = { _, library -> library.uniqueId }) { index, library ->
-                        val focus = remember { FocusRequester() }
-                        LaunchedEffect(Unit) {
-                            if (index == 0 && !initialFocusGiven) {
-                                focus.requestFocus()
-                                initialFocusGiven = true
+        if (details == null) {
+            Text(
+                strings.openSourceNavBar,
+                style = JewelTheme.defaultTextStyle.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 22.sp,
+                    lineHeight = 28.sp,
+                ),
+            )
+            Box(Modifier.fillMaxWidth().weight(1f)) {
+                if (libraries == null && !loadFailed) {
+                    CircularProgressIndicator()
+                } else if (libraries == null || libraries.libraries.isEmpty()) {
+                    Text(strings.readerModeNoContentTitle)
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize().padding(end = DesktopDesignTokens.spaceSection)
+                            .testTag(DesktopLicensesE2eIds.LIST),
+                    ) {
+                        itemsIndexed(libraries.libraries, key = { _, library -> library.uniqueId }) { index, library ->
+                            val focus = focusRequesters.getOrPut(library.uniqueId) { FocusRequester() }
+                            LaunchedEffect(Unit) {
+                                if (index == 0 && !initialFocusGiven) {
+                                    focus.requestFocus()
+                                    initialFocusGiven = true
+                                }
+                            }
+                            val label = listOfNotNull(library.name, library.artifactVersion).joinToString(" · ")
+                            val accessibleLabel = "$label\n${library.uniqueId}"
+                            Tooltip(tooltip = { Text(accessibleLabel) }) {
+                                SimpleListItem(
+                                    text = label,
+                                    state = ListItemState(isSelected = selectedId == library.uniqueId, isActive = true),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .focusRequester(focus)
+                                        .testTag(DesktopLicensesE2eIds.row(library.uniqueId))
+                                        .semantics {
+                                            selected = selectedId == library.uniqueId
+                                            contentDescription = accessibleLabel
+                                        }
+                                        .clickable {
+                                            selectedId = library.uniqueId
+                                            selectedFocus = focus
+                                            details = library
+                                        },
+                                    height = actionHeight,
+                                )
                             }
                         }
-                        val label = listOfNotNull(library.name, library.artifactVersion).joinToString(" · ")
-                        val accessibleLabel = "$label\n${library.uniqueId}"
-                        Tooltip(tooltip = { Text(accessibleLabel) }) {
-                            SimpleListItem(
-                                text = label,
-                                state = ListItemState(isSelected = selectedId == library.uniqueId, isActive = true),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .focusRequester(focus)
-                                    .testTag(DesktopLicensesE2eIds.row(library.uniqueId))
-                                    .semantics {
-                                        selected = selectedId == library.uniqueId
-                                        contentDescription = accessibleLabel
-                                    }
-                                    .clickable {
-                                        selectedId = library.uniqueId
-                                        selectedFocus = focus
-                                        details = library
-                                    },
-                                height = actionHeight,
-                            )
-                        }
+                    }
+                    if (listState.canScrollForward || listState.canScrollBackward) {
+                        FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
                     }
                 }
-                FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
             }
-        }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            DefaultButton(
-                onClick = onBack,
-                modifier = Modifier.heightIn(min = actionHeight).testTag(DesktopLicensesE2eIds.LIST_DONE),
-            ) {
-                Text(strings.actionDone)
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                DefaultButton(
+                    onClick = onBack,
+                    modifier = Modifier.heightIn(min = actionHeight).testTag(DesktopLicensesE2eIds.LIST_DONE),
+                ) {
+                    Text(strings.actionDone)
+                }
             }
-        }
-        details?.let { library ->
-            Dialog(
-                title = library.name,
-                size = DpSize(760.dp, 680.dp),
-                onCloseRequest = { details = null },
-            ) { LicenseDetails(library, onClose = { details = null }) }
+        } else {
+            LicenseDetails(
+                library = requireNotNull(details),
+                onClose = { details = null },
+                modifier = Modifier.testTag(DesktopLicensesE2eIds.DETAILS),
+            )
         }
     }
 }
@@ -198,13 +204,14 @@ internal fun LicenseDetails(library: Library, onClose: () -> Unit, modifier: Mod
                 onClick = onClose,
                 modifier = Modifier.heightIn(min = actionHeight).focusRequester(closeFocus)
                     .testTag(DesktopLicensesE2eIds.DETAILS_DONE),
-            ) { Text(strings.actionDone) }
+            ) { Text(strings.desktopSearchBackButton) }
         }
     }
 }
 
 internal object DesktopLicensesE2eIds {
     const val LIST = "desktop_licenses_list"
+    const val DETAILS = "desktop_license_details"
     const val LIST_DONE = "desktop_licenses_done"
     const val DETAILS_DONE = "desktop_license_details_done"
     const val ARTIFACT_ID = "desktop_license_artifact_id"

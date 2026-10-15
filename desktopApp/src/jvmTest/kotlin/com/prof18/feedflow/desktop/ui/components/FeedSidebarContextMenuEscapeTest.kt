@@ -8,14 +8,15 @@ package com.prof18.feedflow.desktop.ui.components
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.text.input.TextFieldValue
 import com.prof18.feedflow.core.model.CategoryId
@@ -31,9 +32,6 @@ import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.desktop.addfeed.AddFeedWindow
 import com.prof18.feedflow.desktop.editfeed.EditFeedWindow
-import com.prof18.feedflow.desktop.main.DesktopDialogWindowDestination
-import com.prof18.feedflow.desktop.main.DesktopDialogWindowNavigator
-import com.prof18.feedflow.desktop.main.LocalDesktopDialogWindowNavigator
 import com.prof18.feedflow.desktop.testing.DesktopLibraryFixture
 import com.prof18.feedflow.desktop.ui.FeedManagementActions
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -49,7 +47,6 @@ import java.awt.Component
 import java.awt.Container
 import java.awt.Dialog
 import java.awt.Window
-import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import java.awt.event.WindowEvent
 import javax.swing.SwingUtilities
@@ -146,117 +143,60 @@ class FeedSidebarContextMenuEscapeTest {
     }
 
     @Test
-    fun `Escape closes actual feed management window and leaves home visible`() {
-        val navigator = DesktopDialogWindowNavigator()
-        var feedFilterSelected = false
-        val displayState = emptyHomeDisplayState()
-        val managementActions = emptyManagementActions { feedFilterSelected = true }
-
-        rule.setContent {
-            CompositionLocalProvider(
-                LocalDesktopDialogWindowNavigator provides navigator,
-                LocalFeedFlowStrings provides EnFeedFlowStrings,
-            ) {
-                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
-                    Text("Home remains open", Modifier.testTag(HOME_TAG))
-                    FeedManagementDialog(
-                        displayState = displayState,
-                        feedManagementActions = managementActions,
-                        onFeedSuggestionsClick = {},
-                        onImportExportClick = {},
-                    )
-                }
-            }
-        }
-
-        rule.runOnIdle { navigator.open(DesktopDialogWindowDestination.FeedSources) }
-        rule.waitUntilExactlyOneExists(
-            hasContentDescription(EnFeedFlowStrings.addFeed),
-            timeoutMillis = WINDOW_RENDER_TIMEOUT_MS,
-        )
-        assertTrue(navigator.isOpen(DesktopDialogWindowDestination.FeedSources))
-
-        rule.onNodeWithContentDescription(EnFeedFlowStrings.addFeed)
-            .requestFocus()
-        SwingUtilities.invokeAndWait {
-            val window = Window.getWindows().filterIsInstance<Dialog>().single {
-                it.isVisible && it.title == EnFeedFlowStrings.drawerTitleFeedSources
-            }
-            val input = descendants(window).single { component ->
-                component.keyListeners.any { it.javaClass.name.contains("ComposeSceneMediator") }
-            }
-            val escape = KeyEvent(input, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_ESCAPE)
-            // Exercise the actual AWT input listener; scene injection bypasses window preview handlers.
-            input.keyListeners.forEach { it.keyPressed(escape) }
-            assertTrue(escape.isConsumed)
-        }
-        rule.waitUntil(timeoutMillis = WINDOW_RENDER_TIMEOUT_MS) {
-            !navigator.isOpen(DesktopDialogWindowDestination.FeedSources)
-        }
-        rule.waitForIdle()
-
-        assertFalse(navigator.isOpen(DesktopDialogWindowDestination.FeedSources))
-        assertFalse(feedFilterSelected)
-        rule.onNodeWithTag(HOME_TAG).assertIsDisplayed()
-    }
-
-    @Test
-    fun `Escape dismisses a source menu before closing native management`() {
-        val navigator = DesktopDialogWindowNavigator()
+    fun `Escape dismisses a source context menu and preserves the mounted sidebar`() {
         val source = DesktopLibraryFixture.load().sources.first()
+        var selectedFilter: FeedFilter? = null
+        var feedMutations = 0
         val displayState = emptyHomeDisplayState().copy(
             navDrawerState = NavDrawerState(feedSourcesWithoutCategory = persistentListOf(source)),
         )
+        val managementActions = emptyManagementActions { selectedFilter = it }.copy(
+            onEditFeedClick = { _ -> feedMutations++ },
+            onDeleteFeedSourceClick = { _ -> feedMutations++ },
+            onPinFeedClick = { _ -> feedMutations++ },
+        )
+
         rule.setContent {
             CompositionLocalProvider(
-                LocalDesktopDialogWindowNavigator provides navigator,
                 LocalFeedFlowStrings provides EnFeedFlowStrings,
             ) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
-                    Text("Home remains open", Modifier.testTag(HOME_TAG))
-                    FeedManagementDialog(
+                    Text("Canonical sidebar", Modifier.testTag(HOME_TAG))
+                    FeedSidebar(
                         displayState = displayState,
-                        feedManagementActions = emptyManagementActions {},
-                        onFeedSuggestionsClick = {},
-                        onImportExportClick = {},
+                        feedManagementActions = managementActions,
+                        onFeedFilterSelected = { selectedFilter = it },
                     )
                 }
             }
         }
-        rule.runOnIdle { navigator.open(DesktopDialogWindowDestination.FeedSources) }
+
         rule.waitUntilExactlyOneExists(
             hasText(source.feedSource.title),
             timeoutMillis = WINDOW_RENDER_TIMEOUT_MS,
         )
-        rule.onNodeWithText(source.feedSource.title).requestFocus()
-        sendNativeManagementKey(KeyEvent.VK_F10, InputEvent.SHIFT_DOWN_MASK)
+        val row = rule.onNodeWithText(source.feedSource.title)
+        row.requestFocus()
+        row.performKeyInput {
+            keyDown(Key.ShiftLeft)
+            pressKey(Key.F10)
+            keyUp(Key.ShiftLeft)
+        }
         rule.waitUntilExactlyOneExists(
             hasText(EnFeedFlowStrings.openFeedSettings),
             timeoutMillis = WINDOW_RENDER_TIMEOUT_MS,
         )
-        sendNativeManagementKey(KeyEvent.VK_ESCAPE)
+        row.performKeyInput { pressKey(Key.Escape) }
         rule.waitUntilDoesNotExist(
             hasText(EnFeedFlowStrings.openFeedSettings),
             timeoutMillis = WINDOW_RENDER_TIMEOUT_MS,
         )
-        assertTrue(navigator.isOpen(DesktopDialogWindowDestination.FeedSources))
-        rule.onNodeWithText(EnFeedFlowStrings.openFeedSettings).assertDoesNotExist()
-        sendNativeManagementKey(KeyEvent.VK_ESCAPE)
-        rule.waitForIdle()
-        assertFalse(navigator.isOpen(DesktopDialogWindowDestination.FeedSources))
-    }
 
-    private fun sendNativeManagementKey(keyCode: Int, modifiers: Int = 0) {
-        SwingUtilities.invokeAndWait {
-            val window = Window.getWindows().filterIsInstance<Dialog>().single {
-                it.isVisible && it.title == EnFeedFlowStrings.drawerTitleFeedSources
-            }
-            val input = descendants(window).single { component ->
-                component.keyListeners.any { it.javaClass.name.contains("ComposeSceneMediator") }
-            }
-            val event = KeyEvent(input, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), modifiers, keyCode)
-            input.keyListeners.forEach { it.keyPressed(event) }
-        }
+        assertEquals(null, selectedFilter)
+        assertEquals(0, feedMutations)
+        rule.onNodeWithText(source.feedSource.title).assertIsDisplayed()
+        rule.onNodeWithTag(HOME_TAG).assertIsDisplayed()
+        assertFalse(Window.getWindows().filterIsInstance<Dialog>().any { it.isVisible })
     }
 
     private fun descendants(component: Component): Sequence<Component> = sequence {
@@ -289,7 +229,6 @@ class FeedSidebarContextMenuEscapeTest {
         onEditCategoryClick = { _: CategoryId, _: CategoryName -> },
         validateCategoryName = { _: CategoryId?, _: CategoryName -> CategoryNameValidationResult.VALID },
         onDeleteCategoryClick = {},
-        onChangeFeedCategoryClick = {},
         onOpenWebsite = {},
     )
 

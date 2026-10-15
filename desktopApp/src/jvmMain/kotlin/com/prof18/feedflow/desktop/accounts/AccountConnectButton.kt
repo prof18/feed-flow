@@ -1,10 +1,7 @@
 package com.prof18.feedflow.desktop.accounts
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -12,7 +9,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.error
@@ -21,7 +17,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.desktop.testing.AccountE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
-import org.jetbrains.jewel.ui.component.CircularProgressIndicator
+import com.prof18.feedflow.desktop.ui.components.ProgressButtonLabel
 import org.jetbrains.jewel.ui.component.DefaultButton
 import org.jetbrains.jewel.ui.component.Text
 
@@ -78,15 +74,7 @@ internal fun AccountConnectButton(
                 },
             enabled = !isBusy,
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(label)
-                Box(Modifier.size(16.dp), contentAlignment = Alignment.Center) {
-                    if (isBusy) CircularProgressIndicator(Modifier.size(12.dp))
-                }
-            }
+            ProgressButtonLabel(label, isBusy)
         }
         errorMessage?.let { message -> Text(message, Modifier.semantics { error(message) }) }
     }

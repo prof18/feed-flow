@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -17,6 +18,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,7 +49,9 @@ import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
@@ -65,6 +70,7 @@ import com.prof18.feedflow.shared.presentation.model.SearchRequestState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.CircularProgressIndicator
+import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.RadioButtonRow
 import org.jetbrains.jewel.ui.component.Text
@@ -122,9 +128,23 @@ internal fun DesktopSearchScreenContent(
             SearchControls(searchQuery, updateSearchQuery, navigateBack, queryFocusRequester)
             SearchFilters(searchFilter, currentFeedFilter, onSearchFilterSelected)
             when (searchRequestState) {
-                SearchRequestState.Idle -> Column(modifier = Modifier.padding(16.dp)) {
-                    Text(strings.searchHintTitle)
-                    Text(strings.searchHintSubtitle)
+                SearchRequestState.Idle -> Column(
+                    modifier = Modifier.fillMaxWidth().padding(top = 72.dp, start = 24.dp, end = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Icon(
+                        Icons.Outlined.Search,
+                        contentDescription = null,
+                        tint = JewelTheme.globalColors.text.info,
+                        modifier = Modifier.padding(bottom = 6.dp).size(32.dp),
+                    )
+                    Text(strings.searchHintTitle, fontWeight = FontWeight.Medium)
+                    Text(
+                        strings.searchHintSubtitle,
+                        color = JewelTheme.globalColors.text.info,
+                        textAlign = TextAlign.Center,
+                    )
                 }
                 is SearchRequestState.Loading -> Row(
                     modifier = Modifier.padding(16.dp).testTag("search-loading").semantics {
@@ -229,14 +249,19 @@ private fun SearchControls(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        OutlinedButton(onClick = navigateBack, modifier = Modifier.heightIn(min = actionHeight)) {
-            Text(strings.desktopSearchBackButton)
-        }
         TextField(
             state = fieldState,
             modifier = Modifier.weight(1f).heightIn(min = actionHeight)
                 .testTag("search-query").focusRequester(focusRequester),
             placeholder = { Text(strings.searchPlaceholder) },
+            leadingIcon = {
+                Icon(
+                    Icons.Outlined.Search,
+                    contentDescription = null,
+                    tint = JewelTheme.globalColors.text.info,
+                    modifier = Modifier.padding(end = 6.dp).size(16.dp),
+                )
+            },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             onKeyboardAction = KeyboardActionHandler { focusManager.clearFocus() },
         )
@@ -249,6 +274,9 @@ private fun SearchControls(
                 },
                 modifier = Modifier.heightIn(min = actionHeight).testTag("search-clear"),
             ) { Text(strings.desktopSearchClearButton) }
+        }
+        OutlinedButton(onClick = navigateBack, modifier = Modifier.heightIn(min = actionHeight)) {
+            Text(strings.desktopSearchBackButton)
         }
     }
 }

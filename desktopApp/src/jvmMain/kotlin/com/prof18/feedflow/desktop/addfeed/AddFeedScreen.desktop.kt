@@ -12,8 +12,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.feedforms.AddFeedForm
+import com.prof18.feedflow.desktop.feedforms.FeedCategoryActions
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -24,14 +24,14 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun AddFeedScreen(onCloseRequest: () -> Unit, onFeedAdded: () -> Unit) {
-    AddFeedWindow(onCloseRequest) { AddFeedScreenContent(onFeedAdded) }
+    AddFeedWindow(onCloseRequest) { AddFeedScreenContent(onFeedAdded, onCancel = onCloseRequest) }
 }
 
 @Composable
 internal fun AddFeedWindow(onCloseRequest: () -> Unit, content: @Composable () -> Unit) {
     Dialog(
         title = LocalFeedFlowStrings.current.addFeed,
-        size = DpSize(520.dp, 500.dp),
+        size = DpSize(520.dp, 330.dp),
         onCloseRequest = onCloseRequest,
     ) { content() }
 }
@@ -41,6 +41,7 @@ fun AddFeedScreenContent(
     onFeedAdded: () -> Unit,
     modifier: Modifier = Modifier,
     topAppBar: @Composable () -> Unit = {},
+    onCancel: (() -> Unit)? = null,
 ) {
     var feedUrl by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
@@ -48,7 +49,6 @@ fun AddFeedScreenContent(
     var completionRevision by remember { mutableIntStateOf(0) }
     var errorMessage by remember { mutableStateOf("") }
     var canForceAdd by remember { mutableStateOf(false) }
-    var showCategoryDialog by remember { mutableStateOf(false) }
     val viewModel = koinViewModel<AddFeedViewModel>()
     val latestOnFeedAdded by rememberUpdatedState(onFeedAdded)
     val snackbarHostState = remember { DesktopFeedbackState() }
@@ -118,7 +118,12 @@ fun AddFeedScreenContent(
             viewModel.updateFeedUrlTextFieldValue(it)
         },
         onAddFeed = viewModel::addFeed,
-        onCategorySelectorClick = { showCategoryDialog = true },
+        categoryActions = FeedCategoryActions(
+            onSelect = viewModel::onCategorySelected,
+            onAdd = viewModel::addNewCategory,
+            validate = viewModel::validateCategoryName,
+        ),
+        onCancel = onCancel,
         onNotificationToggleChanged = viewModel::updateNotificationStatus,
         onForceAddFeed = viewModel::forceAddFeed,
         modifier = modifier,
@@ -128,15 +133,4 @@ fun AddFeedScreenContent(
         topAppBar = topAppBar,
         snackbarHostState = snackbarHostState,
     )
-    if (showCategoryDialog) {
-        EditCategoryDialog(
-            categoryState = categories,
-            onCategorySelected = viewModel::onCategorySelected,
-            onAddCategory = viewModel::addNewCategory,
-            onDeleteCategory = { viewModel.deleteCategory(it.value) },
-            onEditCategory = viewModel::editCategory,
-            validateCategoryName = viewModel::validateCategoryName,
-            onDismiss = { showCategoryDialog = false },
-        )
-    }
 }

@@ -368,9 +368,9 @@
     <string name="settings_notifications_warning_reliability">Notificările sunt verificate pe dispozitivul tău, însă livrarea acestora depinde de activitatea în fundal permisă de sistem și de modul de utilizare al aplicației, aspecte pe care FeedFlow nu le poate controla.</string>
     <string name="marking_all_read_dialog_title">Marcarea tuturor ca citite...</string>
     <string name="date_format_title">Formatul datei</string>
-    <string name="date_format_normal">Zi.Lună</string>
-    <string name="date_format_american">Lună.Zi</string>
-    <string name="date_format_iso">An.Lună.Zi</string>
+    <string name="date_format_normal">Zi/Lună</string>
+    <string name="date_format_american">Lună/Zi</string>
+    <string name="date_format_iso">An-Lună-Zi</string>
     <string name="time_format_title">Formatul timpului</string>
     <string name="time_format_hours_24">24 ore</string>
     <string name="time_format_hours_12">12 ore</string>
@@ -462,4 +462,8 @@
     <string name="reader_mode_tts_stop">Nu mai asculta</string>
     <string name="reader_mode_tts_error">Nu se poate citi acest articol cu voce tare. Încearcă din nou.</string>
     <string name="reader_mode_tts_preparing">Se pregătește materialul audio al articolului…</string>
+    <string name="hide_youtube_shorts">Ascunde videoclipurile scurte</string>
+    <string name="hide_youtube_shorts_description">Vor fi incluse doar videoclipurile obișnuite de pe acest canal. Videoclipurile scurte și transmisiunile live sunt excluse.</string>
+    <string name="hide_youtube_shorts_fallback">Pentru acest canal nu a fost posibilă ascunderea videoclipurilor scurte, așa că s-a adăugat în schimb fluxul complet.</string>
+    <string name="date_format_day_month_dot">Zi.Lună</string>
 </resources>

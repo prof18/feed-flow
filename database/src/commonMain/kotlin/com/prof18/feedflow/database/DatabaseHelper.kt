@@ -287,9 +287,23 @@ class DatabaseHelper(
         }
     }
 
-    suspend fun insertFeedItems(feedItems: List<FeedItem>, lastSyncTimestamp: Long) =
+    suspend fun insertFeedItems(
+        feedItems: List<FeedItem>,
+        lastSyncTimestamp: Long,
+        markFirstSyncItemsAsNotified: Boolean = false,
+    ) =
         dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Saving fetched articles") {
             writeFeedItems(feedItems)
+
+            // A source's first sync brings in its back-catalog, which must not be announced as new.
+            if (markFirstSyncItemsAsNotified) {
+                feedItems
+                    .filter { it.feedSource.lastSyncTimestamp == null }
+                    .mapTo(mutableSetOf()) { it.feedSource.id }
+                    .forEach { feedSourceId ->
+                        dbRef.feedItemQueries.markFeedSourceItemsNotified(feedSourceId)
+                    }
+            }
 
             // One update per source instead of one per item: the timestamp is identical for all
             // of them, and this transaction is on the path that gets killed for running long.
@@ -1348,6 +1362,7 @@ class DatabaseHelper(
         isNotificationEnabled: Boolean,
         isHideImagesEnabled: Boolean,
     ) = dbRef.transactionWithContext(backgroundDispatcher) {
+        val wasNotificationEnabled = isNotificationEnabled(feedSourceId)
         dbRef.feedSourcePreferencesQueries.insertPreference(
             feed_source_id = feedSourceId,
             article_open_mode = articleOpenMode,
@@ -1364,6 +1379,9 @@ class DatabaseHelper(
             notificationsEnabled = isNotificationEnabled,
             hideImages = isHideImagesEnabled,
         )
+        if (isNotificationEnabled && !wasNotificationEnabled) {
+            dbRef.feedItemQueries.markFeedSourceItemsNotified(feedSourceId)
+        }
     }
 
     suspend fun deleteCategoriesExcept(categoryIds: List<String>) = dbRef.transactionWithContext(backgroundDispatcher) {
@@ -1419,20 +1437,7 @@ class DatabaseHelper(
 
     suspend fun updateNotificationEnabledStatus(feedSourceId: String, enabled: Boolean) =
         dbRef.transactionWithContext(backgroundDispatcher) {
-            val feedSourcePreference = dbRef.feedSourcePreferencesQueries
-                .getPreference(feedSourceId)
-                .executeAsOneOrNull()
-            if (feedSourcePreference == null) {
-                dbRef.feedSourcePreferencesQueries.insertNotificationEnabledPreference(
-                    feed_source_id = feedSourceId,
-                    notifications_enabled = enabled,
-                )
-            } else {
-                dbRef.feedSourcePreferencesQueries.updateNotificationEnabledStatus(
-                    feedSourceId = feedSourceId,
-                    enabled = enabled,
-                )
-            }
+            setNotificationEnabled(feedSourceId, enabled)
         }
 
     suspend fun updateFeedSourceFetchFailed(feedSourceId: String, fetchFailed: Boolean) =
@@ -1447,22 +1452,37 @@ class DatabaseHelper(
         dbRef.transactionWithContext(backgroundDispatcher) {
             val feedSources = dbRef.feedSourceQueries.selectAllUrlHashes().executeAsList()
             feedSources.forEach { feedSourceId ->
-                val feedSourcePreference = dbRef.feedSourcePreferencesQueries
-                    .getPreference(feedSourceId)
-                    .executeAsOneOrNull()
-                if (feedSourcePreference == null) {
-                    dbRef.feedSourcePreferencesQueries.insertNotificationEnabledPreference(
-                        feed_source_id = feedSourceId,
-                        notifications_enabled = enabled,
-                    )
-                } else {
-                    dbRef.feedSourcePreferencesQueries.updateNotificationEnabledStatus(
-                        feedSourceId = feedSourceId,
-                        enabled = enabled,
-                    )
-                }
+                setNotificationEnabled(feedSourceId, enabled)
             }
         }
+
+    private fun isNotificationEnabled(feedSourceId: String): Boolean =
+        dbRef.feedSourcePreferencesQueries
+            .getPreference(feedSourceId)
+            .executeAsOneOrNull()
+            ?.notifications_enabled == true
+
+    // Must run inside a transaction. Turning notifications on marks the feed's existing articles as
+    // notified, so only articles fetched afterwards are announced.
+    private fun setNotificationEnabled(feedSourceId: String, enabled: Boolean) {
+        val feedSourcePreference = dbRef.feedSourcePreferencesQueries
+            .getPreference(feedSourceId)
+            .executeAsOneOrNull()
+        if (feedSourcePreference == null) {
+            dbRef.feedSourcePreferencesQueries.insertNotificationEnabledPreference(
+                feed_source_id = feedSourceId,
+                notifications_enabled = enabled,
+            )
+        } else {
+            dbRef.feedSourcePreferencesQueries.updateNotificationEnabledStatus(
+                feedSourceId = feedSourceId,
+                enabled = enabled,
+            )
+        }
+        if (enabled && feedSourcePreference?.notifications_enabled != true) {
+            dbRef.feedItemQueries.markFeedSourceItemsNotified(feedSourceId)
+        }
+    }
 
     suspend fun addBlockedWord(word: String) =
         dbRef.transactionWithContext(backgroundDispatcher) {

@@ -574,6 +574,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
             logoUrl = null,
         )
         databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.updateLastSyncTimestamps(listOf(feedSource.id), lastSyncTimestamp = 1)
         databaseHelper.updateNotificationEnabledStatus(feedSource.id, true)
 
         val rssChannel = createRssChannel(
@@ -596,6 +597,36 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         assertEquals(1, sourcesToNotify.size)
         assertEquals(feedSource.id, sourcesToNotify.single().feedSourceId)
     }
+
+    @Test
+    fun `fetchFeeds does not notify the back catalog of a feed synced for the first time`() =
+        runTest(testDispatcher) {
+            setupLocalAccount()
+
+            val feedSource = createFeedSource(
+                id = "source-1",
+                title = "New Feed",
+                websiteUrl = null,
+                logoUrl = null,
+            )
+            databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+            databaseHelper.updateNotificationEnabledStatus(feedSource.id, true)
+            fakeRssParserWrapper.setChannel(
+                feedSource.url,
+                createRssChannel(
+                    title = "New Feed",
+                    link = "https://example.com",
+                    items = listOf(
+                        createRssItem(id = "item-1", title = "Item 1", link = "https://example.com/item-1"),
+                    ),
+                ),
+            )
+
+            feedFetcherRepository.fetchFeeds()
+            advanceUntilIdle()
+
+            assertTrue(feedFetcherRepository.getFeedSourceToNotify().isEmpty())
+        }
 
     @Test
     fun `fetchFeeds respects OpenRSS refresh window`() = runTest(testDispatcher) {

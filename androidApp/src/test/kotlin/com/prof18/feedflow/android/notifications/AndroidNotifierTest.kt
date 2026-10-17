@@ -157,6 +157,30 @@ class AndroidNotifierTest {
     }
 
     @Test
+    fun `partial capacity posts newest articles that fit and overflow absorbs the rest`() = runTest {
+        active = (1..35).map { "old-$it" to 0 }.toSet()
+        send(ArticleNotificationBatch(batch("a", "b", "c", "d", "e", "f").articles, listOf("r")))
+        assertEquals(
+            listOf("article-a", "article-b", "article-c", "article-d", "article-overflow"),
+            posts.map { it.first },
+        )
+        assertEquals(listOf(listOf("a"), listOf("b"), listOf("c"), listOf("d"), listOf("e", "f", "r")), acks)
+        assertEquals(
+            EnFeedFlowStrings.notificationArticleOverflowBody("3"),
+            posts.last().second.extras.getString(Notification.EXTRA_TEXT),
+        )
+    }
+
+    @Test
+    fun `full tray from an earlier batch still delivers the next batch through the existing overflow`() = runTest {
+        active = (1..20).map { "article-old-$it" to 0 }.toSet() + ("article-overflow" to 0)
+        val ids = (1..20).map { "new-$it" }
+        send(ArticleNotificationBatch(batch(*ids.toTypedArray()).articles, listOf("r")))
+        assertEquals(ids.take(19).map { "article-$it" } + "article-overflow", posts.map { it.first })
+        assertEquals(listOf("new-20", "r"), acks.last())
+    }
+
+    @Test
     fun `mid batch capacity growth stops unsent work and later dismissal permits retry`() = runTest {
         postAction = { _, _ -> active = (1..40).map { "other-$it" to 0 }.toSet() }
         send(batch("a", "b"))

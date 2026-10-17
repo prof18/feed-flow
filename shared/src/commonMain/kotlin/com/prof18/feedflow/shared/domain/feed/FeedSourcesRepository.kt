@@ -622,8 +622,9 @@ internal class FeedSourcesRepository(
             cloudSessionId = cloudSessionId,
             withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
         )
-        databaseHelper.updateNotificationEnabledStatus(feedSource.id, isNotificationEnabled)
         databaseHelper.insertFeedItems(feedItems, currentTimestamp)
+        // After the items, so enabling notifications marks the initial articles as already notified.
+        databaseHelper.updateNotificationEnabledStatus(feedSource.id, isNotificationEnabled)
         feedSyncRepository.localEditCommitted(cloudSessionId)
         feedSyncRepository.performBackup()
         feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)

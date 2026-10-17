@@ -116,6 +116,53 @@ class ArticleNotificationRepositoryTest : KoinTestBase() {
         assertFalse(pending.any { it in ids.take(ArticleNotificationPolicy.ACK_CHUNK_SIZE + 1) })
     }
 
+    @Test
+    fun `enabling notifications for a feed marks its existing articles as notified`() = runTest(testDispatcher) {
+        seed(source = disabledSource, ids = listOf("old-1", "old-2"))
+
+        databaseHelper.updateNotificationEnabledStatus(disabledSource.id, enabled = true)
+        assertTrue(databaseHelper.getArticlesToNotify().isEmpty())
+
+        insertItems(disabledSource, listOf("new-1"))
+        databaseHelper.updateNotificationEnabledStatus(disabledSource.id, enabled = true)
+        assertEquals(listOf("new-1"), databaseHelper.getArticlesToNotify().map { it.id })
+    }
+
+    @Test
+    fun `enabling all notifications or through feed preferences marks existing articles as notified`() =
+        runTest(testDispatcher) {
+            seed(source = disabledSource, ids = listOf("old-1"))
+            databaseHelper.updateAllNotificationsEnabledStatus(enabled = true)
+            assertTrue(databaseHelper.getArticlesToNotify().isEmpty())
+
+            databaseHelper.updateAllNotificationsEnabledStatus(enabled = false)
+            insertItems(disabledSource, listOf("old-2"))
+            databaseHelper.insertFeedSourcePreference(
+                feedSourceId = disabledSource.id,
+                articleOpenMode = ArticleOpenMode.DEFAULT,
+                isHidden = false,
+                isPinned = false,
+                isNotificationEnabled = true,
+                isHideImagesEnabled = false,
+            )
+            assertTrue(databaseHelper.getArticlesToNotify().isEmpty())
+        }
+
+    @Test
+    fun `first sync of a feed marks its back catalog as notified but later syncs stay pending`() =
+        runTest(testDispatcher) {
+            seed(ids = emptyList())
+            insertItems(enabledSource, listOf("back-catalog"), markFirstSyncItemsAsNotified = true)
+            assertTrue(databaseHelper.getArticlesToNotify().isEmpty())
+
+            insertItems(
+                enabledSource.copy(lastSyncTimestamp = 1),
+                listOf("fresh"),
+                markFirstSyncItemsAsNotified = true,
+            )
+            assertEquals(listOf("fresh"), databaseHelper.getArticlesToNotify().map { it.id })
+        }
+
     private suspend fun seed(
         source: FeedSource = enabledSource,
         ids: List<String>? = null,
@@ -130,7 +177,14 @@ class ArticleNotificationRepositoryTest : KoinTestBase() {
             isNotificationEnabled = source.id != disabledSource.id,
             isHideImagesEnabled = false,
         )
-        val itemIds = ids ?: (0 until requireNotNull(eligibleCount)).map { "item-$it" }
+        insertItems(source, ids ?: (0 until requireNotNull(eligibleCount)).map { "item-$it" })
+    }
+
+    private suspend fun insertItems(
+        source: FeedSource,
+        itemIds: List<String>,
+        markFirstSyncItemsAsNotified: Boolean = false,
+    ) {
         databaseHelper.insertFeedItems(
             feedItems = itemIds.mapIndexed { index, id ->
                 FeedItem(
@@ -149,6 +203,7 @@ class ArticleNotificationRepositoryTest : KoinTestBase() {
                 )
             },
             lastSyncTimestamp = 0,
+            markFirstSyncItemsAsNotified = markFirstSyncItemsAsNotified,
         )
     }
 

@@ -412,6 +412,7 @@ class FeedFetcherRepository internal constructor(
                 databaseHelper.insertFeedItems(
                     feedItems = allFeedItems,
                     lastSyncTimestamp = syncTimestamp,
+                    markFirstSyncItemsAsNotified = true,
                 )
             } catch (e: Throwable) {
                 logger.d(e) { "Failed to insert feed items into database" }

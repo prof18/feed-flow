@@ -57,20 +57,19 @@ Optional live-store checks:
    - Google Play: read live state with `.scripts/pull-google-play-listing.py` (see Live Store Checks), never with Gradle Play Publisher bootstrap. If the script's config is unavailable, report the live check as unavailable and continue with checked-in listing output/source-copy checks.
    - App Store: pull metadata/screenshots into a temp directory and compare against FeedFlow's source store/screenshot copy where mapping is clear.
    - Microsoft Store: read the live listing with `pcenter listing show` and compare against `assets/storecopy/<locale>/`.
-7. Add follow-up TODOs to the FeedFlow Obsidian board when the audit finds actionable store release work.
-   - Board path: `/Users/mg/Workspace/Notes/projects/feed-flow/feed-flow-board.md`.
-   - Use the `## marketing` lane for store listing, ASO, screenshot, and store localization release work.
-   - Preserve the kanban Markdown format: add one `- [ ] ...` item per action under the lane.
-   - Keep TODO text short and concrete, but include the exact thing to change: store, locale, and field or asset type. Examples:
-     - `- [ ] Sync App Store Russian subtitle, keywords, and promotional text`
-     - `- [ ] Generate Google Play Latvian listing text output`
-     - `- [ ] Upload App Store Finnish metadata`
-     - `- [ ] Regenerate App Store Russian iPhone/iPad screenshots`
-     - `- [ ] Update checked-in Google Play Russian title, short description, and full description from live/source`
-   - Do not add TODOs just because a translation was created or changed. Add TODOs only after verifying the relevant source copy is complete in the repo: store metadata cards require complete `assets/storecopy/<locale>/` content; screenshot cards require complete `assets/screenshotcopy/<locale>/` content.
-   - Keep store metadata follow-up and screenshot generation/upload follow-up as separate board cards when both apply.
-   - Do not add TODOs for app-string translation gaps, incomplete store/screenshot copy, non-actionable status, credential setup noise, or findings already represented by an existing unchecked board item.
-   - If the board is unavailable or cannot be edited, include the TODO text in the final report under `Action needed` instead.
+7. Add follow-up TODOs to the FeedFlow native Obsidian Base when the audit finds actionable store release work.
+   - Base path: `/Users/mg/Workspace/Notes/projects/feed-flow/feed-flow-board.base`.
+   - Create exactly one Markdown item note per operational action in `/Users/mg/Workspace/Notes/projects/feed-flow/items/`, with YAML frontmatter `Status: marketing` and an integer `Position` sorted ascending within that column. Add optional `Reference: <URL>` for a useful store, PR, or source URL; display this property as `Link` in the Base.
+   - Keep item titles short and concrete, but include the exact thing to change: store, locale, and field or asset type. Use the existing examples below as the title text, without Markdown checkbox syntax:
+     - `Sync App Store Russian subtitle, keywords, and promotional text`
+     - `Generate Google Play Latvian listing text output`
+     - `Upload App Store Finnish metadata`
+     - `Regenerate App Store Russian iPhone/iPad screenshots`
+     - `Update checked-in Google Play Russian title, short description, and full description from live/source`
+   - Do not add items just because a translation was created or changed. Add items only after verifying the relevant source copy is complete in the repo: store metadata items require complete `assets/storecopy/<locale>/` content; screenshot items require complete `assets/screenshotcopy/<locale>/` content.
+   - Keep store metadata follow-up and screenshot generation/upload follow-up as separate items when both apply.
+   - Do not add items for app-string translation gaps, incomplete store/screenshot copy, non-actionable status, credential setup noise, or findings already represented by an existing item.
+   - If the Base is unavailable or cannot be updated, include the item title in the final report under `Action needed` instead.
 
 ## Live Store Checks
 
@@ -266,22 +265,22 @@ locale ready to generate, while the latter is the live-store upload state.
 
 If nothing changed, say that no translation, store-copy, or screenshot action is needed.
 
-## Obsidian Board Follow-Up
+## Obsidian Base Follow-Up
 
-When store action is needed, write a compact board item so the work is not lost after the audit thread ends. Prefer one grouped task per operational outcome. Do not create board items for missing app-string translations; those belong only in the audit report.
+When store action is needed, create one compact Base item note per operational outcome so the work is not lost after the audit thread ends. Do not create Base items for missing app-string translations; those belong only in the audit report. Each item is a single Markdown note in `/Users/mg/Workspace/Notes/projects/feed-flow/items/` and must have YAML frontmatter with `Status: marketing` and an integer `Position`; add optional `Reference: <URL>` when a useful supporting URL exists. The Base displays `Reference` as `Link`. Do not create a separate detail note for the same task.
 
-- App Store metadata stale: `- [ ] Sync App Store <locale> <fields>`
-- App Store source copy over limits: `- [ ] Shorten App Store <locale> <fields> to <limits>`
-- Google Play live metadata stale: `- [ ] Sync Google Play <locale> <fields>`
-- Microsoft Store live listing stale: `- [ ] Sync Microsoft Store <locale> <fields>`
-- Microsoft Store source copy over limits: `- [ ] Shorten Microsoft Store <locale> <fields> to <limits>`
-- Google Play generated output stale but live matches source: update the generated files during the audit; if that is blocked, use `- [ ] Update checked-in Google Play <locale> <fields> from live/source`
-- Store copy complete in repo but locale not created/shipped: `- [ ] Add <locale> store metadata to <supported stores>` or `- [ ] Generate <store> <locale> listing output`
-- Screenshots stale or incomplete: `- [ ] Regenerate/upload <store> <locale> <device/form-factor> screenshots`
-- Screenshot copy complete in repo but screenshots not regenerated/uploaded: `- [ ] Create localized screenshots for <locale>`
-- Store or screenshot locale scaffold incomplete: report only; do not create a board item until the relevant source copy is complete.
+- App Store metadata stale: `Sync App Store <locale> <fields>`
+- App Store source copy over limits: `Shorten App Store <locale> <fields> to <limits>`
+- Google Play live metadata stale: `Sync Google Play <locale> <fields>`
+- Microsoft Store live listing stale: `Sync Microsoft Store <locale> <fields>`
+- Microsoft Store source copy over limits: `Shorten Microsoft Store <locale> <fields> to <limits>`
+- Google Play generated output stale but live matches source: update the generated files during the audit; if that is blocked, use `Update checked-in Google Play <locale> <fields> from live/source`
+- Store copy complete in repo but locale not created/shipped: `Add <locale> store metadata to <supported stores>` or `Generate <store> <locale> listing output`
+- Screenshots stale or incomplete: `Regenerate/upload <store> <locale> <device/form-factor> screenshots`
+- Screenshot copy complete in repo but screenshots not regenerated/uploaded: `Create localized screenshots for <locale>`
+- Store or screenshot locale scaffold incomplete: report only; do not create a Base item until the relevant source copy is complete.
 
-Before editing the board, read the existing `## marketing` lane and avoid duplicates by matching the main noun phrase and locale/platform names. Insert new items near related store-copy or conversion-analysis tasks. Do not create separate Obsidian notes unless the user asks.
+Before creating an item, search every note under `/Users/mg/Workspace/Notes/projects/feed-flow/items/`, including notes with no `Status`, plus all Base statuses including `done` and `user requests archive`, for duplicates. The `.base` file defines views and filters; it is not the item database. Match the main noun phrase and locale/platform names. For the recurring schedule, prepend new items in the `marketing` column: validate that existing `Position` values there are integers with no duplicates, capture the original ranks and recheck each file before shifting existing positions by `+1` in descending order, then create the new item with `Position: 1`. If any write or creation fails, restore completed rank changes only when their current values still match this operation; preserve concurrent edits and report incomplete recovery. If existing metadata is missing, malformed, or conflicting, stop and report the conflict instead of guessing or overwriting. Preserve existing item metadata and bodies when updating positions. Do not edit a Markdown board, add checkbox rows, or create a second separate detail note.
 
 ## Guardrails
 

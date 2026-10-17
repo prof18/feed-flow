@@ -536,6 +536,12 @@ UPDATE feed_item
 SET notification_sent = 1
 WHERE url_hash IN :ids;
 
+markFeedSourceItemsNotified:
+UPDATE feed_item
+SET notification_sent = 1
+WHERE feed_source_id = :feedSourceId
+AND notification_sent = 0;
+
 updateReadStatusFromFeedItemStatus:
 UPDATE feed_item
 SET is_read = CASE 

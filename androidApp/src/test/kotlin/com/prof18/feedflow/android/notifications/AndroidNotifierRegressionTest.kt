@@ -114,9 +114,9 @@ class AndroidNotifierRegressionTest {
     }
 
     @Test
-    fun `insufficient initial capacity including overflow skips whole batch`() = runTest {
+    fun `capacity for only the overflow folds every article into it`() = runTest {
         val imageCalls = mutableListOf<String?>()
-        var posts = 0
+        val posts = mutableListOf<String>()
         val acknowledgements = mutableListOf<List<String>>()
         val notifier = AndroidNotifier(
             context = context,
@@ -126,7 +126,7 @@ class AndroidNotifierRegressionTest {
                 null
             },
             activeNotificationKeys = { (1..39).map { "other-$it" to 0 }.toSet() },
-            postArticleNotification = { _, _ -> posts++ },
+            postArticleNotification = { tag, _ -> posts += tag },
         )
 
         notifier.showArticleNotifications({ batch("article", remainderIds = listOf("rest")) }) {
@@ -134,8 +134,8 @@ class AndroidNotifierRegressionTest {
         }
 
         assertTrue(imageCalls.isEmpty())
-        assertEquals(0, posts)
-        assertTrue(acknowledgements.isEmpty())
+        assertEquals(listOf("article-overflow"), posts)
+        assertEquals(listOf(listOf("article", "rest")), acknowledgements)
     }
 
     @Test

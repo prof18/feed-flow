@@ -198,6 +198,7 @@ class SerialFeedFetcherRepository internal constructor(
                         databaseHelper.insertFeedItems(
                             feedItems = feedItems,
                             lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+                            markFirstSyncItemsAsNotified = true,
                         )
                     }
 

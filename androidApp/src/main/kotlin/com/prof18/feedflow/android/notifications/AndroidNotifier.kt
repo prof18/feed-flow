@@ -58,12 +58,8 @@ class AndroidNotifier(
         if (!notificationManager.areNotificationsEnabled()) return@withLock
         createNotificationChannel()
         if (!isNotificationChannelEnabled()) return@withLock
-        val batch = prepareBatch()
-        val plannedKeys = batch.articles.map { ArticleNotificationPolicy.ARTICLE_ID_PREFIX + it.id to 0 }
-            .toMutableSet()
-        if (batch.remainderIds.isNotEmpty()) plannedKeys += ArticleNotificationPolicy.OVERFLOW_ID to 0
         val initialKeys = queryActiveKeys() ?: return@withLock
-        if ((initialKeys + plannedKeys).size > ArticleNotificationPolicy.ANDROID_ACTIVE_SOFT_LIMIT) return@withLock
+        val batch = fitToActiveCapacity(prepareBatch(), initialKeys) ?: return@withLock
 
         val strings = feedFlowStrings()
         val postedKeys = mutableSetOf<Pair<String?, Int>>()
@@ -126,6 +122,39 @@ class AndroidNotifier(
             ).build()
             submit(ArticleNotificationPolicy.OVERFLOW_ID, notification, batch.remainderIds)
         }
+    }
+
+    /**
+     * Keeps the tray under the soft limit by posting only the newest articles that fit and folding
+     * the rest into the overflow notification. Returns null when not even the overflow fits.
+     */
+    private fun fitToActiveCapacity(
+        batch: ArticleNotificationBatch,
+        activeKeys: Set<Pair<String?, Int>>,
+    ): ArticleNotificationBatch? {
+        fun cost(tag: String) = if ((tag to 0) in activeKeys) 0 else 1
+        fun articleTag(id: String) = ArticleNotificationPolicy.ARTICLE_ID_PREFIX + id
+
+        val freeSlots = ArticleNotificationPolicy.ANDROID_ACTIVE_SOFT_LIMIT - activeKeys.size
+        val overflowCost = cost(ArticleNotificationPolicy.OVERFLOW_ID)
+        val fullCost = batch.articles.sumOf { cost(articleTag(it.id)) } +
+            if (batch.remainderIds.isNotEmpty()) overflowCost else 0
+        if (fullCost <= freeSlots) return batch
+
+        val articleBudget = freeSlots - overflowCost
+        if (articleBudget < 0) return null
+        var used = 0
+        var fittingCount = 0
+        for (article in batch.articles) {
+            val articleCost = cost(articleTag(article.id))
+            if (used + articleCost > articleBudget) break
+            used += articleCost
+            fittingCount++
+        }
+        return ArticleNotificationBatch(
+            articles = batch.articles.take(fittingCount),
+            remainderIds = batch.articles.drop(fittingCount).map { it.id } + batch.remainderIds,
+        )
     }
 
     private suspend fun loadArticleImage(url: String?, allowance: Long): Bitmap? = try {

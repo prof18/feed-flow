@@ -70,8 +70,7 @@ public struct ReaderView<BottomAccessory: View>: View {
 
     private var readerBody: some View {
         ZStack {
-            Color(ReaderTheme.background)
-                .overlay(content)
+            articleSurface
                 .ignoresSafeArea(edges: isiOS26OrLater() ? .bottom : [])
                 .overlay(loader)
                 .navigationBarTitleDisplayMode(.inline)
@@ -95,6 +94,16 @@ public struct ReaderView<BottomAccessory: View>: View {
             } else {
                 makeLegacyToolbarContent()
             }
+        }
+        .modifier(ReaderFixedToolbarModifier())
+    }
+
+    @ViewBuilder private var articleSurface: some View {
+        let surface = Color(ReaderTheme.background).overlay(content)
+        if #available(iOS 27.1, *) {
+            surface.modifier(ReaderVerticalSafeAreaModifier())
+        } else {
+            surface
         }
     }
 

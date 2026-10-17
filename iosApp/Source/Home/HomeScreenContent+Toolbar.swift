@@ -23,19 +23,24 @@ extension HomeContent {
 
     @ToolbarContentBuilder
     func makeIOS26ToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
+        if #available(iOS 27.1, *) {
+            HomeAdaptiveToolbar(
+                search: makeSearchToolbarButton(),
+                more: makeMoreMenu(proxy: proxy)
+            )
+        } else {
+            makeHorizontalToolbarContent(proxy: proxy)
+        }
+    }
+
+    @ToolbarContentBuilder
+    private func makeHorizontalToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
         if #available(iOS 26.0, *) {
             ToolbarSpacer(.fixed)
         }
 
         ToolbarItem {
-            Button {
-                self.appState.navigate(
-                    route: searchRoute
-                )
-            } label: {
-                Label(feedFlowStrings.searchButtonContentDescription, systemImage: "magnifyingglass")
-            }
-            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
+            makeSearchToolbarButton()
         }
 
         if #available(iOS 26.0, *) {
@@ -197,19 +202,32 @@ extension HomeContent {
         }
     }
 
+    private func makeSearchToolbarButton() -> some View {
+        Button {
+            appState.navigate(route: searchRoute)
+        } label: {
+            Label(feedFlowStrings.searchButtonContentDescription, systemImage: "magnifyingglass")
+        }
+        .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
+    }
+
     @ToolbarContentBuilder
     func makeMenuToolbarView(proxy: ScrollViewProxy) -> some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
-            Menu {
-                makeMenuActions(proxy: proxy)
-            } label: {
-                Label(
-                    feedFlowStrings.moreOptionsButtonContentDescription,
-                    systemImage: isiOS26OrLater() ? "ellipsis" : "ellipsis.circle"
-                )
-            }
-            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.moreMenuButton)
+            makeMoreMenu(proxy: proxy)
         }
+    }
+
+    private func makeMoreMenu(proxy: ScrollViewProxy) -> some View {
+        Menu {
+            makeMenuActions(proxy: proxy)
+        } label: {
+            Label(
+                feedFlowStrings.moreOptionsButtonContentDescription,
+                systemImage: isiOS26OrLater() ? "ellipsis" : "ellipsis.circle"
+            )
+        }
+        .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.moreMenuButton)
     }
 
     @ViewBuilder

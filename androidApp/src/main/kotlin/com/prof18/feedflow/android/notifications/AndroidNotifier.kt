@@ -42,6 +42,8 @@ class AndroidNotifier(
     private val activeNotificationKeys: () -> Set<Pair<String?, Int>> = {
         context.getSystemService(NotificationManager::class.java).activeNotifications.map { it.tag to it.id }.toSet()
     },
+    // Callers check areNotificationsEnabled() before posting, as showNewArticlesNotification does.
+    @SuppressLint("MissingPermission")
     private val postArticleNotification: (String, Notification) -> Unit = { tag, notification ->
         NotificationManagerCompat.from(context).notify(tag, 0, notification)
     },

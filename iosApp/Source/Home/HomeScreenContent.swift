@@ -192,8 +192,17 @@ private extension HomeContent {
         )
     }
 
+    @ViewBuilder private var feedListWithFixedToolbar: some View {
+        if #available(iOS 27.0, *) {
+            feedListBaseView
+                .toolbarMinimizationBehavior(.never, for: .navigationBar)
+        } else {
+            feedListBaseView
+        }
+    }
+
     func feedListView(proxy: ScrollViewProxy) -> some View {
-        feedListBaseView
+        feedListWithFixedToolbar
             .onChange(of: toggleListScroll) {
                 proxy.scrollTo(feedState.first?.id)
                 showScrollToTop = false

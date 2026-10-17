@@ -463,4 +463,14 @@
     <string name="reader_mode_tts_stop">Anhören anhalten</string>
     <string name="reader_mode_tts_error">Dieser Artikel kann nicht vorgelesen werden. Nochmals versuchen.</string>
     <string name="reader_mode_tts_preparing">Audio für den Artikel wird vorbereitet…</string>
+    <string name="hide_youtube_shorts">Shorts ausblenden</string>
+    <string name="hide_youtube_shorts_description">Nur Standard-Videos dieses Kanal sind inkludiert. Shorts und Livestream sind ausgeschlossen.</string>
+    <string name="hide_youtube_shorts_fallback">Shorts konnten für diesen Kanal nicht ausgeblendet werden, daher wurde der vollständige Feed hinzugefügt.</string>
+    <string name="date_format_day_month_dot">Tag.Monat</string>
+    <string name="article_report_action">Schadhaften Artikel melden</string>
+    <string name="article_report_disclosure">Den Link des Artikel, die App-Version und die OS-Version an den Entwickler senden? Artikelinhalt oder Kontodetails werden nicht gesendet.</string>
+    <string name="article_report_send">Senden</string>
+    <string name="article_report_sending">Bericht wird gesendet…</string>
+    <string name="article_report_sent">Bericht wurde gesendet. Danke!</string>
+    <string name="article_report_failed">Bericht konnte nicht gesendet werden. Bitte nochmals versuchen.</string>
 </resources>

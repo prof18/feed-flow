@@ -10,7 +10,9 @@ import FeedFlowKit
 import Foundation
 
 private class NoOpNotifier: Notifier {
-    func showNewArticlesNotification(feedSourcesToNotify: [FeedSourceToNotify]) -> Bool { false }
+    func showNewArticlesNotification(feedSourcesToNotify _: [FeedSourceToNotify]) -> Bool {
+        false
+    }
 }
 
 func startKoin(notifier: (any Notifier)? = nil) {

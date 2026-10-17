@@ -1,0 +1,104 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/report-accepted
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_report
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_report
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_article_report
+    timeout: 10000
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader-report-action
+- assertVisible: "Send this article’s link, app version and OS version to the developer[\\s\\S]*"
+- assertNotVisible: "reports.example.com"
+- assertNotVisible: "[\\s\\S]*reader source[\\s\\S]*"
+- tapOn:
+    id: reader-report-cancel
+- assertNotVisible:
+    id: reader-report-send
+- assertVisible:
+    id: reader_article_e2e_article_report
+
+# Every explicit report request requires confirmation.
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader-report-action
+- tapOn:
+    id: reader-report-send
+- extendedWaitUntil:
+    visible:
+      text: "Report sent. Thanks!"
+    timeout: 5000
+- assertVisible: "Report sent. Thanks!"
+- assertNotVisible: "Close"
+- takeScreenshot: reporting-success
+- extendedWaitUntil:
+    notVisible: "Report sent. Thanks!"
+    timeout: 10000
+- assertVisible:
+    id: reader_article_e2e_article_report
+
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader-report-action
+- assertVisible:
+    id: reader-report-send
+- tapOn:
+    id: reader-report-cancel
+
+# A failed attempt stays failed until another explicit tap; there is no saved report.
+- openLink: feedflow://e2e/report-offline
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: article_row_e2e_article_report
+- extendedWaitUntil:
+    visible:
+      id: reader_more_menu_button
+    timeout: 10000
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader-report-action
+- tapOn:
+    id: reader-report-send
+- extendedWaitUntil:
+    visible: "Couldn’t send the report. Please try again."
+    timeout: 5000
+- assertNotVisible: "Close"
+- extendedWaitUntil:
+    notVisible: "Couldn’t send the report. Please try again."
+    timeout: 10000
+- assertNotVisible: "Report saved[\\s\\S]*"
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader-report-action
+- assertVisible:
+    id: reader-report-send
+- tapOn:
+    id: reader-report-send
+- extendedWaitUntil:
+    visible: "Couldn’t send the report. Please try again."
+    timeout: 5000
+- assertVisible: "Couldn’t send the report. Please try again."

@@ -437,6 +437,12 @@
     <string name="reset_button">Reset</string>
     <string name="settings_danger_title">Danger</string>
     <string name="settings_feeds_and_accounts">Feeds &amp; Accounts</string>
+    <string name="article_report_action">Report broken article</string>
+    <string name="article_report_disclosure">Send this article’s link, app version and OS version to the developer? No article content or account details will be sent.</string>
+    <string name="article_report_send">Send</string>
+    <string name="article_report_sending">Sending report…</string>
+    <string name="article_report_sent">Report sent. Thanks!</string>
+    <string name="article_report_failed">Couldn’t send the report. Please try again.</string>
     <string name="settings_reading_behavior">Reading Behavior</string>
     <string name="settings_sync_and_storage">Sync &amp; Storage</string>
     <string name="settings_appearance">Appearance</string>

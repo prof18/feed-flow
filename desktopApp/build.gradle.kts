@@ -17,6 +17,28 @@ plugins {
 val appVersionName: () -> String by extra
 val appVersionCode: () -> Int by extra
 
+val generateDesktopBuildInfo by tasks.registering {
+    val versionName = appVersionName()
+    inputs.property("versionName", versionName)
+    val outputDirectory = layout.buildDirectory.dir("generated/desktop-build-info/kotlin")
+    outputs.dir(outputDirectory)
+    doLast {
+        val output = outputDirectory.get().file(
+            "com/prof18/feedflow/desktop/DesktopBuildInfo.kt",
+        ).asFile
+        output.parentFile.mkdirs()
+        output.writeText(
+            """
+            package com.prof18.feedflow.desktop
+
+            internal object DesktopBuildInfo {
+                const val VERSION = "$versionName"
+            }
+            """.trimIndent() + "\n",
+        )
+    }
+}
+
 group = "com.prof18"
 
 java {
@@ -42,6 +64,7 @@ kotlin {
 
     sourceSets {
         jvmMain {
+            kotlin.srcDir(generateDesktopBuildInfo)
             dependencies {
                 implementation(project(":shared"))
                 implementation(project(":sharedUI"))

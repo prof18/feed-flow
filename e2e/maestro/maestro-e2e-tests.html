@@ -247,7 +247,7 @@
     <section class="summary" aria-label="Summary">
       <div class="metric"><strong id="total-count">0</strong><span>automated flow files</span></div>
       <div class="metric"><strong>13</strong><span>smoke coverage IDs</span></div>
-      <div class="metric"><strong>75</strong><span>regression coverage IDs</span></div>
+      <div class="metric"><strong>76</strong><span>regression coverage IDs</span></div>
     </section>
 
     <div class="toolbar">
@@ -340,6 +340,7 @@
       "android/regression/176-reader-speech-playback.yaml",
       "android/regression/177-widget-refresh-settings.yaml",
       "android/regression/178-add-feed-youtube-feed-and-playlist-options.yaml",
+      "android/regression/179-reader-report.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -424,6 +425,7 @@
       "ios/regression/175-now-playing-navigation.yaml",
       "ios/regression/176-reader-speech-playback.yaml",
       "ios/regression/178-add-feed-youtube-feed-and-playlist-options.yaml",
+      "ios/regression/179-reader-report.yaml",
       "ios/smoke/001-first-launch-empty.yaml",
       "ios/smoke/002-seeded-timeline-loads.yaml",
       "ios/smoke/003-library-filters.yaml",
@@ -540,7 +542,8 @@
       "regression/175": "Compact active-episode indicator on timeline and search, mini play/pause, direct episode return from another article and search in feed-content mode, position retention, no duplicate indicator in the reader, and removal after closing playback. Global/per-feed browser-mode resolution is covered by shared tests; browser return and app handoff need manual validation because the seeded article URL is remote and browser UI varies by platform. Passed on Pixel and iPhone 17 Pro Simulator on 2026-10-08, including Android reader Back and iOS search with the keyboard visible.",
       "regression/176": "Implemented automated coverage: generate speech from the seeded article, wait for nonzero player duration, pause and seek, change speed, switch between speech and the seeded podcast and back while retaining speech position, background/foreground the app, and close the player. Maestro verifies visible player state; it does not prove audible output, system media controls, or temporary-file cleanup.",
       "regression/177": "Widget refresh button defaults off and persists with the header hidden through the Android debug widget editor.",
-      "regression/178": "Raw YouTube channel RSS reveals Hide Shorts OFF; playlist URLs hide the option."
+      "regression/178": "Raw YouTube channel RSS reveals Hide Shorts OFF; playlist URLs hide the option.",
+      "regression/179": "Every report request, including manual retry, shows confirmation; Cancel sends nothing, Send shows fake acceptance or the failure response; Android result snackbars have no close button and disappear automatically. Passed on Pixel 4 XL and iPhone 18 Pro simulator on 16 October 2026 using shared fake HTTP responses."
     };
 
     const sections = document.querySelector("#sections");

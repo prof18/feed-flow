@@ -21,6 +21,7 @@ import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
@@ -34,6 +35,7 @@ import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.russhwolf.settings.Settings
 
 class E2eSeedRunner internal constructor(
     private val databaseHelper: DatabaseHelper,
@@ -48,6 +50,8 @@ class E2eSeedRunner internal constructor(
     private val icloudSettings: ICloudSettings,
     private val networkSettings: NetworkSettings,
     private val audioPositions: AudioPlaybackPositionRepository,
+    private val appEnvironment: AppEnvironment,
+    private val settings: Settings,
 ) {
     suspend fun reset() {
         databaseHelper.deleteAllE2eData()
@@ -82,6 +86,7 @@ class E2eSeedRunner internal constructor(
     }
 
     suspend fun resetAndSeedDevelopmentFeeds(feedSources: List<ParsedFeedSource>) {
+        if (appEnvironment.isDebug()) selectArticleReportResponse(settings, null)
         reset()
         databaseHelper.insertCategories(feedSources.mapNotNull { it.category }.distinct())
         databaseHelper.insertFeedSource(feedSources)
@@ -95,6 +100,27 @@ class E2eSeedRunner internal constructor(
         accountName: String? = null,
         audioUrl: String? = null,
     ) {
+        if (action.startsWith("report-")) {
+            check(appEnvironment.isDebug())
+            selectArticleReportResponse(settings, action.removePrefix("report-"))
+            resetAndSeed(E2eSeedProfile.CONTENT_RICH)
+            val reportArticle = feedItem(
+                id = "e2e-article-report",
+                title = "E2E Report Article",
+                subtitle = "Cached reporting fixture",
+                feedSource = swiftWeekly,
+                url = "https://reports.example.com/article?fixture=1#context",
+                pubDateMillis = SEED_NOW_MILLIS + ONE_HOUR_MILLIS,
+                content = "<p>Deterministic report content.</p>",
+            )
+            databaseHelper.insertFeedItems(listOf(reportArticle), lastSyncTimestamp = SEED_NOW_MILLIS)
+            feedItemContentFileHandler.saveFeedItemContentToFile(
+                feedItemId = reportArticle.id,
+                content = "<h1>E2E Report Article</h1><p>Deterministic report content.</p>",
+            )
+            feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
+            return
+        }
         val profile = E2eSeedProfile.fromQueryValue(profileName)
             ?: E2eSeedProfile.CONTENT_RICH
         val account = E2eSeedAccount.fromQueryValue(accountName)

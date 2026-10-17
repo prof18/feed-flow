@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.Language
@@ -60,6 +61,7 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.components.rememberConfirmedBookmarkAction
+import com.prof18.feedflow.core.model.ArticleReportUiState
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
@@ -77,6 +79,7 @@ private data class ToolbarAction(
     val label: String,
     val testTag: String? = null,
     val isSelected: Boolean? = null,
+    val enabled: Boolean = true,
     val onClick: () -> Unit,
 )
 
@@ -129,8 +132,10 @@ fun ReaderModeFloatingToolbar(
     onFontSizeChange: (Int) -> Unit,
     lineHeight: Int,
     onLineHeightChange: (Int) -> Unit,
+    articleReportState: ArticleReportUiState,
     modifier: Modifier = Modifier,
     audioContent: (@Composable () -> Unit)? = null,
+    onReportArticle: () -> Unit,
 ) {
     var showFontSizeMenu by remember { mutableStateOf(false) }
     var showOverflowMenu by remember { mutableStateOf(false) }
@@ -156,6 +161,7 @@ fun ReaderModeFloatingToolbar(
     val latestOnCommentsClick by rememberUpdatedState(onCommentsClick)
     val latestOnToggleContentSource by rememberUpdatedState(onToggleContentSource)
     val latestOnListenClick by rememberUpdatedState(onListenClick)
+    val latestOnReportArticle by rememberUpdatedState(onReportArticle)
     var isBookmarked by remember(readerModeState) {
         mutableStateOf(readerModeState.getIsBookmarked)
     }
@@ -210,6 +216,7 @@ fun ReaderModeFloatingToolbar(
         confirmedBookmarkAction,
         isPreparingSpeech,
         isSpeechPlaying,
+        articleReportState,
     ) {
         buildList {
             if (id != null) {
@@ -274,6 +281,7 @@ fun ReaderModeFloatingToolbar(
                     ),
                 )
             }
+            addReportAction(articleReportState, strings) { latestOnReportArticle() }
         }
             .toImmutableList()
     }
@@ -537,6 +545,7 @@ private fun ToolbarActionButton(
             }
         } else {
             IconButton(
+                enabled = action.enabled,
                 modifier = action.testTagModifier(),
                 onClick = action.onClick,
             ) {
@@ -558,6 +567,7 @@ private fun ToolbarActionMenuItem(
     DropdownMenuItem(
         modifier = action.testTagModifier(),
         text = { Text(action.label) },
+        enabled = action.enabled,
         onClick = onClick,
         leadingIcon = {
             Icon(
@@ -588,3 +598,21 @@ private fun Modifier.toolbarTooltipE2eTag(): Modifier =
 @Composable
 private fun readerToolbarShape(hasAudio: Boolean): Shape =
     if (hasAudio) RoundedCornerShape(28.dp) else FloatingToolbarDefaults.ContainerShape
+
+private fun MutableList<ToolbarAction>.addReportAction(
+    state: ArticleReportUiState,
+    strings: FeedFlowStrings,
+    onClick: () -> Unit,
+) {
+    if (state.canReport) {
+        add(
+            ToolbarAction(
+                icon = Icons.Default.BugReport,
+                label = strings.articleReportAction,
+                testTag = ReaderModeE2eIds.REPORT_ACTION,
+                enabled = !state.sending,
+                onClick = onClick,
+            ),
+        )
+    }
+}

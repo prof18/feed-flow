@@ -467,4 +467,10 @@
     <string name="hide_youtube_shorts">Peida lühivideod</string>
     <string name="hide_youtube_shorts_description">Kaasatud on vaid selle kanali tavavideod. Lühivideod ja otse-eeter jäävad välja.</string>
     <string name="hide_youtube_shorts_fallback">Selle kanali lühivideote peitmine pole võimalik, seega selle asemel lisati täismahus uudisvoog.</string>
+    <string name="article_report_action">Teata vigasest/katkisest artiklist</string>
+    <string name="article_report_send">Saada</string>
+    <string name="article_report_sending">Teade on saatmisel…</string>
+    <string name="article_report_disclosure">Kas saadad artikli lingi, rakenduse ja operatsioonisüsteemi versiooni arendajale? Kaasa ei lähe artikli sisu ega kasutajakonto üksikasjad.</string>
+    <string name="article_report_sent">Teade on saadetud. Tänud!</string>
+    <string name="article_report_failed">Teate saatmine ei õnnestunud. Palun proovi uuesti.</string>
 </resources>

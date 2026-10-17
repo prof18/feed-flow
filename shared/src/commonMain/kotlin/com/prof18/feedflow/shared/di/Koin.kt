@@ -27,6 +27,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DateFormatterImpl
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.KsoupHtmlParser
+import com.prof18.feedflow.shared.domain.articlereport.ArticleReporter
 import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryImpl
@@ -56,6 +57,7 @@ import com.prof18.feedflow.shared.domain.parser.KleadArticleContentParser
 import com.prof18.feedflow.shared.domain.parser.readerContentFormat
 import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
+import com.prof18.feedflow.shared.e2e.articleReportHttpClient
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
@@ -97,8 +99,10 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
+import org.koin.dsl.onClose
 import kotlin.time.Clock
 
 fun initKoin(
@@ -164,6 +168,10 @@ private fun getLoggingModule(
 
 private fun getCoreModule(appConfig: AppConfig) = module {
     single { appConfig }
+    single<HttpClient>(named("article-report")) {
+        articleReportHttpClient(appConfig.appEnvironment, get())
+    } onClose { it?.close() }
+    single { ArticleReporter(get(named("article-report")), appConfig, get()) } onClose { it?.close() }
 
     single<Clock> { Clock.System }
 
@@ -444,6 +452,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedItemContentFileHandler = get(),
             articleNavigationRepository = get(),
             databaseHelper = get(),
+            articleReporter = get(),
         )
     }
 
@@ -635,6 +644,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             icloudSettings = get(),
             networkSettings = get(),
             audioPositions = get(),
+            appEnvironment = appConfig.appEnvironment,
+            settings = get(),
         )
     }
 

@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Comment
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LockOpen
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,7 +65,10 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -75,6 +80,7 @@ import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
 import com.mikepenz.markdown.model.markdownAnimations
+import com.prof18.feedflow.core.model.ArticleReportUiState
 import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -89,9 +95,11 @@ import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.ui.icons.BookmarkIcon
 import com.prof18.feedflow.shared.ui.icons.BookmarkOffIcon
+import com.prof18.feedflow.shared.ui.readermode.ArticleReportDisclosure
 import com.prof18.feedflow.shared.ui.readermode.ReaderTextSettingsSheetContent
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.exposeTestTagsAsResourceIds
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -111,6 +119,7 @@ internal fun ReaderModeScreen(
     val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
     val state by readerModeViewModel.readerModeState.collectAsState()
     val fontSettings by readerModeViewModel.readerFontSettingsState.collectAsState()
+    val articleReportState by readerModeViewModel.articleReportState.collectAsState()
     val fontSize = fontSettings.fontSize
     val lineHeight = fontSettings.lineHeight
 
@@ -137,6 +146,9 @@ internal fun ReaderModeScreen(
     val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsState()
     val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsState()
     var hoveredLink by remember { mutableStateOf<String?>(null) }
+    var navigationDockHeight by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
+    val showArticleNavigation = state is ReaderModeState.Success || state is ReaderModeState.ContentNotAvailable
 
     val focusRequester = remember { FocusRequester() }
 
@@ -199,6 +211,8 @@ internal fun ReaderModeScreen(
                             readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
                         },
                         onToggleContentSource = { readerModeViewModel.toggleContentSource() },
+                        articleReportState = articleReportState,
+                        onReportArticle = { readerModeViewModel.requestArticleReport() },
                     )
                 }
             },
@@ -356,6 +370,14 @@ internal fun ReaderModeScreen(
             }
         }
 
+        ArticleReportDisclosure(
+            state = articleReportState,
+            onConfirm = { readerModeViewModel.confirmArticleReport() },
+            onCancel = { readerModeViewModel.cancelArticleReport() },
+            onDismissMessage = { readerModeViewModel.dismissArticleReportMessage() },
+            messageBottomPadding = if (showArticleNavigation) navigationDockHeight else 0.dp,
+        )
+
         hoveredLink?.let { hoveredUrl ->
             Surface(
                 modifier = Modifier
@@ -383,12 +405,13 @@ internal fun ReaderModeScreen(
             }
         }
 
-        if (state is ReaderModeState.Success || state is ReaderModeState.ContentNotAvailable) {
+        if (showArticleNavigation) {
             val strings = LocalFeedFlowStrings.current
 
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
+                    .onSizeChanged { navigationDockHeight = with(density) { it.height.toDp() } }
                     .padding(end = Spacing.regular, bottom = Spacing.regular),
                 shape = RoundedCornerShape(18.dp),
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -496,8 +519,11 @@ private fun ReaderModeToolbar(
     onLineHeightChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onToggleContentSource: () -> Unit,
+    articleReportState: ArticleReportUiState,
+    onReportArticle: () -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
+    var showReportMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
         expandedHeight = 48.dp,
@@ -724,6 +750,38 @@ private fun ReaderModeToolbar(
                                 lineHeight = lineHeight,
                                 onLineHeightChange = onLineHeightChange,
                             )
+                        }
+                    }
+
+                    if (articleReportState.canReport) {
+                        Box {
+                            IconButton(
+                                modifier = Modifier.testTag("reader-report-action"),
+                                enabled = !articleReportState.sending,
+                                onClick = { showReportMenu = true },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.BugReport,
+                                    contentDescription = LocalFeedFlowStrings.current.articleReportAction,
+                                )
+                            }
+                            DropdownMenu(
+                                modifier = Modifier.exposeTestTagsAsResourceIds(),
+                                expanded = showReportMenu,
+                                onDismissRequest = { showReportMenu = false },
+                                shape = MaterialTheme.shapes.large,
+                            ) {
+                                DropdownMenuItem(
+                                    modifier = Modifier.testTag("reader-report-menu-item"),
+                                    text = { Text(LocalFeedFlowStrings.current.articleReportAction) },
+                                    leadingIcon = { Icon(Icons.Default.BugReport, contentDescription = null) },
+                                    enabled = !articleReportState.sending,
+                                    onClick = {
+                                        showReportMenu = false
+                                        onReportArticle()
+                                    },
+                                )
+                            }
                         }
                     }
                 }

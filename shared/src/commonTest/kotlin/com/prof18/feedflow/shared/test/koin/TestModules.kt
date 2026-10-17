@@ -16,6 +16,7 @@ import com.prof18.feedflow.feedsync.database.di.SYNC_DB_DRIVER
 import com.prof18.feedflow.shared.di.getAllModulesModules
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.HtmlRetriever
+import com.prof18.feedflow.shared.domain.articlereport.ArticleReporter
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
@@ -70,6 +71,7 @@ object TestModules {
         ) + createTestOverridesModule()
 
     fun createTestOverridesModule(): Module = module {
+        single<HttpClient>(named("article-report")) { ArticleReporter.httpClient(MockEngine { respondOk() }) }
         single<SqlDriver> { createInMemoryDriver() }
         single { testLogger }
         single {

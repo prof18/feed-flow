@@ -20,6 +20,7 @@ struct ReaderModeScreen: View {
     @Environment(\.colorScheme)
     private var colorScheme
 
+    @State private var reportState: ArticleReportUiState?
     @State private var showFontSizeMenu = false
     @State private var fontSize = 16.0
     @State private var lineHeight = 0.0
@@ -109,7 +110,8 @@ struct ReaderModeScreen: View {
                     contentUnavailableMessage: feedFlowStrings.readerModeNoContentMessage,
                     ttsListen: feedFlowStrings.readerModeTtsListen,
                     ttsStop: feedFlowStrings.audioPause,
-                    ttsPreparing: feedFlowStrings.readerModeTtsPreparing
+                    ttsPreparing: feedFlowStrings.readerModeTtsPreparing,
+                    reportArticle: feedFlowStrings.articleReportAction
                 ),
                 onBookmarkToggle: { newBookmarkState in
                     if let id = feedItemId {
@@ -193,7 +195,9 @@ struct ReaderModeScreen: View {
                 isPreparingSpeech: audioPlayback.isPreparingSpeech && isCurrentSpeechSelected,
                 isSpeechPlaying: audioPlayback.isPlaying && isCurrentSpeechSelected,
                 isShowingFeedContent: isShowingFeedContent,
-                hasUrl: hasArticleUrl
+                hasUrl: hasArticleUrl,
+                onReportArticle: reportState?.canReport == true ? { viewModel.requestArticleReport() } : nil,
+                isSendingReport: reportState?.sending == true
             ),
             isBookmarked: isBookmarked,
             fontSize: fontSize,
@@ -212,6 +216,7 @@ struct ReaderModeScreen: View {
                 )
             }
         )
+        .modifier(ReaderArticleReportHost(viewModel: viewModel, state: $reportState))
         .fullScreenCover(
             isPresented: Binding(
                 get: { imageViewerUrl != nil },
@@ -399,10 +404,22 @@ struct ReaderModeScreen: View {
         )
     }
 
+    private var themeColors: ReaderThemeColors {
+        let codeBlockColors = readerCodeBlockColors(isDarkMode: isDarkMode)
+        return ReaderThemeColors(
+            textColor: isDarkMode ? "#FFFFFF" : "#000000",
+            linkColor: isDarkMode ? "#3B82F6" : "#2563EB",
+            backgroundColor: codeBlockColors.backgroundColor,
+            borderColor: codeBlockColors.borderColor
+        )
+    }
+}
+
+private extension ReaderModeScreen {
     /// Identifies the document the reader is showing, ignoring everything that only styles it.
     /// The web view reloads when this changes, so font size, line height and theme must stay out
     /// of it or the scroll position is lost every time one of them is applied.
-    private func currentContentId(content: String) -> String {
+    func currentContentId(content: String) -> String {
         var hasher = Hasher()
         hasher.combine(feedItemId)
         hasher.combine(isShowingFeedContent)
@@ -416,18 +433,6 @@ struct ReaderModeScreen: View {
         return String(hasher.finalize())
     }
 
-    private var themeColors: ReaderThemeColors {
-        let codeBlockColors = readerCodeBlockColors(isDarkMode: isDarkMode)
-        return ReaderThemeColors(
-            textColor: isDarkMode ? "#FFFFFF" : "#000000",
-            linkColor: isDarkMode ? "#3B82F6" : "#2563EB",
-            backgroundColor: codeBlockColors.backgroundColor,
-            borderColor: codeBlockColors.borderColor
-        )
-    }
-}
-
-private extension ReaderModeScreen {
     private var isCurrentSpeechSelected: Bool {
         return audioPlayback.isSpeechFor(
             itemId: feedItemId,

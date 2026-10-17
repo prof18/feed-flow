@@ -57,7 +57,7 @@ fun main() {
 
     application {
         val properties = loadProperties()
-        val appConfig = createAppConfig(properties)
+        val appConfig = createAppConfig(properties, isIcloudEnabled = setupICloudSupport())
 
         var isInitialized by remember { mutableStateOf(false) }
         var showMainWindow by remember { mutableStateOf(false) }
@@ -184,15 +184,14 @@ private fun loadProperties(): Properties {
     return properties
 }
 
-private fun createAppConfig(properties: Properties): DesktopConfig {
+internal fun createAppConfig(properties: Properties, isIcloudEnabled: Boolean): DesktopConfig {
     val sentryDns = properties["sentry_dns"]?.toString()
-    val version = properties["version"]?.toString()
+    val version = properties["version"]?.toString()?.takeIf { it.isNotBlank() } ?: DesktopBuildInfo.VERSION
     val isRelease = properties["is_release"]?.toString()?.toBooleanStrictOrNull() ?: false
     val dropboxKey = properties["dropbox_key"]?.toString()
     val isFlatpak = properties["flatpak"]?.toString()?.toBooleanStrictOrNull() ?: false
 
     val appEnvironment = if (isRelease) AppEnvironment.Release else AppEnvironment.Debug
-    val isIcloudEnabled = setupICloudSupport()
 
     return DesktopConfig(
         sentryDns = sentryDns,

@@ -80,6 +80,8 @@ class MyViewModelTest : KoinTestBase() {
 
 ### Fakes vs Mocks
 
+Article reporting uses one shared `ArticleReporter` class. Unit tests inject Ktor's `MockEngine`. UI fixtures use a small shared mock HTTP helper selected by the debug E2E seeder. The helper is included in production sources; release builds ignore saved fake response modes and send directly to the real endpoint.
+
 Prefer **fakes** (simple implementations) over mocking libraries:
 
 ```kotlin

@@ -16,6 +16,7 @@ import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
@@ -30,6 +31,15 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class E2eSeedRunnerTest : KoinTestBase() {
+
+    @Test
+    fun `report seed publishes the cached report article to the current timeline`() = runTest {
+        val feedStateRepository: FeedStateRepository by inject()
+        seedRunner.run(action = "report-accepted", profileName = null)
+
+        assertEquals("e2e-article-report", feedStateRepository.feedState.value.first().id)
+        assertNotNull(feedItemContentFileHandler.loadFeedItemContent("e2e-article-report"))
+    }
 
     @Test
     fun `audio seed accepts a validated fixture URL override only for audio profile`() = runTest {

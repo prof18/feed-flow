@@ -14,8 +14,9 @@ final class IOSArticleNotifier {
         authorization: @escaping () async -> UNAuthorizationStatus = {
             await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
         },
-        loadAttachment: @escaping (String?, Int64) async throws -> URL? = {
-            try await NotificationImageAttachmentLoader().load(urlString: $0, allowanceMillis: $1)
+        // One loader per notifier, so its orphan cleanup runs once per batch, not per article.
+        loadAttachment: @escaping (String?, Int64) async throws -> URL? = { [loader = NotificationImageAttachmentLoader()] in
+            try await loader.load(urlString: $0, allowanceMillis: $1)
         },
         add: @escaping (UNNotificationRequest) async throws -> Void = {
             try await UNUserNotificationCenter.current().add($0)

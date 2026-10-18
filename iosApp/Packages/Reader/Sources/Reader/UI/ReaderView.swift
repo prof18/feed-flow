@@ -18,6 +18,23 @@ public struct ReaderView<BottomAccessory: View>: View {
     var isBottomAccessoryVisible: Bool
 
     @State private var webContent: WebContent?
+    @State private var topContentInset: CGFloat = 0
+    @State private var lastArticle: DisplayedArticle?
+    @State private var lastUrl: URL?
+    @State private var allowsPlaceholder = true
+    @State private var placeholderDelay: Task<Void, Never>?
+
+    private static var readerSpace: String { "readerBody" }
+
+    private var isFetching: Bool {
+        readerStatus == .fetching
+    }
+
+    /// While the next article loads, the url-based toolbar items keep the previous url (disabled)
+    /// so the bars don't shrink and grow back on every Next/Previous.
+    private var toolbarUrl: URL? {
+        isFetching ? lastUrl : readerStatus.getUrl()
+    }
 
     public init(
         readerStatus: Binding<ReaderStatus>,
@@ -70,10 +87,37 @@ public struct ReaderView<BottomAccessory: View>: View {
 
     private var readerBody: some View {
         ZStack {
-            articleSurface
-                .ignoresSafeArea(edges: isiOS26OrLater() ? .bottom : [])
+            Color(ReaderTheme.background)
+                .overlay(content)
+                // Measured against the safe-area-sized ZStack in one layout pass: how far the surface
+                // reaches above it is the height of the bars it now runs beneath.
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    max(0, -proxy.frame(in: .named(Self.readerSpace)).minY)
+                } action: { inset in
+                    topContentInset = inset
+                }
+                // The web views inset their own content, so the article scrolls beneath the floating bars.
+                .ignoresSafeArea(.container, edges: isiOS26OrLater() ? .vertical : [])
                 .overlay(loader)
                 .navigationBarTitleDisplayMode(.inline)
+                .onChange(of: readerStatus) { _, status in
+                    switch status {
+                    case .contentUnavailable, .failedToExtractContent:
+                        lastArticle = nil
+                    case .fetching:
+                        delayPlaceholderIfSwitching()
+                    case .extractedContent:
+                        break
+                    }
+                    if !isFetching {
+                        lastUrl = status.getUrl()
+                    }
+                }
+                .onAppear {
+                    if !isFetching {
+                        lastUrl = readerStatus.getUrl()
+                    }
+                }
                 .onChange(of: themeColors) { _, newValue in
                     applyThemeWithJS(newValue)
                 }
@@ -88,6 +132,7 @@ public struct ReaderView<BottomAccessory: View>: View {
                         .presentationBackground(Color(.secondarySystemBackground))
                 }
         }
+        .coordinateSpace(.named(Self.readerSpace))
         .toolbar {
             if isiOS26OrLater() {
                 makeIOS26ToolbarContent()
@@ -98,39 +143,60 @@ public struct ReaderView<BottomAccessory: View>: View {
         .modifier(ReaderFixedToolbarModifier())
     }
 
-    @ViewBuilder private var articleSurface: some View {
-        let surface = Color(ReaderTheme.background).overlay(content)
-        if #available(iOS 27.1, *) {
-            surface.modifier(ReaderVerticalSafeAreaModifier())
-        } else {
-            surface
+    /// The article the reader web view shows. While the next article is fetched it keeps the last
+    /// one, so Next/Previous reuse the same web view (and its WebKit process) instead of creating
+    /// one per article; the loader covers it in the meantime.
+    private var displayedArticle: DisplayedArticle? {
+        switch readerStatus {
+        case let .extractedContent(html, baseURL, _, contentId):
+            DisplayedArticle(html: html, baseURL: baseURL, contentId: contentId)
+        case .fetching:
+            lastArticle
+        case .contentUnavailable, .failedToExtractContent:
+            nil
         }
     }
 
+    /// The reader web view is also mounted, still empty, during the first fetch, so WebKit starts
+    /// up while the article is extracted.
+    private var showsReaderWebView: Bool {
+        displayedArticle != nil || readerStatus == .fetching
+    }
+
     @ViewBuilder private var content: some View {
-        switch readerStatus {
-        case .fetching:
-            EmptyView()
-        case .contentUnavailable:
-            contentUnavailableView
-        case let .failedToExtractContent(url):
-            FallbackWebView(
-                url: url,
-                onLinkClicked: onLinkClicked
-            )
-        case let .extractedContent(html, baseURL, _, contentId):
+        if showsReaderWebView {
+            let article = displayedArticle
             ReaderWebView(
-                baseURL: baseURL,
-                html: html,
-                contentId: contentId,
+                article: article,
+                allowsPlaceholder: allowsPlaceholder,
                 onLinkClicked: onLinkClicked,
                 onImageClicked: options.onImageClicked,
+                topInset: topContentInset,
                 onWebContentReady: { content in
                     webContent = content
                     applyThemeWithJS(themeColors)
                     applyStateUpdate(scripts.stateUpdate, to: content)
                 }
             )
+            .onChange(of: article) { _, article in
+                lastArticle = article
+            }
+            .onAppear {
+                lastArticle = article
+            }
+        } else {
+            switch readerStatus {
+            case .fetching, .extractedContent:
+                EmptyView()
+            case .contentUnavailable:
+                contentUnavailableView
+            case let .failedToExtractContent(url):
+                FallbackWebView(
+                    url: url,
+                    onLinkClicked: onLinkClicked,
+                    topInset: topContentInset
+                )
+            }
         }
     }
 
@@ -150,9 +216,26 @@ public struct ReaderView<BottomAccessory: View>: View {
     }
 
     private var loader: some View {
-        ReaderPlaceholder()
-            .opacity(readerStatus == .fetching ? 1 : 0)
-            .animation(.default, value: readerStatus == .fetching)
+        let isVisible = isFetching && allowsPlaceholder
+        return ReaderPlaceholder()
+            .opacity(isVisible ? 1 : 0)
+            .animation(.default, value: isVisible)
+    }
+
+    /// On Next/Previous the current article stays up for a moment: if the next one is ready quickly
+    /// the reader switches straight to it, and the placeholder only appears for a slower load.
+    private func delayPlaceholderIfSwitching() {
+        placeholderDelay?.cancel()
+        guard lastArticle != nil else {
+            allowsPlaceholder = true
+            return
+        }
+        allowsPlaceholder = false
+        placeholderDelay = Task {
+            try? await Task.sleep(for: .milliseconds(150))
+            guard !Task.isCancelled else { return }
+            allowsPlaceholder = true
+        }
     }
 
     private func onLinkClicked(_ url: URL) {
@@ -184,13 +267,14 @@ public struct ReaderView<BottomAccessory: View>: View {
     @ToolbarContentBuilder
     private func makeIOS26ToolbarContent() -> some ToolbarContent {
         // Bottom bar - left edge
-        if actions.hasUrl, let url = readerStatus.getUrl() {
+        if actions.hasUrl, let url = toolbarUrl {
             ToolbarItem(placement: .bottomBar) {
                 Button {
                     openInBrowser(url)
                 } label: {
                     Label(actions.strings.openInBrowser, systemImage: "globe")
                 }
+                .disabled(isFetching)
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.browserButton)
             }
         }
@@ -219,7 +303,7 @@ public struct ReaderView<BottomAccessory: View>: View {
         }
 
         // Top bar: Share button
-        if actions.hasUrl, let url = readerStatus.getUrl() {
+        if actions.hasUrl, let url = toolbarUrl {
             if #available(iOS 26.0, *) {
                 ToolbarSpacer(.fixed)
             }
@@ -231,6 +315,7 @@ public struct ReaderView<BottomAccessory: View>: View {
                         Label(actions.strings.share, systemImage: "square.and.arrow.up")
                     }
                 )
+                .disabled(isFetching)
             }
 
             if #available(iOS 26.0, *) {
@@ -315,7 +400,7 @@ public struct ReaderView<BottomAccessory: View>: View {
     @ToolbarContentBuilder
     private func makeLegacyToolbarContent() -> some ToolbarContent {
         // Share button
-        if actions.hasUrl, let url = readerStatus.getUrl() {
+        if actions.hasUrl, let url = toolbarUrl {
             ToolbarItem(placement: .navigationBarTrailing) {
                 ShareLink(
                     item: url,
@@ -323,6 +408,7 @@ public struct ReaderView<BottomAccessory: View>: View {
                         Label(actions.strings.share, systemImage: "square.and.arrow.up")
                     }
                 )
+                .disabled(isFetching)
             }
         }
 
@@ -574,7 +660,7 @@ public struct ReaderView<BottomAccessory: View>: View {
     private var compactNavigationToolbar: some View {
         HStack(spacing: 0) {
             // Open in browser - left edge
-            if actions.hasUrl, let url = readerStatus.getUrl() {
+            if actions.hasUrl, let url = toolbarUrl {
                 Button {
                     openInBrowser(url)
                 } label: {
@@ -586,6 +672,7 @@ public struct ReaderView<BottomAccessory: View>: View {
                 .background(.regularMaterial)
                 .clipShape(Capsule())
                 .shadow(radius: 8)
+                .disabled(isFetching)
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.browserButton)
             }
 

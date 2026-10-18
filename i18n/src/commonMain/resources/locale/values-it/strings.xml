@@ -299,7 +299,7 @@
     <string name="cancel_button">Annulla</string>
     <string name="reset_button">Ripristina</string>
     <string name="settings_danger_title">Pericolo</string>
-    <string name="settings_feeds_and_accounts">Feed &amp; Account</string>
+    <string name="settings_feeds_and_accounts">Feed &amp; Accounts</string>
     <string name="settings_reading_behavior">Comportamento di lettura</string>
     <string name="settings_sync_and_storage">Sincronizzazione &amp; Archiviazione</string>
     <string name="settings_about_and_support">Informazioni &amp; Supporto</string>
@@ -467,4 +467,10 @@
     <string name="hide_youtube_shorts">Nascondi Short</string>
     <string name="hide_youtube_shorts_description">Verranno inclusi solo i video normali di questo canale. Short e dirette sono esclusi.</string>
     <string name="hide_youtube_shorts_fallback">Non è stato possibile nascondere gli Short di questo canale, quindi è stato aggiunto il feed completo.</string>
+    <string name="article_report_action">Segnala articolo non funzionante</string>
+    <string name="article_report_disclosure">Inviare allo sviluppatore il link di questo articolo, la versione dell’app e la versione del sistema operativo? Nessun contenuto dell’articolo o dato dell’account verrà inviato.</string>
+    <string name="article_report_send">Invia</string>
+    <string name="article_report_sending">Invio della segnalazione…</string>
+    <string name="article_report_sent">Segnalazione inviata. Grazie!</string>
+    <string name="article_report_failed">Impossibile inviare la segnalazione. Riprova.</string>
 </resources>

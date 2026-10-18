@@ -91,6 +91,7 @@ class DesktopInitialWindowSizeTest {
 
     private companion object {
         const val TITLE = "Native initial size fixture"
+
         // Small enough to fit the 1024x768 displays of CI VMs, where the OS would clamp larger frames.
         const val INITIAL_WIDTH = 640
         const val INITIAL_HEIGHT = 480

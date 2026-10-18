@@ -1,17 +1,17 @@
-package com.prof18.feedflow.shared.ui.home.components.list
+package com.prof18.feedflow.android.ui.home.components.list
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.luminance
+import com.prof18.feedflow.android.ui.preview.feedItemsForPreview
+import com.prof18.feedflow.android.ui.style.DarkColorScheme
+import com.prof18.feedflow.android.ui.style.LightColorScheme
+import com.prof18.feedflow.android.ui.style.OledColorScheme
 import com.prof18.feedflow.core.model.FeedFilter
-import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
-import com.prof18.feedflow.shared.ui.style.DarkColorScheme
-import com.prof18.feedflow.shared.ui.style.LightColorScheme
-import com.prof18.feedflow.shared.ui.style.OledColorScheme
+import org.junit.Test
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

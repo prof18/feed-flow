@@ -16,6 +16,7 @@ import androidx.compose.ui.test.performClick
 import coil3.ImageLoader
 import coil3.PlatformContext
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.ArticleReportUiState
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeData
@@ -184,6 +185,8 @@ class DesktopReaderContentTest {
                         isBookmarked = false,
                         onToggleBookmark = {},
                         onToggleContentSource = onToggleContentSource,
+                        articleReportState = ArticleReportUiState(),
+                        onReportArticle = {},
                     )
                 }
             }

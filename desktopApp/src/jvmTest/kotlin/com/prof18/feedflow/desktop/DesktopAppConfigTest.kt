@@ -15,6 +15,7 @@ class DesktopAppConfigTest {
                 setProperty("is_release", "true")
                 setProperty("dropbox_key", "fixture-only-key")
             },
+            isIcloudEnabled = false,
         )
 
         assertEquals(AppEnvironment.Release, config.appEnvironment)
@@ -24,7 +25,7 @@ class DesktopAppConfigTest {
 
     @Test
     fun `missing keys fall back to debug without Dropbox and flatpak hides Google Drive`() {
-        val config = createAppConfig(Properties().apply { setProperty("flatpak", "true") })
+        val config = createAppConfig(Properties().apply { setProperty("flatpak", "true") }, isIcloudEnabled = false)
 
         assertEquals(AppEnvironment.Debug, config.appEnvironment)
         assertFalse(config.isDropboxEnabled)

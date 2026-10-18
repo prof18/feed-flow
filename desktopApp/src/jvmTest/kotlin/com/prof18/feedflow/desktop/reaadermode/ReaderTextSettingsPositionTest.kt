@@ -25,6 +25,7 @@ import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.unit.dp
 import coil3.ImageLoader
 import coil3.PlatformContext
+import com.prof18.feedflow.core.model.ArticleReportUiState
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeDefaults
@@ -82,6 +83,8 @@ class ReaderTextSettingsPositionTest {
                             isBookmarked = false,
                             onToggleBookmark = {},
                             onToggleContentSource = {},
+                            articleReportState = ArticleReportUiState(),
+                            onReportArticle = {},
                         )
                         DesktopReaderContent(
                             state = readerState,

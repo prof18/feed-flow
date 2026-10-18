@@ -91,26 +91,26 @@ extension HomeContent {
     @ToolbarContentBuilder
     func makeCompactPhoneHeaderToolbarView() -> some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
-            HStack(spacing: Spacing.small) {
-                Button {
-                    showDrawer()
-                } label: {
-                    Label(feedFlowStrings.drawerMenuButtonContentDescription, systemImage: "sidebar.leading")
-                        .labelStyle(.iconOnly)
+            Button(action: showDrawer) {
+                HStack(spacing: Spacing.small) {
+                    Image(systemName: "sidebar.leading")
+
+                    Rectangle()
+                        .fill(Color.secondary.opacity(0.35))
+                        .frame(width: 1, height: 28)
+
+                    makeCompactPhoneHeaderText()
+                        .frame(maxWidth: compactPhoneHeaderMaxWidth, alignment: .leading)
+                        .padding(.trailing, Spacing.small)
+                        .layoutPriority(1)
                 }
-                .accessibilityIdentifier(DrawerAccessibilityIdentifiers.menuButton)
-
-                Rectangle()
-                    .fill(Color.secondary.opacity(0.35))
-                    .frame(width: 1, height: 28)
-
-                makeCompactPhoneHeaderText()
-                    .frame(maxWidth: compactPhoneHeaderMaxWidth, alignment: .leading)
-                    .padding(.trailing, Spacing.small)
-                    .layoutPriority(1)
+                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+                .fixedSize(horizontal: true, vertical: true)
             }
-            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-            .fixedSize(horizontal: true, vertical: true)
+            .accessibilityIdentifier(DrawerAccessibilityIdentifiers.menuButton)
+            .accessibilityLabel(
+                "\(feedFlowStrings.drawerMenuButtonContentDescription), \(compactPhoneHeaderAccessibilityLabel)"
+            )
             .layoutPriority(1)
         }
     }

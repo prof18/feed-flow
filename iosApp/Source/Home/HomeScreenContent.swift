@@ -76,7 +76,7 @@ struct HomeContent: View {
     }
 
     var shouldUseSystemNavigationTitle: Bool {
-        isiOS26OrLater()
+        isiOS26OrLater() && !isCompactPhone
     }
 
     func showDrawer() {
@@ -201,8 +201,39 @@ private extension HomeContent {
         }
     }
 
-    func feedListView(proxy: ScrollViewProxy) -> some View {
+    @ViewBuilder
+    func feedListWithToolbar(proxy: ScrollViewProxy) -> some View {
+        if #available(iOS 27.1, *), isCompactPhone {
+            feedListWithFixedToolbar.modifier(HomeAdaptiveCompactToolbarModifier(
+                title: getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount),
+                horizontalToolbar: makeCompactPhoneToolbarContent(proxy: proxy),
+                verticalToolbar: makeAdaptiveCompactToolbarContent(proxy: proxy)
+            ))
+        } else {
+            feedListWithDefaultToolbar(proxy: proxy)
+        }
+    }
+
+    func feedListWithDefaultToolbar(proxy: ScrollViewProxy) -> some View {
         feedListWithFixedToolbar
+            .navigationTitle(
+                shouldUseSystemNavigationTitle
+                    ? getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount)
+                    : ""
+            )
+            .toolbar {
+                if isCompactPhone {
+                    makeCompactPhoneToolbarContent(proxy: proxy)
+                } else if isiOS26OrLater() {
+                    makeIOS26ToolbarContent(proxy: proxy)
+                } else {
+                    makeLegacyToolbarContent(proxy: proxy)
+                }
+            }
+    }
+
+    func feedListView(proxy: ScrollViewProxy) -> some View {
+        feedListWithToolbar(proxy: proxy)
             .onChange(of: toggleListScroll) {
                 proxy.scrollTo(feedState.first?.id)
                 showScrollToTop = false
@@ -213,24 +244,6 @@ private extension HomeContent {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isCompactPhone)
             .toolbar(removing: isCompactPhone ? .sidebarToggle : nil)
-            .navigationTitle(
-                shouldUseSystemNavigationTitle
-                    ? getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount)
-                    : ""
-            )
-            .toolbar {
-                if isCompactPhone {
-                    if #available(iOS 26.0, *) {
-                        makeAdaptiveCompactToolbarContent(proxy: proxy)
-                    } else {
-                        makeCompactPhoneToolbarContent(proxy: proxy)
-                    }
-                } else if isiOS26OrLater() {
-                    makeIOS26ToolbarContent(proxy: proxy)
-                } else {
-                    makeLegacyToolbarContent(proxy: proxy)
-                }
-            }
             .showsScrollToTop(isVisible: showScrollToTop, onScrollToTop: {
                 withAnimation {
                     proxy.scrollTo(feedState.first?.id)

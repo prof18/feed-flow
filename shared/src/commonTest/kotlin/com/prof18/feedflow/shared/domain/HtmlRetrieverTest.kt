@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain
 import com.prof18.feedflow.core.utils.FEEDFLOW_READER_FALLBACK_USER_AGENT
 import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.core.utils.rejectUnsafeHosts
+import com.prof18.feedflow.shared.domain.recovery.FeedChallenge
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.testLogger
 import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
@@ -407,8 +408,110 @@ class HtmlRetrieverTest {
         assertTrue(result.contains("\u00E4"))
     }
 
+    @Test
+    fun `challenge on primary and fallback returns a challenge result`() = runTest(testDispatcher) {
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = challengeClient(),
+            forbiddenFallbackClient = challengeClient(),
+        )
+
+        assertEquals(
+            HtmlRetrievalResult.Challenge(
+                FeedChallenge(
+                    requestedUrl = ARTICLE_URL,
+                    effectiveUrl = ARTICLE_URL,
+                    statusCode = 403,
+                    retryAfter = null,
+                ),
+            ),
+            retriever.retrieveResult(ARTICLE_URL),
+        )
+        assertNull(retriever.retrieveHtml(ARTICLE_URL))
+    }
+
+    @Test
+    fun `challenge on primary with fallback content returns content`() = runTest(testDispatcher) {
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = challengeClient(),
+            forbiddenFallbackClient = htmlClient("<html>Fallback</html>"),
+        )
+
+        assertEquals(
+            HtmlRetrievalResult.Content(html = "<html>Fallback</html>", effectiveUrl = ARTICLE_URL),
+            retriever.retrieveResult(ARTICLE_URL),
+        )
+    }
+
+    @Test
+    fun `normal content is still returned by retrieveHtml`() = runTest(testDispatcher) {
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = htmlClient("<html>Normal</html>"),
+            forbiddenFallbackClient = unexpectedRequestHttpClient(),
+        )
+
+        assertEquals("<html>Normal</html>", retriever.retrieveHtml(ARTICLE_URL))
+    }
+
+    @Test
+    fun `decodeCaptured rejects unreadable oversized or unsafe captures`() {
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = unexpectedRequestHttpClient(),
+            forbiddenFallbackClient = unexpectedRequestHttpClient(),
+        )
+        val html = "<html>Captured</html>".encodeToByteArray()
+
+        assertEquals(
+            HtmlRetrievalResult.Failed,
+            retriever.decodeCaptured(html, "application/pdf", ARTICLE_URL),
+        )
+        assertEquals(
+            HtmlRetrievalResult.Failed,
+            retriever.decodeCaptured(ByteArray(5 * 1024 * 1024 + 1), "text/html", ARTICLE_URL),
+        )
+        assertEquals(
+            HtmlRetrievalResult.Failed,
+            retriever.decodeCaptured(html, "text/html", "https://bad%host/article"),
+        )
+        assertEquals(
+            HtmlRetrievalResult.Content("<html>Captured</html>", ARTICLE_URL),
+            retriever.decodeCaptured(html, "text/html; charset=utf-8", ARTICLE_URL),
+        )
+    }
+
+    private fun challengeClient() = HttpClient(MockEngine) {
+        engine {
+            addHandler {
+                respond(
+                    content = "<html>Just a moment</html>",
+                    status = HttpStatusCode.Forbidden,
+                    headers = headersOf(
+                        HttpHeaders.ContentType to listOf("text/html"),
+                        "cf-mitigated" to listOf("challenge"),
+                    ),
+                )
+            }
+        }
+    }
+
+    private fun htmlClient(html: String) = HttpClient(MockEngine) {
+        engine {
+            addHandler {
+                respond(
+                    content = html,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "text/html"),
+                )
+            }
+        }
+    }
+
     private companion object {
         private val UTF8_BOM = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
+        private const val ARTICLE_URL = "https://example.com/article"
     }
 
     private fun encodeWindows1252(text: String): ByteArray {

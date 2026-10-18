@@ -10,6 +10,7 @@ import com.prof18.feedflow.db.Cloud_pending_article_flag
 import com.prof18.feedflow.db.Cloud_pending_feed_or_category_change
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item_status
+import com.prof18.feedflow.db.Feed_recovery_record
 import com.prof18.feedflow.db.Feed_source
 import com.prof18.feedflow.db.Feed_source_cache_info
 import com.prof18.feedflow.db.Feed_source_category
@@ -42,6 +43,9 @@ private fun createWidgetDatabase(appEnvironment: AppEnvironment): Pair<FeedFlowD
         cloud_pending_feed_or_category_changeAdapter = Cloud_pending_feed_or_category_change.Adapter(
             entityAdapter = EnumColumnAdapter(),
             field_Adapter = EnumColumnAdapter(),
+        ),
+        feed_recovery_recordAdapter = Feed_recovery_record.Adapter(
+            modeAdapter = EnumColumnAdapter(),
         ),
         feed_source_cache_infoAdapter = Feed_source_cache_info.Adapter(
             user_agent_tierAdapter = EnumColumnAdapter(),

@@ -15,6 +15,9 @@ sealed class FeedAddedState {
         data class FetchFailed(
             val statusCode: Int,
             override val canForceAdd: Boolean = true,
+            val verificationUrl: String? = null,
+            val retryAfter: String? = null,
+            val challengedUrl: String? = null,
         ) : Error()
 
         data class InvalidUrl(override val canForceAdd: Boolean) : Error()

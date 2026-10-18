@@ -44,6 +44,15 @@ import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerIos
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
+import com.prof18.feedflow.shared.domain.recovery.BrowserCapture
+import com.prof18.feedflow.shared.domain.recovery.CapturedFeedParser
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryCoordinator
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.IosWebsiteSessionBridge
+import com.prof18.feedflow.shared.domain.recovery.IosWebsiteSessionHttp
+import com.prof18.feedflow.shared.domain.recovery.WebsiteProfileCleaner
+import com.prof18.feedflow.shared.domain.recovery.WebsiteSessionHttp
+import com.prof18.feedflow.shared.domain.recovery.toRecoveryBytes
 import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
@@ -56,6 +65,7 @@ import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
+import com.prof18.feedflow.shared.presentation.FeedRefreshVerificationViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.FeedbinSyncViewModel
@@ -102,6 +112,8 @@ fun initKoinIos(
     telemetry: Telemetry,
     notifier: Notifier,
     feedUrlProtocolClasses: List<*>,
+    websiteSessionBridge: IosWebsiteSessionBridge? = null,
+    websiteProfileCleaner: WebsiteProfileCleaner? = null,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
         appEnvironment = appEnvironment,
@@ -150,8 +162,24 @@ fun initKoinIos(
                 }
             }
         },
+    ) + listOfNotNull(
+        websiteSessionBridge?.let { recoveryModule(it, feedUrlProtocolClasses) },
+        websiteProfileCleaner?.let { cleaner -> module { single<WebsiteProfileCleaner> { cleaner } } },
     ),
 )
+
+// Only the app passes a bridge: tests and extensions never get website recovery
+private fun recoveryModule(bridge: IosWebsiteSessionBridge, feedUrlProtocolClasses: List<*>) = module {
+    single<WebsiteSessionHttp> { IosWebsiteSessionHttp(bridge, get()) }
+    single {
+        CapturedFeedParser(
+            createRssParser(
+                headers = mapOf("User-Agent" to FEEDFLOW_USER_AGENT),
+                feedUrlProtocolClasses = feedUrlProtocolClasses,
+            )::parse,
+        )
+    }
+}
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
     single<SqlDriver> {
@@ -254,10 +282,11 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             databaseHelper = get(),
             feedSyncRepository = get(),
             logger = getWith("SerialFeedFetcherRepository"),
-            rssParserWrapper = get(),
             rssChannelMapper = get(),
             dateFormatter = get(),
             feedHttpCacheStore = get(),
+            feedAttempt = get(),
+            recoveryRepository = get(),
         )
     }
 
@@ -310,6 +339,11 @@ object Deps : KoinComponent {
     fun getHomeViewModel() = getKoin().get<HomeViewModel>()
     fun getFeedSourceListViewModel() = getKoin().get<FeedSourceListViewModel>()
     fun getAddFeedViewModel() = getKoin().get<AddFeedViewModel>()
+    fun getFeedRecoveryCoordinator() = getKoin().get<FeedRecoveryCoordinator>()
+    fun getFeedRecoveryRepository() = getKoin().get<FeedRecoveryRepository>()
+    fun getFeedRefreshVerificationViewModel() = getKoin().get<FeedRefreshVerificationViewModel>()
+    fun browserCapture(url: String, status: Int, contentType: String?, data: NSData): BrowserCapture =
+        BrowserCapture(url, status, contentType, data.toRecoveryBytes())
     fun getLogger(tag: String? = null) = getKoin().get<Logger> { parametersOf(tag) }
     fun getImportExportViewModel() = getKoin().get<ImportExportViewModel>()
     fun getMainSettingsViewModel() = getKoin().get<MainSettingsViewModel>()
@@ -352,8 +386,17 @@ object Deps : KoinComponent {
         accountName: String?,
         developmentOpml: String?,
         audioUrl: String? = null,
+        verificationFixture: String? = null,
     ): String? =
         runCatching {
+            if (verificationFixture != null) {
+                check(getKoin().get<AppConfig>().appEnvironment.isDebug()) {
+                    "Verification fixtures are debug-only"
+                }
+                check(action == "reset-and-seed" && profileName == "content-rich") {
+                    "Verification fixtures require reset-and-seed with content-rich"
+                }
+            }
             if (action == ACTION_RESTORE_DEVELOPMENT) {
                 val opmlData = requireNotNull(developmentOpml) { "Missing development OPML payload" }
                     .let { NSString.create(string = it).dataUsingEncoding(NSUTF8StringEncoding) ?: NSData() }
@@ -366,6 +409,9 @@ object Deps : KoinComponent {
                     accountName = accountName,
                     audioUrl = audioUrl,
                 )
+            }
+            verificationFixture?.let { fixture ->
+                applyIosVerificationFixture(fixture, getKoin().get(), getFeedRecoveryRepository())
             }
         }.exceptionOrNull()?.message
 }

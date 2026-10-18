@@ -27,6 +27,8 @@ import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.model.AddFeedResponse
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.FeedVerificationRequired
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.sanitizeUrl
@@ -54,6 +56,7 @@ internal class FeedSourcesRepository(
     private val dateFormatter: DateFormatter,
     private val rssChannelMapper: RssChannelMapper,
     private val settingsRepository: SettingsRepository,
+    private val recoveryRepository: FeedRecoveryRepository,
 ) {
     private val knownUrlSuffix = listOf(
         "",
@@ -350,6 +353,16 @@ internal class FeedSourcesRepository(
 
             is AddFeedResponse.FetchError -> FeedAddedState.Error.FetchFailed(feedResponse.statusCode)
 
+            is AddFeedResponse.VerificationRequired -> feedResponse.failure.challenge.let { challenge ->
+                val supported = recoveryRepository.supported
+                FeedAddedState.Error.FetchFailed(
+                    statusCode = challenge.statusCode,
+                    verificationUrl = challenge.effectiveUrl.takeIf { supported },
+                    retryAfter = challenge.retryAfter.takeIf { supported },
+                    challengedUrl = challenge.requestedUrl.takeIf { supported },
+                )
+            }
+
             AddFeedResponse.EmptyFeed -> {
                 FeedAddedState.Error.InvalidTitleLink(canForceAdd = true)
             }
@@ -413,6 +426,7 @@ internal class FeedSourcesRepository(
         val addResult = when (val outcome = guessLinkAndParseFeed(url)) {
             is GuessOutcome.Found -> outcome.result
             is GuessOutcome.HttpFailure -> return@withContext AddFeedResponse.FetchError(outcome.statusCode)
+            is GuessOutcome.Challenge -> return@withContext AddFeedResponse.VerificationRequired(outcome.failure)
             GuessOutcome.NotFound -> return@withContext AddFeedResponse.NotRssFeed
         }
         val rssChannel = addResult.channel
@@ -469,6 +483,16 @@ internal class FeedSourcesRepository(
                 }
 
                 is AddFeedResponse.FetchError -> FeedEditedState.Error.FetchFailed(response.statusCode)
+
+                is AddFeedResponse.VerificationRequired -> response.failure.challenge.let { challenge ->
+                    val supported = recoveryRepository.supported
+                    FeedEditedState.Error.FetchFailed(
+                        statusCode = challenge.statusCode,
+                        verificationUrl = challenge.effectiveUrl.takeIf { supported },
+                        retryAfter = challenge.retryAfter.takeIf { supported },
+                        challengedUrl = challenge.requestedUrl.takeIf { supported },
+                    )
+                }
 
                 AddFeedResponse.EmptyFeed -> {
                     FeedEditedState.Error.InvalidTitleLink
@@ -620,6 +644,9 @@ internal class FeedSourcesRepository(
 
     private suspend fun guessLinkAndParseFeed(originalUrl: String): GuessOutcome {
         var originalHttpStatus: Int? = null
+        // Website verification is the last resort: the other candidates still get a chance first
+        var originalChallenge: FeedVerificationRequired? = null
+        var otherChallenge: FeedVerificationRequired? = null
         for (actualUrl in getCandidateFeedUrls(originalUrl)) {
             logger.d { "Trying with actualUrl: $actualUrl" }
             try {
@@ -630,6 +657,9 @@ internal class FeedSourcesRepository(
                 return GuessOutcome.Found(AddResult(channel = channel, usedUrl = actualUrl))
             } catch (e: CancellationException) {
                 throw e
+            } catch (e: FeedVerificationRequired) {
+                if (actualUrl == originalUrl.trim()) originalChallenge = e else otherChallenge = otherChallenge ?: e
+                logger.d { "Website verification required: $actualUrl" }
             } catch (e: Throwable) {
                 if (actualUrl == originalUrl.trim()) {
                     originalHttpStatus = (e as? HttpException)?.code
@@ -647,11 +677,20 @@ internal class FeedSourcesRepository(
                 return GuessOutcome.Found(AddResult(channel = channel, usedUrl = url))
             } catch (e: CancellationException) {
                 throw e
+            } catch (e: FeedVerificationRequired) {
+                otherChallenge = otherChallenge ?: e
+                logger.d { "Website verification required: $url" }
             } catch (e: Throwable) {
                 logger.d(e) { "Failed to parse discovered rssChannel: $url" }
             }
         }
-        return originalHttpStatus?.let { GuessOutcome.HttpFailure(it) } ?: GuessOutcome.NotFound
+        return guessFailure(originalChallenge ?: otherChallenge, originalHttpStatus)
+    }
+
+    private fun guessFailure(challenge: FeedVerificationRequired?, originalHttpStatus: Int?): GuessOutcome = when {
+        challenge != null -> GuessOutcome.Challenge(challenge)
+        originalHttpStatus != null -> GuessOutcome.HttpFailure(originalHttpStatus)
+        else -> GuessOutcome.NotFound
     }
 
     private suspend fun getCandidateFeedUrls(
@@ -746,6 +785,7 @@ internal class FeedSourcesRepository(
     private sealed interface GuessOutcome {
         data class Found(val result: AddResult) : GuessOutcome
         data class HttpFailure(val statusCode: Int) : GuessOutcome
+        data class Challenge(val failure: FeedVerificationRequired) : GuessOutcome
         data object NotFound : GuessOutcome
     }
 

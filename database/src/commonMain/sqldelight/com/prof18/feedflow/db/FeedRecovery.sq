@@ -1,0 +1,88 @@
+import com.prof18.feedflow.core.model.RecoveryMode;
+import kotlin.Boolean;
+
+CREATE TABLE feed_recovery_profile (
+    profile_id TEXT NOT NULL PRIMARY KEY,
+    account_epoch TEXT NOT NULL,
+    origin TEXT NOT NULL,
+    user_agent TEXT NOT NULL,
+    engine_version TEXT NOT NULL,
+    reader_retained INTEGER AS Boolean NOT NULL DEFAULT 0,
+    retired INTEGER AS Boolean NOT NULL DEFAULT 0
+);
+
+CREATE TABLE feed_recovery_record (
+    account_epoch TEXT NOT NULL,
+    source_id TEXT NOT NULL,
+    subscription_url TEXT NOT NULL,
+    effective_url TEXT NOT NULL,
+    origin TEXT NOT NULL,
+    mode TEXT AS RecoveryMode NOT NULL CHECK (mode IN ('VerificationRequired', 'SessionApproved')),
+    profile_id TEXT,
+    status_code INTEGER,
+    retry_after TEXT,
+    PRIMARY KEY (account_epoch, source_id)
+);
+
+countProfiles:
+SELECT count(*) FROM feed_recovery_profile;
+
+selectRecordsForEpoch:
+SELECT * FROM feed_recovery_record WHERE account_epoch = ?;
+
+selectRecord:
+SELECT * FROM feed_recovery_record WHERE account_epoch = ? AND source_id = ?;
+
+upsertRecord:
+INSERT OR REPLACE INTO feed_recovery_record VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+deleteRecord:
+DELETE FROM feed_recovery_record WHERE account_epoch = ? AND source_id = ?;
+
+deleteStaleRecords:
+DELETE FROM feed_recovery_record
+WHERE NOT EXISTS (SELECT 1 FROM feed_source
+    WHERE feed_source.url_hash = feed_recovery_record.source_id
+      AND feed_source.url = feed_recovery_record.subscription_url);
+
+deleteRecordsForProfile:
+DELETE FROM feed_recovery_record WHERE profile_id = ?;
+
+downgradeRecordsForProfile:
+UPDATE feed_recovery_record
+SET mode = 'VerificationRequired', profile_id = NULL, status_code = NULL, retry_after = NULL
+WHERE profile_id = ?;
+
+selectProfiles:
+SELECT * FROM feed_recovery_profile;
+
+selectActiveProfileForOrigin:
+SELECT * FROM feed_recovery_profile WHERE account_epoch = ? AND origin = ? AND retired = 0 LIMIT 1;
+
+insertProfile:
+INSERT INTO feed_recovery_profile VALUES (?, ?, ?, ?, ?, 0, 0);
+
+setReaderRetained:
+UPDATE feed_recovery_profile SET reader_retained = 1 WHERE profile_id = ? AND retired = 0;
+
+retireProfile:
+UPDATE feed_recovery_profile SET retired = 1 WHERE profile_id = ?;
+
+retireOtherEpochs:
+UPDATE feed_recovery_profile SET retired = 1 WHERE account_epoch != ? AND retired = 0;
+
+deleteRecordsOfOtherEpochs:
+DELETE FROM feed_recovery_record WHERE account_epoch != ?;
+
+retireOrphanProfile:
+UPDATE feed_recovery_profile SET retired = 1
+WHERE profile_id = ? AND retired = 0 AND reader_retained = 0
+  AND NOT EXISTS (SELECT 1 FROM feed_recovery_record WHERE feed_recovery_record.profile_id = feed_recovery_profile.profile_id);
+
+deleteRetiredProfile:
+DELETE FROM feed_recovery_profile WHERE profile_id = ? AND retired = 1;
+
+approveOriginRecords:
+UPDATE feed_recovery_record
+SET mode = 'SessionApproved', profile_id = :profileId, status_code = NULL, retry_after = NULL
+WHERE account_epoch = :epoch AND origin = :origin AND mode = 'VerificationRequired';

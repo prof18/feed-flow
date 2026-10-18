@@ -9,4 +9,14 @@ interface FeedItemContentFileHandler {
     suspend fun isContentAvailable(feedItemId: String): Boolean
     suspend fun deleteFeedItemContent(feedItemId: String)
     suspend fun clearAllContent()
+
+    /** Writes [content] next to the article file without replacing it; null when the write failed. */
+    suspend fun stageContent(feedItemId: String, content: String): StagedReaderContent?
+
+    /** Atomically replaces the article file inside [commit]; false when stale or failed. */
+    suspend fun promoteStaged(staged: StagedReaderContent, commit: (() -> Unit) -> Unit): Boolean
+
+    suspend fun discardStaged(staged: StagedReaderContent)
 }
+
+class StagedReaderContent internal constructor(val feedItemId: String, internal val token: Any)

@@ -1,9 +1,11 @@
 package com.prof18.feedflow.shared.domain.parser
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.shared.domain.HtmlRetrievalResult
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.ReaderContentLanguage
 import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
+import com.prof18.feedflow.shared.domain.feeditem.ArticleParseResult
 import com.prof18.klead.Klead
 import com.prof18.klead.KleadOptions
 import com.prof18.klead.KleadOutput
@@ -15,46 +17,61 @@ internal class KleadArticleContentParser(
     private val logger: Logger,
 ) : ArticleContentParser {
 
-    override suspend fun parse(url: String): String? {
+    override suspend fun parse(url: String): String? =
+        (parseResult(url) as? ArticleParseResult.Content)?.content
+
+    override suspend fun parseResult(url: String): ArticleParseResult {
         logger.d { "Parsing with Klead: $url" }
 
         return try {
-            val html = htmlRetriever.retrieveHtml(url)
-            if (html == null) {
-                logger.d { "Failed to retrieve HTML for Klead: $url" }
-                return null
-            }
-
-            val result = Klead.parseHtml(
-                html = html,
-                url = url,
-                options = KleadOptions(outputs = setOf(contentFormat)),
-            )
-            val content = result.content.let { kleadContent ->
-                when (contentFormat) {
-                    KleadOutput.HTML -> kleadContent.requireHtml()
-                    KleadOutput.MARKDOWN -> kleadContent.requireMarkdown()
+            when (val retrieved = htmlRetriever.retrieveResult(url)) {
+                is HtmlRetrievalResult.Content -> parseHtml(retrieved.html, url)
+                    ?.let { ArticleParseResult.Content(it, url) }
+                    ?: ArticleParseResult.Failed
+                is HtmlRetrievalResult.Challenge -> ArticleParseResult.Challenge(retrieved.challenge)
+                HtmlRetrievalResult.Failed -> {
+                    logger.d { "Failed to retrieve HTML for Klead: $url" }
+                    ArticleParseResult.Failed
                 }
-            }.trim()
-
-            val visibleLength = content.visibleLength(contentFormat)
-            if (visibleLength < MIN_CONTENT_LENGTH) {
-                logger.d { "Klead content too short ($visibleLength chars), rejecting: $url" }
-                return null
             }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            logger.d(e) { "Error parsing with Klead: $url" }
+            ArticleParseResult.Failed
+        }
+    }
 
+    override suspend fun parseHtml(html: String, url: String): String? = try {
+        val result = Klead.parseHtml(
+            html = html,
+            url = url,
+            options = KleadOptions(outputs = setOf(contentFormat)),
+        )
+        val content = result.content.let { kleadContent ->
+            when (contentFormat) {
+                KleadOutput.HTML -> kleadContent.requireHtml()
+                KleadOutput.MARKDOWN -> kleadContent.requireMarkdown()
+            }
+        }.trim()
+
+        val visibleLength = content.visibleLength(contentFormat)
+        if (visibleLength < MIN_CONTENT_LENGTH) {
+            logger.d { "Klead content too short ($visibleLength chars), rejecting: $url" }
+            null
+        } else {
             logger.d { "Successfully parsed with Klead: $url" }
             if (contentFormat == KleadOutput.HTML) {
                 ReaderContentLanguage.preserve(content, result.metadata.language)
             } else {
                 content
             }
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Throwable) {
-            logger.d(e) { "Error parsing with Klead: $url" }
-            null
         }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Throwable) {
+        logger.d(e) { "Error parsing with Klead: $url" }
+        null
     }
 
     override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = try {

@@ -42,6 +42,11 @@ class ContentPrefetchRepositoryImplTest : KoinTestBase() {
     private fun readerContentFetcher() = ReaderContentFetcher(
         articleContentParser = fakeArticleContentParser,
         feedItemContentFileHandler = feedItemContentFileHandler,
+        htmlRetriever = getKoin().get(),
+        recoveryRepository = getKoin().get(),
+        coordinator = getKoin().get(),
+        sessionHttp = null,
+        dateFormatter = getKoin().get(),
     )
 
     private fun createRepository(): ContentPrefetchRepositoryImpl {

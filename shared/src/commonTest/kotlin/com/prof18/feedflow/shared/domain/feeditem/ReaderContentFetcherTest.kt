@@ -1,13 +1,14 @@
 package com.prof18.feedflow.shared.domain.feeditem
 
 import com.prof18.feedflow.shared.test.FeedItemContentFileHandlerTestImpl
+import com.prof18.feedflow.shared.test.KoinTestBase
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 
-class ReaderContentFetcherTest {
+class ReaderContentFetcherTest : KoinTestBase() {
 
     private val fileHandler = FeedItemContentFileHandlerTestImpl()
 
@@ -53,5 +54,10 @@ class ReaderContentFetcherTest {
             override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = html
         },
         feedItemContentFileHandler = fileHandler,
+        htmlRetriever = getKoin().get(),
+        recoveryRepository = getKoin().get(),
+        coordinator = getKoin().get(),
+        sessionHttp = null,
+        dateFormatter = getKoin().get(),
     )
 }

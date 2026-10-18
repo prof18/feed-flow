@@ -545,4 +545,21 @@
     <string name="reader_mode_tts_preparing">Preparing article audio…</string>
     <string name="desktop_expand_feed_category">Expand %s</string>
     <string name="desktop_collapse_feed_category">Collapse %s</string>
+    <string name="feed_verify_website">Verify website</string>
+    <string name="feed_verification_failed">The website could not be retrieved. Cancel and try again.</string>
+    <string name="feed_verification_unsupported">Website verification is unavailable on this device.</string>
+    <string name="feed_verification_save_failed">The feed was retrieved but could not be saved.</string>
+    <string name="feed_verification_browser_failed">Website verification stopped. Cancel and try again.</string>
+    <string name="feed_clear_verification">Clear website verification</string>
+    <string name="reader_content_save_failed">The article opened, but could not be saved offline.</string>
+    <string name="feed_verification_explanation_title">This website needs a quick check</string>
+    <string name="feed_verification_explanation_body">The website uses an extra security check before sharing its content. Open the website and complete any verification. FeedFlow will continue automatically when it is ready.</string>
+    <string name="reader_verification_content_options">Choose feed content or the full article in Settings &gt; Reading Behavior, or by editing this feed.</string>
+    <string name="feed_verification_open_website">Open website</string>
+    <string name="feed_verification_screen_title">Website verification</string>
+    <string name="feed_verification_automatic_hint">Complete the website’s security check below. FeedFlow will continue automatically.</string>
+    <string name="feed_verification_checking_title">Checking the website</string>
+    <string name="feed_verification_checking_body">FeedFlow will continue automatically when the content is ready.</string>
+    <string name="feed_verification_check_again">Check again</string>
+    <string name="feed_verification_retry_body">The content could not be retrieved. Try checking again, or close this screen and retry.</string>
 </resources>

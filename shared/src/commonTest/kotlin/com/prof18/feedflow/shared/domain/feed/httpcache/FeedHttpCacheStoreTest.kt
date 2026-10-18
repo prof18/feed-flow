@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.feed.httpcache
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedFetchTier
 import com.prof18.feedflow.core.model.FeedSourceCacheInfo
+import com.prof18.feedflow.shared.domain.recovery.FeedChallenge
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -177,6 +178,55 @@ class FeedHttpCacheStoreTest {
         val notModified = createCacheInfo(fetchSucceeded = true, previous = previous, cacheStore = freshStore)
         assertEquals(FeedFetchTier.LINK_FREE, notModified.userAgentTier)
         assertEquals(FeedFetchTier.BROWSER, createCacheInfo(true, previous).userAgentTier)
+    }
+
+    @Test
+    fun `marked challenge is exposed with the recorded status`() {
+        recordForbidden(retryAfter = "120")
+        store.markChallenge(feedUrl, "https://e.test/feed")
+
+        assertEquals(
+            FeedChallenge(
+                requestedUrl = feedUrl,
+                effectiveUrl = "https://e.test/feed",
+                statusCode = 403,
+                retryAfter = "120",
+            ),
+            store.challengeFor(feedUrl),
+        )
+    }
+
+    @Test
+    fun `a later response clears the challenge mark`() {
+        recordForbidden(retryAfter = null)
+        store.markChallenge(feedUrl, "https://e.test/feed")
+
+        recordForbidden(retryAfter = null)
+
+        assertNull(store.challengeFor(feedUrl))
+    }
+
+    @Test
+    fun `seeding validators clears the challenge mark`() {
+        recordForbidden(retryAfter = null)
+        store.markChallenge(feedUrl, "https://e.test/feed")
+
+        store.seedValidators(emptyMap())
+
+        assertNull(store.challengeFor(feedUrl))
+    }
+
+    private fun recordForbidden(retryAfter: String?) {
+        store.recordResponse(
+            url = feedUrl,
+            statusCode = 403,
+            etag = null,
+            lastModified = null,
+            cacheControl = null,
+            expires = null,
+            date = null,
+            retryAfter = retryAfter,
+        )
     }
 
     private fun createCacheInfo(

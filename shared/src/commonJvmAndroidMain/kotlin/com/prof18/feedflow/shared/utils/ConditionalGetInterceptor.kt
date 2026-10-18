@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.utils
 
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
+import com.prof18.feedflow.shared.domain.recovery.RecoveryPolicy
 import okhttp3.Interceptor
 import okhttp3.Interceptor.Chain
 import okhttp3.Response
@@ -30,6 +31,9 @@ internal class ConditionalGetInterceptor(
             date = response.header("Date"),
             retryAfter = response.header("Retry-After"),
         )
+        if (RecoveryPolicy.isChallenge(response.header(RecoveryPolicy.CHALLENGE_HEADER))) {
+            feedHttpCacheStore.markChallenge(url, response.request.url.toString())
+        }
 
         return response
     }

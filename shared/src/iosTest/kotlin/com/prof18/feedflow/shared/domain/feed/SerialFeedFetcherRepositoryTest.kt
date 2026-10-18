@@ -54,10 +54,11 @@ class SerialFeedFetcherRepositoryTest : KoinTestBase() {
         databaseHelper = databaseHelper,
         feedSyncRepository = getKoin().get(),
         logger = Logger.withTag("SerialFeedFetcherRepositoryTest"),
-        rssParserWrapper = fakeRssParser,
         rssChannelMapper = getKoin().get(),
         dateFormatter = dateFormatter,
         feedHttpCacheStore = feedHttpCacheStore,
+        feedAttempt = getKoin().get(),
+        recoveryRepository = getKoin().get(),
     )
 
     @Test

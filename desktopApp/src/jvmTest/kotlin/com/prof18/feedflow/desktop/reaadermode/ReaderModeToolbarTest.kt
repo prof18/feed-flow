@@ -17,6 +17,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.model.ArticleReportUiState
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeDefaults
@@ -147,6 +148,8 @@ class ReaderModeToolbarTest {
                             isBookmarked = false,
                             onToggleBookmark = {},
                             onToggleContentSource = {},
+                            articleReportState = ArticleReportUiState(),
+                            onReportArticle = {},
                         )
                     }
                 }
@@ -182,6 +185,8 @@ class ReaderModeToolbarTest {
                             readerState.value = createReaderState(next)
                         },
                         onToggleContentSource = {},
+                        articleReportState = ArticleReportUiState(),
+                        onReportArticle = {},
                     )
                 }
             }

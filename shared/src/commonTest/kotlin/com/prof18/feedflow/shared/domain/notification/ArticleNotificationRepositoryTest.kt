@@ -163,6 +163,15 @@ class ArticleNotificationRepositoryTest : KoinTestBase() {
             assertEquals(listOf("fresh"), databaseHelper.getArticlesToNotify().map { it.id })
         }
 
+    @Test
+    fun `articles a sync account reports as read are no longer pending`() = runTest(testDispatcher) {
+        seed(ids = listOf("unread", "read-on-server"))
+
+        databaseHelper.updateFeedItemReadStatus(listOf("unread"))
+
+        assertEquals(listOf("unread"), databaseHelper.getArticlesToNotify().map { it.id })
+    }
+
     private suspend fun seed(
         source: FeedSource = enabledSource,
         ids: List<String>? = null,

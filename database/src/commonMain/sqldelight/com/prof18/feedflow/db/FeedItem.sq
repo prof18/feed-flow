@@ -547,6 +547,10 @@ UPDATE feed_item
 SET is_read = CASE 
     WHEN url_hash IN (SELECT feed_item_id FROM feed_item_status WHERE type = 'UNREAD') THEN 0
     ELSE 1
+END,
+notification_sent = CASE
+    WHEN url_hash IN (SELECT feed_item_id FROM feed_item_status WHERE type = 'UNREAD') THEN notification_sent
+    ELSE 1
 END;
 
 updateBookmarkStatusFromFeedItemStatus:

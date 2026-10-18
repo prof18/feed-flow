@@ -431,7 +431,11 @@ class GReaderRepository internal constructor(
                 feedSource = feedSource,
             )
         }
-        databaseHelper.insertFeedItems(feedItems, dateFormatter.currentTimeMillis())
+        databaseHelper.insertFeedItems(
+            feedItems = feedItems,
+            lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+            markFirstSyncItemsAsNotified = true,
+        )
 
         return Unit.success()
     }
@@ -495,7 +499,11 @@ class GReaderRepository internal constructor(
                 feedSource = feedSource,
             )
         }
-        databaseHelper.insertFeedItems(feedItems, dateFormatter.currentTimeMillis())
+        databaseHelper.insertFeedItems(
+            feedItems = feedItems,
+            lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+            markFirstSyncItemsAsNotified = true,
+        )
 
         return Unit.success()
     }

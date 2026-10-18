@@ -14,6 +14,10 @@ import com.prof18.feedflow.android.audio.AndroidAudioPlayer
 import com.prof18.feedflow.android.audio.AndroidSpeechAudioGenerator
 import com.prof18.feedflow.android.audio.SpeechAudioGenerating
 import com.prof18.feedflow.android.billing.RevenueCatSupport
+import com.prof18.feedflow.android.feedverification.AndroidWebViewProfiles
+import com.prof18.feedflow.android.feedverification.AndroidWebsiteIdentityProvider
+import com.prof18.feedflow.android.feedverification.AndroidWebsiteProfileCleaner
+import com.prof18.feedflow.android.feedverification.WebViewProfiles
 import com.prof18.feedflow.android.notifications.AndroidNotifier
 import com.prof18.feedflow.android.ui.utils.coilImageLoader
 import com.prof18.feedflow.android.widget.FeedFlowWidget
@@ -26,12 +30,15 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoin
+import com.prof18.feedflow.shared.di.websiteRecoveryModule
 import com.prof18.feedflow.shared.domain.AppForegroundState
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.notification.Notifier
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.WebsiteProfileCleaner
 import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.presentation.WidgetRefreshState
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
@@ -99,6 +106,8 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
             modules = listOf(
                 module {
                     single<Context> { this@FeedFlowApp }
+                    single<WebViewProfiles> { AndroidWebViewProfiles(this@FeedFlowApp) }
+                    single<WebsiteProfileCleaner> { AndroidWebsiteProfileCleaner(get(), get()) }
                     single {
                         BrowserManager(
                             context = this@FeedFlowApp,
@@ -152,6 +161,9 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                             settingsRepository = get(),
                         )
                     }
+                },
+                websiteRecoveryModule { scope ->
+                    AndroidWebsiteIdentityProvider(lazy { scope.get<FeedRecoveryRepository>() })
                 },
             ),
         )

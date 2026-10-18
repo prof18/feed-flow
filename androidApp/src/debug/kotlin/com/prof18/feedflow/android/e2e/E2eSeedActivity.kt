@@ -36,10 +36,14 @@ import com.prof18.feedflow.android.widget.FeedFlowWidget
 import com.prof18.feedflow.android.widget.WidgetConfigurationActivity
 import com.prof18.feedflow.core.model.WidgetContentFilter
 import com.prof18.feedflow.core.model.WidgetFeedLayout
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
+import com.prof18.feedflow.shared.domain.recovery.FeedChallenge
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.RecoveryUpdate
 import com.prof18.feedflow.shared.e2e.E2eSeedProfile
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
@@ -54,6 +58,8 @@ class E2eSeedActivity : BaseThemeActivity() {
     private val opmlFeedHandler by inject<OpmlFeedHandler>()
     private val widgetSettingsRepository by inject<WidgetSettingsRepository>()
     private val widgetUpdater by inject<WidgetUpdater>()
+    private val databaseHelper by inject<DatabaseHelper>()
+    private val feedRecoveryRepository by inject<FeedRecoveryRepository>()
 
     private var uiState by mutableStateOf<E2eSeedUiState>(E2eSeedUiState.Running)
 
@@ -148,6 +154,7 @@ class E2eSeedActivity : BaseThemeActivity() {
         val deepLinkUrl = uri?.getQueryParameter("url")
         val opmlPayload = uri?.getQueryParameter("opml")
         val audioUrl = uri?.getQueryParameter("audioUrl")
+        val verificationFixture = uri?.getQueryParameter("verification")
 
         if (action == null) {
             uiState = E2eSeedUiState.Error("Missing E2E seed action")
@@ -183,6 +190,12 @@ class E2eSeedActivity : BaseThemeActivity() {
                         accountName = accountName,
                         audioUrl = audioUrl,
                     )
+                }
+                if (verificationFixture != null) {
+                    check(action == E2eSeedRunner.ACTION_RESET_AND_SEED && profile == E2eSeedProfile.CONTENT_RICH) {
+                        "Verification fixtures require reset-and-seed with content-rich"
+                    }
+                    applyFeedVerificationFixture(verificationFixture)
                 }
                 if (action != E2eSeedRunner.ACTION_RESET && profile == E2eSeedProfile.ANDROID_WIDGET) {
                     applyAndroidWidgetProfile()
@@ -239,6 +252,24 @@ class E2eSeedActivity : BaseThemeActivity() {
             .forEach(block)
     }
 
+    /** Points a seeded feed at an unreachable HTTPS URL and records it as waiting for verification. */
+    private suspend fun applyFeedVerificationFixture(fixture: String) {
+        check(fixture == "pending") { "Unknown feed verification fixture: $fixture" }
+        val seededSource = databaseHelper.getFeedSources().first { it.id == VERIFICATION_FIXTURE_SOURCE_ID }
+        val source = seededSource.copy(url = VERIFICATION_FIXTURE_URL, websiteUrl = null)
+        databaseHelper.updateFeedSource(source)
+        val challenge = FeedChallenge(
+            requestedUrl = source.url,
+            effectiveUrl = source.url,
+            statusCode = 403,
+            retryAfter = null,
+        )
+        feedRecoveryRepository.apply(
+            update = RecoveryUpdate.RecordChallenge(source = source, challenge = challenge, previous = null),
+            ticket = feedRecoveryRepository.issueTicket(),
+        )
+    }
+
     private fun openMainActivity(deepLinkUrl: String? = null) {
         val intent = Intent(this, MainActivity::class.java)
             .setAction(Intent.ACTION_VIEW)
@@ -254,6 +285,8 @@ class E2eSeedActivity : BaseThemeActivity() {
         const val ACTION_OPEN_DEEP_LINK = "open-deep-link"
         const val ACTION_RESTORE_DEVELOPMENT = "restore-development"
         const val E2E_WIDGET_ID = 1
+        const val VERIFICATION_FIXTURE_SOURCE_ID = "e2e-feed-android-weekly"
+        const val VERIFICATION_FIXTURE_URL = "https://feed-verification.invalid/rss"
     }
 }
 

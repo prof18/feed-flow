@@ -5,6 +5,8 @@ import SwiftUI
 import UIKit
 
 struct ReaderModeScreen: View {
+    @Environment(\.scenePhase)
+    private var scenePhase
     @Environment(BrowserSelector.self)
     private var browserSelector
 
@@ -48,6 +50,7 @@ struct ReaderModeScreen: View {
     /// which captures the view value and with it a stale `@Environment` copy. `@State` is read
     /// through its storage, so it stays current there.
     @State private var isDarkMode = false
+    @State private var verification: ReaderVerificationState?
 
     let viewModel: ReaderModeViewModel
     let onInAppBrowserClick: ((URL) -> Void)?
@@ -219,6 +222,7 @@ struct ReaderModeScreen: View {
             }
         )
         .modifier(ReaderArticleReportHost(viewModel: viewModel, state: $reportState))
+        .modifier(ReaderVerificationMessage(state: verification))
         .fullScreenCover(
             isPresented: Binding(
                 get: { imageViewerUrl != nil },
@@ -239,6 +243,15 @@ struct ReaderModeScreen: View {
         .alert(feedFlowStrings.audioOpenFailed, isPresented: $isShowingAudioOpenFailedAlert) {
             Button(feedFlowStrings.actionDone, role: .cancel) {}
         }
+        .websiteVerificationExplanation(
+            url: scenePhase == .active && viewModel.verificationAvailable ? verification?.verificationUrl : nil,
+            readerHint: true
+        ) {
+            viewModel.verifyWebsite()
+        }
+        .onDisappear {
+            viewModel.cancelVerification()
+        }
         .onChange(of: colorScheme, initial: true) { _, newValue in
             isDarkMode = newValue == .dark
         }
@@ -257,8 +270,10 @@ struct ReaderModeScreen: View {
                     self.hasArticleUrl = !data.url.isEmpty
                     self.canToggleContentSource = false
                     self.currentSiteName = nil
-                    // A url-less item has no page to fall back to, so there is nothing to load.
-                    if let url = URL(string: data.url) {
+                    // A challenged page or a url-less item has no page to fall back to.
+                    if viewModel.verificationState.value.verificationUrl != nil {
+                        self.readerStatus = .contentUnavailable
+                    } else if let url = URL(string: data.url) {
                         self.articleUrl = url
                         self.readerStatus = .failedToExtractContent(url: url)
                     } else {
@@ -297,6 +312,11 @@ struct ReaderModeScreen: View {
             }
         }
         .task {
+            for await state in viewModel.verificationState {
+                self.verification = state
+            }
+        }
+        .task {
             for await canNavigate in viewModel.canNavigateToPreviousState {
                 self.canNavigatePrevious = canNavigate.boolValue
             }
@@ -307,7 +327,9 @@ struct ReaderModeScreen: View {
             }
         }
     }
+}
 
+private extension ReaderModeScreen {
     private func openInBrowser(url: URL) {
         if browserSelector.openInAppBrowser() {
             if let browserClick = onInAppBrowserClick {

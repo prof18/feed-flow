@@ -133,6 +133,8 @@ targets:
       Release: Assets/FeedFlow.xcconfig
     sources:
       - path: Source
+      - path: ../androidApp/src/main/assets/feed-recovery-transfer.js
+        buildPhase: resources
       - path: Assets
         excludes:
           - AppIcon.icon
@@ -413,6 +415,44 @@ targets:
       - package: GoogleAPIClientForREST
         product: GoogleAPIClientForREST_Drive
 
+  FeedRecoveryTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/FeedRecovery
+      - path: Source/WebsiteVerification/WebsiteHTTPTransport.swift
+      - path: Source/WebsiteVerification/WebsiteHTTPTransportOperation.swift
+      - path: Source/WebsiteVerification/WebsiteHTTPTransportError.swift
+      - path: Source/WebsiteVerification/WebsiteHTTPResponse.swift
+      - path: Source/WebsiteVerification/WebsiteClearanceCookies.swift
+      - path: Source/WebsiteVerification/WebsiteReplayIdentity.swift
+      - path: Source/WebsiteVerification/WebsiteRequestTasks.swift
+      - path: Source/WebsiteVerification/WebsiteProfileIdentity.swift
+      - path: Source/WebsiteVerification/WebsiteSessionBridge.swift
+      - path: Source/WebsiteVerification/WebsiteProfileStore.swift
+      - path: Source/WebsiteVerification/WebsiteProfileRecords.swift
+      - path: Source/WebsiteVerification/FeedRecoveryRepositoryRecords.swift
+      - path: Source/WebsiteVerification/WebsiteDataStoreProviding.swift
+      - path: Source/WebsiteVerification/WebKitWebsiteDataStoreProvider.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserAttachLifecycle.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserCaptureOutcome.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserNavigationPolicy.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserNavigationState.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.FeedRecoveryTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_PREPROCESS: "NO"
+        INFOPLIST_PREFIX_HEADER: ""
+        TEST_HOST: ""
+        OTHER_LDFLAGS: ["$(inherited)", "-framework", FeedFlowKit, "-lsqlite3"]
+    dependencies:
+      - target: FeedFlowKitBuilder
+        embed: false
+        link: false
+      - package: Firebase
+        product: FirebaseCrashlytics
+
   WidgetTests:
     type: bundle.unit-test
     platform: iOS
@@ -560,6 +600,17 @@ schemes:
     archive:
       config: Release
       revealArchiveInOrganizer: true
+
+  FeedRecoveryTests:
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        FeedRecoveryTests: all
+    test:
+      config: Debug
+      targets:
+        - FeedRecoveryTests
 
   CloudSyncTests:
     build:

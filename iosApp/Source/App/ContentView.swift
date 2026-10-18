@@ -19,10 +19,20 @@ struct ContentView: View {
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
     @StateObject private var reviewVmStoreOwner = VMStoreOwner<ReviewViewModel>(Deps.shared.getReviewViewModel())
     @StateObject private var readerModeVmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
-        Deps.shared.getReaderModeViewModel())
+        Deps.shared.getReaderModeViewModel()
+    )
+    @StateObject private var refreshVerificationVmStoreOwner = VMStoreOwner<FeedRefreshVerificationViewModel>(
+        Deps.shared.getFeedRefreshVerificationViewModel()
+    )
 
     @State private var hasTriggeredLaunch = false
     @State private var openingAudioEpisode = false
+    @State private var isAppForeground = false
+    @State private var wasInBackground = true
+    @State private var visibleWebsiteVerificationRequest: WebsiteVerificationRequest?
+    @State private var pendingForegroundVerification: PendingFeedVerification?
+    @State private var foregroundVerificationExplanationURL: String?
+    private let isWebsiteVerificationAvailable = Deps.shared.getFeedRecoveryCoordinator().available
 
     @State private var selectedSidebarItem: SidebarSelection? = .timeline
     @State private var navDrawerState: NavDrawerState = .init(
@@ -44,6 +54,44 @@ struct ContentView: View {
             readerModeViewModel: readerModeVmStoreOwner.instance,
             onOpenAudioEpisode: openAudioEpisode
         )
+        .websiteVerificationExplanation(
+            url: foregroundVerificationExplanationURL,
+            identity: foregroundVerificationIdentity,
+            onCancel: {
+                guard let pendingForegroundVerification else { return }
+                refreshVerificationVmStoreOwner.instance.dismiss(pending: pendingForegroundVerification)
+            },
+            onConfirm: {
+                guard let pendingForegroundVerification else { return }
+                refreshVerificationVmStoreOwner.instance.verify(pending: pendingForegroundVerification)
+            }
+        )
+        .onChange(of: scenePhase, initial: true) { _, newPhase in
+            isAppForeground = newPhase == .active
+            switch newPhase {
+            case .active:
+                if wasInBackground {
+                    wasInBackground = false
+                    refreshVerificationVmStoreOwner.instance.onForeground()
+                }
+                updateForegroundVerificationExplanation()
+                WebsiteVerificationPresenter.shared.update(
+                    sessionID: visibleWebsiteVerificationRequest?.sessionId
+                )
+            case .background:
+                wasInBackground = true
+                foregroundVerificationExplanationURL = nil
+                visibleWebsiteVerificationRequest = nil
+                guard !WebsiteVerificationPresenter.shared.hasForegroundActiveScene else { break }
+                WebsiteVerificationPresenter.shared.update(sessionID: nil)
+                refreshVerificationVmStoreOwner.instance.cancel()
+                Task {
+                    try? await Deps.shared.getFeedRecoveryCoordinator().cancelAll()
+                }
+            default:
+                break
+            }
+        }
         .onAppear {
             let savedThemeMode = vmStoreOwner.instance.getCurrentThemeMode()
             appState.updateTheme(savedThemeMode)
@@ -66,6 +114,38 @@ struct ContentView: View {
                     requestReview()
                     reviewVmStoreOwner.instance.onReviewShown()
                 }
+            }
+        }
+        .task {
+            for await request in Deps.shared.getFeedRecoveryCoordinator().visibleState {
+                visibleWebsiteVerificationRequest = request
+                guard isAppForeground else { continue }
+                WebsiteVerificationPresenter.shared.update(sessionID: request?.sessionId)
+            }
+        }
+        .task {
+            for await failure in Deps.shared.getFeedRecoveryCoordinator().failures {
+                appState.snackbarQueue.append(
+                    SnackbarData(title: Self.message(for: failure), subtitle: nil, showBanner: true)
+                )
+            }
+        }
+        .task {
+            for await pending in refreshVerificationVmStoreOwner.instance.pending {
+                pendingForegroundVerification = pending.first
+                updateForegroundVerificationExplanation()
+            }
+        }
+        .task {
+            var previousEpoch: String?
+            for await epoch in Deps.shared.getFeedRecoveryRepository().accountEpochState {
+                if let previousEpoch, previousEpoch != epoch {
+                    refreshVerificationVmStoreOwner.instance.cancel()
+                    pendingForegroundVerification = nil
+                    foregroundVerificationExplanationURL = nil
+                    try? await Deps.shared.getFeedRecoveryCoordinator().cancelAll()
+                }
+                previousEpoch = epoch
             }
         }
         .task {
@@ -101,6 +181,38 @@ struct ContentView: View {
                 }
             }
         #endif
+    }
+}
+
+private extension ContentView {
+    private func updateForegroundVerificationExplanation() {
+        guard isAppForeground else { return }
+        guard isWebsiteVerificationAvailable,
+              let pendingForegroundVerification
+        else {
+            foregroundVerificationExplanationURL = nil
+            return
+        }
+        foregroundVerificationExplanationURL = pendingForegroundVerification.record.effectiveUrl
+    }
+
+    private var foregroundVerificationIdentity: String? {
+        guard let record = pendingForegroundVerification?.record else { return nil }
+        return [record.accountEpoch, record.sourceId, record.subscriptionUrl, record.effectiveUrl]
+            .joined(separator: "|")
+    }
+
+    private static func message(for failure: VerificationFailure) -> String {
+        switch failure {
+        case .saveFailed:
+            feedFlowStrings.feedVerificationSaveFailed
+        case .browserStopped:
+            feedFlowStrings.feedVerificationBrowserFailed
+        case .unsupported:
+            feedFlowStrings.feedVerificationUnsupported
+        default:
+            feedFlowStrings.feedVerificationFailed
+        }
     }
 
     private func handleFeedFlowNotificationURL(_ url: URL) {

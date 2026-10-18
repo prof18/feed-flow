@@ -22,7 +22,7 @@ struct FeedFlowApp: App {
     private var feedSyncTimer: FeedSyncTimer = .init()
 
     init() {
-        startKoin(notifier: IOSNotifier())
+        startKoin(notifier: IOSNotifier(), websiteRecovery: true)
         RevenueCatSupport.configure()
         setupTelemetry()
         _browserSelector = State(initialValue: BrowserSelector())
@@ -198,6 +198,9 @@ struct FeedFlowApp: App {
             let accountName = components?.queryItems?
                 .first { $0.name == "account" }?
                 .value
+            let verificationFixture = components?.queryItems?
+                .first { $0.name == "verification" }?
+                .value
             // iOS truncates opened URLs to 2047 characters, so a full subscription list does not fit
             // in the link: the restore script copies it into Documents instead.
             let audioUrl = components?.queryItems?
@@ -216,7 +219,8 @@ struct FeedFlowApp: App {
                         profileName: profileName,
                         accountName: accountName,
                         developmentOpml: developmentOpml,
-                        audioUrl: audioUrl
+                        audioUrl: audioUrl,
+                        verificationFixture: verificationFixture
                     )
                     await MainActor.run {
                         if let seedError {

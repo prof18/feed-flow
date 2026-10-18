@@ -33,6 +33,8 @@ struct EditFeedScreen: View {
     @State private var isPinned = false
     @State private var showNotificationToggle = false
     @State private var isNotificationEnabled = false
+    @State private var verificationChallengeUrl: String?
+    @State private var verificationExplanationUrl: String?
 
     var body: some View {
         @Bindable var appState = appState
@@ -53,6 +55,7 @@ struct EditFeedScreen: View {
                 categorySelectorObserver: categorySelectorObserver,
                 viewModel: vmStoreOwner.instance,
                 updateFeedUrlTextFieldValue: { value in
+                    clearVerification()
                     vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
                 },
                 updateFeedNameTextFieldValue: { value in
@@ -87,6 +90,22 @@ struct EditFeedScreen: View {
                 }
             )
             .snackbar(messageQueue: $appState.snackbarQueue)
+            .websiteVerificationExplanation(
+                url: verificationExplanationUrl,
+                onCancel: {
+                    clearVerification()
+                    vmStoreOwner.instance.cancelRecovery()
+                    errorMessage = feedFlowStrings.feedFetchRefusedError
+                    showError = true
+                },
+                onConfirm: {
+                    clearVerification()
+                    vmStoreOwner.instance.verifyWebsite()
+                }
+            )
+            .onDisappear {
+                vmStoreOwner.instance.cancelRecovery()
+            }
             .onAppear {
                 vmStoreOwner.instance.loadFeedToEdit(feedSource: feedSource)
 
@@ -116,16 +135,21 @@ struct EditFeedScreen: View {
                             )
                         )
                         self.appState.redrawAfterFeedSourceEdit.toggle()
+                        clearVerification()
                         dismiss()
 
                     case .idle:
                         errorMessage = ""
                         showError = false
+                        clearVerification()
 
                     case .loading:
-                        break
+                        clearVerification()
+                        showError = false
+                        errorMessage = ""
 
                     case let .error(error):
+                        clearVerification()
                         switch onEnum(of: error) {
                         case .invalidUrl:
                             errorMessage = feedFlowStrings.invalidRssUrl
@@ -136,13 +160,21 @@ struct EditFeedScreen: View {
                         case .genericError:
                             errorMessage = feedFlowStrings.editFeedGenericError
 
-                        case .fetchFailed:
+                        case let .fetchFailed(fetchFailure):
+                            verificationChallengeUrl = fetchFailure.verificationUrl
                             errorMessage = feedFlowStrings.feedFetchRefusedError
                         }
 
                         isAddingFeed = false
                         showError = true
+                        updateVerificationPresentation()
                     }
+                }
+            }
+            .task {
+                for await required in vmStoreOwner.instance.verificationRequiredState
+                    where !(required as? Bool ?? false) {
+                    verificationExplanationUrl = nil
                 }
             }
             .task {
@@ -171,5 +203,22 @@ struct EditFeedScreen: View {
                 }
             }
         }
+    }
+
+    private func clearVerification() {
+        verificationChallengeUrl = nil
+        verificationExplanationUrl = nil
+    }
+
+    /// A challenged feed opens the verification explanation instead of the generic fetch error.
+    private func updateVerificationPresentation() {
+        guard verificationChallengeUrl != nil else { return }
+        guard vmStoreOwner.instance.verificationAvailable else {
+            errorMessage = feedFlowStrings.feedVerificationUnsupported
+            return
+        }
+        showError = false
+        errorMessage = ""
+        verificationExplanationUrl = verificationChallengeUrl
     }
 }

@@ -20,6 +20,7 @@ struct FeedSourceListScreen: View {
         feedSourcesWithoutCategory: [],
         feedSourcesWithCategory: []
     )
+    @State private var recoveryStates: [String: FeedSourceRecoveryUiState] = [:]
 
     @State private var showFeedOperationDialog = false
     @State private var feedOperationLoadingMessage: String?
@@ -29,6 +30,8 @@ struct FeedSourceListScreen: View {
 
         FeedSourceListScreenContent(
             feedState: feedState,
+            recoveryStates: recoveryStates,
+            verificationAvailable: vmStoreOwner.instance.verificationAvailable,
             deleteFeedSource: { feedSource in
                 vmStoreOwner.instance.deleteFeedSource(feedSource: feedSource)
             },
@@ -43,6 +46,12 @@ struct FeedSourceListScreen: View {
             },
             onReorderFeedSources: { feedSources in
                 vmStoreOwner.instance.reorderFeedSources(feedSources: feedSources)
+            },
+            onClearVerification: { source in
+                vmStoreOwner.instance.clearWebsiteVerification(source: source)
+            },
+            onVerifyWebsite: { source in
+                vmStoreOwner.instance.verifyWebsite(source: source)
             }
         )
         .id(appState.redrawAfterFeedSourceEdit)
@@ -65,6 +74,11 @@ struct FeedSourceListScreen: View {
         .task {
             for await state in vmStoreOwner.instance.feedSourcesState {
                 self.feedState = state
+            }
+        }
+        .task {
+            for await state in vmStoreOwner.instance.recoveryStates {
+                self.recoveryStates = state
             }
         }
         .task {

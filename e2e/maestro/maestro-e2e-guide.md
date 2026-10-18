@@ -110,6 +110,14 @@ feedflow://e2e/reset-and-seed?profile=sync-linked-mock&account=fresh_rss
 
 `sync-linked-mock` and `sync-upload-required` can select a seeded account with `account=fresh_rss`, `miniflux`, `bazqux`, `feedbin`, `dropbox`, or `icloud`.
 
+`content-rich` also accepts `verification=pending` on `reset-and-seed` (Android and iOS, debug builds
+only). The fixture points the seeded Android Weekly feed at the reserved
+`https://feed-verification.invalid/rss` URL and records it as waiting for website verification. The app
+then shows the foreground explanation once; Cancel hides it until the app returns from the background.
+The feed source list offers **Verify website** for that feed, which opens the same explanation and then
+the verification browser. The fixture does not seed a clearance cookie or complete a live challenge.
+REG-182 uses it.
+
 The stable completion marker is:
 
 - visible text: `E2E seed complete`

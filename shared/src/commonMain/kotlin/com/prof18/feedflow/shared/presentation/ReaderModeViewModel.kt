@@ -24,7 +24,12 @@ import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryCoordinator
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.ReaderFetchResult
+import com.prof18.feedflow.shared.domain.recovery.RecoveryTicket
 import io.ktor.http.Url
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,6 +39,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
 class ReaderModeViewModel internal constructor(
@@ -45,7 +51,15 @@ class ReaderModeViewModel internal constructor(
     private val articleNavigationRepository: ArticleNavigationRepository,
     private val databaseHelper: DatabaseHelper,
     private val articleReporter: ArticleReporter,
+    private val recoveryRepository: FeedRecoveryRepository,
+    coordinator: FeedRecoveryCoordinator,
 ) : ViewModel() {
+
+    val verificationAvailable: Boolean = coordinator.available
+    private val verificationMutableState = MutableStateFlow(ReaderVerificationState())
+    val verificationState = verificationMutableState.asStateFlow()
+    private var loadTicket: RecoveryTicket? = null
+    private var verifyTicket: RecoveryTicket? = null
 
     private val readerModeMutableState: MutableStateFlow<ReaderModeState> = MutableStateFlow(
         ReaderModeState.Loading,
@@ -121,6 +135,8 @@ class ReaderModeViewModel internal constructor(
 
     fun setLoading() {
         loadReaderModeJob?.cancel()
+        loadTicket?.revoke()
+        loadTicket = null
         readerModeMutableState.value = ReaderModeState.Loading
     }
 
@@ -138,7 +154,59 @@ class ReaderModeViewModel internal constructor(
 
     fun clearSelection() {
         articleReportMutableState.value = ArticleReportUiState()
+        loadTicket?.revoke()
+        loadTicket = null
         currentArticleMutableState.value = null
+    }
+
+    fun verifyWebsite() {
+        val state = verificationMutableState.value
+        val articleId = state.articleId ?: return
+        val verificationUrl = state.verificationUrl ?: return
+        val urlInfo = currentArticleMutableState.value?.takeIf { it.id == articleId } ?: return
+        if ((state.blockedUntil ?: 0) > Clock.System.now().toEpochMilliseconds()) {
+            verificationMutableState.value = state.copy(failed = true)
+            return
+        }
+        verifyTicket?.revoke()
+        val ticket = recoveryRepository.issueTicket()
+        verifyTicket = ticket
+        verificationMutableState.value = state.copy(failed = false)
+        viewModelScope.launch {
+            val result = try {
+                readerContentFetcher.verifyForReader(
+                    articleId = articleId,
+                    verificationUrl = verificationUrl,
+                    save = settingsRepository.isSaveItemContentOnOpenEnabled(),
+                    ticket = ticket,
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                ReaderFetchResult.Unavailable
+            }
+            if (currentArticleId != articleId) return@launch
+            if (result is ReaderFetchResult.Content) {
+                val data = buildReaderModeData(
+                    urlInfo = urlInfo,
+                    content = result.content,
+                    shownContentSource = ShownContentSource.WEB,
+                    canToggleContentSource = hasAvailableFeedContent(articleId),
+                )
+                verificationMutableState.value = ReaderVerificationState(
+                    articleId = articleId,
+                    saveFailed = result.saveFailed,
+                )
+                emitIfStillCurrent(articleId, ReaderModeState.Success(data))
+            } else {
+                verificationMutableState.update { it.copy(failed = true) }
+            }
+        }
+    }
+
+    fun cancelVerification() {
+        verifyTicket?.revoke()
+        verifyTicket = null
     }
 
     fun resetState() {
@@ -160,16 +228,17 @@ class ReaderModeViewModel internal constructor(
 
     private fun loadArticleContent(urlInfo: FeedItemUrlInfo, effectiveSource: ShownContentSource) {
         loadReaderModeJob?.cancel()
+        val ticket = replaceLoadTicket()
         loadReaderModeJob = viewModelScope.launch {
             readerModeMutableState.value = ReaderModeState.Loading
 
             val requestedArticleId = urlInfo.id
             val data = if (effectiveSource == ShownContentSource.FEED) {
                 // Feed content preferred; fall back to web parsing when the feed ships no content.
-                loadFeedContent(urlInfo) ?: loadWebContent(urlInfo, requestedArticleId)
+                loadFeedContent(urlInfo) ?: loadWebContent(urlInfo, requestedArticleId, ticket)
             } else {
                 // Web content preferred; use the feed copy when fetching, parsing, or loading times out.
-                loadWebContent(urlInfo, requestedArticleId) ?: loadFeedContent(urlInfo)
+                loadWebContent(urlInfo, requestedArticleId, ticket) ?: loadFeedContent(urlInfo)
             }
 
             if (currentArticleId != requestedArticleId) return@launch
@@ -183,12 +252,16 @@ class ReaderModeViewModel internal constructor(
         }
     }
 
-    private suspend fun loadWebContent(urlInfo: FeedItemUrlInfo, requestedArticleId: String): ReaderModeData? {
+    private suspend fun loadWebContent(
+        urlInfo: FeedItemUrlInfo,
+        requestedArticleId: String,
+        ticket: RecoveryTicket,
+    ): ReaderModeData? {
         if (!urlInfo.canOpenWebReaderMode()) return null
 
         val content = feedItemContentFileHandler.loadFeedItemContent(requestedArticleId)
             ?.takeIf { it.isNotBlank() }
-            ?: parseWebContent(urlInfo, requestedArticleId)
+            ?: parseWebContent(urlInfo, requestedArticleId, ticket)
             ?: return null
         if (currentArticleId != requestedArticleId) return null
 
@@ -200,14 +273,49 @@ class ReaderModeViewModel internal constructor(
         )
     }
 
-    private suspend fun parseWebContent(urlInfo: FeedItemUrlInfo, requestedArticleId: String): String? =
-        withTimeoutOrNull(PARSE_TIMEOUT) {
-            readerContentFetcher.fetch(
-                feedItemId = requestedArticleId,
+    private suspend fun parseWebContent(
+        urlInfo: FeedItemUrlInfo,
+        requestedArticleId: String,
+        ticket: RecoveryTicket,
+    ): String? {
+        val result = withTimeoutOrNull(PARSE_TIMEOUT) {
+            readerContentFetcher.fetchForReader(
+                articleId = requestedArticleId,
                 url = urlInfo.url,
                 save = settingsRepository.isSaveItemContentOnOpenEnabled(),
+                ticket = ticket,
             )
         }
+        return when (result) {
+            is ReaderFetchResult.Content -> {
+                val hadState = verificationMutableState.value.articleId == requestedArticleId
+                if (currentArticleId == requestedArticleId && (result.saveFailed || hadState)) {
+                    // A successful load supersedes an earlier challenge for this article
+                    verificationMutableState.value = ReaderVerificationState(
+                        articleId = requestedArticleId,
+                        saveFailed = result.saveFailed,
+                    )
+                }
+                result.content
+            }
+            is ReaderFetchResult.NeedsVerification -> {
+                if (currentArticleId == requestedArticleId) {
+                    verificationMutableState.value = ReaderVerificationState(
+                        articleId = requestedArticleId,
+                        verificationUrl = result.verificationUrl,
+                        blockedUntil = result.blockedUntil,
+                    )
+                }
+                null
+            }
+            ReaderFetchResult.Unavailable, null -> null
+        }
+    }
+
+    private fun replaceLoadTicket(): RecoveryTicket {
+        loadTicket?.revoke()
+        return recoveryRepository.issueTicket().also { loadTicket = it }
+    }
 
     private suspend fun loadFeedContent(urlInfo: FeedItemUrlInfo): ReaderModeData? {
         val feedContent = databaseHelper.getFeedItemContent(urlInfo.id)
@@ -275,12 +383,13 @@ class ReaderModeViewModel internal constructor(
         val shownSource = currentShownSource ?: return
         val previousState = readerModeMutableState.value as? ReaderModeState.Success ?: return
         loadReaderModeJob?.cancel()
+        val ticket = replaceLoadTicket()
         readerModeMutableState.value = ReaderModeState.Loading
         loadReaderModeJob = viewModelScope.launch {
             val requestedArticleId = urlInfo.id
             val data = when (shownSource) {
                 ShownContentSource.WEB -> loadFeedContent(urlInfo)
-                ShownContentSource.FEED -> loadWebContent(urlInfo, requestedArticleId)
+                ShownContentSource.FEED -> loadWebContent(urlInfo, requestedArticleId, ticket)
             }
             if (currentArticleId != requestedArticleId) return@launch
 
@@ -319,6 +428,11 @@ class ReaderModeViewModel internal constructor(
     private fun selectArticle(urlInfo: FeedItemUrlInfo): Boolean {
         val isSameArticle = currentArticleId == urlInfo.id && readerModeMutableState.value.isForArticle(urlInfo.id)
         if (currentArticleId != urlInfo.id) articleReportMutableState.value = ArticleReportUiState()
+        if (verificationMutableState.value.articleId != urlInfo.id) {
+            // A Retry-After or a pending verification belongs to one article only
+            cancelVerification()
+            verificationMutableState.value = ReaderVerificationState()
+        }
         currentArticleId = urlInfo.id
         currentArticleMutableState.value = urlInfo
         updateNavigationFlags()
@@ -418,7 +532,21 @@ class ReaderModeViewModel internal constructor(
         }
     }
 
+    override fun onCleared() {
+        loadTicket?.revoke()
+        verifyTicket?.revoke()
+        super.onCleared()
+    }
+
     private companion object {
         private val PARSE_TIMEOUT = 20.seconds
     }
 }
+
+data class ReaderVerificationState(
+    val articleId: String? = null,
+    val verificationUrl: String? = null,
+    val blockedUntil: Long? = null,
+    val failed: Boolean = false,
+    val saveFailed: Boolean = false,
+)

@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.feed
 import co.touchlab.kermit.Logger
 import co.touchlab.skie.configuration.annotations.SuspendInterop
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.FeedRecoveryRecord
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import com.prof18.feedflow.core.model.FeedSourceToNotify
@@ -18,7 +19,11 @@ import com.prof18.feedflow.shared.domain.feed.httpcache.FeedRefreshScheduler
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedSourceCacheInfoFactory
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
-import com.prof18.rssparser.exception.HttpException
+import com.prof18.feedflow.shared.domain.recovery.FeedAttempt
+import com.prof18.feedflow.shared.domain.recovery.FeedOutcome
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.RecoveryTicket
+import com.prof18.feedflow.shared.domain.recovery.RecoveryUpdate
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
@@ -35,10 +40,11 @@ class SerialFeedFetcherRepository internal constructor(
     private val databaseHelper: DatabaseHelper,
     private val feedSyncRepository: FeedSyncRepository,
     private val logger: Logger,
-    private val rssParserWrapper: RssParserWrapper,
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
     private val feedHttpCacheStore: FeedHttpCacheStore,
+    private val feedAttempt: FeedAttempt,
+    private val recoveryRepository: FeedRecoveryRepository,
 ) {
     @Suppress("unused") // Used on iOS
     suspend fun getFeedSourceToNotify(): List<FeedSourceToNotify> =
@@ -126,6 +132,9 @@ class SerialFeedFetcherRepository internal constructor(
         feedSourceUrls: List<FeedSource>,
         forceRefresh: Boolean,
     ) {
+        val ticket = recoveryRepository.issueTicket()
+        val recoveryRecords = recoveryRepository.records(ticket.accountEpoch)
+
         val currentTime = dateFormatter.currentTimeMillis()
         val cacheInfoById = databaseHelper.getFeedSourcesCacheInfo().associateBy { it.feedSourceId }
         feedHttpCacheStore.seedTiers(
@@ -171,31 +180,43 @@ class SerialFeedFetcherRepository internal constructor(
         // Process feeds one at a time
         for (feedSource in feedsToProcess) {
             logger.d { "-> Getting ${feedSource.url}" }
+            val record = recoveryRecords[feedSource.id]?.takeIf { it.subscriptionUrl == feedSource.url }
             var fetchSucceeded = false
             var receivedFullResponse = false
+            var recoveryUpdate: RecoveryUpdate? = null
             try {
-                val rssChannel = rssParserWrapper.getRssChannel(feedSource.url)
-                fetchSucceeded = true
-                receivedFullResponse = true
-                val feedItems = rssChannelMapper.getFeedItems(
-                    rssChannel = rssChannel,
-                    feedSource = feedSource,
-                )
+                when (val outcome = feedAttempt.run(feedSource, record)) {
+                    is FeedOutcome.Fetched -> {
+                        fetchSucceeded = true
+                        receivedFullResponse = true
+                        recoveryUpdate = clearedRecord(feedSource, record, outcome.viaSession)
+                        val feedItems = rssChannelMapper.getFeedItems(
+                            rssChannel = outcome.channel,
+                            feedSource = feedSource,
+                        )
 
-                databaseHelper.insertFeedItems(
-                    feedItems = feedItems,
-                    lastSyncTimestamp = dateFormatter.currentTimeMillis(),
-                )
-            } catch (e: HttpException) {
-                if (e.code == HTTP_NOT_MODIFIED) {
-                    logger.d { "Feed not modified, skipping parsing: ${feedSource.url}" }
-                    fetchSucceeded = true
-                    databaseHelper.updateLastSyncTimestamps(
-                        feedSourceIds = listOf(feedSource.id),
-                        lastSyncTimestamp = dateFormatter.currentTimeMillis(),
-                    )
-                } else {
-                    logger.d { "Error, skip: ${feedSource.url}. Error: $e" }
+                        databaseHelper.insertFeedItems(
+                            feedItems = feedItems,
+                            lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+                        )
+                    }
+
+                    is FeedOutcome.NotModified -> {
+                        logger.d { "Feed not modified, skipping parsing: ${feedSource.url}" }
+                        fetchSucceeded = true
+                        recoveryUpdate = clearedRecord(feedSource, record, outcome.viaSession)
+                        databaseHelper.updateLastSyncTimestamps(
+                            feedSourceIds = listOf(feedSource.id),
+                            lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+                        )
+                    }
+
+                    is FeedOutcome.Challenged -> {
+                        logger.d { "Error, skip: ${feedSource.url}. Error: website verification required" }
+                        recoveryUpdate = RecoveryUpdate.RecordChallenge(feedSource, outcome.challenge, record)
+                    }
+
+                    is FeedOutcome.Failed -> logger.d { "Error, skip: ${feedSource.url}. Error: ${outcome.error}" }
                 }
             } catch (e: CancellationException) {
                 throw e
@@ -216,10 +237,24 @@ class SerialFeedFetcherRepository internal constructor(
                     ),
                 ),
             )
+            recoveryUpdate?.let { applyRecoveryUpdate(it, ticket) }
         }
     }
 
-    private companion object {
-        const val HTTP_NOT_MODIFIED = 304
+    private fun clearedRecord(
+        feedSource: FeedSource,
+        record: FeedRecoveryRecord?,
+        viaSession: Boolean,
+    ): RecoveryUpdate? =
+        if (record != null && !viaSession) RecoveryUpdate.ClearRecord(feedSource, record) else null
+
+    private suspend fun applyRecoveryUpdate(update: RecoveryUpdate, ticket: RecoveryTicket) {
+        try {
+            recoveryRepository.apply(update, ticket)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            logger.d(e) { "Recovery update skipped" }
+        }
     }
 }

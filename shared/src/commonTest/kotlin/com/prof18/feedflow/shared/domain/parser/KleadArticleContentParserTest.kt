@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.parser
 
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.ReaderContentLanguage
+import com.prof18.feedflow.shared.domain.feeditem.ArticleParseResult
 import com.prof18.feedflow.shared.test.testLogger
 import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
 import com.prof18.klead.KleadOutput
@@ -15,6 +16,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -185,6 +187,47 @@ class KleadArticleContentParserTest {
         val prepared = markdownWorker().prepareFeedContent(html = html, baseUrl = "https://example.com")
 
         assertEquals(html, prepared)
+    }
+
+    @Test
+    fun `a challenged page is reported as a challenge`() = runTest {
+        val worker = KleadArticleContentParser(
+            contentFormat = KleadOutput.MARKDOWN,
+            htmlRetriever = HtmlRetriever(
+                logger = testLogger,
+                client = challengeClient(),
+                forbiddenFallbackClient = challengeClient(),
+            ),
+            logger = testLogger,
+        )
+
+        val result = worker.parseResult("https://example.com/challenged")
+
+        assertIs<ArticleParseResult.Challenge>(result)
+        assertNull(worker.parse("https://example.com/challenged"))
+    }
+
+    @Test
+    fun `parseHtml extracts the same content as a fetched page`() = runTest {
+        val worker = worker(html = articleHtml)
+        val url = "https://example.com/articles/klead"
+
+        assertEquals(worker.parse(url), worker.parseHtml(articleHtml, url))
+    }
+
+    private fun challengeClient() = HttpClient(MockEngine) {
+        engine {
+            addHandler {
+                respond(
+                    content = "<html>Just a moment</html>",
+                    status = HttpStatusCode.Forbidden,
+                    headers = headersOf(
+                        HttpHeaders.ContentType to listOf("text/html"),
+                        "cf-mitigated" to listOf("challenge"),
+                    ),
+                )
+            }
+        }
     }
 
     private fun markdownWorker() = worker(html = "", contentFormat = KleadOutput.MARKDOWN)

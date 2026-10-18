@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.feed
 
 import com.prof18.feedflow.core.model.FeedFetchTier
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
+import com.prof18.feedflow.shared.domain.recovery.FeedVerificationRequired
 import com.prof18.rssparser.exception.HttpException
 import com.prof18.rssparser.model.RssChannel
 
@@ -17,7 +18,7 @@ internal class RssParserWrapperImpl(
         val permitted = FeedFetchTier.entries.filter { it != FeedFetchTier.BROWSER || allowBrowserTier }
         val remembered = feedHttpCacheStore.tierFor(url)?.takeIf { it in permitted }
         val tiers = listOfNotNull(remembered) + permitted.filter { it != remembered }
-        var lastForbidden: HttpException? = null
+        var lastForbidden: Throwable? = null
         for (tier in tiers) {
             val parser = parsers[tier] ?: continue
             try {
@@ -25,10 +26,12 @@ internal class RssParserWrapperImpl(
                 feedHttpCacheStore.recordSuccessfulTier(url, tier)
                 return channel
             } catch (error: HttpException) {
-                if (error.code != HTTP_FORBIDDEN) {
-                    throw error
+                val challenge = feedHttpCacheStore.challengeFor(url)
+                lastForbidden = when {
+                    challenge != null -> FeedVerificationRequired(challenge.copy(requestedUrl = url))
+                    error.code == HTTP_FORBIDDEN -> error
+                    else -> throw error
                 }
-                lastForbidden = error
             }
         }
         throw checkNotNull(lastForbidden) { "No fetch tier ran for $url" }

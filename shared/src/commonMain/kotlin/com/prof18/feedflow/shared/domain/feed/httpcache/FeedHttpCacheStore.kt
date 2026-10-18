@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import co.touchlab.stately.concurrency.Lock
 import co.touchlab.stately.concurrency.withLock
 import com.prof18.feedflow.core.model.FeedFetchTier
+import com.prof18.feedflow.shared.domain.recovery.FeedChallenge
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -21,6 +22,7 @@ class FeedHttpCacheStore(
     private val responses = mutableMapOf<String, FeedHttpResponseInfo>()
     private val lastSuccessTimestamps = mutableMapOf<String, Long>()
     private val tiers = mutableMapOf<String, FeedFetchTier>()
+    private val challenges = mutableMapOf<String, String>()
 
     fun seedTiers(urlToTiers: Map<String, FeedFetchTier>): Unit = lock.withLock {
         tiers.putAll(urlToTiers)
@@ -35,6 +37,7 @@ class FeedHttpCacheStore(
     fun seedValidators(urlToValidators: Map<String, FeedHttpValidators>): Unit = lock.withLock {
         validators.clear()
         responses.clear()
+        challenges.clear()
         lastSuccessTimestamps.clear()
         validators.putAll(urlToValidators)
     }
@@ -67,6 +70,7 @@ class FeedHttpCacheStore(
         date: String?,
         retryAfter: String?,
     ): Unit = lock.withLock {
+        challenges.remove(url)
         responses[url] = FeedHttpResponseInfo(
             statusCode = statusCode,
             etag = etag,
@@ -93,6 +97,21 @@ class FeedHttpCacheStore(
             // classic conditional GET bug
             validators[url] = FeedHttpValidators(etag = etag, lastModified = lastModified)
         }
+    }
+
+    fun markChallenge(url: String, effectiveUrl: String): Unit = lock.withLock {
+        challenges[url] = effectiveUrl
+    }
+
+    fun challengeFor(url: String): FeedChallenge? = lock.withLock {
+        val effectiveUrl = challenges[url] ?: return@withLock null
+        val response = responses[url] ?: return@withLock null
+        FeedChallenge(
+            requestedUrl = url,
+            effectiveUrl = effectiveUrl,
+            statusCode = response.statusCode,
+            retryAfter = response.retryAfter,
+        )
     }
 
     fun responseFor(url: String): FeedHttpResponseInfo? = lock.withLock { responses[url] }

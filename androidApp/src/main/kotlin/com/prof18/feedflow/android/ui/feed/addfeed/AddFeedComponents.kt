@@ -58,6 +58,7 @@ fun AddFeedContent(
     onHideShortsToggleChanged: (Boolean) -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
     topAppBar: @Composable () -> Unit = {},
+    recoveryAction: @Composable () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier,
@@ -90,6 +91,7 @@ fun AddFeedContent(
                     errorMessage = errorMessage,
                     onFeedUrlUpdated = onFeedUrlUpdated,
                 )
+                recoveryAction()
             }
 
             item {

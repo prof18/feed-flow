@@ -24,6 +24,8 @@ import com.prof18.feedflow.core.model.FeedItemImportData
 import com.prof18.feedflow.core.model.FeedItemToPrefetch
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOrder
+import com.prof18.feedflow.core.model.FeedRecoveryProfile
+import com.prof18.feedflow.core.model.FeedRecoveryRecord
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -31,6 +33,7 @@ import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.PrefetchQueueItem
+import com.prof18.feedflow.core.model.RecoveredFeedOperation
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.core.model.WidgetContentFilter
 import com.prof18.feedflow.core.model.applyCloudFeedAndCategoryChanges
@@ -39,6 +42,8 @@ import com.prof18.feedflow.db.Cloud_pending_article_flag
 import com.prof18.feedflow.db.Cloud_pending_feed_or_category_change
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item_status
+import com.prof18.feedflow.db.Feed_recovery_profile
+import com.prof18.feedflow.db.Feed_recovery_record
 import com.prof18.feedflow.db.Feed_source
 import com.prof18.feedflow.db.Feed_source_cache_info
 import com.prof18.feedflow.db.Feed_source_category
@@ -72,6 +77,9 @@ class DatabaseHelper(
         cloud_pending_feed_or_category_changeAdapter = Cloud_pending_feed_or_category_change.Adapter(
             entityAdapter = EnumColumnAdapter(),
             field_Adapter = EnumColumnAdapter(),
+        ),
+        feed_recovery_recordAdapter = Feed_recovery_record.Adapter(
+            modeAdapter = EnumColumnAdapter(),
         ),
         feed_source_cache_infoAdapter = Feed_source_cache_info.Adapter(
             user_agent_tierAdapter = EnumColumnAdapter(),
@@ -208,103 +216,78 @@ class DatabaseHelper(
         cloudSessionId: String? = null,
         withCurrentSession: (() -> Unit) -> Unit = { it() },
     ) = cloudMutation(withCurrentSession) {
-        feedSource.forEach { feedSource ->
-            feedSource.category?.let { category ->
-                insertEmbeddedCategoryIfNeeded(category, cloudSessionId)
-            }
-            val existing = dbRef.feedSourceQueries.selectCloudFieldsById(feedSource.id).executeAsOneOrNull()
-            if (feedSource.websiteUrl != null) {
-                dbRef.feedSourceQueries.insertFeedSourceWithWebsite(
-                    url_hash = feedSource.id,
-                    url = feedSource.url,
-                    title = feedSource.title,
-                    category_id = feedSource.category?.id,
-                    logo_url = feedSource.logoUrl,
-                    website_url = feedSource.websiteUrl,
-                )
-            } else {
-                dbRef.feedSourceQueries.insertFeedSource(
-                    url_hash = feedSource.id,
-                    url = feedSource.url,
-                    title = feedSource.title,
-                    category_id = feedSource.category?.id,
-                    logo_url = feedSource.logoUrl,
-                )
-            }
-            dbRef.feedSourceQueries.updateFeedSourceMetadata(
-                urlHash = feedSource.id,
+        feedSource.forEach { writeFeedSource(it, cloudSessionId) }
+        dbRef.feedRecoveryQueries.deleteStaleRecords()
+    }
+
+    private fun writeFeedSource(feedSource: ParsedFeedSource, cloudSessionId: String?) {
+        feedSource.category?.let { category ->
+            insertEmbeddedCategoryIfNeeded(category, cloudSessionId)
+        }
+        val existing = dbRef.feedSourceQueries.selectCloudFieldsById(feedSource.id).executeAsOneOrNull()
+        if (feedSource.websiteUrl != null) {
+            dbRef.feedSourceQueries.insertFeedSourceWithWebsite(
+                url_hash = feedSource.id,
                 url = feedSource.url,
                 title = feedSource.title,
-                categoryId = feedSource.category?.id,
-                logoUrl = feedSource.logoUrl,
-                websiteUrl = feedSource.websiteUrl,
+                category_id = feedSource.category?.id,
+                logo_url = feedSource.logoUrl,
+                website_url = feedSource.websiteUrl,
             )
-            val inserted = dbRef.feedSourceQueries.selectCloudFieldsById(feedSource.id).executeAsOneOrNull()
-            if (existing == null && inserted != null) {
-                recordCloudFeedOrCategoryCreation(
-                    sessionId = cloudSessionId,
-                    entity = CloudFeedOrCategoryEntity.SOURCE,
-                    id = feedSource.id,
-                    fields = listOf(
-                        CloudFeedOrCategoryField.URL to inserted.url,
-                        CloudFeedOrCategoryField.TITLE to inserted.title,
-                        CloudFeedOrCategoryField.CATEGORY to inserted.category_id,
-                        CloudFeedOrCategoryField.LOGO to inserted.logo_url,
-                    ),
-                )
-            } else if (existing != null && inserted != null) {
-                recordCloudFeedOrCategoryUpdates(
-                    sessionId = cloudSessionId,
-                    entity = CloudFeedOrCategoryEntity.SOURCE,
-                    id = feedSource.id,
-                    fields = buildList {
-                        if (existing.url != inserted.url) add(CloudFeedOrCategoryField.URL to inserted.url)
-                        if (existing.title != inserted.title) {
-                            add(CloudFeedOrCategoryField.TITLE to inserted.title)
-                        }
-                        if (existing.category_id != inserted.category_id) {
-                            add(CloudFeedOrCategoryField.CATEGORY to inserted.category_id)
-                        }
-                        if (existing.logo_url != inserted.logo_url) {
-                            add(CloudFeedOrCategoryField.LOGO to inserted.logo_url)
-                        }
-                    },
-                )
-            }
+        } else {
+            dbRef.feedSourceQueries.insertFeedSource(
+                url_hash = feedSource.id,
+                url = feedSource.url,
+                title = feedSource.title,
+                category_id = feedSource.category?.id,
+                logo_url = feedSource.logoUrl,
+            )
+        }
+        dbRef.feedSourceQueries.updateFeedSourceMetadata(
+            urlHash = feedSource.id,
+            url = feedSource.url,
+            title = feedSource.title,
+            categoryId = feedSource.category?.id,
+            logoUrl = feedSource.logoUrl,
+            websiteUrl = feedSource.websiteUrl,
+        )
+        val inserted = dbRef.feedSourceQueries.selectCloudFieldsById(feedSource.id).executeAsOneOrNull()
+        if (existing == null && inserted != null) {
+            recordCloudFeedOrCategoryCreation(
+                sessionId = cloudSessionId,
+                entity = CloudFeedOrCategoryEntity.SOURCE,
+                id = feedSource.id,
+                fields = listOf(
+                    CloudFeedOrCategoryField.URL to inserted.url,
+                    CloudFeedOrCategoryField.TITLE to inserted.title,
+                    CloudFeedOrCategoryField.CATEGORY to inserted.category_id,
+                    CloudFeedOrCategoryField.LOGO to inserted.logo_url,
+                ),
+            )
+        } else if (existing != null && inserted != null) {
+            recordCloudFeedOrCategoryUpdates(
+                sessionId = cloudSessionId,
+                entity = CloudFeedOrCategoryEntity.SOURCE,
+                id = feedSource.id,
+                fields = buildList {
+                    if (existing.url != inserted.url) add(CloudFeedOrCategoryField.URL to inserted.url)
+                    if (existing.title != inserted.title) {
+                        add(CloudFeedOrCategoryField.TITLE to inserted.title)
+                    }
+                    if (existing.category_id != inserted.category_id) {
+                        add(CloudFeedOrCategoryField.CATEGORY to inserted.category_id)
+                    }
+                    if (existing.logo_url != inserted.logo_url) {
+                        add(CloudFeedOrCategoryField.LOGO to inserted.logo_url)
+                    }
+                },
+            )
         }
     }
 
     suspend fun insertFeedItems(feedItems: List<FeedItem>, lastSyncTimestamp: Long) =
         dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Saving fetched articles") {
-            for (feedItem in feedItems) {
-                with(feedItem) {
-                    val isDeleted = dbRef.deletedFeedItemsQueries.isItemDeleted(id).executeAsOne()
-
-                    if (!isDeleted) {
-                        val validatedAudioUrl = AudioEnclosure.validatedUrl(audioUrl)
-                        dbRef.feedItemQueries.insertFeedItem(
-                            url_hash = id,
-                            url = url,
-                            title = title,
-                            subtitle = subtitle,
-                            content = content,
-                            image_url = imageUrl,
-                            feed_source_id = feedSource.id,
-                            pub_date = pubDateMillis,
-                            comments_url = commentsUrl,
-                            audio_url = validatedAudioUrl,
-                        )
-                        // INSERT OR IGNORE leaves existing items untouched; enrich or rotate their audio URL.
-                        validatedAudioUrl?.let {
-                            dbRef.feedItemQueries.updateFeedItemAudioUrl(
-                                audioUrl = validatedAudioUrl,
-                                urlHash = id,
-                                feedSourceId = feedSource.id,
-                            )
-                        }
-                    }
-                }
-            }
+            writeFeedItems(feedItems)
 
             // One update per source instead of one per item: the timestamp is identical for all
             // of them, and this transaction is on the path that gets killed for running long.
@@ -312,6 +295,37 @@ class DatabaseHelper(
                 dbRef.feedSourceQueries.updateLastSyncTimestamp(lastSyncTimestamp, feedSourceId)
             }
         }
+
+    private fun writeFeedItems(feedItems: List<FeedItem>) {
+        for (feedItem in feedItems) {
+            with(feedItem) {
+                val isDeleted = dbRef.deletedFeedItemsQueries.isItemDeleted(id).executeAsOne()
+                if (isDeleted) return@with
+
+                val validatedAudioUrl = AudioEnclosure.validatedUrl(audioUrl)
+                dbRef.feedItemQueries.insertFeedItem(
+                    url_hash = id,
+                    url = url,
+                    title = title,
+                    subtitle = subtitle,
+                    content = content,
+                    image_url = imageUrl,
+                    feed_source_id = feedSource.id,
+                    pub_date = pubDateMillis,
+                    comments_url = commentsUrl,
+                    audio_url = validatedAudioUrl,
+                )
+                // INSERT OR IGNORE leaves existing items untouched; enrich or rotate their audio URL.
+                validatedAudioUrl?.let {
+                    dbRef.feedItemQueries.updateFeedItemAudioUrl(
+                        audioUrl = validatedAudioUrl,
+                        urlHash = id,
+                        feedSourceId = feedSource.id,
+                    )
+                }
+            }
+        }
+    }
 
     suspend fun hasFeedItems(): Boolean = withContext(backgroundDispatcher) {
         dbRef.feedItemQueries.countFeedItems().executeAsOne() > 0
@@ -443,6 +457,7 @@ class DatabaseHelper(
             reconcileCategories(merged.categories)
             reconcileSources(merged.sources)
         }
+        dbRef.feedRecoveryQueries.deleteStaleRecords()
     }
 
     private fun reconcileCategories(categories: List<FeedSourceCategory>) {
@@ -798,6 +813,7 @@ class DatabaseHelper(
                 id = feedSourceId,
             )
         }
+        dbRef.feedRecoveryQueries.deleteStaleRecords()
     }
 
     suspend fun deleteFeedSourceExcept(feedSourceIds: List<String>) =
@@ -806,6 +822,7 @@ class DatabaseHelper(
             dbRef.feedSourceCacheInfoQueries.deleteAllExcept(feedSourceIds)
             dbRef.feedSourceQueries.deleteAllExcept(feedSourceIds)
             dbRef.feedItemQueries.deleteAllExcept(feedSourceIds)
+            dbRef.feedRecoveryQueries.deleteStaleRecords()
         }
 
     suspend fun selectAllUrlsForFilter(feedFilter: FeedFilter): List<String> = withContext(backgroundDispatcher) {
@@ -1023,6 +1040,7 @@ class DatabaseHelper(
                 },
             )
         }
+        dbRef.feedRecoveryQueries.deleteStaleRecords()
     }
 
     fun search(
@@ -1966,6 +1984,279 @@ class DatabaseHelper(
                 .executeAsList()
                 .map { FeedItemToPrefetch(feedItemId = it.url_hash, url = it.url) }
         }
+
+    suspend fun hasRecoveryProfiles(): Boolean = withContext(backgroundDispatcher) {
+        dbRef.feedRecoveryQueries.countProfiles().executeAsOne() > 0
+    }
+
+    suspend fun recoveryRecords(epoch: String): List<FeedRecoveryRecord> = withContext(backgroundDispatcher) {
+        dbRef.feedRecoveryQueries.selectRecordsForEpoch(epoch).executeAsList().map(::toFeedRecoveryRecord)
+    }
+
+    fun recoveryRecordsFlow(epoch: String): Flow<List<FeedRecoveryRecord>> =
+        dbRef.feedRecoveryQueries
+            .selectRecordsForEpoch(epoch)
+            .asFlow()
+            .mapToList(backgroundDispatcher)
+            .map { records -> records.map(::toFeedRecoveryRecord) }
+
+    suspend fun recoveryRecord(epoch: String, sourceId: String): FeedRecoveryRecord? =
+        withContext(backgroundDispatcher) {
+            dbRef.feedRecoveryQueries.selectRecord(epoch, sourceId).executeAsOneOrNull()?.let(::toFeedRecoveryRecord)
+        }
+
+    suspend fun upsertRecoveryRecord(record: FeedRecoveryRecord, commit: (() -> Unit) -> Unit) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            commit {
+                dbRef.feedRecoveryQueries.upsertRecord(
+                    account_epoch = record.accountEpoch,
+                    source_id = record.sourceId,
+                    subscription_url = record.subscriptionUrl,
+                    effective_url = record.effectiveUrl,
+                    origin = record.origin,
+                    mode = record.mode,
+                    profile_id = record.profileId,
+                    status_code = record.statusCode?.toLong(),
+                    retry_after = record.retryAfter,
+                )
+            }
+        }
+
+    suspend fun deleteRecoveryRecord(epoch: String, sourceId: String, commit: (() -> Unit) -> Unit) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            commit {
+                dbRef.feedRecoveryQueries.deleteRecord(epoch, sourceId)
+            }
+        }
+
+    /**
+     * Replaces the record of ([epoch], [sourceId]) with [record], or deletes it when [record] is null, only if the
+     * stored row still equals [expected] (absent when null). Read and write share one transaction.
+     * Returns whether the change was applied.
+     */
+    suspend fun replaceRecoveryRecordIf(
+        epoch: String,
+        sourceId: String,
+        expected: FeedRecoveryRecord?,
+        record: FeedRecoveryRecord?,
+        commit: (() -> Unit) -> Unit,
+    ): Boolean = dbRef.transactionWithContext(backgroundDispatcher) {
+        var applied = false
+        commit {
+            val current = dbRef.feedRecoveryQueries.selectRecord(epoch, sourceId)
+                .executeAsOneOrNull()
+                ?.let(::toFeedRecoveryRecord)
+            if (current != expected) return@commit
+            applied = true
+            if (record == null) {
+                dbRef.feedRecoveryQueries.deleteRecord(epoch, sourceId)
+            } else {
+                dbRef.feedRecoveryQueries.upsertRecord(
+                    account_epoch = record.accountEpoch,
+                    source_id = record.sourceId,
+                    subscription_url = record.subscriptionUrl,
+                    effective_url = record.effectiveUrl,
+                    origin = record.origin,
+                    mode = record.mode,
+                    profile_id = record.profileId,
+                    status_code = record.statusCode?.toLong(),
+                    retry_after = record.retryAfter,
+                )
+            }
+        }
+        applied
+    }
+
+    @Suppress("LongParameterList")
+    suspend fun commitRecoveredFeed(
+        source: FeedSource,
+        items: List<FeedItem>,
+        operation: RecoveredFeedOperation,
+        expectedUrl: String?,
+        record: FeedRecoveryRecord,
+        cloudSessionId: String?,
+        commit: (() -> Unit) -> Unit,
+    ) = cloudMutation(commit, suspensionGuardReason = "Saving recovered feed") {
+        check(record.sourceId == source.id && record.subscriptionUrl == source.url)
+        val profile = dbRef.feedRecoveryQueries.selectProfiles().executeAsList()
+            .firstOrNull { it.profile_id == record.profileId }
+        check(
+            profile != null && !profile.retired && profile.account_epoch == record.accountEpoch &&
+                profile.origin == record.origin,
+        ) { "Recovery profile changed" }
+        val existing = dbRef.feedSourceQueries.selectCloudFieldsById(source.id).executeAsOneOrNull()
+        when (operation) {
+            RecoveredFeedOperation.Add -> {
+                check(
+                    existing == null && dbRef.feedSourceQueries.selectFeedUrls().executeAsList().none {
+                        it.url == source.url
+                    },
+                ) { "Recovery source already exists" }
+            }
+            RecoveredFeedOperation.Edit, RecoveredFeedOperation.Refresh -> {
+                check(expectedUrl != null && existing?.url == expectedUrl) { "Recovery source changed" }
+                if (existing.url != source.url) {
+                    // Stale validators must not be sent to the new URL
+                    dbRef.feedSourceCacheInfoQueries.deleteCacheInfo(source.id)
+                }
+            }
+        }
+        if (operation != RecoveredFeedOperation.Refresh) {
+            writeFeedSource(
+                ParsedFeedSource(
+                    source.id,
+                    source.url,
+                    source.title,
+                    source.category,
+                    source.logoUrl,
+                    source.websiteUrl,
+                ),
+                cloudSessionId,
+            )
+            dbRef.feedSourcePreferencesQueries.insertPreference(
+                source.id,
+                source.articleOpenMode,
+                source.isHiddenFromTimeline,
+                source.isPinned,
+                source.isNotificationEnabled,
+                source.isHideImagesEnabled,
+            )
+            dbRef.feedSourcePreferencesQueries.updatePreference(
+                feedSourceId = source.id,
+                articleOpenMode = source.articleOpenMode,
+                isHidden = source.isHiddenFromTimeline,
+                isPinned = source.isPinned,
+                notificationsEnabled = source.isNotificationEnabled,
+                hideImages = source.isHideImagesEnabled,
+            )
+        }
+        if (operation != RecoveredFeedOperation.Edit) {
+            check(items.all { it.feedSource.id == source.id })
+            writeFeedItems(items)
+            dbRef.feedSourceQueries.updateLastSyncTimestamp(
+                source.lastSyncTimestamp ?: Clock.System.now().toEpochMilliseconds(),
+                source.id,
+            )
+            dbRef.feedSourceQueries.updateLogoUrl(source.logoUrl, source.id)
+            dbRef.feedSourceQueries.updateWebsiteUrl(source.websiteUrl, source.id)
+        }
+        dbRef.feedRecoveryQueries.deleteStaleRecords()
+        dbRef.feedRecoveryQueries.upsertRecord(
+            account_epoch = record.accountEpoch,
+            source_id = record.sourceId,
+            subscription_url = record.subscriptionUrl,
+            effective_url = record.effectiveUrl,
+            origin = record.origin,
+            mode = record.mode,
+            profile_id = record.profileId,
+            status_code = record.statusCode?.toLong(),
+            retry_after = record.retryAfter,
+        )
+        dbRef.feedRecoveryQueries.approveOriginRecords(
+            profileId = record.profileId,
+            epoch = record.accountEpoch,
+            origin = record.origin,
+        )
+    }
+
+    suspend fun recoveryProfiles(): List<FeedRecoveryProfile> = withContext(backgroundDispatcher) {
+        dbRef.feedRecoveryQueries.selectProfiles().executeAsList().map(::toFeedRecoveryProfile)
+    }
+
+    suspend fun activeRecoveryProfile(epoch: String, origin: String): FeedRecoveryProfile? =
+        withContext(backgroundDispatcher) {
+            dbRef.feedRecoveryQueries
+                .selectActiveProfileForOrigin(epoch, origin)
+                .executeAsOneOrNull()
+                ?.let(::toFeedRecoveryProfile)
+        }
+
+    suspend fun insertRecoveryProfile(profile: FeedRecoveryProfile, commit: (() -> Unit) -> Unit) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            commit {
+                dbRef.feedRecoveryQueries.insertProfile(
+                    profile_id = profile.id,
+                    account_epoch = profile.accountEpoch,
+                    origin = profile.origin,
+                    user_agent = profile.userAgent,
+                    engine_version = profile.engineVersion,
+                )
+            }
+        }
+
+    suspend fun retainRecoveryProfileForReader(profileId: String, commit: (() -> Unit) -> Unit) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            commit {
+                dbRef.feedRecoveryQueries.setReaderRetained(profileId)
+            }
+        }
+
+    suspend fun retireRecoveryProfile(profileId: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            val epoch = dbRef.feedRecoveryQueries.selectProfiles().executeAsList()
+                .firstOrNull { it.profile_id == profileId }
+                ?.account_epoch
+            if (epoch != null) {
+                dbRef.feedRecoveryQueries.selectRecordsForEpoch(epoch).executeAsList()
+                    .filter { it.profile_id == profileId }
+                    .forEach { dbRef.feedSourceCacheInfoQueries.deleteCacheInfo(it.source_id) }
+            }
+            dbRef.feedRecoveryQueries.deleteRecordsForProfile(profileId)
+            dbRef.feedRecoveryQueries.retireProfile(profileId)
+        }
+
+    /** Retires a profile but keeps its records, which go back to needing verification. */
+    suspend fun replaceRecoveryProfile(profileId: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            val epoch = dbRef.feedRecoveryQueries.selectProfiles().executeAsList()
+                .firstOrNull { it.profile_id == profileId }
+                ?.account_epoch
+            if (epoch != null) {
+                dbRef.feedRecoveryQueries.selectRecordsForEpoch(epoch).executeAsList()
+                    .filter { it.profile_id == profileId }
+                    .forEach { dbRef.feedSourceCacheInfoQueries.deleteCacheInfo(it.source_id) }
+            }
+            dbRef.feedRecoveryQueries.downgradeRecordsForProfile(profileId)
+            dbRef.feedRecoveryQueries.retireProfile(profileId)
+        }
+
+    suspend fun retireRecoveryProfilesOfOtherEpochs(epoch: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedRecoveryQueries.retireOtherEpochs(epoch)
+            dbRef.feedRecoveryQueries.deleteRecordsOfOtherEpochs(epoch)
+        }
+
+    suspend fun retireOrphanRecoveryProfile(profileId: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedRecoveryQueries.retireOrphanProfile(profileId)
+        }
+
+    suspend fun deleteRetiredRecoveryProfile(profileId: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedRecoveryQueries.deleteRetiredProfile(profileId)
+        }
+
+    private fun toFeedRecoveryRecord(record: Feed_recovery_record) = FeedRecoveryRecord(
+        accountEpoch = record.account_epoch,
+        sourceId = record.source_id,
+        subscriptionUrl = record.subscription_url,
+        effectiveUrl = record.effective_url,
+        origin = record.origin,
+        mode = record.mode,
+        profileId = record.profile_id,
+        statusCode = record.status_code?.toInt(),
+        retryAfter = record.retry_after,
+    )
+
+    private fun toFeedRecoveryProfile(profile: Feed_recovery_profile) = FeedRecoveryProfile(
+        id = profile.profile_id,
+        accountEpoch = profile.account_epoch,
+        origin = profile.origin,
+        userAgent = profile.user_agent,
+        engineVersion = profile.engine_version,
+        readerRetained = profile.reader_retained,
+        retired = profile.retired,
+    )
 
     companion object {
         internal const val DB_FILE_NAME_WITH_EXTENSION = "FeedFlow.db"

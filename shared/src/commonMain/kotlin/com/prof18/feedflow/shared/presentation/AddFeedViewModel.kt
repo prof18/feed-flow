@@ -12,6 +12,12 @@ import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feed.YouTubeChannelUrl
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryCoordinator
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRequest
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryService
+import com.prof18.feedflow.shared.domain.recovery.RecoveryTicket
+import com.prof18.feedflow.shared.domain.recovery.WebsiteVerificationFailure
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 import io.ktor.http.Url
 import kotlinx.coroutines.CancellationException
@@ -27,6 +33,9 @@ class AddFeedViewModel internal constructor(
     private val feedSourcesRepository: FeedSourcesRepository,
     private val databaseHelper: DatabaseHelper,
     private val feedStateRepository: FeedStateRepository,
+    private val recoveryService: FeedRecoveryService,
+    private val recoveryRepository: FeedRecoveryRepository,
+    private val coordinator: FeedRecoveryCoordinator,
 ) : ViewModel() {
 
     private var feedUrl: String = ""
@@ -46,6 +55,12 @@ class AddFeedViewModel internal constructor(
     private val isNotificationEnabledMutableStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isNotificationEnabledState = isNotificationEnabledMutableStateFlow.asStateFlow()
 
+    val verificationAvailable: Boolean = coordinator.available
+    private val verificationRequiredMutableState = MutableStateFlow(false)
+    val verificationRequiredState = verificationRequiredMutableState.asStateFlow()
+    private var pendingVerification: PendingVerification? = null
+    private var verificationTicket: RecoveryTicket? = null
+
     init {
         viewModelScope.launch {
             categoryRepository.initCategories()
@@ -57,6 +72,7 @@ class AddFeedViewModel internal constructor(
     }
 
     fun updateFeedUrlTextFieldValue(feedUrlTextFieldValue: String) {
+        if (feedUrlTextFieldValue != feedUrl) clearPendingVerification()
         feedUrl = feedUrlTextFieldValue
         val url = sanitizeUrl(feedUrlTextFieldValue.trim())
         val channel = YouTubeChannelUrl.parse(url)
@@ -103,6 +119,15 @@ class AddFeedViewModel internal constructor(
                     isNotificationEnabled = notifications,
                     hideYouTubeShorts = hideShorts,
                 )
+                val verificationUrl = (feedAddedState as? FeedAddedState.Error.FetchFailed)?.verificationUrl
+                if (verificationUrl != null && submittedUrl == feedUrl) {
+                    pendingVerification = PendingVerification(
+                        subscriptionUrl = feedAddedState.challengedUrl ?: sanitizeUrl(submittedUrl.trim()),
+                        verificationUrl = verificationUrl,
+                        retryAfter = feedAddedState.retryAfter,
+                    )
+                    verificationRequiredMutableState.value = true
+                }
                 feedAddedMutableState.emit(feedAddedState)
                 if (feedAddedState is FeedAddedState.FeedAdded || feedAddedState is FeedAddedState.FeedAlreadyExists) {
                     isNotificationEnabledMutableStateFlow.update { false }
@@ -175,4 +200,51 @@ class AddFeedViewModel internal constructor(
 
     fun validateCategoryName(categoryId: CategoryId?, newName: CategoryName): CategoryNameValidationResult =
         categoryRepository.validateCategoryName(categoryId, newName)
+
+    fun verifyWebsite() {
+        val pending = pendingVerification ?: return
+        verificationTicket?.revoke()
+        val ticket = recoveryRepository.issueTicket()
+        verificationTicket = ticket
+        val request = FeedRecoveryRequest.Add(
+            subscriptionUrl = pending.subscriptionUrl,
+            verificationUrl = pending.verificationUrl,
+            retryAfter = pending.retryAfter,
+            category = categoryRepository.getSelectedCategory(),
+            notificationsEnabled = isNotificationEnabledMutableStateFlow.value,
+        )
+        viewModelScope.launch {
+            try {
+                val source = recoveryService.recover(request, ticket)
+                pendingVerification = null
+                verificationRequiredMutableState.value = false
+                isNotificationEnabledMutableStateFlow.update { false }
+                feedAddedMutableState.emit(FeedAddedState.FeedAdded(source.title))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: WebsiteVerificationFailure) {
+                coordinator.reportFailure(e.reason)
+                feedAddedMutableState.emit(FeedAddedState.Error.GenericError(canForceAdd = false))
+            } catch (_: Exception) {
+                feedAddedMutableState.emit(FeedAddedState.Error.GenericError(canForceAdd = false))
+            }
+        }
+    }
+
+    fun cancelRecovery() {
+        verificationTicket?.revoke()
+        verificationTicket = null
+        verificationRequiredMutableState.value = false
+    }
+
+    private fun clearPendingVerification() {
+        pendingVerification = null
+        cancelRecovery()
+    }
+
+    private data class PendingVerification(
+        val subscriptionUrl: String,
+        val verificationUrl: String,
+        val retryAfter: String?,
+    )
 }

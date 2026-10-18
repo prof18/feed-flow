@@ -55,6 +55,11 @@ import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.parser.KleadArticleContentParser
 import com.prof18.feedflow.shared.domain.parser.readerContentFormat
+import com.prof18.feedflow.shared.domain.recovery.FeedAttempt
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryCoordinator
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryService
+import com.prof18.feedflow.shared.domain.recovery.WebsiteSessionHttp
 import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.e2e.articleReportHttpClient
@@ -68,6 +73,7 @@ import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.ExtrasSettingsViewModel
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
+import com.prof18.feedflow.shared.presentation.FeedRefreshVerificationViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.FeedbinSyncViewModel
@@ -230,6 +236,11 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         ReaderContentFetcher(
             articleContentParser = get(),
             feedItemContentFileHandler = get(),
+            htmlRetriever = get(),
+            recoveryRepository = get(),
+            coordinator = get(),
+            sessionHttp = getOrNull(),
+            dateFormatter = get(),
         )
     }
 
@@ -302,6 +313,9 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             categoryRepository = get(),
             databaseHelper = get(),
             feedStateRepository = get(),
+            recoveryService = get(),
+            recoveryRepository = get(),
+            coordinator = get(),
         )
     }
 
@@ -318,6 +332,21 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedCategoryRepository = get(),
             feedStateRepository = get(),
             settingsRepository = get(),
+            recoveryRepository = get(),
+            recoveryService = get(),
+            coordinator = get(),
+            profileCleaner = getOrNull(),
+        )
+    }
+
+    viewModel {
+        FeedRefreshVerificationViewModel(
+            feedSourcesRepository = get(),
+            recoveryRepository = get(),
+            coordinator = get(),
+            recoveryService = get(),
+            databaseHelper = get(),
+            dateFormatter = get(),
         )
     }
 
@@ -453,6 +482,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             articleNavigationRepository = get(),
             databaseHelper = get(),
             articleReporter = get(),
+            recoveryRepository = get(),
+            coordinator = get(),
         )
     }
 
@@ -535,6 +566,9 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             accountsRepository = get(),
             databaseHelper = get(),
             feedStateRepository = get(),
+            recoveryService = get(),
+            recoveryRepository = get(),
+            coordinator = get(),
         )
     }
 
@@ -613,11 +647,47 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             dateFormatter = get(),
             rssChannelMapper = get(),
             settingsRepository = get(),
+            recoveryRepository = get(),
         )
     }
 
     single {
         ArticleNavigationRepository(feedStateRepository = get())
+    }
+
+    single {
+        FeedRecoveryRepository(
+            databaseHelper = get(),
+            settingsRepository = get(),
+            supported = getOrNull<WebsiteSessionHttp>() != null,
+        )
+    }
+
+    single { FeedRecoveryCoordinator(available = getOrNull<WebsiteSessionHttp>() != null) }
+
+    single {
+        FeedRecoveryService(
+            coordinator = get(),
+            recoveryRepository = get(),
+            capturedFeedParser = getOrNull(),
+            rssChannelMapper = get(),
+            feedSourceLogoRetriever = get(),
+            databaseHelper = get(),
+            feedSyncRepository = get(),
+            feedStateRepository = get(),
+            accountsRepository = get(),
+            dateFormatter = get(),
+            logger = getWith("FeedRecoveryService"),
+        )
+    }
+
+    single {
+        FeedAttempt(
+            rssParserWrapper = get(),
+            recoveryRepository = get(),
+            sessionHttp = getOrNull(),
+            capturedFeedParser = getOrNull(),
+        )
     }
 
     single {
@@ -659,12 +729,13 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSyncRepository = get(),
             settingsRepository = get(),
             logger = getWith("FeedFetcherRepository"),
-            rssParserWrapper = get(),
             rssChannelMapper = get(),
             dateFormatter = get(),
             feedSourceLogoRetriever = get(),
             contentPrefetchRepository = get(),
             feedHttpCacheStore = get(),
+            feedAttempt = get(),
+            recoveryRepository = get(),
         )
     }
 

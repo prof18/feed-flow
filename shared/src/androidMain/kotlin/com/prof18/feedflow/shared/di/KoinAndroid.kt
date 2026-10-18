@@ -35,6 +35,9 @@ import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerAndroid
 import com.prof18.feedflow.shared.domain.parser.JvmFeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.recovery.CapturedFeedParser
+import com.prof18.feedflow.shared.domain.recovery.WebsiteIdentityProvider
+import com.prof18.feedflow.shared.domain.recovery.WebsiteSessionHttp
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
@@ -45,6 +48,7 @@ import org.koin.androidx.workmanager.dsl.worker
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.scope.Scope
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import java.io.File
@@ -222,3 +226,20 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
 internal actual fun platformLogWriters(): List<LogWriter> =
     listOf(platformLogWriter())
+
+/**
+ * Website verification recovery, added only by the app together with its [WebsiteIdentityProvider].
+ * Tests and other Koin setups without the provider keep recovery off.
+ */
+fun websiteRecoveryModule(identityProvider: (Scope) -> WebsiteIdentityProvider): Module = module {
+    single<WebsiteIdentityProvider> { identityProvider(this) }
+    single<WebsiteSessionHttp> { OkHttpWebsiteSessionHttp(identityProvider = get(), cacheStore = get()) }
+    single {
+        CapturedFeedParser(
+            createRssParser(
+                headers = mapOf("User-Agent" to FEEDFLOW_USER_AGENT),
+                feedHttpCacheStore = get(),
+            )::parse,
+        )
+    }
+}

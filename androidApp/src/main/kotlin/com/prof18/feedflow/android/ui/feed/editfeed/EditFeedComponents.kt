@@ -62,6 +62,7 @@ fun EditFeedContent(
     contentPadding: PaddingValues = PaddingValues(),
     onNotificationToggleChanged: (Boolean) -> Unit = {},
     showNotificationToggle: Boolean = false,
+    recoveryAction: @Composable () -> Unit = {},
 ) {
     if (showDeleteDialog) {
         var deleteInProgressState by remember(showDeleteDialog) { mutableStateOf(false) }
@@ -129,6 +130,7 @@ fun EditFeedContent(
                     errorMessage = errorMessage,
                     onFeedUrlUpdated = onFeedUrlUpdated,
                 )
+                recoveryAction()
             }
         }
 

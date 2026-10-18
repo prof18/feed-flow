@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.feed
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedFetchTier
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
+import com.prof18.feedflow.shared.domain.recovery.FeedVerificationRequired
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
 import com.prof18.rssparser.exception.HttpException
 import kotlinx.coroutines.test.runTest
@@ -215,5 +216,130 @@ class RssParserWrapperTest {
         )
         assertSame(expected, wrapper.getRssChannel(feedUrl, allowBrowserTier = false))
         assertEquals(FeedFetchTier.PRIMARY, store.tierFor(feedUrl))
+    }
+
+    @Test
+    fun `challenged primary falls through to link free`() = runTest {
+        val expected = RssChannelGenerator.rssChannel()
+        val wrapper = RssParserWrapperImpl(
+            feedHttpCacheStore = store,
+            parsers = mapOf(
+                FeedFetchTier.PRIMARY to { url -> challenge(url, "https://e.test/primary") },
+                FeedFetchTier.LINK_FREE to { expected },
+                FeedFetchTier.BROWSER to { error("Browser must not run") },
+            ),
+        )
+
+        assertSame(expected, wrapper.getRssChannel(feedUrl))
+        assertEquals(FeedFetchTier.LINK_FREE, store.tierFor(feedUrl))
+    }
+
+    @Test
+    fun `challenge on every tier requires verification with the browser effective url`() = runTest {
+        val wrapper = RssParserWrapperImpl(
+            feedHttpCacheStore = store,
+            parsers = FeedFetchTier.entries.associateWith { tier ->
+                { url: String ->
+                    challenge(url, "https://e.test/${tier.name}")
+                }
+            },
+        )
+
+        val error = assertFailsWith<FeedVerificationRequired> { wrapper.getRssChannel(feedUrl) }
+
+        assertEquals("https://e.test/BROWSER", error.challenge.effectiveUrl)
+        assertEquals(feedUrl, error.challenge.requestedUrl)
+        assertEquals(403, error.challenge.statusCode)
+    }
+
+    @Test
+    fun `server error after a challenge is rethrown`() = runTest {
+        val expected = HttpException(code = 500, message = "Server error")
+        val wrapper = RssParserWrapperImpl(
+            feedHttpCacheStore = store,
+            parsers = mapOf(
+                FeedFetchTier.PRIMARY to { url -> challenge(url, "https://e.test/primary") },
+                FeedFetchTier.LINK_FREE to { url ->
+                    recordStatus(url, 500)
+                    throw expected
+                },
+                FeedFetchTier.BROWSER to { error("Browser must not run") },
+            ),
+        )
+
+        assertSame(expected, assertFailsWith<HttpException> { wrapper.getRssChannel(feedUrl) })
+    }
+
+    @Test
+    fun `plain forbidden on every tier still throws the http error`() = runTest {
+        val wrapper = RssParserWrapperImpl(
+            feedHttpCacheStore = store,
+            parsers = FeedFetchTier.entries.associateWith {
+                { url: String ->
+                    forbidden(url)
+                }
+            },
+        )
+
+        assertEquals(403, assertFailsWith<HttpException> { wrapper.getRssChannel(feedUrl) }.code)
+    }
+
+    @Test
+    fun `challenge without browser tier requires verification`() = runTest {
+        val wrapper = RssParserWrapperImpl(
+            feedHttpCacheStore = store,
+            parsers = mapOf(
+                FeedFetchTier.PRIMARY to { url -> challenge(url, "https://e.test/primary") },
+                FeedFetchTier.LINK_FREE to { url -> challenge(url, "https://e.test/link-free") },
+                FeedFetchTier.BROWSER to { error("Browser must not run") },
+            ),
+        )
+
+        val error = assertFailsWith<FeedVerificationRequired> {
+            wrapper.getRssChannel(feedUrl, allowBrowserTier = false)
+        }
+        assertEquals("https://e.test/link-free", error.challenge.effectiveUrl)
+    }
+
+    private fun recordStatus(url: String, statusCode: Int) {
+        store.recordResponse(
+            url = url,
+            statusCode = statusCode,
+            etag = null,
+            lastModified = null,
+            cacheControl = null,
+            expires = null,
+            date = null,
+            retryAfter = null,
+        )
+    }
+
+    private fun forbidden(url: String): Nothing {
+        store.recordResponse(
+            url = url,
+            statusCode = 403,
+            etag = null,
+            lastModified = null,
+            cacheControl = null,
+            expires = null,
+            date = null,
+            retryAfter = null,
+        )
+        throw HttpException(code = 403, message = "Forbidden")
+    }
+
+    private fun challenge(url: String, effectiveUrl: String): Nothing {
+        store.recordResponse(
+            url = url,
+            statusCode = 403,
+            etag = null,
+            lastModified = null,
+            cacheControl = null,
+            expires = null,
+            date = null,
+            retryAfter = null,
+        )
+        store.markChallenge(url, effectiveUrl)
+        throw HttpException(code = 403, message = "Forbidden")
     }
 }

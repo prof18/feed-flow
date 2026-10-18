@@ -4,6 +4,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ fun FeedSourceListScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val browserManager = koinInject<BrowserManager>()
     val context = LocalContext.current
+    DisposableEffect(viewModel) { onDispose { viewModel.cancelRecovery() } }
 
     if (feedOperation != FeedOperation.None) {
         LoadingOperationDialog(feedOperation)

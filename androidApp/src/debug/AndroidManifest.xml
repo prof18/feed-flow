@@ -3,6 +3,9 @@
 
     <application>
         <activity
+            android:name=".e2e.FeedVerificationTestActivity"
+            android:exported="false" />
+        <activity
             android:name=".e2e.E2eSeedActivity"
             android:exported="true"
             android:launchMode="singleTop">

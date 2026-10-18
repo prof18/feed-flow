@@ -10,9 +10,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.PopupProperties
+import com.prof18.feedflow.android.feedverification.WebsiteVerificationExplanationDialog
 import com.prof18.feedflow.android.ui.components.DeleteFeedSourceDialog
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun FeedSourceContextMenu(
@@ -27,6 +30,8 @@ internal fun FeedSourceContextMenu(
     onOpenWebsite: ((String) -> Unit),
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showVerificationExplanation by remember(feedSource.url) { mutableStateOf(false) }
+    val viewModel = koinViewModel<FeedSourceListViewModel>()
 
     DropdownMenu(
         expanded = showFeedMenu,
@@ -38,6 +43,9 @@ internal fun FeedSourceContextMenu(
             dismissOnClickOutside = true,
         ),
     ) {
+        if (showFeedMenu) {
+            FeedSourceVerificationActions(feedSource, hideMenu) { showVerificationExplanation = true }
+        }
         // 1. Delete (least frequent + destructive - keep far from accidental taps)
         DropdownMenuItem(
             text = {
@@ -118,6 +126,16 @@ internal fun FeedSourceContextMenu(
         )
     }
 
+    if (showVerificationExplanation) {
+        WebsiteVerificationExplanationDialog(
+            websiteUrl = feedSource.url,
+            onDismiss = { showVerificationExplanation = false },
+            onConfirm = {
+                showVerificationExplanation = false
+                viewModel.verifyWebsite(feedSource)
+            },
+        )
+    }
     DeleteFeedSourceDialog(
         showDialog = showDeleteDialog,
         feedSource = feedSource,

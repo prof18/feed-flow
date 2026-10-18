@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,10 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
+import com.prof18.feedflow.android.feedverification.WebsiteVerificationExplanationDialog
 import com.prof18.feedflow.android.ui.feed.addfeed.AddFeedContent
 import com.prof18.feedflow.android.ui.preview.PreviewPhone
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
@@ -41,6 +44,7 @@ fun AddFeedScreen(
     val showLoading by viewModel.isAddingFeedState.collectAsStateWithLifecycle()
     var errorMessage by remember { mutableStateOf("") }
     var canForceAdd by remember { mutableStateOf(false) }
+    var verificationDialogUrl by remember { mutableStateOf<String?>(null) }
 
     val context = LocalContext.current
     val strings = LocalFeedFlowStrings.current
@@ -48,6 +52,7 @@ fun AddFeedScreen(
     val showNotificationToggle by viewModel.showNotificationToggleState.collectAsStateWithLifecycle()
     val isNotificationEnabled by viewModel.isNotificationEnabledState.collectAsStateWithLifecycle()
     val youTubeOptions by viewModel.youTubeOptionsState.collectAsStateWithLifecycle()
+    DisposableEffect(viewModel) { onDispose { viewModel.cancelRecovery() } }
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -58,14 +63,17 @@ fun AddFeedScreen(
         viewModel.feedAddedState.collect { feedAddedState ->
             when (feedAddedState) {
                 is FeedAddedState.Error -> {
-                    showError = true
                     canForceAdd = feedAddedState.canForceAdd
-                    errorMessage = when (feedAddedState) {
-                        is FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrlWithRetryHint
-                        is FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
-                        is FeedAddedState.Error.GenericError -> strings.addFeedGenericError
-                        is FeedAddedState.Error.FetchFailed ->
-                            strings.feedFetchRefusedError
+                    val challengeUrl = (feedAddedState as? FeedAddedState.Error.FetchFailed)?.verificationUrl
+                    if (challengeUrl != null && viewModel.verificationAvailable) {
+                        verificationDialogUrl = challengeUrl
+                        showError = false
+                        errorMessage = ""
+                        canForceAdd = false
+                    } else {
+                        verificationDialogUrl = null
+                        showError = true
+                        errorMessage = feedAddedState.message(strings)
                     }
                 }
 
@@ -74,6 +82,7 @@ fun AddFeedScreen(
                     showError = false
                     errorMessage = ""
                     canForceAdd = false
+                    verificationDialogUrl = null
                     val addedState = feedAddedState as? FeedAddedState.FeedAdded
                     val feedName = addedState?.feedName
                     val message = if (feedAddedState is FeedAddedState.FeedAlreadyExists) {
@@ -93,9 +102,10 @@ fun AddFeedScreen(
                     showError = false
                     errorMessage = ""
                     canForceAdd = false
+                    verificationDialogUrl = null
                 }
 
-                FeedAddedState.Loading -> Unit
+                FeedAddedState.Loading -> verificationDialogUrl = null
             }
         }
     }
@@ -111,6 +121,7 @@ fun AddFeedScreen(
         categoriesState = categoriesState,
         onFeedUrlUpdated = { url ->
             feedUrl = url
+            verificationDialogUrl = null
             viewModel.updateFeedUrlTextFieldValue(url)
         },
         addFeed = {
@@ -151,6 +162,17 @@ fun AddFeedScreen(
         },
     )
 
+    verificationDialogUrl?.let { websiteUrl ->
+        WebsiteVerificationExplanationDialog(
+            websiteUrl = websiteUrl,
+            onDismiss = { verificationDialogUrl = null },
+            onConfirm = {
+                verificationDialogUrl = null
+                viewModel.verifyWebsite()
+            },
+        )
+    }
+
     if (showCategorySheet) {
         EditCategorySheet(
             sheetState = sheetState,
@@ -176,6 +198,17 @@ fun AddFeedScreen(
                 }
             },
         )
+    }
+}
+
+private fun FeedAddedState.Error.message(strings: FeedFlowStrings): String = when (this) {
+    is FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrlWithRetryHint
+    is FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+    is FeedAddedState.Error.GenericError -> strings.addFeedGenericError
+    is FeedAddedState.Error.FetchFailed -> if (verificationUrl != null) {
+        strings.feedVerificationUnsupported
+    } else {
+        strings.feedFetchRefusedError
     }
 }
 

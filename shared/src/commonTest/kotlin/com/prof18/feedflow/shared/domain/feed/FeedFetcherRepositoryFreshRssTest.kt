@@ -16,6 +16,7 @@ import org.koin.core.module.Module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class FeedFetcherRepositoryFreshRssTest : FeedFetcherRepositoryTestBase() {
@@ -105,6 +106,18 @@ class FeedFetcherRepositoryFreshRssTest : FeedFetcherRepositoryTestBase() {
         advanceUntilIdle()
 
         assertEquals(listOf(feedSource.id), feedFetcherRepository.getFeedSourceToNotify().map { it.feedSourceId })
+    }
+
+    @Test
+    fun `gReader sync stamps sources that returned no articles`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
+        databaseHelper.insertFeedSource(listOf(berlinFeedSource().toParsedFeedSource()))
+
+        feedFetcherRepository.fetchFeeds()
+        advanceUntilIdle()
+
+        val quietSource = databaseHelper.getFeedSources().single { it.id == "feed/243" }
+        assertNotNull(quietSource.lastSyncTimestamp)
     }
 
     private fun berlinFeedSource() = createFeedSource(

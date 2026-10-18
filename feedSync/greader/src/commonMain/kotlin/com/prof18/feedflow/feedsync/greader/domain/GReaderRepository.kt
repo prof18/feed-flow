@@ -162,6 +162,12 @@ class GReaderRepository internal constructor(
             }
         }
 
+        // Stamp every source, not only those that returned items, so a source's first real article
+        // after this sync is not mistaken for its back-catalog.
+        databaseHelper.updateLastSyncTimestamps(
+            feedSourceIds = feedSources.map { it.id },
+            lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+        )
         networkSettings.setLastSyncDate(Clock.System.now().epochSeconds)
         return@withContext Unit.success()
     }

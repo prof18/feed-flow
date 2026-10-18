@@ -346,6 +346,7 @@
       "android/regression/178-add-feed-youtube-feed-and-playlist-options.yaml",
       "android/regression/179-share-existing-feed.yaml",
       "android/regression/180-reader-report.yaml",
+      "android/regression/182-feed-verification-actions.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -432,6 +433,7 @@
       "ios/regression/178-add-feed-youtube-feed-and-playlist-options.yaml",
       "ios/regression/180-reader-report.yaml",
       "ios/regression/181-adaptive-navigation.yaml",
+      "ios/regression/182-feed-verification-actions.yaml",
       "ios/smoke/001-first-launch-empty.yaml",
       "ios/smoke/002-seeded-timeline-loads.yaml",
       "ios/smoke/003-library-filters.yaml",
@@ -557,6 +559,7 @@
       "regression/178": "Raw YouTube channel RSS reveals Hide Shorts OFF; playlist URLs hide the option.",
       "regression/179": "Every report request, including manual retry, shows confirmation; Cancel sends nothing, Send shows fake acceptance or the failure response; Android result snackbars have no close button and disappear automatically. Passed on Pixel 4 XL and iPhone 18 Pro simulator on 16 October 2026 using shared fake HTTP responses.",
       "regression/180": "Search query and matching results stay visible through portrait, landscape and back on iPhone, iPad and Duo."
+      "regression/182": "Both platforms check the automatic foreground explanation, Cancel, the source-list Verify website action with Cancel and retry, the browser host and the absence of raw XML. Android also checks that cancelling the browser keeps the feed waiting for verification. The reserved .invalid host does not exercise session requests, background refresh or a completed human challenge."
     };
 
     const sections = document.querySelector("#sections");

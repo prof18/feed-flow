@@ -1,0 +1,56 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- runFlow:
+    when:
+      visible: "Open website"
+    commands:
+      - tapOn: "Cancel"
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich&verification=pending
+- tapOn:
+    text: "^Open$"
+    optional: true
+# The seeded pending challenge prompts once in the foreground. Cancel it, then open
+# the same explanation from the feed's Verify website context-menu action.
+- assertVisible: ".*feed-verification.invalid.*"
+- assertVisible: "Open website"
+- tapOn: "Cancel"
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: feed_source_list_settings_row
+- assertVisible:
+    id: feed_source_list_screen
+- tapOn:
+    id: feed_source_list_category_e2e_category_technology
+- longPressOn:
+    text: "Android Central RSS Feed"
+- tapOn: "Verify website"
+- assertVisible: ".*feed-verification.invalid.*"
+- assertVisible: "Open website"
+- tapOn: "Cancel"
+
+# Retry from the source menu and check the app-owned browser surface.
+- longPressOn:
+    text: "Android Central RSS Feed"
+- tapOn: "Verify website"
+- tapOn: "Open website"
+- extendedWaitUntil:
+    visible:
+      id: website_verification_screen
+    timeout: 10000
+- assertVisible: "feed-verification.invalid"
+- assertNotVisible: "<?xml"
+- assertNotVisible: "<rss"
+- tapOn:
+    id: website_verification_cancel
+- assertNotVisible:
+    id: website_verification_screen

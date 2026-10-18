@@ -467,4 +467,10 @@
     <string name="hide_youtube_shorts">隐藏短视频</string>
     <string name="hide_youtube_shorts_description">只会包含该频道的常规视频。短视频和直播被排除。</string>
     <string name="hide_youtube_shorts_fallback">无法隐藏该频道的短视频，因此添加了完整的源。</string>
+    <string name="article_report_action">报告显示不正常的文章</string>
+    <string name="article_report_disclosure">要将这篇文章的链接、应用版本和操作系统版本发送给开发者吗? 不会发送文章内容或账户详情。</string>
+    <string name="article_report_send">发送</string>
+    <string name="article_report_sending">正在发送报告…</string>
+    <string name="article_report_sent">报告已发送。感谢！</string>
+    <string name="article_report_failed">无法发送报告。请重试。</string>
 </resources>

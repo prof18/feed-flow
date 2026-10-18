@@ -490,7 +490,11 @@ class FeedbinRepository internal constructor(
             )
         }
 
-        databaseHelper.insertFeedItems(feedItems, dateFormatter.currentTimeMillis())
+        databaseHelper.insertFeedItems(
+            feedItems = feedItems,
+            lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+            markFirstSyncItemsAsNotified = true,
+        )
 
         return Unit.success()
     }
@@ -543,7 +547,11 @@ class FeedbinRepository internal constructor(
             )
         }
 
-        databaseHelper.insertFeedItems(feedItems, dateFormatter.currentTimeMillis())
+        databaseHelper.insertFeedItems(
+            feedItems = feedItems,
+            lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+            markFirstSyncItemsAsNotified = true,
+        )
 
         return Unit.success()
     }

@@ -79,6 +79,41 @@ class FeedFetcherRepositoryFreshRssTest : FeedFetcherRepositoryTestBase() {
         assertTrue(getTimelineItems().isNotEmpty())
     }
 
+    @Test
+    fun `first gReader sync of a feed does not notify its back catalog`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
+        val feedSource = berlinFeedSource()
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.updateNotificationEnabledStatus(feedSource.id, true)
+
+        feedFetcherRepository.fetchFeeds()
+        advanceUntilIdle()
+
+        assertTrue(getTimelineItems().isNotEmpty())
+        assertTrue(feedFetcherRepository.getFeedSourceToNotify().isEmpty())
+    }
+
+    @Test
+    fun `gReader sync of a previously synced feed keeps new articles pending`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
+        val feedSource = berlinFeedSource()
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.updateLastSyncTimestamps(listOf(feedSource.id), lastSyncTimestamp = 1)
+        databaseHelper.updateNotificationEnabledStatus(feedSource.id, true)
+
+        feedFetcherRepository.fetchFeeds()
+        advanceUntilIdle()
+
+        assertEquals(listOf(feedSource.id), feedFetcherRepository.getFeedSourceToNotify().map { it.feedSourceId })
+    }
+
+    private fun berlinFeedSource() = createFeedSource(
+        id = "feed/242",
+        title = "20 Percent Berlin",
+        url = "https://www.20percent.berlin/feed",
+        websiteUrl = "https://www.20percent.berlin/",
+    )
+
     private suspend fun getTimelineItems() = databaseHelper.getFeedItems(
         feedFilter = FeedFilter.Timeline,
         pageSize = 50,

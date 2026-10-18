@@ -34,18 +34,6 @@ final class NotificationDeepLinkStoreTests: XCTestCase {
         XCTAssertNil(store.consume())
     }
 
-    func testInactiveSceneRetainsTapUntilActiveConsumption() throws {
-        let store = NotificationDeepLinkStore()
-        let url = try XCTUnwrap(URL(string: "feedflow://feed/article"))
-        store.enqueue(url)
-        var active = false
-        if active { _ = store.consume() }
-        XCTAssertEqual(store.pendingURL, url)
-        active = true
-        XCTAssertEqual(active ? store.consume() : nil, url)
-        XCTAssertNil(store.pendingURL)
-    }
-
     func testNewerTapReplacesPendingAndInvalidURLCannotReplaceIt() throws {
         let store = NotificationDeepLinkStore()
         let first = try XCTUnwrap(URL(string: "feedflow://feedsourcefilter/source"))

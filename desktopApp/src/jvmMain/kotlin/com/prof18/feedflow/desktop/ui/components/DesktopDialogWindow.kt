@@ -171,5 +171,5 @@ private fun MacTitleArea(title: String?) {
     }
 }
 
-private fun nativeWindowTitle(title: String, alertStyle: Boolean, isMacOs: Boolean, appName: String): String =
+internal fun nativeWindowTitle(title: String, alertStyle: Boolean, isMacOs: Boolean, appName: String): String =
     if (alertStyle && !isMacOs) appName else title

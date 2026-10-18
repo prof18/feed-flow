@@ -20,6 +20,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.window.Window
+import com.prof18.feedflow.core.utils.getDesktopOS
+import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.main.MainWindowSurface
 import com.prof18.feedflow.desktop.testing.requestNativeTestAppForeground
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -110,7 +112,7 @@ class DesktopMainWindowFocusTest {
             rule.onNodeWithTag(LAUNCHER_TAG).performSemanticsAction(SemanticsActions.OnClick) { it() }
             rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
             val child = java.awt.Window.getWindows().filterIsInstance<ComposeDialog>().single {
-                it.isShowing && it.title == EnFeedFlowStrings.deleteFeedConfirmationTitle
+                it.isShowing && it.title == alertTitle(EnFeedFlowStrings.deleteFeedConfirmationTitle)
             }
             SwingUtilities.invokeAndWait {
                 assertSame(frame, child.owner)
@@ -138,7 +140,7 @@ class DesktopMainWindowFocusTest {
         rule.onNodeWithTag(LAUNCHER_TAG).performSemanticsAction(SemanticsActions.OnClick) { it() }
         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
         val child = java.awt.Window.getWindows().filterIsInstance<ComposeDialog>().single {
-            it.isShowing && it.title == EnFeedFlowStrings.deleteFeedConfirmationTitle
+            it.isShowing && it.title == alertTitle(EnFeedFlowStrings.deleteFeedConfirmationTitle)
         }
         awaitNativeFocus(child)
         SwingUtilities.invokeAndWait {
@@ -151,6 +153,14 @@ class DesktopMainWindowFocusTest {
             disposed
         }
     }
+
+    // Off macOS, alert dialogs carry the app name in the native title bar instead of their question.
+    private fun alertTitle(title: String): String = nativeWindowTitle(
+        title = title,
+        alertStyle = true,
+        isMacOs = getDesktopOS().isMacOs(),
+        appName = EnFeedFlowStrings.appName,
+    )
 
     private fun awaitNativeFocus(window: java.awt.Window) {
         rule.waitUntil(timeoutMillis = 5_000) {

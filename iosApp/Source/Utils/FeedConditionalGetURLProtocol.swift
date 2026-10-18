@@ -78,6 +78,10 @@ final class FeedConditionalGetURLProtocol: URLProtocol {
                     date: httpResponse.value(forHTTPHeaderField: "Date"),
                     retryAfter: httpResponse.value(forHTTPHeaderField: "Retry-After")
                 )
+                if httpResponse.value(forHTTPHeaderField: "cf-mitigated")?
+                    .trimmingCharacters(in: .whitespaces) == "challenge" {
+                    store.markChallenge(url: url, effectiveUrl: httpResponse.url?.absoluteString ?? url)
+                }
                 self.client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .notAllowed)
             } else if let response {
                 self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)

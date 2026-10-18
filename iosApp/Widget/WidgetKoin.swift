@@ -19,7 +19,9 @@ enum WidgetKoin {
             appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
             telemetry: WidgetTelemetry(),
             notifier: WidgetNotifier(),
-            feedUrlProtocolClasses: [FeedConditionalGetURLProtocol.self]
+            feedUrlProtocolClasses: [FeedConditionalGetURLProtocol.self],
+            websiteSessionBridge: nil,
+            websiteProfileCleaner: nil
         )
     }()
 

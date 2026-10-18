@@ -25,12 +25,16 @@ struct FeedSourceListScreenContent: View {
     @State private var feedToDelete: FeedSource?
 
     let feedState: FeedSourceListState
+    let recoveryStates: [String: FeedSourceRecoveryUiState]
+    let verificationAvailable: Bool
 
     let deleteFeedSource: (FeedSource) -> Void
     let renameFeedSource: (FeedSource, String) -> Void
     let deleteAllFeedsInCategory: ([FeedSource]) -> Void
     let onReorderCategories: ([FeedSourceState]) -> Void
     let onReorderFeedSources: ([FeedSource]) -> Void
+    let onClearVerification: (FeedSource) -> Void
+    let onVerifyWebsite: (FeedSource) -> Void
 
     var body: some View {
         VStack {
@@ -130,11 +134,15 @@ struct FeedSourceListScreenContent: View {
                 ForEach(feedState.feedSourcesWithoutCategory, id: \.self.id) { feedSource in
                     FeedSourceListItem(
                         feedSource: feedSource,
+                        recoveryState: recoveryStates[feedSource.id],
+                        verificationAvailable: verificationAvailable,
                         deleteFeedSource: { source in
                             feedToDelete = source
                             showDeleteFeedDialog = true
                         },
-                        renameFeedSource: renameFeedSource
+                        renameFeedSource: renameFeedSource,
+                        clearVerification: onClearVerification,
+                        verifyWebsite: onVerifyWebsite
                     )
                     .id(feedSource.id)
                     .listRowInsets(EdgeInsets())
@@ -195,11 +203,15 @@ struct FeedSourceListScreenContent: View {
     private func feedSourceListItem(_ feedSource: FeedSource) -> some View {
         FeedSourceListItem(
             feedSource: feedSource,
+            recoveryState: recoveryStates[feedSource.id],
+            verificationAvailable: verificationAvailable,
             deleteFeedSource: { source in
                 feedToDelete = source
                 showDeleteFeedDialog = true
             },
-            renameFeedSource: renameFeedSource
+            renameFeedSource: renameFeedSource,
+            clearVerification: onClearVerification,
+            verifyWebsite: onVerifyWebsite
         )
         .id(feedSource.id)
     }
@@ -249,24 +261,37 @@ private struct FeedSourceListItem: View {
     private var browserSelector
 
     let feedSource: FeedSource
+    let recoveryState: FeedSourceRecoveryUiState?
+    let verificationAvailable: Bool
     @State private var feedSourceTitle: String
 
     @State private var isRenameEnabled = false
+    @State private var verificationExplanationUrl: String?
 
     let deleteFeedSource: (FeedSource) -> Void
     let renameFeedSource: (FeedSource, String) -> Void
+    let clearVerification: (FeedSource) -> Void
+    let verifyWebsite: (FeedSource) -> Void
 
     @FocusState private var isTextFieldFocused: Bool
 
     init(
         feedSource: FeedSource,
+        recoveryState: FeedSourceRecoveryUiState?,
+        verificationAvailable: Bool,
         deleteFeedSource: @escaping (FeedSource) -> Void,
-        renameFeedSource: @escaping (FeedSource, String) -> Void
+        renameFeedSource: @escaping (FeedSource, String) -> Void,
+        clearVerification: @escaping (FeedSource) -> Void,
+        verifyWebsite: @escaping (FeedSource) -> Void
     ) {
         self.feedSource = feedSource
+        self.recoveryState = recoveryState
+        self.verificationAvailable = verificationAvailable
         _feedSourceTitle = State(initialValue: feedSource.title)
         self.deleteFeedSource = deleteFeedSource
         self.renameFeedSource = renameFeedSource
+        self.clearVerification = clearVerification
+        self.verifyWebsite = verifyWebsite
     }
 
     var body: some View {
@@ -338,6 +363,14 @@ private struct FeedSourceListItem: View {
         .padding(.trailing, Spacing.small)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.row(feedSource.id))
+        .websiteVerificationExplanation(
+            url: verificationExplanationUrl,
+            onCancel: { verificationExplanationUrl = nil },
+            onConfirm: {
+                verificationExplanationUrl = nil
+                verifyWebsite(feedSource)
+            }
+        )
         .contentShape(Rectangle())
         .hoverEffect()
         .listRowInsets(
@@ -355,6 +388,28 @@ private struct FeedSourceListItem: View {
                         feedFlowStrings.feedFetchFailedTooltipShort,
                         systemImage: "exclamationmark.triangle.fill"
                     )
+                }
+
+                if let recoveryState, recoveryState.verificationRequired {
+                    Button {
+                        verificationExplanationUrl = feedSource.url
+                    } label: {
+                        Label(
+                            verificationAvailable
+                                ? feedFlowStrings.feedVerifyWebsite
+                                : feedFlowStrings.feedVerificationUnsupported,
+                            systemImage: "checkmark.shield"
+                        )
+                    }
+                    .disabled(!verificationAvailable)
+                }
+
+                if recoveryState?.profileId != nil {
+                    Button {
+                        clearVerification(feedSource)
+                    } label: {
+                        Label(feedFlowStrings.feedClearVerification, systemImage: "xmark.shield")
+                    }
                 }
 
                 NavigationLink(

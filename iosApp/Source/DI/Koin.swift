@@ -15,7 +15,7 @@ private class NoOpNotifier: Notifier {
     }
 }
 
-func startKoin(notifier: (any Notifier)? = nil) {
+func startKoin(notifier: (any Notifier)? = nil, websiteRecovery: Bool = false) {
     // The share extension process is reused across shares, so viewDidLoad can run more than once.
     guard _feedFlowStrings == nil else { return }
 
@@ -24,6 +24,15 @@ func startKoin(notifier: (any Notifier)? = nil) {
         appEnvironment = AppEnvironment.Debug()
     #else
         appEnvironment = AppEnvironment.Release()
+    #endif
+
+    // Koin.swift is compiled into the share extension, which has no website verification.
+    #if APP_EXTENSION
+        let websiteSessionBridge: (any IosWebsiteSessionBridge)? = nil
+        let websiteProfileCleaner: (any WebsiteProfileCleaner)? = nil
+    #else
+        let websiteSessionBridge: (any IosWebsiteSessionBridge)? = websiteRecovery ? WebsiteSessionBridge() : nil
+        let websiteProfileCleaner: (any WebsiteProfileCleaner)? = websiteRecovery ? WebsiteProfileStore.shared : nil
     #endif
 
     let currentLocale = Locale.current
@@ -39,7 +48,9 @@ func startKoin(notifier: (any Notifier)? = nil) {
         appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
         telemetry: TelemetryReporter(),
         notifier: notifier ?? NoOpNotifier(),
-        feedUrlProtocolClasses: [FeedConditionalGetURLProtocol.self]
+        feedUrlProtocolClasses: [FeedConditionalGetURLProtocol.self],
+        websiteSessionBridge: websiteSessionBridge,
+        websiteProfileCleaner: websiteProfileCleaner
     )
     _feedFlowStrings = Deps.shared.getFeedFlowStrings()
 }

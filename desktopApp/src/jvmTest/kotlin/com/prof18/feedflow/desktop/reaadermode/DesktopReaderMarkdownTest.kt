@@ -186,7 +186,7 @@ class DesktopReaderMarkdownTest(private val theme: ThemeMode) {
         rule.setContent {
             FeedFlowTheme(darkTheme = theme != ThemeMode.LIGHT, useOledTheme = theme == ThemeMode.OLED) {
                 DesktopReaderMarkdown(
-                    markdown = "![Fixture alt text](${file.toURI()} \"Fixture image\")",
+                    markdown = "![Fixture alt text](${file.toPath().toUri()} \"Fixture image\")",
                     fontSize = FONT_SIZE,
                     lineHeight = LINE_HEIGHT,
                     imageLoader = imageLoader,

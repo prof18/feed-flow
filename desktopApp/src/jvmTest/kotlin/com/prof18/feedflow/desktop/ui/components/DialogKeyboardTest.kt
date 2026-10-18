@@ -22,6 +22,8 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.utils.getDesktopOS
+import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.home.NoFeedsDialog
 import com.prof18.feedflow.desktop.home.drawer.DesktopFeedMoveDialog
 import com.prof18.feedflow.desktop.settings.DesktopSettingsDialog
@@ -330,7 +332,7 @@ class DialogKeyboardTest {
         awaitActions()
         rule.onNodeWithText(EnFeedFlowStrings.cancelButton).assertIsFocused()
 
-        press(dialog(EnFeedFlowStrings.deleteFeedConfirmationTitle), KeyEvent.VK_ENTER)
+        press(dialog(alertTitle(EnFeedFlowStrings.deleteFeedConfirmationTitle)), KeyEvent.VK_ENTER)
 
         rule.runOnIdle {
             assertEquals(0, confirmed)
@@ -344,7 +346,7 @@ class DialogKeyboardTest {
         var dismissed = 0
         confirmation(onConfirm = { confirmed++ }, onDismiss = { dismissed++ })
         awaitActions()
-        val window = dialog(EnFeedFlowStrings.deleteFeedConfirmationTitle)
+        val window = dialog(alertTitle(EnFeedFlowStrings.deleteFeedConfirmationTitle))
         rule.onNodeWithText(EnFeedFlowStrings.cancelButton).assertIsFocused()
 
         press(window, KeyEvent.VK_TAB)
@@ -403,7 +405,7 @@ class DialogKeyboardTest {
         repeat(2) {
             rule.onNodeWithTag(LAUNCHER_TAG).performSemanticsAction(SemanticsActions.OnClick) { it() }
             awaitActions()
-            val child = dialog(EnFeedFlowStrings.deleteFeedConfirmationTitle)
+            val child = dialog(alertTitle(EnFeedFlowStrings.deleteFeedConfirmationTitle))
             SwingUtilities.invokeAndWait {
                 assertSame(owner, child.owner)
                 assertEquals(Dialog.ModalityType.DOCUMENT_MODAL, child.modalityType)
@@ -496,6 +498,14 @@ class DialogKeyboardTest {
     private fun awaitActions() {
         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
     }
+
+    // Off macOS, alert dialogs carry the app name in the native title bar instead of their question.
+    private fun alertTitle(title: String): String = nativeWindowTitle(
+        title = title,
+        alertStyle = true,
+        isMacOs = getDesktopOS().isMacOs(),
+        appName = EnFeedFlowStrings.appName,
+    )
 
     private fun dialog(title: String): ComposeDialog = Window.getWindows().filterIsInstance<ComposeDialog>().single {
         it.isShowing && it.title == title

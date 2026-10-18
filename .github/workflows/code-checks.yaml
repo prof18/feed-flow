@@ -52,7 +52,12 @@ jobs:
         run: python3 -m unittest discover -s .scripts/tests -p 'test_*.py'
 
       - name: Run Checks
-        run: ./gradlew detekt allTests
+        run: |
+          # Prints thread dumps if desktop tests stop progressing; it never stops the build.
+          bash .scripts/ci-test-stall-watchdog.sh &
+          watchdog_pid=$!
+          trap 'kill "$watchdog_pid" 2>/dev/null || true' EXIT
+          ./gradlew detekt allTests
 
       - name: Upload reports
         if: always()

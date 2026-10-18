@@ -91,10 +91,11 @@ class DesktopInitialWindowSizeTest {
 
     private companion object {
         const val TITLE = "Native initial size fixture"
-        const val INITIAL_WIDTH = 800
-        const val INITIAL_HEIGHT = 600
-        const val RESIZED_WIDTH = 900
-        const val RESIZED_HEIGHT = 720
+        // Small enough to fit the 1024x768 displays of CI VMs, where the OS would clamp larger frames.
+        const val INITIAL_WIDTH = 640
+        const val INITIAL_HEIGHT = 480
+        const val RESIZED_WIDTH = 720
+        const val RESIZED_HEIGHT = 540
         const val WINDOW_TIMEOUT_MS = 5_000L
     }
 }

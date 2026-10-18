@@ -36,6 +36,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
 import java.awt.Dialog
+import java.awt.GraphicsEnvironment
 import java.awt.Window
 import java.util.concurrent.atomic.AtomicReference
 import javax.swing.SwingUtilities
@@ -208,9 +209,11 @@ class DesktopSettingsWindowTest {
         val initialSize = readWindowSize(window)
         val scale = initialSize.scale
         val densityScale = requireNotNull(density.get()) / scale
+        // The OS keeps a window inside the usable screen, so small displays (CI VMs) get a smaller initial size.
+        val screen = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds
         assertTrue(initialSize.isResizable)
-        assertTrue(initialSize.width >= (INITIAL_WIDTH_DP * densityScale).toInt())
-        assertTrue(initialSize.height >= (INITIAL_HEIGHT_DP * densityScale).toInt())
+        assertTrue(initialSize.width >= minOf((INITIAL_WIDTH_DP * densityScale).toInt(), screen.width))
+        assertTrue(initialSize.height >= minOf((INITIAL_HEIGHT_DP * densityScale).toInt(), screen.height))
         assertTrue(initialSize.minimumWidth >= (MINIMUM_WIDTH_DP * densityScale).toInt())
         assertTrue(initialSize.minimumHeight >= (MINIMUM_HEIGHT_DP * densityScale).toInt())
 

@@ -34,7 +34,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: macos-26
+    runs-on: xcode-27
     timeout-minutes: 60
 
     steps:
@@ -44,9 +44,10 @@ jobs:
         run: |
           /usr/bin/xcodebuild -version   
           
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '26.2'
+      # The iPhone Duo layout uses iOS 27.1 SDK APIs, which Xcode 27.0 doesn't have.
+      # Switch to the final 27.1 release once the xcode-27 runner image ships it.
+      - name: Select Xcode 27.1
+        run: sudo xcode-select -s /Applications/Xcode_27.1_Release_Candidate.app
 
       - name: Xcode version
         run: |

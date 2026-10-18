@@ -60,10 +60,7 @@ struct RegularView: View {
     ) {
         _selectedSidebarItem = selectedSidebarItem
         _indexHolder = State(initialValue: HomeListIndexHolder(homeViewModel: homeViewModel))
-        let sidebarVisible = homeViewModel.getLargeScreenSidebarVisible()
-        _columnVisibility = State(initialValue: sidebarVisible.map {
-            $0.boolValue ? .all : .detailOnly
-        } ?? .automatic)
+        _columnVisibility = State(initialValue: Self.savedColumnVisibility(homeViewModel: homeViewModel))
         self.homeViewModel = homeViewModel
         self.readerModeViewModel = readerModeViewModel
         self.onOpenAudioEpisode = onOpenAudioEpisode
@@ -185,6 +182,9 @@ struct RegularView: View {
         .onChange(of: horizontalSizeClass) { oldSizeClass, newSizeClass in
             if oldSizeClass == .regular, newSizeClass == .compact {
                 preferredCompactColumn = .detail
+            } else if oldSizeClass == .compact, newSizeClass == .regular {
+                // The compact layout (a folded Duo) resets the split view, so bring back the saved choice.
+                columnVisibility = Self.savedColumnVisibility(homeViewModel: homeViewModel)
             }
         }
         .onChange(of: columnVisibility) { _, visibility in
@@ -305,6 +305,12 @@ struct RegularView: View {
         .modifier(NowPlayingAccessoryModifier(route: route, onOpenEpisode: onOpenAudioEpisode))
         .environment(appState)
         .environment(browserSelector)
+    }
+
+    private static func savedColumnVisibility(homeViewModel: HomeViewModel) -> NavigationSplitViewVisibility {
+        homeViewModel.getLargeScreenSidebarVisible().map {
+            $0.boolValue ? .all : .detailOnly
+        } ?? .automatic
     }
 
     private func sidebarSelection(from filter: FeedFilter) -> SidebarSelection? {

@@ -473,4 +473,6 @@
     <string name="article_report_sending">正在发送报告…</string>
     <string name="article_report_sent">报告已发送。感谢！</string>
     <string name="article_report_failed">无法发送报告。请重试。</string>
+    <string name="settings_filters">筛选器</string>
+    <string name="desktop_resize_sidebar">调整导航窗格尺寸（左/右）</string>
 </resources>

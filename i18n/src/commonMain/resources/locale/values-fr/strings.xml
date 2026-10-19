@@ -522,4 +522,27 @@
     <string name="desktop_accounts_icloud_title">iCloud</string>
     <string name="desktop_accounts_local_status">Aucun compte à synchroniser n\'est connecté</string>
     <string name="desktop_new_category_menu">Nouvelle catégorie…</string>
+    <string name="desktop_accounts_local_title">Sur cet appareil</string>
+    <string name="menu_article">Article</string>
+    <string name="menu_window">Fenêtre</string>
+    <string name="menu_minimize">Réduire</string>
+    <string name="menu_zoom">Zoomer</string>
+    <string name="menu_toggle_sidebar">Activer la barre latérale</string>
+    <string name="feed_suggestions_empty_catalog">Aucune suggestion de flux n\'est disponible.</string>
+    <string name="feed_suggestions_empty_category">Aucunes suggestions de flux dans cette catégorie.</string>
+    <string name="feed_suggestion_add_error">L\'import de se flux n\'a pas pu être terminé. Veuillez ré-essayer.</string>
+    <string name="feed_suggestion_update_error">Flux ajouté, mais sa mise à jour initiale n\'a pas pu être complétée. Essayez d\'actualiser vos flux.</string>
+    <string name="feed_suggestion_refreshing">Actualisation des articles…</string>
+    <string name="blocked_word_operation_error">Impossible de mettre à jour ce mot bloqué. Veuillez réessayer.</string>
+    <string name="blocked_word_refresh_error">Mots bloqués sauvegardés, mais la liste des articles n\'a pas pu être mise à jour. Veuillez réessayer.</string>
+    <string name="blocked_word_saving">Sauvegarde des mots bloqués…</string>
+    <string name="blocked_word_refreshing">Mise à jour des articles…</string>
+    <string name="blocked_word_added">Mot bloqué ajouté.</string>
+    <string name="blocked_word_removed">Mot bloqué retiré.</string>
+    <string name="article_report_action">Signaler un article cassé</string>
+    <string name="article_report_disclosure">Envoyer le lien de cette article, la version de l\'application et de l\'OS au développeur ? Aucun contenu de l\'article ou détails de compte seront envoyés.</string>
+    <string name="article_report_send">Envoyer</string>
+    <string name="article_report_sending">Envoi du rapport…</string>
+    <string name="article_report_sent">Rapport envoyé. Merci !</string>
+    <string name="article_report_failed">Impossible d\'envoyer ce rapport. Veuillez réessayer.</string>
 </resources>

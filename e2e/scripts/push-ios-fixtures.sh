@@ -3,11 +3,11 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-SIMULATOR_UDID="${SIMULATOR_UDID:-$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 17 Pro/ {print $2; exit}')}"
+SIMULATOR_UDID="${SIMULATOR_UDID:-$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 18 Pro \(/ {print $2; exit}')}"
 APP_ID="${APP_ID:-com.prof18.feedflow.dev}"
 
 if [ -z "$SIMULATOR_UDID" ]; then
-  echo "No booted iPhone 17 Pro simulator found. Boot one before pushing iOS fixtures." >&2
+  echo "No booted iPhone 18 Pro simulator found. Boot one before pushing iOS fixtures." >&2
   exit 1
 fi
 

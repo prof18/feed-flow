@@ -9,6 +9,6 @@ sessionDefaults:
   projectPath: iosApp/FeedFlow.xcodeproj
   scheme: FeedFlow
   configuration: Debug
-  simulatorName: iPhone 17 Pro
+  simulatorName: iPhone 18 Pro
   useLatestOS: true
   platform: iOS

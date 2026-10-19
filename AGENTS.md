@@ -174,7 +174,7 @@ Before handing off you must:
 1. Run `.scripts/refresh-translations.sh` before the Gradle checks if you changed translation resources
 2. Run `./gradlew --quiet --console=plain detekt allTests` to ensure Kotlin/shared/Android/Desktop checks pass - don't run it if you modified only swift files
 3. Run `.scripts/ios-format.sh` to format iOS code - only run if you made changes on the iOS app
-4. If you changed iOS code, run `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet` before handoff; rerun without `-quiet` only if you need the full diagnostics
+4. If you changed iOS code, run `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 18 Pro' build -quiet` before handoff; rerun without `-quiet` only if you need the full diagnostics
 5. Fix any issues found during the above steps
 
 ### Initial Setup (for building from scratch)
@@ -271,7 +271,7 @@ When creating commits:
 
 ### iOS Development
 - Build iOS with `xcodebuild … -quiet`; rerun without `-quiet` only when you need the full diagnostics.
-- Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet`
+- Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 18 Pro' build -quiet`
 - The app requires Xcode 27.1 or newer and builds against the iOS 27.1 SDK, with a minimum deployment target of iOS 17 (`iosApp/project.yml`). Gate newer APIs with `#available` checks; do not add `#if compiler(...)` guards for older Xcode versions.
 - Keep app-group database work that may outlive an iOS foreground interval inside `withSuspensionGuard`; it uses `NSProcessInfo` and also works in the widget and share extensions.
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.

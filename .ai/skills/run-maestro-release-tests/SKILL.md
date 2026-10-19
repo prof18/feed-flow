@@ -40,7 +40,7 @@ Run FeedFlow's full local Maestro release gate across Android and iOS, then repo
 
 - Maestro must be installed as `maestro`.
 - Android needs a running device or emulator. The repo default is `Resizable_Experimental`.
-- iOS needs a booted `iPhone 17 Pro` simulator. The script uses `SIMULATOR_UDID` when present, otherwise it detects the booted simulator.
+- iOS needs a booted `iPhone 18 Pro` simulator. The script uses `SIMULATOR_UDID` when present, otherwise it detects the booted simulator.
 - iOS needs `iosApp/FeedFlow.xcodeproj`; the script generates it when missing.
 
 ## Behavior

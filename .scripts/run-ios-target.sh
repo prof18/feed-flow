@@ -21,7 +21,7 @@ Usage:
   .scripts/run-ios-target.sh --device "<device name fragment>" [--build-only] [--verbose-build] [--clean-install]
 
 Examples:
-  .scripts/run-ios-target.sh --simulator "iPhone 17 Pro"
+  .scripts/run-ios-target.sh --simulator "iPhone 18 Pro"
   .scripts/run-ios-target.sh --device "iPhone 16e" --verbose-build
 EOF
 }

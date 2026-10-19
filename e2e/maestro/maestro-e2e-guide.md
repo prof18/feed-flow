@@ -244,7 +244,7 @@ Preconditions:
 
 - Maestro is installed and available as `maestro`.
 - For Android, a device or emulator is running. Default local target: `Resizable_Experimental`.
-- For iOS, the `iPhone 17 Pro` simulator is booted and `iosApp/FeedFlow.xcodeproj` exists.
+- For iOS, the `iPhone 18 Pro` simulator is booted and `iosApp/FeedFlow.xcodeproj` exists.
 
 Run the full local automated wrappers before a release. These build, install, push fixtures, and run `smoke` followed by `regression`:
 
@@ -293,7 +293,7 @@ maestro --platform android test e2e/maestro/android/smoke/002-seeded-timeline-lo
 Run one iOS flow against an already installed build:
 
 ```bash
-SIMULATOR_UDID=$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 17 Pro/ {print $2; exit}')
+SIMULATOR_UDID=$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 18 Pro \(/ {print $2; exit}')
 maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/smoke/002-seeded-timeline-loads.yaml
 ```
 

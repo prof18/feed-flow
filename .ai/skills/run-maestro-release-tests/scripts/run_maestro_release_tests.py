@@ -19,7 +19,7 @@ from pathlib import Path
 
 
 ANDROID_APP_ID = "com.prof18.feedflow.debug"
-IOS_SIMULATOR_NAME = "iPhone 17 Pro"
+IOS_SIMULATOR_NAME = "iPhone 18 Pro"
 SUITES = ("smoke", "regression")
 COMMAND_TIMEOUT_RETURN_CODE = 124
 MAESTRO_FLOW_TIMEOUT_SECONDS = 180
@@ -289,7 +289,7 @@ def booted_ios_simulator_udid(repo_root: Path, log_root: Path) -> tuple[str | No
 
     text = result.log_path.read_text(encoding="utf-8", errors="replace")
     for line in text.splitlines():
-        if IOS_SIMULATOR_NAME in line:
+        if f"{IOS_SIMULATOR_NAME} (" in line:
             match = re.search(r"\(([A-Fa-f0-9-]{36})\)", line)
             if match:
                 return match.group(1), result
@@ -482,7 +482,7 @@ def update_ios_simulator_udid(env: dict[str, str], setup_results: list[CommandRe
         return
     text = lookup_logs[-1].read_text(encoding="utf-8", errors="replace")
     for line in text.splitlines():
-        if IOS_SIMULATOR_NAME in line:
+        if f"{IOS_SIMULATOR_NAME} (" in line:
             match = re.search(r"\(([A-Fa-f0-9-]{36})\)", line)
             if match:
                 env["SIMULATOR_UDID"] = match.group(1)

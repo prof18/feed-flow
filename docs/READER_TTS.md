@@ -31,7 +31,7 @@ Extractor tests cover missing/blank title semantics and static inline visibility
 ./gradlew --quiet --console=plain :shared:jvmTest --tests "com.prof18.feedflow.shared.domain.tts.TtsTextExtractorTest"
 ./gradlew --quiet --console=plain :androidApp:testGooglePlayDebugUnitTest --tests "com.prof18.feedflow.android.audio.AndroidSpeechAudioGeneratorTest"
 ./gradlew --quiet --console=plain :androidApp:testGooglePlayDebugUnitTest --tests "com.prof18.feedflow.android.audio.AndroidAudioPlayerTest"
-xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme AudioPlaybackTests -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test -quiet
+xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme AudioPlaybackTests -destination 'platform=iOS Simulator,name=iPhone 18 Pro' test -quiet
 ```
 
 The Android generator tests use an injected fake synthesis engine; they do not produce audible speech. Audio-player and iOS audio-playback tests cover duration, seeking, pause/resume, speed, identity, and lifecycle behavior. These tests do not prove that a device emitted sound. Validate audible title/body order, background playback and system controls on a physical Android and iOS device. Also check preparation latency with representative long articles; it depends on the installed system voice and device. Maestro can verify visible controls and player state, but cannot confirm audible output.

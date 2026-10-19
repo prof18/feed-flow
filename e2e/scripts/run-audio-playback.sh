@@ -100,9 +100,9 @@ case "$PLATFORM" in
     AUDIO_HOST="127.0.0.1"
     SIMULATOR_UDID="${SIMULATOR_UDID:-}"
     if [[ -z "$SIMULATOR_UDID" ]]; then
-      SIMULATOR_UDID="$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 17 Pro/ {print $2; exit}')"
+      SIMULATOR_UDID="$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 18 Pro \(/ {print $2; exit}')"
     fi
-    [[ -n "$SIMULATOR_UDID" ]] || { echo "No booted iPhone 17 Pro simulator found" >&2; exit 1; }
+    [[ -n "$SIMULATOR_UDID" ]] || { echo "No booted iPhone 18 Pro simulator found" >&2; exit 1; }
     FLOW="$REPO_ROOT/e2e/maestro/ios/regression/$FLOW_NAME.yaml"
     MAESTRO=(maestro --platform ios --device "$SIMULATOR_UDID")
     ;;

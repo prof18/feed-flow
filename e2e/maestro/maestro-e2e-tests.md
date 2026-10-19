@@ -22,7 +22,7 @@ e2e/scripts/run-ios-smoke.sh
 maestro --platform android test e2e/maestro/android/smoke/<flow>.yaml
 
 # A single iOS flow
-SIMULATOR_UDID=$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 17 Pro/ {print $2; exit}')
+SIMULATOR_UDID=$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 18 Pro \(/ {print $2; exit}')
 maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/smoke/<flow>.yaml
 ```
 

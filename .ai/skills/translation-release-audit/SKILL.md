@@ -99,8 +99,8 @@ Latvian (`lv`) is supported by Google Play but is not a supported App Store Conn
 
 Still compare local source and checked-in generated Play output:
 
-- If `assets/storecopy/<locale>/` is complete but `androidApp/src/googlePlay/play/listings/<locale>/` is missing/stale, update or create generated local text output when possible, or create a board card naming the exact local output work.
-- If checked-in Play screenshots/assets changed, create screenshot upload/regeneration cards only from committed/local evidence. Use the audit script's image counts to identify live screenshot drift.
+- If `assets/storecopy/<locale>/` is complete but `androidApp/src/googlePlay/play/listings/<locale>/` is missing/stale, update or create generated local text output when possible, or create a Base item naming the exact local output work.
+- If checked-in Play screenshots/assets changed, create screenshot upload/regeneration Base items only from committed/local evidence. Use the audit script's image counts to identify live screenshot drift.
 
 ### App Store
 
@@ -133,7 +133,7 @@ screenshots nested inside it; it does not expose screenshots in a top-level data
 Count those nested arrays before declaring screenshots missing, and download only sets
 whose screenshot count is nonzero.
 
-For App Store metadata, validate field limits before syncing or creating board cards. Current limits used by `asc metadata validate`: name 30, subtitle 30, keywords 100, description 4000, promotional text 170. If source fields exceed these limits, the actionable card should be about shortening/fixing the source copy, not syncing ASC.
+For App Store metadata, validate field limits before syncing or creating Base items. Current limits used by `asc metadata validate`: name 30, subtitle 30, keywords 100, description 4000, promotional text 170. If source fields exceed these limits, the actionable item should be about shortening/fixing the source copy, not syncing ASC.
 
 If `asc` is missing, auth is unavailable, or the app/version cannot be resolved, report `App Store live check: unavailable` with the reason.
 

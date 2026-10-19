@@ -70,7 +70,7 @@ Use the [Android CLI](https://developer.android.com/tools/agents/android-cli) (`
 
 **Precondition — a device/emulator must be running.** Check with `adb devices`. Do not assume an emulator: use the first device returned by `adb devices` (real device or emulator — both are fine). If none is connected, default to the resizable emulator: `android emulator start Resizable_Experimental` (verify the exact AVD name with `android emulator list` if it fails).
 
-Devices are shared with other worktrees and agents, and every debug build installs over the same app. A build whose database schema is older than the installed one crashes on launch with `Can't downgrade database from version N to M`. If the user says a device is in use, pick another one. Before clearing the app's data to install an older-schema build, ask, then restore the development feeds afterwards.
+Devices are shared with other worktrees and agents, and every debug build installs over the same app. A build whose database schema is older than the installed one crashes on launch with `Can't downgrade database from version N to M`. If the user says a device is in use, pick another one. Before clearing the app's data to install an older-schema build, ask, then restore the development feeds afterwards. iOS simulators are shared the same way and can also hold preference values an older checkout can't parse; validate an older checkout in a dedicated simulator instead of wiping a shared one.
 
 **Resizable emulator display mode.** When testing with the resizable emulator and the task needs a specific form factor, set it before building/running:
 
@@ -259,9 +259,9 @@ For Miniflux/GReader sync failures, compare FeedFlow's exact requests and header
 ### Git Commit Messages
 When creating commits:
 - Use simple, one-liner commit messages
-- DO NOT include phase numbers (e.g., "Phase 1", "Phase 2")
-- DO NOT add "Generated with Claude Code" attribution
-- DO NOT add "Co-Authored-By: Claude" attribution
+- Don't include phase numbers (e.g., "Phase 1", "Phase 2").
+- Don't add a "Generated with Claude Code" line.
+- Don't add a "Co-Authored-By: Claude" trailer.
 - Example: `git commit -m "Add foundation for unified article parsing system"`
 
 ### macOS Desktop Code Signing
@@ -301,8 +301,9 @@ When creating commits:
 - Run .scripts/refresh-translations.sh after adding a new translation, to re-generate the kotlin code
 - Store screenshots for **all** platforms (Android phone/tablet, iPhone, iPad, macOS, Windows) are rendered from repo code by `tools/screenshots/` (`node render.mjs --all`, then `node verify.mjs`), not Figma. Use the repo-local `render-store-screenshots` skill when translations change; it enforces the spacing/padding floors.
 - Use the repo-local `translation-release-audit` skill for weekly or release checks of app translations, store copy, generated Play listing files, live store metadata, and screenshot copy/assets. Do not upload store metadata/screenshots unless the user explicitly asks.
-- NEVER add hardcoded strings in the code. Always use the i18n resources.
-- NEVER try to translate other languages by yourself. Add only the English strings. The translations will be handled by professionals later.
+- Don't hardcode user-visible strings; put them in the i18n resources.
+- Add only the English strings and don't translate other languages yourself: professional translators handle them later.
+- Write English UI copy without a first-person "we": address the user or describe the state ("Couldn't connect to iCloud", not "We are unable to connect"). Match the tone of the existing strings.
 
 ### Flatpak / Linux Desktop
 - `.scripts/flatpak-build-setup.sh` -> Prepare the project for Flatpak builds (sets release props, disables JetBrains JDK vendor, disables toolchain auto-provisioning, comments out Android-only Gradle plugins)

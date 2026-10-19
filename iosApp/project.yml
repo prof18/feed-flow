@@ -85,7 +85,7 @@ packages:
     path: Packages/Reader
   RevenueCat:
     url: https://github.com/RevenueCat/purchases-ios-spm.git
-    exactVersion: 5.91.0
+    exactVersion: 5.96.0
 
 aggregateTargets:
   FeedFlowKitBuilder:

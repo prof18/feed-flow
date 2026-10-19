@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -149,7 +150,7 @@ class DesktopNoFeedsStateTest {
     @Test
     fun `actual empty timeline keeps actions readable and inside compact host`() {
         val theme = mutableStateOf(ThemeMode.LIGHT)
-        val fontScale = mutableStateOf(1f)
+        val fontScale = mutableFloatStateOf(1f)
         val direction = mutableStateOf(LayoutDirection.Ltr)
         val calls = mutableListOf<String>()
         setEmptyTimelineContent(
@@ -184,7 +185,7 @@ class DesktopNoFeedsStateTest {
         val calls = mutableListOf<String>()
         setEmptyTimelineContent(
             theme = mutableStateOf(ThemeMode.OLED),
-            fontScale = mutableStateOf(2f),
+            fontScale = mutableFloatStateOf(2f),
             direction = mutableStateOf(LayoutDirection.Rtl),
             filter = filter,
             onRefresh = { calls += "refresh" },

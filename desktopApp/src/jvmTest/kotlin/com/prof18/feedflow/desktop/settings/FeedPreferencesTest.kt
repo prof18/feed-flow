@@ -1,7 +1,7 @@
 package com.prof18.feedflow.desktop.settings
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -28,7 +28,7 @@ class FeedPreferencesTest {
 
     @Test
     fun `named font controls update the live preview and respect scale limits`() {
-        val scale = mutableStateOf(0)
+        val scale = mutableIntStateOf(0)
         compose.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {

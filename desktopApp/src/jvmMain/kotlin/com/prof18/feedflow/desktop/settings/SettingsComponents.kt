@@ -42,7 +42,8 @@ import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -116,11 +117,11 @@ internal fun SettingsContent(
         categorySelected(category)
     }
 
-    LaunchedEffect(initialCategory) {
+    SideEffect(initialCategory) {
         categoryListState.selectedKeys = setOf(initialCategory)
         selectedCategory = initialCategory
     }
-    LaunchedEffect(categoryListState.selectedKeys) {
+    SideEffect(categoryListState.selectedKeys) {
         (categoryListState.selectedKeys.firstOrNull() as? DesktopSettingsCategory)?.let {
             if (selectedCategory != it) selectCategory(it)
         }
@@ -241,6 +242,7 @@ internal fun SettingsGroup(title: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
+@ReadOnlyComposable
 private fun settingsPageTitleStyle() = JewelTheme.defaultTextStyle.copy(
     fontWeight = FontWeight.SemiBold,
     fontSize = 22.sp,
@@ -629,11 +631,13 @@ internal fun ConfirmationSetting(
 }
 
 @Composable
+@ReadOnlyComposable
 private fun settingsCardColor(): Color = JewelTheme.globalColors.text.normal
     .copy(alpha = if (JewelTheme.isDark) 0.045f else 0.028f)
     .compositeOver(JewelTheme.globalColors.panelBackground)
 
 @Composable
+@ReadOnlyComposable
 private fun settingsSeparatorColor(): Color = JewelTheme.globalColors.text.normal
     .copy(alpha = if (JewelTheme.isDark) 0.12f else 0.09f)
     .compositeOver(JewelTheme.globalColors.panelBackground)

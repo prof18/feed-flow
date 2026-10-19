@@ -101,7 +101,9 @@ class DesktopPlatformAdaptersTest {
         rule.waitForIdle()
         rule.runOnIdle {
             handler.value = object : UriHandler {
-                override fun openUri(uri: String) { opened += uri }
+                override fun openUri(uri: String) {
+                    opened += uri
+                }
             }
             mounted.value = true
         }

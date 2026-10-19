@@ -1,7 +1,7 @@
 package com.prof18.feedflow.desktop.accounts
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
@@ -81,7 +81,7 @@ class DropboxAuthorizationFormTest {
     fun `failed code exchange permits retry without losing synthetic draft`() {
         var requests = 0
         val state = CredentialsState()
-        val revision = mutableStateOf(0)
+        val revision = mutableIntStateOf(0)
         compose.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {

@@ -1,6 +1,7 @@
 package com.prof18.feedflow.desktop.accounts
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
@@ -81,7 +82,7 @@ class AccountConnectButtonTest {
     @Test
     fun `new error revision unlocks a fast failed submission`() {
         var submissions = 0
-        val errorRevision = mutableStateOf(0)
+        val errorRevision = mutableIntStateOf(0)
         val state = CredentialsState().apply { submissionPending = true }
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
@@ -131,7 +132,7 @@ class AccountConnectButtonTest {
     fun `pending draft survives unmount and same error revision does not enable retry`() {
         var submissions = 0
         val isMounted = mutableStateOf(true)
-        val errorRevision = mutableStateOf(0)
+        val errorRevision = mutableIntStateOf(0)
         val state = CredentialsState()
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {

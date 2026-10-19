@@ -11,6 +11,7 @@ import androidx.compose.foundation.onFocusedBoundsChanged
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
@@ -48,6 +49,8 @@ internal val MacToolbarTitleAreaHeight = 30.dp
 @Suppress("CompositionLocalAllowlist")
 internal val LocalWindowTopInset = staticCompositionLocalOf { 0.dp }
 
+// The branch depends on the OS and a per-window flag, so it never flips while the slot is alive.
+@Suppress("ContentSlotReused")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun DesktopDialogWindow(
@@ -91,7 +94,7 @@ internal fun DesktopDialogWindow(
         },
     ) {
         DesktopWindowBackground(window, java.awt.Color(JewelTheme.globalColors.panelBackground.toArgb()))
-        LaunchedEffect(window, activationRequest) {
+        SideEffect(window, activationRequest) {
             if (activationRequest > 0) {
                 SwingUtilities.invokeLater {
                     if (window.isShowing) {
@@ -102,7 +105,7 @@ internal fun DesktopDialogWindow(
             }
         }
         val density = LocalDensity.current
-        LaunchedEffect(window, minimumSize, density.density) {
+        SideEffect(window, minimumSize, density.density) {
             SwingUtilities.invokeLater {
                 minimumSize?.let { minSize ->
                     val transform = window.graphicsConfiguration.defaultTransform

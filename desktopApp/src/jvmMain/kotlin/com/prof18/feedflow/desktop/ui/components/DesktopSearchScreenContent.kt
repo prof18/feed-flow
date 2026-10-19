@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -237,7 +238,7 @@ private fun SearchControls(
     LaunchedEffect(fieldState) {
         snapshotFlow { fieldState.text.toString() }.distinctUntilChanged().collect { latestUpdate(it) }
     }
-    LaunchedEffect(query) {
+    SideEffect(query) {
         if (fieldState.text.toString() != query) fieldState.setTextAndPlaceCursorAtEnd(query)
     }
     LaunchedEffect(focusRequester) {

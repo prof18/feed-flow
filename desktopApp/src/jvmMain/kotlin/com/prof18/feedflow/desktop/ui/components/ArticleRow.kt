@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Headphones
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -288,10 +289,12 @@ internal fun ArticleRow(
 
 // Card layouts sit on a tinted container so the panel-colored cards stand out, in dark themes too.
 @Composable
+@ReadOnlyComposable
 internal fun articleCardContainerColor(): Color =
     JewelTheme.globalColors.text.normal.copy(alpha = 0.045f).compositeOver(JewelTheme.globalColors.panelBackground)
 
 @Composable
+@ReadOnlyComposable
 private fun Modifier.articleSelection(isSelected: Boolean, shape: RoundedCornerShape): Modifier =
     if (isSelected) background(JewelTheme.globalColors.outlines.focused.copy(alpha = 0.12f), shape) else this
 
@@ -307,7 +310,7 @@ private fun Modifier.articleContextMenuKeys(state: ContextMenuState, menuAnchor:
     onPreviewKeyEvent { event ->
         if (
             event.type == KeyEventType.KeyDown &&
-            (event.key == Key.Menu || event.key == Key.F10 && event.isShiftPressed)
+            (event.key == Key.Menu || (event.key == Key.F10 && event.isShiftPressed))
         ) {
             state.status = ContextMenuState.Status.Open(
                 Rect(menuAnchor, menuAnchor, menuAnchor, menuAnchor),
@@ -326,6 +329,7 @@ private fun articleLayoutModifier(feedLayout: FeedLayout, isGridCell: Boolean): 
     }
 
 @Composable
+@ReadOnlyComposable
 private fun articleSurfaceModifier(
     feedLayout: FeedLayout,
     isHovered: Boolean,

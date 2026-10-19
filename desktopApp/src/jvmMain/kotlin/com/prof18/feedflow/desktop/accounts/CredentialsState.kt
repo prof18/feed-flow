@@ -2,6 +2,7 @@ package com.prof18.feedflow.desktop.accounts
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
@@ -21,7 +22,7 @@ internal class CredentialsState(internal val ownerScope: CoroutineScope? = null)
     var authCodePending by mutableStateOf(false)
     var authCodeReady by mutableStateOf(false)
     var connectionError by mutableStateOf<String?>(null)
-    var connectionErrorRevision by mutableStateOf(0)
+    var connectionErrorRevision by mutableIntStateOf(0)
     internal var connectionObservationJob: Job? = null
     internal var observedConnectionState: AccountConnectionUiState? = null
     internal var observedLoginLoading: Boolean? = null

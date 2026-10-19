@@ -47,8 +47,13 @@ internal class DrawerState(initiallyOpen: Boolean = false) {
     var isOpen by mutableStateOf(initiallyOpen)
         private set
 
-    suspend fun open() { isOpen = true }
-    suspend fun close() { isOpen = false }
+    fun open() {
+        isOpen = true
+    }
+
+    fun close() {
+        isOpen = false
+    }
 }
 
 @Composable

@@ -120,7 +120,7 @@ internal fun ReaderModeScreen(
     val fontSize = fontSettings.fontSize
     val lineHeight = fontSettings.lineHeight
 
-    LaunchedEffect(feedItemUrlInfo.id) {
+    SideEffect(feedItemUrlInfo.id) {
         readerModeViewModel.loadReaderContent(feedItemUrlInfo)
     }
 
@@ -535,7 +535,11 @@ private fun ReaderOverflowAction(
 private fun readerShortcut(key: String, shift: Boolean = false): String {
     val mac = getDesktopOS().isMacOs()
     val modifier = if (mac) "⌘" else "Ctrl+"
-    val shiftLabel = if (shift) { if (mac) "⇧" else "Shift+" } else ""
+    val shiftLabel = when {
+        !shift -> ""
+        mac -> "⇧"
+        else -> "Shift+"
+    }
     return if (mac) "$shiftLabel$modifier$key" else "$modifier$shiftLabel$key"
 }
 

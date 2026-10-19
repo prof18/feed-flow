@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -153,7 +154,7 @@ private fun <T : Any> SettingsChoiceDropdown(
     }
     val popupVisible by popupManager.isPopupVisible
     val canSelect = enabled && choices.isNotEmpty()
-    LaunchedEffect(canSelect) {
+    SideEffect(canSelect) {
         if (!canSelect) popupManager.setPopupVisible(false)
     }
     fun commitChoice(index: Int) {

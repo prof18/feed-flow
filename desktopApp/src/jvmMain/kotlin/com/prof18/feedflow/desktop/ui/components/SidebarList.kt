@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -81,15 +81,15 @@ internal fun SidebarList(
         key.takeUnless { toggle || range }?.let(latestActivate)
     }
 
-    LaunchedEffect(listState.selectedKeys) {
+    SideEffect(listState.selectedKeys) {
         latestFocusChanged(listState.selectedKeys.firstOrNull() as? SidebarKey)
     }
-    LaunchedEffect(activeKey) {
+    SideEffect(activeKey) {
         if (activeKey != null && entries.any { it.key == activeKey }) {
             listState.selectedKeys = setOf(activeKey)
         }
     }
-    LaunchedEffect(entries.map { it.key }) {
+    SideEffect(entries.map { it.key }) {
         val validKeys = entries.mapTo(mutableSetOf()) { it.key }
         if (listState.selectedKeys.none { it in validKeys }) {
             listState.selectedKeys = setOfNotNull(

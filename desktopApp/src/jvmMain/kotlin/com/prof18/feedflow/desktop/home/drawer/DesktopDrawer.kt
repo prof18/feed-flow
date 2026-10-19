@@ -152,7 +152,7 @@ fun DesktopDrawer(
             stateKey = section.id,
         )
     }
-    LaunchedEffect(tree) {
+    SideEffect(tree) {
         treeState.reconcile(tree)
         selection = selection.reconcile(tree.sourceIds)
     }

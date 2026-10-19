@@ -106,6 +106,7 @@ Compose:
     # Focus must be requested after the node is attached, which a frame-deferred LaunchedEffect guarantees.
     allowedCallNames:
       - androidx.compose.ui.focus.FocusRequester.requestFocus
+      - androidx.compose.ui.focus.FocusRequester.restoreFocusedChild
   # Renaming ~130 past-tense event lambdas (onXxxChanged -> onXxxChange) is pure churn for now.
   ParameterNaming:
     active: false

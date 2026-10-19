@@ -16,6 +16,8 @@ import me.saket.swipe.SwipeableActionsBox
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
 
+// Swipe actions only change with the swipe settings, and rebuilding the rows then is expected.
+@Suppress("ContentSlotReused")
 @Composable
 internal fun ArticleSwipeRow(
     item: FeedItem,

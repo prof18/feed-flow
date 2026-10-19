@@ -18,6 +18,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -93,7 +95,7 @@ internal fun AddFeedForm(
 ) {
     val strings = LocalFeedFlowStrings.current
     var urlValue by remember { mutableStateOf(TextFieldValue(feedUrl)) }
-    LaunchedEffect(feedUrl) {
+    SideEffect(feedUrl) {
         urlValue = urlValue.synchronizeExternalText(feedUrl)
     }
     var forceAcknowledged by remember(showError) { mutableStateOf(false) }
@@ -220,10 +222,10 @@ internal fun EditFeedForm(
     val strings = LocalFeedFlowStrings.current
     var nameValue by remember { mutableStateOf(TextFieldValue(feedName)) }
     var urlValue by remember { mutableStateOf(TextFieldValue(feedUrl)) }
-    LaunchedEffect(feedName) {
+    SideEffect(feedName) {
         nameValue = nameValue.synchronizeExternalText(feedName)
     }
-    LaunchedEffect(feedUrl) {
+    SideEffect(feedUrl) {
         urlValue = urlValue.synchronizeExternalText(feedUrl)
     }
     val submission = rememberFeedSubmissionState(showLoading, completionRevision)
@@ -452,6 +454,7 @@ private fun FeedSubmitLabel(label: String, loading: Boolean) {
 }
 
 @Composable
+@ReadOnlyComposable
 private fun feedFormActionHeight(): Dp = with(LocalDensity.current) {
     JewelTheme.defaultTextStyle.lineHeight.toDp()
 } + 16.dp

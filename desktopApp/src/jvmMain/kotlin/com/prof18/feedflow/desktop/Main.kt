@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -65,7 +66,7 @@ fun main() {
 
         var isInitialized by remember { mutableStateOf(false) }
         var showMainWindow by remember { mutableStateOf(false) }
-        var initProgress by remember { mutableStateOf(value = 0.1f) }
+        var initProgress by remember { mutableFloatStateOf(0.1f) }
         var startupThemeMode by remember { mutableStateOf<ThemeMode?>(null) }
 
         @Suppress("MagicNumber")

@@ -1,6 +1,7 @@
 package com.prof18.feedflow.desktop.ui.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.desktop.ui.FeedManagementActions
@@ -41,6 +42,7 @@ internal fun DesktopHomeToolbar(
 }
 
 @Composable
+@NonRestartableComposable
 internal fun DesktopFeedSidebar(
     displayState: HomeDisplayState,
     feedManagementActions: FeedManagementActions,

@@ -18,7 +18,9 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -73,7 +75,7 @@ internal fun ImportExportContent(
     var filter by rememberSaveable { mutableStateOf(ArticleExportFilter.All) }
     var requestPending by rememberSaveable { mutableStateOf(false) }
     var lastAction by rememberSaveable { mutableStateOf<ImportExportAction?>(null) }
-    var focusRevision by rememberSaveable { mutableStateOf(0) }
+    var focusRevision by rememberSaveable { mutableIntStateOf(0) }
     val importFeeds by rememberUpdatedState(onImportClick)
     val exportFeeds by rememberUpdatedState(onExportClick)
     val importArticles by rememberUpdatedState(onImportArticlesClick)
@@ -565,10 +567,12 @@ private fun ImportExportPanel(
 }
 
 @Composable
+@ReadOnlyComposable
 private fun importExportActionHeight(): Dp =
     with(LocalDensity.current) { JewelTheme.defaultTextStyle.lineHeight.toDp() } + 16.dp
 
 @Composable
+@ReadOnlyComposable
 private fun ArticleExportFilter.label(): String = when (this) {
     ArticleExportFilter.All -> LocalFeedFlowStrings.current.articlesExportFilterAll
     ArticleExportFilter.Read -> LocalFeedFlowStrings.current.articlesExportFilterRead

@@ -129,7 +129,9 @@ class ReaderTextSettingsPositionTest {
         .fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
 
     @After
-    fun closeImageLoader() { imageLoader.shutdown() }
+    fun closeImageLoader() {
+        imageLoader.shutdown()
+    }
 
     private companion object {
         const val PARAGRAPH_COUNT = 80

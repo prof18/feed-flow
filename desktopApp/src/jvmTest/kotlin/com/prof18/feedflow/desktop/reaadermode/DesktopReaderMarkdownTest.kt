@@ -202,7 +202,9 @@ class DesktopReaderMarkdownTest(private val theme: ThemeMode) {
     }
 
     @After
-    fun closeImageLoader() { imageLoader.shutdown() }
+    fun closeImageLoader() {
+        imageLoader.shutdown()
+    }
 
     companion object {
         private const val FONT_SIZE = 22

@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.ui.platform.LocalContext
 import com.prof18.feedflow.android.ui.style.DarkColorScheme
 import com.prof18.feedflow.android.ui.style.FeedFlowShapes
@@ -36,6 +37,7 @@ fun FeedFlowTheme(
     )
 }
 
+@NonRestartableComposable
 @Composable
 fun FeedFlowThemePreview(
     content: @Composable () -> Unit,

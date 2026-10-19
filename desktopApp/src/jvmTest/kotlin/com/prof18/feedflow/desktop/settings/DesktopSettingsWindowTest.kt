@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
@@ -46,7 +47,7 @@ import kotlin.test.assertTrue
 
 class DesktopSettingsWindowTest {
     private val density = AtomicReference<Float>()
-    private val activationRequest = mutableStateOf(0)
+    private val activationRequest = mutableIntStateOf(0)
     private val fixture = NativeDesktopWindowFixture {
         CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
             FeedFlowTheme(darkTheme = false, useOledTheme = false) {

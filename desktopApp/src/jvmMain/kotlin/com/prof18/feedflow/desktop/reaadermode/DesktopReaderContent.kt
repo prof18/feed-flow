@@ -293,8 +293,8 @@ private const val READER_SPINNER_DELAY_MILLIS = 300L
 
 @Composable
 private fun ReaderModeFallbackContent(
-    modifier: Modifier = Modifier,
     onOpenInBrowser: (() -> Unit)?,
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalFeedFlowStrings.current
     Column(

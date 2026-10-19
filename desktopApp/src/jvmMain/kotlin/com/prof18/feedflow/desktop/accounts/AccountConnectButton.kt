@@ -3,8 +3,9 @@ package com.prof18.feedflow.desktop.accounts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -34,13 +35,13 @@ internal fun AccountConnectButton(
 ) {
     var localSubmissionPending by remember { mutableStateOf(false) }
     val previousLoading = remember { mutableStateOf(isLoading) }
-    val previousErrorRevision = remember { mutableStateOf(errorRevision) }
+    val previousErrorRevision = remember { mutableIntStateOf(errorRevision) }
     val latestIsLoading by rememberUpdatedState(isLoading)
     val latestOnConnect by rememberUpdatedState(onConnect)
     val latestState by rememberUpdatedState(state)
     val strings = LocalFeedFlowStrings.current
 
-    LaunchedEffect(isLoading, errorRevision, state) {
+    SideEffect(isLoading, errorRevision, state) {
         val loadingCompleted = previousLoading.value && !isLoading
         val receivedNewError = previousErrorRevision.value != errorRevision
         if (loadingCompleted || receivedNewError) {

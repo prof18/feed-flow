@@ -2,7 +2,7 @@ package com.prof18.feedflow.desktop
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -41,7 +41,7 @@ internal fun FrameWindowScope.AppContent(
     val koin = DI.koin
     setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
 
-    LaunchedEffect(Unit) {
+    SideEffect(Unit) {
         val contentPrefetchRepository: ContentPrefetchRepository = koin.get()
         contentPrefetchRepository.startBackgroundFetching()
     }
@@ -63,7 +63,7 @@ internal fun FrameWindowScope.AppContent(
     }
 
     if (getDesktopOS().isNotMacOs()) {
-        LaunchedEffect(isDarkTheme, useOledTheme) {
+        SideEffect(isDarkTheme, useOledTheme) {
             SwingUtilities.invokeLater {
                 setupLookAndFeel(isDarkTheme, useOledTheme)
             }

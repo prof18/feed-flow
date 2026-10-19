@@ -1,7 +1,7 @@
 package com.prof18.feedflow.desktop.accounts
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import com.prof18.feedflow.core.model.AccountConnectionUiState
@@ -21,7 +21,7 @@ internal fun <T> ObserveAccountConnection(
     val detailScope = rememberCoroutineScope()
     val ownerScope = draft.ownerScope ?: detailScope
     val latestOnMessage = rememberUpdatedState(onMessage)
-    LaunchedEffect(draft, ownerScope, uiState, messages, loginLoading) {
+    SideEffect(draft, ownerScope, uiState, messages, loginLoading) {
         draft.connectionObservationJob?.cancel()
         // Provider/page navigation removes the detail; requests remain owned by the Settings session.
         draft.connectionObservationJob = ownerScope.launch(start = CoroutineStart.UNDISPATCHED) {

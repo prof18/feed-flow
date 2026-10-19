@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -108,7 +109,7 @@ internal fun DesktopArticleList(
     var focusedId by remember { mutableStateOf<String?>(null) }
     val latestGridChanged by rememberUpdatedState(onGridArrangementChanged)
 
-    LaunchedEffect(ids) {
+    SideEffect(ids) {
         focusRequesters.keys.retainAll(ids.toSet())
         if (focusedId !in ids) focusedId = ids.firstOrNull()
     }
@@ -121,7 +122,7 @@ internal fun DesktopArticleList(
     BoxWithConstraints(modifier = modifier.background(listBackground)) {
         val useGrid = isGridLayoutEnabled && isGridLayoutAllowed &&
             normalizedLayout != FeedLayout.LIST && maxWidth >= GridMinimumWidth
-        LaunchedEffect(useGrid) { latestGridChanged(useGrid) }
+        SideEffect(useGrid) { latestGridChanged(useGrid) }
 
         val visibleKeys = { visibleArticleKeys(useGrid, listState, gridState, latestIds) }
         LaunchedEffect(listState, gridState, useGrid, currentFeedFilter) {

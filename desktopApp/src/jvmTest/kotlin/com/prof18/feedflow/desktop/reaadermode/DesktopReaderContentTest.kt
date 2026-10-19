@@ -194,7 +194,9 @@ class DesktopReaderContentTest {
     }
 
     @After
-    fun closeImageLoader() { imageLoader.shutdown() }
+    fun closeImageLoader() {
+        imageLoader.shutdown()
+    }
 
     private fun success(url: String = ARTICLE_URL) = ReaderModeState.Success(
         ReaderModeData(

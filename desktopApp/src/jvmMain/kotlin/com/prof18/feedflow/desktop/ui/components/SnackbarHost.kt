@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ import org.jetbrains.jewel.ui.component.Text
 import kotlin.math.abs
 
 @Composable
+@NonRestartableComposable
 internal fun DesktopSnackbarHost(state: DesktopFeedbackState, modifier: Modifier = Modifier) {
     SnackbarHost(state, modifier)
 }

@@ -12,7 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,13 +71,12 @@ internal fun CloudAccountContent(
     val latestUiState by rememberUpdatedState(uiState)
     val latestOnDisconnectClick by rememberUpdatedState(onDisconnectClick)
     val latestOnBackupClick by rememberUpdatedState(onBackupClick)
-    val strings = LocalFeedFlowStrings.current
 
-    LaunchedEffect(uiState is AccountConnectionUiState.Linked, credentialsState) {
+    SideEffect(uiState is AccountConnectionUiState.Linked, credentialsState) {
         if (uiState is AccountConnectionUiState.Linked) credentialsState?.clear()
     }
 
-    LaunchedEffect(uiState) {
+    SideEffect(uiState) {
         if (!uiState.canDisconnect()) {
             isDisconnectConfirmationVisible = false
         }

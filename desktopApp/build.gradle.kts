@@ -170,11 +170,6 @@ tasks.withType<Test>().configureEach {
     }
 }
 
-// Detekt 1.23's compiler cannot accept Java 25 as its analysis target.
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-    jvmTarget = "21"
-}
-
 val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
 val macSigningIdentity = "Marco Gomiero"
 // Full identity name for codesign. Compose's MacSigner derives this same form

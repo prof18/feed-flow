@@ -9,8 +9,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -51,8 +52,8 @@ internal fun DropboxAuthorizationForm(
 ) {
     val strings = LocalFeedFlowStrings.current
     val previousLoading = remember { mutableStateOf(isLoading) }
-    val previousErrorRevision = remember { mutableStateOf(errorRevision) }
-    LaunchedEffect(isLoading, errorRevision) {
+    val previousErrorRevision = remember { mutableIntStateOf(errorRevision) }
+    SideEffect(isLoading, errorRevision) {
         if ((previousLoading.value && !isLoading) || previousErrorRevision.value != errorRevision) {
             state.authCodePending = false
         }

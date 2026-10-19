@@ -3,6 +3,7 @@ package com.prof18.feedflow.desktop.ui.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -50,7 +51,7 @@ import kotlin.test.assertTrue
 class ArticleFooterLayoutTest(private val layout: FeedLayout) {
     @get:Rule
     val rule = createComposeRule()
-    private val fontScale = mutableStateOf(2f)
+    private val fontScale = mutableFloatStateOf(2f)
     private val direction = mutableStateOf(LayoutDirection.Rtl)
     private val theme = mutableStateOf(ThemeMode.OLED)
     private val filter = mutableStateOf<FeedFilter>(FeedFilter.Timeline)

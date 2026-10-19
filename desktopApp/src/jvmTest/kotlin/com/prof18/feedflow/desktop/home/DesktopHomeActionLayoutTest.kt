@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -68,7 +69,7 @@ class DesktopHomeActionLayoutTest {
     @Test
     fun `pending new articles action stays readable in compact populated workspace`() {
         val theme = mutableStateOf(ThemeMode.LIGHT)
-        val fontScale = mutableStateOf(1f)
+        val fontScale = mutableFloatStateOf(1f)
         val direction = mutableStateOf(LayoutDirection.Ltr)
         var callbackCount = 0
 
@@ -175,7 +176,7 @@ class DesktopHomeActionLayoutTest {
         val listState = LazyListState()
         val exposeScrollAction = mutableStateOf(false)
         val theme = mutableStateOf(ThemeMode.LIGHT)
-        val fontScale = mutableStateOf(1f)
+        val fontScale = mutableFloatStateOf(1f)
         val direction = mutableStateOf(LayoutDirection.Ltr)
         rule.setContent {
             val currentDensity = LocalDensity.current

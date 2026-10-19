@@ -276,7 +276,6 @@ private fun HomeArticleList(
     isGrid: Boolean,
     selectedArticleId: String?,
 ) {
-    val strings = LocalFeedFlowStrings.current
     val cardLayout = displayState.feedLayout != FeedLayout.LIST
     Box(
         modifier = Modifier.fillMaxSize().then(

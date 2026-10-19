@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -114,9 +113,9 @@ internal fun DesktopHomeWorkspace(
     val sidebarTopPadding = if (getDesktopOS().isMacOs()) 28.dp else 0.dp
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val layout = state.layout(maxWidth, multiPane, readerSelected = currentReaderArticle != null)
-        LaunchedEffect(maxWidth, multiPane, state.isDrawerVisible) { state.seedListWidth(maxWidth, multiPane) }
-        LaunchedEffect(layout.isSidebarDocked) { if (layout.isSidebarDocked) drawerState.close() }
-        LaunchedEffect(currentReaderArticle) {
+        SideEffect(maxWidth, multiPane, state.isDrawerVisible) { state.seedListWidth(maxWidth, multiPane) }
+        SideEffect(layout.isSidebarDocked) { if (layout.isSidebarDocked) drawerState.close() }
+        SideEffect(currentReaderArticle) {
             if (currentReaderArticle == null && state.isReaderFullscreen) state.toggleReaderFullscreen()
         }
         val toggleSidebar: () -> Unit = {

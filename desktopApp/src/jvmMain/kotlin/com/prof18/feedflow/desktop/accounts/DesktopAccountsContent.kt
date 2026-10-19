@@ -16,7 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Computer
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -68,7 +68,7 @@ internal fun DesktopAccountsContent(
         if (providers.any { it.account == account && it.isEnabled }) selectedName = account.name
     }
     val back = { selectedName = null }
-    LaunchedEffect(selectedName, currentAccount, supportedAccounts) {
+    SideEffect(selectedName, currentAccount, supportedAccounts) {
         if (selectedName != null && selected == null) selectedName = null
     }
 

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
@@ -96,7 +97,7 @@ class FeedSubmissionTest {
     fun `a completed loading cycle allows a retry`() {
         var submitted = 0
         val loading = mutableStateOf(false)
-        val revision = mutableStateOf(0)
+        val revision = mutableIntStateOf(0)
         content { AddForm(loading = loading.value, revision = revision.value, onAdd = { submitted++ }) }
         activateTwice(EnFeedFlowStrings.addFeed)
         rule.runOnIdle { loading.value = true }
@@ -164,7 +165,7 @@ class FeedSubmissionTest {
     @Test
     fun `each fast failure unlocks a retry without losing the typed URL`() {
         var submitted = 0
-        val revision = mutableStateOf(0)
+        val revision = mutableIntStateOf(0)
         val url = mutableStateOf("https://example.test/feed.xml")
         content {
             AddForm(
@@ -218,7 +219,7 @@ class FeedSubmissionTest {
     @Test
     fun `fast edit failure permits retry and retains the name`() {
         var submitted = 0
-        val revision = mutableStateOf(0)
+        val revision = mutableIntStateOf(0)
         val name = mutableStateOf("Example")
         content {
             EditForm(name.value, revision.value, { name.value = it }, onSave = { submitted++ })

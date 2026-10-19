@@ -223,7 +223,8 @@ private fun BlockedWordInput(
     LaunchedEffect(submitted, submittedOperation) {
         val submission = submitted ?: return@LaunchedEffect
         val operation = submittedOperation ?: return@LaunchedEffect
-        confirmBlockedWordResult(submission, operation, field, focus) { submitted = null }
+        confirmBlockedWordResult(submission, operation, field) { submitted = null }
+        if (operation.action == BlockedWordAction.Add && !operation.status.isPending()) focus.requestFocus()
     }
     Column(verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium)) {
         Row(
@@ -250,7 +251,6 @@ private fun confirmBlockedWordResult(
     submission: SubmittedBlockedWord,
     operation: BlockedWordOperationState,
     field: TextFieldState,
-    focus: FocusRequester,
     onRelease: () -> Unit,
 ) {
     if (operation.action != BlockedWordAction.Add) {
@@ -263,7 +263,6 @@ private fun confirmBlockedWordResult(
         if (field.text.toString() == submission.rawDraft) field.setTextAndPlaceCursorAtEnd("")
         if (!operation.status.isPending()) onRelease()
     }
-    if (!operation.status.isPending()) focus.requestFocus()
 }
 
 internal class BlockedWordDraft(val field: TextFieldState) {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
@@ -37,7 +38,7 @@ class FeedbackLayoutTest {
     fun `compact actionable feedback keeps message and controls readable`() {
         val state = DesktopFeedbackState()
         val theme = mutableStateOf(ThemeMode.LIGHT)
-        val fontScale = mutableStateOf(1f)
+        val fontScale = mutableFloatStateOf(1f)
         val direction = mutableStateOf(LayoutDirection.Ltr)
         val message = "Feed refresh failed for this source. Check the connection and try again. " +
             "Your saved articles are unchanged."
@@ -84,7 +85,7 @@ class FeedbackLayoutTest {
     fun `normal feedback keeps localized message and close label readable`() {
         val state = DesktopFeedbackState()
         val theme = mutableStateOf(ThemeMode.LIGHT)
-        val fontScale = mutableStateOf(1f)
+        val fontScale = mutableFloatStateOf(1f)
         val direction = mutableStateOf(LayoutDirection.Ltr)
         val message = EnFeedFlowStrings.feedAddedMessageWithoutName
         rule.setContent {

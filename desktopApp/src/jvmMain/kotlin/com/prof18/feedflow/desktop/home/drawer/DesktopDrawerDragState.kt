@@ -4,6 +4,7 @@ import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +47,7 @@ internal class DesktopDrawerDragState(
     private val categoryHeaderSlots = mutableStateMapOf<String, CategoryHeaderSlot>()
     private var listBoundsInWindow by mutableStateOf<Rect?>(null)
     private var autoScrollJob: Job? = null
-    private var autoScrollDelta by mutableStateOf(0f)
+    private var autoScrollDelta by mutableFloatStateOf(0f)
     private var currentFeedSources by mutableStateOf<Map<String, FeedSource>?>(null)
 
     fun updateFeedSources(sources: Map<String, FeedSource>) {

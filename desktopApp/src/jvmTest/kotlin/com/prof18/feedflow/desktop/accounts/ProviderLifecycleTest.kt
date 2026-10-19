@@ -2,6 +2,7 @@ package com.prof18.feedflow.desktop.accounts
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
@@ -126,7 +127,7 @@ class ProviderLifecycleTest {
         val uiState = mutableStateOf<AccountConnectionUiState>(AccountConnectionUiState.Unlinked)
         val isLoading = mutableStateOf(false)
         val error = mutableStateOf<String?>(null)
-        val errorRevision = mutableStateOf(0)
+        val errorRevision = mutableIntStateOf(0)
         var loginCalls = 0
             private set
         var disconnectCalls = 0

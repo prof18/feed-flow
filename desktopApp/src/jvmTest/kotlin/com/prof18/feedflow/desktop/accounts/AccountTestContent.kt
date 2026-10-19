@@ -91,7 +91,10 @@ internal class FakeDesktopAccount(val account: SyncAccounts) {
 
     val isServer: Boolean
         get() = account in setOf(
-            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.FEEDBIN, SyncAccounts.BAZQUX,
+            SyncAccounts.FRESH_RSS,
+            SyncAccounts.MINIFLUX,
+            SyncAccounts.FEEDBIN,
+            SyncAccounts.BAZQUX,
         )
 
     fun populateDraft() {

@@ -2,6 +2,7 @@ package com.prof18.feedflow.desktop.editfeed
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -41,7 +42,7 @@ internal fun EditFeedWindow(onCloseRequest: () -> Unit, content: @Composable () 
 private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> Unit, modifier: Modifier = Modifier) {
     val vm = koinViewModel<EditFeedViewModel>()
     val close by rememberUpdatedState(onCloseRequest)
-    LaunchedEffect(feedSource) { vm.loadFeedToEdit(feedSource) }
+    SideEffect(feedSource) { vm.loadFeedToEdit(feedSource) }
     val url by vm.feedUrlState.collectAsState()
     val name by vm.feedNameState.collectAsState()
     val settings by vm.feedSourceSettingsState.collectAsState()

@@ -9,8 +9,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -117,8 +118,8 @@ private fun ObserveCredentialSubmissionCompletion(
     errorRevision: Int,
 ) {
     val previousLoading = remember { mutableStateOf(isLoginLoading) }
-    val previousErrorRevision = remember { mutableStateOf(errorRevision) }
-    LaunchedEffect(isLoginLoading, errorRevision) {
+    val previousErrorRevision = remember { mutableIntStateOf(errorRevision) }
+    SideEffect(isLoginLoading, errorRevision) {
         if ((previousLoading.value && !isLoginLoading) || previousErrorRevision.value != errorRevision) {
             state.submissionPending = false
         }
@@ -270,7 +271,11 @@ private class CredentialFocus {
     fun request(field: CredentialFieldType) = requester(field).requestFocus()
 
     fun changed(field: CredentialFieldType, focused: Boolean) {
-        if (focused) active = field else if (active == field) active = null
+        if (focused) {
+            active = field
+        } else if (active == field) {
+            active = null
+        }
     }
 }
 

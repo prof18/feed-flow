@@ -2,6 +2,7 @@ package com.prof18.feedflow.desktop.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -39,4 +40,5 @@ internal fun desktopWindowBackgroundColor(darkTheme: Boolean, useOledTheme: Bool
     java.awt.Color(desktopPanelBackground(darkTheme, useOledTheme).toArgb())
 
 @Composable
+@ReadOnlyComposable
 internal fun desktopMainWindowTitle(): String = LocalFeedFlowStrings.current.appName

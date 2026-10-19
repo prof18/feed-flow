@@ -2,8 +2,10 @@ package com.prof18.feedflow.desktop.feedforms
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -14,8 +16,8 @@ import androidx.compose.ui.focus.FocusRequester
 internal fun rememberFeedSubmissionState(loading: Boolean, completionRevision: Int): FeedSubmissionState {
     val latestLoading = rememberUpdatedState(loading)
     val submission = remember { FeedSubmissionState(latestLoading) }
-    val previousRevision = remember { mutableStateOf(completionRevision) }
-    LaunchedEffect(completionRevision) {
+    val previousRevision = remember { mutableIntStateOf(completionRevision) }
+    SideEffect(completionRevision) {
         if (previousRevision.value != completionRevision) {
             submission.pending = false
         }

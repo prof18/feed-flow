@@ -1,6 +1,7 @@
 package com.prof18.feedflow.desktop.accounts
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
@@ -136,7 +137,7 @@ class CredentialsFormTest {
         var requests = 0
         val loading = mutableStateOf(false)
         val error = mutableStateOf<String?>(EnFeedFlowStrings.wrongCredentialsErrorMessage)
-        val revision = mutableStateOf(0)
+        val revision = mutableIntStateOf(0)
         setForm(
             loading = { loading.value },
             errorMessage = { error.value },

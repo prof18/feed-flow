@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -49,12 +50,14 @@ internal fun SidebarSectionLabel(text: String, modifier: Modifier = Modifier) {
 // Sidebar rows show state with solid fills only, never outlines. Colors are composited over the
 // sidebar background so they stay opaque and consistent in light, dark and OLED themes.
 @Composable
+@ReadOnlyComposable
 internal fun sidebarSelectedColor(): Color = sidebarTint(
     JewelTheme.globalColors.outlines.focused,
     alpha = if (JewelTheme.isDark) 0.34f else 0.18f,
 )
 
 @Composable
+@ReadOnlyComposable
 internal fun sidebarMultiSelectedColor(): Color = sidebarTint(
     JewelTheme.globalColors.outlines.focused,
     alpha = if (JewelTheme.isDark) 0.22f else 0.11f,
@@ -62,12 +65,14 @@ internal fun sidebarMultiSelectedColor(): Color = sidebarTint(
 
 /** Hover and keyboard-focus fill for rows that are not selected. */
 @Composable
+@ReadOnlyComposable
 internal fun sidebarHighlightColor(): Color = sidebarTint(
     JewelTheme.globalColors.text.normal,
     alpha = if (JewelTheme.isDark) 0.09f else 0.06f,
 )
 
 @Composable
+@ReadOnlyComposable
 internal fun sidebarRowBackground(selected: Boolean, highlighted: Boolean, selectedColor: Color? = null): Color = when {
     selected -> selectedColor ?: sidebarSelectedColor()
     highlighted -> sidebarHighlightColor()
@@ -75,8 +80,10 @@ internal fun sidebarRowBackground(selected: Boolean, highlighted: Boolean, selec
 }
 
 @Composable
+@ReadOnlyComposable
 private fun sidebarTint(color: Color, alpha: Float): Color =
     color.copy(alpha = alpha).compositeOver(JewelTheme.globalColors.toolwindowBackground)
 
 @Composable
+@ReadOnlyComposable
 internal fun desktopDrawerInsertionColor(): Color = JewelTheme.globalColors.outlines.focused

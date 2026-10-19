@@ -28,8 +28,7 @@ internal fun rememberConfirmedBookmarkAction(
     }
 
     return remember(scopeKey) {
-        {
-                feedItemId, isBookmarked ->
+        { feedItemId, isBookmarked ->
             if (isBookmarked) {
                 latestOnBookmarkClick(feedItemId, true)
             } else {

@@ -116,26 +116,34 @@ fun PullToNextLayout(
         }
     }
 
-    if (enabled) {
-        val fallbackScrollState = rememberScrollableState { 0f }
+    val fallbackScrollState = rememberScrollableState { 0f }
 
+    // Keep one tree for both states so toggling `enabled` doesn't recreate the content.
+    Box(
+        modifier = modifier
+            .then(
+                if (enabled) {
+                    Modifier
+                        .nestedScroll(nestedScrollConnection)
+                        .scrollable(
+                            state = fallbackScrollState,
+                            orientation = Orientation.Vertical,
+                        )
+                } else {
+                    Modifier
+                },
+            )
+            .fillMaxSize(),
+    ) {
         Box(
-            modifier = modifier
-                .nestedScroll(nestedScrollConnection)
-                .scrollable(
-                    state = fallbackScrollState,
-                    orientation = Orientation.Vertical,
-                )
-                .fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer { translationY = -pullY.value },
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer { translationY = -pullY.value },
-            ) {
-                content()
-            }
+            content()
+        }
 
+        if (enabled) {
             val progress = (pullY.value / triggerThresholdPx).coerceIn(0f, 1f)
             val dynamicScale = (0.5f + (progress * 0.5f)) * popScale.value
 
@@ -158,8 +166,6 @@ fun PullToNextLayout(
                 }
             }
         }
-    } else {
-        content()
     }
 }
 

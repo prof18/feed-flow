@@ -18,10 +18,10 @@ import com.prof18.feedflow.android.ui.style.Spacing
 @Composable
 fun SettingItem(
     title: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     isEnabled: Boolean = true,
-    onClick: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

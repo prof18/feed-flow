@@ -44,7 +44,7 @@ class TelemetryDeckClient(
         isFlatpack = properties["flatpak"]?.toString()?.toBooleanStrictOrNull()
         val saltFromProps = properties["tdeck_salt"]?.toString()
 
-        val salt = saltFromProps ?: ""
+        val salt = saltFromProps.orEmpty()
         userIdManager = UserIdManager(
             salt = salt,
             appEnv = appEnvironment,

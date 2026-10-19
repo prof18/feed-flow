@@ -99,8 +99,8 @@ fun EditCategoryDialogs(
 
     EditCategoryNameDialog(
         showDialog = categoryToEdit != null,
-        categoryId = CategoryId(categoryToEdit?.id ?: ""),
-        initialCategoryName = categoryToEdit?.name ?: "",
+        categoryId = CategoryId(categoryToEdit?.id.orEmpty()),
+        initialCategoryName = categoryToEdit?.name.orEmpty(),
         onDismiss = onDismissEditDialog,
         validateCategoryName = validateCategoryName,
         onEditCategory = { categoryId, newName ->

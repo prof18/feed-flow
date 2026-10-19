@@ -91,8 +91,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         )
         val parsers: Map<FeedFetchTier, suspend (String) -> RssChannel> =
             FeedFetchTier.entries.associateWith { tier ->
-                {
-                        _: String ->
+                { _: String ->
                     attempted.add(tier)
                     if (tier != FeedFetchTier.BROWSER) {
                         throw HttpException(code = 403, message = "Forbidden")

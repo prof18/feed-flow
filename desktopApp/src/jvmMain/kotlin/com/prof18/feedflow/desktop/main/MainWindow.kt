@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -169,7 +170,7 @@ private fun MainWindowEffects(
         }
     }
 
-    LaunchedEffect(composeWindow.rootPane) {
+    SideEffect(composeWindow.rootPane) {
         if (getDesktopOS().isMacOs()) {
             with(composeWindow.rootPane) {
                 putClientProperty("apple.awt.transparentTitleBar", true)
@@ -254,7 +255,7 @@ private fun FrameWindowScope.MainWindowContent(
     val homeViewModel = koinViewModel<HomeViewModel>()
     val homeListStateStore = rememberDesktopHomeListStateStore()
 
-    LaunchedEffect(Unit) {
+    SideEffect(Unit) {
         homeViewModel.onAppLaunch()
     }
 

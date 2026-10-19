@@ -71,14 +71,15 @@ class AndroidSpeechAudioGenerator internal constructor(
 
         try {
             val generatedFile = withTimeout(timeMillis = 5 * 60 * 1_000L) {
-                engine = createEngineAndAwaitInit()
+                val createdEngine = createEngineAndAwaitInit()
+                engine = createdEngine
                 val selectedLanguageTag = ReaderContentLanguage.normalize(languageTag)
                     ?: withContext(dispatcherProvider.default) {
                         ReaderContentLanguage.normalize(languageDetector.detectLanguage(languageSample(segments)))
                     }
                 if (selectedLanguageTag != null) {
                     val languageConfigured = withContext(dispatcherProvider.main) {
-                        engine!!.configureLanguage(selectedLanguageTag)
+                        createdEngine.configureLanguage(selectedLanguageTag)
                     }
                     check(languageConfigured) { "Speech engine does not support language: $selectedLanguageTag" }
                 }
@@ -89,7 +90,7 @@ class AndroidSpeechAudioGenerator internal constructor(
                     }
                     var generatedBytes = 0L
                     wavSegments.forEach { (file, segment) ->
-                        engine!!.synthesize(segment, file)
+                        createdEngine.synthesize(segment, file)
                         generatedBytes += withContext(dispatcherProvider.io) { file.length() }
                         check(generatedBytes <= MAX_OUTPUT_BYTES) {
                             "Speech audio exceeds the 256 MiB limit"
@@ -285,7 +286,7 @@ internal object WavFileCombiner {
         var totalData = 0L
         val wavs = inputs.map { file ->
             val info = inspect(file)
-            check(reference == null || sameFormat(reference!!, info.format)) { "Inconsistent speech WAV formats" }
+            check(reference == null || sameFormat(reference, info.format)) { "Inconsistent speech WAV formats" }
             reference = reference ?: info.format
             totalData = Math.addExact(totalData, info.dataLength)
             check(

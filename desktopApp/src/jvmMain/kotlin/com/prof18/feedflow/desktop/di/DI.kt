@@ -23,7 +23,7 @@ object DI {
             isICloudEnabled = appConfig.isIcloudEnabled,
             isDropboxEnabled = appConfig.isDropboxEnabled,
             isGoogleDriveEnabled = appConfig.isGoogleDriveEnabled,
-            version = appConfig.version ?: "",
+            version = appConfig.version.orEmpty(),
             modules = listOf(
                 module {
                     single {

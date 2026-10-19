@@ -33,7 +33,7 @@ internal object TtsTextExtractor {
         return result
     }
 
-    private suspend fun headingInfo(
+    private fun headingInfo(
         root: Node,
         title: String?,
         context: kotlin.coroutines.CoroutineContext,
@@ -44,7 +44,7 @@ internal object TtsTextExtractor {
         return HeadingInfo(reference = reference, firstHeading = firstHeading)
     }
 
-    private suspend fun firstElementWithTag(
+    private fun firstElementWithTag(
         root: Node,
         tag: String,
         context: kotlin.coroutines.CoroutineContext,
@@ -65,7 +65,7 @@ internal object TtsTextExtractor {
         return found
     }
 
-    private suspend fun extractBodyText(
+    private fun extractBodyText(
         root: Node,
         headingInfo: HeadingInfo,
         context: kotlin.coroutines.CoroutineContext,
@@ -86,7 +86,7 @@ internal object TtsTextExtractor {
         return output.toString()
     }
 
-    private suspend fun appendNode(
+    private fun appendNode(
         traversalNode: TraversalNode,
         stack: ArrayDeque<TraversalNode>,
         output: StringBuilder,
@@ -99,7 +99,7 @@ internal object TtsTextExtractor {
         }
     }
 
-    private suspend fun appendElement(
+    private fun appendElement(
         element: Element,
         inheritedVisibility: Boolean,
         stack: ArrayDeque<TraversalNode>,
@@ -127,7 +127,7 @@ internal object TtsTextExtractor {
         }
     }
 
-    private suspend fun isSkipped(
+    private fun isSkipped(
         element: Element,
         tag: String,
         headingInfo: HeadingInfo,
@@ -139,7 +139,7 @@ internal object TtsTextExtractor {
         return isDuplicateHeading(element, tag, headingInfo, context)
     }
 
-    private suspend fun isDuplicateHeading(
+    private fun isDuplicateHeading(
         element: Element,
         tag: String,
         headingInfo: HeadingInfo,
@@ -150,7 +150,7 @@ internal object TtsTextExtractor {
         return reference.trim().lowercase() == textContent(element, context).trim().lowercase()
     }
 
-    private suspend fun textContent(root: Node, context: kotlin.coroutines.CoroutineContext): String {
+    private fun textContent(root: Node, context: kotlin.coroutines.CoroutineContext): String {
         val result = StringBuilder()
         val stack = ArrayDeque<Node>()
         stack.addLast(root)
@@ -167,7 +167,7 @@ internal object TtsTextExtractor {
         return result.toString()
     }
 
-    private suspend fun splitBlocks(source: String, context: kotlin.coroutines.CoroutineContext): List<String> {
+    private fun splitBlocks(source: String, context: kotlin.coroutines.CoroutineContext): List<String> {
         val result = mutableListOf<String>()
         for (part in source.split(SEGMENT_BREAK)) {
             context.ensureActive()
@@ -177,7 +177,7 @@ internal object TtsTextExtractor {
         return result
     }
 
-    private suspend fun splitBlock(text: String, context: kotlin.coroutines.CoroutineContext): List<String> {
+    private fun splitBlock(text: String, context: kotlin.coroutines.CoroutineContext): List<String> {
         val chunks = mutableListOf<String>()
         var start = 0
         while (start < text.length) {
@@ -242,7 +242,7 @@ internal object TtsTextExtractor {
         return index
     }
 
-    private suspend fun normalize(text: String, context: kotlin.coroutines.CoroutineContext): String {
+    private fun normalize(text: String, context: kotlin.coroutines.CoroutineContext): String {
         val result = StringBuilder(text.length)
         var pendingSpace = false
         for (index in text.indices) {

@@ -211,7 +211,9 @@ Run it only when a device or emulator is deliberately available:
 ./gradlew --quiet --console=plain :shared:connectedAndroidDeviceTest
 ```
 
-On macOS arm64, the Swift task requires Xcode with an iPhone 17 Pro simulator
+On macOS arm64, the Swift task requires Xcode with an iPhone simulator (it picks
+iPhone 18 Pro, then iPhone 17 Pro, then any installed iPhone; override with
+`-Pfeedflow.swiftCloudSyncDestination="platform=iOS Simulator,name=<device>"`)
 and XcodeGen (`brew install xcodegen`). It generates the Xcode project and builds
 its Kotlin framework through Gradle dependencies; Xcode does not invoke Gradle
 recursively. CI prepares dummy iOS configuration files. For a fresh local checkout,

@@ -27,8 +27,8 @@ coroutines = "1.11.0"
 crashk-ios = "0.10.0"
 crashlytics-plugin = "3.0.8"
 csv = "1.3"
-detekt = "1.23.8"
-detekt-compose-rules = "0.4.28"
+detekt = "2.0.0-alpha.6"
+detekt-compose-rules = "0.6.8"
 dropbox-core = "8.0.2"
 firebase-bom = "34.19.0"
 flatlaf = "3.7.2"
@@ -157,9 +157,9 @@ colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", vers
 crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
 csv = { module = "de.halfbit:csv", version.ref = "csv" }
 klead = { module = "com.prof18:klead", version.ref = "klead" }
-detekt = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
+detekt = { group = "dev.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 detekt-compose-rules = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose-rules" }
-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
+detekt-ktlint-wrapper = { group = "dev.detekt", name = "detekt-rules-ktlint-wrapper", version.ref = "detekt" }
 dropbox-core = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dropbox-core" }
 dropbox-core-android = { module = "com.dropbox.core:dropbox-android-sdk", version.ref = "dropbox-core" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
@@ -251,7 +251,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version.ref = "compose-hot-reload" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-plugin" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
 feedflow-detekt = { id = "com.feedflow.detekt", version = "unspecified" }
 feedflow-library = { id = "com.feedflow.library", version = "unspecified" }
 feedflow-versioning = { id = "com.feedflow.versioning", version = "unspecified" }

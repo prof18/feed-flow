@@ -13,8 +13,8 @@ import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 @Composable
 internal fun FeedNameTextField(
     feedName: String,
-    modifier: Modifier = Modifier,
     onFeedNameUpdated: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     OutlinedTextField(
         modifier = modifier,

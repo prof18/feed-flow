@@ -29,6 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -222,6 +223,7 @@ fun HomeFloatingToolbar(
 }
 
 @Composable
+@ReadOnlyComposable
 internal fun homeFloatingToolbarContainerColor(): Color {
     return if (isSystemInDarkTheme()) {
         MaterialTheme.colorScheme.surfaceContainerHighest
@@ -231,6 +233,7 @@ internal fun homeFloatingToolbarContainerColor(): Color {
 }
 
 @Composable
+@ReadOnlyComposable
 internal fun homeFloatingToolbarBorder(): BorderStroke? {
     return if (isSystemInDarkTheme()) {
         BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
@@ -240,6 +243,7 @@ internal fun homeFloatingToolbarBorder(): BorderStroke? {
 }
 
 @Composable
+@ReadOnlyComposable
 private fun FeedFilter.getTitle(): String =
     when (this) {
         is FeedFilter.Category -> this.feedCategory.title

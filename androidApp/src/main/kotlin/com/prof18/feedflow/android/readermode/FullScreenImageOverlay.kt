@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
+import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import coil3.imageLoader
 import coil3.request.ImageRequest
@@ -40,6 +41,7 @@ import coil3.request.SuccessResult
 import coil3.toBitmap
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -180,8 +182,10 @@ private suspend fun shareImage(context: Context, imageUrl: String) {
 
                 context.startActivity(Intent.createChooser(shareIntent, null))
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
-            e.printStackTrace()
+            Logger.e(e) { "Unable to share image" }
         }
     }
 }

@@ -73,7 +73,7 @@ class HomeViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
     private val feedSyncRepository: FeedSyncRepository,
-    private val feedFontSizeRepository: FeedFontSizeRepository,
+    feedFontSizeRepository: FeedFontSizeRepository,
     private val feedCategoryRepository: FeedCategoryRepository,
     private val feedStateRepository: FeedStateRepository,
     private val feedFetcherRepository: FeedFetcherRepository,

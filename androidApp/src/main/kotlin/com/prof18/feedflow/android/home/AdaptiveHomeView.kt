@@ -73,9 +73,9 @@ fun AdaptiveHomeView(
     @Composable
     fun HomeContentInternal(
         showDrawerMenu: Boolean,
+        onDrawerMenuClick: () -> Unit,
         modifier: Modifier = Modifier,
         isDrawerMenuOpen: Boolean = false,
-        onDrawerMenuClick: () -> Unit,
     ) {
         AndroidHomeScreenContent(
             modifier = modifier,

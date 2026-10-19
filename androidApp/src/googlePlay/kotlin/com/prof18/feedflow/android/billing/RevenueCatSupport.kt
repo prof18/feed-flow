@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +53,7 @@ fun RevenueCatSupportPaywall(
 ) {
     var paywallState by remember { mutableStateOf<SupportPaywallState>(SupportPaywallState.Loading) }
 
-    LaunchedEffect(Unit) {
+    SideEffect(Unit) {
         Purchases.sharedInstance.getOfferings(
             object : ReceiveOfferingsCallback {
                 override fun onReceived(offerings: com.revenuecat.purchases.Offerings) {

@@ -60,7 +60,7 @@ fun FeedSuggestionsContent(
         categories.find { it.id == categoryId }
     } ?: categories.firstOrNull()
 
-    val filteredFeeds = selectedCategory?.feeds ?: emptyList()
+    val filteredFeeds = selectedCategory?.feeds.orEmpty()
 
     if (isLoading) {
         Column(

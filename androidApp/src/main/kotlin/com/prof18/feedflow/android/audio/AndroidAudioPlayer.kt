@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.security.MessageDigest
+import java.util.Locale
 
 class AndroidAudioPlayer(
     private val context: Context,
@@ -108,7 +109,7 @@ class AndroidAudioPlayer(
             "\u0000${article.languageTag.orEmpty()}".toByteArray(Charsets.UTF_8)
         val key = MessageDigest.getInstance("SHA-256")
             .digest(languageSource)
-            .joinToString("") { "%02x".format(it) }
+            .joinToString("") { "%02x".format(Locale.ROOT, it) }
         val request = SpeechRequest(article, title, key)
         if (state.value.episode?.playbackId == request.episode.playbackId && !state.value.failed) {
             togglePlayback()
@@ -158,7 +159,10 @@ class AndroidAudioPlayer(
             } catch (_: Exception) {
                 if (generation == speechGeneration) {
                     mutableState.value = state.value.copy(
-                        isPlaying = false, isLoading = false, isPreparingSpeech = false, failed = true,
+                        isPlaying = false,
+                        isLoading = false,
+                        isPreparingSpeech = false,
+                        failed = true,
                     )
                 }
             } finally {
@@ -376,7 +380,7 @@ class AndroidAudioPlayer(
         val episode = state.value.episode ?: return
         val currentPlayer = player ?: return
         // A replacement may update the UI before the old player's final callback is delivered.
-        if (currentPlayer.currentMediaItem?.mediaId != episode.playbackId || !hasValidPosition && !completed) return
+        if (currentPlayer.currentMediaItem?.mediaId != episode.playbackId || (!hasValidPosition && !completed)) return
         positions.savePosition(
             episode.playbackId,
             if (completed) 0 else currentPlayer.currentPosition,

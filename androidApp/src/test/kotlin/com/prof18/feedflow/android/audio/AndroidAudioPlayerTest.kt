@@ -784,7 +784,7 @@ class AndroidAudioPlayerTest {
                 }
                 "getDuration" -> 90_000L
                 "getPlayWhenReady" -> playWhenReady
-                "setPlaybackSpeed" -> { speed = args!![0] as Float }
+                "setPlaybackSpeed" -> speed = args!![0] as Float
                 "getPlaybackState" -> playbackState
                 "getPlayerError" -> error
                 "isCurrentMediaItemSeekable" -> true

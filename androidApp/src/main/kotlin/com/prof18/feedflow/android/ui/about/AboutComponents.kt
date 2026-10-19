@@ -57,8 +57,8 @@ fun AboutTextItem(
 
 @Composable
 private fun AnnotatedClickableText(
-    modifier: Modifier = Modifier,
     onTextClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val annotatedText = buildAnnotatedString {
         append(LocalFeedFlowStrings.current.authorLabel)

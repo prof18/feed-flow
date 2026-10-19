@@ -46,7 +46,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class SearchViewModel internal constructor(
     private val feedActionsRepository: FeedActionsRepository,
     private val dateFormatter: DateFormatter,
-    private val feedFontSizeRepository: FeedFontSizeRepository,
+    feedFontSizeRepository: FeedFontSizeRepository,
     private val feedStateRepository: FeedStateRepository,
     private val articleNavigationRepository: ArticleNavigationRepository,
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,

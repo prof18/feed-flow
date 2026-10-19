@@ -24,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -385,10 +386,10 @@ private fun FallbackWebView(
     }
     var showPageLoader by remember { mutableStateOf(true) }
 
-    LaunchedEffect(url) {
+    SideEffect(url) {
         showPageLoader = true
     }
-    LaunchedEffect(state.loadingState) {
+    SideEffect(state.loadingState) {
         showPageLoader = state.loadingState !is LoadingState.Finished
     }
 
@@ -495,7 +496,7 @@ private fun ReaderMode(
 
     val jsBridge = rememberWebViewJsBridge()
     val bridgeScope = rememberCoroutineScope()
-    LaunchedEffect(jsBridge) {
+    SideEffect(jsBridge) {
         jsBridge.register(
             object : IJsMessageHandler {
                 override fun handle(
@@ -542,7 +543,7 @@ private fun ReaderMode(
         baseUrl = readerModeState.readerModeData.baseUrl,
     )
 
-    LaunchedEffect(isAudioPlaying, state.loadingState) {
+    SideEffect(isAudioPlaying, state.loadingState) {
         if (state.loadingState is LoadingState.Finished) {
             navigator.evaluateJavaScript("window.feedflowUpdateAudioState?.($isAudioPlaying);")
         }

@@ -147,7 +147,7 @@ internal class FeedSourcesRepository(
                             { sourceWithCount -> sourceWithCount.feedSource.title },
                         ),
                     )
-                    ?: emptyList()
+                    .orEmpty()
             }
         }
 

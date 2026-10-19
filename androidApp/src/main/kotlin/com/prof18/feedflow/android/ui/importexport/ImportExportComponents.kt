@@ -21,6 +21,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -322,8 +323,8 @@ private fun ImportExportLoadingView(
 
 @Composable
 private fun ImportExportErrorView(
-    modifier: Modifier = Modifier,
     onRetryClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -383,8 +384,8 @@ private fun InvalidOpmlImportView(
 
 @Composable
 private fun ExportDoneView(
-    modifier: Modifier = Modifier,
     onDoneClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -410,8 +411,8 @@ private fun ExportDoneView(
 
 @Composable
 private fun ArticleExportDoneView(
-    modifier: Modifier = Modifier,
     onDoneClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -612,6 +613,7 @@ private fun FeedsNotAddedList(
 }
 
 @Composable
+@ReadOnlyComposable
 private fun ArticleExportFilter.toLabel(): String =
     when (this) {
         ArticleExportFilter.All -> LocalFeedFlowStrings.current.articlesExportFilterAll

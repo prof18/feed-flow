@@ -77,7 +77,8 @@ class AddFeedViewModelTest : KoinTestBase() {
         val filteredFeed = "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFsBjURrPoezykLs9EqgamOA"
         parser.channels[channelFeed] = RssChannelGenerator.rssChannel(title = "Channel name")
         parser.channels[filteredFeed] = RssChannelGenerator.rssChannel(
-            title = "Videos", items = listOf(RssItemGenerator.rssItem()),
+            title = "Videos",
+            items = listOf(RssItemGenerator.rssItem()),
         )
         parser.gate = CompletableDeferred()
         val viewModel = getViewModel()

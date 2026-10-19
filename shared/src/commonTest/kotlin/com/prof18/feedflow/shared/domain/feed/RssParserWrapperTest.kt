@@ -96,8 +96,7 @@ class RssParserWrapperTest {
         val wrapper = RssParserWrapperImpl(
             feedHttpCacheStore = store,
             parsers = FeedFetchTier.entries.associateWith { tier ->
-                {
-                        _: String ->
+                { _: String ->
                     attempted.add(tier)
                     if (tier != FeedFetchTier.BROWSER) {
                         throw HttpException(code = 403, message = "Forbidden")
@@ -150,8 +149,7 @@ class RssParserWrapperTest {
         val wrapper = RssParserWrapperImpl(
             feedHttpCacheStore = store,
             parsers = FeedFetchTier.entries.associateWith { tier ->
-                {
-                        _: String ->
+                { _: String ->
                     attempted.add(tier)
                     if (tier == FeedFetchTier.BROWSER) {
                         throw expected
@@ -190,8 +188,7 @@ class RssParserWrapperTest {
         val wrapper = RssParserWrapperImpl(
             feedHttpCacheStore = store,
             parsers = FeedFetchTier.entries.associateWith { tier ->
-                {
-                        _: String ->
+                { _: String ->
                     attempted.add(tier)
                     if (tier != FeedFetchTier.LINK_FREE) {
                         throw HttpException(code = 403, message = "Forbidden")

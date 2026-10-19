@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -132,7 +133,7 @@ fun FeedList(
             itemFeedLayout.supportsGridArrangement() &&
             maxWidth >= itemFeedLayout.gridMinContentWidth()
         val latestOnGridArrangementChanged by rememberUpdatedState(onGridArrangementChanged)
-        LaunchedEffect(isGridArrangement) {
+        SideEffect(isGridArrangement) {
             latestOnGridArrangementChanged(isGridArrangement)
         }
         val shouldStartPaginate = remember(isGridArrangement) {
@@ -268,7 +269,7 @@ fun FeedList(
         }
 
         val latestRequestMoreItems by rememberUpdatedState(requestMoreItems)
-        LaunchedEffect(key1 = shouldStartPaginate.value) {
+        SideEffect(shouldStartPaginate.value) {
             if (shouldStartPaginate.value) {
                 latestRequestMoreItems()
             }
@@ -532,6 +533,8 @@ internal fun NavigateNextButton(
     }
 }
 
+// Switching layout rebuilds every item anyway, so keeping slot state across branches isn't needed.
+@Suppress("ContentSlotReused")
 @Composable
 fun FeedItemContainer(
     feedLayout: FeedLayout,

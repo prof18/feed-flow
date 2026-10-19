@@ -133,9 +133,9 @@ fun ReaderModeFloatingToolbar(
     lineHeight: Int,
     onLineHeightChange: (Int) -> Unit,
     articleReportState: ArticleReportUiState,
+    onReportArticle: () -> Unit,
     modifier: Modifier = Modifier,
     audioContent: (@Composable () -> Unit)? = null,
-    onReportArticle: () -> Unit,
 ) {
     var showFontSizeMenu by remember { mutableStateOf(false) }
     var showOverflowMenu by remember { mutableStateOf(false) }

@@ -17,8 +17,8 @@ import com.prof18.feedflow.android.ui.style.Spacing
 fun NotificationToggleRow(
     title: String,
     isChecked: Boolean,
-    modifier: Modifier = Modifier,
     onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier

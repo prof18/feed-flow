@@ -25,7 +25,7 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    val appVersion = packageInfo.versionName ?: ""
+    val appVersion = packageInfo.versionName.orEmpty()
     var hasWidget by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         val ids = GlanceAppWidgetManager(context).getGlanceIds(FeedFlowWidget::class.java)

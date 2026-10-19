@@ -23,7 +23,7 @@ data class ReaderMode(
 fun FeedItemUrlInfo.toReaderMode(): ReaderMode = ReaderMode(
     id = id,
     url = url,
-    title = title ?: "",
+    title = title.orEmpty(),
     isBookmarked = isBookmarked,
     articleOpenMode = articleOpenMode.name,
     commentsUrl = commentsUrl,

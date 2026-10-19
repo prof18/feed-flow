@@ -63,8 +63,11 @@ class ReaderModeViewModel internal constructor(
     private val currentArticleMutableState = MutableStateFlow<FeedItemUrlInfo?>(null)
     val currentArticleState = currentArticleMutableState.asStateFlow()
     private val articleReportMutableState = MutableStateFlow(ArticleReportUiState())
-    val articleReportState = combine(currentArticleState, readerModeState, articleReportMutableState) {
-            article, state, report ->
+    val articleReportState = combine(
+        currentArticleState,
+        readerModeState,
+        articleReportMutableState,
+    ) { article, state, report ->
         report.copy(
             canReport = article != null && article.url.isNotBlank() &&
                 state.isForArticle(article.id) && !report.sending,

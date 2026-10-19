@@ -60,7 +60,7 @@ internal class GReaderClient internal constructor(
     private var httpClient: HttpClient? = providedHttpClient
     private var clientIdentity: ClientIdentity? = null
     private val clientLock = Lock()
-    private var postToken = AtomicReference<String?>(null)
+    private val postToken = AtomicReference<String?>(null)
 
     suspend fun login(
         username: String,

@@ -17,8 +17,8 @@ import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun NoFeedsSourceView(
-    modifier: Modifier = Modifier,
     onAddFeedClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier

@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,13 +55,13 @@ internal fun FeedItemView(
     onOpenFeedWebsite: (String) -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
     onMarkAllAboveAsRead: (String) -> Unit,
+    onMarkAllBelowAsRead: (String) -> Unit,
     modifier: Modifier = Modifier,
     disableClick: Boolean = false,
     isGridCell: Boolean = false,
     heroImageAspectRatio: Float = DefaultHeroImageAspectRatio,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
-    onMarkAllBelowAsRead: (String) -> Unit,
 ) {
     var showItemMenu by remember {
         mutableStateOf(
@@ -212,6 +213,7 @@ internal fun FeedItemView(
  * is resolved once while mapping; items whose text has no direction follow the app locale.
  */
 @Composable
+@ReadOnlyComposable
 private fun contentLayoutDirection(feedItem: FeedItem): LayoutDirection =
     when (feedItem.contentDirection) {
         ContentDirection.LEFT_TO_RIGHT -> LayoutDirection.Ltr

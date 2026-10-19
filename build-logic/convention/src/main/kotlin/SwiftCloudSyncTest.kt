@@ -8,12 +8,14 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.LocalState
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Runs XCTest on a local iOS Simulator")
@@ -34,11 +36,12 @@ abstract class SwiftCloudSyncTest @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val frameworkDirectory: DirectoryProperty
 
+    /** An explicit xcodebuild destination; when absent, an installed iPhone simulator is picked. */
     @get:Input
+    @get:Optional
     abstract val destination: Property<String>
 
     init {
-        destination.convention("platform=iOS Simulator,name=iPhone 17 Pro")
         outputs.upToDateWhen { false }
     }
 
@@ -58,7 +61,7 @@ abstract class SwiftCloudSyncTest @Inject constructor(
                 commandLine(
                     "xcodebuild", "-quiet", "-project", "FeedFlow.xcodeproj",
                     "-scheme", "CloudSyncTests", "-configuration", "Debug",
-                    "-destination", destination.get(),
+                    "-destination", destination.orNull ?: "platform=iOS Simulator,id=${findSimulatorId()}",
                     "-derivedDataPath", derivedDataDirectory.get().asFile.absolutePath,
                     "-resultBundlePath", resultBundle.absolutePath,
                     "OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED=YES",
@@ -92,5 +95,40 @@ abstract class SwiftCloudSyncTest @Inject constructor(
             throw GradleException("Swift cloud test suite is incomplete or failed. See $summaryFile")
         }
         logger.lifecycle("Swift cloud adapter tests: $total passed")
+    }
+
+    // Local machines and CI images ship different simulator sets, so pick from what is installed.
+    private fun findSimulatorId(): String {
+        val json = ByteArrayOutputStream().also { output ->
+            execOperations.exec {
+                commandLine("xcrun", "simctl", "list", "devices", "available", "--json")
+                standardOutput = output
+            }
+        }.toString(Charsets.UTF_8)
+        val devicesByRuntime = (JsonSlurper().parseText(json) as Map<*, *>)["devices"] as Map<*, *>
+        val iPhones = devicesByRuntime
+            .filterKeys { it.toString().contains(".SimRuntime.iOS-") }
+            .entries
+            .sortedByDescending { runtimeVersion(it.key.toString()) }
+            .map { it.value }
+            .flatMap { it as List<*> }
+            .map { it as Map<*, *> }
+            .filter { it["name"].toString().startsWith("iPhone") }
+        val device = PREFERRED_SIMULATORS.firstNotNullOfOrNull { name -> iPhones.firstOrNull { it["name"] == name } }
+            ?: iPhones.firstOrNull()
+            ?: throw GradleException("No iPhone simulator is installed; install one or set -Pfeedflow.swiftCloudSyncDestination")
+        logger.lifecycle("Swift cloud adapter tests run on ${device["name"]}")
+        return device["udid"].toString()
+    }
+
+    // "com.apple.CoreSimulator.SimRuntime.iOS-26-2" -> 2602
+    private fun runtimeVersion(runtime: String): Int =
+        runtime.substringAfter(".SimRuntime.iOS-").split("-")
+            .take(2)
+            .map { it.toIntOrNull() ?: 0 }
+            .fold(0) { acc, part -> acc * 100 + part }
+
+    private companion object {
+        val PREFERRED_SIMULATORS = listOf("iPhone 18 Pro", "iPhone 17 Pro")
     }
 }

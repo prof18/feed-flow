@@ -36,8 +36,8 @@ object ReaderModeEligibility {
             val values = url.parameters.getAll(parameterKey).orEmpty()
             values.any { parameterValue ->
                 val value = parameterValue.lowercase()
-                key in pdfQueryKeys && value == PDF_EXTENSION ||
-                    key == DOWNLOAD_QUERY_KEY && value == DOWNLOAD_QUERY_VALUE
+                (key in pdfQueryKeys && value == PDF_EXTENSION) ||
+                    (key == DOWNLOAD_QUERY_KEY && value == DOWNLOAD_QUERY_VALUE)
             }
         }
 

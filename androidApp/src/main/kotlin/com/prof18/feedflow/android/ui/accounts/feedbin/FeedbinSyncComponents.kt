@@ -119,8 +119,8 @@ private fun LoadingView() {
 fun DisconnectedView(
     isLoginLoading: Boolean,
     hasLocalSubscriptions: Boolean,
-    modifier: Modifier = Modifier,
     onLoginClick: (username: String, password: String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

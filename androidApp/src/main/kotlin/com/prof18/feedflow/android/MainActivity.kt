@@ -28,6 +28,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -179,7 +180,7 @@ class MainActivity : BaseThemeActivity() {
 
         val deeplinkState by deeplinkViewModel.deeplinkFeedState.collectAsStateWithLifecycle()
 
-        LaunchedEffect(currentIntent) {
+        SideEffect(currentIntent) {
             currentIntent?.let { intent ->
                 if (intent.action == Intent.ACTION_VIEW && intent.data != null) {
                     val uri = intent.data
@@ -210,7 +211,7 @@ class MainActivity : BaseThemeActivity() {
             }
         }
 
-        LaunchedEffect(deeplinkState) {
+        SideEffect(deeplinkState) {
             handleDeepLinkState(
                 state = deeplinkState,
                 deeplinkViewModel = deeplinkViewModel,
@@ -339,7 +340,7 @@ class MainActivity : BaseThemeActivity() {
                 }
 
                 entry<Home> { route ->
-                    LaunchedEffect(Unit) {
+                    SideEffect(Unit) {
                         val feedId: String? = route.feedSourceId
                         if (!feedId.isNullOrEmpty()) {
                             homeViewModel.updateFeedSourceFilter(feedId)
@@ -557,7 +558,7 @@ class MainActivity : BaseThemeActivity() {
                     val feedSource: FeedSource = route.toFeedSource()
                     val viewModel = koinViewModel<EditFeedViewModel>()
 
-                    LaunchedEffect(feedSource) {
+                    SideEffect(feedSource) {
                         viewModel.loadFeedToEdit(feedSource)
                     }
 

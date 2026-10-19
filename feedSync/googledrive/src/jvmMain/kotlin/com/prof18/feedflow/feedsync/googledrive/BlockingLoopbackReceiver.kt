@@ -43,10 +43,7 @@ internal class BlockingLoopbackReceiver : VerificationCodeReceiver {
             val callback = try {
                 listeningSocket.accept().use(::readCallback)
             } catch (e: SocketException) {
-                if (listeningSocket.isClosed) {
-                    throw IOException("Loopback receiver was stopped", e)
-                }
-                throw e
+                throw if (listeningSocket.isClosed) IOException("Loopback receiver was stopped", e) else e
             }
 
             when (callback) {

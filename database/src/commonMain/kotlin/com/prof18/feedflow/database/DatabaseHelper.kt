@@ -378,8 +378,8 @@ class DatabaseHelper(
 
     suspend fun getCloudPendingArticleFlags(sessionId: String): List<CloudPendingArticleFlag> =
         withContext(backgroundDispatcher) {
-            dbRef.cloudPendingArticleFlagQueries.selectCloudPendingArticleFlags(sessionId) {
-                    itemId, field, value, revision ->
+            val queries = dbRef.cloudPendingArticleFlagQueries
+            queries.selectCloudPendingArticleFlags(sessionId) { itemId, field, value, revision ->
                 CloudPendingArticleFlag(
                     itemId = itemId,
                     field = field,

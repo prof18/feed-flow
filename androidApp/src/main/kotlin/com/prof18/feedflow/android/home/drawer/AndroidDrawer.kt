@@ -722,8 +722,8 @@ private fun DrawerSectionTitle(title: String) {
 @Composable
 private fun DrawerTopActions(
     onSettingsClick: () -> Unit,
-    modifier: Modifier = Modifier,
     onAddClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),

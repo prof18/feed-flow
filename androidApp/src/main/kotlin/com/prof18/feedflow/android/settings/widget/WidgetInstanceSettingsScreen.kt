@@ -1,7 +1,7 @@
 package com.prof18.feedflow.android.settings.widget
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -24,7 +24,7 @@ fun WidgetInstanceSettingsScreen(
         parametersOf(appWidgetId)
     }
     val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
-    LaunchedEffect(appWidgetId) {
+    SideEffect(appWidgetId) {
         viewModel.reloadWidgetConfiguration()
     }
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {

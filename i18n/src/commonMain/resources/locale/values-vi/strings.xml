@@ -467,4 +467,7 @@
     <string name="hide_youtube_shorts_description">Chỉ những video thường từ kênh này mới được đưa vào. Không bao gồm video ngắn và phát trực tiếp.</string>
     <string name="hide_youtube_shorts_fallback">Không thể ẩn các video Shorts của kênh này nên toàn bộ nguồn tin đã được thêm vào.</string>
     <string name="date_format_day_month_dot">Day.Month</string>
+    <string name="settings_filters">Bộ lọc</string>
+    <string name="desktop_resize_sidebar">Đổi cỡ thanh điều hướng (Trái/Phải)</string>
+    <string name="desktop_resize_article_list">Đổi cỡ danh sách bài viết (Trái/Phải)</string>
 </resources>

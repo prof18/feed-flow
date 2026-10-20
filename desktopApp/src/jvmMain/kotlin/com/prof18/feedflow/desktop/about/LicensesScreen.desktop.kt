@@ -35,7 +35,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composeunstyled.rememberScrollbarState
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.prof18.feedflow.core.utils.DispatcherProvider
@@ -142,7 +141,7 @@ internal fun LicensesContent(
                         }
                     }
                     if (listState.canScrollForward || listState.canScrollBackward) {
-                        FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
+                        FeedFlowVerticalScrollbar(listState)
                     }
                 }
             }
@@ -197,7 +196,7 @@ internal fun LicenseDetails(library: Library, onClose: () -> Unit, modifier: Mod
                     }
                 }
             }
-            FeedFlowVerticalScrollbar(rememberScrollbarState(scrollState))
+            FeedFlowVerticalScrollbar(scrollState)
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
             DefaultButton(

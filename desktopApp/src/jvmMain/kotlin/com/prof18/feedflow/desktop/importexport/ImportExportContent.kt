@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.core.model.ArticleExportFilter
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.ImportExportContentType
@@ -303,7 +302,7 @@ private fun ImportExportIdleContent(
             }
         }
         if (listState.canScrollForward || listState.canScrollBackward) {
-            FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
+            FeedFlowVerticalScrollbar(listState)
         }
     }
 }
@@ -426,7 +425,7 @@ internal fun ArticleExportFilterContent(
                 }
             }
         }
-        FeedFlowVerticalScrollbar(rememberScrollbarState(scrollState))
+        FeedFlowVerticalScrollbar(scrollState)
     }
 }
 
@@ -484,7 +483,7 @@ private fun ImportReport(
                 }
             }
         }
-        FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
+        FeedFlowVerticalScrollbar(listState)
     }
 }
 
@@ -543,7 +542,7 @@ private fun ResultView(
                 textAlign = TextAlign.Center,
             )
         }
-        FeedFlowVerticalScrollbar(rememberScrollbarState(scrollState))
+        FeedFlowVerticalScrollbar(scrollState)
     }
 }
 

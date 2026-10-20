@@ -18,7 +18,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
@@ -69,7 +68,6 @@ internal fun NoFeedsContent(
     val addFocus = remember { FocusRequester() }
     LaunchedEffect(Unit) { addFocus.requestFocus() }
     val scrollState = rememberScrollState()
-    val scrollbarState = rememberScrollbarState(scrollState)
     val actionHeight = with(LocalDensity.current) { JewelTheme.defaultTextStyle.lineHeight.toDp() } + 16.dp
     Box(modifier.fillMaxSize()) {
         Column(
@@ -106,6 +104,6 @@ internal fun NoFeedsContent(
                 },
             ) { Text(strings.feedSuggestionsTitle) }
         }
-        FeedFlowVerticalScrollbar(scrollbarState)
+        FeedFlowVerticalScrollbar(scrollState)
     }
 }

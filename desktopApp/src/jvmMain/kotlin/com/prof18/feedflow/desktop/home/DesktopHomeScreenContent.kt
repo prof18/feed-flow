@@ -34,7 +34,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -330,7 +329,7 @@ private fun HomeArticleList(
             )
         }
         if (!isGrid) {
-            FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
+            FeedFlowVerticalScrollbar(listState)
         }
     }
 }

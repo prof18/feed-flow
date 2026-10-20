@@ -130,7 +130,6 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.flatlaf)
-                implementation(libs.compose.unstyled.scrollbars)
             }
         }
 

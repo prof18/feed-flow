@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import coil3.ImageLoader
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeData
@@ -163,7 +162,7 @@ private fun ReaderArticle(
                 if (body != null) body() else DelayedReaderSpinner(articleKey)
             }
         }
-        FeedFlowVerticalScrollbar(rememberScrollbarState(scrollState))
+        FeedFlowVerticalScrollbar(scrollState)
     }
 }
 

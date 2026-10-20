@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.captureToImage
@@ -149,7 +150,7 @@ class DesktopAccountsContentTest {
             SyncAccounts.BAZQUX,
         )
         compose.setContent { TestContent(supportedAccounts = accounts, short = true) }
-        val page = compose.onNode(hasScrollAction())
+        val page = compose.onNode(scrollablePage)
         page.performScrollToNode(hasTestTag(AccountE2eIds.providerRow(SyncAccounts.ICLOUD)))
         val anchor = page.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
         assertTrue(anchor > 0)
@@ -157,7 +158,7 @@ class DesktopAccountsContentTest {
         compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(SyncAccounts.ICLOUD.name)
         compose.onNodeWithText(EnFeedFlowStrings.desktopAccountsBackToServices).performClick()
 
-        val restored = compose.onNode(hasScrollAction())
+        val restored = compose.onNode(scrollablePage)
             .fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
         assertEquals(anchor, restored)
     }
@@ -277,5 +278,10 @@ class DesktopAccountsContentTest {
         const val OTHER_CATEGORY_TAG = "other-settings-category"
         const val MIN_VISIBLE_CHANNEL = 0.5f
         val SUPPORTED_ACCOUNTS = persistentListOf(SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX)
+
+        // Jewel's scrollbar is scrollable too, but only the page itself reports a scroll range.
+        val scrollablePage =
+            hasScrollAction() and
+                SemanticsMatcher.keyIsDefined(SemanticsProperties.VerticalScrollAxisRange)
     }
 }

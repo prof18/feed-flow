@@ -72,7 +72,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
@@ -286,7 +285,7 @@ internal fun SettingsPage(
                     }
                     // One scrollbar at the window edge, so it never splits the controls from their preview.
                     if (scrollState.maxValue > 0) {
-                        FeedFlowVerticalScrollbar(rememberScrollbarState(scrollState))
+                        FeedFlowVerticalScrollbar(scrollState)
                     }
                 }
             }
@@ -349,7 +348,7 @@ internal fun SettingsScrollPane(
             content = content,
         )
         if (scrollState.maxValue > 0) {
-            FeedFlowVerticalScrollbar(rememberScrollbarState(scrollState))
+            FeedFlowVerticalScrollbar(scrollState)
         }
     }
 }

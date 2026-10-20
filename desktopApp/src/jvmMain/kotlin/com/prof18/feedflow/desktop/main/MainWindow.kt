@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -74,7 +73,6 @@ import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
 import com.prof18.feedflow.desktop.ui.components.SnackbarHost
-import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -261,7 +259,6 @@ private fun FrameWindowScope.MainWindowContent(
 
     val menuCommands = remember { DesktopMenuCommands() }
     CompositionLocalProvider(
-        LocalScrollbarStyle provides scrollbarStyle(),
         LocalDesktopMenuCommands provides menuCommands,
     ) {
         val reduceMotionEnabled = LocalReduceMotion.current
@@ -336,7 +333,6 @@ private fun FrameWindowScope.MainWindowContent(
 
         CompositionLocalProvider(
             LocalDesktopDialogWindowNavigator provides dialogWindowNavigator,
-            LocalScrollbarStyle provides scrollbarStyle(),
         ) {
             val onSearch: (() -> Unit)? = if (backStack.lastOrNull() == Home) {
                 { backStack.add(Search) }

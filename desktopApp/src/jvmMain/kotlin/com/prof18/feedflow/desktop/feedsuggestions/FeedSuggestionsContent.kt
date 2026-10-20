@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import com.composeunstyled.rememberScrollbarState
 import com.prof18.feedflow.core.model.FeedAddState
 import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
@@ -225,7 +224,7 @@ private fun SuggestionFeedArea(
                 }
             }
             if (feedState.canScrollForward || feedState.canScrollBackward) {
-                FeedFlowVerticalScrollbar(rememberScrollbarState(feedState))
+                FeedFlowVerticalScrollbar(feedState)
             }
         }
     }

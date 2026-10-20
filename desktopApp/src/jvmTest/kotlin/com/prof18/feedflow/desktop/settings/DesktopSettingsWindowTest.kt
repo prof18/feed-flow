@@ -187,8 +187,13 @@ class DesktopSettingsWindowTest {
     fun `raising Settings preserves the existing native window and user size`() {
         val window = awaitSettingsWindow()
         val initialSize = readWindowSize(window)
-        SwingUtilities.invokeAndWait {
-            window.setSize(initialSize.width + RESIZE_WIDTH_DP, initialSize.height + RESIZE_HEIGHT_DP)
+        // Shrink rather than grow: on small displays (CI VMs) macOS asynchronously clamps a taller frame to the screen.
+        val targetWidth = (initialSize.width - RESIZE_WIDTH_DP).coerceAtLeast(initialSize.minimumWidth)
+        val targetHeight = (initialSize.height - RESIZE_HEIGHT_DP).coerceAtLeast(initialSize.minimumHeight)
+        SwingUtilities.invokeAndWait { window.setSize(targetWidth, targetHeight) }
+        compose.waitUntil(timeoutMillis = WINDOW_RESIZE_TIMEOUT_MS) {
+            val size = readWindowSize(window)
+            size.width == targetWidth && size.height == targetHeight
         }
         val resized = readWindowSize(window)
         compose.runOnIdle { activationRequest.value++ }

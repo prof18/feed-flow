@@ -71,9 +71,7 @@ final class AudioPlaybackControllerTests: XCTestCase {
         controller.toggle(selected)
         controller.pause()
 
-        for _ in 0 ..< 100 where !controller.canSeek {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.canSeek }
 
         XCTAssertTrue(controller.canSeek)
         let infoCenter = controller.nowPlayingSession.nowPlayingInfoCenter
@@ -153,9 +151,7 @@ final class AudioPlaybackControllerTests: XCTestCase {
         controller.start(AudioEpisode(itemId: "wave", url: url, title: "wave", subtitle: nil, artworkURL: nil))
         controller.pause()
 
-        for _ in 0 ..< 100 where !controller.canSeek {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.canSeek }
         XCTAssertTrue(controller.canSeek)
         XCTAssertFalse(controller.isPlaying)
         XCTAssertEqual(controller.position, 2, accuracy: 0.05)
@@ -226,9 +222,7 @@ final class AudioPlaybackControllerTests: XCTestCase {
         controller.start(AudioEpisode(itemId: "wave", url: url, title: "wave", subtitle: nil, artworkURL: nil))
 
         controller.pause()
-        for _ in 0 ..< 100 where !controller.canSeek {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.canSeek }
         XCTAssertTrue(controller.canSeek)
         XCTAssertFalse(controller.isPlaying)
         controller.setPlaybackSpeed(3.0)
@@ -246,9 +240,7 @@ final class AudioPlaybackControllerTests: XCTestCase {
         )
 
         controller.play()
-        for _ in 0 ..< 100 where controller.player.rate != 1.5 {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.player.rate == 1.5 }
         XCTAssertEqual(controller.player.rate, 1.5, accuracy: 0.01)
         controller.setPlaybackSpeed(0.5)
         XCTAssertEqual(controller.player.rate, 0.5, accuracy: 0.01)
@@ -270,32 +262,24 @@ final class AudioPlaybackControllerTests: XCTestCase {
 
         controller.setPlaybackSpeed(2.0)
         controller.start(first)
-        for _ in 0 ..< 100 where controller.player.rate != 2.0 {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.player.rate == 2.0 }
         XCTAssertEqual(controller.player.rate, 2.0, accuracy: 0.01)
 
         controller.start(second)
         XCTAssertEqual(controller.selectedPlaybackSpeed, 2.0)
-        for _ in 0 ..< 100 where controller.player.rate != 2.0 {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.player.rate == 2.0 }
         XCTAssertEqual(controller.player.rate, 2.0, accuracy: 0.01)
 
         controller.stop()
         XCTAssertEqual(controller.selectedPlaybackSpeed, 2.0)
         controller.toggle(second)
         XCTAssertEqual(controller.selectedPlaybackSpeed, 2.0)
-        for _ in 0 ..< 100 where controller.player.rate != 2.0 {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.player.rate == 2.0 }
         XCTAssertEqual(controller.player.rate, 2.0, accuracy: 0.01)
         controller.failPlayback()
         controller.toggle(second)
         XCTAssertEqual(controller.selectedPlaybackSpeed, 2.0)
-        for _ in 0 ..< 100 where controller.player.rate != 2.0 {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.player.rate == 2.0 }
         XCTAssertEqual(controller.player.rate, 2.0, accuracy: 0.01)
     }
 
@@ -310,9 +294,7 @@ final class AudioPlaybackControllerTests: XCTestCase {
         defer { controller.stop() }
         let selected = AudioEpisode(itemId: "wave", url: url, title: "wave", subtitle: nil, artworkURL: nil)
         controller.start(selected)
-        for _ in 0 ..< 100 where !controller.canSeek {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.canSeek }
         XCTAssertTrue(controller.canSeek)
         controller.pause()
         controller.setPlaybackSpeed(1.5)
@@ -323,9 +305,7 @@ final class AudioPlaybackControllerTests: XCTestCase {
         let systemObserverCount = controller.systemObservers.count
 
         NotificationCenter.default.post(name: AVAudioSession.mediaServicesWereResetNotification, object: nil)
-        for _ in 0 ..< 100 where !controller.hasFailed {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.hasFailed }
 
         XCTAssertTrue(controller.player !== oldPlayer)
         XCTAssertTrue(controller.nowPlayingSession !== oldSession)
@@ -348,14 +328,10 @@ final class AudioPlaybackControllerTests: XCTestCase {
         XCTAssertNotNil(controller.player.currentItem)
         XCTAssertFalse(controller.hasFailed)
         XCTAssertEqual(controller.position, 4, accuracy: 0.05)
-        for _ in 0 ..< 100 where !controller.canSeek {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.canSeek }
         XCTAssertTrue(controller.canSeek)
         XCTAssertTrue(controller.isPlaying)
-        for _ in 0 ..< 100 where controller.player.rate != 1.5 {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        try await waitUntil { controller.player.rate == 1.5 }
         XCTAssertEqual(controller.player.rate, 1.5, accuracy: 0.01)
         XCTAssertEqual(controller.player.defaultRate, 1.5)
     }
@@ -489,9 +465,7 @@ final class AudioPlaybackControllerTests: XCTestCase {
         controller.toggleSpeech(itemId: "article", title: "Article", content: "body", subtitle: nil, artworkURL: nil)
         try await generator.waitForRequestCount(1)
         generator.fail(request: 0)
-        for _ in 0 ..< 100 where !controller.hasFailed {
-            try await Task.sleep(for: .milliseconds(10))
-        }
+        try await waitUntil { controller.hasFailed }
         XCTAssertTrue(controller.hasFailed)
 
         controller.play()
@@ -657,24 +631,27 @@ final class AudioPlaybackControllerTests: XCTestCase {
 
     @MainActor
     private func waitUntilCanSeek(_ controller: AudioPlaybackController) async throws {
-        for _ in 0 ..< 200 {
-            if controller.canSeek {
-                return
-            }
-            try await Task.sleep(for: .milliseconds(10))
+        try await waitUntil { controller.canSeek }
+        if !controller.canSeek {
+            XCTFail("Timed out waiting for prepared audio to become seekable")
         }
-        XCTFail("Timed out waiting for prepared audio to become seekable")
     }
 
     @MainActor
     private func waitUntilFailed(_ controller: AudioPlaybackController) async throws {
-        for _ in 0 ..< 100 {
-            if controller.hasFailed {
-                return
-            }
-            try await Task.sleep(for: .milliseconds(10))
+        try await waitUntil { controller.hasFailed }
+        if !controller.hasFailed {
+            XCTFail("Timed out waiting for speech generation failure")
         }
-        XCTFail("Timed out waiting for speech generation failure")
+    }
+
+    // Simulator media loading is much slower on loaded CI runners, so wait on a deadline rather than a fixed count.
+    @MainActor
+    private func waitUntil(timeout: Duration = .seconds(20), _ condition: () -> Bool) async throws {
+        let deadline = ContinuousClock.now + timeout
+        while !condition(), ContinuousClock.now < deadline {
+            try await Task.sleep(for: .milliseconds(20))
+        }
     }
 
     @MainActor

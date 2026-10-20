@@ -74,7 +74,13 @@ abstract class SwiftCloudSyncTest @Inject constructor(
             }
         }
         if (result.exitValue != 0) {
-            throw GradleException("Swift cloud tests failed. See ${output.resolve("xcodebuild.log")}")
+            val logFile = output.resolve("xcodebuild.log")
+            // Surface the failing tests in the console; CI only exposes the log as a downloadable artifact.
+            val failingTests = logFile.readLines()
+                .dropWhile { !it.startsWith("Failing tests:") }
+                .takeWhile { !it.startsWith("** TEST") }
+                .joinToString("\n")
+            throw GradleException("Swift cloud tests failed. See $logFile\n$failingTests".trimEnd())
         }
         val summaryFile = output.resolve("summary.json")
         summaryFile.outputStream().use { log ->

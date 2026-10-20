@@ -79,10 +79,10 @@ saket-swipe = "1.3.0"
 sentry = "8.58.0"
 skie = "0.10.15"
 slf4jNop = "2.0.20"
-# When updating, check the version of sqlite-jdbc in the following link:
-# https://github.com/cashapp/sqldelight/blob/master/gradle/libs.versions.toml#L74
-# if necessry, dowload again the native library here
-# https://github.com/xerial/sqlite-jdbc/tree/master/src/main/resources/org/sqlite/native/Mac/aarch64
+# When updating, check the sqlite-jdbc version in the POM of the pinned release (replace <version>):
+# https://repo1.maven.org/maven2/app/cash/sqldelight/sqlite-driver/<version>/sqlite-driver-<version>.pom
+# If it changed, download the native library again from that sqlite-jdbc release:
+# https://github.com/xerial/sqlite-jdbc/tree/<sqlite-jdbc-version>/src/main/resources/org/sqlite/native/Mac/aarch64
 sql-delight = "2.4.1"
 stately-concurrency = "2.1.0"
 triplet-play = "4.1.1"

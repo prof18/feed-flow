@@ -99,9 +99,12 @@ class DialogKeyboardTest {
         rule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.DropdownList)).assertIsFocused()
         val window = dialog(EnFeedFlowStrings.changeCategory)
         press(window, KeyEvent.VK_DOWN)
+        // The popup opens asynchronously on Windows; navigating before it shows leaves the selection unchanged.
+        rule.waitUntilExactlyOneExists(hasText(category.title), timeoutMillis = 5_000)
         press(window, KeyEvent.VK_DOWN)
         press(window, KeyEvent.VK_ENTER)
-        rule.waitUntilExactlyOneExists(hasText(category.title), timeoutMillis = 5_000)
+        // The category title is also in the open popup, so wait for the previous selection to disappear instead.
+        rule.waitUntilDoesNotExist(hasText(EnFeedFlowStrings.noCategory), timeoutMillis = 5_000)
         rule.onNodeWithText(category.title).assertExists()
         press(window, KeyEvent.VK_TAB)
         rule.onNodeWithText(EnFeedFlowStrings.cancelButton).assertIsFocused()

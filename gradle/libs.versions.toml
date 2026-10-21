@@ -55,7 +55,7 @@ junit-jupiter = "5.10.1"
 kermit = "2.2.0"
 klead = "0.0.1-alpha11"
 koin-bom = "4.2.2"
-kotlin = "2.4.10"
+kotlin = "2.4.21"
 # Because of telemetry deck still using version 0.6.x
 kotlinx-date-time = "0.8.0-0.6.x-compat"
 kotlinx-serialization = "1.11.0"

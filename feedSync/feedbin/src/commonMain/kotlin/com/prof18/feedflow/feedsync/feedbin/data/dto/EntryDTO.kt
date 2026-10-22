@@ -19,6 +19,7 @@ internal data class EntryDTO(
     @SerialName("created_at")
     val createdAt: String,
     val enclosure: Enclosure? = null,
+    val images: Images? = null,
 ) {
     @Serializable
     data class Enclosure(
@@ -27,4 +28,20 @@ internal data class EntryDTO(
         @SerialName("enclosure_type")
         val type: String? = null,
     )
+
+    @Serializable
+    data class Images(
+        @SerialName("original_url")
+        val originalUrl: String? = null,
+        @SerialName("size_1")
+        val size1: ResizedImage? = null,
+    ) {
+        @Serializable
+        data class ResizedImage(
+            @SerialName("cdn_url")
+            val cdnUrl: String? = null,
+            val width: Int? = null,
+            val height: Int? = null,
+        )
+    }
 }

@@ -9,7 +9,6 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.feedsync.feedbin.data.dto.EntryDTO
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -198,6 +197,49 @@ class EntryDTOMapperTest {
     }
 
     @Test
+    fun `mapToFeedItem prefers images CDN url over content or summary extraction`() {
+        val entryDTO = createEntryDTO(
+            id = 10,
+            published = "2023-11-14T10:00:00Z",
+            summary = "<img src=\"https://example.com/summary-image.jpg\">",
+            content = "<img src=\"https://example.com/content-image.jpg\">",
+            images = EntryDTO.Images(
+                originalUrl = "https://example.com/original.jpg",
+                size1 = EntryDTO.Images.ResizedImage(cdnUrl = "https://images.feedbinusercontent.com/foobar/0123456789ab4cde8f0123456789abcd.jpg", width=542, height=304),
+            ),
+        )
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertEquals("https://images.feedbinusercontent.com/foobar/0123456789ab4cde8f0123456789abcd.jpg", result.imageUrl)
+    }
+
+    @Test
+    fun `mapToFeedItem falls back to images original url when CDN url is missing`() {
+        val entryDTO = createEntryDTO(
+            id = 10,
+            published = "2023-11-14T10:00:00Z",
+            summary = "Summary without image",
+            content = null,
+            images = EntryDTO.Images(originalUrl = "https://example.com/original.jpg"),
+        )
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertEquals("https://example.com/original.jpg", result.imageUrl)
+    }
+
+    @Test
     fun `mapToFeedItem extracts commentsUrl from content`() {
         val entryDTO = createEntryDTO(
             id = 10,
@@ -259,6 +301,7 @@ class EntryDTOMapperTest {
         published: String,
         summary: String?,
         content: String?,
+        images: EntryDTO.Images? = null,
     ): EntryDTO = EntryDTO(
         id = id,
         feedId = 20,
@@ -270,6 +313,7 @@ class EntryDTOMapperTest {
         extractedContentUrl = null,
         published = published,
         createdAt = "2023-11-14T10:00:00Z",
+        images = images,
     )
 
     private companion object {

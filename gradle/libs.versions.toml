@@ -48,7 +48,7 @@ io-coil = "3.6.3"
 # https://github.com/java-native-access/jna
 jsystem-theme-detector = "3.9.1"
 jewel = "0.41.0-262.10968.63"
-jewelPlatform = "262.10968.63"
+jewelPlatform = "262.11879.74"
 spectre = "0.7.1"
 junit = "4.13.2"
 junit-jupiter = "5.10.1"

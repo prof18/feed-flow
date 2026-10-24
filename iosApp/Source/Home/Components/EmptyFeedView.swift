@@ -12,8 +12,6 @@ import SwiftUI
 struct EmptyFeedView: View {
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass
-    @Environment(\.dismiss)
-    private var dismiss
 
     let currentFeedFilter: FeedFilter
     let nextFeedPreviewState: NextFeedPreviewState
@@ -47,15 +45,10 @@ struct EmptyFeedView: View {
             .padding(.top, Spacing.regular)
             .padding(.horizontal, Spacing.medium)
 
-            if columnVisibility != .all {
+            // A collapsed split view reports `.all` even though only the timeline column is on screen.
+            if horizontalSizeClass == .compact || columnVisibility != .all {
                 Button(
-                    action: {
-                        if horizontalSizeClass == .compact {
-                            dismiss()
-                        } else {
-                            openDrawer()
-                        }
-                    },
+                    action: openDrawer,
                     label: {
                         Text(feedFlowStrings.openAnotherFeed)
                             .frame(maxWidth: .infinity)

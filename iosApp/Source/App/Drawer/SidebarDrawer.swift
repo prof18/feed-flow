@@ -33,9 +33,8 @@ struct SidebarDrawer: View {
     @State private var showClearOldArticlesDialog = false
     @State private var expandedCategoryIds: Set<String> = []
     @State private var showDeleteCategoryDialog = false
-    @State private var showEditCategoryDialog = false
     @State private var categoryToDelete: String?
-    @State private var categoryToEdit: String?
+    @State private var categoryToEdit: EditCategoryRequest?
     @State private var editedCategoryName: String = ""
     @State private var showChangeCategorySheet = false
     @State private var showFeedSuggestionsSheet = false
@@ -202,7 +201,6 @@ struct SidebarDrawer: View {
             )
             .background(
                 EditCategoryDialog(
-                    isPresented: $showEditCategoryDialog,
                     categoryToEdit: $categoryToEdit,
                     editedCategoryName: $editedCategoryName,
                     validateCategoryName: validateCategoryName,
@@ -243,8 +241,7 @@ struct SidebarDrawer: View {
 
     func requestCategoryEdit(_ category: FeedSourceCategory) {
         editedCategoryName = category.title
-        categoryToEdit = category.id
-        showEditCategoryDialog = true
+        categoryToEdit = EditCategoryRequest(id: category.id)
     }
 
     func requestAllFeedsDeletion(in categoryId: String) {

@@ -18,9 +18,8 @@ struct CategoriesSection: View {
     let validateCategoryName: (String, CategoryName) -> CategoryNameValidationResult
 
     @State private var showDeleteCategoryDialog = false
-    @State private var showEditCategoryDialog = false
     @State private var categoryToDelete: String?
-    @State private var categoryToEdit: String?
+    @State private var categoryToEdit: EditCategoryRequest?
     @State private var editedCategoryName: String = ""
 
     var body: some View {
@@ -53,8 +52,7 @@ struct CategoriesSection: View {
                         .contextMenu {
                             Button {
                                 editedCategoryName = categoryItem.category.title
-                                categoryToEdit = categoryItem.category.id
-                                showEditCategoryDialog = true
+                                categoryToEdit = EditCategoryRequest(id: categoryItem.category.id)
                             } label: {
                                 Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
                             }
@@ -81,7 +79,6 @@ struct CategoriesSection: View {
             )
             .overlay(
                 EditCategoryDialog(
-                    isPresented: $showEditCategoryDialog,
                     categoryToEdit: $categoryToEdit,
                     editedCategoryName: $editedCategoryName,
                     validateCategoryName: validateCategoryName,

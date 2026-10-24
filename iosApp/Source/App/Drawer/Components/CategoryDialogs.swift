@@ -25,8 +25,7 @@ struct DeleteCategoryDialog: View {
 }
 
 struct EditCategoryDialog: View {
-    @Binding var isPresented: Bool
-    @Binding var categoryToEdit: String?
+    @Binding var categoryToEdit: EditCategoryRequest?
     @Binding var editedCategoryName: String
     let validateCategoryName: (String, CategoryName) -> CategoryNameValidationResult
     let onSave: (String, String) -> Void
@@ -34,23 +33,20 @@ struct EditCategoryDialog: View {
     var body: some View {
         EmptyView()
             .sheet(
-                isPresented: $isPresented,
+                item: $categoryToEdit,
                 onDismiss: {
-                    categoryToEdit = nil
                     editedCategoryName = ""
                 },
-                content: {
-                    if let categoryId = categoryToEdit {
-                        EditCategoryNameSheet(
-                            categoryId: categoryId,
-                            categoryName: $editedCategoryName,
-                            validateCategoryName: validateCategoryName,
-                            onSave: { newName in
-                                onSave(categoryId, newName)
-                                isPresented = false
-                            }
-                        )
-                    }
+                content: { request in
+                    EditCategoryNameSheet(
+                        categoryId: request.id,
+                        categoryName: $editedCategoryName,
+                        validateCategoryName: validateCategoryName,
+                        onSave: { newName in
+                            onSave(request.id, newName)
+                            categoryToEdit = nil
+                        }
+                    )
                 }
             )
     }

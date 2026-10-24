@@ -246,6 +246,7 @@ private struct AddCategoryNameSheet: View {
                     Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) {
                         dismiss()
                     }
+                    .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.addCategoryCloseButton)
                 }
             }
         }

@@ -156,7 +156,7 @@ struct AudioPlayerAccessory: View {
             .foregroundStyle(.secondary)
             .padding(.bottom, 5)
             HStack(spacing: 8) {
-                speedSelector
+                AudioPlaybackSpeedMenu()
                 if episode.kind != .speech {
                     Button {
                         playback.pause()
@@ -171,35 +171,6 @@ struct AudioPlayerAccessory: View {
                 }
             }
         }
-    }
-
-    private var speedSelector: some View {
-        Menu {
-            ForEach(AudioPlaybackController.supportedPlaybackSpeeds, id: \.self) { speed in
-                Button {
-                    playback.setPlaybackSpeed(speed)
-                } label: {
-                    if playback.selectedPlaybackSpeed == speed {
-                        Label(speedValueLabel(speed), systemImage: "checkmark")
-                    } else {
-                        Text(speedValueLabel(speed))
-                    }
-                }
-                .accessibilityIdentifier(AudioPlayerAccessibilityIdentifiers.speedOption(speed))
-            }
-        } label: {
-            Text(speedValueLabel(playback.selectedPlaybackSpeed))
-                .font(.caption.weight(.semibold))
-                .frame(minWidth: 44, minHeight: 44)
-                .contentShape(Rectangle())
-        }
-        .accessibilityLabel(feedFlowStrings.audioPlaybackSpeed)
-        .accessibilityValue(speedValueLabel(playback.selectedPlaybackSpeed))
-        .accessibilityIdentifier(AudioPlayerAccessibilityIdentifiers.speed)
-    }
-
-    private func speedValueLabel(_ speed: Double) -> String {
-        return "\(speed.formatted(.number.precision(.fractionLength(0...1))))×"
     }
 
     private var progress: Double {

@@ -180,9 +180,9 @@ jobs:
           /usr/bin/xcodebuild -version   
 
       # The iPhone Duo layout uses iOS 27.1 SDK APIs, which Xcode 27.0 doesn't have.
-      # Switch to the final 27.1 release once the xcode-27 runner image ships it.
+      # Xcode_27.1.app is the final release on current images and a symlink to the RC on older ones.
       - name: Select Xcode 27.1
-        run: sudo xcode-select -s /Applications/Xcode_27.1_Release_Candidate.app
+        run: sudo xcode-select -s /Applications/Xcode_27.1.app
 
       - name: Xcode version
         run: |

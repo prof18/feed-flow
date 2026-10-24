@@ -1,12 +1,12 @@
-FeedFlow este un cititor RSS minimalist destinat celor care doresc un flux
-simplu și ordonat cronologic — fără algoritmi, fără elemente care să aglomereze
-ecranul și fără zgomot. Doar fluxurile tale, în ordine.
+FeedFlow este un cititor RSS minimalist destinat celor care doresc o cronologie
+simplă și ordonată — fără algoritmi, fără elemente care să aglomereze ecranul și
+fără zgomot. Doar fluxurile tale, în ordine.
 
 Indiferent dacă urmărești site-uri de știri, bloguri sau canale YouTube prin
 RSS, FeedFlow îți oferă o modalitate rapidă și fără distrageri de a fi la curent
 cu tot ce te interesează.
 
-Citiți articole așa cum vă place
+Citește Articole în Felul Tău
 - Deschide articole în browserul tău implicit sau alege un browser special
   pentru sesiunile de lectură.
 - Folosește „Modul Cititor” pentru a citi articolul fără distrageri, cu
@@ -28,9 +28,9 @@ Sincronizează fluxurile pe toate dispozitivele tale
 - Schimbă între telefon, tabletă și computerul de birou fără a pierde locul în
   care te afli.
 
-Păstrează-ți lucrurile organizate cu fluxuri și categorii
-- Importați și exportați fluxuri cu OPML — migrați de la orice alt cititor RSS
-  sau de știri în doar câteva minute.
+Rămâi Organizat cu Fluxuri și Categorii
+- Importă și exportă fluxuri cu OPML — migrează de la orice alt cititor RSS sau
+  de știri în doar câteva minute.
 - Blochează cuvintele deranjante pentru a filtra conținutul nedorit din fluxul
   tău.
 - Organizează fluxurile RSS pe categorii și marchează articole pentru a le citi
@@ -38,7 +38,7 @@ Păstrează-ți lucrurile organizate cu fluxuri și categorii
 - Caută în toate fluxurile și articolele tale pentru a găsi rapid conținutul de
   care ai nevoie.
 
-O experiență de citire a știrilor pe care o controlați
+O experiență de citire a știrilor pe care tu o controlezi
 - Modul întunecat, modul luminos și tema neagră OLED pentru o lectură
   confortabilă atât ziua, cât și noaptea.
 - Actualizarea în fundal menține lista de știri la zi cu articole și postări
@@ -49,8 +49,8 @@ Conceput pentru RSS, Atom și Open Web
 - Abonează-te la bloguri, site-uri de știri, canale de YouTube și multe altele.
 - Nu este necesar niciun cont — adaugă fluxuri direct prin URL sau navighează
   sugestiile de fluxuri selectate cu grijă pentru a începe.
-- Importarea și exportarea în format OPML înseamnă că nu sunteți niciodată
-  limitat la o singură aplicație.
+- Importul și exportul în format OPML înseamnă că nu ești niciodată limitat la o
+  singură aplicație.
 
 Ideal pentru
 - Pasionații de știri care doresc un flux cronologic, fără recomandări
@@ -65,7 +65,7 @@ Ideal pentru
 De ce FeedFlow?
 - Nu există un flux algoritmic — fluxurile sunt întotdeauna în ordine
   cronologică.
-- Aplicație cu sursă deschisă, cu o comunitate activă și actualizări periodice.
+- Open source, cu o comunitate activă și actualizări periodice.
 - Disponibilă pe Android, iOS, macOS, Windows și Linux.
 - Tradusă în peste 25 de limbi de către colaboratori din întreaga lume.
 

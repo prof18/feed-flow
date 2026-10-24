@@ -25,18 +25,18 @@ Sincronizează fluxurile pe toate dispozitivele tale
   sau BazQux.
 - Fluxurile, starea de citire și marcajele rămân sincronizate pe Android, iOS,
   macOS, Windows și Linux.
-- Schimbați între telefon, tabletă și computerul de birou fără a pierde locul în
-  care vă aflați.
+- Schimbă între telefon, tabletă și computerul de birou fără a pierde locul în
+  care te afli.
 
 Păstrează-ți lucrurile organizate cu fluxuri și categorii
 - Importați și exportați fluxuri cu OPML — migrați de la orice alt cititor RSS
   sau de știri în doar câteva minute.
-- Blocați cuvintele-cheie cu multă activitate pentru a elimina conținutul
-  nedorit din fluxul dumneavoastră.
-- Organizați fluxurile RSS pe categorii și adăugați articole la marcaje pentru a
-  le citi mai târziu.
-- Căutați în toate fluxurile și articolele dumnravoastră pentru a găsi rapid
-  conținutul de care aveți nevoie.
+- Blochează cuvintele deranjante pentru a filtra conținutul nedorit din fluxul
+  tău.
+- Organizează fluxurile RSS pe categorii și marchează articole pentru a le citi
+  mai târziu.
+- Caută în toate fluxurile și articolele tale pentru a găsi rapid conținutul de
+  care ai nevoie.
 
 O experiență de citire a știrilor pe care o controlați
 - Modul întunecat, modul luminos și tema neagră OLED pentru o lectură
@@ -46,8 +46,8 @@ O experiență de citire a știrilor pe care o controlați
 
 Conceput pentru RSS, Atom și Open Web
 - Suport complet pentru formatele de flux RSS 2.0, RSS 1.0 și Atom.
-- Abonați-vă la bloguri, site-uri de știri, canale YouTube și multe altele.
-- Nu este necesar un cont — adăugați fluxuri direct prin URL sau răsfoiți
+- Abonează-te la bloguri, site-uri de știri, canale de YouTube și multe altele.
+- Nu este necesar niciun cont — adaugă fluxuri direct prin URL sau navighează
   sugestiile de fluxuri selectate cu grijă pentru a începe.
 - Importarea și exportarea în format OPML înseamnă că nu sunteți niciodată
   limitat la o singură aplicație.
@@ -69,5 +69,5 @@ De ce FeedFlow?
 - Disponibilă pe Android, iOS, macOS, Windows și Linux.
 - Tradusă în peste 25 de limbi de către colaboratori din întreaga lume.
 
-Preluați din nou controlul asupra știrilor și lecturilor preferate — descărcați
-FeedFlow chiar azi.
+Preia din nou controlul asupra știrilor și lecturii tale — descarcă FeedFlow
+azi.

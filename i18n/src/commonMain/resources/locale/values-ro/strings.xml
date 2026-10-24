@@ -508,7 +508,7 @@
     <string name="desktop_account_updating">Se actualizează contul…</string>
     <string name="desktop_dropbox_restart_authorization">Începe din nou</string>
     <string name="desktop_dropbox_code_required">Introdu codul de autorizare de la Dropbox.</string>
-    <string name="desktop_account_disconnect_title">Deconectezi contul?</string>
+    <string name="desktop_account_disconnect_title">Deconectați contul?</string>
     <string name="desktop_account_disconnect_message">FeedFlow va înceta sincronizarea cu acest cont. Îl poți reconecta mai târziu. Deconectarea nu restabilește abonamentele care au fost înlocuite în momentul conectării.</string>
     <string name="desktop_feed_selection_count">%d selectat</string>
     <string name="desktop_clear_feed_selection">Șterge selecția</string>
@@ -527,21 +527,4 @@
     <string name="desktop_settings_preview_title">Previzualizare</string>
     <string name="feed_suggestions_empty_catalog">Nu sunt disponibile sugestii de flux.</string>
     <string name="feed_suggestions_empty_category">Nu există sugestii de flux în această categorie.</string>
-    <string name="feed_suggestion_add_error">Nu s-a putut finaliza adăugarea acestui flux. Te rog să încerci din nou.</string>
-    <string name="feed_suggestion_update_error">Flux adăugat, dar actualizarea sa inițială nu s-a putut finaliza. Încearcă să-ți reîncarci fluxurile.</string>
-    <string name="feed_suggestion_refreshing">Reîncărcare articole…</string>
-    <string name="blocked_word_operation_error">Nu s-a putut actualiza acest cuvânt blocat. Te rog să încerci din nou.</string>
-    <string name="blocked_word_refresh_error">Cuvintele blocate salvate, dar lista articolelor nu s-a putut actualiza. Încearcă din nou.</string>
-    <string name="blocked_word_saving">Salvare cuvânt blocat…</string>
-    <string name="blocked_word_refreshing">Actualizare articole…</string>
-    <string name="blocked_word_added">Cuvânt blocat adăugat.</string>
-    <string name="blocked_word_removed">Cuvânt blocat eliminat.</string>
-    <string name="article_report_action">Raportează articol defect</string>
-    <string name="article_report_disclosure">Să trimit dezvoltatorului linkul către acest articol, versiunea aplicației și versiunea sistemului de operare? Nu vor fi trimise nici conținutul articolului, nici detaliile contului.</string>
-    <string name="article_report_send">Trimis</string>
-    <string name="article_report_sending">Se trimite raportul…</string>
-    <string name="article_report_sent">Raport trimis. Mulțumesc!</string>
-    <string name="article_report_failed">Nu s-a putut trimite raportul. Te rog să încerci din nou.</string>
-    <string name="desktop_expand_feed_category">Extinde %s</string>
-    <string name="desktop_collapse_feed_category">Restrânge %s</string>
 </resources>

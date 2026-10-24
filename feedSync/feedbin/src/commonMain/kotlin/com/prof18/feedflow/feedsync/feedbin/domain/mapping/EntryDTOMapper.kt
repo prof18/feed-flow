@@ -39,7 +39,7 @@ internal class EntryDTOMapper(
             title = entryDTO.title,
             subtitle = entryDTO.summary?.let { htmlParser.getTextFromHTML(it) },
             content = entryDTO.content?.takeIf { it.isNotBlank() } ?: entryDTO.summary,
-            imageUrl = ContentImageUrlExtractor.extractImageUrl(entryDTO.content ?: entryDTO.summary),
+            imageUrl = entryDTO.resolveImageUrl(),
             audioUrl = AudioEnclosure.audioUrlOrNull(
                 url = entryDTO.enclosure?.url,
                 mimeType = entryDTO.enclosure?.type,
@@ -58,4 +58,10 @@ internal class EntryDTOMapper(
             isBookmarked = isBookmarked,
         )
     }
+}
+
+private fun EntryDTO.resolveImageUrl(): String? {
+    return images?.size1?.cdnUrl
+        ?: images?.originalUrl
+        ?: ContentImageUrlExtractor.extractImageUrl(content ?: summary)
 }

@@ -19,8 +19,11 @@ appId: com.prof18.feedflow.debug
     visible:
       id: article_row_e2e_article_reader_success
     timeout: 10000
-# The field's Done action clears focus without issuing Back when the IME is already hidden.
-- pressKey: Enter
+# Maestro types through injected key events, which Gboard buffers as a composing word. A
+# hardware Enter then makes Gboard commit that buffer with its physical-keyboard autocorrect
+# ("Reader" became "Header" or "Readery") instead of reaching the field's Done action. The IME
+# is visible here, so hideKeyboard's Back only closes it and leaves the query as typed.
+- hideKeyboard
 - assertVisible:
     id: article_row_e2e_article_reader_success
 - assertVisible:
@@ -74,7 +77,10 @@ appId: com.prof18.feedflow.debug
     text: "Reader"
 - tapOn:
     id: search_query_field
-- pressKey: Enter
+- hideKeyboard
+- assertVisible:
+    id: search_query_field
+    text: "Reader"
 - assertVisible:
     id: article_row_e2e_article_reader_success
 - assertVisible:

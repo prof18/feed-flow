@@ -16,8 +16,12 @@ appId: com.prof18.feedflow.dev
     id: article_row_e2e_article_reader_success
 - assertVisible:
     text: "E2E Reader Mode Success[\\s\\S]*"
-- tapOn:
-    point: 50%,36%
+# The seeded article's lead image carries alt text, so the tap follows the image wherever the
+# title and byline push it instead of relying on a fixed screen point.
+- extendedWaitUntil:
+    visible: "E2E reader image"
+    timeout: 15000
+- tapOn: "E2E reader image"
 - assertVisible:
     id: reader_image_viewer
 - assertVisible:

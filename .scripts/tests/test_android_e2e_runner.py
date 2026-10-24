@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class AndroidRunnerTest(unittest.TestCase):
-    def run_fixture(self, restore_exit=0, explicit_device=None, image_point=None, flavor=None,
+    def run_fixture(self, restore_exit=0, explicit_device=None, flavor=None,
                     serial="owned-emulator", fdroid_overrides=False):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -67,8 +67,6 @@ class AndroidRunnerTest(unittest.TestCase):
             environment.pop("E2E_ANDROID_FLAVOR", None)
             if flavor is not None:
                 environment["E2E_ANDROID_FLAVOR"] = flavor
-            if image_point is not None:
-                environment["READER_IMAGE_POINT"] = image_point
             log.write_text("")
             result = subprocess.run(["bash", str(scripts / "run-android.sh")], env=environment,
                                     capture_output=True, text=True, timeout=10, check=False)
@@ -178,11 +176,12 @@ class AndroidRunnerTest(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
         self.assertNotIn("presence.yaml", commands)
 
-    def test_configured_image_point_reaches_maestro_environment(self):
-        result, commands = self.run_fixture(image_point="50%,50%")
+    def test_ordinary_flow_runs_without_extra_maestro_environment(self):
+        result, commands = self.run_fixture()
         self.assertEqual(0, result.returncode, result.stderr)
         normal = next(line for line in commands.splitlines() if "008-other.yaml" in line)
-        self.assertIn("test -e READER_IMAGE_POINT=50%,50%", normal)
+        self.assertIn("--platform android test ", normal)
+        self.assertNotIn(" -e ", normal)
 
 
 if __name__ == "__main__":

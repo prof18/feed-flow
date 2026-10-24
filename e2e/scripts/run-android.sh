@@ -120,8 +120,6 @@ for suite in $E2E_ANDROID_SUITES; do
     elif [ "$flow_file" = "$REPO_ROOT/e2e/maestro/android/regression/179-share-existing-feed.yaml" ]; then
       python3 "$SCRIPT_DIR/android_share_feed.py" --device "$ANDROID_SERIAL" \
         --flow "$flow_file" --output "$RUN_OUTPUT/share-feed" --parent-restores
-    elif [ -n "${READER_IMAGE_POINT:-}" ]; then
-      maestro --platform android test -e "READER_IMAGE_POINT=$READER_IMAGE_POINT" "$flow_file"
     else
       maestro --platform android test "$flow_file"
     fi

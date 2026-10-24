@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import html
+import json
 import os
 import re
 import shutil
@@ -24,6 +25,18 @@ SUITES = ("smoke", "regression")
 COMMAND_TIMEOUT_RETURN_CODE = 124
 MAESTRO_FLOW_TIMEOUT_SECONDS = 180
 MAESTRO_MAX_ATTEMPTS = 3
+ATC_LEASE_TTL_SECONDS = 900
+ATC_RENEW_INTERVAL_SECONDS = 120
+ATC_CLAIM_WAIT_SECONDS = 600
+CALLER_LEASE_TTL_SECONDS = 3600
+AUDIO_FLOWS = {
+    "174-podcast-audio-playback.yaml",
+    "175-now-playing-navigation.yaml",
+    "176-reader-speech-playback.yaml",
+}
+# Flows that e2e/scripts/run-android.sh drives through a native helper instead of plain Maestro.
+ANDROID_READER_TOOLTIP_FLOW = "e2e/maestro/android/smoke/007-reader-mode-core.yaml"
+ANDROID_SHARE_FEED_FLOW = "e2e/maestro/android/regression/179-share-existing-feed.yaml"
 PRINT_LOCK = threading.Lock()
 ANSI_PATTERN = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 
@@ -81,6 +94,26 @@ def parse_args() -> argparse.Namespace:
         "--output-dir",
         type=Path,
         help="Report directory. Defaults to .tmp/maestro-release-tests/<timestamp>.",
+    )
+    parser.add_argument(
+        "--android-serial",
+        help="Android device serial. Defaults to ANDROID_SERIAL, else the only connected device.",
+    )
+    parser.add_argument(
+        "--ios-udid",
+        help=f"iOS simulator UDID. Defaults to SIMULATOR_UDID, else the booted {IOS_SIMULATOR_NAME}.",
+    )
+    parser.add_argument(
+        "--maestro-env",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
+        help="Extra variable passed to every plain Maestro flow as -e KEY=VALUE. Repeatable.",
+    )
+    parser.add_argument(
+        "--no-atc",
+        action="store_true",
+        help="Do not reserve the devices with atc, even when it is installed.",
     )
     return parser.parse_args()
 
@@ -151,20 +184,39 @@ def run_command(
     return CommandResult(name=name, returncode=returncode, seconds=seconds, log_path=log_path)
 
 
+MAESTRO_INFRASTRUCTURE_TOKENS = (
+    "deviceserverdiedexception",
+    "device server died",
+    "statusruntimeexception: unavailable",
+    "deadline_exceeded",
+    "command failed (tcp:",
+    "deviceunreachableexception",
+    "device became unreachable",
+    "iosdrivertimeoutexception",
+    "ios driver not ready in time",
+)
+DEBUG_OUTPUT_PATTERN = re.compile(r"^(/\S+/\.maestro/tests/\S+)\s*$", re.MULTILINE)
+
+
+def maestro_debug_log_text(flow_log_text: str) -> str:
+    """Maestro prints driver failures only to the maestro.log in its debug output directory."""
+    texts = []
+    for match in DEBUG_OUTPUT_PATTERN.finditer(ANSI_PATTERN.sub("", flow_log_text)):
+        debug_log = Path(match.group(1)) / "maestro.log"
+        if debug_log.is_file():
+            texts.append(debug_log.read_text(encoding="utf-8", errors="replace"))
+    return "\n".join(texts)
+
+
+def has_infrastructure_failure(flow_log_text: str) -> bool:
+    lower = (flow_log_text + "\n" + maestro_debug_log_text(flow_log_text)).lower()
+    return any(token in lower for token in MAESTRO_INFRASTRUCTURE_TOKENS)
+
+
 def retryable_maestro_failure(result: CommandResult) -> bool:
     if result.returncode == COMMAND_TIMEOUT_RETURN_CODE:
         return True
-
-    lower = read_log_text(result.log_path).lower()
-    return any(
-        token in lower
-        for token in (
-            "deviceserverdiedexception",
-            "device server died",
-            "statusruntimeexception: unavailable",
-            "command failed (tcp:",
-        )
-    )
+    return has_infrastructure_failure(read_log_text(result.log_path))
 
 
 def run_maestro_command(
@@ -204,12 +256,12 @@ def run_maestro_command(
 
 def print_line(message: str) -> None:
     with PRINT_LOCK:
-        print(message)
+        print(message, flush=True)
 
 
 def print_text(message: str) -> None:
     with PRINT_LOCK:
-        print(message, end="")
+        print(message, end="", flush=True)
 
 
 def selected_platforms(platform_arg: str) -> tuple[str, ...]:
@@ -224,8 +276,176 @@ def selected_suites(suite_arg: str) -> tuple[str, ...]:
     return (suite_arg,)
 
 
-def setup_android(repo_root: Path, log_root: Path) -> list[CommandResult]:
+def preflight_failure(name: str, log_path: Path, message: str) -> CommandResult:
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log_path.write_text(message.rstrip() + "\n", encoding="utf-8")
+    print_line(f"\n==> {name}\n    {message}")
+    return CommandResult(name, 1, 0.0, log_path)
+
+
+def capture(args: list[str], cwd: Path) -> tuple[int, str]:
+    try:
+        completed = subprocess.run(
+            args, cwd=cwd, capture_output=True, text=True, timeout=60, check=False
+        )
+    except (OSError, subprocess.TimeoutExpired) as error:
+        return 1, str(error)
+    return completed.returncode, completed.stdout + completed.stderr
+
+
+def resolve_android_serial(requested: str | None, repo_root: Path) -> tuple[str | None, str]:
+    returncode, output = capture(["adb", "devices"], repo_root)
+    if returncode != 0:
+        return None, f"adb devices failed:\n{output}"
+    online = [
+        line.split()[0]
+        for line in output.splitlines()[1:]
+        if len(line.split()) >= 2 and line.split()[1] == "device"
+    ]
+    if requested:
+        if requested not in online:
+            return None, f"Android device {requested} is not connected and online. adb devices:\n{output}"
+        return requested, ""
+    if len(online) == 1:
+        return online[0], ""
+    if not online:
+        return None, "No online Android device. Connect one or pass --android-serial."
+    return None, (
+        "Several Android devices are online; choose one with --android-serial or ANDROID_SERIAL: "
+        + ", ".join(online)
+    )
+
+
+def resolve_ios_udid(requested: str | None, repo_root: Path) -> tuple[str | None, str]:
+    returncode, output = capture(["xcrun", "simctl", "list", "devices", "booted"], repo_root)
+    if returncode != 0:
+        return None, f"xcrun simctl list failed:\n{output}"
+    booted = {
+        match.group(1): line.strip()
+        for line in output.splitlines()
+        if (match := re.search(r"\(([A-Fa-f0-9-]{36})\)", line))
+    }
+    if requested:
+        if requested not in booted:
+            return None, f"Simulator {requested} is not booted. Booted simulators:\n{output}"
+        return requested, ""
+    for udid, line in booted.items():
+        if line.startswith(f"{IOS_SIMULATOR_NAME} ("):
+            return udid, ""
+    return None, f"No booted {IOS_SIMULATOR_NAME} simulator found. Boot it or pass --ios-udid."
+
+
+class AtcLeases:
+    """Reserves the test devices with atc so other agents and tools stay off them during the run.
+
+    Leases the session already held before the run are reused and left in place; leases the
+    runner creates are renewed while it runs and freed at the end.
+    """
+
+    def __init__(self, repo_root: Path, log_root: Path) -> None:
+        self.repo_root = repo_root
+        self.log_root = log_root
+        self.targets: dict[str, str] = {}
+        self.created: set[str] = set()
+        self.stop_event = threading.Event()
+        self.renew_thread: threading.Thread | None = None
+        if not os.environ.get("ATC_SESSION_ID"):
+            # Bind the leases to this process, so atc reclaims them if the runner dies.
+            os.environ["ATC_SESSION_ID"] = f"maestro-release-{os.getpid()}-{int(time.time())}"
+            os.environ["ATC_ANCHOR_PID"] = str(os.getpid())
+        self.session_id = os.environ["ATC_SESSION_ID"]
+
+    def session_holds(self, device_key: str) -> bool:
+        returncode, output = capture(["atc", "status", "--json"], self.repo_root)
+        if returncode != 0:
+            return False
+        try:
+            leases = json.loads(output).get("leases", {})
+        except json.JSONDecodeError:
+            return False
+        lease = leases.get(device_key)
+        return bool(lease) and lease.get("sessionId") == self.session_id
+
+    def claim(self, platform: str, target: str) -> CommandResult:
+        if platform == "android":
+            device_key = f"serial:{target}"
+            args = ["atc", "claim", "--serial", target]
+        else:
+            device_key = f"sim:{target}"
+            args = ["atc", "claim", "--ios", "--udid", target]
+        already_held = self.session_holds(device_key)
+        result = run_command(
+            f"{platform} atc claim",
+            [*args, "--ttl", str(ATC_LEASE_TTL_SECONDS), "--wait", str(ATC_CLAIM_WAIT_SECONDS)],
+            self.repo_root,
+            self.log_root / f"setup/{platform}/00-atc-claim.log",
+        )
+        if result.returncode == 0:
+            self.targets[platform] = target
+            if not already_held:
+                self.created.add(platform)
+            self.start_renewing()
+        return result
+
+    def start_renewing(self) -> None:
+        if self.renew_thread is not None:
+            return
+
+        def renew_loop() -> None:
+            while not self.stop_event.wait(ATC_RENEW_INTERVAL_SECONDS):
+                for platform, target in list(self.targets.items()):
+                    returncode, output = capture(
+                        ["atc", "renew", target, "--ttl", str(ATC_LEASE_TTL_SECONDS)], self.repo_root
+                    )
+                    if returncode != 0:
+                        print_line(f"Warning: atc renew for {platform} {target} failed: {output.strip()}")
+
+        self.renew_thread = threading.Thread(target=renew_loop, daemon=True)
+        self.renew_thread.start()
+
+    def release(self) -> None:
+        self.stop_event.set()
+        for platform, target in self.targets.items():
+            if platform not in self.created:
+                # The run's renewals shortened the caller's lease; hand it back with room to spare.
+                capture(["atc", "renew", target, "--ttl", str(CALLER_LEASE_TTL_SECONDS)], self.repo_root)
+        for platform in sorted(self.created):
+            target = self.targets[platform]
+            returncode, output = capture(["atc", "free", target], self.repo_root)
+            if returncode != 0:
+                print_line(f"Warning: atc free for {platform} {target} failed: {output.strip()}")
+            else:
+                print_line(f"Released atc lease for {platform} {target}.")
+
+
+def write_android_maestro_shim(log_root: Path, serial: str) -> Path:
+    """Binds Maestro calls without an explicit device (restore utility, helpers) to the serial."""
+    tools = log_root / "tools/android"
+    tools.mkdir(parents=True, exist_ok=True)
+    maestro_binary = shutil.which("maestro")
+    shim = tools / "maestro"
+    shim.write_text(
+        "#!/usr/bin/env bash\n"
+        "set -euo pipefail\n"
+        "for argument in \"$@\"; do\n"
+        "  case \"$argument\" in\n"
+        f"    --device|--udid|--device=*|--udid=*) exec {shlex_quote(str(maestro_binary))} \"$@\" ;;\n"
+        "  esac\n"
+        "done\n"
+        f"exec {shlex_quote(str(maestro_binary))} --device={shlex_quote(serial)} \"$@\"\n",
+        encoding="utf-8",
+    )
+    shim.chmod(0o755)
+    return tools
+
+
+def shlex_quote(value: str) -> str:
+    return "'" + value.replace("'", "'\"'\"'") + "'"
+
+
+def setup_android(repo_root: Path, log_root: Path, env: dict[str, str]) -> list[CommandResult]:
     results: list[CommandResult] = []
+    serial = env["ANDROID_SERIAL"]
     apk_path = repo_root / "androidApp/build/outputs/apk/googlePlay/debug/androidApp-googlePlay-debug.apk"
 
     results.append(
@@ -234,21 +454,23 @@ def setup_android(repo_root: Path, log_root: Path) -> list[CommandResult]:
             ["./gradlew", "--quiet", "--console=plain", ":androidApp:assembleGooglePlayDebug"],
             repo_root,
             log_root / "setup/android/01-build.log",
+            env=env,
         )
     )
     if results[-1].returncode != 0:
         return results
 
     if command_exists("android"):
-        install_args = ["android", "run", f"--apks={apk_path}"]
+        install_args = ["android", "run", f"--device={serial}", f"--apks={apk_path}"]
     else:
-        install_args = ["adb", "install", "-r", str(apk_path)]
+        install_args = ["adb", "-s", serial, "install", "-r", str(apk_path)]
     results.append(
         run_command(
             "android install",
             install_args,
             repo_root,
             log_root / "setup/android/02-install.log",
+            env=env,
         )
     )
     if results[-1].returncode != 0:
@@ -258,9 +480,10 @@ def setup_android(repo_root: Path, log_root: Path) -> list[CommandResult]:
         results.append(
             run_command(
                 "android launch",
-                ["adb", "shell", "monkey", "-p", ANDROID_APP_ID, "1"],
+                ["adb", "-s", serial, "shell", "monkey", "-p", ANDROID_APP_ID, "1"],
                 repo_root,
                 log_root / "setup/android/03-launch.log",
+                env=env,
             )
         )
         if results[-1].returncode != 0:
@@ -272,47 +495,15 @@ def setup_android(repo_root: Path, log_root: Path) -> list[CommandResult]:
             [str(repo_root / "e2e/scripts/push-android-fixtures.sh")],
             repo_root,
             log_root / "setup/android/04-fixtures.log",
+            env=env,
         )
     )
     return results
 
 
-def booted_ios_simulator_udid(repo_root: Path, log_root: Path) -> tuple[str | None, CommandResult]:
-    result = run_command(
-        "ios simulator lookup",
-        ["xcrun", "simctl", "list", "devices", "booted"],
-        repo_root,
-        log_root / "setup/ios/00-simulator-lookup.log",
-    )
-    if result.returncode != 0:
-        return None, result
-
-    text = result.log_path.read_text(encoding="utf-8", errors="replace")
-    for line in text.splitlines():
-        if f"{IOS_SIMULATOR_NAME} (" in line:
-            match = re.search(r"\(([A-Fa-f0-9-]{36})\)", line)
-            if match:
-                return match.group(1), result
-    return None, result
-
-
 def setup_ios(repo_root: Path, log_root: Path, env: dict[str, str]) -> list[CommandResult]:
     results: list[CommandResult] = []
-    simulator_udid = env.get("SIMULATOR_UDID")
-    if not simulator_udid:
-        simulator_udid, lookup_result = booted_ios_simulator_udid(repo_root, log_root)
-        results.append(lookup_result)
-    if not simulator_udid:
-        missing_log = log_root / "setup/ios/01-missing-simulator.log"
-        missing_log.parent.mkdir(parents=True, exist_ok=True)
-        missing_log.write_text(
-            f"No booted {IOS_SIMULATOR_NAME} simulator found. Boot it before running iOS E2E flows.\n",
-            encoding="utf-8",
-        )
-        results.append(CommandResult("ios simulator preflight", 1, 0.0, missing_log))
-        return results
-
-    env = {**env, "SIMULATOR_UDID": simulator_udid}
+    simulator_udid = env["SIMULATOR_UDID"]
     xcodeproj = repo_root / "iosApp/FeedFlow.xcodeproj"
     if not xcodeproj.is_dir():
         results.append(
@@ -339,7 +530,7 @@ def setup_ios(repo_root: Path, log_root: Path, env: dict[str, str]) -> list[Comm
                 "-scheme",
                 "FeedFlow",
                 "-destination",
-                f"platform=iOS Simulator,name={IOS_SIMULATOR_NAME}",
+                f"platform=iOS Simulator,id={simulator_udid}",
                 "-derivedDataPath",
                 str(derived_data_path),
                 "build",
@@ -386,17 +577,58 @@ def safe_log_name(flow_path: Path) -> str:
     return flow_path.stem.replace("/", "_") + ".log"
 
 
+def maestro_env_args(maestro_env: list[str]) -> list[str]:
+    args: list[str] = []
+    for assignment in maestro_env:
+        args.extend(["-e", assignment])
+    return args
+
+
+def flow_command(
+    platform: str,
+    relative_flow: Path,
+    env: dict[str, str],
+    log_root: Path,
+    maestro_env: list[str],
+) -> list[str]:
+    """Runs each flow the way e2e/scripts/run-android.sh and run-ios.sh do."""
+    if relative_flow.name in AUDIO_FLOWS:
+        return ["bash", "e2e/scripts/run-audio-playback.sh", platform, relative_flow.stem]
+    if platform == "android":
+        serial = env["ANDROID_SERIAL"]
+        helper_output = log_root / "helpers/android" / relative_flow.stem
+        if str(relative_flow) == ANDROID_READER_TOOLTIP_FLOW:
+            return [
+                "python3", "e2e/scripts/android_reader_tooltip.py", "--device", serial,
+                "--flow", str(relative_flow), "--output", str(helper_output), "--parent-restores",
+            ]
+        if str(relative_flow) == ANDROID_SHARE_FEED_FLOW:
+            return [
+                "python3", "e2e/scripts/android_share_feed.py", "--device", serial,
+                "--flow", str(relative_flow), "--output", str(helper_output), "--parent-restores",
+            ]
+        return [
+            "maestro", "--device", serial, "--platform", "android", "test",
+            *maestro_env_args(maestro_env), str(relative_flow),
+        ]
+    return [
+        "maestro", "--platform", "ios", "--device", env["SIMULATOR_UDID"], "test",
+        *maestro_env_args(maestro_env), str(relative_flow),
+    ]
+
+
 def run_flows(
     repo_root: Path,
     log_root: Path,
     platform: str,
     suites: tuple[str, ...],
     env: dict[str, str],
+    maestro_env: list[str],
 ) -> list[FlowResult]:
     results: list[FlowResult] = []
     for suite in suites:
         flows = flow_files(repo_root, platform, suite)
-        print(f"\n==> {platform} {suite}: {len(flows)} flows")
+        print_line(f"\n==> {platform} {suite}: {len(flows)} flows")
         for flow_path in flows:
             relative_flow = flow_path.relative_to(repo_root)
             log_path = log_root / "flows" / platform / suite / safe_log_name(flow_path)
@@ -429,26 +661,9 @@ def run_flows(
                         )
                     )
                     continue
-                args = [
-                    "maestro",
-                    "--platform",
-                    "ios",
-                    "--device",
-                    env["SIMULATOR_UDID"],
-                    "test",
-                    str(relative_flow),
-                ]
-            else:
-                args = ["maestro", "--platform", "android", "test", str(relative_flow)]
-            if flow_path.name in {
-                "174-podcast-audio-playback.yaml",
-                "175-now-playing-navigation.yaml",
-                "176-reader-speech-playback.yaml",
-            }:
-                args = ["bash", "e2e/scripts/run-audio-playback.sh", platform, flow_path.stem]
             command_result = run_maestro_command(
                 f"{platform} {suite} {flow_path.name}",
-                args,
+                flow_command(platform, relative_flow, env, log_root, maestro_env),
                 repo_root,
                 log_path,
                 env=env,
@@ -470,23 +685,37 @@ def setup_failed(results: list[CommandResult]) -> bool:
     return any(result.returncode != 0 for result in results)
 
 
-def update_ios_simulator_udid(env: dict[str, str], setup_results: list[CommandResult]) -> None:
-    if "SIMULATOR_UDID" in env:
-        return
-    lookup_logs = [
-        result.log_path
-        for result in setup_results
-        if result.name == "ios simulator lookup"
-    ]
-    if not lookup_logs:
-        return
-    text = lookup_logs[-1].read_text(encoding="utf-8", errors="replace")
-    for line in text.splitlines():
-        if f"{IOS_SIMULATOR_NAME} (" in line:
-            match = re.search(r"\(([A-Fa-f0-9-]{36})\)", line)
-            if match:
-                env["SIMULATOR_UDID"] = match.group(1)
-                return
+def prepare_platform(
+    repo_root: Path,
+    output_dir: Path,
+    platform: str,
+    env: dict[str, str],
+    requested_target: str | None,
+    leases: AtcLeases | None,
+) -> list[CommandResult]:
+    """Resolves the device, reserves it and binds every later command to it."""
+    log_path = output_dir / f"setup/{platform}/00-device.log"
+    if platform == "android":
+        target, problem = resolve_android_serial(requested_target, repo_root)
+    else:
+        target, problem = resolve_ios_udid(requested_target, repo_root)
+    if not target:
+        return [preflight_failure(f"{platform} device preflight", log_path, problem)]
+
+    results: list[CommandResult] = []
+    if leases is not None:
+        results.append(leases.claim(platform, target))
+        if results[-1].returncode != 0:
+            return results
+
+    if platform == "android":
+        env["ANDROID_SERIAL"] = target
+        tools = write_android_maestro_shim(output_dir, target)
+        env["PATH"] = f"{tools}{os.pathsep}{env.get('PATH', '')}"
+    else:
+        env["SIMULATOR_UDID"] = target
+    print_line(f"{platform} device: {target}")
+    return results
 
 
 def run_platform_tests(
@@ -495,23 +724,27 @@ def run_platform_tests(
     platform: str,
     suites: tuple[str, ...],
     base_env: dict[str, str],
+    requested_target: str | None,
+    leases: AtcLeases | None,
+    maestro_env: list[str],
 ) -> PlatformRunResult:
     env = base_env.copy()
-    if platform == "android":
-        setup_results = setup_android(repo_root, output_dir)
-    else:
-        setup_results = setup_ios(repo_root, output_dir, env)
-        update_ios_simulator_udid(env, setup_results)
+    setup_results = prepare_platform(repo_root, output_dir, platform, env, requested_target, leases)
+    if not setup_failed(setup_results):
+        if platform == "android":
+            setup_results.extend(setup_android(repo_root, output_dir, env))
+        else:
+            setup_results.extend(setup_ios(repo_root, output_dir, env))
 
     if setup_failed(setup_results):
         print_line(f"Skipping {platform} flows because setup failed.")
         return PlatformRunResult(platform, setup_results, [])
 
-    flow_results = run_flows(repo_root, output_dir, platform, suites, env)
+    flow_results = run_flows(repo_root, output_dir, platform, suites, env, maestro_env)
     restore_result: CommandResult | None = None
     if command_exists("feedflow-restore-dev-feeds"):
         restore_args = ["feedflow-restore-dev-feeds", "--platform", platform]
-        if platform == "ios" and env.get("SIMULATOR_UDID"):
+        if platform == "ios":
             restore_args.extend(["--simulator", env["SIMULATOR_UDID"]])
         restore_result = run_command(
             f"{platform} development-feed restore",
@@ -525,6 +758,11 @@ def run_platform_tests(
                 f"Warning: {platform} development-feed restore failed; "
                 f"see {restore_result.log_path}."
             )
+    else:
+        print_line(
+            f"Warning: feedflow-restore-dev-feeds is not installed; restore the {platform} "
+            "development feeds manually."
+        )
 
     return PlatformRunResult(
         platform,
@@ -606,14 +844,10 @@ def analyze_failure(log_path: Path, returncode: int, context: str) -> FailureAna
     lower = text.lower()
     evidence = failure_evidence(text)
 
-    if returncode == COMMAND_TIMEOUT_RETURN_CODE or any(
-        token in lower
-        for token in (
-            "command timed out",
-            "deviceserverdiedexception",
-            "device server died",
-            "statusruntimeexception: unavailable",
-        )
+    if (
+        returncode == COMMAND_TIMEOUT_RETURN_CODE
+        or "command timed out" in lower
+        or has_infrastructure_failure(text)
     ):
         return FailureAnalysis(
             "Maestro infrastructure / driver",
@@ -1079,49 +1313,72 @@ def main() -> int:
 
     platforms = selected_platforms(args.platform)
     suites = selected_suites(args.suite)
-    env = os.environ.copy()
 
     print_line(f"Repo root: {repo_root}")
     print_line(f"Report directory: {output_dir}")
 
-    missing_tools = [tool for tool in ("maestro",) if not command_exists(tool)]
-    if "android" in platforms and not command_exists("android") and not command_exists("adb"):
-        missing_tools.append("android or adb")
+    missing_tools = [tool for tool in ("maestro", "python3") if not command_exists(tool)]
+    if "android" in platforms and not command_exists("adb"):
+        missing_tools.append("adb")
     if "ios" in platforms:
         for tool in ("xcrun", "xcodebuild"):
             if not command_exists(tool):
                 missing_tools.append(tool)
+    invalid_env = [value for value in args.maestro_env if "=" not in value or value.startswith("=")]
+    if invalid_env:
+        print("Invalid --maestro-env (expected KEY=VALUE): " + ", ".join(invalid_env), file=sys.stderr)
+        return 2
     if missing_tools:
         print("Missing required tools: " + ", ".join(missing_tools), file=sys.stderr)
         return 2
 
+    leases: AtcLeases | None = None
+    if args.no_atc:
+        print_line("Device reservation disabled (--no-atc).")
+    elif command_exists("atc"):
+        leases = AtcLeases(repo_root, output_dir)
+    else:
+        print_line("Warning: atc is not installed; the devices are not reserved for this run.")
+    # Copy after AtcLeases may have set the session variables, so every child sees them.
+    env = os.environ.copy()
+    requested_targets = {
+        "android": args.android_serial or env.get("ANDROID_SERIAL"),
+        "ios": args.ios_udid or env.get("SIMULATOR_UDID"),
+    }
+
     setup_results: dict[str, list[CommandResult]] = {}
     flow_results: list[FlowResult] = []
 
-    if len(platforms) > 1:
-        print_line("Running platform suites in parallel.")
-        with ThreadPoolExecutor(max_workers=len(platforms)) as executor:
-            futures = {
-                platform: executor.submit(
-                    run_platform_tests,
-                    repo_root,
-                    output_dir,
-                    platform,
-                    suites,
-                    env,
-                )
-                for platform in platforms
-            }
-            platform_results = {platform: futures[platform].result() for platform in platforms}
-    else:
-        platform_results = {
-            platform: run_platform_tests(repo_root, output_dir, platform, suites, env)
-            for platform in platforms
-        }
+    def run_platform(platform: str) -> PlatformRunResult:
+        return run_platform_tests(
+            repo_root,
+            output_dir,
+            platform,
+            suites,
+            env,
+            requested_targets[platform],
+            leases,
+            args.maestro_env,
+        )
+
+    try:
+        if len(platforms) > 1:
+            print_line("Running platform suites in parallel.")
+            with ThreadPoolExecutor(max_workers=len(platforms)) as executor:
+                futures = {platform: executor.submit(run_platform, platform) for platform in platforms}
+                platform_results = {platform: futures[platform].result() for platform in platforms}
+        else:
+            platform_results = {platform: run_platform(platform) for platform in platforms}
+    finally:
+        if leases is not None:
+            leases.release()
 
     for platform in platforms:
         result = platform_results[platform]
-        setup_results[platform] = result.setup_results
+        # A failed restore leaves the device without its development feeds, so it fails the run.
+        setup_results[platform] = result.setup_results + (
+            [result.restore_result] if result.restore_result is not None else []
+        )
         flow_results.extend(result.flow_results)
 
     markdown_report_path = output_dir / "report.md"
@@ -1142,7 +1399,7 @@ def main() -> int:
 
     print_line(f"\nHTML report written: {html_report_path}")
     print_line(f"Markdown report written: {markdown_report_path}")
-    print_line(f"Failures: {failed_setup_count} setup, {failed_flow_count} flows")
+    print_line(f"Failures: {failed_setup_count} setup/restore, {failed_flow_count} flows")
     return 1 if failed_setup_count or failed_flow_count else 0
 
 

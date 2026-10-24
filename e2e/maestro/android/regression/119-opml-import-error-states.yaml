@@ -20,7 +20,7 @@ appId: com.prof18.feedflow.debug
 - tapOn: "Show roots"
 - tapOn:
     id: android:id/title
-    text: "^Downloads$"
+    text: "^Downloads?$"
 - tapOn:
     id: com.google.android.documentsui:id/option_menu_search
 - inputText: zz-feedflow-invalid-opml.xml
@@ -37,7 +37,7 @@ appId: com.prof18.feedflow.debug
 - tapOn: "Show roots"
 - tapOn:
     id: android:id/title
-    text: "^Downloads$"
+    text: "^Downloads?$"
 - tapOn:
     id: com.google.android.documentsui:id/option_menu_search
 - inputText: feedflow-valid-opml-smoke.xml

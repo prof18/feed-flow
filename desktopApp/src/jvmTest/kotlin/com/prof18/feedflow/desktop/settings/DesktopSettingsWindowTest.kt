@@ -33,11 +33,14 @@ import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.Text
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
+import java.awt.Desktop
 import java.awt.Dialog
 import java.awt.GraphicsEnvironment
+import java.awt.KeyboardFocusManager
 import java.awt.Window
 import java.util.concurrent.atomic.AtomicReference
 import javax.swing.SwingUtilities
@@ -202,10 +205,52 @@ class DesktopSettingsWindowTest {
         val afterActivation = readWindowSize(window)
         assertEquals(resized.width, afterActivation.width)
         assertEquals(resized.height, afterActivation.height)
+    }
+
+    @Test
+    fun `raising Settings gives the existing dialog keyboard focus`() {
+        val window = awaitSettingsWindow()
+        // The OS gives keyboard focus only to windows of the active application, and toFront() cannot steal
+        // activation from another app (macOS refuses it by design). When another app is frontmost, as on a
+        // shared machine running simulators or other agents, focus could never arrive. Activate the test JVM
+        // first, and skip rather than fail when the OS refuses.
+        assumeTrue(
+            "The OS did not make the test JVM the active application, so window focus cannot be observed",
+            awaitAppActive(),
+        )
+        compose.runOnIdle { activationRequest.value++ }
+        compose.waitForIdle()
+        assertSame(window, awaitSettingsWindow())
         var focused = false
         compose.waitUntil(timeoutMillis = WINDOW_START_TIMEOUT_MS) {
-            SwingUtilities.invokeAndWait { focused = window.isFocused }
+            SwingUtilities.invokeAndWait {
+                // Another app may take activation back while waiting; only the in-app focus target is under test.
+                if (!isAppActive()) requestAppForeground()
+                focused = window.isFocused
+            }
             focused
+        }
+    }
+
+    private fun awaitAppActive(): Boolean {
+        val deadline = System.currentTimeMillis() + WINDOW_START_TIMEOUT_MS
+        while (System.currentTimeMillis() < deadline) {
+            var active = false
+            SwingUtilities.invokeAndWait {
+                active = isAppActive()
+                if (!active) requestAppForeground()
+            }
+            if (active) return true
+            Thread.sleep(APP_ACTIVATION_POLL_MS)
+        }
+        return false
+    }
+
+    private fun isAppActive(): Boolean = KeyboardFocusManager.getCurrentKeyboardFocusManager().activeWindow != null
+
+    private fun requestAppForeground() {
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_REQUEST_FOREGROUND)) {
+            Desktop.getDesktop().requestForeground(false)
         }
     }
 
@@ -334,6 +379,7 @@ class DesktopSettingsWindowTest {
         const val SAVED_SCROLL_POSITION = 80
         const val WINDOW_START_TIMEOUT_MS = 10_000L
         const val WINDOW_RESIZE_TIMEOUT_MS = 2_000L
+        const val APP_ACTIVATION_POLL_MS = 100L
     }
 }
 

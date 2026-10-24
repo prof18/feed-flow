@@ -418,7 +418,9 @@ class E2eSeedRunner internal constructor(
     }
 
     private suspend fun applyAudioEpisodeSettings(audioUrl: String = SEED_AUDIO_URL) {
-        audioPositions.savePosition(SEED_AUDIO_ID, 0)
+        // Reader speech of the seeded episode is keyed separately; leaving it would make each run resume
+        // where the previous one stopped until playback ends mid-flow.
+        audioPositions.clearItemPositions(SEED_AUDIO_ID)
         databaseHelper.insertFeedItems(
             listOf(
                 feedItem(
@@ -687,6 +689,10 @@ class E2eSeedRunner internal constructor(
         const val SEED_ARTICLE_URL = "https://example.com/audio-notes"
         const val SEED_CONTROL_URL = "https://example.com/audio-control"
 
+        private const val READER_SUCCESS_IMAGE_URL =
+            "https://static-prod.cdnilpost.com/wp-content/uploads/2026/05/25/" +
+                "680x453/1779707841-GettyImages-113189195.jpg"
+
         private const val RTL_IMAGE_URL =
             "https://cdn.mos.cms.futurecdn.net/kDPsA7KqMQchuAKRoTZozb-1280-80.jpg"
 
@@ -952,8 +958,7 @@ class E2eSeedRunner internal constructor(
                 subtitle = "Seeded item with cached reader content",
                 feedSource = swiftWeekly,
                 url = "https://www.ilpost.it/2026/05/25/interstitium/",
-                imageUrl = "https://static-prod.cdnilpost.com/wp-content/uploads/2026/05/25/" +
-                    "680x453/1779707841-GettyImages-113189195.jpg",
+                imageUrl = READER_SUCCESS_IMAGE_URL,
                 content = FEED_CONTENT_NO_URL_HTML,
                 pubDateMillis = SEED_NOW_MILLIS - (ONE_HOUR_MILLIS * 9),
             ),
@@ -1034,8 +1039,12 @@ class E2eSeedRunner internal constructor(
             )
         }
 
+        // The leading image carries alt text so REG-111/166 can tap it by its accessibility label
+        // instead of a screen point that moves whenever the title or byline reflows. It also
+        // replaces the decorative (alt="") hero the reader would otherwise add.
         private const val READER_SUCCESS_HTML = """
             <article>
+              <p><img src="$READER_SUCCESS_IMAGE_URL" alt="E2E reader image"></p>
               <p>E2E cached reader content loaded from the seed fixture.</p>
             </article>
         """

@@ -51,4 +51,24 @@ class AudioPlaybackPositionRepositoryTest : KoinTestBase() {
         assertEquals(0L, restored.getPosition("episode-1"))
         assertEquals(3_000L, restored.getPosition("new-episode"))
     }
+
+    @Test
+    fun `clearing an item forgets its episode and spoken article positions only`() {
+        val settings = MapSettings()
+        val repository = AudioPlaybackPositionRepository(settings)
+        repository.savePosition("episode", 42_000)
+        repository.savePosition("speech:episode:content-a", 30_000)
+        repository.savePosition("speech:episode:content-b", 20_000)
+        repository.savePosition("episode-two", 10_000)
+        repository.savePosition("speech:episode-two:content", 5_000)
+
+        repository.clearItemPositions("episode")
+
+        val restored = AudioPlaybackPositionRepository(settings)
+        assertEquals(0L, restored.getPosition("episode"))
+        assertEquals(0L, restored.getPosition("speech:episode:content-a"))
+        assertEquals(0L, restored.getPosition("speech:episode:content-b"))
+        assertEquals(10_000L, restored.getPosition("episode-two"))
+        assertEquals(5_000L, restored.getPosition("speech:episode-two:content"))
+    }
 }

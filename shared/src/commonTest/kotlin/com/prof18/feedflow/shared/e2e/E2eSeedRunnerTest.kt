@@ -47,6 +47,8 @@ class E2eSeedRunnerTest : KoinTestBase() {
         val positions: AudioPlaybackPositionRepository by inject()
         positions.savePosition(E2eSeedRunner.SEED_AUDIO_ID, 55_000, 60_000)
         positions.savePosition("user-episode", 42_000)
+        val seededSpeechId = "speech:${E2eSeedRunner.SEED_AUDIO_ID}:content"
+        positions.savePosition(seededSpeechId, 70_000, 81_000)
         seedRunner.run(
             action = E2eSeedRunner.ACTION_RESET_AND_SEED,
             profileName = "audio-episode",
@@ -54,6 +56,7 @@ class E2eSeedRunnerTest : KoinTestBase() {
         )
         assertEquals(fixture, databaseHelper.getFeedItemAudioUrl(E2eSeedRunner.SEED_AUDIO_ID))
         assertEquals(0L, positions.getPosition(E2eSeedRunner.SEED_AUDIO_ID))
+        assertEquals(0L, positions.getPosition(seededSpeechId))
         assertEquals(42_000L, positions.getPosition("user-episode"))
         seedRunner.run(
             action = E2eSeedRunner.ACTION_RESET_AND_SEED,

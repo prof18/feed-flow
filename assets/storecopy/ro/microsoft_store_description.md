@@ -19,9 +19,9 @@ Citiți articole așa cum vă place
 - Preîncărcați și salvați în cache conținutul integral al articolului pentru
   citire offline.
 
-Sincronizați-vă fluxurile pe toate dispozitivele dumneavoastră
-- Păstrați totul la nivel local sau sincronizați cu mai multe servere de fundal.
-- Sincronizați spațiul de stocare în cloud cu Dropbox sau Google Drive.
+Sincronizează fluxurile pe toate dispozitivele tale
+- Păstrează totul local sau sincronizează cu multiple servere de fundal.
+- Sincronizarea spațiului de stocare în cloud cu Dropbox sau Google Drive.
 - Găzduire proprie și sincronizare cu serverul prin FreshRSS, Miniflux, Feedbin
   sau BazQux.
 - Fluxurile, starea de citire și marcajele rămân sincronizate pe Windows,

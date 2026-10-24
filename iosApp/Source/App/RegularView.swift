@@ -44,8 +44,7 @@ struct RegularView: View {
     let readerModeViewModel: ReaderModeViewModel
     let onOpenAudioEpisode: (AudioEpisode) -> Void
 
-    @State private var showEditFeedSheet = false
-    @State private var feedSourceToEdit: FeedSource?
+    @State private var feedSourceToEdit: EditFeedSheetItem?
     @State private var columnVisibility: NavigationSplitViewVisibility
     @State private var preferredCompactColumn: NavigationSplitViewColumn = .detail
 
@@ -100,8 +99,7 @@ struct RegularView: View {
                     showImportExportSheet.toggle()
                 },
                 onEditFeedClick: { feedSource in
-                    feedSourceToEdit = feedSource
-                    showEditFeedSheet.toggle()
+                    feedSourceToEdit = EditFeedSheetItem(feedSource: feedSource)
                 },
                 onDeleteFeedClick: { feedSource in
                     homeViewModel.deleteFeedSource(feedSource: feedSource)
@@ -234,13 +232,11 @@ struct RegularView: View {
             )
                 .environment(appState)
         }
-        .sheet(isPresented: $showEditFeedSheet) {
-            if let feedSource = feedSourceToEdit {
-                EditFeedScreen(feedSource: feedSource)
-                    .environment(appState)
-                    .environment(browserSelector)
-                    .toggleStyle(BlueToggleStyle())
-            }
+        .sheet(item: $feedSourceToEdit) { item in
+            EditFeedScreen(feedSource: item.feedSource)
+                .environment(appState)
+                .environment(browserSelector)
+                .toggleStyle(BlueToggleStyle())
         }
         .onChange(of: appState.pendingBrowserURL) { _, newURL in
             if let url = newURL {
@@ -266,7 +262,7 @@ struct RegularView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { _ in
             showAddFeedSheet = false
-            showEditFeedSheet = false
+            feedSourceToEdit = nil
             showSettings = false
             showSidebarSettingsSheet = false
             appState.regularNavigationPath = NavigationPath()

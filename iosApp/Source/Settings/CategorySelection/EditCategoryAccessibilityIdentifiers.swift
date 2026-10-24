@@ -3,6 +3,7 @@ enum EditCategoryAccessibilityIdentifiers {
     static let addCategoryButton = "edit_feed_category_sheet_add"
     static let addCategoryInput = "edit_feed_category_add_input"
     static let addCategoryConfirmButton = "edit_feed_category_add_confirm"
+    static let addCategoryCloseButton = "edit_feed_category_add_close"
     static let renameCategoryInput = "edit_feed_category_rename_input"
     static let renameCategorySaveButton = "edit_feed_category_rename_save"
 

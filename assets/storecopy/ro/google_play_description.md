@@ -17,10 +17,10 @@ Citiți articole așa cum vă place
 - Vizualizează pagina web originală sau treci la un format simplu și ușor de
   citit — alegerea îți aparține.
 
-Sincronizați-vă fluxurile pe toate dispozitivele dumneavoastră
-- Păstrați-vă totul la nivel local sau sincronizați-vă fluxurile între
-  dispozitive folosind mai multe servere de fundal.
-- Sincronizați spațiul de stocare în cloud cu Dropbox sau Google Drive.
+Sincronizează fluxurile pe toate dispozitivele tale
+- Păstrează totul local sau sincronizează fluxurile între dispozitive folosind
+  mai multe servere de fundal.
+- Sincronizarea spațiului de stocare în cloud cu Dropbox sau Google Drive.
 - Găzduire proprie și sincronizare cu serverul prin FreshRSS, Miniflux, Feedbin
   sau BazQux.
 - Fluxurile, starea de citire și marcajele rămân sincronizate pe Android, iOS,

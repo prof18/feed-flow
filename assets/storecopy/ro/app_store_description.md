@@ -5,7 +5,7 @@ Urmărește blogurile și site-urile de știri preferate într-o cronologie simp
 ordonată. Nu există algoritmi care să decidă ce vezi — doar fluxurile tale, în
 ordinea în care au fost publicate.
 
-Citește în felul tău
+Citește În Felul Tău
 - Deschide articolele în browser sau folosește „Modul Cititor” pentru o
   vizualizare simplă și ordonată.
 - Reglează dimensiunea textului și spațierea pentru o lectură confortabilă.
@@ -19,7 +19,7 @@ Sincronizează ceea ce se potrivește configurației tale
   găzduite pe cont propriu, precum FreshRSS, Miniflux, Feedbin și BazQux.
 - Progresul tău de citire te însoțește pretutindeni.
 
-Rămâneți organizat
+Rămâi Organizat
 - Importă și exportă fluxuri în format OPML.
 - Blochează cuvintele-cheie pentru a reduce zgomotul din anumite subiecte.
 - Categoriile, marcajele și funcția de căutare îți permit să ai totul la
@@ -30,7 +30,7 @@ Fă-l al tău
 - Actualizare în fundal, pentru ca fluxurile tale să fie mereu la zi.
 - Suportă formatele de flux RSS și Atom.
 
-Aplicație cu sursă deschisă și disponibilă pe toate dispozitivele tale. Tradusă
-în peste 25 de limbi de o comunitate internațională.
+Open source și disponibil pe toate dispozitivele tale. Tradus în peste 25 de
+limbi de o comunitate internațională.
 
 Preia din nou controlul asupra lecturii tale — încearcă FeedFlow chiar astăzi.

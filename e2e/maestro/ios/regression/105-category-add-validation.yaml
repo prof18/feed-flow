@@ -27,8 +27,17 @@ appId: com.prof18.feedflow.dev
 - assertVisible:
     id: edit_feed_category_add_confirm
     enabled: false
-- tapOn:
-    text: "Close"
+# Focusing the field raises the keyboard and moves the add sheet from its medium to its large
+# detent. A tap aimed from a hierarchy read mid-move hits the button's old position and misses,
+# so repeat it until the sheet is gone.
+- retry:
+    maxRetries: 3
+    commands:
+      - waitForAnimationToEnd
+      - tapOn:
+          id: edit_feed_category_add_close
+      - assertNotVisible:
+          id: edit_feed_category_add_input
 - tapOn:
     id: edit_feed_category_sheet_add
 - tapOn:

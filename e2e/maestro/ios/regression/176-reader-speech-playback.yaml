@@ -36,9 +36,11 @@ appId: com.prof18.feedflow.dev
     id: audio_pause
 - tapOn:
     id: audio_pause
+# Seek only about a quarter in: the speech track is ~80s and the rest of the flow
+# (episode switch, speech resume, 1.5x) must finish before it plays to the end.
 - swipe:
     start: 10%, 80%
-    end: 50%, 80%
+    end: 30%, 80%
     duration: 800
 - assertVisible:
     id: audio_position
@@ -65,11 +67,17 @@ appId: com.prof18.feedflow.dev
     text: "^(?!0:00$).+$"
 - tapOn:
     id: audio_playback_speed
+- extendedWaitUntil:
+    visible:
+      id: audio_playback_speed_1_5
+    timeout: 5000
 - tapOn:
     id: audio_playback_speed_1_5
-    retryTapIfNoChange: true
 - assertNotVisible:
     id: audio_playback_speed_1_5
+- assertVisible:
+    id: audio_playback_speed
+    text: "^1[.,]5×$"
 - assertVisible:
     id: audio_pause
 - tapOn:

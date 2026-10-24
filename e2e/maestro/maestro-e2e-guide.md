@@ -154,7 +154,7 @@ appId: com.prof18.feedflow.dev
 
 Import/export flows use deterministic files under `e2e/fixtures/`.
 
-- Android fixtures are pushed to `/sdcard/Download/` by `e2e/scripts/push-android-fixtures.sh`. Android 15's Downloads provider can show an unindexed nested folder as empty after `adb push`; the Downloads root exposes the raw fixture files. The import flows choose the Downloads navigation root, search the exact filename and select its document row.
+- Android fixtures are pushed to `/sdcard/Download/` by `e2e/scripts/push-android-fixtures.sh`. Android 15's Downloads provider can show an unindexed nested folder as empty after `adb push`; the Downloads root exposes the raw fixture files. The import flows choose the Downloads navigation root (`^Downloads?$`: Android 13 labels it "Download"), search the exact filename and select its document row.
 - iOS fixtures are copied into the app Documents directory and the simulator Files provider by `e2e/scripts/push-ios-fixtures.sh`.
 - The OPML fixture is named `feedflow-valid-opml-smoke.xml` so Android DocumentsUI exposes it through the Documents filter, but its contents are OPML.
 - iOS Files may focus a grid item on the first tap; SM-011 deliberately double taps fixture thumbnails.
@@ -165,7 +165,9 @@ Run Android SM-007 through `e2e/scripts/run-android.sh` (or its smoke wrapper). 
 
 Set `ANDROID_SERIAL` to select a private compatible device when several are connected. The runner binds installation, fixtures, assertions and development-feed restoration to that device; a failed restore makes the run fail. Results and split JUnit reports remain under `.tmp/android-e2e.*/reader-tooltip/`. Directly running the original YAML retains its stationary gesture and can still fail; use the runner for this coverage. The helper requires `--parent-restores` because its caller must arrange restoration even after failure. A tooltip assertion or touch-release failure never passes or skips into the reader tail.
 
-For a device that needs the existing reader-image point override, set `READER_IMAGE_POINT` when invoking the suite runner. It forwards the value as Maestro `-e READER_IMAGE_POINT=...`; a host variable alone is not sufficient for direct Maestro invocation. Unset configuration preserves the YAML defaults. The isolated Pixel7 image-viewer/rotation journeys use `READER_IMAGE_POINT='50%,50%'`; inspect captured command variables before treating configuration as effective.
+The reader image-viewer journeys (REG-111 on both platforms, Android REG-166) tap the seeded `reader-mode` article's lead image by its alt text, `E2E reader image`. The reader's own hero image is decorative (`alt=""`) and invisible to Maestro, so a screen point was the only way to reach it and it drifted whenever the title or byline changed height. The image loads from the network; the flows wait for it before tapping.
+
+Android search (REG-171) dismisses the keyboard with `hideKeyboard`, never `pressKey: Enter`. Maestro types through injected key events, which Gboard buffers as a composing word; a hardware Enter makes Gboard commit that word through its physical-keyboard correction ("Reader" became "Header" or "Readery") instead of reaching the field's Done action. Typing on the on-screen keyboard does not go through that path.
 
 ## Writing A New Flow
 

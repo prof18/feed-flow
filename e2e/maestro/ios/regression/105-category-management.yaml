@@ -17,8 +17,17 @@ appId: com.prof18.feedflow.dev
     id: edit_feed_category_rename_input
 - eraseText: 100
 - inputText: "E2E Renamed Category"
-- tapOn:
-    id: edit_feed_category_rename_save
+# The keyboard moves the rename sheet to its large detent and its content shifts after typing.
+# A tap aimed from a hierarchy read before the layout settles hits the button's old position and
+# misses, so repeat it until the sheet is gone.
+- retry:
+    maxRetries: 3
+    commands:
+      - waitForAnimationToEnd
+      - tapOn:
+          id: edit_feed_category_rename_save
+      - assertNotVisible:
+          id: edit_feed_category_rename_input
 - assertVisible: "E2E Renamed Category"
 - longPressOn:
     id: drawer_category_e2e_category_technology

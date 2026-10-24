@@ -28,6 +28,20 @@ class AudioPlaybackPositionRepository(private val settings: Settings) {
         settings.putString(POSITIONS_KEY, Json.encodeToString(positions))
     }
 
+    /**
+     * Forgets the item's podcast position and every spoken-article position derived from it. Platforms key
+     * reader speech as `speech:<itemId>:<contentKey>`, so a fresh start of the item must clear those too.
+     */
+    fun clearItemPositions(itemId: String) = lock.withLock {
+        if (itemId.isBlank()) return@withLock
+        val positions = readPositions()
+        val speechPrefix = "$SPEECH_PLAYBACK_PREFIX$itemId:"
+        val remaining = positions.filterKeys { it != itemId && !it.startsWith(speechPrefix) }
+        if (remaining.size != positions.size) {
+            settings.putString(POSITIONS_KEY, Json.encodeToString(remaining))
+        }
+    }
+
     private fun readPositions(): Map<String, Long> {
         val stored = settings.getStringOrNull(POSITIONS_KEY) ?: return emptyMap()
         return try {
@@ -40,5 +54,6 @@ class AudioPlaybackPositionRepository(private val settings: Settings) {
     private companion object {
         const val POSITIONS_KEY = "audio_playback_positions"
         const val MAX_SAVED_EPISODES = 200
+        const val SPEECH_PLAYBACK_PREFIX = "speech:"
     }
 }

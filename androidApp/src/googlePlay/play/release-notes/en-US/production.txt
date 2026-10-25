@@ -1,5 +1,6 @@
-• Reader Mode has a brand-new engine for cleaner, more reliable articles. If a page doesn't look right, I'd love your feedback!
-• Reader Mode now supports fullscreen videos and keeps your position when you rotate the device
-• Much more reliable Google Drive and Dropbox sync, with no lost edits or read states
-• Better feed loading for sites that block requests, plus easier YouTube channel adding
-• The article list no longer jumps while marking as read on scroll
+• Listen to podcast episodes right in FeedFlow
+• Have articles read aloud in Reader Mode, in a voice that matches the article's language
+• New home screen widgets you can customize, with an optional refresh button
+• The new Reader Mode engine is now the default. If an article doesn't look right, report it with one tap
+• Follow YouTube playlists and hide Shorts from channels
+• Feeds from sites that block requests load more reliably, with clearer error messages

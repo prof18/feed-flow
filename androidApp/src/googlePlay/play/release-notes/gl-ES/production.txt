@@ -1,5 +1,6 @@
-• O modo de lectura estrea motor para artigos máis limpos e fiables. Se unha páxina non se ve ben, encantaríame a túa opinión!
-• Vídeos a pantalla completa no modo de lectura e posición conservada ao xirar
-• Sincronización con Google Drive e Dropbox moito máis fiable, sen perder cambios
-• Mellor carga de sitios que bloquean solicitudes e máis doado engadir canles de YouTube
-• A lista xa non salta ao marcar como lido ao desprazarte
+• Escoita episodios de podcast directamente en FeedFlow
+• Escoita os artigos en voz alta no modo lectura, cunha voz no idioma do artigo
+• Novos widgets personalizables para a pantalla de inicio, cun botón de actualizar opcional
+• O novo motor do modo lectura xa é o predeterminado. Se un artigo non se ve ben, denúncialo cun toque
+• Segue listas de reprodución de YouTube e oculta os Shorts das canles
+• As fontes de sitios que bloquean solicitudes cargan de forma máis fiable, con erros máis claros

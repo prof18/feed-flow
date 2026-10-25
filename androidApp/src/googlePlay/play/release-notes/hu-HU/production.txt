@@ -1,5 +1,6 @@
-• Az olvasó mód új motort kapott a tisztább, megbízhatóbb cikkekért. Ha egy oldal hibás, szívesen fogadom a visszajelzést!
-• Teljes képernyős videók olvasó módban, forgatáskor megmarad a pozíció
-• Sokkal megbízhatóbb Google Drive- és Dropbox-szinkron, elveszett módosítások nélkül
-• Jobb betöltés a kéréseket blokkoló oldalakról és egyszerűbb YouTube-csatorna-hozzáadás
-• A lista már nem ugrál görgetés közbeni olvasottnak jelöléskor
+• Hallgass podcastepizódokat közvetlenül a FeedFlow-ban
+• Felolvastathatod a cikkeket olvasó módban, a cikk nyelvének megfelelő hangon
+• Új, testreszabható kezdőképernyő-widgetek opcionális frissítés gombbal
+• Mostantól az új olvasó mód motor az alapértelmezett. Ha egy cikk nem jól jelenik meg, jelentsd egy koppintással
+• Kövess YouTube-lejátszási listákat, és rejtsd el a csatornák Shorts videóit
+• A kéréseket blokkoló oldalak hírcsatornái megbízhatóbban töltődnek be, érthetőbb hibaüzenetekkel

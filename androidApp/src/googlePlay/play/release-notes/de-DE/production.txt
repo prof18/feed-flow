@@ -1,5 +1,6 @@
-• Der Lesemodus hat eine neue Engine für sauberere, zuverlässigere Artikel. Sieht eine Seite falsch aus, freue ich mich über Feedback!
-• Vollbildvideos im Lesemodus; die Position bleibt beim Drehen erhalten
-• Viel zuverlässigere Synchronisierung mit Google Drive und Dropbox ohne verlorene Änderungen
-• Besseres Laden blockierender Websites und einfacheres Hinzufügen von YouTube-Kanälen
-• Die Liste springt beim Als-gelesen-Markieren durch Scrollen nicht mehr
+• Hör Podcast-Folgen direkt in FeedFlow
+• Lass dir Artikel im Lesemodus vorlesen, mit einer Stimme in der Sprache des Artikels
+• Neue anpassbare Widgets für den Startbildschirm, optional mit Aktualisieren-Taste
+• Die neue Lesemodus-Engine ist jetzt Standard. Sieht ein Artikel falsch aus, melde ihn mit einem Tipp
+• Folge YouTube-Playlists und blende Shorts von Kanälen aus
+• Feeds von Seiten, die Anfragen blockieren, laden zuverlässiger, mit klareren Fehlermeldungen

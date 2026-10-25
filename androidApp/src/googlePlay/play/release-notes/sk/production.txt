@@ -1,5 +1,6 @@
-• Režim čítania má nový engine pre čistejšie a spoľahlivejšie články. Ak stránka nevyzerá správne, rád si prečítam spätnú väzbu!
-• Videá na celú obrazovku v režime čítania a zachovaná pozícia pri otočení
-• Oveľa spoľahlivejšia synchronizácia s Google Drive a Dropbox bez straty úprav
-• Lepšie načítanie stránok blokujúcich požiadavky a jednoduchšie pridávanie kanálov YouTube
-• Zoznam už neposkakuje pri označovaní ako prečítané počas posúvania
+• Počúvajte epizódy podcastov priamo vo FeedFlow
+• Nechajte si čítať články nahlas v režime čítania, hlasom v jazyku článku
+• Nové prispôsobiteľné miniaplikácie na plochu s voliteľným tlačidlom obnovenia
+• Nový engine režimu čítania je teraz predvolený. Ak článok nevyzerá správne, nahláste ho jedným ťuknutím
+• Sledujte playlisty na YouTube a skryte Shorts z kanálov
+• Kanály zo stránok, ktoré blokujú požiadavky, sa načítajú spoľahlivejšie a s jasnejšími chybovými hláseniami

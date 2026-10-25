@@ -1,5 +1,6 @@
-• O modo de leitura ganhou um novo mecanismo para artigos mais limpos e confiáveis. Se uma página não ficar certa, adoraria seu feedback!
-• Vídeos em tela cheia no modo de leitura e posição mantida ao girar
-• Sincronização com Google Drive e Dropbox bem mais confiável, sem perder edições
-• Melhor carregamento de sites que bloqueiam solicitações e canais do YouTube mais fáceis de adicionar
-• A lista não pula mais ao marcar como lido na rolagem
+• Ouça episódios de podcast direto no FeedFlow
+• Ouça os artigos em voz alta no modo leitura, com uma voz no idioma do artigo
+• Novos widgets personalizáveis para a tela inicial, com botão de atualizar opcional
+• O novo mecanismo do modo leitura agora é o padrão. Se um artigo não aparecer direito, denuncie com um toque
+• Siga playlists do YouTube e oculte os Shorts dos canais
+• Feeds de sites que bloqueiam solicitações carregam de forma mais confiável, com erros mais claros

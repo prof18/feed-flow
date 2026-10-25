@@ -1,5 +1,6 @@
-• La modalità lettura ha un nuovo motore per articoli più puliti e affidabili. Se una pagina non si vede bene, scrivimi!
-• Video a schermo intero in modalità lettura e posizione mantenuta alla rotazione
-• Sincronizzazione Google Drive e Dropbox molto più affidabile, senza modifiche perse
-• Caricamento migliore dai siti che bloccano le richieste e canali YouTube più facili da aggiungere
-• L'elenco non salta più segnando come letto durante lo scorrimento
+• Ascolta gli episodi dei podcast direttamente in FeedFlow
+• Ascolta gli articoli letti ad alta voce in modalità lettura, nella loro lingua
+• Nuovi widget personalizzabili per la Home, con pulsante di aggiornamento opzionale
+• Il nuovo motore della modalità lettura è ora quello predefinito. Se un articolo non si vede bene, segnalalo con un tocco
+• Segui le playlist di YouTube e nascondi gli Shorts dei canali
+• I feed dei siti che bloccano le richieste si caricano meglio, con errori più chiari

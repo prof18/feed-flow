@@ -1,5 +1,6 @@
-• Le mode lecture a un nouveau moteur pour des articles plus propres et fiables. Une page mal affichée ? Vos retours me seront précieux !
-• Vidéos en plein écran en mode lecture et position conservée à la rotation
-• Synchronisation Google Drive et Dropbox bien plus fiable, sans perte de modifications
-• Meilleur chargement des sites qui bloquent les requêtes et ajout facile des chaînes YouTube
-• La liste ne saute plus lors du marquage comme lu au défilement
+• Écoutez des épisodes de podcast directement dans FeedFlow
+• Écoutez les articles lus à voix haute en mode lecture, dans leur langue
+• Nouveaux widgets personnalisables pour l'écran d'accueil, avec bouton d'actualisation
+• Le nouveau moteur du mode lecture est désormais par défaut. Article mal affiché ? Signalez-le d'un geste
+• Suivez des playlists YouTube et masquez les Shorts des chaînes
+• Les flux des sites qui bloquent les requêtes se chargent mieux, avec des erreurs plus claires

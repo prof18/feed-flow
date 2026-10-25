@@ -1,5 +1,6 @@
-• Lasīšanas režīmam ir jauns dzinējs tīrākiem un uzticamākiem rakstiem. Ja lapa izskatās nepareizi, gaidīšu atsauksmes!
-• Pilnekrāna video lasīšanas režīmā un pozīcija saglabājas, pagriežot ierīci
-• Daudz uzticamāka Google Drive un Dropbox sinhronizācija bez zaudētām izmaiņām
-• Labāka ielāde no vietnēm, kas bloķē pieprasījumus, un vieglāka YouTube kanālu pievienošana
-• Saraksts vairs nelec, ritinot un atzīmējot kā izlasītu
+• Klausieties podkāstu epizodes tieši FeedFlow
+• Ļaujiet lasīšanas režīmā nolasīt rakstus skaļi ar balsi raksta valodā
+• Jauni pielāgojami sākuma ekrāna logrīki ar izvēles atsvaidzināšanas pogu
+• Jaunais lasīšanas režīma dzinējs tagad ir noklusējuma. Ja raksts neizskatās pareizi, ziņojiet par to ar vienu pieskārienu
+• Sekojiet YouTube atskaņošanas sarakstiem un paslēpiet kanālu Shorts
+• Plūsmas no vietnēm, kas bloķē pieprasījumus, ielādējas uzticamāk, ar skaidrākiem kļūdu ziņojumiem

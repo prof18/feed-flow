@@ -66,7 +66,8 @@ All platforms use the same bullet format: one `• ` bullet per line, one senten
 
 ### iOS and macOS (App Store)
 
-- iOS and macOS are separate apps with separate copy. Highlight the changes each platform actually gets: scrolling and iPad on iOS, windows and keyboard on macOS.
+- iOS gets the full changelog: one complete list of every user-visible change that reaches the iOS app, with no 4–5 bullet cap.
+- The macOS App Store app is the desktop build, not the iOS app. Its notes are the shared desktop list (see "Desktop list" below), not the iOS list.
 - Same simple bullet list as the other platforms, with no headers. Example:
   ```
   • Reader Mode has a brand-new engine that gives cleaner, more reliable articles. If a page doesn't look right, I'd love to hear your feedback.
@@ -75,15 +76,20 @@ All platforms use the same bullet format: one `• ` bullet per line, one senten
 - File: `assets/storecopy/app-store-release-notes.json`, shaped as `{ "ios": { "<locale>": [bullets] }, "macos": { "<locale>": [bullets] } }`. Each bullet string includes the leading `• `.
 - The keys are App Store Connect locale codes: `en-US`, `de-DE`, `es-ES`, `fr-FR`, `he`, `hu`, `it`, `ja`, `pt-BR`, `ru`, `sk`, `uk`, `vi`, `zh-Hans`. If App Store Connect may have gained or lost a language, confirm the list with a read-only `asc` query.
 
+### Desktop list (macOS, Windows, Linux)
+
+- macOS, Windows and Linux share one full list of every user-visible change that reaches the desktop app, with no bullet cap. Use the same bullets in the App Store `macos` entry, the Microsoft Store notes and the Flatpak release.
+- Leave out mobile-only features (widgets, reader read-aloud, in-app podcast playback, iPhone/iPad layouts). Drop a bullet from one store only when that build lacks the feature, such as Google Drive on Flatpak.
+
 ### Windows (Microsoft Store)
 
 - File: `assets/storecopy/microsoft-store-release-notes.json`. It keeps the top-level `notes` object. Each locale value is an array of bullet strings that include the leading `• `.
 - Update every existing locale key. Alias keys (`de`/`de-de`, `es`/`es-es`, `gl`/`gl-es`, `zh-cn`/`zh-hans`) get identical text. A missing locale fails the publish.
-- Include Windows-only fixes (for example Google Drive sign-in). Mention only the sync providers the Windows app has.
+- Use the desktop list. Mention only the sync providers the Windows app has.
 
 ### Linux (Flatpak)
 
-- File: `desktopApp/packaging/flatpak/com.prof18.feedflow.metainfo.xml`. Add a new `<release>` as the first child of `<releases>`, using the version from the `com.feedflow.versioning` convention plugin and the release date. English only.
+- File: `desktopApp/packaging/flatpak/com.prof18.feedflow.metainfo.xml`. Add a new `<release>` as the first child of `<releases>`, using the version from the `com.feedflow.versioning` convention plugin and the release date. English only, using the desktop list: one `<p>` per bullet, without the leading `• `.
   ```xml
     <release version="X.X.X" date="YYYY-MM-DD">
         <description>

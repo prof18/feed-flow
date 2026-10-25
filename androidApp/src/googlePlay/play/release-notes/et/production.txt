@@ -1,5 +1,6 @@
-• Lugemisrežiimil on uus mootor puhtamate ja usaldusväärsemate artiklite jaoks. Kui leht ei näe õige välja, ootan tagasisidet!
-• Täisekraanvideod lugemisrežiimis ja asukoht säilib pööramisel
-• Palju usaldusväärsem Google Drive'i ja Dropboxi sünkroonimine ilma kaotatud muudatusteta
-• Parem laadimine päringuid blokeerivatelt saitidelt ja lihtsam YouTube'i kanalite lisamine
-• Loend ei hüppa enam kerimisel loetuks märkimise ajal
+• Kuula taskuhäälingu episoode otse FeedFlow's
+• Lase artikleid lugemisrežiimis ette lugeda artikli keelele vastava häälega
+• Uued kohandatavad avaekraani vidinad valikulise värskendusnupuga
+• Uus lugemisrežiimi mootor on nüüd vaikimisi. Kui artikkel ei näe õige välja, teata sellest ühe puudutusega
+• Jälgi YouTube'i esitusloendeid ja peida kanalite Shorts-videod
+• Päringuid blokeerivate saitide vood laadivad usaldusväärsemalt ja veateated on selgemad

@@ -42,11 +42,12 @@ glance = "1.2.0"
 google-services = "4.5.0"
 immutable-collections = "0.5.2"
 io-coil = "3.6.3"
-# desktopApp/resources-sandbox/macos-arm64/libjnidispatch.jnilib must match the resolved JNA (currently 5.17.0, from
+# desktopApp/resources-sandbox/macos-arm64/libjnidispatch.dylib must match the resolved JNA (currently 5.17.0, from
 # Jewel), or the Mac App Store build crashes at launch with "incompatible JNA native library".
 # Check with `./gradlew :desktopApp:dependencyInsight --configuration jvmRuntimeClasspath --dependency net.java.dev.jna:jna`.
-# When JNA changes, extract com/sun/jna/darwin-aarch64/libjnidispatch.jnilib from that jna-<version>.jar
-# and sign it with the Mac App Store certificate (see AGENTS.md).
+# When JNA changes, extract com/sun/jna/darwin-aarch64/libjnidispatch.jnilib from that jna-<version>.jar and save it
+# as libjnidispatch.dylib, like libsqlitejdbc.dylib: jpackage re-signs .dylib files with the provisioning-profile
+# certificate in CI but leaves .jnilib files as committed, which App Store Connect rejects (error 90284).
 jsystem-theme-detector = "3.9.1"
 jewel = "0.41.0-262.10968.63"
 jewelPlatform = "262.10968.63"

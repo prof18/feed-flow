@@ -39,6 +39,33 @@ function phoneDevice(d, platformId, assetBase, canvasW, centre) {
   </div>`;
 }
 
+// `composite`: framed captures (device chrome already rendered in by the
+// `frames` CLI) laid over each other. The renderer positions and scales the
+// union of the layers, so layer x/y are board coordinates and the arrangement
+// moves and shrinks as one unit. `shadow` is a CSS drop-shadow() argument list:
+// the framed PNGs are transparent around the bezel, so box-shadow would draw a
+// rectangle.
+function composite(c, platformId, assetBase, canvasW, centre) {
+  const minX = Math.min(...c.images.map((i) => i.x));
+  const minY = Math.min(...c.images.map((i) => i.y));
+  const w = Math.max(...c.images.map((i) => i.x + i.w)) - minX;
+  const h = Math.max(...c.images.map((i) => i.y + i.h)) - minY;
+  const left = centre ? (canvasW - w) / 2 : minX;
+  const layers = c.images
+    .map(
+      (i) =>
+        `<img class="capture" src="${assetBase}/captures/${platformId}/${i.capture}" style="left:${px(
+          i.x - minX
+        )};top:${px(i.y - minY)};width:${px(i.w)};height:${px(i.h)}${
+          i.shadow ? `;filter:drop-shadow(${i.shadow})` : ''
+        }${i.fit ? `;object-fit:${i.fit}` : ''}" alt="">`
+    )
+    .join('');
+  return `<div class="device composite" style="left:${px(left)};width:${px(w)};height:${px(
+    h
+  )}">${layers}</div>`;
+}
+
 function comparison(c, platformId, assetBase, copy, key, canvasW, centre) {
   const panels = c.panels
     .map(
@@ -109,7 +136,7 @@ function plainScreen(p, s, assetBase, centre) {
   )};${shot.shadow ? `box-shadow:${shot.shadow};` : ''}${
     shot.radius ? `border-radius:${px(shot.radius)};` : ''
   }">
-      <img src="${assetBase}/captures/${p.id}/${shot.capture}" alt="">
+      <img src="${assetBase}/captures/${p.assetDir ?? p.id}/${shot.capture}" alt="">
     </div>
   </section>`;
 }
@@ -117,19 +144,25 @@ function plainScreen(p, s, assetBase, centre) {
 function screenHtml(p, s, copy, assetBase) {
   if (s.kind === 'plain') return plainScreen(p, s, assetBase, p.centreDevice);
   const t = p.text;
+  // Platforms that share one capture set (the two iPhone Duo displays) point
+  // `assetDir` at it; everything else reads `captures/<id>/`.
+  const dir = p.assetDir ?? p.id;
+  const centred = (s.centreDevice ?? p.centreDevice) && s.kind !== 'split';
   const body =
     s.kind === 'comparison'
-      ? comparison(s.comparison, p.id, assetBase, copy, s.key, p.canvas.w, p.centreDevice)
-      : phoneDevice(s.device, p.id, assetBase, p.canvas.w, p.centreDevice && s.kind !== 'split');
+      ? comparison(s.comparison, dir, assetBase, copy, s.key, p.canvas.w, centred)
+      : s.kind === 'composite'
+        ? composite(s.composite, dir, assetBase, p.canvas.w, centred)
+        : phoneDevice(s.device, dir, assetBase, p.canvas.w, centred);
 
   return `<section class="screen${s.kind === 'split' ? ' split' : ''}" data-id="${s.id}" data-gap1="${
     s.headlineToSub ?? p.rhythm.preferred.headlineToSub
   }" data-gap2="${s.subToDevice ?? p.rhythm.preferred.subToDevice}" data-top="${
     s.top ?? p.rhythm.preferred.top
-  }" style="width:${px(p.canvas.w)};height:${px(
+  }" data-minbottom="${s.minBottom ?? p.rhythm.minBottom}" style="width:${px(p.canvas.w)};height:${px(
     p.canvas.h
-  )};background:${p.canvas.bg};border-radius:${px(p.canvas.radius)}">
-    ${blobs(p.blobs)}
+  )};background:${s.bg ?? p.canvas.bg};border-radius:${px(p.canvas.radius)}">
+    ${blobs(s.blobs ?? p.blobs)}
     <div class="text" style="left:${px(s.textLeft ?? t.left)};width:${px(
       Math.min(s.textWidth, t.maxWidth ?? s.textWidth)
     )}">
@@ -279,6 +312,8 @@ export function buildPage(platform, copy, { assetBase = '/assets', locale = 'bas
           position: absolute; display: inline-flex; align-items: center; justify-content: center;
           white-space: nowrap; width: max-content; transform: translateX(-50%); }
   .device { position: absolute; overflow: hidden; }
+  /* Composite layers cast drop shadows outside the union box. */
+  .device.composite { overflow: visible; }
   .device-screen { position: absolute; overflow: hidden; }
   .capture { position: absolute; max-width: none; object-fit: cover; pointer-events: none; }
   .notch { position: absolute; border-radius: 999px; }
@@ -351,7 +386,9 @@ function layout() {
     const sub = text.querySelector('p');
     const base = parseFloat(h1.dataset.baseSize);
     const deviceH = device.offsetHeight;
-    const limit = CANVAS_H - RHYTHM.minBottom;
+    // A board that deliberately bleeds off the bottom edge sets a negative
+    // per-screen minBottom instead of shrinking the mockup.
+    const limit = CANVAS_H - parseFloat(screen.dataset.minbottom);
     const baseGap2 = parseFloat(screen.dataset.gap2);
 
     let top = parseFloat(screen.dataset.top);

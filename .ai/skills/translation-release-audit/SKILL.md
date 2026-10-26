@@ -75,25 +75,36 @@ Optional live-store checks:
 
 ### Google Play
 
-Use the repository's dedicated Publishing API audit script. The API requires a Play
-edit for listing/image reads, so it creates one disposable uncommitted edit, reads the
-content into a temporary directory, then deletes the edit. It never writes under
-`androidApp/src/googlePlay/play/` or publishes metadata:
+Use `gplay` (PollyGlot/google-play-cli), which reads the service account from the macOS
+Keychain. `metadata pull` reads the live listings inside a read-only Play edit and
+discards it, so nothing is committed or published. Always pull into a temporary
+directory, never under `androidApp/src/googlePlay/play/`:
 
 ```bash
 audit_dir="$(mktemp -d /private/tmp/feedflow-play-listing.XXXXXX)"
-python3 .scripts/pull-google-play-listing.py --output-dir "$audit_dir"
+gplay metadata pull --package com.prof18.feedflow --dir "$audit_dir" --output json
 ```
 
-The script reads `FEEDFLOW_PLAY_CONFIG_JSON` by default. If it is absent or invalid,
-report the live check as unavailable. Compare `listings.json` against the checked-in
-listing output and `image-counts.json` against the expected screenshot assets.
+It writes `<locale>/title.txt`, `short_description.txt` and `full_description.txt`
+(underscores). Compare them with the checked-in
+`androidApp/src/googlePlay/play/listings/<locale>/title.txt`, `short-description.txt` and
+`full-description.txt` (hyphens). A field that is empty on Play writes no file.
+
+Live screenshot counts are unavailable for now: in gplay 2.3.2,
+`gplay metadata images list` and `images pull` fail with HTTP 400 on `promoGraphic`.
+Report screenshot drift from committed/local evidence only, and retry
+`gplay metadata images list --package com.prof18.feedflow --output json` after
+upgrading gplay. `.scripts/pull-google-play-listing.py` still works when a key file is
+passed explicitly with `--credentials`, but none is kept on disk any more.
+
+If `gplay auth status` shows no active account or the pull fails on auth, report the
+live check as unavailable.
 
 Do not use Gradle Play Publisher bootstrap tasks during the recurring audit. They reset
 the existing Play directory and can delete/partially replace tracked graphics and
 release notes. Never run any `publish*` task during this audit.
 
-- `Google Play live check: unavailable - FEEDFLOW_PLAY_CONFIG_JSON is unavailable or invalid`
+- `Google Play live check: unavailable - gplay is not installed or not logged in`
 
 Latvian (`lv`) is supported by Google Play but is not a supported App Store Connect metadata locale. Exclude Latvian from App Store metadata, field-limit, and screenshot checks and follow-up cards; Latvia uses English (U.K.). Audit Latvian Play copy and screenshots according to their own source completeness. Verify Apple locale support before flagging a missing App Store localization.
 

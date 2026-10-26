@@ -8,7 +8,7 @@ ordinea în care au fost publicate.
 Citește În Felul Tău
 - Deschide articolele în browser sau folosește „Modul Cititor” pentru o
   vizualizare simplă și ordonată.
-- Reglează dimensiunea textului și spațierea pentru o lectură confortabilă.
+- Ajustează dimensiunea textului și spațierea pentru o lectură confortabilă.
 - Salvează articolele complete în cache pentru a le citi offline — ideal pentru
   drumul spre serviciu, zboruri sau oriunde nu există conexiune la internet.
 
@@ -21,7 +21,7 @@ Sincronizează ceea ce se potrivește configurației tale
 
 Rămâi Organizat
 - Importă și exportă fluxuri în format OPML.
-- Blochează cuvintele-cheie pentru a reduce zgomotul din anumite subiecte.
+- Blochează cuvinte pentru a amuți subiecte zgomotoase.
 - Categoriile, marcajele și funcția de căutare îți permit să ai totul la
   îndemână.
 

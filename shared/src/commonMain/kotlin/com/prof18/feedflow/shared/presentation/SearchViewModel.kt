@@ -180,8 +180,8 @@ class SearchViewModel internal constructor(
                 val targetIndex = items.indexOfFirst { it.id == targetItemId }
 
                 if (targetIndex != -1) {
-                    // Get all items from the beginning up to and including the target item
-                    val itemsToMark = items.subList(0, targetIndex + 1)
+                    // Get all items before the target item
+                    val itemsToMark = items.subList(0, targetIndex)
                         .filter { !it.isRead }
                         .map { FeedItemId(it.id) }
 
@@ -203,8 +203,8 @@ class SearchViewModel internal constructor(
                 val targetIndex = items.indexOfFirst { it.id == targetItemId }
 
                 if (targetIndex != -1) {
-                    // Get all items from the target item to the end
-                    val itemsToMark = items.subList(targetIndex, items.size)
+                    // Get all items after the target item
+                    val itemsToMark = items.subList(targetIndex + 1, items.size)
                         .filter { !it.isRead }
                         .map { FeedItemId(it.id) }
 

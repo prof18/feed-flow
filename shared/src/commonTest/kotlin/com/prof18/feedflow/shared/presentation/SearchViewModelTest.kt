@@ -432,7 +432,7 @@ class SearchViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `markAllAboveAsRead marks unread items up to target`() = runTest(testDispatcher) {
+    fun `markAllAboveAsRead marks unread items before target`() = runTest(testDispatcher) {
         val viewModel = getViewModel()
         val databaseHelper = getDatabaseHelper()
 
@@ -465,7 +465,7 @@ class SearchViewModelTest : KoinTestBase() {
         advanceTimeBy(500.milliseconds)
         advanceUntilIdle()
 
-        viewModel.markAllAboveAsRead(item2.id)
+        viewModel.markAllAboveAsRead(item3.id)
         advanceUntilIdle()
 
         val dbItems = databaseHelper.getFeedItems(
@@ -481,7 +481,7 @@ class SearchViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `markAllBelowAsRead marks unread items from target to end`() = runTest(testDispatcher) {
+    fun `markAllBelowAsRead marks unread items after target`() = runTest(testDispatcher) {
         val viewModel = getViewModel()
         val databaseHelper = getDatabaseHelper()
 
@@ -523,7 +523,7 @@ class SearchViewModelTest : KoinTestBase() {
         )
         val itemsById = dbItems.associateBy { it.url_hash }
         assertEquals(false, itemsById.getValue(item1.id).is_read)
-        assertEquals(true, itemsById.getValue(item2.id).is_read)
+        assertEquals(false, itemsById.getValue(item2.id).is_read)
         assertEquals(true, itemsById.getValue(item3.id).is_read)
     }
 

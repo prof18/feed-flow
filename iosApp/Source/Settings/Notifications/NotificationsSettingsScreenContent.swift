@@ -75,14 +75,14 @@ struct NotificationsSettingsScreenContent: View {
                 get: { notificationSettingState.notificationMode },
                 set: { onNotificationModeChanged($0) }
             )) {
+                Text(feedFlowStrings.settingsNotificationModeArticle)
+                    .tag(NotificationMode.article)
                 Text(feedFlowStrings.settingsNotificationModeFeedSource)
                     .tag(NotificationMode.feedSource)
                 Text(feedFlowStrings.settingsNotificationModeCategory)
                     .tag(NotificationMode.category)
                 Text(feedFlowStrings.settingsNotificationModeGrouped)
                     .tag(NotificationMode.grouped)
-                Text(feedFlowStrings.settingsNotificationModeArticle)
-                    .tag(NotificationMode.article)
             } label: {
                 Text(feedFlowStrings.settingsNotificationMode)
             }

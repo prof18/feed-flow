@@ -146,6 +146,32 @@ class DesktopReaderContentTest {
         rule.onAllNodesWithText("<svg", substring = true, useUnmergedTree = true).assertCountEquals(0)
     }
 
+    @Test
+    fun `right-to-left article lays out from the right edge in a left-to-right app`() {
+        val state = success()
+        showBody(
+            state.copy(
+                readerModeData = state.readerModeData.copy(title = RTL_TITLE, content = RTL_BODY),
+            ),
+        )
+        rule.waitUntil(timeoutMillis = 5_000) {
+            rule.onAllNodesWithText(RTL_BODY, substring = true).fetchSemanticsNodes().isNotEmpty()
+        }
+
+        val document = rule.onNodeWithTag(READER_DOCUMENT_TAG).fetchSemanticsNode().boundsInRoot
+        listOf(RTL_TITLE, RTL_BODY).forEach { text ->
+            val bounds = rule.onNodeWithText(text, substring = true).fetchSemanticsNode().boundsInRoot
+            assertTrue(
+                bounds.right - bounds.left < document.width / 2,
+                "Fixture text must stay on one short line, got $bounds in $document",
+            )
+            assertTrue(
+                bounds.center.x > document.center.x,
+                "Right-to-left text must start at the right edge, got $bounds in $document",
+            )
+        }
+    }
+
     private fun showBody(state: ReaderModeState, onOpenInBrowser: (String) -> Unit = {}) {
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
@@ -216,6 +242,8 @@ class DesktopReaderContentTest {
     private companion object {
         const val BODY_TEXT = "Content retained from the feed."
         const val ARTICLE_URL = "https://example.com/article"
+        const val RTL_TITLE = "خبر فوری"
+        const val RTL_BODY = "متن کوتاه مقاله"
     }
 }
 

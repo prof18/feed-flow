@@ -453,7 +453,7 @@
     <string name="notification_category_body">Ai articole noi în %s</string>
     <string name="notification_grouped_body">Ai articole noi gata de citit!</string>
     <string name="settings_notification_mode">Gruparea notificărilor</string>
-    <string name="settings_notification_mode_desc">Grupează notificările pe flux, categorie sau afișează o singură notificare combinată</string>
+    <string name="settings_notification_mode_desc">Afișează notificările pe articol, pe flux, pe categorie sau toate împreună.</string>
     <string name="settings_notification_mode_feed_source">După flux</string>
     <string name="settings_notification_mode_category">După categorie</string>
     <string name="settings_notification_mode_grouped">Toate combinate</string>
@@ -544,4 +544,24 @@
     <string name="article_report_failed">Nu s-a putut trimite raportul. Te rog să încerci din nou.</string>
     <string name="desktop_expand_feed_category">Extinde %s</string>
     <string name="desktop_collapse_feed_category">Restrânge %s</string>
+    <string name="settings_notification_mode_article">Pe articol</string>
+    <string name="settings_notification_mode_article_desc">Afișează titlurile articolelor și imaginile disponibile. La fiecare actualizare sunt afișate până la 20 de articole, plus un rezumat al celorlalte.</string>
+    <string name="notification_article_overflow_body">Alte articole noi: %s</string>
+    <string name="feed_verify_website">Verifică site-ul web</string>
+    <string name="feed_verification_failed">Nu s-a putut accesa site-ul web. Anulează și încearcă din nou.</string>
+    <string name="feed_verification_unsupported">Verificarea site-ului web nu este disponibilă pe acest dispozitiv.</string>
+    <string name="feed_verification_save_failed">Fluxul a fost preluat, dar nu a putut fi salvat.</string>
+    <string name="feed_verification_browser_failed">Verificarea site-ului web a fost întreruptă. Anulează și încearcă din nou.</string>
+    <string name="feed_clear_verification">Șterge verificarea site-ului web</string>
+    <string name="reader_content_save_failed">Articolul s-a deschis, dar nu a putut fi salvat pentru a fi citit offline.</string>
+    <string name="feed_verification_explanation_title">Acest site web necesită o verificare rapidă</string>
+    <string name="feed_verification_explanation_body">Site-ul web utilizează o verificare suplimentară de securitate înainte de a partaja conținutul său. Deschide site-ul web și completează orice verificare. FeedFlow va continua automat când va fi gata.</string>
+    <string name="reader_verification_content_options">Alege conținutul fluxului sau articolul complet din Setări &gt; Comportament de citire sau prin editarea acestui flux.</string>
+    <string name="feed_verification_open_website">Deschide site-ul web</string>
+    <string name="feed_verification_screen_title">Verificarea site-ului web</string>
+    <string name="feed_verification_automatic_hint">Completează verificarea de securitate a site-ului web de mai jos. FeedFlow va continua automat.</string>
+    <string name="feed_verification_checking_title">Se verifică site-ul web</string>
+    <string name="feed_verification_checking_body">FeedFlow va continua automat când conținutul va fi gata.</string>
+    <string name="feed_verification_check_again">Verifică din nou</string>
+    <string name="feed_verification_retry_body">Conținutul nu a putut fi preluat. Încearcă să verifici din nou sau închide această fereastră și reia procesul.</string>
 </resources>

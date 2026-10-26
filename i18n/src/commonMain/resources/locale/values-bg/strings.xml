@@ -473,4 +473,10 @@
     <string name="article_report_sending">Изпращане на доклад…</string>
     <string name="article_report_sent">Докладът е изпратен. Благодаря!</string>
     <string name="article_report_failed">Неуспешно изпращане на доклад. Моля, опитайте отново.</string>
+    <string name="settings_filters">Филтри</string>
+    <string name="desktop_resize_sidebar">Преоразмеряване на навигационния панел (ляво/дясно)</string>
+    <string name="desktop_resize_article_list">Преоразмеряване на списъка със статии (ляво/дясно)</string>
+    <string name="desktop_pane_width">%s пиксела ширина</string>
+    <string name="desktop_expand_reader">Разгъване на четеца</string>
+    <string name="desktop_restore_reader_layout">Възстановяване на списъка със статии</string>
 </resources>

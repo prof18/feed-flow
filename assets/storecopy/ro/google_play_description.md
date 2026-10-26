@@ -10,7 +10,7 @@ Citește Articole în Felul Tău
 - Deschide articole în browserul tău implicit sau alege un browser special
   pentru sesiunile de lectură.
 - Folosește „Modul Cititor” pentru a citi articolul fără distrageri, cu
-  dimensiunea textului și spațierea reglabile.
+  dimensiunea textului și spațierea ajustabile.
 - Preîncarcă și salvează în cache conținutul integral al articolelor pentru
   citire offline — citește articolele oriunde, chiar și fără conexiune la
   internet.
@@ -48,7 +48,7 @@ Conceput pentru RSS, Atom și Open Web
 - Suport complet pentru formatele de flux RSS 2.0, RSS 1.0 și Atom.
 - Abonează-te la bloguri, site-uri de știri, canale de YouTube și multe altele.
 - Nu este necesar niciun cont — adaugă fluxuri direct prin URL sau navighează
-  sugestiile de fluxuri selectate cu grijă pentru a începe.
+  sugestiile de fluxuri atent selectate pentru a începe.
 - Importul și exportul în format OPML înseamnă că nu ești niciodată limitat la o
   singură aplicație.
 

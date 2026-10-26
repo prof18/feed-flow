@@ -205,7 +205,11 @@ class EntryDTOMapperTest {
             content = "<img src=\"https://example.com/content-image.jpg\">",
             images = EntryDTO.Images(
                 originalUrl = "https://example.com/original.jpg",
-                size1 = EntryDTO.Images.ResizedImage(cdnUrl = "https://images.feedbinusercontent.com/foobar/0123456789ab4cde8f0123456789abcd.jpg", width=542, height=304),
+                size1 = EntryDTO.Images.ResizedImage(
+                    cdnUrl = FEEDBIN_CDN_IMAGE_URL,
+                    width = 542,
+                    height = 304,
+                ),
             ),
         )
 
@@ -216,7 +220,22 @@ class EntryDTOMapperTest {
             isBookmarked = false,
         )
 
-        assertEquals("https://images.feedbinusercontent.com/foobar/0123456789ab4cde8f0123456789abcd.jpg", result.imageUrl)
+        assertEquals(FEEDBIN_CDN_IMAGE_URL, result.imageUrl)
+    }
+
+    @Test
+    fun `wire images keys deserialize and map the CDN image url`() {
+        val entryDTO = Json.decodeFromString<EntryDTO>(ENTRY_WITH_IMAGES_JSON)
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertEquals("https://example.com/original.jpg", entryDTO.images?.originalUrl)
+        assertEquals(FEEDBIN_CDN_IMAGE_URL, result.imageUrl)
     }
 
     @Test
@@ -317,6 +336,32 @@ class EntryDTOMapperTest {
     )
 
     private companion object {
+        const val FEEDBIN_CDN_IMAGE_URL =
+            "https://images.feedbinusercontent.com/foobar/0123456789ab4cde8f0123456789abcd.jpg"
+
+        const val ENTRY_WITH_IMAGES_JSON = """
+            {
+              "id": 43,
+              "feed_id": 20,
+              "title": "Video title",
+              "author": "Channel",
+              "content": "<iframe src=\"https://www.youtube.com/embed/abc\"></iframe>",
+              "summary": null,
+              "url": "https://www.youtube.com/watch?v=abc",
+              "extracted_content_url": null,
+              "published": "2023-11-14T10:00:00Z",
+              "created_at": "2023-11-14T10:00:00Z",
+              "images": {
+                "original_url": "https://example.com/original.jpg",
+                "size_1": {
+                  "cdn_url": "$FEEDBIN_CDN_IMAGE_URL",
+                  "width": 542,
+                  "height": 304
+                }
+              }
+            }
+        """
+
         const val ENTRY_WITH_ENCLOSURE_JSON = """
             {
               "id": 42,

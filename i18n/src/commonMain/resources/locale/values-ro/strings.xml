@@ -33,7 +33,7 @@
     <string name="default_browser">Browser implicit</string>
     <string name="author_label">Creat cu ❤️ de către</string>
     <string name="open_source_licenses">Licențe cu sursă deschisă</string>
-    <string name="about_the_app">FeedFlow este un cititor RSS minimalist, care oferă o cronologie simplă și ordonată — fără algoritmi, fără elemente care să aglomereze ecranul. Deschide articolele în browserul tău preferat sau citește-le fără distrageri cu ajutorul „Modului Cititor”. Preîncarcă și salvează în cache articolele complete pentru a le citi offline oriunde te-ai afla.\nSincronizează fluxurile tale, starea de citire și marcajele pe Android, iOS, macOS, Windows și Linux folosind iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin sau BazQux. Organizează fluxurile în categorii, blochează cuvintele-cheie nedorite și importă sau exportă totul cu OPML.</string>
+    <string name="about_the_app">FeedFlow este un cititor RSS minimalist, care oferă o cronologie simplă și ordonată — fără algoritmi, fără elemente care să aglomereze ecranul. Deschide articolele în browserul tău preferat sau citește-le fără distrageri cu ajutorul „Modului Cititor”. Preîncarcă și salvează în cache articolele complete pentru a le citi offline oriunde te-ai afla.\nSincronizează fluxurile tale, starea de citire și marcajele pe Android, iOS, macOS, Windows și Linux folosind iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin sau BazQux. Organizează fluxurile în categorii, blochează cuvintele deranjante și importă sau exportă totul cu OPML.</string>
     <string name="about_nav_bar">Despre</string>
     <string name="open_source_nav_bar">Licențe cu sursă deschisă</string>
     <string name="report_issue_button">Raportează o problemă</string>

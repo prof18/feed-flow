@@ -35,7 +35,7 @@ Rămâi Organizat
 
 Conceput pentru RSS, Atom și Open Web
 - Suportă formatele de flux RSS 2.0, RSS 1.0 și Atom.
-- Adaugă fluxuri prin URL sau navighează sugestiile selectate.
+- Adaugă fluxuri prin URL sau navighează sugestiile atent selectate.
 - Nu este necesar niciun cont pentru a începe.
 
 Open source cu o comunitate activă. Disponibil pe toate platformele importante.

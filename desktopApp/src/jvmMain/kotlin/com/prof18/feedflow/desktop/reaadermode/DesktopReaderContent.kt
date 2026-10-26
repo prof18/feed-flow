@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -24,10 +25,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.ImageLoader
@@ -37,6 +40,7 @@ import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.core.utils.ContentDirection
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.LocalReduceMotion
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
@@ -44,6 +48,7 @@ import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.desktop.ui.components.TopToolbarContentFade
 import com.prof18.feedflow.shared.domain.buildReaderModeMarkdown
 import com.prof18.feedflow.shared.domain.readerLineHeightToTextLineHeightSp
+import com.prof18.feedflow.shared.domain.readerModeContentDirection
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -92,6 +97,11 @@ internal fun DesktopReaderContent(
 
             ReaderModeState.Loading -> ReaderArticle(
                 articleKey = loadingArticle?.id,
+                direction = readerModeContentDirection(
+                    title = loadingArticle?.title,
+                    siteName = loadingArticle?.feedSourceTitle,
+                    markdown = null,
+                ),
                 title = loadingArticle?.title,
                 siteName = loadingArticle?.feedSourceTitle,
                 fontSize = fontSize,
@@ -100,6 +110,13 @@ internal fun DesktopReaderContent(
 
             is ReaderModeState.Success -> ReaderArticle(
                 articleKey = s.readerModeData.id.id,
+                direction = remember(s.readerModeData) {
+                    readerModeContentDirection(
+                        title = s.readerModeData.title,
+                        siteName = s.readerModeData.siteName,
+                        markdown = s.readerModeData.content,
+                    )
+                },
                 title = s.readerModeData.title,
                 siteName = s.readerModeData.siteName,
                 fontSize = fontSize,
@@ -137,6 +154,7 @@ internal fun DesktopReaderContent(
 @Composable
 private fun ReaderArticle(
     articleKey: String?,
+    direction: ContentDirection?,
     title: String?,
     siteName: String?,
     fontSize: Int,
@@ -154,12 +172,25 @@ private fun ReaderArticle(
                 .testTag(READER_DOCUMENT_TAG),
             contentAlignment = Alignment.TopCenter,
         ) {
-            Column(
-                modifier = Modifier.widthIn(max = readerModeMaxContentWidth).fillMaxWidth()
-                    .padding(horizontal = 32.dp).padding(top = 24.dp, bottom = 88.dp),
-            ) {
-                ReaderArticleHeader(title = title, siteName = siteName, fontSize = fontSize, lineHeight = lineHeight)
-                if (body != null) body() else DelayedReaderSpinner(articleKey)
+            // The article is laid out from its own text, not the app locale, like the web reader's dir='auto'.
+            val layoutDirection = when (direction) {
+                ContentDirection.LEFT_TO_RIGHT -> LayoutDirection.Ltr
+                ContentDirection.RIGHT_TO_LEFT -> LayoutDirection.Rtl
+                null -> LocalLayoutDirection.current
+            }
+            CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                Column(
+                    modifier = Modifier.widthIn(max = readerModeMaxContentWidth).fillMaxWidth()
+                        .padding(horizontal = 32.dp).padding(top = 24.dp, bottom = 88.dp),
+                ) {
+                    ReaderArticleHeader(
+                        title = title,
+                        siteName = siteName,
+                        fontSize = fontSize,
+                        lineHeight = lineHeight,
+                    )
+                    if (body != null) body() else DelayedReaderSpinner(articleKey)
+                }
             }
         }
         FeedFlowVerticalScrollbar(scrollState)

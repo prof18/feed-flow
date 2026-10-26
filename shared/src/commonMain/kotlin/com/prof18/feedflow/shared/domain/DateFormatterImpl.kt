@@ -843,6 +843,11 @@ class DateFormatterImpl(
 
     private fun normalizeBasic(dateString: String): String {
         var normalized = dateString
+
+        // Drop the timezone name that JavaScript's Date.toString() appends
+        // e.g. "Wed Sep 09 2026 00:00:00 GMT+0000 (Coordinated Universal Time)"
+        normalized = normalized.replace(trailingTimezoneNameRegex, "")
+
         normalized = gmtOffsetRegex.replace(normalized) { matchResult ->
             val sign = matchResult.groupValues[GMT_OFFSET_SIGN_GROUP_INDEX]
             val hours = matchResult.groupValues[GMT_OFFSET_HOURS_GROUP_INDEX].padStart(OFFSET_HOURS_LENGTH, '0')
@@ -1058,6 +1063,7 @@ class DateFormatterImpl(
         "PDT" to "-0700", // Pacific Daylight Time
         "GMT" to "+0000", // Greenwich Mean Time
         "UTC" to "+0000", // Coordinated Universal Time
+        "BST" to "+0100", // British Summer Time
         "CET" to "+0100", // Central European Time
         "CEST" to "+0200", // Central European Summer Time
         "EEST" to "+0300", // Eastern European Summer Time
@@ -1068,6 +1074,7 @@ class DateFormatterImpl(
     private fun Iterable<String>.escapedAlternation(): String =
         joinToString(separator = "|") { Regex.escape(it) }
 
+    private val trailingTimezoneNameRegex = Regex("\\s+\\([^()]*\\)$")
     private val gmtOffsetRegex = Regex("\\bGMT([+-])(\\d{1,2})(?::?(\\d{2}))?\\b")
     private val timezoneReplacementPattern = timezoneReplacements.keys.escapedAlternation()
     private val timezoneReplacementRegex = Regex("\\b($timezoneReplacementPattern)\\b")

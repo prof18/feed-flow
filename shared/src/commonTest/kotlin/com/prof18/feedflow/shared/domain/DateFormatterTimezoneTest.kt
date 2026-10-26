@@ -113,4 +113,22 @@ class DateFormatterTimezoneTest {
         assertEquals(22, utcDateTime.hour)
         assertEquals(5, utcDateTime.minute)
     }
+
+    @Test
+    fun `getDateMillisFromString parses JavaScript Date toString output with its offset`() {
+        val millis = dateFormatter.getDateMillisFromString(
+            "Tue Oct 20 2026 17:43:00 GMT+0100 (British Summer Time)",
+        )
+
+        assertNotNull(millis)
+        assertEquals(Instant.parse("2026-10-20T16:43:00Z").toEpochMilliseconds(), millis)
+    }
+
+    @Test
+    fun `getDateMillisFromString interprets BST timezone correctly`() {
+        val millis = dateFormatter.getDateMillisFromString("Tue, 20 Oct 2026 16:43:00 BST")
+
+        assertNotNull(millis)
+        assertEquals(Instant.parse("2026-10-20T15:43:00Z").toEpochMilliseconds(), millis)
+    }
 }

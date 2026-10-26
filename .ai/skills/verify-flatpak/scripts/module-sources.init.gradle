@@ -1,0 +1,23 @@
+// Applies the Flatpak sources generator to every subproject. Each module compiles against its own
+// resolved classpath (versions can differ from :desktopApp's), so all of them must be covered.
+// flatpak_vm.py merges the per-module build/flatpak-sources.json files into flatpak-sources.json
+// and then adds jars the plugin dropped (see complete_jars there).
+// The root project already applies the generator (flatpak-sources-root.json), and
+// build-logic/convention has its own (flatpak-sources-convention.json).
+
+// Configurations the Linux JVM build never resolves (and that often cannot resolve on Linux).
+// KMP metadata configurations stay: modules such as :i18n compile commonMain metadata.
+def notUsedByFlatpak = ~/(?i).*(test|ios|apple|macos|watchos|tvos|native|cinterop|commonizer|android|wasm|js[A-Z]|mingw|linuxX64|linuxArm64).*/
+
+gradle.beforeProject { project ->
+    // Skip the root project and the included build-logic build.
+    if (project == project.rootProject || project.gradle.parent != null) return
+    project.pluginManager.apply('io.github.jwharm.flatpak-gradle-generator')
+    project.tasks.named('flatpakGradleGenerator') { task ->
+        task.outputFile.set(project.layout.buildDirectory.file('flatpak-sources.json'))
+        task.downloadDirectory.set('./offline-repository')
+        task.excludeConfigurations.set(project.provider {
+            project.configurations.names.findAll { it ==~ notUsedByFlatpak } as Set
+        })
+    }
+}

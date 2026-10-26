@@ -114,10 +114,10 @@ class FeedActionsRepositoryFreshRssTest : KoinTestBase() {
         feedItems.forEachIndexed { index, feedItem ->
             val item = updatedItems.find { it.url_hash == feedItem.id }
             assertNotNull(item, "Item ${feedItem.id} should exist")
-            if (index <= targetIndex) {
-                assertTrue(item.is_read, "Item above or equal to target should be marked as read: ${feedItem.id}")
+            if (index < targetIndex) {
+                assertTrue(item.is_read, "Item above target should be marked as read: ${feedItem.id}")
             } else {
-                assertFalse(item.is_read, "Item below target should not be marked as read: ${feedItem.id}")
+                assertFalse(item.is_read, "Target or item below it should not be marked as read: ${feedItem.id}")
             }
         }
     }
@@ -156,10 +156,10 @@ class FeedActionsRepositoryFreshRssTest : KoinTestBase() {
         feedItems.forEachIndexed { index, feedItem ->
             val item = updatedItems.find { it.url_hash == feedItem.id }
             assertNotNull(item, "Item ${feedItem.id} should exist")
-            if (index >= targetIndex) {
-                assertTrue(item.is_read, "Item below or equal to target should be marked as read: ${feedItem.id}")
+            if (index > targetIndex) {
+                assertTrue(item.is_read, "Item below target should be marked as read: ${feedItem.id}")
             } else {
-                assertFalse(item.is_read, "Item above target should not be marked as read: ${feedItem.id}")
+                assertFalse(item.is_read, "Target or item above it should not be marked as read: ${feedItem.id}")
             }
         }
     }

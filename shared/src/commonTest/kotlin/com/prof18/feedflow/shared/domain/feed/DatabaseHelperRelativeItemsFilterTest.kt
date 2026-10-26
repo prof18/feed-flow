@@ -38,11 +38,12 @@ class DatabaseHelperRelativeItemsFilterTest : KoinTestBase() {
             FeedFilter.Category(category) to setOf("new", "target", "bookmarked", "sibling", "old"),
             FeedFilter.Uncategorized to setOf("uncategorized"),
         )
-        for ((filter, expectedIds) in cases) {
+        for ((filter, filterIds) in cases) {
             for (newer in listOf(true, false)) {
                 seedItems()
                 databaseHelper.ensureCloudSyncState(SESSION_ID)
                 val target = if (newer) "old" else "new"
+                val expectedIds = filterIds - target
                 val selectedIds = if (newer) {
                     databaseHelper.getNewerItems(target, filter)
                 } else {
@@ -86,9 +87,9 @@ class DatabaseHelperRelativeItemsFilterTest : KoinTestBase() {
 
                 val newer = above == (order == FeedOrder.NEWEST_FIRST)
                 val expected = if (newer) {
-                    setOf("read", "target")
+                    setOf("read")
                 } else {
-                    setOf("bookmarked", "hidden", "read", "target")
+                    setOf("bookmarked", "hidden", "read")
                 }
                 assertEquals(expected, readItemIds(), "$order, above=$above")
             }

@@ -136,10 +136,10 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
         feedItems.forEachIndexed { index, feedItem ->
             val item = updatedItems.find { it.url_hash == feedItem.id }
             assertNotNull(item, "Item ${feedItem.id} should exist")
-            if (index <= targetIndex) {
-                assertTrue(item.is_read, "Item above or equal to target should be marked as read: ${feedItem.id}")
+            if (index < targetIndex) {
+                assertTrue(item.is_read, "Item above target should be marked as read: ${feedItem.id}")
             } else {
-                assertFalse(item.is_read, "Item below target should not be marked as read: ${feedItem.id}")
+                assertFalse(item.is_read, "Target or item below it should not be marked as read: ${feedItem.id}")
             }
         }
     }
@@ -178,10 +178,10 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
         feedItems.forEachIndexed { index, feedItem ->
             val item = updatedItems.find { it.url_hash == feedItem.id }
             assertNotNull(item, "Item ${feedItem.id} should exist")
-            if (index >= targetIndex) {
-                assertTrue(item.is_read, "Item below or equal to target should be marked as read: ${feedItem.id}")
+            if (index > targetIndex) {
+                assertTrue(item.is_read, "Item below target should be marked as read: ${feedItem.id}")
             } else {
-                assertFalse(item.is_read, "Item above target should not be marked as read: ${feedItem.id}")
+                assertFalse(item.is_read, "Target or item above it should not be marked as read: ${feedItem.id}")
             }
         }
     }
@@ -377,7 +377,7 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
         advanceUntilIdle()
 
         assertEquals(
-            setOf(items[0].id, items[2].id),
+            setOf(items[0].id),
             databaseHelper.getAllFeedItemFlagsForCloud().filter { it.isRead }.map { it.id }.toSet(),
         )
 
@@ -386,7 +386,7 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
         advanceUntilIdle()
 
         assertEquals(
-            setOf(items[2].id, items[3].id),
+            setOf(items[3].id),
             databaseHelper.getAllFeedItemFlagsForCloud().filter { it.isRead }.map { it.id }.toSet(),
         )
     }

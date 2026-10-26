@@ -336,7 +336,7 @@ internal class FeedStateRepository(
                 currentItems
             } else {
                 currentItems.mapIndexedNotNull { index, feedItem ->
-                    if (index <= targetIndex && !feedItem.isRead) {
+                    if (index < targetIndex && !feedItem.isRead) {
                         val updatedItem = feedItem.copy(isRead = true)
                         if (hideReadItems && currentFilter != FeedFilter.Read) {
                             null
@@ -360,7 +360,7 @@ internal class FeedStateRepository(
                 currentItems
             } else {
                 currentItems.mapIndexedNotNull { index, feedItem ->
-                    if (index >= targetIndex && !feedItem.isRead) {
+                    if (index > targetIndex && !feedItem.isRead) {
                         val updatedItem = feedItem.copy(isRead = true)
                         if (hideReadItems && currentFilter != FeedFilter.Read) {
                             null

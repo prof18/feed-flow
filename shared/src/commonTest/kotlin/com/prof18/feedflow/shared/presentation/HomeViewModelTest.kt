@@ -1188,7 +1188,7 @@ class HomeViewModelTest : KoinTestBase() {
         assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
         assertTrue(viewModel.feedState.value[1].isRead)
 
-        feedStateRepository.markItemsBelowAsRead("item-3")
+        feedStateRepository.markItemsBelowAsRead("item-2")
         assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
         assertTrue(viewModel.feedState.value.last().isRead)
     }
@@ -1214,8 +1214,7 @@ class HomeViewModelTest : KoinTestBase() {
         viewModel.markAllAboveAsRead("item-2")
         advanceUntilIdle()
 
-        assertEquals(1, viewModel.feedState.value.size)
-        assertEquals("item-3", viewModel.feedState.value.first().id)
+        assertEquals(listOf("item-2", "item-3"), viewModel.feedState.value.map { it.id })
     }
 
     @Test
@@ -1239,8 +1238,7 @@ class HomeViewModelTest : KoinTestBase() {
         viewModel.markAllBelowAsRead("item-2")
         advanceUntilIdle()
 
-        assertEquals(1, viewModel.feedState.value.size)
-        assertEquals("item-1", viewModel.feedState.value.first().id)
+        assertEquals(listOf("item-1", "item-2"), viewModel.feedState.value.map { it.id })
     }
 
     @Test
@@ -1262,7 +1260,7 @@ class HomeViewModelTest : KoinTestBase() {
 
         val dbItems = getDbItems().associateBy { it.url_hash }
         assertTrue(dbItems.getValue("item-1").is_read)
-        assertTrue(dbItems.getValue("item-2").is_read)
+        assertTrue(dbItems.getValue("item-2").is_read.not())
         assertTrue(dbItems.getValue("item-3").is_read.not())
     }
 
@@ -1285,7 +1283,7 @@ class HomeViewModelTest : KoinTestBase() {
 
         val dbItems = getDbItems().associateBy { it.url_hash }
         assertTrue(dbItems.getValue("item-1").is_read.not())
-        assertTrue(dbItems.getValue("item-2").is_read)
+        assertTrue(dbItems.getValue("item-2").is_read.not())
         assertTrue(dbItems.getValue("item-3").is_read)
     }
 

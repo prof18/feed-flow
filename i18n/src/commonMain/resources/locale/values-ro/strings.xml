@@ -544,4 +544,5 @@
     <string name="article_report_failed">Nu s-a putut trimite raportul. Te rog să încerci din nou.</string>
     <string name="desktop_expand_feed_category">Extinde %s</string>
     <string name="desktop_collapse_feed_category">Restrânge %s</string>
+    <string name="app_name" translatable="false"></string>
 </resources>

@@ -397,6 +397,10 @@ private fun NotificationModeSelector(
         currentValue = currentMode,
         options = persistentListOf(
             SettingDropdownOption(
+                NotificationMode.ARTICLE,
+                strings.settingsNotificationModeArticle,
+            ),
+            SettingDropdownOption(
                 NotificationMode.FEED_SOURCE,
                 strings.settingsNotificationModeFeedSource,
             ),
@@ -407,10 +411,6 @@ private fun NotificationModeSelector(
             SettingDropdownOption(
                 NotificationMode.GROUPED,
                 strings.settingsNotificationModeGrouped,
-            ),
-            SettingDropdownOption(
-                NotificationMode.ARTICLE,
-                strings.settingsNotificationModeArticle,
             ),
         ),
         onOptionSelected = onModeSelected,

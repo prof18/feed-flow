@@ -12,6 +12,7 @@ import com.prof18.feedflow.core.model.ArticleOpenMode.FEED_CONTENT
 import com.prof18.feedflow.core.model.ArticleOpenMode.FULL_ARTICLE
 import com.prof18.feedflow.core.model.ArticleOpenMode.INTERNAL_BROWSER
 import com.prof18.feedflow.core.model.ArticleOpenMode.PREFERRED_BROWSER
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.globalArticleOpenModes
 import com.prof18.feedflow.desktop.reaadermode.ReaderTextSettingsControls
@@ -33,6 +34,12 @@ internal fun ReadingPane(
     readerLineHeight: Int = ReaderModeDefaults.LINE_HEIGHT,
     onReaderFontSizeChanged: (Int) -> Unit = {},
     onReaderLineHeightChanged: (Int) -> Unit = {},
+    readerHeadlineFont: ReaderFontFamily = ReaderModeDefaults.HEADLINE_FONT,
+    readerBodyFont: ReaderFontFamily = ReaderModeDefaults.BODY_FONT,
+    onReaderHeadlineFontChanged: (ReaderFontFamily) -> Unit = {},
+    onReaderBodyFontChanged: (ReaderFontFamily) -> Unit = {},
+    readerTitleFontSize: Int = ReaderModeDefaults.TITLE_FONT_SIZE,
+    onReaderTitleFontSizeChanged: (Int) -> Unit = {},
 ) {
     val strings = LocalFeedFlowStrings.current
     var showPrefetchConfirmation by remember { mutableStateOf(false) }
@@ -77,6 +84,12 @@ internal fun ReadingPane(
                 onFontSizeChange = onReaderFontSizeChanged,
                 onLineHeightChange = onReaderLineHeightChanged,
                 modifier = Modifier.fillMaxWidth(),
+                headlineFont = readerHeadlineFont,
+                bodyFont = readerBodyFont,
+                onHeadlineFontChange = onReaderHeadlineFontChanged,
+                onBodyFontChange = onReaderBodyFontChanged,
+                titleFontSize = readerTitleFontSize,
+                onTitleFontSizeChange = onReaderTitleFontSizeChanged,
             )
         }
     }

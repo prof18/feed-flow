@@ -12,6 +12,10 @@ public struct ReaderViewStrings {
     public let openComments: String
     public let fontSize: String
     public let lineHeight: String
+    public let titleFontSize: String
+    public let previewTitle: String
+    public let previewBody: String
+    public let font: String
     public let textSettings: String
     public let resetToDefault: String
     public let done: String
@@ -44,7 +48,11 @@ public struct ReaderViewStrings {
         ttsPreparing: String = "",
         reportArticle: String = "",
         openInBrowser: String = "",
-        moreOptions: String = ""
+        moreOptions: String = "",
+        font: String = "",
+        titleFontSize: String = "",
+        previewTitle: String = "",
+        previewBody: String = ""
     ) {
         self.reportArticle = reportArticle
         self.ttsListen = ttsListen
@@ -59,6 +67,10 @@ public struct ReaderViewStrings {
         self.openComments = openComments
         self.fontSize = fontSize
         self.lineHeight = lineHeight
+        self.titleFontSize = titleFontSize
+        self.previewTitle = previewTitle
+        self.previewBody = previewBody
+        self.font = font
         self.textSettings = textSettings
         self.resetToDefault = resetToDefault
         self.done = done

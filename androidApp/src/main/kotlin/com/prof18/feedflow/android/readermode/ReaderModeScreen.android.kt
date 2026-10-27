@@ -80,19 +80,23 @@ import com.prof18.feedflow.android.ui.readermode.ArticleReportDisclosure
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.domain.ReaderAudioBanner
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.domain.readerCodeBlockColors
+import com.prof18.feedflow.shared.domain.readerFontFamilyJs
 import com.prof18.feedflow.shared.domain.readerFontSizeJs
 import com.prof18.feedflow.shared.domain.readerLineHeightJs
+import com.prof18.feedflow.shared.domain.readerTitleFontSizeJs
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderVerificationState
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -100,6 +104,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
@@ -113,6 +118,12 @@ internal fun ReaderModeScreen(
     onUpdateFontSize: (Int) -> Unit,
     lineHeight: Int,
     onUpdateLineHeight: (Int) -> Unit,
+    titleFontSize: Int,
+    onUpdateTitleFontSize: (Int) -> Unit,
+    headlineFont: ReaderFontFamily,
+    bodyFont: ReaderFontFamily,
+    onUpdateHeadlineFont: (ReaderFontFamily) -> Unit,
+    onUpdateBodyFont: (ReaderFontFamily) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     navigateBack: () -> Unit,
     canNavigatePrevious: Boolean,
@@ -140,6 +151,8 @@ internal fun ReaderModeScreen(
         audioPlayer.openExternal(context, audioUrlOpener, audioUrl, strings.audioOpenFailed)
     }
     val navigator = rememberWebViewNavigator()
+    val fontScriptScope = rememberCoroutineScope()
+    val fontScriptJob = remember { mutableStateOf<Job?>(null) }
     val showingFallbackWebsite = readerModeState.showsFallbackWebsite(verificationState)
     var fullscreenImageUrl by rememberSaveable { mutableStateOf<String?>(null) }
     var toolbarExpanded by rememberSaveable { mutableStateOf(true) }
@@ -250,6 +263,25 @@ internal fun ReaderModeScreen(
                             navigator.evaluateJavaScript(readerLineHeightJs(newLineHeight))
                             onUpdateLineHeight(newLineHeight)
                         },
+                        titleFontSize = titleFontSize,
+                        onTitleFontSizeChange = { newTitleFontSize ->
+                            navigator.evaluateJavaScript(readerTitleFontSizeJs(newTitleFontSize))
+                            onUpdateTitleFontSize(newTitleFontSize)
+                        },
+                        headlineFont = headlineFont,
+                        bodyFont = bodyFont,
+                        onFontFamiliesChange = { headline, body ->
+                            onUpdateHeadlineFont(headline)
+                            onUpdateBodyFont(body)
+                            // Building the script reads uncached font files; a newer choice cancels an older one.
+                            fontScriptJob.value?.cancel()
+                            fontScriptJob.value = fontScriptScope.launch {
+                                val script = withContext(Dispatchers.Default) {
+                                    readerFontFamilyJs(bodyFont = body, headlineFont = headline)
+                                }
+                                navigator.evaluateJavaScript(script)
+                            }
+                        },
                         onBookmarkClick = onBookmarkClick,
                         onToggleContentSource = onToggleContentSource,
                         onListenClick = {
@@ -298,6 +330,11 @@ internal fun ReaderModeScreen(
 
                     is ReaderModeState.Success -> {
                         ReaderMode(
+                            fontSize = fontSize,
+                            lineHeight = lineHeight,
+                            titleFontSize = titleFontSize,
+                            headlineFont = headlineFont,
+                            bodyFont = bodyFont,
                             readerModeState = readerModeState,
                             openInBrowser = { url ->
                                 if (isValidUrl(url)) {
@@ -496,6 +533,11 @@ private fun FallbackWebView(
 private fun ReaderMode(
     readerModeState: ReaderModeState.Success,
     themeMode: ThemeMode,
+    fontSize: Int,
+    lineHeight: Int,
+    titleFontSize: Int,
+    headlineFont: ReaderFontFamily,
+    bodyFont: ReaderFontFamily,
     openInBrowser: (String) -> Unit,
     onImageClick: (String) -> Unit,
     onOpenAudio: (String) -> Unit,
@@ -543,30 +585,39 @@ private fun ReaderMode(
     val spacerHeightDp = (contentPadding.calculateTopPadding().value - 40f).toInt().coerceAtLeast(0)
 
     val strings = LocalFeedFlowStrings.current
-    val content = getReaderModeStyledHtml(
-        colors = colors,
-        content = readerModeState.readerModeData.content,
-        fontSize = readerModeState.readerModeData.fontSize,
-        lineHeight = readerModeState.readerModeData.lineHeight,
-        title = readerModeState.readerModeData.title,
-        imageUrl = readerModeState.readerModeData.imageUrl,
-        leadingContent = "<div id=\"__feedflow_top_spacer\" style=\"height: ${spacerHeightDp}px;\"></div>",
-        siteName = readerModeState.readerModeData.siteName,
-        languageTag = readerModeState.readerModeData.languageTag,
-        audioBanner = AudioEnclosure.validatedUrl(readerModeState.readerModeData.audioUrl)?.let {
-            ReaderAudioBanner(
-                title = readerModeState.readerModeData.title,
-                audioLabel = strings.audioEpisodeLabel,
-                openAudioLabel = strings.audioOpenExternal,
-                enablePlayback = true,
-                subtitle = readerModeState.readerModeData.siteName,
-                imageUrl = readerModeState.readerModeData.audioImageUrl,
-                playAudioLabel = strings.audioPlay,
-                pauseAudioLabel = strings.audioPause,
-                untitledAudioLabel = strings.audioEpisodeUntitled,
-            )
-        },
-    )
+    val readerModeData = readerModeState.readerModeData
+    // The HTML embeds the chosen fonts and is several MB, so build it only when its inputs change.
+    // The text settings are deliberately not keys: changing them restyles the page through JavaScript
+    // without a reload, while any rebuild (theme, insets) reads their current values.
+    val content = remember(readerModeData, colors, spacerHeightDp, strings) {
+        getReaderModeStyledHtml(
+            colors = colors,
+            content = readerModeData.content,
+            fontSize = fontSize,
+            lineHeight = lineHeight,
+            bodyFont = bodyFont,
+            headlineFont = headlineFont,
+            titleFontSize = titleFontSize,
+            title = readerModeData.title,
+            imageUrl = readerModeData.imageUrl,
+            leadingContent = "<div id=\"__feedflow_top_spacer\" style=\"height: ${spacerHeightDp}px;\"></div>",
+            siteName = readerModeData.siteName,
+            languageTag = readerModeData.languageTag,
+            audioBanner = AudioEnclosure.validatedUrl(readerModeData.audioUrl)?.let {
+                ReaderAudioBanner(
+                    title = readerModeData.title,
+                    audioLabel = strings.audioEpisodeLabel,
+                    openAudioLabel = strings.audioOpenExternal,
+                    enablePlayback = true,
+                    subtitle = readerModeData.siteName,
+                    imageUrl = readerModeData.audioImageUrl,
+                    playAudioLabel = strings.audioPlay,
+                    pauseAudioLabel = strings.audioPause,
+                    untitledAudioLabel = strings.audioEpisodeUntitled,
+                )
+            },
+        )
+    }
 
     val jsBridge = rememberWebViewJsBridge()
     val bridgeScope = rememberCoroutineScope()

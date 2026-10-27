@@ -435,6 +435,10 @@ class ReaderModeViewModel internal constructor(
         settingsRepository.setReaderModeHeadlineFont(font)
     }
 
+    fun updateTitleFontSize(newTitleFontSize: Int) {
+        settingsRepository.setReaderModeTitleFontSize(newTitleFontSize)
+    }
+
     fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {
         viewModelScope.launch {
             feedActionsRepository.updateBookmarkStatus(feedItemId, bookmarked)

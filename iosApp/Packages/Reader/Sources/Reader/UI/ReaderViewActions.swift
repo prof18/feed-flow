@@ -9,6 +9,10 @@ public struct ReaderViewActions {
     public let onFontSizeMenuToggle: () -> Void
     public let onFontSizeChange: (Double) -> Void
     public let onLineHeightChange: (Double) -> Void
+    public let onTitleFontSizeChange: (Double) -> Void
+    public let onHeadlineFontChange: (String) -> Void
+    public let onBodyFontChange: (String) -> Void
+    public let fontOptions: [ReaderFontOption]
     public let onNavigateToNext: (() -> Void)?
     public let onNavigateToPrevious: (() -> Void)?
     public let onToggleContentSource: (() -> Void)?
@@ -38,7 +42,11 @@ public struct ReaderViewActions {
         isShowingFeedContent: Bool = false,
         hasUrl: Bool = true,
         onReportArticle: (() -> Void)? = nil,
-        isSendingReport: Bool = false
+        isSendingReport: Bool = false,
+        onHeadlineFontChange: @escaping (String) -> Void = { _ in },
+        onBodyFontChange: @escaping (String) -> Void = { _ in },
+        fontOptions: [ReaderFontOption] = [],
+        onTitleFontSizeChange: @escaping (Double) -> Void = { _ in }
     ) {
         self.strings = strings
         self.onBookmarkToggle = onBookmarkToggle
@@ -48,6 +56,10 @@ public struct ReaderViewActions {
         self.onFontSizeMenuToggle = onFontSizeMenuToggle
         self.onFontSizeChange = onFontSizeChange
         self.onLineHeightChange = onLineHeightChange
+        self.onTitleFontSizeChange = onTitleFontSizeChange
+        self.onHeadlineFontChange = onHeadlineFontChange
+        self.onBodyFontChange = onBodyFontChange
+        self.fontOptions = fontOptions
         self.onNavigateToNext = onNavigateToNext
         self.onNavigateToPrevious = onNavigateToPrevious
         self.onToggleContentSource = onToggleContentSource

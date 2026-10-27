@@ -4,21 +4,30 @@ package com.prof18.feedflow.desktop.reaadermode
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import org.jetbrains.jewel.intui.markdown.standalone.styling.dark
 import org.jetbrains.jewel.intui.markdown.standalone.styling.light
 import org.jetbrains.jewel.markdown.rendering.InlinesStyling
 import org.jetbrains.jewel.markdown.rendering.MarkdownStyling
 import org.jetbrains.jewel.markdown.rendering.MarkdownStyling.Heading
 
-internal fun desktopMarkdownStyling(bodyStyle: TextStyle, codeStyle: TextStyle, dark: Boolean): MarkdownStyling {
+internal fun desktopMarkdownStyling(
+    bodyStyle: TextStyle,
+    codeStyle: TextStyle,
+    dark: Boolean,
+    headlineFontFamily: FontFamily? = null,
+): MarkdownStyling {
     fun inlines(sizeDelta: Int, heightDelta: Int): InlinesStyling {
         val style = bodyStyle.copy(
             fontSize = (bodyStyle.fontSize.value + sizeDelta).sp,
             lineHeight = (bodyStyle.fontSize.value + heightDelta).sp,
             fontWeight = FontWeight.SemiBold,
+            // A System headline keeps the system font even when the body uses a bundled one.
+            fontFamily = headlineFontFamily ?: DesktopDesignTokens.chromeText.fontFamily,
         )
         return if (dark) InlinesStyling.dark(style, codeStyle) else InlinesStyling.light(style, codeStyle)
     }

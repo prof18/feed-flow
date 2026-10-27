@@ -71,6 +71,7 @@ class SettingsRepository(
             lineHeight = getReaderModeLineHeight(),
             bodyFont = getReaderModeBodyFont(),
             headlineFont = getReaderModeHeadlineFont(),
+            titleFontSize = getReaderModeTitleFontSize(),
         ),
     )
     val readerFontSettingsState: StateFlow<ReaderFontSettings> = readerFontSettingsMutableState.asStateFlow()
@@ -239,6 +240,14 @@ class SettingsRepository(
         readerFontSettingsMutableState.update { it.copy(headlineFont = value) }
     }
 
+    fun getReaderModeTitleFontSize(): Int =
+        settings.getInt(SettingsFields.READER_MODE_TITLE_FONT_SIZE.name, ReaderModeDefaults.TITLE_FONT_SIZE)
+
+    fun setReaderModeTitleFontSize(value: Int) {
+        settings.set(SettingsFields.READER_MODE_TITLE_FONT_SIZE.name, value)
+        readerFontSettingsMutableState.update { it.copy(titleFontSize = value) }
+    }
+
     /**
      * The app-wide default, always a concrete mode. [ArticleOpenMode.DEFAULT] only means "follow the
      * global setting" on a feed, so here it resolves to [appDefaultArticleOpenMode].
@@ -386,6 +395,7 @@ private enum class SettingsFields {
     READER_MODE_LINE_HEIGHT,
     READER_MODE_BODY_FONT,
     READER_MODE_HEADLINE_FONT,
+    READER_MODE_TITLE_FONT_SIZE,
     ARTICLE_OPEN_MODE,
     AUTO_DELETE_PERIOD,
     CRASH_REPORTING_ENABLED,

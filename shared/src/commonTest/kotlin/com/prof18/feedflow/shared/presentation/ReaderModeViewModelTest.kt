@@ -406,6 +406,20 @@ class ReaderModeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `initial title font size is default value`() = runTest {
+        assertEquals(
+            ReaderModeDefaults.TITLE_FONT_SIZE,
+            viewModel.readerFontSettingsState.value.titleFontSize,
+        )
+    }
+
+    @Test
+    fun `updateTitleFontSize updates settings and state`() = runTest {
+        viewModel.updateTitleFontSize(22)
+        assertEquals(22, viewModel.readerFontSettingsState.value.titleFontSize)
+    }
+
+    @Test
     fun `reset restores defaults`() = runTest {
         viewModel.updateFontSize(30)
         viewModel.updateLineHeight(6)

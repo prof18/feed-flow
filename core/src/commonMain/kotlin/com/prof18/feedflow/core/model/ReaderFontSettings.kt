@@ -5,4 +5,5 @@ data class ReaderFontSettings(
     val lineHeight: Int,
     val bodyFont: ReaderFontFamily = ReaderFontFamily.SYSTEM,
     val headlineFont: ReaderFontFamily = ReaderFontFamily.SYSTEM,
+    val titleFontSize: Int = ReaderModeDefaults.TITLE_FONT_SIZE,
 )

@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
@@ -39,6 +40,7 @@ import coil3.request.ImageRequest
 import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeData
+import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.utils.ContentDirection
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -73,6 +75,9 @@ internal fun DesktopReaderContent(
     onHoveredLinkChange: (String?) -> Unit,
     modifier: Modifier = Modifier,
     loadingArticle: FeedItemUrlInfo? = null,
+    bodyFontFamily: FontFamily? = null,
+    headlineFontFamily: FontFamily? = null,
+    titleFontSize: Int = ReaderModeDefaults.TITLE_FONT_SIZE,
 ) {
     Box(
         modifier = modifier,
@@ -106,6 +111,9 @@ internal fun DesktopReaderContent(
                 siteName = loadingArticle?.feedSourceTitle,
                 fontSize = fontSize,
                 lineHeight = lineHeight,
+                bodyFontFamily = bodyFontFamily,
+                headlineFontFamily = headlineFontFamily,
+                titleFontSize = titleFontSize,
             )
 
             is ReaderModeState.Success -> ReaderArticle(
@@ -121,6 +129,9 @@ internal fun DesktopReaderContent(
                 siteName = s.readerModeData.siteName,
                 fontSize = fontSize,
                 lineHeight = lineHeight,
+                bodyFontFamily = bodyFontFamily,
+                headlineFontFamily = headlineFontFamily,
+                titleFontSize = titleFontSize,
             ) {
                 val audioUrl = AudioEnclosure.validatedUrl(s.readerModeData.audioUrl)
                 if (audioUrl != null) {
@@ -134,6 +145,8 @@ internal fun DesktopReaderContent(
                     data = s.readerModeData,
                     fontSize = fontSize,
                     lineHeight = lineHeight,
+                    bodyFontFamily = bodyFontFamily,
+                    headlineFontFamily = headlineFontFamily,
                     imageLoader = imageLoader,
                     onUrlClick = onOpenInBrowser,
                     onHoveredLinkChange = onHoveredLinkChange,
@@ -159,6 +172,9 @@ private fun ReaderArticle(
     siteName: String?,
     fontSize: Int,
     lineHeight: Int,
+    bodyFontFamily: FontFamily?,
+    headlineFontFamily: FontFamily?,
+    titleFontSize: Int,
     modifier: Modifier = Modifier,
     body: (@Composable () -> Unit)? = null,
 ) {
@@ -188,6 +204,9 @@ private fun ReaderArticle(
                         siteName = siteName,
                         fontSize = fontSize,
                         lineHeight = lineHeight,
+                        bodyFontFamily = bodyFontFamily,
+                        headlineFontFamily = headlineFontFamily,
+                        titleFontSize = titleFontSize,
                     )
                     if (body != null) body() else DelayedReaderSpinner(articleKey)
                 }
@@ -198,14 +217,29 @@ private fun ReaderArticle(
 }
 
 @Composable
-private fun ReaderArticleHeader(title: String?, siteName: String?, fontSize: Int, lineHeight: Int) {
+private fun ReaderArticleHeader(
+    title: String?,
+    siteName: String?,
+    fontSize: Int,
+    lineHeight: Int,
+    bodyFontFamily: FontFamily?,
+    headlineFontFamily: FontFamily?,
+    titleFontSize: Int,
+) {
     val bodyStyle = DesktopDesignTokens.chromeText.copy(
         color = JewelTheme.globalColors.text.normal,
         fontSize = fontSize.sp,
         lineHeight = readerLineHeightToTextLineHeightSp(fontSize, lineHeight).sp,
+        fontFamily = bodyFontFamily ?: DesktopDesignTokens.chromeText.fontFamily,
     )
     Column {
-        ReaderArticleHeaderTexts(title = title, siteName = siteName, bodyStyle = bodyStyle, fontSize = fontSize)
+        ReaderArticleHeaderTexts(
+            title = title,
+            siteName = siteName,
+            bodyStyle = bodyStyle,
+            titleFontSize = titleFontSize,
+            headlineFontFamily = headlineFontFamily ?: DesktopDesignTokens.chromeText.fontFamily,
+        )
     }
 }
 
@@ -214,16 +248,17 @@ private fun ColumnScope.ReaderArticleHeaderTexts(
     title: String?,
     siteName: String?,
     bodyStyle: TextStyle,
-    fontSize: Int,
+    titleFontSize: Int,
+    headlineFontFamily: FontFamily?,
 ) {
     if (!title.isNullOrBlank()) {
-        // Matches the reader's H1 styling, so the header looks the same as before it moved out of the markdown.
         Text(
             text = title,
             style = bodyStyle.copy(
-                fontSize = (fontSize + READER_TITLE_SIZE_DELTA).sp,
-                lineHeight = (fontSize + READER_TITLE_LINE_HEIGHT_DELTA).sp,
+                fontSize = titleFontSize.sp,
+                lineHeight = (titleFontSize + READER_TITLE_LINE_HEIGHT_DELTA).sp,
                 fontWeight = FontWeight.SemiBold,
+                fontFamily = headlineFontFamily,
             ),
         )
     }
@@ -243,6 +278,8 @@ private fun ReaderArticleBody(
     data: ReaderModeData,
     fontSize: Int,
     lineHeight: Int,
+    bodyFontFamily: FontFamily?,
+    headlineFontFamily: FontFamily?,
     imageLoader: ImageLoader,
     onUrlClick: (String) -> Unit,
     onHoveredLinkChange: (String?) -> Unit,
@@ -278,6 +315,8 @@ private fun ReaderArticleBody(
             onUrlClick = onUrlClick,
             onHoveredLinkChange = onHoveredLinkChange,
             modifier = Modifier.padding(top = READER_BLOCK_SPACING).graphicsLayer { this.alpha = alpha.value },
+            bodyFontFamily = bodyFontFamily,
+            headlineFontFamily = headlineFontFamily,
         )
     }
 }
@@ -316,8 +355,7 @@ private val htmlImageRegex = Regex("""<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["']"""
 private const val LEAD_IMAGE_SCAN_WINDOW = 1000
 private const val LEAD_IMAGE_WAIT_MILLIS = 500L
 private const val BODY_FADE_IN_MILLIS = 150
-private const val READER_TITLE_SIZE_DELTA = 16
-private const val READER_TITLE_LINE_HEIGHT_DELTA = 24
+private const val READER_TITLE_LINE_HEIGHT_DELTA = 8
 private val READER_BLOCK_SPACING = 16.dp
 private const val READER_SPINNER_DELAY_MILLIS = 300L
 

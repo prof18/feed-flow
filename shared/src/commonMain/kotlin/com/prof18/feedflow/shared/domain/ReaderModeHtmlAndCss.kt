@@ -19,6 +19,7 @@ fun getReaderModeStyledHtml(
     languageTag: String? = null,
     bodyFont: ReaderFontFamily = ReaderModeDefaults.BODY_FONT,
     headlineFont: ReaderFontFamily = ReaderModeDefaults.HEADLINE_FONT,
+    titleFontSize: Int = ReaderModeDefaults.TITLE_FONT_SIZE,
 ): String {
     val titleTag = if (title != null) {
         "<h1>${title.escapeHtml()}</h1>"
@@ -46,7 +47,7 @@ fun getReaderModeStyledHtml(
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-      ${readerModeCss(colors, fontSize, lineHeight, bodyFont, headlineFont)}
+      ${readerModeCss(colors, fontSize, lineHeight, bodyFont, headlineFont, titleFontSize)}
     </style>
     </head>
     <body>
@@ -299,6 +300,7 @@ internal fun readerModeCss(
     lineHeight: Int,
     bodyFont: ReaderFontFamily = ReaderModeDefaults.BODY_FONT,
     headlineFont: ReaderFontFamily = ReaderModeDefaults.HEADLINE_FONT,
+    titleFontSize: Int = ReaderModeDefaults.TITLE_FONT_SIZE,
 ): String {
     val fontSizeCss = "${fontSize}px"
     val lineHeightCss = readerLineHeightToCss(lineHeight)
@@ -362,6 +364,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 body > h1 {
+    font-size: ${titleFontSize}px;
     padding: 0 16px;
     margin: 16px auto;
     max-width: 700px;
@@ -721,6 +724,21 @@ fun readerLineHeightToTextLineHeightSp(fontSize: Int, step: Int): Int =
 
 fun readerFontSizeJs(fontSize: Int): String =
     """document.getElementById("container").style.fontSize = "$fontSize" + "px";"""
+
+// The injected article title is the only h1 directly under body; headings inside the article keep their sizes.
+fun readerTitleFontSizeJs(titleFontSize: Int): String =
+    """
+        (function() {
+          var styleId = "__feedflow_title_font_size_style";
+          var style = document.getElementById(styleId);
+          if (!style) {
+            style = document.createElement("style");
+            style.id = styleId;
+            document.head.appendChild(style);
+          }
+          style.textContent = "body > h1 { font-size: ${titleFontSize}px; }";
+        })();
+    """.trimIndent()
 
 fun readerLineHeightLabel(step: Int): String = readerLineHeightToCss(step)
 

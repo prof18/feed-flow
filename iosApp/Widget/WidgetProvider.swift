@@ -44,13 +44,13 @@ struct Provider: AppIntentTimelineProvider {
     ) -> WidgetEntry {
         let strings = WidgetSupport.strings
         let selection = configuration.content
-        let (filterType, filterId) = Self.parse(selectionId: selection?.id)
+        let contentSelection = WidgetContentSelection(selectionId: selection?.id)
         let items = getFeedItems(
             appEnvironment: WidgetSupport.appEnvironment,
-            filterType: filterType,
-            filterId: filterId
+            filterType: contentSelection.filterType,
+            filterId: contentSelection.filterId
         )
-        let title = switch filterType {
+        let title = switch contentSelection.filterType {
         case "bookmarks":
             strings.widgetContentBookmarks
         case "category", "source":
@@ -58,7 +58,7 @@ struct Provider: AppIntentTimelineProvider {
         default:
             strings.widgetTitle
         }
-        let emptyTitle = filterType == "bookmarks"
+        let emptyTitle = contentSelection.filterType == "bookmarks"
             ? strings.widgetBookmarksEmptyMessage
             : strings.widgetEmptyScreenTitle
         return WidgetEntry(
@@ -71,25 +71,5 @@ struct Provider: AppIntentTimelineProvider {
             widgetEmptyScreenTitle: emptyTitle,
             widgetEmptyScreenContent: strings.widgetEmptyScreenContent
         )
-    }
-
-    private static func parse(selectionId: String?) -> (String, String?) {
-        guard let selectionId else {
-            return ("timeline", nil)
-        }
-        if selectionId == "timeline" || selectionId == "bookmarks" {
-            return (selectionId, nil)
-        }
-
-        let categoryPrefix = "category:"
-        if selectionId.hasPrefix(categoryPrefix) {
-            return ("category", String(selectionId.dropFirst(categoryPrefix.count)))
-        }
-
-        let sourcePrefix = "source:"
-        if selectionId.hasPrefix(sourcePrefix) {
-            return ("source", String(selectionId.dropFirst(sourcePrefix.count)))
-        }
-        return ("timeline", nil)
     }
 }

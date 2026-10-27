@@ -74,21 +74,27 @@ struct WebsiteBrowserTransfer {
         nonceJSON: String,
         on webView: WKWebView
     ) async throws -> WebsiteBrowserCapturedResponse {
-        var bytes = Data()
-        var sequence = 0
+        var reader = WebsiteBrowserTransferReader(
+            url: url,
+            nonce: nonce,
+            maxBodyBytes: Int(RecoveryPolicy.shared.MAX_BODY_BYTES),
+            chunkBytes: Int(RecoveryPolicy.shared.TRANSFER_CHUNK_BYTES)
+        )
         let deadline = ContinuousClock.now + .milliseconds(Int(RecoveryPolicy.shared.BROWSER_FETCH_TIMEOUT_MILLIS))
         while ContinuousClock.now < deadline {
             try Task.checkCancellation()
             try validateCurrentOrigin(url: url, on: webView)
-            let message = try await nextMessage(nonceJSON: nonceJSON, nonce: nonce, on: webView)
+            let raw = try await webView.evaluateJavaScript(
+                "JSON.stringify(globalThis.__feedFlowTransfer.next(\(nonceJSON)))"
+            )
+            let message = try reader.message(from: raw)
             switch message["kind"] as? String {
             case "waiting":
                 try await Task.sleep(for: .milliseconds(Self.resultPollMillis))
             case "chunk":
-                try bytes.append(chunk(from: message, sequence: sequence, byteCount: bytes.count))
-                sequence += 1
+                try reader.appendChunk(from: message)
             case "done":
-                return try capturedResponse(from: message, url: url, bytes: bytes)
+                return try reader.capturedResponse(from: message)
             case "error":
                 throw WebsiteBrowserTransferError(reason: message["reason"] as? String ?? "transport")
             default:
@@ -104,56 +110,6 @@ struct WebsiteBrowserTransfer {
         }
     }
 
-    private func nextMessage(nonceJSON: String, nonce: String, on webView: WKWebView) async throws -> [String: Any] {
-        let raw = try await webView.evaluateJavaScript(
-            "JSON.stringify(globalThis.__feedFlowTransfer.next(\(nonceJSON)))"
-        )
-        guard let json = raw as? String,
-              let message = try JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any],
-              message["nonce"] as? String == nonce,
-              message["kind"] is String
-        else {
-            throw WebsiteBrowserTransferError(reason: "owner")
-        }
-        return message
-    }
-
-    private func chunk(from message: [String: Any], sequence: Int, byteCount: Int) throws -> Data {
-        guard let currentSequence = message["sequence"] as? Int,
-              currentSequence == sequence,
-              let encoded = message["base64"] as? String,
-              encoded.utf8.count <= Self.maxEncodedChunk,
-              let chunk = Data(base64Encoded: encoded),
-              chunk.count <= Int(RecoveryPolicy.shared.TRANSFER_CHUNK_BYTES),
-              byteCount + chunk.count <= Int(RecoveryPolicy.shared.MAX_BODY_BYTES)
-        else {
-            throw WebsiteBrowserTransferError(reason: "too-large")
-        }
-        return chunk
-    }
-
-    private func capturedResponse(
-        from message: [String: Any],
-        url: URL,
-        bytes: Data
-    ) throws -> WebsiteBrowserCapturedResponse {
-        guard let effectiveURL = message["effectiveUrl"] as? String,
-              effectiveURL == url.absoluteString,
-              let status = message["status"] as? Int,
-              (200 ... 299).contains(status),
-              let total = message["total"] as? Int,
-              total == bytes.count
-        else {
-            throw WebsiteBrowserTransferError(reason: "owner")
-        }
-        return WebsiteBrowserCapturedResponse(
-            effectiveURL: effectiveURL,
-            statusCode: status,
-            contentType: message["contentType"] as? String,
-            data: bytes
-        )
-    }
-
     private static func jsonString(_ string: String) throws -> String {
         let data = try JSONSerialization.data(withJSONObject: [string])
         guard let array = String(data: data, encoding: .utf8), array.count >= 2 else {
@@ -163,5 +119,4 @@ struct WebsiteBrowserTransfer {
     }
 
     private static let resultPollMillis = 250
-    private static let maxEncodedChunk = (Int(RecoveryPolicy.shared.TRANSFER_CHUNK_BYTES) + 2) / 3 * 4
 }

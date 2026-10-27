@@ -308,6 +308,9 @@ fun buildFeedItemsForSource(source: FeedSource, count: Int): List<FeedItem>
 
 # Run only iOS tests
 ./gradlew :shared:iosSimulatorArm64Test --quiet --console=plain
+
+# Run the Swift unit tests of the iOS app (iOSTests scheme; CloudSyncTests run through allTests)
+.scripts/ios-tests.sh
 ```
 
 ## Best Practices

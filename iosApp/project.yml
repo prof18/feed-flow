@@ -438,6 +438,9 @@ targets:
       - path: Source/WebsiteVerification/WebsiteBrowserCaptureOutcome.swift
       - path: Source/WebsiteVerification/WebsiteBrowserNavigationPolicy.swift
       - path: Source/WebsiteVerification/WebsiteBrowserNavigationState.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserTransferReader.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserTransferError.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserCapturedResponse.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.FeedRecoveryTests
@@ -458,7 +461,12 @@ targets:
     platform: iOS
     sources:
       - path: Tests/Widget/WidgetRefreshCoordinatorTests.swift
+      - path: Tests/Widget/WidgetContentSelectionTests.swift
+      - path: Tests/Widget/TestWidgetContentItem.swift
       - path: Widget/WidgetRefreshCoordinator.swift
+      - path: Widget/WidgetContentSelection.swift
+      - path: Widget/WidgetContentListing.swift
+      - path: Widget/WidgetContentGroups.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.WidgetTests
@@ -520,6 +528,28 @@ targets:
       - package: Firebase
         product: FirebaseCrashlytics
 
+  AppLogicTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/AppLogic
+      - path: Source/Settings/Components/BrowserURLBuilder.swift
+      - path: Source/Utils/FeedConditionalGetURLProtocol.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.AppLogicTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_PREPROCESS: "NO"
+        INFOPLIST_PREFIX_HEADER: ""
+        TEST_HOST: ""
+        OTHER_LDFLAGS: ["$(inherited)", "-framework", FeedFlowKit, "-lsqlite3"]
+    dependencies:
+      - target: FeedFlowKitBuilder
+        embed: false
+        link: false
+      - package: Firebase
+        product: FirebaseCrashlytics
+
   CloudSyncTests:
     type: bundle.unit-test
     platform: iOS
@@ -528,6 +558,8 @@ targets:
       - path: Tests/Widget
         excludes:
           - WidgetRefreshCoordinatorTests.swift
+          - WidgetContentSelectionTests.swift
+          - TestWidgetContentItem.swift
       - path: Widget/WidgetContentLogoLoader.swift
       - path: Source/Accounts/Dropbox/Data
       - path: Source/Accounts/GoogleDrive/Data
@@ -571,6 +603,15 @@ schemes:
       config: Debug
       targets:
         - WidgetTests
+
+  AppLogicTests:
+    build:
+      targets:
+        AppLogicTests: all
+    test:
+      config: Debug
+      targets:
+        - AppLogicTests
 
   AudioPlaybackTests:
     build:
@@ -653,12 +694,31 @@ schemes:
       buildImplicitDependencies: true
       targets:
         CloudSyncTests: all
-        AudioPlaybackTests: all
     test:
       config: Debug
       targets:
         - CloudSyncTests
+
+  # Every iOS test target except CloudSyncTests, which Gradle's allTests runs after the Kotlin side
+  # writes its snapshots. Run with .scripts/ios-tests.sh.
+  iOSTests:
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        AppLogicTests: all
+        AudioPlaybackTests: all
+        FeedRecoveryTests: all
+        NotificationTests: all
+        WidgetTests: all
+    test:
+      config: Debug
+      targets:
+        - AppLogicTests
         - AudioPlaybackTests
+        - FeedRecoveryTests
+        - NotificationTests
+        - WidgetTests
 
   ShareExtension:
     build:

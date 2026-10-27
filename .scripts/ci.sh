@@ -62,6 +62,11 @@ run_checks_job() {
   step "Checks job: detekt + allTests"
   prepare_ios_cloud_sync_inputs
   run_cmd ./gradlew --quiet --console=plain detekt allTests
+
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    step "Checks job: run iOS tests"
+    run_cmd bash .scripts/ios-tests.sh
+  fi
 }
 
 run_android_build_job() {

@@ -2,7 +2,7 @@ import AppIntents
 import FeedFlowKit
 import Foundation
 
-struct WidgetContentEntity: AppEntity {
+struct WidgetContentEntity: AppEntity, WidgetContentListing {
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "Content"
     static let defaultQuery = WidgetContentEntityQuery()
 

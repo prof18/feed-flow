@@ -59,6 +59,9 @@ jobs:
           trap 'kill "$watchdog_pid" 2>/dev/null || true' EXIT
           ./gradlew detekt allTests
 
+      - name: Run iOS tests
+        run: bash .scripts/ios-tests.sh
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v7

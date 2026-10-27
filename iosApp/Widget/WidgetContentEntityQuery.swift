@@ -12,35 +12,17 @@ struct WidgetContentEntityQuery: EntityStringQuery {
 
     private func collection(for entities: [WidgetContentEntity]) -> IntentItemCollection<WidgetContentEntity> {
         let strings = WidgetSupport.strings
-        let builtIns = entities.filter { $0.id == "timeline" || $0.id == "bookmarks" }
-        let categories = entities
-            .filter { $0.isCategory == true }
-            .sorted {
-                $0.title.compare(
-                    $1.title,
-                    options: [.caseInsensitive, .diacriticInsensitive],
-                    locale: .current
-                ) == .orderedAscending
-            }
-        let sources = entities
-            .filter { $0.id.hasPrefix("source:") }
-            .sorted {
-                $0.title.compare(
-                    $1.title,
-                    options: [.caseInsensitive, .diacriticInsensitive],
-                    locale: .current
-                ) == .orderedAscending
-            }
+        let groups = WidgetContentGroups(entities)
 
         var sections: [IntentItemSection<WidgetContentEntity>] = []
-        if !builtIns.isEmpty {
-            sections.append(IntentItemSection("\(strings.widgetContentSectionTitle)", items: builtIns))
+        if !groups.builtIns.isEmpty {
+            sections.append(IntentItemSection("\(strings.widgetContentSectionTitle)", items: groups.builtIns))
         }
-        if !categories.isEmpty {
-            sections.append(IntentItemSection("\(strings.widgetContentCategory)", items: categories))
+        if !groups.categories.isEmpty {
+            sections.append(IntentItemSection("\(strings.widgetContentCategory)", items: groups.categories))
         }
-        if !sources.isEmpty {
-            sections.append(IntentItemSection("\(strings.widgetContentFeedSource)", items: sources))
+        if !groups.sources.isEmpty {
+            sections.append(IntentItemSection("\(strings.widgetContentFeedSource)", items: groups.sources))
         }
         return IntentItemCollection(sections: sections)
     }

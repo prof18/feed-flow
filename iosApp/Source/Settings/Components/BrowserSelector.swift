@@ -12,48 +12,39 @@ import UIKit
 
 @Observable
 class BrowserSelector {
-    private enum BrowserId {
-        static let defaultBrowser = ""
-        static let chrome = "googlechromes://"
-        static let firefox = "firefox://open-url?url="
-        static let firefoxFocus = "firefox-focus://open-url?url="
-        static let duckDuckGo = "ddgQuickLink://"
-        static let brave = "brave://open-url?url="
-    }
-
     private let supportedBrowsers = [
         Browser(
-            id: BrowserId.defaultBrowser,
+            id: BrowserURLBuilder.BrowserId.defaultBrowser,
             name: feedFlowStrings.defaultBrowser,
             isFavourite: false
         ),
 
         Browser(
-            id: BrowserId.chrome,
+            id: BrowserURLBuilder.BrowserId.chrome,
             name: "Chrome",
             isFavourite: false
         ),
 
         Browser(
-            id: BrowserId.firefox,
+            id: BrowserURLBuilder.BrowserId.firefox,
             name: "Firefox",
             isFavourite: false
         ),
 
         Browser(
-            id: BrowserId.firefoxFocus,
+            id: BrowserURLBuilder.BrowserId.firefoxFocus,
             name: "Firefox Focus",
             isFavourite: false
         ),
 
         Browser(
-            id: BrowserId.duckDuckGo,
+            id: BrowserURLBuilder.BrowserId.duckDuckGo,
             name: "DuckDuckGo",
             isFavourite: false
         ),
 
         Browser(
-            id: BrowserId.brave,
+            id: BrowserURLBuilder.BrowserId.brave,
             name: "Brave",
             isFavourite: false
         )
@@ -91,7 +82,7 @@ class BrowserSelector {
         }
 
         for browser in supportedBrowsers {
-            if browser.id == BrowserId.defaultBrowser {
+            if browser.id == BrowserURLBuilder.BrowserId.defaultBrowser {
                 let updatedBrowser = Browser(
                     id: browser.id,
                     name: browser.name,
@@ -105,7 +96,7 @@ class BrowserSelector {
                 continue
             }
 
-            if let url = makeBrowserURL(
+            if let url = BrowserURLBuilder.url(
                 browserId: browser.id,
                 stringUrl: "https://www.example.com"
             ), UIApplication.shared.canOpenURL(url) {
@@ -123,7 +114,8 @@ class BrowserSelector {
         }
 
         if selectedBrowser == nil {
-            selectedBrowser = browsers.first(where: { $0.id == BrowserId.defaultBrowser }) ?? browsers.first
+            selectedBrowser = browsers.first { $0.id == BrowserURLBuilder.BrowserId.defaultBrowser }
+                ?? browsers.first
         }
     }
 
@@ -146,7 +138,7 @@ class BrowserSelector {
     }
 
     func getUrlForDefaultBrowser(stringUrl: String) -> URL {
-        return makeBrowserURL(browserId: currentSelectedBrowserId(), stringUrl: stringUrl)
+        return BrowserURLBuilder.url(browserId: currentSelectedBrowserId(), stringUrl: stringUrl)
             ?? URL(string: stringUrl)
             ?? URL(fileURLWithPath: "")
     }
@@ -155,83 +147,7 @@ class BrowserSelector {
         return url.scheme == "http" || url.scheme == "https"
     }
 
-    private func makeBrowserURL(browserId: String?, stringUrl: String) -> URL? {
-        guard let url = URL(string: stringUrl) else {
-            return nil
-        }
-
-        guard let browserId else {
-            return url
-        }
-
-        switch browserId {
-        case BrowserIds.shared.IN_APP_BROWSER, BrowserId.defaultBrowser:
-            return url
-        case BrowserId.chrome:
-            return makeChromeURL(url: url)
-        case BrowserId.firefox:
-            return makeQueryBrowserURL(scheme: "firefox", targetUrl: stringUrl)
-        case BrowserId.firefoxFocus:
-            return makeQueryBrowserURL(scheme: "firefox-focus", targetUrl: stringUrl)
-        case BrowserId.duckDuckGo:
-            return makeQuickLinkBrowserURL(url: url, scheme: "ddgQuickLink")
-        case BrowserId.brave:
-            return makeQueryBrowserURL(scheme: "brave", targetUrl: stringUrl)
-        default:
-            return url
-        }
-    }
-
     private func currentSelectedBrowserId() -> String {
         settingsRepository.getFavouriteBrowserId() ?? selectedBrowser?.id ?? BrowserIds.shared.IN_APP_BROWSER
     }
-
-    private func makeChromeURL(url: URL) -> URL? {
-        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            return nil
-        }
-
-        switch url.scheme {
-        case "https":
-            components.scheme = "googlechromes"
-        case "http":
-            components.scheme = "googlechrome"
-        default:
-            return nil
-        }
-
-        return components.url
-    }
-
-    private func makeQueryBrowserURL(scheme: String, targetUrl: String) -> URL? {
-        guard let encodedTargetUrl = targetUrl.addingPercentEncoding(
-            withAllowedCharacters: CharacterSet.urlBrowserQueryAllowed
-        ) else {
-            return nil
-        }
-
-        return URL(string: "\(scheme)://open-url?url=\(encodedTargetUrl)")
-    }
-
-    private func makeQuickLinkBrowserURL(url: URL, scheme: String) -> URL? {
-        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            return nil
-        }
-
-        switch url.scheme {
-        case "https", "http":
-            components.scheme = scheme
-            return components.url
-        default:
-            return nil
-        }
-    }
-}
-
-private extension CharacterSet {
-    static let urlBrowserQueryAllowed: CharacterSet = {
-        var allowed = CharacterSet.alphanumerics
-        allowed.insert(charactersIn: "-._~")
-        return allowed
-    }()
 }

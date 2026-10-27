@@ -323,7 +323,7 @@
     <string name="notification_category_body">Du hast neue Artikel in %s</string>
     <string name="notification_grouped_body">Du hast neue, zum Lesen vorbereitete Artikel!</string>
     <string name="settings_notification_mode">Gruppierung der Benachrichtigungen</string>
-    <string name="settings_notification_mode_desc">Benachrichtigungen nach Feed und Kategorie gruppieren oder eine kombinierte Benachrichtigung anzeigen</string>
+    <string name="settings_notification_mode_desc">Benachrichtigungen je Artikel, je Feed, je Kategorie oder alles kombiniert anzeigen.</string>
     <string name="settings_notification_mode_feed_source">Nach Feed</string>
     <string name="settings_notification_mode_category">Nach Kategorie</string>
     <string name="settings_notification_mode_grouped">Alles zusammengefasst</string>
@@ -545,4 +545,24 @@
     <string name="blocked_word_removed">Blockiertes Wort entfernt.</string>
     <string name="desktop_expand_feed_category">Erweitere %s</string>
     <string name="desktop_collapse_feed_category">%s reduzieren</string>
+    <string name="settings_notification_mode_article">Je Artikel</string>
+    <string name="settings_notification_mode_article_desc">Titel der Artikel und verfügbare Bilder anzeigen. Jeder Refresh zeigt bis zu 20 Artikel und eine Zusammenfassung der restlichen.</string>
+    <string name="notification_article_overflow_body">Mehr neue Artikel: %s</string>
+    <string name="feed_verify_website">Webseite überprüfen</string>
+    <string name="feed_verification_failed">Die Webseite konnte nicht abgerufen werden. Abbrechen und nochmals versuchen.</string>
+    <string name="feed_verification_unsupported">Eine Überprüfung von Webseiten ist auf diesem Gerät nicht verfügbar.</string>
+    <string name="feed_verification_save_failed">Der Feed konnte aufgerufen, aber nicht gespeichert werden.</string>
+    <string name="feed_verification_browser_failed">Überprüfung der Webseite wurde gestoppt. Abbrechen und erneut versuchen.</string>
+    <string name="feed_clear_verification">Überprüfung der Webseite löschen</string>
+    <string name="reader_content_save_failed">Der Artikel wurde geöffnet, konnte aber offline nicht gespeichert werden.</string>
+    <string name="feed_verification_explanation_title">Diese Webseite benötigt eine Schnellüberprüfung</string>
+    <string name="feed_verification_explanation_body">Die Webseite verwendet einen zusätzlichen Sicherheitscheck, bevor es seinen Inhalt bereitstellt. Bitte Webseite öffnen und jegliche Überprüfung abschließen. FeedFlow wird automatisch fortsetzen, wenn es dazu bereit ist.</string>
+    <string name="reader_verification_content_options">Feed-Inhalt oder gesamter Artikel wählen entweder in Einstellungen -&gt; Leseverhalten oder durch Bearbeiten dieses Feeds.</string>
+    <string name="feed_verification_open_website">Webseite öffnen</string>
+    <string name="feed_verification_automatic_hint">Unten den Sicherheitscheck der Webseite abschließen. FeedFlow wird automatisch fortsetzen.</string>
+    <string name="feed_verification_checking_title">Webseite wird überprüft</string>
+    <string name="feed_verification_checking_body">FeedFlow wird automatisch fortsetzen wenn der Inhalt bereit ist.</string>
+    <string name="feed_verification_check_again">Erneut überprüfen</string>
+    <string name="feed_verification_retry_body">Der Inhalt konnte nicht abgerufen werden. Die Prüfung erneut versuchen oder diesen Bildschirm schließen und wieder versuchen.</string>
+    <string name="feed_verification_screen_title">Überprüfung der Webseite</string>
 </resources>

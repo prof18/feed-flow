@@ -234,12 +234,12 @@ private fun MainWindowEffects(
     }
 
     LaunchedEffect(Unit) {
-        DesktopDatabaseErrorState.errorState.collect { show ->
-            if (show) {
+        DesktopDatabaseErrorState.recoveredFileName.collect { recoveredFileName ->
+            if (recoveredFileName != null) {
+                DesktopDatabaseErrorState.clear()
                 snackbarHostState.showFeedback(
-                    message = flowStrings.databaseErrorReset,
+                    message = flowStrings.databaseRecoveredFromCorruption,
                 )
-                DesktopDatabaseErrorState.setError(false)
             }
         }
     }

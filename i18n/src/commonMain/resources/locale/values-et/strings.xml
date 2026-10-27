@@ -254,7 +254,6 @@
     <string name="decrease_font_size_button_content_description">Vähenda teksti suurust</string>
     <string name="scroll_to_top_button_content_description">Keri loendi algusesse</string>
     <string name="dropbox_auth_code_expired">Autentimiskood pole enam kehtiv. Palun kontrolli koodi ja proovi siis uuesti.</string>
-    <string name="database_error_reset">Me ei suutnud sinu andmeid laadida ja pidime uuesti alustama. Vabandust, et nii juhtus.</string>
     <string name="trigger_feed_sync">Laadi muudatused üles</string>
     <string name="menu_mark_all_above_as_read">Märgi kõik ülaltoodu loetuks</string>
     <string name="menu_mark_all_below_as_read">Märgi kõik alltoodu loetuks</string>

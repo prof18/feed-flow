@@ -231,7 +231,6 @@
     <string name="articles_export_filter_description">Atlasiet, kādus rakstus vēlaties izgūt.</string>
     <string name="widget_background_color_preview">Priekšskatījums</string>
     <string name="settings_about_and_support">Par lietotni un atbalsts</string>
-    <string name="database_error_reset">Neizdevās ielādēt jūsu datus, nācās atmest esošos datus un atiestatīt lietotni. Tas nozīmē, ka jums viss atkal jāsāk no jauna. Atvainojiet par nepatīkamo ziņu.</string>
     <string name="articles_export_done_message">Raksti izgūti</string>
     <string name="articles_import_done_message">Raksti ievietoti</string>
     <string name="settings_sync_period">Atsvaidzināt ziņu plūsmas fonā</string>

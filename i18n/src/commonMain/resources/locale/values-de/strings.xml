@@ -266,7 +266,6 @@
     <string name="feed_suggestions_title">Feed-Vorschläge</string>
     <string name="feed_suggestions_description">Feeds durchblättern und zur Sammlung hinzufügen</string>
     <string name="dropbox_auth_code_expired">Der Authentifizierungscode ist nicht mehr gültig. Bitte erneut versuchen.</string>
-    <string name="database_error_reset">Probleme beim Laden deiner Daten erforderten einen Neustart. Wir bedauern das.</string>
     <string name="google_drive_auth_retry">Zur weiteren Verwendung der Google Drive Synchronisation musst du dich neu authentifizieren. Gehe zum Konto; dann trenne und verbinde dich erneut.</string>
     <string name="import_export_label">Import und Export</string>
     <string name="import_export_articles_section_title">Artikel (CSV)</string>

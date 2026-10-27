@@ -254,7 +254,6 @@
     <string name="decrease_font_size_button_content_description">Giảm cỡ phông</string>
     <string name="scroll_to_top_button_content_description">Cuộn lên trên</string>
     <string name="dropbox_auth_code_expired">Mã xác thực không còn hiệu lực. Vui lòng thử lại.</string>
-    <string name="database_error_reset">Chúng tôi gặp sự cố khi tải dữ liệu của bạn và phải bắt đầu lại từ đầu. Xin lỗi nha.</string>
     <string name="trigger_feed_sync">Đồng bộ những thay đổi</string>
     <string name="menu_mark_all_above_as_read">Đã đọc tất cả bài viết mới hơn</string>
     <string name="menu_mark_all_below_as_read">Đã đọc tất cả bài viết cũ hơn</string>

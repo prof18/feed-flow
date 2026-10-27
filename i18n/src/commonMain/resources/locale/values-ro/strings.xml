@@ -448,7 +448,6 @@
     <string name="reader_mode_no_content_title">Nu există conținut disponibil</string>
     <string name="reader_mode_no_content_message">Acest articol nu conține niciun conținut și nu există niciun link pentru a-l deschide pe internet.</string>
     <string name="dropbox_auth_code_expired">Codul de autentificare nu mai este valabil. Te rog să încerci din nou.</string>
-    <string name="database_error_reset">Am întâmpinat probleme la încărcarea datelor tale și a trebuit să o luăm de la capăt. Ne pare rău pentru acest inconvenient.</string>
     <string name="google_drive_auth_retry">Trebuie să te autentifici din nou pentru a putea continua să folosești sincronizarea cu Google Drive. Accesează secțiunea „Conturi”, dezactivează asocierea și asociază contul din nou.</string>
     <string name="notification_category_body">Ai articole noi în %s</string>
     <string name="notification_grouped_body">Ai articole noi gata de citit!</string>

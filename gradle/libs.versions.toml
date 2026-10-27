@@ -86,7 +86,9 @@ slf4jNop = "2.0.20"
 # https://repo1.maven.org/maven2/app/cash/sqldelight/sqlite-driver/<version>/sqlite-driver-<version>.pom
 # If it changed, download the native library again from that sqlite-jdbc release:
 # https://github.com/xerial/sqlite-jdbc/tree/<sqlite-jdbc-version>/src/main/resources/org/sqlite/native/Mac/aarch64
+# and set sqlite-jdbc below to that same version.
 sql-delight = "2.4.1"
+sqlite-jdbc = "3.53.4.0"
 stately-concurrency = "2.1.0"
 triplet-play = "4.1.1"
 turbine = "1.2.1"
@@ -231,6 +233,7 @@ sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", versi
 sqldelight-primitive-adapter = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sql-delight" }
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sql-delight" }
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql-delight" }
+sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }
 stately-concurrency = { module = "co.touchlab:stately-concurrency", version.ref = "stately-concurrency" }
 touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 touchlab-kermit-crash = { module = "co.touchlab:kermit-crashlytics", version.ref = "kermit" }

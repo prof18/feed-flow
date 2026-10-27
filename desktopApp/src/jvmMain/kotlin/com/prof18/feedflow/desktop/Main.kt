@@ -22,8 +22,10 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.getDesktopOS
@@ -31,6 +33,9 @@ import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
+import com.prof18.feedflow.desktop.startup.DatabaseStartupErrorWindow
+import com.prof18.feedflow.desktop.startup.DesktopStartupCoordinator
+import com.prof18.feedflow.desktop.startup.StartupState
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.ui.DesktopWindowBackground
 import com.prof18.feedflow.desktop.ui.components.restoreInitialLinuxWindowSize
@@ -44,6 +49,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.DesktopAutoRefreshScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.logging.reportDesktopDatabaseFailure
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -64,25 +70,38 @@ fun main() {
         val properties = loadProperties()
         val appConfig = createAppConfig(properties, isIcloudEnabled = setupICloudSupport())
 
-        var isInitialized by remember { mutableStateOf(false) }
         var showMainWindow by remember { mutableStateOf(false) }
         var initProgress by remember { mutableFloatStateOf(0.1f) }
         var startupThemeMode by remember { mutableStateOf<ThemeMode?>(null) }
+        val startupCoordinator = remember {
+            DesktopStartupCoordinator(
+                initDependencies = {
+                    initializeDependencies(appConfig)
+                    val initialThemeMode = DI.koin.get<SettingsRepository>().getThemeMode()
+                    withContext(Dispatchers.Main) { startupThemeMode = initialThemeMode }
+                    // Open the database here, so a failure reaches the coordinator instead of a composable.
+                    DI.koin.get<SqlDriver>()
+                },
+                afterDatabaseReady = {
+                    DI.koin.get<DesktopAutoRefreshScheduler>().start()
+                    @Suppress("MagicNumber")
+                    withContext(Dispatchers.Main) { initProgress = 0.6f }
+                    setupTelemetryAndCrashReporting(appConfig)
+                },
+                reportStartupFailure = { error ->
+                    runCatching { setupTelemetryAndCrashReporting(appConfig) }
+                    runCatching { reportDesktopDatabaseFailure("startup", error) }
+                },
+            )
+        }
+        val startupState by startupCoordinator.state.collectAsState()
 
         @Suppress("MagicNumber")
         LaunchedEffect(Unit) {
             delay(100.milliseconds)
             initProgress = 0.2f
             launch(Dispatchers.IO) {
-                initializeDependencies(appConfig)
-                val initialThemeMode = DI.koin.get<SettingsRepository>().getThemeMode()
-                withContext(Dispatchers.Main) { startupThemeMode = initialThemeMode }
-                DI.koin.get<DesktopAutoRefreshScheduler>().start()
-                withContext(Dispatchers.Main) { initProgress = 0.6f }
-                setupTelemetryAndCrashReporting(appConfig)
-                withContext(Dispatchers.Main) {
-                    isInitialized = true
-                }
+                startupCoordinator.start()
             }
         }
 
@@ -90,7 +109,7 @@ fun main() {
         val icon = painterResource(Res.drawable.icon)
         val systemDarkTheme = rememberDesktopDarkTheme()
 
-        if (!showMainWindow) {
+        if (!showMainWindow && startupState !is StartupState.DatabaseFailed) {
             DesktopStartupSplashWindow(
                 themeMode = startupThemeMode,
                 systemDarkTheme = systemDarkTheme,
@@ -99,7 +118,15 @@ fun main() {
             )
         }
 
-        if (isInitialized) {
+        (startupState as? StartupState.DatabaseFailed)?.let { failed ->
+            DatabaseStartupErrorWindow(
+                failure = failed.failure,
+                dataFolder = File(AppDataPathBuilder.getAppDataPath(appConfig.appEnvironment)),
+                onQuit = ::exitApplication,
+            )
+        }
+
+        if (startupState == StartupState.Ready) {
             val desktopWindowSettingsRepository = remember { DI.koin.get<DesktopWindowSettingsRepository>() }
             val settingsRepository = remember { DI.koin.get<SettingsRepository>() }
             val windowState = windowState(desktopWindowSettingsRepository)

@@ -13,6 +13,8 @@ import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class FeedStateRepositoryTest : KoinTestBase() {
 
@@ -74,6 +76,24 @@ class FeedStateRepositoryTest : KoinTestBase() {
     }
 
     @Test
+    fun `pending count ignores existing articles past the loaded oldest first page`() = runTest(testDispatcher) {
+        appearanceSettingsRepository.setFeedOrder(FeedOrder.OLDEST_FIRST)
+        val source = createSource("source-1")
+        insertSources(source)
+        repeat(FeedStateRepository.FEED_DB_PAGE_SIZE.toInt() + 1) { index ->
+            insertItem("existing-$index", index.toLong() + 1, source)
+        }
+        repository.getFeeds()
+
+        repository.refreshPendingNewArticlesCount()
+        assertEquals(0, repository.pendingNewArticlesState.value)
+
+        insertItem("new-item", 1_000, source)
+        repository.refreshPendingNewArticlesCount()
+        assertEquals(1, repository.pendingNewArticlesState.value)
+    }
+
+    @Test
     fun `publishing feeds resets pending count`() = runTest(testDispatcher) {
         val source = createSource("source-1")
         insertSources(source)
@@ -86,6 +106,86 @@ class FeedStateRepositoryTest : KoinTestBase() {
         repository.getFeeds()
 
         assertEquals(0, repository.pendingNewArticlesState.value)
+    }
+
+    @Test
+    fun `publishing fetched feeds reloads the list when at top`() = runTest(testDispatcher) {
+        val source = createSource("source-1")
+        insertSources(source)
+        insertItem("existing", 1, source)
+        repository.getFeeds()
+        insertItem("new-item", 2, source)
+
+        repository.publishFetchedFeeds()
+
+        assertEquals(setOf("existing", "new-item"), repository.feedState.value.map { it.id }.toSet())
+        assertEquals(0, repository.pendingNewArticlesState.value)
+    }
+
+    @Test
+    fun `publishing fetched feeds keeps the list when away from top`() = runTest(testDispatcher) {
+        val source = createSource("source-1")
+        insertSources(source)
+        insertItem("existing", 1, source)
+        repository.getFeeds()
+        val initialVersion = repository.feedListVersion.value
+        insertItem("new-item", 2, source)
+        repository.setFeedListAwayFromTop(true)
+
+        repository.publishFetchedFeeds()
+
+        assertEquals(listOf("existing"), repository.feedState.value.map { it.id })
+        assertEquals(1, repository.pendingNewArticlesState.value)
+        assertEquals(initialVersion, repository.feedListVersion.value)
+    }
+
+    @Test
+    fun `returning to top reports a deferred update`() = runTest(testDispatcher) {
+        val source = createSource("source-1")
+        insertSources(source)
+        insertItem("existing", 1, source)
+        repository.getFeeds()
+        insertItem("new-item", 2, source)
+        repository.setFeedListAwayFromTop(true)
+        repository.publishFetchedFeeds()
+
+        assertTrue(repository.setFeedListAwayFromTop(false))
+    }
+
+    @Test
+    fun `returning to top without a deferred update reports nothing`() = runTest(testDispatcher) {
+        repository.setFeedListAwayFromTop(true)
+
+        assertFalse(repository.setFeedListAwayFromTop(false))
+    }
+
+    @Test
+    fun `reloading clears the deferred update`() = runTest(testDispatcher) {
+        val source = createSource("source-1")
+        insertSources(source)
+        insertItem("existing", 1, source)
+        repository.getFeeds()
+        insertItem("new-item", 2, source)
+        repository.setFeedListAwayFromTop(true)
+        repository.publishFetchedFeeds()
+
+        repository.getFeeds()
+
+        assertFalse(repository.setFeedListAwayFromTop(false))
+    }
+
+    @Test
+    fun `returning to top reports a deferred update with no new articles`() = runTest(testDispatcher) {
+        val source = createSource("source-1")
+        insertSources(source)
+        insertItem("existing", 1, source)
+        repository.getFeeds()
+        repository.setFeedListAwayFromTop(true)
+
+        repository.publishFetchedFeeds()
+
+        assertEquals(0, repository.pendingNewArticlesState.value)
+        assertTrue(repository.setFeedListAwayFromTop(false))
     }
 
     private suspend fun insertSources(vararg sources: FeedSource) {

@@ -76,6 +76,7 @@ internal fun HomeScreen(
     val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsStateWithLifecycle()
     val feedItemDisplaySettings by homeViewModel.feedItemDisplaySettings.collectAsStateWithLifecycle()
     val viewMenuState by homeViewModel.viewMenuState.collectAsStateWithLifecycle()
+    val pendingNewArticlesCount by homeViewModel.pendingNewArticlesState.collectAsStateWithLifecycle()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsStateWithLifecycle()
 
@@ -142,6 +143,7 @@ internal fun HomeScreen(
         isSyncUploadRequired,
         nextFeedPreviewState,
         feedItemDisplaySettings,
+        pendingNewArticlesCount,
     ) {
         HomeDisplayState(
             feedItems = feedState,
@@ -157,6 +159,7 @@ internal fun HomeScreen(
             isSyncUploadRequired = isSyncUploadRequired,
             nextFeedDisplayState = nextFeedPreviewState.asDisplayState(),
             feedItemDisplaySettings = feedItemDisplaySettings,
+            pendingNewArticlesCount = pendingNewArticlesCount,
         )
     }
 
@@ -189,6 +192,8 @@ internal fun HomeScreen(
             updateReadStatus = { feedItemId, isRead -> homeViewModel.updateReadStatus(feedItemId, isRead) },
             markAllAboveAsRead = { feedItemId -> homeViewModel.markAllAboveAsRead(feedItemId) },
             markAllBelowAsRead = { feedItemId -> homeViewModel.markAllBelowAsRead(feedItemId) },
+            onShowNewArticlesClick = homeViewModel::onShowNewArticlesClicked,
+            onScrolledAwayFromTopChanged = homeViewModel::onFeedListScrolledAwayFromTopChanged,
         )
     }
 

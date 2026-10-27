@@ -45,9 +45,13 @@ class HomeListIndexHolder {
         }
         guard snapshotKey != visibleSnapshotKey else { return }
         visibleSnapshotKey = snapshotKey
+        let firstVisibleIndex = snapshotKey.map(\.index).min() ?? 0
+        homeViewModel?.onFeedListScrolledAwayFromTopChanged(isAwayFromTop: firstVisibleIndex > awayFromTopThreshold)
         homeViewModel?.onVisibleFeedItemsChanged(visibleItems: visibleItems)
     }
 }
+
+private let awayFromTopThreshold = 3
 
 private struct VisibleFeedItemSnapshotKey: Equatable {
     let id: String

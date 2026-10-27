@@ -37,6 +37,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -122,6 +123,10 @@ fun AndroidHomeScreenContent(
                 gridState = gridState,
             )
         }
+    }
+
+    SideEffect(showScrollToTopButton) {
+        feedListActions.onScrolledAwayFromTopChanged(showScrollToTopButton)
     }
 
     LaunchedEffect(isShowingEmptyFeed, hasFeedItems) {
@@ -332,6 +337,21 @@ fun AndroidHomeScreenContent(
                 contentAlignment = Alignment.TopCenter,
             ) {
                 FeedRefreshPill(loadingState = displayState.feedUpdateStatus)
+                NewArticlesPill(
+                    count = displayState.pendingNewArticlesCount,
+                    loadingState = displayState.feedUpdateStatus,
+                    onClick = {
+                        scope.launch {
+                            scrollFeedToTop(
+                                isGridArrangement = isGridArrangement,
+                                listState = listState,
+                                gridState = gridState,
+                                reduceMotionEnabled = reduceMotionEnabled,
+                            )
+                            feedListActions.onShowNewArticlesClick()
+                        }
+                    },
+                )
             }
 
             HomeFloatingToolbar(

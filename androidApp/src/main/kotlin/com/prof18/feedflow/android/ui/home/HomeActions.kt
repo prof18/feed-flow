@@ -30,6 +30,8 @@ data class FeedListActions(
     val markAllAboveAsRead: (String) -> Unit,
     val markAllBelowAsRead: (String) -> Unit,
     val onNavigateNext: () -> Unit = {},
+    val onShowNewArticlesClick: () -> Unit = {},
+    val onScrolledAwayFromTopChanged: (Boolean) -> Unit = {},
 )
 
 @Stable

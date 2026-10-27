@@ -128,7 +128,7 @@ class FeedFetcherRepository internal constructor(
         // After fetching new feeds, delete old ones based on user settings
         cleanOldFeeds(publishToFeedList)
         if (publishToFeedList) {
-            feedStateRepository.getFeeds()
+            feedStateRepository.publishFetchedFeeds()
         }
     }
 
@@ -149,7 +149,7 @@ class FeedFetcherRepository internal constructor(
         // After fetching new feeds, delete old ones based on user settings
         cleanOldFeeds(publishToFeedList)
         if (publishToFeedList) {
-            feedStateRepository.getFeeds()
+            feedStateRepository.publishFetchedFeeds()
         }
     }
 
@@ -172,7 +172,7 @@ class FeedFetcherRepository internal constructor(
         feedToUpdate.addAll(feedSourceUrls.map { it.url })
 
         if (!isFirstLaunch && publishToFeedList) {
-            feedStateRepository.getFeeds()
+            feedStateRepository.publishFetchedFeeds()
         }
         feedStateRepository.emitUpdateStatus(
             InProgressFeedUpdateStatus(
@@ -196,7 +196,7 @@ class FeedFetcherRepository internal constructor(
         cleanOldFeeds(publishToFeedList)
         updateRefreshCount()
         if (publishToFeedList) {
-            feedStateRepository.getFeeds()
+            feedStateRepository.publishFetchedFeeds()
         }
     }
 
@@ -239,7 +239,7 @@ class FeedFetcherRepository internal constructor(
         feedSyncRepository.deleteFeedItems(oldFeedIds)
         databaseHelper.cleanupOldDeletedItems()
         if (publishToFeedList) {
-            feedStateRepository.getFeeds()
+            feedStateRepository.publishFetchedFeeds()
         }
     }
 

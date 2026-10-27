@@ -3,11 +3,13 @@ package com.prof18.feedflow.shared.domain.feed
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedSourceCacheInfo
+import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpValidators
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
+import com.prof18.feedflow.shared.test.buildFeedItem
 import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
 import com.prof18.feedflow.shared.test.toParsedFeedSource
@@ -109,6 +111,37 @@ class SerialFeedFetcherRepositoryTest : KoinTestBase() {
         repository().fetchFeeds()
 
         assertEquals(emptyList(), fakeRssParser.requestedUrls)
+    }
+
+    @Test
+    fun `serial fetch while scrolled away finishes loading and keeps the list`() = runTest(testDispatcher) {
+        val now = dateFormatter.currentTimeMillis()
+        val source = FeedSourceGenerator.feedSource(id = "scheduled", lastSyncTimestamp = now)
+        databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource()))
+        databaseHelper.updateFeedSourcesCacheInfo(
+            listOf(
+                FeedSourceCacheInfo(
+                    feedSourceId = source.id,
+                    etag = null,
+                    lastModified = null,
+                    validatorsTimestamp = null,
+                    nextFetchTimestamp = now + 30.minutes.inWholeMilliseconds,
+                    backoffTimestamp = null,
+                ),
+            ),
+        )
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "existing", title = "Existing", pubDateMillis = 1, source = source)),
+            lastSyncTimestamp = 0,
+        )
+        val feedStateRepository: FeedStateRepository = getKoin().get()
+        feedStateRepository.getFeeds()
+        feedStateRepository.setFeedListAwayFromTop(true)
+
+        repository().fetchFeeds()
+
+        assertEquals(FinishedFeedUpdateStatus, feedStateRepository.updateState.value)
+        assertEquals(listOf("existing"), feedStateRepository.feedState.value.map { it.id })
     }
 
     @Test

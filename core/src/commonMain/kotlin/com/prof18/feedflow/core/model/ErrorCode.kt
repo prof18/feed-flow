@@ -48,6 +48,7 @@ sealed class SyncICloudError(override val code: String) : ErrorCode {
 sealed class DatabaseError(override val code: String) : ErrorCode {
     data object FeedRetrievalFailed : DatabaseError("DB1")
     data object PaginationFailed : DatabaseError("DB2")
+    data object SaveFailed : DatabaseError("DB3")
 }
 
 // Feed Sync Errors (FS) - FreshRSS/GReader

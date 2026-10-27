@@ -18,6 +18,7 @@ import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
+import com.prof18.feedflow.shared.domain.feed.runUserWrite
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.SyncError
@@ -57,105 +58,109 @@ internal class FeedCategoryRepository(
     }
 
     suspend fun deleteCategory(categoryId: String) {
-        when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
-                gReaderRepository.deleteCategory(categoryId)
-                    .fold(
-                        onSuccess = {
-                            gReaderRepository.fetchFeedSourcesAndCategories()
-                                .onErrorSuspend {
-                                    feedStateRepository.emitErrorState(
-                                        SyncError(errorCode = FeedSyncError.FetchFeedSourcesAndCategoriesFailed),
-                                    )
-                                }
-                        },
-                        onFailure = {
-                            feedStateRepository.emitErrorState(
-                                SyncError(errorCode = FeedSyncError.DeleteCategoryFailed),
-                            )
-                        },
-                    )
-            }
+        feedStateRepository.runUserWrite(onDatabaseFailure = Unit) {
+            when (accountsRepository.getCurrentSyncAccount()) {
+                SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
+                    gReaderRepository.deleteCategory(categoryId)
+                        .fold(
+                            onSuccess = {
+                                gReaderRepository.fetchFeedSourcesAndCategories()
+                                    .onErrorSuspend {
+                                        feedStateRepository.emitErrorState(
+                                            SyncError(errorCode = FeedSyncError.FetchFeedSourcesAndCategoriesFailed),
+                                        )
+                                    }
+                            },
+                            onFailure = {
+                                feedStateRepository.emitErrorState(
+                                    SyncError(errorCode = FeedSyncError.DeleteCategoryFailed),
+                                )
+                            },
+                        )
+                }
 
-            SyncAccounts.FEEDBIN -> {
-                feedbinRepository.deleteCategory(categoryId)
-                    .fold(
-                        onSuccess = {
-                            feedbinRepository.fetchFeedSourcesAndCategories()
-                                .onErrorSuspend {
-                                    feedStateRepository.emitErrorState(
-                                        SyncError(errorCode = FeedSyncError.FetchFeedSourcesAndCategoriesFailed),
-                                    )
-                                }
-                        },
-                        onFailure = {
-                            feedStateRepository.emitErrorState(
-                                SyncError(errorCode = FeedSyncError.DeleteCategoryFailed),
-                            )
-                        },
-                    )
-            }
+                SyncAccounts.FEEDBIN -> {
+                    feedbinRepository.deleteCategory(categoryId)
+                        .fold(
+                            onSuccess = {
+                                feedbinRepository.fetchFeedSourcesAndCategories()
+                                    .onErrorSuspend {
+                                        feedStateRepository.emitErrorState(
+                                            SyncError(errorCode = FeedSyncError.FetchFeedSourcesAndCategoriesFailed),
+                                        )
+                                    }
+                            },
+                            onFailure = {
+                                feedStateRepository.emitErrorState(
+                                    SyncError(errorCode = FeedSyncError.DeleteCategoryFailed),
+                                )
+                            },
+                        )
+                }
 
-            SyncAccounts.LOCAL,
-            SyncAccounts.DROPBOX,
-            SyncAccounts.GOOGLE_DRIVE,
-            SyncAccounts.ICLOUD,
-            -> {
-                val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
-                databaseHelper.deleteCategory(
-                    id = categoryId,
-                    cloudSessionId = cloudSessionId,
-                    withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
-                )
-                feedSyncRepository.localEditCommitted(cloudSessionId)
+                SyncAccounts.LOCAL,
+                SyncAccounts.DROPBOX,
+                SyncAccounts.GOOGLE_DRIVE,
+                SyncAccounts.ICLOUD,
+                -> {
+                    val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
+                    databaseHelper.deleteCategory(
+                        id = categoryId,
+                        cloudSessionId = cloudSessionId,
+                        withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
+                    )
+                    feedSyncRepository.localEditCommitted(cloudSessionId)
+                }
             }
         }
     }
 
     suspend fun updateCategoryName(categoryId: CategoryId, newName: CategoryName) {
-        val trimmedName = newName.trimmed()
-        if (trimmedName.name.isBlank()) {
-            return
-        }
-
-        if (hasCategoryWithName(trimmedName, excludedCategoryId = categoryId.value)) {
-            return
-        }
-
-        // If the category being edited is currently selected, update selectedCategoryName
-        val selectedCategory = categoriesState.value.categories.firstOrNull { it.isSelected }
-        if (selectedCategory?.id == categoryId.value) {
-            selectedCategoryName = trimmedName
-        }
-
-        when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
-                gReaderRepository.editCategoryName(categoryId, trimmedName)
-                    .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditCategoryNameFailed))
-                    }
+        feedStateRepository.runUserWrite(onDatabaseFailure = Unit) {
+            val trimmedName = newName.trimmed()
+            if (trimmedName.name.isBlank()) {
+                return
             }
 
-            SyncAccounts.FEEDBIN -> {
-                feedbinRepository.editCategoryName(categoryId, trimmedName)
-                    .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditCategoryNameFailed))
-                    }
+            if (hasCategoryWithName(trimmedName, excludedCategoryId = categoryId.value)) {
+                return
             }
 
-            SyncAccounts.LOCAL,
-            SyncAccounts.DROPBOX,
-            SyncAccounts.GOOGLE_DRIVE,
-            SyncAccounts.ICLOUD,
-            -> {
-                val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
-                databaseHelper.updateCategoryName(
-                    id = categoryId.value,
-                    newName = trimmedName.name,
-                    cloudSessionId = cloudSessionId,
-                    withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
-                )
-                feedSyncRepository.localEditCommitted(cloudSessionId)
+            // If the category being edited is currently selected, update selectedCategoryName
+            val selectedCategory = categoriesState.value.categories.firstOrNull { it.isSelected }
+            if (selectedCategory?.id == categoryId.value) {
+                selectedCategoryName = trimmedName
+            }
+
+            when (accountsRepository.getCurrentSyncAccount()) {
+                SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
+                    gReaderRepository.editCategoryName(categoryId, trimmedName)
+                        .onErrorSuspend {
+                            feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditCategoryNameFailed))
+                        }
+                }
+
+                SyncAccounts.FEEDBIN -> {
+                    feedbinRepository.editCategoryName(categoryId, trimmedName)
+                        .onErrorSuspend {
+                            feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditCategoryNameFailed))
+                        }
+                }
+
+                SyncAccounts.LOCAL,
+                SyncAccounts.DROPBOX,
+                SyncAccounts.GOOGLE_DRIVE,
+                SyncAccounts.ICLOUD,
+                -> {
+                    val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
+                    databaseHelper.updateCategoryName(
+                        id = categoryId.value,
+                        newName = trimmedName.name,
+                        cloudSessionId = cloudSessionId,
+                        withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
+                    )
+                    feedSyncRepository.localEditCommitted(cloudSessionId)
+                }
             }
         }
     }
@@ -218,38 +223,40 @@ internal class FeedCategoryRepository(
     }
 
     suspend fun createCategory(categoryName: CategoryName) {
-        val trimmedName = categoryName.trimmed()
-        if (trimmedName.name.isBlank()) {
-            return
+        feedStateRepository.runUserWrite(onDatabaseFailure = Unit) {
+            val trimmedName = categoryName.trimmed()
+            if (trimmedName.name.isBlank()) {
+                return
+            }
+
+            if (hasCategoryWithName(trimmedName, excludedCategoryId = null)) {
+                return
+            }
+
+            val categoryId = when (accountsRepository.getCurrentSyncAccount()) {
+                SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX ->
+                    gReaderRepository.buildCategoryId(trimmedName)
+                SyncAccounts.FEEDBIN -> feedbinRepository.buildCategoryId(trimmedName)
+                SyncAccounts.LOCAL,
+                SyncAccounts.DROPBOX,
+                SyncAccounts.GOOGLE_DRIVE,
+                SyncAccounts.ICLOUD,
+                -> trimmedName.name.hashCode().toString()
+            }
+
+            val category = FeedSourceCategory(
+                id = categoryId,
+                title = trimmedName.name,
+            )
+            val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
+            databaseHelper.insertCategories(
+                listOf(category),
+                cloudSessionId = cloudSessionId,
+                withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
+            )
+
+            feedSyncRepository.localEditCommitted(cloudSessionId)
         }
-
-        if (hasCategoryWithName(trimmedName, excludedCategoryId = null)) {
-            return
-        }
-
-        val categoryId = when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX ->
-                gReaderRepository.buildCategoryId(trimmedName)
-            SyncAccounts.FEEDBIN -> feedbinRepository.buildCategoryId(trimmedName)
-            SyncAccounts.LOCAL,
-            SyncAccounts.DROPBOX,
-            SyncAccounts.GOOGLE_DRIVE,
-            SyncAccounts.ICLOUD,
-            -> trimmedName.name.hashCode().toString()
-        }
-
-        val category = FeedSourceCategory(
-            id = categoryId,
-            title = trimmedName.name,
-        )
-        val cloudSessionId = feedSyncRepository.cloudSessionForEdit()
-        databaseHelper.insertCategories(
-            listOf(category),
-            cloudSessionId = cloudSessionId,
-            withCurrentSession = feedSyncRepository.cloudEditGuard(cloudSessionId),
-        )
-
-        feedSyncRepository.localEditCommitted(cloudSessionId)
     }
 
     fun onCategorySelected(categoryId: CategoryId) {

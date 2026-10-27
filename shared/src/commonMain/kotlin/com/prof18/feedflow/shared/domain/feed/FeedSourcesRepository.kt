@@ -318,26 +318,28 @@ internal class FeedSourcesRepository(
         newFeedSource: FeedSource,
         originalFeedSource: FeedSource?,
     ): FeedEditedState {
-        if (newFeedSource != originalFeedSource) {
-            databaseHelper.insertFeedSourcePreference(
-                feedSourceId = newFeedSource.id,
-                articleOpenMode = newFeedSource.articleOpenMode,
-                isHidden = newFeedSource.isHiddenFromTimeline,
-                isPinned = newFeedSource.isPinned,
-                isNotificationEnabled = newFeedSource.isNotificationEnabled,
-                isHideImagesEnabled = newFeedSource.isHideImagesEnabled,
-            )
-            feedStateRepository.getFeeds()
-        }
-        return when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX ->
-                editFeedSourceForFreshRss(newFeedSource, originalFeedSource)
-            SyncAccounts.FEEDBIN -> editFeedSourceForFeedbin(newFeedSource, originalFeedSource)
-            SyncAccounts.LOCAL,
-            SyncAccounts.DROPBOX,
-            SyncAccounts.GOOGLE_DRIVE,
-            SyncAccounts.ICLOUD,
-            -> editFeedSourceForLocalAccount(newFeedSource, originalFeedSource)
+        return feedStateRepository.runUserWrite<FeedEditedState>(FeedEditedState.Error.GenericError) {
+            if (newFeedSource != originalFeedSource) {
+                databaseHelper.insertFeedSourcePreference(
+                    feedSourceId = newFeedSource.id,
+                    articleOpenMode = newFeedSource.articleOpenMode,
+                    isHidden = newFeedSource.isHiddenFromTimeline,
+                    isPinned = newFeedSource.isPinned,
+                    isNotificationEnabled = newFeedSource.isNotificationEnabled,
+                    isHideImagesEnabled = newFeedSource.isHideImagesEnabled,
+                )
+                feedStateRepository.getFeeds()
+            }
+            return when (accountsRepository.getCurrentSyncAccount()) {
+                SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX ->
+                    editFeedSourceForFreshRss(newFeedSource, originalFeedSource)
+                SyncAccounts.FEEDBIN -> editFeedSourceForFeedbin(newFeedSource, originalFeedSource)
+                SyncAccounts.LOCAL,
+                SyncAccounts.DROPBOX,
+                SyncAccounts.GOOGLE_DRIVE,
+                SyncAccounts.ICLOUD,
+                -> editFeedSourceForLocalAccount(newFeedSource, originalFeedSource)
+            }
         }
     }
 

@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.ArticleReportUiState
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
@@ -356,6 +357,8 @@ class ReaderModeViewModel internal constructor(
         baseUrl = baseUrl,
         fontSize = settingsRepository.getReaderModeFontSize(),
         lineHeight = settingsRepository.getReaderModeLineHeight(),
+        bodyFont = settingsRepository.getReaderModeBodyFont(),
+        headlineFont = settingsRepository.getReaderModeHeadlineFont(),
         isBookmarked = urlInfo.isBookmarked,
         commentsUrl = urlInfo.commentsUrl,
         imageUrl = readerImageUrl(urlInfo, shownContentSource),
@@ -410,6 +413,14 @@ class ReaderModeViewModel internal constructor(
 
     fun updateLineHeight(newLineHeight: Int) {
         settingsRepository.setReaderModeLineHeight(newLineHeight)
+    }
+
+    fun updateBodyFont(font: ReaderFontFamily) {
+        settingsRepository.setReaderModeBodyFont(font)
+    }
+
+    fun updateHeadlineFont(font: ReaderFontFamily) {
+        settingsRepository.setReaderModeHeadlineFont(font)
     }
 
     fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {

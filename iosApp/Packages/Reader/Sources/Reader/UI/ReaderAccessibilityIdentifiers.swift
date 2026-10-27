@@ -7,6 +7,8 @@ enum ReaderAccessibilityIdentifiers {
     static let fontSizeSheet = "reader_font_size_sheet"
     static let fontSizeValueLabel = "reader_font_size_value_label"
     static let lineHeightValueLabel = "reader_line_height_value_label"
+    static let titleFontSizeValueLabel = "reader_title_font_size_value_label"
+    static let fontPicker = "reader_font_picker"
     static let textSettingsSheet = "reader_text_settings_sheet"
     static let textSettingsResetButton = "reader_text_settings_reset_button"
     static let moreMenuButton = "reader_more_menu_button"

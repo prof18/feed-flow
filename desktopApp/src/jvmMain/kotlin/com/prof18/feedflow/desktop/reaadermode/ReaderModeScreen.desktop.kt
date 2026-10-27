@@ -66,6 +66,8 @@ import coil3.ImageLoader
 import com.prof18.feedflow.core.model.ArticleReportUiState
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.ReaderFontFamily
+import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.core.utils.getDesktopOS
@@ -119,6 +121,8 @@ internal fun ReaderModeScreen(
     val articleReportState by readerModeViewModel.articleReportState.collectAsState()
     val fontSize = fontSettings.fontSize
     val lineHeight = fontSettings.lineHeight
+    val headlineFontFamily = rememberReaderComposeFontFamily(fontSettings.headlineFont)
+    val bodyFontFamily = rememberReaderComposeFontFamily(fontSettings.bodyFont)
 
     SideEffect(feedItemUrlInfo.id) {
         readerModeViewModel.loadReaderContent(feedItemUrlInfo)
@@ -231,6 +235,12 @@ internal fun ReaderModeScreen(
                 onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
                 lineHeight = lineHeight,
                 onLineHeightChange = { readerModeViewModel.updateLineHeight(it) },
+                headlineFont = fontSettings.headlineFont,
+                bodyFont = fontSettings.bodyFont,
+                onHeadlineFontChange = readerModeViewModel::updateHeadlineFont,
+                onBodyFontChange = readerModeViewModel::updateBodyFont,
+                titleFontSize = fontSettings.titleFontSize,
+                onTitleFontSizeChange = readerModeViewModel::updateTitleFontSize,
                 isBookmarked = isBookmarked,
                 onToggleBookmark = toggleBookmark ?: {},
                 onToggleContentSource = { readerModeViewModel.toggleContentSource() },
@@ -246,10 +256,13 @@ internal fun ReaderModeScreen(
                 loadingArticle = loadingArticle,
                 fontSize = fontSize,
                 lineHeight = lineHeight,
+                titleFontSize = fontSettings.titleFontSize,
                 imageLoader = imageLoader,
                 onOpenInBrowser = ::openExternalUrl,
                 onHoveredLinkChange = { hoveredLink = it },
                 modifier = Modifier.weight(1f).fillMaxSize(),
+                bodyFontFamily = bodyFontFamily,
+                headlineFontFamily = headlineFontFamily,
             )
         }
 
@@ -369,6 +382,12 @@ internal fun ReaderModeToolbar(
     articleReportState: ArticleReportUiState,
     onReportArticle: () -> Unit,
     loadingArticle: FeedItemUrlInfo? = null,
+    headlineFont: ReaderFontFamily = ReaderModeDefaults.HEADLINE_FONT,
+    bodyFont: ReaderFontFamily = ReaderModeDefaults.BODY_FONT,
+    onHeadlineFontChange: (ReaderFontFamily) -> Unit = {},
+    onBodyFontChange: (ReaderFontFamily) -> Unit = {},
+    titleFontSize: Int = ReaderModeDefaults.TITLE_FONT_SIZE,
+    onTitleFontSizeChange: (Int) -> Unit = {},
 ) {
     val strings = LocalFeedFlowStrings.current
     val url = (readerModeState.getUrl ?: loadingArticle?.url)?.takeIf(String::isNotBlank)
@@ -420,6 +439,12 @@ internal fun ReaderModeToolbar(
                     lineHeight = lineHeight,
                     onFontSizeChange = onFontSizeChange,
                     onLineHeightChange = onLineHeightChange,
+                    headlineFont = headlineFont,
+                    bodyFont = bodyFont,
+                    onHeadlineFontChange = onHeadlineFontChange,
+                    onBodyFontChange = onBodyFontChange,
+                    titleFontSize = titleFontSize,
+                    onTitleFontSizeChange = onTitleFontSizeChange,
                 )
             }
             if (itemId != null) ReaderBookmarkAction(isBookmarked, onToggleBookmark)
@@ -549,6 +574,12 @@ private fun ReaderTextSettingsAction(
     lineHeight: Int,
     onFontSizeChange: (Int) -> Unit,
     onLineHeightChange: (Int) -> Unit,
+    headlineFont: ReaderFontFamily,
+    bodyFont: ReaderFontFamily,
+    onHeadlineFontChange: (ReaderFontFamily) -> Unit,
+    onBodyFontChange: (ReaderFontFamily) -> Unit,
+    titleFontSize: Int,
+    onTitleFontSizeChange: (Int) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
     var showSettings by remember { mutableStateOf(false) }
@@ -581,19 +612,22 @@ private fun ReaderTextSettingsAction(
             PopupContainer(
                 onDismissRequest = { showSettings = false },
                 horizontalAlignment = Alignment.End,
-                modifier = Modifier.widthIn(max = 360.dp).heightIn(max = 580.dp),
+                modifier = Modifier.widthIn(max = 400.dp).heightIn(max = 720.dp),
                 popupProperties = PopupProperties(focusable = true),
             ) {
                 Column {
-                    Text(
-                        strings.readerModeTextSettings,
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                    )
                     ReaderTextSettingsControls(
+                        title = strings.readerModeTextSettings,
                         fontSize = fontSize,
                         lineHeight = lineHeight,
                         onFontSizeChange = onFontSizeChange,
                         onLineHeightChange = onLineHeightChange,
+                        headlineFont = headlineFont,
+                        bodyFont = bodyFont,
+                        onHeadlineFontChange = onHeadlineFontChange,
+                        onBodyFontChange = onBodyFontChange,
+                        titleFontSize = titleFontSize,
+                        onTitleFontSizeChange = onTitleFontSizeChange,
                         modifier = Modifier
                             .focusRequester(popupFocusRequester)
                             .onPreviewKeyEvent { event ->

@@ -42,6 +42,28 @@ class ReaderModeHtmlAndCssTest {
     }
 
     @Test
+    fun `readerModeCss sizes the article title on its own`() {
+        val css = readerModeCss(colors = null, fontSize = 18, lineHeight = 0, titleFontSize = 24)
+
+        assertTrue(css.contains("body > h1 {\n    font-size: 24px;"))
+    }
+
+    @Test
+    fun `readerModeCss uses the default title size`() {
+        val css = readerModeCss(colors = null, fontSize = 18, lineHeight = 0)
+
+        assertTrue(css.contains("font-size: ${ReaderModeDefaults.TITLE_FONT_SIZE}px;"))
+    }
+
+    @Test
+    fun `readerTitleFontSizeJs restyles only the article title`() {
+        val js = readerTitleFontSizeJs(28)
+
+        assertTrue(js.contains("__feedflow_title_font_size_style"))
+        assertTrue(js.contains("body > h1 { font-size: 28px; }"))
+    }
+
+    @Test
     fun `unknown or missing stored font names map to system`() {
         assertEquals(ReaderFontFamily.SYSTEM, ReaderFontFamily.fromStorageName("OUTFIT"))
         assertEquals(ReaderFontFamily.SYSTEM, ReaderFontFamily.fromStorageName(null))

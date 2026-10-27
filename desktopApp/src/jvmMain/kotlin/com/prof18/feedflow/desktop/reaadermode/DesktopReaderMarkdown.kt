@@ -36,20 +36,28 @@ internal fun DesktopReaderMarkdown(
     onUrlClick: (String) -> Unit,
     onHoveredLinkChange: (String?) -> Unit,
     modifier: Modifier = Modifier,
+    bodyFontFamily: FontFamily? = null,
+    headlineFontFamily: FontFamily? = null,
 ) {
     val dark = JewelTheme.isDark
     val bodyStyle = DesktopDesignTokens.chromeText.copy(
         color = JewelTheme.globalColors.text.normal,
         fontSize = fontSize.sp,
         lineHeight = readerLineHeightToTextLineHeightSp(fontSize, lineHeight).sp,
+        fontFamily = bodyFontFamily ?: DesktopDesignTokens.chromeText.fontFamily,
     )
     val codeStyle = bodyStyle.copy(
         fontFamily = FontFamily.Monospace,
         fontSize = (fontSize - 2).sp,
         lineHeight = (fontSize + 8).sp,
     )
-    val styling = remember(dark, bodyStyle, codeStyle) {
-        desktopMarkdownStyling(bodyStyle = bodyStyle, codeStyle = codeStyle, dark = dark)
+    val styling = remember(dark, bodyStyle, codeStyle, headlineFontFamily) {
+        desktopMarkdownStyling(
+            bodyStyle = bodyStyle,
+            codeStyle = codeStyle,
+            dark = dark,
+            headlineFontFamily = headlineFontFamily,
+        )
     }
     val processor = remember {
         MarkdownProcessor(

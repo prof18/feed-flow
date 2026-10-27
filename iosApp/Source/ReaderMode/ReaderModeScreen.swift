@@ -26,6 +26,9 @@ struct ReaderModeScreen: View {
     @State private var showFontSizeMenu = false
     @State private var fontSize = 16.0
     @State private var lineHeight = 0.0
+    @State private var titleFontSize = Double(ReaderModeDefaults.shared.TITLE_FONT_SIZE)
+    @State private var headlineFont = ReaderFontFamily.system
+    @State private var bodyFont = ReaderFontFamily.system
     @State private var isBookmarked = false
     @State private var readerStatus = ReaderStatus.fetching
     @State private var currentContent: String?
@@ -92,7 +95,16 @@ struct ReaderModeScreen: View {
                 fontSize: { readerFontSizeJs(fontSize: Int32($0)) },
                 lineHeight: { readerLineHeightJs(step: Int32($0)) },
                 lineHeightLabel: { readerLineHeightLabel(step: Int32($0)) },
-                stateUpdate: "window.feedflowUpdateAudioState?.(\(isCurrentAudioPlaying ? "true" : "false"));"
+                fontFamily: { bodyId, headlineId in
+                    await Task.detached(priority: .userInitiated) {
+                        readerFontFamilyJs(
+                            bodyFont: ReaderFontFamily.companion.fromStorageName(name: bodyId),
+                            headlineFont: ReaderFontFamily.companion.fromStorageName(name: headlineId)
+                        )
+                    }.value
+                },
+                stateUpdate: "window.feedflowUpdateAudioState?.(\(isCurrentAudioPlaying ? "true" : "false"));",
+                titleFontSize: { readerTitleFontSizeJs(titleFontSize: Int32($0)) }
             ),
             actions: ReaderViewActions(
                 strings: ReaderViewStrings(
@@ -116,7 +128,11 @@ struct ReaderModeScreen: View {
                     ttsPreparing: feedFlowStrings.readerModeTtsPreparing,
                     reportArticle: feedFlowStrings.articleReportAction,
                     openInBrowser: feedFlowStrings.readerModeFallbackOpenBrowserButton,
-                    moreOptions: feedFlowStrings.moreOptionsButtonContentDescription
+                    moreOptions: feedFlowStrings.moreOptionsButtonContentDescription,
+                    font: feedFlowStrings.readerModeFont,
+                    titleFontSize: feedFlowStrings.readerModeTitleFontSize,
+                    previewTitle: feedFlowStrings.readerModePreviewTitle,
+                    previewBody: feedFlowStrings.readerModePreviewBody
                 ),
                 onBookmarkToggle: { newBookmarkState in
                     if let id = feedItemId {
@@ -202,13 +218,34 @@ struct ReaderModeScreen: View {
                 isShowingFeedContent: isShowingFeedContent,
                 hasUrl: hasArticleUrl,
                 onReportArticle: reportState?.canReport == true ? { viewModel.requestArticleReport() } : nil,
-                isSendingReport: reportState?.sending == true
+                isSendingReport: reportState?.sending == true,
+                onHeadlineFontChange: { fontId in
+                    let font = ReaderFontFamily.companion.fromStorageName(name: fontId)
+                    headlineFont = font
+                    viewModel.updateHeadlineFont(font: font)
+                },
+                onBodyFontChange: { fontId in
+                    let font = ReaderFontFamily.companion.fromStorageName(name: fontId)
+                    bodyFont = font
+                    viewModel.updateBodyFont(font: font)
+                },
+                fontOptions: ReaderFontOption.readerOptions(strings: feedFlowStrings),
+                onTitleFontSizeChange: { newValue in
+                    titleFontSize = newValue
+                    viewModel.updateTitleFontSize(newTitleFontSize: Int32(Int(newValue)))
+                }
             ),
             isBookmarked: isBookmarked,
             fontSize: fontSize,
             lineHeight: lineHeight,
             defaultFontSize: Double(ReaderModeDefaults.shared.FONT_SIZE),
             defaultLineHeight: Double(ReaderModeDefaults.shared.LINE_HEIGHT),
+            headlineFontId: headlineFont.name,
+            bodyFontId: bodyFont.name,
+            defaultHeadlineFontId: ReaderModeDefaults.shared.HEADLINE_FONT.name,
+            defaultBodyFontId: ReaderModeDefaults.shared.BODY_FONT.name,
+            titleFontSize: titleFontSize,
+            defaultTitleFontSize: Double(ReaderModeDefaults.shared.TITLE_FONT_SIZE),
             showFontSizeMenu: $showFontSizeMenu,
             openInBrowser: { url in
                 openInBrowser(url: url)
@@ -259,6 +296,9 @@ struct ReaderModeScreen: View {
             for await settings in viewModel.readerFontSettingsState {
                 self.fontSize = Double(settings.fontSize)
                 self.lineHeight = Double(settings.lineHeight)
+                self.titleFontSize = Double(settings.titleFontSize)
+                self.headlineFont = settings.headlineFont
+                self.bodyFont = settings.bodyFont
             }
         }
         .task {
@@ -304,6 +344,14 @@ struct ReaderModeScreen: View {
                     self.canToggleContentSource = readerModeData.canToggleContentSource
                     let url = URL(string: readerModeData.url) ?? URL(fileURLWithPath: "")
                     self.articleUrl = url
+                    // Settings and reader state arrive in separate tasks, and a reopened article replays its
+                    // old snapshot, so read the current text settings before building the HTML.
+                    let fontSettings = viewModel.readerFontSettingsState.value
+                    self.fontSize = Double(fontSettings.fontSize)
+                    self.lineHeight = Double(fontSettings.lineHeight)
+                    self.titleFontSize = Double(fontSettings.titleFontSize)
+                    self.headlineFont = fontSettings.headlineFont
+                    self.bodyFont = fontSettings.bodyFont
 
                     updateReaderHTML()
                 }
@@ -418,8 +466,9 @@ private extension ReaderModeScreen {
             siteName: currentSiteName,
             audioBanner: readerAudioBanner,
             languageTag: currentLanguageTag,
-            bodyFont: .system,
-            headlineFont: .system
+            bodyFont: bodyFont,
+            headlineFont: headlineFont,
+            titleFontSize: Int32(titleFontSize)
         )
 
         readerStatus = .extractedContent(

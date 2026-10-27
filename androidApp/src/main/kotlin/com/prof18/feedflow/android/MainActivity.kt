@@ -522,6 +522,12 @@ class MainActivity : BaseThemeActivity() {
                         onUpdateLineHeight = { newLineHeight ->
                             readerModeViewModel.updateLineHeight(newLineHeight)
                         },
+                        titleFontSize = fontSettingsState.titleFontSize,
+                        onUpdateTitleFontSize = readerModeViewModel::updateTitleFontSize,
+                        headlineFont = fontSettingsState.headlineFont,
+                        bodyFont = fontSettingsState.bodyFont,
+                        onUpdateHeadlineFont = readerModeViewModel::updateHeadlineFont,
+                        onUpdateBodyFont = readerModeViewModel::updateBodyFont,
                         onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
                             readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
                         },

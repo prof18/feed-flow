@@ -43,9 +43,35 @@ appId: com.prof18.feedflow.dev
 - assertVisible:
     id: reader_text_settings_sheet
 - assertVisible: "Line Height"
-- assertVisible: "Reset to default"
+- assertVisible: "Title Size"
+- assertVisible: "32"
+- assertVisible:
+    id: reader_text_settings_reset_button
 - assertVisible:
     id: reader_font_size_value_label
 - assertVisible:
     id: reader_line_height_value_label
 - assertVisible: "1.6"
+
+# Choose a font tile, reopen Text Settings to check it persisted, then reset it.
+- assertVisible:
+    id: reader_font_picker_SYSTEM
+    selected: true
+- tapOn:
+    id: reader_font_picker_LORA
+- assertVisible:
+    id: reader_font_picker_LORA
+    selected: true
+- tapOn: "Done"
+- tapOn:
+    id: reader_more_menu_button
+- tapOn: "Text Settings"
+- assertVisible:
+    id: reader_font_picker_LORA
+    selected: true
+- tapOn:
+    id: reader_text_settings_reset_button
+- assertVisible:
+    id: reader_font_picker_SYSTEM
+    selected: true
+- tapOn: "Done"

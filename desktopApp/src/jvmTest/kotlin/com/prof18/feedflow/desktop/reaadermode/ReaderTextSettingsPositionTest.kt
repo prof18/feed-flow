@@ -109,9 +109,10 @@ class ReaderTextSettingsPositionTest {
         rule.runOnIdle {
             assertTrue(Window.getWindows().none { it.isShowing && it is ComposeDialog })
         }
+        // The popup focuses its first control: the headline font choice.
+        rule.onAllNodesWithText(EnFeedFlowStrings.readerFontSystem)[0].assertIsFocused()
         rule.onNodeWithContentDescription(EnFeedFlowStrings.readerModeFontSize)
             .performSemanticsAction(SemanticsActions.SetProgress) { it(NEW_FONT_SIZE.toFloat()) }
-        rule.onNodeWithContentDescription(EnFeedFlowStrings.readerModeFontSize).assertIsFocused()
         rule.waitForIdle()
         val positionWithSettings = documentPosition()
         assertEquals(positionBefore, positionWithSettings)

@@ -12,6 +12,12 @@ public struct ReaderView<BottomAccessory: View>: View {
     var lineHeight: Double
     var defaultFontSize: Double
     var defaultLineHeight: Double
+    var headlineFontId: String
+    var bodyFontId: String
+    var defaultHeadlineFontId: String
+    var defaultBodyFontId: String
+    var titleFontSize: Double
+    var defaultTitleFontSize: Double
     @Binding var showFontSizeMenu: Bool
     var openInBrowser: (URL) -> Void
     var bottomAccessory: BottomAccessory
@@ -23,6 +29,9 @@ public struct ReaderView<BottomAccessory: View>: View {
     @State private var lastUrl: URL?
     @State private var allowsPlaceholder = true
     @State private var placeholderDelay: Task<Void, Never>?
+    @State private var fontScriptTask: Task<Void, Never>?
+    // Opens tall so the preview, both font rows and the sliders fit without scrolling.
+    @State private var textSettingsDetent: PresentationDetent = .large
 
     private static var readerSpace: String { "readerBody" }
 
@@ -47,6 +56,12 @@ public struct ReaderView<BottomAccessory: View>: View {
         lineHeight: Double,
         defaultFontSize: Double,
         defaultLineHeight: Double,
+        headlineFontId: String,
+        bodyFontId: String,
+        defaultHeadlineFontId: String,
+        defaultBodyFontId: String,
+        titleFontSize: Double = 32,
+        defaultTitleFontSize: Double = 32,
         showFontSizeMenu: Binding<Bool>,
         openInBrowser: @escaping (URL) -> Void,
         isBottomAccessoryVisible: Bool = true,
@@ -62,6 +77,12 @@ public struct ReaderView<BottomAccessory: View>: View {
         self.lineHeight = lineHeight
         self.defaultFontSize = defaultFontSize
         self.defaultLineHeight = defaultLineHeight
+        self.headlineFontId = headlineFontId
+        self.bodyFontId = bodyFontId
+        self.defaultHeadlineFontId = defaultHeadlineFontId
+        self.defaultBodyFontId = defaultBodyFontId
+        self.titleFontSize = titleFontSize
+        self.defaultTitleFontSize = defaultTitleFontSize
         _showFontSizeMenu = showFontSizeMenu
         self.openInBrowser = openInBrowser
         self.bottomAccessory = bottomAccessory()
@@ -128,7 +149,7 @@ public struct ReaderView<BottomAccessory: View>: View {
                 }
                 .sheet(isPresented: $showFontSizeMenu) {
                     fontSizeSheet
-                        .presentationDetents([.medium])
+                        .presentationDetents([.medium, .large], selection: $textSettingsDetent)
                         .presentationBackground(Color(.secondarySystemBackground))
                 }
         }
@@ -525,50 +546,84 @@ public struct ReaderView<BottomAccessory: View>: View {
 
     private var fontSizeSheet: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                VStack(alignment: .leading, spacing: 22) {
-                    textSettingSliderRow(
-                        title: actions.strings.fontSize,
-                        valueLabel: fontSizeValueLabel(fontSize),
-                        valueAccessibilityIdentifier: ReaderAccessibilityIdentifiers.fontSizeValueLabel,
-                        value: fontSize,
-                        range: 12 ... 40,
-                        step: 1,
-                        onValueChange: {
-                            updateFontSizeWithJS($0)
-                            actions.onFontSizeChange($0)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    textSettingsPreview
+
+                    fontFamilyTileRow(
+                        title: actions.strings.font,
+                        selection: bodyFontId,
+                        accessibilityIdentifier: ReaderAccessibilityIdentifiers.fontPicker,
+                        onSelectionChange: { newFontId in
+                            updateFontFamilyWithJS(bodyFontId: newFontId, headlineFontId: newFontId)
+                            actions.onHeadlineFontChange(newFontId)
+                            actions.onBodyFontChange(newFontId)
                         }
                     )
 
-                    Divider()
+                    VStack(spacing: 0) {
+                        textSettingSliderRow(
+                            title: actions.strings.fontSize,
+                            valueLabel: fontSizeValueLabel(fontSize),
+                            valueAccessibilityIdentifier: ReaderAccessibilityIdentifiers.fontSizeValueLabel,
+                            value: fontSize,
+                            range: 12 ... 40,
+                            minimumIcon: "textformat.size.smaller",
+                            maximumIcon: "textformat.size.larger",
+                            onValueChange: {
+                                updateFontSizeWithJS($0)
+                                actions.onFontSizeChange($0)
+                            }
+                        )
 
-                    textSettingSliderRow(
-                        title: actions.strings.lineHeight,
-                        valueLabel: lineHeightValueLabel(lineHeight),
-                        valueAccessibilityIdentifier: ReaderAccessibilityIdentifiers.lineHeightValueLabel,
-                        value: lineHeight,
-                        range: 0 ... 15,
-                        step: 1,
-                        onValueChange: {
-                            updateLineHeightWithJS($0)
-                            actions.onLineHeightChange($0)
-                        }
-                    )
+                        Divider().padding(.leading, 16)
 
-                    HStack {
-                        Spacer()
-                        resetTextSettingsButton
+                        textSettingSliderRow(
+                            title: actions.strings.titleFontSize,
+                            valueLabel: fontSizeValueLabel(titleFontSize),
+                            valueAccessibilityIdentifier: ReaderAccessibilityIdentifiers.titleFontSizeValueLabel,
+                            value: titleFontSize,
+                            range: 16 ... 48,
+                            minimumIcon: "textformat.size.smaller",
+                            maximumIcon: "textformat.size.larger",
+                            onValueChange: {
+                                updateTitleFontSizeWithJS($0)
+                                actions.onTitleFontSizeChange($0)
+                            }
+                        )
+
+                        Divider().padding(.leading, 16)
+
+                        textSettingSliderRow(
+                            title: actions.strings.lineHeight,
+                            valueLabel: lineHeightValueLabel(lineHeight),
+                            valueAccessibilityIdentifier: ReaderAccessibilityIdentifiers.lineHeightValueLabel,
+                            value: lineHeight,
+                            range: 0 ... 15,
+                            minimumIcon: "arrow.down.and.line.horizontal.and.arrow.up",
+                            maximumIcon: "arrow.up.and.line.horizontal.and.arrow.down",
+                            onValueChange: {
+                                updateLineHeightWithJS($0)
+                                actions.onLineHeightChange($0)
+                            }
+                        )
                     }
+                    .background(
+                        Color(.tertiarySystemBackground),
+                        in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    )
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 56)
-
-                Spacer(minLength: 0)
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
+                .padding(.bottom, 24)
             }
             .background(Color(.secondarySystemBackground))
             .navigationTitle(actions.strings.textSettings)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    resetTextSettingsButton
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         showFontSizeMenu = false
@@ -581,19 +636,72 @@ public struct ReaderView<BottomAccessory: View>: View {
         .accessibilityIdentifier(ReaderAccessibilityIdentifiers.textSettingsSheet)
     }
 
+    private func fontOption(id: String) -> ReaderFontOption? {
+        actions.fontOptions.first { $0.id == id }
+    }
+
+    private func readerFont(id: String, size: Double, weight: Int) -> Font {
+        fontOption(id: id)?.font(size: size, weight: weight) ?? .system(size: size)
+    }
+
+    // Fixed height, so dragging a size slider never moves the slider under the finger.
+    private var textSettingsPreview: some View {
+        VStack(alignment: .leading, spacing: titleFontSize * 0.35) {
+            Text(actions.strings.previewTitle)
+                .font(readerFont(id: headlineFontId, size: titleFontSize, weight: 700))
+                // A larger title gets one line so the body stays visible in the fixed-height preview.
+                .lineLimit(titleFontSize > defaultTitleFontSize ? 1 : 2)
+                .fixedSize(horizontal: false, vertical: true)
+            Text(actions.strings.previewBody)
+                .font(readerFont(id: bodyFontId, size: fontSize, weight: 400))
+                // The page uses line-height 1.5 + step / 10; lineSpacing adds to the ~1.2 natural line height.
+                .lineSpacing(fontSize * (0.3 + lineHeight / 10))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .foregroundStyle(Color(ReaderTheme.foreground))
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .padding(20)
+        .frame(height: 230, alignment: .top)
+        .clipped()
+        .mask(
+            LinearGradient(
+                stops: [.init(color: .black, location: 0.75), .init(color: .clear, location: 1)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+        .background(
+            Color(ReaderTheme.background),
+            in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .strokeBorder(Color(.separator).opacity(0.5), lineWidth: 0.5)
+        )
+        .animation(.snappy(duration: 0.2), value: headlineFontId)
+        .animation(.snappy(duration: 0.2), value: bodyFontId)
+        .accessibilityHidden(true)
+    }
+
     private var resetTextSettingsButton: some View {
-        let isDisabled = fontSize == defaultFontSize && lineHeight == defaultLineHeight
+        let isDisabled = fontSize == defaultFontSize &&
+            lineHeight == defaultLineHeight &&
+            titleFontSize == defaultTitleFontSize &&
+            headlineFontId == defaultHeadlineFontId &&
+            bodyFontId == defaultBodyFontId
         return Button {
             updateFontSizeWithJS(defaultFontSize)
             updateLineHeightWithJS(defaultLineHeight)
+            updateTitleFontSizeWithJS(defaultTitleFontSize)
+            updateFontFamilyWithJS(bodyFontId: defaultBodyFontId, headlineFontId: defaultHeadlineFontId)
             actions.onFontSizeChange(defaultFontSize)
             actions.onLineHeightChange(defaultLineHeight)
+            actions.onTitleFontSizeChange(defaultTitleFontSize)
+            actions.onHeadlineFontChange(defaultHeadlineFontId)
+            actions.onBodyFontChange(defaultBodyFontId)
         } label: {
-            Text(actions.strings.resetToDefault)
-                .font(.body)
+            Label(actions.strings.resetToDefault, systemImage: "arrow.counterclockwise")
         }
-        .buttonStyle(.plain)
-        .foregroundStyle(isDisabled ? Color.secondary : Color.accentColor)
         .disabled(isDisabled)
         .accessibilityIdentifier(ReaderAccessibilityIdentifiers.textSettingsResetButton)
     }
@@ -604,39 +712,48 @@ public struct ReaderView<BottomAccessory: View>: View {
         valueAccessibilityIdentifier: String,
         value: Double,
         range: ClosedRange<Double>,
-        step: Double?,
+        minimumIcon: String,
+        maximumIcon: String,
         onValueChange: @escaping (Double) -> Void
     ) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(title)
+                    .font(.subheadline.weight(.medium))
                 Spacer()
                 Text(valueLabel)
-                    .font(.body.weight(.semibold))
+                    .font(.subheadline.weight(.semibold).monospacedDigit())
                     .foregroundStyle(.secondary)
+                    .contentTransition(.numericText(value: value))
                     .accessibilityIdentifier(valueAccessibilityIdentifier)
             }
 
-            if let step {
-                Slider(
-                    value: Binding(
-                        get: { value },
-                        set: onValueChange
-                    ),
-                    in: range,
-                    step: step
-                )
-            } else {
-                Slider(
-                    value: Binding(
-                        get: { value },
-                        set: onValueChange
-                    ),
-                    in: range
-                )
+            // Rounded by hand: a stepped Slider draws a tick for every value on iOS 26.
+            Slider(
+                value: Binding(
+                    get: { value },
+                    set: { newValue in
+                        let rounded = newValue.rounded()
+                        if rounded != value {
+                            onValueChange(rounded)
+                        }
+                    }
+                ),
+                in: range
+            ) {
+                Text(title)
+            } minimumValueLabel: {
+                Image(systemName: minimumIcon)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            } maximumValueLabel: {
+                Image(systemName: maximumIcon)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
     }
 
     private func fontSizeValueLabel(_ fontSize: Double) -> String {
@@ -655,6 +772,88 @@ public struct ReaderView<BottomAccessory: View>: View {
     private func updateLineHeightWithJS(_ lineHeight: Double) {
         guard let webContent = webContent else { return }
         webContent.evaluateJavaScript(scripts.lineHeight(Int(lineHeight)))
+    }
+
+    private func updateTitleFontSizeWithJS(_ titleFontSize: Double) {
+        guard let webContent = webContent else { return }
+        webContent.evaluateJavaScript(scripts.titleFontSize(Int(titleFontSize)))
+    }
+
+    // A slow script for an uncached font must not land after a newer selection.
+    private func updateFontFamilyWithJS(bodyFontId: String, headlineFontId: String) {
+        fontScriptTask?.cancel()
+        fontScriptTask = Task {
+            let script = await scripts.fontFamily(bodyFontId, headlineFontId)
+            guard !Task.isCancelled else { return }
+            webContent?.evaluateJavaScript(script)
+        }
+    }
+
+    private func fontFamilyTileRow(
+        title: String,
+        selection: String,
+        accessibilityIdentifier: String,
+        onSelectionChange: @escaping (String) -> Void
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 4)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(actions.fontOptions) { option in
+                        fontFamilyTile(
+                            option: option,
+                            isSelected: option.id == selection,
+                            accessibilityIdentifier: "\(accessibilityIdentifier)_\(option.id)",
+                            onSelect: { onSelectionChange(option.id) }
+                        )
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+            .scrollClipDisabled()
+            .padding(.horizontal, -20)
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(accessibilityIdentifier)
+    }
+
+    private func fontFamilyTile(
+        option: ReaderFontOption,
+        isSelected: Bool,
+        accessibilityIdentifier: String,
+        onSelect: @escaping () -> Void
+    ) -> some View {
+        Button(action: onSelect) {
+            VStack(spacing: 6) {
+                Text(verbatim: "Aa")
+                    .font(option.font(size: 28, weight: 400))
+                    .frame(height: 36)
+                Text(option.label)
+                    .font(.caption2.weight(isSelected ? .semibold : .regular))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2, reservesSpace: true)
+            }
+            .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+            .frame(width: 92, height: 92)
+            .background(
+                isSelected ? Color.accentColor.opacity(0.12) : Color(.tertiarySystemBackground),
+                in: RoundedRectangle(cornerRadius: 16, style: .continuous)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .animation(.snappy(duration: 0.2), value: isSelected)
+        .accessibilityLabel(option.label)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .accessibilityIdentifier(accessibilityIdentifier)
     }
 
     private var compactNavigationToolbar: some View {
@@ -723,6 +922,12 @@ public extension ReaderView where BottomAccessory == EmptyView {
         lineHeight: Double,
         defaultFontSize: Double,
         defaultLineHeight: Double,
+        headlineFontId: String,
+        bodyFontId: String,
+        defaultHeadlineFontId: String,
+        defaultBodyFontId: String,
+        titleFontSize: Double = 32,
+        defaultTitleFontSize: Double = 32,
         showFontSizeMenu: Binding<Bool>,
         openInBrowser: @escaping (URL) -> Void
     ) {
@@ -737,6 +942,12 @@ public extension ReaderView where BottomAccessory == EmptyView {
             lineHeight: lineHeight,
             defaultFontSize: defaultFontSize,
             defaultLineHeight: defaultLineHeight,
+            headlineFontId: headlineFontId,
+            bodyFontId: bodyFontId,
+            defaultHeadlineFontId: defaultHeadlineFontId,
+            defaultBodyFontId: defaultBodyFontId,
+            titleFontSize: titleFontSize,
+            defaultTitleFontSize: defaultTitleFontSize,
             showFontSizeMenu: showFontSizeMenu,
             openInBrowser: openInBrowser,
             isBottomAccessoryVisible: false,

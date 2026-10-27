@@ -24,6 +24,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ThemeMode
@@ -63,6 +64,12 @@ class ReaderVerificationUiTest {
                                     onUpdateFontSize = {},
                                     lineHeight = 24,
                                     onUpdateLineHeight = {},
+                                    titleFontSize = 32,
+                                    onUpdateTitleFontSize = {},
+                                    headlineFont = ReaderFontFamily.SYSTEM,
+                                    bodyFont = ReaderFontFamily.SYSTEM,
+                                    onUpdateHeadlineFont = {},
+                                    onUpdateBodyFont = {},
                                     onBookmarkClick = { _, _ -> },
                                     navigateBack = {},
                                     canNavigatePrevious = false,

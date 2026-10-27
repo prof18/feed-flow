@@ -126,6 +126,12 @@ internal fun SettingsWindow(
                     readerLineHeight = readerFonts.lineHeight,
                     onReaderFontSizeChanged = settingsRepository::setReaderModeFontSize,
                     onReaderLineHeightChanged = settingsRepository::setReaderModeLineHeight,
+                    readerHeadlineFont = readerFonts.headlineFont,
+                    readerBodyFont = readerFonts.bodyFont,
+                    onReaderHeadlineFontChanged = settingsRepository::setReaderModeHeadlineFont,
+                    onReaderBodyFontChanged = settingsRepository::setReaderModeBodyFont,
+                    readerTitleFontSize = readerFonts.titleFontSize,
+                    onReaderTitleFontSizeChanged = settingsRepository::setReaderModeTitleFontSize,
                 )
                 DesktopSettingsCategory.FILTERS -> BlockedWordsScreen(blockedWordDraft)
                 DesktopSettingsCategory.SYNC_STORAGE -> {

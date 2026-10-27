@@ -320,7 +320,7 @@
     <string name="search_filter_bookmarks">收藏</string>
     <string name="settings_refresh_feeds_on_launch">应用启动时刷新订阅源</string>
     <string name="settings_notification_mode">通知分组</string>
-    <string name="settings_notification_mode_desc">按订阅源、类别分组通知，或显示单条合并通知</string>
+    <string name="settings_notification_mode_desc">按文章、订阅源、分类或合并显示通知。</string>
     <string name="settings_reduce_motion">减少动态效果和动画</string>
     <string name="notification_grouped_body">您有新文章待阅读！</string>
     <string name="settings_notification_mode_feed_source">按订阅源</string>

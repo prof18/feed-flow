@@ -4,8 +4,13 @@ import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.loggerConfigInit
+import com.prof18.feedflow.database.DatabaseTransactionException
+import com.prof18.feedflow.database.DesktopDatabaseFailure
+import com.prof18.feedflow.database.DesktopDatabaseFailureKind
+import com.prof18.feedflow.database.DesktopDatabaseStartupException
 import org.sqlite.SQLiteErrorCode
 import org.sqlite.SQLiteException
+import java.io.IOException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -98,5 +103,34 @@ class DatabaseFailureReporterTest {
         ).report("user_write", SQLiteException("busy", SQLiteErrorCode.SQLITE_BUSY), logger)
 
         assertTrue(captures.isEmpty())
+    }
+
+    @Test
+    fun `a startup failure keeps the kind decided at startup`() {
+        val error = DesktopDatabaseStartupException(
+            DesktopDatabaseFailure(DesktopDatabaseFailureKind.StorageUnavailable, sqliteResultCode = null),
+            IOException("could not move the database aside"),
+        )
+
+        reporter().report("startup", error, logger)
+
+        assertEquals("StorageUnavailable", captures.single().second["database.failure_kind"])
+    }
+
+    @Test
+    fun `the transaction wait time is rounded to 100 ms`() {
+        val error = RuntimeException(
+            DatabaseTransactionException(
+                label = "Saving fetched articles",
+                elapsedMs = 30_049,
+                cause = SQLiteException("busy", SQLiteErrorCode.SQLITE_BUSY),
+            ),
+        )
+
+        reporter().report("refresh_write", error, logger)
+
+        val tags = captures.single().second
+        assertEquals("30000", tags["database.wait_ms"])
+        assertEquals("Locked", tags["database.failure_kind"])
     }
 }

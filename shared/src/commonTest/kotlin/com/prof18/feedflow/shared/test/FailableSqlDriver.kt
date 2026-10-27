@@ -15,6 +15,9 @@ class FailableSqlDriver(private val delegate: SqlDriver) : SqlDriver {
 
     var failReads: Boolean = false
 
+    /** Returns the error to throw for a write statement, or null to run it. */
+    var writeFailure: (sql: String) -> Throwable? = { null }
+
     override fun <R> executeQuery(
         identifier: Int?,
         sql: String,
@@ -31,7 +34,10 @@ class FailableSqlDriver(private val delegate: SqlDriver) : SqlDriver {
         sql: String,
         parameters: Int,
         binders: (SqlPreparedStatement.() -> Unit)?,
-    ): QueryResult<Long> = delegate.execute(identifier, sql, parameters, binders)
+    ): QueryResult<Long> {
+        writeFailure(sql)?.let { throw it }
+        return delegate.execute(identifier, sql, parameters, binders)
+    }
 
     override fun newTransaction(): QueryResult<Transacter.Transaction> = delegate.newTransaction()
 

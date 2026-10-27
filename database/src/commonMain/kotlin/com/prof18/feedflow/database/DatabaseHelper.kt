@@ -65,6 +65,8 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 class DatabaseHelper(
     private val sqlDriver: SqlDriver,
@@ -293,24 +295,52 @@ class DatabaseHelper(
         markFirstSyncItemsAsNotified: Boolean = false,
     ) =
         dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Saving fetched articles") {
-            writeFeedItems(feedItems)
-
-            // A source's first sync brings in its back-catalog, which must not be announced as new.
-            if (markFirstSyncItemsAsNotified) {
-                feedItems
-                    .filter { it.feedSource.lastSyncTimestamp == null }
-                    .mapTo(mutableSetOf()) { it.feedSource.id }
-                    .forEach { feedSourceId ->
-                        dbRef.feedItemQueries.markFeedSourceItemsNotified(feedSourceId)
-                    }
-            }
-
-            // One update per source instead of one per item: the timestamp is identical for all
-            // of them, and this transaction is on the path that gets killed for running long.
-            for (feedSourceId in feedItems.mapTo(mutableSetOf()) { it.feedSource.id }) {
-                dbRef.feedSourceQueries.updateLastSyncTimestamp(lastSyncTimestamp, feedSourceId)
-            }
+            writeFetchedItems(feedItems, lastSyncTimestamp, markFirstSyncItemsAsNotified)
         }
+
+    /**
+     * Saves everything one refresh produced in a single transaction, so a failure never leaves new
+     * timestamps or cache validators next to articles that were not saved (or the other way around).
+     */
+    suspend fun persistFeedRefresh(
+        feedItems: List<FeedItem>,
+        syncedFeedSourceIds: List<String>,
+        lastSyncTimestamp: Long,
+        updatedCacheInfo: List<FeedSourceCacheInfo>,
+        markFirstSyncItemsAsNotified: Boolean,
+    ) = dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Saving fetched articles") {
+        if (feedItems.isNotEmpty()) {
+            writeFetchedItems(feedItems, lastSyncTimestamp, markFirstSyncItemsAsNotified)
+        }
+        for (feedSourceId in syncedFeedSourceIds) {
+            dbRef.feedSourceQueries.updateLastSyncTimestamp(lastSyncTimestamp, feedSourceId)
+        }
+        updatedCacheInfo.forEach(::writeCacheInfo)
+    }
+
+    private fun writeFetchedItems(
+        feedItems: List<FeedItem>,
+        lastSyncTimestamp: Long,
+        markFirstSyncItemsAsNotified: Boolean,
+    ) {
+        writeFeedItems(feedItems)
+
+        // A source's first sync brings in its back-catalog, which must not be announced as new.
+        if (markFirstSyncItemsAsNotified) {
+            feedItems
+                .filter { it.feedSource.lastSyncTimestamp == null }
+                .mapTo(mutableSetOf()) { it.feedSource.id }
+                .forEach { feedSourceId ->
+                    dbRef.feedItemQueries.markFeedSourceItemsNotified(feedSourceId)
+                }
+        }
+
+        // One update per source instead of one per item: the timestamp is identical for all
+        // of them, and this transaction is on the path that gets killed for running long.
+        for (feedSourceId in feedItems.mapTo(mutableSetOf()) { it.feedSource.id }) {
+            dbRef.feedSourceQueries.updateLastSyncTimestamp(lastSyncTimestamp, feedSourceId)
+        }
+    }
 
     private fun writeFeedItems(feedItems: List<FeedItem>) {
         for (feedItem in feedItems) {
@@ -799,18 +829,20 @@ class DatabaseHelper(
 
     suspend fun updateFeedSourcesCacheInfo(cacheInfoList: List<FeedSourceCacheInfo>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
-            for (cacheInfo in cacheInfoList) {
-                dbRef.feedSourceCacheInfoQueries.upsertCacheInfo(
-                    url_hash = cacheInfo.feedSourceId,
-                    etag = cacheInfo.etag,
-                    last_modified = cacheInfo.lastModified,
-                    validators_timestamp = cacheInfo.validatorsTimestamp,
-                    next_fetch_timestamp = cacheInfo.nextFetchTimestamp,
-                    backoff_timestamp = cacheInfo.backoffTimestamp,
-                    user_agent_tier = cacheInfo.userAgentTier,
-                )
-            }
+            cacheInfoList.forEach(::writeCacheInfo)
         }
+
+    private fun writeCacheInfo(cacheInfo: FeedSourceCacheInfo) {
+        dbRef.feedSourceCacheInfoQueries.upsertCacheInfo(
+            url_hash = cacheInfo.feedSourceId,
+            etag = cacheInfo.etag,
+            last_modified = cacheInfo.lastModified,
+            validators_timestamp = cacheInfo.validatorsTimestamp,
+            next_fetch_timestamp = cacheInfo.nextFetchTimestamp,
+            backoff_timestamp = cacheInfo.backoffTimestamp,
+            user_agent_tier = cacheInfo.userAgentTier,
+        )
+    }
 
     suspend fun deleteFeedSource(
         feedSourceId: String,
@@ -1606,13 +1638,31 @@ class DatabaseHelper(
         body: TransactionWithReturn<T>.() -> T,
     ): T =
         withContext(coroutineContext) {
-            if (suspensionGuardReason == null) {
-                this@transactionWithContext.transactionWithResult(noEnclosing, body)
-            } else {
-                withSuspensionGuard(suspensionGuardReason) {
+            val label = suspensionGuardReason ?: "unnamed"
+            val start = TimeSource.Monotonic.markNow()
+            val result = try {
+                if (suspensionGuardReason == null) {
                     this@transactionWithContext.transactionWithResult(noEnclosing, body)
+                } else {
+                    withSuspensionGuard(suspensionGuardReason) {
+                        this@transactionWithContext.transactionWithResult(noEnclosing, body)
+                    }
                 }
+            } catch (e: DatabaseTransactionException) {
+                throw e
+            } catch (e: Throwable) {
+                if (e.isDatabaseFailure()) {
+                    throw DatabaseTransactionException(label, start.elapsedNow().inWholeMilliseconds, e)
+                }
+                throw e
             }
+            val elapsed = start.elapsedNow()
+            if (elapsed > SLOW_TRANSACTION) {
+                // Constant text: Sentry groups message events by it, so the duration goes to the debug log.
+                logger.w { "Slow database transaction ($label)" }
+                logger.d { "Slow database transaction ($label): ${elapsed.inWholeMilliseconds} ms" }
+            }
+            result
         }
 
     private fun recordCloudPendingArticleFlags(
@@ -2337,5 +2387,6 @@ class DatabaseHelper(
         internal const val DB_FILE_NAME_WITH_EXTENSION = "FeedFlow.db"
         const val APP_DATABASE_NAME_PROD = "FeedFlowDB"
         const val APP_DATABASE_NAME_DEBUG = "FeedFlowDB-debug"
+        private val SLOW_TRANSACTION = 5.seconds
     }
 }

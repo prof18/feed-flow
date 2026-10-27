@@ -32,6 +32,7 @@ import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.presentation.model.syncErrorMessage
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
+import com.prof18.feedflow.core.model.DatabaseError as DatabaseErrorCode
 
 @Composable
 internal fun SearchScreen(
@@ -74,7 +75,11 @@ internal fun SearchScreen(
             when (errorState) {
                 is UIErrorState.DatabaseError -> {
                     snackbarHostState.showFeedback(
-                        message = strings.databaseError(errorState.errorCode.code),
+                        message = if (errorState.errorCode == DatabaseErrorCode.SaveFailed) {
+                            strings.databaseSaveError(errorState.errorCode.code)
+                        } else {
+                            strings.databaseError(errorState.errorCode.code)
+                        },
                         duration = DesktopFeedbackDuration.Short,
                     )
                 }

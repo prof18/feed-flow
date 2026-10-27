@@ -1,7 +1,9 @@
 package com.prof18.feedflow.shared.logging
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.database.DatabaseTransactionException
 import com.prof18.feedflow.database.classifyDesktopDatabaseFailure
+import com.prof18.feedflow.database.findDesktopDatabaseStartupException
 import io.sentry.Sentry
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.minutes
@@ -25,7 +27,13 @@ internal class DatabaseFailureReporter(
     private val lastCaptures = ConcurrentHashMap<String, TimeMark>()
 
     fun report(operation: String, error: Throwable, logger: Logger) {
-        val failure = error.classifyDesktopDatabaseFailure()
+        // Startup decides the kind itself (e.g. a failed quarantine move is a plain IOException).
+        val failure = error.findDesktopDatabaseStartupException()?.failure
+            ?: error.classifyDesktopDatabaseFailure()
+        val waitMs = generateSequence(error) { it.cause }.take(MAX_CAUSE_DEPTH)
+            .filterIsInstance<DatabaseTransactionException>()
+            .firstOrNull()
+            ?.elapsedMs
         // Debug level on purpose: SentryLogWriter captures Warn and above, which would duplicate the event.
         logger.d(error) { "Database failure in $operation: ${failure?.kind} ${failure?.sqliteResultCode}" }
         if (!isSentryEnabled()) return
@@ -41,9 +49,9 @@ internal class DatabaseFailureReporter(
             error,
             mapOf(
                 "database.operation" to operation,
-                "database.failure_kind" to (failure?.kind?.name ?: "unknown"),
-                "database.sqlite_result_code" to (failure?.sqliteResultCode ?: "unknown"),
-                "database.wait_ms" to "unknown",
+                "database.failure_kind" to (failure?.kind?.name ?: UNKNOWN),
+                "database.sqlite_result_code" to (failure?.sqliteResultCode ?: UNKNOWN),
+                "database.wait_ms" to (waitMs?.let { "${it / WAIT_ROUNDING_MS * WAIT_ROUNDING_MS}" } ?: UNKNOWN),
                 "single_instance_lock" to singleInstanceLockState(),
             ),
         )
@@ -51,6 +59,9 @@ internal class DatabaseFailureReporter(
 
     private companion object {
         val REPORT_DEDUPE = 10.minutes
+        const val WAIT_ROUNDING_MS = 100
+        const val MAX_CAUSE_DEPTH = 10
+        const val UNKNOWN = "unknown"
     }
 }
 

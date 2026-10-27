@@ -30,6 +30,8 @@ struct EditFeedScreen: View {
     @State private var articleOpenMode = ArticleOpenMode.default
     @State private var isHidden = false
     @State private var isHideImagesEnabled = false
+    @State private var isKeepUnreadOnScrollEnabled = false
+    @State private var isMarkReadWhenScrollingEnabled = true
     @State private var isPinned = false
     @State private var showNotificationToggle = false
     @State private var isNotificationEnabled = false
@@ -49,6 +51,8 @@ struct EditFeedScreen: View {
                 articleOpenMode: $articleOpenMode,
                 isHidden: $isHidden,
                 isHideImagesEnabled: $isHideImagesEnabled,
+                isKeepUnreadOnScrollEnabled: $isKeepUnreadOnScrollEnabled,
+                isMarkReadWhenScrollingEnabled: isMarkReadWhenScrollingEnabled,
                 isPinned: $isPinned,
                 showNotificationToggle: showNotificationToggle,
                 isNotificationEnabled: $isNotificationEnabled,
@@ -69,6 +73,9 @@ struct EditFeedScreen: View {
                 },
                 onHideImagesToggled: { hideImages in
                     vmStoreOwner.instance.updateIsHideImagesEnabled(isHideImagesEnabled: hideImages)
+                },
+                onKeepUnreadOnScrollToggled: { keepUnread in
+                    vmStoreOwner.instance.updateIsKeepUnreadOnScrollEnabled(isKeepUnreadOnScrollEnabled: keepUnread)
                 },
                 onPinnedToggled: { pinned in
                     vmStoreOwner.instance.updateIsPinned(isPinned: pinned)
@@ -187,6 +194,7 @@ struct EditFeedScreen: View {
                     self.articleOpenMode = state.articleOpenMode
                     self.isHidden = state.isHiddenFromTimeline
                     self.isHideImagesEnabled = state.isHideImagesEnabled
+                    self.isKeepUnreadOnScrollEnabled = state.isKeepUnreadOnScrollEnabled
                     self.isPinned = state.isPinned
                     self.isNotificationEnabled = state.isNotificationEnabled
                 }
@@ -194,6 +202,11 @@ struct EditFeedScreen: View {
             .task {
                 for await show in vmStoreOwner.instance.showNotificationToggleState {
                     self.showNotificationToggle = show as? Bool ?? false
+                }
+            }
+            .task {
+                for await enabled in vmStoreOwner.instance.markReadWhenScrollingEnabledState {
+                    self.isMarkReadWhenScrollingEnabled = enabled as? Bool ?? true
                 }
             }
             .task {

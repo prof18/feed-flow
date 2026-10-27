@@ -31,6 +31,16 @@ appId: com.prof18.feedflow.debug
 - hideKeyboard
 - tapOn:
     id: edit_feed_hidden_toggle
+- scrollUntilVisible:
+    element:
+      id: edit_feed_keep_unread_on_scroll_toggle
+    direction: DOWN
+- assertVisible:
+    id: edit_feed_keep_unread_on_scroll_toggle
+    enabled: true
+- tapOn:
+    id: edit_feed_keep_unread_on_scroll_toggle
+- assertVisible: "Articles from this feed won't be marked as read when you scroll past them."
 - tapOn:
     id: edit_feed_pinned_toggle
 - scrollUntilVisible:

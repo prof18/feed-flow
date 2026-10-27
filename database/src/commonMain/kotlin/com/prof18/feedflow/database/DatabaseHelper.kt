@@ -1384,6 +1384,35 @@ class DatabaseHelper(
         }
     }
 
+    suspend fun setKeepUnreadOnScroll(feedSourceId: String, enabled: Boolean) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourcePreferencesQueries.insertKeepUnreadOnScrollPreference(
+                feed_source_id = feedSourceId,
+                keep_unread_on_scroll = enabled,
+            )
+            dbRef.feedSourcePreferencesQueries.updateKeepUnreadOnScroll(
+                keepUnreadOnScroll = enabled,
+                feedSourceId = feedSourceId,
+            )
+        }
+
+    suspend fun isKeepUnreadOnScrollEnabled(feedSourceId: String): Boolean = withContext(backgroundDispatcher) {
+        dbRef.feedSourcePreferencesQueries
+            .isKeepUnreadOnScrollEnabled(feedSourceId)
+            .executeAsOneOrNull() ?: false
+    }
+
+    fun getKeepUnreadOnScrollFeedSourceIdsFlow(): Flow<Set<String>> =
+        dbRef.feedSourcePreferencesQueries
+            .getKeepUnreadOnScrollFeedSourceIds()
+            .asFlow()
+            .catch {
+                logger.d(it) { "Something wrong while getting data from Database" }
+            }
+            .mapToList(backgroundDispatcher)
+            .map { ids -> ids.toSet() }
+            .flowOn(backgroundDispatcher)
+
     suspend fun deleteCategoriesExcept(categoryIds: List<String>) = dbRef.transactionWithContext(backgroundDispatcher) {
         dbRef.feedSourceCategoryQueries.deleteAllExcept(categoryIds)
     }

@@ -10,6 +10,7 @@ CREATE TABLE feed_source_preferences (
     notifications_enabled INTEGER AS Boolean NOT NULL DEFAULT 0,
     pinned_position INTEGER AS Int NOT NULL DEFAULT 0,
     hide_images INTEGER AS Boolean NOT NULL DEFAULT 0,
+    keep_unread_on_scroll INTEGER AS Boolean NOT NULL DEFAULT 0,
     FOREIGN KEY (feed_source_id) REFERENCES feed_source(url_hash) ON DELETE CASCADE
 );
 
@@ -67,3 +68,18 @@ updatePinnedPosition:
 UPDATE feed_source_preferences
 SET pinned_position = :position
 WHERE feed_source_id = :feedSourceId;
+
+insertKeepUnreadOnScrollPreference:
+INSERT OR IGNORE INTO feed_source_preferences(feed_source_id, keep_unread_on_scroll)
+VALUES (?, ?);
+
+updateKeepUnreadOnScroll:
+UPDATE feed_source_preferences
+SET keep_unread_on_scroll = :keepUnreadOnScroll
+WHERE feed_source_id = :feedSourceId;
+
+isKeepUnreadOnScrollEnabled:
+SELECT keep_unread_on_scroll FROM feed_source_preferences WHERE feed_source_id = ?;
+
+getKeepUnreadOnScrollFeedSourceIds:
+SELECT feed_source_id FROM feed_source_preferences WHERE keep_unread_on_scroll = 1;

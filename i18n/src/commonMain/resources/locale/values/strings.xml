@@ -341,6 +341,9 @@
     <string name="feed_url_help_text">Add any direct feed, website, or YouTube channel link. The feed will be detected automatically when possible</string>
     <string name="hide_feed_from_timeline_description">Hide this feed\'s articles from the timeline</string>
     <string name="hide_images_for_feed_description">Hide images for this feed</string>
+    <string name="keep_unread_when_scrolling_for_feed">Keep unread when scrolling</string>
+    <string name="keep_unread_when_scrolling_for_feed_description">Articles from this feed won\'t be marked as read when you scroll past them.</string>
+    <string name="keep_unread_when_scrolling_for_feed_disabled">Available when “Mark as read when scrolling” is on.</string>
     <string name="pin_feed_source_description">Pin this feed</string>
     <string name="drawer_title_pinned_feeds">Pinned Feed Sources</string>
     <string name="menu_add_to_pinned">Pin</string>

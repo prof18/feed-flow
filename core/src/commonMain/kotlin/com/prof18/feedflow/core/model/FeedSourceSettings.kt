@@ -6,4 +6,5 @@ data class FeedSourceSettings(
     val isPinned: Boolean = false,
     val isNotificationEnabled: Boolean = false,
     val isHideImagesEnabled: Boolean = false,
+    val isKeepUnreadOnScrollEnabled: Boolean = false,
 )

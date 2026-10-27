@@ -572,6 +572,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             recoveryService = get(),
             recoveryRepository = get(),
             coordinator = get(),
+            settingsRepository = get(),
         )
     }
 

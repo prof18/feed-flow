@@ -206,6 +206,8 @@ internal fun EditFeedForm(
     articleOpenModeSelector: @Composable (Modifier, Boolean) -> Unit,
     onHiddenToggled: (Boolean) -> Unit,
     onHideImagesToggled: (Boolean) -> Unit,
+    onKeepUnreadOnScrollToggled: (Boolean) -> Unit,
+    isMarkReadWhenScrollingEnabled: Boolean,
     onPinnedToggled: (Boolean) -> Unit,
     showNotificationToggle: Boolean,
     onNotificationToggleChanged: (Boolean) -> Unit,
@@ -285,6 +287,12 @@ internal fun EditFeedForm(
                     onCheckedChange = { if (!submission.busy) onHideImagesToggled(it) },
                     enabled = !submission.busy,
                 )
+                KeepUnreadOnScrollSwitch(
+                    checked = feedSourceSettings.isKeepUnreadOnScrollEnabled,
+                    isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
+                    busy = submission.busy,
+                    onCheckedChange = onKeepUnreadOnScrollToggled,
+                )
                 SettingsSwitch(
                     title = strings.pinFeedSourceDescription,
                     checked = feedSourceSettings.isPinned,
@@ -323,6 +331,27 @@ internal fun EditFeedForm(
         },
     )
     DeleteFeedConfirmation(showDeleteDialog, onDismissDeleteDialog, onConfirmDelete)
+}
+
+@Composable
+private fun KeepUnreadOnScrollSwitch(
+    checked: Boolean,
+    isMarkReadWhenScrollingEnabled: Boolean,
+    busy: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    SettingsSwitch(
+        title = strings.keepUnreadWhenScrollingForFeed,
+        checked = checked,
+        onCheckedChange = { if (!busy) onCheckedChange(it) },
+        enabled = !busy && isMarkReadWhenScrollingEnabled,
+        supportingText = if (isMarkReadWhenScrollingEnabled) {
+            strings.keepUnreadWhenScrollingForFeedDescription
+        } else {
+            strings.keepUnreadWhenScrollingForFeedDisabled
+        },
+    )
 }
 
 @Composable

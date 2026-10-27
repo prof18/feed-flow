@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.ui.feed.editfeed
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.prof18.feedflow.android.ui.feed.CategoriesSelector
 import com.prof18.feedflow.android.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.android.ui.feed.FeedNameTextField
@@ -51,6 +54,8 @@ fun EditFeedContent(
     articleOpenModeSelector: @Composable (Modifier) -> Unit,
     onHiddenToggled: (Boolean) -> Unit,
     onHideImagesToggled: (Boolean) -> Unit,
+    onKeepUnreadOnScrollToggled: (Boolean) -> Unit,
+    isMarkReadWhenScrollingEnabled: Boolean,
     onPinnedToggled: (Boolean) -> Unit,
     editFeed: () -> Unit,
     onCategorySelectorClick: () -> Unit,
@@ -179,6 +184,40 @@ fun EditFeedContent(
                     onCheckedChange = onHideImagesToggled,
                     modifier = Modifier
                         .testTag(FeedFormE2eIds.HIDE_IMAGES_TOGGLE)
+                        .padding(start = Spacing.regular),
+                )
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .padding(top = Spacing.regular),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                val keepUnreadTitle = LocalFeedFlowStrings.current.keepUnreadWhenScrollingForFeed
+                Column(
+                    modifier = Modifier.padding(top = Spacing.xsmall)
+                        .weight(1f),
+                ) {
+                    Text(text = keepUnreadTitle)
+                    Text(
+                        text = if (isMarkReadWhenScrollingEnabled) {
+                            LocalFeedFlowStrings.current.keepUnreadWhenScrollingForFeedDescription
+                        } else {
+                            LocalFeedFlowStrings.current.keepUnreadWhenScrollingForFeedDisabled
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Switch(
+                    checked = feedSourceSettings.isKeepUnreadOnScrollEnabled,
+                    onCheckedChange = onKeepUnreadOnScrollToggled,
+                    enabled = isMarkReadWhenScrollingEnabled,
+                    modifier = Modifier
+                        .testTag(FeedFormE2eIds.KEEP_UNREAD_ON_SCROLL_TOGGLE)
+                        .semantics { contentDescription = keepUnreadTitle }
                         .padding(start = Spacing.regular),
                 )
             }

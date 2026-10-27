@@ -360,6 +360,40 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `markAsReadOnScroll keeps items from keep-unread feeds unread`() = runTest(testDispatcher) {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        val keepUnreadSource = createFeedSource(id = "source-2", title = "Source 2")
+        insertFeedSources(feedSource, keepUnreadSource)
+        databaseHelper.setKeepUnreadOnScroll(keepUnreadSource.id, true)
+        val items = listOf(
+            buildFeedItem(id = "item-1", title = "Item 1", pubDateMillis = 3000, source = feedSource),
+            buildFeedItem(id = "item-2", title = "Item 2", pubDateMillis = 2000, source = keepUnreadSource),
+            buildFeedItem(id = "item-3", title = "Item 3", pubDateMillis = 1000, source = feedSource),
+        )
+        databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.onVisibleFeedItemsChanged(
+            listOf(
+                VisibleFeedItem(id = "item-1", index = 0),
+                VisibleFeedItem(id = "item-2", index = 1),
+            ),
+        )
+        viewModel.onVisibleFeedItemsChanged(
+            listOf(
+                VisibleFeedItem(id = "item-3", index = 2),
+            ),
+        )
+        advanceUntilIdle()
+
+        val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
+        assertEquals(setOf("item-1"), readIds)
+    }
+
+    @Test
     fun `markAsReadOnScroll accumulates observed items while debounce is pending`() = runTest(testDispatcher) {
         settingsRepository.setMarkFeedAsReadWhenScrolling(true)
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")

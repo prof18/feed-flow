@@ -380,6 +380,8 @@ class FeedSubmissionTest {
             },
             onHiddenToggled = {},
             onHideImagesToggled = {},
+            onKeepUnreadOnScrollToggled = {},
+            isMarkReadWhenScrollingEnabled = true,
             onPinnedToggled = {},
             showNotificationToggle = false,
             onNotificationToggleChanged = {},

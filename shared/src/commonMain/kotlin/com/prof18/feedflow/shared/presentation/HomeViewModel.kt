@@ -115,6 +115,9 @@ class HomeViewModel internal constructor(
 
     private val scrollReadTracker = ScrollReadTracker()
     private val pendingScrollReadIds = mutableSetOf<FeedItemId>()
+    private val keepUnreadOnScrollFeedSourceIds: StateFlow<Set<String>> =
+        feedSourcesRepository.getKeepUnreadOnScrollFeedSourceIds()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
     private var scrollReadDebounceJob: Job? = null
     private var hasTriggeredAppLaunch = false
 
@@ -335,6 +338,7 @@ class HomeViewModel internal constructor(
                 feedLayout = feedAppearanceSettingsRepository.feedLayout.value,
                 isGridLayoutEnabled = feedAppearanceSettingsRepository.gridLayoutEnabled.value,
             ),
+            excludedFeedSourceIds = keepUnreadOnScrollFeedSourceIds.value,
         )
         if (idsToMark.isEmpty()) {
             return

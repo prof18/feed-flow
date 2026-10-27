@@ -40,7 +40,7 @@ class FeedRecoveryStorageTest {
             FeedFlowDB.Schema.migrate(
                 driver,
                 oldVersion = PRE_RECOVERY_VERSION,
-                newVersion = FeedFlowDB.Schema.version,
+                newVersion = PRE_RECOVERY_VERSION + 1,
             )
 
             assertEquals(1L, count(driver, "feed_source"))
@@ -366,6 +366,6 @@ class FeedRecoveryStorageTest {
         const val SOURCE_URL = "https://fixture.test/rss"
         const val PROFILE_ID = "feedflow-recovery-1"
         const val CLOUD_SESSION = "cloud-session"
-        val PRE_RECOVERY_VERSION = FeedFlowDB.Schema.version - 1
+        const val PRE_RECOVERY_VERSION = 36L
     }
 }

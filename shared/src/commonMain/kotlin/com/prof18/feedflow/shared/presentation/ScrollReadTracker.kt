@@ -19,6 +19,7 @@ internal class ScrollReadTracker {
         feedItems: List<FeedItem>,
         feedListVersion: Long,
         listShapeKey: ScrollReadListShapeKey,
+        excludedFeedSourceIds: Set<String>,
     ): Set<FeedItemId> {
         if (
             observedFeedListVersion != feedListVersion ||
@@ -64,7 +65,7 @@ internal class ScrollReadTracker {
         val idsToMark = if (previousFirstPosition < currentFirstPosition) {
             feedItems
                 .subList(previousFirstPosition, currentFirstPosition)
-                .filter { !it.isRead }
+                .filter { !it.isRead && it.feedSource.id !in excludedFeedSourceIds }
                 .map { FeedItemId(it.id) }
                 .toSet()
         } else {

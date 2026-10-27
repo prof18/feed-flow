@@ -417,7 +417,9 @@ private extension ReaderModeScreen {
             leadingContent: "",
             siteName: currentSiteName,
             audioBanner: readerAudioBanner,
-            languageTag: currentLanguageTag
+            languageTag: currentLanguageTag,
+            bodyFont: .system,
+            headlineFont: .system
         )
 
         readerStatus = .extractedContent(

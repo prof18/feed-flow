@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.FeedRecoveryRecord
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import com.prof18.feedflow.core.model.FeedSourceToNotify
+import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.withSuspensionGuard
@@ -76,12 +77,14 @@ class SerialFeedFetcherRepository internal constructor(
 
     private suspend fun fetchFeedsWithGReader() {
         gReaderRepository.sync()
-        feedStateRepository.getFeeds()
+        feedStateRepository.publishFetchedFeeds()
+        feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)
     }
 
     private suspend fun fetchFeedsWithFeedbin() {
         feedbinRepository.sync()
-        feedStateRepository.getFeeds()
+        feedStateRepository.publishFetchedFeeds()
+        feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)
     }
 
     private suspend fun fetchFeedsWithRssParser(forceRefresh: Boolean) {
@@ -90,7 +93,8 @@ class SerialFeedFetcherRepository internal constructor(
         val feedSourceUrls = databaseHelper.getFeedSources()
         parseFeedsSerially(feedSourceUrls = feedSourceUrls, forceRefresh = forceRefresh)
         feedSyncRepository.syncFeedItems()
-        feedStateRepository.getFeeds()
+        feedStateRepository.publishFetchedFeeds()
+        feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)
     }
 
     private fun shouldRefreshFeed(

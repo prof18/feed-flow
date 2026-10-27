@@ -46,6 +46,7 @@ struct HomeContent: View {
     let nextFeedPreviewState: NextFeedPreviewState
     let feedItemDisplaySettings: FeedItemDisplaySettings
     let viewMenuState: HomeViewMenuState
+    let pendingNewArticlesCount: Int
 
     @State private var showScrollToTop = false
     @State private var showMarkAllReadDialog = false
@@ -70,9 +71,14 @@ struct HomeContent: View {
     let onFeedOrderChange: (FeedOrder) -> Void
     let onShowReadArticlesTimelineChange: (Bool) -> Void
     let onSettingsDone: () -> Void
+    let onShowNewArticlesClick: () -> Void
 
     var isCompactPhone: Bool {
         horizontalSizeClass == .compact
+    }
+
+    private var showNewArticlesPill: Bool {
+        pendingNewArticlesCount > 0 && loadingState?.isLoading() != true
     }
 
     var shouldUseSystemNavigationTitle: Bool {
@@ -250,6 +256,21 @@ private extension HomeContent {
                     showScrollToTop = false
                 }
             })
+            .overlay(alignment: .top) {
+                if showNewArticlesPill {
+                    NewArticlesPillView(count: pendingNewArticlesCount) {
+                        withAnimation(.default, completionCriteria: .logicallyComplete) {
+                            proxy.scrollTo(feedState.first?.id)
+                            showScrollToTop = false
+                        } completion: {
+                            onShowNewArticlesClick()
+                        }
+                    }
+                    .padding(.top, Spacing.small)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
+            .animation(.easeInOut(duration: 0.3), value: showNewArticlesPill)
     }
 
     @ViewBuilder

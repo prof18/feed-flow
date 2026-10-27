@@ -424,6 +424,14 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun onFeedListScrolledAwayFromTopChanged(isAwayFromTop: Boolean) {
+        if (feedStateRepository.setFeedListAwayFromTop(isAwayFromTop)) {
+            launchAfterFlushingScrollReadState {
+                feedStateRepository.getFeeds()
+            }
+        }
+    }
+
     fun deleteAllFeeds() {
         launchAfterFlushingScrollReadState {
             feedSourcesRepository.deleteAllFeeds()

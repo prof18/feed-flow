@@ -954,6 +954,33 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `returning to top applies the deferred feed update`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "existing", title = "Existing", pubDateMillis = 1, source = feedSource)),
+            lastSyncTimestamp = 0,
+        )
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+        viewModel.onFeedListScrolledAwayFromTopChanged(true)
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "new-item", title = "New", pubDateMillis = 2, source = feedSource)),
+            lastSyncTimestamp = 0,
+        )
+        feedStateRepository.publishFetchedFeeds()
+
+        assertEquals(listOf("existing"), viewModel.feedState.value.map { it.id })
+        assertEquals(1, viewModel.pendingNewArticlesState.value)
+
+        viewModel.onFeedListScrolledAwayFromTopChanged(false)
+        advanceUntilIdle()
+
+        assertEquals(setOf("existing", "new-item"), viewModel.feedState.value.map { it.id }.toSet())
+        assertEquals(0, viewModel.pendingNewArticlesState.value)
+    }
+
+    @Test
     fun `markAllRead updates state and database`() = runTest(testDispatcher) {
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)

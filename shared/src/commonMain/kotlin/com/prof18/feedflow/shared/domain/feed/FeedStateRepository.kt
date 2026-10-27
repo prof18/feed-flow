@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 import com.prof18.feedflow.core.model.DatabaseError as DatabaseErrorCode
 
@@ -54,6 +55,13 @@ internal class FeedStateRepository(
     private val pendingNewArticlesMutableState = MutableStateFlow(0)
     val pendingNewArticlesState: StateFlow<Int> = pendingNewArticlesMutableState.asStateFlow()
 
+    private val isFeedListAwayFromTop = MutableStateFlow(false)
+    private val hasDeferredFeedUpdate = MutableStateFlow(false)
+
+    // Newest page at the last reload: with oldest-first order the loaded list doesn't contain it,
+    // and without this baseline every existing article past the loaded pages would count as new.
+    private val newestPageIdsAtReload = MutableStateFlow<Set<String>>(emptySet())
+
     private val currentFeedFilterMutableState: MutableStateFlow<FeedFilter> = MutableStateFlow(FeedFilter.Timeline)
     val currentFeedFilter: StateFlow<FeedFilter> = currentFeedFilterMutableState.asStateFlow()
 
@@ -66,19 +74,32 @@ internal class FeedStateRepository(
         reloadFeeds()
     }
 
-    suspend fun reloadFeeds(): Boolean {
+    suspend fun reloadFeeds(keepListIfAwayFromTop: Boolean = false): Boolean {
         pendingNewArticlesMutableState.update { 0 }
         return try {
             val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
+            val feedFilter = currentFeedFilterMutableState.value
 
             val feeds = executeWithRetry {
                 databaseHelper.getFeedItems(
-                    feedFilter = currentFeedFilterMutableState.value,
+                    feedFilter = feedFilter,
                     pageSize = FEED_DB_PAGE_SIZE,
                     showReadItems = settingsRepository.getShowReadArticlesTimeline(),
                     sortOrder = feedOrder,
                 )
             }
+            if (keepListIfAwayFromTop && isFeedListAwayFromTop.value) {
+                // Scrolled away while the query ran: keep the list and leave the update deferred.
+                refreshPendingNewArticlesCount()
+                return true
+            }
+            val newestPageIds = if (feedOrder == FeedOrder.NEWEST_FIRST) {
+                feeds.mapTo(hashSetOf()) { it.url_hash }
+            } else {
+                getNewestPage(feedFilter).mapTo(hashSetOf()) { it.url_hash }
+            }
+            hasDeferredFeedUpdate.update { false }
+            newestPageIdsAtReload.update { newestPageIds }
             updateCursor(feeds)
             val settings = feedAppearanceSettingsRepository.getFeedItemMappingSettings()
 
@@ -103,28 +124,48 @@ internal class FeedStateRepository(
         }
     }
 
+    // Returns true when a fetch was held back while the list was scrolled and the list is now back at the top.
+    fun setFeedListAwayFromTop(isAwayFromTop: Boolean): Boolean {
+        val wasAwayFromTop = isFeedListAwayFromTop.getAndUpdate { isAwayFromTop }
+        return wasAwayFromTop && !isAwayFromTop && hasDeferredFeedUpdate.value
+    }
+
+    // Fetchers publish through here so a refresh never replaces the list while the user is scrolled down.
+    suspend fun publishFetchedFeeds() {
+        // Set before reading the scroll flag: a concurrent return to the top then always sees it.
+        hasDeferredFeedUpdate.update { true }
+        if (isFeedListAwayFromTop.value) {
+            refreshPendingNewArticlesCount()
+        } else {
+            reloadFeeds(keepListIfAwayFromTop = true)
+        }
+    }
+
     suspend fun refreshPendingNewArticlesCount() {
         try {
             val feedFilter = currentFeedFilterMutableState.value
             val feedListVersion = mutableFeedListVersion.value
             val visibleIds = feedState.value.map { it.id }.toHashSet()
-            val feeds = executeWithRetry {
-                databaseHelper.getFeedItems(
-                    feedFilter = feedFilter,
-                    pageSize = FEED_DB_PAGE_SIZE,
-                    showReadItems = settingsRepository.getShowReadArticlesTimeline(),
-                    sortOrder = FeedOrder.NEWEST_FIRST,
-                )
-            }
+            val knownIds = newestPageIdsAtReload.value
+            val feeds = getNewestPage(feedFilter)
             if (currentFeedFilterMutableState.value != feedFilter || mutableFeedListVersion.value != feedListVersion) {
                 return
             }
             pendingNewArticlesMutableState.update {
-                feeds.count { it.url_hash !in visibleIds }
+                feeds.count { it.url_hash !in visibleIds && it.url_hash !in knownIds }
             }
         } catch (_: Throwable) {
             // The pill is best-effort and must not turn a successful refresh into an error.
         }
+    }
+
+    private suspend fun getNewestPage(feedFilter: FeedFilter): List<SelectFeeds> = executeWithRetry {
+        databaseHelper.getFeedItems(
+            feedFilter = feedFilter,
+            pageSize = FEED_DB_PAGE_SIZE,
+            showReadItems = settingsRepository.getShowReadArticlesTimeline(),
+            sortOrder = FeedOrder.NEWEST_FIRST,
+        )
     }
 
     suspend fun loadMoreFeeds() {

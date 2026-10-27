@@ -27,6 +27,8 @@ struct HomeScreen: View {
 
     @State private var unreadCount = 0
 
+    @State private var pendingNewArticlesCount = 0
+
     @State private var isUnreadCountHidden = false
 
     @State private var currentFeedFilter: FeedFilter = .Timeline()
@@ -88,6 +90,7 @@ struct HomeScreen: View {
             nextFeedPreviewState: nextFeedPreviewState,
             feedItemDisplaySettings: feedItemDisplaySettings,
             viewMenuState: viewMenuState,
+            pendingNewArticlesCount: pendingNewArticlesCount,
             onRefresh: { [homeViewModel] in
                 homeViewModel.refreshCurrentFilter()
             },
@@ -142,6 +145,9 @@ struct HomeScreen: View {
             },
             onSettingsDone: { [homeViewModel] in
                 homeViewModel.reloadFeedState()
+            },
+            onShowNewArticlesClick: { [homeViewModel] in
+                homeViewModel.onShowNewArticlesClicked()
             }
         )
         .refreshable { [homeViewModel] in
@@ -197,6 +203,11 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.unreadCountFlow {
                 self.unreadCount = Int(truncating: state)
+            }
+        }
+        .task {
+            for await state in homeViewModel.pendingNewArticlesState {
+                self.pendingNewArticlesCount = Int(truncating: state)
             }
         }
         .task {

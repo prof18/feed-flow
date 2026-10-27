@@ -39,6 +39,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation(libs.sqldelight.sqlite.driver)
+                implementation(libs.sqlite.jdbc)
             }
         }
 

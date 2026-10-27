@@ -236,6 +236,7 @@ kotlin {
             dependsOn(commonJvmAndroidTest)
             dependencies {
                 implementation(libs.sqldelight.sqlite.driver)
+                implementation(libs.sqlite.jdbc)
             }
         }
     }

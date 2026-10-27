@@ -317,7 +317,6 @@
     <string name="reader_mode_fallback_title">Не удалось разобрать статью</string>
     <string name="reader_mode_fallback_message">Не удалось извлечь содержимое страницы для режима чтения. Можно открыть страницу напрямую в браузере.</string>
     <string name="dropbox_auth_code_expired">Код аутентификации недействителен. Попробуйте снова.</string>
-    <string name="database_error_reset">Не удалось загрузить данные, пришлось начать заново. Извините.</string>
     <string name="google_drive_auth_retry">Для продолжения синхронизации с Google Drive нужно повторно авторизоваться. Перейдите в Аккаунты, отвяжите и привяжите аккаунт заново.</string>
     <string name="notification_category_body">У вас новые статьи в %s</string>
     <string name="notification_grouped_body">У вас новые статьи, готовые к чтению!</string>

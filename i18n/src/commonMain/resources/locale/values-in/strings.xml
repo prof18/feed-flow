@@ -319,7 +319,6 @@
     <string name="reader_mode_fallback_message">Konten halaman ini tidak dapat diekstrak untuk mode pembaca. Anda dapat membuka halaman ini langsung di browser Anda.</string>
     <string name="reader_mode_fallback_open_browser_button">Buka di browser</string>
     <string name="dropbox_auth_code_expired">Kode autentikasi sudah tidak valid. Silakan coba lagi.</string>
-    <string name="database_error_reset">Kami mengalami kendala saat memuat data Anda dan harus memulai dari awal. Maaf soal itu.</string>
     <string name="google_drive_auth_retry">Anda perlu mengautentikasi ulang untuk terus menggunakan sinkronisasi Google Drive. Buka Akun lalu putuskan tautan dan hubungkan lagi.</string>
     <string name="notification_category_body">Anda memiliki artikel baru di %s</string>
     <string name="notification_grouped_body">Anda memiliki artikel baru yang siap dibaca!</string>

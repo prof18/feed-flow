@@ -308,7 +308,6 @@
     <string name="reader_mode_fallback_title">Impossible d\'analyser l\'article</string>
     <string name="reader_mode_fallback_message">Le contenu de cette page ne peut être extrait en mode lecture. Vous pouvez ouvrir la page directement dans votre navigateur.</string>
     <string name="dropbox_auth_code_expired">Le code d\'authentification n\'est plus valide. Veuillez réessayer.</string>
-    <string name="database_error_reset">Nous avons eu quelques soucis avec le chargement de vos données et avons dû commencer de 0. Désolé :( .</string>
     <string name="google_drive_auth_retry">Vous devez vous ré-authentifier afin de continuer à utiliser Google Drive. Aller dans Comptes et désynchroniser puis synchroniser à nouveau votre compte.</string>
     <string name="notification_category_body">Vous avez de nouveaux articles dans %s</string>
     <string name="settings_notification_mode_desc">Regrouper les notifications par flux, catégorie ou montrer une notification associée</string>

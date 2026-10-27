@@ -386,7 +386,6 @@
     <string name="reader_mode_no_content_title">Sem conteúdo disponível</string>
     <string name="reader_mode_no_content_message">Esse artigo ainda não possui conteúdo, e não há link para abrir na web.</string>
     <string name="dropbox_auth_code_expired">O código de validação não é mais válido. Por favor, tente novamente.</string>
-    <string name="database_error_reset">Tivemos um problema ao carregar seus dados e tivemos que começar de maneira limpa. Desculpe por isso.</string>
     <string name="google_drive_auth_retry">Você precisa se autenticar novamente para continuar usando sincronia via Google Drive. Va para Contas, remova e adicione o link novamente.</string>
     <string name="notification_category_body">Você possui novos artigos em %s</string>
     <string name="notification_grouped_body">Você tem novos artigos prontos para serem lidos!</string>

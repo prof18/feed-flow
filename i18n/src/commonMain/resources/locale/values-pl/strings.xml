@@ -371,7 +371,6 @@
     <string name="reader_mode_fallback_message">Nie udało się pobrać treści tej strony do trybu czytania. Możesz otworzyć stronę bezpośrednio w przeglądarce.</string>
     <string name="reader_mode_fallback_open_browser_button">Otwórz w przeglądarce</string>
     <string name="dropbox_auth_code_expired">Kod uwierzytelniający stracił ważność. Spróbuj ponownie.</string>
-    <string name="database_error_reset">Wystąpiły problemy z wczytaniem Twoich danych i musieliśmy zacząć od nowa. Przepraszamy za tę niedogodność.</string>
     <string name="google_drive_auth_retry">Aby nadal korzystać z synchronizacji z Dyskiem Google, musisz ponownie się uwierzytelnić. Przejdź do sekcji „Konta”, usuń powiązanie, a następnie połącz konta ponownie.</string>
     <string name="notification_category_body">Masz nowe artykuły w %s</string>
     <string name="notification_grouped_body">Masz nowe artykuły do przeczytania!</string>

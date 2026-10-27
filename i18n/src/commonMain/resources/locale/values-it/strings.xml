@@ -312,7 +312,6 @@
     <string name="reader_mode_fallback_title">Impossibile analizzare l\'articolo</string>
     <string name="reader_mode_fallback_message">Il contenuto di questa pagina non può essere estratto per la modalità lettura. Puoi aprire la pagina direttamente nel tuo browser.</string>
     <string name="reader_mode_fallback_open_browser_button">Apri nel browser</string>
-    <string name="database_error_reset">Abbiamo avuto problemi a caricare i tuoi dati e abbiamo dovuto ricominciare da capo. Ci dispiace.</string>
     <string name="google_drive_auth_retry">Devi autenticarti di nuovo per continuare a usare la sincronizzazione con Google Drive. Vai in Account, scollega e collega di nuovo.</string>
     <string name="notification_category_body">Hai nuovi articoli in \"%s\"</string>
     <string name="notification_grouped_body">Hai nuovi articoli pronti per essere letti!</string>

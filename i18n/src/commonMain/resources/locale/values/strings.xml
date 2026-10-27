@@ -45,6 +45,15 @@
     <string name="open_website_button">Open website</string>
     <string name="open_feed_website_button">Open feed website</string>
     <string name="database_error">Something went wrong during the retrieval of the feeds. Please retry or restart the app  - error code: %s :(</string>
+    <string name="database_save_error">Couldn\'t save your changes. Try again in a moment - error code: %s</string>
+    <string name="database_recovered_from_corruption">Your local data was damaged, so FeedFlow started with a fresh database. A copy of the old data was kept in the FeedFlow data folder.</string>
+    <string name="database_startup_locked">FeedFlow can\'t open its data because another program is using it. Close other FeedFlow windows, then open FeedFlow again.</string>
+    <string name="database_startup_storage">FeedFlow can\'t read or write its data folder. Check that the disk has free space and that FeedFlow can access the folder.</string>
+    <string name="database_startup_native">FeedFlow couldn\'t load a required component. Reinstall or update FeedFlow. Your data has not been changed.</string>
+    <string name="database_startup_generic">FeedFlow couldn\'t open its data. Your files have not been deleted.</string>
+    <string name="database_open_data_folder">Open data folder</string>
+    <string name="database_quit">Quit</string>
+    <string name="desktop_already_running">FeedFlow is already running.</string>
     <string name="trigger_feed_sync">Upload changes</string>
     <string name="invalid_rss_url">The link you provided is not a valid RSS feed</string>
     <string name="invalid_rss_url_with_retry_hint">Couldn&#39;t validate this feed. It might not be a valid RSS feed, or the server could be temporarily unavailable.</string>
@@ -532,7 +541,6 @@
     <string name="reader_mode_no_content_title">No content available</string>
     <string name="reader_mode_no_content_message">This article doesn\'t include any content, and there\'s no link to open it on the web.</string>
     <string name="dropbox_auth_code_expired">The authentication code is not valid anymore. Please try again.</string>
-    <string name="database_error_reset">We had trouble loading your data and had to start fresh. Sorry about that.</string>
     <string name="google_drive_auth_retry">You need to re-authenticate to continue using Google Drive sync. Go to Accounts and unlink and link again.</string>
     <string name="notification_category_body">You have new articles in "%s"</string>
     <string name="notification_grouped_body">You have new articles ready to be read!</string>

@@ -363,7 +363,6 @@
     <string name="settings_appearance">Aparencia</string>
     <string name="settings_about_and_support">Sobre e Axuda</string>
     <string name="dropbox_auth_code_expired">O código de autenticación xa non é válido. Inténtao outra vez.</string>
-    <string name="database_error_reset">Tivemos problemas para cargar os teus datos e houbo que restablecelos. Lamentámolo.</string>
     <string name="google_drive_auth_retry">Tes que volver a autenticarte para seguir usando a sincronización Google Drive. Vai a Contas e volve a acceder.</string>
     <string name="notification_category_body">Tes novos artigos en %s</string>
     <string name="notification_grouped_body">Tes novos artigos que podes ler!</string>

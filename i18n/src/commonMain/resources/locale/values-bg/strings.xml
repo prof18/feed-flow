@@ -254,7 +254,6 @@
     <string name="decrease_font_size_button_content_description">Намаляване на размера на шрифта</string>
     <string name="scroll_to_top_button_content_description">Превъртете до горе</string>
     <string name="dropbox_auth_code_expired">Кодът за удостоверяване вече не е валиден. Моля, опитайте отново.</string>
-    <string name="database_error_reset">Имахме проблеми със зареждането на данните ви и трябваше да започнем отначало. Извиняваме се за това.</string>
     <string name="trigger_feed_sync">Качване на промени</string>
     <string name="menu_mark_all_above_as_read">Маркиране на всичко по-горе като прочетено</string>
     <string name="menu_mark_all_below_as_read">Маркиране на всички по-долу като прочетени</string>

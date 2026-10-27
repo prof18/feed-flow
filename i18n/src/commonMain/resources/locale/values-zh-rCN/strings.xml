@@ -254,7 +254,6 @@
     <string name="decrease_font_size_button_content_description">减小字体大小</string>
     <string name="scroll_to_top_button_content_description">滚动到顶部</string>
     <string name="dropbox_auth_code_expired">授权码已失效。请重试。</string>
-    <string name="database_error_reset">我们加载您的数据时遇到问题，因此需要重新开始。对此我们深表歉意。</string>
     <string name="google_drive_connect_button">连接 Google Drive</string>
     <string name="change_category">更改类别</string>
     <string name="trigger_feed_sync">上传更改</string>

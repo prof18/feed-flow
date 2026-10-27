@@ -254,7 +254,6 @@
     <string name="decrease_font_size_button_content_description">Зменшити розмір шрифту</string>
     <string name="scroll_to_top_button_content_description">Прокрутити вгору</string>
     <string name="dropbox_auth_code_expired">Код автентифікації більше недійсний. Спробуйте ще раз.</string>
-    <string name="database_error_reset">Виникли проблеми із завантаженням ваших даних і довелося починати все спочатку. Вибачте.</string>
     <string name="trigger_feed_sync">Завантажити зміни</string>
     <string name="menu_mark_all_above_as_read">Позначити все вищезазначене як прочитане</string>
     <string name="menu_mark_all_below_as_read">Позначити все нижче як прочитане</string>

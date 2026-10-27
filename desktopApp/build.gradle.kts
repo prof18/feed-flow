@@ -110,6 +110,8 @@ kotlin {
                 implementation(libs.io.coil.network)
                 implementation(libs.jsystem.theme.detector)
                 implementation(project(":shared"))
+                implementation(project(":database"))
+                implementation(libs.sqldelight.runtime)
                 implementation(compose.desktop.currentOs) {
                     exclude(group = "org.jetbrains.compose.material", module = "material")
                 }
@@ -137,6 +139,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.turbine)
                 implementation(compose.desktop.uiTestJUnit4)
                 implementation(compose.desktop.currentOs) {
                     exclude(group = "org.jetbrains.compose.material", module = "material")

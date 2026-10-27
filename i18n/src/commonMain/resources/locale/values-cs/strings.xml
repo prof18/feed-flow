@@ -319,7 +319,6 @@
     <string name="settings_sync_and_storage">Synchronizace &amp; ukládání</string>
     <string name="settings_about_and_support">O nás &amp; podpora</string>
     <string name="dropbox_auth_code_expired">Ověřovací kód již není platný. Prosím, zkuste to znovu.</string>
-    <string name="database_error_reset">Měli jsme problém s načítáním vašich dat a museli jsme začít znovu. Omlouváme se.</string>
     <string name="google_drive_auth_retry">Abyste mohli nadále používat synchronizaci Disku Google, je nutné projít opětovným přihlášením. Přejděte do sekce Účty, odpojte účty a znovu je propojte.</string>
     <string name="notification_category_body">Máte nové články v %s</string>
     <string name="notification_grouped_body">Máte nové články připravené ke čtení!</string>

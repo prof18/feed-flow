@@ -23,6 +23,13 @@
       "enabled": false
     },
     {
+      "description": "sqlite-jdbc must match the version SQLDelight's sqlite-driver brings in and the macOS sandbox native library in desktopApp/resources-sandbox. Update it by hand together with SQLDelight (see the comment in gradle/libs.versions.toml).",
+      "matchPackageNames": [
+        "org.xerial:sqlite-jdbc"
+      ],
+      "enabled": false
+    },
+    {
       "description": "Screenshot renderer is pinned deliberately: playwright-core determines the rendering engine, so an unattended bump can silently change text rasterisation and shift the shipped store screenshots. Update by hand, then run tools/screenshots/verify.mjs.",
       "matchFileNames": [
         "tools/screenshots/**"

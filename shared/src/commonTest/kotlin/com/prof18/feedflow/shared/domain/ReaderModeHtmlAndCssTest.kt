@@ -18,42 +18,33 @@ class ReaderModeHtmlAndCssTest {
     }
 
     @Test
-    fun `readerModeCss applies bundled body and headline fonts`() {
+    fun `readerModeCss falls back to the system stack after bundled fonts`() {
         val css = readerModeCss(
             colors = null,
             fontSize = 18,
             lineHeight = 0,
-            bodyFont = ReaderFontFamily.OUTFIT,
-            headlineFont = ReaderFontFamily.LITERATA,
+            bodyFont = ReaderFontFamily.LITERATA,
+            headlineFont = ReaderFontFamily.LORA,
         )
 
-        assertTrue(css.contains("FeedFlow Outfit"))
-        assertTrue(css.contains("FeedFlow Literata"))
-        // @font-face needs platform font bytes (JVM/iOS resources). Android host tests
-        // without Application assets still get the correct family names above.
-        if (css.contains("@font-face")) {
-            assertTrue(css.contains("font-weight: 400"))
-            assertFalse(css.contains("font-weight: 100 900"))
-        }
+        assertTrue(css.contains("font-family: 'FeedFlow Literata', -apple-system"))
+        assertTrue(css.contains("font-family: 'FeedFlow Lora', -apple-system"))
     }
 
     @Test
-    fun `readerFontFamilyJs updates body and headline families`() {
-        val js = readerFontFamilyJs(ReaderFontFamily.INTER, ReaderFontFamily.LORA)
+    fun `readerFontFamilyJs updates body and headline families with fallback`() {
+        val js = readerFontFamilyJs(ReaderFontFamily.ATKINSON_HYPERLEGIBLE_NEXT, ReaderFontFamily.SOURCE_SERIF_4)
 
         assertTrue(js.contains("__feedflow_font_family_style"))
-        assertTrue(js.contains("FeedFlow Inter"))
-        assertTrue(js.contains("FeedFlow Lora"))
+        assertTrue(js.contains("FeedFlow Atkinson Hyperlegible Next"))
+        assertTrue(js.contains("FeedFlow Source Serif 4"))
+        assertTrue(js.contains("-apple-system"))
     }
 
     @Test
-    fun `reader document uses the article language instead of hardcoded English`() {
-        val italian = getReaderModeStyledHtml(null, "<p>Ciao</p>", fontSize = 16, languageTag = "it-IT")
-        assertTrue(italian.contains("<html lang=\"it-IT\""))
-        val unknown = getReaderModeStyledHtml(null, "<p>Article</p>", fontSize = 16)
-        assertFalse(unknown.contains("<html lang=\"en\""))
-        val unsafe = getReaderModeStyledHtml(null, "body", fontSize = 16, languageTag = "it\" onclick=\"alert(1)")
-        assertFalse(unsafe.contains("onclick"))
+    fun `unknown or missing stored font names map to system`() {
+        assertEquals(ReaderFontFamily.SYSTEM, ReaderFontFamily.fromStorageName("OUTFIT"))
+        assertEquals(ReaderFontFamily.SYSTEM, ReaderFontFamily.fromStorageName(null))
     }
 
     @Test

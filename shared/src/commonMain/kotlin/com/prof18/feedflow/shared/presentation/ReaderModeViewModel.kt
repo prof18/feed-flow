@@ -25,12 +25,14 @@ import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
+import com.prof18.feedflow.shared.domain.readerfont.readerFontFaceCss
 import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryCoordinator
 import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
 import com.prof18.feedflow.shared.domain.recovery.ReaderFetchResult
 import com.prof18.feedflow.shared.domain.recovery.RecoveryTicket
 import io.ktor.http.Url
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -88,6 +90,16 @@ class ReaderModeViewModel internal constructor(
                 state.isForArticle(article.id) && !report.sending,
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, ArticleReportUiState())
+
+    init {
+        // Reading and encoding the bundled font files is slow; do it off the main thread
+        // before the reader HTML needs the cached @font-face CSS.
+        viewModelScope.launch(Dispatchers.Default) {
+            settingsRepository.readerFontSettingsState.collect { settings ->
+                readerFontFaceCss(settings.bodyFont, settings.headlineFont)
+            }
+        }
+    }
 
     fun requestArticleReport() {
         if (!articleReportState.value.canReport || articleReportMutableState.value.showDisclosure) return

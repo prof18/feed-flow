@@ -1,39 +1,29 @@
 package com.prof18.feedflow.core.model
 
-enum class ReaderFontFamily {
-    SYSTEM,
-    OUTFIT,
-    INTER,
-    ATKINSON_HYPERLEGIBLE,
-    LITERATA,
-    SOURCE_SERIF_4,
-    LIBRE_BASKERVILLE,
-    LORA,
+enum class ReaderFontFamily(
+    val cssFamilyName: String?,
+    val fileName: String?,
+    val italicFileName: String?,
+    val cssWeightRange: String?,
+) {
+    SYSTEM(null, null, null, null),
+    LITERATA("FeedFlow Literata", "Literata-VF.ttf", "Literata-Italic-VF.ttf", "200 900"),
+    SOURCE_SERIF_4("FeedFlow Source Serif 4", "SourceSerif4-VF.ttf", "SourceSerif4-Italic-VF.ttf", "200 900"),
+    LORA("FeedFlow Lora", "Lora-VF.ttf", "Lora-Italic-VF.ttf", "400 700"),
+    ATKINSON_HYPERLEGIBLE_NEXT(
+        "FeedFlow Atkinson Hyperlegible Next",
+        "AtkinsonHyperlegibleNext-VF.ttf",
+        "AtkinsonHyperlegibleNext-Italic-VF.ttf",
+        "200 800",
+    ),
     ;
 
     val isBundled: Boolean
         get() = this != SYSTEM
 
-    /** CSS / Compose font-family name for bundled faces. */
-    val cssFamilyName: String
-        get() = when (this) {
-            SYSTEM -> SYSTEM_FONT_STACK
-            OUTFIT -> "FeedFlow Outfit"
-            INTER -> "FeedFlow Inter"
-            ATKINSON_HYPERLEGIBLE -> "FeedFlow Atkinson Hyperlegible"
-            LITERATA -> "FeedFlow Literata"
-            SOURCE_SERIF_4 -> "FeedFlow Source Serif 4"
-            LIBRE_BASKERVILLE -> "FeedFlow Libre Baskerville"
-            LORA -> "FeedFlow Lora"
-        }
-
-    /** Value suitable for a CSS `font-family` property. */
+    /** Value for a CSS `font-family` property; bundled fonts fall back to the system stack per glyph. */
     val cssFontFamilyValue: String
-        get() = if (this == SYSTEM) {
-            SYSTEM_FONT_STACK
-        } else {
-            "'$cssFamilyName'"
-        }
+        get() = cssFamilyName?.let { "'$it', $SYSTEM_FONT_STACK" } ?: SYSTEM_FONT_STACK
 
     companion object {
         const val SYSTEM_FONT_STACK: String =
@@ -41,6 +31,6 @@ enum class ReaderFontFamily {
                 "'Open Sans', 'Helvetica Neue', sans-serif"
 
         fun fromStorageName(name: String?): ReaderFontFamily =
-            name?.let { runCatching { valueOf(it) }.getOrNull() } ?: SYSTEM
+            entries.firstOrNull { it.name == name } ?: SYSTEM
     }
 }

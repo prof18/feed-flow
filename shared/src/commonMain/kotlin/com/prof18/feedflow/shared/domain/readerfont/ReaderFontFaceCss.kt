@@ -4,66 +4,29 @@ import com.prof18.feedflow.core.model.ReaderFontFamily
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-/**
- * Platform-specific URL usable inside a WebView `@font-face` `src`.
- * All platforms use data URIs so fonts load with an https article baseUrl.
- */
-internal expect fun readerFontFaceSrc(fileName: String): String?
+/** Bundled font file bytes from the `reader-fonts/` resources, or null when the file is missing. */
+internal expect fun readReaderFontBytes(fileName: String): ByteArray?
 
-fun ReaderFontFamily.resourceFileName(): String? = when (this) {
-    ReaderFontFamily.SYSTEM -> null
-    ReaderFontFamily.OUTFIT -> "Outfit-Regular.ttf"
-    ReaderFontFamily.INTER -> "Inter-Regular.ttf"
-    ReaderFontFamily.ATKINSON_HYPERLEGIBLE -> "AtkinsonHyperlegible-Regular.ttf"
-    ReaderFontFamily.LITERATA -> "Literata-Regular.ttf"
-    ReaderFontFamily.SOURCE_SERIF_4 -> "SourceSerif4-Regular.ttf"
-    ReaderFontFamily.LIBRE_BASKERVILLE -> "LibreBaskerville-Regular.ttf"
-    ReaderFontFamily.LORA -> "Lora-Regular.ttf"
-}
+private val fontFaceCssByFamily: Map<ReaderFontFamily, Lazy<String>> =
+    ReaderFontFamily.entries.associateWith { family -> lazy { buildFontFaceCss(family) } }
 
-fun ReaderFontFamily.boldResourceFileName(): String? = when (this) {
-    ReaderFontFamily.ATKINSON_HYPERLEGIBLE -> "AtkinsonHyperlegible-Bold.ttf"
-    else -> null
-}
+fun readerFontFaceCss(vararg families: ReaderFontFamily): String =
+    families.filter { it.isBundled }.distinct()
+        .joinToString("\n") { fontFaceCssByFamily.getValue(it).value }
 
-private val fontFaceCssCache = mutableMapOf<ReaderFontFamily, String>()
+private fun buildFontFaceCss(family: ReaderFontFamily): String = listOfNotNull(
+    family.fileName?.let { fontFace(family, it, "normal") },
+    family.italicFileName?.let { fontFace(family, it, "italic") },
+).joinToString("\n")
 
-fun readerFontFaceCss(vararg families: ReaderFontFamily): String {
-    return families
-        .asSequence()
-        .filter { it.isBundled }
-        .distinct()
-        .joinToString("\n") { family ->
-            fontFaceCssCache.getOrPut(family) { buildFontFaceCss(family) }
-        }
-}
-
-private fun buildFontFaceCss(family: ReaderFontFamily): String {
-    val regularFile = family.resourceFileName() ?: return ""
-    val regularSrc = readerFontFaceSrc(regularFile) ?: return ""
-    val boldFile = family.boldResourceFileName()
-    val boldSrc = boldFile?.let { readerFontFaceSrc(it) }
-
-    val regularFace = """
+private fun fontFace(family: ReaderFontFamily, fileName: String, style: String): String? {
+    val bytes = readReaderFontBytes(fileName) ?: return null
+    return """
         @font-face {
             font-family: '${family.cssFamilyName}';
-            src: url('$regularSrc') format('truetype');
-            font-weight: 400;
-            font-style: normal;
-            font-display: swap;
-        }
-    """.trimIndent()
-
-    if (boldSrc == null) {
-        return regularFace
-    }
-
-    return regularFace + "\n" + """
-        @font-face {
-            font-family: '${family.cssFamilyName}';
-            src: url('$boldSrc') format('truetype');
-            font-weight: 700;
-            font-style: normal;
+            src: url('${bytes.toFontDataUri()}') format('truetype');
+            font-weight: ${family.cssWeightRange};
+            font-style: $style;
             font-display: swap;
         }
     """.trimIndent()

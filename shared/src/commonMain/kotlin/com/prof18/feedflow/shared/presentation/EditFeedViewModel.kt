@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
@@ -25,6 +26,7 @@ import com.prof18.feedflow.shared.utils.sanitizeUrl
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -39,9 +41,11 @@ class EditFeedViewModel internal constructor(
     private val recoveryService: FeedRecoveryService,
     private val recoveryRepository: FeedRecoveryRepository,
     private val coordinator: FeedRecoveryCoordinator,
+    settingsRepository: SettingsRepository,
 ) : ViewModel() {
     val categoriesState = categoryUseCase.categoriesState
     private var originalFeedSource: FeedSource? = null
+    private var originalKeepUnreadOnScroll = false
 
     private val feedUrlMutableState = MutableStateFlow("")
     val feedUrlState = feedUrlMutableState.asStateFlow()
@@ -60,6 +64,8 @@ class EditFeedViewModel internal constructor(
 
     private val showNotificationToggleMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val showNotificationToggleState = showNotificationToggleMutableState.asStateFlow()
+
+    val markReadWhenScrollingEnabledState: StateFlow<Boolean> = settingsRepository.markFeedAsReadWhenScrollingFlow
 
     val verificationAvailable: Boolean = coordinator.available
     private val verificationRequiredMutableState = MutableStateFlow(false)
@@ -139,12 +145,23 @@ class EditFeedViewModel internal constructor(
         }
     }
 
+    fun updateIsKeepUnreadOnScrollEnabled(isKeepUnreadOnScrollEnabled: Boolean) {
+        feedSourceSettingsMutableState.update { oldValue ->
+            oldValue.copy(isKeepUnreadOnScrollEnabled = isKeepUnreadOnScrollEnabled)
+        }
+        viewModelScope.launch {
+            feedEditedMutableState.emit(FeedEditedState.Idle)
+        }
+    }
+
     fun loadFeedToEdit(feedSource: FeedSource) {
         originalFeedSource = feedSource
 
         viewModelScope.launch {
             val currentFeedSource = databaseHelper.getFeedSource(feedSource.id) ?: feedSource
             originalFeedSource = currentFeedSource
+            val keepUnreadOnScroll = databaseHelper.isKeepUnreadOnScrollEnabled(currentFeedSource.id)
+            originalKeepUnreadOnScroll = keepUnreadOnScroll
 
             feedUrlMutableState.update { currentFeedSource.url }
             feedNameMutableState.update { currentFeedSource.title }
@@ -155,6 +172,7 @@ class EditFeedViewModel internal constructor(
                     isPinned = currentFeedSource.isPinned,
                     isNotificationEnabled = currentFeedSource.isNotificationEnabled,
                     isHideImagesEnabled = currentFeedSource.isHideImagesEnabled,
+                    isKeepUnreadOnScrollEnabled = keepUnreadOnScroll,
                 )
             }
 
@@ -197,6 +215,13 @@ class EditFeedViewModel internal constructor(
             }
 
             feedEditedMutableState.emit(FeedEditedState.Loading)
+
+            val keepUnreadOnScroll = feedSourceSettingsState.value.isKeepUnreadOnScrollEnabled
+            val editedFeedSourceId = originalFeedSource?.id
+            if (editedFeedSourceId != null && keepUnreadOnScroll != originalKeepUnreadOnScroll) {
+                databaseHelper.setKeepUnreadOnScroll(editedFeedSourceId, keepUnreadOnScroll)
+                originalKeepUnreadOnScroll = keepUnreadOnScroll
+            }
 
             val selectedCategory = categoryUseCase.getSelectedCategory()
             val newFeedSource = originalFeedSource?.copy(

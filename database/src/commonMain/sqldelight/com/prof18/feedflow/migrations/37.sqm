@@ -1,0 +1,1 @@
+ALTER TABLE feed_source_preferences ADD COLUMN keep_unread_on_scroll INTEGER NOT NULL DEFAULT 0;

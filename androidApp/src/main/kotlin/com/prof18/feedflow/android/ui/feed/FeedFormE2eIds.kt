@@ -7,6 +7,7 @@ object FeedFormE2eIds {
     const val NAME_INPUT = "edit_feed_name"
     const val HIDDEN_TOGGLE = "edit_feed_hidden_toggle"
     const val HIDE_IMAGES_TOGGLE = "edit_feed_hide_images_toggle"
+    const val KEEP_UNREAD_ON_SCROLL_TOGGLE = "edit_feed_keep_unread_on_scroll_toggle"
     const val PINNED_TOGGLE = "edit_feed_pinned_toggle"
     const val CATEGORY_SELECTOR = "edit_feed_category_selector"
     const val CATEGORY_SHEET_SAVE = "edit_feed_category_sheet_save"

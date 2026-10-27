@@ -123,6 +123,8 @@ class FeedFormsUiTest {
                         articleOpenModeSelector = { _, _ -> },
                         onHiddenToggled = {},
                         onHideImagesToggled = {},
+                        onKeepUnreadOnScrollToggled = {},
+                        isMarkReadWhenScrollingEnabled = true,
                         onPinnedToggled = {},
                         showNotificationToggle = false,
                         onNotificationToggleChanged = {},
@@ -157,6 +159,56 @@ class FeedFormsUiTest {
     }
 
     @Test
+    fun `edit form explains keep unread when scrolling`() {
+        setEditFeedFormContent(isMarkReadWhenScrollingEnabled = true)
+
+        rule.onNodeWithText(EnFeedFlowStrings.keepUnreadWhenScrollingForFeed).assertExists()
+        rule.onNodeWithText(EnFeedFlowStrings.keepUnreadWhenScrollingForFeedDescription).assertExists()
+    }
+
+    @Test
+    fun `edit form explains why keep unread when scrolling is disabled`() {
+        setEditFeedFormContent(isMarkReadWhenScrollingEnabled = false)
+
+        rule.onNodeWithText(EnFeedFlowStrings.keepUnreadWhenScrollingForFeedDisabled).assertExists()
+    }
+
+    private fun setEditFeedFormContent(isMarkReadWhenScrollingEnabled: Boolean) {
+        rule.setContent {
+            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    EditFeedForm(
+                        feedUrl = "https://example.com/feed",
+                        feedName = "Example",
+                        showError = false,
+                        showLoading = false,
+                        errorMessage = "",
+                        canEditUrl = true,
+                        categoriesState = CategoriesState(),
+                        feedSourceSettings = com.prof18.feedflow.core.model.FeedSourceSettings(),
+                        onFeedUrlUpdated = {},
+                        onFeedNameUpdated = {},
+                        articleOpenModeSelector = { _, _ -> },
+                        onHiddenToggled = {},
+                        onHideImagesToggled = {},
+                        onKeepUnreadOnScrollToggled = {},
+                        isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
+                        onPinnedToggled = {},
+                        showNotificationToggle = false,
+                        onNotificationToggleChanged = {},
+                        categoryActions = TestCategoryActions,
+                        editFeed = {},
+                        onShowDeleteDialog = {},
+                        showDeleteDialog = false,
+                        onDismissDeleteDialog = {},
+                        onConfirmDelete = {},
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
     fun `external edit feed replacement updates name and URL without stale text`() {
         var feedName by mutableStateOf("Old name")
         var feedUrl by mutableStateOf("https://old.example/feed.xml")
@@ -177,6 +229,8 @@ class FeedFormsUiTest {
                         articleOpenModeSelector = { _, _ -> },
                         onHiddenToggled = {},
                         onHideImagesToggled = {},
+                        onKeepUnreadOnScrollToggled = {},
+                        isMarkReadWhenScrollingEnabled = true,
                         onPinnedToggled = {},
                         showNotificationToggle = false,
                         onNotificationToggleChanged = {},

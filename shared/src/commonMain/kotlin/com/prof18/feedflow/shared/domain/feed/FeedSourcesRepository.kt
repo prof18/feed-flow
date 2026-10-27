@@ -194,6 +194,9 @@ internal class FeedSourcesRepository(
             }
         }
 
+    fun getKeepUnreadOnScrollFeedSourceIds(): Flow<Set<String>> =
+        databaseHelper.getKeepUnreadOnScrollFeedSourceIdsFlow()
+
     suspend fun insertFeedSourcePreference(
         feedSourceId: String,
         articleOpenMode: ArticleOpenMode,

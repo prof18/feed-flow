@@ -104,6 +104,44 @@ class EditFeedViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `loadFeedToEdit loads keep unread on scroll`() = runTest {
+        val feedSource = createFeedSource(
+            id = "source-keep-unread",
+            title = "Newsletter",
+        )
+        insertFeedSource(feedSource)
+        databaseHelper.setKeepUnreadOnScroll(feedSource.id, true)
+
+        viewModel.loadFeedToEdit(feedSource)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.feedSourceSettingsState.value.isKeepUnreadOnScrollEnabled)
+    }
+
+    @Test
+    fun `editFeed saves keep unread on scroll`() = runTest {
+        val feedSource = createFeedSource(
+            id = "source-save-keep-unread",
+            title = "Newsletter",
+        )
+        insertFeedSource(feedSource)
+
+        viewModel.loadFeedToEdit(feedSource)
+        advanceUntilIdle()
+
+        viewModel.updateIsKeepUnreadOnScrollEnabled(true)
+        advanceUntilIdle()
+
+        viewModel.feedEditedState.test {
+            viewModel.editFeed()
+            assertEquals(FeedEditedState.Loading, awaitItem())
+            assertEquals(FeedEditedState.FeedEdited("Newsletter"), awaitItem())
+        }
+
+        assertTrue(databaseHelper.isKeepUnreadOnScrollEnabled(feedSource.id))
+    }
+
+    @Test
     fun `canEditUrl returns true for local account`() = runTest {
         assertTrue(viewModel.canEditUrl())
     }

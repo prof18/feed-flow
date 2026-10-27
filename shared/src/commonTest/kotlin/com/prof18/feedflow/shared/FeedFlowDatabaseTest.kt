@@ -287,6 +287,38 @@ class FeedFlowDatabaseTest : KoinTestBase() {
     }
 
     @Test
+    fun `keep unread on scroll preference round-trips and is listed`() = runTest {
+        databaseHelper.insertFeedSource(
+            listOf(
+                createParsedFeedSource(id = "alpha", title = "Alpha"),
+                createParsedFeedSource(id = "beta", title = "Beta"),
+            ),
+        )
+
+        assertEquals(false, databaseHelper.isKeepUnreadOnScrollEnabled("alpha"))
+
+        databaseHelper.setKeepUnreadOnScroll("alpha", true)
+
+        assertEquals(true, databaseHelper.isKeepUnreadOnScrollEnabled("alpha"))
+        assertEquals(setOf("alpha"), databaseHelper.getKeepUnreadOnScrollFeedSourceIdsFlow().first())
+
+        databaseHelper.insertFeedSourcePreference(
+            feedSourceId = "alpha",
+            articleOpenMode = ArticleOpenMode.DEFAULT,
+            isHidden = false,
+            isPinned = true,
+            isNotificationEnabled = false,
+            isHideImagesEnabled = false,
+        )
+
+        assertEquals(true, databaseHelper.isKeepUnreadOnScrollEnabled("alpha"))
+
+        databaseHelper.setKeepUnreadOnScroll("alpha", false)
+
+        assertEquals(emptySet(), databaseHelper.getKeepUnreadOnScrollFeedSourceIdsFlow().first())
+    }
+
+    @Test
     fun `insertFeedSourcePreference preserves pinned position`() = runTest {
         databaseHelper.insertFeedSource(
             listOf(

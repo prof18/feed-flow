@@ -57,6 +57,7 @@ internal fun EditScreen(
     val strings = LocalFeedFlowStrings.current
 
     val showNotificationToggle by viewModel.showNotificationToggleState.collectAsStateWithLifecycle()
+    val isMarkReadWhenScrollingEnabled by viewModel.markReadWhenScrollingEnabledState.collectAsStateWithLifecycle()
 
     val latestNavigateBack by rememberUpdatedState(navigateBack)
 
@@ -178,6 +179,10 @@ internal fun EditScreen(
             onHideImagesToggled = { hideImages ->
                 viewModel.updateIsHideImagesEnabled(hideImages)
             },
+            onKeepUnreadOnScrollToggled = { keepUnread ->
+                viewModel.updateIsKeepUnreadOnScrollEnabled(keepUnread)
+            },
+            isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
             onPinnedToggled = { pinned ->
                 viewModel.updateIsPinned(pinned)
             },
@@ -282,6 +287,8 @@ private fun EditScreenPreview() {
                 },
                 onHiddenToggled = {},
                 onHideImagesToggled = {},
+                onKeepUnreadOnScrollToggled = {},
+                isMarkReadWhenScrollingEnabled = true,
                 onPinnedToggled = {},
                 showNotificationToggle = true,
                 onNotificationToggleChanged = {},

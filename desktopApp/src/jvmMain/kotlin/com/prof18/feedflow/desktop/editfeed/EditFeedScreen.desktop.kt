@@ -48,6 +48,7 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
     val settings by vm.feedSourceSettingsState.collectAsState()
     val categories by vm.categoriesState.collectAsState()
     val showNotifications by vm.showNotificationToggleState.collectAsState()
+    val markReadWhenScrolling by vm.markReadWhenScrollingEnabledState.collectAsState()
     val strings = LocalFeedFlowStrings.current
     var loading by remember { mutableStateOf(false) }
     var completionRevision by remember { mutableIntStateOf(0) }
@@ -106,6 +107,8 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
         },
         onHiddenToggled = vm::updateIsHiddenFromTimeline,
         onHideImagesToggled = vm::updateIsHideImagesEnabled,
+        onKeepUnreadOnScrollToggled = vm::updateIsKeepUnreadOnScrollEnabled,
+        isMarkReadWhenScrollingEnabled = markReadWhenScrolling,
         onPinnedToggled = vm::updateIsPinned,
         showNotificationToggle = showNotifications,
         onNotificationToggleChanged = vm::updateIsNotificationEnabled,

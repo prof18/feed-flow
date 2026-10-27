@@ -33,8 +33,10 @@ import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
+import com.prof18.feedflow.desktop.startup.AlreadyRunningWindow
 import com.prof18.feedflow.desktop.startup.DatabaseStartupErrorWindow
 import com.prof18.feedflow.desktop.startup.DesktopStartupCoordinator
+import com.prof18.feedflow.desktop.startup.SingleInstanceLock
 import com.prof18.feedflow.desktop.startup.StartupState
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.ui.DesktopWindowBackground
@@ -49,6 +51,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.DesktopAutoRefreshScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.logging.DatabaseFailureReporterConfig
 import com.prof18.feedflow.shared.logging.reportDesktopDatabaseFailure
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -66,10 +69,18 @@ fun main() {
     integrateAppImageIfNeeded()
     setupSandboxEnvironment()
 
-    application {
-        val properties = loadProperties()
-        val appConfig = createAppConfig(properties, isIcloudEnabled = setupICloudSupport())
+    val appConfig = createAppConfig(loadProperties(), isIcloudEnabled = setupICloudSupport())
+    val lockResult = singleInstanceLock.acquire(File(AppDataPathBuilder.getAppDataPath(appConfig.appEnvironment)))
+    DatabaseFailureReporterConfig.singleInstanceLockState = singleInstanceLock.state
 
+    if (lockResult == SingleInstanceLock.Result.HeldByOther) {
+        application {
+            AlreadyRunningWindow(onQuit = ::exitApplication)
+        }
+        return
+    }
+
+    application {
         var showMainWindow by remember { mutableStateOf(false) }
         var initProgress by remember { mutableFloatStateOf(0.1f) }
         var startupThemeMode by remember { mutableStateOf<ThemeMode?>(null) }
@@ -183,6 +194,9 @@ fun main() {
         }
     }
 }
+
+// Held for the whole process lifetime so the OS keeps the lock until FeedFlow exits.
+private val singleInstanceLock = SingleInstanceLock()
 
 @Composable
 internal fun DesktopStartupSplashWindow(

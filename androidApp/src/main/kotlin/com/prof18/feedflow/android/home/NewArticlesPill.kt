@@ -19,6 +19,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,6 +39,12 @@ internal fun NewArticlesPill(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // Keep the last count on screen while the pill fades out, instead of "0 new articles".
+    var shownCount by remember { mutableIntStateOf(count) }
+    if (count > 0 && count != shownCount) {
+        shownCount = count
+    }
+
     ConditionalAnimatedVisibility(
         modifier = modifier,
         visible = count > 0 && !loadingState.isLoading(),
@@ -51,10 +61,10 @@ internal fun NewArticlesPill(
         val isTransitionSettled = transition.currentState == transition.targetState &&
             transition.currentState == EnterExitState.Visible
 
-        val label = if (count >= MaxNewArticlesCount) {
+        val label = if (shownCount >= MaxNewArticlesCount) {
             "$MaxNewArticlesCount+"
         } else {
-            count.toString()
+            shownCount.toString()
         }
 
         Surface(

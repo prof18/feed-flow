@@ -44,6 +44,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -72,6 +73,7 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
 import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
 import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 private val listTopContentPadding = 4.dp
@@ -429,8 +431,18 @@ private fun BoxScope.PullToRefreshIndicator(
     topInset: Dp,
 ) {
     // While a refresh is running the floating pill already reports the progress,
-    // so the spinner would only duplicate it.
-    if (isRefreshing) {
+    // so the spinner would only duplicate it. When the refresh ends the box retracts
+    // the indicator, so keep it hidden until it is fully gone.
+    var isRetractingAfterRefresh by remember { mutableStateOf(false) }
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            isRetractingAfterRefresh = true
+        } else if (isRetractingAfterRefresh) {
+            snapshotFlow { state.distanceFraction }.first { it == 0f }
+            isRetractingAfterRefresh = false
+        }
+    }
+    if (isRefreshing || isRetractingAfterRefresh) {
         return
     }
     PullToRefreshDefaults.Indicator(

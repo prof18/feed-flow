@@ -6,10 +6,11 @@ import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class SingleInstanceLockTest {
 
-    private val directory: File = createTempDirectory("feedflow-lock-test").toFile()
+    private val directory: File = createTempDirectory(File("/tmp").toPath(), "fflock").toFile()
 
     @AfterTest
     fun tearDown() {
@@ -33,6 +34,22 @@ class SingleInstanceLockTest {
         val lock = SingleInstanceLock()
         assertEquals(SingleInstanceLock.Result.Acquired, lock.acquire(directory))
         assertEquals("held", lock.state)
+    }
+
+    @Test
+    fun `a second launch brings the running instance forward`() {
+        val child = startChildHoldingLock()
+        try {
+            val output = child.inputStream.bufferedReader()
+            assertEquals("LOCKED", output.readLine())
+
+            assertTrue(InstanceActivation.requestActivation(directory))
+            assertEquals("ACTIVATED", output.readLine())
+        } finally {
+            child.outputStream.close()
+            child.waitFor(CHILD_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            child.destroyForcibly()
+        }
     }
 
     @Test

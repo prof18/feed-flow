@@ -36,8 +36,10 @@ import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.startup.AlreadyRunningWindow
 import com.prof18.feedflow.desktop.startup.DatabaseStartupErrorWindow
 import com.prof18.feedflow.desktop.startup.DesktopStartupCoordinator
+import com.prof18.feedflow.desktop.startup.InstanceActivation
 import com.prof18.feedflow.desktop.startup.SingleInstanceLock
 import com.prof18.feedflow.desktop.startup.StartupState
+import com.prof18.feedflow.desktop.startup.bringToFront
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.ui.DesktopWindowBackground
 import com.prof18.feedflow.desktop.ui.components.restoreInitialLinuxWindowSize
@@ -54,7 +56,9 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.logging.DatabaseFailureReporterConfig
 import com.prof18.feedflow.shared.logging.reportDesktopDatabaseFailure
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
@@ -70,14 +74,19 @@ fun main() {
     setupSandboxEnvironment()
 
     val appConfig = createAppConfig(loadProperties(), isIcloudEnabled = setupICloudSupport())
-    val lockResult = singleInstanceLock.acquire(File(AppDataPathBuilder.getAppDataPath(appConfig.appEnvironment)))
+    val dataFolder = File(AppDataPathBuilder.getAppDataPath(appConfig.appEnvironment))
+    val lockResult = singleInstanceLock.acquire(dataFolder)
     DatabaseFailureReporterConfig.singleInstanceLockState = singleInstanceLock.state
 
     if (lockResult == SingleInstanceLock.Result.HeldByOther) {
+        if (InstanceActivation.requestActivation(dataFolder)) return
         application {
             AlreadyRunningWindow(onQuit = ::exitApplication)
         }
         return
+    }
+    if (lockResult == SingleInstanceLock.Result.Acquired) {
+        instanceActivation.listen(dataFolder) { activationRequests.tryEmit(Unit) }
     }
 
     application {
@@ -134,6 +143,7 @@ fun main() {
                 failure = failed.failure,
                 dataFolder = File(AppDataPathBuilder.getAppDataPath(appConfig.appEnvironment)),
                 onQuit = ::exitApplication,
+                activationRequests = activationRequests,
             )
         }
 
@@ -179,6 +189,10 @@ fun main() {
             ) {
                 DesktopWindowBackground(window, desktopWindowBackgroundColor(isDarkTheme, themeMode == ThemeMode.OLED))
 
+                LaunchedEffect(window) {
+                    activationRequests.collect { window.bringToFront(windowState) }
+                }
+
                 LaunchedEffect(Unit) {
                     initProgress = 1f
                     delay(100.milliseconds)
@@ -197,6 +211,13 @@ fun main() {
 
 // Held for the whole process lifetime so the OS keeps the lock until FeedFlow exits.
 private val singleInstanceLock = SingleInstanceLock()
+private val instanceActivation = InstanceActivation()
+
+// Requests that arrive before any window exists are dropped: the splash or main window is about to appear.
+private val activationRequests = MutableSharedFlow<Unit>(
+    extraBufferCapacity = 1,
+    onBufferOverflow = BufferOverflow.DROP_OLDEST,
+)
 
 @Composable
 internal fun DesktopStartupSplashWindow(

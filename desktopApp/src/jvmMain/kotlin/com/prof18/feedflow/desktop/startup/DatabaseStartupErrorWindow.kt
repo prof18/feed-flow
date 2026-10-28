@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import com.prof18.feedflow.database.DesktopDatabaseFailure
 import com.prof18.feedflow.database.DesktopDatabaseFailureKind
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import kotlinx.coroutines.flow.Flow
 import org.jetbrains.jewel.ui.component.DefaultButton
 import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.Text
@@ -18,8 +19,9 @@ internal fun DatabaseStartupErrorWindow(
     failure: DesktopDatabaseFailure,
     dataFolder: File,
     onQuit: () -> Unit,
+    activationRequests: Flow<Unit>,
 ) {
-    StartupMessageWindow(onCloseRequest = onQuit) {
+    StartupMessageWindow(onCloseRequest = onQuit, activationRequests = activationRequests) {
         val strings = LocalFeedFlowStrings.current
         val message = when (failure.kind) {
             DesktopDatabaseFailureKind.Locked -> strings.databaseStartupLocked

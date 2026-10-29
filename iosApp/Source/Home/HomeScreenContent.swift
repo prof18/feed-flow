@@ -49,6 +49,7 @@ struct HomeContent: View {
     let pendingNewArticlesCount: Int
 
     @State private var showScrollToTop = false
+    @State private var keepsLoadingHeaderSpace = false
     @State private var showMarkAllReadDialog = false
     @State private var showClearOldArticlesDialog = false
     @State private var showViewOptionsSheet = false
@@ -96,6 +97,18 @@ struct HomeContent: View {
     var body: some View {
         ScrollViewReader { proxy in
             feedListView(proxy: proxy)
+        }
+        // Removing the loading header while scrolled away would shift the whole list,
+        // so keep its space until the user is back at the top.
+        .onChange(of: showLoading && showScrollToTop) { _, isLoadingAwayFromTop in
+            if isLoadingAwayFromTop {
+                keepsLoadingHeaderSpace = true
+            }
+        }
+        .onChange(of: showScrollToTop) { _, isAwayFromTop in
+            if !isAwayFromTop {
+                keepsLoadingHeaderSpace = false
+            }
         }
         .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {
             Button(feedFlowStrings.cancelButton, role: .cancel) {}
@@ -163,6 +176,7 @@ private extension HomeContent {
             loadingState: loadingState,
             feedState: feedState,
             showLoading: showLoading,
+            keepsLoadingHeaderSpace: keepsLoadingHeaderSpace,
             currentFeedFilter: currentFeedFilter,
             columnVisibility: columnVisibility,
             feedFontSizes: feedFontSizes,

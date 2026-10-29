@@ -505,7 +505,6 @@
     <string name="hide_youtube_shorts_fallback">Bu kanal için Shorts videoları gizlenemedi, bu nedenle akışın tamamı eklendi.</string>
     <string name="desktop_accounts_icloud_title">iCloud</string>
     <string name="reader_mode_fallback_open_browser_button">Tarayıcıda aç</string>
-    <string name="database_error_reset">Verileriniz yüklenirken bir sorun oluştu ve sıfırdan başlamak zorunda kaldık. Bunun için üzgünüz.</string>
     <string name="desktop_collapse_all_feeds">Tümünü daralt</string>
     <string name="settings_filters">Filtreler</string>
     <string name="desktop_accounts_connected_status">Bağlandı</string>

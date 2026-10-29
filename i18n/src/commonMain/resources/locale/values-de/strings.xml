@@ -564,4 +564,7 @@
     <string name="feed_verification_check_again">Erneut überprüfen</string>
     <string name="feed_verification_retry_body">Der Inhalt konnte nicht abgerufen werden. Die Prüfung erneut versuchen oder diesen Bildschirm schließen und wieder versuchen.</string>
     <string name="feed_verification_screen_title">Überprüfung der Webseite</string>
+    <string name="keep_unread_when_scrolling_for_feed">Beim Scrollen auf ungelesen belassen</string>
+    <string name="keep_unread_when_scrolling_for_feed_description">Artikel aus diesem Feed werden nicht als gelesen markiert wenn man über sie scrollt.</string>
+    <string name="keep_unread_when_scrolling_for_feed_disabled">Verfügbar, wenn \"Beim Scrollen als gelesen markieren\" aktiviert ist.</string>
 </resources>

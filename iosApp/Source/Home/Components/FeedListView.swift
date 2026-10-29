@@ -26,6 +26,7 @@ struct FeedListView: View {
     var loadingState: FeedUpdateStatus?
     var feedState: [FeedItem]
     var showLoading: Bool
+    var keepsLoadingHeaderSpace = false
     let currentFeedFilter: FeedFilter
     let columnVisibility: NavigationSplitViewVisibility
     let feedFontSizes: FeedFontSizes
@@ -87,7 +88,11 @@ struct FeedListView: View {
         } else {
             let feedItems = Array(feedState.enumerated())
             VStack(alignment: .center) {
-                LoadingHeaderView(loadingState: loadingState, showLoading: showLoading)
+                LoadingHeaderView(
+                    loadingState: loadingState,
+                    showLoading: showLoading,
+                    keepsSpace: keepsLoadingHeaderSpace
+                )
                 GeometryReader { listProxy in
                     let itemFeedLayout = normalizedLayout
                     let currentWidth = listProxy.size.width

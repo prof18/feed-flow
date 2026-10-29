@@ -54,6 +54,8 @@
     <string name="database_open_data_folder">Open data folder</string>
     <string name="database_quit">Quit</string>
     <string name="desktop_already_running">FeedFlow is already running.</string>
+    <string name="desktop_startup_crash">FeedFlow couldn\'t start. The details below were saved to %s. Attach that file when you report the problem.</string>
+    <string name="desktop_startup_crash_no_log">FeedFlow couldn\'t start. Copy the details below and include them when you report the problem.</string>
     <string name="trigger_feed_sync">Upload changes</string>
     <string name="invalid_rss_url">The link you provided is not a valid RSS feed</string>
     <string name="invalid_rss_url_with_retry_hint">Couldn&#39;t validate this feed. It might not be a valid RSS feed, or the server could be temporarily unavailable.</string>

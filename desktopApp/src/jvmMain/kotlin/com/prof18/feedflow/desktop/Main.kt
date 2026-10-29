@@ -40,6 +40,7 @@ import com.prof18.feedflow.desktop.startup.InstanceActivation
 import com.prof18.feedflow.desktop.startup.SingleInstanceLock
 import com.prof18.feedflow.desktop.startup.StartupState
 import com.prof18.feedflow.desktop.startup.bringToFront
+import com.prof18.feedflow.desktop.startup.handleStartupCrash
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.ui.DesktopWindowBackground
 import com.prof18.feedflow.desktop.ui.components.restoreInitialLinuxWindowSize
@@ -55,6 +56,8 @@ import com.prof18.feedflow.shared.domain.DesktopAutoRefreshScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.logging.DatabaseFailureReporterConfig
 import com.prof18.feedflow.shared.logging.reportDesktopDatabaseFailure
+import io.sentry.Sentry
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
@@ -66,14 +69,26 @@ import java.awt.Toolkit
 import java.io.File
 import java.io.InputStream
 import java.util.Properties
+import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalComposeUiApi::class)
 fun main() {
+    var appConfig: DesktopConfig? = null
+    try {
+        runDesktopApp(onConfigReady = { appConfig = it })
+    } catch (e: Throwable) {
+        reportStartupCrash(e, appConfig)
+        exitProcess(1)
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+private fun runDesktopApp(onConfigReady: (DesktopConfig) -> Unit) {
     integrateAppImageIfNeeded()
     setupSandboxEnvironment()
 
     val appConfig = createAppConfig(loadProperties(), isIcloudEnabled = setupICloudSupport())
+    onConfigReady(appConfig)
     val dataFolder = File(AppDataPathBuilder.getAppDataPath(appConfig.appEnvironment))
     val lockResult = singleInstanceLock.acquire(dataFolder)
     DatabaseFailureReporterConfig.singleInstanceLockState = singleInstanceLock.state
@@ -121,7 +136,14 @@ fun main() {
             delay(100.milliseconds)
             initProgress = 0.2f
             launch(Dispatchers.IO) {
-                startupCoordinator.start()
+                try {
+                    startupCoordinator.start()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Throwable) {
+                    reportStartupCrash(e, appConfig)
+                    exitProcess(1)
+                }
             }
         }
 
@@ -208,6 +230,18 @@ fun main() {
         }
     }
 }
+
+private fun reportStartupCrash(error: Throwable, appConfig: DesktopConfig?) {
+    val dataFolder = appConfig?.let { File(AppDataPathBuilder.getAppDataPath(it.appEnvironment)) }
+    handleStartupCrash(error = error, appVersion = appConfig?.version, dataFolder = dataFolder)
+    // Only reaches Sentry when startup got far enough to read the crash reporting preference.
+    runCatching {
+        Sentry.captureException(error)
+        Sentry.flush(SENTRY_FLUSH_TIMEOUT_MILLIS)
+    }
+}
+
+private const val SENTRY_FLUSH_TIMEOUT_MILLIS = 2_000L
 
 // Held for the whole process lifetime so the OS keeps the lock until FeedFlow exits.
 private val singleInstanceLock = SingleInstanceLock()

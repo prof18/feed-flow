@@ -9,7 +9,6 @@ import java.nio.channels.SocketChannel
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,8 +17,7 @@ import kotlin.test.assertTrue
 
 class InstanceActivationTest {
 
-    // Unix socket paths are limited to about 100 bytes, so keep the folder short.
-    private val directory: File = createTempDirectory(File("/tmp").toPath(), "ff").toFile()
+    private val directory: File = createShortTempDirectory("ff")
     private val activation = InstanceActivation()
 
     @AfterTest

@@ -2,7 +2,6 @@ package com.prof18.feedflow.desktop.startup
 
 import java.io.File
 import java.util.concurrent.TimeUnit
-import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -10,7 +9,7 @@ import kotlin.test.assertTrue
 
 class SingleInstanceLockTest {
 
-    private val directory: File = createTempDirectory(File("/tmp").toPath(), "fflock").toFile()
+    private val directory: File = createShortTempDirectory("fflock")
 
     @AfterTest
     fun tearDown() {

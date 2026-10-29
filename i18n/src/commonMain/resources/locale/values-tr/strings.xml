@@ -390,7 +390,7 @@
     <string name="feed_fetch_failed_tooltip_short">Akış güncellenemedi</string>
     <string name="article_report_sending">Rapor gönderiliyor…</string>
     <string name="widget_preview_toggle_background">Önizleme arka planını değiştir</string>
-    <string name="settings_notification_mode_desc">Bildirimleri akışa veya kategoriye göre gruplandırın ya da tek bir birleşik bildirim gösterin</string>
+    <string name="settings_notification_mode_desc">Bildirimleri makalelere, akışlara, kategorilere göre göster ya da hepsini birleştirerek göster.</string>
     <string name="google_drive_auth_retry">Google Drive eşitlemesini kullanmaya devam etmek için yeniden kimlik doğrulaması yapmanız gerekir. Hesaplar bölümüne gidin, bağlantıyı kaldırıp tekrar bağlayın.</string>
     <string name="desktop_accounts_unavailable_status">Başka bir hesap bağlıyken kullanılamaz</string>
     <string name="desktop_account_connecting">Bağlanıyor…</string>
@@ -544,4 +544,27 @@
     <string name="desktop_resize_sidebar">Gezinme bölmesini yeniden boyutlandır (Sol/Sağ)</string>
     <string name="widget_background_color_hex_error">Geçerli bir 6 haneli hex rengi girin</string>
     <string name="menu_view">Görünüm</string>
+    <string name="keep_unread_when_scrolling_for_feed">Kaydırırken okunmamış olarak bırak</string>
+    <string name="keep_unread_when_scrolling_for_feed_description">Bu akıştaki makaleler, kaydırıp geçtiğinizde okundu olarak işaretlenmeyecektir.</string>
+    <string name="keep_unread_when_scrolling_for_feed_disabled">“Kaydırırken okundu olarak işaretle” açık hâldeyken kullanılabilir.</string>
+    <string name="settings_notification_mode_article">Her bir makale</string>
+    <string name="settings_notification_mode_article_desc">Makale başlıklarını ve olan görsellerini göster. Her yenileme 20 makaleye kadar ve geriye kalanların özetini gösterir.</string>
+    <string name="notification_article_overflow_body">Daha fazla yeni makaleler: %s</string>
+    <string name="feed_verify_website">İnternet sitesini doğrula</string>
+    <string name="feed_verification_failed">İnternet sitesine ulaşılamadı. İptal edin ve tekrar deneyin.</string>
+    <string name="feed_verification_unsupported">İnternet sitesi doğrulaması bu cihazda kullanılamıyor.</string>
+    <string name="feed_verification_save_failed">Akışa ulaşıldı fakat kaydedilemedi.</string>
+    <string name="feed_verification_browser_failed">İnternet sitesi doğrulaması durdu. İptal edin ve tekrar deneyin.</string>
+    <string name="feed_clear_verification">İnternet sitesi doğrulamasını temizle</string>
+    <string name="reader_content_save_failed">Makale açıldı ama çevrim dışı görüntüleme için kaydedilemedi.</string>
+    <string name="feed_verification_explanation_title">Bu internet sitesi, hızlı bir kontrol gerektiriyor</string>
+    <string name="feed_verification_explanation_body">Bu internet sitesi, içeriğini paylaşmadan önce ekstra güvenlik katmanı kullanıyor. İnternet sitesini açın ve gerekli doğrulamayı tamamlayın. İşlem tamamlanınca FeedFlow otomatik olarak devam edecek.</string>
+    <string name="reader_verification_content_options">Akış içeriğini veya tam makaleyi Ayarlar&gt;Okuma Davranışı üzerinden ya da bu akışı düzenleyerek ayarlayın.</string>
+    <string name="feed_verification_open_website">İnternet sitesini aç</string>
+    <string name="feed_verification_screen_title">İnternet sitesi doğrulaması</string>
+    <string name="feed_verification_automatic_hint">Aşağıdan internet sitesinin doğrulamasını tamamlayın. FeedFlow otomatik olarak devam edecek.</string>
+    <string name="feed_verification_checking_title">İnternet sitesi kontrol ediliyor</string>
+    <string name="feed_verification_checking_body">İçerik hazır olunca FeedFlow otomatik olarak devam edecek.</string>
+    <string name="feed_verification_check_again">Tekrar kontrol et</string>
+    <string name="feed_verification_retry_body">İçeriğe ulaşılamadı. Tekrar kontrol etmeyi deneyin ya da bu ekranı kapatın ve tekrar deneyin.</string>
 </resources>

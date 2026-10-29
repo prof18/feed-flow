@@ -63,10 +63,13 @@ class SingleInstanceLockTest {
 
     private fun startChildHoldingLock(): Process {
         val javaBin = File(System.getProperty("java.home"), "bin/java").absolutePath
+        // The test classpath exceeds the Windows command line limit, so it goes through an argument file.
+        // Backslashes are escapes inside argument files; forward slashes work on every OS.
+        val classPath = System.getProperty("java.class.path").replace('\\', '/')
+        val argFile = File(directory, "child.args").apply { writeText("-cp \"$classPath\"") }
         return ProcessBuilder(
             javaBin,
-            "-cp",
-            System.getProperty("java.class.path"),
+            "@${argFile.absolutePath}",
             "com.prof18.feedflow.desktop.startup.SingleInstanceLockChildKt",
             directory.absolutePath,
         ).redirectError(ProcessBuilder.Redirect.INHERIT).start()

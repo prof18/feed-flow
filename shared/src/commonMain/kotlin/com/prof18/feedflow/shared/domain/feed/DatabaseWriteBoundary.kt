@@ -9,7 +9,8 @@ import com.prof18.feedflow.core.model.DatabaseError as DatabaseErrorCode
 
 /**
  * Top-level boundary for a user-started write: a database failure (only recognized on desktop) is
- * reported, shown as a save error and turned into [onDatabaseFailure] instead of crashing the app.
+ * reported, shown as a save error, the list is reloaded from the database, and [onDatabaseFailure] is returned
+ * instead of crashing the app.
  * Anything else, cancellation included, propagates unchanged.
  */
 internal suspend inline fun <T> FeedStateRepository.runUserWrite(
@@ -28,4 +29,6 @@ internal suspend fun FeedStateRepository.handleUserWriteFailure(error: Throwable
     if (!error.isDatabaseFailure()) throw error
     reportDatabaseFailure("user_write", error, Logger.withTag("DatabaseWrite"))
     emitErrorState(DatabaseError(DatabaseErrorCode.SaveFailed))
+    // The list was updated optimistically before the write; show what the database actually holds.
+    reloadFeeds()
 }

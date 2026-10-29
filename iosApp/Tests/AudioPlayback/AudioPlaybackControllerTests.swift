@@ -5,6 +5,36 @@ import MediaPlayer
 import XCTest
 
 final class AudioPlaybackControllerTests: XCTestCase {
+    @MainActor private static var isAudioStackWarm = false
+
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        try await Self.warmUpAudioStack()
+    }
+
+    // On a cold CI simulator the first audio session activation and media load can block the main thread
+    // for tens of seconds, eating whichever test runs first's wait deadline. Pay that cost once, untimed.
+    @MainActor
+    private static func warmUpAudioStack() async throws {
+        guard !isAudioStackWarm else { return }
+        isAudioStackWarm = true
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).wav")
+        try AudioTestWaveFile.write(to: url)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playback, mode: .spokenAudio)
+        try session.setActive(true)
+        let item = AVPlayerItem(url: url)
+        let player = AVPlayer(playerItem: item)
+        let deadline = ContinuousClock.now + .seconds(120)
+        while item.status == .unknown, ContinuousClock.now < deadline {
+            try await Task.sleep(for: .milliseconds(50))
+        }
+        player.replaceCurrentItem(with: nil)
+        try? session.setActive(false, options: .notifyOthersOnDeactivation)
+    }
+
     @MainActor
     func testTogglingEpisodeWithChangedDisplayMetadataPausesWithoutReplacingAudio() {
         let store = TestAudioPlaybackPositionStore()

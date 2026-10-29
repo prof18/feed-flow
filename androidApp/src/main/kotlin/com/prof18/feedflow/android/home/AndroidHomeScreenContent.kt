@@ -221,6 +221,10 @@ fun AndroidHomeScreenContent(
                 else -> {
                     val pullToRefreshState = rememberPullToRefreshState()
                     val isRefreshing = displayState.feedUpdateStatus.isLoading()
+                    val reserveLoaderSpace = rememberReserveLoaderSpace(
+                        isRefreshing = isRefreshing,
+                        isAwayFromTop = showScrollToTopButton,
+                    )
                     PullToRefreshBox(
                         modifier = Modifier.fillMaxSize(),
                         state = pullToRefreshState,
@@ -239,7 +243,7 @@ fun AndroidHomeScreenContent(
                         ) {
                             val feedListTopPadding by animateDpAsState(
                                 targetValue = topInset + listTopContentPadding +
-                                    if (isRefreshing) feedLoaderReservedHeight else 0.dp,
+                                    if (reserveLoaderSpace) feedLoaderReservedHeight else 0.dp,
                                 animationSpec = if (reduceMotionEnabled) {
                                     snap()
                                 } else {
@@ -422,6 +426,21 @@ private fun rememberMarkAllReadWithConfirmation(
             }
         }
     }
+}
+
+// Removing the loader space while scrolled away would shift the whole list,
+// so keep it until the user is back at the top.
+@Composable
+private fun rememberReserveLoaderSpace(
+    isRefreshing: Boolean,
+    isAwayFromTop: Boolean,
+): Boolean {
+    var isLoaderSpaceKept by remember { mutableStateOf(false) }
+    val reserveLoaderSpace = isRefreshing || (isLoaderSpaceKept && isAwayFromTop)
+    SideEffect(reserveLoaderSpace) {
+        isLoaderSpaceKept = reserveLoaderSpace
+    }
+    return reserveLoaderSpace
 }
 
 @Composable

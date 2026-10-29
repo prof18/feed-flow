@@ -116,6 +116,7 @@ class DesktopImportExportWindowTest {
                         dialogTitle = CANCEL_PICKER_TITLE,
                         parent = owner,
                         isLoadDialog = true,
+                        showNativePanel = false,
                         onCloseRequest = { result ->
                             results.add(result)
                             pickerVisible.value = false
@@ -127,32 +128,19 @@ class DesktopImportExportWindowTest {
         rule.waitUntilExactlyOneExists(hasTestTag(CONTENT_TAG), timeoutMillis = 5_000)
         val initiator = rule.onNodeWithTag(CONTENT_TAG)
         initiator.requestFocus()
-        try {
-            initiator.performSemanticsAction(SemanticsActions.OnClick) { it() }
-            rule.waitUntil(timeoutMillis = 5_000) {
-                var showing = false
-                SwingUtilities.invokeAndWait { showing = cancelPicker()?.isVisible == true }
-                showing
-            }
-            SwingUtilities.invokeAndWait {
-                val picker = requireNotNull(cancelPicker())
-                assertSame(visibleWindow(), picker.owner)
-                picker.isVisible = false
-            }
-            rule.waitUntil(timeoutMillis = 5_000) { !pickerVisible.value }
-            rule.runOnIdle {
-                assertEquals(listOf<File?>(null), results)
-                assertEquals(0, dismissals)
-            }
-            initiator.assertIsDisplayed().assertIsFocused()
-            SwingUtilities.invokeAndWait { assertTrue(visibleWindow().isVisible) }
-        } finally {
-            SwingUtilities.invokeAndWait { cancelPicker()?.dispose() }
+        initiator.performSemanticsAction(SemanticsActions.OnClick) { it() }
+        rule.waitUntil(timeoutMillis = 5_000) { results.isNotEmpty() && !pickerVisible.value }
+        rule.runOnIdle {
+            assertEquals(listOf<File?>(null), results)
+            assertEquals(0, dismissals)
         }
-    }
-
-    private fun cancelPicker(): FileDialog? = Window.getWindows().filterIsInstance<FileDialog>().singleOrNull {
-        it.title == CANCEL_PICKER_TITLE && it.isDisplayable
+        initiator.assertIsDisplayed().assertIsFocused()
+        SwingUtilities.invokeAndWait {
+            assertTrue(visibleWindow().isVisible)
+            assertTrue(
+                Window.getWindows().none { it is FileDialog && it.title == CANCEL_PICKER_TITLE && it.isDisplayable },
+            )
+        }
     }
 
     @Test

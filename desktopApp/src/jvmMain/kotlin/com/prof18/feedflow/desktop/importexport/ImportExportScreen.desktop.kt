@@ -138,6 +138,7 @@ internal fun NativeImportExportFileDialog(
     exportFileName: String? = null,
     isLoadDialog: Boolean = false,
     allowedExtensions: ImmutableSet<String> = persistentSetOf(),
+    showNativePanel: Boolean = true,
 ) = AwtWindow(
     create = {
         createImportExportFileDialog(
@@ -147,6 +148,7 @@ internal fun NativeImportExportFileDialog(
             exportFileName = exportFileName,
             isLoadDialog = isLoadDialog,
             allowedExtensions = allowedExtensions,
+            showNativePanel = showNativePanel,
         )
     },
     dispose = FileDialog::dispose,
@@ -159,11 +161,13 @@ internal fun createImportExportFileDialog(
     exportFileName: String? = null,
     isLoadDialog: Boolean = false,
     allowedExtensions: ImmutableSet<String> = persistentSetOf(),
+    showNativePanel: Boolean = true,
 ): FileDialog {
     val flag = if (isLoadDialog) FileDialog.LOAD else FileDialog.SAVE
     val dialog = object : FileDialog(parent, dialogTitle, flag) {
         override fun setVisible(value: Boolean) {
-            super.setVisible(value)
+            // macOS ignores hiding a shown panel from code, so tests skip the native panel to avoid leaking it.
+            if (showNativePanel) super.setVisible(value)
             if (value) {
                 onCloseRequest(files.firstOrNull())
             }

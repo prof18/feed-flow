@@ -548,6 +548,9 @@
     <string name="reader_mode_fallback_open_browser_button">Open in browser</string>
     <string name="reader_mode_no_content_title">No content available</string>
     <string name="reader_mode_no_content_message">This article doesn\'t include any content, and there\'s no link to open it on the web.</string>
+    <string name="reader_mode_opened_externally_title">Opened in your browser</string>
+    <string name="reader_mode_opened_externally_message">This link is a file, like a PDF, that FeedFlow can\'t show, so it was opened in your browser.</string>
+    <string name="reader_mode_open_again_in_browser">Open in browser</string>
     <string name="dropbox_auth_code_expired">The authentication code is not valid anymore. Please try again.</string>
     <string name="google_drive_auth_retry">You need to re-authenticate to continue using Google Drive sync. Go to Accounts and unlink and link again.</string>
     <string name="notification_category_body">You have new articles in "%s"</string>

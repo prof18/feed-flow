@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -300,21 +301,15 @@ internal fun ReaderModeScreen(
 
                 when (readerModeState) {
                     is ReaderModeState.ContentNotAvailable -> {
-                        if (!showingFallbackWebsite) {
-                            ReaderContentUnavailable(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(contentPadding),
-                            )
-                        } else {
-                            FallbackWebView(
-                                url = readerModeState.url,
-                                hasAudioPlayer = audioState.episode != null,
-                                toolbarHeightPx = toolbarHeightPx,
-                                contentPadding = contentPadding,
-                                navigator = navigator,
-                            )
-                        }
+                        ReaderFallbackContent(
+                            url = readerModeState.url,
+                            showingFallbackWebsite = showingFallbackWebsite,
+                            hasAudioPlayer = audioState.episode != null,
+                            toolbarHeightPx = toolbarHeightPx,
+                            contentPadding = contentPadding,
+                            navigator = navigator,
+                            openInBrowser = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
+                        )
                     }
 
                     ReaderModeState.Loading -> {
@@ -480,14 +475,87 @@ private fun ReaderContentUnavailable(modifier: Modifier = Modifier) {
 }
 
 @Composable
+private fun ReaderFallbackContent(
+    url: String,
+    showingFallbackWebsite: Boolean,
+    hasAudioPlayer: Boolean,
+    toolbarHeightPx: StateFlow<Int>,
+    contentPadding: PaddingValues,
+    navigator: WebViewNavigator,
+    openInBrowser: (String) -> Unit,
+) {
+    // The fallback WebView can't render files such as PDFs; it reports them as downloads instead.
+    var externallyOpenedUrl by remember(url) { mutableStateOf<String?>(null) }
+    val openedUrl = externallyOpenedUrl
+    when {
+        !showingFallbackWebsite -> ReaderContentUnavailable(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+        )
+        openedUrl != null -> ReaderOpenedExternally(
+            onOpenInBrowser = { openInBrowser(openedUrl) },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+        )
+        else -> FallbackWebView(
+            url = url,
+            hasAudioPlayer = hasAudioPlayer,
+            toolbarHeightPx = toolbarHeightPx,
+            contentPadding = contentPadding,
+            navigator = navigator,
+            onDownloadRequested = { downloadUrl ->
+                externallyOpenedUrl = downloadUrl
+                openInBrowser(downloadUrl)
+            },
+        )
+    }
+}
+
+@Composable
+private fun ReaderOpenedExternally(
+    onOpenInBrowser: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val strings = LocalFeedFlowStrings.current
+    Column(
+        modifier = modifier.padding(horizontal = 24.dp),
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = strings.readerModeOpenedExternallyTitle,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = strings.readerModeOpenedExternallyMessage,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+        FilledTonalButton(
+            onClick = onOpenInBrowser,
+            modifier = Modifier.padding(top = 16.dp),
+        ) {
+            Text(text = strings.readerModeOpenAgainInBrowser)
+        }
+    }
+}
+
+@Composable
 private fun FallbackWebView(
     url: String,
     hasAudioPlayer: Boolean,
     toolbarHeightPx: StateFlow<Int>,
     contentPadding: PaddingValues,
     navigator: WebViewNavigator,
+    onDownloadRequested: (String) -> Unit,
 ) {
     val state = rememberWebViewState(url)
+    val latestOnDownloadRequested by rememberUpdatedState(onDownloadRequested)
     val measuredToolbarHeightPx by toolbarHeightPx.collectAsStateWithLifecycle()
     val density = LocalDensity.current
     val dockInset = if (hasAudioPlayer) {
@@ -514,6 +582,11 @@ private fun FallbackWebView(
             state = state,
             navigator = navigator,
             platformWebViewParams = PlatformWebViewParams(chromeClient = rememberFullscreenVideoChromeClient()),
+            onCreated = { webView ->
+                webView.setDownloadListener { downloadUrl, _, _, _, _ ->
+                    latestOnDownloadRequested(downloadUrl)
+                }
+            },
         )
 
         if (showPageLoader) {

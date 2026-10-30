@@ -6,6 +6,9 @@ import com.prof18.feedflow.shared.domain.recovery.FeedChallenge
 import com.prof18.feedflow.shared.domain.recovery.RecoveryPolicy
 import com.prof18.feedflow.shared.domain.recovery.ResponseTextDecoder
 import io.ktor.client.HttpClient
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.network.sockets.SocketTimeoutException
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.header
 import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsChannel
@@ -14,6 +17,8 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import io.ktor.utils.io.readBuffer
+import kotlinx.coroutines.CancellationException
+import kotlinx.io.IOException
 import kotlinx.io.readByteArray
 
 class HtmlRetriever(
@@ -31,7 +36,8 @@ class HtmlRetriever(
             return HtmlRetrievalResult.Failed
         }
         return try {
-            val firstAttempt = retrieveAttempt(url)
+            val firstAttempt = retrieveFirstAttempt(url)
+                ?: return retrieveAttempt(url, forbiddenFallbackClient).result
             if (firstAttempt.status == HttpStatusCode.Forbidden ||
                 firstAttempt.result is HtmlRetrievalResult.Challenge
             ) {
@@ -40,10 +46,22 @@ class HtmlRetriever(
             } else {
                 firstAttempt.result
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Throwable) {
             logger.d(e) { "Unable to retrieve HTML, skipping" }
             HtmlRetrievalResult.Failed
         }
+    }
+
+    /** Returns null when the connection fails in a way the fallback user agent may avoid. */
+    private suspend fun retrieveFirstAttempt(url: String): RetrievalAttempt? = try {
+        retrieveAttempt(url)
+    } catch (e: IOException) {
+        if (e.isTimeout()) throw e
+        // Some CDNs reset the connection for the FeedFlow user agent instead of answering 403.
+        logger.d(e) { "Retrying HTML retrieval with fallback user agent after a connection failure" }
+        null
     }
 
     /** Validates and decodes HTML captured by a browser or a website session. */
@@ -130,5 +148,8 @@ sealed interface HtmlRetrievalResult {
     data class Challenge(val challenge: FeedChallenge) : HtmlRetrievalResult
     data object Failed : HtmlRetrievalResult
 }
+
+private fun IOException.isTimeout(): Boolean =
+    this is HttpRequestTimeoutException || this is ConnectTimeoutException || this is SocketTimeoutException
 
 private data class RetrievalAttempt(val status: HttpStatusCode, val result: HtmlRetrievalResult)

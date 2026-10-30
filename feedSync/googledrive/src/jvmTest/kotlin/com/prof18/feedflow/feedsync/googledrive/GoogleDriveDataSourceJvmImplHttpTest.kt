@@ -26,10 +26,11 @@ import kotlin.test.assertTrue
 class GoogleDriveDataSourceJvmImplHttpTest {
 
     @Test
-    fun `stale download ID is rediscovered across pages and persisted after transfer`() = runTest {
+    fun `download re-lists once across pages when the kept file returns 404`() = runTest {
         val payload = "new snapshot".encodeToByteArray()
         val transport = RecordingDriveHttpTransport(
-            ResponseSpec(statusCode = 404, body = """{"error":{"code":404}}""".encodeToByteArray()),
+            ResponseSpec(body = """{"files":[{"id":"gone"}]}""".encodeToByteArray()),
+            ResponseSpec(NOT_FOUND_JSON.encodeToByteArray(), statusCode = 404),
             ResponseSpec(body = """{"files":[],"nextPageToken":"next"}""".encodeToByteArray()),
             ResponseSpec(body = """{"files":[{"id":"current"}]}""".encodeToByteArray()),
             ResponseSpec(body = payload),
@@ -39,8 +40,8 @@ class GoogleDriveDataSourceJvmImplHttpTest {
         dataSource.performDownload(GoogleDriveDownloadParam("FeedFlow.db", output))
         assertContentEquals(payload, output.toByteArray())
         assertEquals("current", dataSource.settings.getBackupFileId())
-        assertEquals(4, transport.requests.size)
-        assertTrue(transport.requests[2].url.contains("pageToken=next"))
+        assertEquals(5, transport.requests.size)
+        assertTrue(transport.requests[3].url.contains("pageToken=next"))
     }
 
     @Test
@@ -70,6 +71,7 @@ class GoogleDriveDataSourceJvmImplHttpTest {
     @Test
     fun `upload updates cached file through the Drive SDK`() = runTest {
         val transport = RecordingDriveHttpTransport(
+            ResponseSpec(body = """{"files":[{"id":"drive-existing"}]}""".encodeToByteArray()),
             ResponseSpec(body = """{"id":"drive-updated"}""".encodeToByteArray()),
         )
         val dataSource = createDataSource(transport, cachedFileId = "drive-existing")
@@ -77,8 +79,8 @@ class GoogleDriveDataSourceJvmImplHttpTest {
 
         dataSource.performUpload(GoogleDriveUploadParam("FeedFlow.db", temporaryFile(payload)))
 
-        assertEquals(2, transport.requests.size)
-        val request = transport.requests.first()
+        assertEquals(3, transport.requests.size)
+        val request = transport.requests[1]
         assertEquals("PATCH", request.method)
         assertTrue(request.url.contains("/drive/v3/files/drive-existing"))
         assertEquals("PUT", transport.requests.last().method)
@@ -88,21 +90,20 @@ class GoogleDriveDataSourceJvmImplHttpTest {
     }
 
     @Test
-    fun `upload rediscoveres after stale cached id and updates the discovered file`() = runTest {
+    fun `upload re-lists once when the kept file returns 404`() = runTest {
         val transport = RecordingDriveHttpTransport(
-            ResponseSpec(
-                body = """{"error":{"code":404,"message":"Not Found"}}""".encodeToByteArray(),
-                statusCode = 404,
-            ),
-            ResponseSpec(body = """{"files":[{"id":"rediscovered"}]}""".encodeToByteArray()),
-            ResponseSpec(body = """{"id":"rediscovered"}""".encodeToByteArray()),
+            setOf("gone"),
+            ResponseSpec(body = """{"files":[{"id":"gone"}]}""".encodeToByteArray()),
+            ResponseSpec(body = """{"files":[{"id":"current"}]}""".encodeToByteArray()),
+            ResponseSpec(body = """{"id":"current"}""".encodeToByteArray()),
         )
-        val dataSource = createDataSource(transport, cachedFileId = "stale")
+        val dataSource = createDataSource(transport)
 
         dataSource.performUpload(GoogleDriveUploadParam("FeedFlow.db", temporaryFile("payload".encodeToByteArray())))
 
-        assertEquals("rediscovered", dataSource.settings.getBackupFileId())
-        assertEquals(listOf("PATCH", "PUT", "GET", "PATCH", "PUT"), transport.requests.map { it.method })
+        assertEquals("current", dataSource.settings.getBackupFileId())
+        assertEquals(listOf("GET", "PATCH", "GET", "PATCH", "PUT"), transport.requests.map { it.method })
+        assertTrue(transport.requests[3].url.contains("/files/current"))
         assertTrue(transport.requests.none { it.url.contains("/files?uploadType") })
     }
 
@@ -121,29 +122,99 @@ class GoogleDriveDataSourceJvmImplHttpTest {
     }
 
     @Test
-    fun `upload rejects duplicate discovered files without creating or updating`() = runTest {
+    fun `upload with duplicates updates the newest file and renames the others`() = runTest {
+        val transport = duplicateUploadTransport()
+        val dataSource = createDataSource(transport)
+
+        dataSource.performUpload(GoogleDriveUploadParam("FeedFlow.db", temporaryFile(byteArrayOf(1))))
+
+        assertEquals(listOf("GET", "PATCH", "PUT", "GET", "PATCH"), transport.requests.map { it.method })
+        assertTrue(transport.requests[1].url.contains("/files/new"))
+        assertTrue(transport.requests.last().url.contains("/drive/v3/files/old"))
+        assertTrue(transport.requests.last().body.decodeToString().contains("FeedFlow.db.orphan-old"))
+        assertEquals("new", dataSource.settings.getBackupFileId())
+    }
+
+    @Test
+    fun `upload ignores a cached id that is not the newest backup`() = runTest {
+        val transport = duplicateUploadTransport()
+        val dataSource = createDataSource(transport, cachedFileId = "old")
+
+        dataSource.performUpload(GoogleDriveUploadParam("FeedFlow.db", temporaryFile(byteArrayOf(1))))
+
+        assertTrue(transport.requests[1].url.contains("/files/new"))
+    }
+
+    @Test
+    fun `download with duplicates fetches the newest file and renames the others`() = runTest {
+        val payload = "newest snapshot".encodeToByteArray()
         val transport = RecordingDriveHttpTransport(
-            ResponseSpec(body = """{"files":[{"id":"one"},{"id":"two"}]}""".encodeToByteArray()),
+            ResponseSpec(body = TWO_BACKUPS.encodeToByteArray()),
+            ResponseSpec(body = payload),
+            ResponseSpec(body = TWO_BACKUPS.encodeToByteArray()),
+            ResponseSpec(body = """{"id":"old"}""".encodeToByteArray()),
+        )
+        val dataSource = createDataSource(transport)
+        val output = ByteArrayOutputStream()
+
+        dataSource.performDownload(GoogleDriveDownloadParam("FeedFlow.db", output))
+
+        assertContentEquals(payload, output.toByteArray())
+        assertTrue(transport.requests[1].url.contains("/files/new"))
+        assertEquals("PATCH", transport.requests.last().method)
+        assertTrue(transport.requests.last().url.contains("/drive/v3/files/old"))
+        assertTrue(transport.requests.last().body.decodeToString().contains("FeedFlow.db.orphan-old"))
+    }
+
+    @Test
+    fun `rename failure does not fail the upload`() = runTest {
+        val transport = RecordingDriveHttpTransport(
+            ResponseSpec(body = TWO_BACKUPS.encodeToByteArray()),
+            ResponseSpec(body = """{"id":"new"}""".encodeToByteArray()),
+            ResponseSpec(body = TWO_BACKUPS.encodeToByteArray()),
+            ResponseSpec(NOT_FOUND_JSON.encodeToByteArray(), statusCode = 500),
         )
         val dataSource = createDataSource(transport)
 
-        assertFailsWith<GoogleDriveUploadException> {
-            dataSource.performUpload(GoogleDriveUploadParam("FeedFlow.db", temporaryFile(byteArrayOf(1))))
-        }
-        assertEquals(1, transport.requests.size)
+        dataSource.performUpload(GoogleDriveUploadParam("FeedFlow.db", temporaryFile(byteArrayOf(1))))
+
+        assertEquals("new", dataSource.settings.getBackupFileId())
+    }
+
+    @Test
+    fun `rename is skipped when the newest backup changed before renaming`() = runTest {
+        val transport = RecordingDriveHttpTransport(
+            ResponseSpec(body = TWO_BACKUPS.encodeToByteArray()),
+            ResponseSpec(body = """{"id":"new"}""".encodeToByteArray()),
+            ResponseSpec(
+                body = """
+                    {"files":[{"id":"old","modifiedTime":"2026-03-01T00:00:00.000Z"},
+                    {"id":"new","modifiedTime":"2026-02-01T00:00:00.000Z"}]}
+                """.trimIndent().encodeToByteArray(),
+            ),
+        )
+        val dataSource = createDataSource(transport)
+
+        dataSource.performUpload(GoogleDriveUploadParam("FeedFlow.db", temporaryFile(byteArrayOf(1))))
+
+        assertEquals(4, transport.requests.size)
     }
 
     @Test
     fun `download resolves cached file id and preserves bytes`() = runTest {
         val payload = byteArrayOf(0, 1, 2, 3, 127, -1)
-        val transport = RecordingDriveHttpTransport(ResponseSpec(body = payload))
+        val transport = RecordingDriveHttpTransport(
+            ResponseSpec(body = """{"files":[{"id":"drive-download"}]}""".encodeToByteArray()),
+            ResponseSpec(body = payload),
+        )
         val dataSource = createDataSource(transport, cachedFileId = "drive-download")
         val output = ByteArrayOutputStream()
 
         dataSource.performDownload(GoogleDriveDownloadParam("FeedFlow.db", output))
 
         assertContentEquals(payload, output.toByteArray())
-        val request = transport.requests.single()
+        assertEquals(2, transport.requests.size)
+        val request = transport.requests[1]
         assertEquals("GET", request.method)
         assertTrue(request.url.contains("/drive/v3/files/drive-download"))
         assertTrue(request.url.contains("alt=media"))
@@ -169,6 +240,13 @@ class GoogleDriveDataSourceJvmImplHttpTest {
         assertEquals("GET", transport.requests[1].method)
         assertTrue(transport.requests[1].url.contains("/drive/v3/files/drive-discovered"))
     }
+
+    private fun duplicateUploadTransport() = RecordingDriveHttpTransport(
+        ResponseSpec(body = TWO_BACKUPS.encodeToByteArray()),
+        ResponseSpec(body = """{"id":"new"}""".encodeToByteArray()),
+        ResponseSpec(body = TWO_BACKUPS.encodeToByteArray()),
+        ResponseSpec(body = """{"id":"old"}""".encodeToByteArray()),
+    )
 
     private fun createDataSource(
         transport: RecordingDriveHttpTransport,
@@ -223,10 +301,14 @@ private data class RecordedRequest(
 
 private class RecordingDriveHttpTransport(
     private val responses: ArrayDeque<ResponseSpec>,
+    private val notFoundUploadIds: Set<String> = emptySet(),
 ) : HttpTransport() {
     val requests = mutableListOf<RecordedRequest>()
 
     constructor(vararg responses: ResponseSpec) : this(ArrayDeque(responses.toList()))
+
+    constructor(notFoundUploadIds: Set<String>, vararg responses: ResponseSpec) :
+        this(ArrayDeque(responses.toList()), notFoundUploadIds)
 
     override fun supportsMethod(method: String): Boolean = true
 
@@ -245,15 +327,19 @@ private class RecordingDriveHttpTransport(
                     }
                     requests += RecordedRequest(method, url, bytes)
                 }
-                return if (url.contains("uploadType=resumable")) {
-                    RecordingDriveHttpResponse(
+                val isResumableInit = url.contains("uploadType=resumable")
+                return when {
+                    isResumableInit && notFoundUploadIds.any { url.contains("/files/$it?") } ->
+                        RecordingDriveHttpResponse(
+                            ResponseSpec(body = NOT_FOUND_JSON.encodeToByteArray(), statusCode = 404),
+                        )
+                    isResumableInit -> RecordingDriveHttpResponse(
                         ResponseSpec(
                             body = byteArrayOf(),
                             headers = mapOf("Location" to "https://fixture.invalid/upload-session"),
                         ),
                     )
-                } else {
-                    RecordingDriveHttpResponse(responses.removeFirst())
+                    else -> RecordingDriveHttpResponse(responses.removeFirst())
                 }
             }
         }
@@ -282,3 +368,8 @@ private class RecordingDriveHttpResponse(
 
     override fun getHeaderValue(index: Int): String = response.headers.values.elementAt(index)
 }
+
+private const val TWO_BACKUPS =
+    """{"files":[{"id":"old","modifiedTime":"2026-01-01T00:00:00.000Z"},""" +
+        """{"id":"new","modifiedTime":"2026-02-01T00:00:00.000Z"}]}"""
+private const val NOT_FOUND_JSON = """{"error":{"code":404,"message":"File not found"}}"""

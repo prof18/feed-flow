@@ -50,16 +50,20 @@ final class GoogleDrivePlatformClientSuccessTests: XCTestCase {
     }
 
     func testCachedFileUpdateTransportErrorDoesNotCreateFile() {
-        let service = ScriptedGoogleDriveServiceClient(steps: [.failure(.update, code: 503)])
+        let service = ScriptedGoogleDriveServiceClient(steps: [
+            .files(["cached-id"]),
+            .failure(.update, code: 503),
+        ])
         let result = upload(using: service, existingFileId: "stale-id")
 
         XCTAssertNil(result.fileId)
         XCTAssertNotNil(result.error)
-        XCTAssertEqual(service.executedOperations, [.update])
+        XCTAssertEqual(service.executedOperations, [.search, .update])
     }
 
     func testCachedFileNotFoundRediscoversBeforeUpdating() {
         let service = ScriptedGoogleDriveServiceClient(steps: [
+            .files(["stale-id"]),
             .failure(.update, code: 404),
             .files(["current-id"]),
             .file(.update, id: "current-id"),
@@ -68,11 +72,12 @@ final class GoogleDrivePlatformClientSuccessTests: XCTestCase {
 
         XCTAssertEqual(result.fileId, "current-id")
         XCTAssertNil(result.error)
-        XCTAssertEqual(service.executedOperations, [.update, .search, .update])
+        XCTAssertEqual(service.executedOperations, [.search, .update, .search, .update])
     }
 
     func testCachedFileNotFoundCreatesOnlyAfterSuccessfulEmptyDiscovery() {
         let service = ScriptedGoogleDriveServiceClient(steps: [
+            .files(["stale-id"]),
             .failure(.update, code: 404),
             .files([]),
             .file(.create, id: "new-id"),
@@ -81,34 +86,76 @@ final class GoogleDrivePlatformClientSuccessTests: XCTestCase {
 
         XCTAssertEqual(result.fileId, "new-id")
         XCTAssertNil(result.error)
-        XCTAssertEqual(service.executedOperations, [.update, .search, .create])
+        XCTAssertEqual(service.executedOperations, [.search, .update, .search, .create])
     }
 
     func testCachedFileNotFoundDoesNotSucceedWhenRediscoveredIdIsAlsoMissing() {
         let service = ScriptedGoogleDriveServiceClient(steps: [
-            .failure(.update, code: 404),
             .files(["stale-id"]),
+            .failure(.update, code: 404),
+            .files(["other-id"]),
             .failure(.update, code: 404),
         ])
         let result = upload(using: service, existingFileId: "stale-id")
 
         XCTAssertNil(result.fileId)
         XCTAssertNotNil(result.error)
-        XCTAssertEqual(service.executedOperations, [.update, .search, .update])
+        XCTAssertEqual(service.executedOperations, [.search, .update, .search, .update])
     }
 
-    func testDuplicateFilesFailUploadWithoutUpdatingOrCreating() {
-        let service = ScriptedGoogleDriveServiceClient(steps: [.files(["first-id", "second-id"])])
+    func testDuplicateFilesUploadUpdatesNewestAndRenamesOthers() {
+        let service = ScriptedGoogleDriveServiceClient(steps: duplicateUploadSteps())
         let result = upload(using: service, existingFileId: nil)
 
-        XCTAssertNil(result.fileId)
-        XCTAssertNotNil(result.error)
-        XCTAssertEqual(service.executedOperations, [.search])
+        XCTAssertEqual(result.fileId, "new")
+        XCTAssertNil(result.error)
+        XCTAssertEqual(service.executedOperations, [.search, .update, .search, .update])
+        assertTransferredNewestAndRenamedOld(service)
+    }
+
+    func testCachedIdIsIgnoredInFavourOfNewest() {
+        let service = ScriptedGoogleDriveServiceClient(steps: duplicateUploadSteps())
+        let result = upload(using: service, existingFileId: "old")
+
+        XCTAssertEqual(result.fileId, "new")
+        XCTAssertNil(result.error)
+        XCTAssertEqual(service.executedOperations, [.search, .update, .search, .update])
+        assertTransferredNewestAndRenamedOld(service)
+    }
+
+    func testRenameFailureDoesNotFailUpload() {
+        let service = ScriptedGoogleDriveServiceClient(steps: [
+            .datedFiles([Self.old, Self.new]),
+            .file(.update, id: "new"),
+            .datedFiles([Self.old, Self.new]),
+            .failure(.update, code: 500),
+        ])
+        let result = upload(using: service, existingFileId: nil)
+
+        XCTAssertEqual(result.fileId, "new")
+        XCTAssertNil(result.error)
+        XCTAssertEqual(service.transfers, ["new"])
+    }
+
+    func testRenameSkippedWhenNewestChanged() {
+        let service = ScriptedGoogleDriveServiceClient(steps: [
+            .datedFiles([Self.old, Self.new]),
+            .file(.update, id: "new"),
+            .datedFiles([Self.newerOld, Self.new]),
+        ])
+        let result = upload(using: service, existingFileId: nil)
+
+        XCTAssertEqual(result.fileId, "new")
+        XCTAssertNil(result.error)
+        XCTAssertEqual(service.executedOperations, [.search, .update, .search])
+        XCTAssertEqual(service.transfers, ["new"])
+        XCTAssertTrue(service.renames.isEmpty)
     }
 
     func testCachedDownloadNotFoundRediscoversUniqueFile() {
         let expectedData = Data("rediscovered-drive-data".utf8)
         let service = ScriptedGoogleDriveServiceClient(steps: [
+            .files(["stale-id"]),
             .failure(.download, code: 404),
             .files(["current-id"]),
             .data(expectedData),
@@ -128,37 +175,54 @@ final class GoogleDrivePlatformClientSuccessTests: XCTestCase {
 
         XCTAssertEqual(actualData, expectedData)
         XCTAssertNil(actualError)
-        XCTAssertEqual(service.executedOperations, [.download, .search, .download])
+        XCTAssertEqual(service.executedOperations, [.search, .download, .search, .download])
     }
 
-    func testDuplicateFilesFailDownload() {
-        let service = ScriptedGoogleDriveServiceClient(steps: [.files(["first-id", "second-id"])])
+    func testDuplicateFilesDownloadFetchesNewestAndRenamesOthers() {
+        let expectedData = Data("newest-drive-data".utf8)
+        let service = ScriptedGoogleDriveServiceClient(steps: [
+            .datedFiles([Self.old, Self.new]),
+            .data(expectedData),
+            .datedFiles([Self.old, Self.new]),
+            .file(.update, id: "old"),
+        ])
         let client = GoogleDrivePlatformClient(service: service)
-        let completion = expectation(description: "Drive download fails")
+        let completion = expectation(description: "Drive download completes")
+        var actualData: Data?
+        var actualFileId: String?
         var actualError: KotlinThrowable?
 
         client.downloadFile(fileName: "FeedFlow.sqlite", existingFileId: nil) { data, fileId, error in
-            XCTAssertNil(data)
+            actualData = data
+            actualFileId = fileId
             actualError = error
             completion.fulfill()
         }
         wait(for: [completion], timeout: 1)
 
-        XCTAssertNotNil(actualError)
-        XCTAssertEqual(service.executedOperations, [.search])
+        XCTAssertEqual(actualData, expectedData)
+        XCTAssertEqual(actualFileId, "new")
+        XCTAssertNil(actualError)
+        XCTAssertEqual(service.executedOperations, [.search, .download, .search, .update])
+        assertTransferredNewestAndRenamedOld(service)
     }
 
-    func testDuplicateFilesAcrossPagesFailWithoutMutation() {
+    func testDuplicatesAcrossPagesPickNewestFromAllPages() {
         let service = ScriptedGoogleDriveServiceClient(steps: [
-            .page(["first-id"], nextPageToken: "page-2"),
-            .files(["second-id"]),
+            .datedPage([Self.old], nextPageToken: "page-2"),
+            .datedFiles([Self.new]),
+            .file(.update, id: "new"),
+            .datedPage([Self.old], nextPageToken: "page-2"),
+            .datedFiles([Self.new]),
+            .file(.update, id: "old"),
         ])
         let result = upload(using: service, existingFileId: nil)
 
-        XCTAssertNil(result.fileId)
-        XCTAssertNotNil(result.error)
-        XCTAssertEqual(service.executedOperations, [.search, .search])
-        XCTAssertEqual(service.searchPageTokens, [nil, "page-2"])
+        XCTAssertEqual(result.fileId, "new")
+        XCTAssertNil(result.error)
+        XCTAssertEqual(service.executedOperations, [.search, .search, .update, .search, .search, .update])
+        XCTAssertEqual(service.searchPageTokens, [nil, "page-2", nil, "page-2"])
+        assertTransferredNewestAndRenamedOld(service)
     }
 
     func testSuccessfulEmptySearchReturnsTypedNotFoundError() {
@@ -180,6 +244,7 @@ final class GoogleDrivePlatformClientSuccessTests: XCTestCase {
 
     func testCachedDownloadNotFoundAndEmptyRediscoveryReturnsTypedNotFoundError() {
         let service = ScriptedGoogleDriveServiceClient(steps: [
+            .files(["stale-id"]),
             .failure(.download, code: 404),
             .files([]),
         ])
@@ -195,7 +260,30 @@ final class GoogleDrivePlatformClientSuccessTests: XCTestCase {
         wait(for: [completion], timeout: 1)
 
         XCTAssertTrue(actualError is CloudBackupNotFoundException)
-        XCTAssertEqual(service.executedOperations, [.download, .search])
+        XCTAssertEqual(service.executedOperations, [.search, .download, .search])
+    }
+
+    private static let old = (id: "old", modified: Date(timeIntervalSince1970: 1_767_225_600))
+    private static let new = (id: "new", modified: Date(timeIntervalSince1970: 1_769_904_000))
+    private static let newerOld = (id: "old", modified: Date(timeIntervalSince1970: 1_772_323_200))
+
+    private func duplicateUploadSteps() -> [ScriptedGoogleDriveServiceClient.Step] {
+        [
+            .datedFiles([Self.old, Self.new]),
+            .file(.update, id: "new"),
+            .datedFiles([Self.old, Self.new]),
+            .file(.update, id: "old"),
+        ]
+    }
+
+    private func assertTransferredNewestAndRenamedOld(
+        _ service: ScriptedGoogleDriveServiceClient,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        XCTAssertEqual(service.transfers, ["new"], file: file, line: line)
+        XCTAssertEqual(service.renames.map(\.fileId), ["old"], file: file, line: line)
+        XCTAssertEqual(service.renames.first?.name, "FeedFlow.sqlite.orphan-old", file: file, line: line)
     }
 
     private func upload(
@@ -234,6 +322,8 @@ private final class ScriptedGoogleDriveServiceClient: GoogleDriveServiceClient {
         case failure(Operation, code: Int)
         case files([String])
         case page([String], nextPageToken: String)
+        case datedFiles([(id: String, modified: Date)])
+        case datedPage([(id: String, modified: Date)], nextPageToken: String)
         case file(Operation, id: String)
         case data(Data)
     }
@@ -242,6 +332,8 @@ private final class ScriptedGoogleDriveServiceClient: GoogleDriveServiceClient {
     private var steps: [Step]
     private(set) var executedOperations: [Operation] = []
     private(set) var searchPageTokens: [String?] = []
+    private(set) var transfers: [String] = []
+    private(set) var renames: [(fileId: String, name: String?)] = []
 
     init(steps: [Step]) {
         self.steps = steps
@@ -255,6 +347,16 @@ private final class ScriptedGoogleDriveServiceClient: GoogleDriveServiceClient {
         executedOperations.append(operation)
         if let searchQuery = query as? GTLRDriveQuery_FilesList {
             searchPageTokens.append(searchQuery.pageToken)
+        }
+        if let getQuery = query as? GTLRDriveQuery_FilesGet {
+            transfers.append(getQuery.fileId ?? "")
+        }
+        if let updateQuery = query as? GTLRDriveQuery_FilesUpdate {
+            if updateQuery.uploadParameters != nil {
+                transfers.append(updateQuery.fileId ?? "")
+            } else {
+                renames.append((updateQuery.fileId ?? "", (updateQuery.bodyObject as? GTLRDrive_File)?.name))
+            }
         }
 
         guard !steps.isEmpty else {
@@ -286,6 +388,14 @@ private final class ScriptedGoogleDriveServiceClient: GoogleDriveServiceClient {
             }
             fileList.nextPageToken = nextPageToken
             completionHandler(nil, fileList, nil)
+        case let .datedFiles(files):
+            XCTAssertEqual(operation, .search)
+            completionHandler(nil, Self.fileList(files), nil)
+        case let .datedPage(files, nextPageToken):
+            XCTAssertEqual(operation, .search)
+            let fileList = Self.fileList(files)
+            fileList.nextPageToken = nextPageToken
+            completionHandler(nil, fileList, nil)
         case let .file(expectedOperation, id):
             XCTAssertEqual(operation, expectedOperation)
             let file = GTLRDrive_File()
@@ -297,6 +407,17 @@ private final class ScriptedGoogleDriveServiceClient: GoogleDriveServiceClient {
             dataObject.data = data
             completionHandler(nil, dataObject, nil)
         }
+    }
+
+    private static func fileList(_ files: [(id: String, modified: Date)]) -> GTLRDrive_FileList {
+        let fileList = GTLRDrive_FileList()
+        fileList.files = files.map { entry in
+            let file = GTLRDrive_File()
+            file.identifier = entry.id
+            file.modifiedTime = GTLRDateTime(date: entry.modified)
+            return file
+        }
+        return fileList
     }
 
     private func operation(for query: GTLRQueryProtocol) -> Operation {

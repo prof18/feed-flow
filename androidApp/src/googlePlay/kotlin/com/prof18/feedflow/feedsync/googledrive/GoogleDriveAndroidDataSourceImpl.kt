@@ -66,25 +66,20 @@ class GoogleDriveAndroidDataSourceImpl(
      */
     override suspend fun performDownload(downloadParam: GoogleDriveDownloadParam): GoogleDriveDownloadResult =
         withDriveClient { client ->
-            val cachedFileId = googleDriveSettings.getBackupFileId()
-            var fileId = cachedFileId ?: requireUniqueDownloadFileId(
-                discoverFileIds(client, downloadParam.fileName),
-                downloadParam.fileName,
-            ) ?: throw CloudBackupNotFoundException()
+            val fileName = downloadParam.fileName
+            var resolution = resolveBackup(client, fileName) ?: throw CloudBackupNotFoundException()
             val inputStream = try {
-                client.files().get(fileId).executeMediaAsInputStream()
+                client.files().get(resolution.keptId).executeMediaAsInputStream()
             } catch (e: GoogleJsonResponseException) {
-                if (e.statusCode != HTTP_NOT_FOUND || cachedFileId == null) throw e
-                fileId = requireUniqueDownloadFileId(
-                    discoverFileIds(client, downloadParam.fileName),
-                    downloadParam.fileName,
-                ) ?: throw CloudBackupNotFoundException()
-                client.files().get(fileId).executeMediaAsInputStream()
+                if (e.statusCode != HTTP_NOT_FOUND) throw e
+                resolution = resolveBackup(client, fileName) ?: throw CloudBackupNotFoundException()
+                client.files().get(resolution.keptId).executeMediaAsInputStream()
             }
             inputStream.use { input ->
                 downloadParam.outputStream.use { output -> input.copyTo(output) }
             }
-            googleDriveSettings.setBackupFileId(fileId)
+            googleDriveSettings.setBackupFileId(resolution.keptId)
+            if (resolution.orphanIds.isNotEmpty()) renameOrphans(client, fileName, resolution.keptId)
             GoogleDriveDownloadResult()
         }
 
@@ -93,30 +88,26 @@ class GoogleDriveAndroidDataSourceImpl(
      */
     override suspend fun performUpload(uploadParam: GoogleDriveUploadParam): GoogleDriveUploadResult =
         withDriveClient { client ->
-            val cachedFileId = googleDriveSettings.getBackupFileId()
+            val fileName = uploadParam.fileName
             val mediaContent = FileContent("application/x-sqlite3", uploadParam.file)
-            var mustUpdateResolvedFile = cachedFileId == null
-
-            val fileId = if (cachedFileId != null) {
-                try {
-                    val metadata = GoogleDriveFile().setName(uploadParam.fileName)
-                    client.files().update(cachedFileId, metadata, mediaContent).execute()
-                    cachedFileId
-                } catch (e: Exception) {
-                    if (!isNotFound(e)) throw e
-                    mustUpdateResolvedFile = true
-                    discoverUniqueFileId(client, uploadParam.fileName)
+            var resolution = resolveBackup(client, fileName)
+            if (resolution == null) {
+                createNewFile(client, fileName, mediaContent)
+                return@withDriveClient GoogleDriveUploadResult
+            }
+            try {
+                updateContent(client, resolution.keptId, fileName, mediaContent)
+            } catch (e: Exception) {
+                if (!isNotFound(e)) throw e
+                resolution = resolveBackup(client, fileName)
+                if (resolution == null) {
+                    createNewFile(client, fileName, mediaContent)
+                    return@withDriveClient GoogleDriveUploadResult
                 }
-            } else {
-                discoverUniqueFileId(client, uploadParam.fileName)
+                updateContent(client, resolution.keptId, fileName, mediaContent)
             }
-            if (fileId == null) {
-                createNewFile(client, uploadParam.fileName, mediaContent)
-            } else if (mustUpdateResolvedFile || fileId != cachedFileId) {
-                val metadata = GoogleDriveFile().setName(uploadParam.fileName)
-                client.files().update(fileId, metadata, mediaContent).execute()
-                googleDriveSettings.setBackupFileId(fileId)
-            }
+            googleDriveSettings.setBackupFileId(resolution.keptId)
+            if (resolution.orphanIds.isNotEmpty()) renameOrphans(client, fileName, resolution.keptId)
             GoogleDriveUploadResult
         }
 
@@ -180,50 +171,52 @@ class GoogleDriveAndroidDataSourceImpl(
         googleDriveSettings.setBackupFileId(newFile.id)
     }
 
-    private fun discoverUniqueFileId(client: Drive, fileName: String): String? {
-        return requireUniqueFileId(discoverFileIds(client, fileName), fileName)
+    private fun updateContent(client: Drive, fileId: String, fileName: String, mediaContent: FileContent) {
+        client.files().update(fileId, GoogleDriveFile().setName(fileName), mediaContent).execute()
     }
 
-    private fun discoverFileIds(client: Drive, fileName: String): List<String> {
-        val fileIds = mutableListOf<String>()
+    private fun resolveBackup(client: Drive, fileName: String): GoogleDriveBackupResolution? {
+        val candidates = mutableListOf<GoogleDriveBackupCandidate>()
         var pageToken: String? = null
         do {
             val request = client.files().list()
                 .setSpaces("appDataFolder")
                 .setQ("name = '$fileName' and trashed = false")
-                .setFields("nextPageToken,files(id)")
+                .setFields("nextPageToken,files(id,modifiedTime)")
             if (pageToken != null) request.pageToken = pageToken
             val result = request.execute()
-            fileIds += result.files.orEmpty().mapNotNull { it.id }
+            candidates += result.files.orEmpty().mapNotNull { file ->
+                file.id?.let { GoogleDriveBackupCandidate(it, file.modifiedTime?.value ?: 0L) }
+            }
             pageToken = result.nextPageToken
         } while (pageToken != null)
-        return fileIds
+        return GoogleDriveBackupResolver.resolve(candidates)
+    }
+
+    private fun renameOrphans(client: Drive, fileName: String, keptId: String) {
+        val fresh = try {
+            resolveBackup(client, fileName)
+        } catch (e: Exception) {
+            logger.w(e) { "Failed to re-list Google Drive backups before renaming duplicates" }
+            return
+        }
+        if (fresh == null || fresh.keptId != keptId) {
+            logger.w { "Skipped renaming Google Drive duplicates: the newest backup is no longer $keptId" }
+            return
+        }
+        fresh.orphanIds.forEach { id ->
+            try {
+                val metadata = GoogleDriveFile().setName(GoogleDriveBackupResolver.orphanName(fileName, id))
+                client.files().update(id, metadata).execute()
+                logger.w { "Renamed duplicate Google Drive backup $id" }
+            } catch (e: Exception) {
+                logger.w(e) { "Failed to rename duplicate Google Drive backup $id" }
+            }
+        }
     }
 }
 
 private fun isNotFound(exception: Throwable): Boolean =
     exception is GoogleJsonResponseException && exception.statusCode == HTTP_NOT_FOUND
-
-private fun requireUniqueFileId(
-    fileIds: List<String>,
-    fileName: String,
-): String? = when (fileIds.size) {
-    0 -> null
-    1 -> fileIds.single()
-    else -> throw GoogleDriveUploadException(
-        errorMessage = "Multiple Google Drive backup files found for '$fileName'",
-    )
-}
-
-private fun requireUniqueDownloadFileId(
-    fileIds: List<String>,
-    fileName: String,
-): String? = when (fileIds.size) {
-    0 -> null
-    1 -> fileIds.single()
-    else -> throw GoogleDriveDownloadException(
-        errorMessage = "Multiple Google Drive backup files found for '$fileName'",
-    )
-}
 
 private const val HTTP_NOT_FOUND = 404

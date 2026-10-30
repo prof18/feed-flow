@@ -47,6 +47,7 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.Slider
 import org.jetbrains.jewel.ui.component.Text
+import kotlin.math.roundToInt
 
 private const val PREVIEW_FADE_START = 0.75f
 private const val PREVIEW_TITLE_GAP_RATIO = 0.35f
@@ -128,7 +129,7 @@ internal fun ReaderTextSettingsControls(
             ReaderTextSettingLabel(strings.readerModeFontSize, fontSize.toString())
             Slider(
                 value = fontSize.toFloat(),
-                onValueChange = { onFontSizeChange(it.toInt()) },
+                onValueChange = { onFontSizeChange(it.roundToInt()) },
                 valueRange = 12f..40f,
                 steps = 27,
                 modifier = Modifier.fillMaxWidth()
@@ -139,7 +140,7 @@ internal fun ReaderTextSettingsControls(
             ReaderTextSettingLabel(strings.readerModeTitleFontSize, titleFontSize.toString())
             Slider(
                 value = titleFontSize.toFloat(),
-                onValueChange = { onTitleFontSizeChange(it.toInt()) },
+                onValueChange = { onTitleFontSizeChange(it.roundToInt()) },
                 valueRange = 16f..48f,
                 steps = 31,
                 modifier = Modifier.fillMaxWidth()
@@ -150,7 +151,7 @@ internal fun ReaderTextSettingsControls(
             ReaderTextSettingLabel(strings.readerModeLineHeight, readerLineHeightLabel(lineHeight))
             Slider(
                 value = lineHeight.toFloat(),
-                onValueChange = { onLineHeightChange(it.toInt()) },
+                onValueChange = { onLineHeightChange(it.roundToInt()) },
                 valueRange = 0f..15f,
                 steps = 14,
                 modifier = Modifier.fillMaxWidth()

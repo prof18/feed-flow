@@ -29,6 +29,7 @@ class MainSettingsViewModel internal constructor(
                 MainSettingsState(
                     themeMode = themeMode,
                     isHideUnreadCountEnabled = isHideUnreadCountEnabled,
+                    isForceEnglishEnabled = settingsRepository.getForceEnglishEnabled(),
                     bodyFont = settingsRepository.getReaderModeBodyFont(),
                     headlineFont = settingsRepository.getReaderModeHeadlineFont(),
                 )
@@ -47,6 +48,13 @@ class MainSettingsViewModel internal constructor(
         feedAppearanceSettingsRepository.setHideUnreadCount(value)
         settingsMutableState.update {
             it.copy(isHideUnreadCountEnabled = value)
+        }
+    }
+
+    fun updateForceEnglishEnabled(value: Boolean) {
+        settingsRepository.setForceEnglishEnabled(value)
+        settingsMutableState.update {
+            it.copy(isForceEnglishEnabled = value)
         }
     }
 

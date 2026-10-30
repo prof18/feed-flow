@@ -1,0 +1,40 @@
+appId: com.prof18.feedflow.debug
+---
+# Server accounts have no cloud-backup action, even with a pending-upload seed.
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=sync-upload-required&account=miniflux
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    text: "E2E Newest Unread Article.*"
+- tapOn:
+    id: home_more_menu_button
+- assertNotVisible: "Upload changes"
+- assertVisible: "Mark all as read"
+- back
+- assertVisible:
+    text: "E2E Newest Unread Article.*"
+
+# Local empty-library refresh retains the normal no-feeds transition.
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+- assertVisible: "Nothing else to read here!"
+- tapOn:
+    id: home_more_menu_button
+- assertNotVisible: "Upload changes"
+- assertVisible: "Mark all as read"
+- back
+- tapOn: "Refresh feeds"
+- extendedWaitUntil:
+    visible: "No feeds found. Please add a new feed!"
+    timeout: 10000

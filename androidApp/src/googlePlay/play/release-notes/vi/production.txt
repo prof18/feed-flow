@@ -1,2 +1,6 @@
-• Thử Engine chế độ đọc mới mang tính thử nghiệm để trích xuất bài viết nhanh và chính xác hơn. Hãy giúp tôi cải thiện bằng cách báo nội dung bị thiếu hoặc lỗi định dạng.
-• Cải thiện hình ảnh, nội dung nhúng, bài ngắn hoặc chỉ có hình, thao tác dấu trang và ngắt kết nối Dropbox.
+• Nghe các tập podcast ngay trong FeedFlow
+• Nghe đọc to bài viết trong Chế độ đọc, bằng giọng phù hợp với ngôn ngữ của bài
+• Tiện ích màn hình chính mới có thể tùy chỉnh, kèm nút làm mới tùy chọn
+• Công cụ Chế độ đọc mới giờ là mặc định. Nếu bài viết hiển thị không đúng, hãy báo cáo chỉ với một lần chạm
+• Theo dõi danh sách phát YouTube và ẩn Shorts của các kênh
+• Nguồn tin từ các trang chặn yêu cầu tải ổn định hơn, với thông báo lỗi rõ ràng hơn

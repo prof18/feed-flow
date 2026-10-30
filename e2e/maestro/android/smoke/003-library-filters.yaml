@@ -11,6 +11,12 @@ appId: com.prof18.feedflow.debug
     id: drawer_menu_button
 - assertVisible:
     id: drawer_timeline
+- assertVisible:
+    id: drawer_bookmarks
+- assertNotVisible:
+    id: drawer_bookmarks
+    containsDescendants:
+      - text: "[0-9]+"
 - tapOn:
     id: drawer_read
 - assertVisible:

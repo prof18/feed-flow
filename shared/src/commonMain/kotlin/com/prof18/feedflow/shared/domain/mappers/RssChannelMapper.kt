@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.mappers
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.rssparser.model.RssChannel
@@ -48,6 +49,10 @@ internal class RssChannelMapper(
                 },
                 content = content,
                 imageUrl = rssItem.resolveImageUrl(),
+                audioUrl = AudioEnclosure.audioUrlOrNull(
+                    url = rssItem.rawEnclosure?.url,
+                    mimeType = rssItem.rawEnclosure?.type,
+                ),
                 feedSource = feedSource,
                 pubDateMillis = resolveDateMillis(rssItem),
                 dateString = null, // This is not saved on database, so we can skip it for this mapper

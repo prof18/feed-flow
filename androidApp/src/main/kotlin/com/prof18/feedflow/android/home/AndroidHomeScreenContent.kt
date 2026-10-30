@@ -37,12 +37,14 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -51,23 +53,27 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.prof18.feedflow.android.ui.components.ConfirmationDialog
+import com.prof18.feedflow.android.ui.home.FeedListActions
+import com.prof18.feedflow.android.ui.home.FeedManagementActions
+import com.prof18.feedflow.android.ui.home.ShareBehavior
+import com.prof18.feedflow.android.ui.home.components.EmptyFeedView
+import com.prof18.feedflow.android.ui.home.components.NoFeedsSourceView
+import com.prof18.feedflow.android.ui.home.components.ScrollToTopButton
+import com.prof18.feedflow.android.ui.home.components.list.FeedList
+import com.prof18.feedflow.android.ui.home.components.list.FeedListMaxContentWidth
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.LocalReduceMotion
+import com.prof18.feedflow.android.ui.utils.scrollToItemConditionally
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
+import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
 import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
-import com.prof18.feedflow.shared.ui.home.FeedListActions
-import com.prof18.feedflow.shared.ui.home.FeedManagementActions
-import com.prof18.feedflow.shared.ui.home.HomeDisplayState
-import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.components.EmptyFeedView
-import com.prof18.feedflow.shared.ui.home.components.NoFeedsSourceView
-import com.prof18.feedflow.shared.ui.home.components.ScrollToTopButton
-import com.prof18.feedflow.shared.ui.home.components.list.FeedList
-import com.prof18.feedflow.shared.ui.home.components.list.FeedListMaxContentWidth
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
-import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 private val listTopContentPadding = 4.dp
@@ -105,6 +111,10 @@ fun AndroidHomeScreenContent(
         !hasFeedItems
     var scrollToTopWhenItemsReturn by remember { mutableStateOf(isShowingEmptyFeed) }
     var isGridArrangement by remember { mutableStateOf(false) }
+    val markAllReadWithConfirmation = rememberMarkAllReadWithConfirmation(
+        feedFilter = displayState.currentFeedFilter,
+        onMarkAllRead = feedListActions.markAllRead,
+    )
 
     @Suppress("MagicNumber")
     val showScrollToTopButton by remember {
@@ -115,6 +125,10 @@ fun AndroidHomeScreenContent(
                 gridState = gridState,
             )
         }
+    }
+
+    SideEffect(showScrollToTopButton) {
+        feedListActions.onScrolledAwayFromTopChanged(showScrollToTopButton)
     }
 
     LaunchedEffect(isShowingEmptyFeed, hasFeedItems) {
@@ -207,6 +221,10 @@ fun AndroidHomeScreenContent(
                 else -> {
                     val pullToRefreshState = rememberPullToRefreshState()
                     val isRefreshing = displayState.feedUpdateStatus.isLoading()
+                    val reserveLoaderSpace = rememberReserveLoaderSpace(
+                        isRefreshing = isRefreshing,
+                        isAwayFromTop = showScrollToTopButton,
+                    )
                     PullToRefreshBox(
                         modifier = Modifier.fillMaxSize(),
                         state = pullToRefreshState,
@@ -225,7 +243,7 @@ fun AndroidHomeScreenContent(
                         ) {
                             val feedListTopPadding by animateDpAsState(
                                 targetValue = topInset + listTopContentPadding +
-                                    if (isRefreshing) feedLoaderReservedHeight else 0.dp,
+                                    if (reserveLoaderSpace) feedLoaderReservedHeight else 0.dp,
                                 animationSpec = if (reduceMotionEnabled) {
                                     snap()
                                 } else {
@@ -281,7 +299,7 @@ fun AndroidHomeScreenContent(
                                                 feedListActions.markAsRead(FeedItemId(feedInfo.id))
                                             },
                                             onVisibleFeedItemsChanged = feedListActions.onVisibleFeedItemsChanged,
-                                            markAllAsRead = feedListActions.markAllRead,
+                                            markAllAsRead = markAllReadWithConfirmation,
                                             onShareClick = shareBehavior.onShareClick,
                                             onOpenFeedSettings = feedManagementActions.onEditFeedClick,
                                             onOpenFeedWebsite = feedManagementActions.onOpenWebsite,
@@ -327,6 +345,21 @@ fun AndroidHomeScreenContent(
                 contentAlignment = Alignment.TopCenter,
             ) {
                 FeedRefreshPill(loadingState = displayState.feedUpdateStatus)
+                NewArticlesPill(
+                    count = displayState.pendingNewArticlesCount,
+                    loadingState = displayState.feedUpdateStatus,
+                    onClick = {
+                        scope.launch {
+                            scrollFeedToTop(
+                                isGridArrangement = isGridArrangement,
+                                listState = listState,
+                                gridState = gridState,
+                                reduceMotionEnabled = reduceMotionEnabled,
+                            )
+                            feedListActions.onShowNewArticlesClick()
+                        }
+                    },
+                )
             }
 
             HomeFloatingToolbar(
@@ -372,14 +405,65 @@ fun AndroidHomeScreenContent(
 }
 
 @Composable
+private fun rememberMarkAllReadWithConfirmation(
+    feedFilter: FeedFilter,
+    onMarkAllRead: () -> Unit,
+): () -> Unit {
+    var showMarkBookmarksReadDialog by remember(feedFilter) { mutableStateOf(false) }
+    if (showMarkBookmarksReadDialog) {
+        val strings = LocalFeedFlowStrings.current
+        ConfirmationDialog(
+            title = strings.markAllReadButton,
+            message = strings.markAllBookmarksReadDialogMessage,
+            onConfirm = onMarkAllRead,
+            onDismiss = { showMarkBookmarksReadDialog = false },
+        )
+    }
+    return remember(feedFilter, onMarkAllRead) {
+        {
+            if (feedFilter is FeedFilter.Bookmarks) {
+                showMarkBookmarksReadDialog = true
+            } else {
+                onMarkAllRead()
+            }
+        }
+    }
+}
+
+// Removing the loader space while scrolled away would shift the whole list,
+// so keep it until the user is back at the top.
+@Composable
+private fun rememberReserveLoaderSpace(
+    isRefreshing: Boolean,
+    isAwayFromTop: Boolean,
+): Boolean {
+    var isLoaderSpaceKept by remember { mutableStateOf(false) }
+    val reserveLoaderSpace = isRefreshing || (isLoaderSpaceKept && isAwayFromTop)
+    SideEffect(reserveLoaderSpace) {
+        isLoaderSpaceKept = reserveLoaderSpace
+    }
+    return reserveLoaderSpace
+}
+
+@Composable
 private fun BoxScope.PullToRefreshIndicator(
     state: PullToRefreshState,
     isRefreshing: Boolean,
     topInset: Dp,
 ) {
     // While a refresh is running the floating pill already reports the progress,
-    // so the spinner would only duplicate it.
-    if (isRefreshing) {
+    // so the spinner would only duplicate it. When the refresh ends the box retracts
+    // the indicator, so keep it hidden until it is fully gone.
+    var isRetractingAfterRefresh by remember { mutableStateOf(false) }
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            isRetractingAfterRefresh = true
+        } else if (isRetractingAfterRefresh) {
+            snapshotFlow { state.distanceFraction }.first { it == 0f }
+            isRetractingAfterRefresh = false
+        }
+    }
+    if (isRefreshing || isRetractingAfterRefresh) {
         return
     }
     PullToRefreshDefaults.Indicator(

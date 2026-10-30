@@ -6,209 +6,175 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.AwtWindow
-import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.ArticleExportFilter
 import com.prof18.feedflow.core.model.FeedImportExportState
-import com.prof18.feedflow.core.model.ImportExportContentType
-import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.utils.getUnixDeviceName
 import com.prof18.feedflow.shared.domain.csv.CsvInput
 import com.prof18.feedflow.shared.domain.csv.CsvOutput
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
-import com.prof18.feedflow.shared.ui.importexport.ImportExportContent
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentSetOf
-import org.koin.compose.viewmodel.koinViewModel
+import java.awt.Dialog
 import java.awt.FileDialog
 import java.io.File
-import javax.swing.JFrame
 
 @Composable
 internal fun ImportExportScreen(
-    composeWindow: ComposeWindow,
     onCloseRequest: () -> Unit,
     triggerFeedFetch: () -> Unit,
+    pickerState: ImportExportFilePickerState,
+    viewModel: ImportExportViewModel,
+    modifier: Modifier = Modifier,
 ) {
-    val viewModel = koinViewModel<ImportExportViewModel>()
-    val feedImporterState by viewModel.importExportState.collectAsState()
+    val state by viewModel.importExportState.collectAsState()
+    ImportExportContent(
+        modifier = modifier,
+        isFilePickerOpen = pickerState.request != null,
+        onCloseClick = onCloseRequest,
+        feedImportExportState = state,
+        onDoneClick = {
+            if (state is FeedImportExportState.ImportSuccess || state is FeedImportExportState.ArticleImportSuccess) {
+                triggerFeedFetch()
+            }
+            viewModel.clearState()
+        },
+        onRetryClick = viewModel::clearState,
+        onChooseAnotherFileClick = {
+            viewModel.clearState()
+            pickerState.open(ImportExportFileAction.ImportFeeds)
+        },
+        onImportClick = { pickerState.open(ImportExportFileAction.ImportFeeds) },
+        onExportClick = { pickerState.open(ImportExportFileAction.ExportFeeds) },
+        onImportArticlesClick = { pickerState.open(ImportExportFileAction.ImportArticles) },
+        onExportArticlesClick = { pickerState.open(ImportExportFileAction.ExportArticles, it) },
+    )
+}
 
-    val importExportTitle = LocalFeedFlowStrings.current.importExportOpmlTitle
-    val importDialogTitle = LocalFeedFlowStrings.current.importDialogTitle
-    val exportDialogTitle = LocalFeedFlowStrings.current.exportDialogTitle
-    val importArticlesDialogTitle = LocalFeedFlowStrings.current.importArticlesDialogTitle
-    val exportArticlesDialogTitle = LocalFeedFlowStrings.current.exportArticlesDialogTitle
+@Composable
+internal fun ImportExportFilePickers(
+    owner: Dialog,
+    pickerState: ImportExportFilePickerState,
+    viewModel: ImportExportViewModel,
+) {
+    val request = pickerState.request ?: return
+    val strings = LocalFeedFlowStrings.current
+    val isLoad = request.action == ImportExportFileAction.ImportFeeds ||
+        request.action == ImportExportFileAction.ImportArticles
+    val title = when (request.action) {
+        ImportExportFileAction.ImportFeeds -> strings.importDialogTitle
+        ImportExportFileAction.ExportFeeds -> strings.exportDialogTitle
+        ImportExportFileAction.ImportArticles -> strings.importArticlesDialogTitle
+        ImportExportFileAction.ExportArticles -> strings.exportArticlesDialogTitle
+    }
+    val date = viewModel.getCurrentDateForExport()
+    val device = getUnixDeviceName()
+    val filename = when (request.action) {
+        ImportExportFileAction.ExportFeeds -> "feedflow-export_${date}_$device.opml".lowercase()
+        ImportExportFileAction.ExportArticles ->
+            "feedflow-articles-export_${date}_${device}_${request.filter.name.lowercase()}.csv"
+        else -> null
+    }
+    NativeImportExportFileDialog(
+        parent = owner,
+        dialogTitle = title,
+        isLoadDialog = isLoad,
+        exportFileName = filename,
+        onCloseRequest = { file ->
+            if (pickerState.request == request) {
+                pickerState.close()
+                viewModel.handleFileResult(request, file)
+            }
+        },
+    )
+}
 
-    var showImportDialog by remember { mutableStateOf(false) }
-    var showExportDialog by remember { mutableStateOf(false) }
-    var showImportArticlesDialog by remember { mutableStateOf(false) }
-    var showExportArticlesDialog by remember { mutableStateOf(false) }
-    var articleExportFilter by remember { mutableStateOf(ArticleExportFilter.All) }
-    val closeDialog = {
-        showImportDialog = false
-        showExportDialog = false
-        showImportArticlesDialog = false
-        showExportArticlesDialog = false
-        viewModel.clearState()
-        onCloseRequest()
+private fun ImportExportViewModel.handleFileResult(request: ImportExportFileRequest, file: File?) {
+    if (file == null) {
+        if (request.action == ImportExportFileAction.ExportArticles) clearState()
+        return
+    }
+    when (request.action) {
+        ImportExportFileAction.ImportFeeds -> importFeed(OpmlInput(file))
+        ImportExportFileAction.ExportFeeds -> exportFeed(OpmlOutput(file.withExtension("opml")))
+        ImportExportFileAction.ImportArticles -> importArticles(CsvInput(file))
+        ImportExportFileAction.ExportArticles -> exportArticles(CsvOutput(file.withExtension("csv")), request.filter)
+    }
+}
+
+private fun File.withExtension(extension: String): File =
+    if (name.endsWith(".$extension")) this else File("$absolutePath.$extension")
+
+internal class ImportExportFilePickerState {
+    var request by mutableStateOf<ImportExportFileRequest?>(null)
+        private set
+
+    fun open(action: ImportExportFileAction, filter: ArticleExportFilter = ArticleExportFilter.All) {
+        if (request == null) request = ImportExportFileRequest(action, filter)
     }
 
-    if (showImportDialog) {
-        FileDialog(
-            parent = composeWindow,
-            dialogTitle = importDialogTitle,
-            isLoadDialog = true,
-            allowedExtensions = persistentSetOf(),
-            onCloseRequest = { result ->
-                showImportDialog = false
-                if (result != null) {
-                    viewModel.importFeed(OpmlInput(result))
-                }
-            },
-        )
-    }
-
-    if (showExportDialog) {
-        val deviceName = getUnixDeviceName()
-        val formattedDate = viewModel.getCurrentDateForExport()
-        val fileName = "feedflow-export_${formattedDate}_$deviceName.opml".lowercase()
-
-        FileDialog(
-            parent = composeWindow,
-            dialogTitle = exportDialogTitle,
-            exportFileName = fileName,
-            onCloseRequest = { result ->
-                showExportDialog = false
-                if (result != null) {
-                    var outputFile = result
-
-                    if (!outputFile.name.endsWith(".opml")) {
-                        outputFile = File(outputFile.absolutePath + ".opml")
-                    }
-                    viewModel.exportFeed(OpmlOutput(outputFile))
-                }
-            },
-        )
-    }
-
-    if (showImportArticlesDialog) {
-        FileDialog(
-            parent = composeWindow,
-            dialogTitle = importArticlesDialogTitle,
-            isLoadDialog = true,
-            onCloseRequest = { result ->
-                showImportArticlesDialog = false
-                if (result != null) {
-                    viewModel.importArticles(CsvInput(result))
-                }
-            },
-        )
-    }
-
-    if (showExportArticlesDialog) {
-        val deviceName = getUnixDeviceName()
-        val formattedDate = viewModel.getCurrentDateForExport()
-        val fileName =
-            """
-                feedflow-articles-export_${formattedDate}_${deviceName}_${articleExportFilter.name.lowercase()}.csv
-            """.trimIndent()
-
-        FileDialog(
-            parent = composeWindow,
-            dialogTitle = exportArticlesDialogTitle,
-            exportFileName = fileName,
-            onCloseRequest = { result ->
-                showExportArticlesDialog = false
-                if (result != null) {
-                    var outputFile = result
-
-                    if (!outputFile.name.endsWith(".csv")) {
-                        outputFile = File(outputFile.absolutePath + ".csv")
-                    }
-                    viewModel.exportArticles(
-                        csvOutput = CsvOutput(outputFile),
-                        filter = articleExportFilter,
-                    )
-                } else {
-                    viewModel.clearState()
-                }
-            },
-        )
-    }
-
-    DesktopDialogWindow(
-        title = importExportTitle,
-        size = DpSize(500.dp, 600.dp),
-        onCloseRequest = closeDialog,
-    ) { modifier ->
-        ImportExportContent(
-            modifier = modifier,
-            feedImportExportState = feedImporterState,
-            onDoneClick = {
-                val isImportResult = feedImporterState is FeedImportExportState.ImportSuccess ||
-                    feedImporterState is FeedImportExportState.ArticleImportSuccess
-                if (isImportResult) {
-                    triggerFeedFetch()
-                }
-                viewModel.clearState()
-            },
-            onRetryClick = {
-                viewModel.clearState()
-            },
-            onChooseAnotherFileClick = {
-                viewModel.clearState()
-                showImportDialog = true
-            },
-            onImportClick = {
-                showImportDialog = true
-            },
-            onExportClick = {
-                showExportDialog = true
-            },
-            onImportArticlesClick = {
-                showImportArticlesDialog = true
-            },
-            onExportArticlesClick = { filter ->
-                articleExportFilter = filter
-                viewModel.startExport(ImportExportContentType.ArticlesCsv)
-                showExportArticlesDialog = true
-            },
-        )
+    fun close() {
+        request = null
     }
 }
 
 @Composable
-private fun FileDialog(
+internal fun rememberImportExportFilePickerState(): ImportExportFilePickerState =
+    remember { ImportExportFilePickerState() }
+
+internal enum class ImportExportFileAction { ImportFeeds, ExportFeeds, ImportArticles, ExportArticles }
+
+internal data class ImportExportFileRequest(val action: ImportExportFileAction, val filter: ArticleExportFilter)
+
+@Composable
+internal fun NativeImportExportFileDialog(
     dialogTitle: String,
-    parent: JFrame,
+    parent: Dialog,
     onCloseRequest: (result: File?) -> Unit,
     exportFileName: String? = null,
     isLoadDialog: Boolean = false,
     allowedExtensions: ImmutableSet<String> = persistentSetOf(),
 ) = AwtWindow(
     create = {
-        val flag = if (isLoadDialog) FileDialog.LOAD else FileDialog.SAVE
-        val dialog = object : FileDialog(parent, dialogTitle, flag) {
-            override fun setVisible(value: Boolean) {
-                super.setVisible(value)
-                if (value) {
-                    onCloseRequest(files.firstOrNull())
-                }
-            }
-        }
-        if (isLoadDialog && allowedExtensions.isNotEmpty()) {
-            dialog.filenameFilter = java.io.FilenameFilter { _, name ->
-                val lowercaseName = name.lowercase()
-                allowedExtensions.any { extension -> lowercaseName.endsWith(".$extension") }
-            }
-        }
-        dialog.file = exportFileName
-        dialog
+        createImportExportFileDialog(
+            parent = parent,
+            dialogTitle = dialogTitle,
+            onCloseRequest = onCloseRequest,
+            exportFileName = exportFileName,
+            isLoadDialog = isLoadDialog,
+            allowedExtensions = allowedExtensions,
+        )
     },
     dispose = FileDialog::dispose,
 )
+
+internal fun createImportExportFileDialog(
+    parent: Dialog,
+    dialogTitle: String,
+    onCloseRequest: (File?) -> Unit,
+    exportFileName: String? = null,
+    isLoadDialog: Boolean = false,
+    allowedExtensions: ImmutableSet<String> = persistentSetOf(),
+): FileDialog {
+    val flag = if (isLoadDialog) FileDialog.LOAD else FileDialog.SAVE
+    val dialog = object : FileDialog(parent, dialogTitle, flag) {
+        override fun setVisible(value: Boolean) {
+            super.setVisible(value)
+            if (value) {
+                onCloseRequest(files.firstOrNull())
+            }
+        }
+    }
+    if (isLoadDialog && allowedExtensions.isNotEmpty()) {
+        dialog.filenameFilter = java.io.FilenameFilter { _, name ->
+            val lowercaseName = name.lowercase()
+            allowedExtensions.any { extension -> lowercaseName.endsWith(".$extension") }
+        }
+    }
+    dialog.file = exportFileName
+    return dialog
+}

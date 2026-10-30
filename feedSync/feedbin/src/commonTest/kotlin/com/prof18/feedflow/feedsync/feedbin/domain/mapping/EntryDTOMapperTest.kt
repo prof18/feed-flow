@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.feedsync.feedbin.data.dto.EntryDTO
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -62,6 +63,56 @@ class EntryDTOMapperTest {
         assertEquals(false, result.isBookmarked)
         assertEquals("formatted-date", result.dateString)
         assertEquals(Instant.parse(published).toEpochMilliseconds() / 1000, dateFormatter.lastMillis)
+    }
+
+    @Test
+    fun `wire enclosure keys deserialize and map audio while preserving article url`() {
+        val entryDTO = Json.decodeFromString<EntryDTO>(ENTRY_WITH_ENCLOSURE_JSON)
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertEquals("https://example.com/article", result.url)
+        assertEquals("https://cdn.example.com/episode?signature=a%2Fb", result.audioUrl)
+    }
+
+    @Test
+    fun `absent and null wire enclosures deserialize without audio`() {
+        val enclosureProperty = Regex(
+            """,\s*"enclosure"\s*:\s*\{.*?\}""",
+            RegexOption.DOT_MATCHES_ALL,
+        )
+        val absentEnclosureJson = ENTRY_WITH_ENCLOSURE_JSON.replace(enclosureProperty, "")
+        val nullEnclosureJson = ENTRY_WITH_ENCLOSURE_JSON.replace(
+            Regex(""""enclosure"\s*:\s*\{.*?\}""", RegexOption.DOT_MATCHES_ALL),
+            "\"enclosure\": null",
+        )
+        val absentEnclosure = Json.decodeFromString<EntryDTO>(absentEnclosureJson)
+        val nullEnclosure = Json.decodeFromString<EntryDTO>(nullEnclosureJson)
+
+        assertNull(absentEnclosure.enclosure)
+        assertNull(nullEnclosure.enclosure)
+        assertNull(mapper.mapToFeedItem(absentEnclosure, feedSource, false, false).audioUrl)
+        assertNull(mapper.mapToFeedItem(nullEnclosure, feedSource, false, false).audioUrl)
+    }
+
+    @Test
+    fun `declared image and video enclosures do not become audio`() {
+        for (mimeType in listOf("image/jpeg", "video/mp4")) {
+            val entry = createEntryDTO(
+                id = 42,
+                published = "2023-11-14T10:00:00Z",
+                summary = "Summary",
+                content = null,
+            ).copy(
+                enclosure = EntryDTO.Enclosure(url = "https://example.com/episode.mp3", type = mimeType),
+            )
+            assertNull(mapper.mapToFeedItem(entry, feedSource, false, false).audioUrl)
+        }
     }
 
     @Test
@@ -146,6 +197,68 @@ class EntryDTOMapperTest {
     }
 
     @Test
+    fun `mapToFeedItem prefers images CDN url over content or summary extraction`() {
+        val entryDTO = createEntryDTO(
+            id = 10,
+            published = "2023-11-14T10:00:00Z",
+            summary = "<img src=\"https://example.com/summary-image.jpg\">",
+            content = "<img src=\"https://example.com/content-image.jpg\">",
+            images = EntryDTO.Images(
+                originalUrl = "https://example.com/original.jpg",
+                size1 = EntryDTO.Images.ResizedImage(
+                    cdnUrl = FEEDBIN_CDN_IMAGE_URL,
+                    width = 542,
+                    height = 304,
+                ),
+            ),
+        )
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertEquals(FEEDBIN_CDN_IMAGE_URL, result.imageUrl)
+    }
+
+    @Test
+    fun `wire images keys deserialize and map the CDN image url`() {
+        val entryDTO = Json.decodeFromString<EntryDTO>(ENTRY_WITH_IMAGES_JSON)
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertEquals("https://example.com/original.jpg", entryDTO.images?.originalUrl)
+        assertEquals(FEEDBIN_CDN_IMAGE_URL, result.imageUrl)
+    }
+
+    @Test
+    fun `mapToFeedItem falls back to images original url when CDN url is missing`() {
+        val entryDTO = createEntryDTO(
+            id = 10,
+            published = "2023-11-14T10:00:00Z",
+            summary = "Summary without image",
+            content = null,
+            images = EntryDTO.Images(originalUrl = "https://example.com/original.jpg"),
+        )
+
+        val result = mapper.mapToFeedItem(
+            entryDTO = entryDTO,
+            feedSource = feedSource,
+            isRead = false,
+            isBookmarked = false,
+        )
+
+        assertEquals("https://example.com/original.jpg", result.imageUrl)
+    }
+
+    @Test
     fun `mapToFeedItem extracts commentsUrl from content`() {
         val entryDTO = createEntryDTO(
             id = 10,
@@ -207,6 +320,7 @@ class EntryDTOMapperTest {
         published: String,
         summary: String?,
         content: String?,
+        images: EntryDTO.Images? = null,
     ): EntryDTO = EntryDTO(
         id = id,
         feedId = 20,
@@ -218,7 +332,55 @@ class EntryDTOMapperTest {
         extractedContentUrl = null,
         published = published,
         createdAt = "2023-11-14T10:00:00Z",
+        images = images,
     )
+
+    private companion object {
+        const val FEEDBIN_CDN_IMAGE_URL =
+            "https://images.feedbinusercontent.com/foobar/0123456789ab4cde8f0123456789abcd.jpg"
+
+        const val ENTRY_WITH_IMAGES_JSON = """
+            {
+              "id": 43,
+              "feed_id": 20,
+              "title": "Video title",
+              "author": "Channel",
+              "content": "<iframe src=\"https://www.youtube.com/embed/abc\"></iframe>",
+              "summary": null,
+              "url": "https://www.youtube.com/watch?v=abc",
+              "extracted_content_url": null,
+              "published": "2023-11-14T10:00:00Z",
+              "created_at": "2023-11-14T10:00:00Z",
+              "images": {
+                "original_url": "https://example.com/original.jpg",
+                "size_1": {
+                  "cdn_url": "$FEEDBIN_CDN_IMAGE_URL",
+                  "width": 542,
+                  "height": 304
+                }
+              }
+            }
+        """
+
+        const val ENTRY_WITH_ENCLOSURE_JSON = """
+            {
+              "id": 42,
+              "feed_id": 20,
+              "title": "Episode title",
+              "author": "Podcast host",
+              "content": "<p>Episode notes</p>",
+              "summary": "Summary",
+              "url": "https://example.com/article",
+              "extracted_content_url": null,
+              "published": "2023-11-14T10:00:00Z",
+              "created_at": "2023-11-14T10:00:00Z",
+              "enclosure": {
+                "enclosure_url": "https://cdn.example.com/episode?signature=a%2Fb",
+                "enclosure_type": "audio/mpeg"
+              }
+            }
+        """
+    }
 
     private class FakeHtmlParser : HtmlParser {
         override fun getTextFromHTML(html: String): String? = "Parsed Summary"

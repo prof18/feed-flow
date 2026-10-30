@@ -5,7 +5,14 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
     <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE"/>
+        </intent>
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <category android:name="android.intent.category.BROWSABLE"/>
@@ -16,6 +23,8 @@
     <application
         android:name=".FeedFlowApp"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="FeedFlow"
         android:supportsRtl="true"
@@ -23,8 +32,14 @@
         android:theme="@style/Theme.FeedFlow"
         android:usesCleartextTraffic="true">
 
+        <!--
+            Size and orientation changes are absorbed by the composition instead of recreating the
+            activity (issue #1401): a recreated web view reloads the reader article and loses the
+            reading position. density and uiMode are left out on purpose and still recreate.
+        -->
         <activity
             android:name="com.prof18.feedflow.android.MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:exported="true"
             android:launchMode="singleTop">
             <intent-filter>
@@ -49,6 +64,15 @@
             </intent-filter>
 
         </activity>
+
+        <service
+            android:name=".audio.AudioPlaybackService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService"/>
+            </intent-filter>
+        </service>
 
         <activity android:name=".accounts.dropbox.DropboxSyncActivity"/>
 
@@ -136,4 +160,4 @@
         </provider>
 
     </application>
-</manifest> 
+</manifest>

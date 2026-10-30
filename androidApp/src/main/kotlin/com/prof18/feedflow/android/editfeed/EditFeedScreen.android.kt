@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,15 +24,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.android.feed.ArticleOpenModeSelector
+import com.prof18.feedflow.android.feedverification.WebsiteVerificationExplanationDialog
+import com.prof18.feedflow.android.ui.feed.editfeed.EditFeedContent
+import com.prof18.feedflow.android.ui.preview.PreviewPhone
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
-import com.prof18.feedflow.shared.ui.feed.editfeed.EditFeedContent
-import com.prof18.feedflow.shared.ui.preview.PreviewPhone
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 
 @Composable
@@ -41,6 +43,8 @@ internal fun EditScreen(
     navigateBack: () -> Unit,
 ) {
     val feedUrl by viewModel.feedUrlState.collectAsStateWithLifecycle()
+    var verificationDialogUrl by remember { mutableStateOf<String?>(null) }
+    DisposableEffect(viewModel) { onDispose { viewModel.cancelRecovery() } }
     val feedName by viewModel.feedNameState.collectAsStateWithLifecycle()
     val feedSourceSettings by viewModel.feedSourceSettingsState.collectAsStateWithLifecycle()
     var showLoading by remember { mutableStateOf(false) }
@@ -53,6 +57,7 @@ internal fun EditScreen(
     val strings = LocalFeedFlowStrings.current
 
     val showNotificationToggle by viewModel.showNotificationToggleState.collectAsStateWithLifecycle()
+    val isMarkReadWhenScrollingEnabled by viewModel.markReadWhenScrollingEnabledState.collectAsStateWithLifecycle()
 
     val latestNavigateBack by rememberUpdatedState(navigateBack)
 
@@ -64,17 +69,32 @@ internal fun EditScreen(
         viewModel.feedEditedState.collect { feedAddedState ->
             when (feedAddedState) {
                 is FeedEditedState.Error -> {
-                    showError = true
                     showLoading = false
-                    errorMessage = when (feedAddedState) {
-                        FeedEditedState.Error.InvalidUrl -> strings.invalidRssUrl
-                        FeedEditedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
-                        FeedEditedState.Error.GenericError -> strings.editFeedGenericError
+                    val fetchFailure = feedAddedState as? FeedEditedState.Error.FetchFailed
+                    val challengeUrl = fetchFailure?.verificationUrl
+                    if (challengeUrl != null && viewModel.verificationAvailable) {
+                        verificationDialogUrl = challengeUrl
+                        showError = false
+                        errorMessage = ""
+                    } else {
+                        verificationDialogUrl = null
+                        showError = true
+                        errorMessage = when (feedAddedState) {
+                            FeedEditedState.Error.InvalidUrl -> strings.invalidRssUrl
+                            FeedEditedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+                            FeedEditedState.Error.GenericError -> strings.editFeedGenericError
+                            is FeedEditedState.Error.FetchFailed -> if (challengeUrl != null) {
+                                strings.feedVerificationUnsupported
+                            } else {
+                                strings.feedFetchRefusedError
+                            }
+                        }
                     }
                 }
 
                 is FeedEditedState.FeedEdited -> {
                     showLoading = false
+                    verificationDialogUrl = null
                     val message = strings.feedEditedMessage(feedAddedState.feedName)
                     Toast.makeText(context, message, Toast.LENGTH_SHORT)
                         .show()
@@ -85,10 +105,12 @@ internal fun EditScreen(
                     showLoading = false
                     showError = false
                     errorMessage = ""
+                    verificationDialogUrl = null
                 }
 
                 FeedEditedState.Loading -> {
                     showLoading = true
+                    verificationDialogUrl = null
                 }
             }
         }
@@ -135,6 +157,7 @@ internal fun EditScreen(
             canEditUrl = viewModel.canEditUrl(),
             feedSourceSettings = feedSourceSettings,
             onFeedUrlUpdated = { url ->
+                verificationDialogUrl = null
                 viewModel.updateFeedUrlTextFieldValue(url)
             },
             onFeedNameUpdated = { name ->
@@ -156,6 +179,10 @@ internal fun EditScreen(
             onHideImagesToggled = { hideImages ->
                 viewModel.updateIsHideImagesEnabled(hideImages)
             },
+            onKeepUnreadOnScrollToggled = { keepUnread ->
+                viewModel.updateIsKeepUnreadOnScrollEnabled(keepUnread)
+            },
+            isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
             onPinnedToggled = { pinned ->
                 viewModel.updateIsPinned(pinned)
             },
@@ -174,6 +201,17 @@ internal fun EditScreen(
             onDismissDeleteDialog = { showDeleteDialog = false },
             onConfirmDelete = { viewModel.deleteFeed() },
             contentPadding = innerPadding,
+        )
+    }
+
+    verificationDialogUrl?.let { websiteUrl ->
+        WebsiteVerificationExplanationDialog(
+            websiteUrl = websiteUrl,
+            onDismiss = { verificationDialogUrl = null },
+            onConfirm = {
+                verificationDialogUrl = null
+                viewModel.verifyWebsite()
+            },
         )
     }
 
@@ -249,6 +287,8 @@ private fun EditScreenPreview() {
                 },
                 onHiddenToggled = {},
                 onHideImagesToggled = {},
+                onKeepUnreadOnScrollToggled = {},
+                isMarkReadWhenScrollingEnabled = true,
                 onPinnedToggled = {},
                 showNotificationToggle = true,
                 onNotificationToggleChanged = {},

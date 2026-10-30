@@ -14,7 +14,8 @@ CREATE TABLE feed_item (
     comments_url TEXT,
     notification_sent INTEGER AS Boolean NOT NULL DEFAULT 0,
     is_blocked INTEGER AS Boolean NOT NULL DEFAULT 0,
-    content_fetched INTEGER AS Boolean NOT NULL DEFAULT 0
+    content_fetched INTEGER AS Boolean NOT NULL DEFAULT 0,
+    audio_url TEXT
 );
 
 CREATE INDEX idx_feed_item_feed_source_id ON feed_item(feed_source_id);
@@ -23,8 +24,21 @@ CREATE INDEX idx_feed_item_read_blocked ON feed_item(is_read, is_blocked);
 CREATE INDEX idx_feed_item_timeline ON feed_item(feed_source_id, is_read, is_blocked, pub_date DESC);
 
 insertFeedItem:
-INSERT OR IGNORE INTO feed_item(url_hash, url, title, subtitle, content, image_url, feed_source_id, pub_date, comments_url)
-VALUES (?,?,?,?,?,?,?,?, ?);
+INSERT OR IGNORE INTO feed_item(url_hash, url, title, subtitle, content, image_url, feed_source_id, pub_date, comments_url, audio_url)
+VALUES (?,?,?,?,?,?,?,?,?,?);
+
+updateFeedItemAudioUrl:
+UPDATE feed_item SET audio_url = :audioUrl
+WHERE url_hash = :urlHash AND feed_source_id = :feedSourceId
+AND (audio_url IS NULL OR audio_url != :audioUrl);
+
+selectFeedItemAudioUrl:
+SELECT audio_url FROM feed_item WHERE url_hash = :urlHash;
+
+selectFeedItemAudioArtwork:
+SELECT feed_item.image_url, feed_source.logo_url
+FROM feed_item INNER JOIN feed_source ON feed_item.feed_source_id = feed_source.url_hash
+WHERE feed_item.url_hash = :urlHash;
 
 countFeedItems:
 SELECT COUNT(*) FROM feed_item;
@@ -51,7 +65,7 @@ AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHi
 AND is_blocked = 0;
 
 selectFeeds:
-SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, comments_url, is_read, is_bookmarked, notification_sent, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp, feed_source_category.id AS feed_source_category_id, feed_source_category.title AS feed_source_category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.article_open_mode AS feed_source_article_open_mode, feed_source_preferences.is_hidden AS feed_source_is_hidden, feed_source_preferences.is_pinned AS feed_source_is_pinned, feed_source_preferences.notifications_enabled AS feed_source_notifications_enabled, feed_source_preferences.hide_images AS feed_source_hide_images, feed_source.fetch_failed AS feed_source_fetch_failed FROM feed_item
+SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, comments_url, is_read, is_bookmarked, notification_sent, audio_url, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp, feed_source_category.id AS feed_source_category_id, feed_source_category.title AS feed_source_category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.article_open_mode AS feed_source_article_open_mode, feed_source_preferences.is_hidden AS feed_source_is_hidden, feed_source_preferences.is_pinned AS feed_source_is_pinned, feed_source_preferences.notifications_enabled AS feed_source_notifications_enabled, feed_source_preferences.hide_images AS feed_source_hide_images, feed_source.fetch_failed AS feed_source_fetch_failed FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category
@@ -156,8 +170,14 @@ INSERT OR REPLACE INTO feed_item(
     comments_url,
     notification_sent,
     is_blocked,
-    content_fetched
-) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+    content_fetched,
+    audio_url
+) VALUES (
+    :url_hash, :url, :title, :subtitle, :content, :image_url,
+    :feed_source_id, :is_read, :is_bookmarked, :pub_date,
+    :comments_url, :notification_sent, :is_blocked, :content_fetched,
+    (SELECT audio_url FROM feed_item WHERE url_hash = :url_hash AND feed_source_id = :feed_source_id)
+);
 
 updateReadStatus:
 UPDATE feed_item
@@ -175,6 +195,13 @@ UPDATE feed_item
 SET is_read = 1, notification_sent = 1
 WHERE feed_source_id = :feedSourceId
 AND is_read = 0;
+
+markAllReadBookmarked:
+UPDATE feed_item
+SET is_read = 1, notification_sent = 1
+WHERE is_bookmarked = 1
+AND is_read = 0
+AND is_blocked = 0;
 
 markAllReadByCategory:
 UPDATE feed_item
@@ -278,13 +305,23 @@ WHERE url_hash IN :urlHash;
 selectNewerItems:
 SELECT url_hash FROM feed_item
 WHERE is_read = 0
+AND (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
+AND is_blocked = 0
+AND EXISTS (
+    SELECT 1 FROM feed_source
+    LEFT JOIN feed_source_preferences
+    ON feed_source.url_hash = feed_source_preferences.feed_source_id
+    WHERE feed_source.url_hash = feed_item.feed_source_id
+    AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
+)
 AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
 AND (
     (
         (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NULL
         AND (
             pub_date IS NOT NULL
-            OR (pub_date IS NULL AND url_hash >= :targetItemId)
+            OR (pub_date IS NULL AND url_hash > :targetItemId)
         )
     )
     OR (
@@ -294,7 +331,7 @@ AND (
             pub_date > (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
             OR (
                 pub_date = (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
-                AND url_hash >= :targetItemId
+                AND url_hash > :targetItemId
             )
         )
     )
@@ -310,12 +347,22 @@ AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
 selectOlderItems:
 SELECT url_hash FROM feed_item
 WHERE is_read = 0
+AND (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
+AND is_blocked = 0
+AND EXISTS (
+    SELECT 1 FROM feed_source
+    LEFT JOIN feed_source_preferences
+    ON feed_source.url_hash = feed_source_preferences.feed_source_id
+    WHERE feed_source.url_hash = feed_item.feed_source_id
+    AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
+)
 AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
 AND (
     (
         (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NULL
         AND pub_date IS NULL
-        AND url_hash <= :targetItemId
+        AND url_hash < :targetItemId
     )
     OR (
         (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NOT NULL
@@ -324,7 +371,7 @@ AND (
             OR pub_date < (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
             OR (
                 pub_date = (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
-                AND url_hash <= :targetItemId
+                AND url_hash < :targetItemId
             )
         )
     )
@@ -341,13 +388,23 @@ markAllNewerAsRead:
 UPDATE feed_item
 SET is_read = 1, notification_sent = 1
 WHERE is_read = 0
+AND (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
+AND is_blocked = 0
+AND EXISTS (
+    SELECT 1 FROM feed_source
+    LEFT JOIN feed_source_preferences
+    ON feed_source.url_hash = feed_source_preferences.feed_source_id
+    WHERE feed_source.url_hash = feed_item.feed_source_id
+    AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
+)
 AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
 AND (
     (
         (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NULL
         AND (
             pub_date IS NOT NULL
-            OR (pub_date IS NULL AND url_hash >= :targetItemId)
+            OR (pub_date IS NULL AND url_hash > :targetItemId)
         )
     )
     OR (
@@ -357,7 +414,7 @@ AND (
             pub_date > (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
             OR (
                 pub_date = (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
-                AND url_hash >= :targetItemId
+                AND url_hash > :targetItemId
             )
         )
     )
@@ -374,12 +431,22 @@ markAllOlderAsRead:
 UPDATE feed_item
 SET is_read = 1, notification_sent = 1
 WHERE is_read = 0
+AND (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
+AND is_blocked = 0
+AND EXISTS (
+    SELECT 1 FROM feed_source
+    LEFT JOIN feed_source_preferences
+    ON feed_source.url_hash = feed_source_preferences.feed_source_id
+    WHERE feed_source.url_hash = feed_item.feed_source_id
+    AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
+)
 AND EXISTS (SELECT 1 FROM feed_item WHERE url_hash = :targetItemId)
 AND (
     (
         (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NULL
         AND pub_date IS NULL
-        AND url_hash <= :targetItemId
+        AND url_hash < :targetItemId
     )
     OR (
         (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId) IS NOT NULL
@@ -388,7 +455,7 @@ AND (
             OR pub_date < (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
             OR (
                 pub_date = (SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId)
-                AND url_hash <= :targetItemId
+                AND url_hash < :targetItemId
             )
         )
     )
@@ -415,7 +482,10 @@ selectFeedsForWidget:
 SELECT feed_item.url_hash, feed_item.title, subtitle, image_url, pub_date, feed_source.title AS feed_source_title FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
-WHERE is_read = 0
+WHERE (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
+AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
+AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCategoryId)
 AND is_blocked = 0
 ORDER BY pub_date DESC
 LIMIT :pageSize;
@@ -435,6 +505,19 @@ AND is_blocked = 0
 GROUP BY feed_source.url_hash
 ORDER BY pub_date DESC;
 
+selectArticlesToNotify:
+SELECT feed_item.url_hash AS id,
+       feed_item.title,
+       feed_source.title AS feed_source_title,
+       feed_item.image_url
+FROM feed_item
+INNER JOIN feed_source ON feed_item.feed_source_id = feed_source.url_hash
+LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferences.feed_source_id
+WHERE feed_source_preferences.notifications_enabled = 1
+AND feed_item.notification_sent = 0
+AND feed_item.is_blocked = 0
+ORDER BY feed_item.pub_date DESC, feed_item.url_hash DESC;
+
 markFeedItemsNotified:
 UPDATE feed_item
 SET notification_sent = 1
@@ -448,10 +531,25 @@ WHERE url_hash IN (
     AND is_blocked = 0
 );
 
+markArticleItemsNotified:
+UPDATE feed_item
+SET notification_sent = 1
+WHERE url_hash IN :ids;
+
+markFeedSourceItemsNotified:
+UPDATE feed_item
+SET notification_sent = 1
+WHERE feed_source_id = :feedSourceId
+AND notification_sent = 0;
+
 updateReadStatusFromFeedItemStatus:
 UPDATE feed_item
 SET is_read = CASE 
     WHEN url_hash IN (SELECT feed_item_id FROM feed_item_status WHERE type = 'UNREAD') THEN 0
+    ELSE 1
+END,
+notification_sent = CASE
+    WHEN url_hash IN (SELECT feed_item_id FROM feed_item_status WHERE type = 'UNREAD') THEN notification_sent
     ELSE 1
 END;
 

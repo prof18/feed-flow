@@ -11,20 +11,36 @@ import SwiftUI
 
 extension HomeContent {
     @ToolbarContentBuilder
+    func makeAdaptiveCompactToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button(action: showDrawer) {
+                Label(feedFlowStrings.drawerMenuButtonContentDescription, systemImage: "sidebar.leading")
+            }
+            .accessibilityIdentifier(DrawerAccessibilityIdentifiers.menuButton)
+        }
+        makeIOS26ToolbarContent(proxy: proxy)
+    }
+
+    @ToolbarContentBuilder
     func makeIOS26ToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
+        if #available(iOS 27.1, *) {
+            HomeAdaptiveToolbar(
+                search: makeSearchToolbarButton(),
+                more: makeMoreMenu(proxy: proxy)
+            )
+        } else {
+            makeHorizontalToolbarContent(proxy: proxy)
+        }
+    }
+
+    @ToolbarContentBuilder
+    private func makeHorizontalToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
         if #available(iOS 26.0, *) {
             ToolbarSpacer(.fixed)
         }
 
         ToolbarItem {
-            Button {
-                self.appState.navigate(
-                    route: searchRoute
-                )
-            } label: {
-                Image(systemName: "magnifyingglass")
-            }
-            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
+            makeSearchToolbarButton()
         }
 
         if #available(iOS 26.0, *) {
@@ -49,7 +65,7 @@ extension HomeContent {
                         route: searchRoute
                     )
                 } label: {
-                    Image(systemName: "magnifyingglass")
+                    Label(feedFlowStrings.searchButtonContentDescription, systemImage: "magnifyingglass")
                 }
                 .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
             }
@@ -75,25 +91,26 @@ extension HomeContent {
     @ToolbarContentBuilder
     func makeCompactPhoneHeaderToolbarView() -> some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
-            HStack(spacing: Spacing.small) {
-                Button {
-                    openDrawer()
-                } label: {
+            Button(action: showDrawer) {
+                HStack(spacing: Spacing.small) {
                     Image(systemName: "sidebar.leading")
+
+                    Rectangle()
+                        .fill(Color.secondary.opacity(0.35))
+                        .frame(width: 1, height: 28)
+
+                    makeCompactPhoneHeaderText()
+                        .frame(maxWidth: compactPhoneHeaderMaxWidth, alignment: .leading)
+                        .padding(.trailing, Spacing.small)
+                        .layoutPriority(1)
                 }
-                .accessibilityIdentifier(DrawerAccessibilityIdentifiers.menuButton)
-
-                Rectangle()
-                    .fill(Color.secondary.opacity(0.35))
-                    .frame(width: 1, height: 28)
-
-                makeCompactPhoneHeaderText()
-                    .frame(maxWidth: compactPhoneHeaderMaxWidth, alignment: .leading)
-                    .padding(.trailing, Spacing.small)
-                    .layoutPriority(1)
+                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+                .fixedSize(horizontal: true, vertical: true)
             }
-            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-            .fixedSize(horizontal: true, vertical: true)
+            .accessibilityIdentifier(DrawerAccessibilityIdentifiers.menuButton)
+            .accessibilityLabel(
+                "\(feedFlowStrings.drawerMenuButtonContentDescription), \(compactPhoneHeaderAccessibilityLabel)"
+            )
             .layoutPriority(1)
         }
     }
@@ -108,14 +125,7 @@ extension HomeContent {
             dynamicTypeWidth = 0
         }
 
-        switch getDeviceType() {
-        case .iphonePortrait:
-            return 148 + dynamicTypeWidth
-        case .iphoneLandscape:
-            return 320 + dynamicTypeWidth
-        case .ipad:
-            return 220 + dynamicTypeWidth
-        }
+        return compactToolbarHeaderWidth(verticalSizeClass: verticalSizeClass) + dynamicTypeWidth
     }
 
     private var searchRoute: CommonViewRoute {
@@ -166,6 +176,8 @@ extension HomeContent {
             HStack {
                 Text(getNavBarName(feedFilter: currentFeedFilter))
                     .font(.title2)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
 
                 if shouldShowUnreadCount {
                     Text("(\(unreadCount))")
@@ -184,26 +196,38 @@ extension HomeContent {
                     route: searchRoute
                 )
             } label: {
-                Image(systemName: "magnifyingglass")
+                Label(feedFlowStrings.searchButtonContentDescription, systemImage: "magnifyingglass")
             }
             .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
         }
     }
 
+    private func makeSearchToolbarButton() -> some View {
+        Button {
+            appState.navigate(route: searchRoute)
+        } label: {
+            Label(feedFlowStrings.searchButtonContentDescription, systemImage: "magnifyingglass")
+        }
+        .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
+    }
+
     @ToolbarContentBuilder
     func makeMenuToolbarView(proxy: ScrollViewProxy) -> some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
-            Menu {
-                makeMenuActions(proxy: proxy)
-            } label: {
-                if isiOS26OrLater() {
-                    Image(systemName: "ellipsis")
-                } else {
-                    Image(systemName: "ellipsis.circle")
-                }
-            }
-            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.moreMenuButton)
+            makeMoreMenu(proxy: proxy)
         }
+    }
+
+    private func makeMoreMenu(proxy: ScrollViewProxy) -> some View {
+        Menu {
+            makeMenuActions(proxy: proxy)
+        } label: {
+            Label(
+                feedFlowStrings.moreOptionsButtonContentDescription,
+                systemImage: isiOS26OrLater() ? "ellipsis" : "ellipsis.circle"
+            )
+        }
+        .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.moreMenuButton)
     }
 
     @ViewBuilder
@@ -239,7 +263,7 @@ extension HomeContent {
 
         Divider()
 
-        Button {
+        Button(role: .destructive) {
             requestClearOldArticlesConfirmation()
         } label: {
             Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
@@ -282,23 +306,12 @@ extension HomeContent {
     }
 
     func getNavBarName(feedFilter: FeedFilter) -> String {
-        let deviceType = getDeviceType()
-
-        func getTruncatedTitle(_ title: String) -> String {
-            switch deviceType {
-            case .iphonePortrait:
-                return title.truncate(maxChar: 12)
-            case .ipad, .iphoneLandscape:
-                return title.truncate(maxChar: 40)
-            }
-        }
-
         switch feedFilter {
         case let category as FeedFilter.Category:
-            return getTruncatedTitle(category.feedCategory.title)
+            return category.feedCategory.title
 
         case let source as FeedFilter.Source:
-            return getTruncatedTitle(source.feedSource.title)
+            return source.feedSource.title
 
         case is FeedFilter.Timeline:
             return feedFlowStrings.drawerTitleTimeline

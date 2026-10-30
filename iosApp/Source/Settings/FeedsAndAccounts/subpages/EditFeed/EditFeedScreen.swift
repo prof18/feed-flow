@@ -30,9 +30,13 @@ struct EditFeedScreen: View {
     @State private var articleOpenMode = ArticleOpenMode.default
     @State private var isHidden = false
     @State private var isHideImagesEnabled = false
+    @State private var isKeepUnreadOnScrollEnabled = false
+    @State private var isMarkReadWhenScrollingEnabled = true
     @State private var isPinned = false
     @State private var showNotificationToggle = false
     @State private var isNotificationEnabled = false
+    @State private var verificationChallengeUrl: String?
+    @State private var verificationExplanationUrl: String?
 
     var body: some View {
         @Bindable var appState = appState
@@ -47,12 +51,15 @@ struct EditFeedScreen: View {
                 articleOpenMode: $articleOpenMode,
                 isHidden: $isHidden,
                 isHideImagesEnabled: $isHideImagesEnabled,
+                isKeepUnreadOnScrollEnabled: $isKeepUnreadOnScrollEnabled,
+                isMarkReadWhenScrollingEnabled: isMarkReadWhenScrollingEnabled,
                 isPinned: $isPinned,
                 showNotificationToggle: showNotificationToggle,
                 isNotificationEnabled: $isNotificationEnabled,
                 categorySelectorObserver: categorySelectorObserver,
                 viewModel: vmStoreOwner.instance,
                 updateFeedUrlTextFieldValue: { value in
+                    clearVerification()
                     vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
                 },
                 updateFeedNameTextFieldValue: { value in
@@ -66,6 +73,9 @@ struct EditFeedScreen: View {
                 },
                 onHideImagesToggled: { hideImages in
                     vmStoreOwner.instance.updateIsHideImagesEnabled(isHideImagesEnabled: hideImages)
+                },
+                onKeepUnreadOnScrollToggled: { keepUnread in
+                    vmStoreOwner.instance.updateIsKeepUnreadOnScrollEnabled(isKeepUnreadOnScrollEnabled: keepUnread)
                 },
                 onPinnedToggled: { pinned in
                     vmStoreOwner.instance.updateIsPinned(isPinned: pinned)
@@ -87,6 +97,22 @@ struct EditFeedScreen: View {
                 }
             )
             .snackbar(messageQueue: $appState.snackbarQueue)
+            .websiteVerificationExplanation(
+                url: verificationExplanationUrl,
+                onCancel: {
+                    clearVerification()
+                    vmStoreOwner.instance.cancelRecovery()
+                    errorMessage = feedFlowStrings.feedFetchRefusedError
+                    showError = true
+                },
+                onConfirm: {
+                    clearVerification()
+                    vmStoreOwner.instance.verifyWebsite()
+                }
+            )
+            .onDisappear {
+                vmStoreOwner.instance.cancelRecovery()
+            }
             .onAppear {
                 vmStoreOwner.instance.loadFeedToEdit(feedSource: feedSource)
 
@@ -116,16 +142,21 @@ struct EditFeedScreen: View {
                             )
                         )
                         self.appState.redrawAfterFeedSourceEdit.toggle()
+                        clearVerification()
                         dismiss()
 
                     case .idle:
                         errorMessage = ""
                         showError = false
+                        clearVerification()
 
                     case .loading:
-                        break
+                        clearVerification()
+                        showError = false
+                        errorMessage = ""
 
                     case let .error(error):
+                        clearVerification()
                         switch onEnum(of: error) {
                         case .invalidUrl:
                             errorMessage = feedFlowStrings.invalidRssUrl
@@ -135,11 +166,22 @@ struct EditFeedScreen: View {
 
                         case .genericError:
                             errorMessage = feedFlowStrings.editFeedGenericError
+
+                        case let .fetchFailed(fetchFailure):
+                            verificationChallengeUrl = fetchFailure.verificationUrl
+                            errorMessage = feedFlowStrings.feedFetchRefusedError
                         }
 
                         isAddingFeed = false
                         showError = true
+                        updateVerificationPresentation()
                     }
+                }
+            }
+            .task {
+                for await required in vmStoreOwner.instance.verificationRequiredState
+                    where !(required as? Bool ?? false) {
+                    verificationExplanationUrl = nil
                 }
             }
             .task {
@@ -152,6 +194,7 @@ struct EditFeedScreen: View {
                     self.articleOpenMode = state.articleOpenMode
                     self.isHidden = state.isHiddenFromTimeline
                     self.isHideImagesEnabled = state.isHideImagesEnabled
+                    self.isKeepUnreadOnScrollEnabled = state.isKeepUnreadOnScrollEnabled
                     self.isPinned = state.isPinned
                     self.isNotificationEnabled = state.isNotificationEnabled
                 }
@@ -162,11 +205,33 @@ struct EditFeedScreen: View {
                 }
             }
             .task {
+                for await enabled in vmStoreOwner.instance.markReadWhenScrollingEnabledState {
+                    self.isMarkReadWhenScrollingEnabled = enabled as? Bool ?? true
+                }
+            }
+            .task {
                 for await _ in vmStoreOwner.instance.feedDeletedState {
                     self.appState.redrawAfterFeedSourceEdit.toggle()
                     dismiss()
                 }
             }
         }
+    }
+
+    private func clearVerification() {
+        verificationChallengeUrl = nil
+        verificationExplanationUrl = nil
+    }
+
+    /// A challenged feed opens the verification explanation instead of the generic fetch error.
+    private func updateVerificationPresentation() {
+        guard verificationChallengeUrl != nil else { return }
+        guard vmStoreOwner.instance.verificationAvailable else {
+            errorMessage = feedFlowStrings.feedVerificationUnsupported
+            return
+        }
+        showError = false
+        errorMessage = ""
+        verificationExplanationUrl = verificationChallengeUrl
     }
 }

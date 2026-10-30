@@ -15,7 +15,8 @@ object RevenueCatSupport {
     ) = Unit
 }
 
-@Suppress("UnusedParameter")
+// No-op stub that keeps the googlePlay flavor's composable signature.
+@Suppress("UnusedParameter", "UnnecessaryComposable")
 @Composable
 fun RevenueCatSupportPaywall(
     onDismiss: () -> Unit,

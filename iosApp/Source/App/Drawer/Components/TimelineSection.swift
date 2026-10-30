@@ -11,8 +11,6 @@ import SwiftUI
 
 struct TimelineSection: View {
     let timeline: [DrawerItem]
-    let isSelected: Bool
-    let isCompact: Bool
     let onSelect: () -> Void
     let onFeedFilterSelected: (FeedFilter) -> Void
 
@@ -40,7 +38,6 @@ struct TimelineSection: View {
             .buttonStyle(.plain)
             .tag(SidebarSelection.timeline)
             .accessibilityIdentifier(DrawerAccessibilityIdentifiers.timeline)
-            .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))
         }
     }
 }

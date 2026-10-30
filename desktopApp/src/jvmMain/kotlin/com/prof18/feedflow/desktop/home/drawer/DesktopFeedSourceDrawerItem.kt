@@ -1,6 +1,14 @@
+@file:OptIn(
+    androidx.compose.ui.ExperimentalComposeUiApi::class,
+    androidx.compose.foundation.ExperimentalFoundationApi::class,
+)
+
 package com.prof18.feedflow.desktop.home.drawer
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -9,18 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -29,20 +26,41 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
+import androidx.compose.ui.input.pointer.isPrimaryPressed
+import androidx.compose.ui.input.pointer.isSecondaryPressed
+import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.ui.components.DeleteFeedSourceDialog
-import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenu
-import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenuEntry
-import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
+import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
+import com.prof18.feedflow.desktop.ui.components.DesktopPopupMenu
+import com.prof18.feedflow.desktop.ui.components.DesktopPopupMenuEntry
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.foundation.theme.LocalContentColor
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.Tooltip
+import org.jetbrains.jewel.ui.icons.AllIconsKeys
 
 @Composable
 internal fun DesktopFeedSourceDrawerItem(
@@ -61,198 +79,196 @@ internal fun DesktopFeedSourceDrawerItem(
     onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
     unreadCount: Long,
     modifier: Modifier = Modifier,
+    onContextClick: () -> Unit = {},
+    batchMenuEntries: ImmutableList<DesktopPopupMenuEntry>? = null,
+    onPointerModifiersChanged: (PointerKeyboardModifiers) -> Unit = {},
 ) {
-    var showFeedMenu by remember { mutableStateOf(false) }
-    var menuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showFeedMenu by remember(feedSource.id) { mutableStateOf(false) }
+    var menuPositionInWindow by remember(feedSource.id) { mutableStateOf<Offset?>(null) }
+    var showDeleteDialog by remember(feedSource.id) { mutableStateOf(false) }
+    var itemPosition by remember(feedSource.id) { mutableStateOf(Offset.Zero) }
+    val strings = LocalFeedFlowStrings.current
     val itemShape = drawerItemVisualStyle.itemShape
-    val itemColors = drawerItemColors(drawerItemVisualStyle)
-
+    val selectedColor = drawerItemVisualStyle.selectedContainerColor ?: sidebarSelectedColor()
+    val websiteUrl = feedSource.websiteUrlFallback()
+    val menuEntries = buildFeedSourceMenuEntries(
+        feedSource = feedSource,
+        unreadCount = unreadCount,
+        websiteUrl = websiteUrl,
+        onMarkAllRead = { onMarkAllReadForFeedSourceClick(feedSource) },
+        onOpenWebsite = onOpenWebsite,
+        onEditFeed = { onEditFeedClick(feedSource) },
+        onChangeCategory = { onChangeFeedCategoryClick(feedSource) },
+        onPinFeed = { onPinFeedClick(feedSource) },
+        onDeleteFeed = { showDeleteDialog = true },
+    )
+    val interactionSource = remember(feedSource.id) { MutableInteractionSource() }
+    val hovered by interactionSource.collectIsHoveredAsState()
+    val focused by interactionSource.collectIsFocusedAsState()
+    val finalBackground = feedSourceBackground(
+        selected = selected,
+        multiSelected = isMultiSelected,
+        highlighted = hovered || focused,
+        selectedColor = selectedColor,
+        multiSelectedColor = sidebarMultiSelectedColor(),
+        highlightColor = sidebarHighlightColor(),
+    )
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .onGloballyPositioned { coordinates ->
+                itemPosition = coordinates.positionInWindow()
+            }
+            .heightIn(min = drawerItemVisualStyle.itemMinHeight)
+            .fillMaxWidth()
+            .clip(itemShape)
+            .background(finalBackground)
+            .capturePrimaryModifiers(onPointerModifiersChanged)
+            .feedSourceKeyboardContextMenu {
+                onContextClick()
+                menuPositionInWindow = itemPosition
+                showFeedMenu = true
+            }
+            .selectable(
+                selected = selected || isMultiSelected,
+                role = Role.Tab,
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick,
+            )
+            .semantics {
+                if (feedSource.fetchFailed) stateDescription = strings.feedFetchFailedTooltip
+            }
+            .feedSourceContextMenu { position ->
+                onContextClick()
+                menuPositionInWindow = itemPosition + position
+                showFeedMenu = true
+            }
+            .padding(
+                start = if (feedSource.fetchFailed) {
+                    8.dp
+                } else {
+                    28.dp
+                },
+                end = 8.dp,
+                top = 4.dp,
+                bottom = 4.dp,
+            ),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        if (feedSource.fetchFailed) {
-            TooltipBox(
-                modifier = Modifier
-                    .padding(start = Spacing.regular),
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
-                tooltip = {
-                    PlainTooltip {
-                        Text(LocalFeedFlowStrings.current.feedFetchFailedTooltip)
-                    }
-                },
-                state = rememberTooltipState(),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Warning,
-                    contentDescription = null,
-                    tint = Color(color = 0xFFFF8F00),
-                )
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+            FeedFetchWarning(feedSource.fetchFailed, strings.feedFetchFailedTooltip)
+            val content = drawerItemVisualStyle.selectedContentColor.takeIf { selected }
+                ?: JewelTheme.globalColors.text.normal
+            CompositionLocalProvider(LocalContentColor provides content, content = icon)
+            Spacer(Modifier.width(8.dp))
+            Box(Modifier.weight(1f)) {
+                CompositionLocalProvider(LocalContentColor provides content, content = label)
             }
-            Spacer(Modifier.width(Spacing.small))
         }
-
-        val multiSelectModifier = if (isMultiSelected && !selected) {
-            Modifier.border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                shape = itemShape,
+        if (unreadCount > 0) {
+            Text(
+                unreadCount.toString(),
+                modifier = Modifier.padding(start = DesktopDesignTokens.spaceMedium),
+                style = DesktopDesignTokens.metadataText,
+                color = JewelTheme.globalColors.text.info,
             )
+        }
+    }
+    DesktopPopupMenu(
+        showMenu = showFeedMenu,
+        menuPositionInWindow = menuPositionInWindow,
+        menuEntries = batchMenuEntries ?: menuEntries,
+        closeMenu = {
+            showFeedMenu = false
+            menuPositionInWindow = null
+        },
+    )
+    if (showDeleteDialog) {
+        ConfirmationDialog(
+            title = strings.deleteFeedConfirmationTitle,
+            message = strings.deleteFeedConfirmationMessage,
+            onConfirm = {
+                onDeleteFeedSourceClick(feedSource)
+                showDeleteDialog = false
+            },
+            onDismiss = { showDeleteDialog = false },
+        )
+    }
+}
+
+private fun feedSourceBackground(
+    selected: Boolean,
+    multiSelected: Boolean,
+    highlighted: Boolean,
+    selectedColor: Color,
+    multiSelectedColor: Color,
+    highlightColor: Color,
+): Color = when {
+    selected -> selectedColor
+    multiSelected -> multiSelectedColor
+    highlighted -> highlightColor
+    else -> Color.Transparent
+}
+
+private fun Modifier.feedSourceContextMenu(onShow: (Offset) -> Unit): Modifier =
+    onPointerEvent(PointerEventType.Press) { event ->
+        if (event.buttons.isSecondaryPressed) {
+            onShow(event.changes.first().position)
+            event.changes.forEach { it.consume() }
+        }
+    }
+
+private fun Modifier.capturePrimaryModifiers(onModifiers: (PointerKeyboardModifiers) -> Unit): Modifier =
+    onPointerEvent(PointerEventType.Press, pass = PointerEventPass.Initial) { event ->
+        if (event.buttons.isPrimaryPressed) onModifiers(event.keyboardModifiers)
+    }
+
+private fun Modifier.feedSourceKeyboardContextMenu(onShow: () -> Unit): Modifier =
+    onPreviewKeyEvent { event ->
+        val isContextKey = event.key == Key.Menu || (event.key == Key.F10 && event.isShiftPressed)
+        if (event.type == KeyEventType.KeyDown && isContextKey) {
+            onShow()
+            true
         } else {
-            Modifier
+            false
         }
+    }
 
-        Surface(
-            selected = selected,
-            onClick = onClick,
-            modifier = Modifier
-                .semantics { role = Role.Tab }
-                .heightIn(min = drawerItemVisualStyle.itemMinHeight)
-                .fillMaxWidth()
-                .then(multiSelectModifier),
-            shape = itemShape,
-            color = itemColors.containerColor(selected).value,
-        ) {
-            val paddingStart = if (feedSource.fetchFailed) {
-                Spacing.xsmall
-            } else {
-                Spacing.regular
-            }
-            Row(
-                Modifier
-                    .singleAndLongClickModifier(
-                        onClick = { onClick() },
-                        onLongClick = {
-                            menuPositionInWindow = null
-                            showFeedMenu = true
-                        },
-                        onLongClickPositioned = { position ->
-                            menuPositionInWindow = position
-                            showFeedMenu = true
-                        },
-                    )
-                    .padding(start = paddingStart, end = 24.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f),
-                ) {
-                    val iconColor = itemColors.iconColor(selected).value
-                    CompositionLocalProvider(LocalContentColor provides iconColor, content = icon)
-                    Spacer(Modifier.width(12.dp))
+@Composable
+private fun buildFeedSourceMenuEntries(
+    feedSource: FeedSource,
+    unreadCount: Long,
+    websiteUrl: String?,
+    onMarkAllRead: () -> Unit,
+    onOpenWebsite: (String) -> Unit,
+    onEditFeed: () -> Unit,
+    onChangeCategory: () -> Unit,
+    onPinFeed: () -> Unit,
+    onDeleteFeed: () -> Unit,
+) = buildList {
+    val strings = LocalFeedFlowStrings.current
+    if (unreadCount > 0) {
+        add(DesktopPopupMenuEntry.Action(strings.markAllReadButton, onMarkAllRead))
+    }
+    websiteUrl?.let { url ->
+        add(DesktopPopupMenuEntry.Action(strings.openWebsiteButton, onClick = { onOpenWebsite(url) }))
+    }
+    add(DesktopPopupMenuEntry.Action(strings.openFeedSettings, onEditFeed))
+    add(DesktopPopupMenuEntry.Action(strings.changeCategory, onChangeCategory))
+    val pinLabel = if (feedSource.isPinned) strings.menuRemoveFromPinned else strings.menuAddToPinned
+    add(DesktopPopupMenuEntry.Action(pinLabel, onPinFeed))
+    add(DesktopPopupMenuEntry.Divider)
+    add(DesktopPopupMenuEntry.Action(strings.deleteFeed, onDeleteFeed))
+}.toImmutableList()
 
-                    Box(Modifier.weight(1f)) {
-                        val labelColor = itemColors.textColor(selected).value
-                        CompositionLocalProvider(LocalContentColor provides labelColor, content = label)
-                    }
-                }
-
-                if (unreadCount > 0) {
-                    Text(
-                        modifier = Modifier.padding(start = Spacing.small),
-                        text = unreadCount.toString(),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = itemColors.textColor(selected).value,
-                    )
-                }
-            }
-
-            val strings = LocalFeedFlowStrings.current
-            val menuEntries = buildList {
-                if (unreadCount > 0) {
-                    add(
-                        DesktopPopupMenuEntry.Action(
-                            text = strings.markAllReadButton,
-                            onClick = {
-                                onMarkAllReadForFeedSourceClick(feedSource)
-                                showFeedMenu = false
-                            },
-                        ),
-                    )
-                }
-
-                val websiteUrl = feedSource.websiteUrlFallback()
-                if (websiteUrl != null) {
-                    add(
-                        DesktopPopupMenuEntry.Action(
-                            text = strings.openWebsiteButton,
-                            onClick = {
-                                onOpenWebsite(websiteUrl)
-                                showFeedMenu = false
-                            },
-                        ),
-                    )
-                }
-
-                add(
-                    DesktopPopupMenuEntry.Action(
-                        text = strings.openFeedSettings,
-                        onClick = {
-                            onEditFeedClick(feedSource)
-                            showFeedMenu = false
-                        },
-                    ),
-                )
-
-                add(
-                    DesktopPopupMenuEntry.Action(
-                        text = strings.changeCategory,
-                        onClick = {
-                            onChangeFeedCategoryClick(feedSource)
-                            showFeedMenu = false
-                        },
-                    ),
-                )
-
-                add(
-                    DesktopPopupMenuEntry.Action(
-                        text = if (feedSource.isPinned) {
-                            strings.menuRemoveFromPinned
-                        } else {
-                            strings.menuAddToPinned
-                        },
-                        onClick = {
-                            onPinFeedClick(feedSource)
-                            showFeedMenu = false
-                        },
-                    ),
-                )
-
-                add(DesktopPopupMenuEntry.Divider)
-
-                add(
-                    DesktopPopupMenuEntry.Action(
-                        text = strings.deleteFeed,
-                        onClick = {
-                            showFeedMenu = false
-                            showDeleteDialog = true
-                        },
-                    ),
-                )
-            }.toImmutableList()
-
-            DesktopPopupMenu(
-                showMenu = showFeedMenu,
-                menuPositionInWindow = menuPositionInWindow,
-                menuEntries = menuEntries,
-                closeMenu = {
-                    showFeedMenu = false
-                    menuPositionInWindow = null
-                },
-            )
-
-            DeleteFeedSourceDialog(
-                showDialog = showDeleteDialog,
-                feedSource = feedSource,
-                onDismiss = { showDeleteDialog = false },
-                onDeleteFeedSource = { source ->
-                    onDeleteFeedSourceClick(source)
-                    showDeleteDialog = false
-                },
-            )
+@Composable
+private fun FeedFetchWarning(failed: Boolean, message: String) {
+    if (!failed) return
+    Row {
+        Tooltip(tooltip = { Text(message) }) {
+            Icon(AllIconsKeys.General.Warning, null, tint = JewelTheme.globalColors.text.warning)
         }
+        Spacer(Modifier.width(DesktopDesignTokens.spaceMedium))
     }
 }

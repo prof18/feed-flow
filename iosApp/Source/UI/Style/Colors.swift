@@ -10,5 +10,5 @@ import SwiftUI
 
 extension Color {
     static let colorOnBackground = Color("ColorOnBackground")
-    static let secondaryBackgroundColor = Color("SecondaryBackgroundColor")
+    static let secondaryBackgroundColor = Color(uiColor: .systemGroupedBackground)
 }

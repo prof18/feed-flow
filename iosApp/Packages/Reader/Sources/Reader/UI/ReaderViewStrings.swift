@@ -1,6 +1,10 @@
 import Foundation
 
 public struct ReaderViewStrings {
+    public let reportArticle: String
+    public let ttsListen: String
+    public let ttsStop: String
+    public let ttsPreparing: String
     public let share: String
     public let addBookmark: String
     public let removeBookmark: String
@@ -15,6 +19,8 @@ public struct ReaderViewStrings {
     public let done: String
     public let previousArticle: String
     public let nextArticle: String
+    public let openInBrowser: String
+    public let moreOptions: String
     public let feedContent: String
     public let contentUnavailableTitle: String
     public let contentUnavailableMessage: String
@@ -36,8 +42,20 @@ public struct ReaderViewStrings {
         nextArticle: String,
         feedContent: String = "",
         contentUnavailableTitle: String = "",
-        contentUnavailableMessage: String = ""
+        contentUnavailableMessage: String = "",
+        ttsListen: String = "",
+        ttsStop: String = "",
+        ttsPreparing: String = "",
+        reportArticle: String = "",
+        openInBrowser: String = "",
+        moreOptions: String = ""
     ) {
+        self.reportArticle = reportArticle
+        self.ttsListen = ttsListen
+        self.ttsStop = ttsStop
+        self.ttsPreparing = ttsPreparing
+        self.openInBrowser = openInBrowser
+        self.moreOptions = moreOptions
         self.share = share
         self.addBookmark = addBookmark
         self.removeBookmark = removeBookmark

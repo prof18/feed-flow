@@ -14,6 +14,7 @@ struct AppearanceScreen: View {
     @State private var settingsState = MainSettingsState(
         themeMode: .system,
         isHideUnreadCountEnabled: false,
+        isForceEnglishEnabled: false,
         bodyFont: .system,
         headlineFont: .system
     )

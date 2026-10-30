@@ -1,0 +1,40 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=pagination-scroll-read
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- assertVisible:
+    text: "E2E Scroll Read Article 001"
+- scrollUntilVisible:
+    element:
+      text: "E2E Scroll Read Article 035"
+    direction: DOWN
+    timeout: 60000
+    speed: 50
+    visibilityPercentage: 30
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible:
+      text: "E2E Scroll Read Article 001"
+    timeout: 4000
+    optional: true
+- scrollUntilVisible:
+    element:
+      text: "E2E Scroll Read Article 001"
+    direction: UP
+    timeout: 60000
+    speed: 50
+    visibilityPercentage: 30
+    waitToSettleTimeoutMs: 500
+- scrollUntilVisible:
+    element:
+      text: "E2E Scroll Read Article 050: Skip Needle"
+    direction: DOWN
+    timeout: 60000
+    speed: 50
+    visibilityPercentage: 30
+    waitToSettleTimeoutMs: 500

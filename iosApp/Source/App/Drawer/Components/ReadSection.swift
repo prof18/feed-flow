@@ -11,8 +11,6 @@ import SwiftUI
 
 struct ReadSection: View {
     let read: [DrawerItem]
-    let isSelected: Bool
-    let isCompact: Bool
     let onSelect: () -> Void
     let onFeedFilterSelected: (FeedFilter) -> Void
 
@@ -31,7 +29,6 @@ struct ReadSection: View {
             .buttonStyle(.plain)
             .tag(SidebarSelection.read)
             .accessibilityIdentifier(DrawerAccessibilityIdentifiers.read)
-            .listRowBackground(sidebarSelectionBackground(isSelected: isSelected, isCompact: isCompact))
         }
     }
 }

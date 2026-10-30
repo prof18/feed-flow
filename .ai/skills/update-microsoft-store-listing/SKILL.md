@@ -5,8 +5,7 @@ description: Read or change FeedFlow's Microsoft Store listing with pcenter — 
 
 # Update the Microsoft Store listing
 
-The Store is driven by [`pcenter`](https://github.com/prof18/pcenter-cli), which replaced the
-PowerShell scripts that used to live in `.github/scripts/`. Install locally with
+The Store is driven by [`pcenter`](https://github.com/prof18/pcenter-cli). Install locally with
 `brew install prof18/tap/pcenter`.
 
 ## Before anything else
@@ -92,13 +91,13 @@ cannot silently drop a Store language.
 ## Store limits pcenter checks before creating a submission
 
 - `shortDescription` ≤ **500** characters — Microsoft's published docs wrongly say 1,000.
-- At most **21 locales may carry keywords** at all. Not per locale, not a keyword total: a
-  22nd locale with keywords is rejected outright, so one must be cleared to make room.
+- Per locale, use at most **7 keywords**, **40 characters per keyword**, and **21 words
+  across all keywords**. Partner Center reports the word limit as `KeywordsTotalCount`.
 - `description` ≤ 10,000; `features` ≤ 20 items.
 
 ## When something is stuck
 
-- **Rollout** (the 2026-07-08 class of failure): `pcenter rollout status`, then
+- **Rollout**: `pcenter rollout status`, then
   `pcenter rollout finalize`. Every mutation verifies the resulting state, because the Store
   API returns 504 for operations that in fact succeeded.
 - **A failed submission** (`CommitFailed`, `CertificationFailed`) still occupies the single

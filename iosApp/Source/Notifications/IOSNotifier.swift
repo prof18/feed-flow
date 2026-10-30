@@ -12,6 +12,9 @@ class IOSNotifier: Notifier {
         let mode = settingsRepository.getNotificationMode()
 
         switch mode {
+        case .article:
+            return false
+
         case .feedSource:
             for source in feedSourcesToNotify {
                 scheduleNotification(

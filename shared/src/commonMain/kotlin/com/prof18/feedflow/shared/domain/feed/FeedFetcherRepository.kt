@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.Failure
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedRecoveryRecord
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import com.prof18.feedflow.core.model.FeedSourceToNotify
@@ -29,9 +30,16 @@ import com.prof18.feedflow.shared.domain.feed.httpcache.FeedRefreshScheduler
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedSourceCacheInfoFactory
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
+import com.prof18.feedflow.shared.domain.recovery.FeedAttempt
+import com.prof18.feedflow.shared.domain.recovery.FeedOutcome
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.FeedVerificationRequired
+import com.prof18.feedflow.shared.domain.recovery.RecoveryTicket
+import com.prof18.feedflow.shared.domain.recovery.RecoveryUpdate
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.exception.HttpException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
@@ -54,11 +62,12 @@ class FeedFetcherRepository internal constructor(
     private val settingsRepository: SettingsRepository,
     private val contentPrefetchRepository: ContentPrefetchRepository,
     private val logger: Logger,
-    private val rssParserWrapper: RssParserWrapper,
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
     private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
     private val feedHttpCacheStore: FeedHttpCacheStore,
+    private val feedAttempt: FeedAttempt,
+    private val recoveryRepository: FeedRecoveryRepository,
 ) {
     private val fetchMutex = Mutex()
     private val feedToUpdate = hashSetOf<String>()
@@ -119,7 +128,7 @@ class FeedFetcherRepository internal constructor(
         // After fetching new feeds, delete old ones based on user settings
         cleanOldFeeds(publishToFeedList)
         if (publishToFeedList) {
-            feedStateRepository.getFeeds()
+            feedStateRepository.publishFetchedFeeds()
         }
     }
 
@@ -140,7 +149,7 @@ class FeedFetcherRepository internal constructor(
         // After fetching new feeds, delete old ones based on user settings
         cleanOldFeeds(publishToFeedList)
         if (publishToFeedList) {
-            feedStateRepository.getFeeds()
+            feedStateRepository.publishFetchedFeeds()
         }
     }
 
@@ -163,7 +172,7 @@ class FeedFetcherRepository internal constructor(
         feedToUpdate.addAll(feedSourceUrls.map { it.url })
 
         if (!isFirstLaunch && publishToFeedList) {
-            feedStateRepository.getFeeds()
+            feedStateRepository.publishFetchedFeeds()
         }
         feedStateRepository.emitUpdateStatus(
             InProgressFeedUpdateStatus(
@@ -187,7 +196,7 @@ class FeedFetcherRepository internal constructor(
         cleanOldFeeds(publishToFeedList)
         updateRefreshCount()
         if (publishToFeedList) {
-            feedStateRepository.getFeeds()
+            feedStateRepository.publishFetchedFeeds()
         }
     }
 
@@ -230,7 +239,7 @@ class FeedFetcherRepository internal constructor(
         feedSyncRepository.deleteFeedItems(oldFeedIds)
         databaseHelper.cleanupOldDeletedItems()
         if (publishToFeedList) {
-            feedStateRepository.getFeeds()
+            feedStateRepository.publishFetchedFeeds()
         }
     }
 
@@ -273,14 +282,34 @@ class FeedFetcherRepository internal constructor(
 
     private sealed interface FeedFetchResult {
         val feedSource: FeedSource
+        val recoveryUpdate: RecoveryUpdate?
 
         data class Success(
             override val feedSource: FeedSource,
             val feedItems: List<FeedItem>,
+            override val recoveryUpdate: RecoveryUpdate? = null,
         ) : FeedFetchResult
 
-        data class NotModified(override val feedSource: FeedSource) : FeedFetchResult
-        data class Failure(override val feedSource: FeedSource) : FeedFetchResult
+        data class NotModified(
+            override val feedSource: FeedSource,
+            override val recoveryUpdate: RecoveryUpdate? = null,
+        ) : FeedFetchResult
+
+        data class Failure(
+            override val feedSource: FeedSource,
+            override val recoveryUpdate: RecoveryUpdate? = null,
+        ) : FeedFetchResult
+    }
+
+    private fun seedFeedTiers(
+        feedSources: List<FeedSource>,
+        cacheInfoById: Map<String, FeedSourceCacheInfo>,
+    ) {
+        feedHttpCacheStore.seedTiers(
+            feedSources.mapNotNull { source ->
+                cacheInfoById[source.id]?.userAgentTier?.let { source.url to it }
+            }.toMap(),
+        )
     }
 
     @Suppress("LongMethod")
@@ -294,8 +323,12 @@ class FeedFetcherRepository internal constructor(
         val syncedFeedSourceIds = mutableListOf<String>()
         val updatedCacheInfo = mutableListOf<FeedSourceCacheInfo>()
 
+        val ticket = recoveryRepository.issueTicket()
+        val recoveryRecords = recoveryRepository.records(ticket.accountEpoch)
+
         val currentTime = dateFormatter.currentTimeMillis()
         val cacheInfoById = databaseHelper.getFeedSourcesCacheInfo().associateBy { it.feedSourceId }
+        seedFeedTiers(feedSourceUrls, cacheInfoById)
         feedHttpCacheStore.seedValidators(
             feedSourceUrls.mapNotNull { feedSource ->
                 val cacheInfo = cacheInfoById[feedSource.id] ?: return@mapNotNull null
@@ -337,61 +370,38 @@ class FeedFetcherRepository internal constructor(
             .asFlow()
             .flatMapMerge(concurrency = getNumberOfConcurrentParsingRequests()) { feedSource ->
                 suspend {
-                    logger.d { "-> Getting ${feedSource.url}" }
-                    try {
-                        val rssChannel = withTimeout(1.minutes) {
-                            rssParserWrapper.getRssChannel(feedSource.url)
-                        }
-                        logger.d { "<- Got back ${rssChannel.title}" }
-                        if (feedSource.logoUrl == null) {
-                            val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
-                            databaseHelper.updateFeedSourceLogoUrl(feedSourceId = feedSource.id, logoUrl = logoUrl)
-                        }
-                        if (feedSource.websiteUrl == null) {
-                            databaseHelper.updateFeedSourceWebsiteUrl(
-                                feedSourceId = feedSource.id,
-                                websiteUrl = rssChannel.link,
-                            )
-                        }
-                        FeedFetchResult.Success(
-                            feedSource = feedSource,
-                            feedItems = rssChannelMapper.getFeedItems(
-                                rssChannel = rssChannel,
-                                feedSource = feedSource,
-                            ),
-                        )
-                    } catch (e: Throwable) {
-                        handleFetchError(
-                            feedSource = feedSource,
-                            error = e,
-                        )
-                    }
+                    fetchFeed(
+                        feedSource = feedSource,
+                        record = recoveryRecords[feedSource.id]?.takeIf { it.subscriptionUrl == feedSource.url },
+                    )
                 }.asFlow()
             }
             .collect { result ->
                 feedToUpdate.remove(result.feedSource.url)
                 updateRefreshCount()
+                val cacheInfo = buildUpdatedCacheInfo(
+                    result = result,
+                    previousCacheInfo = cacheInfoById[result.feedSource.id],
+                )
                 when (result) {
                     is FeedFetchResult.Success -> {
                         logger.d { "Collected ${result.feedItems.size} items" }
                         allFeedItems.addAll(result.feedItems)
                         syncedFeedSourceIds.add(result.feedSource.id)
+                        updatedCacheInfo.add(cacheInfo)
                     }
 
                     is FeedFetchResult.NotModified -> {
                         syncedFeedSourceIds.add(result.feedSource.id)
+                        updatedCacheInfo.add(cacheInfo)
                     }
 
                     is FeedFetchResult.Failure -> {
-                        // Failure flag already persisted above
+                        // Preserve backoff if another source is cancelled before the article batch is saved.
+                        databaseHelper.updateFeedSourcesCacheInfo(listOf(cacheInfo))
                     }
                 }
-                updatedCacheInfo.add(
-                    buildUpdatedCacheInfo(
-                        result = result,
-                        previousCacheInfo = cacheInfoById[result.feedSource.id],
-                    ),
-                )
+                result.recoveryUpdate?.let { applyRecoveryUpdate(it, ticket) }
             }
 
         val syncTimestamp = dateFormatter.currentTimeMillis()
@@ -402,6 +412,7 @@ class FeedFetcherRepository internal constructor(
                 databaseHelper.insertFeedItems(
                     feedItems = allFeedItems,
                     lastSyncTimestamp = syncTimestamp,
+                    markFirstSyncItemsAsNotified = true,
                 )
             } catch (e: Throwable) {
                 logger.d(e) { "Failed to insert feed items into database" }
@@ -422,9 +433,67 @@ class FeedFetcherRepository internal constructor(
         }
     }
 
+    private suspend fun fetchFeed(feedSource: FeedSource, record: FeedRecoveryRecord?): FeedFetchResult {
+        logger.d { "-> Getting ${feedSource.url}" }
+        return try {
+            val outcome = withTimeout(1.minutes) {
+                feedAttempt.run(feedSource, record)
+            }
+            val fetched = when (outcome) {
+                is FeedOutcome.Fetched -> outcome
+                is FeedOutcome.NotModified -> {
+                    logger.d { "Feed not modified, skipping parsing: ${feedSource.url}" }
+                    return FeedFetchResult.NotModified(
+                        feedSource = feedSource,
+                        recoveryUpdate = clearedRecord(feedSource, record, outcome.viaSession),
+                    )
+                }
+                is FeedOutcome.Challenged -> return handleFetchError(
+                    feedSource = feedSource,
+                    error = FeedVerificationRequired(outcome.challenge),
+                    recoveryUpdate = RecoveryUpdate.RecordChallenge(feedSource, outcome.challenge, record),
+                )
+                is FeedOutcome.Failed -> return handleFetchError(
+                    feedSource = feedSource,
+                    error = outcome.error,
+                )
+            }
+            val rssChannel = fetched.channel
+            logger.d { "<- Got back ${rssChannel.title}" }
+            if (feedSource.logoUrl == null) {
+                val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
+                databaseHelper.updateFeedSourceLogoUrl(feedSourceId = feedSource.id, logoUrl = logoUrl)
+            }
+            if (feedSource.websiteUrl == null) {
+                databaseHelper.updateFeedSourceWebsiteUrl(
+                    feedSourceId = feedSource.id,
+                    websiteUrl = rssChannel.link,
+                )
+            }
+            FeedFetchResult.Success(
+                feedSource = feedSource,
+                feedItems = rssChannelMapper.getFeedItems(
+                    rssChannel = rssChannel,
+                    feedSource = feedSource,
+                ),
+                recoveryUpdate = clearedRecord(
+                    feedSource = feedSource,
+                    record = record,
+                    viaSession = fetched.viaSession,
+                ),
+            )
+        } catch (e: Throwable) {
+            handleFetchError(
+                feedSource = feedSource,
+                error = e,
+            )
+        }
+    }
+
     private suspend fun handleFetchError(
         feedSource: FeedSource,
         error: Throwable,
+        recoveryUpdate: RecoveryUpdate? = null,
     ): FeedFetchResult {
         if ((error as? HttpException)?.code == HTTP_NOT_MODIFIED) {
             logger.d { "Feed not modified, skipping parsing: ${feedSource.url}" }
@@ -433,7 +502,24 @@ class FeedFetcherRepository internal constructor(
         logger.d { "Error, skip: ${feedSource.url}}. Error: $error" }
         // Mark failure flag on error; surfaced as a per-feed indicator instead of a toast.
         databaseHelper.setFeedFetchFailed(feedSource.id, true)
-        return FeedFetchResult.Failure(feedSource)
+        return FeedFetchResult.Failure(feedSource, recoveryUpdate)
+    }
+
+    private fun clearedRecord(
+        feedSource: FeedSource,
+        record: FeedRecoveryRecord?,
+        viaSession: Boolean,
+    ): RecoveryUpdate? =
+        if (record != null && !viaSession) RecoveryUpdate.ClearRecord(feedSource, record) else null
+
+    private suspend fun applyRecoveryUpdate(update: RecoveryUpdate, ticket: RecoveryTicket) {
+        try {
+            recoveryRepository.apply(update, ticket)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            logger.d(e) { "Recovery update skipped" }
+        }
     }
 
     private fun buildUpdatedCacheInfo(

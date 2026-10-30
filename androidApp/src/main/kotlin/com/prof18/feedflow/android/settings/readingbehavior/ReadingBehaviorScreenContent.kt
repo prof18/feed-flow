@@ -19,14 +19,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.feed.ArticleOpenModeSelector
 import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.settings.components.BrowserSelector
+import com.prof18.feedflow.android.ui.settings.ConfirmationDialogConfig
+import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.Browser
 import com.prof18.feedflow.core.model.ReadingBehaviorState
-import com.prof18.feedflow.shared.ui.settings.ConfirmationDialogConfig
-import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -39,7 +39,6 @@ internal fun ReadingBehaviorScreenContent(
     setArticleOpenMode: (ArticleOpenMode) -> Unit,
     setSaveReaderModeContent: (Boolean) -> Unit,
     setPrefetchArticleContent: (Boolean) -> Unit,
-    setKleadParserEnabled: (Boolean) -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setHideReadItems: (Boolean) -> Unit,
@@ -96,19 +95,6 @@ internal fun ReadingBehaviorScreenContent(
 
             item {
                 SettingSwitchItem(
-                    modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_NEW_PARSER),
-                    title = LocalFeedFlowStrings.current.settingsUseNewArticleParser,
-                    isChecked = state.isKleadParserEnabled,
-                    onCheckedChange = setKleadParserEnabled,
-                    confirmationDialog = ConfirmationDialogConfig(
-                        title = LocalFeedFlowStrings.current.settingsNewReaderModeEngineConfirmationTitle,
-                        message = LocalFeedFlowStrings.current.settingsNewReaderModeEngineConfirmationMessage,
-                    ),
-                )
-            }
-
-            item {
-                SettingSwitchItem(
                     title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
                     isChecked = state.isPrefetchArticleContentEnabled,
                     onCheckedChange = setPrefetchArticleContent,
@@ -142,6 +128,12 @@ internal fun ReadingBehaviorScreenContent(
                     title = LocalFeedFlowStrings.current.settingsHideReadItems,
                     isChecked = state.isHideReadItemsEnabled,
                     onCheckedChange = setHideReadItems,
+                    enabled = !state.isMarkReadWhenScrollingEnabled,
+                    supportingText = if (state.isMarkReadWhenScrollingEnabled) {
+                        LocalFeedFlowStrings.current.settingsHideReadItemsDisabledWhileScrolling
+                    } else {
+                        null
+                    },
                 )
             }
 
@@ -170,7 +162,6 @@ private fun ReadingBehaviorScreenContentPreview() {
             setArticleOpenMode = {},
             setSaveReaderModeContent = {},
             setPrefetchArticleContent = {},
-            setKleadParserEnabled = {},
             setMarkReadWhenScrolling = {},
             setShowReadItem = {},
             setHideReadItems = {},

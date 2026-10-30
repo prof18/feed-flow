@@ -1,0 +1,66 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/report-accepted
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: e2e_seed_complete
+- tapOn:
+    id: article_row_e2e_article_report
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader-report-action
+- assertVisible: "Send this article’s link, app version and OS version to the developer[\\s\\S]*"
+- assertNotVisible: "[\\s\\S]*reports\\.example\\.com[\\s\\S]*"
+- assertNotVisible: "[\\s\\S]*reader source[\\s\\S]*"
+- tapOn:
+    id: reader-report-cancel
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader-report-action
+- tapOn:
+    id: reader-report-send
+- assertVisible: "Report sent. Thanks!"
+- tapOn: "Done"
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader-report-action
+- assertVisible:
+    id: reader-report-send
+- tapOn:
+    id: reader-report-cancel
+- openLink: feedflow://e2e/report-offline
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: e2e_seed_complete
+- tapOn:
+    id: article_row_e2e_article_report
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader-report-action
+- tapOn:
+    id: reader-report-send
+- assertVisible: "Couldn’t send the report. Please try again."
+- assertNotVisible: "Report saved[\\s\\S]*"
+- tapOn: "Done"
+- tapOn:
+    id: reader_more_menu_button
+- tapOn:
+    id: reader-report-action
+- assertVisible:
+    id: reader-report-send
+- tapOn:
+    id: reader-report-send
+- assertVisible: "Couldn’t send the report. Please try again."

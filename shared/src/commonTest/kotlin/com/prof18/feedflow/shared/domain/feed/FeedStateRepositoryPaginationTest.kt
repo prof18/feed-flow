@@ -105,6 +105,7 @@ class FeedStateRepositoryPaginationTest : KoinTestBase() {
             unreadItem(index, pubDate = BASE_PUB_DATE - index * PUB_DATE_STEP)
         }
         seed(items, hideReadItems = true)
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
 
         feedStateRepository.getFeeds()
         val removedIds = feedStateRepository.feedState.value.take(REMOVED_ITEMS_COUNT).map { FeedItemId(it.id) }

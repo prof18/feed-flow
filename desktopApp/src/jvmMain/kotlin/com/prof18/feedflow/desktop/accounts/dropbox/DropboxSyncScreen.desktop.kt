@@ -1,151 +1,111 @@
 package com.prof18.feedflow.desktop.accounts.dropbox
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.DropboxSynMessages
+import com.prof18.feedflow.desktop.accounts.AccountScreen
+import com.prof18.feedflow.desktop.accounts.CloudAccountContent
+import com.prof18.feedflow.desktop.accounts.CredentialsState
+import com.prof18.feedflow.desktop.accounts.DropboxAuthorizationForm
+import com.prof18.feedflow.desktop.accounts.ObserveAccountConnection
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
-import com.prof18.feedflow.shared.ui.accounts.dropbox.DropboxSyncContent
-import com.prof18.feedflow.shared.ui.settings.SettingItem
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun DropboxSyncScreen(
-    navigateBack: () -> Unit,
-    showNavigateBack: Boolean = true,
+    credentialsState: CredentialsState? = null,
 ) {
     val viewModel = koinViewModel<DropboxSyncViewModel>()
-
     val uiState by viewModel.dropboxConnectionUiState.collectAsState()
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { DesktopFeedbackState() }
     val uriHandler = LocalUriHandler.current
+    val strings = LocalFeedFlowStrings.current
+    val scope = rememberCoroutineScope()
+    val fallbackDraft = remember { CredentialsState() }
+    val draft = credentialsState ?: fallbackDraft
 
-    val errorMessage = LocalFeedFlowStrings.current.dropboxSyncError
-    val codeExpiredMessage = LocalFeedFlowStrings.current.dropboxAuthCodeExpired
-    val browserLaunchErrorMessage = LocalFeedFlowStrings.current.browserLaunchError
+    fun showError(message: String) {
+        draft.connectionError = message
+        draft.connectionErrorRevision++
+        draft.submissionPending = false
+        draft.authCodePending = false
+        scope.launch { snackbarHostState.showFeedback(message, duration = DesktopFeedbackDuration.Short) }
+    }
 
-    LaunchedEffect(Unit) {
-        viewModel.dropboxSyncMessageState.collect { event ->
-            when (event) {
-                DropboxSynMessages.Error -> {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = errorMessage,
-                            duration = SnackbarDuration.Short,
-                        )
-                    }
-                }
-
-                DropboxSynMessages.CodeExpired -> {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = codeExpiredMessage,
-                            duration = SnackbarDuration.Short,
-                        )
-                    }
-                }
-
-                is DropboxSynMessages.ProceedToAuth -> {
-                    if (!uriHandler.openUriSafely(event.authorizeUrl)) {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = browserLaunchErrorMessage,
-                                duration = SnackbarDuration.Short,
-                            )
-                        }
-                    }
-                }
+    ObserveAccountConnection(
+        draft = draft,
+        uiState = viewModel.dropboxConnectionUiState,
+        messages = viewModel.dropboxSyncMessageState,
+    ) { event ->
+        when (event) {
+            DropboxSynMessages.Error -> showError(strings.dropboxSyncError)
+            DropboxSynMessages.CodeExpired -> showError(strings.dropboxAuthCodeExpired)
+            is DropboxSynMessages.ProceedToAuth -> {
+                draft.submissionPending = false
+                draft.authCodeReady = true
+                if (!uriHandler.openUriSafely(event.authorizeUrl)) showError(strings.browserLaunchError)
             }
         }
     }
 
-    DropboxSyncContent(
+    AccountScreen(snackbarHostState) {
+        DropboxAccountContent(
+            uiState = uiState,
+            credentialsState = draft,
+            onStartAuth = viewModel::startDropboxAuthFlow,
+            onConfirmCode = viewModel::handleDropboxAuthResponse,
+            onBackup = viewModel::triggerBackup,
+            onDisconnect = viewModel::disconnect,
+        )
+    }
+}
+
+@Composable
+internal fun DropboxAccountContent(
+    uiState: AccountConnectionUiState,
+    credentialsState: CredentialsState,
+    onStartAuth: () -> Unit,
+    onConfirmCode: (String) -> Unit,
+    onBackup: () -> Unit,
+    onDisconnect: () -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    CloudAccountContent(
+        description = strings.dropboxSyncDesktopDescription,
+        successMessage = strings.dropboxSyncSuccess,
+        noSyncMessage = strings.noDropboxSyncYet,
         uiState = uiState,
-        onBackClick = navigateBack,
-        showNavigateBack = showNavigateBack,
-        onBackupClick = {
-            viewModel.triggerBackup()
-        },
-        onDisconnectClick = {
-            viewModel.disconnect()
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        customPlatformUI = {
-            Column(
-                modifier = Modifier.padding(top = Spacing.regular),
-            ) {
-                Text(
-                    text = LocalFeedFlowStrings.current.dropboxSyncDesktopDescription,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = Spacing.regular),
-                )
-
-                SettingItem(
-                    modifier = Modifier.padding(top = Spacing.regular),
-                    title = LocalFeedFlowStrings.current.accountConnectButton,
-                    icon = Icons.Default.Link,
-                    onClick = {
-                        viewModel.startDropboxAuthFlow()
-                    },
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(top = Spacing.small),
-                ) {
-                    var authCode by remember {
-                        mutableStateOf("")
-                    }
-
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .padding(horizontal = Spacing.regular)
-                            .weight(1f),
-                        value = authCode,
-                        onValueChange = { authCode = it },
-                        label = { Text(LocalFeedFlowStrings.current.dropboxAuthCodeHint) },
-                    )
-
-                    Button(
-                        modifier = Modifier
-                            .padding(top = Spacing.xsmall)
-                            .padding(end = Spacing.regular),
-                        enabled = authCode.isNotBlank(),
-                        onClick = {
-                            viewModel.handleDropboxAuthResponse(authCode)
-                        },
-                    ) {
-                        Text(LocalFeedFlowStrings.current.dropboxConfirmButton)
-                    }
-                }
-            }
+        credentialsState = credentialsState,
+        onBackupClick = onBackup,
+        onDisconnectClick = onDisconnect,
+        lastUploadMessage = strings.lastUpload,
+        lastDownloadMessage = strings.lastDownload,
+        connectContent = {
+            DropboxAuthorizationForm(
+                state = credentialsState,
+                isLoading = uiState == AccountConnectionUiState.Loading,
+                isCodeEntryReady = credentialsState.authCodeReady,
+                errorRevision = credentialsState.connectionErrorRevision,
+                errorMessage = credentialsState.connectionError,
+                onStartAuth = {
+                    credentialsState.connectionError = null
+                    onStartAuth()
+                },
+                onConfirmCode = { code ->
+                    credentialsState.connectionError = null
+                    onConfirmCode(code)
+                },
+            )
         },
     )
 }

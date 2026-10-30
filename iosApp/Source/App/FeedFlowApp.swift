@@ -15,16 +15,26 @@ struct FeedFlowApp: App {
     private var delegate
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
-    @State private var appState: AppState = .init()
+    @State private var appearance: AppAppearance
     @State private var browserSelector: BrowserSelector
+    @State private var audioPlayback: AudioPlaybackController
 
     private var feedSyncTimer: FeedSyncTimer = .init()
 
     init() {
-        startKoin(notifier: IOSNotifier())
+        startKoin(notifier: IOSNotifier(), websiteRecovery: true)
         RevenueCatSupport.configure()
         setupTelemetry()
         _browserSelector = State(initialValue: BrowserSelector())
+        _appearance = State(initialValue: AppAppearance())
+        _audioPlayback = State(initialValue: AudioPlaybackController(
+            positionStore: RepositoryAudioPlaybackPositionStore(
+                repository: Deps.shared.getAudioPlaybackPositionRepository()
+            ),
+            speechText: { title, content in
+                try await Deps.shared.getReaderSpeechText().segments(title: title, content: content)
+            }
+        ))
 
         if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {
             if let keys = NSDictionary(contentsOfFile: path) {
@@ -61,7 +71,7 @@ struct FeedFlowApp: App {
 
                 // Phase 1: Fetch feeds (expensive, may be interrupted)
                 do {
-                    try await repo.fetchFeeds()
+                    try await repo.fetchFeeds(forceRefresh: false)
                     fetchSucceeded = true
                 } catch is CancellationError {
                     // System cancelled — items carry over to next run
@@ -77,17 +87,32 @@ struct FeedFlowApp: App {
                 if !Task.isCancelled {
                     let authStatus = await UNUserNotificationCenter.current().notificationSettings()
                     if authStatus.authorizationStatus == .authorized || authStatus.authorizationStatus == .provisional {
-                        do {
-                            let itemsToNotify = try await repo.getFeedSourceToNotify()
-                            if !itemsToNotify.isEmpty {
-                                let notifier = Deps.shared.getNotifier()
-                                let hasShown = notifier.showNewArticlesNotification(feedSourcesToNotify: itemsToNotify)
-                                if hasShown {
-                                    try await repo.markItemsAsNotified()
+                        let mode = Deps.shared.getSettingsRepository().getNotificationMode()
+                        if mode == .article {
+                            do {
+                                let articles = Deps.shared.getArticleNotificationRepository()
+                                let batch = try await articles.prepareBatch()
+                                let notifier = IOSArticleNotifier(strings: feedFlowStrings)
+                                try await notifier.showArticleNotifications(batch: batch) { ids in
+                                    try await articles.acknowledge(ids: ids)
                                 }
+                            } catch {
+                                finish(success: false)
+                                return
                             }
-                        } catch {
-                            // Best effort — items will be picked up next run
+                        } else {
+                            do {
+                                let itemsToNotify = try await repo.getFeedSourceToNotify()
+                                if !itemsToNotify.isEmpty {
+                                    let notifier = Deps.shared.getNotifier()
+                                    let hasShown = notifier.showNewArticlesNotification(feedSourcesToNotify: itemsToNotify)
+                                    if hasShown {
+                                        try await repo.markItemsAsNotified()
+                                    }
+                                }
+                            } catch {
+                                // Best effort — items will be picked up next run
+                            }
                         }
                     }
                 }
@@ -104,14 +129,14 @@ struct FeedFlowApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(appState)
+            FeedFlowScene(appearance: appearance) { appState in
+                ContentView()
                 .environment(browserSelector)
+                .environment(audioPlayback)
                 .toggleStyle(BlueToggleStyle())
-                .preferredColorScheme(appState.colorScheme)
                 .onOpenURL { url in
                     if url.scheme == "feedflow" {
-                        handleFeedFlowURL(url)
+                        handleFeedFlowURL(url, appState: appState)
                     } else {
                         Deps.shared.getDropboxDataSource().handleOAuthResponse {
                             DropboxDataSourceIos.handleOAuthResponse(
@@ -144,6 +169,7 @@ struct FeedFlowApp: App {
                         feedSyncTimer.scheduleTimer()
                         Deps.shared.getContentPrefetchManager().startBackgroundFetching()
                     case .background:
+                        audioPlayback.savePosition()
                         feedSyncTimer.invalidate()
                         // Stop prefetch DB writes before suspension: a SQLite lock held on the
                         // app-group container while suspended gets the app killed (0xdead10cc).
@@ -154,16 +180,17 @@ struct FeedFlowApp: App {
                         break
                     }
                 }
+            }
         }
         .commands {
             appMenu
         }
     }
 
-    private func handleFeedFlowURL(_ url: URL) {
+    private func handleFeedFlowURL(_ url: URL, appState: AppState) {
         #if DEBUG
             if url.host == "e2e" {
-                handleE2eURL(url)
+                handleE2eURL(url, appState: appState)
                 return
             }
         #endif
@@ -176,7 +203,7 @@ struct FeedFlowApp: App {
     }
 
     #if DEBUG
-        private func handleE2eURL(_ url: URL) {
+        private func handleE2eURL(_ url: URL, appState: AppState) {
             let action = url.pathComponents
                 .first { $0 != "/" } ?? "reset-and-seed"
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
@@ -186,10 +213,19 @@ struct FeedFlowApp: App {
             let accountName = components?.queryItems?
                 .first { $0.name == "account" }?
                 .value
+            let verificationFixture = components?.queryItems?
+                .first { $0.name == "verification" }?
+                .value
+            // iOS truncates opened URLs to 2047 characters, so a full subscription list does not fit
+            // in the link: the restore script copies it into Documents instead.
+            let audioUrl = components?.queryItems?
+                .first { $0.name == "audioUrl" }?
+                .value
             let developmentOpml = components?.queryItems?
                 .first { $0.name == "opml" }?
                 .value
-                .flatMap(decodeDevelopmentOPML)
+                .flatMap(decodeDevelopmentOPML) ?? readDevelopmentOPMLFile()
+            audioPlayback.stop()
             appState.e2eSeedMessage = nil
             Task {
                 do {
@@ -197,16 +233,15 @@ struct FeedFlowApp: App {
                         action: action,
                         profileName: profileName,
                         accountName: accountName,
-                        developmentOpml: developmentOpml
+                        developmentOpml: developmentOpml,
+                        audioUrl: audioUrl,
+                        verificationFixture: verificationFixture
                     )
                     await MainActor.run {
                         if let seedError {
                             appState.e2eSeedMessage = "E2E seed failed: \(seedError)"
                         } else {
-                            appState.currentCommonRoute = nil
                             appState.regularNavigationPath = NavigationPath()
-                            appState.compactNavigationPath = NavigationPath()
-                            appState.compactNavigationPath.append(CompactViewRoute.feed)
                             appState.e2eSeedMessage = "E2E seed complete"
                         }
                     }
@@ -229,6 +264,14 @@ private func decodeDevelopmentOPML(_ urlSafeBase64: String) -> String? {
         return nil
     }
     return String(data: data, encoding: .utf8)
+}
+
+private func readDevelopmentOPMLFile() -> String? {
+    guard let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+        return nil
+    }
+    let fileURL = documents.appendingPathComponent("e2e-restore/development.opml")
+    return try? String(contentsOf: fileURL, encoding: .utf8)
 }
 
 func scheduleAppRefresh() {
@@ -266,14 +309,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         let userInfo = response.notification.request.content.userInfo
-        if let urlString = userInfo["url"] as? String {
-            NotificationCenter.default.post(
-                name: .didReceiveNotificationDeepLink,
-                object: nil,
-                userInfo: ["url": urlString]
-            )
+        let url = (userInfo["url"] as? String).flatMap(URL.init(string:))
+        Task { @MainActor in
+            if let url { NotificationDeepLinkStore.shared.enqueue(url) }
+            completionHandler()
         }
-        completionHandler()
     }
 
     func userNotificationCenter(

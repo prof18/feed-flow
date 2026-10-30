@@ -38,10 +38,12 @@ Run FeedFlow's full local Maestro release gate across Android and iOS, then repo
 
 ## Preconditions
 
-- Maestro must be installed as `maestro`.
-- Android needs a running device or emulator. The repo default is `Resizable_Experimental`.
-- iOS needs a booted `iPhone 17 Pro` simulator. The script uses `SIMULATOR_UDID` when present, otherwise it detects the booted simulator.
+- Maestro, `python3` and `adb` must be installed.
+- Android needs a running device or emulator. Pick it with `--android-serial <serial>` (or `ANDROID_SERIAL`); without either, the script uses the only online device and fails setup when several are online. Every install, fixture push, flow, helper and restore is bound to that serial.
+- iOS needs a booted simulator. Pick it with `--ios-udid <udid>` (or `SIMULATOR_UDID`); otherwise the script uses the booted `iPhone 18 Pro`. The build targets that UDID.
 - iOS needs `iosApp/FeedFlow.xcodeproj`; the script generates it when missing.
+- When `atc` is installed, the script reserves both devices before building (`atc claim --serial` / `atc claim --ios --udid`, waiting up to 10 minutes for another holder), renews the leases during the run and frees the ones it created at the end. Leases the calling session already holds are reused and left in place. A device that cannot be reserved fails that platform's setup. Pass `--no-atc` to skip reservation. Claim a physical phone by serial: `atc claim --type phone --api 36` boots an emulator instead.
+- Extra Maestro variables (for example `WIDGET_HEADER_TITLE` on a localized device) go through `--maestro-env KEY=VALUE`, repeatable.
 
 ## Behavior
 
@@ -52,7 +54,9 @@ When both platforms are selected, the script runs Android and iOS in parallel. E
 - `e2e/maestro/ios/smoke`
 - `e2e/maestro/ios/regression`
 
-It continues after failed flows so the final report captures the full failure set. It exits non-zero when any setup step or flow fails.
+Flows run the same way `e2e/scripts/run-android.sh` and `run-ios.sh` run them: the audio flows (174-176) go through `e2e/scripts/run-audio-playback.sh`, Android SM-007 through `android_reader_tooltip.py`, and Android REG-179 through `android_share_feed.py`, which sends the real share intent. Helper output lands under `helpers/android/` in the report directory.
+
+It continues after failed flows so the final report captures the full failure set. After the flows it restores the development feeds with `feedflow-restore-dev-feeds`. It exits non-zero when any setup step, flow or restore fails. Run it with output going to a file (or with `set -o pipefail`) when you rely on the exit code.
 
 Reports and logs are written under:
 

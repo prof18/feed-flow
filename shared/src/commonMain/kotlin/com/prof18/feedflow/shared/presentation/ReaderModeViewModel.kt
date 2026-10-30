@@ -3,12 +3,12 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.ArticleReportMessage
+import com.prof18.feedflow.core.model.ArticleReportUiState
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
-import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.model.ReaderFontFamily
-import com.prof18.feedflow.core.model.ReaderFontSettings
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
@@ -18,44 +18,56 @@ import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveWith
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.ReaderContentLanguage
+import com.prof18.feedflow.shared.domain.articlereport.ArticleReporter
+import com.prof18.feedflow.shared.domain.feed.ArticleNavigationRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
-import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
-import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
+import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryCoordinator
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.ReaderFetchResult
+import com.prof18.feedflow.shared.domain.recovery.RecoveryTicket
 import io.ktor.http.Url
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
 class ReaderModeViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val feedActionsRepository: FeedActionsRepository,
-    private val feedItemParserWorker: FeedItemParserWorker,
+    private val articleContentParser: ArticleContentParser,
+    private val readerContentFetcher: ReaderContentFetcher,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
-    private val feedStateRepository: FeedStateRepository,
+    private val articleNavigationRepository: ArticleNavigationRepository,
     private val databaseHelper: DatabaseHelper,
-    private val feedContentPreparer: FeedContentPreparer,
+    private val articleReporter: ArticleReporter,
+    private val recoveryRepository: FeedRecoveryRepository,
+    coordinator: FeedRecoveryCoordinator,
 ) : ViewModel() {
+
+    val verificationAvailable: Boolean = coordinator.available
+    private val verificationMutableState = MutableStateFlow(ReaderVerificationState())
+    val verificationState = verificationMutableState.asStateFlow()
+    private var loadTicket: RecoveryTicket? = null
+    private var verifyTicket: RecoveryTicket? = null
 
     private val readerModeMutableState: MutableStateFlow<ReaderModeState> = MutableStateFlow(
         ReaderModeState.Loading,
     )
     val readerModeState = readerModeMutableState.asStateFlow()
 
-    private val readerFontSettingsMutableState: MutableStateFlow<ReaderFontSettings> = MutableStateFlow(
-        ReaderFontSettings(
-            fontSize = settingsRepository.getReaderModeFontSize(),
-            lineHeight = settingsRepository.getReaderModeLineHeight(),
-            bodyFont = settingsRepository.getReaderModeBodyFont(),
-            headlineFont = settingsRepository.getReaderModeHeadlineFont(),
-        ),
-    )
-    val readerFontSettingsState = readerFontSettingsMutableState.asStateFlow()
+    val readerFontSettingsState = settingsRepository.readerFontSettingsState
 
     private val canNavigateToPreviousMutableState = MutableStateFlow(false)
     val canNavigateToPreviousState = canNavigateToPreviousMutableState.asStateFlow()
@@ -65,6 +77,57 @@ class ReaderModeViewModel internal constructor(
 
     private val currentArticleMutableState = MutableStateFlow<FeedItemUrlInfo?>(null)
     val currentArticleState = currentArticleMutableState.asStateFlow()
+    private val articleReportMutableState = MutableStateFlow(ArticleReportUiState())
+    val articleReportState = combine(
+        currentArticleState,
+        readerModeState,
+        articleReportMutableState,
+    ) { article, state, report ->
+        report.copy(
+            canReport = article != null && article.url.isNotBlank() &&
+                state.isForArticle(article.id) && !report.sending,
+        )
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, ArticleReportUiState())
+
+    fun requestArticleReport() {
+        if (!articleReportState.value.canReport || articleReportMutableState.value.showDisclosure) return
+        articleReportMutableState.update { it.copy(showDisclosure = true) }
+    }
+
+    fun confirmArticleReport() {
+        val article = currentArticleState.value ?: return
+        val state = readerModeState.value
+        if (
+            !articleReportMutableState.value.showDisclosure || article.url.isBlank() ||
+            !state.isForArticle(article.id) || articleReportMutableState.value.sending
+        ) {
+            return
+        }
+        val source = (state as? ReaderModeState.Success)?.readerModeData?.shownContentSource?.name?.lowercase()
+            ?: "unavailable"
+        articleReportMutableState.update {
+            it.copy(showDisclosure = false, sending = true, message = ArticleReportMessage.SENDING)
+        }
+        articleReporter.submit(article.url, source) { sent ->
+            if (currentArticleState.value?.id == article.id) {
+                val result = if (sent) ArticleReportMessage.SENT else ArticleReportMessage.FAILED
+                articleReportMutableState.update { report ->
+                    report.copy(
+                        sending = false,
+                        message = result.takeIf { report.message != null },
+                    )
+                }
+            }
+        }
+    }
+
+    fun cancelArticleReport() {
+        articleReportMutableState.update { it.copy(showDisclosure = false) }
+    }
+
+    fun dismissArticleReportMessage() {
+        articleReportMutableState.update { it.copy(message = null) }
+    }
 
     private var loadReaderModeJob: Job? = null
     private var currentArticleId: String? = null
@@ -73,10 +136,12 @@ class ReaderModeViewModel internal constructor(
 
     fun setLoading() {
         loadReaderModeJob?.cancel()
+        loadTicket?.revoke()
+        loadTicket = null
         readerModeMutableState.value = ReaderModeState.Loading
     }
 
-    fun getReaderModeHtml(urlInfo: FeedItemUrlInfo) {
+    fun loadReaderContent(urlInfo: FeedItemUrlInfo) {
         val effectiveSource = urlInfo.effectiveContentSource()
         val isSameArticle = selectArticle(urlInfo) && lastRequestedSource == effectiveSource
         if (!isSameArticle) {
@@ -85,8 +150,64 @@ class ReaderModeViewModel internal constructor(
         }
     }
 
+    suspend fun getAudioEpisodeReaderInfo(feedItemId: FeedItemId): FeedItemUrlInfo? =
+        databaseHelper.getFeedItemUrlInfo(feedItemId.id)
+
     fun clearSelection() {
+        articleReportMutableState.value = ArticleReportUiState()
+        loadTicket?.revoke()
+        loadTicket = null
         currentArticleMutableState.value = null
+    }
+
+    fun verifyWebsite() {
+        val state = verificationMutableState.value
+        val articleId = state.articleId ?: return
+        val verificationUrl = state.verificationUrl ?: return
+        val urlInfo = currentArticleMutableState.value?.takeIf { it.id == articleId } ?: return
+        if ((state.blockedUntil ?: 0) > Clock.System.now().toEpochMilliseconds()) {
+            verificationMutableState.value = state.copy(failed = true)
+            return
+        }
+        verifyTicket?.revoke()
+        val ticket = recoveryRepository.issueTicket()
+        verifyTicket = ticket
+        verificationMutableState.value = state.copy(failed = false)
+        viewModelScope.launch {
+            val result = try {
+                readerContentFetcher.verifyForReader(
+                    articleId = articleId,
+                    verificationUrl = verificationUrl,
+                    save = settingsRepository.isSaveItemContentOnOpenEnabled(),
+                    ticket = ticket,
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                ReaderFetchResult.Unavailable
+            }
+            if (currentArticleId != articleId) return@launch
+            if (result is ReaderFetchResult.Content) {
+                val data = buildReaderModeData(
+                    urlInfo = urlInfo,
+                    content = result.content,
+                    shownContentSource = ShownContentSource.WEB,
+                    canToggleContentSource = hasAvailableFeedContent(articleId),
+                )
+                verificationMutableState.value = ReaderVerificationState(
+                    articleId = articleId,
+                    saveFailed = result.saveFailed,
+                )
+                emitIfStillCurrent(articleId, ReaderModeState.Success(data))
+            } else {
+                verificationMutableState.update { it.copy(failed = true) }
+            }
+        }
+    }
+
+    fun cancelVerification() {
+        verifyTicket?.revoke()
+        verifyTicket = null
     }
 
     fun resetState() {
@@ -101,23 +222,24 @@ class ReaderModeViewModel internal constructor(
     }
 
     private fun updateNavigationFlags() {
-        val position = currentArticleId?.let { feedStateRepository.getArticlePosition(it) }
+        val position = currentArticleId?.let { articleNavigationRepository.getArticlePosition(it) }
         canNavigateToPreviousMutableState.value = position != null && position.currentPosition > 1
         canNavigateToNextMutableState.value = position != null && position.currentPosition < position.totalArticles
     }
 
     private fun loadArticleContent(urlInfo: FeedItemUrlInfo, effectiveSource: ShownContentSource) {
         loadReaderModeJob?.cancel()
+        val ticket = replaceLoadTicket()
         loadReaderModeJob = viewModelScope.launch {
             readerModeMutableState.value = ReaderModeState.Loading
 
             val requestedArticleId = urlInfo.id
             val data = if (effectiveSource == ShownContentSource.FEED) {
                 // Feed content preferred; fall back to web parsing when the feed ships no content.
-                loadFeedContent(urlInfo) ?: loadWebContent(urlInfo, requestedArticleId)
+                loadFeedContent(urlInfo) ?: loadWebContent(urlInfo, requestedArticleId, ticket)
             } else {
                 // Web content preferred; use the feed copy when fetching, parsing, or loading times out.
-                loadWebContent(urlInfo, requestedArticleId) ?: loadFeedContent(urlInfo)
+                loadWebContent(urlInfo, requestedArticleId, ticket) ?: loadFeedContent(urlInfo)
             }
 
             if (currentArticleId != requestedArticleId) return@launch
@@ -125,67 +247,93 @@ class ReaderModeViewModel internal constructor(
             val state = if (data != null) {
                 ReaderModeState.Success(data)
             } else {
-                htmlNotAvailableFor(urlInfo)
+                contentNotAvailableFor(urlInfo)
             }
             emitIfStillCurrent(requestedArticleId, state)
         }
     }
 
-    private suspend fun loadWebContent(urlInfo: FeedItemUrlInfo, requestedArticleId: String): ReaderModeData? {
+    private suspend fun loadWebContent(
+        urlInfo: FeedItemUrlInfo,
+        requestedArticleId: String,
+        ticket: RecoveryTicket,
+    ): ReaderModeData? {
         if (!urlInfo.canOpenWebReaderMode()) return null
 
-        val cachedContent = feedItemContentFileHandler.loadFeedItemContent(requestedArticleId)
-        if (!cachedContent.isNullOrBlank()) {
-            return buildReaderModeData(
-                urlInfo = urlInfo,
-                content = cachedContent,
-                title = urlInfo.title,
-                shownContentSource = ShownContentSource.WEB,
-                canToggleContentSource = hasAvailableFeedContent(urlInfo.id),
-            )
-        }
-
-        val result = withTimeoutOrNull(PARSE_TIMEOUT) {
-            feedItemParserWorker.parse(requestedArticleId, urlInfo.url, urlInfo.imageUrl)
-        }
+        val content = feedItemContentFileHandler.loadFeedItemContent(requestedArticleId)
+            ?.takeIf { it.isNotBlank() }
+            ?: parseWebContent(urlInfo, requestedArticleId, ticket)
+            ?: return null
         if (currentArticleId != requestedArticleId) return null
 
-        val successResult = result as? ParsingResult.Success ?: return null
-        val htmlContent = successResult.htmlContent?.takeIf { it.isNotBlank() } ?: return null
         return buildReaderModeData(
             urlInfo = urlInfo,
-            content = htmlContent,
-            title = successResult.title ?: urlInfo.title,
+            content = content,
             shownContentSource = ShownContentSource.WEB,
             canToggleContentSource = hasAvailableFeedContent(urlInfo.id),
         )
+    }
+
+    private suspend fun parseWebContent(
+        urlInfo: FeedItemUrlInfo,
+        requestedArticleId: String,
+        ticket: RecoveryTicket,
+    ): String? {
+        val result = withTimeoutOrNull(PARSE_TIMEOUT) {
+            readerContentFetcher.fetchForReader(
+                articleId = requestedArticleId,
+                url = urlInfo.url,
+                save = settingsRepository.isSaveItemContentOnOpenEnabled(),
+                ticket = ticket,
+            )
+        }
+        return when (result) {
+            is ReaderFetchResult.Content -> {
+                val hadState = verificationMutableState.value.articleId == requestedArticleId
+                if (currentArticleId == requestedArticleId && (result.saveFailed || hadState)) {
+                    // A successful load supersedes an earlier challenge for this article
+                    verificationMutableState.value = ReaderVerificationState(
+                        articleId = requestedArticleId,
+                        saveFailed = result.saveFailed,
+                    )
+                }
+                result.content
+            }
+            is ReaderFetchResult.NeedsVerification -> {
+                if (currentArticleId == requestedArticleId) {
+                    verificationMutableState.value = ReaderVerificationState(
+                        articleId = requestedArticleId,
+                        verificationUrl = result.verificationUrl,
+                        blockedUntil = result.blockedUntil,
+                    )
+                }
+                null
+            }
+            ReaderFetchResult.Unavailable, null -> null
+        }
+    }
+
+    private fun replaceLoadTicket(): RecoveryTicket {
+        loadTicket?.revoke()
+        return recoveryRepository.issueTicket().also { loadTicket = it }
     }
 
     private suspend fun loadFeedContent(urlInfo: FeedItemUrlInfo): ReaderModeData? {
         val feedContent = databaseHelper.getFeedItemContent(urlInfo.id)
         if (feedContent.isNullOrBlank()) return null
         val storedUrlInfo = databaseHelper.getFeedItemUrlInfo(urlInfo.id)
-        val siteName = storedUrlInfo?.feedSourceTitle ?: urlInfo.feedSourceTitle
         // Not every entry point carries the feed source base url, so fall back to the stored one:
         // without it relative links and images in feed-provided content cannot resolve.
         val feedBaseUrl = urlInfo.url.ifBlank {
             (urlInfo.feedSourceBaseUrl ?: storedUrlInfo?.feedSourceBaseUrl).orEmpty()
         }
-        val prepared = feedContentPreparer.prepare(
-            html = feedContent,
-            baseUrl = feedBaseUrl,
-            title = urlInfo.title,
-            imageUrl = urlInfo.imageUrl,
-            siteName = siteName,
-        )
+        val prepared = articleContentParser.prepareFeedContent(html = feedContent, baseUrl = feedBaseUrl)
         if (prepared.isBlank()) return null
         return buildReaderModeData(
             urlInfo = urlInfo,
             content = prepared,
-            title = urlInfo.title,
             shownContentSource = ShownContentSource.FEED,
             canToggleContentSource = urlInfo.canOpenWebReaderMode(),
-            siteName = siteName,
             baseUrl = feedBaseUrl,
         )
     }
@@ -195,17 +343,15 @@ class ReaderModeViewModel internal constructor(
         return !feedContent.isNullOrBlank()
     }
 
-    private fun buildReaderModeData(
+    private suspend fun buildReaderModeData(
         urlInfo: FeedItemUrlInfo,
         content: String,
-        title: String?,
         shownContentSource: ShownContentSource,
         canToggleContentSource: Boolean,
-        siteName: String? = null,
         baseUrl: String = urlInfo.getBaseUrl(),
     ): ReaderModeData = ReaderModeData(
         id = FeedItemId(urlInfo.id),
-        title = title,
+        title = urlInfo.title,
         content = content,
         url = urlInfo.url,
         baseUrl = baseUrl,
@@ -215,30 +361,45 @@ class ReaderModeViewModel internal constructor(
         headlineFont = settingsRepository.getReaderModeHeadlineFont(),
         isBookmarked = urlInfo.isBookmarked,
         commentsUrl = urlInfo.commentsUrl,
-        imageUrl = urlInfo.imageUrl,
+        imageUrl = readerImageUrl(urlInfo, shownContentSource),
         shownContentSource = shownContentSource,
         canToggleContentSource = canToggleContentSource,
-        siteName = siteName,
+        siteName = databaseHelper.getFeedItemUrlInfo(urlInfo.id)?.feedSourceTitle ?: urlInfo.feedSourceTitle,
+        audioUrl = databaseHelper.getFeedItemAudioUrl(urlInfo.id),
+        audioImageUrl = databaseHelper.getFeedItemAudioArtwork(urlInfo.id),
+        languageTag = ReaderContentLanguage.fromCachedContent(content),
     )
+
+    private suspend fun readerImageUrl(urlInfo: FeedItemUrlInfo, source: ShownContentSource): String? {
+        val imageUrl = urlInfo.imageUrl ?: return null
+        if (source == ShownContentSource.FEED) return imageUrl
+        val feedContent = databaseHelper.getFeedItemContent(urlInfo.id).orEmpty()
+        // Inline feed images may be mastheads or tracking pixels rejected by extraction.
+        // Let the parsed article own those images instead of adding them back as a hero.
+        return imageUrl.takeUnless {
+            feedContent.contains(imageUrl) || feedContent.contains(imageUrl.replace("&", "&amp;"))
+        }
+    }
 
     fun toggleContentSource() {
         val urlInfo = currentArticleMutableState.value ?: return
         val shownSource = currentShownSource ?: return
         val previousState = readerModeMutableState.value as? ReaderModeState.Success ?: return
         loadReaderModeJob?.cancel()
+        val ticket = replaceLoadTicket()
         readerModeMutableState.value = ReaderModeState.Loading
         loadReaderModeJob = viewModelScope.launch {
             val requestedArticleId = urlInfo.id
             val data = when (shownSource) {
                 ShownContentSource.WEB -> loadFeedContent(urlInfo)
-                ShownContentSource.FEED -> loadWebContent(urlInfo, requestedArticleId)
+                ShownContentSource.FEED -> loadWebContent(urlInfo, requestedArticleId, ticket)
             }
             if (currentArticleId != requestedArticleId) return@launch
 
             val state = when {
                 data != null -> ReaderModeState.Success(data)
                 // Full article parsing failed: fall back to the website, like the initial load does.
-                shownSource == ShownContentSource.FEED -> htmlNotAvailableFor(urlInfo)
+                shownSource == ShownContentSource.FEED -> contentNotAvailableFor(urlInfo)
                 // The toggle is hidden when the feed ships no content, so keep what is on screen.
                 else -> previousState
             }
@@ -248,22 +409,18 @@ class ReaderModeViewModel internal constructor(
 
     fun updateFontSize(newFontSize: Int) {
         settingsRepository.setReaderModeFontSize(newFontSize)
-        readerFontSettingsMutableState.update { it.copy(fontSize = newFontSize) }
     }
 
     fun updateLineHeight(newLineHeight: Int) {
         settingsRepository.setReaderModeLineHeight(newLineHeight)
-        readerFontSettingsMutableState.update { it.copy(lineHeight = newLineHeight) }
     }
 
     fun updateBodyFont(font: ReaderFontFamily) {
         settingsRepository.setReaderModeBodyFont(font)
-        readerFontSettingsMutableState.update { it.copy(bodyFont = font) }
     }
 
     fun updateHeadlineFont(font: ReaderFontFamily) {
         settingsRepository.setReaderModeHeadlineFont(font)
-        readerFontSettingsMutableState.update { it.copy(headlineFont = font) }
     }
 
     fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {
@@ -281,6 +438,12 @@ class ReaderModeViewModel internal constructor(
 
     private fun selectArticle(urlInfo: FeedItemUrlInfo): Boolean {
         val isSameArticle = currentArticleId == urlInfo.id && readerModeMutableState.value.isForArticle(urlInfo.id)
+        if (currentArticleId != urlInfo.id) articleReportMutableState.value = ArticleReportUiState()
+        if (verificationMutableState.value.articleId != urlInfo.id) {
+            // A Retry-After or a pending verification belongs to one article only
+            cancelVerification()
+            verificationMutableState.value = ReaderVerificationState()
+        }
         currentArticleId = urlInfo.id
         currentArticleMutableState.value = urlInfo
         updateNavigationFlags()
@@ -291,10 +454,10 @@ class ReaderModeViewModel internal constructor(
         loadReaderModeJob?.cancel()
         selectArticle(urlInfo)
         currentShownSource = null
-        readerModeMutableState.value = htmlNotAvailableFor(urlInfo)
+        readerModeMutableState.value = contentNotAvailableFor(urlInfo)
     }
 
-    private fun htmlNotAvailableFor(urlInfo: FeedItemUrlInfo) = ReaderModeState.HtmlNotAvailable(
+    private fun contentNotAvailableFor(urlInfo: FeedItemUrlInfo) = ReaderModeState.ContentNotAvailable(
         url = urlInfo.url,
         id = urlInfo.id,
         isBookmarked = urlInfo.isBookmarked,
@@ -313,11 +476,11 @@ class ReaderModeViewModel internal constructor(
                 canNavigateToNextMutableState.value = false
                 return@launch
             }
-            val nextArticle = feedStateRepository.getNextArticle(articleId)?.toFeedItemUrlInfo()
+            val nextArticle = articleNavigationRepository.getNextArticle(articleId)?.toFeedItemUrlInfo()
             if (nextArticle != null) {
                 feedActionsRepository.markAsRead(hashSetOf(FeedItemId(nextArticle.id)))
                 if (nextArticle.hasNoUrl() || nextArticle.canOpenWebReaderMode()) {
-                    getReaderModeHtml(nextArticle)
+                    loadReaderContent(nextArticle)
                 } else {
                     showFallbackForArticle(nextArticle)
                 }
@@ -332,13 +495,13 @@ class ReaderModeViewModel internal constructor(
             canNavigateToPreviousMutableState.value = false
             return
         }
-        val prevArticle = feedStateRepository.getPreviousArticle(articleId)?.toFeedItemUrlInfo()
+        val prevArticle = articleNavigationRepository.getPreviousArticle(articleId)?.toFeedItemUrlInfo()
         if (prevArticle != null) {
             viewModelScope.launch {
                 feedActionsRepository.markAsRead(hashSetOf(FeedItemId(prevArticle.id)))
             }
             if (prevArticle.hasNoUrl() || prevArticle.canOpenWebReaderMode()) {
-                getReaderModeHtml(prevArticle)
+                loadReaderContent(prevArticle)
             } else {
                 showFallbackForArticle(prevArticle)
             }
@@ -350,7 +513,7 @@ class ReaderModeViewModel internal constructor(
     private fun ReaderModeState.isForArticle(articleId: String): Boolean = when (this) {
         ReaderModeState.Loading -> false
         is ReaderModeState.Success -> readerModeData.id.id == articleId
-        is ReaderModeState.HtmlNotAvailable -> id == articleId
+        is ReaderModeState.ContentNotAvailable -> id == articleId
     }
 
     private fun FeedItem.toFeedItemUrlInfo() = FeedItemUrlInfo(
@@ -380,7 +543,21 @@ class ReaderModeViewModel internal constructor(
         }
     }
 
+    override fun onCleared() {
+        loadTicket?.revoke()
+        verifyTicket?.revoke()
+        super.onCleared()
+    }
+
     private companion object {
         private val PARSE_TIMEOUT = 20.seconds
     }
 }
+
+data class ReaderVerificationState(
+    val articleId: String? = null,
+    val verificationUrl: String? = null,
+    val blockedUntil: Long? = null,
+    val failed: Boolean = false,
+    val saveFailed: Boolean = false,
+)

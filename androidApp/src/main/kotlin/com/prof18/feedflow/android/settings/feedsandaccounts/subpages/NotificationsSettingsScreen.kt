@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -46,18 +47,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BuildConfig
+import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.settings.components.BackgroundSyncRestrictionsSection
+import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
+import com.prof18.feedflow.android.ui.settings.NotificationToggleRow
+import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.NotificationSettingState
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.NotificationsViewModel
-import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
-import com.prof18.feedflow.shared.ui.settings.NotificationToggleRow
-import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -214,6 +216,7 @@ private fun NotificationSettingsScreenContent(
                         onSyncOnlyOnWifiChange = onSyncOnlyOnWifiToggle,
                         onSyncOnlyWhenChargingChange = onSyncOnlyWhenChargingToggle,
                         modifier = Modifier.padding(vertical = Spacing.small),
+                        enabled = syncPeriodState != SyncPeriod.NEVER,
                     )
 
                     if (BuildConfig.DEBUG) {
@@ -233,9 +236,19 @@ private fun NotificationSettingsScreenContent(
                         onModeSelected = onNotificationModeSelected,
                     )
 
+                    if (notificationState.notificationMode == NotificationMode.ARTICLE) {
+                        Text(
+                            text = strings.settingsNotificationModeArticleDesc,
+                            modifier = Modifier.padding(horizontal = Spacing.regular),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(Spacing.xsmall))
 
                     NotificationToggleRow(
+                        modifier = Modifier.testTag(SettingsE2eIds.NOTIFICATIONS_ENABLE_ALL),
                         title = strings.settingsNotificationsEnableAllTitle,
                         isChecked = notificationState.isEnabledForAll,
                         onCheckedChange = {
@@ -253,6 +266,7 @@ private fun NotificationSettingsScreenContent(
                     key = { it.feedSourceId },
                 ) { feedSource ->
                     NotificationToggleRow(
+                        modifier = Modifier.testTag(SettingsE2eIds.NOTIFICATIONS_FEED_PREFIX + feedSource.feedSourceId),
                         title = feedSource.feedSourceTitle,
                         isChecked = feedSource.isEnabled,
                         onCheckedChange = { isEnabled ->
@@ -382,6 +396,10 @@ private fun NotificationModeSelector(
         title = strings.settingsNotificationMode,
         currentValue = currentMode,
         options = persistentListOf(
+            SettingDropdownOption(
+                NotificationMode.ARTICLE,
+                strings.settingsNotificationModeArticle,
+            ),
             SettingDropdownOption(
                 NotificationMode.FEED_SOURCE,
                 strings.settingsNotificationModeFeedSource,

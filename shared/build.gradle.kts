@@ -4,10 +4,33 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.feedflow.detekt)
     alias(libs.plugins.skie)
     id("com.feedflow.cloud-sync-tests")
+}
+
+val generateArticleReportBuildInfo by tasks.registering {
+    val parserVersion = libs.versions.klead
+    inputs.property("parserVersion", parserVersion)
+    val outputDirectory = layout.buildDirectory.dir("generated/article-report/commonMain/kotlin")
+    outputs.dir(outputDirectory)
+    doLast {
+        val output = outputDirectory.get().file(
+            "com/prof18/feedflow/shared/domain/articlereport/ArticleReportBuildInfo.kt",
+        ).asFile
+        output.parentFile.mkdirs()
+        output.writeText(
+            """
+            package com.prof18.feedflow.shared.domain.articlereport
+
+            internal object ArticleReportBuildInfo {
+                const val PARSER_VERSION = "${parserVersion.get()}"
+            }
+            """.trimIndent() + "\n",
+        )
+    }
 }
 
 kotlin {
@@ -77,7 +100,9 @@ kotlin {
         }
 
         commonMain {
+            kotlin.srcDir(generateArticleReportBuildInfo)
             dependencies {
+                implementation(libs.androidx.compose.runtime.annotation)
                 implementation(project(":database"))
                 implementation(project(":feedSync:database"))
                 implementation(project(":feedSync:icloud"))
@@ -88,14 +113,17 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.koin.core.vm)
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.serialization.json)
                 implementation(libs.com.prof18.rss.parser)
                 implementation(libs.csv)
                 implementation(libs.multiplatform.settings)
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.mock)
                 implementation(libs.skie.annotation)
                 implementation(libs.stately.concurrency)
                 implementation(libs.klead)
+                implementation(libs.ksoup)
 
                 api(project(":core"))
                 api(project(":i18n"))
@@ -118,7 +146,6 @@ kotlin {
                 implementation(libs.koin.test)
                 implementation(libs.turbine)
                 implementation(libs.multiplatform.settings.test)
-                implementation(libs.ktor.client.mock)
             }
         }
 
@@ -126,7 +153,6 @@ kotlin {
             dependsOn(commonMain.get())
 
             dependencies {
-                implementation(libs.jsoup)
                 implementation(libs.ktor.client.okhttp)
             }
         }
@@ -202,8 +228,6 @@ kotlin {
 
             dependencies {
                 implementation(libs.kotlinx.coroutines.swing)
-                implementation(libs.htmlunit)
-                implementation(libs.kotlinx.serialization.json)
                 api(libs.sentry)
             }
         }

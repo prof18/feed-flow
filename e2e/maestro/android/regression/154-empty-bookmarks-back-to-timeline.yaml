@@ -5,7 +5,7 @@ appId: com.prof18.feedflow.debug
 - extendedWaitUntil:
     visible:
       id: e2e_seed_complete
-    timeout: 15000
+    timeout: 30000
 - tapOn:
     id: e2e_open_app
 
@@ -20,11 +20,22 @@ appId: com.prof18.feedflow.debug
 - longPressOn:
     id: article_row_e2e_article_bookmarked_unread
 - tapOn: "Remove from bookmarks"
+- assertVisible: "Are you sure you want to remove this article from Bookmarks?"
+- tapOn: "Cancel"
+- assertVisible:
+    id: article_row_e2e_article_bookmarked_unread
+- longPressOn:
+    id: article_row_e2e_article_bookmarked_unread
+- tapOn: "Remove from bookmarks"
+- assertVisible: "Are you sure you want to remove this article from Bookmarks?"
+- tapOn: "Confirm"
 - assertVisible:
     id: article_row_e2e_article_bookmarked_read
 - longPressOn:
     id: article_row_e2e_article_bookmarked_read
 - tapOn: "Remove from bookmarks"
+- assertVisible: "Are you sure you want to remove this article from Bookmarks?"
+- tapOn: "Confirm"
 
 # Empty Bookmarks state shows the bookmark-specific message and the
 # Back to timeline shortcut.

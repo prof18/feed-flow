@@ -105,7 +105,7 @@ class FeedUrlRetrieverTest : KoinTestBase() {
             }
         }
         return FeedUrlRetriever(
-            htmlParser = JvmHtmlParser(logger),
+            htmlParser = KsoupHtmlParser(logger),
             htmlRetriever = HtmlRetriever(logger, client, unexpectedRequestHttpClient()),
         )
     }

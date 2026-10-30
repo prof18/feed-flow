@@ -4,8 +4,9 @@ import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.platformLogWriter
-import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.model.FeedFetchTier
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.FEEDFLOW_BROWSER_FALLBACK_HEADERS
 import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
 import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.database.createDatabaseDriver
@@ -14,17 +15,13 @@ import com.prof18.feedflow.shared.domain.AppForegroundState
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.FeedDownloadWorker
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
-import com.prof18.feedflow.shared.domain.JvmHtmlParser
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryAndroid
+import com.prof18.feedflow.shared.domain.contentprefetch.BackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchWorker
+import com.prof18.feedflow.shared.domain.contentprefetch.WorkManagerBackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
-import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
-import com.prof18.feedflow.shared.domain.feeditem.HtmlFeedContentPreparer
 import com.prof18.feedflow.shared.domain.feedsync.AndroidSyncDatabaseFileProvider
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
@@ -37,24 +34,24 @@ import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerAndroid
-import com.prof18.feedflow.shared.domain.parser.AndroidFeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerAndroid
-import com.prof18.feedflow.shared.domain.parser.KleadContentFormat
-import com.prof18.feedflow.shared.domain.parser.KleadFeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.ParserSelectingFeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.ReaderModeParserWarmer
+import com.prof18.feedflow.shared.domain.parser.JvmFeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.recovery.CapturedFeedParser
+import com.prof18.feedflow.shared.domain.recovery.WebsiteIdentityProvider
+import com.prof18.feedflow.shared.domain.recovery.WebsiteSessionHttp
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
+import com.prof18.feedflow.shared.presentation.WidgetRefreshState
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
-import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import java.io.File
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
     single<SyncDatabaseFileProvider> {
@@ -67,14 +64,21 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     single<RssParserWrapper> {
         val feedHttpCacheStore = get<FeedHttpCacheStore>()
         RssParserWrapperImpl(
-            primaryParser = createRssParser(
-                userAgent = FEEDFLOW_USER_AGENT,
-                feedHttpCacheStore = feedHttpCacheStore,
-            )::getRssChannel,
-            forbiddenFallbackParser = createRssParser(
-                userAgent = FEEDFLOW_FALLBACK_USER_AGENT,
-                feedHttpCacheStore = feedHttpCacheStore,
-            )::getRssChannel,
+            feedHttpCacheStore = feedHttpCacheStore,
+            parsers = mapOf(
+                FeedFetchTier.PRIMARY to createRssParser(
+                    headers = mapOf("User-Agent" to FEEDFLOW_USER_AGENT),
+                    feedHttpCacheStore = feedHttpCacheStore,
+                )::getRssChannel,
+                FeedFetchTier.LINK_FREE to createRssParser(
+                    headers = mapOf("User-Agent" to FEEDFLOW_FALLBACK_USER_AGENT),
+                    feedHttpCacheStore = feedHttpCacheStore,
+                )::getRssChannel,
+                FeedFetchTier.BROWSER to createRssParser(
+                    headers = FEEDFLOW_BROWSER_FALLBACK_HEADERS,
+                    feedHttpCacheStore = feedHttpCacheStore,
+                )::getRssChannel,
+            ),
         )
     }
 
@@ -88,12 +92,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     factory<OpmlFeedHandler> {
         OpmlFeedHandlerAndroid(
             dispatcherProvider = get(),
-        )
-    }
-
-    factory<HtmlParser> {
-        JvmHtmlParser(
-            logger = getWith("JvmHtmlParser"),
         )
     }
 
@@ -115,57 +113,11 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     single<FeedItemContentFileHandler> {
-        FeedItemContentFileHandlerAndroid(
-            appContext = get(),
+        JvmFeedItemContentFileHandler(
+            articlesDirectory = File(get<Context>().filesDir, JvmFeedItemContentFileHandler.ARTICLES_DIR),
             dispatcherProvider = get(),
             logger = getWith("FeedItemContentFileHandler"),
         )
-    }
-
-    single {
-        AndroidFeedItemParserWorker(
-            htmlRetriever = get(),
-            appContext = get(),
-            logger = getWith("FeedItemParserWorker"),
-            dispatcherProvider = get(),
-            feedItemContentFileHandler = get(),
-            settingsRepository = get(),
-        )
-    }
-
-    single<FeedItemParserWorker> {
-        val kleadParser = KleadFeedItemParserWorker(
-            contentFormat = KleadContentFormat.HTML,
-            htmlRetriever = get(),
-            logger = getWith("KleadFeedItemParserWorker"),
-            feedItemContentFileHandler = get(),
-            settingsRepository = get(),
-            cacheResultWhenEnabled = true,
-        )
-        ParserSelectingFeedItemParserWorker(
-            settingsRepository = get(),
-            legacyParser = get<AndroidFeedItemParserWorker>(),
-            kleadParser = kleadParser,
-        )
-    }
-
-    single<ReaderModeParserWarmer> {
-        get<AndroidFeedItemParserWorker>()
-    }
-
-    factory<FeedItemParserWorker>(KLEAD_PREFETCH_PARSER) {
-        KleadFeedItemParserWorker(
-            contentFormat = KleadContentFormat.HTML,
-            htmlRetriever = get(),
-            logger = getWith("KleadPrefetchParserWorker"),
-            feedItemContentFileHandler = get(),
-            settingsRepository = get(),
-            cacheResultWhenEnabled = false,
-        )
-    }
-
-    single<FeedContentPreparer> {
-        HtmlFeedContentPreparer()
     }
 
     viewModel {
@@ -217,13 +169,19 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     workerOf(::SyncWorkManager)
     workerOf(::FeedbinHistorySyncWorker)
 
+    single { WidgetRefreshState() }
+
     worker {
         FeedDownloadWorker(
             feedFetcherRepository = get(),
             widgetUpdater = get(),
             databaseHelper = get(),
             notifier = get(),
+            articleNotifier = get(),
+            articleNotificationRepository = get(),
+            settingsRepository = get(),
             appForegroundState = get(),
+            widgetRefreshState = get(),
             appContext = get(),
             workerParams = get(),
         )
@@ -248,28 +206,17 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     worker {
         ContentPrefetchWorker(
+            contentPrefetcher = get(),
+            logger = getWith("ContentPrefetchWorker"),
             appContext = get(),
             workerParams = get(),
-            databaseHelper = get(),
-            dispatcherProvider = get(),
-            htmlRetriever = get(),
-            kleadFeedItemParserWorker = get(KLEAD_PREFETCH_PARSER),
-            feedItemContentFileHandler = get(),
-            settingsRepository = get(),
-            logger = getWith("ContentPrefetchWorker"),
         )
     }
 
-    single<ContentPrefetchRepository> {
-        ContentPrefetchRepositoryAndroid(
-            logger = getWith("ContentPrefetchRepositoryAndroid"),
-            settingsRepository = get(),
-            databaseHelper = get(),
-            dispatcherProvider = get(),
-            htmlRetriever = get(),
+    single<BackgroundPrefetchScheduler> {
+        WorkManagerBackgroundPrefetchScheduler(
             appContext = get(),
-            feedItemContentFileHandler = get(),
-            kleadFeedItemParserWorker = get(KLEAD_PREFETCH_PARSER),
+            logger = getWith("WorkManagerBackgroundPrefetchScheduler"),
         )
     }
 
@@ -283,4 +230,19 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 internal actual fun platformLogWriters(): List<LogWriter> =
     listOf(platformLogWriter())
 
-private val KLEAD_PREFETCH_PARSER = named("kleadPrefetchParser")
+/**
+ * Website verification recovery, added only by the app together with its [WebsiteIdentityProvider].
+ * Tests and other Koin setups without the provider keep recovery off.
+ */
+fun websiteRecoveryModule(identityProvider: (Scope) -> WebsiteIdentityProvider): Module = module {
+    single<WebsiteIdentityProvider> { identityProvider(this) }
+    single<WebsiteSessionHttp> { OkHttpWebsiteSessionHttp(identityProvider = get(), cacheStore = get()) }
+    single {
+        CapturedFeedParser(
+            createRssParser(
+                headers = mapOf("User-Agent" to FEEDFLOW_USER_AGENT),
+                feedHttpCacheStore = get(),
+            )::parse,
+        )
+    }
+}

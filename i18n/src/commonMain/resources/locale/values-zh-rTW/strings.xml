@@ -80,7 +80,6 @@
     <string name="about_menu_faq">常見問題</string>
     <string name="rename_feed_source_name_button">重新命名</string>
     <string name="in_app_browser">內建瀏覽器</string>
-    <string name="settings_reader_mode">以閱讀模式開啟文章</string>
     <string name="settings_save_reader_mode_content">開啟文章後保存內文以便離線閱讀</string>
     <string name="settings_prefetch_article_content">預先取得文章內文以便離線閱讀</string>
     <string name="settings_prefetch_article_content_warning">啟用後，同步時間和數據用量均會增加，因為更新消息來源時得一併下載文章內文。若文章數量較多，亦可能降低效能。建議僅在需要離線存取文章時才啟用此功能。</string>
@@ -395,8 +394,6 @@
     <string name="settings_feed_layout_grid">網格</string>
     <string name="settings_feed_layout_grid_toggle">在寬螢幕上使用網格</string>
     <string name="article_bookmarked_content_description">已新增至書籤收藏</string>
-    <string name="increase_line_height_button_content_description">增加行高</string>
-    <string name="decrease_line_height_button_content_description">減少行高</string>
     <string name="expand_category_button_content_description">展開 %s</string>
     <string name="collapse_category_button_content_description">收折 %s</string>
     <string name="next">下一篇</string>

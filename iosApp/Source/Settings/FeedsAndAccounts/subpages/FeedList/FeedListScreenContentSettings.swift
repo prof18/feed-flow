@@ -65,7 +65,8 @@ struct FeedListSettingsScreenContent: View {
                             : formatDateTimeExample(dateFormat: dateFormat, timeFormat: timeFormat),
                         commentsUrl: nil,
                         isBookmarked: false,
-                        contentDirection: nil
+                        contentDirection: nil,
+                        audioUrl: nil
                     ),
                     index: 0,
                     feedFontSizes: feedFontSizes,
@@ -224,9 +225,11 @@ struct FeedListSettingsScreenContent: View {
 }
 
 private func formatDateTimeExample(dateFormat: DateFormat, timeFormat: TimeFormat) -> String {
-    let datePart: String = switch dateFormat {
+    let datePart = switch dateFormat {
     case .normal:
         "25/12"
+    case .dayMonthDot:
+        "25.12"
     case .american:
         "12/25"
     case .iso:

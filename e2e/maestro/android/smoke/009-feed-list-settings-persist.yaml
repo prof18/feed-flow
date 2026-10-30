@@ -28,6 +28,13 @@ appId: com.prof18.feedflow.debug
     id: feed_list_settings_order
 - tapOn:
     text: "Oldest First"
+- scrollUntilVisible:
+    element: "Date format"
+    direction: DOWN
+    timeout: 10000
+- tapOn: "Date format"
+- tapOn: "Day\\.Month"
+- assertVisible: "Day\\.Month"
 - tapOn:
     id: settings_back_button
 - tapOn:
@@ -39,8 +46,13 @@ appId: com.prof18.feedflow.debug
     text: "E2E Old Article Eligible For Delete.*"
 - assertNotVisible:
     id: article_image_e2e_article_old
+- assertVisible:
+    text: "[0-9]{2}\\.[0-9]{2}(\\.[0-9]{4})? - .*"
+- stopApp
 - launchApp
 - assertVisible:
     text: "E2E Old Article Eligible For Delete.*"
 - assertNotVisible:
     id: article_image_e2e_article_old
+- assertVisible:
+    text: "[0-9]{2}\\.[0-9]{2}(\\.[0-9]{4})? - .*"

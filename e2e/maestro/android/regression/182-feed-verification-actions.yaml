@@ -1,0 +1,62 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich&verification=pending
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 30000
+- tapOn:
+    id: e2e_open_app
+# The seeded pending challenge prompts once in the foreground.
+- assertVisible: "This website needs a quick check"
+- assertVisible: "Cancel"
+- tapOn: "Cancel"
+- assertNotVisible:
+    id: website_verification_explanation
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feeds_accounts
+- tapOn:
+    id: feed_source_list_settings_row
+- tapOn:
+    id: feed_source_list_category_e2e_category_technology
+- longPressOn:
+    id: feed_source_list_row_e2e_feed_android_weekly
+- assertVisible: "Verify website"
+- assertNotVisible: "Clear website verification"
+- tapOn: "Verify website"
+- assertVisible:
+    id: website_verification_explanation
+- assertVisible: "This website needs a quick check"
+- assertVisible: "Cancel"
+- tapOn: "Cancel"
+- assertNotVisible:
+    id: website_verification_explanation
+
+# Retry from the source menu and check the app-owned browser surface.
+- longPressOn:
+    id: feed_source_list_row_e2e_feed_android_weekly
+- tapOn: "Verify website"
+- assertVisible:
+    id: website_verification_explanation
+- tapOn:
+    id: website_verification_confirm
+- assertVisible:
+    id: website_verification_screen
+- assertVisible: "feed-verification.invalid"
+- assertNotVisible: "This XML file does not appear.*"
+- assertVisible:
+    id: website_verification_cancel
+- tapOn:
+    id: website_verification_cancel
+- assertNotVisible:
+    id: website_verification_screen
+
+# Cancelling keeps the feed waiting for verification.
+- longPressOn:
+    id: feed_source_list_row_e2e_feed_android_weekly
+- assertVisible: "Verify website"

@@ -54,54 +54,64 @@ Optional live-store checks:
    - Store listing screenshot images changed: store screenshots may need upload.
    - Website screenshot assets changed: website screenshot gallery/hero may need deploy.
 6. If live store checking is requested or this is the weekly automation, compare against current store state when credentials are available.
-   - Google Play: do not use Gradle Play Publisher bootstrap for the recurring audit until its graphics download hang is fixed. Report Google Play live state as unavailable when no other reliable read-only path exists, and continue with checked-in listing output/source-copy checks.
+   - Google Play: read live state with `.scripts/pull-google-play-listing.py` (see Live Store Checks), never with Gradle Play Publisher bootstrap. If the script's config is unavailable, report the live check as unavailable and continue with checked-in listing output/source-copy checks.
    - App Store: pull metadata/screenshots into a temp directory and compare against FeedFlow's source store/screenshot copy where mapping is clear.
    - Microsoft Store: read the live listing with `pcenter listing show` and compare against `assets/storecopy/<locale>/`.
-7. Add follow-up TODOs to the FeedFlow Obsidian board when the audit finds actionable store release work.
-   - Board path: `/Users/mg/Workspace/Notes/projects/feed-flow/feed-flow-board.md`.
-   - Use the `## marketing` lane for store listing, ASO, screenshot, and store localization release work.
-   - Preserve the kanban Markdown format: add one `- [ ] ...` item per action under the lane.
-   - Keep TODO text short and concrete, but include the exact thing to change: store, locale, and field or asset type. Examples:
-     - `- [ ] Sync App Store Russian subtitle, keywords, and promotional text`
-     - `- [ ] Generate Google Play Latvian listing text output`
-     - `- [ ] Upload App Store Latvian metadata`
-     - `- [ ] Regenerate App Store Russian iPhone/iPad screenshots`
-     - `- [ ] Update checked-in Google Play Russian title, short description, and full description from live/source`
-   - Do not add TODOs just because a translation was created or changed. Add TODOs only after verifying the relevant source copy is complete in the repo: store metadata cards require complete `assets/storecopy/<locale>/` content; screenshot cards require complete `assets/screenshotcopy/<locale>/` content.
-   - Keep store metadata follow-up and screenshot generation/upload follow-up as separate board cards when both apply.
-   - Do not add TODOs for app-string translation gaps, incomplete store/screenshot copy, non-actionable status, credential setup noise, or findings already represented by an existing unchecked board item.
-   - If the board is unavailable or cannot be edited, include the TODO text in the final report under `Action needed` instead.
+7. Add follow-up TODOs to the FeedFlow native Obsidian Base when the audit finds actionable store release work.
+   - Base path: `/Users/mg/Workspace/Notes/projects/feed-flow/feed-flow-board.base`.
+   - Create exactly one Markdown item note per operational action in `/Users/mg/Workspace/Notes/projects/feed-flow/items/`, with YAML frontmatter `Status: marketing` and an integer `Position` sorted ascending within that column. Add optional `Reference: <URL>` for a useful store, PR, or source URL; display this property as `Link` in the Base.
+   - Keep item titles short and concrete, but include the exact thing to change: store, locale, and field or asset type. Use the existing examples below as the title text, without Markdown checkbox syntax:
+     - `Sync App Store Russian subtitle, keywords, and promotional text`
+     - `Generate Google Play Latvian listing text output`
+     - `Upload App Store Finnish metadata`
+     - `Regenerate App Store Russian iPhone/iPad screenshots`
+     - `Update checked-in Google Play Russian title, short description, and full description from live/source`
+   - Do not add items just because a translation was created or changed. Add items only after verifying the relevant source copy is complete in the repo: store metadata items require complete `assets/storecopy/<locale>/` content; screenshot items require complete `assets/screenshotcopy/<locale>/` content.
+   - Keep store metadata follow-up and screenshot generation/upload follow-up as separate items when both apply.
+   - Do not add items for app-string translation gaps, incomplete store/screenshot copy, non-actionable status, credential setup noise, or findings already represented by an existing item.
+   - If the Base is unavailable or cannot be updated, include the item title in the final report under `Action needed` instead.
 
 ## Live Store Checks
 
 ### Google Play
 
-Use the repository's dedicated Publishing API audit script. The API requires a Play
-edit for listing/image reads, so it creates one disposable uncommitted edit, reads the
-content into a temporary directory, then deletes the edit. It never writes under
-`androidApp/src/googlePlay/play/` or publishes metadata:
+Use `gplay` (PollyGlot/google-play-cli), which reads the service account from the macOS
+Keychain. `metadata pull` reads the live listings inside a read-only Play edit and
+discards it, so nothing is committed or published. Always pull into a temporary
+directory, never under `androidApp/src/googlePlay/play/`:
 
 ```bash
 audit_dir="$(mktemp -d /private/tmp/feedflow-play-listing.XXXXXX)"
-python3 .scripts/pull-google-play-listing.py --output-dir "$audit_dir"
+gplay metadata pull --package com.prof18.feedflow --dir "$audit_dir" --output json
 ```
 
-The script reads `FEEDFLOW_PLAY_CONFIG_JSON` by default. If it is absent or invalid,
-report the live check as unavailable. Compare `listings.json` against the checked-in
-listing output and `image-counts.json` against the expected screenshot assets.
+It writes `<locale>/title.txt`, `short_description.txt` and `full_description.txt`
+(underscores). Compare them with the checked-in
+`androidApp/src/googlePlay/play/listings/<locale>/title.txt`, `short-description.txt` and
+`full-description.txt` (hyphens). A field that is empty on Play writes no file.
+
+Live screenshot counts are unavailable for now: in gplay 2.3.2,
+`gplay metadata images list` and `images pull` fail with HTTP 400 on `promoGraphic`.
+Report screenshot drift from committed/local evidence only, and retry
+`gplay metadata images list --package com.prof18.feedflow --output json` after
+upgrading gplay. `.scripts/pull-google-play-listing.py` still works when a key file is
+passed explicitly with `--credentials`, but none is kept on disk any more.
+
+If `gplay auth status` shows no active account or the pull fails on auth, report the
+live check as unavailable.
 
 Do not use Gradle Play Publisher bootstrap tasks during the recurring audit. They reset
 the existing Play directory and can delete/partially replace tracked graphics and
 release notes. Never run any `publish*` task during this audit.
 
-- `Google Play live check: unavailable - FEEDFLOW_PLAY_CONFIG_JSON is unavailable or invalid`
+- `Google Play live check: unavailable - gplay is not installed or not logged in`
 
-Latvian source store copy is currently incomplete, so report it without creating store or screenshot follow-up. Reassess supported App Store locales only after the source is complete.
+Latvian (`lv`) is supported by Google Play but is not a supported App Store Connect metadata locale. Exclude Latvian from App Store metadata, field-limit, and screenshot checks and follow-up cards; Latvia uses English (U.K.). Audit Latvian Play copy and screenshots according to their own source completeness. Verify Apple locale support before flagging a missing App Store localization.
 
 Still compare local source and checked-in generated Play output:
 
-- If `assets/storecopy/<locale>/` is complete but `androidApp/src/googlePlay/play/listings/<locale>/` is missing/stale, update or create generated local text output when possible, or create a board card naming the exact local output work.
-- If checked-in Play screenshots/assets changed, create screenshot upload/regeneration cards only from committed/local evidence. Use the audit script's image counts to identify live screenshot drift.
+- If `assets/storecopy/<locale>/` is complete but `androidApp/src/googlePlay/play/listings/<locale>/` is missing/stale, update or create generated local text output when possible, or create a Base item naming the exact local output work.
+- If checked-in Play screenshots/assets changed, create screenshot upload/regeneration Base items only from committed/local evidence. Use the audit script's image counts to identify live screenshot drift.
 
 ### App Store
 
@@ -134,7 +144,7 @@ screenshots nested inside it; it does not expose screenshots in a top-level data
 Count those nested arrays before declaring screenshots missing, and download only sets
 whose screenshot count is nonzero.
 
-For App Store metadata, validate field limits before syncing or creating board cards. Current limits used by `asc metadata validate`: name 30, subtitle 30, keywords 100, description 4000, promotional text 170. If source fields exceed these limits, the actionable card should be about shortening/fixing the source copy, not syncing ASC.
+For App Store metadata, validate field limits before syncing or creating Base items. Current limits used by `asc metadata validate`: name 30, subtitle 30, keywords 100, description 4000, promotional text 170. If source fields exceed these limits, the actionable item should be about shortening/fixing the source copy, not syncing ASC.
 
 If `asc` is missing, auth is unavailable, or the app/version cannot be resolved, report `App Store live check: unavailable` with the reason.
 
@@ -191,7 +201,7 @@ Three things will produce false findings unless you handle them:
    an **untranslated placeholder**. Never create a sync card for one — pushing it would
    replace a correctly translated live listing with English.
 3. **Titles are per-locale and optional.** Some locales carry a `title` and some return
-   `""` — as of 2026-08-11, 9 of 25 did. An empty title is normal and must not be reported
+   `""`. An empty title is normal and must not be reported
    as drift, and neither must a locale whose title differs from the repo: the Microsoft Store
    title is a *reserved product name* chosen in Partner Center, not free text, so a
    difference is something to confirm with the user rather than a field to sync. (A locale
@@ -266,22 +276,22 @@ locale ready to generate, while the latter is the live-store upload state.
 
 If nothing changed, say that no translation, store-copy, or screenshot action is needed.
 
-## Obsidian Board Follow-Up
+## Obsidian Base Follow-Up
 
-When store action is needed, write a compact board item so the work is not lost after the audit thread ends. Prefer one grouped task per operational outcome. Do not create board items for missing app-string translations; those belong only in the audit report.
+When store action is needed, create one compact Base item note per operational outcome so the work is not lost after the audit thread ends. Do not create Base items for missing app-string translations; those belong only in the audit report. Each item is a single Markdown note in `/Users/mg/Workspace/Notes/projects/feed-flow/items/` and must have YAML frontmatter with `Status: marketing` and an integer `Position`; add optional `Reference: <URL>` when a useful supporting URL exists. The Base displays `Reference` as `Link`. Do not create a separate detail note for the same task.
 
-- App Store metadata stale: `- [ ] Sync App Store <locale> <fields>`
-- App Store source copy over limits: `- [ ] Shorten App Store <locale> <fields> to <limits>`
-- Google Play live metadata stale: `- [ ] Sync Google Play <locale> <fields>`
-- Microsoft Store live listing stale: `- [ ] Sync Microsoft Store <locale> <fields>`
-- Microsoft Store source copy over limits: `- [ ] Shorten Microsoft Store <locale> <fields> to <limits>`
-- Google Play generated output stale but live matches source: update the generated files during the audit; if that is blocked, use `- [ ] Update checked-in Google Play <locale> <fields> from live/source`
-- Store copy complete in repo but locale not created/shipped: `- [ ] Add <locale> store metadata to <supported stores>` or `- [ ] Generate <store> <locale> listing output`
-- Screenshots stale or incomplete: `- [ ] Regenerate/upload <store> <locale> <device/form-factor> screenshots`
-- Screenshot copy complete in repo but screenshots not regenerated/uploaded: `- [ ] Create localized screenshots for <locale>`
-- Store or screenshot locale scaffold incomplete: report only; do not create a board item until the relevant source copy is complete.
+- App Store metadata stale: `Sync App Store <locale> <fields>`
+- App Store source copy over limits: `Shorten App Store <locale> <fields> to <limits>`
+- Google Play live metadata stale: `Sync Google Play <locale> <fields>`
+- Microsoft Store live listing stale: `Sync Microsoft Store <locale> <fields>`
+- Microsoft Store source copy over limits: `Shorten Microsoft Store <locale> <fields> to <limits>`
+- Google Play generated output stale but live matches source: update the generated files during the audit; if that is blocked, use `Update checked-in Google Play <locale> <fields> from live/source`
+- Store copy complete in repo but locale not created/shipped: `Add <locale> store metadata to <supported stores>` or `Generate <store> <locale> listing output`
+- Screenshots stale or incomplete: `Regenerate/upload <store> <locale> <device/form-factor> screenshots`
+- Screenshot copy complete in repo but screenshots not regenerated/uploaded: `Create localized screenshots for <locale>`
+- Store or screenshot locale scaffold incomplete: report only; do not create a Base item until the relevant source copy is complete.
 
-Before editing the board, read the existing `## marketing` lane and avoid duplicates by matching the main noun phrase and locale/platform names. Insert new items near related store-copy or conversion-analysis tasks. Do not create separate Obsidian notes unless the user asks.
+Before creating an item, search every note under `/Users/mg/Workspace/Notes/projects/feed-flow/items/`, including notes with no `Status`, plus all Base statuses including `done` and `user requests archive`, for duplicates. The `.base` file defines views and filters; it is not the item database. Match the main noun phrase and locale/platform names. For the recurring schedule, prepend new items in the `marketing` column: validate that existing `Position` values there are integers with no duplicates, capture the original ranks and recheck each file before shifting existing positions by `+1` in descending order, then create the new item with `Position: 1`. If any write or creation fails, restore completed rank changes only when their current values still match this operation; preserve concurrent edits and report incomplete recovery. If existing metadata is missing, malformed, or conflicting, stop and report the conflict instead of guessing or overwriting. Preserve existing item metadata and bodies when updating positions. Do not edit a Markdown board, add checkbox rows, or create a second separate detail note.
 
 ## Guardrails
 

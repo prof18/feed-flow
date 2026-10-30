@@ -5,6 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
+import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.ArticleOpenMode.DEFAULT
 import com.prof18.feedflow.core.model.ArticleOpenMode.FEED_CONTENT
@@ -13,9 +16,6 @@ import com.prof18.feedflow.core.model.ArticleOpenMode.INTERNAL_BROWSER
 import com.prof18.feedflow.core.model.ArticleOpenMode.PREFERRED_BROWSER
 import com.prof18.feedflow.core.model.globalArticleOpenModes
 import com.prof18.feedflow.i18n.FeedFlowStrings
-import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
-import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.toImmutableList
 
 /**

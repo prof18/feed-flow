@@ -1,9 +1,12 @@
 package com.prof18.feedflow.desktop.home.drawer
 
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,19 +14,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.Lightbulb
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -32,16 +31,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isSecondaryPressed
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
@@ -51,177 +64,134 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.NavDrawerState
-import com.prof18.feedflow.shared.ui.components.DeleteAllFeedsInCategoryDialog
-import com.prof18.feedflow.shared.ui.components.DeleteCategoryDialog
-import com.prof18.feedflow.shared.ui.components.EditCategoryNameDialog
-import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenu
-import com.prof18.feedflow.shared.ui.components.menu.DesktopPopupMenuEntry
-import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.conditionalAnimateFloatAsState
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
+import com.prof18.feedflow.desktop.ui.components.DesktopPopupMenu
+import com.prof18.feedflow.desktop.ui.components.DesktopPopupMenuEntry
+import com.prof18.feedflow.desktop.ui.conditionalAnimateFloatAsState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.foundation.theme.LocalContentColor
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.IconButton
+import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.Tooltip
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun DesktopDrawerFeedSourcesByCategories(
     navDrawerState: NavDrawerState,
     onDeleteAllFeedsInCategoryClick: (List<FeedSource>) -> Unit,
     onAddFeedClick: () -> Unit,
-    onFeedSuggestionsClick: () -> Unit,
-    onImportExportClick: () -> Unit,
+    onFeedSuggestionsClick: () -> Unit = {},
+    onImportFeedsClick: () -> Unit = {},
+    onExpandAll: () -> Unit = {},
+    onCollapseAll: () -> Unit = {},
 ) {
-    var showUncategorizedMenu by rememberSaveable { mutableStateOf(false) }
-    var uncategorizedMenuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
-    var showDeleteAllUncategorizedDialog by remember { mutableStateOf(false) }
-    var showAddFeedsMenu by remember { mutableStateOf(false) }
-    var addMenuButtonCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
-    val uncategorizedFeedSources = remember(navDrawerState.feedSourcesWithoutCategory) {
-        navDrawerState.feedSourcesWithoutCategory
-            .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList()
+    val strings = LocalFeedFlowStrings.current
+    var showOptions by remember { mutableStateOf(false) }
+    var menuCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    var showAddOptions by remember { mutableStateOf(false) }
+    var addMenuCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    val uncategorizedSources = remember(navDrawerState.feedSourcesWithoutCategory) {
+        navDrawerState.feedSourcesWithoutCategory.filterIsInstance<DrawerItem.DrawerFeedSource>()
+            .map { it.feedSource }
     }
-    val showStandaloneUncategorizedMenu = uncategorizedFeedSources.isNotEmpty() &&
-        navDrawerState.feedSourcesByCategory.isEmpty()
-
-    Column {
-        Column {
-            DrawerDivider()
-
-            val headerMenuModifier = if (showStandaloneUncategorizedMenu) {
-                Modifier.singleAndLongClickModifier(
-                    onClick = {},
-                    onLongClick = {
-                        uncategorizedMenuPositionInWindow = null
-                        showUncategorizedMenu = true
-                    },
-                    onLongClickPositioned = { position ->
-                        uncategorizedMenuPositionInWindow = position
-                        showUncategorizedMenu = true
-                    },
-                )
-            } else {
-                Modifier
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = Spacing.regular)
-                    .padding(bottom = Spacing.regular),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    modifier = Modifier
-                        .weight(1f)
-                        .then(headerMenuModifier),
-                    text = LocalFeedFlowStrings.current.drawerTitleFeedSources,
-                    style = MaterialTheme.typography.labelLarge,
-                )
-
-                Box(
-                    modifier = Modifier
-                        .onGloballyPositioned { addMenuButtonCoordinates = it }
-                        .clip(CircleShape)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = ripple(),
-                        ) { showAddFeedsMenu = true }
-                        .padding(12.dp)
-                        .semantics { role = Role.Button },
-                    contentAlignment = Alignment.Center,
-                ) {
+    var showDeleteAllUncategorizedDialog by remember { mutableStateOf(false) }
+    DrawerDivider()
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(start = 8.dp, bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        SidebarSectionLabel(strings.drawerTitleFeedSources, modifier = Modifier.weight(1f))
+        Box(Modifier.onGloballyPositioned { addMenuCoordinates = it }) {
+            Tooltip(tooltip = { Text(strings.addFeed) }) {
+                IconButton(onClick = { showAddOptions = true }, modifier = Modifier.size(24.dp)) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = LocalFeedFlowStrings.current.addFeed,
+                        contentDescription = strings.addFeed,
+                        tint = JewelTheme.globalColors.text.normal,
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
+            }
+        }
+        Box(Modifier.onGloballyPositioned { menuCoordinates = it }) {
+            Tooltip(tooltip = { Text(strings.moreOptionsButtonContentDescription) }) {
+                IconButton(onClick = { showOptions = true }, modifier = Modifier.size(24.dp)) {
+                    Icon(
+                        imageVector = Icons.Default.MoreHoriz,
+                        contentDescription = strings.moreOptionsButtonContentDescription,
+                        tint = JewelTheme.globalColors.text.normal,
+                        modifier = Modifier.size(16.dp),
                     )
                 }
             }
         }
     }
-
-    if (showStandaloneUncategorizedMenu) {
-        val strings = LocalFeedFlowStrings.current
-        val menuEntries = remember(strings) {
-            persistentListOf(
+    val menuEntries = persistentListOf(
+        DesktopPopupMenuEntry.Action(strings.desktopExpandAllFeeds, onClick = {
+            showOptions = false
+            onExpandAll()
+        }),
+        DesktopPopupMenuEntry.Action(strings.desktopCollapseAllFeeds, onClick = {
+            showOptions = false
+            onCollapseAll()
+        }),
+    ).let { entries ->
+        if (uncategorizedSources.isNotEmpty() && navDrawerState.feedSourcesByCategory.isEmpty()) {
+            entries.add(
                 DesktopPopupMenuEntry.Action(
-                    text = strings.deleteAllFeedsInCategory,
+                    strings.deleteAllFeedsInCategory,
                     onClick = {
-                        showUncategorizedMenu = false
-                        uncategorizedMenuPositionInWindow = null
+                        showOptions = false
                         showDeleteAllUncategorizedDialog = true
                     },
                 ),
             )
+        } else {
+            entries
         }
-
-        DesktopPopupMenu(
-            showMenu = showUncategorizedMenu,
-            menuPositionInWindow = uncategorizedMenuPositionInWindow,
-            menuEntries = menuEntries,
-            closeMenu = {
-                showUncategorizedMenu = false
-                uncategorizedMenuPositionInWindow = null
-            },
-        )
-
-        DeleteAllFeedsInCategoryDialog(
-            showDialog = showDeleteAllUncategorizedDialog,
-            onDismiss = { showDeleteAllUncategorizedDialog = false },
-            onDeleteAllFeeds = {
-                onDeleteAllFeedsInCategoryClick(uncategorizedFeedSources.map { it.feedSource })
-                showDeleteAllUncategorizedDialog = false
-            },
-        )
-    }
-
-    val strings = LocalFeedFlowStrings.current
-    val addFeedMenuEntries = remember(
-        strings,
-        onAddFeedClick,
-        onFeedSuggestionsClick,
-        onImportExportClick,
-    ) {
-        persistentListOf(
-            DesktopPopupMenuEntry.Action(
-                text = strings.addFeed,
-                icon = Icons.Default.AddCircleOutline,
-                onClick = {
-                    showAddFeedsMenu = false
-                    onAddFeedClick()
-                },
-            ),
-            DesktopPopupMenuEntry.Action(
-                text = strings.feedSuggestionsTitle,
-                icon = Icons.Outlined.Lightbulb,
-                onClick = {
-                    showAddFeedsMenu = false
-                    onFeedSuggestionsClick()
-                },
-            ),
-            DesktopPopupMenuEntry.Action(
-                text = strings.importFeedButton,
-                icon = Icons.Default.FileDownload,
-                onClick = {
-                    showAddFeedsMenu = false
-                    onImportExportClick()
-                },
-            ),
-        )
     }
     DesktopPopupMenu(
-        showMenu = showAddFeedsMenu,
-        menuPositionInWindow = addMenuButtonCoordinates?.let { coords ->
-            val bounds = coords.boundsInWindow()
-            Offset(bounds.left, bounds.bottom)
+        showMenu = showAddOptions,
+        menuPositionInWindow = addMenuCoordinates?.boundsInWindow()?.let { Offset(it.left, it.bottom) },
+        menuEntries = persistentListOf(
+            DesktopPopupMenuEntry.Action(strings.addFeed, icon = Icons.Outlined.AddCircleOutline, onClick = {
+                showAddOptions = false
+                onAddFeedClick()
+            }),
+            DesktopPopupMenuEntry.Action(strings.feedSuggestionsTitle, icon = Icons.Outlined.Lightbulb, onClick = {
+                showAddOptions = false
+                onFeedSuggestionsClick()
+            }),
+            DesktopPopupMenuEntry.Action(strings.importFeedButton, icon = Icons.Outlined.FileDownload, onClick = {
+                showAddOptions = false
+                onImportFeedsClick()
+            }),
+        ),
+        closeMenu = { showAddOptions = false },
+    )
+    DesktopPopupMenu(
+        showMenu = showOptions,
+        menuPositionInWindow = menuCoordinates?.boundsInWindow()?.let { Offset(it.left, it.bottom) },
+        menuEntries = menuEntries,
+        closeMenu = { showOptions = false },
+    )
+    DrawerDeleteAllFeedsDialog(
+        showDialog = showDeleteAllUncategorizedDialog,
+        onDismiss = { showDeleteAllUncategorizedDialog = false },
+        onDeleteAllFeeds = {
+            onDeleteAllFeedsInCategoryClick(uncategorizedSources)
+            showDeleteAllUncategorizedDialog = false
         },
-        menuEntries = addFeedMenuEntries,
-        closeMenu = { showAddFeedsMenu = false },
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 internal fun DesktopDrawerFeedSourceByCategoryItem(
     feedSourceCategoryWrapper: DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper,
@@ -232,7 +202,7 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
     onCategoryExpand: () -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     selectedFeedSourceIds: ImmutableSet<String>,
-    onFeedSourceClick: (FeedSource, Boolean) -> Unit,
+    onFeedSourceClick: (FeedSource, Boolean, Boolean) -> Unit,
     selectedFeedSourcesProvider: () -> List<FeedSource>,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
@@ -249,8 +219,11 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
     dragState: DesktopDrawerDragState,
     modifier: Modifier = Modifier,
     headerModifier: Modifier = Modifier,
+    disclosureModifier: Modifier = Modifier,
     showFeedSources: Boolean = true,
+    topSpacing: Dp = 0.dp,
 ) {
+    var headerPosition by remember { mutableStateOf(Offset.Zero) }
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
     var showMenu by rememberSaveable { mutableStateOf(false) }
     var menuPositionInWindow by remember { mutableStateOf<Offset?>(null) }
@@ -273,7 +246,7 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
     )
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().padding(top = topSpacing),
     ) {
         @Suppress("MagicNumber")
         val degrees by conditionalAnimateFloatAsState(
@@ -283,7 +256,7 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(end = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -293,13 +266,21 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
             } else {
                 currentFeedFilter is FeedFilter.Uncategorized
             }
-            val navItemColors = drawerItemColors(drawerItemVisualStyle)
+            val contentColor = drawerItemVisualStyle.selectedContentColor ?: JewelTheme.globalColors.text.normal
             val itemShape = drawerItemVisualStyle.itemShape
+            val interactionSource = remember(category) { MutableInteractionSource() }
+            val isHovered by interactionSource.collectIsHoveredAsState()
+            val isFocused by interactionSource.collectIsFocusedAsState()
+            val categoryBackground = sidebarRowBackground(
+                selected = isSelected,
+                highlighted = isHovered || isFocused,
+                selectedColor = drawerItemVisualStyle.selectedContainerColor,
+            )
             val dropTargetModifier = Modifier.dropTargetModifier(
                 dragState = dragState,
                 category = category,
                 isDropTargetActive = isDropTargetActive,
-                highlightColor = MaterialTheme.colorScheme.primary,
+                highlightColor = desktopDrawerInsertionColor(),
                 shape = itemShape,
             )
             val onClick = {
@@ -310,71 +291,73 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
                 }
             }
 
-            Surface(
-                selected = isSelected,
-                onClick = onClick,
-                shape = itemShape,
-                color = navItemColors.containerColor(isSelected).value,
-                modifier = Modifier
+            Box(
+                modifier = headerModifier
+                    .onGloballyPositioned { headerPosition = it.positionInWindow() }
+                    .categoryContextMenu(position = { headerPosition }) { position ->
+                        menuPositionInWindow = position
+                        showMenu = true
+                    }
+                    .clip(itemShape)
+                    .background(categoryBackground)
+                    .selectable(
+                        selected = isSelected,
+                        onClick = onClick,
+                        role = Role.Tab,
+                        interactionSource = interactionSource,
+                        indication = null,
+                    )
                     .weight(1f)
                     .semantics { role = Role.Tab }
                     .heightIn(min = drawerItemVisualStyle.itemMinHeight)
-                    .hoverable(remember { MutableInteractionSource() })
-                    .then(headerModifier)
+                    .hoverable(interactionSource)
                     .then(dropTargetModifier),
+                contentAlignment = Alignment.CenterStart,
             ) {
-                val contentModifier = Modifier.singleAndLongClickModifier(
-                    onClick = onClick,
-                    onLongClick = {
-                        menuPositionInWindow = null
-                        showMenu = true
-                    },
-                    onLongClickPositioned = { position ->
-                        menuPositionInWindow = position
-                        showMenu = true
-                    },
-                )
-
                 Row(
-                    modifier = contentModifier.padding(start = Spacing.regular, end = 24.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val labelColor = navItemColors.textColor(isSelected).value
+                    val labelColor = contentColor
                     CompositionLocalProvider(LocalContentColor provides labelColor) {
-                        Text(
-                            text = headerText,
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.weight(1f),
-                        )
+                        Box(Modifier.weight(1f)) {
+                            Tooltip(tooltip = { Text(headerText) }) {
+                                Text(
+                                    text = headerText,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontWeight = FontWeight.Medium,
+                                )
+                            }
+                        }
                     }
 
                     if (unreadCount > 0) {
                         Text(
-                            modifier = Modifier.padding(start = Spacing.small),
+                            modifier = Modifier.padding(start = DesktopDesignTokens.spaceMedium),
                             text = unreadCount.toString(),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = navItemColors.textColor(isSelected).value,
+                            style = DesktopDesignTokens.metadataText,
+                            color = JewelTheme.globalColors.text.info,
                         )
                     }
                 }
             }
 
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = ripple(),
-                    ) { onCategoryExpand() }
-                    .padding(12.dp)
-                    .semantics { role = Role.Button },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                    contentDescription = null,
-                    modifier = Modifier.rotate(degrees),
-                )
+            val strings = LocalFeedFlowStrings.current
+            val disclosureLabel = if (isCategoryExpanded) {
+                strings.desktopCollapseFeedCategory(headerText)
+            } else {
+                strings.desktopExpandFeedCategory(headerText)
+            }
+            Tooltip(tooltip = { Text(disclosureLabel) }) {
+                IconButton(onClick = onCategoryExpand, modifier = disclosureModifier.size(24.dp)) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                        contentDescription = disclosureLabel,
+                        modifier = Modifier.size(16.dp).rotate(degrees),
+                        tint = JewelTheme.globalColors.text.normal,
+                    )
+                }
             }
         }
 
@@ -463,7 +446,7 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
             },
         )
 
-        DeleteCategoryDialog(
+        DrawerDeleteCategoryDialog(
             showDialog = showDeleteDialog,
             categoryId = CategoryId(category.id),
             onDismiss = { showDeleteDialog = false },
@@ -473,7 +456,7 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
             },
         )
 
-        EditCategoryNameDialog(
+        DrawerEditCategoryNameDialog(
             showDialog = showEditDialog,
             categoryId = CategoryId(category.id),
             initialCategoryName = category.title,
@@ -497,7 +480,7 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
         )
     }
 
-    DeleteAllFeedsInCategoryDialog(
+    DrawerDeleteAllFeedsDialog(
         showDialog = showDeleteAllFeedsDialog,
         onDismiss = { showDeleteAllFeedsDialog = false },
         onDeleteAllFeeds = {
@@ -506,3 +489,20 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
         },
     )
 }
+
+@OptIn(ExperimentalComposeUiApi::class)
+private fun Modifier.categoryContextMenu(position: () -> Offset, onShow: (Offset?) -> Unit): Modifier =
+    onPointerEvent(PointerEventType.Press) { event ->
+        if (event.buttons.isSecondaryPressed) {
+            onShow(position() + (event.changes.firstOrNull()?.position ?: Offset.Zero))
+            event.changes.forEach { it.consume() }
+        }
+    }.onPreviewKeyEvent { event ->
+        val contextKey = event.key == Key.Menu || (event.key == Key.F10 && event.isShiftPressed)
+        if (event.type == KeyEventType.KeyDown && contextKey) {
+            onShow(position())
+            true
+        } else {
+            false
+        }
+    }

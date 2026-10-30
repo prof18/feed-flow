@@ -5,7 +5,6 @@ import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Severity
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.domain.ParsedFeedContent
-import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
@@ -17,12 +16,11 @@ import com.prof18.feedflow.feedsync.database.di.SYNC_DB_DRIVER
 import com.prof18.feedflow.shared.di.getAllModulesModules
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.HtmlRetriever
+import com.prof18.feedflow.shared.domain.articlereport.ArticleReporter
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
-import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
+import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
-import com.prof18.feedflow.shared.domain.feeditem.HtmlFeedContentPreparer
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.test.ContentPrefetchRepositoryFake
@@ -73,6 +71,7 @@ object TestModules {
         ) + createTestOverridesModule()
 
     fun createTestOverridesModule(): Module = module {
+        single<HttpClient>(named("article-report")) { ArticleReporter.httpClient(MockEngine { respondOk() }) }
         single<SqlDriver> { createInMemoryDriver() }
         single { testLogger }
         single {
@@ -99,18 +98,13 @@ object TestModules {
                 override suspend fun syncFeedItems(): SyncResult = SyncResult.Success
             }
         }
-        single<FeedItemParserWorker> {
-            object : FeedItemParserWorker {
-                override suspend fun parse(feedItemId: String, url: String, imageUrl: String?): ParsingResult =
-                    ParsingResult.Success(
-                        htmlContent = "Content",
-                        title = "Title",
-                        siteName = "Site Name",
-                    )
+        single<ArticleContentParser> {
+            object : ArticleContentParser {
+                override suspend fun parse(url: String): String = "Content"
+                override suspend fun prepareFeedContent(html: String, baseUrl: String?): String = html
             }
         }
         single<FeedItemContentFileHandler> { FeedItemContentFileHandlerTestImpl() }
-        single<FeedContentPreparer> { HtmlFeedContentPreparer() }
         single<HtmlParser> {
             object : HtmlParser {
                 override fun getTextFromHTML(html: String): String? = null
@@ -135,7 +129,7 @@ object TestModules {
         }
         single<RssParserWrapper> {
             object : RssParserWrapper {
-                override suspend fun getRssChannel(url: String): RssChannel =
+                override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel =
                     error("No test RSS parser configured for $url")
             }
         }

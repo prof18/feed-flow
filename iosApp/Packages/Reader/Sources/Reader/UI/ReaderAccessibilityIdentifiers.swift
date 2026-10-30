@@ -1,4 +1,5 @@
 enum ReaderAccessibilityIdentifiers {
+    static let ttsButton = "reader_tts_button"
     static let bookmarkButton = "reader_bookmark_button"
     static let browserButton = "reader_browser_button"
     static let contentSourceButton = "reader_content_source_button"

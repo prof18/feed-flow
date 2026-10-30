@@ -1,0 +1,106 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=audio-episode&audioUrl=${AUDIO_URL}
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_seed_complete
+- tapOn:
+    id: article_row_e2e_audio_episode
+- assertVisible:
+    text: "^Play audio: E2E Audio Episode: Language Notes$"
+- tapOn:
+    text: "^Play audio: E2E Audio Episode: Language Notes$"
+- extendedWaitUntil:
+    visible:
+      id: audio_player
+    timeout: 10000
+- assertVisible:
+    id: audio_pause
+- takeScreenshot: .tmp/audio-playback/ios-player-compact
+- tapOn:
+    id: audio_pause
+- assertVisible:
+    id: audio_play
+- tapOn:
+    id: audio_play
+- assertVisible:
+    id: audio_pause
+- tapOn:
+    id: audio_pause
+- assertVisible:
+    id: audio_play
+- tapOn:
+    id: reader_audio_player_expand
+- tapOn:
+    id: audio_playback_speed
+- tapOn:
+    id: audio_playback_speed_1_5
+- assertVisible:
+    id: audio_playback_speed
+    text: "1.5×"
+- tapOn:
+    id: audio_playback_speed
+- tapOn:
+    id: audio_playback_speed_1
+- assertVisible:
+    id: audio_playback_speed
+    text: "1×"
+- swipe:
+    start: 10%, 80%
+    end: 50%, 80%
+    duration: 800
+- assertVisible:
+    id: audio_position
+    text: "^0:[2-4][0-9]$"
+- takeScreenshot: .tmp/audio-playback/ios-player-expanded
+- tapOn:
+    id: audio_close_player
+- assertNotVisible:
+    id: audio_player
+- tapOn:
+    text: "^Play audio: E2E Audio Episode: Language Notes$"
+- assertVisible:
+    id: audio_player
+- tapOn:
+    id: reader_audio_player_expand
+- assertVisible:
+    id: audio_pause
+- assertVisible:
+    id: audio_position
+    text: "^0:[2-4][0-9]$"
+- tapOn:
+    id: reader_next_button
+- extendedWaitUntil:
+    visible: "E2E Audio Control Article[\\s\\S]*"
+    timeout: 5000
+- assertVisible:
+    id: audio_player
+- assertVisible:
+    id: audio_pause
+- assertVisible:
+    id: audio_position
+    text: "^0:[2-4][0-9]$"
+- tapOn:
+    id: reader_previous_button
+- extendedWaitUntil:
+    visible: "E2E Audio Episode: Language Notes[\\s\\S]*"
+    timeout: 5000
+- assertVisible:
+    text: "^Pause audio: E2E Audio Episode: Language Notes$"
+- assertVisible:
+    id: audio_pause
+- tapOn:
+    text: "^Pause audio: E2E Audio Episode: Language Notes$"
+- assertVisible:
+    id: audio_play
+- tapOn:
+    id: audio_close_player
+- assertNotVisible:
+    id: audio_player

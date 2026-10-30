@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.core.model.applyCloudFeedAndCategoryChanges
+import com.prof18.feedflow.core.utils.withSuspensionGuard
 import com.prof18.feedflow.feedsync.database.db.FeedFlowFeedSyncDB
 import com.prof18.feedflow.feedsync.database.di.FEED_SYNC_SCOPE_NAME
 import com.prof18.feedflow.feedsync.database.di.SYNC_DB_DRIVER
@@ -387,7 +388,7 @@ class SyncedDatabaseHelper(
         database.syncedMetadataQueries.isSyncDatabaseEmpty().executeAsOne() == 0L
     }
 
-    suspend fun deleteFeedItems(feedItemIds: List<FeedItemId>) {
+    suspend fun deleteFeedItems(feedItemIds: List<FeedItemId>) = withSuspensionGuard("Clearing synced articles") {
         withDatabase { database ->
             database.transaction {
                 feedItemIds.forEach { feedItemId ->
@@ -398,7 +399,7 @@ class SyncedDatabaseHelper(
         }
     }
 
-    suspend fun deleteAllData() {
+    suspend fun deleteAllData() = withSuspensionGuard("Removing synced data") {
         withDatabase { database ->
             database.transaction {
                 database.syncedFeedItemQueries.deleteAll()

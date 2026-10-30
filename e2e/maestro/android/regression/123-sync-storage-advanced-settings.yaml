@@ -2,6 +2,16 @@ appId: com.prof18.feedflow.debug
 ---
 - launchApp
 - openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- runFlow:
+    when:
+      visible: "Open with.*"
+    commands:
+      - runFlow:
+          when:
+            visible: "^FeedFlow$"
+          commands:
+            - tapOn: "^FeedFlow$"
+      - tapOn: "Just once"
 - assertVisible: "E2E seed complete"
 - tapOn:
     id: e2e_open_app
@@ -11,13 +21,91 @@ appId: com.prof18.feedflow.debug
     id: drawer_settings_button
 - tapOn:
     id: settings_sync_storage
+- assertVisible:
+    id: sync_storage_sync_period
+- assertVisible: "Never"
 - scrollUntilVisible:
     element: "Background sync only on Wi-Fi"
     direction: DOWN
     timeout: 10000
+- assertVisible:
+    childOf:
+      id: background_sync_wifi_only
+    rightOf:
+      text: "Background sync only on Wi-Fi"
+    enabled: false
+    checked: false
+- assertVisible:
+    childOf:
+      id: background_sync_charging_only
+    rightOf:
+      text: "Background sync only while charging"
+    enabled: false
+    checked: false
+- tapOn:
+    id: sync_storage_sync_period
+- tapOn: "Every hour"
+- assertVisible:
+    childOf:
+      id: background_sync_wifi_only
+    rightOf:
+      text: "Background sync only on Wi-Fi"
+    enabled: true
+- assertVisible:
+    childOf:
+      id: background_sync_charging_only
+    rightOf:
+      text: "Background sync only while charging"
+    enabled: true
 - tapOn: "Background sync only on Wi-Fi"
+- assertVisible:
+    childOf:
+      id: background_sync_wifi_only
+    rightOf:
+      text: "Background sync only on Wi-Fi"
+    checked: true
 - assertVisible: "Background sync only while charging"
 - tapOn: "Background sync only while charging"
+- assertVisible:
+    childOf:
+      id: background_sync_charging_only
+    rightOf:
+      text: "Background sync only while charging"
+    checked: true
+- tapOn:
+    id: sync_storage_sync_period
+- tapOn: "Never"
+- assertVisible:
+    childOf:
+      id: background_sync_wifi_only
+    rightOf:
+      text: "Background sync only on Wi-Fi"
+    enabled: false
+    checked: true
+- assertVisible:
+    childOf:
+      id: background_sync_charging_only
+    rightOf:
+      text: "Background sync only while charging"
+    enabled: false
+    checked: true
+- tapOn:
+    id: sync_storage_sync_period
+- tapOn: "Every hour"
+- assertVisible:
+    childOf:
+      id: background_sync_wifi_only
+    rightOf:
+      text: "Background sync only on Wi-Fi"
+    enabled: true
+    checked: true
+- assertVisible:
+    childOf:
+      id: background_sync_charging_only
+    rightOf:
+      text: "Background sync only while charging"
+    enabled: true
+    checked: true
 - scrollUntilVisible:
     element:
       id: sync_storage_clear_downloaded

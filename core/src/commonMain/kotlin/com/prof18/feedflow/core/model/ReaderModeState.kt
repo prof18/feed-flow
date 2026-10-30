@@ -6,7 +6,7 @@ import androidx.compose.runtime.Immutable
 sealed interface ReaderModeState {
     data object Loading : ReaderModeState
     data class Success(val readerModeData: ReaderModeData) : ReaderModeState
-    data class HtmlNotAvailable(
+    data class ContentNotAvailable(
         val url: String,
         val id: String,
         val isBookmarked: Boolean,
@@ -16,20 +16,20 @@ sealed interface ReaderModeState {
         get() = when (this) {
             is Loading -> false
             is Success -> readerModeData.isBookmarked
-            is HtmlNotAvailable -> isBookmarked
+            is ContentNotAvailable -> isBookmarked
         }
 
     val getUrl: String?
         get() = when (this) {
             is Loading -> null
             is Success -> readerModeData.url
-            is HtmlNotAvailable -> url
+            is ContentNotAvailable -> url
         }
 
     val getId: String?
         get() = when (this) {
             is Loading -> null
             is Success -> readerModeData.id.id
-            is HtmlNotAvailable -> id
+            is ContentNotAvailable -> id
         }
 }

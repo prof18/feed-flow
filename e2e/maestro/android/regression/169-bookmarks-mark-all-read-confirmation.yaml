@@ -1,0 +1,92 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 30000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_bookmarks
+- assertVisible:
+    id: article_row_e2e_article_bookmarked_unread
+
+# The toolbar path asks before marking the bookmarked articles as read.
+- tapOn:
+    id: home_more_menu_button
+- tapOn: "Mark all as read"
+- assertVisible: "Are you sure you want to mark all bookmarked articles as read?"
+- tapOn: "Cancel"
+- back
+- longPressOn:
+    id: article_row_e2e_article_bookmarked_unread
+- assertVisible: "Mark as read"
+- back
+
+# The list footer has the same confirmation and marks only saved articles read.
+- scrollUntilVisible:
+    element:
+      text: "Mark all as read"
+    direction: DOWN
+    timeout: 10000
+- tapOn: "Mark all as read"
+- assertVisible: "Are you sure you want to mark all bookmarked articles as read?"
+- tapOn: "Cancel"
+- longPressOn:
+    id: article_row_e2e_article_bookmarked_unread
+- assertVisible: "Mark as read"
+- back
+- tapOn: "Mark all as read"
+- assertVisible: "Are you sure you want to mark all bookmarked articles as read?"
+- tapOn: "Confirm"
+- assertNotVisible: "Are you sure you want to mark all bookmarked articles as read?"
+- assertVisible:
+    id: article_row_e2e_article_bookmarked_unread
+- longPressOn:
+    id: article_row_e2e_article_bookmarked_unread
+- assertVisible: "Mark as unread"
+- assertVisible: "Remove from bookmarks"
+- back
+- longPressOn:
+    id: article_row_e2e_article_bookmarked_read
+- assertVisible: "Mark as unread"
+- assertVisible: "Remove from bookmarks"
+- back
+
+# Reset and confirm through the toolbar too.
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 30000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_bookmarks
+- tapOn:
+    id: home_more_menu_button
+- tapOn: "Mark all as read"
+- assertVisible: "Are you sure you want to mark all bookmarked articles as read?"
+- tapOn: "Confirm"
+- longPressOn:
+    id: article_row_e2e_article_bookmarked_unread
+- assertVisible: "Mark as unread"
+- assertVisible: "Remove from bookmarks"
+- back
+
+# The bookmark remains saved, while the newest unbookmarked Timeline item stays unread.
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_timeline
+- assertVisible:
+    id: article_row_e2e_article_newest_unread
+- longPressOn:
+    id: article_row_e2e_article_newest_unread
+- assertVisible: "Mark as read"

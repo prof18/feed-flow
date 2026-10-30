@@ -10,13 +10,23 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryCoordinator
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRequest
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryService
+import com.prof18.feedflow.shared.domain.recovery.RecoveryTicket
+import com.prof18.feedflow.shared.domain.recovery.WebsiteVerificationFailure
+import com.prof18.feedflow.shared.utils.sanitizeUrl
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -28,9 +38,14 @@ class EditFeedViewModel internal constructor(
     private val feedSourcesRepository: FeedSourcesRepository,
     private val databaseHelper: DatabaseHelper,
     private val feedStateRepository: FeedStateRepository,
+    private val recoveryService: FeedRecoveryService,
+    private val recoveryRepository: FeedRecoveryRepository,
+    private val coordinator: FeedRecoveryCoordinator,
+    settingsRepository: SettingsRepository,
 ) : ViewModel() {
     val categoriesState = categoryUseCase.categoriesState
     private var originalFeedSource: FeedSource? = null
+    private var originalKeepUnreadOnScroll = false
 
     private val feedUrlMutableState = MutableStateFlow("")
     val feedUrlState = feedUrlMutableState.asStateFlow()
@@ -50,6 +65,14 @@ class EditFeedViewModel internal constructor(
     private val showNotificationToggleMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val showNotificationToggleState = showNotificationToggleMutableState.asStateFlow()
 
+    val markReadWhenScrollingEnabledState: StateFlow<Boolean> = settingsRepository.markFeedAsReadWhenScrollingFlow
+
+    val verificationAvailable: Boolean = coordinator.available
+    private val verificationRequiredMutableState = MutableStateFlow(false)
+    val verificationRequiredState = verificationRequiredMutableState.asStateFlow()
+    private var pendingVerification: FeedRecoveryRequest.Edit? = null
+    private var verificationTicket: RecoveryTicket? = null
+
     init {
         viewModelScope.launch {
             showNotificationToggleMutableState.update { databaseHelper.areNotificationsEnabled() }
@@ -63,6 +86,7 @@ class EditFeedViewModel internal constructor(
             accountsRepository.getCurrentSyncAccount() != SyncAccounts.BAZQUX
 
     fun updateFeedUrlTextFieldValue(feedUrlTextFieldValue: String) {
+        if (feedUrlTextFieldValue != feedUrlMutableState.value) clearPendingVerification()
         feedUrlMutableState.update { feedUrlTextFieldValue }
         viewModelScope.launch {
             feedEditedMutableState.emit(FeedEditedState.Idle)
@@ -121,12 +145,23 @@ class EditFeedViewModel internal constructor(
         }
     }
 
+    fun updateIsKeepUnreadOnScrollEnabled(isKeepUnreadOnScrollEnabled: Boolean) {
+        feedSourceSettingsMutableState.update { oldValue ->
+            oldValue.copy(isKeepUnreadOnScrollEnabled = isKeepUnreadOnScrollEnabled)
+        }
+        viewModelScope.launch {
+            feedEditedMutableState.emit(FeedEditedState.Idle)
+        }
+    }
+
     fun loadFeedToEdit(feedSource: FeedSource) {
         originalFeedSource = feedSource
 
         viewModelScope.launch {
             val currentFeedSource = databaseHelper.getFeedSource(feedSource.id) ?: feedSource
             originalFeedSource = currentFeedSource
+            val keepUnreadOnScroll = databaseHelper.isKeepUnreadOnScrollEnabled(currentFeedSource.id)
+            originalKeepUnreadOnScroll = keepUnreadOnScroll
 
             feedUrlMutableState.update { currentFeedSource.url }
             feedNameMutableState.update { currentFeedSource.title }
@@ -137,6 +172,7 @@ class EditFeedViewModel internal constructor(
                     isPinned = currentFeedSource.isPinned,
                     isNotificationEnabled = currentFeedSource.isNotificationEnabled,
                     isHideImagesEnabled = currentFeedSource.isHideImagesEnabled,
+                    isKeepUnreadOnScrollEnabled = keepUnreadOnScroll,
                 )
             }
 
@@ -180,6 +216,13 @@ class EditFeedViewModel internal constructor(
 
             feedEditedMutableState.emit(FeedEditedState.Loading)
 
+            val keepUnreadOnScroll = feedSourceSettingsState.value.isKeepUnreadOnScrollEnabled
+            val editedFeedSourceId = originalFeedSource?.id
+            if (editedFeedSourceId != null && keepUnreadOnScroll != originalKeepUnreadOnScroll) {
+                databaseHelper.setKeepUnreadOnScroll(editedFeedSourceId, keepUnreadOnScroll)
+                originalKeepUnreadOnScroll = keepUnreadOnScroll
+            }
+
             val selectedCategory = categoryUseCase.getSelectedCategory()
             val newFeedSource = originalFeedSource?.copy(
                 url = feedUrlState.value,
@@ -193,15 +236,61 @@ class EditFeedViewModel internal constructor(
             )
 
             if (newFeedSource != null && newFeedSource != originalFeedSource) {
+                val original = originalFeedSource
                 val state = feedSourcesRepository.editFeedSource(
                     newFeedSource = newFeedSource,
-                    originalFeedSource = originalFeedSource,
+                    originalFeedSource = original,
                 )
+                val verificationUrl = (state as? FeedEditedState.Error.FetchFailed)?.verificationUrl
+                if (verificationUrl != null && original != null && newFeedSource.url == feedUrlState.value) {
+                    pendingVerification = FeedRecoveryRequest.Edit(
+                        original = original,
+                        replacement = newFeedSource.copy(url = state.challengedUrl ?: sanitizeUrl(newFeedSource.url)),
+                        verificationUrl = verificationUrl,
+                        retryAfter = state.retryAfter,
+                    )
+                    verificationRequiredMutableState.value = true
+                }
                 feedEditedMutableState.emit(state)
             } else {
                 feedEditedMutableState.emit(FeedEditedState.FeedEdited(feedNameState.value))
             }
         }
+    }
+
+    fun verifyWebsite() {
+        val request = pendingVerification ?: return
+        verificationTicket?.revoke()
+        val ticket = recoveryRepository.issueTicket()
+        verificationTicket = ticket
+        viewModelScope.launch {
+            try {
+                val source = recoveryService.recover(request, ticket)
+                pendingVerification = null
+                verificationRequiredMutableState.value = false
+                if (source.title != request.original.title) feedStateRepository.updateCurrentFilterName(source.title)
+                originalFeedSource = source
+                feedEditedMutableState.emit(FeedEditedState.FeedEdited(source.title))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: WebsiteVerificationFailure) {
+                coordinator.reportFailure(e.reason)
+                feedEditedMutableState.emit(FeedEditedState.Error.InvalidUrl)
+            } catch (_: Exception) {
+                feedEditedMutableState.emit(FeedEditedState.Error.InvalidUrl)
+            }
+        }
+    }
+
+    fun cancelRecovery() {
+        verificationTicket?.revoke()
+        verificationTicket = null
+        verificationRequiredMutableState.value = false
+    }
+
+    private fun clearPendingVerification() {
+        pendingVerification = null
+        cancelRecovery()
     }
 
     fun deleteFeed() {

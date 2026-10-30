@@ -75,6 +75,8 @@ struct NotificationsSettingsScreenContent: View {
                 get: { notificationSettingState.notificationMode },
                 set: { onNotificationModeChanged($0) }
             )) {
+                Text(feedFlowStrings.settingsNotificationModeArticle)
+                    .tag(NotificationMode.article)
                 Text(feedFlowStrings.settingsNotificationModeFeedSource)
                     .tag(NotificationMode.feedSource)
                 Text(feedFlowStrings.settingsNotificationModeCategory)
@@ -85,7 +87,11 @@ struct NotificationsSettingsScreenContent: View {
                 Text(feedFlowStrings.settingsNotificationMode)
             }
         } footer: {
-            Text(feedFlowStrings.settingsNotificationModeDesc)
+            if notificationSettingState.notificationMode == .article {
+                Text(feedFlowStrings.settingsNotificationModeArticleDesc)
+            } else {
+                Text(feedFlowStrings.settingsNotificationModeDesc)
+            }
         }
     }
 

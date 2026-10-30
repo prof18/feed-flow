@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.data
 
 import app.cash.turbine.test
+import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.shared.test.KoinTestBase
@@ -46,5 +47,15 @@ class FeedAppearanceSettingsRepositoryTest : KoinTestBase() {
 
         assertEquals(FeedLayout.BIG_IMAGE, repository.getFeedLayout())
         assertEquals(true, repository.getGridLayoutEnabled())
+    }
+
+    @Test
+    fun `date format choice is persisted`() {
+        val settings = MapSettings()
+        val repository = FeedAppearanceSettingsRepository(settings)
+
+        repository.setDateFormat(DateFormat.DAY_MONTH_DOT)
+
+        assertEquals(DateFormat.DAY_MONTH_DOT, FeedAppearanceSettingsRepository(settings).getDateFormat())
     }
 }

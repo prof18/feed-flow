@@ -7,6 +7,6 @@ Icon=com.prof18.feedflow
 Exec=feedflow
 Terminal=false
 StartupNotify=true
-Categories=News;
+Categories=Network;News;
 Keywords=RSS;Feed;News;Reader;
 StartupWMClass=FeedFlow

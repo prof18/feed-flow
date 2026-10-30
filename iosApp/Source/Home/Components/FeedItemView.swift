@@ -47,8 +47,9 @@ struct FeedItemView: View {
                 let showUnreadDot = !feedItem.isRead && !feedItemDisplaySettings.isHideUnreadDotEnabled
                 let showFeedSource = !feedItemDisplaySettings.isHideFeedSourceEnabled
                 let showBookmark = feedItem.isBookmarked
+                let showAudio = feedItem.audioUrl != nil
 
-                if showUnreadDot || showFeedSource || showBookmark {
+                if showUnreadDot || showFeedSource || showBookmark || showAudio {
                     HStack {
                         if showUnreadDot {
                             Circle()
@@ -65,6 +66,10 @@ struct FeedItemView: View {
                         }
 
                         Spacer()
+
+                        if showAudio {
+                            FeedItemAudioBadge(feedItemId: feedItem.id)
+                        }
 
                         if showBookmark {
                             Image(systemName: "bookmark.fill")
@@ -181,7 +186,7 @@ struct FeedItemView: View {
     private var hasImageCardSourceRow: Bool {
         let showUnreadDot = !feedItem.isRead && !feedItemDisplaySettings.isHideUnreadDotEnabled
         let showFeedSource = !feedItemDisplaySettings.isHideFeedSourceEnabled
-        return showUnreadDot || showFeedSource || feedItem.isBookmarked
+        return showUnreadDot || showFeedSource || feedItem.isBookmarked || feedItem.audioUrl != nil
     }
 
     @ViewBuilder private var heroImage: some View {
@@ -216,8 +221,9 @@ struct FeedItemView: View {
         let showUnreadDot = !feedItem.isRead && !feedItemDisplaySettings.isHideUnreadDotEnabled
         let showFeedSource = !feedItemDisplaySettings.isHideFeedSourceEnabled
         let showBookmark = feedItem.isBookmarked
+        let showAudio = feedItem.audioUrl != nil
 
-        if showUnreadDot || showFeedSource || showBookmark {
+        if showUnreadDot || showFeedSource || showBookmark || showAudio {
             HStack(spacing: Spacing.small) {
                 if showFeedSource {
                     feedSourceLogo
@@ -230,6 +236,10 @@ struct FeedItemView: View {
                 }
 
                 Spacer()
+
+                if showAudio {
+                    FeedItemAudioBadge(feedItemId: feedItem.id)
+                }
 
                 if showBookmark {
                     Image(systemName: "bookmark.fill")

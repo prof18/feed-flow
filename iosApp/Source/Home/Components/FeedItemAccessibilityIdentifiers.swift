@@ -6,6 +6,10 @@ enum FeedItemAccessibilityIdentifiers {
   static func image(_ feedItemId: String) -> String {
     "article_image_\(feedItemId.e2eIdSuffix)"
   }
+
+  static func audio(_ feedItemId: String) -> String {
+    "feed_audio_\(feedItemId.e2eIdSuffix)"
+  }
 }
 
 private extension String {

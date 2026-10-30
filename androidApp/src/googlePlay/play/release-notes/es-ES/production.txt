@@ -1,2 +1,6 @@
-• Prueba el nuevo motor experimental del modo de lectura para extraer artículos con más rapidez y precisión. Ayúdame a mejorarlo informando de contenido ausente o errores de formato.
-• Mejoras en imágenes, contenido incrustado, artículos breves o solo con imágenes, marcadores y desconexión de Dropbox.
+• Escucha episodios de pódcast directamente en FeedFlow
+• Escucha artículos en voz alta en el modo lectura, en el idioma del artículo
+• Nuevos widgets personalizables para la pantalla de inicio, con botón de actualizar
+• El nuevo motor del modo lectura ya es el predeterminado. Si un artículo no se ve bien, repórtalo con un toque
+• Sigue listas de reproducción de YouTube y oculta los Shorts de los canales
+• Los feeds de sitios que bloquean solicitudes cargan mejor, con errores más claros

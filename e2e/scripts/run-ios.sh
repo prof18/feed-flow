@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 DERIVED_DATA_PATH="$REPO_ROOT/iosApp/build/e2e-derived-data"
 APP_PATH="$DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator/FeedFlow.app"
-SIMULATOR_UDID="${SIMULATOR_UDID:-$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 17 Pro/ {print $2; exit}')}"
+SIMULATOR_UDID="${SIMULATOR_UDID:-$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 18 Pro \(/ {print $2; exit}')}"
 
 cd "$REPO_ROOT"
 
@@ -23,7 +23,7 @@ restore_development_content() {
 trap restore_development_content EXIT
 
 if [ -z "$SIMULATOR_UDID" ]; then
-  echo "No booted iPhone 17 Pro simulator found. Boot one before running iOS E2E flows." >&2
+  echo "No booted iPhone 18 Pro simulator found. Boot one before running iOS E2E flows." >&2
   exit 1
 fi
 
@@ -36,7 +36,7 @@ fi
 xcodebuild \
   -project iosApp/FeedFlow.xcodeproj \
   -scheme FeedFlow \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -destination 'platform=iOS Simulator,name=iPhone 18 Pro' \
   -derivedDataPath "$DERIVED_DATA_PATH" \
   build \
   -quiet
@@ -49,6 +49,13 @@ E2E_IOS_SUITES="${E2E_IOS_SUITES:-smoke regression}"
 for suite in $E2E_IOS_SUITES; do
   while IFS= read -r flow_file; do
     maestro_started=true
-    maestro --platform ios --device "$SIMULATOR_UDID" test "$flow_file"
+    flow_name="${flow_file##*/}"
+    if [[ "$flow_name" == "174-podcast-audio-playback.yaml" ||
+          "$flow_name" == "175-now-playing-navigation.yaml" ||
+          "$flow_name" == "176-reader-speech-playback.yaml" ]]; then
+      SIMULATOR_UDID="$SIMULATOR_UDID" "$REPO_ROOT/e2e/scripts/run-audio-playback.sh" ios "${flow_name%.yaml}"
+    else
+      maestro --platform ios --device "$SIMULATOR_UDID" test "$flow_file"
+    fi
   done < <(find "$REPO_ROOT/e2e/maestro/ios/$suite" -name '*.yaml' | sort)
 done

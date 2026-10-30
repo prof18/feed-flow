@@ -14,6 +14,12 @@ unread articles. That was issue #1319.
 A cursor addresses rows by identity instead ("the rows sorting strictly after *this*
 row"), so it survives the set changing.
 
+When mark-as-read-on-scroll is enabled, newly read articles stay in the current
+in-memory list so its rows do not shift during scrolling, even if auto-hide is
+saved as enabled. A fresh timeline query still applies the normal unread filter
+when showing read articles is off. Auto-hide becomes effective again when
+mark-as-read-on-scroll is disabled.
+
 ## The cursor is a pair
 
 `pub_date` is not unique, so it can't identify a row alone. The `ORDER BY` breaks ties

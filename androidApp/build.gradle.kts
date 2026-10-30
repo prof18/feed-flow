@@ -4,7 +4,6 @@ import java.util.*
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.androidx.baselineprofile)
-    alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.triplet.play)
     alias(libs.plugins.about.libraries.android)
@@ -46,6 +45,7 @@ android {
         applicationId = "com.prof18.feedflow"
         minSdk = libs.versions.android.min.sdk.get().toInt()
         targetSdk = libs.versions.android.target.sdk.get().toInt()
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         versionCode = appVersionCode()
         versionName = appVersionName()
         buildConfigField("String", "REVENUECAT_API_KEY", "\"\"")
@@ -115,6 +115,10 @@ android {
         }
     }
 
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
     packaging {
         resources {
             excludes += setOf(
@@ -138,6 +142,9 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
+            "-opt-in=kotlinx.coroutines.FlowPreview",
             "-opt-in=co.touchlab.kermit.ExperimentalKermitApi",
             "-opt-in=kotlin.ExperimentalStdlibApi",
         )
@@ -153,17 +160,24 @@ baselineProfile {
 
 dependencies {
     implementation(project(":shared"))
-    implementation(project(":sharedUI"))
+    implementation(project(":i18n"))
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.io.coil.compose)
+    implementation(libs.io.coil.network)
+    implementation(libs.lyricist)
+    implementation(libs.immutable.collections)
+    implementation(libs.saket.swipe)
+    implementation(libs.compose.unstyled.slider)
     implementation(libs.androidx.profileinstaller)
     "baselineProfile"(project(":benchmarks"))
  
-    implementation(libs.compose.multiplatform.runtime)
-    implementation(libs.compose.multiplatform.foundation)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.foundation)
     implementation(libs.compose.material3)
-    implementation(libs.compose.multiplatform.material.icons.extended)
-    implementation(libs.compose.multiplatform.ui)
-    implementation(libs.compose.multiplatform.ui.tooling)
-    implementation(libs.compose.multiplatform.material3.adaptive.navigationsuite)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3.adaptive.navigationsuite)
  
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewModel.compose)
@@ -174,7 +188,17 @@ dependencies {
 
     implementation(libs.bundles.about.libraries)
 
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
     implementation(libs.androidx.browser)
+    implementation(libs.androidx.webkit)
+    debugImplementation(libs.com.prof18.rss.parser)
+    debugImplementation(project(":database"))
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.core.ktx)
+    androidTestImplementation(libs.androidx.test.uiautomator)
     implementation(libs.compose.webview)
     implementation(libs.colorpicker.compose)
     implementation(libs.reorderable)
@@ -199,6 +223,8 @@ dependencies {
     "googlePlayImplementation"(libs.play.review)
     "googlePlayImplementation"(libs.telemetry.deck)
     "googlePlayImplementation"(libs.google.identity.googleid)
+    "googlePlayImplementation"(libs.androidx.credentials)
+    "googlePlayImplementation"(libs.androidx.credentials.play.services.auth)
     "googlePlayImplementation"(libs.google.play.services.auth)
     "googlePlayImplementation"(libs.kotlinx.coroutines.play.services)
     "googlePlayImplementation"(libs.google.api.client.android)
@@ -206,8 +232,9 @@ dependencies {
     "googlePlayImplementation"(libs.revenuecat.purchases)
     "googlePlayImplementation"(libs.revenuecat.purchases.ui)
 
-    debugImplementation(libs.compose.multiplatform.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
+    testImplementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.junit)
     testImplementation(libs.koin.test)
     testImplementation(libs.multiplatform.settings.test)
@@ -215,8 +242,10 @@ dependencies {
     testImplementation(libs.google.api.client)
     testImplementation(libs.google.api.services.drive)
     testImplementation(libs.org.robolectric)
+    testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.androidx.test.core.ktx)
     testImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
 }
 
 play {

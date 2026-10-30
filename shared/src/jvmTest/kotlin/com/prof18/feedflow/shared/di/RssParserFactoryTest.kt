@@ -1,7 +1,10 @@
 package com.prof18.feedflow.shared.di
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.FeedFetchTier
+import com.prof18.feedflow.core.utils.FEEDFLOW_BROWSER_FALLBACK_HEADERS
 import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
+import com.prof18.feedflow.core.utils.FEEDFLOW_READER_FALLBACK_USER_AGENT
 import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
@@ -13,6 +16,45 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RssParserFactoryTest {
+
+    @Test
+    fun `browser profile sends configured headers and decompresses gzip`() = runTest {
+        val receivedHeaders = Collections.synchronizedList(mutableListOf<Map<String, String>>())
+        val server = HttpServer.create(InetSocketAddress(LOOPBACK_ADDRESS, 0), 0).apply {
+            createContext(FEED_PATH) { exchange ->
+                receivedHeaders.add(
+                    exchange.requestHeaders.entries.associate { it.key.lowercase() to it.value.first() },
+                )
+                val compressed = java.io.ByteArrayOutputStream().apply {
+                    java.util.zip.GZIPOutputStream(this).use { it.write(RSS_FEED.toByteArray()) }
+                }.toByteArray()
+                exchange.responseHeaders.add("Content-Encoding", "gzip")
+                exchange.sendResponseHeaders(HTTP_OK, compressed.size.toLong())
+                exchange.responseBody.use { it.write(compressed) }
+                exchange.close()
+            }
+            start()
+        }
+        try {
+            val parser = createRssParser(
+                headers = FEEDFLOW_BROWSER_FALLBACK_HEADERS,
+                feedHttpCacheStore = FeedHttpCacheStore(
+                    currentTimeMillis = { 0L },
+                    logger = Logger.withTag("RssParserFactoryTest"),
+                ),
+            )
+            val channel = parser.getRssChannel("http://$LOOPBACK_ADDRESS:${server.address.port}$FEED_PATH")
+            assertEquals("Fallback Feed", channel.title)
+            val headers = receivedHeaders.single()
+            assertEquals(FEEDFLOW_READER_FALLBACK_USER_AGENT, headers["user-agent"])
+            FEEDFLOW_BROWSER_FALLBACK_HEADERS.forEach { (key, value) ->
+                assertEquals(value, headers[key.lowercase()])
+            }
+            assertEquals("gzip", headers["accept-encoding"])
+        } finally {
+            server.stop(0)
+        }
+    }
 
     @Test
     fun `forbidden response retries with configured fallback user agent`() = runTest {
@@ -42,14 +84,21 @@ class RssParserFactoryTest {
                 logger = Logger.withTag("RssParserFactoryTest"),
             )
             val wrapper = RssParserWrapperImpl(
-                primaryParser = createRssParser(
-                    userAgent = FEEDFLOW_USER_AGENT,
-                    feedHttpCacheStore = cacheStore,
-                )::getRssChannel,
-                forbiddenFallbackParser = createRssParser(
-                    userAgent = FEEDFLOW_FALLBACK_USER_AGENT,
-                    feedHttpCacheStore = cacheStore,
-                )::getRssChannel,
+                feedHttpCacheStore = cacheStore,
+                parsers = mapOf(
+                    FeedFetchTier.PRIMARY to createRssParser(
+                        headers = mapOf("User-Agent" to FEEDFLOW_USER_AGENT),
+                        feedHttpCacheStore = cacheStore,
+                    )::getRssChannel,
+                    FeedFetchTier.LINK_FREE to createRssParser(
+                        headers = mapOf("User-Agent" to FEEDFLOW_FALLBACK_USER_AGENT),
+                        feedHttpCacheStore = cacheStore,
+                    )::getRssChannel,
+                    FeedFetchTier.BROWSER to createRssParser(
+                        headers = FEEDFLOW_BROWSER_FALLBACK_HEADERS,
+                        feedHttpCacheStore = cacheStore,
+                    )::getRssChannel,
+                ),
             )
 
             val channel = wrapper.getRssChannel("http://$LOOPBACK_ADDRESS:${server.address.port}$FEED_PATH")

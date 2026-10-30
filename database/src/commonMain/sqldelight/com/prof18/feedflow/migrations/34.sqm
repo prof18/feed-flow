@@ -1,0 +1,3 @@
+import com.prof18.feedflow.core.model.FeedFetchTier;
+
+ALTER TABLE feed_source_cache_info ADD COLUMN user_agent_tier TEXT AS FeedFetchTier;

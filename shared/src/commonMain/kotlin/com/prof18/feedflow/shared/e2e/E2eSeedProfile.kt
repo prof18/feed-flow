@@ -4,6 +4,7 @@ import com.prof18.feedflow.core.model.SyncAccounts
 
 enum class E2eSeedProfile(val queryValue: String) {
     EMPTY("empty"),
+    AUDIO_EPISODE("audio-episode"),
     CONTENT_RICH("content-rich"),
     CARD_LAYOUT("card-layout"),
     BIG_IMAGE_LAYOUT("big-image-layout"),

@@ -23,11 +23,13 @@ internal fun AppearanceScreen(
         bodyFont = settingsState.bodyFont,
         headlineFont = settingsState.headlineFont,
         isReduceMotionEnabled = extrasState.isReduceMotionEnabled,
+        isForceEnglishEnabled = settingsState.isForceEnglishEnabled,
         isHideUnreadCountEnabled = settingsState.isHideUnreadCountEnabled,
         onThemeModeSelected = mainSettingsViewModel::updateThemeMode,
         onBodyFontSelected = mainSettingsViewModel::updateBodyFont,
         onHeadlineFontSelected = mainSettingsViewModel::updateHeadlineFont,
         onReduceMotionToggled = extrasSettingsViewModel::updateReduceMotionEnabled,
+        onForceEnglishToggled = mainSettingsViewModel::updateForceEnglishEnabled,
         onHideUnreadCountToggled = mainSettingsViewModel::updateHideUnreadCount,
     )
 }

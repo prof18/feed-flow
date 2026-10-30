@@ -2,7 +2,10 @@ appId: com.prof18.feedflow.debug
 ---
 - launchApp
 - openLink: feedflow://e2e/reset-and-seed?profile=content-rich
-- assertVisible: "E2E seed complete"
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 30000
 - tapOn:
     id: e2e_open_app
 - scrollUntilVisible:
@@ -10,12 +13,28 @@ appId: com.prof18.feedflow.debug
       id: article_row_e2e_article_reader_success
     direction: DOWN
     timeout: 10000
+    visibilityPercentage: 60
+    centerElement: true
 - tapOn:
     id: article_row_e2e_article_reader_success
 - assertVisible:
     id: reader_bookmark_button
 - tapOn:
     id: reader_bookmark_button
+- assertVisible: "Remove from bookmarks"
+- tapOn:
+    id: reader_bookmark_button
+- assertVisible: "Are you sure you want to remove this article from Bookmarks?"
+- tapOn: "Cancel"
+- assertVisible: "Remove from bookmarks"
+- tapOn:
+    id: reader_bookmark_button
+- assertVisible: "Are you sure you want to remove this article from Bookmarks?"
+- tapOn: "Confirm"
+- assertVisible: "Add to bookmarks"
+- tapOn:
+    id: reader_bookmark_button
+- assertVisible: "Remove from bookmarks"
 - tapOn:
     id: reader_back_button
 - tapOn:

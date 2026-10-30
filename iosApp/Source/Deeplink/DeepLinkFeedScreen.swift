@@ -49,14 +49,14 @@ struct DeepLinkFeedScreen: View {
                 if let urlInfo = (state as? DeeplinkFeedState.Success)?.data {
                     // URL-less items can only be shown in the reader from their feed content.
                     if urlInfo.url.isEmpty {
-                        readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                        readerModeViewModel.loadReaderContent(urlInfo: urlInfo)
                         shouldShowReaderMode = true
                         vmStoreOwner.instance.markAsRead(feedItemId: FeedItemId(id: feedId))
                         continue
                     }
                     switch browserSelector.resolvedOpenMode(for: urlInfo) {
                     case .fullArticle, .feedContent:
-                        readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                        readerModeViewModel.loadReaderContent(urlInfo: urlInfo)
                         shouldShowReaderMode = true
                     case .internalBrowser:
                         openInAppBrowser(urlString: urlInfo.url)

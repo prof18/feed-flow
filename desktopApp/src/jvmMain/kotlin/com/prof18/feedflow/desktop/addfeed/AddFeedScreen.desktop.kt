@@ -1,47 +1,39 @@
 package com.prof18.feedflow.desktop.addfeed
 
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
-import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
+import com.prof18.feedflow.desktop.feedforms.AddFeedForm
+import com.prof18.feedflow.desktop.feedforms.FeedCategoryActions
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.components.Dialog
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
-import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
-import com.prof18.feedflow.shared.ui.feed.addfeed.AddFeedContent
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun AddFeedScreen(
-    onCloseRequest: () -> Unit,
-    onFeedAdded: () -> Unit,
-) {
-    DesktopDialogWindow(
+internal fun AddFeedScreen(onCloseRequest: () -> Unit, onFeedAdded: () -> Unit) {
+    AddFeedWindow(onCloseRequest) { AddFeedScreenContent(onFeedAdded, onCancel = onCloseRequest) }
+}
+
+@Composable
+internal fun AddFeedWindow(onCloseRequest: () -> Unit, content: @Composable () -> Unit) {
+    Dialog(
         title = LocalFeedFlowStrings.current.addFeed,
-        size = DpSize(520.dp, 500.dp),
+        size = DpSize(520.dp, 330.dp),
         onCloseRequest = onCloseRequest,
-    ) { modifier ->
-        AddFeedScreenContent(
-            modifier = modifier,
-            onFeedAdded = {
-                onFeedAdded()
-            },
-        )
-    }
+    ) { content() }
 }
 
 @Composable
@@ -49,148 +41,96 @@ fun AddFeedScreenContent(
     onFeedAdded: () -> Unit,
     modifier: Modifier = Modifier,
     topAppBar: @Composable () -> Unit = {},
+    onCancel: (() -> Unit)? = null,
 ) {
     var feedUrl by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
     var showLoading by remember { mutableStateOf(false) }
+    var completionRevision by remember { mutableIntStateOf(0) }
     var errorMessage by remember { mutableStateOf("") }
     var canForceAdd by remember { mutableStateOf(false) }
-
     val viewModel = koinViewModel<AddFeedViewModel>()
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
     val latestOnFeedAdded by rememberUpdatedState(onFeedAdded)
+    val snackbarHostState = remember { DesktopFeedbackState() }
     val strings = LocalFeedFlowStrings.current
     LaunchedEffect(Unit) {
-        viewModel.feedAddedState.collect { feedAddedState ->
-            when (feedAddedState) {
+        viewModel.feedAddedState.collect { state ->
+            when (state) {
                 is FeedAddedState.Error -> {
+                    completionRevision++
                     showLoading = false
                     showError = true
-                    canForceAdd = feedAddedState.canForceAdd
-                    errorMessage = when (feedAddedState) {
+                    canForceAdd = state.canForceAdd
+                    errorMessage = when (state) {
                         is FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrlWithRetryHint
                         is FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
                         is FeedAddedState.Error.GenericError -> strings.addFeedGenericError
+                        is FeedAddedState.Error.FetchFailed -> strings.feedFetchRefusedError
                     }
                 }
-
                 is FeedAddedState.FeedAdded, is FeedAddedState.FeedAlreadyExists -> {
-                    val feedName = (feedAddedState as? FeedAddedState.FeedAdded)?.feedName
-                    val message = if (feedAddedState is FeedAddedState.FeedAlreadyExists) {
-                        strings.feedAlreadyExistsMessage(feedAddedState.feedName)
+                    val addedState = state as? FeedAddedState.FeedAdded
+                    val feedName = addedState?.feedName
+                    val message = if (state is FeedAddedState.FeedAlreadyExists) {
+                        strings.feedAlreadyExistsMessage(state.feedName)
+                    } else if (addedState?.shortsFilterFallback == true) {
+                        strings.hideYoutubeShortsFallback
                     } else if (feedName != null) {
                         strings.feedAddedMessage(feedName)
                     } else {
                         strings.feedAddedMessageWithoutName
                     }
-
-                    snackbarHostState.showSnackbar(
-                        message,
-                        duration = SnackbarDuration.Short,
-                    )
-
+                    snackbarHostState.showFeedback(message, duration = DesktopFeedbackDuration.Short)
                     showLoading = false
                     feedUrl = ""
+                    viewModel.updateFeedUrlTextFieldValue(feedUrl)
                     showError = false
                     errorMessage = ""
                     canForceAdd = false
+                    completionRevision++
                     latestOnFeedAdded()
                 }
-
                 FeedAddedState.FeedNotAdded -> {
                     showLoading = false
                     showError = false
                     errorMessage = ""
                     canForceAdd = false
                 }
-
-                FeedAddedState.Loading -> {
-                    showLoading = true
-                }
+                FeedAddedState.Loading -> showLoading = true
             }
         }
     }
-
-    val categoriesState by viewModel.categoriesState.collectAsState()
-    val showNotificationToggle by viewModel.showNotificationToggleState.collectAsState()
-    val isNotificationEnabled by viewModel.isNotificationEnabledState.collectAsState()
-
-    var showCategoryDialog by remember { mutableStateOf(false) }
-
-    AddFeedContent(
-        modifier = modifier,
+    val categories by viewModel.categoriesState.collectAsState()
+    val showNotification by viewModel.showNotificationToggleState.collectAsState()
+    val notificationEnabled by viewModel.isNotificationEnabledState.collectAsState()
+    val youTubeOptions by viewModel.youTubeOptionsState.collectAsState()
+    AddFeedForm(
         feedUrl = feedUrl,
         showError = showError,
         showLoading = showLoading,
         errorMessage = errorMessage,
-        onFeedUrlUpdated = { url ->
-            feedUrl = url
-            viewModel.updateFeedUrlTextFieldValue(url)
-        },
-        addFeed = {
-            viewModel.addFeed()
-        },
-        categoriesState = categoriesState,
-        onCategorySelectorClick = {
-            showCategoryDialog = true
-        },
-        showNotificationToggle = showNotificationToggle,
-        isNotificationEnabled = isNotificationEnabled,
-        onNotificationToggleChanged = { enabled ->
-            viewModel.updateNotificationStatus(enabled)
-        },
+        categoriesState = categories,
+        showNotificationToggle = showNotification,
+        isNotificationEnabled = notificationEnabled,
         canForceAdd = canForceAdd,
-        onForceAddFeed = {
-            viewModel.forceAddFeed()
+        onFeedUrlUpdated = {
+            feedUrl = it
+            viewModel.updateFeedUrlTextFieldValue(it)
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        onAddFeed = viewModel::addFeed,
+        categoryActions = FeedCategoryActions(
+            onSelect = viewModel::onCategorySelected,
+            onAdd = viewModel::addNewCategory,
+            validate = viewModel::validateCategoryName,
+        ),
+        onCancel = onCancel,
+        onNotificationToggleChanged = viewModel::updateNotificationStatus,
+        onForceAddFeed = viewModel::forceAddFeed,
+        modifier = modifier,
+        youTubeOptions = youTubeOptions,
+        onHideShortsToggleChanged = viewModel::updateHideShortsStatus,
+        completionRevision = completionRevision,
         topAppBar = topAppBar,
+        snackbarHostState = snackbarHostState,
     )
-
-    if (showCategoryDialog) {
-        EditCategoryDialog(
-            categoryState = categoriesState,
-            onCategorySelected = { categoryId ->
-                viewModel.onCategorySelected(categoryId)
-            },
-            onAddCategory = { categoryName ->
-                viewModel.addNewCategory(categoryName)
-            },
-            onDeleteCategory = { categoryId ->
-                viewModel.deleteCategory(categoryId.value)
-            },
-            onEditCategory = { categoryId, newName ->
-                viewModel.editCategory(categoryId, newName)
-            },
-            validateCategoryName = viewModel::validateCategoryName,
-            onDismiss = {
-                showCategoryDialog = false
-            },
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun AddScreenContentPreview() {
-    FeedFlowTheme {
-        AddFeedContent(
-            feedUrl = "https://www.ablog.com/feed",
-            showError = false,
-            showLoading = false,
-            errorMessage = "",
-            snackbarHost = { SnackbarHost(SnackbarHostState()) },
-            categoriesState = categoriesExpandedState,
-            onFeedUrlUpdated = {},
-            addFeed = { },
-            onCategorySelectorClick = {},
-            showNotificationToggle = true,
-            isNotificationEnabled = false,
-            onNotificationToggleChanged = {},
-            canForceAdd = false,
-            onForceAddFeed = {},
-        )
-    }
 }

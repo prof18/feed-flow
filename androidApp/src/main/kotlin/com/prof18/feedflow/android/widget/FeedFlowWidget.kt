@@ -6,52 +6,74 @@ import androidx.compose.runtime.getValue
 import androidx.glance.GlanceId
 import androidx.glance.GlanceTheme
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.provideContent
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.ui.utils.ProvideFeedFlowStrings
+import com.prof18.feedflow.android.util.rememberAndroidFeedFlowStrings
+import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.data.WidgetConfiguration
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
+import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
-import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
+import com.prof18.feedflow.shared.domain.feed.WidgetRenderState
+import com.prof18.feedflow.shared.presentation.WidgetRefreshState
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 
 internal class FeedFlowWidget(
     private val repository: FeedWidgetRepository,
     private val widgetSettingsRepository: WidgetSettingsRepository,
     private val browserManager: BrowserManager,
+    private val settingsRepository: SettingsRepository,
+    private val widgetRefreshState: WidgetRefreshState,
+    private val feedDownloadWorkerEnqueuer: FeedDownloadWorkerEnqueuer,
 ) : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val feedItemsFlow = repository.getFeeds()
+        val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
+        val widgetStateFlow = widgetSettingsRepository.observeWidgetConfiguration(appWidgetId)
+            .flatMapLatest { config ->
+                repository.getWidgetRenderState(config.contentFilter).map { renderState ->
+                    WidgetContentState(config, renderState)
+                }
+            }
         // Glance rebuilds can briefly render the collectAsState initial value before the DB flow emits.
         // Preloading the current items avoids flashing the widget empty state during refreshes.
-        val initialFeedItems = feedItemsFlow.first()
+        val initialWidgetState = widgetStateFlow.first()
+        val refreshQueuedFlow = feedDownloadWorkerEnqueuer.widgetRefreshQueued
+        val initialRefreshQueued = refreshQueuedFlow.first()
 
         provideContent {
-            val lyricist = rememberFeedFlowStrings()
+            val lyricist = rememberAndroidFeedFlowStrings(settingsRepository)
 
             ProvideFeedFlowStrings(lyricist) {
-                val feedItems by feedItemsFlow.collectAsState(initialFeedItems)
-                val feedLayout by widgetSettingsRepository.feedWidgetLayout.collectAsState()
-                val showHeader by widgetSettingsRepository.widgetShowHeader.collectAsState()
-                val fontScale by widgetSettingsRepository.widgetFontScale.collectAsState()
-                val backgroundColor by widgetSettingsRepository.widgetBackgroundColor.collectAsState()
-                val backgroundOpacity by widgetSettingsRepository.widgetBackgroundOpacity.collectAsState()
-                val textColorMode by widgetSettingsRepository.widgetTextColorMode.collectAsState()
-                val hideImages by widgetSettingsRepository.widgetHideImages.collectAsState()
-
+                val widgetState by widgetStateFlow.collectAsState(initialWidgetState)
+                val isRefreshing by widgetRefreshState.isRefreshing.collectAsState()
+                val isRefreshQueued by refreshQueuedFlow.collectAsState(initialRefreshQueued)
                 GlanceTheme {
                     WidgetContent(
-                        feedItems = feedItems,
-                        feedLayout = feedLayout,
+                        feedItems = widgetState.renderState.feedItems,
+                        feedLayout = widgetState.configuration.feedLayout,
                         browserManager = browserManager,
-                        showHeader = showHeader,
-                        fontScale = fontScale,
-                        backgroundColor = backgroundColor,
-                        backgroundOpacityPercent = backgroundOpacity,
-                        textColorMode = textColorMode,
-                        hideImages = hideImages,
+                        showHeader = widgetState.configuration.showHeader,
+                        showRefreshButton = widgetState.configuration.showRefreshButton,
+                        isRefreshing = isRefreshQueued || isRefreshing,
+                        headerTitle = widgetState.renderState.title,
+                        filter = widgetState.renderState.contentFilter,
+                        fontScale = widgetState.configuration.fontScale,
+                        backgroundColor = widgetState.configuration.backgroundColor,
+                        backgroundOpacityPercent = widgetState.configuration.backgroundOpacityPercent,
+                        textColorMode = widgetState.configuration.textColorMode,
+                        hideImages = widgetState.configuration.hideImages,
                     )
                 }
             }
         }
     }
 }
+
+private data class WidgetContentState(
+    val configuration: WidgetConfiguration,
+    val renderState: WidgetRenderState,
+)

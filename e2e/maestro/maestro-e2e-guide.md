@@ -28,6 +28,15 @@ e2e/
 
 Use platform-specific flow files when the setup or UI differs between Android and iOS. Shared flows are fine only for commands that are identical on both platforms.
 
+Android REG-179 requires the native `android_share_feed.py` bridge in
+`e2e/scripts/run-android.sh`: Maestro seeds the local fixture, ADB sends the real
+text-share intent, then Maestro chooses FeedFlow in the system resolver and checks
+the result and automatic return. The helper splits at the checked-in
+`NATIVE_ACTION_SEND` comment and retains all assertions. Do not run its YAML
+directly: Maestro does not provide an arbitrary ACTION_SEND command. Use an English
+private device with no default text-share target; the parent runner pins the device
+and restores development subscriptions even after failure.
+
 ## App IDs
 
 - Android debug app: `com.prof18.feedflow.debug`
@@ -69,6 +78,26 @@ Supported profiles:
 - `reorder-drag`
 - `feed-content`
 - `rtl-content`
+- `audio-episode`
+
+`audio-episode` adds an audio episode and a plain control article above the existing content-rich items.
+Both open from stored feed content. Feed source and unread indicators are hidden so the flow exercises
+the independent audio badge. REG-173 uses the seed's inert enclosure URL; REG-174 and REG-176 use the
+local WAV URL supplied by `e2e/scripts/run-audio-playback.sh`. REG-176 generates speech from the
+seeded article and uses the podcast player to check visible duration, pause/seek/speed, source switching,
+position retention, background/foreground return, and close behavior.
+
+The focused playback runner starts `e2e/scripts/serve-audio-fixture.py` on an ephemeral port and
+passes the URL to Maestro as `AUDIO_URL`. The local server supports HTTP byte ranges for native
+players. On Android, the runner targets the first device from `adb devices` and maps its localhost
+to the host server with `adb reverse`. iOS Simulator reaches the server at `127.0.0.1`. Runner logs
+remain under `.tmp/audio-playback/` for diagnostics.
+
+`e2e/scripts/run-audio-playback.sh android 175-now-playing-navigation` (or `ios`) runs
+the focused compact-player navigation flow with the same local fixture and development-feed restoration.
+Use `e2e/scripts/run-audio-playback.sh android 176-reader-speech-playback` or the corresponding `ios`
+command for speech playback coverage. Android uses the first connected device by default; set
+`ANDROID_SERIAL=<device-serial>` to target a specific connected device.
 
 Seed deep links:
 
@@ -81,10 +110,21 @@ feedflow://e2e/reset-and-seed?profile=sync-linked-mock&account=fresh_rss
 
 `sync-linked-mock` and `sync-upload-required` can select a seeded account with `account=fresh_rss`, `miniflux`, `bazqux`, `feedbin`, `dropbox`, or `icloud`.
 
+`content-rich` also accepts `verification=pending` on `reset-and-seed` (Android and iOS, debug builds
+only). The fixture points the seeded Android Weekly feed at the reserved
+`https://feed-verification.invalid/rss` URL and records it as waiting for website verification. The app
+then shows the foreground explanation once; Cancel hides it until the app returns from the background.
+The feed source list offers **Verify website** for that feed, which opens the same explanation and then
+the verification browser. The fixture does not seed a clearance cookie or complete a live challenge.
+REG-182 uses it.
+
 The stable completion marker is:
 
 - visible text: `E2E seed complete`
 - accessibility id: `e2e_seed_complete`
+
+On iOS, tap the completion marker after asserting it when testing bottom controls. This dismisses
+the debug-only status banner so it cannot intercept playback-indicator taps.
 
 ## Seeding In Flows
 
@@ -99,6 +139,10 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: e2e_open_app
 ```
+
+The Android `android-widget` profile also exposes `e2e_open_widget_settings`, which opens the widget configuration screen with test widget ID 1. REG-177 uses this entry point to exercise settings and the preview without requiring a launcher host; the seed resets that per-widget configuration before each run. It does not validate the home-screen widget refresh action.
+
+REG-177 defaults to an English UI. For a localized device, pass `-e WIDGET_HEADER_TITLE="<localized Show header title label>"` to Maestro.
 
 iOS handles the seed link inside the app. The simulator may show a system confirmation dialog for custom schemes, so keep the `Open` tap optional.
 
@@ -118,12 +162,20 @@ appId: com.prof18.feedflow.dev
 
 Import/export flows use deterministic files under `e2e/fixtures/`.
 
-- Android fixtures are pushed to `/sdcard/Download/feedflow-e2e` by `e2e/scripts/push-android-fixtures.sh`.
+- Android fixtures are pushed to `/sdcard/Download/` by `e2e/scripts/push-android-fixtures.sh`. Android 15's Downloads provider can show an unindexed nested folder as empty after `adb push`; the Downloads root exposes the raw fixture files. The import flows choose the Downloads navigation root (`^Downloads?$`: Android 13 labels it "Download"), search the exact filename and select its document row.
 - iOS fixtures are copied into the app Documents directory and the simulator Files provider by `e2e/scripts/push-ios-fixtures.sh`.
 - The OPML fixture is named `feedflow-valid-opml-smoke.xml` so Android DocumentsUI exposes it through the Documents filter, but its contents are OPML.
 - iOS Files may focus a grid item on the first tap; SM-011 deliberately double taps fixture thumbnails.
 
 The wrapper scripts push fixtures after installing the app and before running Maestro flows.
+
+Run Android SM-007 through `e2e/scripts/run-android.sh` (or its smoke wrapper). The runner uses `android_reader_tooltip.py` to preserve the flow's setup, tooltip visibility, five-second disappearance wait and complete reader-action tail. A native hierarchy must confirm the seeded app-owned reader and one app-owned, enabled, clickable, long-clickable browser button with valid bounds. If Android CLI also captures that button, its geometry must agree; duplicate nodes, conflicting bounds or an explicit disabled state fail the check. If the CLI snapshot omits the button, the helper uses the validated native bounds. It holds an SDK touch through the original presence assertion and releases it in guaranteed cleanup before running the original tail. This avoids Maestro 2.7.0's post-gesture hierarchy reads missing the transient tooltip and the original percentage point missing the button on some displays. Driver connections are released between Android CLI/native/Maestro inspection. No production tooltip duration or device accessibility setting changes.
+
+Set `ANDROID_SERIAL` to select a private compatible device when several are connected. The runner binds installation, fixtures, assertions and development-feed restoration to that device; a failed restore makes the run fail. Results and split JUnit reports remain under `.tmp/android-e2e.*/reader-tooltip/`. Directly running the original YAML retains its stationary gesture and can still fail; use the runner for this coverage. The helper requires `--parent-restores` because its caller must arrange restoration even after failure. A tooltip assertion or touch-release failure never passes or skips into the reader tail.
+
+The reader image-viewer journeys (REG-111 on both platforms, Android REG-166) tap the seeded `reader-mode` article's lead image by its alt text, `E2E reader image`. The reader's own hero image is decorative (`alt=""`) and invisible to Maestro, so a screen point was the only way to reach it and it drifted whenever the title or byline changed height. The image loads from the network; the flows wait for it before tapping.
+
+Android search (REG-171) dismisses the keyboard with `hideKeyboard`, never `pressKey: Enter`. Maestro types through injected key events, which Gboard buffers as a composing word; a hardware Enter makes Gboard commit that word through its physical-keyboard correction ("Reader" became "Header" or "Readery") instead of reaching the field's Done action. Typing on the on-screen keyboard does not go through that path.
 
 ## Writing A New Flow
 
@@ -202,7 +254,7 @@ Preconditions:
 
 - Maestro is installed and available as `maestro`.
 - For Android, a device or emulator is running. Default local target: `Resizable_Experimental`.
-- For iOS, the `iPhone 17 Pro` simulator is booted and `iosApp/FeedFlow.xcodeproj` exists.
+- For iOS, the `iPhone 18 Pro` simulator is booted and `iosApp/FeedFlow.xcodeproj` exists.
 
 Run the full local automated wrappers before a release. These build, install, push fixtures, and run `smoke` followed by `regression`:
 
@@ -210,6 +262,25 @@ Run the full local automated wrappers before a release. These build, install, pu
 e2e/scripts/run-android.sh
 e2e/scripts/run-ios.sh
 ```
+
+The Android runner defaults to Google Play. To build and install the F-Droid
+debug variant on a selected private device, use
+`E2E_ANDROID_FLAVOR=fdroid ANDROID_SERIAL=<serial> e2e/scripts/run-android.sh`.
+Only `googlePlay` and `fdroid` are accepted; an invalid flavor fails before
+device discovery or installation. Both debug variants share the same app ID, so
+run them sequentially on a compatible test device. `E2E_ANDROID_SUITES=smoke`
+selects the existing smoke subset for either flavor. Restoration remains bound
+to the selected device.
+
+The canonical Android inventory defines 79 logical journeys. F-Droid selects
+four capability-specific alternatives under `android/fdroid/regression` for
+REG-118, REG-132, REG-133 and REG-147. Its existing flavor excludes Dropbox,
+Google Drive and crash reporting. The alternatives check provider/reporting
+absence, connected server-account states, absence of cloud-backup actions for
+server/local accounts, and the same empty-library destinations. All other journeys, including the reader and share
+helpers, use the canonical files. Google Play retains every original cloud
+assertion; alternate files are replacements in the existing sequence, never
+extra flows or skips.
 
 Run the fast smoke subset while iterating:
 
@@ -232,7 +303,7 @@ maestro --platform android test e2e/maestro/android/smoke/002-seeded-timeline-lo
 Run one iOS flow against an already installed build:
 
 ```bash
-SIMULATOR_UDID=$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 17 Pro/ {print $2; exit}')
+SIMULATOR_UDID=$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone 18 Pro \(/ {print $2; exit}')
 maestro --platform ios --device "$SIMULATOR_UDID" test e2e/maestro/ios/smoke/002-seeded-timeline-loads.yaml
 ```
 

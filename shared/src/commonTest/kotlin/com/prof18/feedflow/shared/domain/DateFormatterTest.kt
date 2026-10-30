@@ -117,6 +117,11 @@ class DateFormatterTest {
         "Wednesday, 08 April 2026",
         // JavaScript-style date string (JAVA-G6)
         "Sun Feb 05 2012 10:48:29",
+        // JavaScript Date.toString() output (JAVA-MH)
+        "Wed Sep 09 2026 00:00:00 GMT+0000 (Coordinated Universal Time)",
+        "Tue Oct 20 2026 17:43:00 GMT+0100 (British Summer Time)",
+        // British Summer Time abbreviation (JAVA-MH)
+        "Tue, 20 Oct 2026 16:43:00 BST",
         // Month-first timestamp without a day comma (JAVA-B3 follow-up in same Sentry bucket)
         "Fri, Jun 14 2024 10:08:25 +0000",
     )
@@ -198,6 +203,56 @@ class DateFormatterTest {
         )
 
         assertEquals("2024-12-25 - 2:30 PM", formatted)
+    }
+
+    @Test
+    fun `formatDateForFeed uses zero-padded dot date for same-year articles`() {
+        val timezone = TimeZone.currentSystemDefault()
+        val clock = FakeClock(
+            LocalDateTime(2025, 6, 15, 10, 30).toInstant(timezone),
+        )
+        val formatter = DateFormatterImpl(logger = testLogger, clock = clock)
+        val millis = LocalDateTime(2025, 2, 3, 14, 5)
+            .toInstant(timezone)
+            .toEpochMilliseconds()
+
+        assertEquals(
+            "03.02 - 14:05",
+            formatter.formatDateForFeed(millis, DateFormat.DAY_MONTH_DOT, TimeFormat.HOURS_24),
+        )
+    }
+
+    @Test
+    fun `formatDateForFeed includes year and supports 12 hour clock for older articles`() {
+        val timezone = TimeZone.currentSystemDefault()
+        val clock = FakeClock(
+            LocalDateTime(2025, 6, 15, 10, 30).toInstant(timezone),
+        )
+        val formatter = DateFormatterImpl(logger = testLogger, clock = clock)
+        val millis = LocalDateTime(2024, 2, 3, 14, 5)
+            .toInstant(timezone)
+            .toEpochMilliseconds()
+
+        assertEquals(
+            "03.02.2024 - 2:05 PM",
+            formatter.formatDateForFeed(millis, DateFormat.DAY_MONTH_DOT, TimeFormat.HOURS_12),
+        )
+    }
+
+    @Test
+    fun `formatDateForFeed keeps today time-only with dot date format`() {
+        val timezone = TimeZone.currentSystemDefault()
+        val now = LocalDateTime(2025, 6, 15, 10, 30).toInstant(timezone)
+        val formatter = DateFormatterImpl(logger = testLogger, clock = FakeClock(now))
+
+        assertEquals(
+            "2:05 PM",
+            formatter.formatDateForFeed(
+                LocalDateTime(2025, 6, 15, 14, 5).toInstant(timezone).toEpochMilliseconds(),
+                DateFormat.DAY_MONTH_DOT,
+                TimeFormat.HOURS_12,
+            ),
+        )
     }
 
     private fun Int.padded(): String = toString().padStart(2, '0')

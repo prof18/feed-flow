@@ -17,6 +17,24 @@ class SelectedFeedsMapperTest {
     private val dateFormatter = FakeDateFormatter()
 
     @Test
+    fun `audio metadata preserves signed query and rejects invalid stored urls`() {
+        val signedUrl = "https://example.com/episode.mp3?sig=a%2Bb&part=1#track"
+        val result = createSelectFeeds(audioUrl = signedUrl).toFeedItem(
+            dateFormatter = dateFormatter,
+            settings = FeedItemMappingSettings(),
+        )
+        assertEquals(signedUrl, result.audioUrl)
+        for (audioUrl in listOf(null, "file:///episode.mp3", "https://")) {
+            assertNull(
+                createSelectFeeds(audioUrl = audioUrl).toFeedItem(
+                    dateFormatter = dateFormatter,
+                    settings = FeedItemMappingSettings(),
+                ).audioUrl,
+            )
+        }
+    }
+
+    @Test
     fun `toFeedItem removes title from description when enabled`() {
         val selectFeeds = createSelectFeeds(
             title = "Title",
@@ -147,6 +165,7 @@ class SelectedFeedsMapperTest {
         isPinned: Boolean? = false,
         isNotificationEnabled: Boolean? = false,
         feedSourceHideImages: Boolean? = false,
+        audioUrl: String? = null,
     ): SelectFeeds = SelectFeeds(
         url_hash = "item-1",
         url = "https://example.com/item-1",
@@ -158,6 +177,7 @@ class SelectedFeedsMapperTest {
         is_read = false,
         is_bookmarked = false,
         notification_sent = false,
+        audio_url = audioUrl,
         feed_source_title = "Feed Source",
         feed_source_id = "source-1",
         feed_source_url = "https://example.com/feed.xml",

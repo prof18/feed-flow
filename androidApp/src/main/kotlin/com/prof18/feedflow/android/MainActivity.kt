@@ -9,18 +9,31 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.union
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,12 +52,17 @@ import com.prof18.feedflow.android.accounts.feedbin.FeedbinSyncScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.accounts.miniflux.MinifluxSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
+import com.prof18.feedflow.android.audio.AndroidAudioPlayer
+import com.prof18.feedflow.android.audio.AudioEpisode
+import com.prof18.feedflow.android.audio.AudioPlaybackState
+import com.prof18.feedflow.android.audio.NowPlayingIndicator
 import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.android.editfeed.EditScreen
 import com.prof18.feedflow.android.editfeed.toEditFeed
 import com.prof18.feedflow.android.editfeed.toFeedSource
 import com.prof18.feedflow.android.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.android.feedsuggestions.FeedSuggestionsScreen
+import com.prof18.feedflow.android.feedverification.FeedVerificationScreen
 import com.prof18.feedflow.android.home.HomeScreen
 import com.prof18.feedflow.android.readermode.ReaderModeScreen
 import com.prof18.feedflow.android.search.SearchScreen
@@ -61,7 +79,10 @@ import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.ImportExpo
 import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.NotificationsSettingsScreen
 import com.prof18.feedflow.android.settings.readingbehavior.ReadingBehaviorScreen
 import com.prof18.feedflow.android.settings.syncstorage.SyncAndStorageScreen
+import com.prof18.feedflow.android.settings.widget.WidgetInstanceSettingsScreen
 import com.prof18.feedflow.android.settings.widget.WidgetSettingsScreen
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -70,7 +91,6 @@ import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
-import com.prof18.feedflow.shared.domain.parser.ReaderModeParserWarmer
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -78,9 +98,9 @@ import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.presentation.model.DeeplinkFeedState
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -92,7 +112,7 @@ class MainActivity : BaseThemeActivity() {
     private val reviewViewModel by viewModel<ReviewViewModel>()
     private val homeViewModel by viewModel<HomeViewModel>()
     private val browserManager by inject<BrowserManager>()
-    private val readerModeParserWarmer by inject<ReaderModeParserWarmer>()
+    private val audioPlayer by inject<AndroidAudioPlayer>()
 
     private var currentIntent by mutableStateOf<Intent?>(null)
 
@@ -133,10 +153,36 @@ class MainActivity : BaseThemeActivity() {
 
         val backStack = rememberNavBackStack(Home())
         val flowStrings = LocalFeedFlowStrings.current
+        val indicatorState = remember {
+            audioPlayer.state.map { AudioPlaybackState(episode = it.episode, isPlaying = it.isPlaying) }
+                .distinctUntilChanged()
+        }
+        val audioState by indicatorState.collectAsStateWithLifecycle(initialValue = AudioPlaybackState())
+        val scope = rememberCoroutineScope()
+        var openingAudioEpisode by remember { mutableStateOf(false) }
+        val showNowPlaying = shouldShowNowPlaying(audioState, backStack)
+        val onOpenAudioEpisode: (AudioEpisode) -> Unit = { episode ->
+            if (!openingAudioEpisode) {
+                openingAudioEpisode = true
+                scope.launch {
+                    try {
+                        openAudioEpisode(
+                            episode = episode,
+                            readerModeViewModel = readerModeViewModel,
+                            backStack = backStack,
+                            snackbarHostState = snackbarHostState,
+                            errorMessage = flowStrings.genericErrorMessage,
+                        )
+                    } finally {
+                        openingAudioEpisode = false
+                    }
+                }
+            }
+        }
 
         val deeplinkState by deeplinkViewModel.deeplinkFeedState.collectAsStateWithLifecycle()
 
-        LaunchedEffect(currentIntent) {
+        SideEffect(currentIntent) {
             currentIntent?.let { intent ->
                 if (intent.action == Intent.ACTION_VIEW && intent.data != null) {
                     val uri = intent.data
@@ -167,18 +213,13 @@ class MainActivity : BaseThemeActivity() {
             }
         }
 
-        LaunchedEffect(deeplinkState) {
+        SideEffect(deeplinkState) {
             handleDeepLinkState(
                 state = deeplinkState,
                 deeplinkViewModel = deeplinkViewModel,
                 readerModeViewModel = readerModeViewModel,
                 backStack = backStack,
             )
-        }
-
-        LaunchedEffect(Unit) {
-            delay(READER_MODE_WARMUP_DELAY_MILLIS)
-            readerModeParserWarmer.warmUp()
         }
 
         LaunchedEffect(Unit) {
@@ -199,10 +240,31 @@ class MainActivity : BaseThemeActivity() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background,
         ) {
-            FeedFlowNavigation(
-                backStack = backStack,
-                readerModeViewModel = readerModeViewModel,
-            )
+            Column(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier.weight(1f).then(
+                        if (showNowPlaying) {
+                            Modifier.consumeWindowInsets(WindowInsets.navigationBars.union(WindowInsets.ime))
+                        } else {
+                            Modifier
+                        },
+                    ),
+                ) {
+                    FeedFlowNavigation(backStack, readerModeViewModel, onOpenAudioEpisode)
+                }
+                if (showNowPlaying) {
+                    NowPlayingIndicator(
+                        state = audioState,
+                        onOpenEpisode = onOpenAudioEpisode,
+                        onToggle = audioPlayer::togglePlayback,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .navigationBarsPadding()
+                            .imePadding(),
+                    )
+                }
+            }
 
             Column(
                 modifier = Modifier
@@ -213,6 +275,32 @@ class MainActivity : BaseThemeActivity() {
                 SnackbarHost(snackbarHostState)
             }
         }
+        FeedVerificationScreen()
+    }
+
+    private fun shouldShowNowPlaying(state: AudioPlaybackState, backStack: NavBackStack<NavKey>): Boolean =
+        state.episode != null && backStack.lastOrNull() != ReaderMode
+
+    private suspend fun openAudioEpisode(
+        episode: AudioEpisode,
+        readerModeViewModel: ReaderModeViewModel,
+        backStack: NavBackStack<NavKey>,
+        snackbarHostState: SnackbarHostState,
+        errorMessage: String,
+    ) {
+        try {
+            val info = readerModeViewModel.getAudioEpisodeReaderInfo(FeedItemId(episode.itemId))
+            if (audioPlayer.state.value.episode?.itemId != episode.itemId) return
+            if (info == null) {
+                snackbarHostState.showSnackbar(errorMessage)
+                return
+            }
+            handleArticleOpenMode(info, readerModeViewModel, backStack)
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (_: Exception) {
+            snackbarHostState.showSnackbar(errorMessage)
+        }
     }
 
     @Suppress("ViewModelForwarding")
@@ -221,6 +309,7 @@ class MainActivity : BaseThemeActivity() {
     private fun FeedFlowNavigation(
         backStack: NavBackStack<NavKey>,
         readerModeViewModel: ReaderModeViewModel,
+        onOpenAudioEpisode: (AudioEpisode) -> Unit,
     ) {
         val reduceMotionEnabled = LocalReduceMotion.current
         val navigateBack: () -> Unit = { popBackStackOrFinish(backStack) }
@@ -254,7 +343,7 @@ class MainActivity : BaseThemeActivity() {
                 }
 
                 entry<Home> { route ->
-                    LaunchedEffect(Unit) {
+                    SideEffect(Unit) {
                         val feedId: String? = route.feedSourceId
                         if (!feedId.isNullOrEmpty()) {
                             homeViewModel.updateFeedSourceFilter(feedId)
@@ -272,7 +361,7 @@ class MainActivity : BaseThemeActivity() {
                         onAddFeedClick = { backStack.add(AddFeed) },
                         onImportExportClick = { backStack.add(ImportExport) },
                         navigateToReaderMode = { url ->
-                            readerModeViewModel.getReaderModeHtml(url)
+                            readerModeViewModel.loadReaderContent(url)
                             backStack.add(ReaderMode)
                         },
                         onSearchClick = { backStack.add(Search) },
@@ -344,6 +433,17 @@ class MainActivity : BaseThemeActivity() {
                 entry<WidgetSettings> {
                     WidgetSettingsScreen(
                         navigateBack = navigateBack,
+                        navigateToWidgetInstanceSettings = { appWidgetId ->
+                            backStack.add(WidgetInstanceSettings(appWidgetId))
+                        },
+                    )
+                }
+
+                entry<WidgetInstanceSettings> { key ->
+                    WidgetInstanceSettingsScreen(
+                        appWidgetId = key.appWidgetId,
+                        navigateBack = navigateBack,
+                        navigateToSyncSettings = { backStack.add(SyncAndStorage) },
                     )
                 }
 
@@ -393,6 +493,8 @@ class MainActivity : BaseThemeActivity() {
                 }
 
                 entry<ReaderMode> {
+                    val verificationState by readerModeViewModel.verificationState.collectAsStateWithLifecycle()
+                    DisposableEffect(Unit) { onDispose { readerModeViewModel.cancelVerification() } }
                     val readerModeState by readerModeViewModel.readerModeState.collectAsStateWithLifecycle()
                     val fontSettingsState by readerModeViewModel.readerFontSettingsState
                         .collectAsStateWithLifecycle()
@@ -405,6 +507,10 @@ class MainActivity : BaseThemeActivity() {
                     val themeState by themeViewModel.themeState.collectAsStateWithLifecycle()
 
                     ReaderModeScreen(
+                        onOpenAudioEpisode = onOpenAudioEpisode,
+                        verificationState = verificationState,
+                        verificationAvailable = readerModeViewModel.verificationAvailable,
+                        onVerifyWebsite = readerModeViewModel::verifyWebsite,
                         readerModeState = readerModeState,
                         fontSize = fontSettingsState.fontSize,
                         themeMode = themeState,
@@ -445,7 +551,7 @@ class MainActivity : BaseThemeActivity() {
                     SearchScreen(
                         navigateBack = navigateBack,
                         navigateToReaderMode = { urlInfo ->
-                            readerModeViewModel.getReaderModeHtml(urlInfo)
+                            readerModeViewModel.loadReaderContent(urlInfo)
                             backStack.add(ReaderMode)
                         },
                         navigateToEditFeed = { feedSource ->
@@ -468,7 +574,7 @@ class MainActivity : BaseThemeActivity() {
                     val feedSource: FeedSource = route.toFeedSource()
                     val viewModel = koinViewModel<EditFeedViewModel>()
 
-                    LaunchedEffect(feedSource) {
+                    SideEffect(feedSource) {
                         viewModel.loadFeedToEdit(feedSource)
                     }
 
@@ -562,11 +668,7 @@ class MainActivity : BaseThemeActivity() {
         feedUrlInfo: FeedItemUrlInfo,
         backStack: NavBackStack<NavKey>,
     ) {
-        readerModeViewModel.getReaderModeHtml(feedUrlInfo)
-        backStack.add(ReaderMode)
-    }
-
-    private companion object {
-        const val READER_MODE_WARMUP_DELAY_MILLIS = 1_500L
+        readerModeViewModel.loadReaderContent(feedUrlInfo)
+        if (backStack.lastOrNull() != ReaderMode) backStack.add(ReaderMode)
     }
 }

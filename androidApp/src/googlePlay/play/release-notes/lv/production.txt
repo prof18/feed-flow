@@ -1,2 +1,6 @@
-• Izmēģiniet jauno eksperimentālo lasīšanas režīma dzini, lai rakstus izgūtu ātrāk un precīzāk. Palīdziet man to uzlabot, ziņojot par trūkstošu saturu vai formatējuma problēmām.
-• Uzlaboti attēli, iegultais saturs, īsi un tikai attēlu raksti, grāmatzīmju darbības un Dropbox atvienošana.
+• Klausieties podkāstu epizodes tieši FeedFlow
+• Ļaujiet lasīšanas režīmā nolasīt rakstus skaļi ar balsi raksta valodā
+• Jauni pielāgojami sākuma ekrāna logrīki ar izvēles atsvaidzināšanas pogu
+• Jaunais lasīšanas režīma dzinējs tagad ir noklusējuma. Ja raksts neizskatās pareizi, ziņojiet par to ar vienu pieskārienu
+• Sekojiet YouTube atskaņošanas sarakstiem un paslēpiet kanālu Shorts
+• Plūsmas no vietnēm, kas bloķē pieprasījumus, ielādējas uzticamāk, ar skaidrākiem kļūdu ziņojumiem

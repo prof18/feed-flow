@@ -5,9 +5,10 @@ import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.NSLogWriter
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
-import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.model.FeedFetchTier
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.FEEDFLOW_BROWSER_FALLBACK_HEADERS
 import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
 import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.database.createDatabaseDriver
@@ -22,17 +23,15 @@ import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
-import com.prof18.feedflow.shared.domain.HtmlRetriever
+import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
+import com.prof18.feedflow.shared.domain.contentprefetch.BackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
+import com.prof18.feedflow.shared.domain.contentprefetch.CoroutineBackgroundPrefetchScheduler
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
-import com.prof18.feedflow.shared.domain.feeditem.FeedContentPreparer
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
-import com.prof18.feedflow.shared.domain.feeditem.HtmlFeedContentPreparer
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
@@ -40,15 +39,22 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerIosDesktop
 import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
+import com.prof18.feedflow.shared.domain.notification.ArticleNotificationRepository
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerIos
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
-import com.prof18.feedflow.shared.domain.parser.CachingFeedItemParserWorker
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
-import com.prof18.feedflow.shared.domain.parser.KleadContentFormat
-import com.prof18.feedflow.shared.domain.parser.KleadFeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.ParserSelectingFeedItemParserWorker
+import com.prof18.feedflow.shared.domain.recovery.BrowserCapture
+import com.prof18.feedflow.shared.domain.recovery.CapturedFeedParser
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryCoordinator
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.IosWebsiteSessionBridge
+import com.prof18.feedflow.shared.domain.recovery.IosWebsiteSessionHttp
+import com.prof18.feedflow.shared.domain.recovery.WebsiteProfileCleaner
+import com.prof18.feedflow.shared.domain.recovery.WebsiteSessionHttp
+import com.prof18.feedflow.shared.domain.recovery.toRecoveryBytes
+import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
@@ -60,6 +66,7 @@ import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
+import com.prof18.feedflow.shared.presentation.FeedRefreshVerificationViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.FeedbinSyncViewModel
@@ -97,7 +104,6 @@ import platform.Foundation.dataUsingEncoding
 import platform.UIKit.UIDevice
 
 fun initKoinIos(
-    htmlParser: HtmlParser,
     appEnvironment: AppEnvironment,
     languageCode: String?,
     regionCode: String?,
@@ -105,9 +111,10 @@ fun initKoinIos(
     googleDrivePlatformClient: GoogleDrivePlatformClientIos,
     appVersion: String,
     telemetry: Telemetry,
-    feedItemParserWorker: FeedItemParserWorker,
     notifier: Notifier,
     feedUrlProtocolClasses: List<*>,
+    websiteSessionBridge: IosWebsiteSessionBridge? = null,
+    websiteProfileCleaner: WebsiteProfileCleaner? = null,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
         appEnvironment = appEnvironment,
@@ -122,41 +129,27 @@ fun initKoinIos(
     crashReportingLogWriter = CrashlyticsLogWriter(),
     modules = listOf(
         module {
-            factory { htmlParser }
             single { dropboxDataSource }
             single { googleDrivePlatformClient }
             single { telemetry }
-            single<FeedItemParserWorker> {
-                val kleadParser = KleadFeedItemParserWorker(
-                    contentFormat = KleadContentFormat.HTML,
-                    htmlRetriever = get(),
-                    logger = getWith("KleadFeedItemParserWorker"),
-                    feedItemContentFileHandler = get(),
-                    settingsRepository = get(),
-                    cacheResultWhenEnabled = false,
-                )
-                ParserSelectingFeedItemParserWorker(
-                    settingsRepository = get(),
-                    legacyParser = feedItemParserWorker,
-                    kleadParser = CachingFeedItemParserWorker(
-                        parser = kleadParser,
-                        settingsRepository = get(),
-                        feedItemContentFileHandler = get(),
-                    ),
-                )
-            }
-            single<FeedContentPreparer> { HtmlFeedContentPreparer() }
             single<Notifier> { notifier }
             single<RssParserWrapper> {
                 RssParserWrapperImpl(
-                    primaryParser = createRssParser(
-                        userAgent = FEEDFLOW_USER_AGENT,
-                        feedUrlProtocolClasses = feedUrlProtocolClasses,
-                    )::getRssChannel,
-                    forbiddenFallbackParser = createRssParser(
-                        userAgent = FEEDFLOW_FALLBACK_USER_AGENT,
-                        feedUrlProtocolClasses = feedUrlProtocolClasses,
-                    )::getRssChannel,
+                    feedHttpCacheStore = get(),
+                    parsers = mapOf(
+                        FeedFetchTier.PRIMARY to createRssParser(
+                            headers = mapOf("User-Agent" to FEEDFLOW_USER_AGENT),
+                            feedUrlProtocolClasses = feedUrlProtocolClasses,
+                        )::getRssChannel,
+                        FeedFetchTier.LINK_FREE to createRssParser(
+                            headers = mapOf("User-Agent" to FEEDFLOW_FALLBACK_USER_AGENT),
+                            feedUrlProtocolClasses = feedUrlProtocolClasses,
+                        )::getRssChannel,
+                        FeedFetchTier.BROWSER to createRssParser(
+                            headers = FEEDFLOW_BROWSER_FALLBACK_HEADERS,
+                            feedUrlProtocolClasses = feedUrlProtocolClasses,
+                        )::getRssChannel,
+                    ),
                 )
             }
             single<FeedFlowStrings> {
@@ -170,8 +163,24 @@ fun initKoinIos(
                 }
             }
         },
+    ) + listOfNotNull(
+        websiteSessionBridge?.let { recoveryModule(it, feedUrlProtocolClasses) },
+        websiteProfileCleaner?.let { cleaner -> module { single<WebsiteProfileCleaner> { cleaner } } },
     ),
 )
+
+// Only the app passes a bridge: tests and extensions never get website recovery
+private fun recoveryModule(bridge: IosWebsiteSessionBridge, feedUrlProtocolClasses: List<*>) = module {
+    single<WebsiteSessionHttp> { IosWebsiteSessionHttp(bridge, get()) }
+    single {
+        CapturedFeedParser(
+            createRssParser(
+                headers = mapOf("User-Agent" to FEEDFLOW_USER_AGENT),
+                feedUrlProtocolClasses = feedUrlProtocolClasses,
+            )::parse,
+        )
+    }
+}
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
     single<SqlDriver> {
@@ -274,10 +283,11 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             databaseHelper = get(),
             feedSyncRepository = get(),
             logger = getWith("SerialFeedFetcherRepository"),
-            rssParserWrapper = get(),
             rssChannelMapper = get(),
             dateFormatter = get(),
             feedHttpCacheStore = get(),
+            feedAttempt = get(),
+            recoveryRepository = get(),
         )
     }
 
@@ -294,14 +304,11 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single<ContentPrefetchRepository> {
-        ContentPrefetchRepositoryIosDesktop(
+    single<BackgroundPrefetchScheduler> {
+        CoroutineBackgroundPrefetchScheduler(
+            logger = getWith("CoroutineBackgroundPrefetchScheduler"),
+            contentPrefetcher = get(),
             dispatcherProvider = get(),
-            settingsRepository = get(),
-            databaseHelper = get(),
-            feedItemParserWorker = get(),
-            feedItemContentFileHandler = get(),
-            logger = getWith("ContentPrefetchRepositoryIosDesktop"),
         )
     }
 
@@ -311,14 +318,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 }
 
 private fun createRssParser(
-    userAgent: String,
+    headers: Map<String, String>,
     feedUrlProtocolClasses: List<*>,
 ) = RssParserBuilder(
     nsUrlSession = NSURLSession.sessionWithConfiguration(
         NSURLSessionConfiguration.defaultSessionConfiguration().apply {
-            HTTPAdditionalHeaders = mapOf(
-                "User-Agent" to userAgent,
-            )
+            HTTPAdditionalHeaders = headers.toMap<Any?, String>()
             protocolClasses = feedUrlProtocolClasses
         },
     ),
@@ -335,6 +340,11 @@ object Deps : KoinComponent {
     fun getHomeViewModel() = getKoin().get<HomeViewModel>()
     fun getFeedSourceListViewModel() = getKoin().get<FeedSourceListViewModel>()
     fun getAddFeedViewModel() = getKoin().get<AddFeedViewModel>()
+    fun getFeedRecoveryCoordinator() = getKoin().get<FeedRecoveryCoordinator>()
+    fun getFeedRecoveryRepository() = getKoin().get<FeedRecoveryRepository>()
+    fun getFeedRefreshVerificationViewModel() = getKoin().get<FeedRefreshVerificationViewModel>()
+    fun browserCapture(url: String, status: Int, contentType: String?, data: NSData): BrowserCapture =
+        BrowserCapture(url, status, contentType, data.toRecoveryBytes())
     fun getLogger(tag: String? = null) = getKoin().get<Logger> { parametersOf(tag) }
     fun getImportExportViewModel() = getKoin().get<ImportExportViewModel>()
     fun getMainSettingsViewModel() = getKoin().get<MainSettingsViewModel>()
@@ -345,6 +355,8 @@ object Deps : KoinComponent {
     fun getFeedFlowStrings() = getKoin().get<FeedFlowStrings>()
     fun getStrings() = getKoin().get<FeedFlowStrings>()
     fun getSettingsRepository() = getKoin().get<SettingsRepository>()
+    fun getArticleNotificationRepository() = getKoin().get<ArticleNotificationRepository>()
+    fun getAudioPlaybackPositionRepository() = getKoin().get<AudioPlaybackPositionRepository>()
     fun getSearchViewModel() = getKoin().get<SearchViewModel>()
     fun getAccountsViewModel() = getKoin().get<AccountsViewModel>()
     fun getDropboxDataSource() = getKoin().get<DropboxDataSource>()
@@ -353,6 +365,7 @@ object Deps : KoinComponent {
     fun getFeedSyncRepository() = getKoin().get<FeedSyncRepository>()
     fun getICloudSyncViewModel() = getKoin().get<ICloudSyncViewModel>()
     fun getReaderModeViewModel() = getKoin().get<ReaderModeViewModel>()
+    fun getReaderSpeechText() = getKoin().get<ReaderSpeechText>()
     fun getEditFeedViewModel() = getKoin().get<EditFeedViewModel>()
     fun getFreshRssSyncViewModel() = getKoin().get<FreshRssSyncViewModel>()
     fun getMinifluxSyncViewModel() = getKoin().get<MinifluxSyncViewModel>()
@@ -364,7 +377,6 @@ object Deps : KoinComponent {
     fun getNotificationsViewModel() = getKoin().get<NotificationsViewModel>()
     fun getNotifier() = getKoin().get<Notifier>()
     fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()
-    fun getHtmlRetriever() = getKoin().get<HtmlRetriever>()
     fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()
     fun getUserFeedbackReporter() = getKoin().get<UserFeedbackReporter>()
     fun getChangeFeedCategoryViewModel() = getKoin().get<ChangeFeedCategoryViewModel>()
@@ -375,8 +387,18 @@ object Deps : KoinComponent {
         profileName: String?,
         accountName: String?,
         developmentOpml: String?,
+        audioUrl: String? = null,
+        verificationFixture: String? = null,
     ): String? =
         runCatching {
+            if (verificationFixture != null) {
+                check(getKoin().get<AppConfig>().appEnvironment.isDebug()) {
+                    "Verification fixtures are debug-only"
+                }
+                check(action == "reset-and-seed" && profileName == "content-rich") {
+                    "Verification fixtures require reset-and-seed with content-rich"
+                }
+            }
             if (action == ACTION_RESTORE_DEVELOPMENT) {
                 val opmlData = requireNotNull(developmentOpml) { "Missing development OPML payload" }
                     .let { NSString.create(string = it).dataUsingEncoding(NSUTF8StringEncoding) ?: NSData() }
@@ -387,7 +409,11 @@ object Deps : KoinComponent {
                     action = action,
                     profileName = profileName,
                     accountName = accountName,
+                    audioUrl = audioUrl,
                 )
+            }
+            verificationFixture?.let { fixture ->
+                applyIosVerificationFixture(fixture, getKoin().get(), getFeedRecoveryRepository())
             }
         }.exceptionOrNull()?.message
 }

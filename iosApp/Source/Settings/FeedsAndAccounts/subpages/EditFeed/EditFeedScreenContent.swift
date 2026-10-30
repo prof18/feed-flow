@@ -22,6 +22,8 @@ struct EditFeedScreenContent: View {
     @Binding var articleOpenMode: ArticleOpenMode
     @Binding var isHidden: Bool
     @Binding var isHideImagesEnabled: Bool
+    @Binding var isKeepUnreadOnScrollEnabled: Bool
+    var isMarkReadWhenScrollingEnabled: Bool
     @Binding var isPinned: Bool
     var showNotificationToggle: Bool
     @Binding var isNotificationEnabled: Bool
@@ -34,6 +36,7 @@ struct EditFeedScreenContent: View {
     let updateArticleOpenMode: (ArticleOpenMode) -> Void
     let onHiddenToggled: (Bool) -> Void
     let onHideImagesToggled: (Bool) -> Void
+    let onKeepUnreadOnScrollToggled: (Bool) -> Void
     let onPinnedToggled: (Bool) -> Void
     let onNotificationToggled: (Bool) -> Void
     let addFeed: () -> Void
@@ -110,6 +113,23 @@ struct EditFeedScreenContent: View {
                 .onChange(of: isHideImagesEnabled) {
                     onHideImagesToggled(isHideImagesEnabled)
                 }
+
+                Toggle(isOn: $isKeepUnreadOnScrollEnabled) {
+                    Text(feedFlowStrings.keepUnreadWhenScrollingForFeed)
+                }
+                .disabled(!isMarkReadWhenScrollingEnabled)
+                .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.keepUnreadOnScrollToggle)
+                .onChange(of: isKeepUnreadOnScrollEnabled) {
+                    onKeepUnreadOnScrollToggled(isKeepUnreadOnScrollEnabled)
+                }
+
+                Text(
+                    isMarkReadWhenScrollingEnabled
+                        ? feedFlowStrings.keepUnreadWhenScrollingForFeedDescription
+                        : feedFlowStrings.keepUnreadWhenScrollingForFeedDisabled
+                )
+                .font(.footnote)
+                .foregroundStyle(.secondary)
 
                 Toggle(isOn: $isPinned) {
                     Text(feedFlowStrings.pinFeedSourceDescription)

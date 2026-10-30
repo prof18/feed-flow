@@ -18,6 +18,8 @@ struct RegularView: View {
     private var browserSelector
     @Environment(\.openURL)
     private var openURL
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
 
     @Binding var selectedSidebarItem: SidebarSelection?
 
@@ -40,10 +42,11 @@ struct RegularView: View {
     @State private var indexHolder: HomeListIndexHolder
     let homeViewModel: HomeViewModel
     let readerModeViewModel: ReaderModeViewModel
+    let onOpenAudioEpisode: (AudioEpisode) -> Void
 
-    @State private var showEditFeedSheet = false
-    @State private var feedSourceToEdit: FeedSource?
-    @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
+    @State private var feedSourceToEdit: EditFeedSheetItem?
+    @State private var columnVisibility: NavigationSplitViewVisibility
+    @State private var preferredCompactColumn: NavigationSplitViewColumn = .detail
 
     @State private var showFeedOperationDialog = false
     @State private var feedOperationLoadingMessage: String?
@@ -51,24 +54,30 @@ struct RegularView: View {
     init(
         selectedSidebarItem: Binding<SidebarSelection?>,
         homeViewModel: HomeViewModel,
-        readerModeViewModel: ReaderModeViewModel
+        readerModeViewModel: ReaderModeViewModel,
+        onOpenAudioEpisode: @escaping (AudioEpisode) -> Void
     ) {
         _selectedSidebarItem = selectedSidebarItem
         _indexHolder = State(initialValue: HomeListIndexHolder(homeViewModel: homeViewModel))
+        _columnVisibility = State(initialValue: Self.savedColumnVisibility(homeViewModel: homeViewModel))
         self.homeViewModel = homeViewModel
         self.readerModeViewModel = readerModeViewModel
+        self.onOpenAudioEpisode = onOpenAudioEpisode
     }
 
     var body: some View {
-        NavigationSplitView(columnVisibility: $columnVisibility) {
+        NavigationSplitView(
+            columnVisibility: $columnVisibility,
+            preferredCompactColumn: $preferredCompactColumn
+        ) {
             SidebarDrawer(
                 selectedSidebarItem: $selectedSidebarItem,
                 navDrawerState: navDrawerState,
                 onFeedFilterSelected: { feedFilter in
                     indexHolder.clear()
                     scrollUpTrigger.toggle()
-                    appState.currentCommonRoute = nil
                     appState.regularNavigationPath = NavigationPath()
+                    preferredCompactColumn = .detail
                     homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
                 },
                 onMarkAllReadClick: {
@@ -90,8 +99,7 @@ struct RegularView: View {
                     showImportExportSheet.toggle()
                 },
                 onEditFeedClick: { feedSource in
-                    feedSourceToEdit = feedSource
-                    showEditFeedSheet.toggle()
+                    feedSourceToEdit = EditFeedSheetItem(feedSource: feedSource)
                 },
                 onDeleteFeedClick: { feedSource in
                     homeViewModel.deleteFeedSource(feedSource: feedSource)
@@ -133,6 +141,10 @@ struct RegularView: View {
                     homeViewModel.reorderFeedSources(feedSources: feedSources)
                 }
             )
+            .modifier(NowPlayingAccessoryModifier(
+                isEnabled: horizontalSizeClass == .compact,
+                onOpenEpisode: onOpenAudioEpisode
+            ))
             .environment(appState)
             .environment(browserSelector)
             .navigationBarTitleDisplayMode(.inline)
@@ -148,17 +160,16 @@ struct RegularView: View {
                     onReaderModeNavigate: nil,
                     openDrawer: {
                         columnVisibility = .all
+                        preferredCompactColumn = .sidebar
                     },
                     onSidebarSelectionChanged: { feedFilter in
                         selectedSidebarItem = sidebarSelection(from: feedFilter)
                     }
                 )
+                .modifier(NowPlayingAccessoryModifier(onOpenEpisode: onOpenAudioEpisode))
                 .environment(indexHolder)
                 .environment(appState)
                 .environment(browserSelector)
-                .onAppear {
-                    appState.currentCommonRoute = nil
-                }
                 .navigationDestination(for: CommonViewRoute.self) { route in
                     commonDestination(route)
                 }
@@ -166,6 +177,22 @@ struct RegularView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .navigationSplitViewStyle(.balanced)
+        .onChange(of: horizontalSizeClass) { oldSizeClass, newSizeClass in
+            if oldSizeClass == .regular, newSizeClass == .compact {
+                preferredCompactColumn = .detail
+            } else if oldSizeClass == .compact, newSizeClass == .regular {
+                // The compact layout (a folded Duo) resets the split view, so bring back the saved choice.
+                columnVisibility = Self.savedColumnVisibility(homeViewModel: homeViewModel)
+            }
+        }
+        .onChange(of: columnVisibility) { _, visibility in
+            guard horizontalSizeClass != .compact else { return }
+            if visibility == .detailOnly {
+                homeViewModel.setLargeScreenSidebarVisible(value: false)
+            } else if visibility == .all || visibility == .doubleColumn {
+                homeViewModel.setLargeScreenSidebarVisible(value: true)
+            }
+        }
         .background(Color(.systemGroupedBackground))
         .loadingDialog(isLoading: showFeedOperationDialog, message: feedOperationLoadingMessage)
         .task {
@@ -205,18 +232,15 @@ struct RegularView: View {
             )
                 .environment(appState)
         }
-        .sheet(isPresented: $showEditFeedSheet) {
-            if let feedSource = feedSourceToEdit {
-                EditFeedScreen(feedSource: feedSource)
-                    .environment(appState)
-                    .environment(browserSelector)
-                    .toggleStyle(BlueToggleStyle())
-            }
+        .sheet(item: $feedSourceToEdit) { item in
+            EditFeedScreen(feedSource: item.feedSource)
+                .environment(appState)
+                .environment(browserSelector)
+                .toggleStyle(BlueToggleStyle())
         }
         .onChange(of: appState.pendingBrowserURL) { _, newURL in
             if let url = newURL {
                 appState.pendingBrowserURL = nil
-                appState.currentCommonRoute = CommonViewRoute.inAppBrowser(url: url)
                 appState.regularNavigationPath.append(CommonViewRoute.inAppBrowser(url: url))
             }
         }
@@ -227,8 +251,8 @@ struct RegularView: View {
             }
         }
         .onChange(of: appState.regularNavigationPath.count) { _, newCount in
-            if newCount == 0 {
-                appState.currentCommonRoute = nil
+            if newCount > 0 {
+                preferredCompactColumn = .detail
             }
         }
         .task {
@@ -238,11 +262,11 @@ struct RegularView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { _ in
             showAddFeedSheet = false
-            showEditFeedSheet = false
+            feedSourceToEdit = nil
             showSettings = false
             showSidebarSettingsSheet = false
-            appState.currentCommonRoute = nil
             appState.regularNavigationPath = NavigationPath()
+            preferredCompactColumn = .detail
         }
     }
 
@@ -274,11 +298,15 @@ struct RegularView: View {
                     .navigationBarBackButtonHidden(true)
             }
         }
+        .modifier(NowPlayingAccessoryModifier(route: route, onOpenEpisode: onOpenAudioEpisode))
         .environment(appState)
         .environment(browserSelector)
-        .onAppear {
-            appState.currentCommonRoute = route
-        }
+    }
+
+    private static func savedColumnVisibility(homeViewModel: HomeViewModel) -> NavigationSplitViewVisibility {
+        homeViewModel.getLargeScreenSidebarVisible().map {
+            $0.boolValue ? .all : .detailOnly
+        } ?? .automatic
     }
 
     private func sidebarSelection(from filter: FeedFilter) -> SidebarSelection? {

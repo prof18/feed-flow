@@ -83,7 +83,6 @@
     <string name="menu_remove_from_pinned">Kitűzés megszüntetése</string>
     <string name="menu_share_comments">Megjegyzések megosztása</string>
     <string name="menu_copy_link_comments">Megjegyzések hivatkozásának másolása</string>
-    <string name="settings_reader_mode">Cikkek megnyitása olvasó módban</string>
     <string name="search_no_data">Nincs találat erre: %s.</string>
     <string name="search_placeholder">Keresés…</string>
     <string name="search_hint_title">Gépeljen ide…</string>

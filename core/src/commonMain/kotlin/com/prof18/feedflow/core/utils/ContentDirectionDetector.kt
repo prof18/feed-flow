@@ -73,11 +73,6 @@ object ContentDirectionDetector {
     }
 
     /**
-     * Weak and neutral code points (bidi classes AN, CS, ES, ET, ON and BN) that sit inside the
-     * right-to-left blocks below. They must not decide the direction, so scanning continues past
-     * them to the first character that really is strong.
-     */
-    /**
      * Digits that are strongly right-to-left, unlike the Arabic-Indic ones. They have to be
      * checked before the generic digit test, which would otherwise discard them as weak.
      */
@@ -86,6 +81,11 @@ object ContentDirectionDetector {
         0x1E950..0x1E959, // Adlam digits
     )
 
+    /**
+     * Weak and neutral code points (bidi classes AN, CS, ES, ET, ON and BN) that sit inside the
+     * right-to-left blocks below. They must not decide the direction, so scanning continues past
+     * them to the first character that really is strong.
+     */
     private val NON_STRONG_RANGES = listOf(
         0x0600..0x0607, // Arabic number signs, Arabic-Indic roots
         0x0609..0x060A, // Arabic-Indic per mille and per ten thousand signs

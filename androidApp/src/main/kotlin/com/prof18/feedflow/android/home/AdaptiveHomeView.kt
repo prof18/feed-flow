@@ -18,11 +18,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
@@ -33,16 +29,16 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.home.drawer.AndroidDrawer
+import com.prof18.feedflow.android.ui.home.FeedListActions
+import com.prof18.feedflow.android.ui.home.FeedManagementActions
+import com.prof18.feedflow.android.ui.home.ShareBehavior
+import com.prof18.feedflow.android.ui.utils.LocalReduceMotion
+import com.prof18.feedflow.android.ui.utils.scrollToItemConditionally
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType.NONE
+import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
 import com.prof18.feedflow.shared.presentation.model.HomeViewMenuState
-import com.prof18.feedflow.shared.ui.home.FeedListActions
-import com.prof18.feedflow.shared.ui.home.FeedManagementActions
-import com.prof18.feedflow.shared.ui.home.HomeDisplayState
-import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
-import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -59,6 +55,8 @@ fun AdaptiveHomeView(
     viewMenuState: HomeViewMenuState,
     onFeedOrderChange: (FeedOrder) -> Unit,
     onShowReadArticlesTimelineChange: (Boolean) -> Unit,
+    isDockedDrawerVisible: Boolean,
+    onDockedDrawerVisibilityChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     useDockedDrawer: Boolean = false,
@@ -75,9 +73,9 @@ fun AdaptiveHomeView(
     @Composable
     fun HomeContentInternal(
         showDrawerMenu: Boolean,
+        onDrawerMenuClick: () -> Unit,
         modifier: Modifier = Modifier,
         isDrawerMenuOpen: Boolean = false,
-        onDrawerMenuClick: () -> Unit,
     ) {
         AndroidHomeScreenContent(
             modifier = modifier,
@@ -122,14 +120,12 @@ fun AdaptiveHomeView(
         )
     }
 
-    var isDrawerMenuFullVisible by rememberSaveable { mutableStateOf(true) }
-
     if (useDockedDrawer) {
         Row(
             modifier = modifier.fillMaxSize(),
         ) {
             Box(
-                modifier = if (isDrawerMenuFullVisible) {
+                modifier = if (isDockedDrawerVisible) {
                     Modifier.weight(1f)
                 } else {
                     Modifier
@@ -154,11 +150,11 @@ fun AdaptiveHomeView(
             }
 
             HomeContentInternal(
-                modifier = Modifier.weight(if (isDrawerMenuFullVisible) 2f else 1f),
+                modifier = Modifier.weight(if (isDockedDrawerVisible) 2f else 1f),
                 showDrawerMenu = true,
-                isDrawerMenuOpen = isDrawerMenuFullVisible,
+                isDrawerMenuOpen = isDockedDrawerVisible,
                 onDrawerMenuClick = {
-                    isDrawerMenuFullVisible = !isDrawerMenuFullVisible
+                    onDockedDrawerVisibilityChange(!isDockedDrawerVisible)
                 },
             )
         }

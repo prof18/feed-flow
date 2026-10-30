@@ -136,10 +136,10 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
         feedItems.forEachIndexed { index, feedItem ->
             val item = updatedItems.find { it.url_hash == feedItem.id }
             assertNotNull(item, "Item ${feedItem.id} should exist")
-            if (index <= targetIndex) {
-                assertTrue(item.is_read, "Item above or equal to target should be marked as read: ${feedItem.id}")
+            if (index < targetIndex) {
+                assertTrue(item.is_read, "Item above target should be marked as read: ${feedItem.id}")
             } else {
-                assertFalse(item.is_read, "Item below target should not be marked as read: ${feedItem.id}")
+                assertFalse(item.is_read, "Target or item below it should not be marked as read: ${feedItem.id}")
             }
         }
     }
@@ -178,10 +178,10 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
         feedItems.forEachIndexed { index, feedItem ->
             val item = updatedItems.find { it.url_hash == feedItem.id }
             assertNotNull(item, "Item ${feedItem.id} should exist")
-            if (index >= targetIndex) {
-                assertTrue(item.is_read, "Item below or equal to target should be marked as read: ${feedItem.id}")
+            if (index > targetIndex) {
+                assertTrue(item.is_read, "Item below target should be marked as read: ${feedItem.id}")
             } else {
-                assertFalse(item.is_read, "Item above target should not be marked as read: ${feedItem.id}")
+                assertFalse(item.is_read, "Target or item above it should not be marked as read: ${feedItem.id}")
             }
         }
     }
@@ -352,6 +352,43 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
         val updatedItem = updatedItems.find { it.url_hash == feedItem.id }
         assertNotNull(updatedItem, "Item should exist")
         assertFalse(updatedItem.is_read, "Item should be marked as unread")
+    }
+
+    @Test
+    fun `bookmark range actions leave unbookmarked remote account articles unread`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
+        val source = createFeedSource("source-1", "Test Feed")
+        databaseHelper.insertFeedSourceWithCategory(source)
+        val items = listOf(
+            buildFeedItem("5031084432", "New bookmark", 10000L, source),
+            buildFeedItem("5050623384", "New unbookmarked", 9000L, source),
+            buildFeedItem("5050623385", "Target bookmark", 8000L, source),
+            buildFeedItem("5058157281", "Old bookmark", 7000L, source),
+            buildFeedItem("5058832279", "Old unbookmarked", 6000L, source),
+        )
+        databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+        listOf(items[0], items[2], items[3]).forEach {
+            databaseHelper.updateBookmarkStatus(FeedItemId(it.id), isBookmarked = true)
+        }
+        feedStateRepository.updateFeedFilter(FeedFilter.Bookmarks)
+        advanceUntilIdle()
+
+        feedActionsRepository.markAllAboveAsRead(items[2].id)
+        advanceUntilIdle()
+
+        assertEquals(
+            setOf(items[0].id),
+            databaseHelper.getAllFeedItemFlagsForCloud().filter { it.isRead }.map { it.id }.toSet(),
+        )
+
+        databaseHelper.updateReadStatus(items.map { FeedItemId(it.id) }, isRead = false)
+        feedActionsRepository.markAllBelowAsRead(items[2].id)
+        advanceUntilIdle()
+
+        assertEquals(
+            setOf(items[3].id),
+            databaseHelper.getAllFeedItemFlagsForCloud().filter { it.isRead }.map { it.id }.toSet(),
+        )
     }
 
     private fun createFeedSource(

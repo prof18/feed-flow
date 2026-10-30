@@ -1,28 +1,12 @@
 package com.prof18.feedflow.desktop.settings
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import coil3.SingletonImageLoader
 import coil3.compose.LocalPlatformContext
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
-import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
-import com.prof18.feedflow.shared.ui.settings.ConfirmationSettingItem
-import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
-import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
@@ -35,94 +19,81 @@ internal fun SyncStoragePane(
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     onClearDownloadedArticles: () -> Unit,
+    onImportExport: () -> Unit = {},
+    onClearOldArticles: () -> Unit = {},
+    canClearOldArticles: Boolean = true,
 ) {
+    val strings = LocalFeedFlowStrings.current
     val context = LocalPlatformContext.current
     val scope = rememberCoroutineScope()
-    val strings = LocalFeedFlowStrings.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-    ) {
-        SettingSwitchItem(
-            title = strings.settingsRefreshFeedsOnLaunch,
-            isChecked = isRefreshFeedsOnLaunchEnabled,
-            onCheckedChange = onRefreshFeedsOnLaunchToggled,
-        )
-
-        CompactSettingDropdownRow(
-            title = strings.settingsSyncPeriod,
-            currentValue = syncPeriod,
-            options = persistentListOf(
-                SettingDropdownOption(SyncPeriod.NEVER, strings.settingsSyncPeriodNever),
-                SettingDropdownOption(SyncPeriod.FIFTEEN_MINUTES, strings.settingsSyncPeriodFifteenMinutes),
-                SettingDropdownOption(SyncPeriod.THIRTY_MINUTES, strings.settingsSyncPeriodThirtyMinutes),
-                SettingDropdownOption(SyncPeriod.ONE_HOUR, strings.settingsSyncPeriodOneHour),
-                SettingDropdownOption(SyncPeriod.TWO_HOURS, strings.settingsSyncPeriodTwoHours),
-                SettingDropdownOption(SyncPeriod.SIX_HOURS, strings.settingsSyncPeriodSixHours),
-                SettingDropdownOption(SyncPeriod.TWELVE_HOURS, strings.settingsSyncPeriodTwelveHours),
-                SettingDropdownOption(SyncPeriod.ONE_DAY, strings.settingsSyncPeriodOneDay),
-            ),
-            onOptionSelected = onSyncPeriodSelected,
-        )
-
-        CompactSettingDropdownRow(
-            title = strings.settingsAutoDelete,
-            currentValue = autoDeletePeriod,
-            options = persistentListOf(
-                SettingDropdownOption(AutoDeletePeriod.DISABLED, strings.settingsAutoDeletePeriodDisabled),
-                SettingDropdownOption(AutoDeletePeriod.ONE_DAY, strings.settingsAutoDeletePeriodOneDay),
-                SettingDropdownOption(AutoDeletePeriod.ONE_WEEK, strings.settingsAutoDeletePeriodOneWeek),
-                SettingDropdownOption(AutoDeletePeriod.TWO_WEEKS, strings.settingsAutoDeletePeriodTwoWeeks),
-                SettingDropdownOption(AutoDeletePeriod.ONE_MONTH, strings.settingsAutoDeletePeriodOneMonth),
-            ),
-            onOptionSelected = onAutoDeletePeriodSelected,
-        )
-
-        HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.small))
-
-        Text(
-            text = strings.settingsDangerTitle,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
-            modifier = Modifier.padding(Spacing.regular),
-        )
-
-        ConfirmationSettingItem(
-            title = strings.settingsClearDownloadedArticles,
-            dialogTitle = strings.settingsClearDownloadedArticlesDialogTitle,
-            dialogMessage = strings.settingsClearDownloadedArticlesDialogMessage,
-            onConfirm = onClearDownloadedArticles,
-        )
-
-        ConfirmationSettingItem(
-            title = strings.settingsClearImageCache,
-            dialogTitle = strings.settingsClearImageCacheDialogTitle,
-            dialogMessage = strings.settingsClearImageCacheDialogMessage,
-            onConfirm = {
-                scope.launch {
-                    val imageLoader = SingletonImageLoader.get(context)
-                    imageLoader.memoryCache?.clear()
-                    imageLoader.diskCache?.clear()
-                }
-            },
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun SyncStoragePanePreview() {
-    FeedFlowTheme {
-        SyncStoragePane(
-            isRefreshFeedsOnLaunchEnabled = false,
-            autoDeletePeriod = AutoDeletePeriod.DISABLED,
-            syncPeriod = SyncPeriod.NEVER,
-            onRefreshFeedsOnLaunchToggled = {},
-            onSyncPeriodSelected = {},
-            onAutoDeletePeriodSelected = {},
-            onClearDownloadedArticles = {},
-        )
+    SettingsPage(title = strings.settingsSyncAndStorage) {
+        SettingsSection {
+            SettingsSwitch(
+                title = strings.settingsRefreshFeedsOnLaunch,
+                checked = isRefreshFeedsOnLaunchEnabled,
+                onCheckedChange = onRefreshFeedsOnLaunchToggled,
+            )
+            SettingsChoice(
+                title = strings.settingsSyncPeriod,
+                selected = syncPeriod,
+                choices = persistentListOf(
+                    SyncPeriod.NEVER to strings.settingsSyncPeriodNever,
+                    SyncPeriod.FIFTEEN_MINUTES to strings.settingsSyncPeriodFifteenMinutes,
+                    SyncPeriod.THIRTY_MINUTES to strings.settingsSyncPeriodThirtyMinutes,
+                    SyncPeriod.ONE_HOUR to strings.settingsSyncPeriodOneHour,
+                    SyncPeriod.TWO_HOURS to strings.settingsSyncPeriodTwoHours,
+                    SyncPeriod.SIX_HOURS to strings.settingsSyncPeriodSixHours,
+                    SyncPeriod.TWELVE_HOURS to strings.settingsSyncPeriodTwelveHours,
+                    SyncPeriod.ONE_DAY to strings.settingsSyncPeriodOneDay,
+                ),
+                onSelected = onSyncPeriodSelected,
+            )
+            SettingsChoice(
+                title = strings.settingsAutoDelete,
+                selected = autoDeletePeriod,
+                choices = persistentListOf(
+                    AutoDeletePeriod.DISABLED to strings.settingsAutoDeletePeriodDisabled,
+                    AutoDeletePeriod.ONE_DAY to strings.settingsAutoDeletePeriodOneDay,
+                    AutoDeletePeriod.ONE_WEEK to strings.settingsAutoDeletePeriodOneWeek,
+                    AutoDeletePeriod.TWO_WEEKS to strings.settingsAutoDeletePeriodTwoWeeks,
+                    AutoDeletePeriod.ONE_MONTH to strings.settingsAutoDeletePeriodOneMonth,
+                ),
+                onSelected = onAutoDeletePeriodSelected,
+            )
+        }
+        SettingsSection {
+            SettingsActionRow(
+                title = strings.importExportLabel,
+                onClick = onImportExport,
+                showChevron = true,
+            )
+        }
+        SettingsSection(title = strings.settingsDangerTitle) {
+            ConfirmationSetting(
+                title = strings.clearOldArticlesButton,
+                dialogTitle = strings.clearOldArticlesButton,
+                dialogMessage = strings.clearOldArticlesDialogMessage,
+                onConfirm = onClearOldArticles,
+                enabled = canClearOldArticles,
+            )
+            ConfirmationSetting(
+                title = strings.settingsClearDownloadedArticles,
+                dialogTitle = strings.settingsClearDownloadedArticlesDialogTitle,
+                dialogMessage = strings.settingsClearDownloadedArticlesDialogMessage,
+                onConfirm = onClearDownloadedArticles,
+            )
+            ConfirmationSetting(
+                title = strings.settingsClearImageCache,
+                dialogTitle = strings.settingsClearImageCacheDialogTitle,
+                dialogMessage = strings.settingsClearImageCacheDialogMessage,
+                onConfirm = {
+                    scope.launch {
+                        val imageLoader = SingletonImageLoader.get(context)
+                        imageLoader.memoryCache?.clear()
+                        imageLoader.diskCache?.clear()
+                    }
+                },
+            )
+        }
     }
 }

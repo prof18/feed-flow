@@ -20,6 +20,8 @@ struct SidebarDrawer: View {
 
     @Environment(\.openURL)
     var openURL
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
 
     @Binding var selectedSidebarItem: SidebarSelection?
 
@@ -31,9 +33,8 @@ struct SidebarDrawer: View {
     @State private var showClearOldArticlesDialog = false
     @State private var expandedCategoryIds: Set<String> = []
     @State private var showDeleteCategoryDialog = false
-    @State private var showEditCategoryDialog = false
     @State private var categoryToDelete: String?
-    @State private var categoryToEdit: String?
+    @State private var categoryToEdit: EditCategoryRequest?
     @State private var editedCategoryName: String = ""
     @State private var showChangeCategorySheet = false
     @State private var showFeedSuggestionsSheet = false
@@ -64,7 +65,7 @@ struct SidebarDrawer: View {
     let onReorderFeedSources: ([FeedSource]) -> Void
 
     var isCompactPhone: Bool {
-        UIDevice.current.userInterfaceIdiom == .phone
+        horizontalSizeClass == .compact
     }
 
     @ViewBuilder private var styledList: some View {
@@ -79,31 +80,37 @@ struct SidebarDrawer: View {
     }
 
     private var sidebarList: some View {
-        List {
+        List(selection: isCompactPhone ? nil : $selectedSidebarItem) {
             Section(feedFlowStrings.drawerTitleLibrary) {
                 TimelineSection(
                     timeline: navDrawerState.timeline,
-                    isSelected: selectedSidebarItem == .timeline,
-                    isCompact: isCompactPhone,
                     onSelect: { self.selectedSidebarItem = .timeline },
                     onFeedFilterSelected: self.onFeedFilterSelected
                 )
+                .modifier(SidebarRowSelectionModifier(
+                    isSelected: selectedSidebarItem == .timeline,
+                    isCompact: isCompactPhone
+                ))
 
                 ReadSection(
                     read: navDrawerState.read,
-                    isSelected: selectedSidebarItem == .read,
-                    isCompact: isCompactPhone,
                     onSelect: { self.selectedSidebarItem = .read },
                     onFeedFilterSelected: self.onFeedFilterSelected
                 )
+                .modifier(SidebarRowSelectionModifier(
+                    isSelected: selectedSidebarItem == .read,
+                    isCompact: isCompactPhone
+                ))
 
                 BookmarksSection(
                     bookmarks: navDrawerState.bookmarks,
-                    isSelected: selectedSidebarItem == .bookmarks,
-                    isCompact: isCompactPhone,
                     onSelect: { self.selectedSidebarItem = .bookmarks },
                     onFeedFilterSelected: self.onFeedFilterSelected
                 )
+                .modifier(SidebarRowSelectionModifier(
+                    isSelected: selectedSidebarItem == .bookmarks,
+                    isCompact: isCompactPhone
+                ))
             }
 
             if !navDrawerState.pinnedFeedSources.isEmpty {
@@ -128,7 +135,7 @@ struct SidebarDrawer: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(
                         action: onShowSettingsClick,
-                        label: { Image(systemName: "gear") }
+                        label: { Label(feedFlowStrings.settingsTitle, systemImage: "gear") }
                     )
                     .accessibilityIdentifier(DrawerAccessibilityIdentifiers.settingsButton)
                 }
@@ -150,73 +157,72 @@ struct SidebarDrawer: View {
                                 label: { Label(feedFlowStrings.importFeedButton, systemImage: "square.and.arrow.down") }
                             )
                         },
-                        label: { Image(systemName: "plus") }
+                        label: { Label(feedFlowStrings.addFeed, systemImage: "plus") }
                     )
                     .accessibilityIdentifier(FeedSuggestionsIds.menuButton)
                 }
             }
-        .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {
-            Button(feedFlowStrings.cancelButton, role: .cancel) {}
-            Button(feedFlowStrings.confirmButton) {
-                onMarkAllReadClick()
-            }
-        } message: {
-            Text(feedFlowStrings.markAllReadDialogMessage)
-        }
-        .alert(feedFlowStrings.clearOldArticlesButton, isPresented: $showClearOldArticlesDialog) {
-            Button(feedFlowStrings.cancelButton, role: .cancel) {}
-            Button(feedFlowStrings.confirmButton) {
-                onDeleteOldFeedClick()
-            }
-        } message: {
-            Text(feedFlowStrings.clearOldArticlesDialogMessage)
-        }
-        .background(
-            DeleteCategoryDialog(
-                isPresented: $showDeleteCategoryDialog,
-                categoryToDelete: $categoryToDelete,
-                onDelete: onDeleteCategory
-            )
-        )
-        .background(
-            DeleteFeedSourceDialog(
-                isPresented: $showDeleteFeedDialog,
-                feedToDelete: $feedToDelete,
-                onDelete: onDeleteFeedClick
-            )
-        )
-        .background(
-            DeleteAllFeedsInCategoryDialog(
-                isPresented: $showDeleteAllFeedsDialog,
-                categoryToDeleteAllFeeds: $categoryToDeleteAllFeeds,
-                onDeleteAllFeeds: onDeleteAllFeedsInCategory
-            )
-        )
-        .background(
-            EditCategoryDialog(
-                isPresented: $showEditCategoryDialog,
-                categoryToEdit: $categoryToEdit,
-                editedCategoryName: $editedCategoryName,
-                validateCategoryName: validateCategoryName,
-                onSave: onUpdateCategoryName
-            )
-        )
-        .sheet(isPresented: $showFeedSuggestionsSheet) {
-            FeedSuggestionsScreen()
-        }
-        .sheet(isPresented: $showChangeCategorySheet) {
-            EditCategorySheetForChangeCategory(
-                viewModel: categoryVMStoreOwner.instance,
-                onSave: {
-                    categoryVMStoreOwner.instance.saveCategory()
+            .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {
+                Button(feedFlowStrings.cancelButton, role: .cancel) {}
+                Button(feedFlowStrings.confirmButton) {
+                    onMarkAllReadClick()
                 }
-            )
-        }
-        .task {
-            for await _ in categoryVMStoreOwner.instance.categoryChangedState {
-                showChangeCategorySheet = false
+            } message: {
+                Text(feedFlowStrings.markAllReadDialogMessage)
             }
-        }
+            .alert(feedFlowStrings.clearOldArticlesButton, isPresented: $showClearOldArticlesDialog) {
+                Button(feedFlowStrings.cancelButton, role: .cancel) {}
+                Button(feedFlowStrings.confirmButton) {
+                    onDeleteOldFeedClick()
+                }
+            } message: {
+                Text(feedFlowStrings.clearOldArticlesDialogMessage)
+            }
+            .background(
+                DeleteCategoryDialog(
+                    isPresented: $showDeleteCategoryDialog,
+                    categoryToDelete: $categoryToDelete,
+                    onDelete: onDeleteCategory
+                )
+            )
+            .background(
+                DeleteFeedSourceDialog(
+                    isPresented: $showDeleteFeedDialog,
+                    feedToDelete: $feedToDelete,
+                    onDelete: onDeleteFeedClick
+                )
+            )
+            .background(
+                DeleteAllFeedsInCategoryDialog(
+                    isPresented: $showDeleteAllFeedsDialog,
+                    categoryToDeleteAllFeeds: $categoryToDeleteAllFeeds,
+                    onDeleteAllFeeds: onDeleteAllFeedsInCategory
+                )
+            )
+            .background(
+                EditCategoryDialog(
+                    categoryToEdit: $categoryToEdit,
+                    editedCategoryName: $editedCategoryName,
+                    validateCategoryName: validateCategoryName,
+                    onSave: onUpdateCategoryName
+                )
+            )
+            .sheet(isPresented: $showFeedSuggestionsSheet) {
+                FeedSuggestionsScreen()
+            }
+            .sheet(isPresented: $showChangeCategorySheet) {
+                EditCategorySheetForChangeCategory(
+                    viewModel: categoryVMStoreOwner.instance,
+                    onSave: {
+                        categoryVMStoreOwner.instance.saveCategory()
+                    }
+                )
+            }
+            .task {
+                for await _ in categoryVMStoreOwner.instance.categoryChangedState {
+                    showChangeCategorySheet = false
+                }
+            }
     }
 
     func requestCategoryChange(for feedSource: FeedSource) {
@@ -235,8 +241,7 @@ struct SidebarDrawer: View {
 
     func requestCategoryEdit(_ category: FeedSourceCategory) {
         editedCategoryName = category.title
-        categoryToEdit = category.id
-        showEditCategoryDialog = true
+        categoryToEdit = EditCategoryRequest(id: category.id)
     }
 
     func requestAllFeedsDeletion(in categoryId: String) {

@@ -2,6 +2,7 @@
 
 package com.prof18.feedflow.android.e2e
 
+import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
@@ -26,25 +27,39 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.lifecycleScope
 import com.prof18.feedflow.android.MainActivity
+import com.prof18.feedflow.android.audio.AndroidAudioPlayer
 import com.prof18.feedflow.android.base.BaseThemeActivity
+import com.prof18.feedflow.android.widget.FeedFlowWidget
+import com.prof18.feedflow.android.widget.WidgetConfigurationActivity
+import com.prof18.feedflow.core.model.WidgetContentFilter
 import com.prof18.feedflow.core.model.WidgetFeedLayout
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
+import com.prof18.feedflow.shared.domain.recovery.FeedChallenge
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.RecoveryUpdate
 import com.prof18.feedflow.shared.e2e.E2eSeedProfile
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
+import com.prof18.feedflow.shared.presentation.WidgetUpdater
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.io.ByteArrayInputStream
 
 class E2eSeedActivity : BaseThemeActivity() {
 
+    private val audioPlayer by inject<AndroidAudioPlayer>()
     private val seedRunner by inject<E2eSeedRunner>()
     private val opmlFeedHandler by inject<OpmlFeedHandler>()
     private val widgetSettingsRepository by inject<WidgetSettingsRepository>()
+    private val widgetUpdater by inject<WidgetUpdater>()
+    private val databaseHelper by inject<DatabaseHelper>()
+    private val feedRecoveryRepository by inject<FeedRecoveryRepository>()
 
     private var uiState by mutableStateOf<E2eSeedUiState>(E2eSeedUiState.Running)
 
@@ -100,6 +115,19 @@ class E2eSeedActivity : BaseThemeActivity() {
                     ) {
                         Text("Open FeedFlow")
                     }
+                    if (state.profileName == "android-widget") {
+                        Button(
+                            modifier = Modifier.testTag("e2e_open_widget_settings"),
+                            onClick = {
+                                startActivity(
+                                    Intent(this@E2eSeedActivity, WidgetConfigurationActivity::class.java)
+                                        .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, E2E_WIDGET_ID),
+                                )
+                            },
+                        ) {
+                            Text("Open widget settings")
+                        }
+                    }
                 }
 
                 is E2eSeedUiState.Error -> {
@@ -125,6 +153,8 @@ class E2eSeedActivity : BaseThemeActivity() {
         val accountName = uri?.getQueryParameter("account")
         val deepLinkUrl = uri?.getQueryParameter("url")
         val opmlPayload = uri?.getQueryParameter("opml")
+        val audioUrl = uri?.getQueryParameter("audioUrl")
+        val verificationFixture = uri?.getQueryParameter("verification")
 
         if (action == null) {
             uiState = E2eSeedUiState.Error("Missing E2E seed action")
@@ -142,6 +172,7 @@ class E2eSeedActivity : BaseThemeActivity() {
         uiState = E2eSeedUiState.Running
         lifecycleScope.launch {
             try {
+                audioPlayer.close()
                 resetWidgetSettings()
                 if (action == ACTION_RESTORE_DEVELOPMENT) {
                     val opmlBytes = Base64.decode(
@@ -153,11 +184,23 @@ class E2eSeedActivity : BaseThemeActivity() {
                     )
                     seedRunner.resetAndSeedDevelopmentFeeds(feedSources)
                 } else {
-                    seedRunner.run(action = action, profileName = profileName, accountName = accountName)
+                    seedRunner.run(
+                        action = action,
+                        profileName = profileName,
+                        accountName = accountName,
+                        audioUrl = audioUrl,
+                    )
+                }
+                if (verificationFixture != null) {
+                    check(action == E2eSeedRunner.ACTION_RESET_AND_SEED && profile == E2eSeedProfile.CONTENT_RICH) {
+                        "Verification fixtures require reset-and-seed with content-rich"
+                    }
+                    applyFeedVerificationFixture(verificationFixture)
                 }
                 if (action != E2eSeedRunner.ACTION_RESET && profile == E2eSeedProfile.ANDROID_WIDGET) {
                     applyAndroidWidgetProfile()
                 }
+                widgetUpdater.update()
                 uiState = E2eSeedUiState.Success(profile.queryValue)
             } catch (throwable: Throwable) {
                 uiState = E2eSeedUiState.Error(
@@ -167,24 +210,64 @@ class E2eSeedActivity : BaseThemeActivity() {
         }
     }
 
-    private fun resetWidgetSettings() {
-        widgetSettingsRepository.setFeedWidgetLayout(WidgetFeedLayout.LIST)
-        widgetSettingsRepository.setWidgetShowHeader(true)
-        widgetSettingsRepository.setWidgetFontScaleFactor(0)
-        widgetSettingsRepository.setWidgetBackgroundColor(null)
-        widgetSettingsRepository.setWidgetBackgroundOpacityPercent(100)
-        widgetSettingsRepository.setWidgetTextColorMode(WidgetTextColorMode.AUTOMATIC)
-        widgetSettingsRepository.setWidgetHideImages(false)
+    private suspend fun resetWidgetSettings() {
+        E2eWidgetSettingsSeedHelper.resetLegacyFallbacks(
+            getSharedPreferences("feedflow.shared.pref", MODE_PRIVATE),
+        )
+        forEachWidget { appWidgetId ->
+            widgetSettingsRepository.setWidgetContentFilter(appWidgetId, WidgetContentFilter.Timeline)
+            widgetSettingsRepository.setWidgetFeedLayout(appWidgetId, WidgetFeedLayout.LIST)
+            widgetSettingsRepository.setWidgetShowHeader(appWidgetId, true)
+            widgetSettingsRepository.setWidgetShowRefreshButton(appWidgetId, false)
+            widgetSettingsRepository.setWidgetFontScaleFactor(appWidgetId, 0)
+            widgetSettingsRepository.setWidgetBackgroundColor(appWidgetId, null)
+            widgetSettingsRepository.setWidgetBackgroundOpacityPercent(appWidgetId, 100)
+            widgetSettingsRepository.setWidgetTextColorMode(appWidgetId, WidgetTextColorMode.AUTOMATIC)
+            widgetSettingsRepository.setWidgetHideImages(appWidgetId, false)
+        }
     }
 
-    private fun applyAndroidWidgetProfile() {
-        widgetSettingsRepository.setFeedWidgetLayout(WidgetFeedLayout.CARD)
-        widgetSettingsRepository.setWidgetShowHeader(true)
-        widgetSettingsRepository.setWidgetFontScaleFactor(2)
-        widgetSettingsRepository.setWidgetBackgroundColor(0xFF1E3A5F.toInt())
-        widgetSettingsRepository.setWidgetBackgroundOpacityPercent(85)
-        widgetSettingsRepository.setWidgetTextColorMode(WidgetTextColorMode.LIGHT)
-        widgetSettingsRepository.setWidgetHideImages(false)
+    private suspend fun applyAndroidWidgetProfile() {
+        E2eWidgetSettingsSeedHelper.applyAndroidWidgetLegacyFallbacks(
+            getSharedPreferences("feedflow.shared.pref", MODE_PRIVATE),
+        )
+        forEachWidget { appWidgetId ->
+            widgetSettingsRepository.setWidgetFeedLayout(appWidgetId, WidgetFeedLayout.CARD)
+            widgetSettingsRepository.setWidgetShowHeader(appWidgetId, true)
+            widgetSettingsRepository.setWidgetShowRefreshButton(appWidgetId, false)
+            widgetSettingsRepository.setWidgetFontScaleFactor(appWidgetId, 2)
+            widgetSettingsRepository.setWidgetBackgroundColor(appWidgetId, 0xFF1E3A5F.toInt())
+            widgetSettingsRepository.setWidgetBackgroundOpacityPercent(appWidgetId, 85)
+            widgetSettingsRepository.setWidgetTextColorMode(appWidgetId, WidgetTextColorMode.LIGHT)
+            widgetSettingsRepository.setWidgetHideImages(appWidgetId, false)
+        }
+    }
+
+    private suspend fun forEachWidget(block: (Int) -> Unit) {
+        val manager = GlanceAppWidgetManager(this)
+        manager.getGlanceIds(FeedFlowWidget::class.java)
+            .map(manager::getAppWidgetId)
+            .plus(E2E_WIDGET_ID)
+            .distinct()
+            .forEach(block)
+    }
+
+    /** Points a seeded feed at an unreachable HTTPS URL and records it as waiting for verification. */
+    private suspend fun applyFeedVerificationFixture(fixture: String) {
+        check(fixture == "pending") { "Unknown feed verification fixture: $fixture" }
+        val seededSource = databaseHelper.getFeedSources().first { it.id == VERIFICATION_FIXTURE_SOURCE_ID }
+        val source = seededSource.copy(url = VERIFICATION_FIXTURE_URL, websiteUrl = null)
+        databaseHelper.updateFeedSource(source)
+        val challenge = FeedChallenge(
+            requestedUrl = source.url,
+            effectiveUrl = source.url,
+            statusCode = 403,
+            retryAfter = null,
+        )
+        feedRecoveryRepository.apply(
+            update = RecoveryUpdate.RecordChallenge(source = source, challenge = challenge, previous = null),
+            ticket = feedRecoveryRepository.issueTicket(),
+        )
     }
 
     private fun openMainActivity(deepLinkUrl: String? = null) {
@@ -201,6 +284,9 @@ class E2eSeedActivity : BaseThemeActivity() {
     private companion object {
         const val ACTION_OPEN_DEEP_LINK = "open-deep-link"
         const val ACTION_RESTORE_DEVELOPMENT = "restore-development"
+        const val E2E_WIDGET_ID = 1
+        const val VERIFICATION_FIXTURE_SOURCE_ID = "e2e-feed-android-weekly"
+        const val VERIFICATION_FIXTURE_URL = "https://feed-verification.invalid/rss"
     }
 }
 

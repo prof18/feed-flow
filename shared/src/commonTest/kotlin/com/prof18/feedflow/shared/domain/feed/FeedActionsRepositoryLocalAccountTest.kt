@@ -142,7 +142,7 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
                 sortOrder = FeedOrder.NEWEST_FIRST,
             ).filter { it.is_read }.map { it.url_hash }.toSet()
 
-            assertEquals(setOf("b", "c"), readIds)
+            assertEquals(setOf("c"), readIds)
         }
 
     @Test
@@ -172,7 +172,7 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
                 sortOrder = FeedOrder.OLDEST_FIRST,
             ).filter { it.is_read }.map { it.url_hash }.toSet()
 
-            assertEquals(setOf("a", "b"), readIds)
+            assertEquals(setOf("a"), readIds)
         }
 
     @Test
@@ -272,7 +272,7 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
             sortOrder = FeedOrder.NEWEST_FIRST,
         )
 
-        // With NEWEST_FIRST, "above" means newer items (pub_date >= target)
+        // With NEWEST_FIRST, "above" means newer items (pub_date > target)
         // Articles 1, 2, 3 should be read (index 0, 1, 2)
         // Articles 4, 5 should be unread (index 3, 4)
         val item1 = updatedItems.find { it.url_hash == "item1" }
@@ -289,7 +289,7 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
 
         assertTrue(item1.is_read, "Article 1 (above target) should be read")
         assertTrue(item2.is_read, "Article 2 (above target) should be read")
-        assertTrue(item3.is_read, "Article 3 (target) should be read")
+        assertFalse(item3.is_read, "Article 3 (target) should stay unread")
         assertFalse(item4.is_read, "Article 4 (below target) should be unread")
         assertFalse(item5.is_read, "Article 5 (below target) should be unread")
     }
@@ -330,9 +330,9 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
             sortOrder = FeedOrder.OLDEST_FIRST,
         )
 
-        // With OLDEST_FIRST, "above" (visually) means OLDER items (pub_date <= target)
-        // Articles 5, 4, 3 should be read (older or same as target)
-        // Articles 2, 1 should be unread (newer than target)
+        // With OLDEST_FIRST, "above" (visually) means OLDER items (pub_date < target)
+        // Articles 5, 4 should be read (older than target)
+        // Articles 3, 2, 1 should be unread (target or newer)
         val item1 = updatedItems.find { it.url_hash == "item1" }
         val item2 = updatedItems.find { it.url_hash == "item2" }
         val item3 = updatedItems.find { it.url_hash == "item3" }
@@ -347,7 +347,7 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
 
         assertFalse(item1.is_read, "Article 1 (below target in OLDEST_FIRST) should be unread")
         assertFalse(item2.is_read, "Article 2 (below target in OLDEST_FIRST) should be unread")
-        assertTrue(item3.is_read, "Article 3 (target) should be read")
+        assertFalse(item3.is_read, "Article 3 (target) should stay unread")
         assertTrue(item4.is_read, "Article 4 (above target in OLDEST_FIRST) should be read")
         assertTrue(item5.is_read, "Article 5 (above target in OLDEST_FIRST) should be read")
     }
@@ -382,7 +382,7 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
             sortOrder = FeedOrder.NEWEST_FIRST,
         )
 
-        // With NEWEST_FIRST, "below" means older items (pub_date <= target)
+        // With NEWEST_FIRST, "below" means older items (pub_date < target)
         val item1 = updatedItems.find { it.url_hash == "item1" }
         val item2 = updatedItems.find { it.url_hash == "item2" }
         val item3 = updatedItems.find { it.url_hash == "item3" }
@@ -397,7 +397,7 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
 
         assertFalse(item1.is_read, "Article 1 (above target) should be unread")
         assertFalse(item2.is_read, "Article 2 (above target) should be unread")
-        assertTrue(item3.is_read, "Article 3 (target) should be read")
+        assertFalse(item3.is_read, "Article 3 (target) should stay unread")
         assertTrue(item4.is_read, "Article 4 (below target) should be read")
         assertTrue(item5.is_read, "Article 5 (below target) should be read")
     }
@@ -432,7 +432,7 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
             sortOrder = FeedOrder.OLDEST_FIRST,
         )
 
-        // With OLDEST_FIRST, "below" (visually) means NEWER items (pub_date >= target)
+        // With OLDEST_FIRST, "below" (visually) means NEWER items (pub_date > target)
         val item1 = updatedItems.find { it.url_hash == "item1" }
         val item2 = updatedItems.find { it.url_hash == "item2" }
         val item3 = updatedItems.find { it.url_hash == "item3" }
@@ -447,7 +447,7 @@ class FeedActionsRepositoryLocalAccountTest : KoinTestBase() {
 
         assertTrue(item1.is_read, "Article 1 (below target in OLDEST_FIRST) should be read")
         assertTrue(item2.is_read, "Article 2 (below target in OLDEST_FIRST) should be read")
-        assertTrue(item3.is_read, "Article 3 (target) should be read")
+        assertFalse(item3.is_read, "Article 3 (target) should stay unread")
         assertFalse(item4.is_read, "Article 4 (above target in OLDEST_FIRST) should be unread")
         assertFalse(item5.is_read, "Article 5 (above target in OLDEST_FIRST) should be unread")
     }

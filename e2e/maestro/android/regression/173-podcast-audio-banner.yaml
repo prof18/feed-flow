@@ -1,0 +1,34 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=audio-episode
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    id: feed_audio_e2e_audio_episode
+- assertNotVisible:
+    id: feed_audio_e2e_audio_control
+- tapOn:
+    id: article_row_e2e_audio_episode
+- assertVisible:
+    id: reader_article_e2e_audio_episode
+- assertVisible: "E2E Audio Episode: Language Notes"
+- assertVisible:
+    id: reader_audio_banner
+- assertVisible:
+    id: reader_play_audio
+- assertVisible: ".*Play audio.*"
+- assertVisible: ".*Open in another app.*"
+- tapOn:
+    id: reader_next_button
+- extendedWaitUntil:
+    visible:
+      id: reader_article_e2e_audio_control
+    timeout: 5000
+- assertVisible: "E2E Audio Control Article"
+- assertNotVisible:
+    id: reader_audio_banner

@@ -31,6 +31,11 @@ data object SyncAndStorage : NavKey
 data object WidgetSettings : NavKey
 
 @Serializable
+data class WidgetInstanceSettings(
+    val appWidgetId: Int,
+) : NavKey
+
+@Serializable
 data object Appearance : NavKey
 
 @Serializable

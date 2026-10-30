@@ -18,12 +18,34 @@ appId: com.prof18.feedflow.dev
     text: "E2E Reader Mode Success[\\s\\S]*"
 - assertVisible:
     id: reader_browser_button
+- runFlow:
+    when:
+      notVisible:
+        id: reader_tts_button
+    commands:
+      - tapOn:
+          id: reader_more_menu_button
+      - assertVisible:
+          id: reader_tts_button
+      - tapOn:
+          point: 5%, 50%
 - tapOn:
     id: reader_next_button
 - extendedWaitUntil:
     visible:
       text: "E2E Reader Mode Fallback[\\s\\S]*"
     timeout: 5000
+- runFlow:
+    when:
+      notVisible:
+        id: reader_tts_button
+    commands:
+      - tapOn:
+          id: reader_more_menu_button
+      - assertVisible:
+          id: reader_tts_button
+      - tapOn:
+          point: 5%, 50%
 - tapOn:
     id: reader_more_menu_button
 - tapOn:

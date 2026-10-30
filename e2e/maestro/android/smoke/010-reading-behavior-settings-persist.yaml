@@ -15,6 +15,7 @@ appId: com.prof18.feedflow.debug
     id: reading_behavior_article_open_mode
 - tapOn:
     id: article_open_mode_feed_content
+- tapOn: "Mark as read when scrolling"
 - tapOn:
     id: reading_behavior_show_read
 - scrollUntilVisible:
@@ -24,6 +25,40 @@ appId: com.prof18.feedflow.debug
     timeout: 10000
 - tapOn:
     id: reading_behavior_hide_read
+- scrollUntilVisible:
+    element:
+      text: "Mark as read when scrolling"
+    direction: UP
+    timeout: 10000
+- tapOn: "Mark as read when scrolling"
+- scrollUntilVisible:
+    element:
+      id: reading_behavior_hide_read
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: reading_behavior_hide_read
+    enabled: false
+- assertVisible: "Auto-hide is disabled when.*articles stay in place as you scroll.*"
+- tapOn:
+    id: reading_behavior_hide_read
+- assertVisible:
+    id: reading_behavior_hide_read
+    enabled: false
+- scrollUntilVisible:
+    element:
+      text: "Mark as read when scrolling"
+    direction: UP
+    timeout: 10000
+- tapOn: "Mark as read when scrolling"
+- scrollUntilVisible:
+    element:
+      id: reading_behavior_hide_read
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: reading_behavior_hide_read
+    enabled: true
 - tapOn:
     id: settings_back_button
 - tapOn:

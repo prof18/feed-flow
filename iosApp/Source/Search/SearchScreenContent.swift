@@ -146,7 +146,7 @@ struct SearchScreenContent: View {
 
         // URL-less items can only be shown in the reader from their feed content.
         if feedItem.url.isEmpty {
-            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+            readerModeViewModel.loadReaderContent(urlInfo: urlInfo)
             navigateToReaderMode()
             onReadStatusClick(FeedItemId(id: feedItem.id), true)
             return
@@ -159,7 +159,7 @@ struct SearchScreenContent: View {
 
         switch browserSelector.resolvedOpenMode(for: urlInfo) {
         case .fullArticle, .feedContent:
-            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+            readerModeViewModel.loadReaderContent(urlInfo: urlInfo)
             navigateToReaderMode()
         case .internalBrowser:
             if browserSelector.isValidForInAppBrowser(url) {

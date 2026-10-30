@@ -4,36 +4,46 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.AndroidRemoteViews
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
+import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.MainActivity
+import com.prof18.feedflow.android.R
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.android.widget.components.WidgetFeedItemCard
 import com.prof18.feedflow.android.widget.components.WidgetFeedItemList
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.WidgetContentFilter
 import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 
 @SuppressLint("RestrictedApi")
@@ -43,11 +53,15 @@ internal fun WidgetContent(
     feedLayout: WidgetFeedLayout,
     browserManager: BrowserManager,
     showHeader: Boolean,
+    showRefreshButton: Boolean,
+    isRefreshing: Boolean,
     fontScale: Int,
     backgroundColor: Int?,
     backgroundOpacityPercent: Int,
     textColorMode: WidgetTextColorMode,
     hideImages: Boolean,
+    headerTitle: String?,
+    filter: WidgetContentFilter,
 ) {
     val context = LocalContext.current
     val openAppAction = createOpenAppAction(context)
@@ -81,21 +95,16 @@ internal fun WidgetContent(
     val secondaryTextColor = textColors?.secondary?.let(::ColorProvider) ?: GlanceTheme.colors.onSurface
 
     Scaffold(
-        titleBar = if (showHeader) {
+        titleBar = if (showHeader || showRefreshButton) {
             {
-                Text(
-                    modifier = GlanceModifier
-                        .padding(top = Spacing.regular)
-                        .padding(bottom = Spacing.small)
-                        .padding(horizontal = Spacing.medium)
-                        .fillMaxWidth()
-                        .clickable(openAppAction),
-                    text = LocalFeedFlowStrings.current.widgetLatestItems,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = fontSizes.header.sp,
-                        color = primaryTextColor,
-                    ),
+                WidgetHeader(
+                    showHeader = showHeader,
+                    showRefreshButton = showRefreshButton,
+                    isRefreshing = isRefreshing,
+                    headerTitle = headerTitle ?: defaultWidgetHeaderTitle(filter),
+                    headerFontSize = fontSizes.header,
+                    textColor = primaryTextColor,
+                    openAppAction = openAppAction,
                 )
             }
         } else {
@@ -117,7 +126,11 @@ internal fun WidgetContent(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = LocalFeedFlowStrings.current.emptyFeedMessage,
+                    text = if (filter is WidgetContentFilter.Bookmarks) {
+                        LocalFeedFlowStrings.current.bookmarkedArticlesEmptyScreenMessage
+                    } else {
+                        LocalFeedFlowStrings.current.emptyFeedMessage
+                    },
                     style = TextStyle(
                         fontWeight = FontWeight.Normal,
                         fontSize = fontSizes.empty.sp,
@@ -137,7 +150,7 @@ internal fun WidgetContent(
             }
         } else {
             LazyColumn {
-                if (!showHeader) {
+                if (!showHeader && !showRefreshButton) {
                     item { Spacer(modifier = GlanceModifier.height(Spacing.small)) }
                 }
 
@@ -156,6 +169,74 @@ internal fun WidgetContent(
                 }
 
                 item { Spacer(modifier = GlanceModifier.height(Spacing.small)) }
+            }
+        }
+    }
+}
+
+@Composable
+@ReadOnlyComposable
+private fun defaultWidgetHeaderTitle(filter: WidgetContentFilter): String = when (filter) {
+    WidgetContentFilter.Bookmarks -> LocalFeedFlowStrings.current.drawerTitleBookmarks
+    else -> LocalFeedFlowStrings.current.widgetLatestItems
+}
+
+@SuppressLint("RestrictedApi")
+@Composable
+private fun WidgetHeader(
+    showHeader: Boolean,
+    headerTitle: String,
+    showRefreshButton: Boolean,
+    isRefreshing: Boolean,
+    headerFontSize: Int,
+    textColor: ColorProvider,
+    openAppAction: Action,
+) {
+    Row(
+        modifier = GlanceModifier.fillMaxWidth()
+            .padding(horizontal = Spacing.medium),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (showHeader) {
+            Text(
+                modifier = GlanceModifier.defaultWeight()
+                    .padding(top = Spacing.regular, bottom = Spacing.small)
+                    .clickable(openAppAction),
+                text = headerTitle,
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = headerFontSize.sp,
+                    color = textColor,
+                ),
+                maxLines = 1,
+            )
+        } else {
+            Spacer(modifier = GlanceModifier.defaultWeight())
+        }
+        if (showRefreshButton) {
+            val refreshModifier = if (isRefreshing) {
+                GlanceModifier
+            } else {
+                GlanceModifier.clickable(
+                    actionRunCallback<RefreshFeedsAction>(),
+                    rippleOverride = R.drawable.widget_refresh_ripple,
+                )
+            }
+            Box(
+                modifier = GlanceModifier.size(width = 48.dp, height = 48.dp)
+                    .then(refreshModifier),
+                contentAlignment = Alignment.Center,
+            ) {
+                val context = LocalContext.current
+                AndroidRemoteViews(
+                    remoteViews = widgetRefreshButtonViews(
+                        context = context,
+                        textColor = textColor.getColor(context).toArgb(),
+                        contentDescription = LocalFeedFlowStrings.current.refreshFeeds,
+                        isRefreshing = isRefreshing,
+                    ),
+                    modifier = GlanceModifier.size(width = 48.dp, height = 48.dp),
+                )
             }
         }
     }

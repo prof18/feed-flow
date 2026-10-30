@@ -100,6 +100,13 @@ disable_android_in_file() {
         next
     }
 
+    # Match the cloud sync test harness plugin: it wires Android host test tasks
+    # (testAndroidHostTest), which do not exist once Android is disabled.
+    /id\("com\.feedflow\.cloud-sync-tests"\)/ {
+        print "// " $0
+        next
+    }
+
     # Match kotlin.android plugin
     /alias\(libs\.plugins\.kotlin\.android\)/ {
         print "// " $0
@@ -160,7 +167,7 @@ disable_android_in_file() {
         next
     }
 
-    /getByName\("androidHostTest"\)/ {
+    /getByName\("android(Host|Device)Test"\)/ {
         print "// " $0
         in_android_block = 1
         # Check if opening brace is on same line

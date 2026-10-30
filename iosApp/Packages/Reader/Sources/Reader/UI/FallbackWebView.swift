@@ -9,13 +9,14 @@ import SwiftUI
 struct FallbackWebView: View {
     var url: URL
     var onLinkClicked: ((URL) -> Void)?
+    var topInset: CGFloat = 0
 
     @StateObject private var content = WebContent()
     @State private var isPageLoading = true
 
     var body: some View {
         ZStack {
-            WebView(content: content)
+            WebView(content: content, topInset: topInset)
 
             ReaderPlaceholder()
                 .opacity(isPageLoading ? 1 : 0)
@@ -25,6 +26,9 @@ struct FallbackWebView: View {
         .onAppear {
             setupLinkHandler()
             setupContentReadyHandler()
+        }
+        .onDisappear {
+            content.detachHandlers()
         }
         .onAppearOrChange(url) { url in
             isPageLoading = true

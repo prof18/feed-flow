@@ -1,8 +1,10 @@
 package com.prof18.feedflow.shared.domain.feed
 
 import app.cash.turbine.test
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.core.model.FeedFetchTier
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
@@ -24,6 +26,8 @@ import com.prof18.rssparser.exception.HttpException
 import com.prof18.rssparser.model.RssChannel
 import com.prof18.rssparser.model.RssItem
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
@@ -60,6 +64,71 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     fun resetParserState() {
         fakeRssParserWrapper.reset()
         fakeRssParserWrapper.validatorsFor = { feedHttpCacheStore.validatorsFor(it) }
+    }
+
+    @Test
+    fun `browser tier survives database round trip and skips earlier identities`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val source = createFeedSource(id = "tier-source", title = "Tier Feed")
+        databaseHelper.insertFeedSource(listOf(source.toParsedFeedSource()))
+        val attempted = mutableListOf<FeedFetchTier>()
+        bindTieredFetcher(attempted).fetchFeeds(forceRefresh = true)
+        advanceUntilIdle()
+        assertEquals(FeedFetchTier.entries.toList(), attempted)
+        assertEquals(FeedFetchTier.BROWSER, databaseHelper.getFeedSourcesCacheInfo().single().userAgentTier)
+
+        attempted.clear()
+        // A fresh store proves the second refresh loads its tier from the database.
+        bindTieredFetcher(attempted).fetchFeeds(forceRefresh = true)
+        advanceUntilIdle()
+        assertEquals(listOf(FeedFetchTier.BROWSER), attempted)
+    }
+
+    private fun bindTieredFetcher(attempted: MutableList<FeedFetchTier>): FeedFetcherRepository {
+        val store = FeedHttpCacheStore(
+            currentTimeMillis = { dateFormatter.currentTimeMillis() },
+            logger = Logger.withTag("TierRoundTrip"),
+        )
+        val parsers: Map<FeedFetchTier, suspend (String) -> RssChannel> =
+            FeedFetchTier.entries.associateWith { tier ->
+                { _: String ->
+                    attempted.add(tier)
+                    if (tier != FeedFetchTier.BROWSER) {
+                        throw HttpException(code = 403, message = "Forbidden")
+                    }
+                    createRssChannel(title = "Tier Feed", link = "https://example.com", items = emptyList())
+                }
+            }
+        getKoin().loadModules(
+            listOf(
+                module {
+                    single<FeedHttpCacheStore> { store }
+                    single<RssParserWrapper> {
+                        RssParserWrapperImpl(parsers = parsers, feedHttpCacheStore = get())
+                    }
+                    factory {
+                        FeedFetcherRepository(
+                            dispatcherProvider = get(),
+                            feedStateRepository = get(),
+                            gReaderRepository = get(),
+                            feedbinRepository = get(),
+                            databaseHelper = get(),
+                            feedSyncRepository = get(),
+                            settingsRepository = get(),
+                            contentPrefetchRepository = get(),
+                            logger = Logger.withTag("TierRoundTrip"),
+                            rssChannelMapper = get(),
+                            dateFormatter = get(),
+                            feedSourceLogoRetriever = get(),
+                            feedHttpCacheStore = get(),
+                            feedAttempt = get(),
+                            recoveryRepository = get(),
+                        )
+                    }
+                },
+            ),
+        )
+        return getKoin().get()
     }
 
     private fun setupLocalAccount() {
@@ -172,6 +241,110 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         assertEquals(2, fakeRssParserWrapper.callCount)
         assertEquals(FinishedFeedUpdateStatus, feedStateRepository.updateState.value)
     }
+
+    @Test
+    fun `retry after backoff is saved when another concurrent source is cancelled`() =
+        runTest(testDispatcher) {
+            setupLocalAccount()
+            val throttled = createFeedSource(id = "throttled", title = "A Throttled")
+            val blocked = createFeedSource(id = "blocked", title = "B Blocked")
+            databaseHelper.insertFeedSource(
+                listOf(throttled, blocked).map { it.toParsedFeedSource() },
+            )
+            val blockedSourceEntered = CompletableDeferred<Unit>()
+            fakeRssParserWrapper.onRequest = { url ->
+                if (url == throttled.url) {
+                    feedHttpCacheStore.recordResponse(
+                        url = url,
+                        statusCode = 429,
+                        etag = null,
+                        lastModified = null,
+                        cacheControl = null,
+                        expires = null,
+                        date = null,
+                        retryAfter = "3600",
+                    )
+                    throw HttpException(code = 429, message = "Too Many Requests")
+                }
+                blockedSourceEntered.complete(Unit)
+                awaitCancellation()
+            }
+
+            val fetchJob = launch { feedFetcherRepository.fetchFeeds(forceRefresh = true) }
+            blockedSourceEntered.await()
+            runCurrent()
+            fetchJob.cancelAndJoin()
+
+            val throttledCacheInfo = databaseHelper.getFeedSourcesCacheInfo().singleOrNull {
+                it.feedSourceId == throttled.id
+            }
+            val backoffTimestamp = assertNotNull(throttledCacheInfo?.backoffTimestamp)
+            assertTrue(backoffTimestamp > dateFormatter.currentTimeMillis())
+
+            fakeRssParserWrapper.onRequest = {}
+            fakeRssParserWrapper.setChannel(
+                blocked.url,
+                createRssChannel(title = blocked.title, link = "https://example.com", items = emptyList()),
+            )
+            fakeRssParserWrapper.requestedUrls.clear()
+            feedFetcherRepository.fetchFeeds(forceRefresh = true)
+            advanceUntilIdle()
+
+            assertEquals(listOf(blocked.url), fakeRssParserWrapper.requestedUrls)
+        }
+
+    @Test
+    fun `successful response cache waits until the concurrent item batch is persisted`() =
+        runTest(testDispatcher) {
+            setupLocalAccount()
+            val successful = createFeedSource(id = "successful", title = "A Successful")
+            val blocked = createFeedSource(id = "blocked", title = "B Blocked")
+            databaseHelper.insertFeedSource(
+                listOf(successful, blocked).map { it.toParsedFeedSource() },
+            )
+            fakeRssParserWrapper.setChannel(
+                successful.url,
+                createRssChannel(
+                    title = successful.title,
+                    link = "https://example.com",
+                    items = listOf(
+                        createRssItem(
+                            id = "pending-article",
+                            title = "Pending article",
+                            link = "https://example.com/pending-article",
+                        ),
+                    ),
+                ),
+            )
+            val blockedSourceEntered = CompletableDeferred<Unit>()
+            fakeRssParserWrapper.onRequest = { url ->
+                if (url == successful.url) {
+                    feedHttpCacheStore.recordResponse(
+                        url = url,
+                        statusCode = 200,
+                        etag = "\"feed-v1\"",
+                        lastModified = null,
+                        cacheControl = null,
+                        expires = null,
+                        date = null,
+                        retryAfter = null,
+                    )
+                } else {
+                    blockedSourceEntered.complete(Unit)
+                    awaitCancellation()
+                }
+            }
+
+            val fetchJob = launch { feedFetcherRepository.fetchFeeds(forceRefresh = true) }
+            blockedSourceEntered.await()
+            runCurrent()
+            fetchJob.cancelAndJoin()
+
+            assertTrue(
+                databaseHelper.getFeedSourcesCacheInfo().none { it.feedSourceId == successful.id },
+            )
+            assertTrue(getTimelineItems().isEmpty())
+        }
 
     @Test
     fun `fetchFeeds with filter matching no source finishes instead of hanging`() = runTest(testDispatcher) {
@@ -319,6 +492,41 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     }
 
     @Test
+    fun `foreground fetch while scrolled away keeps the list and counts new articles`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        val feedSource = createFeedSource(id = "source-1", title = "Test Feed")
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "existing", title = "Existing", pubDateMillis = 1, source = feedSource)),
+            lastSyncTimestamp = 0,
+        )
+        feedStateRepository.getFeeds()
+        fakeRssParserWrapper.setChannel(
+            feedSource.url,
+            createRssChannel(
+                title = "Test Feed",
+                link = "https://example.com",
+                items = listOf(
+                    createRssItem(
+                        id = "new-item",
+                        title = "New Item",
+                        link = "https://example.com/new-item",
+                    ),
+                ),
+            ),
+        )
+        feedStateRepository.setFeedListAwayFromTop(true)
+
+        feedFetcherRepository.fetchFeeds()
+        advanceUntilIdle()
+
+        assertTrue(getTimelineItems().any { it.url == "https://example.com/new-item" })
+        assertEquals(listOf("existing"), feedStateRepository.feedState.value.map { it.id })
+        assertEquals(1, feedStateRepository.pendingNewArticlesState.value)
+        assertEquals(FinishedFeedUpdateStatus, feedStateRepository.updateState.value)
+    }
+
+    @Test
     fun `fetchFeeds skips refresh when feed is too recent`() = runTest(testDispatcher) {
         setupLocalAccount()
 
@@ -401,6 +609,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
             logoUrl = null,
         )
         databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+        databaseHelper.updateLastSyncTimestamps(listOf(feedSource.id), lastSyncTimestamp = 1)
         databaseHelper.updateNotificationEnabledStatus(feedSource.id, true)
 
         val rssChannel = createRssChannel(
@@ -423,6 +632,36 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
         assertEquals(1, sourcesToNotify.size)
         assertEquals(feedSource.id, sourcesToNotify.single().feedSourceId)
     }
+
+    @Test
+    fun `fetchFeeds does not notify the back catalog of a feed synced for the first time`() =
+        runTest(testDispatcher) {
+            setupLocalAccount()
+
+            val feedSource = createFeedSource(
+                id = "source-1",
+                title = "New Feed",
+                websiteUrl = null,
+                logoUrl = null,
+            )
+            databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+            databaseHelper.updateNotificationEnabledStatus(feedSource.id, true)
+            fakeRssParserWrapper.setChannel(
+                feedSource.url,
+                createRssChannel(
+                    title = "New Feed",
+                    link = "https://example.com",
+                    items = listOf(
+                        createRssItem(id = "item-1", title = "Item 1", link = "https://example.com/item-1"),
+                    ),
+                ),
+            )
+
+            feedFetcherRepository.fetchFeeds()
+            advanceUntilIdle()
+
+            assertTrue(feedFetcherRepository.getFeedSourceToNotify().isEmpty())
+        }
 
     @Test
     fun `fetchFeeds respects OpenRSS refresh window`() = runTest(testDispatcher) {
@@ -1031,7 +1270,7 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
             notModifiedUrls.add(url)
         }
 
-        override suspend fun getRssChannel(url: String): RssChannel {
+        override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
             callCount += 1
             requestedUrls.add(url)
             validatorsSeenByUrl[url] = validatorsFor(url)

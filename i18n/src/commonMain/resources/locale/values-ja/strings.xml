@@ -79,7 +79,6 @@
     <string name="about_menu_contribute_translations">翻訳を手伝う</string>
     <string name="rename_feed_source_name_button">名前を変更</string>
     <string name="in_app_browser">アプリ内蔵のブラウザ</string>
-    <string name="settings_reader_mode">記事をリーダーモードで開く</string>
     <string name="search_no_data">%sにマッチするものはありませんでした。</string>
     <string name="search_placeholder">検索…</string>
     <string name="search_hint_title">入力開始…</string>

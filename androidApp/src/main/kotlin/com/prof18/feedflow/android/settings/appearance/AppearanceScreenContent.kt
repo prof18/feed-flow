@@ -17,14 +17,14 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.settings.SettingsE2eIds
+import com.prof18.feedflow.android.ui.readermode.ReaderFontFamilyDropdownRow
+import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
+import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
+import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ThemeMode
-import com.prof18.feedflow.shared.ui.readermode.ReaderFontFamilyDropdownRow
-import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
-import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
-import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -34,11 +34,13 @@ internal fun AppearanceScreenContent(
     bodyFont: ReaderFontFamily,
     headlineFont: ReaderFontFamily,
     isReduceMotionEnabled: Boolean,
+    isForceEnglishEnabled: Boolean,
     isHideUnreadCountEnabled: Boolean,
     onThemeModeSelected: (ThemeMode) -> Unit,
     onBodyFontSelected: (ReaderFontFamily) -> Unit,
     onHeadlineFontSelected: (ReaderFontFamily) -> Unit,
     onReduceMotionToggled: (Boolean) -> Unit,
+    onForceEnglishToggled: (Boolean) -> Unit,
     onHideUnreadCountToggled: (Boolean) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
@@ -117,6 +119,16 @@ internal fun AppearanceScreenContent(
             }
 
             item {
+                SettingSwitchItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.APPEARANCE_FORCE_ENGLISH),
+                    title = strings.settingsForceEnglish,
+                    supportingText = strings.settingsForceEnglishDescription,
+                    isChecked = isForceEnglishEnabled,
+                    onCheckedChange = onForceEnglishToggled,
+                )
+            }
+
+            item {
                 Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
             }
         }
@@ -133,11 +145,13 @@ private fun AppearanceScreenContentPreview() {
             bodyFont = ReaderFontFamily.SYSTEM,
             headlineFont = ReaderFontFamily.SYSTEM,
             isReduceMotionEnabled = false,
+            isForceEnglishEnabled = false,
             isHideUnreadCountEnabled = false,
             onThemeModeSelected = {},
             onBodyFontSelected = {},
             onHeadlineFontSelected = {},
             onReduceMotionToggled = {},
+            onForceEnglishToggled = {},
             onHideUnreadCountToggled = {},
         )
     }

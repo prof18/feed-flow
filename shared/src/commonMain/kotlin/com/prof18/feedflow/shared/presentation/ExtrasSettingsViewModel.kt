@@ -27,6 +27,7 @@ class ExtrasSettingsViewModel internal constructor(
         stateMutableFlow.update {
             ExtrasSettingsState(
                 isReduceMotionEnabled = isReduceMotionEnabled,
+                isForceEnglishEnabled = settingsRepository.getForceEnglishEnabled(),
             )
         }
     }
@@ -38,5 +39,10 @@ class ExtrasSettingsViewModel internal constructor(
                 it.copy(isReduceMotionEnabled = value)
             }
         }
+    }
+
+    fun updateForceEnglishEnabled(value: Boolean) {
+        settingsRepository.setForceEnglishEnabled(value)
+        stateMutableFlow.update { it.copy(isForceEnglishEnabled = value) }
     }
 }

@@ -59,6 +59,42 @@ class ItemContentDTOMapperTest {
     }
 
     @Test
+    fun `mapToFeedItem keeps first valid audio enclosure and canonical article url`() {
+        val audioUrl = "https://cdn.example.com/download?token=a%2Fb"
+        val itemContentDTO = createItemContentDTO(
+            canonicalHref = "https://example.com/article",
+            imageHref = null,
+            contentText = "Episode notes",
+        ).copy(
+            enclosure = listOf(
+                ItemContentDTO.Enclosure(href = "https://example.com/image.jpg", type = "image/jpeg"),
+                ItemContentDTO.Enclosure(href = "https://example.com/clip.mp4", type = "video/mp4"),
+                ItemContentDTO.Enclosure(href = audioUrl, type = "audio/mpeg"),
+                ItemContentDTO.Enclosure(href = "https://example.com/second.mp3", type = "audio/mpeg"),
+            ),
+        )
+
+        val result = mapper.mapToFeedItem(itemContentDTO, testFeedSource)
+
+        assertEquals("https://example.com/article", result?.url)
+        assertEquals(audioUrl, result?.audioUrl)
+    }
+
+    @Test
+    fun `mapToFeedItem ignores non-audio and missing enclosures`() {
+        val nonAudioItem = createItemContentDTO(canonicalHref = "https://example.com/article").copy(
+            enclosure = listOf(
+                ItemContentDTO.Enclosure(href = "https://example.com/episode.mp3", type = "image/jpeg"),
+                ItemContentDTO.Enclosure(href = "https://example.com/episode.mp3", type = "video/mp4"),
+            ),
+        )
+        val noEnclosureItem = createItemContentDTO(canonicalHref = "https://example.com/article")
+
+        assertNull(mapper.mapToFeedItem(nonAudioItem, testFeedSource)?.audioUrl)
+        assertNull(mapper.mapToFeedItem(noEnclosureItem, testFeedSource)?.audioUrl)
+    }
+
+    @Test
     fun `mapToFeedItem returns null when canonical URL and content are missing`() {
         val itemContentDTO = createItemContentDTO(
             id = "tag:google.com,2005:reader/item/abc123",

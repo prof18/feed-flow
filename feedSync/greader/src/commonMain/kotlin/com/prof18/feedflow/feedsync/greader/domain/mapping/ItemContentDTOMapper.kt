@@ -2,6 +2,7 @@ package com.prof18.feedflow.feedsync.greader.domain.mapping
 
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
@@ -21,6 +22,9 @@ internal class ItemContentDTOMapper(
         val url = itemContentDTO.canonical
             ?.firstNotNullOfOrNull { canonical -> canonical.href?.takeIf { it.isNotBlank() } }
         val content = itemContentDTO.content?.content?.takeIf { it.isNotBlank() } ?: itemContentDTO.summary?.content
+        val audioUrl = itemContentDTO.enclosure.orEmpty().firstNotNullOfOrNull { enclosure ->
+            AudioEnclosure.audioUrlOrNull(url = enclosure.href, mimeType = enclosure.type)
+        }
         if (url == null && content.isNullOrBlank()) {
             // No URL to open and no content to show — the item is unusable.
             return null
@@ -35,6 +39,7 @@ internal class ItemContentDTOMapper(
             subtitle = parsedContent?.text,
             content = content,
             imageUrl = itemContentDTO.image?.href ?: ContentImageUrlExtractor.extractImageUrl(content),
+            audioUrl = audioUrl,
             feedSource = feedSource,
             pubDateMillis = itemContentDTO.published * 1000,
             isRead = itemContentDTO.read,

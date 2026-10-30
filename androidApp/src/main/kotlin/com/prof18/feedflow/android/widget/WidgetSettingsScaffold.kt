@@ -1,28 +1,31 @@
 package com.prof18.feedflow.android.widget
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.exposeTestTagsAsResourceIds
+import com.prof18.feedflow.core.model.WidgetContentFilter
 import com.prof18.feedflow.core.model.WidgetFeedLayout
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.domain.model.WidgetTextColorMode
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun WidgetSettingsScaffold(
@@ -30,18 +33,22 @@ fun WidgetSettingsScaffold(
     settingsState: WidgetSettingsState,
     onFeedLayoutSelected: (WidgetFeedLayout) -> Unit,
     onShowHeaderSelected: (Boolean) -> Unit,
+    onShowRefreshButtonSelected: (Boolean) -> Unit,
     onFontScaleSelected: (Int) -> Unit,
     onBackgroundColorSelected: (Int?) -> Unit,
     onBackgroundOpacitySelected: (Int) -> Unit,
     onTextColorModeSelected: (WidgetTextColorMode) -> Unit,
     onHideImagesSelected: (Boolean) -> Unit,
+    onContentFilterSelected: (WidgetContentFilter) -> Unit,
+    onManageSync: () -> Unit,
     showConfirmButton: Boolean,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
     onNavigateBack: (() -> Unit)? = null,
 ) {
+    val strings = LocalFeedFlowStrings.current
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.exposeTestTagsAsResourceIds(),
         topBar = {
             TopAppBar(
                 title = { Text(title) },
@@ -57,50 +64,42 @@ fun WidgetSettingsScaffold(
                 },
             )
         },
+        bottomBar = {
+            if (showConfirmButton) {
+                Surface(modifier = Modifier.navigationBarsPadding()) {
+                    Button(
+                        onClick = onConfirm,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Spacing.regular)
+                            .testTag("widget_configuration_done"),
+                    ) {
+                        Text(strings.actionDone)
+                    }
+                }
+            }
+        },
     ) { paddingValues ->
-        val layoutDir = LocalLayoutDirection.current
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .padding(top = paddingValues.calculateTopPadding())
-                .padding(start = paddingValues.calculateLeftPadding(layoutDir))
-                .padding(end = paddingValues.calculateRightPadding(layoutDir)),
+                .padding(paddingValues)
+                .fillMaxSize(),
         ) {
-            val strings = LocalFeedFlowStrings.current
-            WidgetPreviewSection(
-                settingsState = settingsState,
-            )
-            Text(
-                text = strings.widgetPreviewNote,
-                modifier = Modifier
-                    .padding(horizontal = Spacing.regular)
-                    .padding(end = Spacing.large)
-                    .padding(bottom = Spacing.small),
-                style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
-                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.88f),
-            )
-
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                item {
-                    WidgetSettingsContent(
-                        settingsState = settingsState,
-                        onFeedLayoutSelected = onFeedLayoutSelected,
-                        onShowHeaderSelected = onShowHeaderSelected,
-                        onFontScaleSelected = onFontScaleSelected,
-                        onBackgroundColorSelected = onBackgroundColorSelected,
-                        onBackgroundOpacitySelected = onBackgroundOpacitySelected,
-                        onTextColorModeSelected = onTextColorModeSelected,
-                        onHideImagesSelected = onHideImagesSelected,
-                        showConfirmButton = showConfirmButton,
-                        onConfirm = onConfirm,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
-                }
+            item {
+                WidgetSettingsContent(
+                    settingsState = settingsState,
+                    onFeedLayoutSelected = onFeedLayoutSelected,
+                    onShowHeaderSelected = onShowHeaderSelected,
+                    onShowRefreshButtonSelected = onShowRefreshButtonSelected,
+                    onFontScaleSelected = onFontScaleSelected,
+                    onBackgroundColorSelected = onBackgroundColorSelected,
+                    onBackgroundOpacitySelected = onBackgroundOpacitySelected,
+                    onTextColorModeSelected = onTextColorModeSelected,
+                    onHideImagesSelected = onHideImagesSelected,
+                    onContentFilterSelected = onContentFilterSelected,
+                    onManageSync = onManageSync,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
         }
     }
@@ -123,11 +122,14 @@ private fun WidgetSettingsScaffoldPreview() {
             ),
             onFeedLayoutSelected = {},
             onShowHeaderSelected = {},
+            onShowRefreshButtonSelected = {},
             onFontScaleSelected = {},
             onBackgroundColorSelected = {},
             onBackgroundOpacitySelected = {},
             onTextColorModeSelected = {},
             onHideImagesSelected = {},
+            onContentFilterSelected = {},
+            onManageSync = {},
             showConfirmButton = true,
             onConfirm = {},
             onNavigateBack = {},

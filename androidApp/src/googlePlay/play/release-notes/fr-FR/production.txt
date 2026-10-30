@@ -1,2 +1,6 @@
-• Testez le nouveau moteur expérimental du mode Lecture pour extraire les articles plus vite et plus précisément. Aidez-moi à l’améliorer en signalant le contenu manquant ou les erreurs de formatage.
-• Amélioration des images, du contenu intégré, des articles courts ou composés d’images, des favoris et de la déconnexion Dropbox.
+• Écoutez des épisodes de podcast directement dans FeedFlow
+• Écoutez les articles lus à voix haute en mode lecture, dans leur langue
+• Nouveaux widgets personnalisables pour l'écran d'accueil, avec bouton d'actualisation
+• Le nouveau moteur du mode lecture est désormais par défaut. Article mal affiché ? Signalez-le d'un geste
+• Suivez des playlists YouTube et masquez les Shorts des chaînes
+• Les flux des sites qui bloquent les requêtes se chargent mieux, avec des erreurs plus claires

@@ -30,9 +30,7 @@ sealed class DrawerItem {
 
     data object Read : DrawerItem()
 
-    data class Bookmarks(
-        val unreadCount: Long,
-    ) : DrawerItem()
+    data object Bookmarks : DrawerItem()
 
     data class DrawerCategory(
         val category: FeedSourceCategory,

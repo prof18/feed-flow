@@ -189,34 +189,38 @@ internal class FeedSyncIosWorker(
         }
 
     override suspend fun syncFeedSources(): SyncResult = withContext(dispatcherProvider.io) {
-        mutex.withLock {
-            try {
-                logger.w { "Start syncing feed sources" }
-                feedSyncer.syncFeedSourceCategory(downloadSession)
-                feedSyncer.syncFeedSource()
-                logger.w { "Syncing feed sources finished" }
-                SyncResult.Success
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                logger.e("Sync feed sources failed", e)
-                SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
+        return@withContext withSuspensionGuard("FeedFlow sync feed sources") {
+            mutex.withLock {
+                try {
+                    logger.w { "Start syncing feed sources" }
+                    feedSyncer.syncFeedSourceCategory(downloadSession)
+                    feedSyncer.syncFeedSource()
+                    logger.w { "Syncing feed sources finished" }
+                    SyncResult.Success
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    logger.e("Sync feed sources failed", e)
+                    SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
+                }
             }
         }
     }
 
     override suspend fun syncFeedItems(): SyncResult = withContext(dispatcherProvider.io) {
-        mutex.withLock {
-            try {
-                logger.w { "Start syncing feed items" }
-                feedSyncer.syncFeedItem(downloadSession)
-                logger.w { "Syncing feed items finished" }
-                SyncResult.Success
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                logger.e("Sync feed items failed", e)
-                SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
+        return@withContext withSuspensionGuard("FeedFlow sync feed items") {
+            mutex.withLock {
+                try {
+                    logger.w { "Start syncing feed items" }
+                    feedSyncer.syncFeedItem(downloadSession)
+                    logger.w { "Syncing feed items finished" }
+                    SyncResult.Success
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    logger.e("Sync feed items failed", e)
+                    SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
+                }
             }
         }
     }

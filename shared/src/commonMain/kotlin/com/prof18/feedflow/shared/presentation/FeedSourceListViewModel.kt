@@ -8,32 +8,104 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
+import com.prof18.feedflow.core.model.RecoveryMode
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryCoordinator
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRequest
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryService
+import com.prof18.feedflow.shared.domain.recovery.FeedSourceRecoveryUiState
+import com.prof18.feedflow.shared.domain.recovery.RecoveryTicket
+import com.prof18.feedflow.shared.domain.recovery.VerificationFailure
+import com.prof18.feedflow.shared.domain.recovery.WebsiteProfileCleaner
+import com.prof18.feedflow.shared.domain.recovery.WebsiteVerificationFailure
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class FeedSourceListViewModel internal constructor(
     private val feedSourcesRepository: FeedSourcesRepository,
     private val feedCategoryRepository: FeedCategoryRepository,
     private val feedStateRepository: FeedStateRepository,
     private val settingsRepository: SettingsRepository,
+    private val recoveryRepository: FeedRecoveryRepository,
+    private val recoveryService: FeedRecoveryService,
+    private val coordinator: FeedRecoveryCoordinator,
+    private val profileCleaner: WebsiteProfileCleaner?,
 ) : ViewModel() {
+
+    val verificationAvailable: Boolean = coordinator.available
+    private var verificationTicket: RecoveryTicket? = null
+
+    val recoveryStates: StateFlow<Map<String, FeedSourceRecoveryUiState>> = combine(
+        recoveryRepository.accountEpochState.flatMapLatest { epoch -> recoveryRepository.recordsFlow(epoch) },
+        recoveryRepository.accountEpochState,
+        feedSourcesRepository.getFeedSources(),
+    ) { records, epoch, sources ->
+        records.filter { record ->
+            record.accountEpoch == epoch && sources.any { it.id == record.sourceId && it.url == record.subscriptionUrl }
+        }.associate { record ->
+            record.sourceId to FeedSourceRecoveryUiState(
+                verificationRequired = record.mode == RecoveryMode.VerificationRequired,
+                approved = record.mode == RecoveryMode.SessionApproved,
+                profileId = record.profileId,
+            )
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000), emptyMap())
+
+    fun verifyWebsite(source: FeedSource) {
+        verificationTicket?.revoke()
+        val ticket = recoveryRepository.issueTicket()
+        verificationTicket = ticket
+        viewModelScope.launch {
+            val record = recoveryRepository.records(ticket.accountEpoch)[source.id]
+                ?.takeIf { it.subscriptionUrl == source.url }
+                ?: return@launch
+            try {
+                recoveryService.recover(FeedRecoveryRequest.Refresh(source, record), ticket)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                val reason = (e as? WebsiteVerificationFailure)?.reason ?: VerificationFailure.InvalidContent
+                coordinator.reportFailure(reason)
+            }
+        }
+    }
+
+    fun cancelRecovery() {
+        verificationTicket?.revoke()
+        verificationTicket = null
+    }
+
+    fun clearWebsiteVerification(source: FeedSource) {
+        val profileId = recoveryStates.value[source.id]?.profileId ?: return
+        cancelRecovery()
+        viewModelScope.launch {
+            recoveryRepository.clearWebsite(profileId)
+            profileCleaner?.clean()
+        }
+    }
 
     private val feedsMutableState: MutableStateFlow<FeedSourceListState> = MutableStateFlow(FeedSourceListState())
     val feedSourcesState: StateFlow<FeedSourceListState> = feedsMutableState.asStateFlow()

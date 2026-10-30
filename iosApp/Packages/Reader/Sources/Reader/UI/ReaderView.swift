@@ -1,68 +1,11 @@
 import SwiftUI
 import UIKit
 
-public struct ReaderViewActions {
-    public let strings: ReaderViewStrings
-    public let onBookmarkToggle: (Bool) -> Void
-    public let onArchive: () -> Void
-    public let onOpenInBrowser: () -> Void
-    public let onComments: (() -> Void)?
-    public let onFontSizeMenuToggle: () -> Void
-    public let onFontSizeChange: (Double) -> Void
-    public let onLineHeightChange: (Double) -> Void
-    public let onBodyFontChange: (String) -> Void
-    public let onHeadlineFontChange: (String) -> Void
-    public let fontFamilyScriptFor: (String, String) -> String
-    public let fontOptions: [ReaderFontOption]
-    public let onNavigateToNext: (() -> Void)?
-    public let onNavigateToPrevious: (() -> Void)?
-    public let onToggleContentSource: (() -> Void)?
-    public let isShowingFeedContent: Bool
-    public let hasUrl: Bool
-
-    public init(
-        strings: ReaderViewStrings,
-        onBookmarkToggle: @escaping (Bool) -> Void,
-        onArchive: @escaping () -> Void,
-        onOpenInBrowser: @escaping () -> Void,
-        onComments: (() -> Void)? = nil,
-        onFontSizeMenuToggle: @escaping () -> Void,
-        onFontSizeChange: @escaping (Double) -> Void,
-        onLineHeightChange: @escaping (Double) -> Void,
-        onBodyFontChange: @escaping (String) -> Void,
-        onHeadlineFontChange: @escaping (String) -> Void,
-        fontFamilyScriptFor: @escaping (String, String) -> String,
-        fontOptions: [ReaderFontOption],
-        onNavigateToNext: (() -> Void)? = nil,
-        onNavigateToPrevious: (() -> Void)? = nil,
-        onToggleContentSource: (() -> Void)? = nil,
-        isShowingFeedContent: Bool = false,
-        hasUrl: Bool = true
-    ) {
-        self.strings = strings
-        self.onBookmarkToggle = onBookmarkToggle
-        self.onArchive = onArchive
-        self.onOpenInBrowser = onOpenInBrowser
-        self.onComments = onComments
-        self.onFontSizeMenuToggle = onFontSizeMenuToggle
-        self.onFontSizeChange = onFontSizeChange
-        self.onLineHeightChange = onLineHeightChange
-        self.onBodyFontChange = onBodyFontChange
-        self.onHeadlineFontChange = onHeadlineFontChange
-        self.fontFamilyScriptFor = fontFamilyScriptFor
-        self.fontOptions = fontOptions
-        self.onNavigateToNext = onNavigateToNext
-        self.onNavigateToPrevious = onNavigateToPrevious
-        self.onToggleContentSource = onToggleContentSource
-        self.isShowingFeedContent = isShowingFeedContent
-        self.hasUrl = hasUrl
-    }
-}
-
-public struct ReaderView: View {
+public struct ReaderView<BottomAccessory: View>: View {
     @Binding var readerStatus: ReaderStatus
     var options: ReaderViewOptions
     var themeColors: ReaderThemeColors
+    var scripts: ReaderViewScripts
     var actions: ReaderViewActions
     var isBookmarked: Bool
     var fontSize: Double
@@ -75,29 +18,52 @@ public struct ReaderView: View {
     var defaultHeadlineFontId: String
     @Binding var showFontSizeMenu: Bool
     var openInBrowser: (URL) -> Void
+    var bottomAccessory: BottomAccessory
+    var isBottomAccessoryVisible: Bool
 
     @State private var webContent: WebContent?
+    @State private var topContentInset: CGFloat = 0
+    @State private var lastArticle: DisplayedArticle?
+    @State private var lastUrl: URL?
+    @State private var allowsPlaceholder = true
+    @State private var placeholderDelay: Task<Void, Never>?
+
+    private static var readerSpace: String { "readerBody" }
+
+    private var isFetching: Bool {
+        readerStatus == .fetching
+    }
+
+    /// While the next article loads, the url-based toolbar items keep the previous url (disabled)
+    /// so the bars don't shrink and grow back on every Next/Previous.
+    private var toolbarUrl: URL? {
+        isFetching ? lastUrl : readerStatus.getUrl()
+    }
 
     public init(
         readerStatus: Binding<ReaderStatus>,
         options: ReaderViewOptions,
         themeColors: ReaderThemeColors,
+        scripts: ReaderViewScripts,
         actions: ReaderViewActions,
         isBookmarked: Bool,
         fontSize: Double,
         lineHeight: Double,
-        bodyFontId: String,
-        headlineFontId: String,
+        bodyFontId: String = "SYSTEM",
+        headlineFontId: String = "SYSTEM",
         defaultFontSize: Double,
         defaultLineHeight: Double,
-        defaultBodyFontId: String,
-        defaultHeadlineFontId: String,
+        defaultBodyFontId: String = "SYSTEM",
+        defaultHeadlineFontId: String = "SYSTEM",
         showFontSizeMenu: Binding<Bool>,
-        openInBrowser: @escaping (URL) -> Void
+        openInBrowser: @escaping (URL) -> Void,
+        isBottomAccessoryVisible: Bool = true,
+        @ViewBuilder bottomAccessory: () -> BottomAccessory
     ) {
-        self._readerStatus = readerStatus
+        _readerStatus = readerStatus
         self.options = options
         self.themeColors = themeColors
+        self.scripts = scripts
         self.actions = actions
         self.isBookmarked = isBookmarked
         self.fontSize = fontSize
@@ -108,24 +74,68 @@ public struct ReaderView: View {
         self.defaultLineHeight = defaultLineHeight
         self.defaultBodyFontId = defaultBodyFontId
         self.defaultHeadlineFontId = defaultHeadlineFontId
-        self._showFontSizeMenu = showFontSizeMenu
+        _showFontSizeMenu = showFontSizeMenu
         self.openInBrowser = openInBrowser
+        self.bottomAccessory = bottomAccessory()
+        self.isBottomAccessoryVisible = isBottomAccessoryVisible
     }
 
     public var body: some View {
+        if #available(iOS 26, *) {
+            readerBody
+                .modifier(ReaderBottomAccessoryModifier(accessory: bottomAccessory, isVisible: isBottomAccessoryVisible))
+        } else {
+            readerBody
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    VStack(spacing: 10) {
+                        if isBottomAccessoryVisible {
+                            bottomAccessory
+                        }
+                        compactNavigationToolbar
+                    }
+                }
+        }
+    }
+
+    private var readerBody: some View {
         ZStack {
             Color(ReaderTheme.background)
                 .overlay(content)
+                // Measured against the safe-area-sized ZStack in one layout pass: how far the surface
+                // reaches above it is the height of the bars it now runs beneath.
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    max(0, -proxy.frame(in: .named(Self.readerSpace)).minY)
+                } action: { inset in
+                    topContentInset = inset
+                }
+                // The web views inset their own content, so the article scrolls beneath the floating bars.
+                .ignoresSafeArea(.container, edges: isiOS26OrLater() ? .vertical : [])
                 .overlay(loader)
                 .navigationBarTitleDisplayMode(.inline)
+                .onChange(of: readerStatus) { _, status in
+                    switch status {
+                    case .contentUnavailable, .failedToExtractContent:
+                        lastArticle = nil
+                    case .fetching:
+                        delayPlaceholderIfSwitching()
+                    case .extractedContent:
+                        break
+                    }
+                    if !isFetching {
+                        lastUrl = status.getUrl()
+                    }
+                }
+                .onAppear {
+                    if !isFetching {
+                        lastUrl = readerStatus.getUrl()
+                    }
+                }
                 .onChange(of: themeColors) { _, newValue in
                     applyThemeWithJS(newValue)
                 }
-                .toolbar {
-                    if isiOS26OrLater() {
-                        makeIOS26ToolbarContent()
-                    } else {
-                        makeLegacyToolbarContent()
+                .onChange(of: scripts.stateUpdate) { _, script in
+                    if let webContent {
+                        applyStateUpdate(script, to: webContent)
                     }
                 }
                 .sheet(isPresented: $showFontSizeMenu) {
@@ -133,43 +143,76 @@ public struct ReaderView: View {
                         .presentationDetents([.medium])
                         .presentationBackground(Color(.secondarySystemBackground))
                 }
+        }
+        .coordinateSpace(.named(Self.readerSpace))
+        .toolbar {
+            if isiOS26OrLater() {
+                makeIOS26ToolbarContent()
+            } else {
+                makeLegacyToolbarContent()
+            }
+        }
+        .modifier(ReaderFixedToolbarModifier())
+    }
 
-            if !isiOS26OrLater() {
-                VStack {
-                    Spacer()
-                    compactNavigationToolbar
+    /// The article the reader web view shows. While the next article is fetched it keeps the last
+    /// one, so Next/Previous reuse the same web view (and its WebKit process) instead of creating
+    /// one per article; the loader covers it in the meantime.
+    private var displayedArticle: DisplayedArticle? {
+        switch readerStatus {
+        case let .extractedContent(html, baseURL, _, contentId):
+            DisplayedArticle(html: html, baseURL: baseURL, contentId: contentId)
+        case .fetching:
+            lastArticle
+        case .contentUnavailable, .failedToExtractContent:
+            nil
+        }
+    }
+
+    /// The reader web view is also mounted, still empty, during the first fetch, so WebKit starts
+    /// up while the article is extracted.
+    private var showsReaderWebView: Bool {
+        displayedArticle != nil || readerStatus == .fetching
+    }
+
+    @ViewBuilder private var content: some View {
+        if showsReaderWebView {
+            let article = displayedArticle
+            ReaderWebView(
+                article: article,
+                allowsPlaceholder: allowsPlaceholder,
+                onLinkClicked: onLinkClicked,
+                onImageClicked: options.onImageClicked,
+                topInset: topContentInset,
+                onWebContentReady: { content in
+                    webContent = content
+                    applyThemeWithJS(themeColors)
+                    applyStateUpdate(scripts.stateUpdate, to: content)
                 }
+            )
+            .onChange(of: article) { _, article in
+                lastArticle = article
+            }
+            .onAppear {
+                lastArticle = article
+            }
+        } else {
+            switch readerStatus {
+            case .fetching, .extractedContent:
+                EmptyView()
+            case .contentUnavailable:
+                contentUnavailableView
+            case let .failedToExtractContent(url):
+                FallbackWebView(
+                    url: url,
+                    onLinkClicked: onLinkClicked,
+                    topInset: topContentInset
+                )
             }
         }
     }
 
-    @ViewBuilder private var content: some View {
-        switch readerStatus {
-        case .fetching:
-            EmptyView()
-        case .contentUnavailable:
-            contentUnavailableView
-        case let .failedToExtractContent(url):
-            FallbackWebView(
-                url: url,
-                onLinkClicked: onLinkClicked
-            )
-        case let .extractedContent(html, baseURL, _, contentId):
-            ReaderWebView(
-                baseURL: baseURL,
-                html: html,
-                contentId: contentId,
-                onLinkClicked: onLinkClicked,
-                onImageClicked: options.onImageClicked,
-                onWebContentReady: { content in
-                    webContent = content
-                    applyThemeWithJS(themeColors)
-                }
-            )
-        }
-    }
-
-    @ViewBuilder private var contentUnavailableView: some View {
+    private var contentUnavailableView: some View {
         VStack(spacing: 8) {
             Text(actions.strings.contentUnavailableTitle)
                 .font(.headline)
@@ -184,10 +227,27 @@ public struct ReaderView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    @ViewBuilder private var loader: some View {
-        ReaderPlaceholder()
-            .opacity(readerStatus == .fetching ? 1 : 0)
-            .animation(.default, value: readerStatus == .fetching)
+    private var loader: some View {
+        let isVisible = isFetching && allowsPlaceholder
+        return ReaderPlaceholder()
+            .opacity(isVisible ? 1 : 0)
+            .animation(.default, value: isVisible)
+    }
+
+    /// On Next/Previous the current article stays up for a moment: if the next one is ready quickly
+    /// the reader switches straight to it, and the placeholder only appears for a slower load.
+    private func delayPlaceholderIfSwitching() {
+        placeholderDelay?.cancel()
+        guard lastArticle != nil else {
+            allowsPlaceholder = true
+            return
+        }
+        allowsPlaceholder = false
+        placeholderDelay = Task {
+            try? await Task.sleep(for: .milliseconds(150))
+            guard !Task.isCancelled else { return }
+            allowsPlaceholder = true
+        }
     }
 
     private func onLinkClicked(_ url: URL) {
@@ -205,28 +265,42 @@ public struct ReaderView: View {
         webContent.evaluateJavaScript(script)
     }
 
+    private func applyStateUpdate(_ script: String?, to content: WebContent) {
+        content.onContentReady = { [weak content] in
+            if let script {
+                content?.evaluateJavaScript(script)
+            }
+        }
+        if let script {
+            content.evaluateJavaScript(script)
+        }
+    }
+
     @ToolbarContentBuilder
     private func makeIOS26ToolbarContent() -> some ToolbarContent {
         // Bottom bar - left edge
-        if actions.hasUrl, let url = readerStatus.getUrl() {
+        if actions.hasUrl, let url = toolbarUrl {
             ToolbarItem(placement: .bottomBar) {
                 Button {
                     openInBrowser(url)
                 } label: {
-                    Image(systemName: "globe")
+                    Label(actions.strings.openInBrowser, systemImage: "globe")
                 }
+                .disabled(isFetching)
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.browserButton)
             }
         }
 
         // Bottom bar - right edge (navigation arrows)
-        ToolbarItemGroup(placement: .bottomBar) {
-            Spacer()
+        if #available(iOS 26.0, *) {
+            ToolbarSpacer(.flexible, placement: .bottomBar)
+        }
 
+        ToolbarItemGroup(placement: .bottomBar) {
             Button {
                 actions.onNavigateToPrevious?()
             } label: {
-                Image(systemName: "chevron.left")
+                Label(actions.strings.previousArticle, systemImage: "chevron.left")
             }
             .disabled(actions.onNavigateToPrevious == nil)
             .accessibilityIdentifier(ReaderAccessibilityIdentifiers.previousButton)
@@ -234,14 +308,14 @@ public struct ReaderView: View {
             Button {
                 actions.onNavigateToNext?()
             } label: {
-                Image(systemName: "chevron.right")
+                Label(actions.strings.nextArticle, systemImage: "chevron.right")
             }
             .disabled(actions.onNavigateToNext == nil)
             .accessibilityIdentifier(ReaderAccessibilityIdentifiers.nextButton)
         }
 
         // Top bar: Share button
-        if actions.hasUrl, let url = readerStatus.getUrl() {
+        if actions.hasUrl, let url = toolbarUrl {
             if #available(iOS 26.0, *) {
                 ToolbarSpacer(.fixed)
             }
@@ -253,6 +327,7 @@ public struct ReaderView: View {
                         Label(actions.strings.share, systemImage: "square.and.arrow.up")
                     }
                 )
+                .disabled(isFetching)
             }
 
             if #available(iOS 26.0, *) {
@@ -274,16 +349,25 @@ public struct ReaderView: View {
                 }
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.bookmarkButton)
 
+                if let onReportArticle = actions.onReportArticle {
+                    Button(action: onReportArticle) {
+                        Label(actions.strings.reportArticle, systemImage: "exclamationmark.bubble")
+                    }
+                    .disabled(actions.isSendingReport)
+                    .accessibilityIdentifier(ReaderReportAccessibilityIdentifiers.action)
+                }
+
                 if actions.hasUrl {
                     Button {
                         actions.onArchive()
                     } label: {
-                        Label(actions.strings.openInArchive, systemImage: "hammer.fill")
+                        Label(actions.strings.openInArchive, systemImage: "lock.open")
                     }
                 }
 
                 if case .extractedContent = readerStatus,
-                   let onComments = actions.onComments {
+                   let onComments = actions.onComments
+                {
                     Button {
                         onComments()
                     } label: {
@@ -292,6 +376,19 @@ public struct ReaderView: View {
                 }
 
                 if case .extractedContent = readerStatus {
+                    if let onToggleSpeech = actions.onToggleSpeech {
+                        Button {
+                            onToggleSpeech()
+                        } label: {
+                            Label(
+                                speechActionTitle,
+                                systemImage: actions.isSpeechPlaying ? "pause.fill" : "headphones"
+                            )
+                        }
+                        .disabled(actions.isPreparingSpeech)
+                        .accessibilityIdentifier(ReaderAccessibilityIdentifiers.ttsButton)
+                    }
+
                     Button {
                         actions.onFontSizeMenuToggle()
                     } label: {
@@ -301,11 +398,12 @@ public struct ReaderView: View {
                 }
 
                 if case .extractedContent = readerStatus,
-                   let onToggleContentSource = actions.onToggleContentSource {
+                   let onToggleContentSource = actions.onToggleContentSource
+                {
                     contentSourceMenuToggle(onToggle: onToggleContentSource)
                 }
             } label: {
-                Image(systemName: "ellipsis.circle")
+                Label(actions.strings.moreOptions, systemImage: "ellipsis.circle")
                     .accessibilityIdentifier(ReaderAccessibilityIdentifiers.moreMenuButton)
             }
         }
@@ -314,7 +412,7 @@ public struct ReaderView: View {
     @ToolbarContentBuilder
     private func makeLegacyToolbarContent() -> some ToolbarContent {
         // Share button
-        if actions.hasUrl, let url = readerStatus.getUrl() {
+        if actions.hasUrl, let url = toolbarUrl {
             ToolbarItem(placement: .navigationBarTrailing) {
                 ShareLink(
                     item: url,
@@ -322,6 +420,7 @@ public struct ReaderView: View {
                         Label(actions.strings.share, systemImage: "square.and.arrow.up")
                     }
                 )
+                .disabled(isFetching)
             }
         }
 
@@ -339,16 +438,25 @@ public struct ReaderView: View {
                 }
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.bookmarkButton)
 
+                if let onReportArticle = actions.onReportArticle {
+                    Button(action: onReportArticle) {
+                        Label(actions.strings.reportArticle, systemImage: "exclamationmark.bubble")
+                    }
+                    .disabled(actions.isSendingReport)
+                    .accessibilityIdentifier(ReaderReportAccessibilityIdentifiers.action)
+                }
+
                 if actions.hasUrl {
                     Button {
                         actions.onArchive()
                     } label: {
-                        Label(actions.strings.openInArchive, systemImage: "hammer.fill")
+                        Label(actions.strings.openInArchive, systemImage: "lock.open")
                     }
                 }
 
                 if case .extractedContent = readerStatus,
-                   let onComments = actions.onComments {
+                   let onComments = actions.onComments
+                {
                     Button {
                         onComments()
                     } label: {
@@ -357,6 +465,19 @@ public struct ReaderView: View {
                 }
 
                 if case .extractedContent = readerStatus {
+                    if let onToggleSpeech = actions.onToggleSpeech {
+                        Button {
+                            onToggleSpeech()
+                        } label: {
+                            Label(
+                                speechActionTitle,
+                                systemImage: actions.isSpeechPlaying ? "pause.fill" : "headphones"
+                            )
+                        }
+                        .disabled(actions.isPreparingSpeech)
+                        .accessibilityIdentifier(ReaderAccessibilityIdentifiers.ttsButton)
+                    }
+
                     Button {
                         actions.onFontSizeMenuToggle()
                     } label: {
@@ -366,7 +487,8 @@ public struct ReaderView: View {
                 }
 
                 if case .extractedContent = readerStatus,
-                   let onToggleContentSource = actions.onToggleContentSource {
+                   let onToggleContentSource = actions.onToggleContentSource
+                {
                     contentSourceMenuToggle(onToggle: onToggleContentSource)
                 }
             } label: {
@@ -394,10 +516,18 @@ public struct ReaderView: View {
         )
     }
 
+    private var speechActionTitle: String {
+        if actions.isPreparingSpeech {
+            return actions.strings.ttsPreparing
+        }
+        return actions.isSpeechPlaying ? actions.strings.ttsStop : actions.strings.ttsListen
+    }
+
     @ViewBuilder
     private var contentSourceMenuIcon: some View {
         if let image = UIImage(systemName: "dot.radiowaves.up.forward")?
-            .withTintColor(.label, renderingMode: .alwaysOriginal) {
+            .withTintColor(.label, renderingMode: .alwaysOriginal)
+        {
             Image(uiImage: image)
         } else {
             Image(systemName: "dot.radiowaves.up.forward")
@@ -405,7 +535,6 @@ public struct ReaderView: View {
         }
     }
 
-    @ViewBuilder
     private var fontSizeSheet: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -438,25 +567,27 @@ public struct ReaderView: View {
                         }
                     )
 
-                    Divider()
+                    if !actions.fontOptions.isEmpty {
+                        Divider()
 
-                    fontFamilyPickerRow(
-                        title: actions.strings.headlineFont,
-                        selection: headlineFontId,
-                        onSelectionChange: { newHeadlineFontId in
-                            updateFontFamilyWithJS(bodyFontId: bodyFontId, headlineFontId: newHeadlineFontId)
-                            actions.onHeadlineFontChange(newHeadlineFontId)
-                        }
-                    )
+                        fontFamilyPickerRow(
+                            title: actions.strings.headlineFont,
+                            selection: headlineFontId,
+                            onSelectionChange: { newValue in
+                                updateFontFamilyWithJS(bodyFontId: bodyFontId, headlineFontId: newValue)
+                                actions.onHeadlineFontChange(newValue)
+                            }
+                        )
 
-                    fontFamilyPickerRow(
-                        title: actions.strings.bodyFont,
-                        selection: bodyFontId,
-                        onSelectionChange: { newBodyFontId in
-                            updateFontFamilyWithJS(bodyFontId: newBodyFontId, headlineFontId: headlineFontId)
-                            actions.onBodyFontChange(newBodyFontId)
-                        }
-                    )
+                        fontFamilyPickerRow(
+                            title: actions.strings.bodyFont,
+                            selection: bodyFontId,
+                            onSelectionChange: { newValue in
+                                updateFontFamilyWithJS(bodyFontId: newValue, headlineFontId: headlineFontId)
+                                actions.onBodyFontChange(newValue)
+                            }
+                        )
+                    }
 
                     HStack {
                         Spacer()
@@ -492,10 +623,7 @@ public struct ReaderView: View {
         return Button {
             updateFontSizeWithJS(defaultFontSize)
             updateLineHeightWithJS(defaultLineHeight)
-            updateFontFamilyWithJS(
-                bodyFontId: defaultBodyFontId,
-                headlineFontId: defaultHeadlineFontId
-            )
+            updateFontFamilyWithJS(bodyFontId: defaultBodyFontId, headlineFontId: defaultHeadlineFontId)
             actions.onFontSizeChange(defaultFontSize)
             actions.onLineHeightChange(defaultLineHeight)
             actions.onBodyFontChange(defaultBodyFontId)
@@ -529,7 +657,6 @@ public struct ReaderView: View {
         .padding(.vertical, 4)
     }
 
-    @ViewBuilder
     private func textSettingSliderRow(
         title: String,
         valueLabel: String,
@@ -576,50 +703,28 @@ public struct ReaderView: View {
     }
 
     private func lineHeightValueLabel(_ lineHeight: Double) -> String {
-        let tenths = 15 + Int(lineHeight)
-        return "\(tenths / 10).\(tenths % 10)"
+        scripts.lineHeightLabel(Int(lineHeight))
     }
 
     private func updateFontSizeWithJS(_ newFontSize: Double) {
         guard let webContent = webContent else { return }
-        let script = """
-            document.getElementById("container").style.fontSize = "\(Int(newFontSize))" + "px";
-        """
-        webContent.evaluateJavaScript(script)
+        webContent.evaluateJavaScript(scripts.fontSize(Int(newFontSize)))
     }
 
-    // Mirror of Kotlin readerLineHeightToCss + readerLineHeightJs - keep in sync.
     private func updateLineHeightWithJS(_ lineHeight: Double) {
         guard let webContent = webContent else { return }
-        let tenths = 15 + Int(lineHeight)
-        let lineHeightCss = "\(tenths / 10).\(tenths % 10)"
-        let script = """
-            (function() {
-              var styleId = "__feedflow_line_height_style";
-              var style = document.getElementById(styleId);
-              if (!style) {
-                style = document.createElement("style");
-                style.id = styleId;
-                document.head.appendChild(style);
-              }
-              style.textContent = "body, #__content { line-height: \(lineHeightCss); }";
-            })();
-        """
-        webContent.evaluateJavaScript(script)
+        webContent.evaluateJavaScript(scripts.lineHeight(Int(lineHeight)))
     }
 
     private func updateFontFamilyWithJS(bodyFontId: String, headlineFontId: String) {
         guard let webContent = webContent else { return }
-        webContent.evaluateJavaScript(
-            actions.fontFamilyScriptFor(bodyFontId, headlineFontId)
-        )
+        webContent.evaluateJavaScript(scripts.fontFamily(bodyFontId, headlineFontId))
     }
 
-    @ViewBuilder
     private var compactNavigationToolbar: some View {
         HStack(spacing: 0) {
             // Open in browser - left edge
-            if actions.hasUrl, let url = readerStatus.getUrl() {
+            if actions.hasUrl, let url = toolbarUrl {
                 Button {
                     openInBrowser(url)
                 } label: {
@@ -631,6 +736,7 @@ public struct ReaderView: View {
                 .background(.regularMaterial)
                 .clipShape(Capsule())
                 .shadow(radius: 8)
+                .disabled(isFetching)
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.browserButton)
             }
 
@@ -666,5 +772,39 @@ public struct ReaderView: View {
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
+    }
+}
+
+public extension ReaderView where BottomAccessory == EmptyView {
+    init(
+        readerStatus: Binding<ReaderStatus>,
+        options: ReaderViewOptions,
+        themeColors: ReaderThemeColors,
+        scripts: ReaderViewScripts,
+        actions: ReaderViewActions,
+        isBookmarked: Bool,
+        fontSize: Double,
+        lineHeight: Double,
+        defaultFontSize: Double,
+        defaultLineHeight: Double,
+        showFontSizeMenu: Binding<Bool>,
+        openInBrowser: @escaping (URL) -> Void
+    ) {
+        self.init(
+            readerStatus: readerStatus,
+            options: options,
+            themeColors: themeColors,
+            scripts: scripts,
+            actions: actions,
+            isBookmarked: isBookmarked,
+            fontSize: fontSize,
+            lineHeight: lineHeight,
+            defaultFontSize: defaultFontSize,
+            defaultLineHeight: defaultLineHeight,
+            showFontSizeMenu: showFontSizeMenu,
+            openInBrowser: openInBrowser,
+            isBottomAccessoryVisible: false,
+            bottomAccessory: { EmptyView() }
+        )
     }
 }

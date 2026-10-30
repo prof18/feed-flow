@@ -1,6 +1,8 @@
 appId: com.prof18.feedflow.debug
+androidWebViewHierarchy: devtools
 ---
 - launchApp
+- setOrientation: PORTRAIT
 - openLink: feedflow://e2e/reset-and-seed?profile=reader-mode
 - extendedWaitUntil:
     visible:
@@ -16,15 +18,56 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: article_row_e2e_article_reader_success
 - assertVisible: "E2E cached reader content loaded from the seed fixture."
+- setOrientation: LANDSCAPE_LEFT
+- waitForAnimationToEnd
+- assertVisible:
+    id: reader_content_source_button
+    checked: false
+- takeScreenshot: reader-rss-inactive
 - tapOn:
-    id: reader_more_menu_button
-- tapOn:
-    text: "Content from the feed"
+    id: reader_content_source_button
+- assertVisible:
+    id: reader_content_source_button
+    checked: true
+- takeScreenshot: reader-rss-active
+- setOrientation: PORTRAIT
 - extendedWaitUntil:
     visible: "This article ships no link at all.*"
     timeout: 5000
+- setOrientation: LANDSCAPE_LEFT
+- waitForAnimationToEnd
+- tapOn:
+    id: reader_content_source_button
+- assertVisible:
+    id: reader_content_source_button
+    checked: false
+- setOrientation: PORTRAIT
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "E2E cached reader content loaded from the seed fixture."
+    timeout: 5000
 - tapOn:
     id: reader_back_button
+- assertVisible:
+    id: article_row_e2e_article_reader_success
+- assertNotVisible:
+    id: reader_article_e2e_article_reader_success
+
+# System Back exits the reader after a same-article HTML replacement too.
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- extendedWaitUntil:
+    visible: "E2E cached reader content loaded from the seed fixture."
+    timeout: 5000
+- tapOn:
+    id: reader_more_menu_button
+- tapOn: "Content from the feed"
+- extendedWaitUntil:
+    notVisible: "E2E cached reader content loaded from the seed fixture."
+    timeout: 5000
+- assertVisible:
+    id: reader_article_e2e_article_reader_success
+- back
 - assertVisible:
     id: article_row_e2e_article_reader_success
 - assertNotVisible:

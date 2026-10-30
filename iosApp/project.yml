@@ -62,25 +62,22 @@ knownRegions:
 packages:
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
-    exactVersion: 12.17.0
+    exactVersion: 12.19.2
   SwiftyDropbox:
     url: https://github.com/dropbox/SwiftyDropbox
     exactVersion: 10.2.4
-  SwiftSoup:
-    url: https://github.com/scinfu/SwiftSoup
-    exactVersion: 2.13.7
   Nuke:
     url: https://github.com/kean/Nuke
-    exactVersion: 13.0.6
+    exactVersion: 13.2.0
   Collections:
     url: https://github.com/apple/swift-collections
-    exactVersion: 1.6.0
+    exactVersion: 1.7.3
   GoogleSignIn:
     url: https://github.com/google/GoogleSignIn-iOS
-    exactVersion: 9.2.0
+    exactVersion: 10.0.0
   GoogleAPIClientForREST:
     url: https://github.com/google/google-api-objectivec-client-for-rest
-    exactVersion: 5.3.0
+    exactVersion: 5.5.0
   TelemetryDeck:
     url: https://github.com/TelemetryDeck/SwiftSDK
     exactVersion: 2.14.2
@@ -88,7 +85,7 @@ packages:
     path: Packages/Reader
   RevenueCat:
     url: https://github.com/RevenueCat/purchases-ios-spm.git
-    exactVersion: 5.82.0
+    exactVersion: 5.96.0
 
 aggregateTargets:
   FeedFlowKitBuilder:
@@ -136,6 +133,8 @@ targets:
       Release: Assets/FeedFlow.xcconfig
     sources:
       - path: Source
+      - path: ../androidApp/src/main/assets/feed-recovery-transfer.js
+        buildPhase: resources
       - path: Assets
         excludes:
           - AppIcon.icon
@@ -217,7 +216,6 @@ targets:
       - package: Firebase
         product: FirebaseCrashlytics
       - package: SwiftyDropbox
-      - package: SwiftSoup
       - package: Nuke
       - package: Nuke
         product: NukeUI
@@ -275,10 +273,8 @@ targets:
       - path: Source/Accounts/GoogleDrive/Data/GoogleDrivePlatformClient.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClient.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClientImpl.swift
-      - path: Source/Reader/FeedItemParser.swift
-      - path: Source/Reader/FeedItemParserWorkerIos.swift
       - path: Source/UI/Style/Spacing.swift
-      - path: Source/Utils/IosHtmlParser.swift
+      - path: Source/Utils/FeedConditionalGetURLProtocol.swift
     settings:
       base:
         PRODUCT_NAME: $(TARGET_NAME)
@@ -311,6 +307,7 @@ targets:
           DEBUG_INFORMATION_FORMAT: dwarf
           DEVELOPMENT_TEAM: Q7CUB3RNAK
           PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.Widget
+          FEEDFLOW_HOST_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev
           PROVISIONING_PROFILE_SPECIFIER: ""
           SWIFT_ACTIVE_COMPILATION_CONDITIONS: "DEBUG $(inherited) APP_EXTENSION"
         Release:
@@ -319,6 +316,7 @@ targets:
           DEVELOPMENT_TEAM[sdk=iphoneos*]: Q7CUB3RNAK
           CODE_SIGN_IDENTITY[sdk=iphoneos*]: "Apple Development"
           PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.Widget
+          FEEDFLOW_HOST_BUNDLE_IDENTIFIER: com.prof18.feedflow
           PROVISIONING_PROFILE_SPECIFIER: ""
           PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]: FeedFlowWidgetGHActionDevProvisioning
           SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_EXTENSION
@@ -334,7 +332,6 @@ targets:
       - package: Firebase
         product: FirebaseCrashlytics
       - package: SwiftyDropbox
-      - package: SwiftSoup
       - package: Nuke
       - package: GoogleSignIn
       - package: GoogleAPIClientForREST
@@ -361,11 +358,8 @@ targets:
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClient.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClientImpl.swift
       - path: Source/DI/Koin.swift
-      - path: Source/Reader/FeedItemParser.swift
-      - path: Source/Reader/FeedItemParserWorkerIos.swift
       - path: Source/UI/Style/Spacing.swift
       - path: Source/Utils/FeedConditionalGetURLProtocol.swift
-      - path: Source/Utils/IosHtmlParser.swift
       - path: Source/Utils/TelemetryReporter.swift
       - path: Source/Utils/VMStoreOwner.swift
     settings:
@@ -416,17 +410,157 @@ targets:
       - package: Firebase
         product: FirebaseCrashlytics
       - package: SwiftyDropbox
-      - package: SwiftSoup
       - package: TelemetryDeck
       - package: GoogleSignIn
       - package: GoogleAPIClientForREST
         product: GoogleAPIClientForREST_Drive
+
+  FeedRecoveryTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/FeedRecovery
+      - path: Source/WebsiteVerification/WebsiteHTTPTransport.swift
+      - path: Source/WebsiteVerification/WebsiteHTTPTransportOperation.swift
+      - path: Source/WebsiteVerification/WebsiteHTTPTransportError.swift
+      - path: Source/WebsiteVerification/WebsiteHTTPResponse.swift
+      - path: Source/WebsiteVerification/WebsiteClearanceCookies.swift
+      - path: Source/WebsiteVerification/WebsiteReplayIdentity.swift
+      - path: Source/WebsiteVerification/WebsiteRequestTasks.swift
+      - path: Source/WebsiteVerification/WebsiteProfileIdentity.swift
+      - path: Source/WebsiteVerification/WebsiteSessionBridge.swift
+      - path: Source/WebsiteVerification/WebsiteProfileStore.swift
+      - path: Source/WebsiteVerification/WebsiteProfileRecords.swift
+      - path: Source/WebsiteVerification/FeedRecoveryRepositoryRecords.swift
+      - path: Source/WebsiteVerification/WebsiteDataStoreProviding.swift
+      - path: Source/WebsiteVerification/WebKitWebsiteDataStoreProvider.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserAttachLifecycle.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserCaptureOutcome.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserNavigationPolicy.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserNavigationState.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserTransferReader.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserTransferError.swift
+      - path: Source/WebsiteVerification/WebsiteBrowserCapturedResponse.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.FeedRecoveryTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_PREPROCESS: "NO"
+        INFOPLIST_PREFIX_HEADER: ""
+        TEST_HOST: ""
+        OTHER_LDFLAGS: ["$(inherited)", "-framework", FeedFlowKit, "-lsqlite3"]
+    dependencies:
+      - target: FeedFlowKitBuilder
+        embed: false
+        link: false
+      - package: Firebase
+        product: FirebaseCrashlytics
+
+  WidgetTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/Widget/WidgetRefreshCoordinatorTests.swift
+      - path: Tests/Widget/WidgetContentSelectionTests.swift
+      - path: Tests/Widget/TestWidgetContentItem.swift
+      - path: Widget/WidgetRefreshCoordinator.swift
+      - path: Widget/WidgetContentSelection.swift
+      - path: Widget/WidgetContentListing.swift
+      - path: Widget/WidgetContentGroups.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.WidgetTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_PREPROCESS: "NO"
+        INFOPLIST_PREFIX_HEADER: ""
+        TEST_HOST: ""
+
+  AudioPlaybackTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/AudioPlayback
+      - path: Source/Audio/AudioEpisode.swift
+      - path: Source/Audio/AudioPlaybackPositionStore.swift
+      - path: Source/Audio/AudioPlaybackProgress.swift
+      - path: Source/Audio/AudioPlaybackController.swift
+      - path: Source/Audio/AudioPlaybackController+System.swift
+      - path: Source/Audio/AudioSourceKind.swift
+      - path: Source/Audio/SpeechPlaybackRequest.swift
+      - path: Source/Audio/SpeechAudioGenerating.swift
+      - path: Source/Audio/SpeechAudioGenerationError.swift
+      - path: Source/Audio/SpeechAudioGenerator.swift
+      - path: Source/Audio/SpeechLanguageDetector.swift
+      - path: Source/Audio/SpeechSynthesizerDriving.swift
+      - path: Source/Audio/SpeechAudioWriting.swift
+      - path: Source/Audio/NativeSpeechSynthesizer.swift
+      - path: Source/Audio/NativeSpeechAudioWriter.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.AudioPlaybackTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_PREPROCESS: "NO"
+        INFOPLIST_PREFIX_HEADER: ""
+        TEST_HOST: ""
+
+  NotificationTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/Notifications
+      - path: Source/Notifications/IOSArticleNotifier.swift
+      - path: Source/Notifications/NotificationImageAttachmentLoader.swift
+      - path: Source/Notifications/NotificationDeepLinkStore.swift
+      - path: Source/Utils/CustomNotification.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.NotificationTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_PREPROCESS: "NO"
+        INFOPLIST_PREFIX_HEADER: ""
+        TEST_HOST: ""
+        OTHER_LDFLAGS: ["$(inherited)", "-framework", FeedFlowKit, "-lsqlite3"]
+    dependencies:
+      - target: FeedFlowKitBuilder
+        embed: false
+        link: false
+      - package: Nuke
+      - package: Firebase
+        product: FirebaseCrashlytics
+
+  AppLogicTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/AppLogic
+      - path: Source/Settings/Components/BrowserURLBuilder.swift
+      - path: Source/Utils/FeedConditionalGetURLProtocol.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.AppLogicTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_PREPROCESS: "NO"
+        INFOPLIST_PREFIX_HEADER: ""
+        TEST_HOST: ""
+        OTHER_LDFLAGS: ["$(inherited)", "-framework", FeedFlowKit, "-lsqlite3"]
+    dependencies:
+      - target: FeedFlowKitBuilder
+        embed: false
+        link: false
+      - package: Firebase
+        product: FirebaseCrashlytics
 
   CloudSyncTests:
     type: bundle.unit-test
     platform: iOS
     sources:
       - path: Tests/CloudSync
+      - path: Tests/Widget
+        excludes:
+          - WidgetRefreshCoordinatorTests.swift
+          - WidgetContentSelectionTests.swift
+          - TestWidgetContentItem.swift
+      - path: Widget/WidgetContentLogoLoader.swift
       - path: Source/Accounts/Dropbox/Data
       - path: Source/Accounts/GoogleDrive/Data
     settings:
@@ -442,6 +576,7 @@ targets:
       - target: FeedFlowKitBuilder
         embed: false
         link: false
+      - package: Nuke
       - package: SwiftyDropbox
       - package: GoogleSignIn
       - package: Firebase
@@ -450,6 +585,43 @@ targets:
         product: GoogleAPIClientForREST_Drive
 
 schemes:
+  NotificationTests:
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        NotificationTests: all
+    test:
+      config: Debug
+      targets:
+        - NotificationTests
+  WidgetTests:
+    build:
+      targets:
+        WidgetTests: all
+    test:
+      config: Debug
+      targets:
+        - WidgetTests
+
+  AppLogicTests:
+    build:
+      targets:
+        AppLogicTests: all
+    test:
+      config: Debug
+      targets:
+        - AppLogicTests
+
+  AudioPlaybackTests:
+    build:
+      targets:
+        AudioPlaybackTests: all
+    test:
+      config: Debug
+      targets:
+        - AudioPlaybackTests
+
   FeedFlow:
     build:
       parallelizeBuild: true
@@ -505,6 +677,17 @@ schemes:
       config: Release
       revealArchiveInOrganizer: true
 
+  FeedRecoveryTests:
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        FeedRecoveryTests: all
+    test:
+      config: Debug
+      targets:
+        - FeedRecoveryTests
+
   CloudSyncTests:
     build:
       parallelizeBuild: true
@@ -515,6 +698,27 @@ schemes:
       config: Debug
       targets:
         - CloudSyncTests
+
+  # Every iOS test target except CloudSyncTests, which Gradle's allTests runs after the Kotlin side
+  # writes its snapshots. Run with .scripts/ios-tests.sh.
+  iOSTests:
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        AppLogicTests: all
+        AudioPlaybackTests: all
+        FeedRecoveryTests: all
+        NotificationTests: all
+        WidgetTests: all
+    test:
+      config: Debug
+      targets:
+        - AppLogicTests
+        - AudioPlaybackTests
+        - FeedRecoveryTests
+        - NotificationTests
+        - WidgetTests
 
   ShareExtension:
     build:

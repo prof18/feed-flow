@@ -1,0 +1,95 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=audio-episode&audioUrl=${AUDIO_URL}
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_seed_complete
+- tapOn:
+    id: article_row_e2e_audio_episode
+- assertVisible:
+    text: "^Play audio: E2E Audio Episode: Language Notes$"
+- waitForAnimationToEnd
+- tapOn:
+    text: "^Play audio: E2E Audio Episode: Language Notes$"
+- extendedWaitUntil:
+    visible:
+      id: audio_pause
+    timeout: 10000
+- tapOn:
+    id: audio_pause
+- tapOn:
+    id: reader_audio_player_expand
+- swipe:
+    start: 10%, 80%
+    end: 50%, 80%
+    duration: 800
+- assertVisible:
+    id: audio_position
+    text: "^0:[2-4][0-9]$"
+- tapOn:
+    id: reader_next_button
+- assertVisible: "E2E Audio Control Article[\\s\\S]*"
+- tapOn:
+    id: audio_dock_return_to_episode
+- assertVisible: "E2E Audio Episode: Language Notes[\\s\\S]*"
+- assertVisible:
+    id: audio_play
+- swipe:
+    start: 1%, 50%
+    end: 90%, 50%
+    duration: 500
+- assertVisible:
+    id: audio_now_playing
+- assertVisible:
+    id: audio_mini_play
+- takeScreenshot: .tmp/audio-playback/ios-now-playing
+- tapOn:
+    id: audio_mini_play
+- assertVisible:
+    id: audio_mini_pause
+- tapOn:
+    id: audio_mini_pause
+- assertVisible:
+    id: audio_mini_play
+- tapOn:
+    id: home_search_button
+- tapOn:
+    text: "^Continue$"
+    optional: true
+- inputText: "Audio"
+- assertVisible: "E2E Audio Control Article[\\s\\S]*"
+- assertVisible:
+    id: audio_now_playing
+- takeScreenshot: .tmp/audio-playback/ios-now-playing-search
+- waitForAnimationToEnd
+- tapOn:
+    id: audio_return_to_episode
+- extendedWaitUntil:
+    visible:
+      id: audio_play
+    timeout: 10000
+- assertVisible: "E2E Audio Episode: Language Notes[\\s\\S]*"
+- assertVisible:
+    id: audio_play
+- assertNotVisible:
+    id: audio_now_playing
+- tapOn:
+    id: reader_audio_player_expand
+- assertVisible:
+    id: audio_position
+    text: "^0:[2-4][0-9]$"
+- tapOn:
+    id: audio_close_player
+- swipe:
+    start: 1%, 50%
+    end: 90%, 50%
+    duration: 500
+- assertNotVisible:
+    id: audio_now_playing

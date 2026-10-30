@@ -65,11 +65,9 @@ LIMITS = {
 MAX_FEATURES = 20
 MAX_FEATURE_CHARS = 200
 
-# The API caps the number of *locales carrying keywords* at 21 —
-# "The size of KeywordsTotalCount must be 21 or less". It is not a per-locale
-# limit and not the total number of keywords (which is far higher in practice).
-# Undocumented; found by hitting it on 2026-08-09 when adding a 22nd.
-MAX_KEYWORD_LOCALES = 21
+MAX_KEYWORDS = 7
+MAX_KEYWORD_CHARS = 40
+MAX_KEYWORD_WORDS = 21
 
 
 def unwrap(text: str) -> str:
@@ -137,6 +135,19 @@ UNTRANSLATED_WORD_SHARE = 0.8
 
 def split_keywords(value: str) -> list[str]:
     return [part.strip() for part in (value or "").split(",") if part.strip()]
+
+
+def keyword_limit_problems(locale: str, keywords: list[str]) -> list[str]:
+    problems = []
+    if len(keywords) > MAX_KEYWORDS:
+        problems.append(f"{locale}: {len(keywords)} keywords, maximum is {MAX_KEYWORDS}")
+    word_count = sum(len(keyword.split()) for keyword in keywords)
+    if word_count > MAX_KEYWORD_WORDS:
+        problems.append(f"{locale}: {word_count} keyword words, maximum is {MAX_KEYWORD_WORDS}")
+    for keyword in keywords:
+        if len(keyword) > MAX_KEYWORD_CHARS:
+            problems.append(f"{locale}: keyword {keyword!r} is {len(keyword)} characters, maximum is {MAX_KEYWORD_CHARS}")
+    return problems
 
 
 def stage_screenshots(metadata_dir: pathlib.Path, source: pathlib.Path, locales: list[str], dry_run: bool) -> list[str]:
@@ -331,6 +342,7 @@ def main() -> int:
         for keyword in generated.get("keywords") or []:
             if ":" in keyword:
                 warnings.append(f"{locale}: keyword {keyword!r} contains a colon - looks like a translated field label, check the source")
+        problems.extend(keyword_limit_problems(locale, generated.get("keywords") or []))
 
         for field, limit in LIMITS.items():
             value = generated.get(field) or ""
@@ -349,18 +361,6 @@ def main() -> int:
         written.append((locale, changed))
         if not args.dry_run:
             target.write_text(json.dumps(generated, ensure_ascii=False, indent=2) + "\n")
-
-    # Checked across the whole directory, not per locale: the cap is on how many
-    # locales carry keywords at all, so adding one to a 21st locale fails even
-    # though that locale is individually fine.
-    keyword_locales = sorted(
-        p.stem for p in listings_dir.glob("*.json") if json.loads(p.read_text()).get("keywords")
-    )
-    if len(keyword_locales) > MAX_KEYWORD_LOCALES:
-        problems.append(
-            f"{len(keyword_locales)} locales carry keywords, and the Store allows "
-            f"{MAX_KEYWORD_LOCALES}. Clear keywords on a locale to make room: {', '.join(keyword_locales)}"
-        )
 
     if args.screenshots:
         for line in stage_screenshots(pathlib.Path(args.dir), pathlib.Path(args.screenshots), store_locales, args.dry_run):

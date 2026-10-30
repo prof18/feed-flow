@@ -78,7 +78,6 @@
     <string name="about_menu_contribute_translations">المساعدة في الترجمة</string>
     <string name="rename_feed_source_name_button">إعادة تسمية</string>
     <string name="in_app_browser">متصفح داخل التطبيق</string>
-    <string name="settings_reader_mode">فتح المقالات في وضع القارئ</string>
     <string name="search_no_data">لا توجد نتائج مطابقة لـ %s.</string>
     <string name="search_placeholder">بحث…</string>
     <string name="search_hint_title">ابدأ الكتابة…</string>

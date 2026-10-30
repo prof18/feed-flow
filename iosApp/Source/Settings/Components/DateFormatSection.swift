@@ -8,6 +8,8 @@ struct DateFormatSection: View {
         Picker(selection: $dateFormat) {
             Text(feedFlowStrings.dateFormatNormal)
                 .tag(DateFormat.normal)
+            Text(feedFlowStrings.dateFormatDayMonthDot)
+                .tag(DateFormat.dayMonthDot)
             Text(feedFlowStrings.dateFormatAmerican)
                 .tag(DateFormat.american)
             Text(feedFlowStrings.dateFormatIso)

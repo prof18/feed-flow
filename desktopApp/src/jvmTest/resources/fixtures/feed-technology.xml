@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Local Field Notes</title>
+    <link>http://127.0.0.1:18765/</link>
+    <description>Deterministic local feed for the Jewel desktop prototype.</description>
+    <category>Technology</category>
+    <item>
+      <title>A Small Desk for Big Ideas</title>
+      <link>http://127.0.0.1:18765/article-1.html</link>
+      <guid isPermaLink="true">http://127.0.0.1:18765/article-1.html</guid>
+      <pubDate>Thu, 01 Oct 2026 15:30:00 +0000</pubDate>
+      <description>A compact workspace can make room for deeper work.</description>
+      <content:encoded><![CDATA[<p>A clear desk is an invitation to begin.</p><p>Try one <strong>small change</strong> today, then <a href="http://127.0.0.1:18765/article-1.html#notes">read the field notes</a>.</p><blockquote>Make space for the work that matters.</blockquote>]]></content:encoded>
+    </item>
+    <item>
+      <title>Why Plain Text Still Matters</title>
+      <link>http://127.0.0.1:18765/article-2.html</link>
+      <guid isPermaLink="true">http://127.0.0.1:18765/article-2.html</guid>
+      <pubDate>Thu, 01 Oct 2026 14:20:00 +0000</pubDate>
+      <description>Readable formats age well and travel easily.</description>
+      <content:encoded><![CDATA[<p>Plain text is easy to search, copy, and keep.</p><ul><li>Portable</li><li>Durable</li><li>Yours to organize</li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>Notes from a Rainy Walk</title>
+      <link>http://127.0.0.1:18765/article-3.html</link>
+      <guid isPermaLink="true">http://127.0.0.1:18765/article-3.html</guid>
+      <pubDate>Thu, 01 Oct 2026 13:10:00 +0000</pubDate>
+      <description>Three observations from a slow afternoon.</description>
+      <content:encoded><![CDATA[<p>The rain softened the edges of the city.</p><p><em>Slowing down</em> made the familiar feel new.</p>]]></content:encoded>
+    </item>
+  </channel>
+</rss>

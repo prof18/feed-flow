@@ -1,0 +1,297 @@
+package com.prof18.feedflow.shared.domain
+
+import co.touchlab.kermit.Logger
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
+
+class KsoupHtmlParserTest {
+
+    private val parser = KsoupHtmlParser(Logger.withTag("KsoupHtmlParserTest"))
+
+    @Test
+    fun `getTextFromHTML strips HTML tags from text`() {
+        val html = """
+                <div class="feat-image"><img src="https://9to5mac.com/wp-content/uploads/sites/6/2022/06/get-macos-ventura.jpg?quality=82&#038;strip=all&#038;w=1280" /></div> <p>Apple on Monday released macOS Ventura 13.2.1 for Mac users. According to Apple, the update brings “important bug fixes,” but there are no details on what exactly today’s update fixes. The update comes three weeks after the release of macOS 13.2, which introduced support for Security Keys with Apple.</p> <p> <a href="https://9to5mac.com/2023/02/13/macos-ventura-13-2-1-update/#more-864283" class="more-link">more…</a></p> <p>The post <a rel="nofollow" href="https://9to5mac.com/2023/02/13/macos-ventura-13-2-1-update/">Apple releases macOS Ventura 13.2.1 with important bug fixes for Mac users</a> appeared first on <a rel="nofollow" href="https://9to5mac.com">9to5Mac</a>.</p>
+        """.trimIndent()
+
+        val text = parser.getTextFromHTML(html)
+
+        val expectedText = """
+            Apple on Monday released macOS Ventura 13.2.1 for Mac users. According to Apple, the update brings “important bug fixes,” but there are no details on what exactly today’s update fixes. The update comes three weeks after the release of macOS 13.2, which introduced support for Security Keys with Apple. more… The post Apple releases macOS Ventura 13.2.1 with important bug fixes for Mac users appeared first on 9to5Mac.
+        """.trimIndent()
+
+        assertEquals(expectedText, text)
+    }
+
+    @Test
+    fun `getTextFromHTML returns plain text unchanged`() {
+        val text = """
+            Apple on Monday released macOS Ventura 13.2.1 for Mac users. According to Apple, the update brings “important bug fixes,” but there are no details on what exactly today’s update fixes. The update comes three weeks after the release of macOS 13.2, which introduced support for Security Keys with Apple. more… The post Apple releases macOS Ventura 13.2.1 with important bug fixes for Mac users appeared first on 9to5Mac.
+        """.trimIndent()
+
+        val cleanText = parser.getTextFromHTML(text)
+
+        assertEquals(text, cleanText)
+    }
+
+    @Test
+    fun `getTextFromHTML decodes decimal and hexadecimal numeric entities`() {
+        val text = parser.getTextFromHTML("BBC &#8238;فارسی &#x2026;")
+
+        assertEquals("BBC \u202Eفارسی …", text)
+    }
+
+    @Test
+    fun `getRssUrl finds RSS feed link`() {
+        val html = """
+            <html>
+                <head>
+                    <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
+                </head>
+            </html>
+        """.trimIndent()
+
+        val feedUrl = parser.getRssUrl(html)
+        assertEquals("/feed.xml", feedUrl)
+    }
+
+    @Test
+    fun `getRssUrl finds Atom feed link`() {
+        val html = """
+            <html>
+                <head>
+                    <link rel="alternate" type="application/atom+xml" href="/atom.xml" />
+                </head>
+            </html>
+        """.trimIndent()
+
+        val feedUrl = parser.getRssUrl(html)
+        assertEquals("/atom.xml", feedUrl)
+    }
+
+    @Test
+    fun `getRssUrl finds JSON feed link`() {
+        val html = """
+            <html>
+                <head>
+                    <link rel="alternate" type="application/feed+json" href="/feed.json" />
+                </head>
+            </html>
+        """.trimIndent()
+
+        val feedUrl = parser.getRssUrl(html)
+        assertEquals("/feed.json", feedUrl)
+    }
+
+    @Test
+    fun `getFaviconUrl extracts favicon URL`() {
+        val html = """
+            <html>
+                <head>
+                    <link rel="icon" href="/favicon.ico" />
+                </head>
+            </html>
+        """.trimIndent()
+
+        val faviconUrl = parser.getFaviconUrl(html)
+        assertEquals("/favicon.ico", faviconUrl)
+    }
+
+    @Test
+    fun `getFaviconUrl extracts shortcut icon URL`() {
+        val html = """
+            <html>
+                <head>
+                    <link rel="shortcut" href="/shortcut-icon.png" />
+                </head>
+            </html>
+        """.trimIndent()
+
+        val faviconUrl = parser.getFaviconUrl(html)
+        assertEquals("/shortcut-icon.png", faviconUrl)
+    }
+
+    @Test
+    fun `getCanonicalUrl finds canonical link regardless of attribute order`() {
+        val html = """
+            <link href="https://example.com/canonical" rel="canonical">
+        """.trimIndent()
+
+        assertEquals("https://example.com/canonical", parser.getCanonicalUrl(html))
+    }
+
+    @Test
+    fun `getCanonicalUrl returns null when no canonical link is present`() {
+        assertNull(parser.getCanonicalUrl("<link rel=alternate href=\"/feed.xml\">"))
+    }
+
+    @Test
+    fun `getCanonicalUrl returns null for blank href`() {
+        assertNull(parser.getCanonicalUrl("<link rel=canonical href=\"   \">"))
+    }
+
+    @Test
+    fun `getTextFromHTML handles malformed HTML`() {
+        val html = "<html><p>Unclosed paragraph<div>Unclosed div"
+
+        val text = parser.getTextFromHTML(html)
+        assertNotNull(text)
+    }
+
+    @Test
+    fun `getRssUrl returns null when no feed URL found`() {
+        val html = """
+            <html>
+                <head>
+                    <title>No feeds here</title>
+                </head>
+            </html>
+        """.trimIndent()
+
+        val feedUrl = parser.getRssUrl(html)
+        assertNull(feedUrl)
+    }
+
+    @Test
+    fun `getFaviconUrl returns null when no favicon found`() {
+        val html = """
+            <html>
+                <head>
+                    <title>No icon here</title>
+                </head>
+            </html>
+        """.trimIndent()
+
+        val faviconUrl = parser.getFaviconUrl(html)
+        assertNull(faviconUrl)
+    }
+
+    @Test
+    fun `getTextFromHTML handles empty HTML`() {
+        val text = parser.getTextFromHTML("")
+        assertEquals("", text)
+    }
+
+    @Test
+    fun `parseFeedContent returns text and commentsUrl when anchor text is Comments`() {
+        val html = """
+            <p>Some content</p>
+            <p><a href="https://example.com/article#comments">Comments</a></p>
+        """.trimIndent()
+
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertEquals("Some content Comments", result.text)
+        assertEquals("https://example.com/article#comments", result.commentsUrl)
+    }
+
+    @Test
+    fun `parseFeedContent comments matching is case insensitive`() {
+        val html = """<a href="https://example.com/article#comments">COMMENTS</a>"""
+
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertEquals("https://example.com/article#comments", result.commentsUrl)
+    }
+
+    @Test
+    fun `parseFeedContent resolves relative comments url against base url`() {
+        val html = """<a href="/article#comments">Comments</a>"""
+
+        val result = parser.parseFeedContent(html, baseUrl = "https://example.com/posts/123")
+        assertEquals("https://example.com/article#comments", result.commentsUrl)
+    }
+
+    @Test
+    fun `parseFeedContent returns null commentsUrl for relative href without base url`() {
+        val html = """<a href="/article#comments">Comments</a>"""
+
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertNull(result.commentsUrl)
+    }
+
+    @Test
+    fun `parseFeedContent returns null commentsUrl for non http scheme`() {
+        val html = """<a href="mailto:someone@example.com">Comments</a>"""
+
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertNull(result.commentsUrl)
+    }
+
+    @Test
+    fun `parseFeedContent returns null commentsUrl when no comments anchor present`() {
+        val html = """
+            <p>Some content without a comments link</p>
+            <a href="https://example.com/article">Read more</a>
+        """.trimIndent()
+
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertNull(result.commentsUrl)
+    }
+
+    @Test
+    fun `parseFeedContent handles empty html`() {
+        val result = parser.parseFeedContent("", baseUrl = null)
+        assertEquals("", result.text)
+        assertNull(result.commentsUrl)
+    }
+
+    @Test
+    fun `parseFeedContent returns null commentsUrl when comments anchor has no href`() {
+        val html = """<a>Comments</a>"""
+
+        val result = parser.parseFeedContent(html, baseUrl = null)
+        assertNull(result.commentsUrl)
+    }
+
+    @Test
+    fun `getTextFromHTML tolerates null bytes`() {
+        val text = parser.getTextFromHTML("<p>Hel\u0000lo</p>")
+
+        assertNotNull(text)
+        assertTrue("Hel" in text && "lo" in text, text)
+    }
+
+    @Test
+    fun `getTextFromHTML tolerates a leading byte order mark`() {
+        val text = parser.getTextFromHTML("\uFEFF<p>Hello</p>")
+
+        assertNotNull(text)
+        assertEquals("Hello", text.trim { it == '\uFEFF' || it.isWhitespace() })
+    }
+
+    @Test
+    fun `getTextFromHTML tolerates a truncated tag`() {
+        val text = parser.getTextFromHTML("<p>Hello</p><a hre")
+
+        assertNotNull(text)
+        assertTrue("Hello" in text, text)
+    }
+
+    @Test
+    fun `parseFeedContent tolerates an unterminated attribute`() {
+        val parsed = parser.parseFeedContent("<p>Hello</p><img srcset=\"a.jpg 1x, b.jp", null)
+
+        val text = assertNotNull(parsed.text)
+        assertTrue("Hello" in text, text)
+    }
+
+    @Test
+    fun `parseFeedContent handles unclosed tags`() {
+        val parsed = parser.parseFeedContent(
+            html = "<div><p><a href=\"https://example.com/c\">Comments",
+            baseUrl = "https://example.com",
+        )
+
+        assertEquals("https://example.com/c", parsed.commentsUrl)
+    }
+
+    @Test
+    fun `getTextFromHTML handles large input`() {
+        val text = parser.getTextFromHTML("<p>" + "a".repeat(2_000_000) + "</p>")
+
+        assertNotNull(text)
+        assertEquals(2_000_000, text.length)
+    }
+}

@@ -18,6 +18,8 @@ struct HomeContent: View {
     private var browserSelector
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass
+    @Environment(\.verticalSizeClass)
+    var verticalSizeClass
     @Environment(\.dynamicTypeSize)
     var dynamicTypeSize
 
@@ -44,8 +46,10 @@ struct HomeContent: View {
     let nextFeedPreviewState: NextFeedPreviewState
     let feedItemDisplaySettings: FeedItemDisplaySettings
     let viewMenuState: HomeViewMenuState
+    let pendingNewArticlesCount: Int
 
     @State private var showScrollToTop = false
+    @State private var keepsLoadingHeaderSpace = false
     @State private var showMarkAllReadDialog = false
     @State private var showClearOldArticlesDialog = false
     @State private var showViewOptionsSheet = false
@@ -68,18 +72,43 @@ struct HomeContent: View {
     let onFeedOrderChange: (FeedOrder) -> Void
     let onShowReadArticlesTimelineChange: (Bool) -> Void
     let onSettingsDone: () -> Void
+    let onShowNewArticlesClick: () -> Void
 
     var isCompactPhone: Bool {
-        horizontalSizeClass == .compact && UIDevice.current.userInterfaceIdiom == .phone
+        horizontalSizeClass == .compact
+    }
+
+    private var showNewArticlesPill: Bool {
+        pendingNewArticlesCount > 0 && loadingState?.isLoading() != true
     }
 
     var shouldUseSystemNavigationTitle: Bool {
         isiOS26OrLater() && !isCompactPhone
     }
 
+    func showDrawer() {
+        if isCompactPhone {
+            dismiss()
+        } else {
+            openDrawer()
+        }
+    }
+
     var body: some View {
         ScrollViewReader { proxy in
             feedListView(proxy: proxy)
+        }
+        // Removing the loading header while scrolled away would shift the whole list,
+        // so keep its space until the user is back at the top.
+        .onChange(of: showLoading && showScrollToTop) { _, isLoadingAwayFromTop in
+            if isLoadingAwayFromTop {
+                keepsLoadingHeaderSpace = true
+            }
+        }
+        .onChange(of: showScrollToTop) { _, isAwayFromTop in
+            if !isAwayFromTop {
+                keepsLoadingHeaderSpace = false
+            }
         }
         .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {
             Button(feedFlowStrings.cancelButton, role: .cancel) {}
@@ -92,7 +121,7 @@ struct HomeContent: View {
         }
         .alert(feedFlowStrings.clearOldArticlesButton, isPresented: $showClearOldArticlesDialog) {
             Button(feedFlowStrings.cancelButton, role: .cancel) {}
-            Button(feedFlowStrings.confirmButton) {
+            Button(feedFlowStrings.confirmButton, role: .destructive) {
                 onDeleteOldFeedClick()
             }
         } message: {
@@ -147,6 +176,7 @@ private extension HomeContent {
             loadingState: loadingState,
             feedState: feedState,
             showLoading: showLoading,
+            keepsLoadingHeaderSpace: keepsLoadingHeaderSpace,
             currentFeedFilter: currentFeedFilter,
             columnVisibility: columnVisibility,
             feedFontSizes: feedFontSizes,
@@ -169,7 +199,7 @@ private extension HomeContent {
             onBackToTimelineClick: onBackToTimelineClick,
             onNavigateToNextFeed: onNavigateToNextFeed,
             onMarkAllAsReadClick: onMarkAllReadClick,
-            openDrawer: openDrawer,
+            openDrawer: showDrawer,
             onScrollPositionChanged: { shouldShow in
                 guard showScrollToTop != shouldShow else { return }
                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -182,17 +212,30 @@ private extension HomeContent {
         )
     }
 
-    func feedListView(proxy: ScrollViewProxy) -> some View {
-        feedListBaseView
-            .onChange(of: toggleListScroll) {
-                proxy.scrollTo(feedState.first?.id)
-                showScrollToTop = false
-            }
-            .onChange(of: showSettings) {
-                sheetToShow = .settings
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(isCompactPhone)
+    @ViewBuilder private var feedListWithFixedToolbar: some View {
+        if #available(iOS 27.0, *) {
+            feedListBaseView
+                .toolbarMinimizationBehavior(.never, for: .navigationBar)
+        } else {
+            feedListBaseView
+        }
+    }
+
+    @ViewBuilder
+    func feedListWithToolbar(proxy: ScrollViewProxy) -> some View {
+        if #available(iOS 27.1, *), isCompactPhone {
+            feedListWithFixedToolbar.modifier(HomeAdaptiveCompactToolbarModifier(
+                title: getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount),
+                horizontalToolbar: makeCompactPhoneToolbarContent(proxy: proxy),
+                verticalToolbar: makeAdaptiveCompactToolbarContent(proxy: proxy)
+            ))
+        } else {
+            feedListWithDefaultToolbar(proxy: proxy)
+        }
+    }
+
+    func feedListWithDefaultToolbar(proxy: ScrollViewProxy) -> some View {
+        feedListWithFixedToolbar
             .navigationTitle(
                 shouldUseSystemNavigationTitle
                     ? getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount)
@@ -207,12 +250,41 @@ private extension HomeContent {
                     makeLegacyToolbarContent(proxy: proxy)
                 }
             }
+    }
+
+    func feedListView(proxy: ScrollViewProxy) -> some View {
+        feedListWithToolbar(proxy: proxy)
+            .onChange(of: toggleListScroll) {
+                proxy.scrollTo(feedState.first?.id)
+                showScrollToTop = false
+            }
+            .onChange(of: showSettings) {
+                sheetToShow = .settings
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(isCompactPhone)
+            .toolbar(removing: isCompactPhone ? .sidebarToggle : nil)
             .showsScrollToTop(isVisible: showScrollToTop, onScrollToTop: {
                 withAnimation {
                     proxy.scrollTo(feedState.first?.id)
                     showScrollToTop = false
                 }
             })
+            .overlay(alignment: .top) {
+                if showNewArticlesPill {
+                    NewArticlesPillView(count: pendingNewArticlesCount) {
+                        withAnimation(.default, completionCriteria: .logicallyComplete) {
+                            proxy.scrollTo(feedState.first?.id)
+                            showScrollToTop = false
+                        } completion: {
+                            onShowNewArticlesClick()
+                        }
+                    }
+                    .padding(.top, Spacing.small)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
+            .animation(.easeInOut(duration: 0.3), value: showNewArticlesPill)
     }
 
     @ViewBuilder

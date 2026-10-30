@@ -1,2 +1,6 @@
-• Teste o novo mecanismo experimental do modo Leitura para extrair artigos com mais rapidez e precisão. Ajude-me a melhorar reportando conteúdo ausente ou erros de formatação.
-• Melhorias em imagens, conteúdo incorporado, artigos curtos ou só com imagens, ações de favoritos e desvinculação do Dropbox.
+• Ouça episódios de podcast direto no FeedFlow
+• Ouça os artigos em voz alta no modo leitura, com uma voz no idioma do artigo
+• Novos widgets personalizáveis para a tela inicial, com botão de atualizar opcional
+• O novo mecanismo do modo leitura agora é o padrão. Se um artigo não aparecer direito, denuncie com um toque
+• Siga playlists do YouTube e oculte os Shorts dos canais
+• Feeds de sites que bloqueiam solicitações carregam de forma mais confiável, com erros mais claros

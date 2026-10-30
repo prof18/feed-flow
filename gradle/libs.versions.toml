@@ -1,101 +1,136 @@
 [versions]
-about-libraries = "15.0.4"
+about-libraries = "15.3.0"
 activity-compose = "1.13.0"
 android-compile-sdk = "37"
-android-gradle-plugin = "9.3.1"
+android-gradle-plugin = "9.4.1"
 android-min-sdk = "26"
 android-target-sdk = "36"
-androidx-benchmark = "1.5.0-beta01"
+androidx-benchmark = "1.5.0"
 androidx-browser = "1.10.0"
+androidx-webkit = "1.16.0"
+androidx-credentials = "1.6.0"
 androidx-core-ktx = "1.7.0"
 androidx-profileinstaller = "1.4.1"
 androidx-test-ext-junit = "1.3.0"
 androidx-test-runner = "1.7.0"
 androidx-uiautomator = "2.4.0"
 arrow = "2.2.3"
-compose-material3 = "1.5.0-alpha25"
+compose-material3 = "1.5.0-beta01"
+androidx-compose-bom = "2026.09.00"
+compose-runtime-annotation = "1.12.1"
 compose-hot-reload = "1.2.0"
-compose-multiplatform = "1.11.1"
-compose-multiplatform-material3-adaptive = "1.9.0"
-compose-multiplatform-material3-adaptive-layout = "1.3.0-beta02"
+compose-multiplatform = "1.12.2"
 compose-multiplatform-material-icons = "1.7.3"
-compose-unstyled = "2.9.0"
+compose-unstyled = "2.10.0"
 compose-webview = "2.0.3"
-colorpicker-compose = "1.2.0"
+colorpicker-compose = "1.3.0"
 coroutines = "1.11.0"
-crashk-ios = "0.9.0"
-crashlytics-plugin = "3.0.7"
+crashk-ios = "0.10.0"
+crashlytics-plugin = "3.0.8"
 csv = "1.3"
-detekt = "1.23.8"
-detekt-compose-rules = "0.4.28"
+detekt = "2.0.0-alpha.6"
+detekt-compose-rules = "0.6.8"
 dropbox-core = "8.0.2"
-firebase-bom = "34.17.0"
+firebase-bom = "35.0.2"
 flatlaf = "3.7.2"
-google-api-client = "2.9.0"
-google-api-client-android = "2.9.0"
-google-api-services-drive = "v3-rev20260720-2.0.0"
+google-api-client = "2.9.1"
+google-api-client-android = "2.9.1"
+google-api-services-drive = "v3-rev20261011-2.0.0"
 google-oauth-client-jetty = "1.39.0"
-google-identity-googleid = "1.2.0"
-google-play-services-auth = "21.6.0"
-haze = "1.7.2"
-htmlunit = "5.3.0"
-glance = "1.1.1"
+google-identity-googleid = "1.2.1"
+google-play-services-auth = "22.0.0"
+glance = "1.2.0"
 google-services = "4.5.0"
-immutable-collections = "0.5.1"
-io-coil = "3.5.0"
-jsoup = "1.23.1"
-# When updating, check the version of jna in the following link:
-# https://github.com/Dansoftowner/jSystemThemeDetector/blob/master/build.gradle
-# if necessary, download again the native library here and uzip the jar: unzip jna-5.15.0/dist/darwin-aarch64.jar
-# https://github.com/java-native-access/jna
+immutable-collections = "0.5.2"
+io-coil = "3.6.3"
+# desktopApp/resources-sandbox/macos-arm64/libjnidispatch.dylib must match the resolved JNA (currently 5.17.0, from
+# Jewel), or the Mac App Store build crashes at launch with "incompatible JNA native library".
+# Check with `./gradlew :desktopApp:dependencyInsight --configuration jvmRuntimeClasspath --dependency net.java.dev.jna:jna`.
+# When JNA changes, extract com/sun/jna/darwin-aarch64/libjnidispatch.jnilib from that jna-<version>.jar and save it
+# as libjnidispatch.dylib, like libsqlitejdbc.dylib: jpackage re-signs .dylib files with the provisioning-profile
+# certificate in CI but leaves .jnilib files as committed, which App Store Connect rejects (error 90284).
 jsystem-theme-detector = "3.9.1"
+jewel = "0.41.0-262.10968.63"
+jewelPlatform = "262.10968.63"
+spectre = "0.7.1"
 junit = "4.13.2"
-kermit = "2.1.0"
-klead = "0.0.1-alpha07"
+junit-jupiter = "5.10.1"
+kermit = "2.2.0"
+klead = "0.0.1-alpha12"
 koin-bom = "4.2.2"
 kotlin = "2.4.10"
 # Because of telemetry deck still using version 0.6.x
 kotlinx-date-time = "0.8.0-0.6.x-compat"
 kotlinx-serialization = "1.11.0"
+ksoup = "0.2.6"
 ksp = "2.3.10"
-ktor = "3.5.2"
+ktor = "3.6.0"
 lifecycle = "2.11.0"
 lyricist = "1.9.0"
-material-window-size = "1.9.0"
+media3 = "1.11.1"
 multiplatform-settings = "1.3.0"
-multiplatformMarkdownRendererM3 = "0.43.0"
-nav3 = "1.1.5"
-nav3-multiplatform = "1.1.1"
+nav3 = "1.2.0"
+nav3-multiplatform = "1.1.2"
 lifecycle-viewmodel-nav3 = "2.11.0"
 lifecycle-viewmodel-nav3-multiplatform = "2.11.0"
-org-robolectric = "4.16.1"
+org-robolectric = "4.17"
 play-review = "2.0.2"
 rss-parser = "6.1.8"
 reorderable = "3.1.0"
-revenuecat = "10.15.1"
+revenuecat = "10.28.1"
 saket-swipe = "1.3.0"
-sentry = "8.51.0"
-skie = "0.10.14"
-slf4jNop = "2.0.18"
-# When updating, check the version of sqlite-jdbc in the following link:
-# https://github.com/cashapp/sqldelight/blob/master/gradle/libs.versions.toml#L74
-# if necessry, dowload again the native library here
-# https://github.com/xerial/sqlite-jdbc/tree/master/src/main/resources/org/sqlite/native/Mac/aarch64
-sql-delight = "2.3.2"
+sentry = "8.58.0"
+skie = "0.10.15"
+slf4jNop = "2.0.20"
+# When updating, check the sqlite-jdbc version in the POM of the pinned release (replace <version>):
+# https://repo1.maven.org/maven2/app/cash/sqldelight/sqlite-driver/<version>/sqlite-driver-<version>.pom
+# If it changed, download the native library again from that sqlite-jdbc release:
+# https://github.com/xerial/sqlite-jdbc/tree/<sqlite-jdbc-version>/src/main/resources/org/sqlite/native/Mac/aarch64
+sql-delight = "2.4.1"
 stately-concurrency = "2.1.0"
-triplet-play = "4.0.0"
+triplet-play = "4.1.1"
 turbine = "1.2.1"
-workmanager = "2.11.2"
+workmanager = "2.12.0"
 flatpack-gradle-generator = "1.8.0"
-telemetry-deck = "7.1.0"
+telemetry-deck = "7.2.0"
 telephoto = "0.19.0"
 
 [libraries]
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
+androidx-compose-runtime = { module = "androidx.compose.runtime:runtime" }
+androidx-compose-foundation = { module = "androidx.compose.foundation:foundation" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
+androidx-compose-material3-adaptive-navigationsuite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+androidx-compose-runtime-annotation = { module = "androidx.compose.runtime:runtime-annotation", version.ref = "compose-runtime-annotation" }
+jewel-platform-icons = { module = "com.jetbrains.intellij.platform:icons", version.ref = "jewelPlatform" }
+jewel-int-ui-standalone = { module = "org.jetbrains.jewel:jewel-int-ui-standalone", version.ref = "jewel" }
+jewel-markdown-core = { module = "org.jetbrains.jewel:jewel-markdown-core", version.ref = "jewel" }
+jewel-markdown-standalone-styling = { module = "org.jetbrains.jewel:jewel-markdown-int-ui-standalone-styling", version.ref = "jewel" }
+jewel-markdown-images = { module = "org.jetbrains.jewel:jewel-markdown-extensions-images", version.ref = "jewel" }
+jewel-markdown-tables = { module = "org.jetbrains.jewel:jewel-markdown-extensions-gfm-tables", version.ref = "jewel" }
+jewel-markdown-strikethrough = { module = "org.jetbrains.jewel:jewel-markdown-extensions-gfm-strikethrough", version.ref = "jewel" }
+jewel-markdown-autolink = { module = "org.jetbrains.jewel:jewel-markdown-extensions-autolink", version.ref = "jewel" }
+spectre-core = { module = "dev.sebastiano.spectre:spectre-core", version.ref = "spectre" }
+spectre-recording = { module = "dev.sebastiano.spectre:spectre-recording", version.ref = "spectre" }
+spectre-recording-linux = { module = "dev.sebastiano.spectre:spectre-recording-linux", version.ref = "spectre" }
+spectre-recording-macos = { module = "dev.sebastiano.spectre:spectre-recording-macos", version.ref = "spectre" }
+spectre-recording-windows = { module = "dev.sebastiano.spectre:spectre-recording-windows", version.ref = "spectre" }
+spectre-testing = { module = "dev.sebastiano.spectre:spectre-testing", version.ref = "spectre" }
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "about-libraries" }
 about-libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "about-libraries" }
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "android-gradle-plugin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
+androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "androidx-webkit" }
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
+androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "androidx-credentials" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidx-credentials" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewModel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
@@ -114,36 +149,27 @@ androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", 
 arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow" }
 com-prof18-rss-parser = { module = "com.prof18.rssparser:rssparser", version.ref = "rss-parser" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
-compose-multiplatform-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-multiplatform-material3-adaptive" }
-compose-multiplatform-material3-adaptive-navigationsuite = { module = "org.jetbrains.compose.material3:material3-adaptive-navigation-suite", version.ref = "compose-multiplatform-material3-adaptive" }
-compose-multiplatform-material3-adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "compose-multiplatform-material3-adaptive-layout" }
-compose-multiplatform-material3-adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "compose-multiplatform-material3-adaptive-layout" }
 compose-multiplatform-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "compose-multiplatform-material-icons" }
 compose-multiplatform-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
 compose-multiplatform-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
 compose-multiplatform-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
 compose-multiplatform-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose-multiplatform" }
 compose-multiplatform-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-multiplatform" }
-compose-unstyled-scrollbars = { module = "com.composables:composeunstyled-scrollbars", version.ref = "compose-unstyled" }
 compose-unstyled-slider = { module = "com.composables:composeunstyled-slider", version.ref = "compose-unstyled" }
 compose-multiplatform-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 compose-webview = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "compose-webview" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker-compose" }
-components-ui-tooling-preview = { module = "org.jetbrains.compose.components:components-ui-tooling-preview", version.ref = "compose-multiplatform" }
 crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
 csv = { module = "de.halfbit:csv", version.ref = "csv" }
 klead = { module = "com.prof18:klead", version.ref = "klead" }
-detekt = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
+detekt = { group = "dev.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 detekt-compose-rules = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose-rules" }
-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
+detekt-ktlint-wrapper = { group = "dev.detekt", name = "detekt-rules-ktlint-wrapper", version.ref = "detekt" }
 dropbox-core = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dropbox-core" }
 dropbox-core-android = { module = "com.dropbox.core:dropbox-android-sdk", version.ref = "dropbox-core" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 flatlaf = { module = "com.formdev:flatlaf", version.ref = "flatlaf" }
-haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
-haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
-htmlunit = { module = "org.htmlunit:htmlunit", version.ref = "htmlunit" }
 glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 glance-material = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
 google-api-client = { module = "com.google.api-client:google-api-client", version.ref = "google-api-client" }
@@ -155,9 +181,9 @@ google-play-services-auth = { module = "com.google.android.gms:play-services-aut
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
 io-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "io-coil" }
 io-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "io-coil" }
-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
 junit = { module = "junit:junit", version.ref = "junit" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 koin-composeVM = { module = "io.insert-koin:koin-compose-viewmodel" }
@@ -175,6 +201,7 @@ kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-date-time = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-date-time" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
@@ -187,9 +214,6 @@ ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", versi
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 lyricist = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" }
 lyricist-processorXml = { module = "com.github.prof18:lyricist", version = "e305b936c3" }
-material-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material-window-size" }
-multiplatform-markdown-renderer-coil = { module = "com.mikepenz:multiplatform-markdown-renderer-coil3", version.ref = "multiplatformMarkdownRendererM3" }
-multiplatform-markdown-renderer-m3 = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "multiplatformMarkdownRendererM3" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
 multiplatform-settings-test = { module = "com.russhwolf:multiplatform-settings-test", version.ref = "multiplatform-settings" }
 org-robolectric = { module = "org.robolectric:robolectric", version.ref = "org-robolectric" }
@@ -232,7 +256,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version.ref = "compose-hot-reload" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-plugin" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
 feedflow-detekt = { id = "com.feedflow.detekt", version = "unspecified" }
 feedflow-library = { id = "com.feedflow.library", version = "unspecified" }
 feedflow-versioning = { id = "com.feedflow.versioning", version = "unspecified" }

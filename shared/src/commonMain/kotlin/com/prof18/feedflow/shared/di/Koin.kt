@@ -6,6 +6,7 @@ import co.touchlab.kermit.Severity
 import co.touchlab.kermit.StaticConfig
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
+import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
@@ -25,6 +26,13 @@ import com.prof18.feedflow.shared.data.ReviewRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DateFormatterImpl
 import com.prof18.feedflow.shared.domain.HtmlRetriever
+import com.prof18.feedflow.shared.domain.KsoupHtmlParser
+import com.prof18.feedflow.shared.domain.articlereport.ArticleReporter
+import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryImpl
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetcher
+import com.prof18.feedflow.shared.domain.feed.ArticleNavigationRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
@@ -37,12 +45,25 @@ import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feed.httpcache.FeedHttpCacheStore
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
+import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentCacheMigration
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
+import com.prof18.feedflow.shared.domain.notification.ArticleNotificationRepository
+import com.prof18.feedflow.shared.domain.parser.KleadArticleContentParser
+import com.prof18.feedflow.shared.domain.parser.readerContentFormat
+import com.prof18.feedflow.shared.domain.recovery.FeedAttempt
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryCoordinator
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryService
+import com.prof18.feedflow.shared.domain.recovery.WebsiteSessionHttp
+import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
+import com.prof18.feedflow.shared.e2e.articleReportHttpClient
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
@@ -53,6 +74,7 @@ import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.ExtrasSettingsViewModel
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
+import com.prof18.feedflow.shared.presentation.FeedRefreshVerificationViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.FeedbinSyncViewModel
@@ -84,8 +106,10 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
+import org.koin.dsl.onClose
 import kotlin.time.Clock
 
 fun initKoin(
@@ -151,6 +175,10 @@ private fun getLoggingModule(
 
 private fun getCoreModule(appConfig: AppConfig) = module {
     single { appConfig }
+    single<HttpClient>(named("article-report")) {
+        articleReportHttpClient(appConfig.appEnvironment, get())
+    } onClose { it?.close() }
+    single { ArticleReporter(get(named("article-report")), appConfig, get()) } onClose { it?.close() }
 
     single<Clock> { Clock.System }
 
@@ -170,6 +198,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
+    single { ArticleNotificationRepository(databaseHelper = get()) }
+
     factory {
         UserFeedbackReporter(
             appConfig = appConfig,
@@ -186,7 +216,60 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             accountsRepository = get(),
             feedAppearanceSettingsRepository = get(),
             feedStateRepository = get(),
-            feedItemParserWorker = get(),
+            readerContentFetcher = get(),
+            feedItemContentFileHandler = get(),
+        )
+    }
+
+    single<ArticleContentParser> {
+        KleadArticleContentParser(
+            contentFormat = readerContentFormat,
+            htmlRetriever = get(),
+            logger = getWith("KleadArticleContentParser"),
+        )
+    }
+
+    factory<HtmlParser> {
+        KsoupHtmlParser(
+            logger = getWith("KsoupHtmlParser"),
+        )
+    }
+
+    factory {
+        ReaderContentFetcher(
+            articleContentParser = get(),
+            feedItemContentFileHandler = get(),
+            htmlRetriever = get(),
+            recoveryRepository = get(),
+            coordinator = get(),
+            sessionHttp = getOrNull(),
+            dateFormatter = get(),
+        )
+    }
+
+    factory {
+        ReaderContentCacheMigration(
+            settingsRepository = get(),
+            feedItemContentFileHandler = get(),
+            logger = getWith("ReaderContentCacheMigration"),
+        )
+    }
+
+    single {
+        ContentPrefetcher(
+            logger = getWith("ContentPrefetcher"),
+            databaseHelper = get(),
+            readerContentFetcher = get(),
+        )
+    }
+
+    single<ContentPrefetchRepository> {
+        ContentPrefetchRepositoryImpl(
+            logger = getWith("ContentPrefetchRepository"),
+            settingsRepository = get(),
+            databaseHelper = get(),
+            contentPrefetcher = get(),
+            backgroundPrefetchScheduler = get(),
         )
     }
 
@@ -223,6 +306,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedStateRepository = get(),
             feedFetcherRepository = get(),
             getNextFeedFilterOrNullUseCase = get(),
+            readerContentCacheMigration = get(),
         )
     }
 
@@ -232,6 +316,9 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             categoryRepository = get(),
             databaseHelper = get(),
             feedStateRepository = get(),
+            recoveryService = get(),
+            recoveryRepository = get(),
+            coordinator = get(),
         )
     }
 
@@ -248,15 +335,31 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedCategoryRepository = get(),
             feedStateRepository = get(),
             settingsRepository = get(),
+            recoveryRepository = get(),
+            recoveryService = get(),
+            coordinator = get(),
+            profileCleaner = getOrNull(),
+        )
+    }
+
+    viewModel {
+        FeedRefreshVerificationViewModel(
+            feedSourcesRepository = get(),
+            recoveryRepository = get(),
+            coordinator = get(),
+            recoveryService = get(),
+            databaseHelper = get(),
+            dateFormatter = get(),
         )
     }
 
     single {
         SettingsRepository(
             settings = get(),
-            appEnvironment = appConfig.appEnvironment,
         )
     }
+
+    single { AudioPlaybackPositionRepository(settings = get()) }
 
     single {
         FeedAppearanceSettingsRepository(
@@ -361,6 +464,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedAppearanceSettingsRepository = get(),
             feedFontSizeRepository = get(),
             feedStateRepository = get(),
+            articleNavigationRepository = get(),
             settingsRepository = get(),
         )
     }
@@ -376,13 +480,18 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         ReaderModeViewModel(
             settingsRepository = get(),
             feedActionsRepository = get(),
-            feedItemParserWorker = get(),
+            articleContentParser = get(),
+            readerContentFetcher = get(),
             feedItemContentFileHandler = get(),
-            feedStateRepository = get(),
+            articleNavigationRepository = get(),
             databaseHelper = get(),
-            feedContentPreparer = get(),
+            articleReporter = get(),
+            recoveryRepository = get(),
+            coordinator = get(),
         )
     }
+
+    single { ReaderSpeechText(dispatcherProvider = get()) }
 
     factory {
         FeedUrlRetriever(
@@ -461,6 +570,10 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             accountsRepository = get(),
             databaseHelper = get(),
             feedStateRepository = get(),
+            recoveryService = get(),
+            recoveryRepository = get(),
+            coordinator = get(),
+            settingsRepository = get(),
         )
     }
 
@@ -539,6 +652,46 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             dateFormatter = get(),
             rssChannelMapper = get(),
             settingsRepository = get(),
+            recoveryRepository = get(),
+        )
+    }
+
+    single {
+        ArticleNavigationRepository(feedStateRepository = get())
+    }
+
+    single {
+        FeedRecoveryRepository(
+            databaseHelper = get(),
+            settingsRepository = get(),
+            supported = getOrNull<WebsiteSessionHttp>() != null,
+        )
+    }
+
+    single { FeedRecoveryCoordinator(available = getOrNull<WebsiteSessionHttp>() != null) }
+
+    single {
+        FeedRecoveryService(
+            coordinator = get(),
+            recoveryRepository = get(),
+            capturedFeedParser = getOrNull(),
+            rssChannelMapper = get(),
+            feedSourceLogoRetriever = get(),
+            databaseHelper = get(),
+            feedSyncRepository = get(),
+            feedStateRepository = get(),
+            accountsRepository = get(),
+            dateFormatter = get(),
+            logger = getWith("FeedRecoveryService"),
+        )
+    }
+
+    single {
+        FeedAttempt(
+            rssParserWrapper = get(),
+            recoveryRepository = get(),
+            sessionHttp = getOrNull(),
+            capturedFeedParser = getOrNull(),
         )
     }
 
@@ -565,6 +718,9 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             googleDriveSettings = get(),
             icloudSettings = get(),
             networkSettings = get(),
+            audioPositions = get(),
+            appEnvironment = appConfig.appEnvironment,
+            settings = get(),
         )
     }
 
@@ -578,12 +734,13 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSyncRepository = get(),
             settingsRepository = get(),
             logger = getWith("FeedFetcherRepository"),
-            rssParserWrapper = get(),
             rssChannelMapper = get(),
             dateFormatter = get(),
             feedSourceLogoRetriever = get(),
             contentPrefetchRepository = get(),
             feedHttpCacheStore = get(),
+            feedAttempt = get(),
+            recoveryRepository = get(),
         )
     }
 

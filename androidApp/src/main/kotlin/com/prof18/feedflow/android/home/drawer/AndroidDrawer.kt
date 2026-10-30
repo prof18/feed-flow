@@ -49,15 +49,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.home.AddFeedOptionsBottomSheet
+import com.prof18.feedflow.android.ui.components.FeedSourceLogoImage
+import com.prof18.feedflow.android.ui.feedsuggestions.FeedSuggestionsE2eIds
+import com.prof18.feedflow.android.ui.home.FeedManagementActions
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
-import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsE2eIds
-import com.prof18.feedflow.shared.ui.home.FeedManagementActions
-import com.prof18.feedflow.shared.ui.home.HomeDisplayState
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -172,16 +172,9 @@ fun AndroidDrawer(
             }
 
             item {
-                val bookmarksItem = remember(displayState.navDrawerState.bookmarks) {
-                    displayState.navDrawerState.bookmarks
-                        .filterIsInstance<DrawerItem.Bookmarks>()
-                        .firstOrNull()
-                        ?: DrawerItem.Bookmarks(unreadCount = 0)
-                }
                 DrawerBookmarksItem(
                     currentFeedFilter = displayState.currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
-                    drawerItem = bookmarksItem,
                     drawerItemVisualStyle = DefaultDrawerItemVisualStyle,
                 )
             }
@@ -729,8 +722,8 @@ private fun DrawerSectionTitle(title: String) {
 @Composable
 private fun DrawerTopActions(
     onSettingsClick: () -> Unit,
-    modifier: Modifier = Modifier,
     onAddClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),

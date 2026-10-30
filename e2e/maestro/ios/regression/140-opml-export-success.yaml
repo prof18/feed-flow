@@ -24,12 +24,11 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - tapOn:
     point: "87%,12%"
-- runFlow:
-    when:
-      visible: "Cancel"
-    commands:
-      - tapOn:
-          point: "50%,54%"
+# An export from an earlier run the same day already has this file name. iOS then asks whether to
+# replace it; iOS 27 offers Replace / Keep Both / Stop, so tap Replace by its label.
+- tapOn:
+    text: "^Replace$"
+    optional: true
 - extendedWaitUntil:
     visible:
       id: import_export_feed_export_success

@@ -6,7 +6,7 @@ import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.MenuBarScope
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 
 @Composable
 internal fun MenuBarScope.FeedMenu(
@@ -24,8 +24,13 @@ internal fun MenuBarScope.FeedMenu(
                 KeyShortcut(Key.N, ctrl = true)
             },
         )
+        Item(
+            text = LocalFeedFlowStrings.current.feedSuggestionsTitle,
+            onClick = callbacks.onFeedSuggestionsClick,
+        )
 
         if (state.feedFilter is FeedFilter.Source) {
+            Separator()
             Item(
                 text = LocalFeedFlowStrings.current.openFeedSettings,
                 onClick = { callbacks.onEditFeed(state.feedFilter.feedSource) },
@@ -35,18 +40,12 @@ internal fun MenuBarScope.FeedMenu(
                     KeyShortcut(Key.E, ctrl = true)
                 },
             )
-            Separator()
         }
-
-        Item(
-            text = LocalFeedFlowStrings.current.settingsBlockedWords,
-            onClick = callbacks.onBlockedWordsClick,
-        )
     }
 }
 
 internal data class FeedMenuCallbacks(
     val onAddFeed: () -> Unit,
     val onEditFeed: (FeedSource) -> Unit,
-    val onBlockedWordsClick: () -> Unit,
+    val onFeedSuggestionsClick: () -> Unit,
 )

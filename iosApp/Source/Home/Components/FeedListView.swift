@@ -26,6 +26,7 @@ struct FeedListView: View {
     var loadingState: FeedUpdateStatus?
     var feedState: [FeedItem]
     var showLoading: Bool
+    var keepsLoadingHeaderSpace = false
     let currentFeedFilter: FeedFilter
     let columnVisibility: NavigationSplitViewVisibility
     let feedFontSizes: FeedFontSizes
@@ -87,7 +88,11 @@ struct FeedListView: View {
         } else {
             let feedItems = Array(feedState.enumerated())
             VStack(alignment: .center) {
-                LoadingHeaderView(loadingState: loadingState, showLoading: showLoading)
+                LoadingHeaderView(
+                    loadingState: loadingState,
+                    showLoading: showLoading,
+                    keepsSpace: keepsLoadingHeaderSpace
+                )
                 GeometryReader { listProxy in
                     let itemFeedLayout = normalizedLayout
                     let currentWidth = listProxy.size.width
@@ -131,10 +136,7 @@ struct FeedListView: View {
                             .onPreferenceChange(FeedItemVisibilityPreferenceKey.self) { items in
                                 visibleItemsChanged(items: items, viewportHeight: listProxy.size.height)
                             }
-                            .centeredScrollContent(
-                                margin: centeringMargin,
-                                safeAreaInsets: listProxy.safeAreaInsets
-                            )
+                            .centeredScrollContent(margin: centeringMargin)
                         }
                     }
                     .transaction { transaction in
@@ -329,13 +331,8 @@ struct FeedListView: View {
 
 private extension View {
     /// Centers the scroll content within the available width.
-    ///
-    /// The scroll view extends under the split view sidebar, so the margin has to be offset by the
-    /// safe area on each edge. A symmetric `.horizontal` margin would be swallowed by the sidebar
-    /// inset on the leading edge only, leaving the list off-center while the sidebar is open.
-    func centeredScrollContent(margin: CGFloat, safeAreaInsets: EdgeInsets) -> some View {
-        contentMargins(.leading, safeAreaInsets.leading + margin, for: .scrollContent)
-            .contentMargins(.trailing, safeAreaInsets.trailing + margin, for: .scrollContent)
+    func centeredScrollContent(margin: CGFloat) -> some View {
+        contentMargins(.horizontal, margin, for: .scrollContent)
     }
 }
 

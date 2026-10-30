@@ -44,8 +44,10 @@ import org.koin.test.get
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
@@ -110,7 +112,7 @@ class HomeViewModelTest : KoinTestBase() {
 
         val state = viewModel.navDrawerState.value
         assertEquals(2L, (state.timeline.first() as DrawerItem.Timeline).unreadCount)
-        assertEquals(1L, (state.bookmarks.first() as DrawerItem.Bookmarks).unreadCount)
+        assertEquals(DrawerItem.Bookmarks, state.bookmarks.single())
         assertEquals(1, state.pinnedFeedSources.size)
         assertEquals(2, state.feedSourcesWithoutCategory.size)
         assertTrue(state.feedSourcesByCategory.isEmpty())
@@ -355,6 +357,40 @@ class HomeViewModelTest : KoinTestBase() {
         val dbItems = getDbItems()
         val readIds = dbItems.filter { it.is_read }.map { it.url_hash }.toSet()
         assertEquals(setOf("item-1", "item-2"), readIds)
+    }
+
+    @Test
+    fun `markAsReadOnScroll keeps items from keep-unread feeds unread`() = runTest(testDispatcher) {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        val keepUnreadSource = createFeedSource(id = "source-2", title = "Source 2")
+        insertFeedSources(feedSource, keepUnreadSource)
+        databaseHelper.setKeepUnreadOnScroll(keepUnreadSource.id, true)
+        val items = listOf(
+            buildFeedItem(id = "item-1", title = "Item 1", pubDateMillis = 3000, source = feedSource),
+            buildFeedItem(id = "item-2", title = "Item 2", pubDateMillis = 2000, source = keepUnreadSource),
+            buildFeedItem(id = "item-3", title = "Item 3", pubDateMillis = 1000, source = feedSource),
+        )
+        databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        viewModel.onVisibleFeedItemsChanged(
+            listOf(
+                VisibleFeedItem(id = "item-1", index = 0),
+                VisibleFeedItem(id = "item-2", index = 1),
+            ),
+        )
+        viewModel.onVisibleFeedItemsChanged(
+            listOf(
+                VisibleFeedItem(id = "item-3", index = 2),
+            ),
+        )
+        advanceUntilIdle()
+
+        val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
+        assertEquals(setOf("item-1"), readIds)
     }
 
     @Test
@@ -814,7 +850,7 @@ class HomeViewModelTest : KoinTestBase() {
         }
 
     @Test
-    fun `onVisibleFeedItemsChanged does not cascade after hidden read items are removed`() =
+    fun `onVisibleFeedItemsChanged keeps read items in place when auto hide is saved`() =
         runTest(testDispatcher) {
             settingsRepository.setMarkFeedAsReadWhenScrolling(true)
             settingsRepository.setHideReadItems(true)
@@ -841,16 +877,20 @@ class HomeViewModelTest : KoinTestBase() {
                     VisibleFeedItem(id = "item-3", index = 2),
                 ),
             )
+            assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
+            assertTrue(viewModel.feedState.value.take(2).all { it.isRead })
             advanceUntilIdle()
             viewModel.onVisibleFeedItemsChanged(
-                listOf(
-                    VisibleFeedItem(id = "item-3", index = 0),
-                ),
+                listOf(VisibleFeedItem(id = "item-3", index = 2)),
             )
             advanceUntilIdle()
 
             val readIds = getDbItems().filter { it.is_read }.map { it.url_hash }.toSet()
             assertEquals(setOf("item-1", "item-2"), readIds)
+            assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
+
+            feedStateRepository.getFeeds()
+            assertEquals(listOf("item-3"), viewModel.feedState.value.map { it.id })
         }
 
     @Test
@@ -948,6 +988,33 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `returning to top applies the deferred feed update`() = runTest(testDispatcher) {
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "existing", title = "Existing", pubDateMillis = 1, source = feedSource)),
+            lastSyncTimestamp = 0,
+        )
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+        viewModel.onFeedListScrolledAwayFromTopChanged(true)
+        databaseHelper.insertFeedItems(
+            listOf(buildFeedItem(id = "new-item", title = "New", pubDateMillis = 2, source = feedSource)),
+            lastSyncTimestamp = 0,
+        )
+        feedStateRepository.publishFetchedFeeds()
+
+        assertEquals(listOf("existing"), viewModel.feedState.value.map { it.id })
+        assertEquals(1, viewModel.pendingNewArticlesState.value)
+
+        viewModel.onFeedListScrolledAwayFromTopChanged(false)
+        advanceUntilIdle()
+
+        assertEquals(setOf("existing", "new-item"), viewModel.feedState.value.map { it.id }.toSet())
+        assertEquals(0, viewModel.pendingNewArticlesState.value)
+    }
+
+    @Test
     fun `markAllRead updates state and database`() = runTest(testDispatcher) {
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)
@@ -971,6 +1038,39 @@ class HomeViewModelTest : KoinTestBase() {
         val dbItems = getDbItems()
         assertTrue(dbItems.all { it.is_read })
     }
+
+    @Test
+    fun `markAllRead in Bookmarks marks saved articles read and preserves other unread articles`() =
+        runTest(testDispatcher) {
+            val source = createFeedSource(id = "source-1", title = "Source 1")
+            insertFeedSources(source)
+            databaseHelper.insertFeedItems(
+                listOf(
+                    buildFeedItem("saved-unread", "Saved unread", 3L, source),
+                    buildFeedItem("saved-read", "Saved read", 2L, source),
+                    buildFeedItem("other-unread", "Other unread", 1L, source),
+                ),
+                lastSyncTimestamp = 0,
+            )
+            databaseHelper.updateBookmarkStatus(FeedItemId("saved-unread"), isBookmarked = true)
+            databaseHelper.updateBookmarkStatus(FeedItemId("saved-read"), isBookmarked = true)
+            databaseHelper.updateReadStatus(FeedItemId("saved-read"), isRead = true)
+
+            val viewModel = getViewModel()
+            advanceUntilIdle()
+            viewModel.onFeedFilterSelected(FeedFilter.Bookmarks)
+            advanceUntilIdle()
+
+            viewModel.markAllRead()
+            advanceUntilIdle()
+
+            val items = getDbItems().associateBy { it.url_hash }
+            assertTrue(items.getValue("saved-unread").is_read)
+            assertTrue(items.getValue("saved-read").is_read)
+            assertFalse(items.getValue("other-unread").is_read)
+            assertEquals(setOf("saved-unread", "saved-read"), viewModel.feedState.value.map { it.id }.toSet())
+            assertTrue(viewModel.feedState.value.all { it.isRead && it.isBookmarked })
+        }
 
     @Test
     fun `markAllReadForFeedSource marks only that source as read`() = runTest(testDispatcher) {
@@ -1072,6 +1172,7 @@ class HomeViewModelTest : KoinTestBase() {
 
     @Test
     fun `markAsRead removes item from feed list when hideReadItems is enabled`() = runTest(testDispatcher) {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
         settingsRepository.setHideReadItems(true)
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)
@@ -1121,7 +1222,41 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `saved auto hide does not remove read items while scroll marking is enabled`() = runTest(testDispatcher) {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+        settingsRepository.setHideReadItems(true)
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        databaseHelper.insertFeedItems(
+            listOf(
+                buildFeedItem(id = "item-1", title = "Item 1", pubDateMillis = 3000, source = feedSource),
+                buildFeedItem(id = "item-2", title = "Item 2", pubDateMillis = 2000, source = feedSource),
+                buildFeedItem(id = "item-3", title = "Item 3", pubDateMillis = 1000, source = feedSource),
+            ),
+            lastSyncTimestamp = 0,
+        )
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+        viewModel.markAsRead("item-1")
+        advanceUntilIdle()
+
+        assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
+        assertTrue(viewModel.feedState.value.first().isRead)
+        assertTrue(getDbItems().first { it.url_hash == "item-1" }.is_read)
+
+        feedStateRepository.updateReadStatus(FeedItemId("item-2"), isRead = true)
+        assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
+        assertTrue(viewModel.feedState.value[1].isRead)
+
+        feedStateRepository.markItemsBelowAsRead("item-2")
+        assertEquals(listOf("item-1", "item-2", "item-3"), viewModel.feedState.value.map { it.id })
+        assertTrue(viewModel.feedState.value.last().isRead)
+    }
+
+    @Test
     fun `markAllAboveAsRead removes items from feed list when hideReadItems is enabled`() = runTest(testDispatcher) {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
         settingsRepository.setHideReadItems(true)
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)
@@ -1140,12 +1275,12 @@ class HomeViewModelTest : KoinTestBase() {
         viewModel.markAllAboveAsRead("item-2")
         advanceUntilIdle()
 
-        assertEquals(1, viewModel.feedState.value.size)
-        assertEquals("item-3", viewModel.feedState.value.first().id)
+        assertEquals(listOf("item-2", "item-3"), viewModel.feedState.value.map { it.id })
     }
 
     @Test
     fun `markAllBelowAsRead removes items from feed list when hideReadItems is enabled`() = runTest(testDispatcher) {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
         settingsRepository.setHideReadItems(true)
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)
@@ -1164,8 +1299,7 @@ class HomeViewModelTest : KoinTestBase() {
         viewModel.markAllBelowAsRead("item-2")
         advanceUntilIdle()
 
-        assertEquals(1, viewModel.feedState.value.size)
-        assertEquals("item-1", viewModel.feedState.value.first().id)
+        assertEquals(listOf("item-1", "item-2"), viewModel.feedState.value.map { it.id })
     }
 
     @Test
@@ -1187,7 +1321,7 @@ class HomeViewModelTest : KoinTestBase() {
 
         val dbItems = getDbItems().associateBy { it.url_hash }
         assertTrue(dbItems.getValue("item-1").is_read)
-        assertTrue(dbItems.getValue("item-2").is_read)
+        assertTrue(dbItems.getValue("item-2").is_read.not())
         assertTrue(dbItems.getValue("item-3").is_read.not())
     }
 
@@ -1210,7 +1344,7 @@ class HomeViewModelTest : KoinTestBase() {
 
         val dbItems = getDbItems().associateBy { it.url_hash }
         assertTrue(dbItems.getValue("item-1").is_read.not())
-        assertTrue(dbItems.getValue("item-2").is_read)
+        assertTrue(dbItems.getValue("item-2").is_read.not())
         assertTrue(dbItems.getValue("item-3").is_read)
     }
 
@@ -1817,6 +1951,24 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `sidebar uses the platform default before a user choice`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+
+        assertNull(viewModel.getLargeScreenSidebarVisible())
+    }
+
+    @Test
+    fun `sidebar choice persists across view model recreation`() = runTest(testDispatcher) {
+        val viewModel = getViewModel()
+
+        for (visible in listOf(false, true, false)) {
+            viewModel.setLargeScreenSidebarVisible(visible)
+
+            assertEquals(visible, getViewModel().getLargeScreenSidebarVisible())
+        }
+    }
+
+    @Test
     fun `viewMenuState initial value matches repository defaults`() = runTest(testDispatcher) {
         val viewModel = getViewModel()
         advanceUntilIdle()
@@ -1931,7 +2083,7 @@ class HomeViewModelTest : KoinTestBase() {
             channelByUrl[url] = channel
         }
 
-        override suspend fun getRssChannel(url: String): RssChannel {
+        override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
             callCount += 1
             requestedUrls.add(url)
             return requireNotNull(channelByUrl[url]) { "Missing channel for $url" }

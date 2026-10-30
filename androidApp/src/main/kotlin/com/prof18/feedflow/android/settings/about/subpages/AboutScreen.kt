@@ -20,16 +20,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.BuildConfig
+import com.prof18.feedflow.android.ui.about.AboutButtonItem
+import com.prof18.feedflow.android.ui.about.AboutTextItem
+import com.prof18.feedflow.android.ui.about.AuthorText
+import com.prof18.feedflow.android.ui.preview.PreviewPhone
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.TRANSLATION_WEBSITE
-import com.prof18.feedflow.shared.ui.about.AboutButtonItem
-import com.prof18.feedflow.shared.ui.about.AboutTextItem
-import com.prof18.feedflow.shared.ui.about.AuthorText
-import com.prof18.feedflow.shared.ui.preview.PreviewPhone
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.koinInject
 
 @Composable

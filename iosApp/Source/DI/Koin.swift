@@ -10,10 +10,15 @@ import FeedFlowKit
 import Foundation
 
 private class NoOpNotifier: Notifier {
-    func showNewArticlesNotification(feedSourcesToNotify: [FeedSourceToNotify]) -> Bool { false }
+    func showNewArticlesNotification(feedSourcesToNotify _: [FeedSourceToNotify]) -> Bool {
+        false
+    }
 }
 
-func startKoin(notifier: (any Notifier)? = nil) {
+func startKoin(notifier: (any Notifier)? = nil, websiteRecovery: Bool = false) {
+    // The share extension process is reused across shares, so viewDidLoad can run more than once.
+    guard _feedFlowStrings == nil else { return }
+
     let appEnvironment: AppEnvironment
     #if DEBUG
         appEnvironment = AppEnvironment.Debug()
@@ -21,12 +26,20 @@ func startKoin(notifier: (any Notifier)? = nil) {
         appEnvironment = AppEnvironment.Release()
     #endif
 
+    // Koin.swift is compiled into the share extension, which has no website verification.
+    #if APP_EXTENSION
+        let websiteSessionBridge: (any IosWebsiteSessionBridge)? = nil
+        let websiteProfileCleaner: (any WebsiteProfileCleaner)? = nil
+    #else
+        let websiteSessionBridge: (any IosWebsiteSessionBridge)? = websiteRecovery ? WebsiteSessionBridge() : nil
+        let websiteProfileCleaner: (any WebsiteProfileCleaner)? = websiteRecovery ? WebsiteProfileStore.shared : nil
+    #endif
+
     let currentLocale = Locale.current
     let languageCode = currentLocale.language.languageCode?.identifier
     let regionCode = currentLocale.region?.identifier
 
     _ = doInitKoinIos(
-        htmlParser: IosHtmlParser(),
         appEnvironment: appEnvironment,
         languageCode: languageCode,
         regionCode: regionCode,
@@ -34,9 +47,10 @@ func startKoin(notifier: (any Notifier)? = nil) {
         googleDrivePlatformClient: GoogleDrivePlatformClient(),
         appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
         telemetry: TelemetryReporter(),
-        feedItemParserWorker: FeedItemParserWorkerIos(),
         notifier: notifier ?? NoOpNotifier(),
-        feedUrlProtocolClasses: [FeedConditionalGetURLProtocol.self]
+        feedUrlProtocolClasses: [FeedConditionalGetURLProtocol.self],
+        websiteSessionBridge: websiteSessionBridge,
+        websiteProfileCleaner: websiteProfileCleaner
     )
     _feedFlowStrings = Deps.shared.getFeedFlowStrings()
 }

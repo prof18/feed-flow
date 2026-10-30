@@ -17,7 +17,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
+import com.prof18.feedflow.android.components.rememberConfirmedBookmarkAction
 import com.prof18.feedflow.android.openShareSheet
+import com.prof18.feedflow.android.ui.home.FeedListActions
+import com.prof18.feedflow.android.ui.home.FeedManagementActions
+import com.prof18.feedflow.android.ui.home.ShareBehavior
+import com.prof18.feedflow.android.ui.home.components.LoadingOperationDialog
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -27,18 +33,13 @@ import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
+import com.prof18.feedflow.shared.presentation.model.NextFeedDisplayState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewDisabledState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState.NextFeedPreviewEnabledState
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.prof18.feedflow.shared.ui.home.FeedListActions
-import com.prof18.feedflow.shared.ui.home.FeedManagementActions
-import com.prof18.feedflow.shared.ui.home.HomeDisplayState
-import com.prof18.feedflow.shared.ui.home.NextFeedDisplayState
-import com.prof18.feedflow.shared.ui.home.ShareBehavior
-import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.syncErrorMessage
+import com.prof18.feedflow.shared.presentation.model.syncErrorMessage
 import org.koin.compose.koinInject
 
 @Composable
@@ -56,6 +57,9 @@ internal fun HomeScreen(
 ) {
     val browserManager = koinInject<BrowserManager>()
     val changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = koinInject()
+    var isDockedDrawerVisible by rememberSaveable {
+        mutableStateOf(homeViewModel.getLargeScreenSidebarVisible() ?: true)
+    }
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
@@ -74,6 +78,7 @@ internal fun HomeScreen(
     val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsStateWithLifecycle()
     val feedItemDisplaySettings by homeViewModel.feedItemDisplaySettings.collectAsStateWithLifecycle()
     val viewMenuState by homeViewModel.viewMenuState.collectAsStateWithLifecycle()
+    val pendingNewArticlesCount by homeViewModel.pendingNewArticlesState.collectAsStateWithLifecycle()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsStateWithLifecycle()
 
@@ -85,6 +90,10 @@ internal fun HomeScreen(
     val context = LocalContext.current
     val strings = LocalFeedFlowStrings.current
 
+    val updateBookmarkStatus = rememberConfirmedBookmarkAction(
+        scopeKey = currentFeedFilter,
+        onBookmarkClick = homeViewModel::updateBookmarkStatus,
+    )
     if (feedOperation != FeedOperation.None) {
         LoadingOperationDialog(feedOperation)
     }
@@ -138,6 +147,7 @@ internal fun HomeScreen(
         isSyncUploadRequired,
         nextFeedPreviewState,
         feedItemDisplaySettings,
+        pendingNewArticlesCount,
     ) {
         HomeDisplayState(
             feedItems = feedState,
@@ -155,11 +165,13 @@ internal fun HomeScreen(
             isSyncUploadRequired = isSyncUploadRequired,
             nextFeedDisplayState = nextFeedPreviewState.asDisplayState(),
             feedItemDisplaySettings = feedItemDisplaySettings,
+            pendingNewArticlesCount = pendingNewArticlesCount,
         )
     }
 
     val feedListActions = remember(
         homeViewModel,
+        updateBookmarkStatus,
         navigateToReaderMode,
         browserManager,
         context,
@@ -169,7 +181,7 @@ internal fun HomeScreen(
             onDeleteDatabaseClick = { homeViewModel.deleteAllFeeds() },
             refreshData = { homeViewModel.refreshCurrentFilter() },
             requestNewData = { homeViewModel.requestNewFeedsPage() },
-            markAllRead = { homeViewModel.markAllRead() },
+            markAllRead = homeViewModel::markAllRead,
             onBackToTimelineClick = { homeViewModel.onFeedFilterSelected(FeedFilter.Timeline) },
             onVisibleFeedItemsChanged = homeViewModel::onVisibleFeedItemsChanged,
             markAsRead = { feedItemId -> homeViewModel.markAsRead(feedItemId.id) },
@@ -182,12 +194,12 @@ internal fun HomeScreen(
                 )
             },
             openInBrowser = { urlInfo -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context) },
-            updateBookmarkStatus = { feedItemId, isBookmarked ->
-                homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
-            },
+            updateBookmarkStatus = updateBookmarkStatus,
             updateReadStatus = { feedItemId, isRead -> homeViewModel.updateReadStatus(feedItemId, isRead) },
             markAllAboveAsRead = { feedItemId -> homeViewModel.markAllAboveAsRead(feedItemId) },
             markAllBelowAsRead = { feedItemId -> homeViewModel.markAllBelowAsRead(feedItemId) },
+            onShowNewArticlesClick = homeViewModel::onShowNewArticlesClicked,
+            onScrolledAwayFromTopChanged = homeViewModel::onFeedListScrolledAwayFromTopChanged,
         )
     }
 
@@ -259,6 +271,11 @@ internal fun HomeScreen(
         feedListActions = feedListActions,
         feedManagementActions = feedManagementActions,
         useDockedDrawer = useDockedDrawer,
+        isDockedDrawerVisible = isDockedDrawerVisible,
+        onDockedDrawerVisibilityChange = { visible ->
+            homeViewModel.setLargeScreenSidebarVisible(visible)
+            isDockedDrawerVisible = visible
+        },
         shareBehavior = shareBehavior,
         onBackupClick = homeViewModel::enqueueBackup,
         onFeedSuggestionsClick = onFeedSuggestionsClick,

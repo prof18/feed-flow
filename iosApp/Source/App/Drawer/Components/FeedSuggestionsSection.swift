@@ -10,7 +10,6 @@ import FeedFlowKit
 import SwiftUI
 
 struct FeedSuggestionsSection: View {
-    let isCompact: Bool
     let onFeedSuggestionsClick: () -> Void
 
     var body: some View {
@@ -22,6 +21,5 @@ struct FeedSuggestionsSection: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .listRowBackground(sidebarSelectionBackground(isSelected: false, isCompact: isCompact))
     }
 }

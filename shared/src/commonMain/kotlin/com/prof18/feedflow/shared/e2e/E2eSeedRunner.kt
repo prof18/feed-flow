@@ -3,6 +3,7 @@
 package com.prof18.feedflow.shared.e2e
 
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.DescriptionLineLimit
@@ -20,6 +21,7 @@ import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
@@ -27,11 +29,13 @@ import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.russhwolf.settings.Settings
 
 class E2eSeedRunner internal constructor(
     private val databaseHelper: DatabaseHelper,
@@ -45,6 +49,9 @@ class E2eSeedRunner internal constructor(
     private val googleDriveSettings: GoogleDriveSettings,
     private val icloudSettings: ICloudSettings,
     private val networkSettings: NetworkSettings,
+    private val audioPositions: AudioPlaybackPositionRepository,
+    private val appEnvironment: AppEnvironment,
+    private val settings: Settings,
 ) {
     suspend fun reset() {
         databaseHelper.deleteAllE2eData()
@@ -79,6 +86,7 @@ class E2eSeedRunner internal constructor(
     }
 
     suspend fun resetAndSeedDevelopmentFeeds(feedSources: List<ParsedFeedSource>) {
+        if (appEnvironment.isDebug()) selectArticleReportResponse(settings, null)
         reset()
         databaseHelper.insertCategories(feedSources.mapNotNull { it.category }.distinct())
         databaseHelper.insertFeedSource(feedSources)
@@ -90,7 +98,29 @@ class E2eSeedRunner internal constructor(
         action: String,
         profileName: String?,
         accountName: String? = null,
+        audioUrl: String? = null,
     ) {
+        if (action.startsWith("report-")) {
+            check(appEnvironment.isDebug())
+            selectArticleReportResponse(settings, action.removePrefix("report-"))
+            resetAndSeed(E2eSeedProfile.CONTENT_RICH)
+            val reportArticle = feedItem(
+                id = "e2e-article-report",
+                title = "E2E Report Article",
+                subtitle = "Cached reporting fixture",
+                feedSource = swiftWeekly,
+                url = "https://reports.example.com/article?fixture=1#context",
+                pubDateMillis = SEED_NOW_MILLIS + ONE_HOUR_MILLIS,
+                content = "<p>Deterministic report content.</p>",
+            )
+            databaseHelper.insertFeedItems(listOf(reportArticle), lastSyncTimestamp = SEED_NOW_MILLIS)
+            feedItemContentFileHandler.saveFeedItemContentToFile(
+                feedItemId = reportArticle.id,
+                content = "<h1>E2E Report Article</h1><p>Deterministic report content.</p>",
+            )
+            feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
+            return
+        }
         val profile = E2eSeedProfile.fromQueryValue(profileName)
             ?: E2eSeedProfile.CONTENT_RICH
         val account = E2eSeedAccount.fromQueryValue(accountName)
@@ -99,6 +129,9 @@ class E2eSeedRunner internal constructor(
             ACTION_SEED -> seed(profile, account)
             ACTION_RESET_AND_SEED -> resetAndSeed(profile, account)
             else -> error("Unsupported E2E seed action: $action")
+        }
+        if (profile == E2eSeedProfile.AUDIO_EPISODE && action != ACTION_RESET) {
+            AudioEnclosure.validatedUrl(audioUrl)?.let { applyAudioEpisodeSettings(it) }
         }
     }
 
@@ -110,7 +143,6 @@ class E2eSeedRunner internal constructor(
         settingsRepository.setArticleOpenMode(ArticleOpenMode.FULL_ARTICLE)
         settingsRepository.setSaveItemContentOnOpen(false)
         settingsRepository.setPrefetchArticleContent(false)
-        settingsRepository.setKleadParserEnabled(false)
         settingsRepository.setIsSyncUploadRequired(false)
         settingsRepository.setReaderModeFontSize(SettingsRepository.DEFAULT_READER_MODE_FONT_SIZE)
         settingsRepository.setReaderModeLineHeight(ReaderModeDefaults.LINE_HEIGHT)
@@ -125,6 +157,7 @@ class E2eSeedRunner internal constructor(
         )
         settingsRepository.setThemeMode(ThemeMode.SYSTEM)
         settingsRepository.setReduceMotionEnabled(true)
+        settingsRepository.setForceEnglishEnabled(false)
         settingsRepository.setRefreshFeedsOnLaunch(false)
         settingsRepository.setNotificationMode(NotificationMode.FEED_SOURCE)
 
@@ -255,6 +288,7 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.PAGINATION_SCROLL_READ,
             E2eSeedProfile.REORDER_DRAG,
             E2eSeedProfile.FEED_CONTENT,
+            E2eSeedProfile.AUDIO_EPISODE,
             E2eSeedProfile.RTL_CONTENT,
             -> applyFeatureProfileSettings(profile, account)
         }
@@ -296,6 +330,7 @@ class E2eSeedRunner internal constructor(
             E2eSeedProfile.PAGINATION_SCROLL_READ -> applyPaginationScrollReadSettings()
             E2eSeedProfile.REORDER_DRAG -> applyReorderDragSettings()
             E2eSeedProfile.FEED_CONTENT -> applyFeedContentSettings()
+            E2eSeedProfile.AUDIO_EPISODE -> applyAudioEpisodeSettings()
             E2eSeedProfile.RTL_CONTENT -> applyRtlContentSettings()
             else -> Unit
         }
@@ -382,6 +417,40 @@ class E2eSeedRunner internal constructor(
         )
     }
 
+    private suspend fun applyAudioEpisodeSettings(audioUrl: String = SEED_AUDIO_URL) {
+        // Reader speech of the seeded episode is keyed separately; leaving it would make each run resume
+        // where the previous one stopped until playback ends mid-flow.
+        audioPositions.clearItemPositions(SEED_AUDIO_ID)
+        databaseHelper.insertFeedItems(
+            listOf(
+                feedItem(
+                    id = SEED_AUDIO_ID,
+                    title = SEED_AUDIO_TITLE,
+                    subtitle = "A language episode for deterministic audio badge coverage",
+                    feedSource = androidWeekly,
+                    url = SEED_ARTICLE_URL,
+                    imageUrl = null,
+                    content = AUDIO_EPISODE_HTML,
+                    pubDateMillis = SEED_NOW_MILLIS + ONE_HOUR_MILLIS,
+                ).copy(audioUrl = audioUrl),
+                feedItem(
+                    id = SEED_PLAIN_ID,
+                    title = SEED_PLAIN_TITLE,
+                    subtitle = "A plain article for audio badge control coverage",
+                    feedSource = androidWeekly,
+                    url = SEED_CONTROL_URL,
+                    imageUrl = null,
+                    content = AUDIO_CONTROL_HTML,
+                    pubDateMillis = SEED_NOW_MILLIS + ONE_HOUR_MILLIS - 1,
+                ),
+            ),
+            lastSyncTimestamp = SEED_NOW_MILLIS,
+        )
+        settingsRepository.setArticleOpenMode(ArticleOpenMode.FEED_CONTENT)
+        feedAppearanceSettingsRepository.setHideFeedSource(true)
+        feedAppearanceSettingsRepository.setHideUnreadDot(true)
+    }
+
     private suspend fun applyReorderDragSettings() {
         val feedSource = seedFeedSources.first { it.id == ANDROID_WEEKLY_FEED_ID }
         databaseHelper.insertFeedSourcePreference(
@@ -399,10 +468,10 @@ class E2eSeedRunner internal constructor(
     }
 
     private suspend fun applyPaginationScrollReadSettings() {
-        // Scrolled-past items must be flushed as read while the timeline keeps hiding read items,
-        // so every new page is requested against a shrinking unread set.
+        // Scrolled-past items stay in the current list, while subsequent pages use the
+        // shrinking unread-only database query.
         settingsRepository.setMarkFeedAsReadWhenScrolling(true)
-        settingsRepository.setHideReadItems(false)
+        settingsRepository.setHideReadItems(true)
         settingsRepository.setShowReadArticlesTimeline(false)
         databaseHelper.insertFeedItems(paginationScrollReadFeedItems, lastSyncTimestamp = SEED_NOW_MILLIS)
     }
@@ -612,6 +681,18 @@ class E2eSeedRunner internal constructor(
         const val RTL_LATIN_PREFIX_TITLE = "BBC گزارش تازه از تهران"
         const val RTL_NEUTRAL_TITLE = "2026 (#1) — 12:45"
 
+        const val SEED_AUDIO_ID = "e2e-audio-episode"
+        const val SEED_PLAIN_ID = "e2e-audio-control"
+        const val SEED_AUDIO_TITLE = "E2E Audio Episode: Language Notes"
+        const val SEED_PLAIN_TITLE = "E2E Audio Control Article"
+        const val SEED_AUDIO_URL = "https://example.com/episode.mp3?token=seed&part=1"
+        const val SEED_ARTICLE_URL = "https://example.com/audio-notes"
+        const val SEED_CONTROL_URL = "https://example.com/audio-control"
+
+        private const val READER_SUCCESS_IMAGE_URL =
+            "https://static-prod.cdnilpost.com/wp-content/uploads/2026/05/25/" +
+                "680x453/1779707841-GettyImages-113189195.jpg"
+
         private const val RTL_IMAGE_URL =
             "https://cdn.mos.cms.futurecdn.net/kDPsA7KqMQchuAKRoTZozb-1280-80.jpg"
 
@@ -627,6 +708,17 @@ class E2eSeedRunner internal constructor(
                 "and opening it goes straight into the reader. Because there is no URL, the reader " +
                 "hides the open-in-browser, share, and archive actions that only make sense for a " +
                 "real web address.</p>"
+
+        private val AUDIO_EPISODE_HTML = "<p>Listen to this episode about language notes.</p>" +
+            (
+                "<p>A familiar story becomes easier to follow when we listen carefully. " +
+                    "The speaker pauses between ideas and explains how each example connects to the next. " +
+                    "Reading and listening offer different ways to explore the same article. " +
+                    "We can move to an earlier passage, change the speaking speed, or pause and return later. " +
+                    "These language notes describe everyday conversations, interesting questions, " +
+                    "and the small details that help us understand one another.</p>"
+                ).repeat(6)
+        private const val AUDIO_CONTROL_HTML = "<p>This plain article is the non-audio control.</p>"
 
         private const val TECHNOLOGY_CATEGORY_ID = "e2e-category-technology"
         private const val NEWS_CATEGORY_ID = "e2e-category-news"
@@ -866,8 +958,7 @@ class E2eSeedRunner internal constructor(
                 subtitle = "Seeded item with cached reader content",
                 feedSource = swiftWeekly,
                 url = "https://www.ilpost.it/2026/05/25/interstitium/",
-                imageUrl = "https://static-prod.cdnilpost.com/wp-content/uploads/2026/05/25/" +
-                    "680x453/1779707841-GettyImages-113189195.jpg",
+                imageUrl = READER_SUCCESS_IMAGE_URL,
                 content = FEED_CONTENT_NO_URL_HTML,
                 pubDateMillis = SEED_NOW_MILLIS - (ONE_HOUR_MILLIS * 9),
             ),
@@ -948,9 +1039,12 @@ class E2eSeedRunner internal constructor(
             )
         }
 
+        // The leading image carries alt text so REG-111/166 can tap it by its accessibility label
+        // instead of a screen point that moves whenever the title or byline reflows. It also
+        // replaces the decorative (alt="") hero the reader would otherwise add.
         private const val READER_SUCCESS_HTML = """
             <article>
-              <h1>E2E Reader Mode Success Article</h1>
+              <p><img src="$READER_SUCCESS_IMAGE_URL" alt="E2E reader image"></p>
               <p>E2E cached reader content loaded from the seed fixture.</p>
             </article>
         """
@@ -981,7 +1075,6 @@ class E2eSeedRunner internal constructor(
 
         private const val READER_FALLBACK_HTML = """
             <article>
-              <h1>E2E Reader Mode Fallback Article</h1>
               <p>E2E fallback reader content loaded from the seed fixture.</p>
             </article>
         """

@@ -23,7 +23,10 @@ struct AddFeedScreen: View {
     @State private var feedURL = ""
     @State private var showNotificationToggle = false
     @State private var isNotificationEnabled = false
+    @State private var youTubeOptionsState: YouTubeOptionsState?
     @State private var canForceAdd = false
+    @State private var verificationChallengeUrl: String?
+    @State private var verificationExplanationUrl: String?
 
     var showCloseButton: Bool
 
@@ -41,16 +44,21 @@ struct AddFeedScreen: View {
                 errorMessage: errorMessage,
                 isAddingFeed: $isAddingFeed,
                 showNotificationToggle: showNotificationToggle,
+                youTubeOptionsState: youTubeOptionsState,
                 isNotificationEnabled: $isNotificationEnabled,
                 canForceAdd: canForceAdd,
                 categorySelectorObserver: categorySelectorObserver,
                 viewModel: vmStoreOwner.instance,
                 showCloseButton: showCloseButton,
                 updateFeedUrlTextFieldValue: { value in
+                    clearVerification()
                     vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
                 },
                 onNotificationToggled: { enabled in
                     vmStoreOwner.instance.updateNotificationStatus(status: enabled)
+                },
+                onHideShortsToggled: { enabled in
+                    vmStoreOwner.instance.updateHideShortsStatus(status: enabled)
                 },
                 addFeed: {
                     vmStoreOwner.instance.addFeed()
@@ -60,6 +68,23 @@ struct AddFeedScreen: View {
                 }
             )
             .snackbar(messageQueue: $appState.snackbarQueue)
+        }
+        .websiteVerificationExplanation(
+            url: verificationExplanationUrl,
+            onCancel: {
+                clearVerification()
+                vmStoreOwner.instance.cancelRecovery()
+                errorMessage = feedFlowStrings.feedFetchRefusedError
+                showError = true
+                canForceAdd = true
+            },
+            onConfirm: {
+                clearVerification()
+                vmStoreOwner.instance.verifyWebsite()
+            }
+        )
+        .onDisappear {
+            vmStoreOwner.instance.cancelRecovery()
         }
         .onAppear {
             categorySelectorObserver.onCategorySelected = { categoryId in
@@ -71,7 +96,9 @@ struct AddFeedScreen: View {
                 switch onEnum(of: state) {
                 case let .feedAdded(addedState):
                     let message: String
-                    if let feedName = addedState.feedName {
+                    if addedState.shortsFilterFallback {
+                        message = feedFlowStrings.hideYoutubeShortsFallback
+                    } else if let feedName = addedState.feedName {
                         message = feedFlowStrings.feedAddedMessage(feedName)
                     } else {
                         message = feedFlowStrings.feedAddedMessageWithoutName
@@ -89,6 +116,7 @@ struct AddFeedScreen: View {
                     self.showError = false
                     self.errorMessage = ""
                     self.canForceAdd = false
+                    clearVerification()
 
                 case let .feedAlreadyExists(existingState):
                     self.appState.snackbarQueue.append(
@@ -103,14 +131,17 @@ struct AddFeedScreen: View {
                     self.showError = false
                     self.errorMessage = ""
                     self.canForceAdd = false
+                    clearVerification()
 
                 case .feedNotAdded:
                     errorMessage = ""
                     showError = false
                     canForceAdd = false
+                    clearVerification()
 
                 case let .error(errorState):
                     canForceAdd = errorState.canForceAdd
+                    clearVerification()
                     switch onEnum(of: errorState) {
                     case .invalidUrl:
                         errorMessage = feedFlowStrings.invalidRssUrlWithRetryHint
@@ -120,14 +151,35 @@ struct AddFeedScreen: View {
 
                     case .genericError:
                         errorMessage = feedFlowStrings.addFeedGenericError
+
+                    case let .fetchFailed(fetchFailure):
+                        verificationChallengeUrl = fetchFailure.verificationUrl
+                        errorMessage = feedFlowStrings.feedFetchRefusedError
                     }
 
                     isAddingFeed = false
                     showError = true
+                    updateVerificationPresentation()
 
                 case .loading:
-                    break
+                    clearVerification()
+                    showError = false
+                    errorMessage = ""
                 }
+            }
+        }
+        .task {
+            for await required in vmStoreOwner.instance.verificationRequiredState
+                where !(required as? Bool ?? false) {
+                verificationExplanationUrl = nil
+            }
+        }
+        .task {
+            vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: feedURL)
+        }
+        .task {
+            for await state in vmStoreOwner.instance.youTubeOptionsState {
+                self.youTubeOptionsState = state
             }
         }
         .task {
@@ -147,5 +199,24 @@ struct AddFeedScreen: View {
                 self.isNotificationEnabled = enabled as? Bool ?? false
             }
         }
+    }
+
+    private func clearVerification() {
+        verificationChallengeUrl = nil
+        verificationExplanationUrl = nil
+    }
+
+    /// A challenged feed opens the verification explanation instead of the generic fetch error.
+    private func updateVerificationPresentation() {
+        guard verificationChallengeUrl != nil else { return }
+        guard vmStoreOwner.instance.verificationAvailable else {
+            errorMessage = feedFlowStrings.feedVerificationUnsupported
+            canForceAdd = false
+            return
+        }
+        showError = false
+        errorMessage = ""
+        canForceAdd = false
+        verificationExplanationUrl = verificationChallengeUrl
     }
 }

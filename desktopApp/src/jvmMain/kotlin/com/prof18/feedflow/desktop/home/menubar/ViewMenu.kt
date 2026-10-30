@@ -1,43 +1,39 @@
 package com.prof18.feedflow.desktop.home.menubar
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.MenuBarScope
 import com.prof18.feedflow.core.model.FeedOrder
-import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.desktop.main.DesktopMenuCommands
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.presentation.model.MenuBarSettingsState
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun MenuBarScope.ViewMenu(
+    isMacOS: Boolean,
     settingsState: MenuBarSettingsState,
     callbacks: ViewMenuCallbacks,
+    commands: DesktopMenuCommands,
 ) {
     Menu(LocalFeedFlowStrings.current.menuView, mnemonic = 'V') {
-        Menu(LocalFeedFlowStrings.current.settingsTheme) {
-            RadioButtonItem(
-                text = LocalFeedFlowStrings.current.settingsThemeSystem,
-                selected = settingsState.themeMode == ThemeMode.SYSTEM,
-                onClick = { callbacks.onThemeModeSelected(ThemeMode.SYSTEM) },
-            )
-            RadioButtonItem(
-                text = LocalFeedFlowStrings.current.settingsThemeLight,
-                selected = settingsState.themeMode == ThemeMode.LIGHT,
-                onClick = { callbacks.onThemeModeSelected(ThemeMode.LIGHT) },
-            )
-            RadioButtonItem(
-                text = LocalFeedFlowStrings.current.settingsThemeDark,
-                selected = settingsState.themeMode == ThemeMode.DARK,
-                onClick = { callbacks.onThemeModeSelected(ThemeMode.DARK) },
-            )
-            RadioButtonItem(
-                text = LocalFeedFlowStrings.current.settingsThemeOled,
-                selected = settingsState.themeMode == ThemeMode.OLED,
-                onClick = { callbacks.onThemeModeSelected(ThemeMode.OLED) },
-            )
-        }
-
+        Item(
+            text = LocalFeedFlowStrings.current.searchButtonContentDescription,
+            onClick = { commands.search?.invoke() },
+            enabled = commands.search != null,
+            shortcut = shortcut(isMacOS, Key.F),
+        )
+        Item(
+            text = LocalFeedFlowStrings.current.menuToggleSidebar,
+            onClick = { commands.toggleSidebar?.invoke() },
+            enabled = commands.toggleSidebar != null,
+            shortcut = if (isMacOS) {
+                KeyShortcut(Key.S, meta = true, ctrl = true)
+            } else {
+                KeyShortcut(Key.B, ctrl = true)
+            },
+        )
         Separator()
-
         CheckboxItem(
             text = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
             checked = settingsState.isShowReadItemsEnabled,
@@ -60,7 +56,6 @@ internal fun MenuBarScope.ViewMenu(
 }
 
 internal data class ViewMenuCallbacks(
-    val onThemeModeSelected: (ThemeMode) -> Unit,
     val onShowReadItemsToggled: (Boolean) -> Unit,
     val onFeedOrderSelected: (FeedOrder) -> Unit,
 )

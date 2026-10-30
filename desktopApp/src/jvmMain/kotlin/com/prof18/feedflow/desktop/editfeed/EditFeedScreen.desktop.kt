@@ -2,225 +2,126 @@ package com.prof18.feedflow.desktop.editfeed
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.FeedSourceSettings
-import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
+import com.prof18.feedflow.desktop.feedforms.EditFeedForm
+import com.prof18.feedflow.desktop.feedforms.FeedCategoryActions
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.ArticleOpenModeSelector
-import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
+import com.prof18.feedflow.desktop.ui.components.Dialog
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
-import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
-import com.prof18.feedflow.shared.ui.feed.editfeed.EditFeedContent
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun EditFeedScreen(
-    feedSource: FeedSource?,
-    onCloseRequest: () -> Unit,
-) {
+internal fun EditFeedScreen(feedSource: FeedSource?, onCloseRequest: () -> Unit) {
     if (feedSource == null) return
-
-    DesktopDialogWindow(
-        title = LocalFeedFlowStrings.current.openFeedSettings,
-        size = DpSize(560.dp, 700.dp),
-        onCloseRequest = onCloseRequest,
-    ) { modifier ->
-        EditFeedScreenContent(
-            modifier = modifier,
-            feedSource = feedSource,
-            onCloseRequest = onCloseRequest,
-        )
-    }
+    EditFeedWindow(onCloseRequest) { EditFeedScreenContent(feedSource, onCloseRequest) }
 }
 
 @Composable
-private fun EditFeedScreenContent(
-    feedSource: FeedSource,
-    onCloseRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val viewModel = koinViewModel<EditFeedViewModel>()
-    val currentCloseRequest by rememberUpdatedState(onCloseRequest)
+internal fun EditFeedWindow(onCloseRequest: () -> Unit, content: @Composable () -> Unit) {
+    Dialog(
+        title = LocalFeedFlowStrings.current.openFeedSettings,
+        size = DpSize(560.dp, 560.dp),
+        onCloseRequest = onCloseRequest,
+    ) { content() }
+}
 
-    LaunchedEffect(feedSource) {
-        viewModel.loadFeedToEdit(feedSource)
-    }
-
-    val feedUrl by viewModel.feedUrlState.collectAsState()
-    val feedName by viewModel.feedNameState.collectAsState()
-    val feedSourceSettings by viewModel.feedSourceSettingsState.collectAsState()
-    var showLoading by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
-    var showError by remember { mutableStateOf(false) }
-
-    val categoriesState by viewModel.categoriesState.collectAsState()
-    val showNotificationToggle by viewModel.showNotificationToggleState.collectAsState()
-
+@Composable
+private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> Unit, modifier: Modifier = Modifier) {
+    val vm = koinViewModel<EditFeedViewModel>()
+    val close by rememberUpdatedState(onCloseRequest)
+    SideEffect(feedSource) { vm.loadFeedToEdit(feedSource) }
+    val url by vm.feedUrlState.collectAsState()
+    val name by vm.feedNameState.collectAsState()
+    val settings by vm.feedSourceSettingsState.collectAsState()
+    val categories by vm.categoriesState.collectAsState()
+    val showNotifications by vm.showNotificationToggleState.collectAsState()
+    val markReadWhenScrolling by vm.markReadWhenScrollingEnabledState.collectAsState()
     val strings = LocalFeedFlowStrings.current
-
+    var loading by remember { mutableStateOf(false) }
+    var completionRevision by remember { mutableIntStateOf(0) }
+    var error by remember { mutableStateOf("") }
+    var showError by remember { mutableStateOf(false) }
+    var showDelete by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        viewModel.feedEditedState.collect { feedAddedState ->
-            when (feedAddedState) {
+        vm.feedEditedState.collect { state ->
+            when (state) {
                 is FeedEditedState.Error -> {
+                    completionRevision++
                     showError = true
-                    showLoading = false
-                    errorMessage = when (feedAddedState) {
+                    loading = false
+                    error = when (state) {
                         FeedEditedState.Error.InvalidUrl -> strings.invalidRssUrl
                         FeedEditedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
                         FeedEditedState.Error.GenericError -> strings.editFeedGenericError
+                        is FeedEditedState.Error.FetchFailed ->
+                            strings.feedFetchRefusedError
                     }
                 }
-
                 is FeedEditedState.FeedEdited -> {
-                    showLoading = false
-                    currentCloseRequest()
+                    completionRevision++
+                    loading = false
+                    close()
                 }
-
                 FeedEditedState.Idle -> {
-                    showLoading = false
+                    loading = false
                     showError = false
-                    errorMessage = ""
+                    error = ""
                 }
-
-                FeedEditedState.Loading -> {
-                    showLoading = true
-                }
+                FeedEditedState.Loading -> loading = true
             }
         }
     }
-
-    var showDeleteDialog by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
-        viewModel.feedDeletedState.collect {
-            showDeleteDialog = false
-            currentCloseRequest()
+        vm.feedDeletedState.collect {
+            showDelete = false
+            close()
         }
     }
-
-    var showCategoryDialog by remember { mutableStateOf(false) }
-
-    EditFeedContent(
-        feedUrl = feedUrl,
-        feedName = feedName,
-        showError = showError,
-        showLoading = showLoading,
-        errorMessage = errorMessage,
-        canEditUrl = viewModel.canEditUrl(),
-        categoriesState = categoriesState,
-        feedSourceSettings = feedSourceSettings,
-        onFeedUrlUpdated = { url ->
-            viewModel.updateFeedUrlTextFieldValue(url)
-        },
-        onFeedNameUpdated = { name ->
-            viewModel.updateFeedNameTextFieldValue(name)
-        },
-        articleOpenModeSelector = { selectorModifier ->
+    EditFeedForm(
+        feedUrl = url, feedName = name, showError = showError, showLoading = loading,
+        errorMessage = error, canEditUrl = vm.canEditUrl(), categoriesState = categories,
+        feedSourceSettings = settings,
+        onFeedUrlUpdated = vm::updateFeedUrlTextFieldValue,
+        onFeedNameUpdated = vm::updateFeedNameTextFieldValue,
+        articleOpenModeSelector = { m, enabled ->
             ArticleOpenModeSelector(
-                modifier = selectorModifier,
-                currentMode = feedSourceSettings.articleOpenMode,
-                onModeSelected = { articleOpenMode ->
-                    viewModel.updateArticleOpenMode(articleOpenMode)
-                },
+                settings.articleOpenMode,
+                vm::updateArticleOpenMode,
+                modifier = m,
                 allowDefault = true,
+                enabled = enabled,
             )
         },
-        onHiddenToggled = { hidden ->
-            viewModel.updateIsHiddenFromTimeline(hidden)
-        },
-        onHideImagesToggled = { hideImages ->
-            viewModel.updateIsHideImagesEnabled(hideImages)
-        },
-        onPinnedToggled = { pinned ->
-            viewModel.updateIsPinned(pinned)
-        },
-        showNotificationToggle = showNotificationToggle,
-        onNotificationToggleChanged = { isNotificationEnabled ->
-            viewModel.updateIsNotificationEnabled(isNotificationEnabled)
-        },
-        editFeed = {
-            viewModel.editFeed()
-        },
-        onCategorySelectorClick = {
-            showCategoryDialog = true
-        },
-        showDeleteDialog = showDeleteDialog,
-        onShowDeleteDialog = { showDeleteDialog = true },
-        onDismissDeleteDialog = { showDeleteDialog = false },
-        onConfirmDelete = { viewModel.deleteFeed() },
+        onHiddenToggled = vm::updateIsHiddenFromTimeline,
+        onHideImagesToggled = vm::updateIsHideImagesEnabled,
+        onKeepUnreadOnScrollToggled = vm::updateIsKeepUnreadOnScrollEnabled,
+        isMarkReadWhenScrollingEnabled = markReadWhenScrolling,
+        onPinnedToggled = vm::updateIsPinned,
+        showNotificationToggle = showNotifications,
+        onNotificationToggleChanged = vm::updateIsNotificationEnabled,
+        categoryActions = FeedCategoryActions(
+            onSelect = vm::onCategorySelected,
+            onAdd = vm::addNewCategory,
+            validate = vm::validateCategoryName,
+        ),
+        onCancel = onCloseRequest,
+        editFeed = vm::editFeed,
+        onShowDeleteDialog = { showDelete = true }, showDeleteDialog = showDelete,
+        onDismissDeleteDialog = { showDelete = false }, onConfirmDelete = vm::deleteFeed,
         modifier = modifier,
+        completionRevision = completionRevision,
     )
-
-    if (showCategoryDialog) {
-        EditCategoryDialog(
-            categoryState = categoriesState,
-            onCategorySelected = { categoryId ->
-                viewModel.onCategorySelected(categoryId)
-            },
-            onAddCategory = { categoryName ->
-                viewModel.addNewCategory(categoryName)
-            },
-            onDeleteCategory = { categoryId ->
-                viewModel.deleteCategory(categoryId.value)
-            },
-            onEditCategory = { categoryId, newName ->
-                viewModel.editCategory(categoryId, newName)
-            },
-            validateCategoryName = viewModel::validateCategoryName,
-            onDismiss = {
-                showCategoryDialog = false
-            },
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun EditScreenPreview() {
-    FeedFlowTheme {
-        EditFeedContent(
-            feedUrl = "https://www.ablog.com/feed",
-            feedName = "Feed Name",
-            showError = false,
-            showLoading = false,
-            errorMessage = "",
-            canEditUrl = true,
-            categoriesState = categoriesExpandedState,
-            feedSourceSettings = FeedSourceSettings(),
-            onFeedUrlUpdated = {},
-            onFeedNameUpdated = {},
-            articleOpenModeSelector = { selectorModifier ->
-                ArticleOpenModeSelector(
-                    modifier = selectorModifier,
-                    currentMode = ArticleOpenMode.DEFAULT,
-                    onModeSelected = {},
-                    allowDefault = true,
-                )
-            },
-            onHiddenToggled = {},
-            onHideImagesToggled = {},
-            onPinnedToggled = {},
-            showNotificationToggle = true,
-            onNotificationToggleChanged = {},
-            editFeed = { },
-            onCategorySelectorClick = {},
-            showDeleteDialog = true,
-            onShowDeleteDialog = {},
-            onDismissDeleteDialog = {},
-            onConfirmDelete = {},
-        )
-    }
 }

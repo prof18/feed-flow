@@ -88,6 +88,14 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
         updateTransparency()
     }
 
+    /// The SwiftUI views that own this object install these callbacks, and the callbacks capture
+    /// those views (and with them this object), so they must be dropped when the view goes away.
+    func detachHandlers() {
+        shouldBlockNavigation = nil
+        onLoadingStateChanged = nil
+        onContentReady = nil
+    }
+
     func load(url: URL) {
         onLoadingStateChanged?(true)
         webview.load(.init(url: url))
@@ -212,6 +220,20 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     
     func evaluateJavaScript(_ script: String) {
         webview.evaluateJavaScript(script, completionHandler: nil)
+    }
+
+    /// Calls back once the loaded page has painted a frame. `didFinish` arrives before WebKit
+    /// draws, so hiding a loading overlay on it alone flashes an empty web view.
+    func afterNextPaint(_ completion: @escaping () -> Void) {
+        webview.callAsyncJavaScript(
+            "await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))",
+            arguments: [:],
+            in: nil,
+            in: .page
+        ) { [weak self] _ in
+            guard let self, !self.webview.isLoading else { return }
+            completion()
+        }
     }
 
     // MARK: - File Upload Prevention

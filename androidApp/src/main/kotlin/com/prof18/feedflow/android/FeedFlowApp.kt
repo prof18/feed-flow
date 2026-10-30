@@ -10,27 +10,40 @@ import androidx.lifecycle.coroutineScope
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import com.prof18.feedflow.android.audio.AndroidAudioPlayer
+import com.prof18.feedflow.android.audio.AndroidSpeechAudioGenerator
+import com.prof18.feedflow.android.audio.SpeechAudioGenerating
 import com.prof18.feedflow.android.billing.RevenueCatSupport
+import com.prof18.feedflow.android.feedverification.AndroidWebViewProfiles
+import com.prof18.feedflow.android.feedverification.AndroidWebsiteIdentityProvider
+import com.prof18.feedflow.android.feedverification.AndroidWebsiteProfileCleaner
+import com.prof18.feedflow.android.feedverification.WebViewProfiles
 import com.prof18.feedflow.android.notifications.AndroidNotifier
-import com.prof18.feedflow.android.settings.widget.WidgetSettingsViewModel
+import com.prof18.feedflow.android.ui.utils.coilImageLoader
 import com.prof18.feedflow.android.widget.FeedFlowWidget
-import com.prof18.feedflow.android.widget.WidgetConfigurationViewModel
+import com.prof18.feedflow.android.widget.WidgetInstanceSettingsViewModel
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveAndroidDataSourceImpl
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceAndroid
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoin
+import com.prof18.feedflow.shared.di.websiteRecoveryModule
 import com.prof18.feedflow.shared.domain.AppForegroundState
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.domain.notification.ArticleNotifier
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.readerfont.ReaderFontAndroidContext
+import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
+import com.prof18.feedflow.shared.domain.recovery.WebsiteProfileCleaner
+import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
+import com.prof18.feedflow.shared.presentation.WidgetRefreshState
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
-import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -41,9 +54,12 @@ import org.koin.dsl.module
 
 class FeedFlowApp : Application(), SingletonImageLoader.Factory {
 
+    private val audioPlayer by inject<AndroidAudioPlayer>()
     private val feedSyncRepo by inject<FeedSyncRepository>()
     private val widgetRepository by inject<FeedWidgetRepository>()
     private val widgetSettingsRepository by inject<WidgetSettingsRepository>()
+    private val settingsRepository by inject<SettingsRepository>()
+    private val widgetRefreshState by inject<WidgetRefreshState>()
     private val feedDownloadWorkerEnqueuer by inject<FeedDownloadWorkerEnqueuer>()
     private val appForegroundState by inject<AppForegroundState>()
     private val browserManager by inject<BrowserManager>()
@@ -94,6 +110,8 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
             modules = listOf(
                 module {
                     single<Context> { this@FeedFlowApp }
+                    single<WebViewProfiles> { AndroidWebViewProfiles(this@FeedFlowApp) }
+                    single<WebsiteProfileCleaner> { AndroidWebsiteProfileCleaner(get(), get()) }
                     single {
                         BrowserManager(
                             context = this@FeedFlowApp,
@@ -109,6 +127,11 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                             dispatcherProvider = get(),
                         )
                     }
+                    single<SpeechAudioGenerating> { AndroidSpeechAudioGenerator(this@FeedFlowApp, get()) }
+                    single {
+                        val speechText: ReaderSpeechText = get()
+                        AndroidAudioPlayer(this@FeedFlowApp, get(), get(), speechText = speechText::segments)
+                    }
                     single { appConfig }
                     factory<WidgetUpdater> {
                         WidgetUpdater {
@@ -120,29 +143,33 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                         widgetRepository,
                                         widgetSettingsRepository,
                                         get<BrowserManager>(),
+                                        get<SettingsRepository>(),
+                                        get<WidgetRefreshState>(),
+                                        get<FeedDownloadWorkerEnqueuer>(),
                                     ).update(this@FeedFlowApp, id)
                                 }
                         }
                     }
-                    viewModel {
-                        WidgetConfigurationViewModel(
+                    viewModel { (appWidgetId: Int) ->
+                        WidgetInstanceSettingsViewModel(
+                            appWidgetId = appWidgetId,
                             settingsRepository = get(),
                             widgetSettingsRepository = get(),
-                        )
-                    }
-                    viewModel {
-                        WidgetSettingsViewModel(
-                            settingsRepository = get(),
-                            widgetSettingsRepository = get(),
+                            feedWidgetRepository = get(),
                             widgetUpdater = get(),
                         )
                     }
-                    single<Notifier> {
+                    single {
                         AndroidNotifier(
                             context = androidContext(),
                             settingsRepository = get(),
                         )
                     }
+                    single<Notifier> { get<AndroidNotifier>() }
+                    single<ArticleNotifier> { get<AndroidNotifier>() }
+                },
+                websiteRecoveryModule { scope ->
+                    AndroidWebsiteIdentityProvider(lazy { scope.get<FeedRecoveryRepository>() })
                 },
             ),
         )
@@ -160,6 +187,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                     override fun onStop(owner: LifecycleOwner) {
                         super.onStop(owner)
                         appForegroundState.onAppBackgrounded()
+                        audioPlayer.savePosition()
                         lifecycle.coroutineScope.launch {
                             pendingReadStatusActionRetrier.retryPendingReadStatusActions()
                         }
@@ -173,6 +201,9 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                         widgetRepository,
                                         widgetSettingsRepository,
                                         browserManager,
+                                        settingsRepository,
+                                        widgetRefreshState,
+                                        feedDownloadWorkerEnqueuer,
                                     ).update(this@FeedFlowApp, id)
                                 }
                         }

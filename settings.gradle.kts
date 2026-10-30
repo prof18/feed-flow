@@ -14,6 +14,10 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
+            url = uri("https://www.jetbrains.com/intellij-repository/releases")
+            content { includeModule("com.jetbrains.intellij.platform", "icons") }
+        }
+        maven {
             url = uri("https://jitpack.io")
             content {
                 includeModule("com.github.Dansoftowner", "jSystemThemeDetector")
@@ -31,7 +35,6 @@ rootProject.name = "FeedFlow"
 include(":androidApp")
 include(":benchmarks")
 include(":shared")
-include(":sharedUI")
 include(":desktopApp")
 include(":i18n")
 include(":core")

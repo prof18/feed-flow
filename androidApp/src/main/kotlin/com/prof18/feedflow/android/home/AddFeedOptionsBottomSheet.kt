@@ -16,10 +16,10 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsE2eIds
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import md_theme_dark_background
-import md_theme_light_background
+import com.prof18.feedflow.android.ui.feedsuggestions.FeedSuggestionsE2eIds
+import com.prof18.feedflow.android.ui.style.md_theme_dark_background
+import com.prof18.feedflow.android.ui.style.md_theme_light_background
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun AddFeedOptionsBottomSheet(

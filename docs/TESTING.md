@@ -57,7 +57,7 @@ Located at `shared/src/commonTest/.../test/koin/TestModules.kt`. Provides test i
 - `SqlDriver` - In-memory database
 - `DispatcherProvider` - Test dispatchers (`UnconfinedTestDispatcher`)
 - `Settings` - `MapSettings` for in-memory preferences
-- `FeedSyncWorker`, `FeedItemParserWorker`, etc. - No-op or controllable fakes
+- `FeedSyncWorker`, `ArticleContentParser`, etc. - No-op or controllable fakes
 - `HtmlRetriever`, `HtmlParser` - Mock HTTP client implementations
 
 **Adding a new fake:**
@@ -79,6 +79,8 @@ class MyViewModelTest : KoinTestBase() {
 ```
 
 ### Fakes vs Mocks
+
+Article reporting uses one shared `ArticleReporter` class. Unit tests inject Ktor's `MockEngine`. UI fixtures use a small shared mock HTTP helper selected by the debug E2E seeder. The helper is included in production sources; release builds ignore saved fake response modes and send directly to the real endpoint.
 
 Prefer **fakes** (simple implementations) over mocking libraries:
 
@@ -306,6 +308,9 @@ fun buildFeedItemsForSource(source: FeedSource, count: Int): List<FeedItem>
 
 # Run only iOS tests
 ./gradlew :shared:iosSimulatorArm64Test --quiet --console=plain
+
+# Run the Swift unit tests of the iOS app (iOSTests scheme; CloudSyncTests run through allTests)
+.scripts/ios-tests.sh
 ```
 
 ## Best Practices

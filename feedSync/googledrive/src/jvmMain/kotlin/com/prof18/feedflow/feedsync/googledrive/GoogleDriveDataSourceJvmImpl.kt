@@ -3,6 +3,7 @@ package com.prof18.feedflow.feedsync.googledrive
 import co.touchlab.kermit.Logger
 import com.google.api.client.auth.oauth2.TokenResponseException
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp
+import com.google.api.client.extensions.java6.auth.oauth2.VerificationCodeReceiver
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
@@ -17,9 +18,13 @@ import com.google.api.services.drive.DriveScopes
 import com.prof18.feedflow.core.model.CloudBackupNotFoundException
 import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.getDesktopOS
+import com.prof18.feedflow.core.utils.isWindows
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 import java.io.InputStreamReader
 import com.google.api.services.drive.model.File as GoogleDriveFile
 
@@ -41,7 +46,13 @@ class GoogleDriveDataSourceJvmImpl(
     override suspend fun startAuthFlow(): Boolean = withContext(dispatcherProvider.io) {
         try {
             val flow = buildAuthFlow()
-            val receiver = buildLocalServerReceiver()
+            val receiver = buildVerificationCodeReceiver(
+                onFallback = { error ->
+                    logger.w(error) {
+                        "Google Drive OAuth primary loopback receiver failed; attempting blocking fallback"
+                    }
+                },
+            )
             val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
 
             driveService = Drive.Builder(httpTransport, jsonFactory, credential)
@@ -250,8 +261,24 @@ internal fun requireGoogleDriveBackupFileId(
     errorMessage = "No Google Drive backup file found for '$fileName'",
 )
 
-// Bind to the loopback IP literal rather than the "localhost" hostname: Google's own OAuth docs
-// note that "localhost" can be blocked or misrouted by client firewalls/DNS, while 127.0.0.1 is not.
+internal fun buildVerificationCodeReceiver(
+    desktopOS: DesktopOS = getDesktopOS(),
+    onFallback: (IOException) -> Unit = {},
+): VerificationCodeReceiver {
+    val primaryReceiver = buildLocalServerReceiver()
+    return if (desktopOS.isWindows()) {
+        StartupFallbackVerificationCodeReceiver(
+            primaryReceiver = primaryReceiver,
+            fallbackReceiverFactory = ::BlockingLoopbackReceiver,
+            onFallback = onFallback,
+        )
+    } else {
+        primaryReceiver
+    }
+}
+
+// Use the loopback IP literal in the redirect URI rather than the "localhost" hostname: Google's
+// OAuth docs note that "localhost" can be blocked or misrouted by client firewalls/DNS.
 internal fun buildLocalServerReceiver(): LocalServerReceiver = LocalServerReceiver.Builder()
     .setHost("127.0.0.1")
     .build()

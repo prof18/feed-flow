@@ -1,0 +1,22 @@
+CREATE TABLE feed_recovery_profile (
+    profile_id TEXT NOT NULL PRIMARY KEY,
+    account_epoch TEXT NOT NULL,
+    origin TEXT NOT NULL,
+    user_agent TEXT NOT NULL,
+    engine_version TEXT NOT NULL,
+    reader_retained INTEGER NOT NULL DEFAULT 0,
+    retired INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE feed_recovery_record (
+    account_epoch TEXT NOT NULL,
+    source_id TEXT NOT NULL,
+    subscription_url TEXT NOT NULL,
+    effective_url TEXT NOT NULL,
+    origin TEXT NOT NULL,
+    mode TEXT NOT NULL CHECK (mode IN ('VerificationRequired', 'SessionApproved')),
+    profile_id TEXT,
+    status_code INTEGER,
+    retry_after TEXT,
+    PRIMARY KEY (account_epoch, source_id)
+);

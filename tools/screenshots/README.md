@@ -129,6 +129,19 @@ A platform with no on-image copy sets `localised: false` and renders once into
 | `ipad` | 2732x2048 | 5 | flattened device mockups |
 | `macos` | 2880x1800 | 4 | mockups bleed to the bottom edge |
 | `windows` | 3840x2160 | 4 | no on-image copy; renders once |
+| `iphone_duo` | 2007x2853 | 5 | ASC `APP_IPHONE_DUO`, inner display; iPhone copy |
+| `iphone_duo_outer` | 1398x2034 | 5 | ASC `APP_IPHONE_DUO`, outer display; same board scaled |
+
+The two Duo platforms have no Figma board. They share `src/duo.mjs` and one
+capture folder (`assets/captures/iphone_duo/`, via the config's `assetDir`),
+and use `composite` screens: framed captures stacked as one unit. Captures come
+from the iOS 27.1 iPhone Duo simulator in three poses (closed, open landscape,
+open rotated to portrait), framed with `frames -o <dir> <captures>`; screen
+05's cards use the raw closed captures. Unfolding and rotating need Device
+Hub's posture buttons; `simctl io <udid> screenshot --display=<id>` must name
+the active display explicitly (`simctl io <udid> enumerate`: outer `LCD`,
+inner `LCD-1`). `feedflow:///<url_hash>` opens an article straight in the
+reader, which avoids tapping on the open display.
 
 ## Provenance
 

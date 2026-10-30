@@ -2,15 +2,14 @@ package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import com.prof18.feedflow.shared.test.ContentPrefetchRepositoryFake
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -23,9 +22,7 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
     private val viewModel: ReadingBehaviorSettingsViewModel by inject()
     private val feedStateRepository: FeedStateRepository by inject()
     private val settingsRepository: SettingsRepository by inject()
-    private val feedItemContentFileHandler: FeedItemContentFileHandler by inject()
     private val databaseHelper: DatabaseHelper by inject()
-    private val contentPrefetchRepository: ContentPrefetchRepository by inject()
 
     @Test
     fun `state is loaded from settings repository on init`() = runTest {
@@ -35,7 +32,6 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
             assertEquals(ArticleOpenMode.FULL_ARTICLE, initialState.articleOpenMode)
             assertFalse(initialState.isSaveReaderModeContentEnabled)
             assertFalse(initialState.isPrefetchArticleContentEnabled)
-            assertTrue(initialState.isKleadParserEnabled)
             assertTrue(initialState.isMarkReadWhenScrollingEnabled)
             assertFalse(initialState.isShowReadItemsEnabled)
             assertFalse(initialState.isHideReadItemsEnabled)
@@ -82,26 +78,6 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `update Klead parser updates state`() = runTest {
-        populateDatabase()
-        val feedItemId = databaseHelper.getFirstUnfetchedItemsBatch(1).single().feedItemId
-        databaseHelper.updateContentFetchedStatus(feedItemId, fetched = true)
-        feedItemContentFileHandler.saveFeedItemContentToFile("cached-item", "cached")
-        viewModel.state.test {
-            awaitItem()
-
-            viewModel.updateKleadParserEnabled(false)
-            assertFalse(awaitItem().isKleadParserEnabled)
-
-            viewModel.updateKleadParserEnabled(true)
-            assertTrue(awaitItem().isKleadParserEnabled)
-            assertTrue(feedItemContentFileHandler.isContentAvailable("cached-item"))
-            assertTrue(databaseHelper.getFirstUnfetchedItemsBatch(1).isEmpty())
-            assertFalse((contentPrefetchRepository as ContentPrefetchRepositoryFake).cancelFetchingCalled)
-        }
-    }
-
-    @Test
     fun `updateMarkReadWhenScrolling updates state`() = runTest {
         viewModel.state.test {
             awaitItem()
@@ -112,6 +88,23 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
             viewModel.updateMarkReadWhenScrolling(true)
             assertTrue(awaitItem().isMarkReadWhenScrollingEnabled)
         }
+    }
+
+    @Test
+    fun `disabling scroll marking reapplies saved auto hide to current list`() = runTest {
+        populateDatabase()
+        settingsRepository.setHideReadItems(true)
+        feedStateRepository.getFeeds()
+        val itemId = FeedItemId(feedStateRepository.feedState.value.single().id)
+        databaseHelper.updateReadStatus(itemId, isRead = true)
+        feedStateRepository.markAsRead(hashSetOf(itemId))
+        assertEquals(1, feedStateRepository.feedState.value.size)
+
+        viewModel.updateMarkReadWhenScrolling(false)
+        advanceUntilIdle()
+
+        assertTrue(settingsRepository.getHideReadItems())
+        assertTrue(feedStateRepository.feedState.value.isEmpty())
     }
 
     @Test

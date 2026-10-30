@@ -1,2 +1,6 @@
-• Teste die experimentelle neue Lesemodus-Engine für eine schnellere, genauere Artikelextraktion. Hilf mir, sie zu verbessern, indem du fehlende Inhalte oder Formatierungsfehler meldest.
-• Verbessert wurden Bilder, eingebettete Inhalte, kurze und reine Bildartikel, Lesezeichenaktionen und das Trennen von Dropbox.
+• Hör Podcast-Folgen direkt in FeedFlow
+• Lass dir Artikel im Lesemodus vorlesen, mit einer Stimme in der Sprache des Artikels
+• Neue anpassbare Widgets für den Startbildschirm, optional mit Aktualisieren-Taste
+• Die neue Lesemodus-Engine ist jetzt Standard. Sieht ein Artikel falsch aus, melde ihn mit einem Tipp
+• Folge YouTube-Playlists und blende Shorts von Kanälen aus
+• Feeds von Seiten, die Anfragen blockieren, laden zuverlässiger, mit klareren Fehlermeldungen

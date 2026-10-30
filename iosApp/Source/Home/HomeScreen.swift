@@ -27,6 +27,8 @@ struct HomeScreen: View {
 
     @State private var unreadCount = 0
 
+    @State private var pendingNewArticlesCount = 0
+
     @State private var isUnreadCountHidden = false
 
     @State private var currentFeedFilter: FeedFilter = .Timeline()
@@ -90,6 +92,7 @@ struct HomeScreen: View {
             nextFeedPreviewState: nextFeedPreviewState,
             feedItemDisplaySettings: feedItemDisplaySettings,
             viewMenuState: viewMenuState,
+            pendingNewArticlesCount: pendingNewArticlesCount,
             onRefresh: { [homeViewModel] in
                 homeViewModel.refreshCurrentFilter()
             },
@@ -144,6 +147,9 @@ struct HomeScreen: View {
             },
             onSettingsDone: { [homeViewModel] in
                 homeViewModel.reloadFeedState()
+            },
+            onShowNewArticlesClick: { [homeViewModel] in
+                homeViewModel.onShowNewArticlesClicked()
             }
         )
         .environment(\.feedBodyFont, bodyFont)
@@ -201,6 +207,11 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.unreadCountFlow {
                 self.unreadCount = Int(truncating: state)
+            }
+        }
+        .task {
+            for await state in homeViewModel.pendingNewArticlesState {
+                self.pendingNewArticlesCount = Int(truncating: state)
             }
         }
         .task {
@@ -277,14 +288,14 @@ struct HomeScreen: View {
         if let navigate = onReaderModeNavigate {
             return { [homeViewModel, readerModeViewModel, navigate] urlInfo in
                 homeViewModel.markAsRead(feedItemId: urlInfo.id)
-                readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                readerModeViewModel.loadReaderContent(urlInfo: urlInfo)
                 navigate()
             }
         }
 
         return { [homeViewModel, readerModeViewModel, appState] urlInfo in
             homeViewModel.markAsRead(feedItemId: urlInfo.id)
-            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+            readerModeViewModel.loadReaderContent(urlInfo: urlInfo)
             appState.navigate(route: CommonViewRoute.readerMode)
         }
     }

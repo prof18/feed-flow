@@ -109,6 +109,41 @@ class CloudPendingArticleFlagsDatabaseTest : KoinTestBase() {
     }
 
     @Test
+    fun `bulk bookmark marking captures only unread saved articles across sources`() = runTest(testDispatcher) {
+        val firstSource = FeedSourceGenerator.feedSource(id = "first-source")
+        val secondSource = FeedSourceGenerator.feedSource(id = "second-source")
+        databaseHelper.insertFeedSourceWithCategory(firstSource)
+        databaseHelper.insertFeedSourceWithCategory(secondSource)
+        databaseHelper.insertFeedItems(
+            listOf(
+                buildFeedItem("saved-unread", "Saved unread", 4L, firstSource),
+                buildFeedItem("other-saved-unread", "Other saved unread", 3L, secondSource),
+                buildFeedItem("saved-read", "Saved read", 2L, firstSource),
+                buildFeedItem("other-unread", "Other unread", 1L, secondSource),
+            ),
+            lastSyncTimestamp = 0,
+        )
+        for (id in listOf("saved-unread", "other-saved-unread", "saved-read")) {
+            databaseHelper.updateBookmarkStatus(FeedItemId(id), isBookmarked = true)
+        }
+        databaseHelper.updateReadStatus(FeedItemId("saved-read"), isRead = true)
+        databaseHelper.ensureCloudSyncState(SESSION_ID)
+
+        databaseHelper.markAllFeedAsRead(FeedFilter.Bookmarks, cloudSessionId = SESSION_ID)
+
+        val pending = databaseHelper.getCloudPendingArticleFlags(SESSION_ID)
+        assertEquals(setOf("saved-unread", "other-saved-unread"), pending.map { it.itemId }.toSet())
+        assertTrue(pending.all { it.field == CloudArticleFlag.READ && it.value })
+        for (id in listOf("saved-unread", "other-saved-unread", "saved-read")) {
+            val item = feedItem(id)
+            assertTrue(item.is_read)
+            assertTrue(item.is_bookmarked)
+            assertTrue(item.notification_sent)
+        }
+        assertFalse(feedItem("other-unread").is_read)
+    }
+
+    @Test
     fun `cloud state initialization is idempotent and preserves revision sequence`() = runTest(testDispatcher) {
         seedItems("item-1")
         databaseHelper.ensureCloudSyncState(SESSION_ID)

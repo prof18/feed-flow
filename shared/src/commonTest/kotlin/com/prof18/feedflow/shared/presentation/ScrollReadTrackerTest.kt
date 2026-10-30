@@ -258,18 +258,46 @@ class ScrollReadTrackerTest {
         assertTrue(result.isEmpty())
     }
 
+    @Test
+    fun `forward scroll skips items from excluded feed sources`() {
+        val items = feedItems(
+            sourceForId = { id -> if (id == "item-2") feedSource.copy(id = "source-2") else feedSource },
+        )
+        onVisibleItemsChanged(
+            visibleItems = listOf(
+                visibleItem(id = "item-1", index = 0),
+                visibleItem(id = "item-2", index = 1),
+            ),
+            feedItems = items,
+            excludedFeedSourceIds = setOf("source-2"),
+        )
+
+        val result = onVisibleItemsChanged(
+            visibleItems = listOf(
+                visibleItem(id = "item-4", index = 3),
+                visibleItem(id = "item-5", index = 4),
+            ),
+            feedItems = items,
+            excludedFeedSourceIds = setOf("source-2"),
+        )
+
+        assertEquals(setOf(FeedItemId("item-1"), FeedItemId("item-3")), result)
+    }
+
     private fun onVisibleItemsChanged(
         visibleItems: List<VisibleFeedItem>,
         readIds: Set<String> = emptySet(),
         feedItems: List<FeedItem> = feedItems(readIds = readIds),
         feedListVersion: Long = 0,
         listShapeKey: ScrollReadListShapeKey = defaultListShapeKey,
+        excludedFeedSourceIds: Set<String> = emptySet(),
     ): Set<FeedItemId> =
         tracker.onVisibleItemsChanged(
             visibleItems = visibleItems,
             feedItems = feedItems,
             feedListVersion = feedListVersion,
             listShapeKey = listShapeKey,
+            excludedFeedSourceIds = excludedFeedSourceIds,
         )
 
     private fun visibleItem(
@@ -284,6 +312,7 @@ class ScrollReadTrackerTest {
     private fun feedItems(
         count: Int = 25,
         readIds: Set<String> = emptySet(),
+        sourceForId: (String) -> FeedSource = { feedSource },
     ): List<FeedItem> =
         (1..count).map { index ->
             val id = "item-$index"
@@ -294,7 +323,7 @@ class ScrollReadTrackerTest {
                 subtitle = null,
                 content = null,
                 imageUrl = null,
-                feedSource = feedSource,
+                feedSource = sourceForId(id),
                 pubDateMillis = index.toLong(),
                 isRead = id in readIds,
                 dateString = null,

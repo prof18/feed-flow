@@ -7,16 +7,23 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material.icons.filled.Share
@@ -47,21 +54,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.android.components.rememberConfirmedBookmarkAction
+import com.prof18.feedflow.android.ui.icons.BookmarkIcon
+import com.prof18.feedflow.android.ui.icons.BookmarkOffIcon
+import com.prof18.feedflow.android.ui.readermode.ReaderTextSettingsSheetContent
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.exposeTestTagsAsResourceIds
+import com.prof18.feedflow.core.model.ArticleReportUiState
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.i18n.FeedFlowStrings
-import com.prof18.feedflow.shared.ui.icons.BookmarkIcon
-import com.prof18.feedflow.shared.ui.icons.BookmarkOffIcon
-import com.prof18.feedflow.shared.ui.readermode.ReaderTextSettingsSheetContent
-import com.prof18.feedflow.shared.ui.readermode.hammerIcon
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.exposeTestTagsAsResourceIds
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -70,6 +80,7 @@ private data class ToolbarAction(
     val label: String,
     val testTag: String? = null,
     val isSelected: Boolean? = null,
+    val enabled: Boolean = true,
     val onClick: () -> Unit,
 )
 
@@ -82,6 +93,22 @@ private fun contentSourceToolbarAction(
     label = strings.readerContentSourceFeed,
     testTag = ReaderModeE2eIds.CONTENT_SOURCE_BUTTON,
     isSelected = shownContentSource == ShownContentSource.FEED,
+    onClick = onClick,
+)
+
+private fun speechToolbarAction(
+    isPreparingSpeech: Boolean,
+    isSpeechPlaying: Boolean,
+    strings: FeedFlowStrings,
+    onClick: () -> Unit,
+) = ToolbarAction(
+    icon = Icons.Default.Headphones,
+    label = when {
+        isPreparingSpeech -> strings.readerModeTtsPreparing
+        isSpeechPlaying -> strings.audioPause
+        else -> strings.readerModeTtsListen
+    },
+    testTag = ReaderModeE2eIds.TTS_BUTTON,
     onClick = onClick,
 )
 
@@ -100,6 +127,9 @@ fun ReaderModeFloatingToolbar(
     onArchiveClick: (String) -> Unit,
     onCommentsClick: (String) -> Unit,
     onToggleContentSource: () -> Unit,
+    onListenClick: () -> Unit,
+    isPreparingSpeech: Boolean,
+    isSpeechPlaying: Boolean,
     onFontSizeChange: (Int) -> Unit,
     lineHeight: Int,
     onLineHeightChange: (Int) -> Unit,
@@ -107,7 +137,10 @@ fun ReaderModeFloatingToolbar(
     onBodyFontChange: (ReaderFontFamily) -> Unit,
     headlineFont: ReaderFontFamily,
     onHeadlineFontChange: (ReaderFontFamily) -> Unit,
+    articleReportState: ArticleReportUiState,
+    onReportArticle: () -> Unit,
     modifier: Modifier = Modifier,
+    audioContent: (@Composable () -> Unit)? = null,
 ) {
     var showFontSizeMenu by remember { mutableStateOf(false) }
     var showOverflowMenu by remember { mutableStateOf(false) }
@@ -129,13 +162,21 @@ fun ReaderModeFloatingToolbar(
     val id = readerModeState.getId
     val latestOpenInBrowser by rememberUpdatedState(openInBrowser)
     val latestOnShareClick by rememberUpdatedState(onShareClick)
-    val latestOnBookmarkClick by rememberUpdatedState(onBookmarkClick)
     val latestOnArchiveClick by rememberUpdatedState(onArchiveClick)
     val latestOnCommentsClick by rememberUpdatedState(onCommentsClick)
     val latestOnToggleContentSource by rememberUpdatedState(onToggleContentSource)
+    val latestOnListenClick by rememberUpdatedState(onListenClick)
+    val latestOnReportArticle by rememberUpdatedState(onReportArticle)
     var isBookmarked by remember(readerModeState) {
         mutableStateOf(readerModeState.getIsBookmarked)
     }
+    val confirmedBookmarkAction = rememberConfirmedBookmarkAction(
+        scopeKey = id,
+        onBookmarkClick = { feedItemId, newIsBookmarked ->
+            isBookmarked = newIsBookmarked
+            onBookmarkClick(feedItemId, newIsBookmarked)
+        },
+    )
 
     val isContentVisible = expanded && readerModeState !is ReaderModeState.Loading
 
@@ -170,7 +211,18 @@ fun ReaderModeFloatingToolbar(
     val shownContentSource = (readerModeState as? ReaderModeState.Success)?.readerModeData?.shownContentSource
     val canToggleContentSource =
         (readerModeState as? ReaderModeState.Success)?.readerModeData?.canToggleContentSource == true
-    val trailingActions = remember(readerModeState, strings, url, id, isBookmarked, shownContentSource) {
+    val trailingActions = remember(
+        readerModeState,
+        strings,
+        url,
+        id,
+        isBookmarked,
+        shownContentSource,
+        confirmedBookmarkAction,
+        isPreparingSpeech,
+        isSpeechPlaying,
+        articleReportState,
+    ) {
         buildList {
             if (id != null) {
                 val bookmarkLabel = if (isBookmarked) {
@@ -189,9 +241,7 @@ fun ReaderModeFloatingToolbar(
                         label = bookmarkLabel,
                         testTag = ReaderModeE2eIds.BOOKMARK_BUTTON,
                         onClick = {
-                            val newIsBookmarked = !isBookmarked
-                            isBookmarked = newIsBookmarked
-                            latestOnBookmarkClick(FeedItemId(id), newIsBookmarked)
+                            confirmedBookmarkAction(FeedItemId(id), !isBookmarked)
                         },
                     ),
                 )
@@ -210,13 +260,14 @@ fun ReaderModeFloatingToolbar(
             if (url != null) {
                 add(
                     ToolbarAction(
-                        icon = hammerIcon,
+                        icon = Icons.Default.LockOpen,
                         label = strings.readerModeArchiveButton,
                         onClick = { latestOnArchiveClick(url) },
                     ),
                 )
             }
             if (readerModeState is ReaderModeState.Success) {
+                add(speechToolbarAction(isPreparingSpeech, isSpeechPlaying, strings) { latestOnListenClick() })
                 add(
                     ToolbarAction(
                         icon = Icons.Outlined.TextFields,
@@ -235,19 +286,21 @@ fun ReaderModeFloatingToolbar(
                     ),
                 )
             }
+            addReportAction(articleReportState, strings) { latestOnReportArticle() }
         }
             .toImmutableList()
     }
 
     Surface(
         modifier = modifier,
-        shape = FloatingToolbarDefaults.ContainerShape,
+        shape = readerToolbarShape(hasAudio = audioContent != null),
         color = toolbarContainerColor,
         contentColor = MaterialTheme.colorScheme.onSurface,
         shadowElevation = 6.dp,
         border = toolbarBorder,
     ) {
-        Box {
+        Column {
+            audioContent?.invoke()
             OverflowToolbarLayout(
                 leadingActions = leadingActions,
                 trailingActions = trailingActions,
@@ -255,6 +308,7 @@ fun ReaderModeFloatingToolbar(
                 showOverflowMenu = showOverflowMenu,
                 onShowOverflowMenu = { showOverflowMenu = it },
                 moreOptionsLabel = strings.moreOptionsButtonContentDescription,
+                fillAvailableWidth = audioContent != null,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
             ) {
                 TooltipBox(
@@ -341,6 +395,7 @@ private fun OverflowToolbarLayout(
     showOverflowMenu: Boolean,
     onShowOverflowMenu: (Boolean) -> Unit,
     moreOptionsLabel: String,
+    fillAvailableWidth: Boolean,
     modifier: Modifier = Modifier,
     fixedContent: @Composable () -> Unit,
 ) {
@@ -379,7 +434,11 @@ private fun OverflowToolbarLayout(
         val overflowActions = leadingActions.drop(visibleLeading) + trailingActions.drop(visibleTrailing)
 
         val contentPlaceable = subcompose("content") {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = if (fillAvailableWidth) Modifier.fillMaxWidth() else Modifier,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = if (fillAvailableWidth) Arrangement.SpaceBetween else Arrangement.Start,
+            ) {
                 AnimatedVisibility(
                     visible = isContentVisible && visibleLeading > 0,
                     enter = fadeIn() + expandHorizontally(),
@@ -392,7 +451,9 @@ private fun OverflowToolbarLayout(
                     }
                 }
 
-                fixedContent()
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    fixedContent()
+                }
 
                 AnimatedVisibility(
                     visible = isContentVisible && (visibleTrailing > 0 || needsOverflow),
@@ -428,6 +489,7 @@ private fun OverflowToolbarLayout(
                                     }
                                 }
                                 DropdownMenu(
+                                    modifier = Modifier.exposeTestTagsAsResourceIds(),
                                     expanded = showOverflowMenu,
                                     onDismissRequest = { onShowOverflowMenu(false) },
                                     shape = MaterialTheme.shapes.large,
@@ -479,7 +541,7 @@ private fun ToolbarActionButton(
                 onCheckedChange = { action.onClick() },
                 modifier = action.testTagModifier(),
                 colors = IconButtonDefaults.filledIconToggleButtonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    containerColor = Color.Transparent,
                     contentColor = MaterialTheme.colorScheme.onSurface,
                     checkedContainerColor = MaterialTheme.colorScheme.primary,
                     checkedContentColor = MaterialTheme.colorScheme.onPrimary,
@@ -492,6 +554,7 @@ private fun ToolbarActionButton(
             }
         } else {
             IconButton(
+                enabled = action.enabled,
                 modifier = action.testTagModifier(),
                 onClick = action.onClick,
             ) {
@@ -513,6 +576,7 @@ private fun ToolbarActionMenuItem(
     DropdownMenuItem(
         modifier = action.testTagModifier(),
         text = { Text(action.label) },
+        enabled = action.enabled,
         onClick = onClick,
         leadingIcon = {
             Icon(
@@ -539,3 +603,25 @@ private fun ToolbarAction.testTagModifier(): Modifier =
 
 private fun Modifier.toolbarTooltipE2eTag(): Modifier =
     exposeTestTagsAsResourceIds().testTag(ReaderModeE2eIds.TOOLTIP)
+
+@Composable
+private fun readerToolbarShape(hasAudio: Boolean): Shape =
+    if (hasAudio) RoundedCornerShape(28.dp) else FloatingToolbarDefaults.ContainerShape
+
+private fun MutableList<ToolbarAction>.addReportAction(
+    state: ArticleReportUiState,
+    strings: FeedFlowStrings,
+    onClick: () -> Unit,
+) {
+    if (state.canReport) {
+        add(
+            ToolbarAction(
+                icon = Icons.Default.BugReport,
+                label = strings.articleReportAction,
+                testTag = ReaderModeE2eIds.REPORT_ACTION,
+                enabled = !state.sending,
+                onClick = onClick,
+            ),
+        )
+    }
+}

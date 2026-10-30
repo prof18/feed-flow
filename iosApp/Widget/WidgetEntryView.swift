@@ -22,6 +22,9 @@ struct WidgetEntryView: View {
                     .font(.headline)
                 Text(entry.widgetEmptyScreenContent)
                     .font(.caption)
+                if entry.showRefreshButton && widgetFamily != .systemSmall {
+                    refreshButton
+                }
             }
             .padding()
         } else {
@@ -46,20 +49,21 @@ struct WidgetEntryView: View {
 
     private func regularWidgetView(items: [FeedItemWidget]) -> some View {
         return VStack(alignment: .leading, spacing: Spacing.small) {
-            Text(entry.widgetTitle)
-                .font(.headline)
+            widgetHeader
                 .padding(.top, 10.0)
 
-            ForEach(items, id: \.id) { item in
-                Link(
-                    destination: URL(string: "feedflow://feed/\(item.id)") ?? URL(string: "feedflow://") ?? URL(fileURLWithPath: "")
-                ) {
-                    WidgetFeedItemView(feedItem: item, lineLimit: widgetFamily == .systemMedium ? 1 : 2)
-                }
-                .buttonStyle(PlainButtonStyle())
+            VStack(alignment: .leading, spacing: Spacing.small) {
+                ForEach(items, id: \.id) { item in
+                    Link(
+                        destination: URL(string: "feedflow://feed/\(item.id)") ?? URL(string: "feedflow://") ?? URL(fileURLWithPath: "")
+                    ) {
+                        WidgetFeedItemView(feedItem: item, lineLimit: widgetFamily == .systemMedium ? 1 : 2)
+                    }
+                    .buttonStyle(PlainButtonStyle())
 
-                if item.id != items.last?.id {
-                    Divider()
+                    if item.id != items.last?.id {
+                        Divider()
+                    }
                 }
             }
         }
@@ -73,8 +77,7 @@ struct WidgetEntryView: View {
         ]
 
         return VStack(alignment: .leading, spacing: 0) {
-            Text(entry.widgetTitle)
-                .font(.headline)
+            widgetHeader
                 .padding(.horizontal, Spacing.medium)
                 .padding(.vertical, Spacing.medium)
 
@@ -91,6 +94,27 @@ struct WidgetEntryView: View {
             }
             .padding(.horizontal, Spacing.medium)
         }
+    }
+
+    private var widgetHeader: some View {
+        HStack {
+            Text(entry.widgetTitle)
+                .font(.headline)
+            Spacer()
+            if entry.showRefreshButton {
+                refreshButton
+            }
+        }
+    }
+
+    private var refreshButton: some View {
+        // WidgetKit renders both toggle states, so loading feedback appears before the intent starts.
+        Toggle(isOn: false, intent: RefreshFeedsIntent()) {
+            Image(systemName: "arrow.clockwise")
+                .font(.subheadline)
+        }
+        .toggleStyle(WidgetRefreshButtonStyle(refreshingLabel: entry.refreshingLabel))
+        .accessibilityLabel(entry.refreshLabel)
     }
 
     private func smallWidgetFeedItemView(_ feedItem: FeedItemWidget) -> some View {

@@ -1,2 +1,6 @@
-• Proovi uut katselist lugemisvaate lahendust, et artikleid kiiremini ja täpsemalt eraldada. Aita mul seda parandada, teatades puuduvast sisust või vormindusvigadest.
-• Parandatud on pildid, manustatud sisu, lühikesed ja ainult pildiga artiklid, järjehoidjad ning Dropboxi lahtiühendamine.
+• Kuula taskuhäälingu episoode otse FeedFlow's
+• Lase artikleid lugemisrežiimis ette lugeda artikli keelele vastava häälega
+• Uued kohandatavad avaekraani vidinad valikulise värskendusnupuga
+• Uus lugemisrežiimi mootor on nüüd vaikimisi. Kui artikkel ei näe õige välja, teata sellest ühe puudutusega
+• Jälgi YouTube'i esitusloendeid ja peida kanalite Shorts-videod
+• Päringuid blokeerivate saitide vood laadivad usaldusväärsemalt ja veateated on selgemad

@@ -20,6 +20,8 @@
 	<string>VERSION_CODE</string>
 	<key>CFBundleDisplayName</key>
 	<string>Widget</string>
+	<key>FeedFlowKeychainAccessGroup</key>
+	<string>$(AppIdentifierPrefix)$(FEEDFLOW_HOST_BUNDLE_IDENTIFIER)</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>

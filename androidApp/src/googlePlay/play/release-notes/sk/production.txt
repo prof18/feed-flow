@@ -1,2 +1,6 @@
-• Vyskúšajte nový experimentálny mechanizmus režimu čítania na rýchlejšie a presnejšie získavanie článkov. Pomôžte mi ho zlepšiť nahlasovaním chýbajúceho obsahu alebo chýb formátovania.
-• Zlepšili sa obrázky, vložený obsah, krátke a obrazové články, záložky aj odpojenie Dropboxu.
+• Počúvajte epizódy podcastov priamo vo FeedFlow
+• Nechajte si čítať články nahlas v režime čítania, hlasom v jazyku článku
+• Nové prispôsobiteľné miniaplikácie na plochu s voliteľným tlačidlom obnovenia
+• Nový engine režimu čítania je teraz predvolený. Ak článok nevyzerá správne, nahláste ho jedným ťuknutím
+• Sledujte playlisty na YouTube a skryte Shorts z kanálov
+• Kanály zo stránok, ktoré blokujú požiadavky, sa načítajú spoľahlivejšie a s jasnejšími chybovými hláseniami

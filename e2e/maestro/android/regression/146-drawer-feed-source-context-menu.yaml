@@ -52,7 +52,33 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "Pin"
 - assertNotVisible: "Unpin"
 
-# Change category opens the category selector sheet
+# Save a changed category and verify the chooser closes
+- tapOn: "Change category"
+- assertVisible: "Categories"
+- tapOn: "News"
+- tapOn: "Save"
+- assertNotVisible: "Categories"
+- scrollUntilVisible:
+    element:
+      id: drawer_category_expand_e2e_category_news
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_expand_e2e_category_news
+- assertVisible:
+    id: drawer_feed_source_e2e_feed_android_weekly
+
+# Saving the current selection must also close the chooser
+- longPressOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- tapOn: "Change category"
+- assertVisible: "Categories"
+- tapOn: "Save"
+- assertNotVisible: "Categories"
+
+# Back still dismisses the chooser
+- longPressOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
 - tapOn: "Change category"
 - assertVisible: "Categories"
 - back

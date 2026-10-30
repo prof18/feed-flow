@@ -4,6 +4,7 @@ import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +47,18 @@ internal class DesktopDrawerDragState(
     private val categoryHeaderSlots = mutableStateMapOf<String, CategoryHeaderSlot>()
     private var listBoundsInWindow by mutableStateOf<Rect?>(null)
     private var autoScrollJob: Job? = null
-    private var autoScrollDelta by mutableStateOf(0f)
+    private var autoScrollDelta by mutableFloatStateOf(0f)
+    private var currentFeedSources by mutableStateOf<Map<String, FeedSource>?>(null)
+
+    fun updateFeedSources(sources: Map<String, FeedSource>) {
+        currentFeedSources = sources
+    }
+
+    fun draggedFeedSources(): List<FeedSource> {
+        val captured = (dragPayload as? DrawerDragPayload.FeedSources)?.feedSources.orEmpty()
+        val current = currentFeedSources ?: return captured
+        return captured.mapNotNull { current[it.id] }.distinctBy { it.id }
+    }
 
     fun startDrag(payload: DrawerDragPayload, positionInWindow: Offset) {
         dragPayload = payload
@@ -144,7 +156,7 @@ internal class DesktopDrawerDragState(
             }
         }
 
-        return currentMoveToCategoryDecision(payload.feedSources, position)
+        return currentMoveToCategoryDecision(draggedFeedSources(), position)
     }
 
     private fun currentFeedSourceReorderDecision(

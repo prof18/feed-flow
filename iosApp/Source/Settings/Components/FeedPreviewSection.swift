@@ -50,7 +50,8 @@ struct FeedPreviewSection: View {
                         dateString: previewDateString(dateFormat: dateFormat),
                         commentsUrl: nil,
                         isBookmarked: false,
-                        contentDirection: nil
+                        contentDirection: nil,
+                        audioUrl: nil
                     ),
                     index: 0,
                     feedFontSizes: feedFontSizes
@@ -93,6 +94,8 @@ private func previewDateString(dateFormat: DateFormat) -> String {
     switch dateFormat {
     case .normal:
         "25/12"
+    case .dayMonthDot:
+        "25.12"
     case .american:
         "12/25"
     case .iso:

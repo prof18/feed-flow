@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,11 +26,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -38,38 +43,68 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
 import com.multiplatform.webview.web.LoadingState
+import com.multiplatform.webview.web.PlatformWebViewParams
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.WebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
+import com.prof18.feedflow.android.AudioUrlOpener
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.audio.AndroidAudioPlayer
+import com.prof18.feedflow.android.audio.AudioEpisode
+import com.prof18.feedflow.android.audio.AudioPlaybackState
+import com.prof18.feedflow.android.audio.isPlayingItem
+import com.prof18.feedflow.android.audio.readerAudioDockContent
+import com.prof18.feedflow.android.feedverification.WebsiteVerificationExplanationDialog
 import com.prof18.feedflow.android.openShareSheet
+import com.prof18.feedflow.android.ui.readermode.ArticleReportDisclosure
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.core.model.AudioEnclosure
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeState
-import com.prof18.feedflow.core.model.ShownContentSource
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.shared.domain.ReaderAudioBanner
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
+import com.prof18.feedflow.shared.domain.readerCodeBlockColors
 import com.prof18.feedflow.shared.domain.readerFontFamilyJs
+import com.prof18.feedflow.shared.domain.readerFontSizeJs
 import com.prof18.feedflow.shared.domain.readerLineHeightJs
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.presentation.ReaderVerificationState
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
+import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -91,19 +126,36 @@ internal fun ReaderModeScreen(
     onNavigateToPrevious: () -> Unit,
     onNavigateToNext: () -> Unit,
     onToggleContentSource: () -> Unit,
+    verificationState: ReaderVerificationState = ReaderVerificationState(),
+    verificationAvailable: Boolean = false,
+    onVerifyWebsite: () -> Unit = {},
     isDetailFullscreen: Boolean = false,
     onToggleDetailFullscreen: (() -> Unit)? = null,
+    onOpenAudioEpisode: ((AudioEpisode) -> Unit)? = null,
 ) {
+    val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
+    val articleReportState by readerModeViewModel.articleReportState.collectAsStateWithLifecycle()
     val browserManager = koinInject<BrowserManager>()
+    val audioPlayer = koinInject<AndroidAudioPlayer>()
+    val audioState by audioPlayer.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+    val strings = LocalFeedFlowStrings.current
+    val audioUrlOpener = remember(context) { AudioUrlOpener(context::startActivity) }
+    val openAudioExternal: (String) -> Unit = { audioUrl ->
+        audioPlayer.openExternal(context, audioUrlOpener, audioUrl, strings.audioOpenFailed)
+    }
     val navigator = rememberWebViewNavigator()
-    var fullscreenImageUrl by remember { mutableStateOf<String?>(null) }
+    val showingFallbackWebsite = readerModeState.showsFallbackWebsite(verificationState)
+    var fullscreenImageUrl by rememberSaveable { mutableStateOf<String?>(null) }
     var toolbarExpanded by rememberSaveable { mutableStateOf(true) }
     var currentBodyFont by remember(bodyFont) { mutableStateOf(bodyFont) }
     var currentHeadlineFont by remember(headlineFont) { mutableStateOf(headlineFont) }
-    LaunchedEffect(bodyFont) { currentBodyFont = bodyFont }
-    LaunchedEffect(headlineFont) { currentHeadlineFont = headlineFont }
+    val toolbarHeightPx = remember { MutableStateFlow(0) }
+    var verificationDialogUrl by remember { mutableStateOf<String?>(null) }
+    SideEffect(verificationState.verificationUrl, verificationAvailable) {
+        verificationDialogUrl = verificationState.verificationUrl.takeIf { verificationAvailable }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -112,18 +164,27 @@ internal fun ReaderModeScreen(
             topBar = {
                 ReaderModeToolbar(
                     navigateBack = {
-                        if (navigator.canGoBack) {
-                            navigator.navigateBack()
-                        } else {
-                            navigateBack()
-                        }
+                        navigateReaderBack(
+                            state = readerModeState,
+                            // A pending verification replaces the fallback website, so Back leaves the reader.
+                            canGoBack = navigator.canGoBack && verificationState.verificationUrl == null,
+                            navigateHistory = navigator::navigateBack,
+                            leaveReader = navigateBack,
+                        )
                     },
                     isDetailFullscreen = isDetailFullscreen,
                     onToggleDetailFullscreen = onToggleDetailFullscreen,
                 )
             },
 
-        ) { contentPadding ->
+        ) { scaffoldPadding ->
+            val hasVerificationMessage = verificationState.hasMessage
+            var verificationMessageHeightPx by remember { mutableIntStateOf(0) }
+            val contentPadding = readerContentPadding(
+                scaffoldPadding = scaffoldPadding,
+                messageHeightPx = verificationMessageHeightPx,
+                messageVisible = hasVerificationMessage,
+            )
             Box(
                 modifier = Modifier,
             ) {
@@ -131,7 +192,7 @@ internal fun ReaderModeScreen(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .height(120.dp)
+                        .height(readerScrimHeight(audioState))
                         .zIndex(zIndex = 0.5f)
                         .background(
                             Brush.verticalGradient(
@@ -144,7 +205,7 @@ internal fun ReaderModeScreen(
                         ),
                 )
 
-                if (readerModeState !is ReaderModeState.Loading) {
+                if (readerModeState !is ReaderModeState.Loading || audioState.episode != null) {
                     ReaderModeFloatingToolbar(
                         modifier = Modifier.align(Alignment.BottomCenter)
                             .offset(y = -ScreenOffset)
@@ -153,8 +214,17 @@ internal fun ReaderModeScreen(
                                 start = 24.dp,
                                 end = 24.dp,
                                 bottom = contentPadding.calculateBottomPadding(),
-                            ),
-                        expanded = toolbarExpanded,
+                            )
+                            .onSizeChanged { toolbarHeightPx.value = it.height },
+                        expanded = toolbarExpanded || audioState.episode != null,
+                        audioContent = readerAudioDockContent(
+                            audioState,
+                            audioPlayer,
+                            openAudioExternal,
+                            onOpenEpisode = onOpenAudioEpisode.takeIf {
+                                readerModeState.getId != audioState.episode?.itemId
+                            },
+                        ),
                         readerModeState = readerModeState,
                         fontSize = fontSize,
                         openInBrowser = { url ->
@@ -180,11 +250,7 @@ internal fun ReaderModeScreen(
                             }
                         },
                         onFontSizeChange = { newFontSize ->
-                            navigator.evaluateJavaScript(
-                                """
-        document.getElementById("container").style.fontSize = "$newFontSize" + "px";
-                                """.trimIndent(),
-                            )
+                            navigator.evaluateJavaScript(readerFontSizeJs(newFontSize))
                             onUpdateFontSize(newFontSize)
                         },
                         lineHeight = lineHeight,
@@ -210,16 +276,23 @@ internal fun ReaderModeScreen(
                         },
                         onBookmarkClick = onBookmarkClick,
                         onToggleContentSource = onToggleContentSource,
+                        onListenClick = {
+                            playReaderSpeech(readerModeState, audioPlayer, strings.audioEpisodeUntitled)
+                        },
+                        isPreparingSpeech = audioPlayer.isPreparingSpeechFor(readerModeState, audioState),
+                        isSpeechPlaying = audioPlayer.isSpeechPlayingFor(readerModeState, audioState),
                         canNavigatePrevious = canNavigatePrevious,
                         canNavigateNext = canNavigateNext,
                         onNavigateToPrevious = onNavigateToPrevious,
                         onNavigateToNext = onNavigateToNext,
+                        articleReportState = articleReportState,
+                        onReportArticle = { readerModeViewModel.requestArticleReport() },
                     )
                 }
 
                 when (readerModeState) {
-                    is ReaderModeState.HtmlNotAvailable -> {
-                        if (readerModeState.url.isBlank()) {
+                    is ReaderModeState.ContentNotAvailable -> {
+                        if (!showingFallbackWebsite) {
                             ReaderContentUnavailable(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -228,6 +301,8 @@ internal fun ReaderModeScreen(
                         } else {
                             FallbackWebView(
                                 url = readerModeState.url,
+                                hasAudioPlayer = audioState.episode != null,
+                                toolbarHeightPx = toolbarHeightPx,
                                 contentPadding = contentPadding,
                                 navigator = navigator,
                             )
@@ -262,6 +337,15 @@ internal fun ReaderModeScreen(
                                     fullscreenImageUrl = imageUrl
                                 }
                             },
+                            onOpenAudio = openAudioExternal,
+                            isAudioPlaying = audioState.isPlayingItem(readerModeState.readerModeData.id.id),
+                            toolbarHeightPx = toolbarHeightPx,
+                            onPlayAudio = {
+                                audioPlayer.playReaderEpisode(
+                                    readerModeState.readerModeData,
+                                    strings.audioEpisodeUntitled,
+                                )
+                            },
                             contentPadding = contentPadding,
                             navigator = navigator,
                             themeMode = themeMode,
@@ -273,9 +357,36 @@ internal fun ReaderModeScreen(
                         )
                     }
                 }
+                if (hasVerificationMessage) {
+                    ReaderVerificationMessage(
+                        verificationFailed = !verificationState.saveFailed,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = scaffoldPadding.calculateTopPadding())
+                            .onSizeChanged { verificationMessageHeightPx = it.height },
+                    )
+                }
             }
+
+            val measuredToolbarHeightPx by toolbarHeightPx.collectAsStateWithLifecycle()
+            ArticleReportDisclosure(
+                state = articleReportState,
+                onConfirm = { readerModeViewModel.confirmArticleReport() },
+                onCancel = { readerModeViewModel.cancelArticleReport() },
+                onDismissMessage = { readerModeViewModel.dismissArticleReportMessage() },
+                messageBottomPadding = (measuredToolbarHeightPx / LocalDensity.current.density).dp +
+                    contentPadding.calculateBottomPadding() + ScreenOffset,
+            )
         }
 
+        ReaderVerificationExplanation(
+            url = verificationDialogUrl,
+            onDismiss = { verificationDialogUrl = null },
+            onConfirm = {
+                verificationDialogUrl = null
+                onVerifyWebsite()
+            },
+        )
         fullscreenImageUrl?.let { imageUrl ->
             FullScreenImageOverlay(
                 imageUrl = imageUrl,
@@ -284,6 +395,57 @@ internal fun ReaderModeScreen(
         }
     }
 }
+
+/** Keeps every scaffold inset and adds the height of the verification or save message above the content. */
+@Composable
+@ReadOnlyComposable
+private fun readerContentPadding(
+    scaffoldPadding: PaddingValues,
+    messageHeightPx: Int,
+    messageVisible: Boolean,
+): PaddingValues {
+    val layoutDirection = LocalLayoutDirection.current
+    val messageHeight = if (messageVisible) with(LocalDensity.current) { messageHeightPx.toDp() } else 0.dp
+    return PaddingValues(
+        start = scaffoldPadding.calculateStartPadding(layoutDirection),
+        end = scaffoldPadding.calculateEndPadding(layoutDirection),
+        top = scaffoldPadding.calculateTopPadding() + messageHeight,
+        bottom = scaffoldPadding.calculateBottomPadding(),
+    )
+}
+
+private fun playReaderSpeech(
+    state: ReaderModeState,
+    player: AndroidAudioPlayer,
+    untitledTitle: String,
+) {
+    val article = (state as? ReaderModeState.Success)?.readerModeData ?: return
+    player.playReaderSpeech(article, untitledTitle)
+}
+
+private fun AndroidAudioPlayer.isSpeechFor(state: ReaderModeState): Boolean =
+    (state as? ReaderModeState.Success)?.readerModeData?.let(::isSpeechFor) == true
+
+private fun AndroidAudioPlayer.isPreparingSpeechFor(state: ReaderModeState, playback: AudioPlaybackState): Boolean =
+    playback.isPreparingSpeech && isSpeechFor(state)
+
+private fun AndroidAudioPlayer.isSpeechPlayingFor(state: ReaderModeState, playback: AudioPlaybackState): Boolean =
+    playback.isPlaying && isSpeechFor(state)
+
+@Composable
+private fun ReaderVerificationExplanation(url: String?, onDismiss: () -> Unit, onConfirm: () -> Unit) {
+    url?.let {
+        WebsiteVerificationExplanationDialog(
+            websiteUrl = it,
+            onDismiss = onDismiss,
+            onConfirm = onConfirm,
+            readerOptionsHint = LocalFeedFlowStrings.current.readerVerificationContentOptions,
+        )
+    }
+}
+
+private fun ReaderModeState.showsFallbackWebsite(verificationState: ReaderVerificationState): Boolean =
+    this is ReaderModeState.ContentNotAvailable && url.isNotBlank() && verificationState.verificationUrl == null
 
 @Composable
 private fun ReaderContentUnavailable(modifier: Modifier = Modifier) {
@@ -311,16 +473,25 @@ private fun ReaderContentUnavailable(modifier: Modifier = Modifier) {
 @Composable
 private fun FallbackWebView(
     url: String,
+    hasAudioPlayer: Boolean,
+    toolbarHeightPx: StateFlow<Int>,
     contentPadding: PaddingValues,
     navigator: WebViewNavigator,
 ) {
     val state = rememberWebViewState(url)
+    val measuredToolbarHeightPx by toolbarHeightPx.collectAsStateWithLifecycle()
+    val density = LocalDensity.current
+    val dockInset = if (hasAudioPlayer) {
+        with(density) { measuredToolbarHeightPx.toDp() } + ScreenOffset + READER_DOCK_BOTTOM_GAP
+    } else {
+        0.dp
+    }
     var showPageLoader by remember { mutableStateOf(true) }
 
-    LaunchedEffect(url) {
+    SideEffect(url) {
         showPageLoader = true
     }
-    LaunchedEffect(state.loadingState) {
+    SideEffect(state.loadingState) {
         showPageLoader = state.loadingState !is LoadingState.Finished
     }
 
@@ -330,9 +501,10 @@ private fun FallbackWebView(
             .padding(contentPadding),
     ) {
         WebView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(bottom = dockInset),
             state = state,
             navigator = navigator,
+            platformWebViewParams = PlatformWebViewParams(chromeClient = rememberFullscreenVideoChromeClient()),
         )
 
         if (showPageLoader) {
@@ -358,6 +530,10 @@ private fun ReaderMode(
     themeMode: ThemeMode,
     openInBrowser: (String) -> Unit,
     onImageClick: (String) -> Unit,
+    onOpenAudio: (String) -> Unit,
+    onPlayAudio: () -> Unit,
+    isAudioPlaying: Boolean,
+    toolbarHeightPx: StateFlow<Int>,
     contentPadding: PaddingValues,
     navigator: WebViewNavigator,
     onExpandToolbar: () -> Unit,
@@ -378,25 +554,19 @@ private fun ReaderMode(
             }
         }
     }
-    val backgroundColor = if (isDarkMode) {
-        "#1e1e1e"
-    } else {
-        "#f6f8fa"
-    }
-    val borderColor = if (isDarkMode) {
-        "#444444"
-    } else {
-        "#d1d9e0"
-    }
+    val codeBlockColors = readerCodeBlockColors(isDarkMode)
 
     val colors = ReaderColors(
         textColor = "#$bodyColor",
         linkColor = "#$linkColor",
-        backgroundColor = backgroundColor,
-        borderColor = borderColor,
+        backgroundColor = codeBlockColors.backgroundColor,
+        borderColor = codeBlockColors.borderColor,
     )
 
     val latestOpenInBrowser by rememberUpdatedState(openInBrowser)
+    val latestOpenAudio by rememberUpdatedState(onOpenAudio)
+    val latestPlayAudio by rememberUpdatedState(onPlayAudio)
+    val latestAudioUrl by rememberUpdatedState(readerModeState.readerModeData.audioUrl)
     val latestOpenImage by rememberUpdatedState(onImageClick)
     val latestExpand by rememberUpdatedState(onExpandToolbar)
     val latestCollapse by rememberUpdatedState(onCollapseToolbar)
@@ -404,38 +574,55 @@ private fun ReaderMode(
     @Suppress("MagicNumber")
     val spacerHeightDp = (contentPadding.calculateTopPadding().value - 40f).toInt().coerceAtLeast(0)
 
+    val strings = LocalFeedFlowStrings.current
     // Key HTML on document identity + chrome colors only. Font size, line height, and
     // font families are applied live via JS so the WebView does not full-reload (and lose
     // scroll) when the reader text sheet changes — matching iOS contentId behavior.
-    val feedTitle = readerModeState.readerModeData.title.takeIf {
-        readerModeState.readerModeData.shownContentSource == ShownContentSource.FEED
-    }
     val content = remember(
         readerModeState.readerModeData.id,
         readerModeState.readerModeData.content,
         readerModeState.readerModeData.shownContentSource,
         readerModeState.readerModeData.imageUrl,
         readerModeState.readerModeData.siteName,
-        feedTitle,
+        readerModeState.readerModeData.title,
+        readerModeState.readerModeData.languageTag,
+        readerModeState.readerModeData.audioUrl,
+        readerModeState.readerModeData.audioImageUrl,
         colors,
         spacerHeightDp,
+        strings,
     ) {
         getReaderModeStyledHtml(
             colors = colors,
             content = readerModeState.readerModeData.content,
             fontSize = fontSize,
             lineHeight = lineHeight,
-            title = feedTitle,
+            title = readerModeState.readerModeData.title,
             imageUrl = readerModeState.readerModeData.imageUrl,
             leadingContent = "<div id=\"__feedflow_top_spacer\" style=\"height: ${spacerHeightDp}px;\"></div>",
             siteName = readerModeState.readerModeData.siteName,
+            languageTag = readerModeState.readerModeData.languageTag,
+            audioBanner = AudioEnclosure.validatedUrl(readerModeState.readerModeData.audioUrl)?.let {
+                ReaderAudioBanner(
+                    title = readerModeState.readerModeData.title,
+                    audioLabel = strings.audioEpisodeLabel,
+                    openAudioLabel = strings.audioOpenExternal,
+                    enablePlayback = true,
+                    subtitle = readerModeState.readerModeData.siteName,
+                    imageUrl = readerModeState.readerModeData.audioImageUrl,
+                    playAudioLabel = strings.audioPlay,
+                    pauseAudioLabel = strings.audioPause,
+                    untitledAudioLabel = strings.audioEpisodeUntitled,
+                )
+            },
             bodyFont = bodyFont,
             headlineFont = headlineFont,
         )
     }
 
     val jsBridge = rememberWebViewJsBridge()
-    LaunchedEffect(jsBridge) {
+    val bridgeScope = rememberCoroutineScope()
+    SideEffect(jsBridge) {
         jsBridge.register(
             object : IJsMessageHandler {
                 override fun handle(
@@ -443,8 +630,14 @@ private fun ReaderMode(
                     navigator: WebViewNavigator?,
                     callback: (String) -> Unit,
                 ) {
-                    if (message.params.isNotBlank()) {
-                        latestOpenInBrowser(message.params)
+                    bridgeScope.launch(Dispatchers.Main.immediate) {
+                        if (message.params == AudioEnclosure.PLAY_ACTION_URL) {
+                            latestPlayAudio()
+                        } else if (message.params == AudioEnclosure.ACTION_URL) {
+                            AudioEnclosure.validatedUrl(latestAudioUrl)?.let(latestOpenAudio)
+                        } else if (message.params.isNotBlank()) {
+                            latestOpenInBrowser(message.params)
+                        }
                     }
                 }
 
@@ -458,9 +651,11 @@ private fun ReaderMode(
                     navigator: WebViewNavigator?,
                     callback: (String) -> Unit,
                 ) {
-                    val imageUrl = message.params
-                    if (imageUrl.isNotBlank() && isValidImageUrl(imageUrl)) {
-                        latestOpenImage(imageUrl)
+                    bridgeScope.launch(Dispatchers.Main.immediate) {
+                        val imageUrl = message.params
+                        if (imageUrl.isNotBlank() && isValidImageUrl(imageUrl)) {
+                            latestOpenImage(imageUrl)
+                        }
                     }
                 }
 
@@ -474,7 +669,24 @@ private fun ReaderMode(
         baseUrl = readerModeState.readerModeData.baseUrl,
     )
 
+    SideEffect(isAudioPlaying, state.loadingState) {
+        if (state.loadingState is LoadingState.Finished) {
+            navigator.evaluateJavaScript("window.feedflowUpdateAudioState?.($isAudioPlaying);")
+        }
+    }
+
     val density = LocalDensity.current
+    val bottomSafeArea = contentPadding.calculateBottomPadding()
+    LaunchedEffect(toolbarHeightPx, density, bottomSafeArea, state.loadingState) {
+        if (state.loadingState is LoadingState.Finished) {
+            toolbarHeightPx
+                .map { height -> readerBottomInsetCssPx(height, density, bottomSafeArea) }
+                .distinctUntilChanged()
+                .collect { inset ->
+                    navigator.evaluateJavaScript("document.body.style.paddingBottom = '${inset}px';")
+                }
+        }
+    }
     val thresholdPx = with(density) { 6.dp.toPx() }
 
     var scrollY by remember { mutableIntStateOf(0) }
@@ -492,6 +704,9 @@ private fun ReaderMode(
             state = state,
             navigator = navigator,
             webViewJsBridge = jsBridge,
+            // Replacing reader HTML must not turn Back into browser-history navigation.
+            captureBackPresses = false,
+            platformWebViewParams = PlatformWebViewParams(chromeClient = rememberFullscreenVideoChromeClient()),
             onCreated = { webView ->
                 CookieManager.getInstance().setAcceptCookie(true)
                 CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
@@ -577,4 +792,31 @@ private fun isValidImageUrl(url: String): Boolean {
         url.contains("0.0.0.0") ||
         url.contains("::1")
     return isHttpUrl && !isLocalhost
+}
+
+private fun readerScrimHeight(state: AudioPlaybackState) = if (state.episode == null) 120.dp else 280.dp
+
+private fun readerBottomInsetCssPx(toolbarHeightPx: Int, density: Density, bottomSafeArea: Dp): Int {
+    val toolbarHeightDp = with(density) { toolbarHeightPx.toDp() }
+    return maxOf(
+        DEFAULT_READER_BOTTOM_PADDING_CSS_PX,
+        (toolbarHeightDp + bottomSafeArea + ScreenOffset + READER_DOCK_BOTTOM_GAP).value.roundToInt(),
+    )
+}
+
+private const val DEFAULT_READER_BOTTOM_PADDING_CSS_PX = 112
+private val READER_DOCK_BOTTOM_GAP = 16.dp
+
+private val ReaderVerificationState.hasMessage: Boolean get() = saveFailed || failed
+
+@Composable
+private fun ReaderVerificationMessage(verificationFailed: Boolean, modifier: Modifier = Modifier) {
+    val strings = LocalFeedFlowStrings.current
+    Text(
+        text = if (verificationFailed) strings.feedVerificationFailed else strings.readerContentSaveFailed,
+        modifier = modifier
+            .semantics { liveRegion = LiveRegionMode.Polite }
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 16.dp),
+    )
 }

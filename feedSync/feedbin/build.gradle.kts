@@ -58,6 +58,8 @@ kotlin {
             dependencies {
                 implementation(project(":core"))
                 implementation(kotlin("test"))
+                implementation(libs.multiplatform.settings.test)
+                implementation(libs.ktor.client.mock)
             }
         }
     }

@@ -5,17 +5,35 @@ import SwiftUI
 struct ContentView: View {
     @Environment(AppState.self)
     private var appState
+    @Environment(AudioPlaybackController.self)
+    private var audioPlayback
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(\.openURL)
+    private var openURL
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass: UserInterfaceSizeClass?
+    @Environment(\.requestReview)
+    private var requestReview
 
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
     @StateObject private var reviewVmStoreOwner = VMStoreOwner<ReviewViewModel>(Deps.shared.getReviewViewModel())
     @StateObject private var readerModeVmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
-        Deps.shared.getReaderModeViewModel())
+        Deps.shared.getReaderModeViewModel()
+    )
+    @StateObject private var refreshVerificationVmStoreOwner = VMStoreOwner<FeedRefreshVerificationViewModel>(
+        Deps.shared.getFeedRefreshVerificationViewModel()
+    )
 
+    @State private var notificationLinks = NotificationDeepLinkStore.shared
     @State private var hasTriggeredLaunch = false
+    @State private var openingAudioEpisode = false
+    @State private var isAppForeground = false
+    @State private var wasInBackground = true
+    @State private var visibleWebsiteVerificationRequest: WebsiteVerificationRequest?
+    @State private var pendingForegroundVerification: PendingFeedVerification?
+    @State private var foregroundVerificationExplanationURL: String?
+    private let isWebsiteVerificationAvailable = Deps.shared.getFeedRecoveryCoordinator().available
 
     @State private var selectedSidebarItem: SidebarSelection? = .timeline
     @State private var navDrawerState: NavDrawerState = .init(
@@ -31,37 +49,59 @@ struct ContentView: View {
     @State private var pendingNotificationSelection: NotificationSelectionTarget?
 
     var body: some View {
-        @Bindable var appState = appState
-        let effectiveSizeClass = appState.sizeClass ?? horizontalSizeClass
-
-        Group {
-            if effectiveSizeClass == .compact {
-                CompactView(
-                    selectedSidebarItem: $selectedSidebarItem,
-                    homeViewModel: vmStoreOwner.instance,
-                    readerModeViewModel: readerModeVmStoreOwner.instance
+        RegularView(
+            selectedSidebarItem: $selectedSidebarItem,
+            homeViewModel: vmStoreOwner.instance,
+            readerModeViewModel: readerModeVmStoreOwner.instance,
+            onOpenAudioEpisode: openAudioEpisode
+        )
+        .websiteVerificationExplanation(
+            url: foregroundVerificationExplanationURL,
+            identity: foregroundVerificationIdentity,
+            onCancel: {
+                guard let pendingForegroundVerification else { return }
+                refreshVerificationVmStoreOwner.instance.dismiss(pending: pendingForegroundVerification)
+            },
+            onConfirm: {
+                guard let pendingForegroundVerification else { return }
+                refreshVerificationVmStoreOwner.instance.verify(pending: pendingForegroundVerification)
+            }
+        )
+        .onChange(of: scenePhase, initial: true) { _, newPhase in
+            isAppForeground = newPhase == .active
+            switch newPhase {
+            case .active:
+                if wasInBackground {
+                    wasInBackground = false
+                    refreshVerificationVmStoreOwner.instance.onForeground()
+                }
+                updateForegroundVerificationExplanation()
+                WebsiteVerificationPresenter.shared.update(
+                    sessionID: visibleWebsiteVerificationRequest?.sessionId
                 )
-            } else {
-                RegularView(
-                    selectedSidebarItem: $selectedSidebarItem,
-                    homeViewModel: vmStoreOwner.instance,
-                    readerModeViewModel: readerModeVmStoreOwner.instance
-                )
+            case .background:
+                wasInBackground = true
+                foregroundVerificationExplanationURL = nil
+                visibleWebsiteVerificationRequest = nil
+                guard !WebsiteVerificationPresenter.shared.hasForegroundActiveScene else { break }
+                WebsiteVerificationPresenter.shared.update(sessionID: nil)
+                refreshVerificationVmStoreOwner.instance.cancel()
+                Task {
+                    try? await Deps.shared.getFeedRecoveryCoordinator().cancelAll()
+                }
+            default:
+                break
             }
         }
         .onAppear {
-            if appState.sizeClass == nil {
-                appState.sizeClass = horizontalSizeClass
-            }
             let savedThemeMode = vmStoreOwner.instance.getCurrentThemeMode()
             appState.updateTheme(savedThemeMode)
-        }
-        .onChange(of: horizontalSizeClass) {
-            synchronizeSizeClassIfActive()
+            consumePendingNotificationLinkIfActive()
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
             case .active:
+                consumePendingNotificationLinkIfActive()
                 if !hasTriggeredLaunch {
                     hasTriggeredLaunch = true
                     vmStoreOwner.instance.onAppLaunch()
@@ -70,21 +110,45 @@ struct ContentView: View {
                 break
             }
         }
-        .task(id: scenePhase) {
-            guard scenePhase == .active else { return }
-            await Task.yield()
-            synchronizeSizeClassIfActive()
-        }
         .task {
             for await state in reviewVmStoreOwner.instance.canShowReviewDialog {
                 let showReview = state as? Bool ?? false
                 if showReview {
-                    guard let currentScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
-                        return
-                    }
-                    AppStore.requestReview(in: currentScene)
+                    requestReview()
                     reviewVmStoreOwner.instance.onReviewShown()
                 }
+            }
+        }
+        .task {
+            for await request in Deps.shared.getFeedRecoveryCoordinator().visibleState {
+                visibleWebsiteVerificationRequest = request
+                guard isAppForeground else { continue }
+                WebsiteVerificationPresenter.shared.update(sessionID: request?.sessionId)
+            }
+        }
+        .task {
+            for await failure in Deps.shared.getFeedRecoveryCoordinator().failures {
+                appState.snackbarQueue.append(
+                    SnackbarData(title: Self.message(for: failure), subtitle: nil, showBanner: true)
+                )
+            }
+        }
+        .task {
+            for await pending in refreshVerificationVmStoreOwner.instance.pending {
+                pendingForegroundVerification = pending.first
+                updateForegroundVerificationExplanation()
+            }
+        }
+        .task {
+            var previousEpoch: String?
+            for await epoch in Deps.shared.getFeedRecoveryRepository().accountEpochState {
+                if let previousEpoch, previousEpoch != epoch {
+                    refreshVerificationVmStoreOwner.instance.cancel()
+                    pendingForegroundVerification = nil
+                    foregroundVerificationExplanationURL = nil
+                    try? await Deps.shared.getFeedRecoveryCoordinator().cancelAll()
+                }
+                previousEpoch = epoch
             }
         }
         .task {
@@ -96,11 +160,8 @@ struct ContentView: View {
                 }
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { notification in
-            guard let urlString = notification.userInfo?["url"] as? String,
-                  let url = URL(string: urlString),
-                  url.scheme == "feedflow" else { return }
-            handleFeedFlowNotificationURL(url)
+        .onChange(of: notificationLinks.pendingURL) {
+            consumePendingNotificationLinkIfActive()
         }
         #if DEBUG
             .overlay(alignment: .bottom) {
@@ -111,6 +172,9 @@ struct ContentView: View {
                         .padding(.vertical, 10)
                         .background(.regularMaterial, in: Capsule())
                         .padding(.bottom, 18)
+                        .onTapGesture {
+                            appState.e2eSeedMessage = nil
+                        }
                         .accessibilityIdentifier(
                             e2eSeedMessage == "E2E seed complete" ? "e2e_seed_complete" : "e2e_seed_error"
                         )
@@ -118,12 +182,54 @@ struct ContentView: View {
             }
         #endif
     }
+}
+
+private extension ContentView {
+    private func updateForegroundVerificationExplanation() {
+        guard isAppForeground else { return }
+        guard isWebsiteVerificationAvailable,
+              let pendingForegroundVerification
+        else {
+            foregroundVerificationExplanationURL = nil
+            return
+        }
+        foregroundVerificationExplanationURL = pendingForegroundVerification.record.effectiveUrl
+    }
+
+    private var foregroundVerificationIdentity: String? {
+        guard let record = pendingForegroundVerification?.record else { return nil }
+        return [record.accountEpoch, record.sourceId, record.subscriptionUrl, record.effectiveUrl]
+            .joined(separator: "|")
+    }
+
+    private static func message(for failure: VerificationFailure) -> String {
+        switch failure {
+        case .saveFailed:
+            feedFlowStrings.feedVerificationSaveFailed
+        case .browserStopped:
+            feedFlowStrings.feedVerificationBrowserFailed
+        case .unsupported:
+            feedFlowStrings.feedVerificationUnsupported
+        default:
+            feedFlowStrings.feedVerificationFailed
+        }
+    }
+
+    private func consumePendingNotificationLinkIfActive() {
+        guard scenePhase == .active, let url = notificationLinks.consume() else { return }
+        handleFeedFlowNotificationURL(url)
+    }
 
     private func handleFeedFlowNotificationURL(_ url: URL) {
         let host = url.host ?? ""
         let pathComponents = url.pathComponents.filter { $0 != "/" }
 
         switch host {
+        case "feed":
+            if let itemId = pathComponents.first {
+                showFeedScreen()
+                appState.navigate(route: CommonViewRoute.deepLinkFeed(itemId))
+            }
         case "feedsourcefilter":
             if let feedSourceId = pathComponents.first {
                 showFeedScreen()
@@ -145,34 +251,47 @@ struct ContentView: View {
         }
     }
 
-    private func showFeedScreen() {
-        appState.currentCommonRoute = nil
-        appState.regularNavigationPath = NavigationPath()
-        appState.compactNavigationPath = NavigationPath()
-        appState.compactNavigationPath.append(CompactViewRoute.feed)
-    }
-
-    private func synchronizeSizeClassIfActive() {
-        // Replacing the navigation root while iPadOS detaches the scene can move one navigation item between bars.
-        guard scenePhase == .active, horizontalSizeClass != appState.sizeClass else { return }
-        preserveVisibleRoute(from: appState.sizeClass, to: horizontalSizeClass)
-        appState.sizeClass = horizontalSizeClass
-    }
-
-    private func preserveVisibleRoute(
-        from oldSizeClass: UserInterfaceSizeClass?,
-        to newSizeClass: UserInterfaceSizeClass?
-    ) {
-        guard let currentCommonRoute = appState.currentCommonRoute else { return }
-
-        if oldSizeClass == .compact, newSizeClass != .compact {
-            appState.regularNavigationPath = NavigationPath()
-            appState.regularNavigationPath.append(currentCommonRoute)
-        } else if oldSizeClass != .compact, newSizeClass == .compact {
-            appState.compactNavigationPath = NavigationPath()
-            appState.compactNavigationPath.append(CompactViewRoute.feed)
-            appState.compactNavigationPath.append(currentCommonRoute)
+    private func openAudioEpisode(_ episode: AudioEpisode) {
+        guard !openingAudioEpisode else { return }
+        openingAudioEpisode = true
+        Task { @MainActor in
+            defer { openingAudioEpisode = false }
+            do {
+                let info = try await readerModeVmStoreOwner.instance.getAudioEpisodeReaderInfo(
+                    feedItemId: FeedItemId(id: episode.itemId)
+                )
+                guard audioPlayback.episode?.itemId == episode.itemId else { return }
+                guard let info else {
+                    appState.emitGenericError()
+                    return
+                }
+                let openMode = browserSelector.resolvedOpenMode(for: info)
+                switch openMode {
+                case .fullArticle, .feedContent:
+                    readerModeVmStoreOwner.instance.loadReaderContent(urlInfo: info)
+                    appState.navigate(route: CommonViewRoute.readerMode)
+                default:
+                    guard let url = URL(string: info.url) else {
+                        appState.emitGenericError()
+                        return
+                    }
+                    if openMode == .internalBrowser || browserSelector.openInAppBrowser(),
+                       browserSelector.isValidForInAppBrowser(url) {
+                        appState.openInAppBrowser(url: url)
+                    } else {
+                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: info.url))
+                    }
+                }
+            } catch is CancellationError {
+                return
+            } catch {
+                appState.emitGenericError()
+            }
         }
+    }
+
+    private func showFeedScreen() {
+        appState.regularNavigationPath = NavigationPath()
     }
 
     private func sidebarSelection(for target: NotificationSelectionTarget) -> SidebarSelection {

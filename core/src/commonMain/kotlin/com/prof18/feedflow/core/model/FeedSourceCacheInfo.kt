@@ -7,4 +7,5 @@ data class FeedSourceCacheInfo(
     val validatorsTimestamp: Long?,
     val nextFetchTimestamp: Long?,
     val backoffTimestamp: Long?,
+    val userAgentTier: FeedFetchTier? = null,
 )

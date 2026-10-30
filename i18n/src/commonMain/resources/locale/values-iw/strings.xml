@@ -63,7 +63,6 @@
     <string name="settings_toggle_show_read_articles">הצג מאמרים שנקראו על ציר הזמן</string>
     <string name="empty_screen_back_to_timeline">חזרה לציר הזמן</string>
     <string name="in_app_browser">דפדפן בתוך האפליקציה</string>
-    <string name="settings_reader_mode">פתח מאמרים על מצב קריאה</string>
     <string name="search_no_data">אין התאמות עבור %s.</string>
     <string name="search_placeholder">מחפש…</string>
     <string name="settings_title_feed">פיד</string>

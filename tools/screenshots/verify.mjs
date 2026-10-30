@@ -68,6 +68,7 @@ async function measure(page, port, locale, CANVAS_W) {
         bottom: n(
           s.getBoundingClientRect().bottom - dev.getBoundingClientRect().bottom
         ),
+        minBottom: n(s.dataset.minbottom),
         overflow: s.dataset.overflow === 'true',
       });
     }
@@ -140,7 +141,9 @@ for (const [id, platform] of Object.entries(PLATFORMS)) {
         problems.push(`${r.id} headline right margin ${r.headR} < left ${r.textL}`);
       if (r.subR < r.textL - TOLERANCE)
         problems.push(`${r.id} sub right margin ${r.subR} < left ${r.textL}`);
-      const floor = platform.rhythm?.minBottom ?? 40;
+      // A screen that deliberately bleeds off the bottom carries its own
+      // negative minBottom; everything else uses the platform floor.
+      const floor = r.minBottom ?? platform.rhythm?.minBottom ?? 40;
       if (r.bottom < floor - TOLERANCE)
         problems.push(`${r.id} bottom margin ${r.bottom} < ${floor}`);
     }

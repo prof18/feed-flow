@@ -19,6 +19,14 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.settings.SettingsE2eIds
+import com.prof18.feedflow.android.ui.readermode.SliderWithPlusMinus
+import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
+import com.prof18.feedflow.android.ui.settings.FeedItemPreview
+import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
+import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
+import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFontSizes
@@ -29,14 +37,6 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
-import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
-import com.prof18.feedflow.shared.ui.settings.CompactSettingDropdownRow
-import com.prof18.feedflow.shared.ui.settings.FeedItemPreview
-import com.prof18.feedflow.shared.ui.settings.SettingDropdownOption
-import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -223,6 +223,7 @@ internal fun FeedListSettingsScreenContent(
                         currentValue = state.dateFormat,
                         options = persistentListOf(
                             SettingDropdownOption(DateFormat.NORMAL, strings.dateFormatNormal),
+                            SettingDropdownOption(DateFormat.DAY_MONTH_DOT, strings.dateFormatDayMonthDot),
                             SettingDropdownOption(DateFormat.AMERICAN, strings.dateFormatAmerican),
                             SettingDropdownOption(DateFormat.ISO, strings.dateFormatIso),
                         ),

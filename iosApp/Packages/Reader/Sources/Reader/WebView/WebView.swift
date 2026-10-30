@@ -5,6 +5,7 @@ import WebKit
 struct WebView: UIViewRepresentable {
     var content: WebContent
     var onEvent: ((WebViewEvent) -> Void)?
+    var topInset: CGFloat = 0
 
     func makeUIView(context _: Context) -> WebViewContainer {
         return WebViewContainer()
@@ -14,6 +15,7 @@ struct WebView: UIViewRepresentable {
         guard let webview = content.view as? WKWebView else { return }
         uiView.contentView = webview
         uiView.onEvent = onEvent
+        uiView.topInset = topInset
     }
 }
 
@@ -44,6 +46,15 @@ class WebViewContainer: UIView {
 
     private var webviewSubs = Set<NSKeyValueObservation>()
 
+    /// Space for the floating bars: the web view runs beneath them and its scroll view starts the
+    /// content below, since a hosted WKWebView does not pick up the SwiftUI safe area by itself.
+    var topInset: CGFloat = 0 {
+        didSet(old) {
+            guard topInset != old else { return }
+            applyTopInset(previous: old)
+        }
+    }
+
     var contentView: WKWebView? {
         didSet(old) {
             guard contentView != old else { return }
@@ -52,6 +63,7 @@ class WebViewContainer: UIView {
 
             if let view = contentView {
                 addSubview(view)
+                applyTopInset(previous: view.scrollView.contentInset.top)
                 webviewSubs.insert(
                     view.scrollView.observe(\.contentOffset, options: [.new]) { [weak self] scrollView, _ in
                         self?.onEvent?(.scrollPositionChanged(scrollView.info))
@@ -65,6 +77,16 @@ class WebViewContainer: UIView {
                     }
                 )
             }
+        }
+    }
+
+    private func applyTopInset(previous: CGFloat) {
+        guard let scrollView = contentView?.scrollView else { return }
+        let wasAtTop = scrollView.contentOffset.y <= -previous
+        scrollView.contentInset.top = topInset
+        scrollView.verticalScrollIndicatorInsets.top = topInset
+        if wasAtTop {
+            scrollView.contentOffset.y = -topInset
         }
     }
 

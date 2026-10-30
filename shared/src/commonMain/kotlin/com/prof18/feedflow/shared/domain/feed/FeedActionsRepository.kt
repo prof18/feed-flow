@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.model.canOpenWebReaderMode
 import com.prof18.feedflow.core.model.isSuccess
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.database.DatabaseHelper
@@ -13,7 +14,8 @@ import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
-import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentFetcher
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.SyncError
@@ -29,7 +31,8 @@ internal class FeedActionsRepository(
     private val accountsRepository: AccountsRepository,
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
     private val feedStateRepository: FeedStateRepository,
-    private val feedItemParserWorker: FeedItemParserWorker,
+    private val readerContentFetcher: ReaderContentFetcher,
+    private val feedItemContentFileHandler: FeedItemContentFileHandler,
 ) {
     suspend fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
         feedStateRepository.markAsRead(itemsToUpdates)
@@ -332,10 +335,10 @@ internal class FeedActionsRepository(
             }
         }
 
-        if (isBookmarked) {
+        if (isBookmarked && !feedItemContentFileHandler.isContentAvailable(feedItemId.id)) {
             val urlInfo = databaseHelper.getFeedItemUrlInfo(feedItemId.id)
-            if (urlInfo != null) {
-                feedItemParserWorker.parse(urlInfo.id, urlInfo.url, urlInfo.imageUrl)
+            if (urlInfo != null && urlInfo.canOpenWebReaderMode()) {
+                readerContentFetcher.fetch(urlInfo.id, urlInfo.url, save = true)
             }
         }
     }

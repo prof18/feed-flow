@@ -18,7 +18,9 @@ final class FeedConditionalGetURLProtocol: URLProtocol {
     private static let handledKey = "FeedConditionalGetHandled"
     private var sessionTask: URLSessionDataTask?
 
-    private static let session: URLSession = {
+    /// Replaced in tests; the system creates protocol instances, so they can't be injected per request.
+    static var cacheStore: () -> FeedHttpCacheStore = { Deps.shared.getFeedHttpCacheStore() }
+    static var session: URLSession = {
         let configuration = URLSessionConfiguration.default
         configuration.urlCache = nil
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -49,7 +51,7 @@ final class FeedConditionalGetURLProtocol: URLProtocol {
 
         URLProtocol.setProperty(true, forKey: Self.handledKey, in: mutableRequest)
 
-        let store = Deps.shared.getFeedHttpCacheStore()
+        let store = Self.cacheStore()
         if let validators = store.validatorsFor(url: url) {
             if let etag = validators.etag {
                 mutableRequest.setValue(etag, forHTTPHeaderField: "If-None-Match")
@@ -78,6 +80,10 @@ final class FeedConditionalGetURLProtocol: URLProtocol {
                     date: httpResponse.value(forHTTPHeaderField: "Date"),
                     retryAfter: httpResponse.value(forHTTPHeaderField: "Retry-After")
                 )
+                if httpResponse.value(forHTTPHeaderField: "cf-mitigated")?
+                    .trimmingCharacters(in: .whitespaces) == "challenge" {
+                    store.markChallenge(url: url, effectiveUrl: httpResponse.url?.absoluteString ?? url)
+                }
                 self.client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .notAllowed)
             } else if let response {
                 self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)

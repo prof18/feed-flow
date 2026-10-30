@@ -3,10 +3,12 @@ package com.prof18.feedflow.desktop.home.menubar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.MenuBarScope
 import com.prof18.feedflow.core.utils.FeatureFlags
+import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
+import com.prof18.feedflow.core.utils.Websites.TRANSLATION_WEBSITE
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isLinux
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.utils.openDesktopUriSafely
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun MenuBarScope.HelpMenu(
@@ -26,6 +28,18 @@ internal fun MenuBarScope.HelpMenu(
         Item(
             text = LocalFeedFlowStrings.current.reportIssueButton,
             onClick = callbacks.onBugReportClick,
+        )
+
+        Separator()
+
+        Item(
+            text = LocalFeedFlowStrings.current.openWebsiteButton,
+            onClick = { openDesktopUriSafely(FEED_FLOW_WEBSITE) },
+        )
+
+        Item(
+            text = LocalFeedFlowStrings.current.aboutMenuContributeTranslations,
+            onClick = { openDesktopUriSafely(TRANSLATION_WEBSITE) },
         )
 
         if (getDesktopOS().isLinux()) {

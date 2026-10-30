@@ -19,6 +19,7 @@ jobs:
         uses: ./.github/actions/setup-gradle
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+          desktop-toolchain: 'true'
 
       - name: Refresh translations
         run: bash .scripts/refresh-translations.sh
@@ -47,16 +48,28 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
+      - name: Test helper scripts
+        run: python3 -m unittest discover -s .scripts/tests -p 'test_*.py'
+
       - name: Run Checks
-        run: ./gradlew detekt allTests
+        run: |
+          # Prints thread dumps if desktop tests stop progressing; it never stops the build.
+          bash .scripts/ci-test-stall-watchdog.sh &
+          watchdog_pid=$!
+          trap 'kill "$watchdog_pid" 2>/dev/null || true' EXIT
+          ./gradlew detekt allTests
+
+      - name: Run iOS tests
+        run: bash .scripts/ios-tests.sh
 
       - name: Upload reports
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: build-reports
           path: |
             **/build/reports/*
+            **/build/test-results/*
 
       - name: Upload cloud sync artifacts
         if: failure()
@@ -82,18 +95,35 @@ jobs:
         uses: ./.github/actions/setup-gradle
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+          desktop-toolchain: 'true'
+
+      - name: Refresh translations
+        shell: bash
+        run: bash .scripts/refresh-translations.sh
+
+      - name: Install Linux window manager
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends openbox x11-utils xvfb
 
       - name: Run desktop tests
         shell: bash
-        run: ./gradlew --quiet --console=plain jvmTest
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            xvfb-run --auto-servernum bash .scripts/with-linux-test-window-manager.sh ./gradlew jvmTest
+          else
+            ./gradlew jvmTest
+          fi
 
       - name: Upload test reports and cloud snapshots
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: test-results-${{ matrix.os }}
           path: |
             **/build/reports/tests
+            **/build/test-results/*
             shared/build/cloud-sync-artifacts
 
   build-android-app:
@@ -132,16 +162,17 @@ jobs:
         uses: ./.github/actions/setup-gradle
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+          desktop-toolchain: 'true'
 
       - name: Refresh translations
         run: bash .scripts/refresh-translations.sh
 
       - name: Build Desktop App
-        run: ./gradlew :desktopApp:packageDistributionForCurrentOS
+        run: ./gradlew :desktopApp:createReleaseDistributable :desktopApp:packageDistributionForCurrentOS
 
   build-ios-app:
     name: Build iOS App
-    runs-on: macos-26
+    runs-on: xcode-27
     needs: [ checks ]
     timeout-minutes: 90
     steps:
@@ -151,9 +182,10 @@ jobs:
         run: |
           /usr/bin/xcodebuild -version   
 
+      # The iPhone Duo layout uses iOS 27.1 SDK APIs, which Xcode 27.0 doesn't have.
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '26.2'
+          xcode-version: '27.1'
 
       - name: Xcode version
         run: |

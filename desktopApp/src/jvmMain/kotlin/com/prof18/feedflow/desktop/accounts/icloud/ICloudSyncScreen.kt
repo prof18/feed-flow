@@ -1,254 +1,100 @@
 package com.prof18.feedflow.desktop.accounts.icloud
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.FileUpload
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.filled.LinkOff
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.AccountConnectionUiState
-import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.SyncResult
+import com.prof18.feedflow.desktop.accounts.AccountConnectButton
+import com.prof18.feedflow.desktop.accounts.AccountLoading
+import com.prof18.feedflow.desktop.accounts.AccountScreen
+import com.prof18.feedflow.desktop.accounts.CloudAccountContent
+import com.prof18.feedflow.desktop.accounts.CredentialsState
+import com.prof18.feedflow.desktop.accounts.ObserveAccountConnection
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
-import com.prof18.feedflow.shared.ui.settings.SettingItem
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun ICloudSyncScreen(
-    navigateBack: () -> Unit,
-    showNavigateBack: Boolean = true,
+    credentialsState: CredentialsState? = null,
 ) {
     val viewModel = koinViewModel<ICloudSyncViewModel>()
-
     val uiState by viewModel.iCloudConnectionUiState.collectAsState()
-
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarHostState = remember { DesktopFeedbackState() }
+    val strings = LocalFeedFlowStrings.current
     val scope = rememberCoroutineScope()
+    val fallbackDraft = remember { CredentialsState() }
+    val draft = credentialsState ?: fallbackDraft
 
-    val flowStrings = LocalFeedFlowStrings.current
-    LaunchedEffect(Unit) {
-        viewModel.syncMessageQueue.collect { event ->
-            if (event is SyncResult.Error) {
-                scope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = flowStrings.errorAccountSync(event.errorCode.code),
-                        duration = SnackbarDuration.Short,
-                    )
-                }
+    ObserveAccountConnection(
+        draft = draft,
+        uiState = viewModel.iCloudConnectionUiState,
+        messages = viewModel.syncMessageQueue,
+    ) { event ->
+        if (event is SyncResult.Error) {
+            draft.connectionErrorRevision++
+            draft.connectionError = strings.errorAccountSync(event.errorCode.code)
+            draft.submissionPending = false
+            scope.launch {
+                snackbarHostState.showFeedback(
+                    strings.errorAccountSync(event.errorCode.code),
+                    duration = DesktopFeedbackDuration.Short,
+                )
             }
         }
     }
 
-    IcloudSyncContent(
-        uiState = uiState,
-        onConnectClick = {
-            viewModel.setICloudAuth()
-        },
-        onBackupClick = {
-            viewModel.triggerBackup()
-        },
-        onDisconnectClick = {
-            viewModel.unlink()
-        },
-        onBackClick = navigateBack,
-        showNavigateBack = showNavigateBack,
-        snackbarHost = {
-            SnackbarHost(snackbarHostState)
-        },
-    )
+    AccountScreen(snackbarHostState) {
+        ICloudAccountContent(
+            uiState = uiState,
+            credentialsState = draft,
+            onConnect = viewModel::setICloudAuth,
+            onBackup = viewModel::triggerBackup,
+            onDisconnect = viewModel::unlink,
+        )
+    }
 }
 
 @Composable
-private fun IcloudSyncContent(
+internal fun ICloudAccountContent(
     uiState: AccountConnectionUiState,
-    onConnectClick: () -> Unit,
-    onBackClick: () -> Unit,
-    onBackupClick: () -> Unit,
-    onDisconnectClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    snackbarHost: @Composable () -> Unit = {},
-    showNavigateBack: Boolean = true,
+    credentialsState: CredentialsState,
+    onConnect: () -> Unit,
+    onBackup: () -> Unit,
+    onDisconnect: () -> Unit,
 ) {
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    if (showNavigateBack) {
-                        IconButton(onClick = onBackClick) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = null,
-                            )
-                        }
-                    }
-                },
-                title = {
-                    Text(text = "iCloud")
-                },
-            )
-        },
-        snackbarHost = snackbarHost,
-    ) { padding ->
-        Box(
-            modifier = Modifier
-                .padding(padding)
-                .padding(bottom = Spacing.regular),
-        ) {
-            when (uiState) {
-                is AccountConnectionUiState.Linked -> ConnectedView(
-                    uiState = uiState,
-                    onBackupClick = onBackupClick,
-                    onDisconnectClick = onDisconnectClick,
+    val strings = LocalFeedFlowStrings.current
+    when (uiState) {
+        AccountConnectionUiState.Loading -> AccountLoading()
+        else -> CloudAccountContent(
+            description = strings.icloudSyncDescription,
+            successMessage = strings.icloudSyncSuccess,
+            noSyncMessage = strings.noIcloudSyncYet,
+            uiState = uiState,
+            credentialsState = credentialsState,
+            onBackupClick = onBackup,
+            onDisconnectClick = onDisconnect,
+            lastUploadMessage = strings.lastUpload,
+            lastDownloadMessage = strings.lastDownload,
+            connectContent = {
+                AccountConnectButton(
+                    label = strings.accountConnectButton,
+                    isLoading = uiState == AccountConnectionUiState.Loading,
+                    errorRevision = credentialsState.connectionErrorRevision,
+                    errorMessage = credentialsState.connectionError,
+                    onConnect = {
+                        credentialsState.connectionError = null
+                        onConnect()
+                    },
+                    state = credentialsState,
                 )
-
-                AccountConnectionUiState.Loading -> LoadingView()
-                AccountConnectionUiState.Unlinked -> DisconnectedView(
-                    onConnectClick = onConnectClick,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun LoadingView() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize(),
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-private fun DisconnectedView(
-    onConnectClick: () -> Unit,
-) {
-    Column {
-        Text(
-            text = LocalFeedFlowStrings.current.icloudSyncDescription,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = Spacing.regular),
-        )
-
-        SettingItem(
-            modifier = Modifier.padding(top = Spacing.regular),
-            title = LocalFeedFlowStrings.current.accountConnectButton,
-            icon = Icons.Default.Link,
-            onClick = onConnectClick,
-        )
-    }
-}
-
-@Composable
-private fun ConnectedView(
-    uiState: AccountConnectionUiState.Linked,
-    onBackupClick: () -> Unit,
-    onDisconnectClick: () -> Unit,
-) {
-    Column {
-        Text(
-            text = LocalFeedFlowStrings.current.icloudSyncSuccess,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = Spacing.regular),
-        )
-
-        when (val syncState = uiState.syncState) {
-            AccountSyncUIState.Loading -> {
-                Row(
-                    modifier = Modifier
-                        .padding(
-                            top = Spacing.regular,
-                            start = Spacing.regular,
-                            end = Spacing.regular,
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    CircularProgressIndicator()
-                    Text(
-                        text = LocalFeedFlowStrings.current.accountRefreshProgress,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(start = Spacing.small),
-                    )
-                }
-            }
-
-            AccountSyncUIState.None -> {
-                Text(
-                    text = LocalFeedFlowStrings.current.noIcloudSyncYet,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(horizontal = Spacing.regular)
-                        .padding(top = Spacing.small),
-                )
-            }
-
-            is AccountSyncUIState.Synced -> {
-                val lastUpload = syncState.lastUploadDate
-                if (lastUpload != null) {
-                    Text(
-                        modifier = Modifier
-                            .padding(horizontal = Spacing.regular)
-                            .padding(top = Spacing.small),
-                        text = LocalFeedFlowStrings.current.lastUpload(lastUpload),
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
-
-                val lastDownload = syncState.lastDownloadDate
-                if (lastDownload != null) {
-                    Text(
-                        modifier = Modifier
-                            .padding(horizontal = Spacing.regular)
-                            .padding(top = Spacing.small),
-                        text = LocalFeedFlowStrings.current.lastDownload(lastDownload),
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
-            }
-        }
-
-        SettingItem(
-            modifier = Modifier
-                .padding(top = Spacing.regular),
-            isEnabled = uiState.syncState !is AccountSyncUIState.Loading,
-            title = LocalFeedFlowStrings.current.backupButton,
-            icon = Icons.Default.FileUpload,
-            onClick = onBackupClick,
-        )
-
-        SettingItem(
-            title = LocalFeedFlowStrings.current.accountDisconnectButton,
-            isEnabled = uiState.syncState !is AccountSyncUIState.Loading,
-            icon = Icons.Default.LinkOff,
-            onClick = onDisconnectClick,
+            },
         )
     }
 }

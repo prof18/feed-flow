@@ -1,2 +1,6 @@
-• Try the experimental new Reader Mode engine for faster, more accurate article extraction. Help me improve it by reporting missing content or formatting issues.
-• Improved Reader Mode images, embedded content, short and image-only articles, bookmark actions, and Dropbox unlinking.
+• Listen to podcast episodes right in FeedFlow
+• Have articles read aloud in Reader Mode, in a voice that matches the article's language
+• New home screen widgets you can customize, with an optional refresh button
+• The new Reader Mode engine is now the default. If an article doesn't look right, report it with one tap
+• Follow YouTube playlists and hide Shorts from channels
+• Feeds from sites that block requests load more reliably, with clearer error messages

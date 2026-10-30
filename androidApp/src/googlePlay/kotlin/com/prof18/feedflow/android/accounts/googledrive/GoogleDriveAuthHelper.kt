@@ -6,12 +6,17 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
+import androidx.credentials.exceptions.ClearCredentialException
+import co.touchlab.kermit.Logger
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.common.api.Scope
 
 class GoogleDriveAuthHelper(
     private val activity: ComponentActivity,
+    private val clearCredentialState: suspend () -> Unit = {
+        CredentialManager.create(activity).clearCredentialState(ClearCredentialStateRequest())
+    },
 ) {
     fun createAuthorizationLauncher(
         onSuccess: () -> Unit,
@@ -64,7 +69,10 @@ class GoogleDriveAuthHelper(
     }
 
     suspend fun performUnlink() {
-        val credentialManager = CredentialManager.create(activity)
-        credentialManager.clearCredentialState(ClearCredentialStateRequest())
+        try {
+            clearCredentialState()
+        } catch (e: ClearCredentialException) {
+            Logger.w(e) { "Unable to clear Google Drive credential state; continuing local disconnect" }
+        }
     }
 }

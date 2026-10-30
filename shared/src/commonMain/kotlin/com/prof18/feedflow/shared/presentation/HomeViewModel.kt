@@ -35,6 +35,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentCacheMigration
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
@@ -73,11 +74,12 @@ class HomeViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
     private val feedSyncRepository: FeedSyncRepository,
-    private val feedFontSizeRepository: FeedFontSizeRepository,
+    feedFontSizeRepository: FeedFontSizeRepository,
     private val feedCategoryRepository: FeedCategoryRepository,
     private val feedStateRepository: FeedStateRepository,
     private val feedFetcherRepository: FeedFetcherRepository,
     private val getNextFeedFilterOrNullUseCase: GetNextFeedFilterOrNullUseCase,
+    private val readerContentCacheMigration: ReaderContentCacheMigration,
 ) : ViewModel() {
 
     // Loading
@@ -114,6 +116,9 @@ class HomeViewModel internal constructor(
 
     private val scrollReadTracker = ScrollReadTracker()
     private val pendingScrollReadIds = mutableSetOf<FeedItemId>()
+    private val keepUnreadOnScrollFeedSourceIds: StateFlow<Set<String>> =
+        feedSourcesRepository.getKeepUnreadOnScrollFeedSourceIds()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
     private var scrollReadDebounceJob: Job? = null
     private var hasTriggeredAppLaunch = false
 
@@ -170,6 +175,9 @@ class HomeViewModel internal constructor(
         }
         hasTriggeredAppLaunch = true
         viewModelScope.launch {
+            readerContentCacheMigration.clearOutdatedContent()
+        }
+        viewModelScope.launch {
             feedStateRepository.getFeeds()
         }
         getNewFeeds(isFirstLaunch = true)
@@ -181,14 +189,12 @@ class HomeViewModel internal constructor(
                 feedSourcesRepository.observeFeedSourcesByCategoryWithUnreadCount(),
                 feedCategoryRepository.observeCategoriesWithUnreadCount(),
                 feedStateRepository.getUnreadTimelineCountFlow(),
-                feedStateRepository.getUnreadBookmarksCountFlow(),
                 feedAppearanceSettingsRepository.hideUnreadCount,
-            ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, bookmarksCount, hideUnreadCount ->
+            ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, hideUnreadCount ->
                 DrawerDataSnapshot(
                     feedSourceByCategoryWithCount = feedSourceByCategoryWithCount,
                     categoriesWithCount = categoriesWithCount,
                     timelineCount = timelineCount,
-                    bookmarksCount = bookmarksCount,
                     hideUnreadCount = hideUnreadCount,
                 )
             },
@@ -197,7 +203,6 @@ class HomeViewModel internal constructor(
             val feedSourceByCategoryWithCount = snapshot.feedSourceByCategoryWithCount
             val categoriesWithCount = snapshot.categoriesWithCount
             val timelineCount = snapshot.timelineCount
-            val bookmarksCount = snapshot.bookmarksCount
             val hideUnreadCount = snapshot.hideUnreadCount
             val containsOnlyNullKey = feedSourceByCategoryWithCount.keys.all { it == null }
 
@@ -224,7 +229,7 @@ class HomeViewModel internal constructor(
             NavDrawerState(
                 timeline = persistentListOf(DrawerItem.Timeline(unreadCount = displayCount(timelineCount))),
                 read = persistentListOf(DrawerItem.Read),
-                bookmarks = persistentListOf(DrawerItem.Bookmarks(unreadCount = displayCount(bookmarksCount))),
+                bookmarks = persistentListOf(DrawerItem.Bookmarks),
                 categories = categoriesWithCount.map { categoryWithCount ->
                     DrawerCategory(
                         category = categoryWithCount.category,
@@ -268,7 +273,6 @@ class HomeViewModel internal constructor(
         val feedSourceByCategoryWithCount: Map<FeedSourceCategory?, List<FeedSourceWithUnreadCount>>,
         val categoriesWithCount: List<CategoryWithUnreadCount>,
         val timelineCount: Long,
-        val bookmarksCount: Long,
         val hideUnreadCount: Boolean,
     )
 
@@ -334,10 +338,11 @@ class HomeViewModel internal constructor(
             feedListVersion = currentFeedListVersion,
             listShapeKey = ScrollReadListShapeKey(
                 showReadArticlesTimeline = settingsRepository.showReadArticlesTimelineFlow.value,
-                hideReadItems = settingsRepository.hideReadItemsFlow.value,
+                hideReadItems = settingsRepository.getEffectiveHideReadItems(),
                 feedLayout = feedAppearanceSettingsRepository.feedLayout.value,
                 isGridLayoutEnabled = feedAppearanceSettingsRepository.gridLayoutEnabled.value,
             ),
+            excludedFeedSourceIds = keepUnreadOnScrollFeedSourceIds.value,
         )
         if (idsToMark.isEmpty()) {
             return
@@ -424,6 +429,14 @@ class HomeViewModel internal constructor(
         launchAfterFlushingScrollReadState {
             feedStateRepository.getFeeds()
             refreshTriggerMutableState.update { it + 1 }
+        }
+    }
+
+    fun onFeedListScrolledAwayFromTopChanged(isAwayFromTop: Boolean) {
+        if (feedStateRepository.setFeedListAwayFromTop(isAwayFromTop)) {
+            launchAfterFlushingScrollReadState {
+                feedStateRepository.getFeeds()
+            }
         }
     }
 
@@ -669,6 +682,10 @@ class HomeViewModel internal constructor(
 
     fun getCurrentThemeMode() = settingsRepository.getThemeMode()
 
+    fun getLargeScreenSidebarVisible(): Boolean? = settingsRepository.getLargeScreenSidebarVisible()
+
+    fun setLargeScreenSidebarVisible(value: Boolean) = settingsRepository.setLargeScreenSidebarVisible(value)
+
     fun updateFeedOrder(order: com.prof18.feedflow.core.model.FeedOrder) {
         launchAfterFlushingScrollReadState {
             feedAppearanceSettingsRepository.setFeedOrder(order)
@@ -684,7 +701,7 @@ class HomeViewModel internal constructor(
     }
 
     private fun enqueueScrollReadIds(idsToMark: Set<FeedItemId>) {
-        if (!settingsRepository.hideReadItemsFlow.value) {
+        if (!settingsRepository.getEffectiveHideReadItems()) {
             feedStateRepository.markAsRead(idsToMark.toHashSet())
         }
         pendingScrollReadIds.addAll(idsToMark)

@@ -112,7 +112,7 @@ failed discovery or materialization retains pending work without uploading.
 Apple's [iCloud document guide](https://developer.apple.com/documentation/uikit/synchronizing-documents-in-the-icloud-environment)
 explains why local filesystem lookup cannot discover unmaterialized documents.
 
-SDK transport tests cover Drive discovery errors, duplicate identities, stale IDs
+SDK transport tests cover Drive discovery errors, duplicate backups converging on the newest file, stale IDs
 and pagination, plus Dropbox missing-path classification. Swift callbacks carry
 Drive's resolved ID through the local write before caching it. Native iCloud tests
 cover replacement and preserving the last backup when an upload copy fails.

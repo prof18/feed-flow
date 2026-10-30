@@ -275,7 +275,7 @@ These are in-process lifetime guarantees. They do not establish ownership of the
 | Provider | Platforms | Freshness and replacement behavior | Remaining limitation |
 | --- | --- | --- | --- |
 | Dropbox | Android, iOS, desktop | Download returns revision with bytes; update requires that revision, or create-only after confirmed absence | Old clients can still overwrite unconditionally; exhausted retries keep work pending |
-| Google Drive | Android, iOS, desktop; unavailable in shipping Flatpak | Discover exact backup identity in `appDataFolder`, download fresh file, update/create resolved identity | No atomic conditional-write guarantee; simultaneous writers can still overwrite |
+| Google Drive | Android, iOS, desktop; unavailable in shipping Flatpak | Discover the newest matching backup and rename duplicates in `appDataFolder`, download fresh file, update/create resolved identity | No atomic conditional-write guarantee; simultaneous writers can still overwrite |
 | iCloud | iOS and macOS desktop | Discover/materialize current available document, coordinate local document read/write, stage replacements | Local save success does not mean another device has received it; no distributed conflict merge |
 
 ### Dropbox
@@ -286,7 +286,7 @@ This protects the gap between read and write when another device updates the fil
 
 ### Google Drive
 
-Drive uses the backup filename within the app-data space and a cached file ID as an optimization. Discovery handles list failures, pagination, duplicate matches, and stale cached IDs. Those outcomes must not all be interpreted as a missing backup. A duplicate identity is an error rather than permission to choose an arbitrary file.
+Drive lists the backup filename within the app-data space on every transfer. Discovery handles list failures and pagination, and those outcomes must not be interpreted as a missing backup. When several files match, every device keeps the one with the newest `modifiedTime` (ties: smallest ID) via [`GoogleDriveBackupResolver`](../feedSync/googledrive/src/commonMain/kotlin/com/prof18/feedflow/feedsync/googledrive/GoogleDriveBackupResolver.kt) and renames the others to `<name>.orphan-<id>` after a successful transfer. Orphans are kept, not deleted, because the snapshot sync would otherwise drop data that exists only in them. A 404 on the kept file triggers one re-list.
 
 The fresh download protects against an ordinarily stale device, but the later write is not an atomic compare-and-swap against the version that was read. The approved scope accepts the rare overlapping-writer risk. See [Android adapter](../androidApp/src/googlePlay/kotlin/com/prof18/feedflow/feedsync/googledrive/GoogleDriveAndroidDataSourceImpl.kt), [Drive module](../feedSync/googledrive), and [iOS adapters](../iosApp/Source/Accounts/GoogleDrive/Data).
 

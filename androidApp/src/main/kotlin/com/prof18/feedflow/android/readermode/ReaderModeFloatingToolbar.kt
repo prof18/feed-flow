@@ -371,8 +371,10 @@ fun ReaderModeFloatingToolbar(
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         ) {
             ReaderTextSettingsSheetContent(
+                // The sheet is its own window, so the activity's test-tag exposure doesn't reach it.
                 modifier = Modifier
                     .navigationBarsPadding()
+                    .exposeTestTagsAsResourceIds()
                     .testTag(ReaderModeE2eIds.TEXT_SETTINGS_SHEET),
                 fontSize = fontSize,
                 onFontSizeChange = onFontSizeChange,

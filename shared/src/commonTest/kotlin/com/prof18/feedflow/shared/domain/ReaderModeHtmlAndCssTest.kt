@@ -10,6 +10,16 @@ import kotlin.test.assertTrue
 class ReaderModeHtmlAndCssTest {
 
     @Test
+    fun `reader document uses the article language instead of hardcoded English`() {
+        val italian = getReaderModeStyledHtml(null, "<p>Ciao</p>", fontSize = 16, languageTag = "it-IT")
+        assertTrue(italian.contains("<html lang=\"it-IT\""))
+        val unknown = getReaderModeStyledHtml(null, "<p>Article</p>", fontSize = 16)
+        assertFalse(unknown.contains("<html lang=\"en\""))
+        val unsafe = getReaderModeStyledHtml(null, "body", fontSize = 16, languageTag = "it\" onclick=\"alert(1)")
+        assertFalse(unsafe.contains("onclick"))
+    }
+
+    @Test
     fun `readerModeCss uses system font stack by default`() {
         val css = readerModeCss(colors = null, fontSize = 18, lineHeight = 0)
 

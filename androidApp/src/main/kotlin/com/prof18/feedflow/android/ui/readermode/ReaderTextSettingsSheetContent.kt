@@ -45,6 +45,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +58,7 @@ import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeDefaults
+import kotlin.math.roundToInt
 
 private const val FONT_SIZE_VALUE_LABEL_TAG = "reader_font_size_value_label"
 private const val LINE_HEIGHT_VALUE_LABEL_TAG = "reader_line_height_value_label"
@@ -159,7 +162,7 @@ fun ReaderTextSettingsSheetContent(
                     valueLabel = fontSize.toString(),
                     valueLabelTestTag = FONT_SIZE_VALUE_LABEL_TAG,
                     value = fontSize.toFloat(),
-                    onValueChange = { onFontSizeChange(it.toInt()) },
+                    onValueChange = { onFontSizeChange(it.roundToInt()) },
                     valueRange = MIN_FONT_SIZE..MAX_FONT_SIZE,
                     steps = FONT_SIZE_STEPS,
                     minIcon = Icons.Rounded.TextDecrease,
@@ -171,7 +174,7 @@ fun ReaderTextSettingsSheetContent(
                     valueLabel = titleFontSize.toString(),
                     valueLabelTestTag = TITLE_FONT_SIZE_VALUE_LABEL_TAG,
                     value = titleFontSize.toFloat(),
-                    onValueChange = { onTitleFontSizeChange(it.toInt()) },
+                    onValueChange = { onTitleFontSizeChange(it.roundToInt()) },
                     valueRange = MIN_TITLE_FONT_SIZE..MAX_TITLE_FONT_SIZE,
                     steps = TITLE_FONT_SIZE_STEPS,
                     minIcon = Icons.Rounded.TextDecrease,
@@ -183,7 +186,7 @@ fun ReaderTextSettingsSheetContent(
                     valueLabel = readerLineHeightValueLabel(lineHeight),
                     valueLabelTestTag = LINE_HEIGHT_VALUE_LABEL_TAG,
                     value = lineHeight.toFloat(),
-                    onValueChange = { onLineHeightChange(it.toInt()) },
+                    onValueChange = { onLineHeightChange(it.roundToInt()) },
                     valueRange = MIN_LINE_HEIGHT..MAX_LINE_HEIGHT,
                     steps = LINE_HEIGHT_STEPS,
                     minIcon = Icons.Rounded.FormatLineSpacing,
@@ -408,7 +411,9 @@ private fun ReaderTextSettingSliderRow(
                 onValueChange = onValueChange,
                 valueRange = valueRange,
                 steps = steps,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { contentDescription = title },
             )
             Icon(
                 imageVector = maxIcon,

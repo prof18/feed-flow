@@ -23,6 +23,7 @@ cd "$SCRIPT_DIR/../iosApp"
 (cd .. && ./gradlew --quiet --console=plain :shared:linkDebugFrameworkIosSimulatorArm64)
 framework_dir="$(cd ../shared/build/bin/iosSimulatorArm64/debugFramework && pwd)"
 derived_data="$(cd .. && pwd)/build/ios-test-derived-data"
+source_packages="$(cd .. && pwd)/build/ios-source-packages"
 
 destination="${1:-}"
 if [[ -z "$destination" ]]; then
@@ -39,6 +40,7 @@ command=(
   xcodebuild -project FeedFlow.xcodeproj -scheme iOSTests -configuration Debug
   -destination "$destination"
   -derivedDataPath "$derived_data"
+  -clonedSourcePackagesDirPath "$source_packages"
   OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED=YES
   "FRAMEWORK_SEARCH_PATHS=\"$framework_dir\""
   test

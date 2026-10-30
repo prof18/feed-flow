@@ -8,6 +8,10 @@ on:
       - '*'
   workflow_dispatch:
 
+concurrency:
+  group: code-checks-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   checks:
     runs-on: macos-26
@@ -15,7 +19,19 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Booting a fresh simulator takes several minutes, so it happens while Gradle compiles.
+      - name: Boot iOS test simulator
+        run: |
+          udid="$(bash .scripts/ios-test-simulator.sh)"
+          if [[ -z "$udid" ]]; then
+            echo "::error::No iPhone simulator is installed on this runner."
+            exit 1
+          fi
+          echo "IOS_TEST_DESTINATION=platform=iOS Simulator,id=$udid" >> "$GITHUB_ENV"
+          nohup xcrun simctl bootstatus "$udid" -b > "$RUNNER_TEMP/simulator-boot.log" 2>&1 &
+
       - name: Setup environment
+        id: setup
         uses: ./.github/actions/setup-gradle
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
@@ -51,16 +67,38 @@ jobs:
       - name: Test helper scripts
         run: python3 -m unittest discover -s .scripts/tests -p 'test_*.py'
 
-      - name: Run Checks
+      # JVM and Android host tests and detekt run in the jvm-checks job on Linux. The cloud sync
+      # artifact tasks still run here, since they exchange snapshots with the iOS side.
+      - name: Run Kotlin/Native and cloud sync tests
+        run: ./gradlew allTests -x jvmTest -x testAndroidHostTest -x testGooglePlayDebugUnitTest "-Pfeedflow.swiftCloudSyncDestination=$IOS_TEST_DESTINATION"
+
+      - name: Run iOS tests
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: bash .scripts/ios-tests.sh "$IOS_TEST_DESTINATION"
+
+      - name: Run desktop tests
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: |
+          # Frees the simulator's memory for the desktop UI tests.
+          xcrun simctl shutdown all || true
           # Prints thread dumps if desktop tests stop progressing; it never stops the build.
           bash .scripts/ci-test-stall-watchdog.sh &
           watchdog_pid=$!
           trap 'kill "$watchdog_pid" 2>/dev/null || true' EXIT
-          ./gradlew detekt allTests
+          ./gradlew :desktopApp:jvmTest
 
-      - name: Run iOS tests
-        run: bash .scripts/ios-tests.sh
+      - name: Report memory pressure
+        if: always()
+        run: |
+          sysctl vm.swapusage
+          memory_pressure | tail -n 1
+
+      - name: Save KMP tooling
+        if: github.ref == 'refs/heads/main' && steps.setup.outputs.konan-cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ~/.konan
+          key: ${{ steps.setup.outputs.konan-cache-key }}
 
       - name: Upload reports
         if: always()
@@ -79,6 +117,39 @@ jobs:
           path: |
             shared/build/cloud-sync-artifacts
             shared/build/reports/tests/swiftCloudSyncTest
+
+  jvm-checks:
+    name: Detekt and Android tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+          desktop-toolchain: 'true'
+
+      - name: Refresh translations
+        run: bash .scripts/refresh-translations.sh
+
+      - name: Create dummy Firebase json
+        run: |
+          cp config/dummy-google-services.json androidApp/src/debug/google-services.json
+          cp config/dummy-google-services.json androidApp/src/release/google-services.json
+
+      - name: Run detekt and Android tests
+        run: ./gradlew detekt testAndroidHostTest :androidApp:testGooglePlayDebugUnitTest
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-reports-jvm
+          path: |
+            **/build/reports/*
+            **/build/test-results/*
 
   tests-desktop:
     name: Tests (${{ matrix.os }})
@@ -129,7 +200,6 @@ jobs:
   build-android-app:
     name: Build Android App
     runs-on: ubuntu-latest
-    needs: [ checks ]
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v7
@@ -153,7 +223,6 @@ jobs:
   build-desktop-app:
     name: Build Desktop App
     runs-on: ubuntu-latest
-    needs: [ checks ]
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v7
@@ -173,7 +242,6 @@ jobs:
   build-ios-app:
     name: Build iOS App
     runs-on: xcode-27
-    needs: [ checks ]
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v7

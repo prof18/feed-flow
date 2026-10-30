@@ -66,6 +66,7 @@ jobs:
             --body "Automated PR for translation updates coming from the \`localization\` branch.")"
 
           echo "number=$(gh pr view "${pr_url}" --json number --jq '.number')" >> "${GITHUB_OUTPUT}"
+          echo "created=true" >> "${GITHUB_OUTPUT}"
 
       - name: Enable auto-merge
         if: steps.pr.outputs.number != ''
@@ -75,8 +76,10 @@ jobs:
         run: |
           gh pr merge "${{ steps.pr.outputs.number }}" --auto --rebase
 
+      # Pushes to an existing PR already run Code Checks through pull_request. A PR opened with
+      # GITHUB_TOKEN starts no workflows, so only a new PR needs the checks dispatched.
       - name: Trigger code checks
-        if: steps.pr.outputs.number != ''
+        if: steps.pr.outputs.created == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

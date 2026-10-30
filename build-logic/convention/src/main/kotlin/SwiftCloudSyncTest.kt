@@ -104,6 +104,7 @@ abstract class SwiftCloudSyncTest @Inject constructor(
     }
 
     // Local machines and CI images ship different simulator sets, so pick from what is installed.
+    // Keep in sync with .scripts/ios-test-simulator.sh, which applies the same preference.
     private fun findSimulatorId(): String {
         val json = ByteArrayOutputStream().also { output ->
             execOperations.exec {

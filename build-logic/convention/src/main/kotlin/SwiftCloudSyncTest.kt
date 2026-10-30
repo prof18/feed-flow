@@ -63,6 +63,8 @@ abstract class SwiftCloudSyncTest @Inject constructor(
                     "-scheme", "CloudSyncTests", "-configuration", "Debug",
                     "-destination", destination.orNull ?: "platform=iOS Simulator,id=${findSimulatorId()}",
                     "-derivedDataPath", derivedDataDirectory.get().asFile.absolutePath,
+                    // Shared with ios-tests.sh and the CI iOS build, which cache it between runs.
+                    "-clonedSourcePackagesDirPath", rootDirectory.dir("build/ios-source-packages").get().asFile.absolutePath,
                     "-resultBundlePath", resultBundle.absolutePath,
                     "OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED=YES",
                     "FRAMEWORK_SEARCH_PATHS=\"${frameworkDirectory.get().asFile.absolutePath}\"",

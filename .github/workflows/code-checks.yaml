@@ -67,6 +67,16 @@ jobs:
       - name: Test helper scripts
         run: python3 -m unittest discover -s .scripts/tests -p 'test_*.py'
 
+      # Swift packages take about 3 minutes to clone. Every xcodebuild call clones into
+      # build/ios-source-packages, and only main saves the cache, to stay under the quota.
+      - name: Restore Swift packages
+        id: spm-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: build/ios-source-packages
+          key: spm-${{ hashFiles('iosApp/project.yml') }}
+          restore-keys: spm-
+
       # JVM and Android host tests and detekt run in the jvm-checks job on Linux. The cloud sync
       # artifact tasks still run here, since they exchange snapshots with the iOS side.
       - name: Run Kotlin/Native and cloud sync tests
@@ -99,6 +109,13 @@ jobs:
         with:
           path: ~/.konan
           key: ${{ steps.setup.outputs.konan-cache-key }}
+
+      - name: Save Swift packages
+        if: github.ref == 'refs/heads/main' && steps.spm-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: build/ios-source-packages
+          key: ${{ steps.spm-cache.outputs.cache-primary-key }}
 
       - name: Upload reports
         if: always()
@@ -286,8 +303,23 @@ jobs:
           cd iosApp
           ./.scripts/generate-project.sh
 
+      - name: Restore Swift packages
+        id: spm-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: build/ios-source-packages
+          key: spm-${{ hashFiles('iosApp/project.yml') }}
+          restore-keys: spm-
+
       - name: Build iOS Sample
         run: |
           set -o pipefail
           cd iosApp
-          xcodebuild -project FeedFlow.xcodeproj -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build | xcbeautify --renderer github-actions
+          xcodebuild -project FeedFlow.xcodeproj -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" -clonedSourcePackagesDirPath ../build/ios-source-packages ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build | xcbeautify --renderer github-actions
+
+      - name: Save Swift packages
+        if: github.ref == 'refs/heads/main' && steps.spm-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: build/ios-source-packages
+          key: ${{ steps.spm-cache.outputs.cache-primary-key }}

@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import unittest
 from pathlib import Path
@@ -45,7 +46,8 @@ class CiTestStallWatchdogTests(unittest.TestCase):
             process.kill()
             process.wait()
 
-    def _run_watchdog(self, seconds, touch_progress=False):
+    def _run_watchdog(self, seconds, touch_progress=False, until=None):
+        """Runs the watchdog for `seconds`, or until `until` appears in its output."""
         env = dict(
             os.environ,
             PATH=f"{self.bin}{os.pathsep}{os.environ['PATH']}",
@@ -58,19 +60,24 @@ class CiTestStallWatchdogTests(unittest.TestCase):
         watchdog = subprocess.Popen(
             [BASH, str(WATCHDOG)], env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
         )
+        lines = []
+        reader = threading.Thread(target=lambda: lines.extend(iter(watchdog.stdout.readline, "")), daemon=True)
+        reader.start()
         deadline = time.monotonic() + seconds
         counter = 0
-        while time.monotonic() < deadline:
+        while time.monotonic() < deadline and not (until and until in "".join(lines)):
             if touch_progress:
                 counter += 1
                 self.progress.write_text(f"progress {counter}")
             time.sleep(0.5)
         watchdog.terminate()
-        output, _ = watchdog.communicate(timeout=10)
-        return output
+        watchdog.wait(timeout=10)
+        reader.join(timeout=10)
+        return "".join(lines)
 
     def test_stalled_tests_print_a_thread_dump_without_stopping_the_jvm(self):
-        output = self._run_watchdog(seconds=6)
+        # Loaded CI runners can take a while to report the stall, so wait for the whole dump.
+        output = self._run_watchdog(seconds=60, until="::endgroup::")
 
         self.assertIn("::warning::Desktop tests made no progress", output)
         self.assertIn(f"Thread dump of test JVM {self.fixture.pid}", output)

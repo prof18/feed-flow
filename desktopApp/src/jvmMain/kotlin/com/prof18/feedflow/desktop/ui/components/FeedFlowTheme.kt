@@ -49,7 +49,9 @@ internal fun FeedFlowTheme(
     }
     IntUiTheme(theme = theme, styling = ComponentStyling) {
         ProvideButtonStyles {
-            ProvideSelectionStyles(content)
+            ProvideSelectionStyles {
+                ProvideSliderStyles(content)
+            }
         }
     }
 }

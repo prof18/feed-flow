@@ -10,12 +10,14 @@ import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
+import kotlinx.io.IOException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -232,6 +234,92 @@ class HtmlRetrieverTest {
         )
         assertEquals(1, primaryRequests)
         assertEquals(1, fallbackRequests)
+    }
+
+    @Test
+    fun `connection failure is retried once with fallback user agent`() = runTest(testDispatcher) {
+        var primaryRequests = 0
+        var fallbackRequests = 0
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        primaryRequests++
+                        throw IOException("HTTP/2 stream was not closed cleanly: INTERNAL_ERROR")
+                    }
+                }
+            },
+            forbiddenFallbackClient = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        fallbackRequests++
+                        respond(
+                            content = "<html>Success</html>",
+                            status = HttpStatusCode.OK,
+                            headers = headersOf(HttpHeaders.ContentType, "text/html"),
+                        )
+                    }
+                }
+            },
+        )
+
+        assertEquals("<html>Success</html>", retriever.retrieveHtml("https://example.com"))
+        assertEquals(1, primaryRequests)
+        assertEquals(1, fallbackRequests)
+    }
+
+    @Test
+    fun `repeated connection failure stops after two requests`() = runTest(testDispatcher) {
+        var primaryRequests = 0
+        var fallbackRequests = 0
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        primaryRequests++
+                        throw IOException("connection reset")
+                    }
+                }
+            },
+            forbiddenFallbackClient = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        fallbackRequests++
+                        throw IOException("connection reset")
+                    }
+                }
+            },
+        )
+
+        assertNull(retriever.retrieveHtml("https://example.com"))
+        assertEquals(1, primaryRequests)
+        assertEquals(1, fallbackRequests)
+    }
+
+    @Test
+    fun `timeout is not retried with fallback user agent`() = runTest(testDispatcher) {
+        var fallbackRequests = 0
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler { throw SocketTimeoutException("read timed out") }
+                }
+            },
+            forbiddenFallbackClient = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        fallbackRequests++
+                        respond(content = "<html>Success</html>", status = HttpStatusCode.OK)
+                    }
+                }
+            },
+        )
+
+        assertNull(retriever.retrieveHtml("https://example.com"))
+        assertEquals(0, fallbackRequests)
     }
 
     @Test

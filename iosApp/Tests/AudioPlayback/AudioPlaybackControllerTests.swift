@@ -13,8 +13,9 @@ final class AudioPlaybackControllerTests: XCTestCase {
         try await Self.warmUpAudioStack()
     }
 
-    // On a cold CI simulator the first audio session activation and media load can block the main thread
-    // for tens of seconds, eating whichever test runs first's wait deadline. Pay that cost once, untimed.
+    // On a cold CI simulator the first audio session activation, now-playing session, media load and seek can
+    // block the main thread for tens of seconds, eating whichever test runs first's wait deadline. Pay that cost
+    // once, untimed, through the same controller path the tests wait on: a bare AVPlayer load is not enough.
     @MainActor
     private static func warmUpAudioStack() async throws {
         guard !isAudioStackWarm else { return }
@@ -22,17 +23,20 @@ final class AudioPlaybackControllerTests: XCTestCase {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).wav")
         try AudioTestWaveFile.write(to: url)
         defer { try? FileManager.default.removeItem(at: url) }
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playback, mode: .spokenAudio)
-        try session.setActive(true)
-        let item = AVPlayerItem(url: url)
-        let player = AVPlayer(playerItem: item)
+        let generator = TestSpeechAudioGenerator()
+        let controller = AudioPlaybackController(
+            positionStore: TestAudioPlaybackPositionStore(),
+            speechGenerator: generator,
+            speechText: { _, content in [content] }
+        )
+        defer { controller.stop() }
+        controller.toggleSpeech(itemId: "warm-up", title: "Warm-up", content: "warm-up", subtitle: nil, artworkURL: nil)
+        try await generator.waitForRequestCount(1)
+        generator.complete(request: 0, with: url)
         let deadline = ContinuousClock.now + .seconds(120)
-        while item.status == .unknown, ContinuousClock.now < deadline {
+        while !controller.canSeek, ContinuousClock.now < deadline {
             try await Task.sleep(for: .milliseconds(50))
         }
-        player.replaceCurrentItem(with: nil)
-        try? session.setActive(false, options: .notifyOthersOnDeactivation)
     }
 
     @MainActor

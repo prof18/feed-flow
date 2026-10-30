@@ -44,7 +44,8 @@ class CloudSyncTestsPlugin : Plugin<Project> {
                     dependsOn("linkDebugFrameworkIosSimulatorArm64")
                     rootDirectory.set(rootProject.layout.projectDirectory)
                     frameworkDirectory.set(layout.buildDirectory.dir("bin/iosSimulatorArm64/debugFramework"))
-                    derivedDataDirectory.set(layout.buildDirectory.dir("swift-cloud-sync-derived-data"))
+                    // Shared with .scripts/ios-tests.sh so the Swift packages are compiled once.
+                    derivedDataDirectory.set(rootProject.layout.buildDirectory.dir("ios-test-derived-data"))
                     outputDirectory.set(layout.buildDirectory.dir("reports/tests/swiftCloudSyncTest"))
                     destination.set(providers.gradleProperty("feedflow.swiftCloudSyncDestination"))
                 }

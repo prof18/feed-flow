@@ -10,6 +10,13 @@ inputs:
     required: false
     default: 'false'
 
+outputs:
+  konan-cache-key:
+    description: 'Cache key for ~/.konan on macOS; save it after the build with actions/cache/save'
+    value: ${{ steps.konan-cache.outputs.cache-primary-key }}
+  konan-cache-hit:
+    description: 'Whether ~/.konan was restored from an exact key match'
+    value: ${{ steps.konan-cache.outputs.cache-hit }}
 
 runs:
   using: 'composite'
@@ -25,22 +32,42 @@ runs:
         cache-cleanup: on-success
         cache-encryption-key: ${{ inputs.gradle-cache-encryption-key }}
 
+    # Hosted macOS runners have 7 GB of RAM and also run the simulator and xcodebuild, so Gradle
+    # compiles Kotlin in-process with a smaller heap there. Linux runners have 16 GB.
+    # The daemon stays on so later Gradle calls in the same job skip a cold start.
     - name: Setup Gradle Properties
-      if: runner.os != 'Windows'
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        echo "org.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC" >> ~/.gradle/gradle.properties
+        echo "kotlin.compiler.execution.strategy=in-process" >> ~/.gradle/gradle.properties
+        echo "org.gradle.workers.max=2" >> ~/.gradle/gradle.properties
+        echo "org.gradle.vfs.watch=false" >> ~/.gradle/gradle.properties
+
+    - name: Setup Gradle Properties
+      if: runner.os == 'Linux'
       shell: bash
       run: |
         echo "org.gradle.jvmargs=-Xms10g -Xmx10g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC" >> ~/.gradle/gradle.properties
         echo "kotlin.daemon.jvmargs=-Xms4g -Xmx4g -XX:+UseParallelGC" >> ~/.gradle/gradle.properties
-        echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
         echo "org.gradle.workers.max=2" >> ~/.gradle/gradle.properties
-        echo "org.gradle.vfs.watch=false" >> ~/.gradle/gradle.properties                   
+        echo "org.gradle.vfs.watch=false" >> ~/.gradle/gradle.properties
 
-    - name: Cache KMP tooling
-      uses: actions/cache@v6
+    # Keyed on the Kotlin version so a Kotlin update starts a fresh cache instead of downloading
+    # the new native dependencies on every run. Only main saves it, to stay under the cache quota.
+    - name: Read Kotlin version
+      if: runner.os == 'macOS'
+      id: kotlin-version
+      shell: bash
+      run: echo "version=$(sed -n 's/^kotlin = "\(.*\)"$/\1/p' gradle/libs.versions.toml)" >> "$GITHUB_OUTPUT"
+
+    - name: Restore KMP tooling
+      if: runner.os == 'macOS'
+      id: konan-cache
+      uses: actions/cache/restore@v6
       with:
-        path: |
-          ~/.konan
-        key: ${{ runner.os }}-konan-v2
+        path: ~/.konan
+        key: ${{ runner.os }}-konan-${{ steps.kotlin-version.outputs.version }}
 
     - name: Resolve desktop JBR 25 toolchain
       if: inputs.desktop-toolchain == 'true'

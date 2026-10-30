@@ -395,8 +395,8 @@ class ReaderModeViewModelTest : KoinTestBase() {
 
     @Test
     fun `updateBodyFont updates settings and state`() = runTest {
-        viewModel.updateBodyFont(ReaderFontFamily.LORA)
-        assertEquals(ReaderFontFamily.LORA, viewModel.readerFontSettingsState.value.bodyFont)
+        viewModel.updateBodyFont(ReaderFontFamily.IBM_PLEX_SANS)
+        assertEquals(ReaderFontFamily.IBM_PLEX_SANS, viewModel.readerFontSettingsState.value.bodyFont)
     }
 
     @Test

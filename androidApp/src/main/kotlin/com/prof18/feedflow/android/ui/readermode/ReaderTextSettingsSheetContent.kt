@@ -286,6 +286,14 @@ private fun ReaderFontFamilyTileRow(
                 )
             }
         }
+        if (selected.isLatinScriptOnly) {
+            Text(
+                text = strings.readerFontLatinScriptOnly,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = Spacing.medium),
+            )
+        }
     }
 }
 

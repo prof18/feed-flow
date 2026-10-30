@@ -24,11 +24,11 @@ class ReaderModeHtmlAndCssTest {
             fontSize = 18,
             lineHeight = 0,
             bodyFont = ReaderFontFamily.LITERATA,
-            headlineFont = ReaderFontFamily.LORA,
+            headlineFont = ReaderFontFamily.IBM_PLEX_SANS,
         )
 
         assertTrue(css.contains("font-family: 'FeedFlow Literata', -apple-system"))
-        assertTrue(css.contains("font-family: 'FeedFlow Lora', -apple-system"))
+        assertTrue(css.contains("font-family: 'FeedFlow IBM Plex Sans', -apple-system"))
     }
 
     @Test

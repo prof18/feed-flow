@@ -110,6 +110,9 @@ android {
     }
 
     aboutLibraries {
+        collect {
+            configPath.set(file("config/aboutlibraries"))
+        }
         export {
             excludeFields.set(listOf("generated"))
         }

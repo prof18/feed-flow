@@ -12,6 +12,6 @@ The five standard texts come from the official [SPDX license data revision](http
 | LGPL-2.1-or-later | `5749785c8bdefafcb5d798270ed0a967036fe2ca63dcedade1627565dfef81d2` |
 | MIT | `b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5` |
 
-The IBM Plex OFL definition retains the actual distributed font license, including its copyright and reserved font name. Its source/provenance is recorded with the bundled font.
+The IBM Plex OFL definition retains the actual distributed font license, including its copyright and reserved font name. Its source/provenance is recorded with the bundled font. The reader font definitions (Literata, Source Serif 4, Atkinson Hyperlegible Next) copy the OFL files in `licenses/reader-fonts/`; IBM Plex Sans is shared with the UI font.
 
 `DesktopLicenseResourcesTest` checks the generated report has a nonempty body for each license definition. The offline regression invokes the pinned exporter with its public `offlineMode` enabled before running that test; a full Flatpak check also disables the build sandbox network. Keep raw export/artifact comparisons in the local desktop evidence directory.

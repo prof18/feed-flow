@@ -1,0 +1,13 @@
+{
+  "uniqueId": "font:ibm-plex-sans",
+  "name": "IBM Plex Sans",
+  "website": "https://github.com/IBM/plex",
+  "licenses": [
+    "ibm-plex-sans-ofl"
+  ],
+  "developers": [
+    {
+      "name": "IBM"
+    }
+  ]
+}

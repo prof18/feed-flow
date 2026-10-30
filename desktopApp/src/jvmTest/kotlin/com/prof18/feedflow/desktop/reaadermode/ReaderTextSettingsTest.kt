@@ -83,8 +83,8 @@ class ReaderTextSettingsTest {
 
     @Test
     fun `reset restores both fonts`() {
-        val headlineFont = mutableStateOf(ReaderFontFamily.LORA)
-        val bodyFont = mutableStateOf(ReaderFontFamily.LORA)
+        val headlineFont = mutableStateOf(ReaderFontFamily.IBM_PLEX_SANS)
+        val bodyFont = mutableStateOf(ReaderFontFamily.IBM_PLEX_SANS)
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
@@ -132,12 +132,36 @@ class ReaderTextSettingsTest {
             }
         }
 
-        rule.onNodeWithText(EnFeedFlowStrings.readerFontLora).performClick()
+        rule.onNodeWithText(ReaderFontFamily.IBM_PLEX_SANS.familyName!!).performClick()
 
         rule.runOnIdle {
-            assertEquals(ReaderFontFamily.LORA, headlineFont.value)
-            assertEquals(ReaderFontFamily.LORA, bodyFont.value)
+            assertEquals(ReaderFontFamily.IBM_PLEX_SANS, headlineFont.value)
+            assertEquals(ReaderFontFamily.IBM_PLEX_SANS, bodyFont.value)
         }
+    }
+
+    @Test
+    fun `latin-only font shows the script coverage hint`() {
+        val bodyFont = mutableStateOf(ReaderFontFamily.SYSTEM)
+        rule.setContent {
+            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    ReaderTextSettingsControls(
+                        fontSize = ReaderModeDefaults.FONT_SIZE,
+                        lineHeight = ReaderModeDefaults.LINE_HEIGHT,
+                        onFontSizeChange = {},
+                        onLineHeightChange = {},
+                        headlineFont = bodyFont.value,
+                        bodyFont = bodyFont.value,
+                        onBodyFontChange = { bodyFont.value = it },
+                    )
+                }
+            }
+        }
+
+        rule.onNodeWithText(EnFeedFlowStrings.readerFontLatinScriptOnly).assertDoesNotExist()
+        rule.onNodeWithText(ReaderFontFamily.ATKINSON_HYPERLEGIBLE_NEXT.familyName!!).performClick()
+        rule.onNodeWithText(EnFeedFlowStrings.readerFontLatinScriptOnly).assertExists()
     }
 
     @Test

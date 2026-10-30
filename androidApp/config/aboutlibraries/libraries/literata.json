@@ -1,0 +1,13 @@
+{
+  "uniqueId": "font:literata",
+  "name": "Literata",
+  "website": "https://github.com/googlefonts/literata",
+  "licenses": [
+    "literata-ofl"
+  ],
+  "developers": [
+    {
+      "name": "The Literata Project Authors"
+    }
+  ]
+}

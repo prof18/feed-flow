@@ -816,6 +816,13 @@ public struct ReaderView<BottomAccessory: View>: View {
             }
             .scrollClipDisabled()
             .padding(.horizontal, -20)
+
+            if let note = actions.fontOptions.first(where: { $0.id == selection })?.note {
+                Text(note)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 4)
+            }
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(accessibilityIdentifier)

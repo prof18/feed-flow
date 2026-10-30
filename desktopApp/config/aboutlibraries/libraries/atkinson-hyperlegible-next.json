@@ -1,0 +1,13 @@
+{
+  "uniqueId": "font:atkinson-hyperlegible-next",
+  "name": "Atkinson Hyperlegible Next",
+  "website": "https://github.com/googlefonts/atkinson-hyperlegible-next",
+  "licenses": [
+    "atkinson-hyperlegible-next-ofl"
+  ],
+  "developers": [
+    {
+      "name": "The Atkinson Hyperlegible Next Project Authors"
+    }
+  ]
+}

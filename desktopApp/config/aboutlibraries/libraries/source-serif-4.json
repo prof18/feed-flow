@@ -1,0 +1,13 @@
+{
+  "uniqueId": "font:source-serif-4",
+  "name": "Source Serif 4",
+  "website": "https://github.com/adobe-fonts/source-serif",
+  "licenses": [
+    "source-serif-4-ofl"
+  ],
+  "developers": [
+    {
+      "name": "The Source Serif 4 Project Authors"
+    }
+  ]
+}

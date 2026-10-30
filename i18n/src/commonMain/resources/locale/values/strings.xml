@@ -252,10 +252,7 @@
     <string name="reader_mode_title_font_size">Title Size</string>
     <string name="reader_mode_font">Font</string>
     <string name="reader_font_system">System</string>
-    <string name="reader_font_literata">Literata</string>
-    <string name="reader_font_source_serif_4">Source Serif 4</string>
-    <string name="reader_font_lora">Lora</string>
-    <string name="reader_font_atkinson_hyperlegible_next">Atkinson Hyperlegible Next</string>
+    <string name="reader_font_latin_script_only">This font covers Latin-script languages only. Text in other scripts uses the system font.</string>
     <string name="reader_mode_text_settings">Text Settings</string>
     <string name="reader_mode_reset_to_default">Reset to default</string>
     <string name="reader_mode_preview_title">A slow morning with a good article</string>

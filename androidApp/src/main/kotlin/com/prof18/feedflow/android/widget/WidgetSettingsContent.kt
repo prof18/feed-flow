@@ -35,6 +35,7 @@ import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.prof18.feedflow.android.ui.readermode.SliderWithPlusMinus
+import com.prof18.feedflow.android.ui.readermode.wholeValueSteps
 import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
@@ -142,8 +143,8 @@ fun WidgetSettingsContent(
             modifier = Modifier.padding(horizontal = Spacing.regular),
             value = settingsState.fontScale.toFloat(),
             onValueChange = { onFontScaleSelected(it.roundToInt()) },
-            valueRange = MIN_WIDGET_FONT_SCALE.toFloat()..MAX_WIDGET_FONT_SCALE.toFloat(),
-            steps = MAX_WIDGET_FONT_SCALE - MIN_WIDGET_FONT_SCALE,
+            valueRange = WIDGET_FONT_SCALE_RANGE,
+            steps = wholeValueSteps(WIDGET_FONT_SCALE_RANGE),
         )
 
         WidgetSyncStatus(
@@ -392,3 +393,5 @@ private fun WidgetSettingsContentPreview() {
         }
     }
 }
+
+private val WIDGET_FONT_SCALE_RANGE = MIN_WIDGET_FONT_SCALE.toFloat()..MAX_WIDGET_FONT_SCALE.toFloat()

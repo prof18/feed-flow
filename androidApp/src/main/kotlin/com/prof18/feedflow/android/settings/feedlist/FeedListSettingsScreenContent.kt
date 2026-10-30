@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.ui.readermode.SliderWithPlusMinus
+import com.prof18.feedflow.android.ui.readermode.wholeValueSteps
 import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.android.ui.settings.FeedItemPreview
 import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
@@ -39,6 +40,7 @@ import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlin.math.roundToInt
 
 @Composable
 internal fun FeedListSettingsScreenContent(
@@ -115,9 +117,9 @@ internal fun FeedListSettingsScreenContent(
                     SliderWithPlusMinus(
                         modifier = Modifier.padding(horizontal = Spacing.regular),
                         value = fontSizes.scaleFactor.toFloat(),
-                        onValueChange = { updateFontScale(it.toInt()) },
-                        valueRange = -4f..16f,
-                        steps = 20,
+                        onValueChange = { updateFontScale(it.roundToInt()) },
+                        valueRange = FONT_SCALE_RANGE,
+                        steps = wholeValueSteps(FONT_SCALE_RANGE),
                     )
                 }
 
@@ -358,3 +360,5 @@ private fun FeedListSettingsScreenContentPreview() {
         )
     }
 }
+
+private val FONT_SCALE_RANGE = -4f..16f

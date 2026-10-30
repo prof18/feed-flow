@@ -16,9 +16,12 @@ import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
 import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.styling.SimpleListItemStyle
+import org.jetbrains.jewel.ui.component.styling.SliderStyle
+import org.jetbrains.jewel.ui.theme.sliderStyle
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -115,6 +118,27 @@ class DesktopThemeTest {
         listOf("fonts/IBMPlexSans.ttf", "fonts/OFL.txt").forEach { path ->
             assertNotNull(javaClass.classLoader.getResource(path), "Missing packaged resource $path")
         }
+    }
+
+    @Test
+    fun `sliders hide step markers but keep the rest of the theme style`() {
+        var themed: SliderStyle? = null
+        var base: SliderStyle? = null
+        rule.setContent {
+            IntUiTheme { base = JewelTheme.sliderStyle }
+            FeedFlowTheme(darkTheme = false) { themed = JewelTheme.sliderStyle }
+        }
+        rule.waitForIdle()
+
+        val style = assertNotNull(themed)
+        val default = assertNotNull(base)
+        assertEquals(Color.Transparent, style.colors.stepMarker)
+        assertEquals(0.dp, style.metrics.stepLineHeight)
+        assertEquals(0.dp, style.metrics.trackToStepSpacing)
+        assertEquals(default.colors.trackFilled, style.colors.trackFilled)
+        assertEquals(default.colors.thumbBorder, style.colors.thumbBorder)
+        assertEquals(default.metrics.thumbSize, style.metrics.thumbSize)
+        assertEquals(default.metrics.trackHeight, style.metrics.trackHeight)
     }
 
     private companion object {

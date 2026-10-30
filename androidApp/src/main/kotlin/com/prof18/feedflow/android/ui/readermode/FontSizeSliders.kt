@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.composeunstyled.UnstyledSlider
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import kotlin.math.roundToInt
 
 @Composable
 fun SliderWithPlusMinus(
@@ -41,11 +42,7 @@ fun SliderWithPlusMinus(
     decreaseContentDescription: String =
         LocalFeedFlowStrings.current.decreaseFontSizeButtonContentDescription,
 ) {
-    val stepSize = if (steps == 0) {
-        0f
-    } else {
-        (valueRange.endInclusive - valueRange.start) / steps
-    }
+    val stepSize = sliderStepSize(valueRange, steps)
 
     Row(
         modifier = modifier,
@@ -184,3 +181,10 @@ fun SubtractButton(
         )
     }
 }
+
+// `steps` counts the positions between the two ends, as in Compose sliders.
+internal fun wholeValueSteps(valueRange: ClosedFloatingPointRange<Float>): Int =
+    (valueRange.endInclusive - valueRange.start).roundToInt() - 1
+
+internal fun sliderStepSize(valueRange: ClosedFloatingPointRange<Float>, steps: Int): Float =
+    if (steps == 0) 0f else (valueRange.endInclusive - valueRange.start) / (steps + 1)

@@ -91,10 +91,6 @@ jobs:
         run: |
           # Frees the simulator's memory for the desktop UI tests.
           xcrun simctl shutdown all || true
-          # Prints thread dumps if desktop tests stop progressing; it never stops the build.
-          bash .scripts/ci-test-stall-watchdog.sh &
-          watchdog_pid=$!
-          trap 'kill "$watchdog_pid" 2>/dev/null || true' EXIT
           ./gradlew :desktopApp:jvmTest
 
       - name: Report memory pressure

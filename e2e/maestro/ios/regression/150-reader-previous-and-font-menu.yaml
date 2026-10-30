@@ -58,16 +58,16 @@ appId: com.prof18.feedflow.dev
     id: reader_font_picker_SYSTEM
     selected: true
 - tapOn:
-    id: reader_font_picker_LORA
+    id: reader_font_picker_IBM_PLEX_SANS
 - assertVisible:
-    id: reader_font_picker_LORA
+    id: reader_font_picker_IBM_PLEX_SANS
     selected: true
 - tapOn: "Done"
 - tapOn:
     id: reader_more_menu_button
 - tapOn: "Text Settings"
 - assertVisible:
-    id: reader_font_picker_LORA
+    id: reader_font_picker_IBM_PLEX_SANS
     selected: true
 - tapOn:
     id: reader_text_settings_reset_button

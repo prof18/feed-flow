@@ -20,7 +20,7 @@ enum ReaderFontRegistry {
         let fileNames = [
             ReaderFontFamily.literata,
             ReaderFontFamily.sourceSerif4,
-            ReaderFontFamily.lora,
+            ReaderFontFamily.ibmPlexSans,
             ReaderFontFamily.atkinsonHyperlegibleNext
         ].compactMap(\.fileName)
 

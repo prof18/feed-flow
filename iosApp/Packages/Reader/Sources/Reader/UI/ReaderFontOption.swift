@@ -7,11 +7,14 @@ public struct ReaderFontOption: Identifiable, Hashable {
     public let label: String
     /// PostScript name of a registered bundled font; nil means the system font.
     public let fontName: String?
+    /// Shown under the picker while this option is selected.
+    public let note: String?
 
-    public init(id: String, label: String, fontName: String? = nil) {
+    public init(id: String, label: String, fontName: String? = nil, note: String? = nil) {
         self.id = id
         self.label = label
         self.fontName = fontName
+        self.note = note
     }
 
     func font(size: CGFloat, weight: Int) -> Font {

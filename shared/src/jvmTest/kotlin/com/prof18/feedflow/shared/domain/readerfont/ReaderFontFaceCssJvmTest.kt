@@ -20,9 +20,9 @@ class ReaderFontFaceCssJvmTest {
 
     @Test
     fun `repeated family is declared once`() {
-        val css = readerFontFaceCss(ReaderFontFamily.LORA, ReaderFontFamily.LORA)
+        val css = readerFontFaceCss(ReaderFontFamily.IBM_PLEX_SANS, ReaderFontFamily.IBM_PLEX_SANS)
 
-        assertTrue(css.contains("font-weight: 400 700"))
+        assertTrue(css.contains("font-weight: 100 700"))
         assertEquals(2, css.fontFaceCount())
     }
 

@@ -237,6 +237,9 @@ private fun ReaderFontChoice(
                 )
             }
         }
+        if (selected.isLatinScriptOnly) {
+            Text(strings.readerFontLatinScriptOnly, color = JewelTheme.globalColors.text.info)
+        }
     }
 }
 
@@ -280,13 +283,7 @@ private fun ReaderTextSettingLabel(label: String, value: String) {
     }
 }
 
-private fun ReaderFontFamily.displayName(strings: FeedFlowStrings): String = when (this) {
-    ReaderFontFamily.SYSTEM -> strings.readerFontSystem
-    ReaderFontFamily.LITERATA -> strings.readerFontLiterata
-    ReaderFontFamily.SOURCE_SERIF_4 -> strings.readerFontSourceSerif4
-    ReaderFontFamily.LORA -> strings.readerFontLora
-    ReaderFontFamily.ATKINSON_HYPERLEGIBLE_NEXT -> strings.readerFontAtkinsonHyperlegibleNext
-}
+private fun ReaderFontFamily.displayName(strings: FeedFlowStrings): String = familyName ?: strings.readerFontSystem
 
 // Leading outside the first and last line would push the body out of the fixed-height preview.
 private val PreviewLineHeightStyle = LineHeightStyle(

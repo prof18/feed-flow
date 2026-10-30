@@ -74,7 +74,7 @@ packages:
     exactVersion: 1.7.3
   GoogleSignIn:
     url: https://github.com/google/GoogleSignIn-iOS
-    exactVersion: 10.0.0
+    exactVersion: 10.1.0
   GoogleAPIClientForREST:
     url: https://github.com/google/google-api-objectivec-client-for-rest
     exactVersion: 5.5.0

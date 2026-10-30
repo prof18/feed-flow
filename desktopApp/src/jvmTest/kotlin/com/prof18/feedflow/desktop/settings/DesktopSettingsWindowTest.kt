@@ -117,14 +117,24 @@ class DesktopSettingsWindowTest {
     @Test
     fun `settings dialog is resizable and enforces desktop minimum size`() {
         val window = awaitSettingsWindow()
-        val initialSize = readWindowSize(window)
-        val scale = initialSize.scale
-        val densityScale = requireNotNull(density.get()) / scale
+        val densityScale = requireNotNull(density.get()) / readWindowSize(window).scale
         // The OS keeps a window inside the usable screen, so small displays (CI VMs) get a smaller initial size.
         val screen = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds
+        val expectedWidth = minOf((INITIAL_WIDTH_DP * densityScale).toInt(), screen.width)
+        val expectedHeight = minOf((INITIAL_HEIGHT_DP * densityScale).toInt(), screen.height)
+        // X11 can map the dialog before it applies the requested size, so wait for it to settle before reading it.
+        runCatching {
+            compose.waitUntil(timeoutMillis = WINDOW_START_TIMEOUT_MS) {
+                val size = readWindowSize(window)
+                size.width >= expectedWidth && size.height >= expectedHeight
+            }
+        }
+        val initialSize = readWindowSize(window)
         assertTrue(initialSize.isResizable)
-        assertTrue(initialSize.width >= minOf((INITIAL_WIDTH_DP * densityScale).toInt(), screen.width))
-        assertTrue(initialSize.height >= minOf((INITIAL_HEIGHT_DP * densityScale).toInt(), screen.height))
+        assertTrue(
+            initialSize.width >= expectedWidth && initialSize.height >= expectedHeight,
+            "Initial size $initialSize is below ${expectedWidth}x$expectedHeight on screen $screen",
+        )
         assertTrue(initialSize.minimumWidth >= (MINIMUM_WIDTH_DP * densityScale).toInt())
         assertTrue(initialSize.minimumHeight >= (MINIMUM_HEIGHT_DP * densityScale).toInt())
 

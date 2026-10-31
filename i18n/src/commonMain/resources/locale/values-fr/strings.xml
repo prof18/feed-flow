@@ -584,4 +584,7 @@
     <string name="feed_verification_checking_body">FeedFlow poursuivra automatiquement lorsque le contenu sera prêt.</string>
     <string name="feed_verification_check_again">Vérifiez à nouveau</string>
     <string name="feed_verification_retry_body">Le contenu n\'a pas pu être récupéré. Veuillez vérifier à nouveau, ou fermer cet écran et réessayer.</string>
+    <string name="reader_mode_opened_externally_title">Ouvert dans votre navigateur</string>
+    <string name="reader_mode_opened_externally_message">Ce lien est un fichier, comme un PDF, que FeedFlow ne peut pas afficher, il a donc été ouvert dans votre navigateur.</string>
+    <string name="reader_mode_open_again_in_browser">Ouvrir dans le navigateur</string>
 </resources>

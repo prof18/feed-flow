@@ -104,6 +104,26 @@ class ReaderModeHtmlAndCssTest {
     }
 
     @Test
+    fun `reader mode css keeps fixed-width captioned figures inside the screen`() {
+        val css = readerModeCss(colors = null, fontSize = 18, lineHeight = 0)
+
+        // WordPress writes `style="width: 760px"` on captioned figures; without a cap the
+        // figure and its image overflow the column and get clipped.
+        assertTrue(
+            css.contains(
+                """
+                figure, .wp-caption {
+                    margin-left: 0;
+                    margin-right: 0;
+                    max-width: 100%;
+                    box-sizing: border-box;
+                }
+                """.trimIndent(),
+            ),
+        )
+    }
+
+    @Test
     fun `reader mode html marks failed images as hidden`() {
         val html = getReaderModeStyledHtml(
             colors = null,

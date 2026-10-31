@@ -449,9 +449,11 @@ a:link {
     color: var(--reader-link);
 }
 
-figure {
+figure, .wp-caption {
     margin-left: 0;
     margin-right: 0;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 figcaption, cite {

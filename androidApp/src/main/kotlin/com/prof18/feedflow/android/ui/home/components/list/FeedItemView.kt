@@ -58,7 +58,6 @@ internal fun FeedItemView(
     onMarkAllBelowAsRead: (String) -> Unit,
     modifier: Modifier = Modifier,
     disableClick: Boolean = false,
-    isGridCell: Boolean = false,
     heroImageAspectRatio: Float = DefaultHeroImageAspectRatio,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
@@ -106,7 +105,6 @@ internal fun FeedItemView(
                     FeedItemImageCardContent(
                         feedItem = feedItem,
                         feedFontSize = feedFontSize,
-                        isGridCell = isGridCell,
                         heroImageAspectRatio = heroImageAspectRatio,
                         currentFeedFilter = currentFeedFilter,
                         feedItemDisplaySettings = feedItemDisplaySettings,

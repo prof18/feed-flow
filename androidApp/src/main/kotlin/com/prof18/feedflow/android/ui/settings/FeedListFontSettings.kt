@@ -111,7 +111,6 @@ fun FeedItemPreview(
                 shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuShareComments,
                 shareMenuLabel = LocalFeedFlowStrings.current.menuShare,
                 disableClick = true,
-                isGridCell = isCompactImageCardPreview,
                 heroImageAspectRatio = FeedItemPreviewHeroImageAspectRatio,
                 onFeedItemClick = {},
                 onBookmarkClick = { _, _ -> },

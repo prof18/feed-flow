@@ -124,7 +124,6 @@ struct FeedItemView: View {
                     Text(title)
                         .font(.system(size: CGFloat(feedFontSizes.feedTitleFontSize)))
                         .bold()
-                        .lineLimit(isGridCell ? 2 : 3)
                         .foregroundStyle(.primary)
                         .opacity(readTextOpacity)
                         .padding(.top, hasImageCardSourceRow ? Spacing.small : 0)

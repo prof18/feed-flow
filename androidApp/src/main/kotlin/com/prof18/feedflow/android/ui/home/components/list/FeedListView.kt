@@ -192,7 +192,6 @@ fun FeedList(
                                 onOpenFeedWebsite = onOpenFeedWebsite,
                                 onShareClick = onShareClick,
                                 feedLayout = itemFeedLayout,
-                                isGridCell = true,
                                 currentFeedFilter = currentFeedFilter,
                                 onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                                 onMarkAllBelowAsRead = onMarkAllBelowAsRead,

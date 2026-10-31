@@ -58,8 +58,7 @@ class DesktopHomeSettingsRepository(
         settings.set(DesktopHomeSettingsFields.DESKTOP_HOME_REQUESTED_LIST_WIDTH.name, value)
 
     fun getCollapsedFeedTreeSections(): Set<String> {
-        val encoded = settings.getStringOrNull(DesktopHomeSettingsFields.DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS.name)
-            ?: return emptySet()
+        val encoded = readCollapsedFeedTreeSections() ?: return emptySet()
         if (encoded.isEmpty()) return emptySet()
         return runCatching {
             encoded.split(',').map { Base64.getUrlDecoder().decode(it).toString(Charsets.UTF_8) }
@@ -68,14 +67,35 @@ class DesktopHomeSettingsRepository(
         }.getOrDefault(emptySet())
     }
 
-    fun setCollapsedFeedTreeSections(value: Set<String>) =
-        settings.set(
-            DesktopHomeSettingsFields.DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS.name,
-            value.sorted().joinToString(",") { Base64.getUrlEncoder().encodeToString(it.toByteArray(Charsets.UTF_8)) },
-        )
+    // Java Preferences caps a value at 8 KB, so large sets are split across numbered keys.
+    fun setCollapsedFeedTreeSections(value: Set<String>) {
+        val encoded = value.sorted()
+            .joinToString(",") { Base64.getUrlEncoder().encodeToString(it.toByteArray(Charsets.UTF_8)) }
+        val chunks = encoded.chunked(COLLAPSED_SECTIONS_CHUNK_LENGTH)
+        val previousChunkCount = collapsedSectionsChunkCount() ?: 0
+        chunks.forEachIndexed { index, chunk -> settings.set(collapsedSectionsChunkKey(index), chunk) }
+        for (index in chunks.size until previousChunkCount) {
+            settings.remove(collapsedSectionsChunkKey(index))
+        }
+        settings.set(DesktopHomeSettingsFields.DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS_CHUNKS.name, chunks.size)
+        settings.remove(DesktopHomeSettingsFields.DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS.name)
+    }
+
+    private fun readCollapsedFeedTreeSections(): String? {
+        val chunkCount = collapsedSectionsChunkCount()
+            ?: return settings.getStringOrNull(DesktopHomeSettingsFields.DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS.name)
+        return (0 until chunkCount).joinToString("") { settings.getString(collapsedSectionsChunkKey(it), "") }
+    }
+
+    private fun collapsedSectionsChunkCount(): Int? =
+        settings.getIntOrNull(DesktopHomeSettingsFields.DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS_CHUNKS.name)
+
+    private fun collapsedSectionsChunkKey(index: Int): String =
+        "${DesktopHomeSettingsFields.DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS_CHUNKS.name}_$index"
 
     private companion object {
         const val DEFAULT_PANE_EXPANSION_INDEX = 5
+        const val COLLAPSED_SECTIONS_CHUNK_LENGTH = 4_096
     }
 }
 
@@ -86,4 +106,5 @@ private enum class DesktopHomeSettingsFields {
     DESKTOP_HOME_REQUESTED_SIDEBAR_WIDTH,
     DESKTOP_HOME_REQUESTED_LIST_WIDTH,
     DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS,
+    DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS_CHUNKS,
 }

@@ -1,8 +1,11 @@
 package com.prof18.feedflow.shared.data
 
+import com.prof18.feedflow.shared.test.InMemoryPreferences
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.russhwolf.settings.MapSettings
+import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.set
+import java.util.Base64
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -52,5 +55,38 @@ class DesktopHomeSettingsRepositoryTest : KoinTestBase() {
         val settings = MapSettings()
         settings.set("DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS", "invalid-json")
         assertTrue(DesktopHomeSettingsRepository(settings).getCollapsedFeedTreeSections().isEmpty())
+    }
+
+    @Test
+    fun `hundreds of collapsed groups fit in java preferences and survive restart`() {
+        val settings = PreferencesSettings(InMemoryPreferences())
+        val repository = DesktopHomeSettingsRepository(settings)
+        val collapsed = (0 until 1_000).mapTo(mutableSetOf()) { "category:${-1_000_000_000 - it}" } + "uncategorized"
+
+        repository.setCollapsedFeedTreeSections(collapsed)
+        assertEquals(collapsed, DesktopHomeSettingsRepository(settings).getCollapsedFeedTreeSections())
+
+        val fewer = setOf("category:1")
+        repository.setCollapsedFeedTreeSections(fewer)
+        assertEquals(fewer, DesktopHomeSettingsRepository(settings).getCollapsedFeedTreeSections())
+
+        repository.setCollapsedFeedTreeSections(emptySet())
+        assertTrue(DesktopHomeSettingsRepository(settings).getCollapsedFeedTreeSections().isEmpty())
+    }
+
+    @Test
+    fun `collapsed groups saved in the single legacy value are still read and replaced on save`() {
+        val settings = PreferencesSettings(InMemoryPreferences())
+        val legacy = setOf("category:42", "uncategorized")
+        settings.set(
+            "DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS",
+            legacy.sorted().joinToString(",") { Base64.getUrlEncoder().encodeToString(it.toByteArray()) },
+        )
+        val repository = DesktopHomeSettingsRepository(settings)
+        assertEquals(legacy, repository.getCollapsedFeedTreeSections())
+
+        repository.setCollapsedFeedTreeSections(setOf("category:42"))
+        assertEquals(setOf("category:42"), DesktopHomeSettingsRepository(settings).getCollapsedFeedTreeSections())
+        assertNull(settings.getStringOrNull("DESKTOP_HOME_COLLAPSED_FEED_TREE_SECTIONS"))
     }
 }

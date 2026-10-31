@@ -201,7 +201,6 @@ internal fun ArticleRow(
                     if (isHero) {
                         ArticleHero(
                             feedItem = feedItem,
-                            isGridCell = isGridCell || feedLayout == FeedLayout.GRID,
                             feedFontSize = feedFontSize,
                             feedItemDisplaySettings = feedItemDisplaySettings,
                             readAlpha = readAlpha,
@@ -243,7 +242,6 @@ internal fun ArticleRow(
                                         feedFontSize = feedFontSize,
                                         feedItemDisplaySettings = feedItemDisplaySettings,
                                         currentFeedFilter = currentFeedFilter,
-                                        isGridCell = false,
                                     )
                                 }
                                 feedItem.imageUrl?.let { imageUrl ->
@@ -502,7 +500,6 @@ private fun ArticleTitleAndDescription(
     feedFontSize: FeedFontSizes,
     feedItemDisplaySettings: FeedItemDisplaySettings,
     currentFeedFilter: FeedFilter,
-    isGridCell: Boolean,
 ) {
     val alpha = feedItem.articleReadAlpha(currentFeedFilter)
     Column {
@@ -513,8 +510,6 @@ private fun ArticleTitleAndDescription(
                 fontWeight = if (feedItem.isRead) FontWeight.Normal else FontWeight.SemiBold,
                 lineHeight = (feedFontSize.feedTitleFontSize + 4).sp,
                 color = JewelTheme.globalColors.text.normal.copy(alpha = alpha),
-                maxLines = if (isGridCell) 2 else 3,
-                overflow = TextOverflow.Ellipsis,
             )
         }
         feedItem.subtitle?.let { subtitle ->
@@ -552,7 +547,6 @@ private fun ArticleThumbnail(feedItem: FeedItem, imageUrl: String, currentFeedFi
 @Composable
 private fun ArticleHero(
     feedItem: FeedItem,
-    isGridCell: Boolean,
     feedFontSize: FeedFontSizes,
     feedItemDisplaySettings: FeedItemDisplaySettings,
     readAlpha: Float,
@@ -586,7 +580,6 @@ private fun ArticleHero(
                 feedFontSize = feedFontSize,
                 feedItemDisplaySettings = feedItemDisplaySettings,
                 currentFeedFilter = currentFeedFilter,
-                isGridCell = isGridCell,
             )
             footer()
         }

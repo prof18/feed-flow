@@ -166,7 +166,6 @@ internal fun TitleSubtitleAndImageRow(
 internal fun FeedItemImageCardContent(
     feedItem: FeedItem,
     feedFontSize: FeedFontSizes,
-    isGridCell: Boolean,
     heroImageAspectRatio: Float,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
@@ -209,8 +208,6 @@ internal fun FeedItemImageCardContent(
                 Text(
                     modifier = Modifier.padding(top = if (hasSourceRow) Spacing.small else 0.dp),
                     text = title,
-                    maxLines = if (isGridCell) 2 else 3,
-                    overflow = TextOverflow.Ellipsis,
                     fontSize = feedFontSize.feedTitleFontSize.sp,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,

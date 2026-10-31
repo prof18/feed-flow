@@ -281,7 +281,6 @@ private fun SearchFeedItem(
             onOpenFeedSettings = onOpenFeedSettings,
             onOpenFeedWebsite = onOpenFeedWebsite,
             feedLayout = feedLayout,
-            isGridCell = isGridCell,
             currentFeedFilter = currentFeedFilter ?: FeedFilter.Timeline,
             onShareClick = onShareClick,
             onMarkAllAboveAsRead = onMarkAllAboveAsRead,

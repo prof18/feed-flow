@@ -16,6 +16,8 @@ struct RegularView: View {
     private var appState
     @Environment(BrowserSelector.self)
     private var browserSelector
+    @Environment(AudioPlaybackController.self)
+    private var audioPlayback
     @Environment(\.openURL)
     private var openURL
     @Environment(\.horizontalSizeClass)
@@ -147,6 +149,7 @@ struct RegularView: View {
             ))
             .environment(appState)
             .environment(browserSelector)
+            .environment(audioPlayback)
             .navigationBarTitleDisplayMode(.inline)
         } detail: {
             @Bindable var appState = appState
@@ -170,6 +173,7 @@ struct RegularView: View {
                 .environment(indexHolder)
                 .environment(appState)
                 .environment(browserSelector)
+                .environment(audioPlayback)
                 .navigationDestination(for: CommonViewRoute.self) { route in
                     commonDestination(route)
                 }
@@ -301,12 +305,7 @@ struct RegularView: View {
         .modifier(NowPlayingAccessoryModifier(route: route, onOpenEpisode: onOpenAudioEpisode))
         .environment(appState)
         .environment(browserSelector)
-    }
-
-    private static func savedColumnVisibility(homeViewModel: HomeViewModel) -> NavigationSplitViewVisibility {
-        homeViewModel.getLargeScreenSidebarVisible().map {
-            $0.boolValue ? .all : .detailOnly
-        } ?? .automatic
+        .environment(audioPlayback)
     }
 
     private func sidebarSelection(from filter: FeedFilter) -> SidebarSelection? {
@@ -322,5 +321,13 @@ struct RegularView: View {
             return .feedSource(id: source.feedSource.id)
         }
         return nil
+    }
+}
+
+private extension RegularView {
+    static func savedColumnVisibility(homeViewModel: HomeViewModel) -> NavigationSplitViewVisibility {
+        homeViewModel.getLargeScreenSidebarVisible().map {
+            $0.boolValue ? .all : .detailOnly
+        } ?? .automatic
     }
 }

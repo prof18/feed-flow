@@ -24,6 +24,7 @@ struct NowPlayingAccessoryModifier: ViewModifier {
         if isEnabled, playback.episode != nil, isVisible {
             NowPlayingIndicator(onOpenEpisode: onOpenEpisode)
                 .padding(.vertical, 8)
+                .environment(playback)
         }
     }
 

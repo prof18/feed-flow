@@ -256,6 +256,7 @@ struct ReaderModeScreen: View {
                     openExternal: openAudioExternally,
                     onOpenEpisode: audioPlayback.episode?.itemId != feedItemId ? returnToAudioEpisode : nil
                 )
+                .environment(audioPlayback)
             }
         )
         .modifier(ReaderArticleReportHost(viewModel: viewModel, state: $reportState))

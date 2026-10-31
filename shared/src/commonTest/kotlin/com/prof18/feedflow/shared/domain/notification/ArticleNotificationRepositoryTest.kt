@@ -194,6 +194,7 @@ class ArticleNotificationRepositoryTest : KoinTestBase() {
         itemIds: List<String>,
         markFirstSyncItemsAsNotified: Boolean = false,
     ) {
+        val now = Clock.System.now().toEpochMilliseconds()
         databaseHelper.insertFeedItems(
             feedItems = itemIds.mapIndexed { index, id ->
                 FeedItem(
@@ -204,7 +205,7 @@ class ArticleNotificationRepositoryTest : KoinTestBase() {
                     content = null,
                     imageUrl = null,
                     feedSource = source,
-                    pubDateMillis = Clock.System.now().toEpochMilliseconds() - index,
+                    pubDateMillis = now - index,
                     isRead = false,
                     dateString = null,
                     commentsUrl = null,

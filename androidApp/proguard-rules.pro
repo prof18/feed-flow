@@ -30,3 +30,8 @@
 
 -dontwarn com.google.re2j.Matcher
 -dontwarn com.google.re2j.Pattern
+# Glance creates ActionCallback implementations by reflection. Its consumer rule keeps only the
+# class, so R8 full mode drops the no-arg constructor and widget actions silently fail in release.
+-keep class * implements androidx.glance.appwidget.action.ActionCallback {
+    <init>();
+}

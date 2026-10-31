@@ -9,8 +9,11 @@ import android.os.Build
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.android.readermode.isSystemWebViewAvailable
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.Browser
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.core.utils.BrowserIds
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
@@ -41,6 +44,10 @@ class BrowserManager(
 
     fun getArticleOpenMode(): ArticleOpenMode =
         settingsRepository.getArticleOpenMode()
+
+    /** Reader modes fall back to the favourite browser when the system WebView can't render the reader. */
+    fun resolveArticleOpenMode(urlInfo: FeedItemUrlInfo): ArticleOpenMode =
+        urlInfo.resolveArticleOpenMode(getArticleOpenMode(), readerAvailable = isSystemWebViewAvailable())
 
     fun setFavouriteBrowser(browser: Browser) {
         settingsRepository.saveFavouriteBrowserId(browser.id)

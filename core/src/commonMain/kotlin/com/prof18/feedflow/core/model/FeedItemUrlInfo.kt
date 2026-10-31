@@ -23,21 +23,27 @@ fun FeedItemUrlInfo.hasNoUrl(): Boolean = url.isBlank()
 
 /**
  * The mode this item actually opens with: the per-feed value falls back to [globalDefault], and a
- * reader mode falls back to the favourite browser when the page cannot be parsed. Never returns
- * [ArticleOpenMode.DEFAULT].
+ * reader mode falls back to the favourite browser when the page cannot be parsed, or when the
+ * platform cannot render the reader at all ([readerAvailable] false, e.g. no system WebView on
+ * Android). Never returns [ArticleOpenMode.DEFAULT].
  */
-fun FeedItemUrlInfo.resolveArticleOpenMode(globalDefault: ArticleOpenMode): ArticleOpenMode =
-    ArticleOpenModeResolver.resolve(this, globalDefault)
+fun FeedItemUrlInfo.resolveArticleOpenMode(
+    globalDefault: ArticleOpenMode,
+    readerAvailable: Boolean = true,
+): ArticleOpenMode = ArticleOpenModeResolver.resolve(this, globalDefault, readerAvailable)
 
 // Object wrapper so iOS can call the same resolution: top-level functions are awkward to reach
 // from Swift, while objects are exported as `ArticleOpenModeResolver.shared`.
 object ArticleOpenModeResolver {
-    fun resolve(urlInfo: FeedItemUrlInfo, globalDefault: ArticleOpenMode): ArticleOpenMode {
+    fun resolve(urlInfo: FeedItemUrlInfo, globalDefault: ArticleOpenMode): ArticleOpenMode =
+        resolve(urlInfo, globalDefault, readerAvailable = true)
+
+    fun resolve(urlInfo: FeedItemUrlInfo, globalDefault: ArticleOpenMode, readerAvailable: Boolean): ArticleOpenMode {
         if (urlInfo.hasNoUrl()) return ArticleOpenMode.FEED_CONTENT
         val resolved = urlInfo.articleOpenMode.resolveWith(globalDefault)
         return when {
             !resolved.isReaderMode() -> resolved
-            urlInfo.canOpenWebReaderMode() -> resolved
+            readerAvailable && urlInfo.canOpenWebReaderMode() -> resolved
             else -> ArticleOpenMode.PREFERRED_BROWSER
         }
     }

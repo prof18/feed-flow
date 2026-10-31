@@ -92,6 +92,36 @@ class ArticleOpenModeResolverTest {
     }
 
     @Test
+    fun `reader modes fall back to the favourite browser when the reader cannot render`() {
+        for (readerMode in listOf(ArticleOpenMode.FULL_ARTICLE, ArticleOpenMode.FEED_CONTENT)) {
+            assertEquals(
+                ArticleOpenMode.PREFERRED_BROWSER,
+                urlInfo(articleOpenMode = readerMode)
+                    .resolveArticleOpenMode(ArticleOpenMode.FULL_ARTICLE, readerAvailable = false),
+            )
+        }
+        assertEquals(
+            ArticleOpenMode.PREFERRED_BROWSER,
+            urlInfo(articleOpenMode = ArticleOpenMode.DEFAULT)
+                .resolveArticleOpenMode(ArticleOpenMode.FULL_ARTICLE, readerAvailable = false),
+        )
+    }
+
+    @Test
+    fun `browser modes and url-less items ignore reader availability`() {
+        assertEquals(
+            ArticleOpenMode.INTERNAL_BROWSER,
+            urlInfo(articleOpenMode = ArticleOpenMode.INTERNAL_BROWSER)
+                .resolveArticleOpenMode(ArticleOpenMode.FULL_ARTICLE, readerAvailable = false),
+        )
+        assertEquals(
+            ArticleOpenMode.FEED_CONTENT,
+            urlInfo(url = "", articleOpenMode = ArticleOpenMode.FULL_ARTICLE)
+                .resolveArticleOpenMode(ArticleOpenMode.FULL_ARTICLE, readerAvailable = false),
+        )
+    }
+
+    @Test
     fun `browser modes are unaffected by reader eligibility`() {
         for (browserMode in listOf(ArticleOpenMode.INTERNAL_BROWSER, ArticleOpenMode.PREFERRED_BROWSER)) {
             assertEquals(

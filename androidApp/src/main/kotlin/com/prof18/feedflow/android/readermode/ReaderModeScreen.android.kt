@@ -152,6 +152,8 @@ internal fun ReaderModeScreen(
         audioPlayer.openExternal(context, audioUrlOpener, audioUrl, strings.audioOpenFailed)
     }
     val navigator = rememberWebViewNavigator()
+    // Browser opens are routed away when the WebView is missing, but URL-less items still land here.
+    val webViewAvailable = remember { isSystemWebViewAvailable() }
     val fontScriptScope = rememberCoroutineScope()
     val fontScriptJob = remember { mutableStateOf<Job?>(null) }
     val showingFallbackWebsite = readerModeState.showsFallbackWebsite(verificationState)
@@ -299,8 +301,18 @@ internal fun ReaderModeScreen(
                     )
                 }
 
-                when (readerModeState) {
-                    is ReaderModeState.ContentNotAvailable -> {
+                when {
+                    readerModeState.needsMissingWebView(webViewAvailable) -> {
+                        ReaderWebViewUnavailable(
+                            url = readerModeState.getUrl.orEmpty(),
+                            openInBrowser = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(contentPadding),
+                        )
+                    }
+
+                    readerModeState is ReaderModeState.ContentNotAvailable -> {
                         ReaderFallbackContent(
                             url = readerModeState.url,
                             showingFallbackWebsite = showingFallbackWebsite,
@@ -312,7 +324,7 @@ internal fun ReaderModeScreen(
                         )
                     }
 
-                    ReaderModeState.Loading -> {
+                    readerModeState is ReaderModeState.Loading -> {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
@@ -323,7 +335,7 @@ internal fun ReaderModeScreen(
                         }
                     }
 
-                    is ReaderModeState.Success -> {
+                    readerModeState is ReaderModeState.Success -> {
                         ReaderMode(
                             fontSize = fontSize,
                             lineHeight = lineHeight,
@@ -451,6 +463,9 @@ private fun ReaderVerificationExplanation(url: String?, onDismiss: () -> Unit, o
 private fun ReaderModeState.showsFallbackWebsite(verificationState: ReaderVerificationState): Boolean =
     this is ReaderModeState.ContentNotAvailable && url.isNotBlank() && verificationState.verificationUrl == null
 
+private fun ReaderModeState.needsMissingWebView(webViewAvailable: Boolean): Boolean =
+    !webViewAvailable && this !is ReaderModeState.Loading
+
 @Composable
 private fun ReaderContentUnavailable(modifier: Modifier = Modifier) {
     val strings = LocalFeedFlowStrings.current
@@ -471,6 +486,37 @@ private fun ReaderContentUnavailable(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 8.dp),
         )
+    }
+}
+
+@Composable
+private fun ReaderWebViewUnavailable(
+    url: String,
+    openInBrowser: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (url.isBlank()) {
+        ReaderContentUnavailable(modifier = modifier)
+        return
+    }
+    val strings = LocalFeedFlowStrings.current
+    Column(
+        modifier = modifier.padding(horizontal = 24.dp),
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = strings.readerModeFallbackMessage,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+        FilledTonalButton(
+            onClick = { openInBrowser(url) },
+            modifier = Modifier.padding(top = 16.dp),
+        ) {
+            Text(text = strings.readerModeFallbackOpenBrowserButton)
+        }
     }
 }
 

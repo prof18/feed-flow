@@ -30,7 +30,6 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.isReaderMode
-import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
@@ -339,7 +338,7 @@ private fun openUrl(
     browserManager: BrowserManager,
     context: Context,
 ) {
-    val openMode = urlInfo.resolveArticleOpenMode(browserManager.getArticleOpenMode())
+    val openMode = browserManager.resolveArticleOpenMode(urlInfo)
     when {
         openMode.isReaderMode() -> navigateToReaderMode(urlInfo)
         openMode == ArticleOpenMode.INTERNAL_BROWSER -> browserManager.openWithInAppBrowser(urlInfo.url, context)

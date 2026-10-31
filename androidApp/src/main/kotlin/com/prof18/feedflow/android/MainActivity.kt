@@ -89,7 +89,6 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.model.isReaderMode
-import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
@@ -647,7 +646,7 @@ class MainActivity : BaseThemeActivity() {
         readerModeViewModel: ReaderModeViewModel,
         backStack: NavBackStack<NavKey>,
     ) {
-        val openMode = feedUrlInfo.resolveArticleOpenMode(browserManager.getArticleOpenMode())
+        val openMode = browserManager.resolveArticleOpenMode(feedUrlInfo)
         when {
             openMode.isReaderMode() -> {
                 navigateToReaderModeIfNeeded(readerModeViewModel, feedUrlInfo, backStack)

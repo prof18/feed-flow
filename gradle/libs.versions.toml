@@ -50,7 +50,7 @@ io-coil = "3.6.3"
 # as libjnidispatch.dylib, like libsqlitejdbc.dylib: jpackage re-signs .dylib files with the provisioning-profile
 # certificate in CI but leaves .jnilib files as committed, which App Store Connect rejects (error 90284).
 jsystem-theme-detector = "3.9.1"
-jewel = "0.41.0-262.10968.63"
+jewel = "0.41.0-262.11879.100"
 jewelPlatform = "262.11879.111"
 spectre = "0.7.1"
 junit = "4.13.2"

@@ -6,12 +6,13 @@
   "rangeStrategy": "bump",
   "packageRules": [
     {
+      "description": "New Kotlin versions need a matching SKIE (and KSP) release, so they must land in a single PR.",
       "groupName": "Kotlin, KSP, SKIE",
       "groupSlug": "kotlin",
       "matchPackageNames": [
-        "com.google.devtools.ksp",
-        "org.jetbrains.kotlin",
-        "co.touchlab.skie"
+        "/^com\\.google\\.devtools\\.ksp[.:]/",
+        "/^org\\.jetbrains\\.kotlin[.:]/",
+        "/^co\\.touchlab\\.skie[.:]/"
       ]
     },
     {

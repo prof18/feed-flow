@@ -54,7 +54,7 @@ Optional live-store checks:
    - Store listing screenshot images changed: store screenshots may need upload.
    - Website screenshot assets changed: website screenshot gallery/hero may need deploy.
 6. If live store checking is requested or this is the weekly automation, compare against current store state when credentials are available.
-   - Google Play: read live state with `.scripts/pull-google-play-listing.py` (see Live Store Checks), never with Gradle Play Publisher bootstrap. If the script's config is unavailable, report the live check as unavailable and continue with checked-in listing output/source-copy checks.
+   - Google Play: read live state with `gplay metadata pull` (see Live Store Checks), never with Gradle Play Publisher bootstrap. If gplay is not installed or not logged in, report the live check as unavailable and continue with checked-in listing output/source-copy checks.
    - App Store: pull metadata/screenshots into a temp directory and compare against FeedFlow's source store/screenshot copy where mapping is clear.
    - Microsoft Store: read the live listing with `pcenter listing show` and compare against `assets/storecopy/<locale>/`.
 7. Add follow-up TODOs to the FeedFlow native Obsidian Base when the audit finds actionable store release work.

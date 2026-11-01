@@ -566,4 +566,24 @@
     <string name="keep_unread_when_scrolling_for_feed">Beim Scrollen auf ungelesen belassen</string>
     <string name="keep_unread_when_scrolling_for_feed_description">Artikel aus diesem Feed werden nicht als gelesen markiert wenn man über sie scrollt.</string>
     <string name="keep_unread_when_scrolling_for_feed_disabled">Verfügbar, wenn \"Beim Scrollen als gelesen markieren\" aktiviert ist.</string>
+    <string name="database_save_error">Änderungen konnten nicht gespeichert werden. Versuchen sie es in Kürze nochmals - Fehlercode: %s</string>
+    <string name="database_recovered_from_corruption">Ihre lokalen Daten sind beschädigt, daher hat FeedFlow mit einer neuen Datenbank begonnen. Eine Kopie der alten Daten ist im FeedFlow-Datenordner erhalten.</string>
+    <string name="database_startup_locked">FeedFlow kann die Daten nicht öffnen weil sie von einem anderen Programm verwendet werden. Schließen sie andere FeedFlow-Fenster und öffnen sie FeedFlow erneut.</string>
+    <string name="database_startup_storage">FeedFlow kann seinen Datenordner nicht lesen oder beschreiben. Prüfen Sie, ob die Festplatte freien Speicherplatz hat und ob FeedFlow Ordnerzugriff hat.</string>
+    <string name="database_startup_native">FeedFlow konnte eine erforderliche Komponente nicht laden. Installieren sie FeedFlow neu oder updaten sie es. Ihre Daten wurden nicht geändert.</string>
+    <string name="database_startup_generic">FeedFlow konnte seine Daten nicht öffnen. Ihre Dateien wurden nicht gelöscht.</string>
+    <string name="database_open_data_folder">Daten-Ordner öffnen</string>
+    <string name="database_quit">Verlassen</string>
+    <string name="desktop_already_running">FeedFlow läuft bereits.</string>
+    <string name="desktop_startup_crash">FeedFlow konnte nicht starten. Die unten stehenden Details wurden in %s gesichert. Fügen sie diese Datei beim Fehlerbericht hinzu.</string>
+    <string name="desktop_startup_crash_no_log">FeedFlow konnte nicht starten. Kopieren sie die unten stehenden Details und fügen sie diese dem Fehlerbericht hinzu.</string>
+    <string name="reader_mode_title_font_size">Titelgröße</string>
+    <string name="reader_font_system">System</string>
+    <string name="reader_font_latin_script_only">Diese Schriftart unterstützt nur Sprachen mit lateinischer Schrift. Texte in anderen Schriftsystemen werden in der Systemschriftart angezeigt.</string>
+    <string name="reader_mode_preview_title">Ein ruhiger Morgen mit einem guten Artikel</string>
+    <string name="reader_mode_preview_body">Diese Voransicht ändert sich mit den Anpassungen von Schriftart und -größe; so kann vor der Rückkehr zum Artikel eine gute Leseeinstellung gefunden werden.</string>
+    <string name="reader_mode_opened_externally_title">In ihrem Browser geöffnet</string>
+    <string name="reader_mode_opened_externally_message">Diese Verknüpfung zeigt auf eine Datei, z.B. ein PDF, die FeedFlow nicht anzeigen kann; daher wurde sie in ihrem Browser geöffnet.</string>
+    <string name="reader_mode_open_again_in_browser">Im Browser öffnen</string>
+    <string name="reader_mode_font">Schriftart</string>
 </resources>

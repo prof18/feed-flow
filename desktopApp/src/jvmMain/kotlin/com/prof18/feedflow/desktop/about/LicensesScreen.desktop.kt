@@ -28,7 +28,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.useResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -46,7 +45,6 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.CircularProgressIndicator
 import org.jetbrains.jewel.ui.component.DefaultButton
-import org.jetbrains.jewel.ui.component.ListItemState
 import org.jetbrains.jewel.ui.component.SimpleListItem
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.Tooltip
@@ -57,7 +55,9 @@ fun LicensesScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier) {
     val report by produceState<Result<Libs>?>(initialValue = null) {
         value = withContext(dispatchers.default) {
             runCatching {
-                val json = useResource("aboutlibraries.json") { it.bufferedReader().readText() }
+                val json = requireNotNull(DI::class.java.classLoader?.getResourceAsStream("aboutlibraries.json"))
+                    .bufferedReader()
+                    .use { it.readText() }
                 Libs.Builder().withJson(json).build()
             }
         }
@@ -121,7 +121,8 @@ internal fun LicensesContent(
                             Tooltip(tooltip = { Text(accessibleLabel) }) {
                                 SimpleListItem(
                                     text = label,
-                                    state = ListItemState(isSelected = selectedId == library.uniqueId, isActive = true),
+                                    selected = selectedId == library.uniqueId,
+                                    active = true,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .focusRequester(focus)

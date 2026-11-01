@@ -227,8 +227,6 @@ class ReaderContentFetcherRecoveryTest : KoinTestBase() {
         )
     }
 
-    private suspend fun FeedRecoveryRepository.profiles() = databaseHelper.recoveryProfiles()
-
     private class ScriptedPage {
         var html: String = ""
         var status: HttpStatusCode = HttpStatusCode.OK

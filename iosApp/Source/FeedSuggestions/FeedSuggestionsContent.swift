@@ -199,7 +199,7 @@ private struct SuggestedFeedRow: View {
                     .fontWeight(.bold)
                     .lineLimit(1)
 
-                Text(feed.description_)
+                Text(feed.feedDescription)
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .lineLimit(2)

@@ -3,8 +3,9 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.prof18.feedflow.core"
+        withHostTest {}
     }
 
     compilerOptions {

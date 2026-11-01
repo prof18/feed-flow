@@ -7,14 +7,14 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.prof18.feedflow.i18n"
     }
 
     applyDefaultHierarchyTemplate()
 
     sourceSets {
-        val commonJvmAndroidMain by creating {
+        val commonJvmAndroidMain = create("commonJvmAndroidMain") {
             dependsOn(commonMain.get())
         }
 

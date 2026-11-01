@@ -4,7 +4,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.prof18.feedflow.feedsync.googledrive"
     }
 
@@ -27,7 +27,7 @@ kotlin {
             }
         }
 
-        val commonJvmAndroidMain by creating {
+        val commonJvmAndroidMain = create("commonJvmAndroidMain") {
             dependsOn(commonMain.get())
         }
 

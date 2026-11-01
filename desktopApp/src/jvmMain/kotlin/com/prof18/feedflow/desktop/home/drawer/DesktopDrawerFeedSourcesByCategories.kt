@@ -143,7 +143,7 @@ internal fun DesktopDrawerFeedSourcesByCategories(
         }),
     ).let { entries ->
         if (uncategorizedSources.isNotEmpty() && navDrawerState.feedSourcesByCategory.isEmpty()) {
-            entries.add(
+            entries.adding(
                 DesktopPopupMenuEntry.Action(
                     strings.deleteAllFeedsInCategory,
                     onClick = {

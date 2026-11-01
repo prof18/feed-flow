@@ -1080,7 +1080,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
             ArticleOpenMode.FEED_CONTENT,
             requireNotNull(info).resolveArticleOpenMode(settingsRepository.getArticleOpenMode()),
         )
-        assertEquals(item.isBookmarked, info?.isBookmarked)
+        assertEquals(item.isBookmarked, info.isBookmarked)
         assertNull(viewModel.currentArticleState.value)
         assertEquals(item.isRead, databaseHelper.getAllFeedItemFlagsForCloud().single { it.id == item.id }.isRead)
 

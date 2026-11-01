@@ -87,12 +87,12 @@ class FeedRecoveryCoordinatorTest : KoinTestBase() {
     fun `different origin is busy while another verification is visible`() = runTest(testDispatcher) {
         val coordinator = FeedRecoveryCoordinator(available = true)
         val first = launch {
-            coordinator.verify(FEED_URL, VerificationPurpose.Feed, ticket()) { _, _ -> Unit }
+            coordinator.verify(FEED_URL, VerificationPurpose.Feed, ticket()) { _, _ -> }
         }
         runCurrent()
 
         val error = assertFailsWith<WebsiteVerificationFailure> {
-            coordinator.verify("https://other.test/feed.xml", VerificationPurpose.Feed, ticket()) { _, _ -> Unit }
+            coordinator.verify("https://other.test/feed.xml", VerificationPurpose.Feed, ticket()) { _, _ -> }
         }
 
         assertEquals(VerificationFailure.Busy, error.reason)
@@ -151,7 +151,7 @@ class FeedRecoveryCoordinatorTest : KoinTestBase() {
     fun `stale request ids cannot start fail or capture the visible request`() = runTest(testDispatcher) {
         val coordinator = FeedRecoveryCoordinator(available = true)
         val verification = launch {
-            coordinator.verify(FEED_URL, VerificationPurpose.Feed, ticket()) { _, _ -> Unit }
+            coordinator.verify(FEED_URL, VerificationPurpose.Feed, ticket()) { _, _ -> }
         }
         runCurrent()
         val request = assertNotNull(coordinator.visibleState.value)
@@ -219,7 +219,7 @@ class FeedRecoveryCoordinatorTest : KoinTestBase() {
         val coordinator = FeedRecoveryCoordinator(available = true)
         val ticket = ticket()
         val verification = launch {
-            coordinator.verify(FEED_URL, VerificationPurpose.Feed, ticket) { _, _ -> Unit }
+            coordinator.verify(FEED_URL, VerificationPurpose.Feed, ticket) { _, _ -> }
         }
         runCurrent()
 
@@ -234,7 +234,7 @@ class FeedRecoveryCoordinatorTest : KoinTestBase() {
         val coordinator = FeedRecoveryCoordinator(available = false)
 
         val error = assertFailsWith<WebsiteVerificationFailure> {
-            coordinator.verify(FEED_URL, VerificationPurpose.Feed, ticket()) { _, _ -> Unit }
+            coordinator.verify(FEED_URL, VerificationPurpose.Feed, ticket()) { _, _ -> }
         }
 
         assertEquals(VerificationFailure.Unsupported, error.reason)
@@ -246,7 +246,7 @@ class FeedRecoveryCoordinatorTest : KoinTestBase() {
         val coordinator = FeedRecoveryCoordinator(available = true)
 
         val error = assertFailsWith<WebsiteVerificationFailure> {
-            coordinator.verify("http://example.test/feed.xml", VerificationPurpose.Feed, ticket()) { _, _ -> Unit }
+            coordinator.verify("http://example.test/feed.xml", VerificationPurpose.Feed, ticket()) { _, _ -> }
         }
 
         assertEquals(VerificationFailure.Unsupported, error.reason)

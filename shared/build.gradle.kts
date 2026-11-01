@@ -1,3 +1,4 @@
+import co.touchlab.skie.configuration.SuppressSkieWarning
 import co.touchlab.skie.configuration.SuspendInterop
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -11,7 +12,7 @@ plugins {
     id("com.feedflow.cloud-sync-tests")
 }
 
-val generateArticleReportBuildInfo by tasks.registering {
+val generateArticleReportBuildInfo = tasks.register("generateArticleReportBuildInfo") {
     val parserVersion = libs.versions.klead
     inputs.property("parserVersion", parserVersion)
     val outputDirectory = layout.buildDirectory.dir("generated/article-report/commonMain/kotlin")
@@ -36,7 +37,7 @@ val generateArticleReportBuildInfo by tasks.registering {
 kotlin {
     jvmToolchain(21)
 
-    androidLibrary {
+    android {
         namespace = "com.prof18.feedflow.shared"
         compileSdk = libs.versions.android.compile.sdk.get().toInt()
         minSdk = libs.versions.android.min.sdk.get().toInt()
@@ -63,11 +64,11 @@ kotlin {
             isStatic = true
             binaryOption("bundleId", "com.prof18.feedflow.FeedFlowKit")
 
-            export(project(":i18n"))
-            export(project(":core"))
-            export(project(":feedSync:dropbox"))
-            export(project(":feedSync:googledrive"))
-            export(project(":feedSync:icloud"))
+            export(project.dependencies.project(":i18n"))
+            export(project.dependencies.project(":core"))
+            export(project.dependencies.project(":feedSync:dropbox"))
+            export(project.dependencies.project(":feedSync:googledrive"))
+            export(project.dependencies.project(":feedSync:icloud"))
             export(libs.touchlab.kermit.simple)
             export(libs.androidx.lifecycle.viewModel)
         }
@@ -149,7 +150,7 @@ kotlin {
             }
         }
 
-        val commonJvmAndroidMain by creating {
+        val commonJvmAndroidMain = create("commonJvmAndroidMain") {
             dependsOn(commonMain.get())
 
             dependencies {
@@ -157,7 +158,7 @@ kotlin {
             }
         }
 
-        val commonJvmAndroidTest by creating {
+        val commonJvmAndroidTest = create("commonJvmAndroidTest") {
             dependsOn(commonTest.get())
 
             dependencies {
@@ -165,7 +166,7 @@ kotlin {
             }
         }
 
-        val androidTest by creating {
+        val androidTest = create("androidTest") {
             dependsOn(commonJvmAndroidTest)
 
             dependencies {
@@ -173,7 +174,7 @@ kotlin {
             }
         }
 
-        val commonMobileMain by creating {
+        val commonMobileMain = create("commonMobileMain") {
             dependsOn(commonMain.get())
         }
 
@@ -260,6 +261,13 @@ skie {
     features {
         group {
             SuspendInterop.Enabled(false)
+        }
+        // Third-party types whose `description` collides with NSObject.description; Swift never uses them.
+        group("io.ktor.http.HttpStatusCode") {
+            SuppressSkieWarning.NameCollision(true)
+        }
+        group("com.prof18.rssparser.model") {
+            SuppressSkieWarning.NameCollision(true)
         }
     }
 }

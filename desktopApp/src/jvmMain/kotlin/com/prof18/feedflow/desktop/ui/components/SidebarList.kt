@@ -43,7 +43,6 @@ import org.jetbrains.jewel.foundation.lazy.tree.DefaultSelectableLazyColumnEvent
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.intui.standalone.styling.dark
 import org.jetbrains.jewel.intui.standalone.styling.light
-import org.jetbrains.jewel.ui.component.ListItemState
 import org.jetbrains.jewel.ui.component.SimpleListItem
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.styling.SimpleListItemColors
@@ -163,13 +162,9 @@ internal fun SidebarList(
                 }
             }
             item(key = entry.key, contentType = entry.key::class) {
-                val itemState = ListItemState(
-                    isSelected = isSelected ||
-                        (entry.key as? SidebarKey.Feed)?.id in selectedFeedIds,
-                    isActive = isActive,
-                )
                 SimpleListItem(
-                    state = itemState,
+                    selected = isSelected || (entry.key as? SidebarKey.Feed)?.id in selectedFeedIds,
+                    active = isActive,
                     modifier = Modifier
                         .testTag("sidebar-${entry.key}")
                         .padding(
@@ -230,7 +225,7 @@ private fun handleSidebarKeyEvent(
     val isSection = selectedKey is SidebarKey.Category || selectedKey == SidebarKey.Uncategorized
     val isExpansionKey = event.key == Key.DirectionRight || event.key == Key.DirectionLeft
     return when {
-        isSection && selectedKey != null && isExpansionKey -> {
+        isSection && isExpansionKey -> {
             onExpansionChange(selectedKey, event.key == Key.DirectionRight)
             true
         }

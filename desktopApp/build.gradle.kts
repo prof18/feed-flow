@@ -20,7 +20,7 @@ val appVersionName = extra["appVersionName"] as () -> String
 @Suppress("UNCHECKED_CAST")
 val appVersionCode = extra["appVersionCode"] as () -> Int
 
-val generateDesktopBuildInfo by tasks.registering {
+val generateDesktopBuildInfo = tasks.register("generateDesktopBuildInfo") {
     val versionName = appVersionName()
     inputs.property("versionName", versionName)
     val outputDirectory = layout.buildDirectory.dir("generated/desktop-build-info/kotlin")
@@ -156,6 +156,15 @@ kotlin {
                 implementation(libs.junit.jupiter.api)
             }
         }
+    }
+}
+
+dependencies {
+    constraints {
+        // Jewel markdown images pins older Coil JVM artifacts, which drag in an incompatible Skiko.
+        val coilVersion = libs.versions.io.coil.get()
+        add("jvmMainImplementation", "io.coil-kt.coil3:coil-svg-jvm:$coilVersion")
+        add("jvmMainImplementation", "io.coil-kt.coil3:coil-network-ktor3-jvm:$coilVersion")
     }
 }
 

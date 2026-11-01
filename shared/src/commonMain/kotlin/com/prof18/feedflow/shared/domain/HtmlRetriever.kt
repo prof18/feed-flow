@@ -128,7 +128,7 @@ class HtmlRetriever(
     }
 
     private companion object {
-        private const val MAX_RESPONSE_BYTES = 5 * 1024 * 1024 // 5 MB
+        private const val MAX_RESPONSE_BYTES = 5L * 1024 * 1024 // 5 MB
         private const val READABLE_CONTENT_ACCEPT_HEADER =
             "text/html, application/xhtml+xml, application/xml;q=0.9, text/xml;q=0.9, " +
                 "application/rss+xml;q=0.8, application/atom+xml;q=0.8, */*;q=0.1"

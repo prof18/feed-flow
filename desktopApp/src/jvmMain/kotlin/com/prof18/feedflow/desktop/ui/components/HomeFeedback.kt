@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Article
+import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +49,7 @@ internal fun ReaderEmptyState() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
-            painter = rememberVectorPainter(Icons.Outlined.Article),
+            painter = rememberVectorPainter(Icons.AutoMirrored.Outlined.Article),
             contentDescription = null,
             tint = JewelTheme.globalColors.text.info.copy(alpha = 0.5f),
             modifier = Modifier.padding(bottom = 16.dp).size(48.dp),

@@ -13,6 +13,7 @@ import androidx.compose.ui.window.WindowState
 import org.jetbrains.jewel.ui.component.Text
 import org.junit.Rule
 import org.junit.Test
+import java.awt.Dimension
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.util.concurrent.atomic.AtomicReference
@@ -82,11 +83,18 @@ class DesktopInitialWindowSizeTest {
         return requireNotNull(frame)
     }
 
+    // On X11 the window manager can deliver frame insets after windowOpened, and the size is corrected
+    // asynchronously afterwards, so wait for the bounds to settle before asserting them.
     private fun assertBounds(frame: ComposeWindow, width: Int, height: Int) {
-        SwingUtilities.invokeAndWait {
-            assertEquals(width, frame.width)
-            assertEquals(height, frame.height)
-        }
+        val expected = Dimension(width, height)
+        runCatching { rule.waitUntil(timeoutMillis = WINDOW_TIMEOUT_MS) { frame.sizeOnEdt() == expected } }
+        assertEquals(expected, frame.sizeOnEdt())
+    }
+
+    private fun ComposeWindow.sizeOnEdt(): Dimension {
+        var size = Dimension()
+        SwingUtilities.invokeAndWait { size = this.size }
+        return size
     }
 
     private companion object {

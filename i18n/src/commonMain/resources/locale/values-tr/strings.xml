@@ -221,7 +221,6 @@
     <string name="articles_import_done_message">Makaleler içe aktarıldı</string>
     <string name="articles_export_done_message">Makaleler dışa aktarıldı</string>
     <string name="articles_export_filter_title">Dışa aktarılan makaleler</string>
-    <string name="widget_refreshing">Yenileniyor…</string>
     <string name="hide_youtube_shorts">Shorts\'ları gizle</string>
     <string name="desktop_accounts_backup_description">Abonelikleri, okunmuş makaleleri ve yer imlerini yedekler.</string>
     <string name="reader_mode_fallback_title">Makale ayrıştırılamadı</string>

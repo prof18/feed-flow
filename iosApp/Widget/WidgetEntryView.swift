@@ -22,9 +22,6 @@ struct WidgetEntryView: View {
                     .font(.headline)
                 Text(entry.widgetEmptyScreenContent)
                     .font(.caption)
-                if entry.showRefreshButton && widgetFamily != .systemSmall {
-                    refreshButton
-                }
             }
             .padding()
         } else {
@@ -97,24 +94,8 @@ struct WidgetEntryView: View {
     }
 
     private var widgetHeader: some View {
-        HStack {
-            Text(entry.widgetTitle)
-                .font(.headline)
-            Spacer()
-            if entry.showRefreshButton {
-                refreshButton
-            }
-        }
-    }
-
-    private var refreshButton: some View {
-        // WidgetKit renders both toggle states, so loading feedback appears before the intent starts.
-        Toggle(isOn: false, intent: RefreshFeedsIntent()) {
-            Image(systemName: "arrow.clockwise")
-                .font(.subheadline)
-        }
-        .toggleStyle(WidgetRefreshButtonStyle(refreshingLabel: entry.refreshingLabel))
-        .accessibilityLabel(entry.refreshLabel)
+        Text(entry.widgetTitle)
+            .font(.headline)
     }
 
     private func smallWidgetFeedItemView(_ feedItem: FeedItemWidget) -> some View {

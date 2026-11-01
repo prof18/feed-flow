@@ -440,7 +440,6 @@
     <string name="widget_list_item_title">„%s“ vidin</string>
     <string name="widget_list_item_description">Vidin %s · %s</string>
     <string name="widget_list_empty">Ühtegi vidinat veel pole. Lisa FeedFlow vidin oma käivitajast.</string>
-    <string name="widget_refreshing">Andmed on uuendamisel…</string>
     <string name="audio_play">Esita heliriba</string>
     <string name="audio_pause">Peata heliriba esitus</string>
     <string name="audio_close_player">Sulge pleier</string>

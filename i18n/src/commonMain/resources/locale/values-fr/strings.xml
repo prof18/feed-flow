@@ -440,7 +440,6 @@
     <string name="widget_list_item_title">Widget %s</string>
     <string name="widget_list_item_description">Widget %s · %s</string>
     <string name="widget_list_empty">Aucun widget ajouté pour l\'instant. Ajoutez un widget FeedFlow depuis votre lanceur.</string>
-    <string name="widget_refreshing">Rafraîchissement…</string>
     <string name="audio_episode_badge_content_description">Episode audio</string>
     <string name="audio_episode_label">Audio</string>
     <string name="menu_open_audio">Ouvrir l\'audio</string>

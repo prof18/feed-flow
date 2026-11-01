@@ -1,3 +1,4 @@
+import com.google.devtools.ksp.gradle.KspAATask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
@@ -39,7 +40,12 @@ ksp {
     arg("lyricist.xml.generateComposeAccessors", "false")
 }
 
-tasks.withType<KotlinCompilationTask<*>>().all {
+tasks.withType<KotlinCompilationTask<*>>().configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
+}
+
+// The platform KSP tasks read commonMain, which includes the generated Lyricist sources below.
+tasks.withType<KspAATask>().configureEach {
     if (name != "kspCommonMainKotlinMetadata") {
         dependsOn("kspCommonMainKotlinMetadata")
     }

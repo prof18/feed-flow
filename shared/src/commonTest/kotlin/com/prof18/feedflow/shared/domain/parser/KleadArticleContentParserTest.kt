@@ -67,6 +67,29 @@ class KleadArticleContentParserTest {
     }
 
     @Test
+    fun `keeps short content chosen by a site profile`() = runTest {
+        val worker = worker(html = redditPostHtml(body = "<p>Seed: 12345. Good luck!</p>"))
+
+        val content = assertNotNull(worker.parse(REDDIT_POST_URL))
+
+        assertTrue(content.contains("Seed: 12345. Good luck!"), content)
+    }
+
+    @Test
+    fun `keeps an image-only post chosen by a site profile`() = runTest {
+        val worker = worker(
+            html = redditPostHtml(
+                media = "<div slot=\"post-media-container\">" +
+                    "<img data-post-media-primary src=\"https://i.redd.it/puzzle.png\"></div>",
+            ),
+        )
+
+        val content = assertNotNull(worker.parse(REDDIT_POST_URL))
+
+        assertTrue(content.contains("https://i.redd.it/puzzle.png"), content)
+    }
+
+    @Test
     fun `link and image urls do not count towards the Markdown minimum length`() = runTest {
         val longUrl = "https://example.com/" + "a".repeat(300)
         val worker = worker(
@@ -260,7 +283,18 @@ class KleadArticleContentParserTest {
         forbiddenFallbackClient = unexpectedRequestHttpClient(),
     )
 
+    private fun redditPostHtml(body: String = "", media: String = "") = """
+        <html><body>
+          <shreddit-post post-title="Puzzle map" author="someone">
+            $media
+            <div slot="text-body"><div property="schema:articleBody">$body</div></div>
+          </shreddit-post>
+        </body></html>
+    """.trimIndent()
+
     private companion object {
+        private const val REDDIT_POST_URL = "https://www.reddit.com/r/MinecraftUnlimited/comments/1xb6g1l/puzzle_map/"
+
         private val articleBody = List(12) { index ->
             "Klead extracts article prose into clean Markdown for desktop reader mode paragraph $index."
         }.joinToString(" ")

@@ -55,8 +55,10 @@ internal class KleadArticleContentParser(
             }
         }.trim()
 
+        // A site profile matched the page structure, so a short result is a real short post, not page chrome.
+        val minLength = if (result.metadata.fromSiteProfile) 0 else MIN_CONTENT_LENGTH
         val visibleLength = content.visibleLength(contentFormat)
-        if (visibleLength < MIN_CONTENT_LENGTH) {
+        if (content.isEmpty() || visibleLength < minLength) {
             logger.d { "Klead content too short ($visibleLength chars), rejecting: $url" }
             null
         } else {

@@ -24,8 +24,9 @@ STAGE_DIR="${STAGE_DIR:-desktopApp/build/release/main-release/app/$APP_NAME}"
 DIST_DIR="${DIST_DIR:-dist}"
 APPDIR="$DIST_DIR/$APP_NAME.AppDir"
 TOOLS_DIR="${TOOLS_DIR:-.tmp/appimage-tools}"
-APPIMAGETOOL_URL="${APPIMAGETOOL_URL:-https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$ARCH.AppImage}"
-APPIMAGETOOL="$TOOLS_DIR/appimagetool-$ARCH.AppImage"
+APPIMAGETOOL_VERSION="${APPIMAGETOOL_VERSION:-1.9.1}"
+APPIMAGETOOL_URL="${APPIMAGETOOL_URL:-https://github.com/AppImage/appimagetool/releases/download/$APPIMAGETOOL_VERSION/appimagetool-$ARCH.AppImage}"
+APPIMAGETOOL="$TOOLS_DIR/appimagetool-$APPIMAGETOOL_VERSION-$ARCH.AppImage"
 OUTPUT_APPIMAGE="$DIST_DIR/$APP_NAME-$VERSION-$ARCH.AppImage"
 
 if [[ ! -d "$STAGE_DIR" ]]; then
@@ -92,8 +93,17 @@ if [[ ! -x "$APPIMAGETOOL" ]]; then
   chmod +x "$APPIMAGETOOL"
 fi
 
+# appimagetool's own AppStream check also fetches every <url> in the metainfo,
+# so a site that blocks CI runners (Weblate answers 403) fails the release.
+# Validate offline here instead; Flathub runs the full online validation.
+if command -v appstreamcli >/dev/null 2>&1; then
+  appstreamcli validate-tree --no-net "$APPDIR"
+else
+  echo "appstreamcli not found, skipping AppStream validation" >&2
+fi
+
 rm -f "$OUTPUT_APPIMAGE" "$OUTPUT_APPIMAGE.sha256"
-APPIMAGE_EXTRACT_AND_RUN=1 ARCH="$ARCH" "$APPIMAGETOOL" "$APPDIR" "$OUTPUT_APPIMAGE"
+APPIMAGE_EXTRACT_AND_RUN=1 ARCH="$ARCH" "$APPIMAGETOOL" --no-appstream "$APPDIR" "$OUTPUT_APPIMAGE"
 chmod +x "$OUTPUT_APPIMAGE"
 
 if command -v sha256sum >/dev/null 2>&1; then

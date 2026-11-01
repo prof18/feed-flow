@@ -60,9 +60,6 @@ jobs:
           "version=$VERSION" >> $env:GITHUB_OUTPUT
           "VERSION=$VERSION" >> $env:GITHUB_ENV
 
-      - name: Update Licenses file
-        run: ./gradlew :desktopApp:exportLibraryDefinitions "-PaboutLibraries.exportPath=src/main/resources/"
-
       - name: Create path variables
         id: path_variables
         shell: pwsh

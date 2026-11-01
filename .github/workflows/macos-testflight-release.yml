@@ -80,9 +80,6 @@ jobs:
         env:
           RUNTIME_PROVISION: ${{ secrets.RUNTIME_PROVISION }}
 
-      - name: Update Licenses file
-        run: ./gradlew :desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
-
       - name: Read version from properties
         id: version
         run: |

@@ -48,12 +48,15 @@ val isMacOS = System.getProperty("os.name").lowercase().contains("mac")
 val isLinux = System.getProperty("os.name").lowercase().contains("linux")
 val isWindows = System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
 
+// Generated on every build from the resolved dependencies, so it stays out of the source tree.
+val generatedLicensesDir = layout.buildDirectory.dir("generated/aboutlibraries")
+
 aboutLibraries {
     collect {
         configPath.set(file("config/aboutlibraries"))
     }
     export {
-        outputFile.set(file("src/jvmMain/resources/aboutlibraries.json"))
+        outputFile.set(generatedLicensesDir.map { it.file("aboutlibraries.json") })
     }
 }
 
@@ -93,6 +96,7 @@ kotlin {
     sourceSets {
         jvmMain {
             kotlin.srcDir(generateDesktopBuildInfo)
+            resources.srcDir(tasks.named("exportLibraryDefinitions").map { generatedLicensesDir.get() })
             dependencies {
                 implementation(libs.jewel.int.ui.standalone)
                 implementation(libs.jewel.platform.icons)

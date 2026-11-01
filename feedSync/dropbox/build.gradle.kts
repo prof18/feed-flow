@@ -3,7 +3,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.prof18.feedflow.feedsync.dropbox"
         withHostTest {}
     }
@@ -29,7 +29,7 @@ kotlin {
             }
         }
 
-        val commonJvmAndroidMain by creating {
+        val commonJvmAndroidMain = create("commonJvmAndroidMain") {
             dependsOn(commonMain.get())
 
             dependencies {
@@ -37,7 +37,7 @@ kotlin {
             }
         }
 
-        val commonJvmAndroidTest by creating {
+        val commonJvmAndroidTest = create("commonJvmAndroidTest") {
             dependsOn(commonTest.get())
         }
 

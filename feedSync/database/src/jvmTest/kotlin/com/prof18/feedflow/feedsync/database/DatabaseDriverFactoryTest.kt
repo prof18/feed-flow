@@ -25,7 +25,7 @@ class DatabaseDriverFactoryTest {
         }
         openSyncDatabase(databasePath, logger).use { driver ->
             assertEquals(1L, countRows(driver, "synced_feed_item"))
-            assertEquals(FeedFlowFeedSyncDB.Schema.version.toLong(), userVersion(driver))
+            assertEquals(FeedFlowFeedSyncDB.Schema.version, userVersion(driver))
         }
     }
 
@@ -40,7 +40,7 @@ class DatabaseDriverFactoryTest {
 
         openSyncDatabase(databasePath, logger).use { driver ->
             assertEquals(1L, countRows(driver, "synced_feed_item"))
-            assertEquals(FeedFlowFeedSyncDB.Schema.version.toLong(), userVersion(driver))
+            assertEquals(FeedFlowFeedSyncDB.Schema.version, userVersion(driver))
         }
     }
 
@@ -50,7 +50,7 @@ class DatabaseDriverFactoryTest {
         createDatabase(databasePath) { driver ->
             createSyncTables(driver)
             insertItem(driver, "future-item")
-            setVersion(driver, FeedFlowFeedSyncDB.Schema.version.toLong() + 1)
+            setVersion(driver, FeedFlowFeedSyncDB.Schema.version + 1)
         }
         val before = databasePath.readBytes()
 
@@ -59,7 +59,7 @@ class DatabaseDriverFactoryTest {
         assertContentEquals(before, databasePath.readBytes())
         createDatabase(databasePath) { driver ->
             assertEquals(1L, countRows(driver, "synced_feed_item"))
-            assertEquals(FeedFlowFeedSyncDB.Schema.version.toLong() + 1, userVersion(driver))
+            assertEquals(FeedFlowFeedSyncDB.Schema.version + 1, userVersion(driver))
         }
     }
 
@@ -69,7 +69,7 @@ class DatabaseDriverFactoryTest {
         createDatabase(databasePath) { driver ->
             driver.execute(null, "CREATE TABLE synced_feed_item (url_hash TEXT NOT NULL PRIMARY KEY);", 0, null)
             driver.execute(null, "INSERT INTO synced_feed_item(url_hash) VALUES ('incomplete-item')", 0)
-            setVersion(driver, FeedFlowFeedSyncDB.Schema.version.toLong())
+            setVersion(driver, FeedFlowFeedSyncDB.Schema.version)
         }
         val before = databasePath.readBytes()
 

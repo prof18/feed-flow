@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ViewSidebar
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.ViewSidebar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -80,7 +80,7 @@ internal fun HomeToolbar(
     ) {
         if (showDrawerMenu) {
             ToolbarIconButton(
-                icon = Icons.Outlined.ViewSidebar,
+                icon = Icons.AutoMirrored.Outlined.ViewSidebar,
                 description = strings.drawerMenuButtonContentDescription,
                 onClick = onDrawerMenuClick,
                 selected = isDrawerOpen,

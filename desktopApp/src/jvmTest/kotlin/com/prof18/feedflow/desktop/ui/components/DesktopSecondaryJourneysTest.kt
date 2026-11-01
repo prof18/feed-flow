@@ -412,7 +412,14 @@ class DesktopSecondaryJourneysTest {
             val input = descendants(window).single { component ->
                 component.keyListeners.any { it.javaClass.name.contains("ComposeSceneMediator") }
             }
-            val event = KeyEvent(input, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_ESCAPE)
+            val event = KeyEvent(
+                input,
+                KeyEvent.KEY_PRESSED,
+                System.currentTimeMillis(),
+                0,
+                KeyEvent.VK_ESCAPE,
+                KeyEvent.CHAR_UNDEFINED,
+            )
             input.keyListeners.forEach { it.keyPressed(event) }
         }
         rule.waitUntil(timeoutMillis = 5_000) { !visible.value }

@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.ProgressButtonLabel
+import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.ui.Outline
 import org.jetbrains.jewel.ui.component.DefaultButton
 import org.jetbrains.jewel.ui.component.OutlinedButton
@@ -82,6 +83,7 @@ internal fun DropboxAuthorizationForm(
 }
 
 @Composable
+@OptIn(ExperimentalJewelApi::class)
 private fun DropboxCodeEntry(
     state: CredentialsState,
     loading: Boolean,

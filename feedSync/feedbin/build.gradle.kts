@@ -4,8 +4,9 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.prof18.feedflow.feedsync.feedbin"
+        withHostTest {}
     }
 
     sourceSets {

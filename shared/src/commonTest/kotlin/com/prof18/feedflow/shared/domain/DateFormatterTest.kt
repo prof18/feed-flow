@@ -170,8 +170,8 @@ class DateFormatterTest {
         val timezone = TimeZone.currentSystemDefault()
         val millis = LocalDateTime(
             year = 2025,
-            monthNumber = 2,
-            dayOfMonth = 3,
+            month = 2,
+            day = 3,
             hour = 14,
             minute = 30,
         ).toInstant(timezone).toEpochMilliseconds()
@@ -190,8 +190,8 @@ class DateFormatterTest {
         val timezone = TimeZone.currentSystemDefault()
         val millis = LocalDateTime(
             year = 2024,
-            monthNumber = 12,
-            dayOfMonth = 25,
+            month = 12,
+            day = 25,
             hour = 14,
             minute = 30,
         ).toInstant(timezone).toEpochMilliseconds()

@@ -63,7 +63,7 @@ internal class FoundationICloudMetadataQuery : ICloudMetadataQuery {
 
             continuation.invokeOnCancellation {
                 operationQueue.addOperationWithBlock {
-                    observer?.let(NSNotificationCenter.defaultCenter::removeObserver)
+                    NSNotificationCenter.defaultCenter.removeObserver(observer)
                     if (query.started) query.stopQuery()
                 }
             }

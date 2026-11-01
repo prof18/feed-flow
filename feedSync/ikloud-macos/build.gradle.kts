@@ -6,7 +6,7 @@ kotlin {
     macosArm64("ikloud") {
         compilations.getByName("main") {
             cinterops {
-                val jni by creating {
+                create("jni") {
                     val javaHome = File(System.getProperty("java.home"))
                     packageName = "com.prof18.jni"
                     includeDirs(
@@ -32,7 +32,7 @@ kotlin {
             }
         }
 
-        val ikloudTest by getting {
+        getByName("ikloudTest") {
             dependencies {
                 implementation(kotlin("test"))
             }

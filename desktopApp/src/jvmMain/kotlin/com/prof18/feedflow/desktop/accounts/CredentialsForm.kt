@@ -38,6 +38,7 @@ import com.prof18.feedflow.desktop.testing.AccountE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
 import com.prof18.feedflow.desktop.ui.components.ProgressButtonLabel
+import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.ui.Outline
 import org.jetbrains.jewel.ui.component.DefaultButton
 import org.jetbrains.jewel.ui.component.Icon
@@ -192,6 +193,7 @@ private fun CredentialFields(
 }
 
 @Composable
+@OptIn(ExperimentalJewelApi::class)
 private fun CredentialField(
     label: String,
     value: TextFieldValue,

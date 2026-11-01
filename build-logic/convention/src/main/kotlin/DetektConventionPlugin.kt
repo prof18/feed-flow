@@ -43,7 +43,7 @@ class DetektConventionPlugin : Plugin<Project> {
 
             // `detekt` alone skips rules that need type resolution (e.g. most new compose rules).
             tasks.named("detekt") {
-                dependsOn(tasks.matching { it.name in TYPE_RESOLVED_TASKS })
+                dependsOn(provider { TYPE_RESOLVED_TASKS.filter { it in tasks.names } })
             }
 
             dependencies {

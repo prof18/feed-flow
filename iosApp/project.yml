@@ -274,7 +274,6 @@ targets:
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClient.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClientImpl.swift
       - path: Source/UI/Style/Spacing.swift
-      - path: Source/Utils/FeedConditionalGetURLProtocol.swift
     settings:
       base:
         PRODUCT_NAME: $(TARGET_NAME)
@@ -307,7 +306,6 @@ targets:
           DEBUG_INFORMATION_FORMAT: dwarf
           DEVELOPMENT_TEAM: Q7CUB3RNAK
           PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.Widget
-          FEEDFLOW_HOST_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev
           PROVISIONING_PROFILE_SPECIFIER: ""
           SWIFT_ACTIVE_COMPILATION_CONDITIONS: "DEBUG $(inherited) APP_EXTENSION"
         Release:
@@ -316,7 +314,6 @@ targets:
           DEVELOPMENT_TEAM[sdk=iphoneos*]: Q7CUB3RNAK
           CODE_SIGN_IDENTITY[sdk=iphoneos*]: "Apple Development"
           PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.Widget
-          FEEDFLOW_HOST_BUNDLE_IDENTIFIER: com.prof18.feedflow
           PROVISIONING_PROFILE_SPECIFIER: ""
           PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]: FeedFlowWidgetGHActionDevProvisioning
           SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_EXTENSION
@@ -460,10 +457,8 @@ targets:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - path: Tests/Widget/WidgetRefreshCoordinatorTests.swift
       - path: Tests/Widget/WidgetContentSelectionTests.swift
       - path: Tests/Widget/TestWidgetContentItem.swift
-      - path: Widget/WidgetRefreshCoordinator.swift
       - path: Widget/WidgetContentSelection.swift
       - path: Widget/WidgetContentListing.swift
       - path: Widget/WidgetContentGroups.swift
@@ -557,7 +552,6 @@ targets:
       - path: Tests/CloudSync
       - path: Tests/Widget
         excludes:
-          - WidgetRefreshCoordinatorTests.swift
           - WidgetContentSelectionTests.swift
           - TestWidgetContentItem.swift
       - path: Widget/WidgetContentLogoLoader.swift

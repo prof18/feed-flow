@@ -12,7 +12,6 @@
     <string name="refresh_feeds">Actualizează fluxurile</string>
     <string name="no_feeds_found_message">Nu s-au găsit fluxuri. Te rog să adaugi un flux nou!</string>
     <string name="loading_feed_message">Se încarcă fluxurile %s</string>
-    <string name="widget_refreshing">Se actualizează…</string>
     <string name="mark_all_read_button">Marchează tot ca citit</string>
     <string name="clear_old_articles_button">Șterge articolele vechi de o săptămână</string>
     <string name="settings_button">Setări</string>

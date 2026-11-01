@@ -143,8 +143,6 @@ fun getWidgetStrings(
         }
     }
     return WidgetStrings(
-        widgetRefresh = strings.refreshFeeds,
-        widgetRefreshing = strings.widgetRefreshing,
         widgetTitle = strings.widgetLatestItems,
         widgetEmptyScreenTitle = strings.emptyFeedMessage,
         widgetEmptyScreenContent = strings.widgetCheckFeedSources,
@@ -174,8 +172,6 @@ data class WidgetContentOption(
 )
 
 data class WidgetStrings(
-    val widgetRefresh: String,
-    val widgetRefreshing: String,
     val widgetTitle: String,
     val widgetEmptyScreenTitle: String,
     val widgetEmptyScreenContent: String,

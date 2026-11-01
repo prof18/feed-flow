@@ -440,7 +440,6 @@
     <string name="widget_list_item_title">Widget %s</string>
     <string name="widget_list_item_description">Widget %s · %s</string>
     <string name="widget_list_empty">Noch wurden keine Widgets hinzugefügt. Fügen sie ein Widget von ihrem Launcher hinzu.</string>
-    <string name="widget_refreshing">Aktualisieren…</string>
     <string name="audio_episode_badge_content_description">Audioepisode</string>
     <string name="audio_episode_label">Audio</string>
     <string name="menu_open_audio">Audio öffnen</string>

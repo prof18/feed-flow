@@ -440,7 +440,6 @@
     <string name="widget_list_empty">Ще не додано жодного віджета. Додайте віджет FeedFlow з головного екрана.</string>
     <string name="mark_all_bookmarks_read_dialog_message">Ви впевнені, що бажаєте позначити всі збережені статті як прочитані?</string>
     <string name="remove_bookmark_dialog_message">Ви впевнені, що бажаєте вилучити цю статтю із закладок?</string>
-    <string name="widget_refreshing">Оновлення…</string>
     <string name="audio_episode_badge_content_description">Аудіоепізод</string>
     <string name="audio_episode_label">Аудіо</string>
     <string name="menu_open_audio">Відкрити аудіо</string>

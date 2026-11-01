@@ -6,9 +6,6 @@ struct Provider: AppIntentTimelineProvider {
     func placeholder(in _: Context) -> WidgetEntry {
         let strings = WidgetSupport.strings
         return WidgetEntry(
-            showRefreshButton: false,
-            refreshLabel: strings.widgetRefresh,
-            refreshingLabel: strings.widgetRefreshing,
             date: Date(),
             feedItems: [],
             widgetTitle: strings.widgetTitle,
@@ -62,9 +59,6 @@ struct Provider: AppIntentTimelineProvider {
             ? strings.widgetBookmarksEmptyMessage
             : strings.widgetEmptyScreenTitle
         return WidgetEntry(
-            showRefreshButton: configuration.showRefreshButton,
-            refreshLabel: strings.widgetRefresh,
-            refreshingLabel: strings.widgetRefreshing,
             date: date,
             feedItems: items,
             widgetTitle: title,

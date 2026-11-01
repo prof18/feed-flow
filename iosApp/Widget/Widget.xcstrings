@@ -12,18 +12,6 @@
           }
         }
       }
-    },
-    "widget_show_refresh_button" : {
-      "comment" : "Label for the optional refresh button in Edit Widget.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show refresh button"
-          }
-        }
-      }
     }
   },
   "version" : "1.0"

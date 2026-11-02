@@ -566,4 +566,5 @@
     <string name="feed_verification_checking_body">İçerik hazır olunca FeedFlow otomatik olarak devam edecek.</string>
     <string name="feed_verification_check_again">Tekrar kontrol et</string>
     <string name="feed_verification_retry_body">İçeriğe ulaşılamadı. Tekrar kontrol etmeyi deneyin ya da bu ekranı kapatın ve tekrar deneyin.</string>
+    <string name="database_save_error">Değişiklikleriniz kaydedilmedi. Daha sonra tekrar deneyin - hata kodu: %s</string>
 </resources>

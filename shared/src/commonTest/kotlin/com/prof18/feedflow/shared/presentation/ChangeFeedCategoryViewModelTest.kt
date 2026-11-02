@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.SyncResult
@@ -144,6 +145,33 @@ class ChangeFeedCategoryViewModelTest : KoinTestBase() {
         val updatedSources = databaseHelper.getFeedSources().associateBy { it.id }
         assertEquals(category.id, updatedSources.getValue(feedSourceA.id).category?.id)
         assertEquals(category.id, updatedSources.getValue(feedSourceB.id).category?.id)
+    }
+
+    @Test
+    fun `createCategory stores the category so a move can target it`() = runTest(testDispatcher) {
+        viewModel.createCategory(CategoryName("Reading"))
+        advanceUntilIdle()
+
+        val created = databaseHelper.getFeedSourceCategories().firstOrNull { it.title == "Reading" }
+        assertNotNull(created)
+
+        val feedSource = createFeedSource(id = "source-a", title = "Feed A")
+        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+
+        viewModel.moveFeedSourcesToCategory(listOf(feedSource), created)
+        advanceUntilIdle()
+
+        assertEquals(created.id, databaseHelper.getFeedSource(feedSource.id)?.category?.id)
+    }
+
+    @Test
+    fun `createCategory keeps a single category when the name already exists`() = runTest(testDispatcher) {
+        databaseHelper.insertCategories(listOf(FeedSourceCategory(id = "category-1", title = "Reading")))
+
+        viewModel.createCategory(CategoryName("Reading"))
+        advanceUntilIdle()
+
+        assertEquals(1, databaseHelper.getFeedSourceCategories().count { it.title == "Reading" })
     }
 
     private fun createFeedSource(

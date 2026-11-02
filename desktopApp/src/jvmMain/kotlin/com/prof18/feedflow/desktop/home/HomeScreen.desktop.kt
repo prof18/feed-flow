@@ -31,7 +31,7 @@ import com.prof18.feedflow.desktop.ui.FeedManagementActions
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.LocalReduceMotion
 import com.prof18.feedflow.desktop.ui.ShareBehavior
-import com.prof18.feedflow.desktop.ui.components.DesktopLoadingOperationDialog
+import com.prof18.feedflow.desktop.ui.components.DesktopLoadingOperationOverlay
 import com.prof18.feedflow.desktop.ui.desktopExternalLinkAction
 import com.prof18.feedflow.desktop.ui.scrollToItemConditionally
 import com.prof18.feedflow.desktop.utils.copyToClipboard
@@ -107,7 +107,7 @@ internal fun HomeScreen(
     }
 
     if (feedOperation != FeedOperation.None) {
-        DesktopLoadingOperationDialog(feedOperation)
+        DesktopLoadingOperationOverlay(feedOperation)
     }
 
     LaunchedEffect(homeViewModel, snackbarHostState) {
@@ -310,6 +310,7 @@ internal fun HomeScreen(
             onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
             validateCategoryName = homeViewModel::validateCategoryName,
             onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
+            onAddCategoryClick = { categoryName -> changeFeedCategoryViewModel.createCategory(categoryName) },
             onOpenWebsite = desktopExternalLinkAction(uriHandler, ::showBrowserLaunchError),
             onMoveFeedSourcesToCategory = { feedSources, category ->
                 changeFeedCategoryViewModel.moveFeedSourcesToCategory(feedSources, category)

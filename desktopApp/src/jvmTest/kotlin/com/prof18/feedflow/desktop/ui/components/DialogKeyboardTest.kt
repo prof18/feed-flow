@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.home.NoFeedsDialog
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.desktop.home.drawer.DesktopFeedMoveDialog
 import com.prof18.feedflow.desktop.settings.DesktopSettingsDialog
 import com.prof18.feedflow.desktop.testing.DesktopLibraryFixture
@@ -89,6 +90,8 @@ class DialogKeyboardTest {
                                 actions += "${sources.single().id}:${destination?.id}"
                                 visible.value = false
                             },
+                            onCreateCategory = { },
+                            validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
                             onDismiss = { actions += "dismiss" },
                         )
                     }
@@ -129,6 +132,8 @@ class DialogKeyboardTest {
                             categories = persistentListOf(category),
                             feedSources = persistentListOf(source),
                             onMove = { _, _ -> actions += "move" },
+                            onCreateCategory = { },
+                            validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
                             onDismiss = {
                                 actions += "dismiss"
                                 visible.value = false

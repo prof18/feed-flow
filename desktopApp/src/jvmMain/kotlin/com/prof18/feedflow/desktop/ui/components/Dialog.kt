@@ -10,6 +10,7 @@ internal fun Dialog(
     title: String,
     onCloseRequest: () -> Unit,
     size: DpSize = DpSize(400.dp, 300.dp),
+    resizable: Boolean = true,
     extendBehindTitleBar: Boolean = false,
     alertStyle: Boolean = false,
     content: @Composable DialogWindowScope.() -> Unit,
@@ -18,6 +19,7 @@ internal fun Dialog(
         title = title,
         size = size,
         onCloseRequest = onCloseRequest,
+        resizable = resizable,
         extendBehindTitleBar = extendBehindTitleBar,
         alertStyle = alertStyle,
     ) { content() }

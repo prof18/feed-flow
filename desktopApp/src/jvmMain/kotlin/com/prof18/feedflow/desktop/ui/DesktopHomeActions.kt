@@ -47,6 +47,7 @@ data class FeedManagementActions(
     val validateCategoryName: (CategoryId?, CategoryName) -> CategoryNameValidationResult,
     val onDeleteCategoryClick: (CategoryId) -> Unit,
     val onOpenWebsite: (String) -> Unit,
+    val onAddCategoryClick: (CategoryName) -> Unit = { _ -> },
     val onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit = { _, _ -> },
     val onReorderPinnedFeedSources: (List<FeedSource>) -> Unit = { _ -> },
     val onReorderCategories: (List<DrawerFeedSource.FeedSourceCategoryWrapper>) -> Unit = { _ -> },

@@ -470,6 +470,8 @@ fun DesktopDrawer(
                 onMoveFeedSourcesToCategory(sources, category)
                 moveTargetIds = null
             },
+            onCreateCategory = feedManagementActions.onAddCategoryClick,
+            validateCategoryName = feedManagementActions.validateCategoryName,
             onDismiss = { moveTargetIds = null },
         )
     }

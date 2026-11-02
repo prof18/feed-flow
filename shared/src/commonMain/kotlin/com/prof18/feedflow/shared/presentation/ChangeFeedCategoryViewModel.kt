@@ -82,6 +82,14 @@ class ChangeFeedCategoryViewModel internal constructor(
         }
     }
 
+    /** Creates a category from a picker that is about to move feeds into it, then refreshes the drawer. */
+    fun createCategory(categoryName: CategoryName) {
+        viewModelScope.launch {
+            categoryRepository.createCategory(categoryName)
+            feedStateRepository.getFeeds()
+        }
+    }
+
     fun moveFeedSourcesToCategory(feedSources: List<FeedSource>, category: FeedSourceCategory?) {
         viewModelScope.launch {
             feedSources.forEach { feedSource ->

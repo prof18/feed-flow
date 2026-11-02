@@ -563,4 +563,27 @@
     <string name="feed_verification_checking_body">FeedFlow sẽ tự động tiếp tục khi nội dung đã sẵn sàng.</string>
     <string name="feed_verification_check_again">Kiểm tra lại</string>
     <string name="feed_verification_retry_body">Không thể truy xuất nội dung. Vui lòng kiểm tra lại hoặc đóng màn hình này và thử lại.</string>
+    <string name="database_save_error">Không thể lưu thay đổi. Thử lại sau - mã lỗi: %s</string>
+    <string name="database_recovered_from_corruption">Dữ liệu cục bộ của bạn bị hỏng, vì vậy FeedFlow đã khởi động lại với một cơ sở dữ liệu mới. Một bản sao của dữ liệu cũ đã được lưu giữ trong thư mục dữ liệu của FeedFlow.</string>
+    <string name="database_startup_locked">FeedFlow không thể mở dữ liệu vì một chương trình khác đang sử dụng nó. Hãy đóng các cửa sổ FeedFlow khác, sau đó mở lại FeedFlow.</string>
+    <string name="database_startup_storage">FeedFlow không thể đọc hoặc ghi vào thư mục dữ liệu của nó. Hãy kiểm tra xem ổ đĩa có đủ dung lượng trống và FeedFlow có thể truy cập vào thư mục đó hay không.</string>
+    <string name="database_startup_native">FeedFlow không thể tải một thành phần cần thiết. Hãy cài đặt lại hoặc cập nhật FeedFlow. Dữ liệu của bạn không thay đổi.</string>
+    <string name="database_startup_generic">FeedFlow không thể mở dữ liệu. Các tệp của bạn chưa bị xóa.</string>
+    <string name="database_open_data_folder">Mở thư mục dữ liệu</string>
+    <string name="database_quit">Thoát</string>
+    <string name="desktop_already_running">FeedFlow hiện đang hoạt động.</string>
+    <string name="desktop_startup_crash">FeedFlow không thể khởi động. Thông tin chi tiết bên dưới đã được lưu vào %s. Vui lòng đính kèm tệp đó khi báo cáo sự cố.</string>
+    <string name="desktop_startup_crash_no_log">FeedFlow không thể khởi động. Vui lòng sao chép các chi tiết bên dưới và đính kèm chúng khi báo cáo sự cố.</string>
+    <string name="reader_mode_title_font_size">Kích cỡ Tựa đề</string>
+    <string name="reader_mode_font">Phông chữ</string>
+    <string name="reader_font_system">Hệ thống</string>
+    <string name="reader_font_latin_script_only">Phông chữ này chỉ hỗ trợ các hệ chữ Latinh. Văn bản sử dụng các hệ chữ khác sẽ sử dụng phông chữ hệ thống.</string>
+    <string name="reader_mode_preview_title">Buổi sáng thảnh thơi với một bài viết hay</string>
+    <string name="reader_mode_preview_body">Bản xem trước này sẽ thay đổi khi bạn điều chỉnh phông chữ và kích cõ, vì vậy bạn có thể thiết lập thử thoải mái để đọc trước khi quay lại bài viết.</string>
+    <string name="keep_unread_when_scrolling_for_feed">Giữ nguyên trạng thái chưa đọc khi cuộn</string>
+    <string name="keep_unread_when_scrolling_for_feed_description">Các bài viết từ nguồn này sẽ không được đánh dấu là đã đọc khi bạn cuộn qua chúng.</string>
+    <string name="keep_unread_when_scrolling_for_feed_disabled">Khả dụng khi tùy chọn “Đánh dấu đã đọc khi cuộn” được bật.</string>
+    <string name="reader_mode_opened_externally_title">Đã mở bằng trình duyệt của bạn</string>
+    <string name="reader_mode_opened_externally_message">Liên kết này là một tệp tin, giống như PDF, mà FeedFlow không thể hiển thị trực tiếp, vì vậy nó đã được mở trong trình duyệt của bạn.</string>
+    <string name="reader_mode_open_again_in_browser">Mở bằng trình duyệt</string>
 </resources>

@@ -132,4 +132,22 @@ class YouTubeChannelUrlTest : KoinTestBase() {
             "https://www.youtube.com/feed/videos.xml?channel_id=$channelId",
         ).forEach { assertNull(YouTubeChannelUrl.normalizeFeedUrl(it), it) }
     }
+
+    @Test
+    fun `no-Shorts playlist feed resolves back to its channel`() {
+        listOf(
+            "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFsBjURrPoezykLs9EqgamOA",
+            "http://youtube.com/feeds/videos.xml?playlist_id=UULFsBjURrPoezykLs9EqgamOA",
+        ).forEach { assertEquals(channelId, YouTubeChannelUrl.channelIdFromNoShortsFeedUrl(it), it) }
+    }
+
+    @Test
+    fun `no-Shorts playlist parsing rejects other feeds`() {
+        listOf(
+            "https://www.youtube.com/feeds/videos.xml?channel_id=$channelId",
+            "https://www.youtube.com/feeds/videos.xml?playlist_id=PL_test",
+            "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFshort",
+            "https://example.com/feeds/videos.xml?playlist_id=UULFsBjURrPoezykLs9EqgamOA",
+        ).forEach { assertNull(YouTubeChannelUrl.channelIdFromNoShortsFeedUrl(it), it) }
+    }
 }

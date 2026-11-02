@@ -2,16 +2,20 @@ package com.prof18.feedflow.shared
 
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
+import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class FeedFlowDatabaseTest : KoinTestBase() {
     private val databaseHelper by inject<DatabaseHelper>()
@@ -357,6 +361,55 @@ class FeedFlowDatabaseTest : KoinTestBase() {
         assertEquals(1, updatedSource?.pinnedPosition)
         assertEquals(true, updatedSource?.isHiddenFromTimeline)
         assertEquals(true, updatedSource?.isNotificationEnabled)
+    }
+
+    @Test
+    fun `deleteYouTubeShorts removes only unbookmarked Shorts of that feed`() = runTest {
+        databaseHelper.insertFeedSource(
+            listOf(
+                createParsedFeedSource(id = "yt", title = "Channel"),
+                createParsedFeedSource(id = "other", title = "Other channel"),
+            ),
+        )
+        val channel = FeedSourceGenerator.feedSource(id = "yt")
+        val short = FeedItemGenerator.feedItem(
+            id = "short",
+            url = "https://www.youtube.com/shorts/a",
+            feedSource = channel,
+        )
+        databaseHelper.insertFeedItems(
+            listOf(
+                short,
+                FeedItemGenerator.feedItem(
+                    id = "saved-short",
+                    url = "https://www.youtube.com/shorts/b",
+                    feedSource = channel,
+                ),
+                FeedItemGenerator.feedItem(
+                    id = "video",
+                    url = "https://www.youtube.com/watch?v=c",
+                    feedSource = channel,
+                ),
+                FeedItemGenerator.feedItem(
+                    id = "other-short",
+                    url = "https://www.youtube.com/shorts/d",
+                    feedSource = FeedSourceGenerator.feedSource(id = "other"),
+                ),
+            ),
+            lastSyncTimestamp = 0,
+        )
+        databaseHelper.updateBookmarkStatus(FeedItemId("saved-short"), isBookmarked = true)
+
+        assertEquals(listOf(FeedItemId("short")), databaseHelper.deleteYouTubeShorts("yt"))
+
+        assertNull(databaseHelper.getFeedItemUrlInfo("short"))
+        assertNotNull(databaseHelper.getFeedItemUrlInfo("saved-short"))
+        assertNotNull(databaseHelper.getFeedItemUrlInfo("video"))
+        assertNotNull(databaseHelper.getFeedItemUrlInfo("other-short"))
+
+        // No tombstone: the Short must come back when the switch is turned off
+        databaseHelper.insertFeedItems(listOf(short), lastSyncTimestamp = 0)
+        assertNotNull(databaseHelper.getFeedItemUrlInfo("short"))
     }
 
     private fun createParsedFeedSource(id: String, title: String) = ParsedFeedSource(

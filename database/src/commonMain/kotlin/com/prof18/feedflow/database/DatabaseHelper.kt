@@ -778,6 +778,17 @@ class DatabaseHelper(
             logger.d { "Error while deleting old feed items" }
         }
 
+    // No tombstones: unlike old items, removed Shorts must come back if the feed returns to the full channel
+    suspend fun deleteYouTubeShorts(feedSourceId: String): List<FeedItemId> =
+        dbRef.transactionWithContext(backgroundDispatcher, suspensionGuardReason = "Removing YouTube Shorts") {
+            val shorts = dbRef.feedItemQueries.selectYouTubeShortsForFeedSource(feedSourceId).executeAsList()
+            if (shorts.isNotEmpty()) {
+                dbRef.readStatusPendingActionQueries.deleteReadStatusPendingActionsForFeedItems(shorts)
+                dbRef.feedItemQueries.deleteByUrlHashes(shorts)
+            }
+            shorts.map(::FeedItemId)
+        }
+
     suspend fun getOldFeedItem(timeThreshold: Long, feedFilter: FeedFilter) = withContext(backgroundDispatcher) {
         dbRef.feedItemQueries.selectOldItems(
             threshold = timeThreshold,

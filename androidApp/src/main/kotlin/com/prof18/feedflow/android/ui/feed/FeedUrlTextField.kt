@@ -17,9 +17,10 @@ internal fun FeedUrlTextField(
     errorMessage: String,
     onFeedUrlUpdated: (String) -> Unit,
     modifier: Modifier = Modifier,
+    testTag: String = FeedFormE2eIds.ADD_FEED_URL_INPUT,
 ) {
     OutlinedTextField(
-        modifier = modifier.testTag(FeedFormE2eIds.ADD_FEED_URL_INPUT),
+        modifier = modifier.testTag(testTag),
         label = {
             Text(text = LocalFeedFlowStrings.current.feedUrl)
         },

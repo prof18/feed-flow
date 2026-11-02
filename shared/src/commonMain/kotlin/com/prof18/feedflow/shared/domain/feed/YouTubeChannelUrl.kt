@@ -8,6 +8,7 @@ internal data class YouTubeChannelUrl(
     val channelId: String?,
 ) {
     companion object {
+        private const val NO_SHORTS_PREFIX = "UULF"
         private val channelIdPattern = Regex("UC[A-Za-z0-9_-]{22}")
         private val channelTabs = setOf("videos", "shorts", "streams", "featured", "playlists", "community", "about")
         private val channelHosts = setOf("youtube.com", "www.youtube.com", "m.youtube.com")
@@ -67,7 +68,16 @@ internal data class YouTubeChannelUrl(
 
         fun noShortsFeedUrl(channelId: String): String {
             require(channelIdPattern.matches(channelId))
-            return "https://www.youtube.com/feeds/videos.xml?playlist_id=UULF${channelId.drop(2)}"
+            return "https://www.youtube.com/feeds/videos.xml?playlist_id=$NO_SHORTS_PREFIX${channelId.drop(2)}"
+        }
+
+        fun channelIdFromNoShortsFeedUrl(value: String): String? {
+            val url = parseYouTubeUrl(value) ?: return null
+            if (url.encodedPath != "/feeds/videos.xml") return null
+            if (url.parameters.contains("channel_id")) return null
+            val playlistId = url.parameters.getAll("playlist_id")?.singleOrNull() ?: return null
+            if (!playlistId.startsWith(NO_SHORTS_PREFIX)) return null
+            return "UC${playlistId.removePrefix(NO_SHORTS_PREFIX)}".takeIf(channelIdPattern::matches)
         }
 
         private fun parseYouTubeUrl(value: String): Url? {

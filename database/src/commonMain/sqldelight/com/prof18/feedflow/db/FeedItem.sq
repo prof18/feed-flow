@@ -270,6 +270,20 @@ deleteAllExcept:
 DELETE FROM feed_item
 WHERE feed_source_id NOT IN :feedSourceId;
 
+selectYouTubeShortsForFeedSource:
+SELECT url_hash FROM feed_item
+WHERE feed_source_id = :feedSourceId
+AND is_bookmarked = 0
+AND (
+  url LIKE 'https://www.youtube.com/shorts/%'
+  OR url LIKE 'https://youtube.com/shorts/%'
+  OR url LIKE 'https://m.youtube.com/shorts/%'
+);
+
+deleteByUrlHashes:
+DELETE FROM feed_item
+WHERE url_hash IN :urlHashes;
+
 updateBookmarkStatus:
 UPDATE feed_item
 SET is_bookmarked = :starred

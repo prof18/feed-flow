@@ -1,0 +1,63 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp:
+    permissions:
+      notifications: allow
+- openLink: feedflow://e2e/reset-and-seed?profile=notifications
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- longPressOn:
+    id: article_row_e2e_article_newest_unread
+- tapOn: "Feed settings"
+- assertVisible: "Feed settings"
+- assertNotVisible:
+    id: edit_feed_hide_youtube_shorts_toggle
+- tapOn:
+    id: edit_feed_url_input
+    point: "95%,50%"
+- eraseText: 200
+- inputText: "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"
+- scrollUntilVisible:
+    element:
+      id: edit_feed_hide_youtube_shorts_toggle
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: edit_feed_hide_youtube_shorts_toggle
+    checked: false
+- tapOn:
+    id: edit_feed_hide_youtube_shorts_toggle
+    point: "90%,50%"
+- assertVisible:
+    id: edit_feed_hide_youtube_shorts_toggle
+    checked: true
+- scrollUntilVisible:
+    element:
+      id: edit_feed_url_input
+    direction: UP
+    timeout: 10000
+- assertVisible:
+    id: edit_feed_url_input
+    text: ".*playlist_id=UULFsBjURrPoezykLs9EqgamOA.*"
+- scrollUntilVisible:
+    element:
+      id: edit_feed_hide_youtube_shorts_toggle
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: edit_feed_hide_youtube_shorts_toggle
+    point: "90%,50%"
+- assertVisible:
+    id: edit_feed_hide_youtube_shorts_toggle
+    checked: false
+- scrollUntilVisible:
+    element:
+      id: edit_feed_url_input
+    direction: UP
+    timeout: 10000
+- assertVisible:
+    id: edit_feed_url_input
+    text: ".*channel_id=UCsBjURrPoezykLs9EqgamOA.*"

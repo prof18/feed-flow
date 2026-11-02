@@ -5,6 +5,7 @@ sealed class FeedEditedState {
     data object Loading : FeedEditedState()
     data class FeedEdited(
         val feedName: String,
+        val shortsFilterFallback: Boolean = false,
     ) : FeedEditedState()
 
     sealed class Error : FeedEditedState() {
@@ -15,6 +16,7 @@ sealed class FeedEditedState {
             val challengedUrl: String? = null,
         ) : Error()
 
+        data class FeedAlreadyExists(val feedName: String) : Error()
         data object InvalidUrl : Error()
         data object InvalidTitleLink : Error()
         data object GenericError : Error()

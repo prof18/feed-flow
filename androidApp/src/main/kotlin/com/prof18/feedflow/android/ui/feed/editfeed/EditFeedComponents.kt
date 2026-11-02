@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.ui.feed.editfeed
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.FeedSourceSettings
+import com.prof18.feedflow.core.model.YouTubeOptionsState
 
 @Composable
 fun EditFeedContent(
@@ -67,6 +69,8 @@ fun EditFeedContent(
     contentPadding: PaddingValues = PaddingValues(),
     onNotificationToggleChanged: (Boolean) -> Unit = {},
     showNotificationToggle: Boolean = false,
+    youTubeOptions: YouTubeOptionsState = YouTubeOptionsState(),
+    onHideShortsToggled: (Boolean) -> Unit = {},
     recoveryAction: @Composable () -> Unit = {},
 ) {
     if (showDeleteDialog) {
@@ -134,6 +138,7 @@ fun EditFeedContent(
                     showError = showError,
                     errorMessage = errorMessage,
                     onFeedUrlUpdated = onFeedUrlUpdated,
+                    testTag = FeedFormE2eIds.URL_INPUT,
                 )
                 recoveryAction()
             }
@@ -186,6 +191,42 @@ fun EditFeedContent(
                         .testTag(FeedFormE2eIds.HIDE_IMAGES_TOGGLE)
                         .padding(start = Spacing.regular),
                 )
+            }
+        }
+
+        if (youTubeOptions.showHideShortsToggle) {
+            item {
+                val hideShortsLabel = LocalFeedFlowStrings.current.hideYoutubeShorts
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Spacing.regular),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.xsmall),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = hideShortsLabel,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Switch(
+                            checked = youTubeOptions.hideShorts,
+                            onCheckedChange = onHideShortsToggled,
+                            enabled = !showLoading,
+                            modifier = Modifier
+                                .testTag(FeedFormE2eIds.EDIT_HIDE_YOUTUBE_SHORTS_TOGGLE)
+                                .semantics { contentDescription = hideShortsLabel }
+                                .padding(start = Spacing.regular),
+                        )
+                    }
+                    Text(
+                        text = LocalFeedFlowStrings.current.hideYoutubeShortsDescription,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
 

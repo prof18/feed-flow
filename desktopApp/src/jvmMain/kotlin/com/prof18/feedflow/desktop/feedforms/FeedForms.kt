@@ -220,6 +220,8 @@ internal fun EditFeedForm(
     modifier: Modifier = Modifier,
     completionRevision: Int = 0,
     onCancel: (() -> Unit)? = null,
+    youTubeOptions: YouTubeOptionsState = YouTubeOptionsState(),
+    onHideShortsToggled: (Boolean) -> Unit = {},
 ) {
     val strings = LocalFeedFlowStrings.current
     var nameValue by remember { mutableStateOf(TextFieldValue(feedName)) }
@@ -287,6 +289,16 @@ internal fun EditFeedForm(
                     onCheckedChange = { if (!submission.busy) onHideImagesToggled(it) },
                     enabled = !submission.busy,
                 )
+                if (youTubeOptions.showHideShortsToggle) {
+                    SettingsSwitch(
+                        title = strings.hideYoutubeShorts,
+                        checked = youTubeOptions.hideShorts,
+                        onCheckedChange = { if (!submission.busy) onHideShortsToggled(it) },
+                        modifier = Modifier.testTag(FeedFormE2eIds.EDIT_HIDE_YOUTUBE_SHORTS_TOGGLE),
+                        enabled = !submission.busy,
+                        supportingText = strings.hideYoutubeShortsDescription,
+                    )
+                }
                 KeepUnreadOnScrollSwitch(
                     checked = feedSourceSettings.isKeepUnreadOnScrollEnabled,
                     isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,

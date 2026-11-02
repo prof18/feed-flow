@@ -9,10 +9,12 @@ import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.model.YouTubeOptionsState
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
+import com.prof18.feedflow.shared.domain.feed.YouTubeChannelUrl
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
@@ -62,6 +64,9 @@ class EditFeedViewModel internal constructor(
     private val feedDeletedMutableState: MutableSharedFlow<Unit> = MutableSharedFlow()
     val feedDeletedState = feedDeletedMutableState.asSharedFlow()
 
+    private val youTubeOptionsMutableState = MutableStateFlow(YouTubeOptionsState())
+    val youTubeOptionsState = youTubeOptionsMutableState.asStateFlow()
+
     private val showNotificationToggleMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val showNotificationToggleState = showNotificationToggleMutableState.asStateFlow()
 
@@ -88,9 +93,17 @@ class EditFeedViewModel internal constructor(
     fun updateFeedUrlTextFieldValue(feedUrlTextFieldValue: String) {
         if (feedUrlTextFieldValue != feedUrlMutableState.value) clearPendingVerification()
         feedUrlMutableState.update { feedUrlTextFieldValue }
+        refreshYouTubeOptions(feedUrlTextFieldValue)
         viewModelScope.launch {
             feedEditedMutableState.emit(FeedEditedState.Idle)
         }
+    }
+
+    fun updateHideShortsStatus(status: Boolean) {
+        if (status == youTubeOptionsMutableState.value.hideShorts) return
+        val channelId = youTubeChannelId(feedUrlMutableState.value) ?: return
+        val url = if (status) YouTubeChannelUrl.noShortsFeedUrl(channelId) else YouTubeChannelUrl.feedUrl(channelId)
+        updateFeedUrlTextFieldValue(url)
     }
 
     fun updateFeedNameTextFieldValue(feedNameTextFieldValue: String) {
@@ -164,6 +177,7 @@ class EditFeedViewModel internal constructor(
             originalKeepUnreadOnScroll = keepUnreadOnScroll
 
             feedUrlMutableState.update { currentFeedSource.url }
+            refreshYouTubeOptions(currentFeedSource.url)
             feedNameMutableState.update { currentFeedSource.title }
             feedSourceSettingsMutableState.update {
                 FeedSourceSettings(
@@ -251,6 +265,12 @@ class EditFeedViewModel internal constructor(
                     )
                     verificationRequiredMutableState.value = true
                 }
+                if (state is FeedEditedState.FeedEdited && state.shortsFilterFallback && original != null) {
+                    // Set directly: updateFeedUrlTextFieldValue emits Idle, which would hide the fallback notice
+                    originalFeedSource = newFeedSource.copy(url = original.url)
+                    feedUrlMutableState.value = original.url
+                    refreshYouTubeOptions(original.url)
+                }
                 feedEditedMutableState.emit(state)
             } else {
                 feedEditedMutableState.emit(FeedEditedState.FeedEdited(feedNameState.value))
@@ -286,6 +306,22 @@ class EditFeedViewModel internal constructor(
         verificationTicket?.revoke()
         verificationTicket = null
         verificationRequiredMutableState.value = false
+    }
+
+    private fun refreshYouTubeOptions(url: String) {
+        val sanitized = sanitizeUrl(url.trim())
+        val noShortsChannelId = YouTubeChannelUrl.channelIdFromNoShortsFeedUrl(sanitized)
+        val visible = canEditUrl() && youTubeChannelId(sanitized) != null
+        youTubeOptionsMutableState.value = YouTubeOptionsState(
+            showHideShortsToggle = visible,
+            hideShorts = visible && noShortsChannelId != null,
+        )
+    }
+
+    private fun youTubeChannelId(url: String): String? {
+        val sanitized = sanitizeUrl(url.trim())
+        return YouTubeChannelUrl.channelIdFromNoShortsFeedUrl(sanitized)
+            ?: YouTubeChannelUrl.channelIdFromFeedUrl(sanitized)
     }
 
     private fun clearPendingVerification() {

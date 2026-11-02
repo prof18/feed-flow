@@ -22,6 +22,8 @@ struct EditFeedScreenContent: View {
     @Binding var articleOpenMode: ArticleOpenMode
     @Binding var isHidden: Bool
     @Binding var isHideImagesEnabled: Bool
+    let showHideShortsToggle: Bool
+    @Binding var isHideShortsEnabled: Bool
     @Binding var isKeepUnreadOnScrollEnabled: Bool
     var isMarkReadWhenScrollingEnabled: Bool
     @Binding var isPinned: Bool
@@ -36,6 +38,7 @@ struct EditFeedScreenContent: View {
     let updateArticleOpenMode: (ArticleOpenMode) -> Void
     let onHiddenToggled: (Bool) -> Void
     let onHideImagesToggled: (Bool) -> Void
+    let onHideShortsToggled: (Bool) -> Void
     let onKeepUnreadOnScrollToggled: (Bool) -> Void
     let onPinnedToggled: (Bool) -> Void
     let onNotificationToggled: (Bool) -> Void
@@ -67,6 +70,7 @@ struct EditFeedScreenContent: View {
                         .keyboardType(.URL)
                         .textContentType(.URL)
                         .autocorrectionDisabled()
+                        .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.urlInput)
                         .hoverEffect()
                         .focused($isTextFieldFocused)
                 },
@@ -112,6 +116,21 @@ struct EditFeedScreenContent: View {
                 .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.hideImagesToggle)
                 .onChange(of: isHideImagesEnabled) {
                     onHideImagesToggled(isHideImagesEnabled)
+                }
+
+                if showHideShortsToggle {
+                    Toggle(isOn: $isHideShortsEnabled) {
+                        VStack(alignment: .leading) {
+                            Text(feedFlowStrings.hideYoutubeShorts)
+                            Text(feedFlowStrings.hideYoutubeShortsDescription)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.hideShortsToggle)
+                    .onChange(of: isHideShortsEnabled) {
+                        onHideShortsToggled(isHideShortsEnabled)
+                    }
                 }
 
                 Toggle(isOn: $isKeepUnreadOnScrollEnabled) {

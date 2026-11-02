@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.model.YouTubeOptionsState
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
@@ -17,6 +18,7 @@ import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -174,6 +176,57 @@ class EditFeedViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `channel feed URL shows Hide Shorts off`() = runTest {
+        viewModel.updateFeedUrlTextFieldValue(CHANNEL_FEED_URL)
+
+        assertEquals(
+            YouTubeOptionsState(showHideShortsToggle = true, hideShorts = false),
+            viewModel.youTubeOptionsState.value,
+        )
+    }
+
+    @Test
+    fun `no-Shorts feed URL shows Hide Shorts on`() = runTest {
+        viewModel.updateFeedUrlTextFieldValue(NO_SHORTS_FEED_URL)
+
+        assertEquals(
+            YouTubeOptionsState(showHideShortsToggle = true, hideShorts = true),
+            viewModel.youTubeOptionsState.value,
+        )
+    }
+
+    @Test
+    fun `non YouTube URL hides Hide Shorts`() = runTest {
+        viewModel.updateFeedUrlTextFieldValue("https://example.com/rss.xml")
+
+        assertEquals(YouTubeOptionsState(), viewModel.youTubeOptionsState.value)
+    }
+
+    @Test
+    fun `toggling Hide Shorts rewrites the feed URL`() = runTest {
+        viewModel.updateFeedUrlTextFieldValue(CHANNEL_FEED_URL)
+
+        viewModel.updateHideShortsStatus(true)
+        assertEquals(NO_SHORTS_FEED_URL, viewModel.feedUrlState.value)
+        assertTrue(viewModel.youTubeOptionsState.value.hideShorts)
+
+        viewModel.updateHideShortsStatus(false)
+        assertEquals(CHANNEL_FEED_URL, viewModel.feedUrlState.value)
+        assertFalse(viewModel.youTubeOptionsState.value.hideShorts)
+    }
+
+    @Test
+    fun `restricted account hides Hide Shorts`() = runTest {
+        networkSettings.setSyncAccountType(SyncAccounts.FRESH_RSS)
+        networkSettings.setSyncPwd("token")
+        networkSettings.setSyncUrl("https://example.com")
+
+        viewModel.updateFeedUrlTextFieldValue(CHANNEL_FEED_URL)
+
+        assertEquals(YouTubeOptionsState(), viewModel.youTubeOptionsState.value)
+    }
+
+    @Test
     fun `updateFeedNameTextFieldValue emits idle and updates state`() = runTest {
         viewModel.feedEditedState.test {
             viewModel.updateFeedNameTextFieldValue("Updated Name")
@@ -271,4 +324,10 @@ class EditFeedViewModelTest : KoinTestBase() {
         isPinned = isPinned,
         isNotificationEnabled = isNotificationEnabled,
     )
+
+    private companion object {
+        const val CHANNEL_FEED_URL = "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"
+        const val NO_SHORTS_FEED_URL =
+            "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFsBjURrPoezykLs9EqgamOA"
+    }
 }

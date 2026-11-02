@@ -31,6 +31,7 @@ import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSourceSettings
+import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
@@ -47,6 +48,7 @@ internal fun EditScreen(
     DisposableEffect(viewModel) { onDispose { viewModel.cancelRecovery() } }
     val feedName by viewModel.feedNameState.collectAsStateWithLifecycle()
     val feedSourceSettings by viewModel.feedSourceSettingsState.collectAsStateWithLifecycle()
+    val youTubeOptions by viewModel.youTubeOptionsState.collectAsStateWithLifecycle()
     var showLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
@@ -79,23 +81,18 @@ internal fun EditScreen(
                     } else {
                         verificationDialogUrl = null
                         showError = true
-                        errorMessage = when (feedAddedState) {
-                            FeedEditedState.Error.InvalidUrl -> strings.invalidRssUrl
-                            FeedEditedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
-                            FeedEditedState.Error.GenericError -> strings.editFeedGenericError
-                            is FeedEditedState.Error.FetchFailed -> if (challengeUrl != null) {
-                                strings.feedVerificationUnsupported
-                            } else {
-                                strings.feedFetchRefusedError
-                            }
-                        }
+                        errorMessage = feedAddedState.toMessage(strings)
                     }
                 }
 
                 is FeedEditedState.FeedEdited -> {
                     showLoading = false
                     verificationDialogUrl = null
-                    val message = strings.feedEditedMessage(feedAddedState.feedName)
+                    val message = if (feedAddedState.shortsFilterFallback) {
+                        strings.hideYoutubeShortsEditFallback
+                    } else {
+                        strings.feedEditedMessage(feedAddedState.feedName)
+                    }
                     Toast.makeText(context, message, Toast.LENGTH_SHORT)
                         .show()
                     latestNavigateBack()
@@ -187,6 +184,8 @@ internal fun EditScreen(
                 viewModel.updateIsPinned(pinned)
             },
             showNotificationToggle = showNotificationToggle,
+            youTubeOptions = youTubeOptions,
+            onHideShortsToggled = viewModel::updateHideShortsStatus,
             onNotificationToggleChanged = { isNotificationEnabled ->
                 viewModel.updateIsNotificationEnabled(isNotificationEnabled)
             },
@@ -301,5 +300,17 @@ private fun EditScreenPreview() {
                 contentPadding = innerPadding,
             )
         }
+    }
+}
+
+private fun FeedEditedState.Error.toMessage(strings: FeedFlowStrings): String = when (this) {
+    FeedEditedState.Error.InvalidUrl -> strings.invalidRssUrl
+    FeedEditedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+    FeedEditedState.Error.GenericError -> strings.editFeedGenericError
+    is FeedEditedState.Error.FeedAlreadyExists -> strings.feedAlreadyExistsMessage(feedName)
+    is FeedEditedState.Error.FetchFailed -> if (verificationUrl != null) {
+        strings.feedVerificationUnsupported
+    } else {
+        strings.feedFetchRefusedError
     }
 }

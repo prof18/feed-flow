@@ -46,6 +46,7 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
     val url by vm.feedUrlState.collectAsState()
     val name by vm.feedNameState.collectAsState()
     val settings by vm.feedSourceSettingsState.collectAsState()
+    val youTubeOptions by vm.youTubeOptionsState.collectAsState()
     val categories by vm.categoriesState.collectAsState()
     val showNotifications by vm.showNotificationToggleState.collectAsState()
     val markReadWhenScrolling by vm.markReadWhenScrollingEnabledState.collectAsState()
@@ -66,6 +67,7 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
                         FeedEditedState.Error.InvalidUrl -> strings.invalidRssUrl
                         FeedEditedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
                         FeedEditedState.Error.GenericError -> strings.editFeedGenericError
+                        is FeedEditedState.Error.FeedAlreadyExists -> strings.feedAlreadyExistsMessage(state.feedName)
                         is FeedEditedState.Error.FetchFailed ->
                             strings.feedFetchRefusedError
                     }
@@ -73,7 +75,12 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
                 is FeedEditedState.FeedEdited -> {
                     completionRevision++
                     loading = false
-                    close()
+                    if (state.shortsFilterFallback) {
+                        showError = true
+                        error = strings.hideYoutubeShortsEditFallback
+                    } else {
+                        close()
+                    }
                 }
                 FeedEditedState.Idle -> {
                     loading = false
@@ -123,5 +130,7 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
         onDismissDeleteDialog = { showDelete = false }, onConfirmDelete = vm::deleteFeed,
         modifier = modifier,
         completionRevision = completionRevision,
+        youTubeOptions = youTubeOptions,
+        onHideShortsToggled = vm::updateHideShortsStatus,
     )
 }

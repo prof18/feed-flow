@@ -5,6 +5,8 @@ object FeedFormE2eIds {
     const val ADD_FEED_SAVE_BUTTON = "add_feed_save_button"
     const val ADD_FEED_HIDE_YOUTUBE_SHORTS = "add_feed_hide_youtube_shorts"
     const val NAME_INPUT = "edit_feed_name"
+    const val URL_INPUT = "edit_feed_url_input"
+    const val EDIT_HIDE_YOUTUBE_SHORTS_TOGGLE = "edit_feed_hide_youtube_shorts_toggle"
     const val HIDDEN_TOGGLE = "edit_feed_hidden_toggle"
     const val HIDE_IMAGES_TOGGLE = "edit_feed_hide_images_toggle"
     const val PINNED_TOGGLE = "edit_feed_pinned_toggle"

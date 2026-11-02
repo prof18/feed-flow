@@ -29,9 +29,6 @@ internal data class DesktopFeedSelectionState(
         return copy(selectedIds = emptySet(), anchorId = id)
     }
 
-    fun contextTarget(id: String): DesktopFeedSelectionState =
-        if (id in selectedIds) this else copy(selectedIds = setOf(id), anchorId = id)
-
     fun reconcile(presentIds: Set<String>): DesktopFeedSelectionState = copy(
         selectedIds = selectedIds intersect presentIds,
         anchorId = anchorId?.takeIf { it in presentIds },

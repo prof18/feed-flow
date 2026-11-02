@@ -74,7 +74,6 @@ internal fun DesktopDrawerFeedSourcesList(
     isCategoryDropTarget: Boolean,
     reorderEnabled: Boolean,
     modifier: Modifier = Modifier,
-    onContextTarget: (FeedSource) -> Unit = {},
     batchMenuEntries: ImmutableList<DesktopPopupMenuEntry>? = null,
 ) {
     Column(
@@ -138,7 +137,6 @@ internal fun DesktopDrawerFeedSourcesList(
                 onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSourceClick,
                 feedSource = feedSourceWrapper.feedSource,
                 unreadCount = feedSourceWrapper.unreadCount,
-                onContextClick = { onContextTarget(feedSourceWrapper.feedSource) },
                 batchMenuEntries = batchMenuEntries.takeIf { isMultiSelected },
                 onPointerModifiersChanged = { pointerModifiers = it },
                 isMultiSelected = isMultiSelected,

@@ -79,7 +79,6 @@ internal fun DesktopFeedSourceDrawerItem(
     onMarkAllReadForFeedSourceClick: (FeedSource) -> Unit,
     unreadCount: Long,
     modifier: Modifier = Modifier,
-    onContextClick: () -> Unit = {},
     batchMenuEntries: ImmutableList<DesktopPopupMenuEntry>? = null,
     onPointerModifiersChanged: (PointerKeyboardModifiers) -> Unit = {},
 ) {
@@ -124,7 +123,6 @@ internal fun DesktopFeedSourceDrawerItem(
             .background(finalBackground)
             .capturePrimaryModifiers(onPointerModifiersChanged)
             .feedSourceKeyboardContextMenu {
-                onContextClick()
                 menuPositionInWindow = itemPosition
                 showFeedMenu = true
             }
@@ -139,7 +137,6 @@ internal fun DesktopFeedSourceDrawerItem(
                 if (feedSource.fetchFailed) stateDescription = strings.feedFetchFailedTooltip
             }
             .feedSourceContextMenu { position ->
-                onContextClick()
                 menuPositionInWindow = itemPosition + position
                 showFeedMenu = true
             }

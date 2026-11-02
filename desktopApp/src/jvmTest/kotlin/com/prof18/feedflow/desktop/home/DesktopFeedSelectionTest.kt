@@ -33,10 +33,11 @@ class DesktopFeedSelectionTest {
     }
 
     @Test
-    fun `context preserves a selected batch or targets only the clicked row`() {
+    fun `a plain click clears the multi selection`() {
         val state = DesktopFeedSelectionState(setOf("first", "last"), anchorId = "first")
-        assertEquals(state, state.contextTarget("last"))
-        assertEquals(setOf("second"), state.contextTarget("second").selectedIds)
+        val clicked = state.select("second", visibleIds)
+        assertEquals(emptySet(), clicked.selectedIds)
+        assertEquals("second", clicked.anchorId)
     }
 
     @Test

@@ -6,7 +6,6 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -171,8 +170,6 @@ fun DesktopDrawer(
     } else {
         null
     }
-    val onContextTarget: (FeedSource) -> Unit = { selection = selection.contextTarget(it.id) }
-
     val onReorderPinnedFeedSource: (Int, FeedSource) -> Unit = { insertionIndex, feedSource ->
         val fromIndex = pinnedFeedSourceItems.indexOfFirst { it.feedSource.id == feedSource.id }
         if (fromIndex != -1) {
@@ -218,244 +215,241 @@ fun DesktopDrawer(
             .padding(contentPadding)
             .onGloballyPositioned { drawerCoordinates = it }
             .onPreviewKeyEvent { event ->
-                if (event.type == KeyEventType.KeyDown && event.key == Key.Escape && dragState.dragPayload != null) {
-                    dragState.clear()
-                    true
-                } else {
+                if (event.type != KeyEventType.KeyDown || event.key != Key.Escape) {
                     false
+                } else {
+                    when {
+                        dragState.dragPayload != null -> {
+                            dragState.clear()
+                            true
+                        }
+
+                        selection.selectedIds.isNotEmpty() -> {
+                            selection = DesktopFeedSelectionState()
+                            true
+                        }
+
+                        else -> false
+                    }
                 }
             },
     ) {
-        Column(Modifier.fillMaxSize()) {
-            if (selectedSources.isNotEmpty()) {
-                DesktopFeedManagementToolbar(
-                    modifier = Modifier.fillMaxWidth(),
-                    selectedCount = selectedSources.size,
-                    onClear = { selection = DesktopFeedSelectionState() },
-                    onMove = { moveTargetIds = selectedFeedSourceIds },
-                    onDelete = { deleteTargetIds = selectedFeedSourceIds },
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fillMaxSize()
+                .onGloballyPositioned { dragState.updateListBounds(it) }
+                .onPreviewKeyEvent { event ->
+                    keyboard.handle(event, keyboardRows, treeState) { id, toggle ->
+                        latestFeedSources[id]?.let { onFeedSourceClick(it, toggle, true) }
+                    }
+                },
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            item {
+                val timelineItem = remember(displayState.navDrawerState.timeline) {
+                    displayState.navDrawerState.timeline
+                        .filterIsInstance<DrawerItem.Timeline>()
+                        .firstOrNull()
+                        ?: DrawerItem.Timeline(unreadCount = 0)
+                }
+
+                DrawerTimelineItem(
+                    currentFeedFilter = displayState.currentFeedFilter,
+                    onFeedFilterSelected = onFeedFilterSelectedWithClear,
+                    drawerItem = timelineItem,
+                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
+                    modifier = desktopTreeRowFocusModifier("timeline", keyboard),
                 )
             }
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .onGloballyPositioned { dragState.updateListBounds(it) }
-                    .onPreviewKeyEvent { event ->
-                        keyboard.handle(event, keyboardRows, treeState) { id, toggle ->
-                            latestFeedSources[id]?.let { onFeedSourceClick(it, toggle, true) }
-                        }
-                    },
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                item {
-                    val timelineItem = remember(displayState.navDrawerState.timeline) {
-                        displayState.navDrawerState.timeline
-                            .filterIsInstance<DrawerItem.Timeline>()
-                            .firstOrNull()
-                            ?: DrawerItem.Timeline(unreadCount = 0)
-                    }
 
-                    DrawerTimelineItem(
-                        currentFeedFilter = displayState.currentFeedFilter,
-                        onFeedFilterSelected = onFeedFilterSelectedWithClear,
-                        drawerItem = timelineItem,
-                        drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
-                        modifier = desktopTreeRowFocusModifier("timeline", keyboard),
-                    )
+            item {
+                DrawerReadItem(
+                    currentFeedFilter = displayState.currentFeedFilter,
+                    onFeedFilterSelected = onFeedFilterSelectedWithClear,
+                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
+                    modifier = desktopTreeRowFocusModifier("read", keyboard),
+                )
+            }
+
+            item {
+                DrawerBookmarksItem(
+                    currentFeedFilter = displayState.currentFeedFilter,
+                    onFeedFilterSelected = onFeedFilterSelectedWithClear,
+                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
+                    modifier = desktopTreeRowFocusModifier("bookmarks", keyboard),
+                )
+            }
+
+            item {
+                DesktopDrawerFeedSourcesByCategories(
+                    navDrawerState = displayState.navDrawerState,
+                    onDeleteAllFeedsInCategoryClick = feedManagementActions.onDeleteAllFeedsInCategoryClick,
+                    onAddFeedClick = feedManagementActions.onAddFeedClick,
+                    onFeedSuggestionsClick = feedManagementActions.onFeedSuggestionsClick,
+                    onImportFeedsClick = feedManagementActions.onImportFeedsClick,
+                    onExpandAll = { tree.sections.forEach { treeState.setExpanded(it.id, true) } },
+                    onCollapseAll = { tree.sections.forEach { treeState.setExpanded(it.id, false) } },
+                )
+            }
+            if (displayState.navDrawerState.pinnedFeedSources.isNotEmpty()) {
+                val canReorderPinnedFeedSources = pinnedFeedSourceItems.size > 1
+
+                item {
+                    DrawerDivider()
                 }
 
                 item {
-                    DrawerReadItem(
-                        currentFeedFilter = displayState.currentFeedFilter,
-                        onFeedFilterSelected = onFeedFilterSelectedWithClear,
-                        drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
-                        modifier = desktopTreeRowFocusModifier("read", keyboard),
+                    SidebarSectionLabel(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp, bottom = 4.dp),
+                        text = LocalFeedFlowStrings.current.drawerTitlePinnedFeeds,
                     )
                 }
 
-                item {
-                    DrawerBookmarksItem(
+                itemsIndexed(
+                    items = pinnedFeedSourceItems,
+                    key = { _, item -> pinnedFeedSourceKey(item.feedSource.id) },
+                ) { index, feedSourceWrapper ->
+                    DesktopDrawerFeedSourcesList(
+                        drawerFeedSources = persistentListOf(feedSourceWrapper),
                         currentFeedFilter = displayState.currentFeedFilter,
-                        onFeedFilterSelected = onFeedFilterSelectedWithClear,
                         drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
-                        modifier = desktopTreeRowFocusModifier("bookmarks", keyboard),
+                        selectedFeedSourceIds = selectedFeedSourceIds,
+                        onFeedSourceClick = onFeedSourceClick,
+                        selectedFeedSourcesProvider = { selectedFeedSourceIds.mapNotNull { allFeedSources[it] } },
+                        batchMenuEntries = batchMenuEntries,
+                        onEditFeedClick = feedManagementActions.onEditFeedClick,
+                        onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
+                        onPinFeedClick = feedManagementActions.onPinFeedClick,
+                        onChangeFeedCategoryClick = changeFeedCategory,
+                        onOpenWebsite = feedManagementActions.onOpenWebsite,
+                        onMarkAllReadForFeedSourceClick = feedManagementActions.onMarkAllReadForFeedSourceClick,
+                        onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                        onReorderFeedSource = onReorderFeedSourceInSection,
+                        dragState = dragState,
+                        sectionKey = DesktopDrawerPinnedSectionKey,
+                        indexInSection = index,
+                        sectionSize = pinnedFeedSourceItems.size,
+                        sectionCategory = null,
+                        isCategoryDropTarget = false,
+                        reorderEnabled = canReorderPinnedFeedSources,
+                        modifier = desktopTreeRowFocusModifier("feed:${feedSourceWrapper.feedSource.id}", keyboard)
+                            .then(sidebarPlacementModifier(enabled = animatePlacement)),
                     )
                 }
+            }
+            val canReorderCategories = categorySections.size > 1
+            categorySections.forEachIndexed { categoryIndex, categorySection ->
+                val category = categorySection.categoryWrapper.feedSourceCategory
+                val canReorderCategory = canReorderCategories
+                val itemKey = categorySectionKey(categorySection)
+                val categoryId = categorySection.categoryKey
+                val isCategoryExpanded = treeState.isExpanded(categorySection.stateKey)
+                val expansion = categoryTransitions.getValue(categorySection.stateKey)
+                val isLastCategory = categoryIndex == categorySections.lastIndex
 
-                item {
-                    DesktopDrawerFeedSourcesByCategories(
-                        navDrawerState = displayState.navDrawerState,
+                item(key = itemKey) {
+                    DesktopDrawerFeedSourceByCategoryItem(
+                        modifier = sidebarPlacementModifier(enabled = animatePlacement),
+                        topSpacing = if (categoryIndex > 0) DesktopDesignTokens.spaceMedium else 0.dp,
+                        headerModifier = desktopTreeRowFocusModifier(categorySection.stateKey, keyboard)
+                            .categoryHeaderReorderSlot(
+                                dragState = dragState,
+                                sectionKey = categoryId,
+                                index = categoryIndex,
+                            )
+                            .categoryDragSource(
+                                dragState = dragState,
+                                categoryKey = categoryId,
+                                categoryTitle = category?.title ?: LocalFeedFlowStrings.current.noCategory,
+                                index = categoryIndex,
+                                enabled = canReorderCategory,
+                                onDropReorder = { insertionIndex ->
+                                    onReorderCategory(categoryId, insertionIndex)
+                                },
+                            )
+                            .categoryReorderInsertionIndicator(
+                                dragState = dragState,
+                                index = categoryIndex,
+                                isLast = isLastCategory,
+                            ),
+                        disclosureModifier = Modifier.onFocusChanged {
+                            if (it.isFocused) keyboard.focused(categorySection.stateKey)
+                        },
+                        feedSourceCategoryWrapper = categorySection.categoryWrapper,
+                        drawerFeedSources = categorySection.members,
+                        currentFeedFilter = displayState.currentFeedFilter,
+                        drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
+                        isCategoryExpanded = isCategoryExpanded,
+                        onCategoryExpand = {
+                            treeState.setExpanded(categorySection.stateKey, !isCategoryExpanded)
+                        },
+                        onFeedFilterSelected = onFeedFilterSelectedWithClear,
+                        selectedFeedSourceIds = selectedFeedSourceIds,
+                        onFeedSourceClick = onFeedSourceClick,
+                        selectedFeedSourcesProvider = { selectedFeedSourceIds.mapNotNull { allFeedSources[it] } },
+                        onEditFeedClick = feedManagementActions.onEditFeedClick,
+                        onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
+                        onPinFeedClick = feedManagementActions.onPinFeedClick,
+                        onChangeFeedCategoryClick = changeFeedCategory,
+                        onOpenWebsite = feedManagementActions.onOpenWebsite,
+                        onEditCategoryClick = feedManagementActions.onEditCategoryClick,
+                        validateCategoryName = feedManagementActions.validateCategoryName,
+                        onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
                         onDeleteAllFeedsInCategoryClick = feedManagementActions.onDeleteAllFeedsInCategoryClick,
-                        onAddFeedClick = feedManagementActions.onAddFeedClick,
-                        onFeedSuggestionsClick = feedManagementActions.onFeedSuggestionsClick,
-                        onImportFeedsClick = feedManagementActions.onImportFeedsClick,
-                        onExpandAll = { tree.sections.forEach { treeState.setExpanded(it.id, true) } },
-                        onCollapseAll = { tree.sections.forEach { treeState.setExpanded(it.id, false) } },
+                        onMarkAllReadForFeedSourceClick = feedManagementActions.onMarkAllReadForFeedSourceClick,
+                        onMarkAllReadForCategoryClick = feedManagementActions.onMarkAllReadForCategoryClick,
+                        onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                        dragState = dragState,
+                        showFeedSources = false,
                     )
                 }
-                if (displayState.navDrawerState.pinnedFeedSources.isNotEmpty()) {
-                    val canReorderPinnedFeedSources = pinnedFeedSourceItems.size > 1
 
-                    item {
-                        DrawerDivider()
-                    }
-
-                    item {
-                        SidebarSectionLabel(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 8.dp, bottom = 4.dp),
-                            text = LocalFeedFlowStrings.current.drawerTitlePinnedFeeds,
-                        )
-                    }
-
+                if (isCategoryExpanded || categorySection.stateKey in retainedCollapsedSections) {
+                    val canReorderFeedSources = categorySection.drawerFeedSources.size > 1
                     itemsIndexed(
-                        items = pinnedFeedSourceItems,
-                        key = { _, item -> pinnedFeedSourceKey(item.feedSource.id) },
+                        items = categorySection.drawerFeedSources,
+                        key = { _, item -> categoryFeedSourceKey(categoryId, item.feedSource.id) },
                     ) { index, feedSourceWrapper ->
-                        DesktopDrawerFeedSourcesList(
-                            drawerFeedSources = persistentListOf(feedSourceWrapper),
-                            currentFeedFilter = displayState.currentFeedFilter,
-                            drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
-                            selectedFeedSourceIds = selectedFeedSourceIds,
-                            onFeedSourceClick = onFeedSourceClick,
-                            selectedFeedSourcesProvider = { selectedFeedSourceIds.mapNotNull { allFeedSources[it] } },
-                            onContextTarget = onContextTarget,
-                            batchMenuEntries = batchMenuEntries,
-                            onEditFeedClick = feedManagementActions.onEditFeedClick,
-                            onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
-                            onPinFeedClick = feedManagementActions.onPinFeedClick,
-                            onChangeFeedCategoryClick = changeFeedCategory,
-                            onOpenWebsite = feedManagementActions.onOpenWebsite,
-                            onMarkAllReadForFeedSourceClick = feedManagementActions.onMarkAllReadForFeedSourceClick,
-                            onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
-                            onReorderFeedSource = onReorderFeedSourceInSection,
-                            dragState = dragState,
-                            sectionKey = DesktopDrawerPinnedSectionKey,
-                            indexInSection = index,
-                            sectionSize = pinnedFeedSourceItems.size,
-                            sectionCategory = null,
-                            isCategoryDropTarget = false,
-                            reorderEnabled = canReorderPinnedFeedSources,
-                            modifier = desktopTreeRowFocusModifier("feed:${feedSourceWrapper.feedSource.id}", keyboard)
-                                .then(sidebarPlacementModifier(enabled = animatePlacement)),
-                        )
-                    }
-                }
-                val canReorderCategories = categorySections.size > 1
-                categorySections.forEachIndexed { categoryIndex, categorySection ->
-                    val category = categorySection.categoryWrapper.feedSourceCategory
-                    val canReorderCategory = canReorderCategories
-                    val itemKey = categorySectionKey(categorySection)
-                    val categoryId = categorySection.categoryKey
-                    val isCategoryExpanded = treeState.isExpanded(categorySection.stateKey)
-                    val expansion = categoryTransitions.getValue(categorySection.stateKey)
-                    val isLastCategory = categoryIndex == categorySections.lastIndex
-
-                    item(key = itemKey) {
-                        DesktopDrawerFeedSourceByCategoryItem(
+                        expansion.AnimatedVisibility(
+                            visible = { it },
                             modifier = sidebarPlacementModifier(enabled = animatePlacement),
-                            topSpacing = if (categoryIndex > 0) DesktopDesignTokens.spaceMedium else 0.dp,
-                            headerModifier = desktopTreeRowFocusModifier(categorySection.stateKey, keyboard)
-                                .categoryHeaderReorderSlot(
-                                    dragState = dragState,
-                                    sectionKey = categoryId,
-                                    index = categoryIndex,
-                                )
-                                .categoryDragSource(
-                                    dragState = dragState,
-                                    categoryKey = categoryId,
-                                    categoryTitle = category?.title ?: LocalFeedFlowStrings.current.noCategory,
-                                    index = categoryIndex,
-                                    enabled = canReorderCategory,
-                                    onDropReorder = { insertionIndex ->
-                                        onReorderCategory(categoryId, insertionIndex)
-                                    },
-                                )
-                                .categoryReorderInsertionIndicator(
-                                    dragState = dragState,
-                                    index = categoryIndex,
-                                    isLast = isLastCategory,
+                            enter = if (reduceMotion) EnterTransition.None else SidebarExpansionEnter,
+                            exit = if (reduceMotion) ExitTransition.None else SidebarExpansionExit,
+                        ) {
+                            DesktopDrawerFeedSourcesList(
+                                drawerFeedSources = persistentListOf(feedSourceWrapper),
+                                currentFeedFilter = displayState.currentFeedFilter,
+                                drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
+                                selectedFeedSourceIds = selectedFeedSourceIds,
+                                onFeedSourceClick = onFeedSourceClick,
+                                selectedFeedSourcesProvider = {
+                                    selectedFeedSourceIds.mapNotNull { allFeedSources[it] }
+                                },
+                                batchMenuEntries = batchMenuEntries,
+                                onEditFeedClick = feedManagementActions.onEditFeedClick,
+                                onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
+                                onPinFeedClick = feedManagementActions.onPinFeedClick,
+                                onChangeFeedCategoryClick = changeFeedCategory,
+                                onOpenWebsite = feedManagementActions.onOpenWebsite,
+                                onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSource,
+                                onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                                onReorderFeedSource = onReorderFeedSourceInSection,
+                                dragState = dragState,
+                                sectionKey = categoryId,
+                                indexInSection = index,
+                                sectionSize = categorySection.drawerFeedSources.size,
+                                sectionCategory = category,
+                                isCategoryDropTarget = true,
+                                reorderEnabled = canReorderFeedSources,
+                                modifier = desktopTreeRowFocusModifier(
+                                    "feed:${feedSourceWrapper.feedSource.id}",
+                                    keyboard,
                                 ),
-                            disclosureModifier = Modifier.onFocusChanged {
-                                if (it.isFocused) keyboard.focused(categorySection.stateKey)
-                            },
-                            feedSourceCategoryWrapper = categorySection.categoryWrapper,
-                            drawerFeedSources = categorySection.members,
-                            currentFeedFilter = displayState.currentFeedFilter,
-                            drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
-                            isCategoryExpanded = isCategoryExpanded,
-                            onCategoryExpand = {
-                                treeState.setExpanded(categorySection.stateKey, !isCategoryExpanded)
-                            },
-                            onFeedFilterSelected = onFeedFilterSelectedWithClear,
-                            selectedFeedSourceIds = selectedFeedSourceIds,
-                            onFeedSourceClick = onFeedSourceClick,
-                            selectedFeedSourcesProvider = { selectedFeedSourceIds.mapNotNull { allFeedSources[it] } },
-                            onEditFeedClick = feedManagementActions.onEditFeedClick,
-                            onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
-                            onPinFeedClick = feedManagementActions.onPinFeedClick,
-                            onChangeFeedCategoryClick = changeFeedCategory,
-                            onOpenWebsite = feedManagementActions.onOpenWebsite,
-                            onEditCategoryClick = feedManagementActions.onEditCategoryClick,
-                            validateCategoryName = feedManagementActions.validateCategoryName,
-                            onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
-                            onDeleteAllFeedsInCategoryClick = feedManagementActions.onDeleteAllFeedsInCategoryClick,
-                            onMarkAllReadForFeedSourceClick = feedManagementActions.onMarkAllReadForFeedSourceClick,
-                            onMarkAllReadForCategoryClick = feedManagementActions.onMarkAllReadForCategoryClick,
-                            onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
-                            dragState = dragState,
-                            showFeedSources = false,
-                        )
-                    }
-
-                    if (isCategoryExpanded || categorySection.stateKey in retainedCollapsedSections) {
-                        val canReorderFeedSources = categorySection.drawerFeedSources.size > 1
-                        itemsIndexed(
-                            items = categorySection.drawerFeedSources,
-                            key = { _, item -> categoryFeedSourceKey(categoryId, item.feedSource.id) },
-                        ) { index, feedSourceWrapper ->
-                            expansion.AnimatedVisibility(
-                                visible = { it },
-                                modifier = sidebarPlacementModifier(enabled = animatePlacement),
-                                enter = if (reduceMotion) EnterTransition.None else SidebarExpansionEnter,
-                                exit = if (reduceMotion) ExitTransition.None else SidebarExpansionExit,
-                            ) {
-                                DesktopDrawerFeedSourcesList(
-                                    drawerFeedSources = persistentListOf(feedSourceWrapper),
-                                    currentFeedFilter = displayState.currentFeedFilter,
-                                    drawerItemVisualStyle = desktopDrawerItemVisualStyle(),
-                                    selectedFeedSourceIds = selectedFeedSourceIds,
-                                    onFeedSourceClick = onFeedSourceClick,
-                                    selectedFeedSourcesProvider = {
-                                        selectedFeedSourceIds.mapNotNull { allFeedSources[it] }
-                                    },
-                                    onContextTarget = onContextTarget,
-                                    batchMenuEntries = batchMenuEntries,
-                                    onEditFeedClick = feedManagementActions.onEditFeedClick,
-                                    onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
-                                    onPinFeedClick = feedManagementActions.onPinFeedClick,
-                                    onChangeFeedCategoryClick = changeFeedCategory,
-                                    onOpenWebsite = feedManagementActions.onOpenWebsite,
-                                    onMarkAllReadForFeedSourceClick = onMarkAllReadForFeedSource,
-                                    onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
-                                    onReorderFeedSource = onReorderFeedSourceInSection,
-                                    dragState = dragState,
-                                    sectionKey = categoryId,
-                                    indexInSection = index,
-                                    sectionSize = categorySection.drawerFeedSources.size,
-                                    sectionCategory = category,
-                                    isCategoryDropTarget = true,
-                                    reorderEnabled = canReorderFeedSources,
-                                    modifier = desktopTreeRowFocusModifier(
-                                        "feed:${feedSourceWrapper.feedSource.id}",
-                                        keyboard,
-                                    ),
-                                )
-                            }
+                            )
                         }
                     }
                 }

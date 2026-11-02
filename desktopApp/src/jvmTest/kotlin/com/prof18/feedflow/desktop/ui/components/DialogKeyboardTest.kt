@@ -22,10 +22,10 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.home.NoFeedsDialog
-import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.desktop.home.drawer.DesktopFeedMoveDialog
 import com.prof18.feedflow.desktop.settings.DesktopSettingsDialog
 import com.prof18.feedflow.desktop.testing.DesktopLibraryFixture

@@ -38,6 +38,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
@@ -530,16 +531,35 @@ internal fun DeleteFeedConfirmation(
     if (!visible) return
     val strings = LocalFeedFlowStrings.current
     var deleting by remember(visible) { mutableStateOf(false) }
+    val actionHeight = with(LocalDensity.current) { JewelTheme.defaultTextStyle.lineHeight.toDp() } + 16.dp
     Dialog(
         title = strings.deleteFeedConfirmationTitle,
         onCloseRequest = { if (!deleting) onDismiss() },
+        size = DELETE_FEED_DIALOG_SIZE,
+        resizable = false,
         alertStyle = true,
     ) {
-        Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(strings.deleteFeedConfirmationTitle, style = DesktopDesignTokens.sectionHeading)
-            Text(strings.deleteFeedConfirmationMessage)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = onDismiss, enabled = !deleting) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(DesktopDesignTokens.spacePanel),
+            verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection),
+        ) {
+            Column(
+                modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceLarge),
+            ) {
+                Text(strings.deleteFeedConfirmationTitle, style = DesktopDesignTokens.sectionHeading)
+                Text(strings.deleteFeedConfirmationMessage)
+            }
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium, Alignment.End),
+                verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
+            ) {
+                OutlinedButton(
+                    onClick = onDismiss,
+                    enabled = !deleting,
+                    modifier = Modifier.heightIn(min = actionHeight),
+                ) {
                     Text(strings.deleteCategoryCloseButton)
                 }
                 DefaultButton(
@@ -550,6 +570,7 @@ internal fun DeleteFeedConfirmation(
                         }
                     },
                     enabled = !deleting,
+                    modifier = Modifier.heightIn(min = actionHeight),
                 ) {
                     ProgressButtonLabel(strings.deleteFeed, deleting)
                 }
@@ -557,6 +578,8 @@ internal fun DeleteFeedConfirmation(
         }
     }
 }
+
+private val DELETE_FEED_DIALOG_SIZE = DpSize(width = 400.dp, height = 230.dp)
 
 @OptIn(ExperimentalJewelApi::class)
 @Composable
@@ -596,12 +619,20 @@ internal fun CategoryNameDialog(
             latestDismiss()
         }
     }
-    Dialog(title = title, onCloseRequest = dismiss) {
+    Dialog(
+        title = title,
+        onCloseRequest = dismiss,
+        size = CATEGORY_NAME_DIALOG_SIZE,
+        resizable = false,
+    ) {
         LaunchedEffect(categoryId) { focus.requestFocus() }
-        Column(modifier = Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(DesktopDesignTokens.spacePanel),
+            verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection),
+        ) {
             Column(
                 modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
             ) {
                 Text(strings.newCategoryHint)
                 TextField(
@@ -651,6 +682,8 @@ internal fun CategoryNameDialog(
         }
     }
 }
+
+private val CATEGORY_NAME_DIALOG_SIZE = DpSize(width = 380.dp, height = 230.dp)
 
 private fun canSaveCategoryName(
     enabled: Boolean,

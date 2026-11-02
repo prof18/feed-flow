@@ -22,6 +22,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -46,7 +47,7 @@ internal fun ConfirmationDialog(
             latestDismiss()
         }
     }
-    Dialog(title = title, onCloseRequest = dismiss, alertStyle = true) {
+    Dialog(title = title, onCloseRequest = dismiss, size = CONFIRMATION_DIALOG_SIZE, alertStyle = true) {
         ConfirmationContent(
             title = title,
             message = message,
@@ -112,3 +113,5 @@ internal fun ConfirmationContent(
         }
     }
 }
+
+private val CONFIRMATION_DIALOG_SIZE = DpSize(width = 400.dp, height = 250.dp)

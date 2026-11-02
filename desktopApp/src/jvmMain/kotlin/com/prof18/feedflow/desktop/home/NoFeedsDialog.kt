@@ -40,7 +40,7 @@ internal fun NoFeedsDialog(
     val strings = LocalFeedFlowStrings.current
     DesktopDialogWindow(
         title = strings.noFeedModalTitle,
-        size = DpSize(400.dp, 400.dp),
+        size = DpSize(400.dp, 340.dp),
         onCloseRequest = onDismissRequest,
         resizable = true,
     ) { modifier ->

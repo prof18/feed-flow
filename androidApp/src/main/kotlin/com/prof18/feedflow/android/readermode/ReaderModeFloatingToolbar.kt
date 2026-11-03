@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -369,11 +369,12 @@ fun ReaderModeFloatingToolbar(
         ModalBottomSheet(
             onDismissRequest = { showFontSizeMenu = false },
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            // The content pads itself, so the sheet surface runs behind the navigation bar.
+            contentWindowInsets = { WindowInsets(0) },
         ) {
             ReaderTextSettingsSheetContent(
                 // The sheet is its own window, so the activity's test-tag exposure doesn't reach it.
                 modifier = Modifier
-                    .navigationBarsPadding()
                     .exposeTestTagsAsResourceIds()
                     .testTag(ReaderModeE2eIds.TEXT_SETTINGS_SHEET),
                 fontSize = fontSize,

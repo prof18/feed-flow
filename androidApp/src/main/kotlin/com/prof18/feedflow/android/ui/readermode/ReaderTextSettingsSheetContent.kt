@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
@@ -42,6 +44,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -64,6 +68,7 @@ private const val FONT_SIZE_VALUE_LABEL_TAG = "reader_font_size_value_label"
 private const val LINE_HEIGHT_VALUE_LABEL_TAG = "reader_line_height_value_label"
 private const val TITLE_FONT_SIZE_VALUE_LABEL_TAG = "reader_title_font_size_value_label"
 private const val FONT_OPTION_TAG_PREFIX = "reader_font_option_"
+private const val MAX_SHEET_HEIGHT_FRACTION = 0.9f
 private const val MIN_FONT_SIZE = 12f
 private const val MAX_FONT_SIZE = 40f
 private const val FONT_SIZE_STEPS = 27
@@ -77,6 +82,9 @@ private const val LINE_HEIGHT_BASE_TENTHS = 15
 private const val LINE_HEIGHT_TENTHS_DENOMINATOR = 10
 private const val PREVIEW_FADE_START = 0.75f
 private const val PREVIEW_TITLE_GAP_RATIO = 0.35f
+
+// Material 3 sheet drag handle: a 4dp bar with 22dp of vertical padding on each side.
+private val SHEET_DRAG_HANDLE_HEIGHT = 48.dp
 
 @Composable
 fun ReaderTextSettingsSheetContent(
@@ -93,9 +101,15 @@ fun ReaderTextSettingsSheetContent(
     resetButtonModifier: Modifier = Modifier,
 ) {
     val strings = LocalFeedFlowStrings.current
+    // Keeps the whole sheet, drag handle included, at most 90% of the window tall.
+    val maxContentHeight = with(LocalDensity.current) {
+        (LocalWindowInfo.current.containerSize.height * MAX_SHEET_HEIGHT_FRACTION).toDp()
+    } - SHEET_DRAG_HANDLE_HEIGHT
     Column(
         modifier = modifier
+            .heightIn(max = maxContentHeight)
             .verticalScroll(rememberScrollState())
+            .navigationBarsPadding()
             .padding(bottom = Spacing.regular),
         verticalArrangement = Arrangement.spacedBy(Spacing.medium),
     ) {

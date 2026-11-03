@@ -134,21 +134,22 @@ struct EditFeedScreenContent: View {
                 }
 
                 Toggle(isOn: $isKeepUnreadOnScrollEnabled) {
-                    Text(feedFlowStrings.keepUnreadWhenScrollingForFeed)
+                    VStack(alignment: .leading) {
+                        Text(feedFlowStrings.keepUnreadWhenScrollingForFeed)
+                        Text(
+                            isMarkReadWhenScrollingEnabled
+                                ? feedFlowStrings.keepUnreadWhenScrollingForFeedDescription
+                                : feedFlowStrings.keepUnreadWhenScrollingForFeedDisabled
+                        )
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    }
                 }
                 .disabled(!isMarkReadWhenScrollingEnabled)
                 .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.keepUnreadOnScrollToggle)
                 .onChange(of: isKeepUnreadOnScrollEnabled) {
                     onKeepUnreadOnScrollToggled(isKeepUnreadOnScrollEnabled)
                 }
-
-                Text(
-                    isMarkReadWhenScrollingEnabled
-                        ? feedFlowStrings.keepUnreadWhenScrollingForFeedDescription
-                        : feedFlowStrings.keepUnreadWhenScrollingForFeedDisabled
-                )
-                .font(.footnote)
-                .foregroundStyle(.secondary)
 
                 Toggle(isOn: $isPinned) {
                     Text(feedFlowStrings.pinFeedSourceDescription)

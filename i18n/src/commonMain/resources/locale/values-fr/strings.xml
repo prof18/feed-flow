@@ -586,4 +586,5 @@
     <string name="reader_mode_opened_externally_title">Ouvert dans votre navigateur</string>
     <string name="reader_mode_opened_externally_message">Ce lien est un fichier, comme un PDF, que FeedFlow ne peut pas afficher, il a donc été ouvert dans votre navigateur.</string>
     <string name="reader_mode_open_again_in_browser">Ouvrir dans le navigateur</string>
+    <string name="hide_youtube_shorts_edit_fallback">Les Shorts ne pouvaient pas être masqués pour cette chaîne. Vos autres modifications ont été enregistrées.</string>
 </resources>

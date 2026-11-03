@@ -586,4 +586,5 @@
     <string name="reader_mode_opened_externally_title">Đã mở bằng trình duyệt của bạn</string>
     <string name="reader_mode_opened_externally_message">Liên kết này là một tệp tin, giống như PDF, mà FeedFlow không thể hiển thị trực tiếp, vì vậy nó đã được mở trong trình duyệt của bạn.</string>
     <string name="reader_mode_open_again_in_browser">Mở bằng trình duyệt</string>
+    <string name="hide_youtube_shorts_edit_fallback">Không thể ẩn các video Shorts cho kênh này. Các thay đổi khác của bạn đã được lưu.</string>
 </resources>

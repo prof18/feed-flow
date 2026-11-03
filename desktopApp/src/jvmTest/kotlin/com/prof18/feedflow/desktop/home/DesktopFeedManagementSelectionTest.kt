@@ -13,6 +13,10 @@ import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.click
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -170,6 +174,12 @@ class DesktopFeedManagementSelectionTest {
                 feedSource = sources.first().feedSource.copy(title = "Renamed", isPinned = true),
             )
             drawer = drawer.copy(feedSourcesWithoutCategory = (listOf(updated) + sources.drop(1)).toImmutableList())
+        }
+        // The dialog opens on the category the feeds are already in, so a destination has to be picked first.
+        moveDestination(EnFeedFlowStrings.noCategory).performSemanticsAction(SemanticsActions.OnClick) { it() }
+        rule.waitUntil(timeoutMillis = 5_000) {
+            rule.onAllNodes(moveDestinationMatcher(EnFeedFlowStrings.noCategory) and isSelected())
+                .fetchSemanticsNodes().size == 1
         }
         rule.onNodeWithText(EnFeedFlowStrings.confirmButton).performSemanticsAction(SemanticsActions.OnClick) { it() }
         rule.runOnIdle {
@@ -562,6 +572,12 @@ class DesktopFeedManagementSelectionTest {
             }
         }
     }
+
+    // "Uncategorized" also titles a drawer section, so destinations are matched inside the move dialog's own list.
+    private fun moveDestinationMatcher(label: String) =
+        hasText(label) and hasAnyAncestor(hasContentDescription(EnFeedFlowStrings.changeCategory))
+
+    private fun moveDestination(label: String) = rule.onNode(moveDestinationMatcher(label))
 
     private val categoryTitle = requireNotNull(sources[0].feedSource.category).title
 

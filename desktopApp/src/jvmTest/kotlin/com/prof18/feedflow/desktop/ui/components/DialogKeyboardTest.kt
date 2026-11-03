@@ -9,12 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeDialog
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -73,10 +73,11 @@ class DialogKeyboardTest {
     }
 
     @Test
-    fun `move dialog starts on destination and keyboard confirms the intended source and category`() {
+    fun `move dialog starts on the current category and keyboard confirms the intended source and category`() {
         val library = DesktopLibraryFixture.load()
         val source = library.sources.first { it.feedSource.category != null }.feedSource
-        val category = library.categories.first { it.id != source.category?.id }
+        val current = library.categories.first { it.id == source.category?.id }
+        val other = library.categories.first { it.id != source.category?.id }
         val visible = mutableStateOf(true)
         val actions = mutableListOf<String>()
         rule.setContent {
@@ -84,7 +85,7 @@ class DialogKeyboardTest {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
                     if (visible.value) {
                         DesktopFeedMoveDialog(
-                            categories = persistentListOf(category),
+                            categories = persistentListOf(current, other),
                             feedSources = persistentListOf(source),
                             onMove = { sources, destination ->
                                 actions += "${sources.single().id}:${destination?.id}"
@@ -99,29 +100,26 @@ class DialogKeyboardTest {
             }
         }
         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
-        rule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.DropdownList)).assertIsFocused()
+        rule.onNodeWithText(current.title).assertIsSelected()
         val window = dialog(EnFeedFlowStrings.changeCategory)
         press(window, KeyEvent.VK_DOWN)
-        // The popup opens asynchronously on Windows; navigating before it shows leaves the selection unchanged.
-        rule.waitUntilExactlyOneExists(hasText(category.title), timeoutMillis = 5_000)
-        press(window, KeyEvent.VK_DOWN)
-        press(window, KeyEvent.VK_ENTER)
-        // The category title is also in the open popup, so wait for the previous selection to disappear instead.
-        rule.waitUntilDoesNotExist(hasText(EnFeedFlowStrings.noCategory), timeoutMillis = 5_000)
-        rule.onNodeWithText(category.title).assertExists()
+        rule.waitUntilExactlyOneExists(hasText(other.title) and isSelected(), timeoutMillis = 5_000)
+        press(window, KeyEvent.VK_TAB)
+        rule.onNodeWithText(EnFeedFlowStrings.desktopNewCategoryMenu).assertIsFocused()
         press(window, KeyEvent.VK_TAB)
         rule.onNodeWithText(EnFeedFlowStrings.cancelButton).assertIsFocused()
         press(window, KeyEvent.VK_TAB)
         rule.onNodeWithText(EnFeedFlowStrings.confirmButton).assertIsFocused()
         press(window, KeyEvent.VK_ENTER)
-        rule.runOnIdle { assertEquals(listOf("${source.id}:${category.id}"), actions) }
+        rule.runOnIdle { assertEquals(listOf("${source.id}:${other.id}"), actions) }
     }
 
     @Test
-    fun `move dialog Escape closes its destination popup before dismissing without a move`() {
+    fun `move dialog Escape dismisses after a keyboard selection without moving`() {
         val library = DesktopLibraryFixture.load()
         val source = library.sources.first { it.feedSource.category != null }.feedSource
-        val category = library.categories.first { it.id != source.category?.id }
+        val current = library.categories.first { it.id == source.category?.id }
+        val other = library.categories.first { it.id != source.category?.id }
         val visible = mutableStateOf(true)
         val actions = mutableListOf<String>()
         rule.setContent {
@@ -129,7 +127,7 @@ class DialogKeyboardTest {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
                     if (visible.value) {
                         DesktopFeedMoveDialog(
-                            categories = persistentListOf(category),
+                            categories = persistentListOf(current, other),
                             feedSources = persistentListOf(source),
                             onMove = { _, _ -> actions += "move" },
                             onCreateCategory = { },
@@ -146,11 +144,7 @@ class DialogKeyboardTest {
         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
         val window = dialog(EnFeedFlowStrings.changeCategory)
         press(window, KeyEvent.VK_DOWN)
-        rule.waitUntilExactlyOneExists(hasText(category.title), timeoutMillis = 5_000)
-        press(window, KeyEvent.VK_ESCAPE)
-        rule.waitUntilDoesNotExist(hasText(category.title), timeoutMillis = 5_000)
-        rule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.DropdownList)).assertIsFocused()
-        rule.runOnIdle { assertTrue(actions.isEmpty()) }
+        rule.waitUntilExactlyOneExists(hasText(other.title) and isSelected(), timeoutMillis = 5_000)
         press(window, KeyEvent.VK_ESCAPE)
         rule.runOnIdle { assertEquals(listOf("dismiss"), actions) }
     }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,7 +30,7 @@ import com.prof18.feedflow.core.model.canonical
 import com.prof18.feedflow.core.model.canonicalCategoryName
 import com.prof18.feedflow.desktop.feedforms.CategoryNameDialog
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
-import com.prof18.feedflow.desktop.ui.components.DesktopChoiceDropdown
+import com.prof18.feedflow.desktop.ui.components.DesktopChoiceList
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import com.prof18.feedflow.desktop.ui.components.Dialog
 import kotlinx.collections.immutable.ImmutableList
@@ -49,21 +50,23 @@ internal fun DesktopFeedMoveDialog(
     onDismiss: () -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
-    var selectedId by remember { mutableStateOf(DesktopDrawerUncategorizedSectionKey) }
+    var selectedId by remember { mutableStateOf(currentDestination(feedSources, categories)) }
     var showNewCategory by remember { mutableStateOf(false) }
     var pendingCategoryName by remember { mutableStateOf<CategoryName?>(null) }
 
-    // A category created from the picker becomes the destination as soon as the drawer reports it.
+    // A category created from this dialog becomes the destination as soon as the drawer reports it.
     val createdCategory = pendingCategoryName?.let { name ->
         categories.firstOrNull { it.title.canonicalCategoryName() == name.canonical() }
     }
-    val destinationId = createdCategory?.id ?: selectedId
-    val selectedCategory = categories.firstOrNull { it.id == destinationId }
+    SideEffect(createdCategory?.id) {
+        createdCategory?.let { selectedId = it.id }
+    }
+
+    val selectedCategory = categories.firstOrNull { it.id == selectedId }
     val sourcesToMove = feedSources.filter { it.category?.id != selectedCategory?.id }
     val choices = (
         listOf(DesktopDrawerUncategorizedSectionKey to strings.noCategory) +
-            categories.map { it.id to it.title } +
-            (NEW_CATEGORY_KEY to strings.desktopNewCategoryMenu)
+            categories.map { it.id to it.title }
         ).toPersistentList()
 
     Dialog(
@@ -84,21 +87,20 @@ internal fun DesktopFeedMoveDialog(
                 verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
             ) {
                 Text(strings.desktopFeedSelectionCount(feedSources.size))
-                DesktopChoiceDropdown(
+                DesktopChoiceList(
                     title = strings.changeCategory,
                     choices = choices,
-                    selected = destinationId,
+                    selected = selectedId,
                     onSelected = { id ->
-                        if (id == NEW_CATEGORY_KEY) {
-                            showNewCategory = true
-                        } else {
-                            pendingCategoryName = null
-                            selectedId = id
-                        }
+                        pendingCategoryName = null
+                        selectedId = id
                     },
-                    maxPopupWidth = MovePopupMaxWidth,
-                    modifier = Modifier.fillMaxWidth().focusRequester(destinationFocus),
+                    modifier = Modifier.weight(1f).fillMaxWidth().focusRequester(destinationFocus),
                 )
+                OutlinedButton(
+                    onClick = { showNewCategory = true },
+                    modifier = Modifier.heightIn(min = actionHeight),
+                ) { Text(strings.desktopNewCategoryMenu) }
             }
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
@@ -132,7 +134,13 @@ internal fun DesktopFeedMoveDialog(
     )
 }
 
-private val MoveDialogSize = DpSize(width = 380.dp, height = 200.dp)
-private val MovePopupMaxWidth = MoveDialogSize.width - DesktopDesignTokens.spacePanel * 2
+/** The dialog opens on the category the selection already sits in, so confirming without a change moves nothing. */
+private fun currentDestination(
+    feedSources: List<FeedSource>,
+    categories: List<FeedSourceCategory>,
+): String {
+    val shared = feedSources.map { it.category?.id }.distinct().singleOrNull()
+    return shared?.takeIf { id -> categories.any { it.id == id } } ?: DesktopDrawerUncategorizedSectionKey
+}
 
-private const val NEW_CATEGORY_KEY = "feedflow-new-category"
+private val MoveDialogSize = DpSize(width = 400.dp, height = 420.dp)

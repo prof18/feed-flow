@@ -6,11 +6,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -39,7 +39,33 @@ class DesktopFeedMoveDialogTest {
     val rule = createComposeRule()
 
     @Test
-    fun `a category created from the picker becomes the move destination`() {
+    fun `the picker opens on the category the selection already sits in`() {
+        val news = FeedSourceCategory(id = "category-1", title = "News")
+        val tech = FeedSourceCategory(id = "category-2", title = "Tech")
+
+        rule.setContent {
+            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    DesktopFeedMoveDialog(
+                        categories = persistentListOf(news, tech),
+                        feedSources = persistentListOf(feedSource(category = tech)),
+                        onMove = { _, _ -> },
+                        onCreateCategory = { },
+                        validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
+                        onDismiss = { },
+                    )
+                }
+            }
+        }
+
+        rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
+        rule.onNodeWithText(tech.title).assertIsSelected()
+        // There is nothing to move while the destination is the category the feed is already in.
+        rule.onNodeWithText(EnFeedFlowStrings.confirmButton).assertIsNotEnabled()
+    }
+
+    @Test
+    fun `a category created from the dialog becomes the move destination`() {
         val created = mutableListOf<CategoryName>()
         var categories: ImmutableList<FeedSourceCategory> by mutableStateOf(persistentListOf())
         var moved: Pair<List<FeedSource>, FeedSourceCategory?>? = null
@@ -65,8 +91,6 @@ class DesktopFeedMoveDialogTest {
         }
 
         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
-        openDestinationPicker()
-        rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.desktopNewCategoryMenu), timeoutMillis = 5_000)
         rule.onNodeWithText(EnFeedFlowStrings.desktopNewCategoryMenu)
             .performSemanticsAction(SemanticsActions.OnClick) { it() }
 
@@ -77,8 +101,8 @@ class DesktopFeedMoveDialogTest {
         rule.waitUntilDoesNotExist(hasText(EnFeedFlowStrings.newCategoryHint), timeoutMillis = 5_000)
 
         rule.runOnIdle { assertEquals(listOf(CategoryName("Reading")), created) }
-        // The picker shows the new category without a second trip through the menu.
-        rule.waitUntilExactlyOneExists(hasText("Reading"), timeoutMillis = 5_000)
+        // The new category is picked for the move without a second trip through the list.
+        rule.waitUntilExactlyOneExists(hasText("Reading") and isSelected(), timeoutMillis = 5_000)
 
         rule.onNodeWithText(EnFeedFlowStrings.confirmButton)
             .performSemanticsAction(SemanticsActions.OnClick) { it() }
@@ -110,6 +134,9 @@ class DesktopFeedMoveDialogTest {
         }
 
         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
+        rule.onNodeWithText(EnFeedFlowStrings.noCategory)
+            .performSemanticsAction(SemanticsActions.OnClick) { it() }
+        rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.noCategory) and isSelected(), timeoutMillis = 5_000)
         rule.onNodeWithText(EnFeedFlowStrings.confirmButton)
             .performSemanticsAction(SemanticsActions.OnClick) { it() }
 
@@ -117,11 +144,6 @@ class DesktopFeedMoveDialogTest {
             assertEquals(listOf(source), moved?.first)
             assertNull(moved?.second)
         }
-    }
-
-    private fun openDestinationPicker() {
-        rule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.DropdownList))
-            .performSemanticsAction(SemanticsActions.OnClick) { it() }
     }
 
     private fun feedSource(category: FeedSourceCategory? = null) = FeedSource(

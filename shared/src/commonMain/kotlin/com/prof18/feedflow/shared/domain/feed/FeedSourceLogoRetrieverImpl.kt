@@ -4,12 +4,27 @@ import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.rssparser.model.RssChannel
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 internal class FeedSourceLogoRetrieverImpl(
     private val htmlRetriever: HtmlRetriever,
     private val htmlParser: HtmlParser,
 ) : FeedSourceLogoRetriever {
     private val baseDomainRegex = "^.+?[^/:](?=[?/]|\$)".toRegex()
+
+    // Feeds that share a domain share a favicon: importing 100+ YouTube channels would otherwise
+    // download youtube.com's ~1 MB home page once per feed.
+    private val lookupsMutex = Mutex()
+    private val lookups = mutableMapOf<String, DomainLogoLookup>()
+
+    private val availabilityMutex = Mutex()
+    private val availability = mutableMapOf<String, AvailabilityCheck>()
+
+    override suspend fun invalidateLookupCaches() {
+        lookupsMutex.withLock { lookups.clear() }
+        availabilityMutex.withLock { availability.clear() }
+    }
 
     override suspend fun getFeedSourceLogoUrl(rssChannel: RssChannel): String? {
         val baseDomain = extractBaseDomain(rssChannel.link)
@@ -26,11 +41,29 @@ internal class FeedSourceLogoRetrieverImpl(
     private fun extractBaseDomain(link: String?): String? =
         link?.let { value -> baseDomainRegex.find(value)?.value }
 
+    override suspend fun isStoredLogoStillAvailable(logoUrl: String): Boolean {
+        val check = availabilityMutex.withLock { availability.getOrPut(logoUrl) { AvailabilityCheck() } }
+        return check.mutex.withLock {
+            check.value ?: htmlRetriever.isUrlAvailable(logoUrl).also { check.value = it }
+        }
+    }
+
     private suspend fun resolveLogoUrlFromWebsite(baseDomain: String?): String? {
         if (baseDomain == null) {
             return null
         }
 
+        val lookup = lookupsMutex.withLock { lookups.getOrPut(baseDomain) { DomainLogoLookup() } }
+        return lookup.mutex.withLock {
+            if (!lookup.isResolved) {
+                lookup.value = fetchLogoUrlFromWebsite(baseDomain)
+                lookup.isResolved = true
+            }
+            lookup.value
+        }
+    }
+
+    private suspend fun fetchLogoUrlFromWebsite(baseDomain: String): String? {
         val html = htmlRetriever.retrieveHtml(baseDomain)
         return if (html != null) {
             htmlParser.getFaviconUrl(html) ?: getFaviconFromGoogle(baseDomain)
@@ -44,14 +77,12 @@ internal class FeedSourceLogoRetrieverImpl(
             return baseDomain?.let { "$it/favicon.ico" }
         }
         if (baseDomain == null) {
-            return logoUrl
+            // Nothing to resolve a relative path against, and storing one would have the refresh
+            // replace it with null and write it straight back on the next pass, forever.
+            return logoUrl.takeIf { isAbsolute(it) }
         }
         return when {
-            logoUrl.startsWith("http://", ignoreCase = true) ||
-                logoUrl.startsWith("https://", ignoreCase = true) ||
-                logoUrl.startsWith("data:", ignoreCase = true) -> {
-                logoUrl
-            }
+            isAbsolute(logoUrl) -> logoUrl
 
             logoUrl.startsWith("//") -> {
                 val scheme = if (baseDomain.startsWith("https://", ignoreCase = true)) {
@@ -67,6 +98,11 @@ internal class FeedSourceLogoRetrieverImpl(
         }
     }
 
+    private fun isAbsolute(logoUrl: String): Boolean =
+        logoUrl.startsWith("http://", ignoreCase = true) ||
+            logoUrl.startsWith("https://", ignoreCase = true) ||
+            logoUrl.startsWith("data:", ignoreCase = true)
+
     private fun getFaviconFromGoogle(websiteLink: String): String {
         val websiteDomain = websiteLink
             .replace("https://", "")
@@ -74,4 +110,15 @@ internal class FeedSourceLogoRetrieverImpl(
             .split("/")[0]
         return "https://www.google.com/s2/favicons?domain=$websiteDomain&sz=64"
     }
+}
+
+private class DomainLogoLookup {
+    val mutex = Mutex()
+    var isResolved = false
+    var value: String? = null
+}
+
+private class AvailabilityCheck {
+    val mutex = Mutex()
+    var value: Boolean? = null
 }

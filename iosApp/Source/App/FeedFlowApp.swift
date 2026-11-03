@@ -22,6 +22,7 @@ struct FeedFlowApp: App {
     private var feedSyncTimer: FeedSyncTimer = .init()
 
     init() {
+        SVGImageDecoder.register()
         startKoin(notifier: IOSNotifier(), websiteRecovery: true)
         RevenueCatSupport.configure()
         setupTelemetry()

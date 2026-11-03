@@ -69,6 +69,9 @@ packages:
   Nuke:
     url: https://github.com/kean/Nuke
     exactVersion: 13.2.0
+  SwiftDraw:
+    url: https://github.com/swhitty/SwiftDraw
+    exactVersion: 0.29.0
   Collections:
     url: https://github.com/apple/swift-collections
     exactVersion: 1.7.5
@@ -219,6 +222,7 @@ targets:
       - package: Nuke
       - package: Nuke
         product: NukeUI
+      - package: SwiftDraw
       - package: Collections
       - package: Collections
         product: OrderedCollections
@@ -274,6 +278,7 @@ targets:
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClient.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClientImpl.swift
       - path: Source/UI/Style/Spacing.swift
+      - path: Source/Utils/SVGImageDecoder.swift
     settings:
       base:
         PRODUCT_NAME: $(TARGET_NAME)
@@ -330,6 +335,7 @@ targets:
         product: FirebaseCrashlytics
       - package: SwiftyDropbox
       - package: Nuke
+      - package: SwiftDraw
       - package: GoogleSignIn
       - package: GoogleAPIClientForREST
         product: GoogleAPIClientForREST_Drive
@@ -530,6 +536,7 @@ targets:
       - path: Tests/AppLogic
       - path: Source/Settings/Components/BrowserURLBuilder.swift
       - path: Source/Utils/FeedConditionalGetURLProtocol.swift
+      - path: Source/Utils/SVGImageDecoder.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.prof18.feedflow.dev.AppLogicTests
@@ -544,6 +551,8 @@ targets:
         link: false
       - package: Firebase
         product: FirebaseCrashlytics
+      - package: Nuke
+      - package: SwiftDraw
 
   CloudSyncTests:
     type: bundle.unit-test
@@ -555,6 +564,7 @@ targets:
           - WidgetContentSelectionTests.swift
           - TestWidgetContentItem.swift
       - path: Widget/WidgetContentLogoLoader.swift
+      - path: Source/Utils/SVGImageDecoder.swift
       - path: Source/Accounts/Dropbox/Data
       - path: Source/Accounts/GoogleDrive/Data
     settings:
@@ -571,6 +581,7 @@ targets:
         embed: false
         link: false
       - package: Nuke
+      - package: SwiftDraw
       - package: SwiftyDropbox
       - package: GoogleSignIn
       - package: Firebase

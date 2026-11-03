@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.domain.recovery
 
+import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedRecoveryRecord
@@ -46,10 +48,23 @@ class FeedRecoveryServiceTest : KoinTestBase() {
 
     private val browser by lazy { FakeVerificationBrowser(coordinator, recoveryRepository) }
 
+    private var faviconUrl: String? = null
+
     override fun getTestModules(): List<Module> =
         super.getTestModules() +
             RecoveryTestModules.enabled(FakeWebsiteSessionHttp(), channel = null) +
-            module { single { CapturedFeedParser { fixtureChannel ?: error("Invalid feed") } } }
+            module {
+                single { CapturedFeedParser { fixtureChannel ?: error("Invalid feed") } }
+                single<HtmlParser> {
+                    object : HtmlParser {
+                        override fun getTextFromHTML(html: String): String? = null
+                        override fun getFaviconUrl(html: String): String? = faviconUrl
+                        override fun getRssUrl(html: String): String? = null
+                        override fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent =
+                            ParsedFeedContent(text = null, commentsUrl = null)
+                    }
+                }
+            }
 
     @Test
     fun `verified add saves the feed its items and an approved record`() = runTest(testDispatcher) {
@@ -148,6 +163,29 @@ class FeedRecoveryServiceTest : KoinTestBase() {
         assertTrue(recoveryRepository.records(epoch).isEmpty())
     }
 
+    @Test
+    fun `a second recovery from a domain gets the favicon the site serves now`() = runTest(testDispatcher) {
+        browser.start(backgroundScope)
+        faviconUrl = "/build/aaaa/favicon.png"
+        val first = service.recover(addRequest(), recoveryRepository.issueTicket())
+
+        // The site redeploys between the two recoveries.
+        faviconUrl = "/build/bbbb/favicon.png"
+        val second = service.recover(
+            addRequest(subscriptionUrl = OTHER_FEED_URL),
+            recoveryRepository.issueTicket(),
+        )
+
+        assertEquals(
+            expected = "https://recovery.test/build/aaaa/favicon.png",
+            actual = databaseHelper.getFeedSource(first.id)?.logoUrl,
+        )
+        assertEquals(
+            expected = "https://recovery.test/build/bbbb/favicon.png",
+            actual = databaseHelper.getFeedSource(second.id)?.logoUrl,
+        )
+    }
+
     private suspend fun TestScope.recover(request: FeedRecoveryRequest): FeedSource {
         browser.start(backgroundScope)
         return service.recover(request, recoveryRepository.issueTicket())
@@ -162,9 +200,12 @@ class FeedRecoveryServiceTest : KoinTestBase() {
         sortOrder = FeedOrder.NEWEST_FIRST,
     )
 
-    private fun addRequest(retryAfter: String? = null) = FeedRecoveryRequest.Add(
-        subscriptionUrl = FEED_URL,
-        verificationUrl = FEED_URL,
+    private fun addRequest(
+        retryAfter: String? = null,
+        subscriptionUrl: String = FEED_URL,
+    ) = FeedRecoveryRequest.Add(
+        subscriptionUrl = subscriptionUrl,
+        verificationUrl = subscriptionUrl,
         retryAfter = retryAfter,
         category = null,
         notificationsEnabled = false,
@@ -180,5 +221,6 @@ class FeedRecoveryServiceTest : KoinTestBase() {
 
     private companion object {
         const val FEED_URL = "https://recovery.test/feed.xml"
+        const val OTHER_FEED_URL = "https://recovery.test/other/feed.xml"
     }
 }

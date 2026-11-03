@@ -9,6 +9,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
+import io.ktor.client.request.head
 import io.ktor.client.request.header
 import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsChannel
@@ -63,6 +64,42 @@ class HtmlRetriever(
         logger.d(e) { "Retrying HTML retrieval with fallback user agent after a connection failure" }
         null
     }
+
+    /**
+     * Only a status that means the resource is gone counts as missing, so a timeout never discards
+     * a logo that is fine. A URL that cannot be fetched at all cannot be rendered either.
+     */
+    suspend fun isUrlAvailable(url: String): Boolean {
+        // A data: URI carries the image itself.
+        if (isDataUri(url)) {
+            return true
+        }
+        if (!isHttpUrl(url) || !HttpHostValidator.isUrlSafeForHttpClient(url)) {
+            return false
+        }
+        return try {
+            val headStatus = client.head(url) {
+                header(HttpHeaders.Accept, IMAGE_ACCEPT_HEADER)
+            }.status
+            val status = if (headStatus in METHOD_UNAVAILABLE_STATUSES) {
+                // Hacker News refuses HEAD with 405 while serving y18.svg to GET.
+                statusWithoutReadingBody(url)
+            } else {
+                headStatus
+            }
+            status !in MISSING_STATUSES
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            logger.d(e) { "Unable to check availability of $url, assuming it is still there" }
+            true
+        }
+    }
+
+    private suspend fun statusWithoutReadingBody(url: String): HttpStatusCode =
+        client.prepareGet(url) {
+            header(HttpHeaders.Accept, IMAGE_ACCEPT_HEADER)
+        }.execute { response -> response.status }
 
     /** Validates and decodes HTML captured by a browser or a website session. */
     fun decodeCaptured(bytes: ByteArray, contentType: String?, effectiveUrl: String): HtmlRetrievalResult {
@@ -121,6 +158,13 @@ class HtmlRetriever(
             )
         }
 
+    private fun isHttpUrl(url: String): Boolean = scheme(url) == "http" || scheme(url) == "https"
+
+    private fun isDataUri(url: String): Boolean = scheme(url) == "data"
+
+    private fun scheme(url: String): String =
+        url.trim().substringBefore(':', missingDelimiterValue = "").lowercase()
+
     private fun isReadableContentType(contentTypeHeader: String?): Boolean {
         if (contentTypeHeader.isNullOrBlank()) return true
         val mediaType = contentTypeHeader.substringBefore(';').trim().lowercase()
@@ -129,6 +173,10 @@ class HtmlRetriever(
 
     private companion object {
         private const val MAX_RESPONSE_BYTES = 5L * 1024 * 1024 // 5 MB
+        private const val IMAGE_ACCEPT_HEADER = "image/*"
+        private val MISSING_STATUSES = setOf(HttpStatusCode.NotFound, HttpStatusCode.Gone)
+        private val METHOD_UNAVAILABLE_STATUSES =
+            setOf(HttpStatusCode.MethodNotAllowed, HttpStatusCode.NotImplemented)
         private const val READABLE_CONTENT_ACCEPT_HEADER =
             "text/html, application/xhtml+xml, application/xml;q=0.9, text/xml;q=0.9, " +
                 "application/rss+xml;q=0.8, application/atom+xml;q=0.8, */*;q=0.1"

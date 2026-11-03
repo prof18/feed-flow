@@ -174,6 +174,8 @@ class GReaderRepository internal constructor(
 
     suspend fun updateFavicons() =
         withContext(dispatcherProvider.io) {
+            // Singleton: without this the first lookup of a domain answers for the whole process.
+            feedSourceLogoRetriever.invalidateLookupCaches()
             gReaderClient.getFeedSourcesAndCategories().onSuccessSuspend { results ->
                 val urlMaps = results.subscriptions.map { source ->
                     source.id to feedSourceLogoRetriever.getFeedSourceLogoUrl(source.htmlUrl)

@@ -6,6 +6,7 @@ enum WidgetContentLogoLoader {
     static let fallbackSymbol = "dot.radiowaves.left.and.right"
 
     private static let pipeline: ImagePipeline = {
+        SVGImageDecoder.register()
         var configuration = ImagePipeline.Configuration.withDataCache(
             name: "com.prof18.feedflow.widget.logos",
             sizeLimit: 5 * 1_024 * 1_024

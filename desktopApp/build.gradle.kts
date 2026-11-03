@@ -112,6 +112,7 @@ kotlin {
                 implementation(libs.lyricist)
                 implementation(libs.io.coil.compose)
                 implementation(libs.io.coil.network)
+                implementation(libs.io.coil.svg)
                 implementation(libs.jsystem.theme.detector)
                 implementation(project(":shared"))
                 implementation(project(":database"))

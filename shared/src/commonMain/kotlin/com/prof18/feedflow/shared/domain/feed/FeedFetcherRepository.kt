@@ -42,6 +42,7 @@ import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.exception.HttpException
+import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
@@ -85,6 +86,7 @@ class FeedFetcherRepository internal constructor(
     ) {
         fetchMutex.withLock {
             withContext(dispatcherProvider.io) {
+                feedSourceLogoRetriever.invalidateLookupCaches()
                 feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
                 try {
                     when {
@@ -446,6 +448,7 @@ class FeedFetcherRepository internal constructor(
                 is FeedOutcome.Fetched -> outcome
                 is FeedOutcome.NotModified -> {
                     logger.d { "Feed not modified, skipping parsing: ${feedSource.url}" }
+                    refreshLogoUrlIfNeeded(feedSource)
                     return FeedFetchResult.NotModified(
                         feedSource = feedSource,
                         recoveryUpdate = clearedRecord(feedSource, record, outcome.viaSession),
@@ -463,10 +466,7 @@ class FeedFetcherRepository internal constructor(
             }
             val rssChannel = fetched.channel
             logger.d { "<- Got back ${rssChannel.title}" }
-            if (feedSource.logoUrl == null) {
-                val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
-                databaseHelper.updateFeedSourceLogoUrl(feedSourceId = feedSource.id, logoUrl = logoUrl)
-            }
+            refreshLogoUrlIfNeeded(feedSource, rssChannel)
             if (feedSource.websiteUrl == null) {
                 databaseHelper.updateFeedSourceWebsiteUrl(
                     feedSourceId = feedSource.id,
@@ -495,6 +495,38 @@ class FeedFetcherRepository internal constructor(
         }
     }
 
+    /** The 304 path, where a well-behaved feed spends most refreshes and there is no channel. */
+    private suspend fun refreshLogoUrlIfNeeded(feedSource: FeedSource) {
+        val currentLogoUrl = feedSource.logoUrl ?: return
+        if (feedSourceLogoRetriever.isStoredLogoStillAvailable(currentLogoUrl)) {
+            return
+        }
+        val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(feedSource.websiteUrl)
+        if (logoUrl != currentLogoUrl) {
+            databaseHelper.updateFeedSourceLogoUrl(feedSourceId = feedSource.id, logoUrl = logoUrl)
+        }
+    }
+
+    /**
+     * Resolves a missing logo, and replaces one that stopped resolving: a site that puts a build
+     * hash in the favicon path breaks every stored URL when it deploys.
+     */
+    private suspend fun refreshLogoUrlIfNeeded(feedSource: FeedSource, rssChannel: RssChannel) {
+        val currentLogoUrl = feedSource.logoUrl
+        if (currentLogoUrl != null && feedSourceLogoRetriever.isStoredLogoStillAvailable(currentLogoUrl)) {
+            return
+        }
+        var logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
+        if (currentLogoUrl != null && logoUrl == currentLogoUrl) {
+            // The channel <image> wins over the website, so when that is the URL that rotted,
+            // re-resolving hands back the same dead link and only the website can heal it.
+            logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel.link)
+        }
+        if (logoUrl != currentLogoUrl) {
+            databaseHelper.updateFeedSourceLogoUrl(feedSourceId = feedSource.id, logoUrl = logoUrl)
+        }
+    }
+
     private suspend fun handleFetchError(
         feedSource: FeedSource,
         error: Throwable,
@@ -502,6 +534,7 @@ class FeedFetcherRepository internal constructor(
     ): FeedFetchResult {
         if ((error as? HttpException)?.code == HTTP_NOT_MODIFIED) {
             logger.d { "Feed not modified, skipping parsing: ${feedSource.url}" }
+            refreshLogoUrlIfNeeded(feedSource)
             return FeedFetchResult.NotModified(feedSource)
         }
         logger.d { "Error, skip: ${feedSource.url}}. Error: $error" }

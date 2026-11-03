@@ -169,6 +169,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.io.coil.compose)
     implementation(libs.io.coil.network)
+    implementation(libs.io.coil.svg)
     implementation(libs.lyricist)
     implementation(libs.immutable.collections)
     implementation(libs.saket.swipe)

@@ -7,6 +7,7 @@ import coil3.intercept.Interceptor
 import coil3.memory.MemoryCache
 import coil3.network.httpHeaders
 import coil3.request.crossfade
+import coil3.svg.SvgDecoder
 import coil3.util.DebugLogger
 import okio.FileSystem
 
@@ -33,6 +34,7 @@ fun coilImageLoader(
     return ImageLoader.Builder(context)
         .components {
             add(imageAcceptHeaderInterceptor)
+            add(SvgDecoder.Factory())
         }
         .memoryCache {
             MemoryCache.Builder()

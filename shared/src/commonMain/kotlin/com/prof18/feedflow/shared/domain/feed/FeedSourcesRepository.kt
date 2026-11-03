@@ -229,6 +229,7 @@ internal class FeedSourcesRepository(
         isNotificationEnabled: Boolean,
         hideYouTubeShorts: Boolean = false,
     ): FeedAddedState {
+        dropMemoisedLogoLookups()
         val sanitizedUrl = sanitizeUrl(feedUrl.trim())
         val url = YouTubeChannelUrl.normalizePlaylistUrl(sanitizedUrl)
             ?: YouTubeChannelUrl.normalizeFeedUrl(sanitizedUrl) ?: sanitizedUrl
@@ -318,6 +319,7 @@ internal class FeedSourcesRepository(
         newFeedSource: FeedSource,
         originalFeedSource: FeedSource?,
     ): FeedEditedState {
+        dropMemoisedLogoLookups()
         return feedStateRepository.runUserWrite<FeedEditedState>(FeedEditedState.Error.GenericError) {
             if (newFeedSource != originalFeedSource) {
                 databaseHelper.insertFeedSourcePreference(
@@ -423,6 +425,12 @@ internal class FeedSourcesRepository(
         feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)
         feedStateRepository.getFeeds()
     }
+
+    /**
+     * This repository lives as long as the screen that owns it. Per action, not per fetch: hiding
+     * a YouTube channel's shorts parses two feeds and should still read the website once.
+     */
+    private suspend fun dropMemoisedLogoLookups() = feedSourceLogoRetriever.invalidateLookupCaches()
 
     private suspend fun fetchSingleFeed(
         url: String,

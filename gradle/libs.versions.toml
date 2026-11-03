@@ -183,6 +183,7 @@ google-play-services-auth = { module = "com.google.android.gms:play-services-aut
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
 io-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "io-coil" }
 io-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "io-coil" }
+io-coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "io-coil" }
 jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
 junit = { module = "junit:junit", version.ref = "junit" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }

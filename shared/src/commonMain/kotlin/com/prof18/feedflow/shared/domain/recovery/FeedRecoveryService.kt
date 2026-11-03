@@ -40,6 +40,9 @@ internal class FeedRecoveryService(
         val parser = capturedFeedParser ?: throw WebsiteVerificationFailure(VerificationFailure.Unsupported)
         if (isBackingOff(request)) throw WebsiteVerificationFailure(VerificationFailure.AccessDenied)
 
+        // Singleton: without this the first lookup of a domain answers every later recovery.
+        feedSourceLogoRetriever.invalidateLookupCaches()
+
         val source = ticket.guard {
             coordinator.verify(request.verificationUrl, VerificationPurpose.Feed, ticket) { capture, profile ->
                 if (!recoveryRepository.isCurrent(profile)) {

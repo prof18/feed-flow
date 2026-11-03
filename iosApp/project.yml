@@ -68,7 +68,7 @@ packages:
     exactVersion: 10.2.4
   Nuke:
     url: https://github.com/kean/Nuke
-    exactVersion: 13.2.0
+    exactVersion: 13.2.1
   SwiftDraw:
     url: https://github.com/swhitty/SwiftDraw
     exactVersion: 0.29.0

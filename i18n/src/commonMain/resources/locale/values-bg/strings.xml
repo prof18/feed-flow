@@ -586,4 +586,5 @@
     <string name="feed_verification_checking_body">FeedFlow ще продължи автоматично, когато съдържанието е готово.</string>
     <string name="feed_verification_check_again">Проверете отново</string>
     <string name="feed_verification_retry_body">Съдържанието не можа да бъде извлечено. Опитайте да проверите отново или затворете този екран и опитайте отново.</string>
+    <string name="hide_youtube_shorts_edit_fallback">Кратките видеоклипове не можаха да бъдат скрити за този канал. Другите ви промени бяха запазени.</string>
 </resources>

@@ -20,6 +20,7 @@ appId: com.prof18.feedflow.dev
     point: "95%,50%"
 - eraseText: 200
 - inputText: "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"
+- pressKey: Enter
 - scrollUntilVisible:
     element:
       id: edit_feed_hide_youtube_shorts_toggle

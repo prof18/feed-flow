@@ -87,6 +87,22 @@
   </content_rating>
 
   <releases>
+  <release version="1.20.0" date="2026-11-04">
+      <description>
+            <p>Pick your reader font and title size, with a live preview.</p>
+            <p>Keep articles unread while scrolling, set per feed.</p>
+            <p>Hide Shorts for a YouTube channel at any time from Edit feed.</p>
+            <p>Right-to-left articles are laid out right-to-left in the reader.</p>
+            <p>Corrupt databases are set aside with a clear startup error, instead of being deleted.</p>
+            <p>Opening FeedFlow a second time brings the running window forward.</p>
+            <p>Feed logos that stopped loading are fixed, and SVG favicons now show.</p>
+            <p>Dialogs now fit their content, and the category picker opens on the feed's current category.</p>
+            <p>Right-clicking the sidebar no longer starts selection mode.</p>
+            <p>Reader mode retries after dropped connections and hands PDFs to your browser.</p>
+            <p>Feeds with unusual date formats now sort correctly.</p>
+            <p>Marking articles above or below as read no longer includes the one you have open.</p>
+      </description>
+  </release>
   <release version="1.19.0" date="2026-10-25">
       <description>
           <p>FeedFlow has a fully redesigned interface that feels more at home on your desktop.</p>

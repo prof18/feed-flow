@@ -1,6 +1,5 @@
-• Ouça episódios de podcast direto no FeedFlow
-• Ouça os artigos em voz alta no modo leitura, com uma voz no idioma do artigo
-• Novos widgets personalizáveis para a tela inicial, com botão de atualizar opcional
-• O novo mecanismo do modo leitura agora é o padrão. Se um artigo não aparecer direito, denuncie com um toque
-• Siga playlists do YouTube e oculte os Shorts dos canais
-• Feeds de sites que bloqueiam solicitações carregam de forma mais confiável, com erros mais claros
+• Receba uma notificação para cada novo artigo, com a miniatura
+• Escolha a fonte e o tamanho do título do leitor, com pré-visualização ao vivo
+• Os novos artigos esperam atrás de uma pílula, e a lista não pula mais enquanto você lê
+• Mantenha os artigos como não lidos ao rolar, configurável por feed
+• Sites com verificação do Cloudflare podem ser verificados para que seus feeds e artigos carreguem

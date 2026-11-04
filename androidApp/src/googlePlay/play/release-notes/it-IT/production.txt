@@ -1,6 +1,5 @@
-• Ascolta gli episodi dei podcast direttamente in FeedFlow
-• Ascolta gli articoli letti ad alta voce in modalità lettura, nella loro lingua
-• Nuovi widget personalizzabili per la Home, con pulsante di aggiornamento opzionale
-• Il nuovo motore della modalità lettura è ora quello predefinito. Se un articolo non si vede bene, segnalalo con un tocco
-• Segui le playlist di YouTube e nascondi gli Shorts dei canali
-• I feed dei siti che bloccano le richieste si caricano meglio, con errori più chiari
+• Ricevi una notifica per ogni nuovo articolo, con la sua miniatura
+• Scegli il font e la dimensione del titolo del lettore, con anteprima in tempo reale
+• I nuovi articoli aspettano dietro una pillola, così l’elenco non salta più mentre leggi
+• Mantieni gli articoli non letti durante lo scorrimento, impostabile per feed
+• I siti con verifica Cloudflare possono essere verificati per far caricare feed e articoli

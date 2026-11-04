@@ -1,6 +1,5 @@
-• Klausieties podkāstu epizodes tieši FeedFlow
-• Ļaujiet lasīšanas režīmā nolasīt rakstus skaļi ar balsi raksta valodā
-• Jauni pielāgojami sākuma ekrāna logrīki ar izvēles atsvaidzināšanas pogu
-• Jaunais lasīšanas režīma dzinējs tagad ir noklusējuma. Ja raksts neizskatās pareizi, ziņojiet par to ar vienu pieskārienu
-• Sekojiet YouTube atskaņošanas sarakstiem un paslēpiet kanālu Shorts
-• Plūsmas no vietnēm, kas bloķē pieprasījumus, ielādējas uzticamāk, ar skaidrākiem kļūdu ziņojumiem
+• Saņem paziņojumu par katru jaunu rakstu kopā ar tā sīktēlu
+• Izvēlies lasītāja fontu un virsraksta izmēru ar tiešo priekšskatījumu
+• Jaunie raksti gaida aiz iezīmes, tāpēc saraksts lasīšanas laikā vairs nelēkā
+• Atstāj rakstus nelasītus ritināšanas laikā, iestatāms katrai plūsmai
+• Vietnes ar Cloudflare pārbaudi var apstiprināt, lai ielādētos to plūsmas un raksti

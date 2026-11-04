@@ -1,6 +1,5 @@
-• Hör Podcast-Folgen direkt in FeedFlow
-• Lass dir Artikel im Lesemodus vorlesen, mit einer Stimme in der Sprache des Artikels
-• Neue anpassbare Widgets für den Startbildschirm, optional mit Aktualisieren-Taste
-• Die neue Lesemodus-Engine ist jetzt Standard. Sieht ein Artikel falsch aus, melde ihn mit einem Tipp
-• Folge YouTube-Playlists und blende Shorts von Kanälen aus
-• Feeds von Seiten, die Anfragen blockieren, laden zuverlässiger, mit klareren Fehlermeldungen
+• Du bekommst für jeden neuen Artikel eine Benachrichtigung mit Vorschaubild
+• Wähle Schriftart und Titelgröße für den Reader, mit Live-Vorschau
+• Neue Artikel warten hinter einer Anzeige, damit die Liste beim Lesen nicht mehr springt
+• Artikel beim Scrollen ungelesen lassen, einstellbar pro Feed
+• Seiten mit Cloudflare-Prüfung lassen sich bestätigen, damit ihre Feeds und Artikel laden

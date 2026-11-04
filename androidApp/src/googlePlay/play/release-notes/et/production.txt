@@ -1,6 +1,5 @@
-• Kuula taskuhäälingu episoode otse FeedFlow's
-• Lase artikleid lugemisrežiimis ette lugeda artikli keelele vastava häälega
-• Uued kohandatavad avaekraani vidinad valikulise värskendusnupuga
-• Uus lugemisrežiimi mootor on nüüd vaikimisi. Kui artikkel ei näe õige välja, teata sellest ühe puudutusega
-• Jälgi YouTube'i esitusloendeid ja peida kanalite Shorts-videod
-• Päringuid blokeerivate saitide vood laadivad usaldusväärsemalt ja veateated on selgemad
+• Saa iga uue artikli kohta teavitus koos pisipildiga
+• Vali lugeri font ja pealkirja suurus otseeelvaatega
+• Uued artiklid ootavad märgi taga, nii et loend ei hüppa lugemise ajal enam
+• Hoia artiklid kerimisel lugemata, seadistatav iga voo jaoks
+• Cloudflare’i kontrolliga saite saab kinnitada, et nende vood ja artiklid laadiksid

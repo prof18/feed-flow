@@ -1,6 +1,5 @@
-• Hallgass podcastepizódokat közvetlenül a FeedFlow-ban
-• Felolvastathatod a cikkeket olvasó módban, a cikk nyelvének megfelelő hangon
-• Új, testreszabható kezdőképernyő-widgetek opcionális frissítés gombbal
-• Mostantól az új olvasó mód motor az alapértelmezett. Ha egy cikk nem jól jelenik meg, jelentsd egy koppintással
-• Kövess YouTube-lejátszási listákat, és rejtsd el a csatornák Shorts videóit
-• A kéréseket blokkoló oldalak hírcsatornái megbízhatóbban töltődnek be, érthetőbb hibaüzenetekkel
+• Minden új cikkről értesítést kapsz, a bélyegképével együtt
+• Válaszd ki az olvasó betűtípusát és a cím méretét, élő előnézettel
+• Az új cikkek egy jelzés mögött várnak, így a lista olvasás közben már nem ugrál
+• Görgetés közben is olvasatlanul hagyhatod a cikkeket, hírcsatornánként beállíthatóan
+• A Cloudflare-ellenőrzést használó oldalak megerősíthetők, hogy a hírcsatornáik és cikkeik betöltődjenek

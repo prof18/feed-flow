@@ -1,6 +1,5 @@
-• Listen to podcast episodes right in FeedFlow
-• Have articles read aloud in Reader Mode, in a voice that matches the article's language
-• New home screen widgets you can customize, with an optional refresh button
-• The new Reader Mode engine is now the default. If an article doesn't look right, report it with one tap
-• Follow YouTube playlists and hide Shorts from channels
-• Feeds from sites that block requests load more reliably, with clearer error messages
+• Get a notification for each new article, with its thumbnail
+• Pick your reader font and title size, with a live preview
+• New articles wait behind a pill, so the list no longer jumps while you read
+• Keep articles unread while scrolling, set per feed
+• Sites behind Cloudflare checks can be verified so their feeds and articles load

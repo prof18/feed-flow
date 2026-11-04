@@ -1,6 +1,5 @@
-• Nghe các tập podcast ngay trong FeedFlow
-• Nghe đọc to bài viết trong Chế độ đọc, bằng giọng phù hợp với ngôn ngữ của bài
-• Tiện ích màn hình chính mới có thể tùy chỉnh, kèm nút làm mới tùy chọn
-• Công cụ Chế độ đọc mới giờ là mặc định. Nếu bài viết hiển thị không đúng, hãy báo cáo chỉ với một lần chạm
-• Theo dõi danh sách phát YouTube và ẩn Shorts của các kênh
-• Nguồn tin từ các trang chặn yêu cầu tải ổn định hơn, với thông báo lỗi rõ ràng hơn
+• Nhận thông báo cho mỗi bài viết mới, kèm ảnh thu nhỏ
+• Chọn phông chữ và cỡ tiêu đề của trình đọc, có xem trước trực tiếp
+• Bài viết mới chờ sau một nhãn, nên danh sách không còn nhảy khi bạn đọc
+• Giữ bài viết ở trạng thái chưa đọc khi cuộn, đặt riêng cho từng nguồn cấp
+• Các trang có bước kiểm tra Cloudflare có thể được xác minh để nguồn cấp và bài viết tải được

@@ -14,17 +14,35 @@ struct LoadingHeaderView: View {
             if feedCount > 0 && totalFeedCount > 0 {
                 let feedRefreshCounter = "\(feedCount)/\(totalFeedCount)"
 
-                Text(feedFlowStrings.loadingFeedMessage(feedRefreshCounter))
-                    .font(.body)
+                LoadingHeaderChip(text: feedFlowStrings.loadingFeedMessage(feedRefreshCounter))
             } else {
-                Text(feedFlowStrings.loadingFeedMessage("..."))
-                    .font(.body)
+                LoadingHeaderChip(text: feedFlowStrings.loadingFeedMessage("..."))
             }
         } else if keepsSpace {
-            Text(feedFlowStrings.loadingFeedMessage("..."))
-                .font(.body)
+            LoadingHeaderChip(text: feedFlowStrings.loadingFeedMessage("..."))
                 .hidden()
                 .accessibilityHidden(true)
+        }
+    }
+}
+
+/// The header floats over the feed list, so it needs its own background to stay readable over articles.
+private struct LoadingHeaderChip: View {
+    let text: String
+
+    var body: some View {
+        let label = Text(text)
+            .font(.subheadline.weight(.medium))
+            .padding(.horizontal, Spacing.regular)
+            .padding(.vertical, Spacing.small)
+
+        if #available(iOS 26.0, *) {
+            label.glassEffect(.regular, in: .capsule)
+        } else {
+            label
+                .background(.regularMaterial)
+                .clipShape(Capsule())
+                .shadow(radius: 5)
         }
     }
 }

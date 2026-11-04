@@ -64,6 +64,11 @@ struct FeedListView: View {
 
     @State private var stableLayoutWidth: CGFloat = 0
     @State private var pendingMarkAllReadAction: MarkAllReadAction?
+    @State private var loadingHeaderHeight: CGFloat = 0
+
+    private var loadingHeaderMargin: CGFloat {
+        loadingHeaderHeight > 0 ? loadingHeaderHeight + Spacing.small : 0
+    }
 
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
@@ -87,12 +92,7 @@ struct FeedListView: View {
             }
         } else {
             let feedItems = Array(feedState.enumerated())
-            VStack(alignment: .center) {
-                LoadingHeaderView(
-                    loadingState: loadingState,
-                    showLoading: showLoading,
-                    keepsSpace: keepsLoadingHeaderSpace
-                )
+            Group {
                 GeometryReader { listProxy in
                     let itemFeedLayout = normalizedLayout
                     let currentWidth = listProxy.size.width
@@ -145,6 +145,23 @@ struct FeedListView: View {
                     .task(id: layoutWidthBucket(for: currentWidth)) {
                         await updateStableLayoutWidth(currentWidth)
                     }
+                }
+            }
+            // The header floats over the list and reserves its height as a content margin, so the
+            // list keeps scrolling under the toolbar instead of being clipped below an opaque strip.
+            .contentMargins(.top, loadingHeaderMargin, for: .scrollContent)
+            .overlay(alignment: .top) {
+                ZStack {
+                    LoadingHeaderView(
+                        loadingState: loadingState,
+                        showLoading: showLoading,
+                        keepsSpace: keepsLoadingHeaderSpace
+                    )
+                }
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    proxy.size.height
+                } action: { height in
+                    loadingHeaderHeight = height
                 }
             }
             .modifier(MarkAllReadConfirmations(
@@ -317,7 +334,7 @@ struct FeedListView: View {
     private func visibleItemsChanged(items: [FeedItemVisibilityPreference], viewportHeight: CGFloat) {
         let visibleItems = items
             .filter { item in
-                let visibleTop = max(item.minY, viewportVerticalInset)
+                let visibleTop = max(item.minY, viewportVerticalInset + loadingHeaderMargin)
                 let visibleBottom = min(item.maxY, viewportHeight - viewportVerticalInset)
                 return visibleBottom - visibleTop >= minimumVisibleRowHeight
             }

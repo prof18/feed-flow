@@ -55,8 +55,7 @@ The sidebar is the single home for feed navigation and management. There is no
 separate Feed Sources window or footer launcher. Source/category context menus,
 multi-selection, batch move/delete and drag-and-drop operate in the sidebar.
 Selection controls appear only while feeds are selected; the source heading's
-options menu keeps expand/collapse-all actions available. Add feed opens directly,
-and suggestions and import/export remain fixed footer actions.
+options menu keeps expand/collapse-all actions available.
 
 Sidebar rows start at 32dp and grow for enlarged text. Feed icons are 16dp;
 source and category names use a single ellipsized line with full-name tooltips.

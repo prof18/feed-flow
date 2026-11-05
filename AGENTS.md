@@ -102,7 +102,7 @@ When you need to run the Desktop app for testing, UI iteration, or user-visible 
 
 Use the Gradle daemon for manual local runs so repeated desktop iterations stay fast. The checked-in `.mcp.json` may still pass `--no-daemon` because JetBrains' AI-agent example does that for MCP client-managed server processes.
 
-Use the MCP tools when you need to interact with the running Desktop app: check status, reload code changes, list windows, capture screenshots, inspect the semantic tree, click/type/scroll, or resize windows. The MCP server is experimental in Compose Hot Reload; if it is unavailable or not connected, fall back to `./gradlew --quiet --console=plain desktopApp:run` and note the limitation in handoff.
+Use the MCP tools when you need to interact with the running Desktop app: check status, reload code changes, list windows, capture screenshots, inspect the semantic tree, click/type/scroll, or resize windows. The MCP server is experimental in Compose Hot Reload; if it is unavailable or not connected, fall back to `./gradlew --quiet --console=plain desktopApp:run` and note the limitation in handoff. Dialog windows (Add feed, Settings, Feed suggestions) are not registered with the MCP: `list_windows` shows only the main window, so they can't be inspected or typed into through it.
 
 Desktop compiles, tests and packages with JBR 25; Gradle and shared/mobile toolchains remain on Java 21. Desktop controls use Jewel, with Material icon vectors allowed; shared/core remain independent of platform UI. See `docs/DESKTOP_UI.md`.
 
@@ -144,7 +144,8 @@ This requires XcodeGen installed (`brew install xcodegen`, or `mint bootstrap` u
 ### Building for iOS Simulator
 
 - If using XcodeBuildMCP, use the installed XcodeBuildMCP skill before calling XcodeBuildMCP tools.
-- The xcodeproj must exist locally. Run `cd iosApp && ./.scripts/generate-project.sh` first if it's missing.
+- The xcodeproj must exist locally and match the checkout. Run `cd iosApp && ./.scripts/generate-project.sh` before building after a pull or branch switch: a project generated from an older checkout misses newly added Swift files and fails to compile.
+- Under Xcode 27.1, XcodeBuildMCP `snapshot_ui` and `axe` HID taps fail silently (SimulatorKit moved to `Contents/SharedFrameworks`). `axe describe-ui` still reads the UI tree; drive input through Maestro instead.
 - XcodeBuildMCP has repo-local defaults in `.xcodebuildmcp/config.yaml`; prefer the current CLI shape:
 
 ```bash
@@ -213,7 +214,7 @@ Generic patterns (Screen/ScreenContent split, ViewModel shape, events, SwiftUI f
 - **Android:** wrapper `androidApp/.../android/<feature>/XxxScreen.android.kt`, route (`@Serializable ... : NavKey`) in `androidApp/.../android/Screen.kt`, `entry<Route>` in `MainActivity.FeedFlowNavigation()`. Go back with `popBackStackOrFinish(backStack)` (the `navigateBack` lambda).
 - **Desktop:** wrapper `desktopApp/.../desktop/<feature>/XxxScreen.desktop.kt`. In-window pages get a `NavKey` in `desktopApp/.../desktop/Screen.kt` and an `entry<Route>` in `screens()` in `desktop/main/MainWindow.kt`. Preferences go in the Settings window and other detail pages are dialog windows instead (see "Desktop screens/windows").
 - **ViewModel scope:** no Navigation 3 ViewModel entry decorator is installed, so `koinViewModel()` inside an entry is scoped to the Activity/window. The ViewModel outlives the screen and is reused next time; reset per-screen state explicitly (as `SearchScreen` does with `resetSearch()`).
-- **iOS:** `iosApp/Source/<Feature>/XxxScreen.swift` + `XxxScreenContent.swift`. Add a case to `CommonViewRoute` (`iosApp/Source/App/Model/CommonViewRoute.swift`) and handle it in the `.navigationDestination(for: CommonViewRoute.self)` of **both** `RegularView.swift` and `CompactView.swift`. Navigate with `appState.navigate(route:)`. Surface errors via `appState.snackbarQueue` + `.snackbar(messageQueue:)`.
+- **iOS:** `iosApp/Source/<Feature>/XxxScreen.swift` + `XxxScreenContent.swift`. Add a case to `CommonViewRoute` (`iosApp/Source/App/Model/CommonViewRoute.swift`) and handle it in the `.navigationDestination(for: CommonViewRoute.self)` of `RegularView.swift`, the single root layout for iPhone, iPad and iPhone Duo. Navigate with `appState.navigate(route:)`. Surface errors via `appState.snackbarQueue` + `.snackbar(messageQueue:)`.
 - **Strings:** `LocalFeedFlowStrings.current` in Compose, `feedFlowStrings` in Swift.
 - **No SwiftUI previews:** the Kotlin framework can't load in Xcode previews.
 

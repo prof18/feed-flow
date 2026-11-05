@@ -216,8 +216,9 @@
     <string name="desktop_account_updating">Updating account…</string>
     <string name="desktop_dropbox_restart_authorization">Start again</string>
     <string name="desktop_dropbox_code_required">Enter the authorization code from Dropbox.</string>
-    <string name="desktop_account_disconnect_title">Disconnect account?</string>
-    <string name="desktop_account_disconnect_message">FeedFlow will stop syncing with this account. You can connect it again later. Disconnecting does not restore subscriptions replaced when you connected.</string>
+    <string name="account_disconnect_title">Disconnect account?</string>
+    <string name="account_disconnect_server_message">Feeds, articles, bookmarks and read status will be removed from this device. Your account on the server isn’t changed, and connecting again downloads it back. Feeds replaced when you connected won’t be restored.</string>
+    <string name="account_disconnect_backup_message">FeedFlow will stop backing up to this account. Your feeds and articles stay on this device, and the existing backup isn’t deleted.</string>
     <string name="server_account_subscriptions_warning">This account uses the subscriptions stored on its server.</string>
     <string name="server_account_replace_local_title">Replace local subscriptions?</string>
     <string name="server_account_replace_local_message">Connecting replaces the feeds currently stored on this device with the subscriptions from the server. Disconnecting later won’t restore the local feeds. Export them to OPML first if you want to keep a copy.</string>

@@ -506,8 +506,6 @@
     <string name="desktop_account_updating">Se actualizează contul…</string>
     <string name="desktop_dropbox_restart_authorization">Începe din nou</string>
     <string name="desktop_dropbox_code_required">Introdu codul de autorizare de la Dropbox.</string>
-    <string name="desktop_account_disconnect_title">Deconectezi contul?</string>
-    <string name="desktop_account_disconnect_message">FeedFlow va înceta sincronizarea cu acest cont. Îl poți reconecta mai târziu. Deconectarea nu restabilește abonamentele care au fost înlocuite în momentul conectării.</string>
     <string name="desktop_feed_selection_count">%d selectat</string>
     <string name="desktop_clear_feed_selection">Șterge selecția</string>
     <string name="desktop_expand_all_feeds">Extinde tot</string>

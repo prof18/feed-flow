@@ -96,6 +96,7 @@ class ProviderLifecycleTest {
             description = "",
             successMessage = "Synthetic account linked",
             noSyncMessage = "No sync",
+            disconnectMessage = EnFeedFlowStrings.accountDisconnectServerMessage,
             uiState = lifecycle.uiState.value,
             onBackupClick = null,
             onDisconnectClick = lifecycle::disconnect,

@@ -82,6 +82,7 @@ internal fun BazquxAccountContent(
             description = "",
             successMessage = strings.bazquxAccountConnected,
             noSyncMessage = strings.noBazquxSyncYet,
+            disconnectMessage = strings.accountDisconnectServerMessage,
             uiState = uiState,
             credentialsState = credentialsState,
             onBackupClick = null,

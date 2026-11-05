@@ -70,7 +70,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-113 | `113-sync-storage-settings.yaml` | `content-rich` | Android, iOS | Refresh-on-launch, auto-delete picker, Android sync-period, clear-downloaded cancel path. |
 | REG-114 | `114-appearance-settings.yaml` | `content-rich` | Android, iOS | Theme picker (Dark), hide unread count, Android Black theme + reduce motion. |
 | REG-115 | `115-notifications-profile.yaml` | `notifications` | Android, iOS | Seeded notifications settings: default grouping, per-article description, navigation/relaunch persistence, grouped-mode fallback, per-feed toggle, and permission state. |
-| REG-116 | `116-account-list-one-account-constraint.yaml` | `sync-linked-mock` | Android, iOS | One-account constraint: with FreshRSS linked, other providers are disabled; disconnect unlocks them. |
+| REG-116 | `116-account-list-one-account-constraint.yaml` | `sync-linked-mock` | Android, iOS | One-account constraint: with FreshRSS linked, other providers are disabled; disconnect unlocks them. Cancels the destructive disconnect dialog, checks the warning, then confirms. On iOS, the alert closing when a sync starts while it is open is not covered: the account screens only report loading from their own actions. |
 | REG-117 | `117-greader-provider-form-validation.yaml` | `empty`, `content-rich` | Android, iOS | FreshRSS/Miniflux/BazQux/Feedbin provider forms: required-field state, warning hidden with no local subscriptions and shown when subscriptions exist, plus FreshRSS replacement confirmation + password visibility (Android). |
 | REG-118 | `118-cloud-provider-mock-states.yaml` | `sync-linked-mock` | Android, iOS | Seeded Dropbox linked state (Google Play/iOS) and iCloud linked state (iOS); F-Droid checks cloud-provider absence and its connected Miniflux state. |
 | REG-119 | `119-opml-import-error-states.yaml` | `empty` + fixtures | Android, iOS | Invalid OPML import → error screen + Choose another file recovery. |
@@ -92,7 +92,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-135 | `135-feed-list-secondary-persistence.yaml` | `content-rich` | Android, iOS | Description line limit, date format, time format, left/right swipe action dropdowns survive relaunch. |
 | REG-136 | `136-sync-storage-secondary-persistence.yaml` | `content-rich` | Android, iOS | Auto-delete period survives relaunch (both); sync period survives relaunch (Android). |
 | REG-137 | `137-reading-behavior-browser-selector-persistence.yaml` | `content-rich` | Android, iOS | Browser selector mutation (Chrome / Default) survives relaunch. |
-| REG-138 | `138-cloud-provider-disconnect.yaml` | `sync-linked-mock` | iOS | Unlink seeded iCloud account, return to add-account state. |
+| REG-138 | `138-cloud-provider-disconnect.yaml` | `sync-linked-mock` | iOS | Unlink seeded iCloud account, return to add-account state. Cancels the destructive disconnect dialog, checks the warning, then confirms. |
 | REG-139 | `139-article-export-filter.yaml` (+ iOS `139-ios-article-export-filter.yaml`) | `content-rich` | Android, iOS | Bookmarked-articles export filter reaches export-success state. |
 | REG-140 | `140-opml-export-success.yaml` | `content-rich` | Android, iOS | Export feeds to OPML, app reaches export-success state. |
 | REG-141 | `141-article-export-filter-matrix.yaml` | `content-rich` | Android, iOS | All / Read / Unread article export filters reach export-success state. |

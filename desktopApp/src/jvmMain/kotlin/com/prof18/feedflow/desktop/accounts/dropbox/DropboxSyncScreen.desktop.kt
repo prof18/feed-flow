@@ -84,6 +84,7 @@ internal fun DropboxAccountContent(
         description = strings.dropboxSyncDesktopDescription,
         successMessage = strings.dropboxSyncSuccess,
         noSyncMessage = strings.noDropboxSyncYet,
+        disconnectMessage = strings.accountDisconnectBackupMessage,
         uiState = uiState,
         credentialsState = credentialsState,
         onBackupClick = onBackup,

@@ -57,6 +57,7 @@ internal fun CloudAccountContent(
     description: String,
     successMessage: String,
     noSyncMessage: String,
+    disconnectMessage: String,
     uiState: AccountConnectionUiState,
     onBackupClick: (() -> Unit)?,
     onDisconnectClick: () -> Unit,
@@ -117,6 +118,7 @@ internal fun CloudAccountContent(
 
     DisconnectConfirmationDialog(
         isVisible = isDisconnectConfirmationVisible,
+        message = disconnectMessage,
         uiState = latestUiState,
         disconnectConfirmed = disconnectConfirmed,
         onConfirm = {
@@ -221,6 +223,7 @@ private val ConnectedColor = Color(color = 0xFF2F9E6B)
 @Composable
 private fun DisconnectConfirmationDialog(
     isVisible: Boolean,
+    message: String,
     uiState: AccountConnectionUiState,
     disconnectConfirmed: Boolean,
     onConfirm: () -> Unit,
@@ -229,13 +232,14 @@ private fun DisconnectConfirmationDialog(
     if (isVisible && !disconnectConfirmed && uiState.canDisconnect()) {
         val strings = LocalFeedFlowStrings.current
         ConfirmationDialog(
-            title = strings.desktopAccountDisconnectTitle,
-            message = strings.desktopAccountDisconnectMessage,
+            title = strings.accountDisconnectTitle,
+            message = message,
             onConfirm = {
                 if (!disconnectConfirmed && uiState.canDisconnect()) onConfirm()
             },
             onDismiss = onDismiss,
             confirmLabel = strings.accountDisconnectButton,
+            destructive = true,
         )
     }
 }

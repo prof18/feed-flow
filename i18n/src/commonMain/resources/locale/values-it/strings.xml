@@ -513,8 +513,6 @@
     <string name="desktop_account_updating">Aggiornamento dell’account…</string>
     <string name="desktop_dropbox_restart_authorization">Ricomincia</string>
     <string name="desktop_dropbox_code_required">Inserisci il codice di autorizzazione di Dropbox.</string>
-    <string name="desktop_account_disconnect_title">Disconnettere l’account?</string>
-    <string name="desktop_account_disconnect_message">FeedFlow smetterà di sincronizzarsi con questo account. Potrai riconnetterlo in seguito. La disconnessione non ripristina le sottoscrizioni sostituite durante la connessione.</string>
     <string name="desktop_feed_selection_count">%d selezionati</string>
     <string name="desktop_clear_feed_selection">Deseleziona</string>
     <string name="desktop_expand_all_feeds">Espandi tutto</string>

@@ -37,6 +37,7 @@ internal fun ConfirmationDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     confirmLabel: String? = null,
+    destructive: Boolean = false,
 ) {
     var settled by remember { mutableStateOf(false) }
     val latestDismiss by rememberUpdatedState(onDismiss)
@@ -62,6 +63,7 @@ internal fun ConfirmationDialog(
             modifier = Modifier.fillMaxSize(),
             enabled = !settled,
             confirmLabel = confirmLabel,
+            destructive = destructive,
         )
     }
 }
@@ -75,6 +77,7 @@ internal fun ConfirmationContent(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     confirmLabel: String? = null,
+    destructive: Boolean = false,
 ) {
     val strings = LocalFeedFlowStrings.current
     val cancelFocus = remember { FocusRequester() }
@@ -107,8 +110,22 @@ internal fun ConfirmationContent(
             ) {
                 Text(strings.cancelButton)
             }
-            DefaultButton(onClick = onConfirm, enabled = enabled, modifier = Modifier.heightIn(min = actionHeight)) {
-                Text(confirmLabel ?: strings.confirmButton)
+            if (destructive) {
+                OutlinedButton(
+                    onClick = onConfirm,
+                    enabled = enabled,
+                    modifier = Modifier.heightIn(min = actionHeight),
+                ) {
+                    Text(confirmLabel ?: strings.confirmButton, color = JewelTheme.globalColors.text.error)
+                }
+            } else {
+                DefaultButton(
+                    onClick = onConfirm,
+                    enabled = enabled,
+                    modifier = Modifier.heightIn(min = actionHeight),
+                ) {
+                    Text(confirmLabel ?: strings.confirmButton)
+                }
             }
         }
     }

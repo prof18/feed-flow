@@ -77,16 +77,11 @@ struct ICloudSyncScreenContent: View {
                 )
                 .disabled(state.syncState is AccountSyncUIState.Loading)
 
-                Button(
-                    action: {
-                        onDisconnectClick()
-                    },
-                    label: {
-                        Label(feedFlowStrings.accountDisconnectButton, systemImage: "square.slash")
-                    }
+                DisconnectAccountButton(
+                    kind: .backupService,
+                    isDisabled: state.syncState is AccountSyncUIState.Loading,
+                    onConfirm: onDisconnectClick
                 )
-                .disabled(state.syncState is AccountSyncUIState.Loading)
-                .accessibilityIdentifier(AccountAccessibilityIdentifiers.disconnectButton)
             }
         }
     }

@@ -164,15 +164,11 @@ struct MinifluxSyncContent: View {
                     }
                 }
 
-                Button(
-                    action: {
-                        onDisconnectClick()
-                    },
-                    label: {
-                        Label(feedFlowStrings.accountDisconnectButton, systemImage: "square.slash")
-                    }
+                DisconnectAccountButton(
+                    kind: .readerService,
+                    isDisabled: state.syncState is AccountSyncUIState.Loading,
+                    onConfirm: onDisconnectClick
                 )
-                .disabled(state.syncState is AccountSyncUIState.Loading)
             }
         }
     }

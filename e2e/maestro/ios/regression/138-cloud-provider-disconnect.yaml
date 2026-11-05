@@ -25,6 +25,22 @@ appId: com.prof18.feedflow.dev
     id: account_disconnect_button
 - extendedWaitUntil:
     visible:
+      id: account_disconnect_confirm_button
+    timeout: 5000
+- assertVisible: "FeedFlow will stop backing up to this account.*"
+- tapOn: "Cancel"
+- assertVisible:
+    id: account_connected_message
+- tapOn:
+    id: account_disconnect_button
+- extendedWaitUntil:
+    visible:
+      id: account_disconnect_confirm_button
+    timeout: 5000
+- tapOn:
+    id: account_disconnect_confirm_button
+- extendedWaitUntil:
+    visible:
       id: account_connect_button
     timeout: 10000
 - tapOn:

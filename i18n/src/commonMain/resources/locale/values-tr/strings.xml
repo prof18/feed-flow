@@ -313,7 +313,6 @@
     <string name="reader_content_source_feed_subtitle">RSS akışında yer alan metni kullan</string>
     <string name="hide_youtube_shorts_description">Bu kanaldan yalnızca normal videolar dahil edilir. Shorts videoları ve canlı yayınlar hariç tutulur.</string>
     <string name="bazqux_password_hint">BazQux hesap parolanız</string>
-    <string name="desktop_account_disconnect_message">FeedFlow bu hesapla eşitlemeyi durduracaktır. Daha sonra tekrar bağlayabilirsiniz. Bağlantıyı kesmek, bağlandığınızda değiştirilen abonelikleri geri yüklemez.</string>
     <string name="feedbin_account_connected">Feedbin hesabınız başarıyla bağlandı</string>
     <string name="settings_clear_downloaded_articles_dialog_message">Bu işlem çevrimdışı okuma için indirilmiş tüm makale içeriklerini silecektir. Bu işlem geri alınamaz.</string>
     <string name="widget_background_color_hex_label">Hex rengi</string>
@@ -529,7 +528,6 @@
     <string name="sort_and_filter_button">Sırala ve filtrele</string>
     <string name="feed_suggestions_empty_category">Bu kategoride hiç akış önerisi yok.</string>
     <string name="feed_suggestions_description">Koleksiyonunuza göz atın ve akışlar ekleyin</string>
-    <string name="desktop_account_disconnect_title">Hesap bağlantısı kesilsin mi?</string>
     <string name="support_purchase_thank_you_title">Harikasınız! 🎉</string>
     <string name="miniflux_account_connected">Miniflux hesabınız başarıyla bağlandı</string>
     <string name="new_articles_button">%s yeni makale</string>

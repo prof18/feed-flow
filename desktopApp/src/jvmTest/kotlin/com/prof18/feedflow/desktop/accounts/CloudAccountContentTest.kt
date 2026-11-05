@@ -40,6 +40,7 @@ class CloudAccountContentTest {
                         description = "",
                         successMessage = "Account connected",
                         noSyncMessage = "No sync yet",
+                        disconnectMessage = EnFeedFlowStrings.accountDisconnectServerMessage,
                         uiState = AccountConnectionUiState.Linked(AccountSyncUIState.Loading),
                         onBackupClick = { backupRequests++ },
                         onDisconnectClick = { disconnectRequests++ },
@@ -73,6 +74,7 @@ class CloudAccountContentTest {
                         description = "",
                         successMessage = "Account connected",
                         noSyncMessage = "No sync yet",
+                        disconnectMessage = EnFeedFlowStrings.accountDisconnectServerMessage,
                         uiState = AccountConnectionUiState.Linked(AccountSyncUIState.None),
                         onBackupClick = null,
                         onDisconnectClick = { disconnectRequests++ },
@@ -83,11 +85,34 @@ class CloudAccountContentTest {
         }
 
         rule.onNodeWithTag(AccountE2eIds.DISCONNECT_BUTTON).performClick()
-        rule.onNodeWithTag("confirmation-title").assertTextEquals(EnFeedFlowStrings.desktopAccountDisconnectTitle)
+        rule.onNodeWithTag("confirmation-title").assertTextEquals(EnFeedFlowStrings.accountDisconnectTitle)
         rule.onNodeWithText(EnFeedFlowStrings.cancelButton)
             .performSemanticsAction(SemanticsActions.OnClick) { it() }
         rule.onNodeWithTag("confirmation-title").assertDoesNotExist()
         rule.runOnIdle { assertEquals(0, disconnectRequests) }
+    }
+
+    @Test
+    fun `disconnect confirmation shows the provided message`() {
+        rule.setContent {
+            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    CloudAccountContent(
+                        description = "",
+                        successMessage = "Account connected",
+                        noSyncMessage = "No sync yet",
+                        disconnectMessage = EnFeedFlowStrings.accountDisconnectBackupMessage,
+                        uiState = AccountConnectionUiState.Linked(AccountSyncUIState.None),
+                        onBackupClick = null,
+                        onDisconnectClick = {},
+                        connectContent = {},
+                    )
+                }
+            }
+        }
+
+        rule.onNodeWithTag(AccountE2eIds.DISCONNECT_BUTTON).performClick()
+        rule.onNodeWithText(EnFeedFlowStrings.accountDisconnectBackupMessage).assertExists()
     }
 
     @Test
@@ -100,6 +125,7 @@ class CloudAccountContentTest {
                         description = "",
                         successMessage = "Account connected",
                         noSyncMessage = "No sync yet",
+                        disconnectMessage = EnFeedFlowStrings.accountDisconnectServerMessage,
                         uiState = AccountConnectionUiState.Linked(AccountSyncUIState.None),
                         onBackupClick = null,
                         onDisconnectClick = { disconnectRequests++ },
@@ -110,7 +136,7 @@ class CloudAccountContentTest {
         }
 
         rule.onNodeWithTag(AccountE2eIds.DISCONNECT_BUTTON).performClick()
-        rule.onNodeWithTag("confirmation-title").assertTextEquals(EnFeedFlowStrings.desktopAccountDisconnectTitle)
+        rule.onNodeWithTag("confirmation-title").assertTextEquals(EnFeedFlowStrings.accountDisconnectTitle)
         val confirmAction = rule.onAllNodesWithText(EnFeedFlowStrings.accountDisconnectButton)[1]
             .fetchSemanticsNode().config[SemanticsActions.OnClick].action
         rule.runOnIdle {
@@ -134,6 +160,7 @@ class CloudAccountContentTest {
                         description = "",
                         successMessage = "Account connected",
                         noSyncMessage = "No sync yet",
+                        disconnectMessage = EnFeedFlowStrings.accountDisconnectServerMessage,
                         uiState = uiState.value,
                         onBackupClick = null,
                         onDisconnectClick = { disconnectRequests++ },
@@ -144,7 +171,7 @@ class CloudAccountContentTest {
         }
 
         rule.onNodeWithTag(AccountE2eIds.DISCONNECT_BUTTON).performClick()
-        rule.onNodeWithTag("confirmation-title").assertTextEquals(EnFeedFlowStrings.desktopAccountDisconnectTitle)
+        rule.onNodeWithTag("confirmation-title").assertTextEquals(EnFeedFlowStrings.accountDisconnectTitle)
         rule.runOnIdle { uiState.value = AccountConnectionUiState.Linked(AccountSyncUIState.Loading) }
         val confirmButtons = rule.onAllNodesWithText(EnFeedFlowStrings.accountDisconnectButton)
         if (confirmButtons.fetchSemanticsNodes().size > 1) confirmButtons[1].performClick()
@@ -160,6 +187,7 @@ class CloudAccountContentTest {
                         description = "",
                         successMessage = "Account connected",
                         noSyncMessage = "No sync yet",
+                        disconnectMessage = EnFeedFlowStrings.accountDisconnectServerMessage,
                         uiState = AccountConnectionUiState.Linked(
                             AccountSyncUIState.Synced(lastDownloadDate = "Today", lastUploadDate = null),
                         ),
@@ -187,6 +215,7 @@ class CloudAccountContentTest {
                         description = "Provider description",
                         successMessage = "Account connected",
                         noSyncMessage = "No sync yet",
+                        disconnectMessage = EnFeedFlowStrings.accountDisconnectServerMessage,
                         uiState = uiState.value,
                         onBackupClick = null,
                         onDisconnectClick = {},

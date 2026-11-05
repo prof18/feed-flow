@@ -11,6 +11,7 @@ object AccountE2eIds {
     const val CONNECTED_MESSAGE = "account_connected_message"
     const val LAST_SYNC_LABEL = "account_last_sync_label"
     const val DISCONNECT_BUTTON = "account_disconnect_button"
+    const val DISCONNECT_CONFIRM_BUTTON = "account_disconnect_confirm_button"
 
     fun providerRow(account: SyncAccounts): String =
         "accounts_provider_${account.name.lowercase()}"

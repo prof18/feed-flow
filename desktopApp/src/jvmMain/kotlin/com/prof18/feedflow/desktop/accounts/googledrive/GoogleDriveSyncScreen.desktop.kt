@@ -73,6 +73,7 @@ internal fun GoogleDriveAccountContent(
         description = strings.googleDriveDesktopSyncDescription,
         successMessage = strings.googleDriveSyncSuccess,
         noSyncMessage = strings.noGoogleDriveSyncYet,
+        disconnectMessage = strings.accountDisconnectBackupMessage,
         uiState = uiState,
         credentialsState = credentialsState,
         onBackupClick = onBackup,

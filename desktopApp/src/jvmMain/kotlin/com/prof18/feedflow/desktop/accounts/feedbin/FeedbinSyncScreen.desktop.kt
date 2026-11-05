@@ -79,6 +79,7 @@ internal fun FeedbinAccountContent(
             description = "",
             successMessage = strings.feedbinAccountConnected,
             noSyncMessage = strings.noFeedbinSyncYet,
+            disconnectMessage = strings.accountDisconnectServerMessage,
             uiState = uiState,
             credentialsState = credentialsState,
             onBackupClick = null,

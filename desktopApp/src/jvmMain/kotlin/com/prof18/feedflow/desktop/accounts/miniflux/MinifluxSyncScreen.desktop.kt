@@ -81,6 +81,7 @@ internal fun MinifluxAccountContent(
             description = "",
             successMessage = strings.minifluxAccountConnected,
             noSyncMessage = strings.noMinifluxSyncYet,
+            disconnectMessage = strings.accountDisconnectServerMessage,
             uiState = uiState,
             credentialsState = credentialsState,
             onBackupClick = null,

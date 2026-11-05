@@ -513,8 +513,6 @@
     <string name="desktop_account_updating">Konto wird upgedated…</string>
     <string name="desktop_dropbox_restart_authorization">Erneut beginnen</string>
     <string name="desktop_dropbox_code_required">Den Autorisationscode von Dropbox eingeben.</string>
-    <string name="desktop_account_disconnect_title">Konto trennen?</string>
-    <string name="desktop_account_disconnect_message">FeedFlow wird die Sync mit diesem Konto stoppen. Sie können es später wieder verbinden. Die Trennung stellt die Abonnements, die während der Verbindung ersetzt wurden, nicht wieder her.</string>
     <string name="desktop_feed_selection_count">%d gewählt</string>
     <string name="desktop_clear_feed_selection">Auswahl aufheben</string>
     <string name="desktop_expand_all_feeds">Alles erweitern</string>

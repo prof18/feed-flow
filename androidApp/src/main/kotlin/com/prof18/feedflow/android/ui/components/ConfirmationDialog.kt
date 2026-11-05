@@ -7,9 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.android.ui.utils.PreviewTheme
+import com.prof18.feedflow.android.ui.utils.exposeTestTagsAsResourceIds
 
 @Composable
 fun ConfirmationDialog(
@@ -21,6 +23,7 @@ fun ConfirmationDialog(
     confirmButtonText: String = LocalFeedFlowStrings.current.confirmButton,
     dismissButtonText: String = LocalFeedFlowStrings.current.cancelButton,
     isDestructive: Boolean = false,
+    confirmButtonTestTag: String? = null,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -32,6 +35,7 @@ fun ConfirmationDialog(
         },
         confirmButton = {
             TextButton(
+                modifier = if (confirmButtonTestTag != null) Modifier.testTag(confirmButtonTestTag) else Modifier,
                 onClick = {
                     onConfirm()
                     onDismiss()
@@ -54,7 +58,7 @@ fun ConfirmationDialog(
                 Text(dismissButtonText)
             }
         },
-        modifier = modifier,
+        modifier = if (confirmButtonTestTag != null) modifier.exposeTestTagsAsResourceIds() else modifier,
     )
 }
 

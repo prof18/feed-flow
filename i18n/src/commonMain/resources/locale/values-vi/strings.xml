@@ -506,8 +506,6 @@
     <string name="desktop_account_updating">Đang cập nhật tài khoản…</string>
     <string name="desktop_dropbox_restart_authorization">Bắt đầu lại</string>
     <string name="desktop_dropbox_code_required">Nhập mã xác thực từ Dropbox.</string>
-    <string name="desktop_account_disconnect_title">Ngắt kết nối tài khoản?</string>
-    <string name="desktop_account_disconnect_message">FeedFlow sẽ ngừng đồng bộ hóa với tài khoản này. Bạn có thể kết nối lại sau. Việc ngắt kết nối không khôi phục lại các đăng ký đã bị thay thế khi bạn kết nối.</string>
     <string name="desktop_feed_selection_count">%d đã chọn</string>
     <string name="desktop_clear_feed_selection">Xóa mục đã chọn</string>
     <string name="desktop_expand_all_feeds">Mở rộng tất cả</string>

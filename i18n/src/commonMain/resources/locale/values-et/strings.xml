@@ -496,8 +496,6 @@
     <string name="desktop_account_updating">Kasutajakonto on uuendamisel…</string>
     <string name="desktop_dropbox_restart_authorization">Alusta uuesti</string>
     <string name="desktop_dropbox_code_required">Sisesta Dropboxi autentimiskood.</string>
-    <string name="desktop_account_disconnect_title">Kas katkestad kasutajakonto ühenduse?</string>
-    <string name="desktop_account_disconnect_message">FeedFlow katkestab selle kasutajakontoga sünkroonimise. Võid ta hiljem ühendada. Ühenduse katkestamine ei taasta tellimusi, mis asendati ühendamisel.</string>
     <string name="desktop_feed_selection_count">%d on valitud</string>
     <string name="desktop_clear_feed_selection">Eemalda valik</string>
     <string name="desktop_expand_all_feeds">Laienda kõik</string>

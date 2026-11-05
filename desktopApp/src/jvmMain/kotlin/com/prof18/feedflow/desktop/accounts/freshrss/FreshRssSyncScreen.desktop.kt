@@ -80,6 +80,7 @@ internal fun FreshRssAccountContent(
             description = "",
             successMessage = strings.freshRssAccountConnected,
             noSyncMessage = strings.noFreshRssSyncYet,
+            disconnectMessage = strings.accountDisconnectServerMessage,
             uiState = uiState,
             credentialsState = credentialsState,
             onBackupClick = null,

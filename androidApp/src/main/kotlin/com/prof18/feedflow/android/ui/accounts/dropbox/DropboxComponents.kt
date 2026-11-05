@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FileUpload
-import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.prof18.feedflow.android.ui.accounts.AccountE2eIds
+import com.prof18.feedflow.android.ui.accounts.DisconnectAccountItem
+import com.prof18.feedflow.android.ui.accounts.DisconnectAccountKind
 import com.prof18.feedflow.android.ui.settings.SettingItem
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
@@ -172,12 +173,10 @@ private fun ConnectedView(
             onClick = onBackupClick,
         )
 
-        SettingItem(
-            modifier = Modifier.testTag(AccountE2eIds.DISCONNECT_BUTTON),
-            title = LocalFeedFlowStrings.current.accountDisconnectButton,
+        DisconnectAccountItem(
+            kind = DisconnectAccountKind.BackupService,
             isEnabled = uiState.syncState !is AccountSyncUIState.Loading,
-            icon = Icons.Default.LinkOff,
-            onClick = onDisconnectClick,
+            onConfirm = onDisconnectClick,
         )
     }
 }

@@ -8,6 +8,7 @@ enum AccountAccessibilityIdentifiers {
     static let connectedMessage = "account_connected_message"
     static let lastSyncLabel = "account_last_sync_label"
     static let disconnectButton = "account_disconnect_button"
+    static let disconnectConfirmButton = "account_disconnect_confirm_button"
 
     static func provider(_ id: String) -> String {
         "accounts_provider_\(id)"

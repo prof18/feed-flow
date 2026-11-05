@@ -76,6 +76,7 @@ internal fun ICloudAccountContent(
             description = strings.icloudSyncDescription,
             successMessage = strings.icloudSyncSuccess,
             noSyncMessage = strings.noIcloudSyncYet,
+            disconnectMessage = strings.accountDisconnectBackupMessage,
             uiState = uiState,
             credentialsState = credentialsState,
             onBackupClick = onBackup,

@@ -12,7 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,8 +35,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.prof18.feedflow.android.ui.accounts.AccountE2eIds
+import com.prof18.feedflow.android.ui.accounts.DisconnectAccountItem
+import com.prof18.feedflow.android.ui.accounts.DisconnectAccountKind
 import com.prof18.feedflow.android.ui.accounts.ServerAccountConnectButton
-import com.prof18.feedflow.android.ui.settings.SettingItem
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.AccountConnectionUiState
@@ -262,14 +262,11 @@ private fun ConnectedView(
             }
         }
 
-        SettingItem(
-            modifier = Modifier
-                .testTag(AccountE2eIds.DISCONNECT_BUTTON)
-                .padding(top = Spacing.regular),
-            title = LocalFeedFlowStrings.current.accountDisconnectButton,
+        DisconnectAccountItem(
+            modifier = Modifier.padding(top = Spacing.regular),
+            kind = DisconnectAccountKind.ReaderService,
             isEnabled = uiState.syncState !is AccountSyncUIState.Loading,
-            icon = Icons.Default.LinkOff,
-            onClick = onDisconnectClick,
+            onConfirm = onDisconnectClick,
         )
     }
 }

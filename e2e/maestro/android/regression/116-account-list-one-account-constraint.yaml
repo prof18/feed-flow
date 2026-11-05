@@ -36,6 +36,22 @@ appId: com.prof18.feedflow.debug
     id: account_last_sync_label
 - tapOn:
     id: account_disconnect_button
+- extendedWaitUntil:
+    visible:
+      id: account_disconnect_confirm_button
+    timeout: 5000
+- assertVisible: "Feeds, articles, bookmarks and read status will be removed.*"
+- tapOn: "Cancel"
+- assertVisible:
+    id: account_connected_message
+- tapOn:
+    id: account_disconnect_button
+- extendedWaitUntil:
+    visible:
+      id: account_disconnect_confirm_button
+    timeout: 5000
+- tapOn:
+    id: account_disconnect_confirm_button
 - assertVisible:
     id: account_connect_button
     enabled: false

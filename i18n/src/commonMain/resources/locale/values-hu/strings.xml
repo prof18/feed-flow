@@ -349,8 +349,6 @@
     <string name="desktop_account_updating">Fiók frissítése…</string>
     <string name="desktop_dropbox_restart_authorization">Újrakezdés</string>
     <string name="desktop_dropbox_code_required">Dropbox hitelesítési kód.</string>
-    <string name="desktop_account_disconnect_title">Kijelentkezés a fiókból?</string>
-    <string name="desktop_account_disconnect_message">FeedFlow szinkronzálás leállítása ezzel a fiókkal. Később ismét bejelentkezhetsz. A kijelentkezés nem állítja vissza a feliratkozásokat mikor újracsatlakozol.</string>
     <string name="server_account_subscriptions_warning">A fiók saját szerveren tárolja a hírfolyam feliratkozásokat.</string>
     <string name="server_account_replace_local_title">Felülírod a helyi feliratkozásokat?</string>
     <string name="server_account_replace_local_message">A csatlakozás lecseréli az eszközön jelenleg tárolt hírcsatornákat a szerverről származó előfizetésekkel. A későbbi lecsatlakozás nem állítja vissza a helyi hírcsatornákat. Először exportálja őket OPML-be, ha a másolatot megtartanád.</string>

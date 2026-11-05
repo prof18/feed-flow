@@ -483,7 +483,6 @@
     <string name="desktop_search_loading">Recherche de %s…</string>
     <string name="desktop_settings_preview_title">Prévisualisation</string>
     <string name="desktop_dropbox_code_required">Saisir le code d\'autorisation pour Dropbox.</string>
-    <string name="desktop_account_disconnect_title">Déconnecter le compte ?</string>
     <string name="desktop_account_connecting">Connexion…</string>
     <string name="desktop_account_updating">Mise à jour du compte …</string>
     <string name="desktop_dropbox_restart_authorization">Recommencer</string>
@@ -507,7 +506,6 @@
     <string name="desktop_feed_selection_count">%d sélectionnés</string>
     <string name="desktop_account_show_password">Afficher le mot de passe</string>
     <string name="desktop_accounts_connected_status">Connecté</string>
-    <string name="desktop_account_disconnect_message">FeedFlow va arrêter la synchronisation de ce compte. Vous pourrez le reconnecter ultérieurement. La déconnexion ne rétablit pas les abonnements qui avaient été remplacés lors de votre connexion.</string>
     <string name="desktop_accounts_back_to_services">Retour aux services</string>
     <string name="desktop_accounts_backup_description">Sauvegarde les abonnements, les articles lus et les signets.</string>
     <string name="desktop_accounts_reader_description">Synchronise les abonnements et l\'état des articles avec votre compte de lecteur.</string>

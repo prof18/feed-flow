@@ -524,8 +524,6 @@
     <string name="desktop_account_updating">Актуализиране на акаунта…</string>
     <string name="desktop_dropbox_restart_authorization">Започни отново</string>
     <string name="desktop_dropbox_code_required">Въведете кода за оторизация от Dropbox.</string>
-    <string name="desktop_account_disconnect_title">Прекъсване на акаунта?</string>
-    <string name="desktop_account_disconnect_message">FeedFlow ще спре да се синхронизира с този акаунт. Можете да го свържете отново по-късно. Прекъсването на връзката не възстановява абонаментите, заменени при свързването ви.</string>
     <string name="reader_mode_title_font_size">Размер на заглавието</string>
     <string name="reader_mode_font">Шрифт</string>
     <string name="reader_font_system">Система</string>

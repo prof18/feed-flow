@@ -57,6 +57,8 @@ knownRegions:
   - ca
   - sq
   - ar
+  - ro
+  - id
   - zh-Hant
 
 packages:

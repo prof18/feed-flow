@@ -44,6 +44,8 @@
 		<string>ar</string>
 		<string>sq</string>
 		<string>ca</string>
+		<string>ro</string>
+		<string>id</string>
 		<string>zh-Hant</string>
 	</array>
 	<key>CFBundleName</key>

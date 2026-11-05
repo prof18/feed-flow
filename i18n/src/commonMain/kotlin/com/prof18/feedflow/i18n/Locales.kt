@@ -45,6 +45,10 @@ val feedFlowStrings: Map<String, FeedFlowStrings> = mapOf(
     Locales.Ar to ArFeedFlowStrings,
     Locales.Sq to SqFeedFlowStrings,
     Locales.Ca to CaFeedFlowStrings,
+    Locales.Ro to RoFeedFlowStrings,
+
+    Locales.In to InFeedFlowStrings,
+    "id" to InFeedFlowStrings,
 )
 
 expect fun String.format(vararg args: Any): String

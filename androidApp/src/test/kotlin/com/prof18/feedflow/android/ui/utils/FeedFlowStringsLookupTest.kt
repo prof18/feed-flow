@@ -2,8 +2,10 @@ package com.prof18.feedflow.android.ui.utils
 
 import com.prof18.feedflow.i18n.DeFeedFlowStrings
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
+import com.prof18.feedflow.i18n.InFeedFlowStrings
 import com.prof18.feedflow.i18n.ItFeedFlowStrings
 import com.prof18.feedflow.i18n.PtBrFeedFlowStrings
+import com.prof18.feedflow.i18n.RoFeedFlowStrings
 import com.prof18.feedflow.i18n.ZhCnFeedFlowStrings
 import com.prof18.feedflow.i18n.ZhTwFeedFlowStrings
 import org.junit.Assert.assertSame
@@ -16,6 +18,12 @@ class FeedFlowStringsLookupTest {
     fun `region tag falls back to the language strings`() {
         assertSame(ItFeedFlowStrings, feedFlowStringsFor(Locale.forLanguageTag("it-IT")))
         assertSame(DeFeedFlowStrings, feedFlowStringsFor(Locale.forLanguageTag("de-AT")))
+    }
+
+    @Test
+    fun `romanian and indonesian resolve to their translations`() {
+        assertSame(RoFeedFlowStrings, feedFlowStringsFor(Locale.forLanguageTag("ro-RO")))
+        assertSame(InFeedFlowStrings, feedFlowStringsFor(Locale.forLanguageTag("id-ID")))
     }
 
     @Test

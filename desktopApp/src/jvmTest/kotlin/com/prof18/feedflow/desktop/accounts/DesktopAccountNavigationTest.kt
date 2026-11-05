@@ -3,6 +3,7 @@ package com.prof18.feedflow.desktop.accounts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -20,6 +21,8 @@ import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.desktop.accounts.dropbox.DropboxAccountContent
 import com.prof18.feedflow.desktop.accounts.googledrive.GoogleDriveAccountContent
+import com.prof18.feedflow.desktop.settings.search.LocalSettingsSearchJump
+import com.prof18.feedflow.desktop.settings.search.SettingsSearchJump
 import com.prof18.feedflow.desktop.testing.AccountE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
@@ -136,6 +139,43 @@ class DesktopAccountNavigationTest {
             assertEquals(0, confirmations)
         }
     }
+
+    @Test
+    fun `search jump returns accounts to the provider list`() {
+        val jump = mutableStateOf<SettingsSearchJump?>(null)
+        compose.setContent {
+            CompositionLocalProvider(
+                LocalFeedFlowStrings provides EnFeedFlowStrings,
+                LocalSettingsSearchJump provides jump.value,
+            ) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    Box(Modifier.requiredSize(width = 900.dp, height = 600.dp)) {
+                        DesktopAccountsContent(
+                            currentAccount = SyncAccounts.LOCAL,
+                            supportedAccounts = persistentListOf(SyncAccounts.MINIFLUX, SyncAccounts.FRESH_RSS),
+                        ) { _, _, _, credentials ->
+                            CredentialsForm(
+                                serverUrlHint = "Server endpoint",
+                                usernameHint = null,
+                                passwordHint = null,
+                                isLoginLoading = false,
+                                hasLocalSubscriptions = false,
+                                credentialsState = credentials,
+                                onLogin = { _, _, _ -> },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.MINIFLUX)).performClick()
+        compose.onNodeWithText(EnFeedFlowStrings.desktopAccountsBackToServices).assertExists()
+
+        compose.runOnIdle { jump.value = SettingsSearchJump(id = 1, targetTitle = null) }
+
+        compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.FRESH_RSS)).assertExists()
+    }
+
     private companion object {
         const val CURSOR_POSITION = 3
     }

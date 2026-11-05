@@ -1,9 +1,11 @@
 package com.prof18.feedflow.desktop.settings
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -12,17 +14,31 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isNotSelected
+import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.desktop.settings.search.SETTINGS_SEARCH_CLEAR_TAG
+import com.prof18.feedflow.desktop.settings.search.SETTINGS_SEARCH_FIELD_TAG
+import com.prof18.feedflow.desktop.settings.search.SETTINGS_SEARCH_RESULTS_TAG
+import com.prof18.feedflow.desktop.settings.search.SettingsSearchEntry
+import com.prof18.feedflow.desktop.settings.search.settingsSearchIndex
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
@@ -159,10 +175,149 @@ class DesktopSettingsContentTest {
         }
     }
 
+    @Test
+    fun `typing a query replaces categories with results and choosing one opens its page`() {
+        compose.setContent { SettingsContent(DesktopSettingsCategory.FEED_LIST) }
+
+        val field = compose.onNodeWithTag(SETTINGS_SEARCH_FIELD_TAG)
+        field.performTextInput("unread count")
+        compose.onNodeWithTag(SETTINGS_CATEGORIES_TAG).assertDoesNotExist()
+        compose.onNodeWithTag(SETTINGS_SEARCH_RESULTS_TAG).assertExists()
+        compose.onNodeWithText(EnFeedFlowStrings.settingsHideUnreadCount).performClick()
+
+        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.GENERAL.name)
+        field.assertTextContains("unread count")
+    }
+
+    @Test
+    fun `Enter opens the first result`() {
+        compose.setContent { SettingsContent(DesktopSettingsCategory.GENERAL) }
+
+        val field = compose.onNodeWithTag(SETTINGS_SEARCH_FIELD_TAG)
+        field.performTextInput("swipe")
+        field.performKeyInput { pressKey(Key.Enter) }
+
+        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.FEED_LIST.name)
+    }
+
+    @Test
+    fun `Down then Enter opens the second result`() {
+        compose.setContent { SettingsContent(DesktopSettingsCategory.ABOUT) }
+
+        val field = compose.onNodeWithTag(SETTINGS_SEARCH_FIELD_TAG)
+        field.performTextInput("unread")
+        field.performKeyInput {
+            pressKey(Key.DirectionDown)
+            pressKey(Key.Enter)
+        }
+
+        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.FEED_LIST.name)
+    }
+
+    @Test
+    fun `keyboard-active result is exposed as selected`() {
+        compose.setContent { SettingsContent(DesktopSettingsCategory.ABOUT) }
+
+        val field = compose.onNodeWithTag(SETTINGS_SEARCH_FIELD_TAG)
+        field.performTextInput("unread")
+        compose.onNode(hasText(EnFeedFlowStrings.settingsHideUnreadCount) and isSelected()).assertExists()
+        field.performKeyInput { pressKey(Key.DirectionDown) }
+
+        compose.onNode(hasText(EnFeedFlowStrings.settingsHideUnreadDot) and isSelected()).assertExists()
+        compose.onNode(hasText(EnFeedFlowStrings.settingsHideUnreadCount) and isNotSelected()).assertExists()
+    }
+
+    @Test
+    fun `Escape clears the query and restores categories`() {
+        compose.setContent { SettingsContent(DesktopSettingsCategory.GENERAL) }
+
+        val field = compose.onNodeWithTag(SETTINGS_SEARCH_FIELD_TAG)
+        field.performTextInput("theme")
+        field.performKeyInput { pressKey(Key.Escape) }
+
+        compose.onNodeWithTag(SETTINGS_CATEGORIES_TAG).assertExists()
+        assertEquals("", field.fetchSemanticsNode().config[SemanticsProperties.EditableText].text)
+    }
+
+    @Test
+    fun `clear button empties the query and restores categories`() {
+        compose.setContent { SettingsContent(DesktopSettingsCategory.GENERAL) }
+
+        val field = compose.onNodeWithTag(SETTINGS_SEARCH_FIELD_TAG)
+        compose.onNodeWithTag(SETTINGS_SEARCH_CLEAR_TAG).assertDoesNotExist()
+        field.performTextInput("about")
+        val clear = compose.onNodeWithTag(SETTINGS_SEARCH_CLEAR_TAG)
+        // Mouse-only, so Enter typed in the field never lands on it.
+        clear.requestFocus()
+        clear.assertIsNotFocused()
+        clear.performClick()
+
+        compose.onNodeWithTag(SETTINGS_CATEGORIES_TAG).assertExists()
+        compose.onNodeWithTag(SETTINGS_SEARCH_CLEAR_TAG).assertDoesNotExist()
+        assertEquals("", field.fetchSemanticsNode().config[SemanticsProperties.EditableText].text)
+    }
+
+    @Test
+    fun `no results shows the empty message`() {
+        compose.setContent { SettingsContent(DesktopSettingsCategory.GENERAL) }
+
+        compose.onNodeWithTag(SETTINGS_SEARCH_FIELD_TAG).performTextInput("zzzz")
+
+        compose.onNodeWithText(EnFeedFlowStrings.desktopSettingsSearchNoResults).assertExists()
+    }
+
+    @Test
+    fun `shrinking the index resets the active result`() {
+        val entries = mutableStateOf(
+            listOf(
+                SettingsSearchEntry(DesktopSettingsCategory.GENERAL, "Alpha one", "General"),
+                SettingsSearchEntry(DesktopSettingsCategory.READING, "Alpha two", "Reading"),
+            ),
+        )
+        compose.setContent { SettingsContent(DesktopSettingsCategory.ABOUT, searchEntries = entries.value) }
+
+        val field = compose.onNodeWithTag(SETTINGS_SEARCH_FIELD_TAG)
+        field.performTextInput("alpha")
+        field.performKeyInput { pressKey(Key.DirectionDown) }
+        compose.runOnIdle { entries.value = entries.value.take(1) }
+        field.performKeyInput { pressKey(Key.Enter) }
+
+        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.GENERAL.name)
+    }
+
+    @Test
+    fun `keyboard selection keeps the active result visible`() {
+        compose.setContent {
+            Box(Modifier.requiredSize(width = 900.dp, height = 300.dp)) {
+                SettingsContent(
+                    DesktopSettingsCategory.GENERAL,
+                    searchEntries = List(30) {
+                        SettingsSearchEntry(DesktopSettingsCategory.ABOUT, "Item $it", "About")
+                    },
+                )
+            }
+        }
+
+        val field = compose.onNodeWithTag(SETTINGS_SEARCH_FIELD_TAG)
+        field.performTextInput("item")
+        field.performKeyInput { repeat(times = 25) { pressKey(Key.DirectionDown) } }
+
+        compose.waitUntil(timeoutMillis = 2_000) {
+            runCatching { compose.onNodeWithText("Item 25").assertIsDisplayed() }.isSuccess
+        }
+    }
+
     @Composable
     private fun SettingsContent(
         initialCategory: DesktopSettingsCategory,
         onCategorySelected: (DesktopSettingsCategory) -> Unit = {},
+        searchEntries: List<SettingsSearchEntry> = settingsSearchIndex(
+            strings = EnFeedFlowStrings,
+            supportedAccounts = listOf(SyncAccounts.DROPBOX),
+            isCrashReportingAvailable = false,
+            isGridToggleVisible = true,
+            isFaqEnabled = false,
+        ),
         paneContent: @Composable (DesktopSettingsCategory) -> Unit = { category ->
             Column {
                 Text(category.name, modifier = Modifier.testTag(DETAIL_TAG))
@@ -180,6 +335,7 @@ class DesktopSettingsContentTest {
                 SettingsContent(
                     initialCategory = initialCategory,
                     modifier = Modifier.fillMaxSize(),
+                    searchEntries = searchEntries,
                     content = paneContent,
                 )
             }

@@ -30,6 +30,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -42,9 +44,12 @@ import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -56,6 +61,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
@@ -72,11 +78,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.prof18.feedflow.desktop.settings.search.HIGHLIGHT_FADE_MS
+import com.prof18.feedflow.desktop.settings.search.HIGHLIGHT_HOLD_MS
+import com.prof18.feedflow.desktop.settings.search.LocalSettingsSearchJump
+import com.prof18.feedflow.desktop.settings.search.SettingsSearchEntry
+import com.prof18.feedflow.desktop.settings.search.SettingsSearchField
+import com.prof18.feedflow.desktop.settings.search.SettingsSearchJump
+import com.prof18.feedflow.desktop.settings.search.SettingsSearchResults
+import com.prof18.feedflow.desktop.settings.search.search
+import com.prof18.feedflow.desktop.settings.search.settingsSearchHighlight
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.desktop.ui.components.LocalWindowTopInset
 import com.prof18.feedflow.desktop.ui.components.rememberDesktopSidebarItemStyle
+import kotlinx.coroutines.delay
 import org.jetbrains.jewel.foundation.lazy.SingleSelectionLazyColumn
 import org.jetbrains.jewel.foundation.lazy.items
 import org.jetbrains.jewel.foundation.lazy.rememberSingleSelectionLazyListState
@@ -93,6 +109,9 @@ internal fun SettingsContent(
     modifier: Modifier = Modifier,
     sectionKey: String? = null,
     onCategorySelected: (DesktopSettingsCategory) -> Unit = {},
+    searchEntries: List<SettingsSearchEntry> = emptyList(),
+    searchState: TextFieldState = rememberTextFieldState(),
+    searchFocusRequester: FocusRequester = remember { FocusRequester() },
     content: @Composable (DesktopSettingsCategory) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
@@ -116,13 +135,34 @@ internal fun SettingsContent(
         categorySelected(category)
     }
 
+    val query by remember(searchState) { derivedStateOf { searchState.text.toString() } }
+    val results = remember(searchEntries, query) { searchEntries.search(query) }
+    var activeIndex by remember(results) { mutableIntStateOf(0) }
+    var jump by remember { mutableStateOf<SettingsSearchJump?>(null) }
+    var jumpId by remember { mutableIntStateOf(0) }
+    LaunchedEffect(jump) {
+        if (jump != null) {
+            delay(HIGHLIGHT_HOLD_MS + HIGHLIGHT_FADE_MS)
+            jump = null
+        }
+    }
+    val openResult: (SettingsSearchEntry) -> Unit = { entry ->
+        selectCategory(entry.category)
+        jumpId += 1
+        // Always set, even without a target, so panes leave their subpages.
+        jump = SettingsSearchJump(id = jumpId, targetTitle = entry.targetTitle)
+    }
+
     SideEffect(initialCategory) {
         categoryListState.selectedKeys = setOf(initialCategory)
         selectedCategory = initialCategory
     }
     SideEffect(categoryListState.selectedKeys) {
         (categoryListState.selectedKeys.firstOrNull() as? DesktopSettingsCategory)?.let {
-            if (selectedCategory != it) selectCategory(it)
+            if (selectedCategory != it) {
+                jump = null
+                selectCategory(it)
+            }
         }
     }
 
@@ -135,25 +175,49 @@ internal fun SettingsContent(
             NAVIGATION_WIDTH
         }
         Row(modifier = Modifier.fillMaxSize()) {
-            SingleSelectionLazyColumn(
-                state = categoryListState,
+            Column(
                 modifier = Modifier
-                    .testTag(SETTINGS_CATEGORIES_TAG)
                     .width(navigationWidth)
                     .fillMaxHeight()
                     .background(JewelTheme.globalColors.toolwindowBackground)
                     .drawTrailingSeparator(separator)
                     .padding(top = topInset)
                     .padding(horizontal = 10.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                items(items = categories, key = { it.first }) { (category, label) ->
-                    SettingsCategoryRow(
-                        label = label,
-                        icon = category.icon(),
-                        state = ListItemState(isSelected = isSelected, isActive = isActive),
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp)
-                            .clickable { selectCategory(category) },
-                        style = categoryStyle,
+                SettingsSearchField(
+                    state = searchState,
+                    focusRequester = searchFocusRequester,
+                    onMoveActive = { delta ->
+                        if (results.isNotEmpty()) activeIndex = (activeIndex + delta).coerceIn(0, results.lastIndex)
+                    },
+                    onOpenActive = { results.getOrNull(activeIndex)?.let(openResult) },
+                )
+                if (query.isBlank()) {
+                    SingleSelectionLazyColumn(
+                        state = categoryListState,
+                        modifier = Modifier.testTag(SETTINGS_CATEGORIES_TAG).fillMaxWidth().weight(1f),
+                    ) {
+                        items(items = categories, key = { it.first }) { (category, label) ->
+                            SettingsCategoryRow(
+                                label = label,
+                                icon = category.icon(),
+                                state = ListItemState(isSelected = isSelected, isActive = isActive),
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp)
+                                    .clickable {
+                                        jump = null
+                                        selectCategory(category)
+                                    },
+                                style = categoryStyle,
+                            )
+                        }
+                    }
+                } else {
+                    SettingsSearchResults(
+                        results = results,
+                        activeIndex = activeIndex,
+                        onOpen = openResult,
+                        modifier = Modifier.fillMaxWidth().weight(1f),
                     )
                 }
             }
@@ -164,8 +228,10 @@ internal fun SettingsContent(
                     .fillMaxHeight()
                     .padding(start = 16.dp, top = 8.dp + topInset, end = 8.dp, bottom = 8.dp),
             ) {
-                saveableStateHolder.SaveableStateProvider("${selectedCategory.name}:${sectionKey.orEmpty()}") {
-                    content(selectedCategory)
+                CompositionLocalProvider(LocalSettingsSearchJump provides jump) {
+                    saveableStateHolder.SaveableStateProvider("${selectedCategory.name}:${sectionKey.orEmpty()}") {
+                        content(selectedCategory)
+                    }
                 }
             }
         }
@@ -363,7 +429,7 @@ internal fun SettingsSection(
     footer: String? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth().settingsSearchHighlight(title)) {
         if (title != null) {
             Text(
                 text = title,
@@ -412,6 +478,7 @@ internal fun SettingsRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .settingsSearchHighlight(title)
             .settingsRowSeparator()
             .heightIn(min = SETTINGS_ROW_MIN_HEIGHT)
             .padding(horizontal = 14.dp, vertical = 10.dp),

@@ -1,13 +1,27 @@
 package com.prof18.feedflow.desktop.settings
 
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowScope
+import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.utils.FeatureFlags
+import com.prof18.feedflow.core.utils.getDesktopOS
+import com.prof18.feedflow.core.utils.isMacOs
+import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.accounts.rememberAccountDrafts
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.importexport.ImportExportFilePickers
@@ -16,10 +30,14 @@ import com.prof18.feedflow.desktop.importexport.rememberImportExportFilePickerSt
 import com.prof18.feedflow.desktop.main.DesktopDialogWindowNavigator
 import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.desktop.settings.blocked.rememberBlockedWordDraft
+import com.prof18.feedflow.desktop.settings.search.clearSettingsSearch
+import com.prof18.feedflow.desktop.settings.search.isSettingsSearchShortcut
+import com.prof18.feedflow.desktop.settings.search.settingsSearchIndex
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.MenuBarViewModel
@@ -32,6 +50,8 @@ private val SETTINGS_WINDOW_MINIMUM_SIZE = DpSize(width = 680.dp, height = 520.d
 internal fun DesktopSettingsDialog(
     onCloseRequest: () -> Unit,
     activationRequest: Int = 0,
+    onPreviewKeyEvent: (KeyEvent) -> Boolean = { false },
+    onKeyEvent: (KeyEvent) -> Boolean = { false },
     content: @Composable DialogWindowScope.(Modifier) -> Unit,
 ) {
     DesktopDialogWindow(
@@ -42,6 +62,8 @@ internal fun DesktopSettingsDialog(
         resizable = true,
         extendBehindTitleBar = true,
         activationRequest = activationRequest,
+        onPreviewKeyEvent = onPreviewKeyEvent,
+        onKeyEvent = onKeyEvent,
     ) { modifier -> content(modifier) }
 }
 
@@ -53,7 +75,21 @@ internal fun SettingsWindow(
     onClearOldArticles: () -> Unit,
     canClearOldArticles: Boolean,
 ) {
-    DesktopSettingsDialog(onCloseRequest, activationRequest = navigator.settingsActivationRequest) { modifier ->
+    val searchFocusRequester = remember { FocusRequester() }
+    val searchState = rememberTextFieldState()
+    val isMacOs = remember { getDesktopOS().isMacOs() }
+    DesktopSettingsDialog(
+        onCloseRequest = onCloseRequest,
+        activationRequest = navigator.settingsActivationRequest,
+        onPreviewKeyEvent = { event ->
+            isSettingsSearchShortcut(event.key, event.type, event.isMetaPressed, event.isCtrlPressed, isMacOs)
+                .also { if (it) searchFocusRequester.requestFocus() }
+        },
+        // Runs after focused controls (an open dropdown, a text field) had their chance, before Escape closes Settings.
+        onKeyEvent = { event ->
+            event.type == KeyEventType.KeyDown && event.key == Key.Escape && searchState.clearSettingsSearch()
+        },
+    ) { modifier ->
         val menuBarViewModel = koinViewModel<MenuBarViewModel>()
         val feedListSettingsViewModel = koinViewModel<FeedListSettingsViewModel>()
         val desktopHomeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
@@ -69,11 +105,30 @@ internal fun SettingsWindow(
         val isMultiPaneEnabled by desktopHomeSettingsRepository.isMultiPaneLayoutEnabledFlow.collectAsState()
         val fontSizesState by feedListSettingsViewModel.feedFontSizeState.collectAsState()
         val feedListSettingsState by feedListSettingsViewModel.state.collectAsState()
+        val accountsViewModel = koinViewModel<AccountsViewModel>()
+        val strings = LocalFeedFlowStrings.current
+        val appConfig = remember { DI.koin.get<DesktopConfig>() }
+        val supportedAccounts = remember(accountsViewModel) { accountsViewModel.getSupportedAccounts() }
+        // Same rule as FeedListPane's grid switch, which is only shown for these layouts.
+        val isGridToggleVisible = feedListSettingsState.feedLayout == FeedLayout.CARD ||
+            feedListSettingsState.feedLayout == FeedLayout.BIG_IMAGE
+        val searchEntries = remember(strings, supportedAccounts, isGridToggleVisible) {
+            settingsSearchIndex(
+                strings = strings,
+                supportedAccounts = supportedAccounts,
+                isCrashReportingAvailable = appConfig.appEnvironment.isRelease(),
+                isGridToggleVisible = isGridToggleVisible,
+                isFaqEnabled = FeatureFlags.ENABLE_FAQ,
+            )
+        }
         SettingsContent(
             initialCategory = navigator.settingsCategory,
             sectionKey = navigator.settingsSection?.name,
             onCategorySelected = navigator::selectSettingsCategory,
             modifier = modifier,
+            searchEntries = searchEntries,
+            searchState = searchState,
+            searchFocusRequester = searchFocusRequester,
         ) { category ->
             when (category) {
                 DesktopSettingsCategory.GENERAL -> GeneralPane(

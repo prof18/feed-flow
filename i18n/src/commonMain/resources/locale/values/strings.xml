@@ -429,6 +429,8 @@
     <string name="menu_toggle_sidebar">Toggle sidebar</string>
     <string name="desktop_new_category_menu">New category…</string>
     <string name="desktop_settings_preview_title">Preview</string>
+    <string name="desktop_settings_search_placeholder">Search settings</string>
+    <string name="desktop_settings_search_no_results">No matching settings</string>
     <string name="settings_left_swipe_action">Left swipe</string>
     <string name="settings_right_swipe_action">Right swipe</string>
     <string name="settings_swipe_action_toggle_read">Toggle read</string>

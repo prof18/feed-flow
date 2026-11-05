@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.desktop.settings.search.settingsSearchHighlight
 import com.prof18.feedflow.desktop.ui.components.DesktopChoiceDropdown
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import kotlinx.collections.immutable.ImmutableList
@@ -33,6 +34,7 @@ internal fun <T : Any> SettingsChoice(
     val inSection = LocalInSettingsSection.current
     BoxWithConstraints(
         modifier.fillMaxWidth()
+            .settingsSearchHighlight(title)
             .settingsRowSeparator()
             .padding(horizontal = if (inSection) 14.dp else 4.dp, vertical = 8.dp),
     ) {

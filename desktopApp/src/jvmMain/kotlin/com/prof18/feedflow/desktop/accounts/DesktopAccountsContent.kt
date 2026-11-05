@@ -39,6 +39,7 @@ import com.prof18.feedflow.desktop.settings.SettingsActionRow
 import com.prof18.feedflow.desktop.settings.SettingsPage
 import com.prof18.feedflow.desktop.settings.SettingsRow
 import com.prof18.feedflow.desktop.settings.SettingsSection
+import com.prof18.feedflow.desktop.settings.search.OnSettingsSearchJump
 import com.prof18.feedflow.desktop.testing.AccountE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
@@ -62,6 +63,7 @@ internal fun DesktopAccountsContent(
     val strings = LocalFeedFlowStrings.current
     val providers = desktopAccountPresentations(currentAccount, supportedAccounts, strings)
     var selectedName by rememberSaveable { mutableStateOf<String?>(null) }
+    OnSettingsSearchJump { selectedName = null }
     val selected = providers.firstOrNull { it.account.name == selectedName && it.isEnabled }
     val overviewScrollState = rememberScrollState()
     val open: (SyncAccounts) -> Unit = { account ->

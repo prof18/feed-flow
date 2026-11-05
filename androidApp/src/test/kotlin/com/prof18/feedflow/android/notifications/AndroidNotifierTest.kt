@@ -32,7 +32,9 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 class AndroidNotifierTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
-    private val settings = SettingsRepository(MapSettings())
+
+    // Assertions compare against English strings, so keep them independent of the host locale.
+    private val settings = SettingsRepository(MapSettings()).also { it.setForceEnglishEnabled(true) }
     private val posts = mutableListOf<Pair<String, Notification>>()
     private val acks = mutableListOf<List<String>>()
     private var active = emptySet<Pair<String?, Int>>()

@@ -10,12 +10,11 @@ import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.android.ui.utils.feedFlowStringsFor
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.Browser
 import com.prof18.feedflow.core.utils.BrowserIds
-import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
-import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -23,7 +22,6 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.util.Locale
 
 class BrowserManager(
     private val context: Context,
@@ -54,10 +52,8 @@ class BrowserManager(
         }
     }
 
-    private fun getCurrentStrings(): FeedFlowStrings {
-        val languageCode = if (settingsRepository.getForceEnglishEnabled()) "en" else Locale.getDefault().language
-        return feedFlowStrings[languageCode] ?: EnFeedFlowStrings
-    }
+    private fun getCurrentStrings(): FeedFlowStrings =
+        feedFlowStringsFor(forceEnglish = settingsRepository.getForceEnglishEnabled())
 
     private fun populateBrowserList() {
         val favouriteBrowserId = settingsRepository.getFavouriteBrowserId()

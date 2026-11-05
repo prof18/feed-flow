@@ -23,6 +23,7 @@ val feedFlowStrings: Map<String, FeedFlowStrings> = mapOf(
     "zh-Hans-CN" to ZhCnFeedFlowStrings,
 
     Locales.ZhTw to ZhTwFeedFlowStrings,
+    "zh-TW" to ZhTwFeedFlowStrings,
     "zh-Hant" to ZhTwFeedFlowStrings,
     "zh-Hant-TW" to ZhTwFeedFlowStrings,
 

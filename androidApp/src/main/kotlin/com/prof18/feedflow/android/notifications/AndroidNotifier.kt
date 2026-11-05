@@ -15,13 +15,12 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.android.R
+import com.prof18.feedflow.android.ui.utils.feedFlowStringsFor
 import com.prof18.feedflow.core.model.ArticleNotificationBatch
 import com.prof18.feedflow.core.model.ArticleNotificationPolicy
 import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.NotificationMode
-import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
-import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.notification.ArticleNotifier
 import com.prof18.feedflow.shared.domain.notification.Notifier
@@ -325,11 +324,8 @@ class AndroidNotifier(
     private fun isNotificationChannelEnabled(): Boolean =
         notificationManager.getNotificationChannel(CHANNEL_ID)?.importance != NotificationManager.IMPORTANCE_NONE
 
-    private fun feedFlowStrings(): FeedFlowStrings {
-        val languageTag = if (settingsRepository.getForceEnglishEnabled()) "en" else Locale.getDefault().toLanguageTag()
-        val feedFlowStrings = feedFlowStrings[languageTag] ?: EnFeedFlowStrings
-        return feedFlowStrings
-    }
+    private fun feedFlowStrings(): FeedFlowStrings =
+        feedFlowStringsFor(forceEnglish = settingsRepository.getForceEnglishEnabled())
 
     private fun newNotificationId(key: String): Int =
         "$key-${UUID.randomUUID()}".hashCode() and Int.MAX_VALUE

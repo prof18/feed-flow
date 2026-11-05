@@ -105,6 +105,8 @@ internal fun DesktopSearchScreenContent(
     onRetrySearch: () -> Unit = {},
     snackbarHost: @Composable () -> Unit = {
     },
+    revealArticleId: String? = null,
+    onArticleRevealed: () -> Unit = {},
 ) {
     val strings = LocalFeedFlowStrings.current
     val actionHeight = with(LocalDensity.current) { JewelTheme.defaultTextStyle.lineHeight.toDp() } + 16.dp
@@ -119,6 +121,12 @@ internal fun DesktopSearchScreenContent(
         }
         else -> null
     }
+    SearchRevealSideEffects(
+        revealArticleId = revealArticleId,
+        visibleResult = visibleResult,
+        onSelect = { selectedArticleId = it },
+        onArticleRevealed = onArticleRevealed,
+    )
     Box(
         modifier = modifier.fillMaxSize().desktopSearchShortcuts(
             onSearch = { queryFocusRequester.requestFocus() },
@@ -214,12 +222,31 @@ internal fun DesktopSearchScreenContent(
                         gridState = gridState,
                         selectedArticleId = selectedArticleId,
                         showFooter = false,
+                        revealArticleId = revealArticleId,
+                        onArticleRevealed = onArticleRevealed,
                         modifier = Modifier.weight(1f).padding(top = 8.dp),
                     )
                 }
             }
         }
         Box(modifier = Modifier.align(Alignment.BottomCenter)) { snackbarHost() }
+    }
+}
+
+@Composable
+private fun SearchRevealSideEffects(
+    revealArticleId: String?,
+    visibleResult: SearchState?,
+    onSelect: (String) -> Unit,
+    onArticleRevealed: () -> Unit,
+) {
+    // The result reached in the reader becomes the selection, as the home list does.
+    SideEffect(revealArticleId) {
+        if (revealArticleId != null) onSelect(revealArticleId)
+    }
+    // No results means nothing to reveal; while results are loading the request waits for the list.
+    SideEffect(revealArticleId, visibleResult) {
+        if (revealArticleId != null && visibleResult is SearchState.NoDataFound) onArticleRevealed()
     }
 }
 

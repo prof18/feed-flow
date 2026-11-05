@@ -51,6 +51,7 @@ import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.VisibleFeedItem
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.ui.revealItem
 import com.prof18.feedflow.shared.presentation.model.NextFeedDisplayState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -98,6 +99,8 @@ internal fun DesktopArticleList(
     showFooter: Boolean = true,
     selectedArticleId: String? = null,
     markAllAsReadEnabled: Boolean = true,
+    revealArticleId: String? = null,
+    onArticleRevealed: () -> Unit = {},
 ) {
     val ids = remember(feedItems) { feedItems.map { it.id }.toImmutableList() }
     val normalizedLayout = if (feedLayout == FeedLayout.GRID) FeedLayout.BIG_IMAGE else feedLayout
@@ -123,6 +126,14 @@ internal fun DesktopArticleList(
         val useGrid = isGridLayoutEnabled && isGridLayoutAllowed &&
             normalizedLayout != FeedLayout.LIST && maxWidth >= GridMinimumWidth
         SideEffect(useGrid) { latestGridChanged(useGrid) }
+        RevealArticleEffect(
+            revealArticleId = revealArticleId,
+            ids = latestIds,
+            useGrid = useGrid,
+            listState = listState,
+            gridState = gridState,
+            onArticleRevealed = onArticleRevealed,
+        )
 
         val visibleKeys = { visibleArticleKeys(useGrid, listState, gridState, latestIds) }
         LaunchedEffect(listState, gridState, useGrid, currentFeedFilter) {
@@ -325,3 +336,23 @@ private fun ArticleFooter(
 
 private val GridCellWidth = 280.dp
 private val GridMinimumWidth = 576.dp
+
+@Composable
+private fun RevealArticleEffect(
+    revealArticleId: String?,
+    ids: ImmutableList<String>,
+    useGrid: Boolean,
+    listState: LazyListState,
+    gridState: LazyStaggeredGridState,
+    onArticleRevealed: () -> Unit,
+) {
+    val latestOnArticleRevealed by rememberUpdatedState(onArticleRevealed)
+    LaunchedEffect(revealArticleId, useGrid) {
+        val articleId = revealArticleId ?: return@LaunchedEffect
+        val index = ids.indexOf(articleId)
+        if (index >= 0) {
+            if (useGrid) gridState.revealItem(index) else listState.revealItem(index)
+        }
+        latestOnArticleRevealed()
+    }
+}

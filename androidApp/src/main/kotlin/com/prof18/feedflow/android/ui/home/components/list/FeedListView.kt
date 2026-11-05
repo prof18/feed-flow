@@ -52,8 +52,10 @@ import com.prof18.feedflow.android.ui.icons.BookmarkOffIcon
 import com.prof18.feedflow.android.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.android.ui.utils.PreviewColumn
 import com.prof18.feedflow.android.ui.utils.PreviewHelper
+import com.prof18.feedflow.android.ui.utils.revealItemConditionally
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
@@ -118,6 +120,8 @@ fun FeedList(
     onMarkAllAboveAsRead: (String) -> Unit = {},
     onMarkAllBelowAsRead: (String) -> Unit = {},
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
+    revealArticleId: String? = null,
+    onArticleRevealed: () -> Unit = {},
 ) {
     val itemFeedLayout = feedLayout.normalizeForFeedList()
     val feedBackgroundModifier = if (itemFeedLayout.usesCardBackground() && feedItems.isNotEmpty()) {
@@ -136,6 +140,14 @@ fun FeedList(
         SideEffect(isGridArrangement) {
             latestOnGridArrangementChanged(isGridArrangement)
         }
+        RevealFeedItemEffect(
+            revealArticleId = revealArticleId,
+            feedItems = feedItems,
+            isGridArrangement = isGridArrangement,
+            listState = listState,
+            gridState = gridState,
+            onArticleRevealed = onArticleRevealed,
+        )
         val shouldStartPaginate = remember(isGridArrangement) {
             derivedStateOf {
                 if (isGridArrangement) {
@@ -392,6 +404,31 @@ private fun FeedListItem(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun RevealFeedItemEffect(
+    revealArticleId: String?,
+    feedItems: ImmutableList<FeedItem>,
+    isGridArrangement: Boolean,
+    listState: LazyListState,
+    gridState: LazyStaggeredGridState,
+    onArticleRevealed: () -> Unit,
+) {
+    val reduceMotionEnabled = LocalReduceMotion.current
+    val latestOnArticleRevealed by rememberUpdatedState(onArticleRevealed)
+    LaunchedEffect(revealArticleId, isGridArrangement) {
+        val articleId = revealArticleId ?: return@LaunchedEffect
+        val index = feedItems.indexOfFirst { it.id == articleId }
+        if (index >= 0) {
+            if (isGridArrangement) {
+                gridState.revealItemConditionally(index, reduceMotionEnabled)
+            } else {
+                listState.revealItemConditionally(index, reduceMotionEnabled)
+            }
+        }
+        latestOnArticleRevealed()
     }
 }
 

@@ -28,6 +28,10 @@ class HomeListIndexHolder {
         return visibleSnapshotKey.map(\.index).min() ?? 0
     }
 
+    func isVisible(id: String) -> Bool {
+        visibleSnapshotKey.contains { $0.id == id }
+    }
+
     func refresh() {
         visibleSnapshotKey.removeAll()
     }

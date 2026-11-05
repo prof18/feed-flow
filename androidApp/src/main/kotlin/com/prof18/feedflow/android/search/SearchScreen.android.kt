@@ -26,6 +26,9 @@ import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.shared.presentation.SearchViewModel
+import com.prof18.feedflow.shared.presentation.model.ArticleListSource
+import com.prof18.feedflow.shared.presentation.model.ArticleRevealRequest
+import com.prof18.feedflow.shared.presentation.model.SearchRequestState
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.presentation.model.syncErrorMessage
 import org.koin.compose.koinInject
@@ -36,6 +39,8 @@ internal fun SearchScreen(
     navigateBack: () -> Unit,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
     navigateToEditFeed: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
+    articleReveal: ArticleRevealRequest? = null,
+    onArticleRevealed: (ArticleRevealRequest) -> Unit = {},
 ) {
     val viewModel = koinViewModel<SearchViewModel>()
     val browserManager = koinInject<BrowserManager>()
@@ -45,6 +50,7 @@ internal fun SearchScreen(
     val searchFilter by viewModel.searchFilterState.collectAsStateWithLifecycle()
     val currentFeedFilter by viewModel.searchFeedFilterState.collectAsStateWithLifecycle()
     val feedItemDisplaySettings by viewModel.feedItemDisplaySettings.collectAsStateWithLifecycle()
+    val searchRequestState by viewModel.searchRequestState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
 
@@ -141,6 +147,9 @@ internal fun SearchScreen(
             browserManager.openUrlWithFavoriteBrowser(url, context)
         },
         feedItemDisplaySettings = feedItemDisplaySettings,
+        isSearchInFlight = searchRequestState is SearchRequestState.Loading,
+        revealArticleId = articleReveal?.takeIf { it.source == ArticleListSource.SEARCH }?.articleId,
+        onArticleRevealed = { articleReveal?.let(onArticleRevealed) },
     )
 }
 

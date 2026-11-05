@@ -40,6 +40,7 @@ import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.presentation.model.ArticleListSource
 import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
 import com.prof18.feedflow.shared.presentation.model.NextFeedDisplayState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
@@ -89,6 +90,10 @@ internal fun HomeScreen(
 
     val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
     val currentReaderArticle by readerModeViewModel.currentArticleState.collectAsState()
+    val articleReveal by readerModeViewModel.articleRevealState.collectAsState()
+    val timelineRevealId = articleReveal?.takeIf { it.source == ArticleListSource.TIMELINE }?.articleId
+    val searchRevealId = articleReveal?.takeIf { it.source == ArticleListSource.SEARCH }?.articleId
+    val onArticleRevealed: () -> Unit = { articleReveal?.let(readerModeViewModel::onArticleRevealed) }
 
     var showNoFeedsBottomSheet by remember { mutableStateOf(false) }
 
@@ -197,16 +202,14 @@ internal fun HomeScreen(
         onDispose { menuCommands.search = null }
     }
 
-    LaunchedEffect(refreshTrigger, isMultiPaneLayoutEnabled) {
-        if (refreshTrigger > 0) {
-            if (isGridLayoutEnabled && !isMultiPaneLayoutEnabled) {
-                gridState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-            } else {
-                listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-            }
-            if (isMultiPaneLayoutEnabled) {
-                resetReaderArticle()
-            }
+    RefreshScrollEffect(refreshTrigger) {
+        if (isGridLayoutEnabled && !isMultiPaneLayoutEnabled) {
+            gridState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+        } else {
+            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+        }
+        if (isMultiPaneLayoutEnabled) {
+            resetReaderArticle()
         }
     }
 
@@ -365,6 +368,8 @@ internal fun HomeScreen(
                         navigateBack = { inlineSearch = false },
                         navigateToReaderMode = openReaderArticle,
                         navigateToEditFeed = onEditFeedClick,
+                        revealArticleId = searchRevealId,
+                        onArticleRevealed = onArticleRevealed,
                     )
                 }
             } else {
@@ -383,6 +388,8 @@ internal fun HomeScreen(
             onEmptyStateClick = {
                 showNoFeedsBottomSheet = true
             },
+            revealArticleId = timelineRevealId,
+            onArticleRevealed = onArticleRevealed,
         )
     } else {
         DesktopSinglePaneHomeScaffold(
@@ -400,6 +407,8 @@ internal fun HomeScreen(
             onEmptyStateClick = {
                 showNoFeedsBottomSheet = true
             },
+            revealArticleId = timelineRevealId,
+            onArticleRevealed = onArticleRevealed,
         )
     }
 

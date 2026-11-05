@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.feed
 
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.shared.presentation.model.ArticleListSource
 import kotlinx.collections.immutable.ImmutableList
 
 internal class ArticleNavigationRepository(
@@ -36,6 +37,9 @@ internal class ArticleNavigationRepository(
         val index = searchList.indexOfFirst { it.id == currentArticleId }
         return ArticlePosition(currentPosition = index + 1, totalArticles = searchList.size)
     }
+
+    fun listSourceOf(articleId: String): ArticleListSource =
+        if (searchListContaining(articleId) != null) ArticleListSource.SEARCH else ArticleListSource.TIMELINE
 
     private fun searchListContaining(articleId: String): ImmutableList<FeedItem>? {
         val list = searchResults ?: return null

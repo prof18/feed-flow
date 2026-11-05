@@ -15,6 +15,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -87,6 +88,18 @@ fun conditionalAnimateFloatAsState(
 }
 
 suspend fun LazyListState.scrollToItemConditionally(
+    index: Int,
+    scrollOffset: Int = 0,
+    reduceMotionEnabled: Boolean,
+) {
+    if (reduceMotionEnabled) {
+        scrollToItem(index, scrollOffset)
+    } else {
+        animateScrollToItem(index, scrollOffset)
+    }
+}
+
+suspend fun LazyGridState.scrollToItemConditionally(
     index: Int,
     scrollOffset: Int = 0,
     reduceMotionEnabled: Boolean,

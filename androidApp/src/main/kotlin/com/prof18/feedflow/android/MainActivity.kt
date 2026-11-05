@@ -355,8 +355,11 @@ class MainActivity : BaseThemeActivity() {
                         }
                     }
 
+                    val articleReveal by readerModeViewModel.articleRevealState.collectAsStateWithLifecycle()
                     HomeScreen(
                         homeViewModel = homeViewModel,
+                        articleReveal = articleReveal,
+                        onArticleRevealed = readerModeViewModel::onArticleRevealed,
                         onSettingsButtonClicked = { backStack.add(Settings) },
                         onAddFeedClick = { backStack.add(AddFeed) },
                         onImportExportClick = { backStack.add(ImportExport) },
@@ -546,8 +549,11 @@ class MainActivity : BaseThemeActivity() {
                 }
 
                 entry<Search> {
+                    val articleReveal by readerModeViewModel.articleRevealState.collectAsStateWithLifecycle()
                     SearchScreen(
                         navigateBack = navigateBack,
+                        articleReveal = articleReveal,
+                        onArticleRevealed = readerModeViewModel::onArticleRevealed,
                         navigateToReaderMode = { urlInfo ->
                             readerModeViewModel.loadReaderContent(urlInfo)
                             backStack.add(ReaderMode)

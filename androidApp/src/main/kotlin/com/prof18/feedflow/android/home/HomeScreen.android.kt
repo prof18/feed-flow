@@ -33,6 +33,8 @@ import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveArticleOpenMode
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.model.ArticleListSource
+import com.prof18.feedflow.shared.presentation.model.ArticleRevealRequest
 import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
 import com.prof18.feedflow.shared.presentation.model.NextFeedDisplayState
 import com.prof18.feedflow.shared.presentation.model.NextFeedPreviewState
@@ -54,6 +56,8 @@ internal fun HomeScreen(
     onFeedSuggestionsClick: () -> Unit,
     onNavigateToNextFeed: () -> Unit,
     onImportExportClick: () -> Unit = {},
+    articleReveal: ArticleRevealRequest? = null,
+    onArticleRevealed: (ArticleRevealRequest) -> Unit = {},
 ) {
     val browserManager = koinInject<BrowserManager>()
     val changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = koinInject()
@@ -281,6 +285,8 @@ internal fun HomeScreen(
         viewMenuState = viewMenuState,
         onFeedOrderChange = homeViewModel::updateFeedOrder,
         onShowReadArticlesTimelineChange = homeViewModel::updateShowReadArticlesTimeline,
+        revealArticleId = articleReveal?.takeIf { it.source == ArticleListSource.TIMELINE }?.articleId,
+        onArticleRevealed = { articleReveal?.let(onArticleRevealed) },
     )
 
     if (showChangeCategorySheet) {

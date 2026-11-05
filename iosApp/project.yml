@@ -534,6 +534,7 @@ targets:
     platform: iOS
     sources:
       - path: Tests/AppLogic
+      - path: Source/Home/HomeListIndexHolder.swift
       - path: Source/Settings/Components/BrowserURLBuilder.swift
       - path: Source/Utils/FeedConditionalGetURLProtocol.swift
       - path: Source/Utils/SVGImageDecoder.swift

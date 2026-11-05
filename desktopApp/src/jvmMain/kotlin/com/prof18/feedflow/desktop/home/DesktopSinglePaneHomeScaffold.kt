@@ -25,6 +25,8 @@ internal fun DesktopSinglePaneHomeScaffold(
     onShowNewArticlesClicked: () -> Unit,
     onEmptyStateClick: () -> Unit,
     onImportExportClick: () -> Unit = {},
+    revealArticleId: String? = null,
+    onArticleRevealed: () -> Unit = {},
 ) {
     DesktopHomeWorkspace(
         displayState = displayState,
@@ -40,6 +42,8 @@ internal fun DesktopSinglePaneHomeScaffold(
         onEmptyStateClick = onEmptyStateClick,
         onImportExportClick = onImportExportClick,
         multiPane = false,
+        revealArticleId = revealArticleId,
+        onArticleRevealed = onArticleRevealed,
     )
 }
 

@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.presentation.model.ArticleListSource
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.buildFeedItem
@@ -115,6 +116,18 @@ class ArticleNavigationRepositoryTest : KoinTestBase() {
         )
         assertEquals(a.id, articleNavigationRepository.getPreviousArticle(b.id)?.id)
         assertEquals(c.id, articleNavigationRepository.getNextArticle(b.id)?.id)
+    }
+
+    @Test
+    fun `list source follows the search snapshot`() = runTest(testDispatcher) {
+        val homeItems = seedItems(count = 3, prefix = "source")
+        articleNavigationRepository.setSearchResults(listOf(homeItems[2]).toImmutableList())
+
+        assertEquals(ArticleListSource.SEARCH, articleNavigationRepository.listSourceOf(homeItems[2].id))
+        assertEquals(ArticleListSource.TIMELINE, articleNavigationRepository.listSourceOf(homeItems[0].id))
+
+        articleNavigationRepository.clearSearchResults()
+        assertEquals(ArticleListSource.TIMELINE, articleNavigationRepository.listSourceOf(homeItems[2].id))
     }
 
     @Test

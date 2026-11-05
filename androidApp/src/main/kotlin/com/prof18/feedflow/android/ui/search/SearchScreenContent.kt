@@ -13,11 +13,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -39,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -57,6 +62,8 @@ import com.prof18.feedflow.android.ui.home.components.list.FeedListMaxContentWid
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.LocalReduceMotion
+import com.prof18.feedflow.android.ui.utils.revealItemConditionally
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemDisplaySettings
@@ -104,7 +111,12 @@ fun SearchScreenContent(
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
     snackbarHost: @Composable () -> Unit = {
     },
+    isSearchInFlight: Boolean = false,
+    revealArticleId: String? = null,
+    onArticleRevealed: () -> Unit = {},
 ) {
+    val listState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
     var textFieldValue by remember { mutableStateOf(TextFieldValue(searchQuery, TextRange(searchQuery.length))) }
 
     val focusManager = LocalFocusManager.current
@@ -169,8 +181,19 @@ fun SearchScreenContent(
                     itemFeedLayout.supportsSearchGridArrangement() &&
                     maxWidth >= itemFeedLayout.searchGridMinContentWidth()
 
+                RevealSearchResultEffect(
+                    revealArticleId = revealArticleId,
+                    searchState = searchState,
+                    isSearchInFlight = isSearchInFlight,
+                    isGridArrangement = isGridArrangement,
+                    listState = listState,
+                    gridState = gridState,
+                    onArticleRevealed = onArticleRevealed,
+                )
+
                 if (isGridArrangement && searchState is SearchState.DataFound) {
                     LazyVerticalGrid(
+                        state = gridState,
                         columns = GridCells.Adaptive(minSize = itemFeedLayout.searchGridMinCellWidth()),
                         contentPadding = gridContentPadding,
                         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
@@ -199,7 +222,7 @@ fun SearchScreenContent(
                         }
                     }
                 } else {
-                    LazyColumn {
+                    LazyColumn(state = listState) {
                         when (searchState) {
                             is SearchState.EmptyState -> {
                                 // No-op
@@ -469,5 +492,33 @@ private fun FeedFilter.getLabel(strings: FeedFlowStrings): String {
         FeedFilter.Timeline -> strings.searchFilterAll
         FeedFilter.Read -> strings.searchFilterRead
         FeedFilter.Bookmarks -> strings.searchFilterBookmarks
+    }
+}
+
+@Composable
+private fun RevealSearchResultEffect(
+    revealArticleId: String?,
+    searchState: SearchState,
+    isSearchInFlight: Boolean,
+    isGridArrangement: Boolean,
+    listState: LazyListState,
+    gridState: LazyGridState,
+    onArticleRevealed: () -> Unit,
+) {
+    val reduceMotionEnabled = LocalReduceMotion.current
+    val latestOnArticleRevealed by rememberUpdatedState(onArticleRevealed)
+    LaunchedEffect(revealArticleId, isGridArrangement, searchState, isSearchInFlight) {
+        val articleId = revealArticleId ?: return@LaunchedEffect
+        // While a search is running, or none has produced results yet, the request waits.
+        if (isSearchInFlight || searchState is SearchState.EmptyState) return@LaunchedEffect
+        val index = (searchState as? SearchState.DataFound)?.items?.indexOfFirst { it.id == articleId } ?: -1
+        if (index >= 0) {
+            if (isGridArrangement) {
+                gridState.revealItemConditionally(index, reduceMotionEnabled)
+            } else {
+                listState.revealItemConditionally(index, reduceMotionEnabled)
+            }
+        }
+        latestOnArticleRevealed()
     }
 }

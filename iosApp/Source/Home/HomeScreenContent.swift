@@ -73,6 +73,15 @@ struct HomeContent: View {
     let onShowReadArticlesTimelineChange: (Bool) -> Void
     let onSettingsDone: () -> Void
     let onShowNewArticlesClick: () -> Void
+    let articleReveal: ArticleRevealRequest?
+    let onArticleRevealed: (ArticleRevealRequest) -> Void
+
+    @State private var isOnScreen = false
+
+    private var articleRevealKey: String? {
+        guard isOnScreen, let articleReveal else { return nil }
+        return "\(articleReveal.articleId)#\(feedState.count)"
+    }
 
     var isCompactPhone: Bool {
         horizontalSizeClass == .compact
@@ -257,6 +266,20 @@ private extension HomeContent {
             .onChange(of: toggleListScroll) {
                 proxy.scrollTo(feedState.first?.id)
                 showScrollToTop = false
+            }
+            .onAppear { isOnScreen = true }
+            .onDisappear { isOnScreen = false }
+            // Keyed on the list size too: the reader can load more pages while Home is hidden, and the
+            // request may arrive before that page does, so a missing article waits for the next list.
+            .onChange(of: articleRevealKey, initial: true) {
+                guard isOnScreen, let request = articleReveal, request.source == .timeline,
+                      feedState.contains(where: { $0.id == request.articleId }) else { return }
+                if !indexHolder.isVisible(id: request.articleId) {
+                    withAnimation {
+                        proxy.scrollTo(request.articleId, anchor: .top)
+                    }
+                }
+                onArticleRevealed(request)
             }
             .onChange(of: showSettings) {
                 sheetToShow = .settings

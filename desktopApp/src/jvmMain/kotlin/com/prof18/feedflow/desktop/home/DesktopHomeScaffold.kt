@@ -52,6 +52,8 @@ internal fun DesktopHomeScaffold(
     onEmptyStateClick: () -> Unit,
     onImportExportClick: () -> Unit = {},
     searchContent: (@Composable () -> Unit)? = null,
+    revealArticleId: String? = null,
+    onArticleRevealed: () -> Unit = {},
 ) {
     DesktopHomeWorkspace(
         displayState = displayState,
@@ -70,6 +72,8 @@ internal fun DesktopHomeScaffold(
         onImportExportClick = onImportExportClick,
         multiPane = true,
         searchContent = searchContent,
+        revealArticleId = revealArticleId,
+        onArticleRevealed = onArticleRevealed,
     )
 }
 
@@ -91,6 +95,8 @@ internal fun DesktopHomeWorkspace(
     currentReaderArticle: FeedItemUrlInfo? = null,
     onReaderClosed: () -> Unit = {},
     searchContent: (@Composable () -> Unit)? = null,
+    revealArticleId: String? = null,
+    onArticleRevealed: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotion = LocalReduceMotion.current
@@ -192,6 +198,8 @@ internal fun DesktopHomeWorkspace(
                                 onDrawerMenuClick = toggleSidebar,
                                 onEmptyStateClick = onEmptyStateClick,
                                 selectedArticleId = currentReaderArticle?.id,
+                                revealArticleId = revealArticleId,
+                                onArticleRevealed = onArticleRevealed,
                                 modifier = Modifier.fillMaxSize(),
                             )
                         }

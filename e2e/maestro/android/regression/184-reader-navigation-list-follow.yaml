@@ -1,0 +1,27 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=large-content
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+
+# Move ten articles ahead in the reader, then go back: the timeline follows the
+# reader to the last article read instead of staying at the first one.
+- tapOn:
+    id: article_row_e2e_large_article_001
+- repeat:
+    times: 10
+    commands:
+      - tapOn:
+          id: reader_next_button
+      - waitForAnimationToEnd
+- back
+- waitForAnimationToEnd
+- assertVisible:
+    id: article_row_e2e_large_article_011
+- assertNotVisible:
+    id: article_row_e2e_large_article_001

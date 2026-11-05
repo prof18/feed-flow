@@ -30,6 +30,8 @@ import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryCoordinator
 import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
 import com.prof18.feedflow.shared.domain.recovery.ReaderFetchResult
 import com.prof18.feedflow.shared.domain.recovery.RecoveryTicket
+import com.prof18.feedflow.shared.presentation.model.ArticleListSource
+import com.prof18.feedflow.shared.presentation.model.ArticleRevealRequest
 import io.ktor.http.Url
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -79,6 +81,9 @@ class ReaderModeViewModel internal constructor(
 
     private val currentArticleMutableState = MutableStateFlow<FeedItemUrlInfo?>(null)
     val currentArticleState = currentArticleMutableState.asStateFlow()
+
+    private val articleRevealMutableState = MutableStateFlow<ArticleRevealRequest?>(null)
+    val articleRevealState = articleRevealMutableState.asStateFlow()
     private val articleReportMutableState = MutableStateFlow(ArticleReportUiState())
     val articleReportState = combine(
         currentArticleState,
@@ -154,6 +159,7 @@ class ReaderModeViewModel internal constructor(
     }
 
     fun loadReaderContent(urlInfo: FeedItemUrlInfo) {
+        if (urlInfo.id != currentArticleId) articleRevealMutableState.value = null
         val effectiveSource = urlInfo.effectiveContentSource()
         val isSameArticle = selectArticle(urlInfo) && lastRequestedSource == effectiveSource
         if (!isSameArticle) {
@@ -492,6 +498,7 @@ class ReaderModeViewModel internal constructor(
                 canNavigateToNextMutableState.value = false
                 return@launch
             }
+            val source = articleNavigationRepository.listSourceOf(articleId)
             val nextArticle = articleNavigationRepository.getNextArticle(articleId)?.toFeedItemUrlInfo()
             if (nextArticle != null) {
                 feedActionsRepository.markAsRead(hashSetOf(FeedItemId(nextArticle.id)))
@@ -500,6 +507,7 @@ class ReaderModeViewModel internal constructor(
                 } else {
                     showFallbackForArticle(nextArticle)
                 }
+                requestReveal(nextArticle.id, source)
             } else {
                 canNavigateToNextMutableState.value = false
             }
@@ -511,6 +519,7 @@ class ReaderModeViewModel internal constructor(
             canNavigateToPreviousMutableState.value = false
             return
         }
+        val source = articleNavigationRepository.listSourceOf(articleId)
         val prevArticle = articleNavigationRepository.getPreviousArticle(articleId)?.toFeedItemUrlInfo()
         if (prevArticle != null) {
             viewModelScope.launch {
@@ -521,9 +530,18 @@ class ReaderModeViewModel internal constructor(
             } else {
                 showFallbackForArticle(prevArticle)
             }
+            requestReveal(prevArticle.id, source)
         } else {
             canNavigateToPreviousMutableState.value = false
         }
+    }
+
+    fun onArticleRevealed(request: ArticleRevealRequest) {
+        articleRevealMutableState.compareAndSet(request, null)
+    }
+
+    private fun requestReveal(articleId: String, source: ArticleListSource) {
+        articleRevealMutableState.value = ArticleRevealRequest(articleId = articleId, source = source)
     }
 
     private fun ReaderModeState.isForArticle(articleId: String): Boolean = when (this) {

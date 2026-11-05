@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -82,6 +83,8 @@ internal fun DesktopHomeScreenContent(
     onDrawerMenuClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
     selectedArticleId: String? = null,
+    revealArticleId: String? = null,
+    onArticleRevealed: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotion = LocalReduceMotion.current
@@ -156,6 +159,8 @@ internal fun DesktopHomeScreenContent(
                     onGridArrangementChanged = { isGrid = it },
                     isGrid = isGrid,
                     selectedArticleId = selectedArticleId,
+                    revealArticleId = revealArticleId,
+                    onArticleRevealed = onArticleRevealed,
                 )
             }
             if (pendingNewArticlesCount > 0) {
@@ -208,6 +213,8 @@ private fun HomeFeedBody(
     onGridArrangementChanged: (Boolean) -> Unit,
     isGrid: Boolean,
     selectedArticleId: String?,
+    revealArticleId: String?,
+    onArticleRevealed: () -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
     val actionHeight = with(LocalDensity.current) { JewelTheme.defaultTextStyle.lineHeight.toDp() } + 16.dp
@@ -239,14 +246,18 @@ private fun HomeFeedBody(
                 }
             }
         }
-        !displayState.feedUpdateStatus.isLoading() && displayState.feedItems.isEmpty() -> EmptyTimeline(
-            currentFilter = displayState.currentFeedFilter,
-            nextFeedState = displayState.nextFeedDisplayState,
-            onRefresh = feedListActions.refreshData,
-            onTimeline = feedListActions.onBackToTimelineClick,
-            onOpenDrawer = onDrawerMenuClick.takeIf { showDrawerMenu },
-            onNext = feedListActions.onNavigateNext,
-        )
+        !displayState.feedUpdateStatus.isLoading() && displayState.feedItems.isEmpty() -> {
+            // A settled empty timeline has no list to reveal into, so the request is cleared here.
+            SideEffect(revealArticleId) { if (revealArticleId != null) onArticleRevealed() }
+            EmptyTimeline(
+                currentFilter = displayState.currentFeedFilter,
+                nextFeedState = displayState.nextFeedDisplayState,
+                onRefresh = feedListActions.refreshData,
+                onTimeline = feedListActions.onBackToTimelineClick,
+                onOpenDrawer = onDrawerMenuClick.takeIf { showDrawerMenu },
+                onNext = feedListActions.onNavigateNext,
+            )
+        }
         else -> HomeArticleList(
             displayState = displayState,
             feedListActions = feedListActions,
@@ -258,6 +269,8 @@ private fun HomeFeedBody(
             onGridArrangementChanged = onGridArrangementChanged,
             isGrid = isGrid,
             selectedArticleId = selectedArticleId,
+            revealArticleId = revealArticleId,
+            onArticleRevealed = onArticleRevealed,
         )
     }
 }
@@ -274,6 +287,8 @@ private fun HomeArticleList(
     onGridArrangementChanged: (Boolean) -> Unit,
     isGrid: Boolean,
     selectedArticleId: String?,
+    revealArticleId: String?,
+    onArticleRevealed: () -> Unit,
 ) {
     val cardLayout = displayState.feedLayout != FeedLayout.LIST
     Box(
@@ -294,6 +309,8 @@ private fun HomeArticleList(
             }
             DesktopArticleList(
                 selectedArticleId = selectedArticleId,
+                revealArticleId = revealArticleId,
+                onArticleRevealed = onArticleRevealed,
                 feedItems = displayState.feedItems,
                 nextFeedState = displayState.nextFeedDisplayState,
                 feedFontSize = displayState.feedFontSizes,

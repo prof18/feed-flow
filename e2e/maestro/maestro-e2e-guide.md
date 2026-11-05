@@ -272,7 +272,7 @@ run them sequentially on a compatible test device. `E2E_ANDROID_SUITES=smoke`
 selects the existing smoke subset for either flavor. Restoration remains bound
 to the selected device.
 
-The canonical Android inventory defines 79 logical journeys. F-Droid selects
+The canonical Android inventory defines 80 logical journeys. F-Droid selects
 four capability-specific alternatives under `android/fdroid/regression` for
 REG-118, REG-132, REG-133 and REG-147. Its existing flavor excludes Dropbox,
 Google Drive and crash reporting. The alternatives check provider/reporting

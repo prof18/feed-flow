@@ -39,6 +39,8 @@ internal fun SearchScreen(
     navigateBack: () -> Unit,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
     navigateToEditFeed: (FeedSource) -> Unit,
+    revealArticleId: String? = null,
+    onArticleRevealed: () -> Unit = {},
 ) {
     val browserManager = DI.koin.get<BrowserManager>()
     val desktopHomeSettingsRepository = remember { DI.koin.get<DesktopHomeSettingsRepository>() }
@@ -102,6 +104,8 @@ internal fun SearchScreen(
     }
 
     DesktopSearchScreenContent(
+        revealArticleId = revealArticleId,
+        onArticleRevealed = onArticleRevealed,
         searchState = state,
         searchRequestState = requestState,
         onRetrySearch = viewModel::retrySearch,

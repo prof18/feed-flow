@@ -102,6 +102,8 @@ fun AndroidHomeScreenContent(
     onBackupClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
     onNavigateToNextFeed: () -> Unit = { },
+    revealArticleId: String? = null,
+    onArticleRevealed: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -110,6 +112,7 @@ fun AndroidHomeScreenContent(
         !displayState.feedUpdateStatus.isLoading() &&
         !hasFeedItems
     var scrollToTopWhenItemsReturn by remember { mutableStateOf(isShowingEmptyFeed) }
+    AcknowledgeRevealOnEmptyFeed(revealArticleId, isShowingEmptyFeed, onArticleRevealed)
     var isGridArrangement by remember { mutableStateOf(false) }
     val markAllReadWithConfirmation = rememberMarkAllReadWithConfirmation(
         feedFilter = displayState.currentFeedFilter,
@@ -274,6 +277,8 @@ fun AndroidHomeScreenContent(
                                         FeedList(
                                             modifier = Modifier.fillMaxSize(),
                                             feedItems = displayState.feedItems,
+                                            revealArticleId = revealArticleId,
+                                            onArticleRevealed = onArticleRevealed,
                                             listState = listState,
                                             gridState = gridState,
                                             contentPadding = PaddingValues(top = feedListTopPadding),
@@ -497,6 +502,18 @@ private fun FeedLayout.feedListWidthModifier(isGridLayoutEnabled: Boolean): Modi
             .widthIn(max = FeedListMaxContentWidth)
             .fillMaxWidth()
     }
+
+@Composable
+private fun AcknowledgeRevealOnEmptyFeed(
+    revealArticleId: String?,
+    isShowingEmptyFeed: Boolean,
+    onArticleRevealed: () -> Unit,
+) {
+    // A settled empty timeline has no list to reveal into, so the request is cleared here.
+    SideEffect(revealArticleId, isShowingEmptyFeed) {
+        if (revealArticleId != null && isShowingEmptyFeed) onArticleRevealed()
+    }
+}
 
 private fun shouldShowScrollToTopButton(
     isGridArrangement: Boolean,

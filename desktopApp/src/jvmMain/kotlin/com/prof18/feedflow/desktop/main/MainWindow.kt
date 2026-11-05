@@ -76,6 +76,8 @@ import com.prof18.feedflow.desktop.ui.components.SnackbarHost
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.presentation.model.ArticleListSource
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.CircularProgressIndicator
@@ -502,6 +504,8 @@ private fun EntryProviderScope<NavKey>.screens(
     }
 
     entry<Search> {
+        val readerModeViewModel = koinViewModel<ReaderModeViewModel>()
+        val articleReveal by readerModeViewModel.articleRevealState.collectAsState()
         MacOsTitleBarPadding {
             com.prof18.feedflow.desktop.search.SearchScreen(
                 navigateBack = navigateBack,
@@ -509,6 +513,8 @@ private fun EntryProviderScope<NavKey>.screens(
                     backStack.add(urlInfo.toReaderMode())
                 },
                 navigateToEditFeed = onEditFeedRequested,
+                revealArticleId = articleReveal?.takeIf { it.source == ArticleListSource.SEARCH }?.articleId,
+                onArticleRevealed = { articleReveal?.let(readerModeViewModel::onArticleRevealed) },
             )
         }
     }

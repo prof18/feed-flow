@@ -33,6 +33,10 @@ struct SearchScreenContent: View {
     let onReadStatusClick: (FeedItemId, Bool) -> Void
     let onMarkAllAboveAsRead: (String) -> Void
     let onMarkAllBelowAsRead: (String) -> Void
+    let articleReveal: ArticleRevealRequest?
+    let onArticleRevealed: (ArticleRevealRequest) -> Void
+
+    @State private var isOnScreen = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -65,8 +69,47 @@ struct SearchScreenContent: View {
         )
     }
 
-    @ViewBuilder
     func makeSearchContent() -> some View {
+        ScrollViewReader { proxy in
+            Group {
+                makeSearchStateContent()
+            }
+            .onAppear { isOnScreen = true }
+            .onDisappear { isOnScreen = false }
+            // Keyed on the result state too, so a request that lands before the results is retried.
+            .onChange(of: articleRevealKey, initial: true) {
+                guard isOnScreen, let request = articleReveal, request.source == .search else { return }
+                // No search has produced results yet: keep the request pending.
+                if case .emptyState = onEnum(of: searchState) { return }
+                if case let .dataFound(state) = onEnum(of: searchState),
+                   state.items.contains(where: { $0.id == request.articleId }) {
+                    withAnimation {
+                        proxy.scrollTo(request.articleId)
+                    }
+                }
+                onArticleRevealed(request)
+            }
+        }
+    }
+
+    private var articleRevealKey: String? {
+        guard isOnScreen, let articleReveal else { return nil }
+        return "\(articleReveal.articleId)#\(searchStateKey)"
+    }
+
+    private var searchStateKey: String {
+        switch onEnum(of: searchState) {
+        case .emptyState:
+            "empty"
+        case .noDataFound:
+            "none"
+        case let .dataFound(state):
+            "found-\(state.items.count)"
+        }
+    }
+
+    @ViewBuilder
+    private func makeSearchStateContent() -> some View {
         switch onEnum(of: searchState) {
         case .emptyState:
             ContentUnavailableView(

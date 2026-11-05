@@ -24,6 +24,8 @@ import com.prof18.feedflow.shared.domain.feed.ArticlePosition
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.ArticleContentParser
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.presentation.model.ArticleListSource
+import com.prof18.feedflow.shared.presentation.model.ArticleRevealRequest
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import kotlinx.collections.immutable.toImmutableList
@@ -475,6 +477,87 @@ class ReaderModeViewModelTest : KoinTestBase() {
         assertEquals(middleItem.id, previousState.readerModeData.id.id)
         assertTrue(viewModel.canNavigateToPreviousState.value)
         assertTrue(viewModel.canNavigateToNextState.value)
+    }
+
+    @Test
+    fun `reader navigation asks the timeline to reveal the new article`() = runTest {
+        val feedItems = seedFeedItems()
+
+        viewModel.loadReaderContent(feedItems[1].toUrlInfo())
+        assertNull(viewModel.articleRevealState.value)
+
+        viewModel.navigateToNextArticle()
+        assertEquals(
+            ArticleRevealRequest(feedItems[2].id, ArticleListSource.TIMELINE),
+            viewModel.articleRevealState.value,
+        )
+
+        viewModel.navigateToPreviousArticle()
+        assertEquals(
+            ArticleRevealRequest(feedItems[1].id, ArticleListSource.TIMELINE),
+            viewModel.articleRevealState.value,
+        )
+    }
+
+    @Test
+    fun `only the pending reveal request is cleared`() = runTest {
+        val feedItems = seedFeedItems()
+        viewModel.loadReaderContent(feedItems[1].toUrlInfo())
+        viewModel.navigateToNextArticle()
+        val current = ArticleRevealRequest(feedItems[2].id, ArticleListSource.TIMELINE)
+
+        viewModel.onArticleRevealed(ArticleRevealRequest(feedItems[1].id, ArticleListSource.TIMELINE))
+        assertEquals(current, viewModel.articleRevealState.value)
+
+        viewModel.onArticleRevealed(current)
+        assertNull(viewModel.articleRevealState.value)
+    }
+
+    @Test
+    fun `closing the reader keeps a pending reveal request`() = runTest {
+        val feedItems = seedFeedItems()
+        viewModel.loadReaderContent(feedItems[1].toUrlInfo())
+        viewModel.navigateToNextArticle()
+
+        viewModel.resetState()
+
+        assertEquals(
+            ArticleRevealRequest(feedItems[2].id, ArticleListSource.TIMELINE),
+            viewModel.articleRevealState.value,
+        )
+    }
+
+    @Test
+    fun `opening a different article clears the reveal request but reloading the current one keeps it`() = runTest {
+        val feedItems = seedFeedItems()
+        viewModel.loadReaderContent(feedItems[1].toUrlInfo())
+        viewModel.navigateToNextArticle()
+
+        viewModel.loadReaderContent(feedItems[2].toUrlInfo())
+        assertEquals(
+            ArticleRevealRequest(feedItems[2].id, ArticleListSource.TIMELINE),
+            viewModel.articleRevealState.value,
+        )
+
+        viewModel.loadReaderContent(feedItems[0].toUrlInfo())
+        assertNull(viewModel.articleRevealState.value)
+    }
+
+    @Test
+    fun `reveal source follows the list the current article belongs to`() = runTest(testDispatcher) {
+        keepReadNavigationItems()
+        val feedItems = seedFeedItems()
+        articleNavigationRepository.setSearchResults(listOf(feedItems[2]).toImmutableList())
+
+        viewModel.loadReaderContent(feedItems[1].toUrlInfo())
+        advanceUntilIdle()
+        viewModel.navigateToNextArticle()
+        advanceUntilIdle()
+
+        assertEquals(
+            ArticleRevealRequest(feedItems[2].id, ArticleListSource.TIMELINE),
+            viewModel.articleRevealState.value,
+        )
     }
 
     @Test
@@ -1026,6 +1109,7 @@ class ReaderModeViewModelTest : KoinTestBase() {
         viewModel.navigateToNextArticle()
         advanceUntilIdle()
         assertReaderSelection(items[2], previous = true, next = false)
+        assertEquals(ArticleRevealRequest(items[2].id, ArticleListSource.SEARCH), viewModel.articleRevealState.value)
         viewModel.navigateToPreviousArticle()
         advanceUntilIdle()
         assertReaderSelection(items[0], previous = false, next = true)

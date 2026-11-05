@@ -584,4 +584,5 @@
     <string name="reader_mode_opened_externally_message">Diese Verknüpfung zeigt auf eine Datei, z.B. ein PDF, die FeedFlow nicht anzeigen kann; daher wurde sie in ihrem Browser geöffnet.</string>
     <string name="reader_mode_open_again_in_browser">Im Browser öffnen</string>
     <string name="reader_mode_font">Schriftart</string>
+    <string name="hide_youtube_shorts_edit_fallback">Shorts konnten für diesen Kanal nicht ausgeblendet werden. Die anderen Änderungen wurden übernommen.</string>
 </resources>

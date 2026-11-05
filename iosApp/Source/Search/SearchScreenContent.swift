@@ -83,8 +83,10 @@ struct SearchScreenContent: View {
                 if case .emptyState = onEnum(of: searchState) { return }
                 if case let .dataFound(state) = onEnum(of: searchState),
                    state.items.contains(where: { $0.id == request.articleId }) {
+                    // Anchored to the top: the list runs under the keyboard, so a minimal scroll
+                    // would count a row behind it as visible.
                     withAnimation {
-                        proxy.scrollTo(request.articleId)
+                        proxy.scrollTo(request.articleId, anchor: .top)
                     }
                 }
                 onArticleRevealed(request)

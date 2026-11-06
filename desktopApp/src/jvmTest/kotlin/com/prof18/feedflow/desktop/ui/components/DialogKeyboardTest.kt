@@ -105,11 +105,11 @@ class DialogKeyboardTest {
         press(window, KeyEvent.VK_DOWN)
         rule.waitUntilExactlyOneExists(hasText(other.title) and isSelected(), timeoutMillis = 5_000)
         press(window, KeyEvent.VK_TAB)
-        rule.onNodeWithText(EnFeedFlowStrings.desktopNewCategoryMenu).assertIsFocused()
+        awaitFocused(EnFeedFlowStrings.desktopNewCategoryMenu)
         press(window, KeyEvent.VK_TAB)
-        rule.onNodeWithText(EnFeedFlowStrings.cancelButton).assertIsFocused()
+        awaitFocused(EnFeedFlowStrings.cancelButton)
         press(window, KeyEvent.VK_TAB)
-        rule.onNodeWithText(EnFeedFlowStrings.confirmButton).assertIsFocused()
+        awaitFocused(EnFeedFlowStrings.confirmButton)
         press(window, KeyEvent.VK_ENTER)
         rule.runOnIdle { assertEquals(listOf("${source.id}:${other.id}"), actions) }
     }
@@ -162,11 +162,11 @@ class DialogKeyboardTest {
         )
         (labels.drop(1) + labels.first()).forEach { label ->
             press(window, KeyEvent.VK_TAB)
-            rule.onNodeWithText(label).assertIsFocused()
+            awaitFocused(label)
         }
         (labels.drop(1).reversed() + labels.first()).forEach { label ->
             press(window, KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK)
-            rule.onNodeWithText(label).assertIsFocused()
+            awaitFocused(label)
         }
         rule.runOnIdle { assertTrue(actions.isEmpty()) }
     }
@@ -237,7 +237,7 @@ class DialogKeyboardTest {
                 assertSame(child, KeyboardFocusManager.getCurrentKeyboardFocusManager().focusedWindow)
             }
             press(child, KeyEvent.VK_TAB)
-            rule.onNodeWithText(EnFeedFlowStrings.importExportLabel).assertIsFocused()
+            awaitFocused(EnFeedFlowStrings.importExportLabel)
             press(child, KeyEvent.VK_ESCAPE)
             rule.waitUntilDoesNotExist(hasText(EnFeedFlowStrings.addFeed), timeoutMillis = 5_000)
             awaitNativeFocus(owner)
@@ -255,7 +255,7 @@ class DialogKeyboardTest {
         noFeeds(actions)
         val window = dialog(EnFeedFlowStrings.noFeedModalTitle)
         repeat(tabCount) { press(window, KeyEvent.VK_TAB) }
-        rule.onNodeWithText(label).assertIsFocused()
+        awaitFocused(label)
         press(window, KeyEvent.VK_ENTER)
         rule.runOnIdle { assertEquals(listOf("dismiss", action), actions) }
         rule.waitUntilDoesNotExist(hasText(EnFeedFlowStrings.addFeed), timeoutMillis = 5_000)
@@ -352,11 +352,11 @@ class DialogKeyboardTest {
         rule.onNodeWithText(EnFeedFlowStrings.cancelButton).assertIsFocused()
 
         press(window, KeyEvent.VK_TAB)
-        rule.onNodeWithText(EnFeedFlowStrings.confirmButton).assertIsFocused()
+        awaitFocused(EnFeedFlowStrings.confirmButton)
         press(window, KeyEvent.VK_TAB)
-        rule.onNodeWithText(EnFeedFlowStrings.cancelButton).assertIsFocused()
+        awaitFocused(EnFeedFlowStrings.cancelButton)
         press(window, KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK)
-        rule.onNodeWithText(EnFeedFlowStrings.confirmButton).assertIsFocused()
+        awaitFocused(EnFeedFlowStrings.confirmButton)
         press(window, KeyEvent.VK_ENTER)
         press(window, KeyEvent.VK_ENTER)
 
@@ -521,6 +521,14 @@ class DialogKeyboardTest {
             }
             focused
         }
+    }
+
+    // Focus moves after a key press can land a frame after idle on slow CI runners (seen on Windows).
+    private fun awaitFocused(text: String) {
+        rule.waitUntil(timeoutMillis = 5_000) {
+            rule.onNodeWithText(text).fetchSemanticsNode().config.getOrElse(SemanticsProperties.Focused) { false }
+        }
+        rule.onNodeWithText(text).assertIsFocused()
     }
 
     private fun press(window: ComposeDialog, key: Int, modifiers: Int = 0) {

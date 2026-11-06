@@ -94,15 +94,19 @@ For anything deeper — SDK package management (`android sdk ...`), device inter
 
 ### Running & validating the Desktop app
 
-When you need to run the Desktop app for testing, UI iteration, or user-visible validation, prefer the Compose Hot Reload MCP server configured in `.mcp.json`:
+When you need to run the Desktop app for testing, UI iteration, or user-visible validation, drive it through the Compose Hot Reload MCP server configured in `.mcp.json`. The agent harness already starts that server (`:desktopApp:hotMcpServerJvm`); it only attaches to an app launched with hot reload, so start the app yourself, in the background:
 
 ```bash
-./gradlew --quiet --console=plain :desktopApp:hotMcpServerJvm
+./gradlew --quiet --console=plain :desktopApp:hotRunJvm
 ```
+
+Do not start `hotMcpServerJvm` by hand: it launches no app, and the MCP `status` stays `connected: false`. Once the app writes `desktopApp/build/run/jvmMain/jvmMain.pid`, `status` reports `connected: true`.
 
 Use the Gradle daemon for manual local runs so repeated desktop iterations stay fast. The checked-in `.mcp.json` may still pass `--no-daemon` because JetBrains' AI-agent example does that for MCP client-managed server processes.
 
-Use the MCP tools when you need to interact with the running Desktop app: check status, reload code changes, list windows, capture screenshots, inspect the semantic tree, click/type/scroll, or resize windows. The MCP server is experimental in Compose Hot Reload; if it is unavailable or not connected, fall back to `./gradlew --quiet --console=plain desktopApp:run` and note the limitation in handoff. Dialog windows (Add feed, Settings, Feed suggestions) are not registered with the MCP: `list_windows` shows only the main window, so they can't be inspected or typed into through it.
+Use the MCP tools when you need to interact with the running Desktop app: check status, reload code changes, list windows, inspect the semantic tree, click/type/scroll, or resize windows. Its `take_screenshot` grabs the screen area under the window, so other windows on top show up in it. The MCP server is experimental in Compose Hot Reload; if it is unavailable or not connected, fall back to `./gradlew --quiet --console=plain desktopApp:run` and note the limitation in handoff. Dialog windows (Add feed, Settings, Feed suggestions) are not registered with the MCP: `list_windows` shows only the main window, so they can't be inspected or typed into through it.
+
+For visual proof, record the window with sigillum while driving it through the MCP: `sigillum record start desktop --window-title FeedFlow`, act, then `sigillum record stop desktop`. It captures the window itself even when it is covered, and needs no computer-use grant. Don't request computer-use access for the main window.
 
 Desktop compiles, tests and packages with JBR 25; Gradle and shared/mobile toolchains remain on Java 21. Desktop controls use Jewel, with Material icon vectors allowed; shared/core remain independent of platform UI. See `docs/DESKTOP_UI.md`.
 

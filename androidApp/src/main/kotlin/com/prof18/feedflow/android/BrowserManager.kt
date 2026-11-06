@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
@@ -135,8 +136,25 @@ class BrowserManager(
     }
 
     fun openWithInAppBrowser(url: String, context: Context) {
+        val uri = url.toUri()
         val intent = CustomTabsIntent.Builder().build()
-        intent.launchUrl(context, url.toUri())
+        getInAppBrowserPackage(uri)?.let { packageName ->
+            intent.intent.setPackage(packageName)
+        }
+        intent.launchUrl(context, uri)
+    }
+
+    // Without a default browser, an unpinned Custom Tab opens the system "Open with" chooser.
+    private fun getInAppBrowserPackage(uri: Uri): String? {
+        val viewIntent = Intent(Intent.ACTION_VIEW, uri).addCategory(Intent.CATEGORY_BROWSABLE)
+        val packageManager = context.packageManager
+        return inAppBrowserPackage(
+            resolvedPackage = packageManager.resolveActivity(viewIntent, PackageManager.MATCH_DEFAULT_ONLY)
+                ?.activityInfo?.packageName,
+            handlerPackages = packageManager.queryIntentActivities(viewIntent, PackageManager.MATCH_DEFAULT_ONLY)
+                .map { it.activityInfo.packageName },
+            customTabsProvider = { candidates -> CustomTabsClient.getPackageName(context, candidates) },
+        )
     }
 
     private fun tryOpenWithAppHandler(url: String, context: Context): Boolean {
@@ -216,4 +234,17 @@ class BrowserManager(
             logger.e(e) { "Unable to start web browser" }
         }
     }
+}
+
+/**
+ * Returns the Custom Tabs provider to pin when the system has no default handler for the link and
+ * would show a chooser, or null to leave routing (default browser, verified app links) to the system.
+ */
+internal fun inAppBrowserPackage(
+    resolvedPackage: String?,
+    handlerPackages: List<String>,
+    customTabsProvider: (candidates: List<String>) -> String?,
+): String? {
+    val hasDefaultHandler = resolvedPackage != null && resolvedPackage in handlerPackages
+    return if (hasDefaultHandler) null else customTabsProvider(handlerPackages)
 }

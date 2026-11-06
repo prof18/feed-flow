@@ -202,14 +202,27 @@ internal fun HomeScreen(
         onDispose { menuCommands.search = null }
     }
 
+    var isNewArticlesRefreshPending by remember { mutableStateOf(false) }
+    val onShowNewArticlesClicked: () -> Unit = remember(homeViewModel) {
+        {
+            isNewArticlesRefreshPending = true
+            homeViewModel.onShowNewArticlesClicked()
+        }
+    }
+
     RefreshScrollEffect(refreshTrigger) {
+        val fromNewArticles = isNewArticlesRefreshPending
+        isNewArticlesRefreshPending = false
+        val scrollToTop = shouldScrollToTopOnRefresh(
+            isMultiPane = isMultiPaneLayoutEnabled,
+            isReaderOpen = currentReaderArticle != null,
+            fromNewArticles = fromNewArticles,
+        )
+        if (!scrollToTop) return@RefreshScrollEffect
         if (isGridLayoutEnabled && !isMultiPaneLayoutEnabled) {
             gridState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
         } else {
             listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-        }
-        if (isMultiPaneLayoutEnabled) {
-            resetReaderArticle()
         }
     }
 
@@ -376,7 +389,7 @@ internal fun HomeScreen(
                 null
             },
             pendingNewArticlesCount = pendingNewArticlesCount,
-            onShowNewArticlesClicked = homeViewModel::onShowNewArticlesClicked,
+            onShowNewArticlesClicked = onShowNewArticlesClicked,
             displayState = homeDisplayState,
             feedListActions = feedListActions,
             feedManagementActions = feedManagementActions,
@@ -397,7 +410,7 @@ internal fun HomeScreen(
             gridState = gridState,
             onSearchClick = onSearchClick,
             pendingNewArticlesCount = pendingNewArticlesCount,
-            onShowNewArticlesClicked = homeViewModel::onShowNewArticlesClicked,
+            onShowNewArticlesClicked = onShowNewArticlesClicked,
             displayState = homeDisplayState,
             feedListActions = feedListActions,
             feedManagementActions = feedManagementActions,

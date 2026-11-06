@@ -23,3 +23,13 @@ internal fun RefreshScrollEffect(refreshTrigger: Int, onRefresh: suspend () -> U
         }
     }
 }
+
+/**
+ * In the multi-pane layout an open article keeps the list where it is on refresh, so the reader
+ * and the reading position survive; the new-articles pill still jumps to the top.
+ */
+internal fun shouldScrollToTopOnRefresh(
+    isMultiPane: Boolean,
+    isReaderOpen: Boolean,
+    fromNewArticles: Boolean,
+): Boolean = !isMultiPane || !isReaderOpen || fromNewArticles

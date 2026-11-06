@@ -43,14 +43,18 @@ struct FeedItemContextMenu: View {
             makeCommentsButton(feedItem: feedItem)
 
             // 5. Share comments
-            makeShareCommentsButton(commentsUrl: commentUrl)
+            if let shareableCommentsUrl = ShareableURL.make(from: commentUrl) {
+                makeShareCommentsButton(commentsUrl: shareableCommentsUrl)
+            }
 
             // Separator after comments section
             Divider()
         }
 
-        // 6. Share
-        makeShareButton(feedItem: feedItem)
+        // 6. Share (URL-less items have no link to share)
+        if let shareableUrl = ShareableURL.make(from: feedItem.url) {
+            makeShareButton(url: shareableUrl, title: feedItem.title)
+        }
 
         // 7. Add to bookmarks
         makeBookmarkButton(feedItem: feedItem)
@@ -123,20 +127,18 @@ struct FeedItemContextMenu: View {
     }
 
     @ViewBuilder
-    private func makeShareButton(feedItem: FeedItem) -> some View {
+    private func makeShareButton(url: URL, title: String?) -> some View {
         ShareLink(
-            item: URL(string: feedItem.url) ?? URL(fileURLWithPath: ""),
-            message: Text(feedItem.title ?? "")
+            item: url,
+            message: Text(title ?? "")
         ) {
             Label(feedFlowStrings.menuShare, systemImage: "square.and.arrow.up")
         }
     }
 
     @ViewBuilder
-    private func makeShareCommentsButton(commentsUrl: String) -> some View {
-        ShareLink(
-            item: URL(string: commentsUrl) ?? URL(fileURLWithPath: "")
-        ) {
+    private func makeShareCommentsButton(commentsUrl: URL) -> some View {
+        ShareLink(item: commentsUrl) {
             Label(feedFlowStrings.menuShareComments, systemImage: "square.and.arrow.up.on.square")
         }
     }

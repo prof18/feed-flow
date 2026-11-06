@@ -1,0 +1,35 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+# A server-synced account owns the feed URL, so Feed settings hides the URL field.
+- openLink: feedflow://e2e/reset-and-seed?profile=sync-linked-mock&account=fresh_rss
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- longPressOn:
+    id: article_row_e2e_article_newest_unread
+- tapOn: "Feed settings"
+- assertVisible:
+    id: edit_feed_name
+- assertNotVisible:
+    id: edit_feed_url_input
+- launchApp:
+    stopApp: true
+# A URL-less article has no link to share, so its context menu omits Share.
+- openLink: feedflow://e2e/reset-and-seed?profile=feed-content
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_feed_content_no_url
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_feed_content_no_url
+    direction: DOWN
+    timeout: 10000
+- longPressOn:
+    id: article_row_e2e_article_feed_content_no_url
+- assertVisible: "Add to bookmarks"
+- assertNotVisible: "^Share$"

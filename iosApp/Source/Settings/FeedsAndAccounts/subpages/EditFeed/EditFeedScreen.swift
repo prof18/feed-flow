@@ -47,6 +47,7 @@ struct EditFeedScreen: View {
             EditFeedScreenContent(
                 feedURL: $feedURL,
                 feedName: $feedName,
+                canEditUrl: vmStoreOwner.instance.canEditUrl(),
                 showError: showError,
                 errorMessage: errorMessage,
                 isAddingFeed: $isAddingFeed,

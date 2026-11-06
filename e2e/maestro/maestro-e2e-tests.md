@@ -139,6 +139,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-183 | `183-edit-feed-youtube-hide-shorts.yaml` | `notifications` | Android, iOS | Edit-feed: a YouTube channel RSS URL reveals Hide Shorts OFF; toggling rewrites the URL to the no-Shorts playlist and back. Saving is not exercised (needs live YouTube); repository tests cover the swap, Shorts cleanup and fallback. |
 | REG-184 | `184-reader-navigation-list-follow.yaml` | `large-content` | Android | Open the first article, move ten articles ahead with the reader Next button, then go Back: the timeline shows the last article read and the first one has scrolled away. iOS is not covered (see Known Limitations). |
 | REG-185 | `185-back-closes-drawer-and-filter.yaml` | `content-rich` | Android | System Back with the drawer open closes the drawer and keeps the app open; with the drawer open over a category filter the first Back closes only the drawer and the next returns to Timeline. Only the Timeline root lets Back leave the app. iOS has no system Back. |
+| REG-186 | `186-server-feed-url-and-urlless-share-guards.yaml` | `sync-linked-mock` + `feed-content` | Android, iOS | With FreshRSS linked, Feed settings hides the server-owned feed URL field; a URL-less article's context menu omits Share. |
 
 Run REG-172 explicitly on a tablet-sized Android device or an iPad simulator in landscape:
 

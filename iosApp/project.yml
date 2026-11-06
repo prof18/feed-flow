@@ -365,6 +365,7 @@ targets:
       - path: Source/DI/Koin.swift
       - path: Source/UI/Style/Spacing.swift
       - path: Source/Utils/FeedConditionalGetURLProtocol.swift
+      - path: Source/Utils/ShareableURL.swift
       - path: Source/Utils/TelemetryReporter.swift
       - path: Source/Utils/VMStoreOwner.swift
     settings:
@@ -539,6 +540,7 @@ targets:
       - path: Source/Home/HomeListIndexHolder.swift
       - path: Source/Settings/Components/BrowserURLBuilder.swift
       - path: Source/Utils/FeedConditionalGetURLProtocol.swift
+      - path: Source/Utils/ShareableURL.swift
       - path: Source/Utils/SVGImageDecoder.swift
     settings:
       base:

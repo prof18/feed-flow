@@ -16,6 +16,8 @@ struct EditFeedScreenContent: View {
 
     @Binding var feedURL: String
     @Binding var feedName: String
+    /// False for server-synced accounts (FreshRSS, Miniflux, Feedbin, BazQux), where the server owns the URL.
+    let canEditUrl: Bool
     let showError: Bool
     let errorMessage: String
     @Binding var isAddingFeed: Bool
@@ -61,30 +63,17 @@ struct EditFeedScreenContent: View {
                 },
                 header: {
                     Text(feedFlowStrings.feedName)
-                }
-            )
-
-            Section(
-                content: {
-                    TextField(feedFlowStrings.feedUrl, text: $feedURL)
-                        .keyboardType(.URL)
-                        .textContentType(.URL)
-                        .autocorrectionDisabled()
-                        .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.urlInput)
-                        .hoverEffect()
-                        .focused($isTextFieldFocused)
-                },
-                header: {
-                    Text(feedFlowStrings.feedUrl)
                 },
                 footer: {
-                    if showError {
-                        Text(errorMessage)
-                            .font(.caption)
-                            .foregroundColor(.red)
+                    if !canEditUrl {
+                        errorFooter
                     }
                 }
             )
+
+            if canEditUrl {
+                feedUrlSection
+            }
 
             Section(feedFlowStrings.articleOpenMode) {
                 Picker(
@@ -247,6 +236,34 @@ struct EditFeedScreenContent: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 saveButton
             }
+        }
+    }
+
+    private var feedUrlSection: some View {
+        Section(
+            content: {
+                TextField(feedFlowStrings.feedUrl, text: $feedURL)
+                    .keyboardType(.URL)
+                    .textContentType(.URL)
+                    .autocorrectionDisabled()
+                    .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.urlInput)
+                    .hoverEffect()
+                    .focused($isTextFieldFocused)
+            },
+            header: {
+                Text(feedFlowStrings.feedUrl)
+            },
+            footer: {
+                errorFooter
+            }
+        )
+    }
+
+    @ViewBuilder private var errorFooter: some View {
+        if showError {
+            Text(errorMessage)
+                .font(.caption)
+                .foregroundColor(.red)
         }
     }
 

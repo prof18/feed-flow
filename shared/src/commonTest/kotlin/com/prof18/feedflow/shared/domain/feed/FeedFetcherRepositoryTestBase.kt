@@ -40,6 +40,7 @@ abstract class FeedFetcherRepositoryTestBase : KoinTestBase() {
                     sqlDriver = get(),
                     backgroundDispatcher = testDispatcher,
                     logger = getWith("DatabaseHelper"),
+                    liveQueryGate = get(),
                 )
             }
             single { SyncedDatabaseHelper(backgroundDispatcher = testDispatcher) }

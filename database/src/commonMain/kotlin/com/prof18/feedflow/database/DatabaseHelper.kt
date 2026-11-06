@@ -39,6 +39,7 @@ import com.prof18.feedflow.core.model.RecoveredFeedOperation
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.core.model.WidgetContentFilter
 import com.prof18.feedflow.core.model.applyCloudFeedAndCategoryChanges
+import com.prof18.feedflow.core.utils.LiveQueryGate
 import com.prof18.feedflow.core.utils.withSuspensionGuard
 import com.prof18.feedflow.db.Cloud_pending_article_flag
 import com.prof18.feedflow.db.Cloud_pending_feed_or_category_change
@@ -72,6 +73,7 @@ class DatabaseHelper(
     private val sqlDriver: SqlDriver,
     private val backgroundDispatcher: CoroutineDispatcher,
     private val logger: Logger,
+    private val liveQueryGate: LiveQueryGate,
 ) {
     private val dbRef: FeedFlowDB = FeedFlowDB(
         sqlDriver,
@@ -107,6 +109,8 @@ class DatabaseHelper(
         sqlDriver.close()
     }
 
+    private fun <T> Flow<T>.pausedInBackground(): Flow<T> = liveQueryGate.whileOpen(this)
+
     suspend fun getFeedSources(): List<FeedSource> = withContext(backgroundDispatcher) {
         dbRef.feedSourceQueries
             .selectFeedUrls()
@@ -138,6 +142,7 @@ class DatabaseHelper(
                 logger.d(it) { "Something wrong while getting data from Database" }
             }
             .mapToList(backgroundDispatcher)
+            .pausedInBackground()
             .map { feedSources ->
                 feedSources.map(::transformToFeedSource)
             }
@@ -151,6 +156,7 @@ class DatabaseHelper(
                 logger.d(it) { "Something wrong while getting data from Database" }
             }
             .mapToList(backgroundDispatcher)
+            .pausedInBackground()
             .map { feedSources ->
                 feedSources.map { source ->
                     FeedSourceWithUnreadCount(
@@ -204,6 +210,7 @@ class DatabaseHelper(
             )
             .asFlow()
             .mapToList(backgroundDispatcher)
+            .pausedInBackground()
 
     suspend fun insertCategories(
         categories: List<FeedSourceCategory>,
@@ -452,6 +459,7 @@ class DatabaseHelper(
     fun observeCloudPendingArticleFlags(sessionId: String): Flow<Boolean> =
         dbRef.cloudPendingArticleFlagQueries.countCloudPendingArticleFlags(sessionId).asFlow()
             .mapToOneOrDefault(0L, backgroundDispatcher)
+            .pausedInBackground()
             .map { it > 0 }
 
     suspend fun getCloudPendingFeedAndCategoryChanges(sessionId: String): List<CloudPendingFeedOrCategoryChange> =
@@ -462,6 +470,7 @@ class DatabaseHelper(
     fun observeCloudPendingFeedAndCategoryChanges(sessionId: String): Flow<Boolean> =
         dbRef.cloudPendingFeedOrCategoryChangeQueries.countCloudPendingFeedAndCategoryChanges(sessionId).asFlow()
             .mapToOneOrDefault(0L, backgroundDispatcher)
+            .pausedInBackground()
             .map { it > 0 }
 
     suspend fun acknowledgeCloudPendingFeedAndCategoryChanges(
@@ -902,6 +911,7 @@ class DatabaseHelper(
         dbRef.feedSourceCategoryQueries.selectAll()
             .asFlow()
             .mapToList(backgroundDispatcher)
+            .pausedInBackground()
             .map { categories ->
                 categories.map {
                     FeedSourceCategory(
@@ -917,6 +927,7 @@ class DatabaseHelper(
         dbRef.viewQueries.getCategoriesWithUnreadCount()
             .asFlow()
             .mapToList(backgroundDispatcher)
+            .pausedInBackground()
             .map { categories ->
                 categories.map { category ->
                     CategoryWithUnreadCount(
@@ -971,6 +982,7 @@ class DatabaseHelper(
                 logger.d(it) { "Something wrong while getting data from Database" }
             }
             .mapToOneOrDefault(0, backgroundDispatcher)
+            .pausedInBackground()
             .flowOn(backgroundDispatcher)
 
     suspend fun deleteCategory(
@@ -1118,6 +1130,7 @@ class DatabaseHelper(
             )
             .asFlow()
             .mapToList(backgroundDispatcher)
+            .pausedInBackground()
             .flowOn(backgroundDispatcher)
 
     private fun String.toFtsPrefixQuery(): String {
@@ -1453,6 +1466,7 @@ class DatabaseHelper(
                 logger.d(it) { "Something wrong while getting data from Database" }
             }
             .mapToList(backgroundDispatcher)
+            .pausedInBackground()
             .map { ids -> ids.toSet() }
             .flowOn(backgroundDispatcher)
 
@@ -1575,6 +1589,7 @@ class DatabaseHelper(
                 logger.d(it) { "Something wrong while observing blocked words from Database" }
             }
             .mapToList(backgroundDispatcher)
+            .pausedInBackground()
             .flowOn(backgroundDispatcher)
 
     suspend fun getFeedSourceToNotify(): List<FeedSourceToNotify> = withContext(backgroundDispatcher) {
@@ -2134,6 +2149,7 @@ class DatabaseHelper(
             .selectRecordsForEpoch(epoch)
             .asFlow()
             .mapToList(backgroundDispatcher)
+            .pausedInBackground()
             .map { records -> records.map(::toFeedRecoveryRecord) }
 
     suspend fun recoveryRecord(epoch: String, sourceId: String): FeedRecoveryRecord? =

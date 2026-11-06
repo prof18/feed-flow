@@ -67,7 +67,11 @@ class NotificationsViewModelTest : KoinTestBase() {
 
             viewModel.updateAllNotificationStatus(true)
 
-            val state = awaitItem()
+            // The initial database load can still land after the update; wait for the settled state.
+            var state = awaitItem()
+            while (state.feedSources.isEmpty() || !state.feedSources.all { it.isEnabled }) {
+                state = awaitItem()
+            }
             assertTrue(state.isEnabledForAll)
             assertTrue(state.feedSources.all { it.isEnabled })
         }

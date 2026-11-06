@@ -12,6 +12,7 @@ import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.RecoveredFeedOperation
 import com.prof18.feedflow.core.model.RecoveryMode
+import com.prof18.feedflow.core.utils.LiveQueryGate
 import com.prof18.feedflow.db.FeedFlowDB
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -314,7 +315,7 @@ class FeedRecoveryStorageTest {
     private fun withHelper(block: suspend (DatabaseHelper) -> Unit) {
         JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).use { driver ->
             FeedFlowDB.Schema.create(driver)
-            val helper = DatabaseHelper(driver, Dispatchers.Unconfined, Logger)
+            val helper = DatabaseHelper(driver, Dispatchers.Unconfined, Logger, LiveQueryGate())
             runBlocking { block(helper) }
         }
     }

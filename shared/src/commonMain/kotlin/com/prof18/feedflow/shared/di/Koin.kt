@@ -13,6 +13,7 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.FEEDFLOW_READER_FALLBACK_USER_AGENT
 import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
+import com.prof18.feedflow.core.utils.LiveQueryGate
 import com.prof18.feedflow.core.utils.rejectUnsafeHosts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
@@ -190,11 +191,14 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         }
     }
 
+    single { LiveQueryGate() }
+
     single {
         DatabaseHelper(
             sqlDriver = get(),
             backgroundDispatcher = Dispatchers.IO.limitedParallelism(1),
             logger = getWith("DatabaseHelper"),
+            liveQueryGate = get(),
         )
     }
 

@@ -11,6 +11,7 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.FEEDFLOW_BROWSER_FALLBACK_HEADERS
 import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
 import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
+import com.prof18.feedflow.core.utils.LiveQueryGate
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceIos
@@ -378,6 +379,7 @@ object Deps : KoinComponent {
     fun getNotifier() = getKoin().get<Notifier>()
     fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()
     fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()
+    fun getLiveQueryGate() = getKoin().get<LiveQueryGate>()
     fun getUserFeedbackReporter() = getKoin().get<UserFeedbackReporter>()
     fun getChangeFeedCategoryViewModel() = getKoin().get<ChangeFeedCategoryViewModel>()
     fun getFeedSuggestionsViewModel() = getKoin().get<FeedSuggestionsViewModel>()

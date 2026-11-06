@@ -26,6 +26,7 @@ import com.prof18.feedflow.core.model.VisibleFeedItem
 import com.prof18.feedflow.core.model.canonical
 import com.prof18.feedflow.core.model.canonicalCategoryName
 import com.prof18.feedflow.core.model.trimmed
+import com.prof18.feedflow.core.utils.withSuspensionGuard
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
@@ -594,6 +595,20 @@ class HomeViewModel internal constructor(
         launchAfterFlushingScrollReadState {
             retryPendingReadStatusActionsNow()
             feedSyncRepository.enqueueBackup()
+        }
+    }
+
+    // Used on iOS. This runs while the app is being suspended and every step touches the app-group
+    // database, so one guard covers the whole hand-off and the upload is awaited instead of launched.
+    fun onAppBackgrounded() {
+        val idsToFlush = takePendingScrollReadIds()
+        scrollReadTracker.reset()
+        viewModelScope.launch {
+            withSuspensionGuard("FeedFlow background hand-off") {
+                persistScrollReadIds(idsToFlush)
+                retryPendingReadStatusActionsNow()
+                feedSyncRepository.performBackup()
+            }
         }
     }
 

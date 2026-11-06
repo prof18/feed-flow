@@ -48,6 +48,15 @@ struct FeedFlowApp: App {
         registerBackgroundTask()
     }
 
+    // A background launch never reports a .background scene phase, so the live queries are
+    // paused here; becoming active resumes them.
+    @MainActor
+    private func pauseLiveQueriesUnlessActive() {
+        if UIApplication.shared.applicationState != .active {
+            Deps.shared.getLiveQueryGate().pause()
+        }
+    }
+
     private func registerBackgroundTask() {
         BGTaskScheduler.shared.register(
             forTaskWithIdentifier: "com.prof18.feedflow.articlesync",
@@ -67,6 +76,7 @@ struct FeedFlowApp: App {
             }
 
             let backgroundTask = Task {
+                await pauseLiveQueriesUnlessActive()
                 let repo = Deps.shared.getSerialFeedFetcherRepository()
                 var fetchSucceeded = false
 
@@ -167,9 +177,14 @@ struct FeedFlowApp: App {
                 .onChange(of: scenePhase) {
                     switch scenePhase {
                     case .active:
+                        Deps.shared.getLiveQueryGate().resume()
                         feedSyncTimer.scheduleTimer()
                         Deps.shared.getContentPrefetchManager().startBackgroundFetching()
                     case .background:
+                        // Live queries re-run after every write, outside any suspension guard: one
+                        // still reading the app-group database when iOS suspends the app gets it
+                        // killed (0xdead10cc). They resume, with fresh data, when the app is active.
+                        Deps.shared.getLiveQueryGate().pause()
                         audioPlayback.savePosition()
                         feedSyncTimer.invalidate()
                         // Stop prefetch DB writes before suspension: a SQLite lock held on the

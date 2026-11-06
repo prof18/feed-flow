@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.utils.LiveQueryGate
 import com.prof18.feedflow.db.FeedFlowDB
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -97,7 +98,7 @@ class DatabaseHelperRefreshPersistenceTest {
         JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).use { jdbc ->
             FeedFlowDB.Schema.create(jdbc)
             val driver = FailingDriver(jdbc)
-            val helper = DatabaseHelper(driver, Dispatchers.Unconfined, Logger)
+            val helper = DatabaseHelper(driver, Dispatchers.Unconfined, Logger, LiveQueryGate())
             runBlocking {
                 helper.insertFeedSource(listOf(parsedSource()))
                 block(helper, driver)

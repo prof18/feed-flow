@@ -79,6 +79,7 @@ object TestModules {
                 sqlDriver = get(),
                 backgroundDispatcher = TestDispatcherProvider.testDispatcher,
                 logger = getWith("DatabaseHelper"),
+                liveQueryGate = get(),
             )
         }
         single {

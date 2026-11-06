@@ -274,7 +274,7 @@ struct HomeScreen: View {
         .onChange(of: scenePhase) {
             switch scenePhase {
             case .background:
-                homeViewModel.enqueueBackup()
+                homeViewModel.onAppBackgrounded()
             default:
                 break
             }

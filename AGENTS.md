@@ -287,6 +287,7 @@ When creating commits:
 - Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 18 Pro' build -quiet`
 - The app requires Xcode 27.1 or newer and builds against the iOS 27.1 SDK, with a minimum deployment target of iOS 17 (`iosApp/project.yml`). Gate newer APIs with `#available` checks; do not add `#if compiler(...)` guards for older Xcode versions.
 - Keep app-group database work that may outlive an iOS foreground interval inside `withSuspensionGuard`; it uses `NSProcessInfo` and also works in the widget and share extensions.
+- Every live query in `DatabaseHelper` (`asFlow()` + `mapToList`/`mapToOne…`) must end its SQLDelight chain with `.pausedInBackground()`. iOS pauses the `LiveQueryGate` when the app goes to the background: the re-runs a write triggers happen after its suspension guard is released, and a read still open at suspension gets the app killed (0xdead10cc).
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
 - Keep accessibility identifier enums in separate `*AccessibilityIdentifiers.swift` files, not appended to view files.
 - Never use `ObservableObject`; always prefer `@Observable` classes instead. The one exception is `VMStoreOwner` held with `@StateObject`: its autoclosure creates the Kotlin ViewModel once per view identity, while `@State` would rebuild it on every parent update.

@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.YouTubeOptionsState
+import com.prof18.feedflow.core.utils.withSuspensionGuard
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -109,37 +110,43 @@ class AddFeedViewModel internal constructor(
         val categoryName = categoryRepository.getSelectedCategory()
         val notifications = isNotificationEnabledMutableStateFlow.value
         val hideShorts = youTubeOptionsMutableState.value.hideShorts
+        // The iOS share extension can be dismissed mid-add; the guard keeps it alive until the
+        // writes to the app-group database finish (0xdead10cc otherwise).
         viewModelScope.launch {
-            try {
-                feedAddedMutableState.emit(FeedAddedState.Loading)
-                if (submittedUrl.isEmpty()) return@launch
-                val feedAddedState = feedSourcesRepository.addFeedSource(
-                    feedUrl = submittedUrl,
-                    categoryName = categoryName,
-                    isNotificationEnabled = notifications,
-                    hideYouTubeShorts = hideShorts,
-                )
-                val verificationUrl = (feedAddedState as? FeedAddedState.Error.FetchFailed)?.verificationUrl
-                if (verificationUrl != null && submittedUrl == feedUrl) {
-                    pendingVerification = PendingVerification(
-                        subscriptionUrl = feedAddedState.challengedUrl ?: sanitizeUrl(submittedUrl.trim()),
-                        verificationUrl = verificationUrl,
-                        retryAfter = feedAddedState.retryAfter,
+            withSuspensionGuard("FeedFlow add feed") {
+                try {
+                    feedAddedMutableState.emit(FeedAddedState.Loading)
+                    if (submittedUrl.isEmpty()) return@withSuspensionGuard
+                    val feedAddedState = feedSourcesRepository.addFeedSource(
+                        feedUrl = submittedUrl,
+                        categoryName = categoryName,
+                        isNotificationEnabled = notifications,
+                        hideYouTubeShorts = hideShorts,
                     )
-                    verificationRequiredMutableState.value = true
+                    val verificationUrl = (feedAddedState as? FeedAddedState.Error.FetchFailed)?.verificationUrl
+                    if (verificationUrl != null && submittedUrl == feedUrl) {
+                        pendingVerification = PendingVerification(
+                            subscriptionUrl = feedAddedState.challengedUrl ?: sanitizeUrl(submittedUrl.trim()),
+                            verificationUrl = verificationUrl,
+                            retryAfter = feedAddedState.retryAfter,
+                        )
+                        verificationRequiredMutableState.value = true
+                    }
+                    feedAddedMutableState.emit(feedAddedState)
+                    if (feedAddedState is FeedAddedState.FeedAdded ||
+                        feedAddedState is FeedAddedState.FeedAlreadyExists
+                    ) {
+                        isNotificationEnabledMutableStateFlow.update { false }
+                        youTubeOptionsMutableState.value = YouTubeOptionsState()
+                        channelIdentity = null
+                    }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (_: Exception) {
+                    feedAddedMutableState.emit(FeedAddedState.Error.GenericError(canForceAdd = false))
+                } finally {
+                    isAddingFeedMutableState.value = false
                 }
-                feedAddedMutableState.emit(feedAddedState)
-                if (feedAddedState is FeedAddedState.FeedAdded || feedAddedState is FeedAddedState.FeedAlreadyExists) {
-                    isNotificationEnabledMutableStateFlow.update { false }
-                    youTubeOptionsMutableState.value = YouTubeOptionsState()
-                    channelIdentity = null
-                }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (_: Exception) {
-                feedAddedMutableState.emit(FeedAddedState.Error.GenericError(canForceAdd = false))
-            } finally {
-                isAddingFeedMutableState.value = false
             }
         }
     }
@@ -151,27 +158,29 @@ class AddFeedViewModel internal constructor(
         val categoryName = categoryRepository.getSelectedCategory()
         val notifications = isNotificationEnabledMutableStateFlow.value
         viewModelScope.launch {
-            feedAddedMutableState.emit(FeedAddedState.Loading)
-            try {
-                val feedTitle = runCatching { Url(submittedUrl).host }.getOrNull() ?: submittedUrl
-                feedSourcesRepository.addFeedSourceWithoutFetching(
-                    feedUrl = submittedUrl,
-                    feedTitle = feedTitle,
-                    category = categoryName,
-                    logoUrl = null,
-                    isNotificationEnabled = notifications,
-                )
-                feedStateRepository.getFeeds()
-                isNotificationEnabledMutableStateFlow.update { false }
-                youTubeOptionsMutableState.value = YouTubeOptionsState()
-                channelIdentity = null
-                feedAddedMutableState.emit(FeedAddedState.FeedAdded(feedTitle))
-            } catch (e: CancellationException) {
-                throw e
-            } catch (_: Exception) {
-                feedAddedMutableState.emit(FeedAddedState.Error.GenericError(canForceAdd = false))
-            } finally {
-                isAddingFeedMutableState.value = false
+            withSuspensionGuard("FeedFlow add feed") {
+                feedAddedMutableState.emit(FeedAddedState.Loading)
+                try {
+                    val feedTitle = runCatching { Url(submittedUrl).host }.getOrNull() ?: submittedUrl
+                    feedSourcesRepository.addFeedSourceWithoutFetching(
+                        feedUrl = submittedUrl,
+                        feedTitle = feedTitle,
+                        category = categoryName,
+                        logoUrl = null,
+                        isNotificationEnabled = notifications,
+                    )
+                    feedStateRepository.getFeeds()
+                    isNotificationEnabledMutableStateFlow.update { false }
+                    youTubeOptionsMutableState.value = YouTubeOptionsState()
+                    channelIdentity = null
+                    feedAddedMutableState.emit(FeedAddedState.FeedAdded(feedTitle))
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (_: Exception) {
+                    feedAddedMutableState.emit(FeedAddedState.Error.GenericError(canForceAdd = false))
+                } finally {
+                    isAddingFeedMutableState.value = false
+                }
             }
         }
     }

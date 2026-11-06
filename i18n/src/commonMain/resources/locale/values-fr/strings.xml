@@ -585,4 +585,9 @@
     <string name="reader_mode_opened_externally_message">Ce lien est un fichier, comme un PDF, que FeedFlow ne peut pas afficher, il a donc été ouvert dans votre navigateur.</string>
     <string name="reader_mode_open_again_in_browser">Ouvrir dans le navigateur</string>
     <string name="hide_youtube_shorts_edit_fallback">Les Shorts ne pouvaient pas être masqués pour cette chaîne. Vos autres modifications ont été enregistrées.</string>
+    <string name="account_disconnect_title">Déconnecter le compte ?</string>
+    <string name="account_disconnect_server_message">Les flux, articles, favoris et statuts de lecture seront supprimés de cet appareil. Votre compte sur le serveur ne sera pas modifié, et une nouvelle connexion permettra de les télécharger à nouveau. Les flux remplacés lors de votre connexion ne seront pas restaurés.</string>
+    <string name="account_disconnect_backup_message">FeedFlow cessera d’effectuer des sauvegardes vers ce compte. Vos flux et articles resteront sur cet appareil, et la sauvegarde existante ne sera pas supprimée.</string>
+    <string name="desktop_settings_search_placeholder">Paramètres de recherche</string>
+    <string name="desktop_settings_search_no_results">Aucun paramètre correspondant</string>
 </resources>

@@ -350,6 +350,7 @@
       "android/regression/182-feed-verification-actions.yaml",
       "android/regression/183-edit-feed-youtube-hide-shorts.yaml",
       "android/regression/184-reader-navigation-list-follow.yaml",
+      "android/regression/185-back-closes-drawer-and-filter.yaml",
       "android/smoke/001-first-launch-empty.yaml",
       "android/smoke/002-seeded-timeline-loads.yaml",
       "android/smoke/003-library-filters.yaml",
@@ -565,7 +566,8 @@
       "regression/180": "Search query and matching results stay visible through portrait, landscape and back on iPhone, iPad and Duo.",
       "regression/182": "Both platforms check the automatic foreground explanation, Cancel, the source-list Verify website action with Cancel and retry, the browser host and the absence of raw XML. Android also checks that cancelling the browser keeps the feed waiting for verification. The reserved .invalid host does not exercise session requests, background refresh or a completed human challenge.",
       "regression/183": "Edit-feed: a YouTube channel RSS URL reveals Hide Shorts OFF; toggling rewrites the URL to the no-Shorts playlist and back. Saving is not exercised (needs live YouTube); repository tests cover the swap, Shorts cleanup and fallback.",
-      "regression/184": "After ten Next taps in the reader, Back returns to a timeline scrolled to the last article read. Android only; the iOS reader cannot step through the offline seed."
+      "regression/184": "After ten Next taps in the reader, Back returns to a timeline scrolled to the last article read. Android only; the iOS reader cannot step through the offline seed.",
+      "regression/185": "Back closes an open drawer first, then returns from a category filter to Timeline instead of leaving the app. Android only."
     };
 
     const sections = document.querySelector("#sections");

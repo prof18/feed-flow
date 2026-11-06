@@ -1,0 +1,58 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible:
+    text: "E2E Newest Unread Article.*"
+
+# Back with the drawer open closes the drawer instead of leaving the app.
+- tapOn:
+    id: drawer_menu_button
+- assertVisible:
+    id: drawer_bookmarks
+- pressKey: back
+- extendedWaitUntil:
+    notVisible:
+      id: drawer_bookmarks
+    timeout: 10000
+- assertVisible:
+    text: "E2E Newest Unread Article.*"
+
+# Select a category filter, then open the drawer over it.
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_category_e2e_category_news
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_e2e_category_news
+- assertVisible:
+    text: "E2E Article With Image.*"
+- tapOn:
+    id: drawer_menu_button
+- assertVisible:
+    id: drawer_bookmarks
+
+# The drawer is the topmost surface, so the first Back only closes it and keeps
+# the category filter.
+- pressKey: back
+- extendedWaitUntil:
+    notVisible:
+      id: drawer_bookmarks
+    timeout: 10000
+- assertVisible:
+    text: "E2E Article With Image.*"
+
+# The next Back returns to Timeline instead of leaving the app.
+- pressKey: back
+- extendedWaitUntil:
+    visible:
+      text: "E2E Newest Unread Article.*"
+    timeout: 10000
+- assertVisible:
+    id: drawer_menu_button

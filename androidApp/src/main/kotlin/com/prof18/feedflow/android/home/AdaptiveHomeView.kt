@@ -72,6 +72,13 @@ fun AdaptiveHomeView(
     val reduceMotionEnabled = LocalReduceMotion.current
     val drawerListState = rememberLazyListState()
 
+    fun showTimeline() {
+        feedManagementActions.onFeedFilterSelected(FeedFilter.Timeline)
+        scope.launch {
+            listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+        }
+    }
+
     @Composable
     fun HomeContentInternal(
         showDrawerMenu: Boolean,
@@ -125,6 +132,14 @@ fun AdaptiveHomeView(
     }
 
     if (useDockedDrawer) {
+        // The docked drawer is part of the layout rather than a surface on top, so Back leaves it
+        // alone and only steps back from a filter.
+        HomeBackHandler(
+            isDrawerOpen = false,
+            currentFeedFilter = displayState.currentFeedFilter,
+            onCloseDrawer = {},
+            onShowTimeline = { showTimeline() },
+        )
         Row(
             modifier = modifier.fillMaxSize(),
         ) {
@@ -165,6 +180,12 @@ fun AdaptiveHomeView(
     } else {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+        HomeBackHandler(
+            isDrawerOpen = drawerState.isOpenForBack,
+            currentFeedFilter = displayState.currentFeedFilter,
+            onCloseDrawer = { scope.launch { drawerState.close() } },
+            onShowTimeline = { showTimeline() },
+        )
         ModalNavigationDrawer(
             modifier = modifier,
             drawerState = drawerState,

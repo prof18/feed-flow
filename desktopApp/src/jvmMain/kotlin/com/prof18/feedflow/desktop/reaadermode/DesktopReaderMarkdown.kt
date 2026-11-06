@@ -83,11 +83,13 @@ internal fun DesktopReaderMarkdown(
             onHoveredLinkChange = { latestHover(it) },
         )
     }
+    val codeHighlighter = remember(dark) { readerCodeHighlighter(dark) }
     ProvideMarkdownStyling(
         isDark = dark,
         markdownStyling = styling,
         markdownProcessor = processor,
         markdownBlockRenderer = renderer,
+        codeHighlighter = codeHighlighter,
     ) {
         // Reset parsed blocks and image slots when changing documents, retaining them for text-size changes.
         key(markdown) {

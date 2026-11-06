@@ -73,6 +73,32 @@ class DesktopReaderMarkdownTest(private val theme: ThemeMode) {
     }
 
     @Test
+    fun `renders a code block with a very long string literal as plain text in every desktop theme`() {
+        val longLiteral = "{\"data\": \"${"a".repeat(200_000)}\"}"
+        rule.setContent {
+            FeedFlowTheme(darkTheme = theme != ThemeMode.LIGHT, useOledTheme = theme == ThemeMode.OLED) {
+                DesktopReaderMarkdown(
+                    markdown = "Before the payload.\n\n```json\n$longLiteral\n```",
+                    fontSize = FONT_SIZE,
+                    lineHeight = LINE_HEIGHT,
+                    imageLoader = imageLoader,
+                    onUrlClick = {},
+                    onHoveredLinkChange = {},
+                )
+            }
+        }
+
+        rule.waitUntil(timeoutMillis = 5_000) {
+            rule.onAllNodesWithText("Before the payload.").fetchSemanticsNodes().isNotEmpty()
+        }
+        // Highlighting runs on Dispatchers.Default, outside what waitForIdle tracks: give it time to finish
+        // so an overflow there is rethrown into the composition before the assertion.
+        Thread.sleep(2_000)
+        rule.waitForIdle()
+        rule.onNodeWithText(longLiteral).assertIsDisplayed()
+    }
+
+    @Test
     fun `applies the selected reader font size and line height in every desktop theme`() {
         val expectedLineHeight = readerLineHeightToTextLineHeightSp(FONT_SIZE, LINE_HEIGHT)
         rule.setContent {

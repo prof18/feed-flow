@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE martif PUBLIC "ISO 12200:1999A//DTD MARTIF core (DXFcdV04)//EN" "TBXcdv04.dtd">
+<martif type="TBX" xml:lang="en">
+    <martifHeader>
+        <fileDesc>
+            <sourceDesc>
+                <p>FeedFlow glossary</p>
+            </sourceDesc>
+        </fileDesc>
+    </martifHeader>
+    <text>
+        <body>
+            <termEntry weblate-flags="terminology">
+                <descrip>A website's RSS, Atom or JSON feed that the user follows. Avoid: feed source, source, subscription, channel.</descrip>
+                <langSet xml:lang="en"><tig><term>feed</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>The list of all feeds the user follows, grouped by category (section and screen title). Avoid: Feed Sources.</descrip>
+                <langSet xml:lang="en"><tig><term>Feeds</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>Feeds and categories the user keeps at the top of the sidebar. Avoid: Pinned Feed Sources, favorites.</descrip>
+                <langSet xml:lang="en"><tig><term>Pinned feeds</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>Only for OPML import and export: the feed list as stored in an OPML file. Everywhere else say feeds.</descrip>
+                <langSet xml:lang="en"><tig><term>subscriptions</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>The title of a feed, shown on each article. Avoid: feed source.</descrip>
+                <langSet xml:lang="en"><tig><term>feed name</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>One entry of a feed: title, summary and link, which FeedFlow gets when it refreshes feeds. Avoid: item, post, entry, story.</descrip>
+                <langSet xml:lang="en"><tig><term>article</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>The whole text of an article's web page, which FeedFlow gets from the website for reader mode. Avoid: article content, web content.</descrip>
+                <langSet xml:lang="en"><tig><term>full article</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>A full article stored on the device so it can be read without a connection. Not the same as refreshing feeds. Avoid: download, save, prefetch, cache.</descrip>
+                <langSet xml:lang="en"><tig><term>offline copy</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>Images stored on the device so they load faster. Only used for images.</descrip>
+                <langSet xml:lang="en"><tig><term>image cache</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>Check the feeds for new articles (Refresh feeds, Background refresh). Avoid: download, sync, reload.</descrip>
+                <langSet xml:lang="en"><tig><term>refresh</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>Keep feeds, read status and bookmarks the same across the user's devices through an account. Avoid: upload, refresh.</descrip>
+                <langSet xml:lang="en"><tig><term>sync</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>Button that copies feeds, read status and bookmarks to a backup account (iCloud, Dropbox, Google Drive) right away. Verb: back up; noun: backup. Avoid: Upload changes.</descrip>
+                <langSet xml:lang="en"><tig><term>Back up now</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>A connected iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin or BazQux account. Avoid: service, provider.</descrip>
+                <langSet xml:lang="en"><tig><term>account</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>Bookmarks: articles the user keeps; they are never deleted automatically. Also the verb and bookmarked. Avoid: saved, save for later, favorites.</descrip>
+                <langSet xml:lang="en"><tig><term>bookmark</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>A user-made group of feeds. The add button is New category. Avoid: folder, group.</descrip>
+                <langSet xml:lang="en"><tig><term>category</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>The group of feeds that have no category. Avoid: No category.</descrip>
+                <langSet xml:lang="en"><tig><term>Uncategorized</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>The screen with the options of a single feed. Avoid: Edit feed.</descrip>
+                <langSet xml:lang="en"><tig><term>Feed settings</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>Open the homepage of the feed's website in the browser. Avoid: Open feed website.</descrip>
+                <langSet xml:lang="en"><tig><term>Open website</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>FeedFlow's built-in, distraction-free view of a full article. Sentence case. Avoid: Reader Mode, reader view.</descrip>
+                <langSet xml:lang="en"><tig><term>Reader mode</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+            <termEntry weblate-flags="terminology">
+                <descrip>Set an article's read status (Mark as read, Mark as unread, Mark all as read). Avoid: Toggle read.</descrip>
+                <langSet xml:lang="en"><tig><term>Mark as read</term></tig></langSet>
+                <langSet xml:lang="pt-BR"><tig><term></term></tig></langSet>
+            </termEntry>
+        </body>
+    </text>
+</martif>

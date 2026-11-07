@@ -161,3 +161,6 @@ __pycache__/
 
 # Local implementation plans (not published)
 /plan/
+
+# Impeccable design-skill local state
+/.impeccable/

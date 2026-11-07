@@ -55,7 +55,7 @@
     <string name="export_dialog_title">Lưu file OPML</string>
     <string name="export_started_message">Đang xuất file</string>
     <string name="open_source_licenses">Giấy phép mã nguồn mở</string>
-    <string name="open_website_button">Trang chủ</string>
+    <string name="open_website_button">Mở trang chủ</string>
     <string name="database_error">Đã xảy ra lỗi trong quá trình truy xuất nguồn tin. Hãy thử lại hoặc khởi động lại ứng dụng - error code: %s :(</string>
     <string name="settings_app_title">Chung</string>
     <string name="menu_mark_as_read">Đánh dấu là đã đọc</string>
@@ -146,7 +146,7 @@
     <string name="settings_auto_delete_period_one_month">Một tháng</string>
     <string name="settings_hide_images">Ẩn hình thumbnail bài viết</string>
     <string name="settings_hide_description">Ẩn mô tả bài viết</string>
-    <string name="hide_feed_from_timeline_description">Ẩn bài viết của nguồn tin này khỏi bảng tin</string>
+    <string name="hide_feed_from_timeline_description">Ẩn bài viết từ nguồn tin này khỏi bảng tin</string>
     <string name="pin_feed_source_description">Ghim nguồn tin này</string>
     <string name="drawer_title_pinned_feeds">Nguồn tin đã ghim</string>
     <string name="menu_add_to_pinned">Ghim</string>
@@ -179,7 +179,7 @@
     <string name="settings_sync_period_fifteen_minutes">Mỗi 15 phút</string>
     <string name="settings_swipe_action_toggle_bookmark">Đánh dấu lưu</string>
     <string name="settings_notification_no_feed">Có vẻ như bạn chưa thêm bất kỳ nguồn tin nào. Thêm ngay để bắt đầu nhận thông báo!</string>
-    <string name="settings_notification_check_period">Tần suất kiểm tra thông báo</string>
+    <string name="settings_notification_check_period">Tần suất gửi thông báo</string>
     <string name="settings_notifications_enable_all_title">Bật tất cả thông báo</string>
     <string name="notification_channel_description">Thông báo bài viết mới trên bảng tin</string>
     <string name="settings_notifications_permission_status_title">Trạng thái cấp quyền</string>
@@ -223,9 +223,9 @@
     <string name="confirm_button">Xác nhận</string>
     <string name="cancel_button">Hủy bỏ</string>
     <string name="reader_mode_comments_button_content_description">Mở bình luận</string>
-    <string name="settings_save_reader_mode_content">Lưu nội dung bài viết khi mở để đọc offline</string>
-    <string name="settings_prefetch_article_content">Tải trước nội dung bài viết để đọc offline</string>
-    <string name="settings_prefetch_article_content_warning">Bật tùy chọn này sẽ làm tăng thời gian đồng bộ hóa và mức sử dụng dữ liệu, vì toàn bộ nội dung bài viết sẽ được tải xuống trong quá trình cập nhật nguồn cấp dữ liệu. Nếu bạn có nhiều bài viết, điều này cũng có thể ảnh hưởng đến hiệu suất. Chỉ bật tùy chọn này nếu bạn cần truy cập offline nội dung bài viết.</string>
+    <string name="settings_save_reader_mode_content">Lưu nội dung bài viết khi mở</string>
+    <string name="settings_prefetch_article_content">Tải trước nội dung bài viết</string>
+    <string name="settings_prefetch_article_content_warning">Bật tùy chọn này sẽ làm tăng thời gian đồng bộ hóa và mức sử dụng dữ liệu, vì toàn bộ nội dung bài viết sẽ được tải xuống trong quá trình cập nhật nguồn tin. Nếu bạn có nhiều bài viết, điều này cũng có thể ảnh hưởng đến hiệu suất. Chỉ bật tùy chọn này nếu bạn cần truy cập offline nội dung bài viết.</string>
     <string name="reader_mode_archive_button">Mở trong archive.is</string>
     <string name="previous_article">Bài viết trước</string>
     <string name="next_article">Bài viết tiếp</string>
@@ -402,7 +402,7 @@
     <string name="article_open_mode_feed_short">Trình đọc (bảng tin)</string>
     <string name="reader_content_source_web">Bài viết từ website</string>
     <string name="reader_content_source_web_subtitle">Lấy và làm gọn trang gốc</string>
-    <string name="hide_images_for_feed_description">Ẩn hình ảnh đối với nguồn tin này</string>
+    <string name="hide_images_for_feed_description">Ẩn hình ảnh từ nguồn tin này</string>
     <string name="new_articles_button">%s bài viết mới</string>
     <string name="reader_mode_no_content_title">Không có nội dung nào</string>
     <string name="reader_mode_no_content_message">Bài viết này không có nội dung và cũng không có liên kết để mở trên web.</string>
@@ -424,7 +424,7 @@
     <string name="feed_fetch_refused_error">Không thể truy cập nguồn tin này. Trang web có thể đang chặn các trình đọc RSS. Vui lòng thử lại sau.</string>
     <string name="mark_all_bookmarks_read_dialog_message">Bạn có chắc muốn đánh dấu tất cả các bài viết đã lưu là đã đọc?</string>
     <string name="remove_bookmark_dialog_message">Bạn có chắc muốn xóa bài viết này khỏi mục Đã lưu?</string>
-    <string name="settings_force_english">Luôn dùng Tiếng Anh</string>
+    <string name="settings_force_english">Dùng Tiếng Anh</string>
     <string name="settings_force_english_description">Dùng tiếng Anh cho giao diện ứng dụng thay vì ngôn ngữ của thiết bị.</string>
     <string name="widget_preview_info">Về bản xem trước này</string>
     <string name="widget_sync_disabled">Tắt cập nhật tự động</string>
@@ -572,11 +572,11 @@
     <string name="desktop_already_running">FeedFlow hiện đang hoạt động.</string>
     <string name="desktop_startup_crash">FeedFlow không thể khởi động. Thông tin chi tiết bên dưới đã được lưu vào %s. Vui lòng đính kèm tệp đó khi báo cáo sự cố.</string>
     <string name="desktop_startup_crash_no_log">FeedFlow không thể khởi động. Vui lòng sao chép các chi tiết bên dưới và đính kèm chúng khi báo cáo sự cố.</string>
-    <string name="reader_mode_title_font_size">Kích cỡ Tựa đề</string>
+    <string name="reader_mode_title_font_size">Cỡ tựa đề</string>
     <string name="reader_mode_font">Phông chữ</string>
     <string name="reader_font_system">Hệ thống</string>
     <string name="reader_font_latin_script_only">Phông chữ này chỉ hỗ trợ các hệ chữ Latinh. Văn bản sử dụng các hệ chữ khác sẽ sử dụng phông chữ hệ thống.</string>
-    <string name="reader_mode_preview_title">Buổi sáng thảnh thơi với một bài viết hay</string>
+    <string name="reader_mode_preview_title">Buổi sáng thảnh thơi đọc một bài viết hay</string>
     <string name="reader_mode_preview_body">Bản xem trước này sẽ thay đổi khi bạn điều chỉnh phông chữ và kích cõ, vì vậy bạn có thể thiết lập thử thoải mái để đọc trước khi quay lại bài viết.</string>
     <string name="keep_unread_when_scrolling_for_feed">Giữ nguyên trạng thái chưa đọc khi cuộn</string>
     <string name="keep_unread_when_scrolling_for_feed_description">Các bài viết từ nguồn này sẽ không được đánh dấu là đã đọc khi bạn cuộn qua chúng.</string>
@@ -585,4 +585,9 @@
     <string name="reader_mode_opened_externally_message">Liên kết này là một tệp tin, giống như PDF, mà FeedFlow không thể hiển thị trực tiếp, vì vậy nó đã được mở trong trình duyệt của bạn.</string>
     <string name="reader_mode_open_again_in_browser">Mở bằng trình duyệt</string>
     <string name="hide_youtube_shorts_edit_fallback">Không thể ẩn các video Shorts cho kênh này. Các thay đổi khác của bạn đã được lưu.</string>
+    <string name="account_disconnect_title">Ngắt kết nối tài khoản?</string>
+    <string name="account_disconnect_server_message">Các nguồn tin, bài viết, bài viết đã lưu và trạng thái đã đọc sẽ bị xóa khỏi thiết bị này. Tài khoản của bạn trên máy chủ không thay đổi và việc kết nối lại sẽ tải xuống lại. Các nguồn tin đã bị thay thế khi bạn kết nối sẽ không thể khôi phục.</string>
+    <string name="account_disconnect_backup_message">FeedFlow sẽ ngừng sao lưu vào tài khoản này. Các nguồn tin và bài viết của bạn vẫn được lưu trữ trên thiết bị này và bản sao lưu hiện tại sẽ không bị xóa.</string>
+    <string name="desktop_settings_search_placeholder">Tìm kiếm cài đặt</string>
+    <string name="desktop_settings_search_no_results">Không có cài đặt trùng khớp</string>
 </resources>

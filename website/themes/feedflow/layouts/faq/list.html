@@ -1,14 +1,5 @@
 {{ define "main" }}
-{{- $hasFAQ := gt (len .Pages) 0 -}}
-{{- $enFAQ  := false -}}
-{{- if not $hasFAQ -}}
-  {{- range $.Site.Sites -}}
-    {{- if eq .Language.Lang "en" -}}
-      {{- $page := .GetPage "/faq" -}}
-      {{- if $page -}}{{- $enFAQ = $page -}}{{- end -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
+{{- $faq := partial "faq/items.html" . -}}
 
 <div class="page-header">
   <div class="container container-sm">
@@ -20,12 +11,14 @@
 <section class="section faq-page-section">
   <div class="container container-sm">
 
-    {{- if not $hasFAQ }}
+    {{- if gt $faq.missing 0 }}
     <div class="faq-fallback-notice">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>This FAQ is still being translated. Showing English answers below.</span>
+      <span>This FAQ is still being translated. Some answers are shown in English.</span>
     </div>
+    {{- if eq $faq.translated 0 }}
     <meta name="robots" content="noindex,follow">
+    {{- end }}
     {{- end }}
 
     <div class="faq-search-wrap" hidden>
@@ -37,9 +30,7 @@
     </div>
 
     <div role="list">
-      {{- $pages := .Pages.ByWeight -}}
-      {{- if not $hasFAQ -}}{{- if $enFAQ -}}{{- $pages = $enFAQ.Pages.ByWeight -}}{{- end -}}{{- end -}}
-      {{ range $pages }}
+      {{ range $faq.items }}
       <details class="faq-item-page" role="listitem">
         <summary>
           {{ .Title }}
@@ -55,11 +46,19 @@
     <div class="faq-support-card">
       <div>
         <strong>Still have a question?</strong>
-        <p>Open an issue on GitHub and the community will help.</p>
+        <p>Send an email describing the problem, or open an issue on GitHub.</p>
       </div>
-      <a href="{{ .Site.Params.reportIssue }}" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">
-        Open an issue →
-      </a>
+      <div class="faq-support-actions">
+        {{- with .Site.Params.supportEmail }}
+        <a href="#" class="btn btn-primary btn-sm js-support-email" hidden
+           data-e="{{ . | base64Encode }}">
+          Send an email
+        </a>
+        {{- end }}
+        <a href="{{ .Site.Params.reportIssue }}" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">
+          Open an issue →
+        </a>
+      </div>
     </div>
 
   </div>

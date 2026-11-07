@@ -30,6 +30,7 @@
         <h4>Resources</h4>
         <ul class="footer-links" role="list">
           <li><a href="{{ .Site.BaseURL | relLangURL }}updates/">Updates</a></li>
+          <li><a href="{{ with site.GetPage "/faq" }}{{ .RelPermalink }}{{ else }}/faq/{{ end }}">FAQ</a></li>
           <li><a href="{{ .Site.Params.github }}" target="_blank" rel="noopener">GitHub</a></li>
           <li><a href="{{ .Site.Params.weblate }}" target="_blank" rel="noopener">Translate on Weblate</a></li>
           <li><a href="{{ .Site.Params.privacy }}" target="_blank" rel="noopener">Privacy Policy</a></li>

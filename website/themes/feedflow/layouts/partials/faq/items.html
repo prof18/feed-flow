@@ -1,0 +1,38 @@
+{{- /*
+  FAQ entries for the current language, in the English order. Each English entry is replaced
+  by its translation when content/<lang>/faq/ has a file with the same name, so a partly
+  translated FAQ mixes translated answers with the English ones still missing.
+  Returns: items (all entries), featured (entries marked featured in English),
+  translated (how many are translated), missing (how many fall back to English).
+*/ -}}
+{{- $lang := .Language.Lang -}}
+{{- $enFAQ := false -}}
+{{- range .Site.Sites -}}
+  {{- if eq .Language.Lang "en" -}}
+    {{- with .GetPage "/faq" -}}{{- $enFAQ = . -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $items := slice -}}
+{{- $featured := slice -}}
+{{- $translated := 0 -}}
+{{- $missing := 0 -}}
+{{- with $enFAQ -}}
+  {{- range .Pages.ByWeight -}}
+    {{- $page := . -}}
+    {{- if ne $lang "en" -}}
+      {{- $translation := false -}}
+      {{- range .Translations -}}
+        {{- if eq .Language.Lang $lang -}}{{- $translation = . -}}{{- end -}}
+      {{- end -}}
+      {{- if $translation -}}
+        {{- $page = $translation -}}
+        {{- $translated = add $translated 1 -}}
+      {{- else -}}
+        {{- $missing = add $missing 1 -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $items = $items | append $page -}}
+    {{- if .Params.featured -}}{{- $featured = $featured | append $page -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return dict "items" $items "featured" $featured "translated" $translated "missing" $missing -}}

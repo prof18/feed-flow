@@ -1,3 +1,4 @@
+{{- $faqURL := "/faq/" -}}{{- with site.GetPage "/faq" -}}{{- $faqURL = .RelPermalink -}}{{- end -}}
 <nav class="site-nav" aria-label="Main navigation">
   <div class="nav-inner">
     <a href="{{ .Site.BaseURL }}" class="nav-brand">
@@ -9,6 +10,7 @@
       <li><a href="{{ .Site.Home.RelPermalink }}#features">Features</a></li>
       <li><a href="{{ .Site.Home.RelPermalink }}#gallery">Screenshots</a></li>
       <li><a href="{{ .Site.Home.RelPermalink }}#social">Community</a></li>
+      <li><a href="{{ $faqURL }}">FAQ</a></li>
     </ul>
 
     <div class="nav-cta">
@@ -27,6 +29,7 @@
       <li><a href="{{ .Site.Home.RelPermalink }}#features">Features</a></li>
       <li><a href="{{ .Site.Home.RelPermalink }}#gallery">Screenshots</a></li>
       <li><a href="{{ .Site.Home.RelPermalink }}#social">Community</a></li>
+      <li><a href="{{ $faqURL }}">FAQ</a></li>
     </ul>
     <a href="#platforms" class="btn btn-primary mobile-nav-download">Download</a>
   </div>

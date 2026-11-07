@@ -107,6 +107,7 @@ enableRobotsTXT = true
   donate        = "https://www.paypal.me/MarcoGomiero"
   privacy       = "https://www.prof18.com/feed-flow/pp/privacy-policy-jul23/"
   reportIssue   = "https://github.com/prof18/feed-flow/issues/new?title=App+issue&body=Please+describe+the+issue+and+provide+a+link+to+the+RSS+Feed+that+causes+the+issues:%0A"
+  supportEmail  = "mgp.dev.studio+feedflow@gmail.com"
   authorName    = "Marco Gomiero"
   authorURL     = "https://www.marcogomiero.com/"
   twitterHandle = "@marcoGomier"

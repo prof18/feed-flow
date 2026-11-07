@@ -67,3 +67,19 @@
 
   els.forEach(el => io.observe(el));
 })();
+
+/* FAQ: support email, assembled on click so the address isn't in the page source */
+(function () {
+  document.querySelectorAll('.js-support-email').forEach((link) => {
+    link.hidden = false;
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const address = atob(link.dataset.e);
+      const subject = encodeURIComponent('FeedFlow question');
+      const body = encodeURIComponent(
+        'Describe your question or problem. Please include your platform (Android, iPhone, iPad, Mac, Windows or Linux), the app version and, if it\'s about a feed, its link.\n\n'
+      );
+      window.location.href = 'mailto:' + address + '?subject=' + subject + '&body=' + body;
+    });
+  });
+})();

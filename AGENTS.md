@@ -185,7 +185,8 @@ Before handing off you must:
 3. Run `.scripts/ios-format.sh` to format iOS code - only run if you made changes on the iOS app
 4. If you changed iOS code, run `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 18 Pro' build -quiet` before handoff; rerun without `-quiet` only if you need the full diagnostics
 5. If you changed iOS code, run `.scripts/ios-tests.sh`
-6. Fix any issues found during the above steps
+6. If you changed user-visible behaviour, check whether a website FAQ answer needs updating or a new entry is warranted (see "Website FAQ")
+7. Fix any issues found during the above steps
 
 ### Initial Setup (for building from scratch)
 ```bash
@@ -321,6 +322,12 @@ When creating commits:
 - Don't hardcode user-visible strings; put them in the i18n resources.
 - Add only the English strings and don't translate other languages yourself: professional translators handle them later.
 - Write English UI copy without a first-person "we": address the user or describe the state ("Couldn't connect to iCloud", not "We are unable to connect"). Match the tone of the existing strings.
+
+### Website FAQ
+- The FAQ lives in `website/content/en/faq/`, one Markdown file per question, ordered by `weight` (filename number × 10); `featured: true` puts a question in the homepage "Common questions" section. The apps' FAQ entry opens it through `Websites.faqUrl`.
+- When a change alters something an answer describes, update that answer in the same change: setting names or locations, defaults, refresh/background sync, notifications, sync providers and per-build availability (F-Droid, Flathub), reader and link-opening options, import/export, error codes in `ErrorCode.kt`, platforms and minimum OS versions. Remove statements that stop being true.
+- When a new user-visible feature or behaviour is likely to raise questions (non-obvious defaults, platform differences, limits, something users can't find), add an entry or extend the closest one. Ask the user if unsure whether it belongs in the FAQ.
+- Write answers like the UI copy: plain English, no "we", settings as **Settings → Section → Option** with the exact English string names. Don't mention pricing, tips or analytics. Add only the English files; translations go in `content/<lang>/faq/` with the same filename and fall back to English per entry.
 
 ### Flatpak / Linux Desktop
 - `.scripts/flatpak-build-setup.sh` -> Prepare the project for Flatpak builds (sets release props, disables JetBrains JDK vendor, disables toolchain auto-provisioning, comments out Android-only Gradle plugins)

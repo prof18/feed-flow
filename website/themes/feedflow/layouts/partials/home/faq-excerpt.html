@@ -1,6 +1,8 @@
-{{- $faqPage := .Site.GetPage "/faq" -}}
-{{ if $faqPage -}}
-{{- $faqItems := first 3 $faqPage.Pages.ByWeight -}}
+{{- $faqURL := "/faq/" -}}
+{{- with .Site.GetPage "/faq" }}{{ $faqURL = .RelPermalink }}{{ end -}}
+{{- $faq := partial "faq/items.html" . -}}
+{{- $faqItems := $faq.featured -}}
+{{- if not $faqItems }}{{ $faqItems = first 4 $faq.items }}{{ end -}}
 {{ if $faqItems -}}
 <section class="section faq-excerpt" aria-labelledby="faq-excerpt-heading">
   <div class="container container-sm">
@@ -8,6 +10,7 @@
       <div>
         <h2 id="faq-excerpt-heading">Common questions.</h2>
       </div>
+      <a href="{{ $faqURL }}" class="btn btn-ghost btn-sm">See all questions →</a>
     </header>
 
     <div class="faq-list" role="list">
@@ -26,4 +29,3 @@
   </div>
 </section>
 {{- end -}}
-{{- end }}

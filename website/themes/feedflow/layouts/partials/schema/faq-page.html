@@ -1,10 +1,11 @@
-{{ if .Pages -}}
+{{- $faq := partial "faq/items.html" . -}}
+{{ if and .IsSection $faq.items -}}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    {{ range $i, $page := .Pages.ByWeight -}}
+    {{ range $i, $page := $faq.items -}}
     {{ if $i }},{{ end }}
     {
       "@type": "Question",

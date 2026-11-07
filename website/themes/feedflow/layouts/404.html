@@ -1,4 +1,14 @@
 {{ define "main" }}
+<script>
+  // The apps link to /<language>/faq/ for every language. GitHub Pages has no server-side
+  // redirects, so a language without a translated FAQ lands here and goes to the English one.
+  (function () {
+    var match = window.location.pathname.match(/^\/[a-z]{2,3}(?:[-_][a-z0-9]+)?\/faq(\/.*)?$/i);
+    if (match) {
+      window.location.replace('/faq' + (match[1] || '/') + window.location.search + window.location.hash);
+    }
+  })();
+</script>
 <div class="not-found">
   <div class="container">
     <div class="not-found-inner">

@@ -102,6 +102,11 @@ struct FreshRssSyncContent: View {
                                 .foregroundColor(.gray)
                         }
                     )
+                    .accessibilityLabel(
+                        isPasswordVisible
+                            ? feedFlowStrings.desktopAccountHidePassword
+                            : feedFlowStrings.desktopAccountShowPassword
+                    )
                     .accessibilityIdentifier(AccountAccessibilityIdentifiers.passwordVisibility)
                 }
             },

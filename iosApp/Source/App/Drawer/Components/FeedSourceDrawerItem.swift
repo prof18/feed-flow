@@ -64,10 +64,12 @@ struct FeedSourceDrawerItem: View {
                         .clipped()
                 } else {
                     Image(systemName: "square.stack.3d.up")
+                        .accessibilityHidden(true)
                 }
             }
         } else {
             Image(systemName: "square.stack.3d.up")
+                .accessibilityHidden(true)
         }
     }
 

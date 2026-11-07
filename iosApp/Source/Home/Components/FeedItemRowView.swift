@@ -182,6 +182,7 @@ struct FeedItemRowView: View {
     Button(action: action) {
       Image(systemName: systemImageName)
     }
+    .accessibilityLabel(feedFlowStrings.readerModeFallbackOpenBrowserButton)
   }
 
   private func openReaderMode(_ urlInfo: FeedItemUrlInfo) {

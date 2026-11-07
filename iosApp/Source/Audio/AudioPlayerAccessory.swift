@@ -84,7 +84,7 @@ struct AudioPlayerAccessory: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(episode.title)
-            .accessibilityHint(onOpenEpisode != nil ? feedFlowStrings.audioReturnToEpisode : feedFlowStrings.audioSeek)
+            .accessibilityHint(onOpenEpisode != nil ? feedFlowStrings.audioReturnToEpisode : "")
             .accessibilityIdentifier(onOpenEpisode != nil
                 ? AudioPlayerAccessibilityIdentifiers.dockReturnToEpisode : AudioPlayerAccessibilityIdentifiers.expand)
 
@@ -99,7 +99,11 @@ struct AudioPlayerAccessory: View {
                 }.frame(width: 44, height: 44).contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(playback.isPlaying ? feedFlowStrings.audioPause : feedFlowStrings.audioPlay)
+            .accessibilityLabel(
+                playback.isLoading
+                    ? feedFlowStrings.audioLoading
+                    : playback.isPlaying ? feedFlowStrings.audioPause : feedFlowStrings.audioPlay
+            )
             .accessibilityIdentifier(playback.isPlaying
                 ? AudioPlayerAccessibilityIdentifiers.pause : AudioPlayerAccessibilityIdentifiers.play)
 

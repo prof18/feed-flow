@@ -140,6 +140,7 @@ struct AddAccountScreen: View {
                             Image(systemName: "xmark.circle")
                         }
                     }
+                    .accessibilityLabel(feedFlowStrings.closeButtonContentDescription)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)

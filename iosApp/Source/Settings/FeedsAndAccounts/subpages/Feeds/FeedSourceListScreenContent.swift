@@ -57,6 +57,7 @@ struct FeedSourceListScreenContent: View {
                         Image(systemName: "plus")
                             .foregroundStyle(.primary)
                 }
+                .accessibilityLabel(feedFlowStrings.addFeed)
             }
         }
     }
@@ -319,11 +320,13 @@ private struct FeedSourceListItem: View {
                             .clipped()
                     } else {
                         Image(systemName: "square.stack.3d.up")
+                            .accessibilityHidden(true)
                     }
                 }
                 .padding(.leading, feedSource.fetchFailed ? Spacing.xsmall : Spacing.regular)
             } else {
                 Image(systemName: "square.stack.3d.up")
+                    .accessibilityHidden(true)
                     .padding(.leading, feedSource.fetchFailed ? Spacing.xsmall : Spacing.regular)
             }
 
@@ -348,6 +351,7 @@ private struct FeedSourceListItem: View {
                             Image(systemName: "checkmark.circle.fill")
                                 .tint(.green)
                         }
+                        .accessibilityLabel(feedFlowStrings.renameFeedSourceNameButton)
                         .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.renameSave(feedSource.id))
                         .padding(.top, Spacing.regular)
                     }

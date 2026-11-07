@@ -128,6 +128,7 @@ struct EditCategorySheet: View {
                             Image(systemName: "xmark.circle")
                         }
                     }
+                    .accessibilityLabel(feedFlowStrings.closeButtonContentDescription)
                 }
             }
         }

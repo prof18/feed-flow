@@ -506,6 +506,7 @@ public struct ReaderView<BottomAccessory: View, TextSettingsModifier: ViewModifi
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
+                    .accessibilityLabel(actions.strings.moreOptions)
                     .accessibilityIdentifier(ReaderAccessibilityIdentifiers.moreMenuButton)
             }
         }
@@ -883,6 +884,7 @@ public struct ReaderView<BottomAccessory: View, TextSettingsModifier: ViewModifi
                 .clipShape(Capsule())
                 .shadow(radius: 8)
                 .disabled(isFetching)
+                .accessibilityLabel(actions.strings.openInBrowser)
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.browserButton)
             }
 
@@ -899,6 +901,7 @@ public struct ReaderView<BottomAccessory: View, TextSettingsModifier: ViewModifi
                         .frame(width: 50, height: 44)
                 }
                 .disabled(actions.onNavigateToPrevious == nil)
+                .accessibilityLabel(actions.strings.previousArticle)
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.previousButton)
 
                 Button {
@@ -910,6 +913,7 @@ public struct ReaderView<BottomAccessory: View, TextSettingsModifier: ViewModifi
                         .frame(width: 50, height: 44)
                 }
                 .disabled(actions.onNavigateToNext == nil)
+                .accessibilityLabel(actions.strings.nextArticle)
                 .accessibilityIdentifier(ReaderAccessibilityIdentifiers.nextButton)
             }
             .background(.regularMaterial)

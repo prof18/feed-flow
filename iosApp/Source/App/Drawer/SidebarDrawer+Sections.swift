@@ -128,6 +128,7 @@ extension SidebarDrawer {
                         HStack {
                             Image(systemName: "folder")
                                 .foregroundStyle(.tint)
+                                .accessibilityHidden(true)
                             Text(feedFlowStrings.noCategory)
                             Spacer()
                             if unreadCount > 0 {
@@ -185,6 +186,7 @@ extension SidebarDrawer {
                 HStack {
                     Image(systemName: "folder")
                         .foregroundStyle(.tint)
+                        .accessibilityHidden(true)
                     Text(categoryItem.category.title)
                     Spacer()
                     if categoryItem.unreadCount > 0 {

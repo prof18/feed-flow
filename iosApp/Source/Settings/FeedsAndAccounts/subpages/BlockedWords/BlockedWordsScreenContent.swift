@@ -48,6 +48,7 @@ struct BlockedWordsScreenContent: View {
                         }
                         // Borderless keeps the Form row from firing this button on any tap in the row
                         .buttonStyle(.borderless)
+                        .accessibilityLabel(feedFlowStrings.addWordPlaceholder)
                         .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.addButton)
                         .hoverEffect()
                     }

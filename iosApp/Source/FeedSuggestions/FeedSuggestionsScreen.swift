@@ -29,6 +29,7 @@ struct FeedSuggestionsScreen: View {
                     } label: {
                         Image(systemName: "xmark")
                     }
+                    .accessibilityLabel(feedFlowStrings.closeButtonContentDescription)
                 }
             }
         }

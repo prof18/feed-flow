@@ -208,6 +208,8 @@ cp iosApp/Assets/Config.xcconfig.template iosApp/Assets/Config.xcconfig
 
 For compile-only local/CI iOS builds without real sync credentials, you can use `cp config/dummy-config.xcconfig iosApp/Assets/Config.xcconfig` instead.
 
+A fresh git worktree has none of these gitignored files. Before the first build or gate run there, copy `local.properties`, the `google-services.json` files, both `GoogleService-Info*.plist` files and `iosApp/Assets/Config.xcconfig` from the main checkout, or create them with the commands above. Without the iOS files, `allTests` fails in `generate-project.sh`'s XcodeGen spec validation. Don't copy `keystore.properties`: its RevenueCat key makes the Robolectric tests fail.
+
 To read the live Google Play listing locally, run `gplay metadata pull --package com.prof18.feedflow --dir "$(mktemp -d)"` (PollyGlot/google-play-cli; the service account is in the macOS Keychain and no key file is kept on disk). CI still publishes through Gradle Play Publisher with the `PLAY_CONFIG` secret. Run `FEEDFLOW_PLAY_CONFIG_JSON=/path/to/play_config.json ./gradlew --quiet --console=plain :androidApp:bootstrapGooglePlayReleaseListing` only when you deliberately want to overwrite `androidApp/src/googlePlay/play/` from the live store: it resets that directory, including tracked graphics and release notes. Do not assume an uncommitted repo-root `play_config.json` exists in automation worktrees.
 
 ## Adding a feature
@@ -313,6 +315,7 @@ When creating commits:
 - Main-to-`localization` sync uses rebase (`.github/workflows/sync-main-to-localization.yml`); resolve translation conflicts during the rebase rather than switching the workflow to merge commits.
 - String resources are located in `i18n/src/commonMain/resources/locale/values-[language]/`
 - Run .scripts/refresh-translations.sh after adding a new translation, to re-generate the kotlin code
+- Enabling a new app language takes more than the `values-[language]/` folder. Register it in the `feedFlowStrings` map in `i18n/src/commonMain/kotlin/com/prof18/feedflow/i18n/Locales.kt`, `CFBundleLocalizations` in `iosApp/Info.plist`, `knownRegions` in `iosApp/project.yml`, the macOS localizations in `desktopApp/build.gradle.kts` (`macExtraPlistKeys`), the Windows package languages in `.github/msix-resources-template.xml`, and `FeedFlowStringsLookupTest`. The MSIX list is the one most easily forgotten.
 - Store screenshots for **all** platforms (Android phone/tablet, iPhone, iPad, macOS, Windows) are rendered from repo code by `tools/screenshots/` (`node render.mjs --all`, then `node verify.mjs`), not Figma. Use the repo-local `render-store-screenshots` skill when translations change; it enforces the spacing/padding floors.
 - Use the repo-local `translation-release-audit` skill for weekly or release checks of app translations, store copy, generated Play listing files, live store metadata, and screenshot copy/assets. Do not upload store metadata/screenshots unless the user explicitly asks.
 - Don't hardcode user-visible strings; put them in the i18n resources.

@@ -41,8 +41,6 @@ struct EditFeedScreen: View {
     @State private var verificationExplanationUrl: String?
 
     var body: some View {
-        @Bindable var appState = appState
-
         NavigationStack {
             EditFeedScreenContent(
                 feedURL: $feedURL,
@@ -104,7 +102,6 @@ struct EditFeedScreen: View {
                     vmStoreOwner.instance.deleteFeed()
                 }
             )
-            .snackbar(messageQueue: $appState.snackbarQueue)
             .websiteVerificationExplanation(
                 url: verificationExplanationUrl,
                 onCancel: {

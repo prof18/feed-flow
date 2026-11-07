@@ -215,6 +215,7 @@ struct EditFeedScreenContent: View {
                 categorySelectorObserver: categorySelectorObserver,
                 onSave: {}
             )
+            .snackbarPresentationSurface()
         }
         .alert(feedFlowStrings.deleteFeedConfirmationTitle, isPresented: $showDeleteFeedDialog) {
             Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) { }

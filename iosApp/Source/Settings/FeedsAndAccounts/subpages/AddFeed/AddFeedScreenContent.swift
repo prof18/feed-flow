@@ -176,6 +176,7 @@ struct AddFeedScreenContent: View {
                 categorySelectorObserver: categorySelectorObserver,
                 onSave: {}
             )
+            .snackbarPresentationSurface()
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {

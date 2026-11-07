@@ -19,8 +19,6 @@ struct DropboxSyncScreen: View {
     @State private var uiState: AccountConnectionUiState = .Unlinked()
 
     var body: some View {
-        @Bindable var appState = appState
-
         DropboxSyncScreenContent(
             connectionState: uiState,
             onDropboxAuthSuccess: {
@@ -33,7 +31,6 @@ struct DropboxSyncScreen: View {
                 vmStoreOwner.instance.unlink()
             }
         )
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in vmStoreOwner.instance.dropboxConnectionUiState {
                 self.uiState = state

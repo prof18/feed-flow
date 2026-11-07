@@ -219,10 +219,21 @@ struct FeedFlowApp: App {
     }
 
     #if DEBUG
+        private func enqueueE2eSnackbars(queryItems: [URLQueryItem], appState: AppState) {
+            appState.emitGenericError()
+            if queryItems.contains(where: { $0.name == "count" && $0.value == "2" }) {
+                appState.emitGenericError()
+            }
+        }
+
         private func handleE2eURL(_ url: URL, appState: AppState) {
             let action = url.pathComponents
                 .first { $0 != "/" } ?? "reset-and-seed"
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            if action == "snackbar" {
+                enqueueE2eSnackbars(queryItems: components?.queryItems ?? [], appState: appState)
+                return
+            }
             let profileName = components?.queryItems?
                 .first { $0.name == "profile" }?
                 .value

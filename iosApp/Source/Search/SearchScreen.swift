@@ -37,8 +37,6 @@ struct SearchScreen: View {
     }
 
     var body: some View {
-        @Bindable var appState = appState
-        
         SearchScreenContent(
             searchText: $searchText,
             searchState: searchState,
@@ -68,7 +66,6 @@ struct SearchScreen: View {
                 readerModeViewModel.onArticleRevealed(request: request)
             }
         )
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .onChange(of: searchText) {
             vmStoreOwner.instance.updateSearchQuery(query: searchText)
         }

@@ -20,8 +20,6 @@ struct GoogleDriveSyncScreen: View {
     @State private var uiState: AccountConnectionUiState = .Loading()
 
     var body: some View {
-        @Bindable var appState = appState
-
         GoogleDriveSyncScreenContent(
             connectionState: uiState,
             onConnectClick: {
@@ -34,7 +32,6 @@ struct GoogleDriveSyncScreen: View {
                 vmStoreOwner.instance.unlink()
             }
         )
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in vmStoreOwner.instance.googleDriveConnectionUiState {
                 self.uiState = state

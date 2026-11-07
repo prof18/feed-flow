@@ -35,8 +35,6 @@ struct AddFeedScreen: View {
     }
 
     var body: some View {
-        @Bindable var appState = appState
-
         NavigationStack {
             AddFeedScreenContent(
                 feedURL: $feedURL,
@@ -67,7 +65,6 @@ struct AddFeedScreen: View {
                     vmStoreOwner.instance.forceAddFeed()
                 }
             )
-            .snackbar(messageQueue: $appState.snackbarQueue)
         }
         .websiteVerificationExplanation(
             url: verificationExplanationUrl,

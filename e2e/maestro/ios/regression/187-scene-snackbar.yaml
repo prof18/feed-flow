@@ -1,0 +1,95 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=reader-mode
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: e2e_seed_complete
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_success
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_success
+- assertVisible:
+    id: reader_browser_button
+- openLink: feedflow://e2e/snackbar
+- assertVisible:
+    id: app_snackbar
+- swipe:
+    from:
+      id: app_snackbar
+    direction: LEFT
+- assertNotVisible:
+    id: app_snackbar
+- tapOn:
+    id: reader_more_menu_button
+- tapOn: "Text Settings"
+- assertVisible: "Text Settings"
+- openLink: feedflow://e2e/snackbar
+- assertVisible:
+    id: app_snackbar
+- swipe:
+    from:
+      id: app_snackbar
+    direction: LEFT
+- assertNotVisible:
+    id: app_snackbar
+- tapOn: "Done"
+- assertVisible:
+    id: reader_browser_button
+- assertNotVisible:
+    id: app_snackbar
+
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- tapOn:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: feed_suggestions_menu_button
+- tapOn: "Add feed"
+- tapOn:
+    id: edit_feed_category_selector
+- tapOn:
+    id: edit_feed_category_sheet_add
+- assertVisible:
+    id: edit_feed_category_add_input
+- openLink: feedflow://e2e/snackbar
+- assertVisible:
+    id: app_snackbar
+- swipe:
+    from:
+      id: app_snackbar
+    direction: LEFT
+- assertNotVisible:
+    id: app_snackbar
+- assertVisible:
+    id: edit_feed_category_add_input
+- tapOn:
+    id: edit_feed_category_add_close
+- assertNotVisible:
+    id: app_snackbar
+- tapOn:
+    id: edit_feed_category_sheet_save
+- assertVisible:
+    id: add_feed_url_input
+- assertNotVisible:
+    id: app_snackbar
+- tapOn: "Close"
+- assertNotVisible:
+    id: app_snackbar
+- openLink: feedflow://e2e/snackbar
+- assertVisible:
+    id: app_snackbar

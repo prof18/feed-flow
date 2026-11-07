@@ -47,6 +47,7 @@ struct EditCategoryDialog: View {
                             categoryToEdit = nil
                         }
                     )
+                    .snackbarPresentationSurface()
                 }
             )
     }

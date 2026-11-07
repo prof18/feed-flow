@@ -24,8 +24,6 @@ struct BazquxSyncScreen: View {
     let onAccountLinked: (() -> Void)?
 
     var body: some View {
-        @Bindable var appState = appState
-
         BazquxSyncContent(
             uiState: uiState,
             isLoginLoading: isLoginLoading,
@@ -40,7 +38,6 @@ struct BazquxSyncScreen: View {
                 )
             }
         )
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .loadingDialog(isLoading: isLoginLoading)
         .task {
             for await state in vmStoreOwner.instance.uiState {

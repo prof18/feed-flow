@@ -219,6 +219,7 @@ struct RegularView: View {
                 .environment(appState)
                 .environment(browserSelector)
                 .toggleStyle(BlueToggleStyle())
+                .snackbarPresentationSurface()
         }
         .sheet(isPresented: $showSidebarSettingsSheet) {
             SettingsScreen(
@@ -228,6 +229,7 @@ struct RegularView: View {
                 .environment(appState)
                 .environment(browserSelector)
                 .preferredColorScheme(appState.colorScheme)
+                .snackbarPresentationSurface()
         }
         .sheet(isPresented: $showImportExportSheet) {
             ImportExportScreen(
@@ -235,12 +237,14 @@ struct RegularView: View {
                 fetchFeeds: { homeViewModel.getNewFeeds(isFirstLaunch: false, forceRefresh: false) }
             )
                 .environment(appState)
+                .snackbarPresentationSurface()
         }
         .sheet(item: $feedSourceToEdit) { item in
             EditFeedScreen(feedSource: item.feedSource)
                 .environment(appState)
                 .environment(browserSelector)
                 .toggleStyle(BlueToggleStyle())
+                .snackbarPresentationSurface()
         }
         .onChange(of: appState.pendingBrowserURL) { _, newURL in
             if let url = newURL {

@@ -1,32 +1,33 @@
-//
-//  SnackbarModifier.swift
-//  FeedFlow
-//
-//  Created by Marco Gomiero on 18/08/25.
-//  Copyright © 2025 FeedFlow. All rights reserved.
-//
-
-import Collections
 import SwiftUI
 
-struct SnackbarModifier: ViewModifier {
-    @Binding var messageQueue: Deque<SnackbarData>
+struct SnackbarPresentationSurfaceModifier: ViewModifier {
+    @Environment(AppState.self)
+    private var appState
+    @Environment(\.snackbarSurfaceDepth)
+    private var parentDepth
+    @State private var surface = UUID()
 
     func body(content: Content) -> some View {
-        ZStack {
-            content
-
-            VStack(spacing: 0) {
-                Spacer()
-
-                Snackbar(messageQueue: $messageQueue)
+        content
+            .environment(\.snackbarSurfaceDepth, parentDepth + 1)
+            .overlay(alignment: .bottom) {
+                SnackbarOverlay(surface: surface)
             }
-        }
+            .onAppear {
+                appState.snackbarPresentation.register(surface, depth: parentDepth + 1)
+            }
+            .onDisappear {
+                appState.snackbarPresentation.unregister(surface)
+            }
     }
 }
 
 extension View {
-    func snackbar(messageQueue: Binding<Deque<SnackbarData>>) -> some View {
-        modifier(SnackbarModifier(messageQueue: messageQueue))
+    func snackbarPresentationSurface() -> some View {
+        modifier(SnackbarPresentationSurfaceModifier())
     }
+}
+
+private extension EnvironmentValues {
+    @Entry var snackbarSurfaceDepth = 0
 }

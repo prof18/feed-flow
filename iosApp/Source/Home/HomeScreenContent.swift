@@ -141,6 +141,7 @@ struct HomeContent: View {
         }
         .sheet(item: $sheetToShow) { item in
             sheetContent(item)
+                .snackbarPresentationSurface()
         }
         .sheet(isPresented: $showViewOptionsSheet) {
             HomeViewOptionsSheet(
@@ -148,6 +149,7 @@ struct HomeContent: View {
                 onFeedOrderChange: onFeedOrderChange,
                 onShowReadArticlesTimelineChange: onShowReadArticlesTimelineChange
             )
+            .snackbarPresentationSurface()
         }
         .onReceive(NotificationCenter.default.publisher(for: .feedFlowRefreshFeeds)) { _ in
             onRefresh()

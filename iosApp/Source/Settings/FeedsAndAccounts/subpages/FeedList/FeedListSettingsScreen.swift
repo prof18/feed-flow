@@ -31,8 +31,6 @@ struct FeedListSettingsScreen: View {
     @State private var scaleFactor: Double = 0.0
 
     var body: some View {
-        @Bindable var appState = appState
-
         FeedListSettingsScreenContent(
             settingsState: settingsState,
             feedFontSizes: feedFontSizes,
@@ -108,7 +106,6 @@ struct FeedListSettingsScreen: View {
         .toolbarBackground(Color.secondaryBackgroundColor, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .background(Color.secondaryBackgroundColor.ignoresSafeArea())
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in vmStoreOwner.instance.state {
                 self.settingsState = state

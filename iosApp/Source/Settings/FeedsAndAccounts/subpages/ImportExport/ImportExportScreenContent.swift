@@ -128,6 +128,7 @@ private extension ImportExportContent {
         }
         .sheet(isPresented: $showExportArticlesDialog) {
             exportArticlesDialog
+                .snackbarPresentationSurface()
         }
     }
 

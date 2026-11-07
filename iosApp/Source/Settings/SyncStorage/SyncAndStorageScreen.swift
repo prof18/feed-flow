@@ -18,8 +18,6 @@ struct SyncAndStorageScreen: View {
     )
 
     var body: some View {
-        @Bindable var appState = appState
-
         SyncAndStorageScreenContent(
             autoDeletePeriod: Binding(
                 get: { settingsState.autoDeletePeriod },
@@ -35,7 +33,6 @@ struct SyncAndStorageScreen: View {
         )
         .navigationTitle(Text(feedFlowStrings.settingsSyncAndStorage))
         .navigationBarTitleDisplayMode(.inline)
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in vmStoreOwner.instance.state {
                 self.settingsState = state

@@ -71,8 +71,6 @@ struct HomeScreen: View {
     var onSidebarSelectionChanged: ((FeedFilter) -> Void)?
 
     var body: some View {
-        @Bindable var appState = appState
-
         HomeContent(
             loadingState: loadingState,
             feedState: feedState,
@@ -159,7 +157,6 @@ struct HomeScreen: View {
         .refreshable { [homeViewModel] in
             homeViewModel.refreshCurrentFilter()
         }
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await request in readerModeViewModel.articleRevealState {
                 articleReveal = request

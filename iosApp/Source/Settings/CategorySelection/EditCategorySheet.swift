@@ -146,6 +146,7 @@ struct EditCategorySheet: View {
                         onAddCategory(CategoryName(name: categoryName))
                     }
                 )
+                .snackbarPresentationSurface()
             }
         )
         .confirmationDialog(
@@ -174,17 +175,20 @@ struct EditCategorySheet: View {
                 set: { if !$0 { categoryToEdit = nil } }
             )
         ) {
-            if let category = categoryToEdit {
-                EditCategoryNameSheet(
-                    categoryId: category.id,
-                    categoryName: category.name ?? "",
-                    validateCategoryName: validateCategoryName,
-                    onConfirm: { newName in
-                        onEditCategory(category.id, CategoryName(name: newName))
-                        categoryToEdit = nil
-                    }
-                )
+            Group {
+                if let category = categoryToEdit {
+                    EditCategoryNameSheet(
+                        categoryId: category.id,
+                        categoryName: category.name ?? "",
+                        validateCategoryName: validateCategoryName,
+                        onConfirm: { newName in
+                            onEditCategory(category.id, CategoryName(name: newName))
+                            categoryToEdit = nil
+                        }
+                    )
+                }
             }
+            .snackbarPresentationSurface()
         }
     }
 }

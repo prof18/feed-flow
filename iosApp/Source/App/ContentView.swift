@@ -55,6 +55,15 @@ struct ContentView: View {
             readerModeViewModel: readerModeVmStoreOwner.instance,
             onOpenAudioEpisode: openAudioEpisode
         )
+        .overlay(alignment: .bottom) {
+            SnackbarOverlay(surface: nil)
+        }
+        .task(id: appState.snackbarQueue.first?.id) {
+            await presentSnackbar()
+        }
+        .task(id: appState.snackbarPresentation.isExiting ? appState.snackbarPresentation.messageID : nil) {
+            await removeDismissedSnackbar()
+        }
         .websiteVerificationExplanation(
             url: foregroundVerificationExplanationURL,
             identity: foregroundVerificationIdentity,
@@ -185,6 +194,41 @@ struct ContentView: View {
 }
 
 private extension ContentView {
+    private func presentSnackbar() async {
+        guard let message = appState.snackbarQueue.first else { return }
+        let presentation = appState.snackbarPresentation
+        let didShow = withAnimation { presentation.show(message.id) }
+        if didShow {
+            AccessibilityNotification.Announcement(message.title).post()
+        }
+        guard presentation.messageID == message.id,
+              !presentation.isExiting,
+              let deadline = presentation.deadline
+        else { return }
+
+        guard (try? await ContinuousClock().sleep(until: deadline)) != nil,
+              !Task.isCancelled
+        else { return }
+        withAnimation {
+            _ = presentation.beginDismissal(message.id)
+        }
+    }
+
+    private func removeDismissedSnackbar() async {
+        let presentation = appState.snackbarPresentation
+        guard presentation.isExiting,
+              let id = presentation.messageID,
+              let deadline = presentation.deadline
+        else { return }
+
+        guard (try? await ContinuousClock().sleep(until: deadline)) != nil,
+              !Task.isCancelled,
+              appState.snackbarQueue.first?.id == id,
+              presentation.completeDismissal(id)
+        else { return }
+        appState.snackbarQueue.removeFirst()
+    }
+
     private func updateForegroundVerificationExplanation() {
         guard isAppForeground else { return }
         guard isWebsiteVerificationAvailable,

@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-public struct ReaderView<BottomAccessory: View>: View {
+public struct ReaderView<BottomAccessory: View, TextSettingsModifier: ViewModifier>: View {
     @Binding var readerStatus: ReaderStatus
     var options: ReaderViewOptions
     var themeColors: ReaderThemeColors
@@ -22,6 +22,7 @@ public struct ReaderView<BottomAccessory: View>: View {
     var openInBrowser: (URL) -> Void
     var bottomAccessory: BottomAccessory
     var isBottomAccessoryVisible: Bool
+    var textSettingsModifier: TextSettingsModifier
 
     @State private var webContent: WebContent?
     @State private var topContentInset: CGFloat = 0
@@ -65,6 +66,7 @@ public struct ReaderView<BottomAccessory: View>: View {
         showFontSizeMenu: Binding<Bool>,
         openInBrowser: @escaping (URL) -> Void,
         isBottomAccessoryVisible: Bool = true,
+        textSettingsModifier: TextSettingsModifier = EmptyModifier(),
         @ViewBuilder bottomAccessory: () -> BottomAccessory
     ) {
         _readerStatus = readerStatus
@@ -87,6 +89,7 @@ public struct ReaderView<BottomAccessory: View>: View {
         self.openInBrowser = openInBrowser
         self.bottomAccessory = bottomAccessory()
         self.isBottomAccessoryVisible = isBottomAccessoryVisible
+        self.textSettingsModifier = textSettingsModifier
     }
 
     public var body: some View {
@@ -149,6 +152,7 @@ public struct ReaderView<BottomAccessory: View>: View {
                 }
                 .sheet(isPresented: $showFontSizeMenu) {
                     fontSizeSheet
+                        .modifier(textSettingsModifier)
                         .presentationDetents([.medium, .large], selection: $textSettingsDetent)
                         .presentationBackground(Color(.secondarySystemBackground))
                 }
@@ -917,7 +921,7 @@ public struct ReaderView<BottomAccessory: View>: View {
     }
 }
 
-public extension ReaderView where BottomAccessory == EmptyView {
+public extension ReaderView where BottomAccessory == EmptyView, TextSettingsModifier == EmptyModifier {
     init(
         readerStatus: Binding<ReaderStatus>,
         options: ReaderViewOptions,

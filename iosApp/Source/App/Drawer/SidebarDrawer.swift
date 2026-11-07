@@ -209,6 +209,7 @@ struct SidebarDrawer: View {
             )
             .sheet(isPresented: $showFeedSuggestionsSheet) {
                 FeedSuggestionsScreen()
+                    .snackbarPresentationSurface()
             }
             .sheet(isPresented: $showChangeCategorySheet) {
                 EditCategorySheetForChangeCategory(
@@ -217,6 +218,7 @@ struct SidebarDrawer: View {
                         categoryVMStoreOwner.instance.saveCategory()
                     }
                 )
+                .snackbarPresentationSurface()
             }
             .task {
                 for await _ in categoryVMStoreOwner.instance.categoryChangedState {

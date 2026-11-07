@@ -2,8 +2,6 @@ import FeedFlowKit
 import SwiftUI
 
 struct FeedsAndAccountsScreen: View {
-    @Environment(AppState.self)
-    private var appState
     @Environment(BrowserSelector.self)
     private var browserSelector
 
@@ -11,8 +9,6 @@ struct FeedsAndAccountsScreen: View {
     let fetchFeeds: () -> Void
 
     var body: some View {
-        @Bindable var appState = appState
-
         Form {
             Section {
                 NavigationLink(destination: FeedSourceListScreen()
@@ -50,6 +46,5 @@ struct FeedsAndAccountsScreen: View {
         .background(Color.secondaryBackgroundColor)
         .navigationTitle(Text(feedFlowStrings.settingsFeedsAndAccounts))
         .navigationBarTitleDisplayMode(.inline)
-        .snackbar(messageQueue: $appState.snackbarQueue)
     }
 }

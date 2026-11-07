@@ -20,7 +20,7 @@ class AppState {
     }
 
     var snackbarQueue: Deque<SnackbarData> = Deque()
-    var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
+    let snackbarPresentation = SnackbarPresentation()
     var regularNavigationPath = NavigationPath()
     var colorScheme: ColorScheme? {
         get { appearance.colorScheme }

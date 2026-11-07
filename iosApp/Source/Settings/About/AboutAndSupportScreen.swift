@@ -22,8 +22,6 @@ struct AboutAndSupportScreen: View {
     )
 
     var body: some View {
-        @Bindable var appState = appState
-
         AboutAndSupportScreenContent(
             isCrashReportingEnabled: Binding(
                 get: { settingsState.isCrashReportingEnabled },
@@ -39,7 +37,6 @@ struct AboutAndSupportScreen: View {
         )
         .navigationTitle(Text(feedFlowStrings.settingsAboutAndSupport))
         .navigationBarTitleDisplayMode(.inline)
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in vmStoreOwner.instance.state {
                 self.settingsState = state

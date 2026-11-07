@@ -21,7 +21,6 @@ struct ReadingBehaviorScreen: View {
     )
 
     var body: some View {
-        @Bindable var appState = appState
         @Bindable var browserSelector = browserSelector
 
         ReadingBehaviorScreenContent(
@@ -53,7 +52,6 @@ struct ReadingBehaviorScreen: View {
         )
         .navigationTitle(Text(feedFlowStrings.settingsReadingBehavior))
         .navigationBarTitleDisplayMode(.inline)
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in vmStoreOwner.instance.state {
                 self.settingsState = state

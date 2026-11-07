@@ -4,9 +4,6 @@ import UIKit
 import UserNotifications
 
 struct NotificationsSettingsScreen: View {
-    @Environment(AppState.self)
-    private var appState
-
     @StateObject private var vmStoreOwner = VMStoreOwner<NotificationsViewModel>(
         Deps.shared.getNotificationsViewModel()
     )
@@ -20,8 +17,6 @@ struct NotificationsSettingsScreen: View {
     @State private var permissionStatus: UNAuthorizationStatus = .notDetermined
 
     var body: some View {
-        @Bindable var appState = appState
-
         NotificationsSettingsScreenContent(
             permissionStatus: permissionStatus,
             notificationSettingState: notificationSettingState,
@@ -47,7 +42,6 @@ struct NotificationsSettingsScreen: View {
         )
         .navigationTitle(Text(feedFlowStrings.settingsNotificationsTitle))
         .navigationBarTitleDisplayMode(.inline)
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             await refreshPermissionStatus()
         }

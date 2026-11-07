@@ -251,6 +251,7 @@ struct ReaderModeScreen: View {
                 openInBrowser(url: url)
             },
             isBottomAccessoryVisible: audioPlayback.episode != nil,
+            textSettingsModifier: SnackbarPresentationSurfaceModifier(),
             bottomAccessory: {
                 AudioPlayerAccessory(
                     openExternal: openAudioExternally,
@@ -271,12 +272,15 @@ struct ReaderModeScreen: View {
                 }
             )
         ) {
-            if let imageUrl = imageViewerUrl {
-                ReaderImageViewer(
-                    imageUrl: imageUrl,
-                    onClose: { imageViewerUrl = nil }
-                )
+            Group {
+                if let imageUrl = imageViewerUrl {
+                    ReaderImageViewer(
+                        imageUrl: imageUrl,
+                        onClose: { imageViewerUrl = nil }
+                    )
+                }
             }
+            .snackbarPresentationSurface()
         }
         .alert(feedFlowStrings.audioOpenFailed, isPresented: $isShowingAudioOpenFailedAlert) {
             Button(feedFlowStrings.actionDone, role: .cancel) {}

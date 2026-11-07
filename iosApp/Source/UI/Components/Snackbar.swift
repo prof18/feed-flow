@@ -6,27 +6,25 @@
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-import Collections
 import SwiftUI
 
 struct Snackbar: View {
-    @Binding var messageQueue: Deque<SnackbarData>
+    let message: SnackbarData
+    let isExiting: Bool
+    let onDismiss: () -> Void
 
-    @State private var snackbarData: SnackbarData = .init()
-
-    @State private var showBanner = false
     @State private var dismissDirection: SnackbarDismissDirection = .vertical
     @State private var snackbarSize = CGSize.zero
 
     var body: some View {
         HStack(spacing: Spacing.medium) {
             VStack(alignment: .leading, spacing: Spacing.xsmall) {
-                Text(snackbarData.title)
+                Text(message.title)
                     .font(.system(.body, design: .rounded, weight: .semibold))
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
 
-                if let subtitle = snackbarData.subtitle {
+                if let subtitle = message.subtitle {
                     Text(subtitle)
                         .font(.system(.footnote, design: .rounded))
                         .foregroundColor(.white.opacity(0.8))
@@ -65,40 +63,15 @@ struct Snackbar: View {
                     let horizontalSwipe = abs(value.translation.width) > horizontalDismissThreshold &&
                         abs(value.translation.width) > abs(value.translation.height)
 
-                    if horizontalSwipe {
+                    if horizontalSwipe, !isExiting {
                         let direction: CGFloat = value.translation.width >= 0 ? 1 : -1
-                        if let id = messageQueue.first?.id {
-                            Task {
-                                await dismissCurrent(
-                                    id: id,
-                                    direction: .horizontal(direction: direction)
-                                )
-                            }
+                        withAnimation {
+                            dismissDirection = .horizontal(direction: direction)
+                            onDismiss()
                         }
                     }
                 }
         )
-        .task(id: messageQueue.first?.id) {
-            guard let data = messageQueue.first else {
-                showBanner = false
-                return
-            }
-
-            dismissDirection = .vertical
-            snackbarData = data
-            withAnimation {
-                showBanner = true
-            }
-            AccessibilityNotification.Announcement(data.title).post()
-
-            do {
-                try await Task.sleep(for: .seconds(5))
-            } catch {
-                return
-            }
-
-            await dismissCurrent(id: data.id, direction: .vertical)
-        }
         .onGeometryChange(for: CGSize.self) { proxy in
             proxy.size
         } action: { newSize in
@@ -108,9 +81,12 @@ struct Snackbar: View {
         }
         .padding(.bottom, Spacing.regular)
         .zIndex(100)
-        .opacity(showBanner ? 1 : 0)
-        .accessibilityHidden(!showBanner)
-        .offset(showBanner ? .zero : hiddenOffset)
+        .opacity(isExiting ? 0 : 1)
+        .allowsHitTesting(!isExiting)
+        .accessibilityElement(children: .combine)
+        .accessibilityHidden(isExiting)
+        .accessibilityIdentifier(SnackbarAccessibilityIdentifiers.banner)
+        .offset(isExiting ? hiddenOffset : .zero)
         .padding(.horizontal, Spacing.medium)
     }
 
@@ -120,26 +96,6 @@ struct Snackbar: View {
             return CGSize(width: direction * (snackbarSize.width + Spacing.medium), height: 0)
         case .vertical:
             return CGSize(width: 0, height: snackbarSize.height + Spacing.regular)
-        }
-    }
-
-    @MainActor
-    private func dismissCurrent(id: UUID, direction: SnackbarDismissDirection) async {
-        guard messageQueue.first?.id == id else { return }
-
-        dismissDirection = direction
-        withAnimation {
-            showBanner = false
-        }
-
-        do {
-            try await Task.sleep(for: .milliseconds(300))
-        } catch {
-            return
-        }
-
-        if messageQueue.first?.id == id {
-            messageQueue.removeFirst()
         }
     }
 }

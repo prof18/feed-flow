@@ -24,8 +24,6 @@ struct FreshRssSyncScreen: View {
     let onAccountLinked: (() -> Void)?
 
     var body: some View {
-        @Bindable var appState = appState
-
         FreshRssSyncContent(
             uiState: uiState,
             isLoginLoading: isLoginLoading,
@@ -41,7 +39,6 @@ struct FreshRssSyncScreen: View {
                 )
             }
         )
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .loadingDialog(isLoading: isLoginLoading)
         .task {
             for await state in vmStoreOwner.instance.uiState {

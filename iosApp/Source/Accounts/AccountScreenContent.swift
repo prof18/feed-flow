@@ -156,6 +156,7 @@ struct AccountsScreenContent: View {
             AddAccountScreen(
                 supportedAccounts: supportedAccounts
             )
+            .snackbarPresentationSurface()
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

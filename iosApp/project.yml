@@ -537,6 +537,7 @@ targets:
     platform: iOS
     sources:
       - path: Tests/AppLogic
+      - path: Source/App/Model/SnackbarPresentation.swift
       - path: Source/Home/HomeListIndexHolder.swift
       - path: Source/Settings/Components/BrowserURLBuilder.swift
       - path: Source/Utils/FeedConditionalGetURLProtocol.swift

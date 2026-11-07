@@ -541,4 +541,7 @@
     <string name="blocked_word_removed">Parola bloccata rimossa.</string>
     <string name="desktop_expand_feed_category">Espandi %s</string>
     <string name="desktop_collapse_feed_category">Comprimi %s</string>
+    <string name="hide_youtube_shorts_edit_fallback">Impossibile nascondere gli Shorts di questo canale. Le altre modifiche sono state salvate.</string>
+    <string name="database_save_error">Impossibile salvare le modifiche. Riprova tra un attimo - codice dell\'errore: %s</string>
+    <string name="database_recovered_from_corruption">I tuoi dati locali erano corrotti, perciò FeedFlow si è avviato con un nuovo database. Una copia del vecchio database è stata conservata nella cartella dei dati di FeedFlow.</string>
 </resources>

@@ -118,9 +118,18 @@ internal fun settingsSearchIndex(
         syncStorage,
         null,
         strings.settingsRefreshFeedsOnLaunch,
-        strings.settingsSyncPeriod,
+        strings.settingsDesktopRefreshWhileOpen,
         strings.settingsAutoDelete,
         strings.importExportLabel,
+    )
+    // The mobile apps call the same setting "Background sync"; keep that wording searchable on desktop.
+    add(
+        SettingsSearchEntry(
+            DesktopSettingsCategory.SYNC_STORAGE,
+            strings.settingsSyncPeriod,
+            syncStorage,
+            targetTitle = strings.settingsDesktopRefreshWhileOpen,
+        ),
     )
     rows(
         DesktopSettingsCategory.SYNC_STORAGE,

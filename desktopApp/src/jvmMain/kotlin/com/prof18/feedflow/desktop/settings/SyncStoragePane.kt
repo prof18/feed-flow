@@ -34,7 +34,8 @@ internal fun SyncStoragePane(
                 onCheckedChange = onRefreshFeedsOnLaunchToggled,
             )
             SettingsChoice(
-                title = strings.settingsSyncPeriod,
+                title = strings.settingsDesktopRefreshWhileOpen,
+                supportingText = strings.settingsDesktopRefreshWhileOpenDescription,
                 selected = syncPeriod,
                 choices = persistentListOf(
                     SyncPeriod.NEVER to strings.settingsSyncPeriodNever,

@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="{{ $desc }}">
 <meta name="twitter:image"       content="{{ .Site.BaseURL }}images/og-default.webp">
 {{- with .Site.Params.twitterHandle }}
-<meta name="twitter:site" content="{{ . }}">
+<meta name="twitter:creator" content="{{ . }}">
 {{ end -}}
 
 {{- /* Favicon */}}
@@ -46,7 +46,7 @@
 {{- /* Fonts — Google Fonts with preconnect */}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,600;1,9..144,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
 {{- /* CSS */}}
 {{- $css := resources.Get "css/app.css" | minify | fingerprint -}}

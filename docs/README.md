@@ -15,5 +15,6 @@ Architecture, implementation, and testing guides for FeedFlow:
 - [Adaptive iOS layout](IOS_ADAPTIVE_LAYOUT.md): Duo folding, window navigation, native toolbars, and validation limits.
 - [Cloudflare recovery](CLOUDFLARE_FEED_RECOVERY.md): verification flow, saved website sessions, reader integration, and regression checks.
 - [Sync error codes](error-codes-sync.md): synchronization error-code reference.
+- [Glossary](GLOSSARY.md): user-facing terms, where they live on Weblate and in `i18n/glossary/`, and how to change them.
 
 Agent workflows remain in [`.ai/skills`](../.ai/skills). Build and contribution instructions are in [AGENTS.md](../AGENTS.md).

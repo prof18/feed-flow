@@ -321,6 +321,7 @@ When creating commits:
 - Store screenshots for **all** platforms (Android phone/tablet, iPhone, iPad, macOS, Windows) are rendered from repo code by `tools/screenshots/` (`node render.mjs --all`, then `node verify.mjs`), not Figma. Use the repo-local `render-store-screenshots` skill when translations change; it enforces the spacing/padding floors.
 - Use the repo-local `translation-release-audit` skill for weekly or release checks of app translations, store copy, generated Play listing files, live store metadata, and screenshot copy/assets. Do not upload store metadata/screenshots unless the user explicitly asks.
 - Don't hardcode user-visible strings; put them in the i18n resources.
+- Use the terms in `docs/GLOSSARY.md` (feeds, offline copy, Back up now, Uncategorized…). The term list itself is the Weblate glossary, mirrored in `i18n/glossary/*.tbx`.
 - Add only the English strings and don't translate other languages yourself: professional translators handle them later.
 - Write English UI copy without a first-person "we": address the user or describe the state ("Couldn't connect to iCloud", not "We are unable to connect"). Match the tone of the existing strings.
 

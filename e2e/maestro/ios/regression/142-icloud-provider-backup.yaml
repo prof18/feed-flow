@@ -24,7 +24,7 @@ appId: com.prof18.feedflow.dev
     id: account_connected_message
 - assertVisible:
     id: account_last_sync_label
-- tapOn: "Backup"
+- tapOn: "Back up now"
 - extendedWaitUntil:
     visible:
       id: account_last_sync_label

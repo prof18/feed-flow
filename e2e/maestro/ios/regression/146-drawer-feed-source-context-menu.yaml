@@ -34,9 +34,9 @@ appId: com.prof18.feedflow.dev
 - assertVisible: "Pin"
 - assertVisible: "Delete"
 
-# Pin moves the feed into the Pinned Feed Sources section
+# Pin moves the feed into the Pinned feeds section
 - tapOn: "Pin"
-- assertVisible: "Pinned Feed Sources"
+- assertVisible: "Pinned feeds"
 - assertVisible:
     id: drawer_feed_source_e2e_feed_android_weekly
 
@@ -47,7 +47,7 @@ appId: com.prof18.feedflow.dev
 - tapOn: "Unpin"
 
 # Confirm the menu now shows Pin again. The content-rich seed includes Ars
-# Technica as a pre-pinned source, so the Pinned Feed Sources header stays.
+# Technica as a pre-pinned source, so the Pinned feeds header stays.
 - longPressOn:
     id: drawer_feed_source_e2e_feed_android_weekly
 - assertVisible: "Pin"

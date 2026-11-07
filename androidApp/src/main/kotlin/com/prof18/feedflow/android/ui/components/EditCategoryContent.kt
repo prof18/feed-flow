@@ -128,7 +128,7 @@ fun AddCategoryButton(
         )
         Spacer(modifier = Modifier.width(Spacing.small))
         Text(
-            text = LocalFeedFlowStrings.current.addFeedCategoryTitle,
+            text = LocalFeedFlowStrings.current.newCategoryButton,
             fontWeight = FontWeight.Medium,
         )
     }

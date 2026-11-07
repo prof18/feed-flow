@@ -40,7 +40,7 @@ internal fun AddCategoryDialog(
             onDismissRequest = onDismiss,
             title = {
                 Text(
-                    text = LocalFeedFlowStrings.current.addFeedCategoryTitle,
+                    text = LocalFeedFlowStrings.current.newCategoryButton,
                     style = MaterialTheme.typography.headlineSmall,
                 )
             },

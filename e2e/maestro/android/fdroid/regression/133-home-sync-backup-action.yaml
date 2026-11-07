@@ -13,7 +13,7 @@ appId: com.prof18.feedflow.debug
     text: "E2E Newest Unread Article.*"
 - tapOn:
     id: home_more_menu_button
-- assertNotVisible: "Upload changes"
+- assertNotVisible: "Back up now"
 - assertVisible: "Mark all as read"
 - back
 - assertVisible:
@@ -31,7 +31,7 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "Nothing else to read here!"
 - tapOn:
     id: home_more_menu_button
-- assertNotVisible: "Upload changes"
+- assertNotVisible: "Back up now"
 - assertVisible: "Mark all as read"
 - back
 - tapOn: "Refresh feeds"

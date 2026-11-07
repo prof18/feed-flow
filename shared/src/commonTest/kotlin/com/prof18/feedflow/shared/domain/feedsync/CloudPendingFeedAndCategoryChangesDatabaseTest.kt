@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.feedsync
 
 import app.cash.sqldelight.db.SqlDriver
+import com.prof18.feedflow.core.model.CloudFeedAndCategorySnapshot
 import com.prof18.feedflow.core.model.CloudFeedOrCategoryEntity
 import com.prof18.feedflow.core.model.CloudFeedOrCategoryField
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -230,6 +231,26 @@ class CloudPendingFeedAndCategoryChangesDatabaseTest : KoinTestBase() {
         }
         assertTrue(database.getFeedSourceCategories().isEmpty())
         assertTrue(database.getCloudPendingFeedAndCategoryChanges(SESSION_ID).isEmpty())
+    }
+
+    @Test
+    fun `local rename to a name another device created merges into that category`() = runTest(testDispatcher) {
+        val local = category("local", "Old")
+        database.insertCategories(listOf(local))
+        database.insertFeedSource(listOf(source(category = local)))
+        database.ensureCloudSyncState(SESSION_ID)
+        database.updateCategoryName("local", "Tech", SESSION_ID)
+
+        database.applyCloudFeedAndCategoryChanges(
+            snapshot = CloudFeedAndCategorySnapshot(
+                sources = listOf(source(category = local)),
+                categories = listOf(local, category("remote", "Tech")),
+            ),
+            sessionId = SESSION_ID,
+        )
+
+        assertEquals(listOf(category("remote", "Tech")), database.getFeedSourceCategories())
+        assertEquals("remote", database.getFeedSources().single().category?.id)
     }
 
     private fun createAbortTrigger() {

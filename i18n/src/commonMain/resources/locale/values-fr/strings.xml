@@ -590,4 +590,7 @@
     <string name="account_disconnect_backup_message">FeedFlow cessera d’effectuer des sauvegardes vers ce compte. Vos flux et articles resteront sur cet appareil, et la sauvegarde existante ne sera pas supprimée.</string>
     <string name="desktop_settings_search_placeholder">Paramètres de recherche</string>
     <string name="desktop_settings_search_no_results">Aucun paramètre correspondant</string>
+    <string name="article_unread_state">Non lu</string>
+    <string name="article_unread_bookmarked_state">Non lu, en favori</string>
+    <string name="unread_count_accessibility">%s non lu</string>
 </resources>

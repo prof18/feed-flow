@@ -6,6 +6,7 @@
 	<string>$(GID_CLIENT_ID)</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
+		<string>com.prof18.feedflow.articlerefresh</string>
 		<string>com.prof18.feedflow.articlesync</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>

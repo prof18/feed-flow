@@ -45,7 +45,9 @@ struct FeedFlowApp: App {
             }
         }
 
-        registerBackgroundTask()
+        for identifier in BackgroundRefreshScheduler.taskIdentifiers {
+            registerBackgroundTask(identifier: identifier)
+        }
     }
 
     // A background launch never reports a .background scene phase, so the live queries are
@@ -57,12 +59,12 @@ struct FeedFlowApp: App {
         }
     }
 
-    private func registerBackgroundTask() {
+    private func registerBackgroundTask(identifier: String) {
         BGTaskScheduler.shared.register(
-            forTaskWithIdentifier: "com.prof18.feedflow.articlesync",
+            forTaskWithIdentifier: identifier,
             using: nil
         ) { task in
-            scheduleAppRefresh()
+            BackgroundRefreshScheduler.schedule()
 
             let completionLock = NSLock()
             var didComplete = false
@@ -82,10 +84,18 @@ struct FeedFlowApp: App {
 
                 // Phase 1: Fetch feeds (expensive, may be interrupted)
                 do {
-                    try await repo.fetchFeeds(forceRefresh: false)
+                    if task is BGAppRefreshTask {
+                        try await repo.refreshFeedsQuickly(
+                            timeBudgetMillis: BackgroundRefreshScheduler.refreshTimeBudgetMillis
+                        )
+                    } else {
+                        try await repo.fetchFeeds(forceRefresh: false)
+                    }
                     fetchSucceeded = true
                 } catch is CancellationError {
-                    // System cancelled — items carry over to next run
+                    // System cancelled — items carry over to next run. The feeds fetched before the
+                    // cutoff are already saved, so the widget can show them now.
+                    WidgetCenter.shared.reloadAllTimelines()
                     finish(success: false)
                     return
                 } catch {
@@ -190,7 +200,7 @@ struct FeedFlowApp: App {
                         // Stop prefetch DB writes before suspension: a SQLite lock held on the
                         // app-group container while suspended gets the app killed (0xdead10cc).
                         Deps.shared.getContentPrefetchManager().pauseFetching()
-                        scheduleAppRefresh()
+                        BackgroundRefreshScheduler.schedule()
                         WidgetCenter.shared.reloadAllTimelines()
                     default:
                         break
@@ -299,14 +309,6 @@ private func readDevelopmentOPMLFile() -> String? {
     }
     let fileURL = documents.appendingPathComponent("e2e-restore/development.opml")
     return try? String(contentsOf: fileURL, encoding: .utf8)
-}
-
-func scheduleAppRefresh() {
-    let request = BGProcessingTaskRequest(identifier: "com.prof18.feedflow.articlesync")
-    // Schedule for 2 hours from now
-    request.earliestBeginDate = .now.addingTimeInterval(2 * 3_600)
-    request.requiresNetworkConnectivity = true
-    try? BGTaskScheduler.shared.submit(request)
 }
 
 func setupTelemetry() {

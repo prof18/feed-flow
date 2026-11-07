@@ -30,6 +30,9 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TestTimeSource
+import kotlin.time.TimeSource
 
 class SerialFeedFetcherRepositoryTest : KoinTestBase() {
 
@@ -48,7 +51,9 @@ class SerialFeedFetcherRepositoryTest : KoinTestBase() {
         }
     }
 
-    private fun repository(): SerialFeedFetcherRepository = SerialFeedFetcherRepository(
+    private fun repository(
+        timeSource: TimeSource = TimeSource.Monotonic,
+    ): SerialFeedFetcherRepository = SerialFeedFetcherRepository(
         dispatcherProvider = getKoin().get(),
         feedStateRepository = getKoin().get(),
         gReaderRepository = getKoin().get(),
@@ -61,6 +66,7 @@ class SerialFeedFetcherRepositoryTest : KoinTestBase() {
         feedHttpCacheStore = feedHttpCacheStore,
         feedAttempt = getKoin().get(),
         recoveryRepository = getKoin().get(),
+        timeSource = timeSource,
     )
 
     @Test
@@ -254,6 +260,37 @@ class SerialFeedFetcherRepositoryTest : KoinTestBase() {
         repository().fetchFeeds(forceRefresh = true)
 
         assertEquals(listOf(second.url), fakeRssParser.requestedUrls)
+    }
+
+    @Test
+    fun `quick refresh stops starting new sources once its time budget is used up`() = runTest(testDispatcher) {
+        val sources = listOf("a", "b", "c").map { name ->
+            FeedSourceGenerator.feedSource(id = name, title = name, url = "https://example.com/$name.xml")
+        }
+        databaseHelper.insertFeedSource(sources.map { it.toParsedFeedSource() })
+        val timeSource = TestTimeSource()
+        fakeRssParser.onRequest = { timeSource += 6.seconds }
+
+        repository(timeSource).refreshFeedsQuickly(timeBudgetMillis = 10.seconds.inWholeMilliseconds)
+
+        assertEquals(sources.take(2).map { it.url }, fakeRssParser.requestedUrls)
+        assertEquals(FinishedFeedUpdateStatus, getKoin().get<FeedStateRepository>().updateState.value)
+    }
+
+    @Test
+    fun `sources skipped by the quick refresh budget are fetched by the next refresh`() = runTest(testDispatcher) {
+        val sources = listOf("a", "b").map { name ->
+            FeedSourceGenerator.feedSource(id = name, title = name, url = "https://example.com/$name.xml")
+        }
+        databaseHelper.insertFeedSource(sources.map { it.toParsedFeedSource() })
+        val timeSource = TestTimeSource()
+        fakeRssParser.onRequest = { timeSource += 6.seconds }
+        repository(timeSource).refreshFeedsQuickly(timeBudgetMillis = 5.seconds.inWholeMilliseconds)
+        fakeRssParser.requestedUrls.clear()
+
+        repository(timeSource).fetchFeeds()
+
+        assertEquals(listOf(sources[1].url), fakeRssParser.requestedUrls)
     }
 
     private class FakeRssParser : RssParserWrapper {

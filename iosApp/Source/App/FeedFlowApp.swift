@@ -153,6 +153,17 @@ struct FeedFlowApp: App {
                 .environment(audioPlayback)
                 .toggleStyle(BlueToggleStyle())
                 .onOpenURL { url in
+                    if let feedUrl = AddFeedLinkParser.shared.parse(link: url.absoluteString) {
+                        appState.pendingAddFeedUrl = feedUrl
+                        appState.addFeedLinkRevision += 1
+                        return
+                    }
+                    let scheme = url.scheme?.lowercased()
+                    let isAddFeedShaped = (scheme == "feedflow" && url.host?.lowercased() == "add") ||
+                        scheme == "feed" || scheme == "feeds"
+                    if isAddFeedShaped {
+                        return
+                    }
                     if url.scheme == "feedflow" {
                         handleFeedFlowURL(url, appState: appState)
                     } else {

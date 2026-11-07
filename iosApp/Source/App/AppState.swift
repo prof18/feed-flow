@@ -31,6 +31,8 @@ class AppState {
     }
 
     var redrawAfterFeedSourceEdit = false
+    var pendingAddFeedUrl: String?
+    var addFeedLinkRevision = 0
     var pendingBrowserURL: URL?
     var pendingExternalURL: URL?
 

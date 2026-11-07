@@ -72,6 +72,8 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>feedflow</string>
+				<string>feed</string>
+				<string>feeds</string>
 			</array>
 		</dict>
 	</array>

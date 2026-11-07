@@ -262,6 +262,9 @@ struct ReaderModeScreen: View {
         )
         .modifier(ReaderArticleReportHost(viewModel: viewModel, state: $reportState))
         .modifier(ReaderVerificationMessage(state: verification))
+        .onChange(of: appState.addFeedLinkRevision) {
+            imageViewerUrl = nil
+        }
         .fullScreenCover(
             isPresented: Binding(
                 get: { imageViewerUrl != nil },

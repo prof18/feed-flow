@@ -139,6 +139,10 @@ struct HomeContent: View {
         .onChange(of: appState.redrawAfterFeedSourceEdit) {
             onRefresh()
         }
+        .onChange(of: appState.addFeedLinkRevision) {
+            sheetToShow = nil
+            showViewOptionsSheet = false
+        }
         .sheet(item: $sheetToShow) { item in
             sheetContent(item)
                 .snackbarPresentationSurface()

@@ -30,8 +30,9 @@ struct AddFeedScreen: View {
 
     var showCloseButton: Bool
 
-    init(showCloseButton: Bool = false) {
+    init(showCloseButton: Bool = false, initialUrl: String? = nil) {
         self.showCloseButton = showCloseButton
+        _feedURL = State(initialValue: initialUrl ?? "")
     }
 
     var body: some View {

@@ -211,6 +211,11 @@ struct SidebarDrawer: View {
                 FeedSuggestionsScreen()
                     .snackbarPresentationSurface()
             }
+            .onChange(of: appState.addFeedLinkRevision) {
+                showFeedSuggestionsSheet = false
+                showChangeCategorySheet = false
+                categoryToEdit = nil
+            }
             .sheet(isPresented: $showChangeCategorySheet) {
                 EditCategorySheetForChangeCategory(
                     viewModel: categoryVMStoreOwner.instance,

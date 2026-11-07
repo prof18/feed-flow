@@ -1,0 +1,60 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+# The app restores the drawer if a previous run left it open.
+- tapOn:
+    id: drawer_timeline
+    optional: true
+- assertVisible: "Nothing else to read here!"
+- openLink: feedflow://add?url=https%3A%2F%2Fe2e.feedflow.local%2Ffeed.xml
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: add_feed_url_input
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://e2e.feedflow.local/feed.xml"
+- assertVisible:
+    id: add_feed_save_button
+    enabled: true
+- swipe:
+    direction: DOWN
+    from:
+      id: add_feed_url_input
+- assertVisible: "Nothing else to read here!"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- assertVisible:
+    id: settings_feeds_accounts
+- openLink: feed://e2e.feedflow.local/feed.xml
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://e2e.feedflow.local/feed.xml"
+- swipe:
+    direction: DOWN
+    from:
+      id: add_feed_url_input
+# Settings was reached through the drawer, which is still showing.
+- tapOn:
+    id: drawer_timeline
+    optional: true
+- assertVisible: "Nothing else to read here!"
+- openLink: feedflow://add?url=javascript%3Aalert(1)
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible: "Nothing else to read here!"
+- assertNotVisible:
+    id: add_feed_url_input

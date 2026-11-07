@@ -11,6 +11,9 @@ import Foundation
 import SwiftUI
 
 struct AccountsScreenContent: View {
+    @Environment(AppState.self)
+    private var appState
+
     @State private var showAddAccountSheet = false
 
     let syncAccount: SyncAccounts
@@ -151,6 +154,9 @@ struct AccountsScreenContent: View {
             }
             .disabled(syncAccount != SyncAccounts.local)
             .accessibilityIdentifier(AccountAccessibilityIdentifiers.addAccount)
+        }
+        .onChange(of: appState.addFeedLinkRevision) {
+            showAddAccountSheet = false
         }
         .sheet(isPresented: $showAddAccountSheet) {
             AddAccountScreen(

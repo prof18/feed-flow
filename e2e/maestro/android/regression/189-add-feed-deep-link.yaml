@@ -1,0 +1,39 @@
+appId: com.prof18.feedflow.debug
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=empty
+- assertVisible: "E2E seed complete"
+- tapOn:
+    id: e2e_open_app
+- assertVisible: "Nothing else to read here!"
+- openLink: feedflow://add?url=https%3A%2F%2Fe2e.feedflow.local%2Ffeed.xml
+- assertVisible:
+    id: add_feed_url_input
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://e2e.feedflow.local/feed.xml"
+- assertVisible:
+    id: add_feed_save_button
+    enabled: true
+- back
+- openLink: feed://e2e.feedflow.local/feed.xml
+# Other feed apps (Pocket Casts) also claim feed://, so Android may ask which app opens it.
+- runFlow:
+    when:
+      visible: "Open with"
+    commands:
+      - tapOn: "FeedFlow"
+      - tapOn:
+          text: "Just once"
+          optional: true
+- assertVisible:
+    id: add_feed_url_input
+- assertVisible:
+    id: add_feed_url_input
+    text: "https://e2e.feedflow.local/feed.xml"
+- back
+- assertVisible: "Nothing else to read here!"
+- openLink: feedflow://add?url=javascript%3Aalert(1)
+- assertVisible: "Nothing else to read here!"
+- assertNotVisible:
+    id: add_feed_url_input

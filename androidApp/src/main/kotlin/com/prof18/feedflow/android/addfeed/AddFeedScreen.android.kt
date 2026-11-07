@@ -37,9 +37,10 @@ import org.koin.compose.viewmodel.koinViewModel
 fun AddFeedScreen(
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
+    initialUrl: String? = null,
 ) {
     val viewModel = koinViewModel<AddFeedViewModel>()
-    var feedUrl by remember { mutableStateOf("") }
+    var feedUrl by remember(initialUrl) { mutableStateOf(initialUrl.orEmpty()) }
     var showError by remember { mutableStateOf(false) }
     val showLoading by viewModel.isAddingFeedState.collectAsStateWithLifecycle()
     var errorMessage by remember { mutableStateOf("") }

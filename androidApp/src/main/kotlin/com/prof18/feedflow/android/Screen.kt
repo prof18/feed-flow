@@ -42,7 +42,7 @@ data object Appearance : NavKey
 data object AboutAndSupport : NavKey
 
 @Serializable
-data object AddFeed : NavKey
+data class AddFeed(val initialUrl: String? = null, val requestId: Long = 0) : NavKey
 
 @Serializable
 data object FeedList : NavKey

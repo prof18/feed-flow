@@ -2,6 +2,7 @@ package com.prof18.feedflow.android
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -52,6 +53,7 @@ import com.prof18.feedflow.android.accounts.feedbin.FeedbinSyncScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.accounts.miniflux.MinifluxSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
+import com.prof18.feedflow.android.addfeed.openAddFeedLink
 import com.prof18.feedflow.android.audio.AndroidAudioPlayer
 import com.prof18.feedflow.android.audio.AudioEpisode
 import com.prof18.feedflow.android.audio.AudioPlaybackState
@@ -90,6 +92,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveArticleOpenMode
+import com.prof18.feedflow.core.utils.AddFeedLinkParser
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
@@ -118,7 +121,9 @@ class MainActivity : BaseThemeActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        currentIntent = intent
+        val isRestoringAddFeedLink = savedInstanceState != null &&
+            AddFeedLinkParser.parse(intent.dataString.orEmpty()) != null
+        currentIntent = if (isRestoringAddFeedLink) null else intent
         homeViewModel.onAppLaunch()
 
         if (BuildConfig.FLAVOR == "googlePlay") {
@@ -184,32 +189,7 @@ class MainActivity : BaseThemeActivity() {
 
         SideEffect(currentIntent) {
             currentIntent?.let { intent ->
-                if (intent.action == Intent.ACTION_VIEW && intent.data != null) {
-                    val uri = intent.data
-                    if (uri?.scheme == "feedflow") {
-                        when (uri.host) {
-                            "feed" -> {
-                                val feedId = uri.pathSegments.firstOrNull()
-                                if (feedId != null) {
-                                    readerModeViewModel.setLoading()
-                                    deeplinkViewModel.getReaderModeUrl(FeedItemId(feedId))
-                                }
-                            }
-                            "feedsourcefilter" -> {
-                                val feedSourceId = uri.pathSegments.firstOrNull()
-                                if (feedSourceId != null) {
-                                    homeViewModel.updateFeedSourceFilter(feedSourceId)
-                                }
-                            }
-                            "category" -> {
-                                val categoryId = uri.pathSegments.firstOrNull()
-                                if (categoryId != null) {
-                                    homeViewModel.updateCategoryFilter(categoryId)
-                                }
-                            }
-                        }
-                    }
-                }
+                handleIncomingIntent(intent, backStack, readerModeViewModel, deeplinkViewModel)
             }
         }
 
@@ -276,6 +256,39 @@ class MainActivity : BaseThemeActivity() {
             }
         }
         FeedVerificationScreen()
+    }
+
+    private fun handleIncomingIntent(
+        intent: Intent,
+        backStack: NavBackStack<NavKey>,
+        readerModeViewModel: ReaderModeViewModel,
+        deeplinkViewModel: DeeplinkFeedViewModel,
+    ) {
+        if (openAddFeedLink(intent, backStack)) return
+        if (intent.action != Intent.ACTION_VIEW) return
+        val uri = intent.data
+        if (uri?.scheme != "feedflow") return
+        when (uri.host) {
+            "feed" -> {
+                val feedId = uri.pathSegments.firstOrNull()
+                if (feedId != null) {
+                    readerModeViewModel.setLoading()
+                    deeplinkViewModel.getReaderModeUrl(FeedItemId(feedId))
+                }
+            }
+            "feedsourcefilter" -> {
+                val feedSourceId = uri.pathSegments.firstOrNull()
+                if (feedSourceId != null) {
+                    homeViewModel.updateFeedSourceFilter(feedSourceId)
+                }
+            }
+            "category" -> {
+                val categoryId = uri.pathSegments.firstOrNull()
+                if (categoryId != null) {
+                    homeViewModel.updateCategoryFilter(categoryId)
+                }
+            }
+        }
     }
 
     private fun shouldShowNowPlaying(state: AudioPlaybackState, backStack: NavBackStack<NavKey>): Boolean =
@@ -361,7 +374,7 @@ class MainActivity : BaseThemeActivity() {
                         articleReveal = articleReveal,
                         onArticleRevealed = readerModeViewModel::onArticleRevealed,
                         onSettingsButtonClicked = { backStack.add(Settings) },
-                        onAddFeedClick = { backStack.add(AddFeed) },
+                        onAddFeedClick = { backStack.add(AddFeed()) },
                         onImportExportClick = { backStack.add(ImportExport) },
                         navigateToReaderMode = { url ->
                             readerModeViewModel.loadReaderContent(url)
@@ -401,7 +414,7 @@ class MainActivity : BaseThemeActivity() {
                     FeedsAndAccountsScreen(
                         navigateBack = navigateBack,
                         onFeedListClick = { backStack.add(FeedList) },
-                        onAddFeedClick = { backStack.add(AddFeed) },
+                        onAddFeedClick = { backStack.add(AddFeed()) },
                         navigateToImportExport = { backStack.add(ImportExport) },
                         navigateToAccounts = { backStack.add(Accounts) },
                         navigateToNotifications = { backStack.add(Notifications) },
@@ -457,15 +470,16 @@ class MainActivity : BaseThemeActivity() {
                     )
                 }
 
-                entry<AddFeed> {
+                entry<AddFeed> { route ->
                     AddFeedScreen(
                         navigateBack = navigateBack,
+                        initialUrl = route.initialUrl,
                     )
                 }
 
                 entry<FeedList> {
                     FeedSourceListScreen(
-                        onAddFeedClick = { backStack.add(AddFeed) },
+                        onAddFeedClick = { backStack.add(AddFeed()) },
                         navigateBack = navigateBack,
                         onEditFeedClick = { feedSource ->
                             backStack.add(feedSource.toEditFeed())
@@ -675,4 +689,14 @@ class MainActivity : BaseThemeActivity() {
         readerModeViewModel.loadReaderContent(feedUrlInfo)
         if (backStack.lastOrNull() != ReaderMode) backStack.add(ReaderMode)
     }
+}
+
+/** Opens Add feed pre-filled when [intent] carries an add-feed link. Returns true when it did. */
+private fun openAddFeedLink(intent: Intent, backStack: NavBackStack<NavKey>): Boolean {
+    val addFeedUrl = intent.takeIf { it.action == Intent.ACTION_VIEW }
+        ?.dataString
+        ?.let(AddFeedLinkParser::parse)
+        ?: return false
+    backStack.openAddFeedLink(addFeedUrl, requestId = SystemClock.uptimeMillis())
+    return true
 }

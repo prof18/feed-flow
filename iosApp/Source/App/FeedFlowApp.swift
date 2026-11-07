@@ -66,15 +66,12 @@ struct FeedFlowApp: App {
         ) { task in
             BackgroundRefreshScheduler.schedule()
 
-            let completionLock = NSLock()
-            var didComplete = false
+            let completion = BackgroundTaskCompletion { success in
+                task.setTaskCompleted(success: success)
+            }
 
             func finish(success: Bool) {
-                completionLock.lock()
-                defer { completionLock.unlock() }
-                guard !didComplete else { return }
-                didComplete = true
-                task.setTaskCompleted(success: success)
+                completion.finish(success: success)
             }
 
             let backgroundTask = Task {
@@ -143,7 +140,7 @@ struct FeedFlowApp: App {
 
             task.expirationHandler = {
                 backgroundTask.cancel()
-                finish(success: false)
+                completion.finishAfterGracePeriod()
             }
         }
     }

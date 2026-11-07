@@ -538,6 +538,7 @@ targets:
     sources:
       - path: Tests/AppLogic
       - path: Source/App/BackgroundRefreshScheduler.swift
+      - path: Source/App/BackgroundTaskCompletion.swift
       - path: Source/App/Model/SnackbarPresentation.swift
       - path: Source/Home/HomeListIndexHolder.swift
       - path: Source/Settings/Components/BrowserURLBuilder.swift

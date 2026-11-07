@@ -313,7 +313,8 @@ When creating commits:
 - The cursor predicate must mirror the query's `ORDER BY` exactly, including SQLite NULL placement for nullable `pub_date`; invalidate the cursor only after a query succeeds.
 
 ### Internationalization
-- Main-to-`localization` sync uses rebase (`.github/workflows/sync-main-to-localization.yml`); resolve translation conflicts during the rebase rather than switching the workflow to merge commits.
+- Translations come from Weblate (project `feedflow`). Weblate tracks `main` through its GitHub App and delivers translations as one pull request it keeps updated and auto-merges with rebase; there is no `localization` branch. Every component is linked to `app-strings`, which owns the repository settings.
+- Each website FAQ entry is its own Weblate component, created by the Component discovery add-on on `app-strings` from `website/content/en/faq/NN-*.md`. Renaming an English FAQ file replaces its component. A language only gets a published FAQ if it is listed in `website/config.toml`.
 - String resources are located in `i18n/src/commonMain/resources/locale/values-[language]/`
 - Run .scripts/refresh-translations.sh after adding a new translation, to re-generate the kotlin code
 - Enabling a new app language takes more than the `values-[language]/` folder. Register it in the `feedFlowStrings` map in `i18n/src/commonMain/kotlin/com/prof18/feedflow/i18n/Locales.kt`, `CFBundleLocalizations` in `iosApp/Info.plist`, `knownRegions` in `iosApp/project.yml`, the macOS localizations in `desktopApp/build.gradle.kts` (`macExtraPlistKeys`), the Windows package languages in `.github/msix-resources-template.xml`, and `FeedFlowStringsLookupTest`. The MSIX list is the one most easily forgotten.

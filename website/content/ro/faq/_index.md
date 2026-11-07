@@ -1,12 +1,12 @@
 ---
-# titlu
-traductibil „Întrebări frecvente | FeedFlow”
-descriere: „Găsește răspunsuri la întrebările frecvente despre cititorul RSS FeedFlow — sincronizare, modul de citire, importare OPML și multe altele.”
-titlu: „Întrebări frecvente”
+# translatable
+title: "Întrebări frecvente | FeedFlow"
+description: "Găsește răspunsuri la întrebările frecvente despre cititorul RSS FeedFlow — sincronizare, modul de citire, importare OPML și multe altele."
+heading: "Întrebări frecvente"
 
-# nu se traduce
-tip: „faq”
-aspect: „listă”
+# do not translate
+type: "faq"
+layout: "list"
 ---
 
 Bine ai venit în secțiunea de întrebări frecvente a FeedFlow. Aici vei găsi

@@ -50,14 +50,19 @@ class SerialFeedFetcherRepository internal constructor(
     private val timeSource: TimeSource = TimeSource.Monotonic,
 ) {
     @Suppress("unused") // Used on iOS
+    @Throws(Exception::class)
     suspend fun getFeedSourceToNotify(): List<FeedSourceToNotify> =
         databaseHelper.getFeedSourceToNotify()
 
     @Suppress("unused") // Used on iOS
+    @Throws(Exception::class)
     suspend fun markItemsAsNotified() =
         databaseHelper.markFeedItemsAsNotified()
 
+    // Without @Throws, any exception other than a cancellation terminates the app on iOS instead of
+    // reaching the background task handler's catch.
     @SuspendInterop.Enabled
+    @Throws(Exception::class)
     suspend fun fetchFeeds(forceRefresh: Boolean = false) {
         return withContext(dispatcherProvider.io) {
             withSuspensionGuard("FeedFlow serial feed fetch") {
@@ -84,6 +89,7 @@ class SerialFeedFetcherRepository internal constructor(
      * caller still has time to post notifications; the skipped feeds stay due for the next refresh.
      */
     @SuspendInterop.Enabled
+    @Throws(Exception::class)
     suspend fun refreshFeedsQuickly(timeBudgetMillis: Long) {
         val startMark = timeSource.markNow()
         return withContext(dispatcherProvider.io) {

@@ -18,6 +18,7 @@ appId: com.prof18.feedflow.debug
     timeout: 10000
 - tapOn: "About & Support"
 - assertVisible: "Report issue"
+- assertVisible: "FAQ"
 - assertNotVisible: "Send anonymous crash reports"
 - assertVisible: "About"
 - tapOn: "About"
@@ -25,5 +26,6 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "Open source licenses"
 - back
 - assertVisible: "Report issue"
+- assertVisible: "FAQ"
 - assertVisible: "About"
 - assertNotVisible: "Send anonymous crash reports"

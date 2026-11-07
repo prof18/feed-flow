@@ -10,6 +10,7 @@ import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.CrashlyticsHelper
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.utils.AppConfig
+import com.prof18.feedflow.core.utils.Websites
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import org.koin.compose.koinInject
@@ -49,9 +50,7 @@ fun AboutAndSupportScreen(
             context.startActivity(Intent.createChooser(emailIntent, strings.issueReportTitle))
         },
         onFaqClick = {
-            val languageCode = java.util.Locale.getDefault().language
-            val faqUrl = "https://feedflow.dev/$languageCode/faq"
-            browserManager.openWithInAppBrowser(faqUrl, context)
+            browserManager.openWithInAppBrowser(Websites.faqUrl(java.util.Locale.getDefault().language), context)
         },
     )
 }

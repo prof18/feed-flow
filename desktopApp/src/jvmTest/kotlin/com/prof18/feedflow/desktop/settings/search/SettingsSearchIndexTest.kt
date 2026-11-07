@@ -82,11 +82,10 @@ class SettingsSearchIndexTest {
     }
 
     @Test
-    fun `faq only when enabled`() {
-        assertTrue(index(faq = false).none { it.title == EnFeedFlowStrings.aboutMenuFaq })
+    fun `faq is in the about category`() {
         assertEquals(
             DesktopSettingsCategory.ABOUT,
-            index(faq = true).single { it.title == EnFeedFlowStrings.aboutMenuFaq }.category,
+            index().single { it.title == EnFeedFlowStrings.aboutMenuFaq }.category,
         )
     }
 
@@ -121,6 +120,5 @@ class SettingsSearchIndexTest {
         supported: List<SyncAccounts> = SyncAccounts.entries,
         crash: Boolean = true,
         grid: Boolean = true,
-        faq: Boolean = true,
-    ) = settingsSearchIndex(EnFeedFlowStrings, supported, crash, grid, faq)
+    ) = settingsSearchIndex(EnFeedFlowStrings, supported, crash, grid)
 }

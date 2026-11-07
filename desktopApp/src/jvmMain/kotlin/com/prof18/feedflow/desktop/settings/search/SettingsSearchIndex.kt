@@ -18,7 +18,6 @@ internal fun settingsSearchIndex(
     supportedAccounts: List<SyncAccounts>,
     isCrashReportingAvailable: Boolean,
     isGridToggleVisible: Boolean,
-    isFaqEnabled: Boolean,
 ): List<SettingsSearchEntry> = buildList {
     fun page(category: DesktopSettingsCategory, pageTitle: String, title: String = pageTitle) =
         add(SettingsSearchEntry(category, title, pageTitle))
@@ -143,9 +142,7 @@ internal fun settingsSearchIndex(
     val about = strings.settingsAboutAndSupport
     page(DesktopSettingsCategory.ABOUT, about)
     rows(DesktopSettingsCategory.ABOUT, about, strings.settingsHelpTitle, strings.reportIssueButton)
-    if (isFaqEnabled) {
-        rows(DesktopSettingsCategory.ABOUT, about, strings.settingsHelpTitle, strings.aboutMenuFaq)
-    }
+    rows(DesktopSettingsCategory.ABOUT, about, strings.settingsHelpTitle, strings.aboutMenuFaq)
     rows(
         DesktopSettingsCategory.ABOUT,
         about,

@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowScope
 import com.prof18.feedflow.core.model.FeedLayout
-import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.DesktopConfig
@@ -118,7 +117,6 @@ internal fun SettingsWindow(
                 supportedAccounts = supportedAccounts,
                 isCrashReportingAvailable = appConfig.appEnvironment.isRelease(),
                 isGridToggleVisible = isGridToggleVisible,
-                isFaqEnabled = FeatureFlags.ENABLE_FAQ,
             )
         }
         SettingsContent(

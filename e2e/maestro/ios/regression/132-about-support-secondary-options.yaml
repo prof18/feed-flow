@@ -17,6 +17,7 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - tapOn: "About & Support"
 - assertVisible: "Report issue"
+- assertVisible: "FAQ"
 - assertVisible: "Send anonymous crash reports"
 - tapOn: "Send anonymous crash reports"
 - assertVisible: "Send anonymous crash reports"

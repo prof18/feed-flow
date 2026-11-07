@@ -249,6 +249,9 @@ struct RegularView: View {
         .onChange(of: appState.pendingBrowserURL) { _, newURL in
             if let url = newURL {
                 appState.pendingBrowserURL = nil
+                // The browser is pushed on the main stack, so a settings sheet would cover it.
+                showSettings = false
+                showSidebarSettingsSheet = false
                 appState.regularNavigationPath.append(CommonViewRoute.inAppBrowser(url: url))
             }
         }

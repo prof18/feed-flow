@@ -38,18 +38,14 @@ struct AboutAndSupportScreenContent: View {
                     systemImage: "exclamationmark.bubble.fill"
                 )
 
-                if FeatureFlags.shared.ENABLE_FAQ {
-                    Button {
-                        let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
-                        let faqUrl = "https://feedflow.dev/\(languageCode)/faq"
-
-                        if let url = URL(string: faqUrl) {
-                            dismiss()
-                            appState.openInAppBrowser(url: url)
-                        }
-                    } label: {
-                        Label(feedFlowStrings.aboutMenuFaq, systemImage: "questionmark")
+                Button {
+                    let faqUrl = Websites.shared.faqUrl(languageCode: Locale.current.language.languageCode?.identifier)
+                    if let url = URL(string: faqUrl) {
+                        dismiss()
+                        appState.openInAppBrowser(url: url)
                     }
+                } label: {
+                    Label(feedFlowStrings.aboutMenuFaq, systemImage: "questionmark")
                 }
 
                 NavigationLink(destination: AboutScreen()) {

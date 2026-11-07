@@ -19,7 +19,6 @@ import com.prof18.feedflow.android.ui.settings.SettingItem
 import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.core.utils.FeatureFlags
 
 @Composable
 internal fun AboutAndSupportScreenContent(
@@ -70,13 +69,11 @@ internal fun AboutAndSupportScreenContent(
                 )
             }
 
-            if (FeatureFlags.ENABLE_FAQ) {
-                item {
-                    SettingItem(
-                        title = LocalFeedFlowStrings.current.aboutMenuFaq,
-                        onClick = onFaqClick,
-                    )
-                }
+            item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.aboutMenuFaq,
+                    onClick = onFaqClick,
+                )
             }
 
             item {

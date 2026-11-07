@@ -316,7 +316,6 @@ class DesktopSettingsContentTest {
             supportedAccounts = listOf(SyncAccounts.DROPBOX),
             isCrashReportingAvailable = false,
             isGridToggleVisible = true,
-            isFaqEnabled = false,
         ),
         paneContent: @Composable (DesktopSettingsCategory) -> Unit = { category ->
             Column {

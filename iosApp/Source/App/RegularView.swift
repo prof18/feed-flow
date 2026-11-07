@@ -276,7 +276,6 @@ struct RegularView: View {
             feedSourceToEdit = nil
             showSettings = false
             showSidebarSettingsSheet = false
-            appState.regularNavigationPath = NavigationPath()
             preferredCompactColumn = .detail
         }
     }

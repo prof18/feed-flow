@@ -211,11 +211,9 @@ struct FeedFlowApp: App {
             }
         #endif
 
-        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        let path = components?.path ?? ""
-
-        let feedId = path.replacing("/", with: "")
-        appState.navigate(route: CommonViewRoute.deepLinkFeed(feedId))
+        if url.host == "feed" {
+            NotificationDeepLinkStore.shared.enqueue(url)
+        }
     }
 
     #if DEBUG

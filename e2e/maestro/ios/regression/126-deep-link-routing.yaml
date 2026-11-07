@@ -7,8 +7,27 @@ appId: com.prof18.feedflow.dev
     optional: true
 - assertVisible:
     id: e2e_seed_complete
+- tapOn:
+    id: e2e_seed_complete
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_sync_storage
+    direction: DOWN
+    timeout: 10000
 - openLink: feedflow://feed/e2e-article-reader-success
 - extendedWaitUntil:
     visible: "E2E Reader Mode Success Article.*"
     timeout: 10000
 - assertVisible: "E2E cached reader content loaded from the seed fixture."
+- openLink: feedflow://feed/e2e-article-reader-success
+- assertVisible: "E2E cached reader content loaded from the seed fixture."
+- swipe:
+    start: 2%, 50%
+    end: 90%, 50%
+    duration: 500
+- assertVisible:
+    id: drawer_menu_button

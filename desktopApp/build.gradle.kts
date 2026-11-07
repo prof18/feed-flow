@@ -397,6 +397,19 @@ val macExtraPlistKeys: String
                 <string>Any</string>
             </dict>
         </dict>
+        <key>CFBundleURLTypes</key>
+        <array>
+          <dict>
+            <key>CFBundleURLName</key>
+            <string>com.prof18.feedflow</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+              <string>feedflow</string>
+              <string>feed</string>
+              <string>feeds</string>
+            </array>
+          </dict>
+        </array>
     """.trimIndent()
 
 // Copy the Liquid Glass asset catalog (Assets.car) into Contents/Resources/ of the

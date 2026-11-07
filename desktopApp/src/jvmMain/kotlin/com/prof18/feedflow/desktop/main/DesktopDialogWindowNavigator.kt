@@ -26,12 +26,22 @@ internal class DesktopDialogWindowNavigator {
         private set
     var settingsActivationRequest by mutableIntStateOf(0)
         private set
+    var addFeedInitialUrl by mutableStateOf<String?>(null)
+        private set
+    var addFeedRequestRevision by mutableIntStateOf(0)
+        private set
 
     fun openSettings(category: DesktopSettingsCategory? = null, section: DesktopSettingsSection? = null) {
         if (category != null) selectSettingsCategory(category)
         if (section != null) settingsSection = section
         settingsActivationRequest++
         open(DesktopDialogWindowDestination.Settings)
+    }
+
+    fun openAddFeed(initialUrl: String?) {
+        addFeedInitialUrl = initialUrl
+        addFeedRequestRevision++
+        open(DesktopDialogWindowDestination.AddFeed)
     }
 
     fun selectSettingsCategory(category: DesktopSettingsCategory) {
@@ -49,6 +59,7 @@ internal class DesktopDialogWindowNavigator {
 
     fun close(destination: DesktopDialogWindowDestination) {
         openedWindows[destination] = false
+        if (destination == DesktopDialogWindowDestination.AddFeed) addFeedInitialUrl = null
     }
 
     fun isOpen(destination: DesktopDialogWindowDestination): Boolean =

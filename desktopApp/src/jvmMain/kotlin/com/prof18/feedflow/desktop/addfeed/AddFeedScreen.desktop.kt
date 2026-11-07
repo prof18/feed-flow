@@ -2,6 +2,7 @@ package com.prof18.feedflow.desktop.addfeed
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -23,8 +24,20 @@ import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun AddFeedScreen(onCloseRequest: () -> Unit, onFeedAdded: () -> Unit) {
-    AddFeedWindow(onCloseRequest) { AddFeedScreenContent(onFeedAdded, onCancel = onCloseRequest) }
+internal fun AddFeedScreen(
+    onCloseRequest: () -> Unit,
+    onFeedAdded: () -> Unit,
+    initialUrl: String?,
+    requestRevision: Int,
+) {
+    AddFeedWindow(onCloseRequest) {
+        AddFeedScreenContent(
+            onFeedAdded,
+            onCancel = onCloseRequest,
+            initialUrl = initialUrl.orEmpty(),
+            requestRevision = requestRevision,
+        )
+    }
 }
 
 @Composable
@@ -42,14 +55,19 @@ fun AddFeedScreenContent(
     modifier: Modifier = Modifier,
     topAppBar: @Composable () -> Unit = {},
     onCancel: (() -> Unit)? = null,
+    initialUrl: String = "",
+    requestRevision: Int = 0,
 ) {
-    var feedUrl by remember { mutableStateOf("") }
+    var feedUrl by remember(initialUrl, requestRevision) { mutableStateOf(initialUrl) }
     var showError by remember { mutableStateOf(false) }
     var showLoading by remember { mutableStateOf(false) }
     var completionRevision by remember { mutableIntStateOf(0) }
     var errorMessage by remember { mutableStateOf("") }
     var canForceAdd by remember { mutableStateOf(false) }
     val viewModel = koinViewModel<AddFeedViewModel>()
+    SideEffect(initialUrl, requestRevision) {
+        if (initialUrl.isNotEmpty()) viewModel.updateFeedUrlTextFieldValue(initialUrl)
+    }
     val latestOnFeedAdded by rememberUpdatedState(onFeedAdded)
     val snackbarHostState = remember { DesktopFeedbackState() }
     val strings = LocalFeedFlowStrings.current

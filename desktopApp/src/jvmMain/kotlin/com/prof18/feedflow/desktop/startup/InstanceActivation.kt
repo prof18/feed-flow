@@ -1,6 +1,7 @@
 package com.prof18.feedflow.desktop.startup
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.utils.AddFeedLinkParser
 import java.io.File
 import java.io.IOException
 import java.net.StandardProtocolFamily
@@ -28,7 +29,7 @@ internal class InstanceActivation(
     private var socketPath: Path? = null
 
     /** Call only while holding [SingleInstanceLock], since it replaces any socket file left by a crash. */
-    fun listen(appDataPath: File, onActivate: () -> Unit): Boolean {
+    fun listen(appDataPath: File, onActivate: (feedUrl: String?) -> Unit): Boolean {
         val path = try {
             socketPath(appDataPath)
         } catch (e: InvalidPathException) {
@@ -64,7 +65,7 @@ internal class InstanceActivation(
         socketPath = null
     }
 
-    private fun acceptRequests(server: ServerSocketChannel, onActivate: () -> Unit) {
+    private fun acceptRequests(server: ServerSocketChannel, onActivate: (feedUrl: String?) -> Unit) {
         while (server.isOpen) {
             val client = try {
                 server.accept()
@@ -79,14 +80,19 @@ internal class InstanceActivation(
         }
     }
 
-    private fun handleRequest(client: SocketChannel, onActivate: () -> Unit) {
+    private fun handleRequest(client: SocketChannel, onActivate: (feedUrl: String?) -> Unit) {
         val buffer = ByteBuffer.allocate(MAX_MESSAGE_BYTES)
         while (buffer.hasRemaining() && client.read(buffer) >= 0) {
             if (buffer.array().take(buffer.position()).contains(NEW_LINE)) break
         }
+        if (!buffer.array().take(buffer.position()).contains(NEW_LINE)) return
         val message = String(buffer.array(), 0, buffer.position(), Charsets.UTF_8).trim()
-        if (message != ACTIVATE_MESSAGE) return
-        onActivate()
+        val feedUrl = when {
+            message == ACTIVATE_MESSAGE -> null
+            message.startsWith(OPEN_LINK_PREFIX) -> AddFeedLinkParser.parse(message.removePrefix(OPEN_LINK_PREFIX))
+            else -> return
+        }
+        onActivate(feedUrl)
         client.write(ByteBuffer.wrap("$ACTIVATED_REPLY\n".toByteArray(Charsets.UTF_8)))
     }
 
@@ -94,20 +100,46 @@ internal class InstanceActivation(
         private const val SOCKET_FILE_NAME = "FeedFlow.sock"
         private const val ACTIVATE_MESSAGE = "activate"
         private const val ACTIVATED_REPLY = "ok"
-        private const val MAX_MESSAGE_BYTES = 64
+        private const val OPEN_LINK_PREFIX = "open-link "
+        private const val LINK_CONNECT_ATTEMPTS = 10
+        private const val LINK_CONNECT_RETRY_DELAY_MILLIS = 100L
+        private const val MAX_MESSAGE_BYTES = 8_192
         private const val NEW_LINE = '\n'.code.toByte()
         private const val DEFAULT_TIMEOUT_MILLIS = 2_000L
         private const val MAX_SOCKET_PATH_BYTES = 100
         private const val FOLDER_ID_BYTES = 8
 
-        /** Returns true only when the running instance confirmed it brought its window forward. */
-        fun requestActivation(appDataPath: File, timeoutMillis: Long = DEFAULT_TIMEOUT_MILLIS): Boolean {
+        /**
+         * Returns true only when the running instance confirmed it brought its window forward. A [link] is
+         * forwarded so the running instance can open it.
+         */
+        fun requestActivation(
+            appDataPath: File,
+            link: String? = null,
+            timeoutMillis: Long = DEFAULT_TIMEOUT_MILLIS,
+        ): Boolean {
+            // The running instance takes the lock a moment before its listener starts, so a link launched in
+            // that gap retries instead of being lost. A plain activation keeps a single attempt.
+            val attempts = if (link == null) 1 else LINK_CONNECT_ATTEMPTS
+            repeat(attempts) { attempt ->
+                when (sendRequest(appDataPath, link, timeoutMillis)) {
+                    RequestResult.Activated -> return true
+                    RequestResult.Failed -> return false
+                    RequestResult.NotConnected -> if (attempt < attempts - 1) {
+                        Thread.sleep(LINK_CONNECT_RETRY_DELAY_MILLIS)
+                    }
+                }
+            }
+            return false
+        }
+
+        private fun sendRequest(appDataPath: File, link: String?, timeoutMillis: Long): RequestResult {
             val channel = try {
                 SocketChannel.open(StandardProtocolFamily.UNIX)
             } catch (_: IOException) {
-                return false
+                return RequestResult.Failed
             } catch (_: UnsupportedOperationException) {
-                return false
+                return RequestResult.Failed
             }
             // A blocking Unix socket has no read timeout, so a watchdog closes it instead.
             val watchdog = thread(isDaemon = true, name = "FeedFlow-activation-timeout") {
@@ -119,14 +151,19 @@ internal class InstanceActivation(
                 }
             }
             return try {
-                channel.connect(UnixDomainSocketAddress.of(socketPath(appDataPath)))
-                channel.write(ByteBuffer.wrap("$ACTIVATE_MESSAGE\n".toByteArray(Charsets.UTF_8)))
+                try {
+                    channel.connect(UnixDomainSocketAddress.of(socketPath(appDataPath)))
+                } catch (_: IOException) {
+                    return RequestResult.NotConnected
+                }
+                val message = if (link == null) "$ACTIVATE_MESSAGE\n" else "$OPEN_LINK_PREFIX$link\n"
+                channel.write(ByteBuffer.wrap(message.toByteArray(Charsets.UTF_8)))
                 channel.shutdownOutput()
-                readReply(channel) == ACTIVATED_REPLY
+                if (readReply(channel) == ACTIVATED_REPLY) RequestResult.Activated else RequestResult.Failed
             } catch (_: IOException) {
-                false
+                RequestResult.Failed
             } catch (_: InvalidPathException) {
-                false
+                RequestResult.Failed
             } finally {
                 watchdog.interrupt()
                 runCatching { channel.close() }
@@ -155,4 +192,10 @@ internal class InstanceActivation(
             return Path.of(System.getProperty("java.io.tmpdir"), "feedflow-$folderId.sock")
         }
     }
+}
+
+private enum class RequestResult {
+    Activated,
+    NotConnected,
+    Failed,
 }

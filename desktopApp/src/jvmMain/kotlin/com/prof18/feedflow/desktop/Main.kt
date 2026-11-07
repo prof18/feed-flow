@@ -25,6 +25,7 @@ import androidx.compose.ui.window.rememberWindowState
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.core.utils.AddFeedLinkParser
 import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DesktopOS
@@ -39,6 +40,7 @@ import com.prof18.feedflow.desktop.startup.DesktopStartupCoordinator
 import com.prof18.feedflow.desktop.startup.InstanceActivation
 import com.prof18.feedflow.desktop.startup.SingleInstanceLock
 import com.prof18.feedflow.desktop.startup.StartupState
+import com.prof18.feedflow.desktop.startup.addFeedLinkInbox
 import com.prof18.feedflow.desktop.startup.bringToFront
 import com.prof18.feedflow.desktop.startup.handleStartupCrash
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
@@ -65,6 +67,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
+import java.awt.Desktop
 import java.awt.Toolkit
 import java.io.File
 import java.io.InputStream
@@ -72,10 +75,10 @@ import java.util.Properties
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.milliseconds
 
-fun main() {
+fun main(args: Array<String>) {
     var appConfig: DesktopConfig? = null
     try {
-        runDesktopApp(onConfigReady = { appConfig = it })
+        runDesktopApp(args, onConfigReady = { appConfig = it })
     } catch (e: Throwable) {
         reportStartupCrash(e, appConfig)
         exitProcess(1)
@@ -83,9 +86,12 @@ fun main() {
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
-private fun runDesktopApp(onConfigReady: (DesktopConfig) -> Unit) {
+private fun runDesktopApp(args: Array<String>, onConfigReady: (DesktopConfig) -> Unit) {
     integrateAppImageIfNeeded()
     setupSandboxEnvironment()
+    installMacOpenUriHandler()
+    val launchLink = args.firstOrNull { AddFeedLinkParser.parse(it) != null }
+    launchLink?.let(AddFeedLinkParser::parse)?.let(addFeedLinkInbox::offer)
 
     val appConfig = createAppConfig(loadProperties(), isIcloudEnabled = setupICloudSupport())
     onConfigReady(appConfig)
@@ -94,14 +100,17 @@ private fun runDesktopApp(onConfigReady: (DesktopConfig) -> Unit) {
     DatabaseFailureReporterConfig.singleInstanceLockState = singleInstanceLock.state
 
     if (lockResult == SingleInstanceLock.Result.HeldByOther) {
-        if (InstanceActivation.requestActivation(dataFolder)) return
+        if (InstanceActivation.requestActivation(dataFolder, link = launchLink)) return
         application {
             AlreadyRunningWindow(onQuit = ::exitApplication)
         }
         return
     }
     if (lockResult == SingleInstanceLock.Result.Acquired) {
-        instanceActivation.listen(dataFolder) { activationRequests.tryEmit(Unit) }
+        instanceActivation.listen(dataFolder) { feedUrl ->
+            feedUrl?.let(addFeedLinkInbox::offer)
+            activationRequests.tryEmit(Unit)
+        }
     }
 
     application {
@@ -441,3 +450,13 @@ data class DesktopConfig(
     val isDropboxEnabled: Boolean,
     val isGoogleDriveEnabled: Boolean,
 )
+
+private fun installMacOpenUriHandler() {
+    if (!Desktop.isDesktopSupported()) return
+    val desktop = Desktop.getDesktop()
+    if (!desktop.isSupported(Desktop.Action.APP_OPEN_URI)) return
+    desktop.setOpenURIHandler { event ->
+        AddFeedLinkParser.parse(event.uri.toString())?.let(addFeedLinkInbox::offer)
+        activationRequests.tryEmit(Unit)
+    }
+}

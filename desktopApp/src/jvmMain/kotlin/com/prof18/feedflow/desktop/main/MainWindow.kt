@@ -65,6 +65,7 @@ import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.settings.DesktopSettingsCategory
 import com.prof18.feedflow.desktop.settings.DesktopSettingsSection
 import com.prof18.feedflow.desktop.settings.SettingsWindow
+import com.prof18.feedflow.desktop.startup.addFeedLinkInbox
 import com.prof18.feedflow.desktop.toReaderMode
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -281,10 +282,20 @@ private fun FrameWindowScope.MainWindowContent(
             },
         )
 
+        val pendingAddFeedUrl by addFeedLinkInbox.links.collectAsState()
+        SideEffect(pendingAddFeedUrl) {
+            pendingAddFeedUrl?.let { feedUrl ->
+                dialogWindowNavigator.openAddFeed(feedUrl)
+                addFeedLinkInbox.consume(feedUrl)
+            }
+        }
+
         if (dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.AddFeed)) {
             AddFeedScreen(
                 onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.AddFeed) },
                 onFeedAdded = { homeViewModel.getNewFeeds() },
+                initialUrl = dialogWindowNavigator.addFeedInitialUrl,
+                requestRevision = dialogWindowNavigator.addFeedRequestRevision,
             )
         }
 

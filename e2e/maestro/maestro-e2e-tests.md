@@ -279,3 +279,5 @@ Widget-selection UX manual checklist (both platforms use the normal OS-owned wid
 ## Desktop validation
 
 Maestro coverage is mobile-only and cannot drive the Compose desktop app. The Jewel desktop UI lives in `desktopApp/src/jvmMain` with Compose/Spectre coverage in `desktopApp/src/jvmTest`; run `./gradlew --quiet --console=plain :desktopApp:jvmTest`. Display-backed tests cover navigation, pointer and keyboard interaction, themes, pagination, forms, dialogs and reader behavior. See the [desktop UI guide](../../docs/DESKTOP_UI.md). Desktop validation does not replace the Android/iOS Maestro gates.
+
+Add-feed links on desktop are covered by `AddFeedLinkInboxTest`, `InstanceActivationTest` and `DesktopDialogWindowNavigatorTest`; the OS registration (macOS Info.plist, MSIX protocols, Flatpak MimeType) is checked by hand on packaged builds. MSI/EXE, DEB/RPM and AppImage builds do not register the schemes.

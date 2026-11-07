@@ -18,8 +18,9 @@
 <Package
     xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
     xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+    xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
     xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-    IgnorableNamespaces="uap rescap">
+    IgnorableNamespaces="uap uap3 rescap">
 
   <Identity
       Name="MarcoGomiero.FeedFlowRSSReader"
@@ -61,6 +62,23 @@
             Square310x310Logo="Assets\Square310x310Logo.png"
             Square71x71Logo="Assets\Square71x71Logo.png" />
       </uap:VisualElements>
+      <Extensions>
+        <uap3:Extension Category="windows.protocol">
+          <uap3:Protocol Name="feedflow" Parameters="&quot;%1&quot;">
+            <uap:DisplayName>FeedFlow</uap:DisplayName>
+          </uap3:Protocol>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.protocol">
+          <uap3:Protocol Name="feed" Parameters="&quot;%1&quot;">
+            <uap:DisplayName>RSS feed</uap:DisplayName>
+          </uap3:Protocol>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.protocol">
+          <uap3:Protocol Name="feeds" Parameters="&quot;%1&quot;">
+            <uap:DisplayName>RSS feed</uap:DisplayName>
+          </uap3:Protocol>
+        </uap3:Extension>
+      </Extensions>
     </Application>
   </Applications>
 </Package>

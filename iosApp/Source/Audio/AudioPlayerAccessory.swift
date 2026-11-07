@@ -96,7 +96,7 @@ struct AudioPlayerAccessory: View {
                         Image(systemName: playback.isPlaying ? "pause.fill" : "play.fill")
                             .font(.system(size: 19))
                     }
-                }.frame(width: 44, height: 44)
+                }.frame(width: 44, height: 44).contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel(playback.isPlaying ? feedFlowStrings.audioPause : feedFlowStrings.audioPlay)
@@ -110,7 +110,7 @@ struct AudioPlayerAccessory: View {
             }
 
             Button { playback.stop() } label: {
-                Image(systemName: "xmark").font(.system(size: 16)).frame(width: 44, height: 44)
+                Image(systemName: "xmark").font(.system(size: 16)).frame(width: 44, height: 44).contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel(feedFlowStrings.audioClosePlayer)

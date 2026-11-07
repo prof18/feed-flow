@@ -140,7 +140,10 @@ extension SidebarDrawer {
                                     .clipShape(Capsule())
                             }
                         }
+                        // Grows the hit area to 44 pt without making the row taller
+                        .padding(.vertical, Spacing.regular)
                         .contentShape(Rectangle())
+                        .padding(.vertical, -Spacing.regular)
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier(DrawerAccessibilityIdentifiers.category(nil))
@@ -194,7 +197,10 @@ extension SidebarDrawer {
                             .clipShape(Capsule())
                     }
                 }
+                // Grows the hit area to 44 pt without making the row taller
+                .padding(.vertical, Spacing.regular)
                 .contentShape(Rectangle())
+                .padding(.vertical, -Spacing.regular)
             }
             .buttonStyle(.plain)
             .contextMenu {
@@ -273,10 +279,12 @@ extension SidebarDrawer {
             Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.secondary)
-                .padding(.leading, Spacing.small)
-                .padding(.trailing, Spacing.small)
+                .padding(.horizontal, Spacing.small)
                 .padding(.vertical, Spacing.xxsmall)
+                // Grows the hit area to 44 pt into the row's trailing inset, keeping the chevron in place
+                .padding(EdgeInsets(top: Spacing.regular, leading: 0, bottom: Spacing.regular, trailing: 20))
                 .contentShape(Rectangle())
+                .padding(EdgeInsets(top: -Spacing.regular, leading: 0, bottom: -Spacing.regular, trailing: -20))
         }
         .buttonStyle(.plain)
         .accessibilityLabel(

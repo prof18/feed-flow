@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /add/
 
 Sitemap: {{ .Site.BaseURL }}sitemap.xml

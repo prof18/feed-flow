@@ -14,6 +14,7 @@ Architecture, implementation, and testing guides for FeedFlow:
 - [Reader text to speech](READER_TTS.md): extraction, playback ownership, lifecycle limits, and validation.
 - [Adaptive iOS layout](IOS_ADAPTIVE_LAYOUT.md): Duo folding, window navigation, native toolbars, and validation limits.
 - [Cloudflare recovery](CLOUDFLARE_FEED_RECOVERY.md): verification flow, saved website sessions, reader integration, and regression checks.
+- [Add-feed links](ADD_FEED_LINKS.md): `feedflow://add`, `feed://` and www.feedflow.dev links, platform registration, parser rules, and association checks.
 - [Sync error codes](error-codes-sync.md): synchronization error-code reference.
 - [Glossary](GLOSSARY.md): user-facing terms, where they live on Weblate and in `i18n/glossary/`, and how to change them.
 

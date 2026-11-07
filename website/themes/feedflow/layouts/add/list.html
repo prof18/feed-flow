@@ -1,0 +1,58 @@
+{{ define "main" }}
+<div class="page-header">
+  <div class="container container-sm">
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p>{{ . }}</p>{{ end }}
+  </div>
+</div>
+<div class="container container-sm">
+  <div class="page-content prose">
+    <div id="add-feed-valid" hidden>
+      <p>Feed address:</p>
+      <p><code id="add-feed-url"></code></p>
+      <p>
+        <a id="add-feed-open" class="btn" href="#">Open in FeedFlow</a>
+        <button id="add-feed-copy" type="button" class="btn">Copy feed address</button>
+      </p>
+      <p>On a phone with FeedFlow installed this link opens the app directly. On a computer, "Open in FeedFlow" works with the Mac App Store, Microsoft Store and Flathub versions; otherwise copy the address and paste it in Add feed.</p>
+    </div>
+    <p id="add-feed-invalid" hidden>This link has no valid feed URL.</p>
+    <h2>Get FeedFlow</h2>
+    <ul>
+      {{ range .Site.Data.downloads.platforms }}
+        {{ $platform := .name }}
+        {{ range .links }}
+          <li><a href="{{ .url }}">{{ $platform }}: {{ .title }}</a></li>
+        {{ end }}
+      {{ end }}
+    </ul>
+  </div>
+</div>
+<script>
+(function () {
+  var raw = new URLSearchParams(window.location.search).get("url") || "";
+  var url = raw.trim();
+  var valid = false;
+  try {
+    var parsed = new URL(url);
+    valid = (parsed.protocol === "https:" || parsed.protocol === "http:") && parsed.hostname !== "" && url.length <= 2048 &&
+      /^https?:\/\//i.test(url) && !/%(?![0-9A-Fa-f]{2})/.test(url);
+  } catch (e) { valid = false; }
+  if (!valid) {
+    document.getElementById("add-feed-invalid").hidden = false;
+    return;
+  }
+  document.getElementById("add-feed-valid").hidden = false;
+  document.getElementById("add-feed-url").textContent = url;
+  var appLink = "feedflow://add?url=" + encodeURIComponent(url);
+  if (appLink.length <= 2048) {
+    document.getElementById("add-feed-open").href = appLink;
+  } else {
+    document.getElementById("add-feed-open").hidden = true;
+  }
+  document.getElementById("add-feed-copy").addEventListener("click", function () {
+    navigator.clipboard.writeText(url);
+  });
+})();
+</script>
+{{ end }}

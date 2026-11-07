@@ -18,7 +18,10 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: settings_blocked_words
 - tapOn:
-    id: blocked_words_add_pixel_e2e
+    id: blocked_words_input
+- inputText: "pixel"
+- tapOn:
+    id: blocked_words_add_button
 - assertVisible:
     id: blocked_word_pixel
 - tapOn:

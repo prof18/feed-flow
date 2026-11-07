@@ -1,7 +1,6 @@
 enum BlockedWordsAccessibilityIdentifiers {
     static let input = "blocked_words_input"
     static let addButton = "blocked_words_add_button"
-    static let addPixelButton = "blocked_words_add_pixel_e2e"
 
     static func row(_ word: String) -> String {
         "blocked_word_\(word.e2eIdSuffix)"

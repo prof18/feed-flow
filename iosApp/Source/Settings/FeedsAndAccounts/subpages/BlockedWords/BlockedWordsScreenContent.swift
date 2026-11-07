@@ -46,23 +46,11 @@ struct BlockedWordsScreenContent: View {
                                 .contentShape(Rectangle())
                                 .padding(-(Spacing.small + Spacing.xsmall))
                         }
+                        // Borderless keeps the Form row from firing this button on any tap in the row
+                        .buttonStyle(.borderless)
                         .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.addButton)
                         .hoverEffect()
                     }
-
-                    #if DEBUG
-                    Button {
-                        onAddWord("pixel")
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            // Grows the hit area to 44 pt without moving the icon or making the row taller
-                            .padding(Spacing.small + Spacing.xsmall)
-                            .contentShape(Rectangle())
-                            .padding(-(Spacing.small + Spacing.xsmall))
-                    }
-                    .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.addPixelButton)
-                    .hoverEffect()
-                    #endif
                 }
                 }
 

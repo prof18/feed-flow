@@ -72,6 +72,7 @@ struct FeedItemView: View {
                                 .font(.system(size: 12))
                                 .foregroundColor(Color.accentColor)
                                 .padding(.top, Spacing.small)
+                                .accessibilityHidden(true)
                         }
                     }
                 }
@@ -235,6 +236,7 @@ struct FeedItemView: View {
                     Image(systemName: "bookmark.fill")
                         .font(.system(size: 14))
                         .foregroundStyle(Color.accentColor)
+                        .accessibilityHidden(true)
                 }
 
                 if showUnreadDot {

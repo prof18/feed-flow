@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -26,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.prof18.feedflow.android.ui.feedsourcelist.singleAndLongClickModifier
 import com.prof18.feedflow.android.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.android.ui.utils.PreviewHelper
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
@@ -37,6 +40,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.utils.ContentDirection
+import com.prof18.feedflow.shared.presentation.model.accessibilityState
 
 private const val DefaultHeroImageAspectRatio = 16f / 9f
 
@@ -93,13 +97,15 @@ internal fun FeedItemView(
     }
 
     val contentLayoutDirection = contentLayoutDirection(feedItem)
+    val rowState = feedItem.accessibilityState(LocalFeedFlowStrings.current)
 
     val normalizedFeedLayout = if (feedLayout == FeedLayout.GRID) FeedLayout.BIG_IMAGE else feedLayout
     if (normalizedFeedLayout == FeedLayout.BIG_IMAGE) {
         Column(modifier = modifier) {
             Column(
                 modifier = clickableItemModifier
-                    .testTag(FeedItemE2eIds.row(feedItem.id)),
+                    .testTag(FeedItemE2eIds.row(feedItem.id))
+                    .semantics { rowState?.let { stateDescription = it } },
             ) {
                 CompositionLocalProvider(LocalLayoutDirection provides contentLayoutDirection) {
                     FeedItemImageCardContent(
@@ -137,6 +143,7 @@ internal fun FeedItemView(
         Column(
             modifier = clickableItemModifier
                 .testTag(FeedItemE2eIds.row(feedItem.id))
+                .semantics { rowState?.let { stateDescription = it } }
                 .padding(horizontal = Spacing.regular)
                 .padding(
                     top = Spacing.small,

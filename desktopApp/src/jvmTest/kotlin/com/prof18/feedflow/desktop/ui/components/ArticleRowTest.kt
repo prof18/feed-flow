@@ -5,6 +5,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
@@ -133,7 +134,7 @@ class ArticleRowTest(private val articleLayout: FeedLayout) {
 
     @Test
     fun `bookmarked article retains its title as the accessible row label`() {
-        setRow(bookmarked = true)
+        setRow(bookmarked = true, read = true)
         val semantics = rule.onNodeWithTag(ARTICLE_ROW_TAG).fetchSemanticsNode().config
         assertNull(semantics.getOrNull(SemanticsProperties.ContentDescription))
         assertEquals(
@@ -142,6 +143,35 @@ class ArticleRowTest(private val articleLayout: FeedLayout) {
         )
         rule.onNodeWithText(ARTICLE_TITLE).assertIsDisplayed()
     }
+
+    @Test
+    fun `unread article announces unread state`() {
+        setRow()
+        assertEquals(EnFeedFlowStrings.articleUnreadState, rowState())
+    }
+
+    @Test
+    fun `unread bookmarked article announces both`() {
+        setRow(bookmarked = true)
+        assertEquals(EnFeedFlowStrings.articleUnreadBookmarkedState, rowState())
+    }
+
+    @Test
+    fun `read article has no state description`() {
+        setRow(read = true)
+        assertNull(rowState())
+    }
+
+    @Test
+    fun `article row has button role`() {
+        setRow()
+        val semantics = rule.onNodeWithTag(ARTICLE_ROW_TAG).fetchSemanticsNode().config
+        assertEquals(Role.Button, semantics[SemanticsProperties.Role])
+    }
+
+    private fun rowState(): String? =
+        rule.onNodeWithTag(ARTICLE_ROW_TAG).fetchSemanticsNode().config
+            .getOrNull(SemanticsProperties.StateDescription)
 
     @Test
     fun `mark above confirmation cancels and accepts only once`() {
@@ -176,6 +206,7 @@ class ArticleRowTest(private val articleLayout: FeedLayout) {
         layout: FeedLayout = articleLayout,
         selected: Boolean = false,
         bookmarked: Boolean = false,
+        read: Boolean = false,
         displaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
     ) {
         rule.setContent {
@@ -183,7 +214,7 @@ class ArticleRowTest(private val articleLayout: FeedLayout) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
                     Column {
                         ArticleRow(
-                            feedItem = article.copy(isBookmarked = bookmarked),
+                            feedItem = article.copy(isBookmarked = bookmarked, isRead = read),
                             isSelected = selected,
                             feedFontSize = FeedFontSizes(),
                             shareMenuLabel = EnFeedFlowStrings.menuCopyLink,

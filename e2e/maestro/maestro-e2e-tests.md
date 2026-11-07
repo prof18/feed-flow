@@ -271,6 +271,7 @@ Widget-selection UX manual checklist (both platforms use the normal OS-owned wid
   selection: `linkd` cannot obtain the extension's team ID and rejects its AppEntity identifier.
   Validate with a development-signed test build (or a signed device build) before treating this
   as a filtering defect; leave production signing settings unchanged.
+- **Screen-reader row state** — Article rows announce "Unread", "Unread, bookmarked" or "Bookmarked" through Android `stateDescription`, iOS `accessibilityValue` and Desktop `stateDescription`. Maestro selectors match text and accessibility labels, not these values, so there is no flow. Coverage: `FeedItemAccessibilityTest` (shared), `FeedItemViewAccessibilityTest` (Android), `ArticleRowTest` (Desktop); iOS VoiceOver output and the row actions are a manual check.
 
 ## Desktop validation
 

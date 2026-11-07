@@ -89,6 +89,19 @@ struct FeedItemRowView: View {
     )
     .buttonStyle(.plain)
     .accessibilityIdentifier(FeedItemAccessibilityIdentifiers.row(feedItem.id))
+    .accessibilityValue(feedItem.accessibilityState(strings: feedFlowStrings) ?? "")
+    .accessibilityActions {
+      if !hasSwipeAction(.toggleReadStatus) {
+        Button(feedItem.isRead ? feedFlowStrings.menuMarkAsUnread : feedFlowStrings.menuMarkAsRead) {
+          onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead)
+        }
+      }
+      if !hasSwipeAction(.toggleBookmarkStatus) {
+        Button(feedItem.isBookmarked ? feedFlowStrings.menuRemoveFromBookmark : feedFlowStrings.menuAddToBookmark) {
+          onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked)
+        }
+      }
+    }
     .id(feedItem.id)
     .listRowInsets(EdgeInsets())
     .hoverEffect()
@@ -104,6 +117,11 @@ struct FeedItemRowView: View {
     }
   }
 
+  private func hasSwipeAction(_ type: SwipeActionType) -> Bool {
+    allowsSwipeActions &&
+      (swipeActions.leftSwipeAction == type || swipeActions.rightSwipeAction == type)
+  }
+
   @ViewBuilder
   private func swipeActionButton(for action: SwipeActionType) -> some View {
     switch action {
@@ -112,14 +130,18 @@ struct FeedItemRowView: View {
         action: { onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead) },
         isToggled: feedItem.isRead,
         toggledImageName: "envelope.badge",
-        untoggledImageName: "envelope.open"
+        untoggledImageName: "envelope.open",
+        accessibilityLabel: feedItem.isRead ? feedFlowStrings.menuMarkAsUnread : feedFlowStrings.menuMarkAsRead
       )
     case .toggleBookmarkStatus:
       createSwipeButton(
         action: { onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked) },
         isToggled: feedItem.isBookmarked,
         toggledImageName: "bookmark.slash",
-        untoggledImageName: "bookmark"
+        untoggledImageName: "bookmark",
+        accessibilityLabel: feedItem.isBookmarked
+          ? feedFlowStrings.menuRemoveFromBookmark
+          : feedFlowStrings.menuAddToBookmark
       )
     case .openInBrowser:
       // URL-less items have nothing to open in a browser.
@@ -143,11 +165,13 @@ struct FeedItemRowView: View {
     action: @escaping () -> Void,
     isToggled: Bool,
     toggledImageName: String,
-    untoggledImageName: String
+    untoggledImageName: String,
+    accessibilityLabel: String
   ) -> some View {
     Button(action: action) {
       Image(systemName: isToggled ? toggledImageName : untoggledImageName)
     }
+    .accessibilityLabel(accessibilityLabel)
   }
 
   @ViewBuilder

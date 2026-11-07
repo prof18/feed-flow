@@ -164,7 +164,7 @@ extension HomeContent {
     var compactPhoneHeaderAccessibilityLabel: String {
         let title = getCompactToolbarTitle(feedFilter: currentFeedFilter)
         if shouldShowUnreadCount {
-            return "\(title), \(unreadCount.formatted())"
+            return "\(title), \(feedFlowStrings.unreadCountAccessibility(unreadCount.formatted()))"
         } else {
             return title
         }

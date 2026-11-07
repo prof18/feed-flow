@@ -475,6 +475,9 @@
     <string name="reader_mode_browser_button_content_description">Open in browser</string>
     <string name="reader_mode_comments_button_content_description">Open comments</string>
     <string name="article_bookmarked_content_description">Bookmarked</string>
+    <string name="article_unread_state">Unread</string>
+    <string name="article_unread_bookmarked_state">Unread, bookmarked</string>
+    <string name="unread_count_accessibility">%s unread</string>
     <string name="search_button_content_description">Search</string>
     <string name="more_options_button_content_description">More options</string>
     <string name="drawer_menu_button_content_description">Open navigation menu</string>

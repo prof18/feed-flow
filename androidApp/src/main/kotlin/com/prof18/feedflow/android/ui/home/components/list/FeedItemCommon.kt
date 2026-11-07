@@ -30,7 +30,6 @@ import com.prof18.feedflow.android.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.android.ui.home.components.FeedItemHeroImage
 import com.prof18.feedflow.android.ui.home.components.FeedItemImage
 import com.prof18.feedflow.android.ui.style.Spacing
-import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.DescriptionLineLimit
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
@@ -95,7 +94,7 @@ internal fun FeedSourceAndUnreadDotRow(
                     .padding(bottom = Spacing.small),
                 tint = MaterialTheme.colorScheme.primary,
                 imageVector = Icons.Filled.Bookmark,
-                contentDescription = LocalFeedFlowStrings.current.articleBookmarkedContentDescription,
+                contentDescription = null,
             )
         }
     }
@@ -305,7 +304,7 @@ internal fun FeedItemCardSourceRow(
                 modifier = Modifier.size(24.dp),
                 tint = MaterialTheme.colorScheme.primary,
                 imageVector = Icons.Filled.Bookmark,
-                contentDescription = LocalFeedFlowStrings.current.articleBookmarkedContentDescription,
+                contentDescription = null,
             )
         }
 

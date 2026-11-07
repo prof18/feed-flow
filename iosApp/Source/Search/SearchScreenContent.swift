@@ -157,6 +157,7 @@ struct SearchScreenContent: View {
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier(FeedItemAccessibilityIdentifiers.row(feedItem.id))
+        .accessibilityValue(feedItem.accessibilityState(strings: feedFlowStrings) ?? "")
         .id(feedItem.id)
         .contentShape(Rectangle())
         .listRowInsets(EdgeInsets())

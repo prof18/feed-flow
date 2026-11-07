@@ -18,7 +18,7 @@ Site owners should publish the web link once it is live (see "Status" below). It
 
 ## Status
 
-The custom schemes (`feedflow://add`, `feed://`, `feeds://`) and the fallback page work today. Opening the web link straight in the apps is not live yet. The Android `autoVerify` filter and the association files in `website/static/.well-known/` are in place; Android verifies the link once the website is deployed and a build with the filter is released. iOS still needs the associated-domains entitlement (waiting for the Associated Domains capability on the App IDs). Until then, the web link shows the fallback page.
+The custom schemes (`feedflow://add`, `feed://`, `feeds://`) and the fallback page work today. Opening the web link straight in the apps is not live yet. The Android `autoVerify` filter and the association files in `website/static/.well-known/` are in place; Android verifies the link once the website is deployed and a build with the filter is released. iOS declares `applinks:www.feedflow.dev` and verifies it the same way, through Apple's CDN copy of the association file. Until both are deployed and released, the web link shows the fallback page.
 
 ## How each platform receives them
 

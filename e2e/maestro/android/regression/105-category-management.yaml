@@ -17,7 +17,7 @@ appId: com.prof18.feedflow.debug
     id: edit_feed_category_selector
 - assertVisible: "Categories"
 - tapOn:
-    text: "Category"
+    text: "New category"
 - tapOn:
     text: "New category name"
 - inputText: "Technology"
@@ -25,7 +25,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     text: "Close"
 - tapOn:
-    text: "Category"
+    text: "New category"
 - tapOn:
     text: "New category name"
 - inputText: "E2E Created Category"

@@ -15,5 +15,5 @@ appId: com.prof18.feedflow.dev
     id: settings_sync_storage
 - tapOn:
     id: sync_storage_clear_downloaded
-- assertVisible: "Clear downloaded articles?"
+- assertVisible: "Delete offline copies?"
 - tapOn: "Confirm"

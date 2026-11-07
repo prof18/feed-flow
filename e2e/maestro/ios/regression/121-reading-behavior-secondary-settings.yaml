@@ -14,8 +14,8 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: settings_reading_behavior
 - assertVisible: "Browser"
-- assertVisible: "Save article content on open for offline reading"
-- assertVisible: "Prefetch article content for offline reading"
+- assertVisible: "Keep offline copies of articles you open"
+- assertVisible: "Make offline copies when feeds refresh"
 - assertVisible: "Mark as read when scrolling"
 - tapOn:
     id: reading_behavior_save_content

@@ -3,7 +3,7 @@ title: "Why doesn't my widget update?"
 weight: 120
 ---
 
-The widget shows what FeedFlow has already downloaded, so it updates when the app refreshes feeds.
+The widget shows the articles FeedFlow already has, so it updates when the app refreshes feeds.
 
 **Android**: the widget follows **Background sync** (Settings → Sync & storage). If it's set to **Never**, the widget only changes when you open the app. In **Settings → Widget Configuration** you can choose what each widget shows (Timeline, Bookmarks, a category or a single feed) and change its background colour, opacity, text colour, font size, header and refresh button.
 

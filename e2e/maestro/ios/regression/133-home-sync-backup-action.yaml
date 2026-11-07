@@ -11,7 +11,7 @@ appId: com.prof18.feedflow.dev
     text: "E2E Newest Unread Article.*"
 - tapOn:
     id: home_more_menu_button
-- assertVisible: "Upload changes"
-- tapOn: "Upload changes"
+- assertVisible: "Back up now"
+- tapOn: "Back up now"
 - assertVisible:
     text: "E2E Newest Unread Article.*"

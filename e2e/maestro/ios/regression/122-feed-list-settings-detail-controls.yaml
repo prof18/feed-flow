@@ -22,7 +22,7 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: feed_list_settings_hide_unread_dot
     point: "90%,50%"
-- assertVisible: "Hide feed source"
+- assertVisible: "Hide feed name"
 - tapOn:
     id: feed_list_settings_hide_feed_source
     point: "90%,50%"

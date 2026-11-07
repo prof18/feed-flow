@@ -113,7 +113,7 @@ appId: com.prof18.feedflow.debug
     timeout: 10000
 - tapOn:
     id: sync_storage_clear_downloaded
-- assertVisible: "Clear downloaded articles?"
+- assertVisible: "Delete offline copies?"
 - tapOn: "Confirm"
 - scrollUntilVisible:
     element: "Clear image cache"

@@ -33,9 +33,9 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "Pin"
 - assertVisible: "Delete"
 
-# Pin: moves Android Weekly into the Pinned Feed Sources section
+# Pin: moves Android Weekly into the Pinned feeds section
 - tapOn: "Pin"
-- assertVisible: "Pinned Feed Sources"
+- assertVisible: "Pinned feeds"
 - assertVisible:
     id: drawer_feed_source_e2e_feed_android_weekly
 
@@ -46,7 +46,7 @@ appId: com.prof18.feedflow.debug
 - tapOn: "Unpin"
 
 # Confirm the menu now shows Pin again (the source is unpinned). Content-rich
-# also seeds Ars Technica pinned, so the Pinned Feed Sources header stays visible.
+# also seeds Ars Technica pinned, so the Pinned feeds header stays visible.
 - longPressOn:
     id: drawer_feed_source_e2e_feed_android_weekly
 - assertVisible: "Pin"

@@ -75,7 +75,7 @@ struct EditCategorySheet: View {
                                 HStack(spacing: 6) {
                                     Image(systemName: "plus")
                                         .font(.system(size: 16, weight: .medium))
-                                    Text(feedFlowStrings.addFeedCategoryTitle)
+                                    Text(feedFlowStrings.newCategoryButton)
                                         .font(.body)
                                         .fontWeight(.medium)
                                 }
@@ -244,7 +244,7 @@ private struct AddCategoryNameSheet: View {
                 .accessibilityIdentifier(EditCategoryAccessibilityIdentifiers.addCategoryConfirmButton)
             }
             .padding()
-            .navigationTitle(feedFlowStrings.addFeedCategoryTitle)
+            .navigationTitle(feedFlowStrings.newCategoryButton)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

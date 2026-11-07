@@ -105,12 +105,12 @@ struct ContentView: View {
         .onAppear {
             let savedThemeMode = vmStoreOwner.instance.getCurrentThemeMode()
             appState.updateTheme(savedThemeMode)
-            consumePendingNotificationLinkIfActive()
+            consumePendingDeepLinksIfActive()
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
             case .active:
-                consumePendingNotificationLinkIfActive()
+                consumePendingDeepLinksIfActive()
                 if !hasTriggeredLaunch {
                     hasTriggeredLaunch = true
                     vmStoreOwner.instance.onAppLaunch()
@@ -170,7 +170,10 @@ struct ContentView: View {
             }
         }
         .onChange(of: notificationLinks.pendingURL) {
-            consumePendingNotificationLinkIfActive()
+            consumePendingDeepLinksIfActive()
+        }
+        .onChange(of: appState.widgetLinks.pendingURL) {
+            consumePendingDeepLinksIfActive()
         }
         #if DEBUG
             .overlay(alignment: .bottom) {
@@ -259,12 +262,17 @@ private extension ContentView {
         }
     }
 
-    private func consumePendingNotificationLinkIfActive() {
-        guard scenePhase == .active, let url = notificationLinks.consume() else { return }
-        handleFeedFlowNotificationURL(url)
+    private func consumePendingDeepLinksIfActive() {
+        guard scenePhase == .active else { return }
+        if let url = notificationLinks.consume(dismissingSheetsIn: appState.widgetLinks) {
+            handleFeedFlowDeepLink(url)
+        }
+        if let url = appState.widgetLinks.consume() {
+            handleFeedFlowDeepLink(url)
+        }
     }
 
-    private func handleFeedFlowNotificationURL(_ url: URL) {
+    private func handleFeedFlowDeepLink(_ url: URL) {
         let host = url.host ?? ""
         let pathComponents = url.pathComponents.filter { $0 != "/" }
 

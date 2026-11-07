@@ -14,9 +14,12 @@ import SwiftUI
 @Observable
 class AppState {
     private let appearance: AppAppearance
+    let widgetLinks: NotificationDeepLinkStore
 
+    @MainActor
     init(appearance: AppAppearance = AppAppearance()) {
         self.appearance = appearance
+        widgetLinks = NotificationDeepLinkStore()
     }
 
     var snackbarQueue: Deque<SnackbarData> = Deque()

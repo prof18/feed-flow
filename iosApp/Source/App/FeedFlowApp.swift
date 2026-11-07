@@ -212,7 +212,7 @@ struct FeedFlowApp: App {
         #endif
 
         if url.host == "feed" {
-            NotificationDeepLinkStore.shared.enqueue(url)
+            appState.widgetLinks.enqueue(url)
         }
     }
 

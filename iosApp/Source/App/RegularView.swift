@@ -271,7 +271,10 @@ struct RegularView: View {
                 self.navDrawerState = state
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { _ in
+        .onReceive(NotificationCenter.default.publisher(
+            for: .didReceiveNotificationDeepLink,
+            object: appState.widgetLinks.dismissalSender
+        )) { _ in
             showAddFeedSheet = false
             feedSourceToEdit = nil
             showSettings = false

@@ -3,25 +3,49 @@ import XCTest
 
 @MainActor
 final class NotificationDeepLinkStoreTests: XCTestCase {
-    func testConsumptionDismissesPresentedSheetsBeforeRoutingExactlyOnce() throws {
-        let store = NotificationDeepLinkStore()
+    func testConsumptionDismissesOnlyTheReceivingSceneBeforeRouting() throws {
+        let widgetLinks = NotificationDeepLinkStore()
+        let otherWidgetLinks = NotificationDeepLinkStore()
+        let notificationLinks = NotificationDeepLinkStore()
         var dismissalCount = 0
+        var otherDismissalCount = 0
         let observer = NotificationCenter.default.addObserver(
-            forName: .didReceiveNotificationDeepLink, object: nil, queue: .main
+            forName: .didReceiveNotificationDeepLink, object: widgetLinks.dismissalSender, queue: .main
         ) { _ in
             MainActor.assumeIsolated {
-                XCTAssertNil(store.pendingURL)
+                XCTAssertNil(widgetLinks.pendingURL)
+                XCTAssertNil(notificationLinks.pendingURL)
                 dismissalCount += 1
             }
         }
-        defer { NotificationCenter.default.removeObserver(observer) }
-        let url = try XCTUnwrap(URL(string: "feedflow://feed/article"))
-        store.enqueue(url)
+        let otherObserver = NotificationCenter.default.addObserver(
+            forName: .didReceiveNotificationDeepLink, object: otherWidgetLinks.dismissalSender, queue: .main
+        ) { _ in
+            MainActor.assumeIsolated {
+                otherDismissalCount += 1
+            }
+        }
+        defer {
+            NotificationCenter.default.removeObserver(observer)
+            NotificationCenter.default.removeObserver(otherObserver)
+        }
+
+        let widgetURL = try XCTUnwrap(URL(string: "feedflow://feed/article"))
+        let otherWidgetURL = try XCTUnwrap(URL(string: "feedflow://feed/other-article"))
+        let notificationURL = try XCTUnwrap(URL(string: "feedflow://category/category"))
+        widgetLinks.enqueue(widgetURL)
+        otherWidgetLinks.enqueue(otherWidgetURL)
         XCTAssertEqual(dismissalCount, 0)
-        XCTAssertEqual(store.consume(), url)
+        XCTAssertEqual(widgetLinks.consume(), widgetURL)
         XCTAssertEqual(dismissalCount, 1)
-        XCTAssertNil(store.consume())
-        XCTAssertEqual(dismissalCount, 1)
+
+        notificationLinks.enqueue(notificationURL)
+        XCTAssertEqual(notificationLinks.consume(dismissingSheetsIn: widgetLinks), notificationURL)
+        XCTAssertNil(widgetLinks.consume())
+        XCTAssertNil(notificationLinks.consume(dismissingSheetsIn: widgetLinks))
+        XCTAssertEqual(dismissalCount, 2)
+        XCTAssertEqual(otherDismissalCount, 0)
+        XCTAssertEqual(otherWidgetLinks.pendingURL, otherWidgetURL)
     }
 
     func testTapBeforeViewExistsIsConsumedExactlyOnce() throws {

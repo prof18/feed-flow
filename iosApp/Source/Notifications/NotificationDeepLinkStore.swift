@@ -6,6 +6,7 @@ import Observation
 final class NotificationDeepLinkStore {
     static let shared = NotificationDeepLinkStore()
 
+    let dismissalSender = NSObject()
     private(set) var pendingURL: URL?
 
     func enqueue(_ url: URL) {
@@ -17,10 +18,13 @@ final class NotificationDeepLinkStore {
         pendingURL = url
     }
 
-    func consume() -> URL? {
+    func consume(dismissingSheetsIn sceneLinks: NotificationDeepLinkStore? = nil) -> URL? {
         guard let url = pendingURL else { return nil }
         pendingURL = nil
-        NotificationCenter.default.post(name: .didReceiveNotificationDeepLink, object: nil)
+        NotificationCenter.default.post(
+            name: .didReceiveNotificationDeepLink,
+            object: (sceneLinks ?? self).dismissalSender
+        )
         return url
     }
 }

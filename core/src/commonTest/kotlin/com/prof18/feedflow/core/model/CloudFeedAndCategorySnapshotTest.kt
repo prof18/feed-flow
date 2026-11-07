@@ -2,7 +2,6 @@ package com.prof18.feedflow.core.model
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class CloudFeedAndCategorySnapshotTest {
 
@@ -136,27 +135,82 @@ class CloudFeedAndCategorySnapshotTest {
     }
 
     @Test
-    fun `conflicting category names are rejected`() {
-        val original = snapshot(category = category("cat", "Tech"))
+    fun `local category created with a remote category name merges into the remote category`() {
+        val original = snapshot(category = category("remote", "Tech"))
 
-        assertFailsWith<IllegalStateException> {
-            original.applyCloudFeedAndCategoryChanges(
-                listOf(
-                    change(
-                        CloudFeedOrCategoryEntity.CATEGORY,
-                        "other",
-                        CloudFeedOrCategoryField.EXISTS,
-                        "1",
-                    ),
-                    change(
-                        CloudFeedOrCategoryEntity.CATEGORY,
-                        "other",
-                        CloudFeedOrCategoryField.TITLE,
-                        "Tech",
-                    ),
+        val result = original.applyCloudFeedAndCategoryChanges(
+            listOf(
+                change(CloudFeedOrCategoryEntity.CATEGORY, "local", CloudFeedOrCategoryField.EXISTS, "1"),
+                change(CloudFeedOrCategoryEntity.CATEGORY, "local", CloudFeedOrCategoryField.TITLE, "Tech"),
+                change(CloudFeedOrCategoryEntity.SOURCE, "source", CloudFeedOrCategoryField.EXISTS, "1"),
+                change(
+                    CloudFeedOrCategoryEntity.SOURCE,
+                    "source",
+                    CloudFeedOrCategoryField.URL,
+                    "https://example.com/source",
                 ),
-            )
-        }
+                change(CloudFeedOrCategoryEntity.SOURCE, "source", CloudFeedOrCategoryField.TITLE, "Source"),
+                change(CloudFeedOrCategoryEntity.SOURCE, "source", CloudFeedOrCategoryField.CATEGORY, "local"),
+            ),
+        )
+
+        assertEquals(listOf(category("remote", "Tech")), result.categories)
+        assertEquals(category("remote", "Tech"), result.sources.single().category)
+    }
+
+    @Test
+    fun `local rename to a remote category name moves its sources into the remote category`() {
+        val original = CloudFeedAndCategorySnapshot(
+            sources = listOf(
+                source(category = category("local", "Old")),
+                source(category = category("remote", "Tech")).copy(id = "remote-source"),
+            ),
+            categories = listOf(category("local", "Old"), category("remote", "Tech")),
+        )
+
+        val result = original.applyCloudFeedAndCategoryChanges(
+            listOf(
+                change(CloudFeedOrCategoryEntity.CATEGORY, "local", CloudFeedOrCategoryField.TITLE, "Tech"),
+            ),
+        )
+
+        assertEquals(listOf(category("remote", "Tech")), result.categories)
+        assertEquals(
+            listOf(category("remote", "Tech"), category("remote", "Tech")),
+            result.sources.map { it.category },
+        )
+    }
+
+    @Test
+    fun `remote rename to a local category name keeps the remote category`() {
+        val original = snapshot(
+            source = source(category = category("remote", "Tech")),
+            category = category("remote", "Tech"),
+        )
+
+        val result = original.applyCloudFeedAndCategoryChanges(
+            listOf(
+                change(CloudFeedOrCategoryEntity.CATEGORY, "local", CloudFeedOrCategoryField.EXISTS, "1"),
+                change(CloudFeedOrCategoryEntity.CATEGORY, "local", CloudFeedOrCategoryField.TITLE, "Tech"),
+                change(CloudFeedOrCategoryEntity.SOURCE, "source", CloudFeedOrCategoryField.CATEGORY, "local"),
+            ),
+        )
+
+        assertEquals(listOf(category("remote", "Tech")), result.categories)
+        assertEquals(category("remote", "Tech"), result.sources.single().category)
+    }
+
+    @Test
+    fun `duplicate names already in the snapshot keep one category deterministically`() {
+        val original = CloudFeedAndCategorySnapshot(
+            sources = listOf(source(category = category("b", "Tech"))),
+            categories = listOf(category("b", "Tech"), category("a", "Tech")),
+        )
+
+        val result = original.applyCloudFeedAndCategoryChanges(emptyList())
+
+        assertEquals(listOf(category("a", "Tech")), result.categories)
+        assertEquals(category("a", "Tech"), result.sources.single().category)
     }
 
     private fun change(

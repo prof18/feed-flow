@@ -477,6 +477,7 @@
     <string name="reader_mode_archive_button">Open in archive.is</string>
     <string name="reader_mode_browser_button_content_description">Open in browser</string>
     <string name="reader_mode_comments_button_content_description">Open comments</string>
+    <string name="reader_mode_unnamed_image_link">Open image</string>
     <string name="article_bookmarked_content_description">Bookmarked</string>
     <string name="article_unread_state">Unread</string>
     <string name="article_unread_bookmarked_state">Unread, bookmarked</string>

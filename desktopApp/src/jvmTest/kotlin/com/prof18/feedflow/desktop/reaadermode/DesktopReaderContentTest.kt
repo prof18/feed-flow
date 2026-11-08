@@ -147,6 +147,29 @@ class DesktopReaderContentTest {
     }
 
     @Test
+    fun `an image without alt text that fails to load links with a label instead of its URL`() {
+        val imageUrl = "file:///feedflow-missing-image.avif"
+        val state = success()
+        showBody(state.copy(readerModeData = state.readerModeData.copy(content = "$BODY_TEXT\n\n![]($imageUrl)")))
+        rule.waitUntil(timeoutMillis = 5_000) {
+            rule.onAllNodesWithText(EnFeedFlowStrings.readerModeUnnamedImageLink, substring = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+
+        rule.onAllNodesWithText(imageUrl, substring = true).assertCountEquals(0)
+    }
+
+    @Test
+    fun `only images without alt text get the default label`() {
+        val markdown = "![](a.avif) ![ ](b.avif) ![Kept](c.avif) [](d.html)"
+
+        assertEquals(
+            "![Open image](a.avif) ![Open image](b.avif) ![Kept](c.avif) [](d.html)",
+            markdown.withDefaultImageAlt("Open image"),
+        )
+    }
+
+    @Test
     fun `right-to-left article lays out from the right edge in a left-to-right app`() {
         val state = success()
         showBody(

@@ -284,9 +284,11 @@ private fun ReaderArticleBody(
     onUrlClick: (String) -> Unit,
     onHoveredLinkChange: (String?) -> Unit,
 ) {
-    val markdown = remember(data) {
+    val unnamedImageLabel = LocalFeedFlowStrings.current.readerModeUnnamedImageLink
+    val markdown = remember(data, unnamedImageLabel) {
         buildReaderModeMarkdown(content = data.content, title = null, imageUrl = data.imageUrl, siteName = null)
             .withoutInlineSvg()
+            .withDefaultImageAlt(unnamedImageLabel)
     }
     val leadImageUrl = remember(markdown) { leadingImageUrl(markdown) }
     var ready by remember(data.id, data.content) { mutableStateOf(leadImageUrl == null) }
@@ -342,6 +344,16 @@ private fun DelayedReaderSpinner(articleKey: String?) {
 internal fun String.withoutInlineSvg(): String = replace(inlineSvgRegex, "")
 
 private val inlineSvgRegex = Regex("<svg\\b.*?</svg\\s*>", setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL))
+
+// An image that fails to load (for example AVIF, which Skia can't decode) becomes a link labelled with its alt text,
+// or with its full URL when the alt is empty. A short label reads better than the URL.
+internal fun String.withDefaultImageAlt(alt: String): String {
+    val escapedAlt = alt.replace(markdownBracketRegex, "\\\\$0")
+    return replace(emptyAltImageRegex) { "![$escapedAlt](" }
+}
+
+private val emptyAltImageRegex = Regex("""!\[\s*]\(""")
+private val markdownBracketRegex = Regex("""[\[\]\\]""")
 
 private fun leadingImageUrl(markdown: String): String? {
     val window = markdown.take(LEAD_IMAGE_SCAN_WINDOW)

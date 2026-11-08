@@ -1,7 +1,7 @@
 import BackgroundTasks
 import Foundation
 
-// iOS gets two background tasks. The app refresh runs several times a day but has about 30
+// iOS gets two background tasks. The app refresh runs several times a day but has only 25 to 30
 // seconds, so it only fetches the local feeds that are due, within a budget, and then posts
 // notifications. The processing task runs rarely, usually overnight on the charger, with minutes
 // to spare: it does the full fetch, account and cloud backup sync included.
@@ -12,8 +12,10 @@ enum BackgroundRefreshScheduler {
 
     static let minimumRefreshInterval: TimeInterval = 3_600
     static let minimumFullSyncInterval: TimeInterval = 2 * 3_600
-    // Leaves about a third of the app refresh time for the widget reload and the notifications.
-    static let refreshTimeBudgetMillis: Int64 = 20_000
+    // Leaves about 10 seconds for the notifications, whose thumbnails can take up to 5 seconds
+    // (ArticleNotificationPolicy.IMAGE_BATCH_BUDGET_MS), and the widget reload. With 20 seconds,
+    // iOS expired the refresh while it was still posting notifications.
+    static let refreshTimeBudgetMillis: Int64 = 15_000
 
     static func makeRefreshRequest(now: Date = .now) -> BGAppRefreshTaskRequest {
         let request = BGAppRefreshTaskRequest(identifier: refreshTaskIdentifier)

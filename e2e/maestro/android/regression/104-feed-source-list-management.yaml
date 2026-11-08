@@ -27,6 +27,14 @@ appId: com.prof18.feedflow.debug
     id: feed_source_list_category_e2e_category_technology
 - assertVisible:
     id: feed_source_list_row_e2e_feed_android_weekly
+- tapOn:
+    id: feed_source_list_row_e2e_feed_android_weekly
+- assertVisible: "Feed settings"
+- assertVisible:
+    id: edit_feed_name
+- back
+- assertVisible:
+    id: feed_source_list_row_e2e_feed_android_weekly
 - longPressOn:
     id: feed_source_list_row_e2e_feed_android_weekly
 - tapOn:

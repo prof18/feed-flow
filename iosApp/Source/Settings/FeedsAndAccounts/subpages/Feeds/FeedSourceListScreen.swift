@@ -52,7 +52,6 @@ struct FeedSourceListScreen: View {
                 vmStoreOwner.instance.verifyWebsite(source: source)
             }
         )
-        .id(appState.redrawAfterFeedSourceEdit)
         .loadingDialog(isLoading: showFeedOperationDialog, message: feedOperationLoadingMessage)
         .task {
             for await state in vmStoreOwner.instance.feedOperationState {

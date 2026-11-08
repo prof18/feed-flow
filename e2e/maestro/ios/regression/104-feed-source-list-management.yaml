@@ -18,6 +18,12 @@ appId: com.prof18.feedflow.dev
 - assertVisible:
     id: feed_source_list_screen
 - tapOn:
+    id: feed_source_list_category_e2e_category_news
+- assertVisible:
+    id: feed_source_list_warning_e2e_feed_fetch_failed
+- tapOn:
+    id: feed_source_list_category_e2e_category_news
+- tapOn:
     id: feed_source_list_category_e2e_category_technology
 - assertVisible: "Android Central RSS Feed"
 - tapOn:
@@ -25,6 +31,17 @@ appId: com.prof18.feedflow.dev
 - assertNotVisible: "Android Central RSS Feed"
 - tapOn:
     id: feed_source_list_category_e2e_category_technology
+- assertVisible: "Android Central RSS Feed"
+- tapOn: "Android Central RSS Feed"
+- assertVisible: "Feed settings"
+- assertVisible:
+    id: edit_feed_save
+- tapOn:
+    id: BackButton
+- assertVisible: "Android Central RSS Feed"
+- tapOn: "Android Central RSS Feed"
+- tapOn:
+    id: edit_feed_save
 - assertVisible: "Android Central RSS Feed"
 - longPressOn:
     text: "Android Central RSS Feed"
@@ -33,7 +50,3 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     text: "Delete feed"
 - assertNotVisible: "Android Central RSS Feed"
-- tapOn:
-    id: feed_source_list_category_e2e_category_news
-- assertVisible:
-    id: feed_source_list_warning_e2e_feed_fetch_failed

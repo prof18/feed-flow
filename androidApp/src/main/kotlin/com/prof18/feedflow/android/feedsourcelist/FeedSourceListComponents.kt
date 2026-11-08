@@ -471,19 +471,19 @@ private fun FeedSourceItem(
         } else {
             Modifier.weight(1f)
         }
+        val rowInteraction = if (isEditEnabled || isEditMode) {
+            Modifier
+        } else {
+            Modifier.singleAndLongClickModifier(
+                onClick = { onEditFeedClick(feedSource) },
+                onLongClick = { showFeedMenu = true },
+            )
+        }
 
         Row(
             modifier = rowModifier
                 .testTag(FeedSourceListE2eIds.row(feedSource.id))
-                .singleAndLongClickModifier(
-                    onLongClick = if (isEditEnabled || isEditMode) {
-                        null
-                    } else {
-                        {
-                            showFeedMenu = true
-                        }
-                    },
-                )
+                .then(rowInteraction)
                 .padding(start = paddingStart, end = 24.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,

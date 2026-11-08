@@ -34,12 +34,12 @@
     <string name="settings_help_title">Trợ giúp</string>
     <string name="account_connect_button">Kết nối</string>
     <string name="account_disconnect_button">Hủy kết nối</string>
-    <string name="backup_button">Sao lưu</string>
+    <string name="backup_button">Sao lưu ngay</string>
     <string name="dropbox_sync_error">Đã xảy ra lỗi khi kết nối với Dropbox. Vui lòng thử lại</string>
     <string name="dropbox_sync_success">Kết nối tài khoản Dropbox thành công</string>
     <string name="last_upload">Tải lên lần cuối: %s</string>
     <string name="error_account_sync">Đã xảy ra lỗi khi đồng bộ dữ liệu trong tài khoản của bạn - error code: %s :(</string>
-    <string name="no_dropbox_sync_yet">Dữ liệu chưa được đồng bộ hóa với Dropbox. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
+    <string name="no_dropbox_sync_yet">Chưa được sao lưu bằng Dropbox. Nhấn Sao lưu ngay để bắt đầu.</string>
     <string name="settings_hide_duplicated_title_from_desc">Ẩn tựa đề trùng phụ đề</string>
     <string name="reader_mode_font_size">Cỡ chữ</string>
     <string name="author_label">Lập trình bằng ❤️ bởi</string>
@@ -65,7 +65,7 @@
     <string name="accounts_description">Kết nối tài khoản để đồng bộ hóa các nguồn tin, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị của bạn.\n\nTính năng này đang trong giai đoạn thử nghiệm, có thể xảy ra sự cố (ví dụ: bài viết đã đọc có thể không được đồng bộ hóa hoàn toàn). Trong tương lai sẽ hỗ trợ nhiều dịch vụ hơn.\n\nHiện chỉ hỗ trợ một tài khoản.</string>
     <string name="dropbox_sync_desktop_description">Nhấn vào nút Kết nối, bạn sẽ được chuyển hướng đến trang web Dropbox. Sau khi kết nối tài khoản, hãy sao chép và nhập mã xác minh vào đây trong ứng dụng</string>
     <string name="feed_sync_in_progress">Đang làm mới. Ứng dụng sẽ tự đóng khi xong.</string>
-    <string name="no_icloud_sync_yet">Dữ liệu chưa được đồng bộ hóa với iCloud. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
+    <string name="no_icloud_sync_yet">Chưa được sao lưu bằng iCloud. Nhấn Sao lưu ngay để bắt đầu.</string>
     <string name="settings_toggle_show_read_articles">Bao gồm các bài viết đã đọc</string>
     <string name="about_button">Giới thiệu</string>
     <string name="dropbox_sync_common_description">Kết nối tài khoản Dropbox của bạn để đồng bộ các nguồn tin, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn.</string>
@@ -162,7 +162,7 @@
     <string name="menu_copy_link">Sao chép liên kết</string>
     <string name="settings_sync_period_never">Không dùng</string>
     <string name="settings_sync_period_six_hours">Mỗi 6 giờ</string>
-    <string name="widget_check_feed_sources">Hãy đảm bảo đã thêm nguồn tin</string>
+    <string name="widget_check_feed_sources">Thêm một nguồn tin để xem các bài viết từ nó.</string>
     <string name="widget_latest_items">Gần Đây</string>
     <string name="settings_sync_period_one_hour">Mỗi giờ</string>
     <string name="settings_sync_period_two_hours">Mỗi 2 giờ</string>
@@ -225,7 +225,7 @@
     <string name="reader_mode_comments_button_content_description">Mở bình luận</string>
     <string name="settings_save_reader_mode_content">Lưu nội dung bài viết khi mở</string>
     <string name="settings_prefetch_article_content">Tải trước nội dung bài viết</string>
-    <string name="settings_prefetch_article_content_warning">Bật tùy chọn này sẽ làm tăng thời gian đồng bộ hóa và mức sử dụng dữ liệu, vì toàn bộ nội dung bài viết sẽ được tải xuống trong quá trình cập nhật nguồn tin. Nếu bạn có nhiều bài viết, điều này cũng có thể ảnh hưởng đến hiệu suất. Chỉ bật tùy chọn này nếu bạn cần truy cập offline nội dung bài viết.</string>
+    <string name="settings_prefetch_article_content_warning">Bật tùy chọn này sẽ khiến làm mới nguồn tin lâu hơn và tốn dữ liệu di động, vì toàn bộ nội dung bài viết sẽ được FeedFlow tải xuống trong quá trình cập nhật nguồn tin. Nếu bạn có nhiều bài viết, điều này cũng có thể ảnh hưởng đến hiệu suất. Chỉ bật tùy chọn này nếu bạn cần truy cập offline nội dung bài viết.</string>
     <string name="reader_mode_archive_button">Mở trong archive.is</string>
     <string name="previous_article">Bài viết trước</string>
     <string name="next_article">Bài viết tiếp</string>
@@ -236,9 +236,9 @@
     <string name="time_format_hours_24">24 giờ</string>
     <string name="time_format_hours_12">12 giờ</string>
     <string name="settings_danger_title">Nguy hiểm</string>
-    <string name="settings_clear_downloaded_articles">Xóa những bài viết đã tải</string>
-    <string name="settings_clear_downloaded_articles_dialog_title">Xóa những bài viết đã tải xuống?</string>
-    <string name="settings_clear_downloaded_articles_dialog_message">Thao tác này sẽ xóa toàn bộ nội dung bài viết đã tải xuống để đọc offline. Không thể hoàn tác.</string>
+    <string name="settings_clear_downloaded_articles">Xóa những bản sao offline</string>
+    <string name="settings_clear_downloaded_articles_dialog_title">Xóa những bản sao offline?</string>
+    <string name="settings_clear_downloaded_articles_dialog_message">Thao tác này sẽ xóa toàn bộ bản sao offline của các bài viết đầy đủ. Không thể hoàn tác.</string>
     <string name="settings_clear_image_cache">Xóa bộ nhớ đệm hình ảnh</string>
     <string name="settings_clear_image_cache_dialog_title">Xóa bộ nhớ đệm hình ảnh?</string>
     <string name="settings_clear_image_cache_dialog_message">Thao tác này sẽ xóa tất cả hình ảnh đã lưu trong bộ nhớ đệm. Hình ảnh sẽ được tải xuống lại khi bạn xem lại các bài viết.</string>
@@ -254,13 +254,13 @@
     <string name="decrease_font_size_button_content_description">Giảm cỡ phông</string>
     <string name="scroll_to_top_button_content_description">Cuộn lên trên</string>
     <string name="dropbox_auth_code_expired">Mã xác thực không còn hiệu lực. Vui lòng thử lại.</string>
-    <string name="trigger_feed_sync">Đồng bộ những thay đổi</string>
+    <string name="trigger_feed_sync">Sao lưu ngay</string>
     <string name="menu_mark_all_above_as_read">Đã đọc tất cả bài viết mới hơn</string>
     <string name="menu_mark_all_below_as_read">Đã đọc tất cả bài viết cũ hơn</string>
     <string name="google_drive_sync_common_description">Kết nối tài khoản Google Drive của bạn để đồng bộ các nguồn tin đăng ký, danh mục, bài viết đã đọc và đánh dấu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ tệp nào của bạn.</string>
     <string name="google_drive_sync_error">Đã xảy ra lỗi khi kết nối với Google Drive. Vui lòng thử lại</string>
     <string name="google_drive_sync_success">Tài khoản Google Drive của bạn đã được kết nối thành công</string>
-    <string name="no_google_drive_sync_yet">Dữ liệu chưa được đồng bộ hóa với Google Drive. Nhấn vào nút sao lưu để bắt đầu đồng bộ hóa</string>
+    <string name="no_google_drive_sync_yet">Chưa được sao lưu bằng Google Drive. Nhấn Sao lưu ngay để bắt đầu.</string>
     <string name="google_drive_connect_button">Kết nối Google Drive</string>
     <string name="google_drive_desktop_sync_description">Nhấn vào nút bên dưới để kết nối tài khoản Google Drive của bạn. Một cửa sổ trình duyệt sẽ mở ra để xác thực. Sau khi hoàn tất đăng nhập, bạn có thể quay lại ứng dụng này.</string>
     <string name="change_category">Đổi danh mục</string>
@@ -327,11 +327,11 @@
     <string name="settings_notification_mode_category">Theo danh mục</string>
     <string name="settings_notification_mode_grouped">Gộp chung lại</string>
     <string name="settings_theme_oled">Đen</string>
-    <string name="open_feed_website_button">Mở trang web nguồn tin</string>
+    <string name="open_feed_website_button">Mở trang web</string>
     <string name="settings_hide_read_items">Ẩn các bài viết đánh dấu đã đọc</string>
     <string name="exit_menu">Thoát</string>
     <string name="browser_launch_error">Không thể mở liên kết. Vui lòng kiểm tra cài đặt trình duyệt của bạn.</string>
-    <string name="about_the_app">FeedFlow là trình đọc RSS tối giản với giao diện gọn gàng, theo trình tự thời gian — không thuật toán, không rườm rà. Mở bài viết trong trình duyệt yêu thích của bạn hoặc đọc chúng mà không bị phân tâm với Chế độ Đọc. Tải trước và lưu vào bộ nhớ đệm toàn bộ bài viết để đọc ngoại tuyến mọi lúc mọi nơi.\nĐồng bộ hóa nguồn tin, trạng thái đọc và dấu trang của bạn trên Android, iOS, macOS, Windows và Linux bằng iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin hoặc BazQux. Sắp xếp nguồn tin theo danh mục, chặn các từ khóa gây nhiễu và nhập hoặc xuất mọi thứ với OPML.</string>
+    <string name="about_the_app">FeedFlow là trình đọc RSS tối giản với giao diện gọn gàng, theo trình tự thời gian — không thuật toán, không rườm rà. Mở bài viết trong trình duyệt yêu thích của bạn hoặc đọc chúng mà không bị phân tâm với chế độ đọc. Lưu toàn bộ bài viết để đọc ngoại tuyến mọi lúc mọi nơi.\nĐồng bộ hóa nguồn tin, trạng thái đọc và dấu trang của bạn trên Android, iOS, macOS, Windows và Linux bằng iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin hoặc BazQux. Sắp xếp nguồn tin theo danh mục, chặn các từ khóa gây nhiễu và nhập hoặc xuất mọi thứ với OPML.</string>
     <string name="choose_another_file_button">Chọn một tệp khác</string>
     <string name="invalid_opml_import_title">Không thể nhập tệp này</string>
     <string name="invalid_opml_import_description">Tệp này có vẻ không phải là tệp OPML hợp lệ. Hãy thử xuất nguồn tin của bạn dưới dạng OPML từ ứng dụng RSS và nhập lại.</string>
@@ -412,9 +412,9 @@
     <string name="mark_all_above_as_read_confirmation_message">Tất cả bài viết phía trên bài viết này sẽ được đánh dấu là đã đọc.</string>
     <string name="mark_all_below_as_read_confirmation_message">Tất cả bài viết phía dưới bài viết này sẽ được đánh dấu là đã đọc.</string>
     <string name="mark_all_below_as_read_confirmation_title">Đánh tất cả dưới là đã đọc?</string>
-    <string name="server_account_subscriptions_warning">Tài khoản này sử dụng các mục đăng ký được lưu trữ trên máy chủ của nó.</string>
-    <string name="server_account_replace_local_title">Thay thế đăng ký trên thiết bị?</string>
-    <string name="server_account_replace_local_message">Việc kết nối sẽ thay thế các nguồn tin hiện được lưu trữ trên thiết bị này bằng các đăng ký từ máy chủ. Ngắt kết nối sau sẽ không khôi phục nguồn tin trên thiết bị. Trước tiên hãy xuất chúng sang OPML nếu bạn muốn giữ một bản sao.</string>
+    <string name="server_account_subscriptions_warning">Tài khoản này sử dụng các nguồn tin được lưu trữ trên máy chủ của nó.</string>
+    <string name="server_account_replace_local_title">Thay thế nguồn tin trên thiết bị?</string>
+    <string name="server_account_replace_local_message">Việc kết nối sẽ thay thế các nguồn tin hiện được lưu trữ trên thiết bị này bằng các nguồn tin từ máy chủ. Ngắt kết nối sau sẽ không khôi phục nguồn tin trên thiết bị. Trước tiên hãy xuất chúng sang OPML nếu bạn muốn giữ một bản sao.</string>
     <string name="server_account_replace_and_connect_button">Thay thế và kết nối</string>
     <string name="support_paywall_title">Giúp FeedFlow tiếp tục phát triển 💙</string>
     <string name="support_purchase_thank_you_title">Bạn thật tuyệt vời! 🎉</string>
@@ -433,7 +433,7 @@
     <string name="widget_content_section_title">Nội dung</string>
     <string name="widget_content_choose">Chọn nội dung</string>
     <string name="widget_content_timeline_description">Bài viết chưa đọc từ tất cả các nguồn tin</string>
-    <string name="widget_content_bookmarks_description">Những bài viết đã lưu của bạn</string>
+    <string name="widget_content_bookmarks_description">Những bài viết bạn đã lưu</string>
     <string name="widget_content_no_categories">Chưa có danh mục nào. Hãy tạo một danh mục trong FeedFlow để sử dụng ở đây.</string>
     <string name="widget_content_category">Danh mục</string>
     <string name="widget_content_feed_source">Nguồn tin</string>
@@ -488,8 +488,8 @@
     <string name="desktop_accounts_manage_button">Quản lý tài khoản</string>
     <string name="desktop_accounts_back_to_services">Quay lại dịch vụ</string>
     <string name="desktop_accounts_choose_service">Chọn một dịch vụ để xem chi tiết kết nối của nó.</string>
-    <string name="desktop_accounts_backup_description">Sao lưu các gói đăng ký, bài viết đã đọc và đã lưu.</string>
-    <string name="desktop_accounts_reader_description">Đồng bộ hóa đăng ký và trạng thái bài viết với tài khoản trình đọc của bạn.</string>
+    <string name="desktop_accounts_backup_description">Sao lưu các nguồn tin, bài viết đã đọc và đã lưu.</string>
+    <string name="desktop_accounts_reader_description">Đồng bộ nguồn tin và trạng thái bài viết với tài khoản trình đọc của bạn.</string>
     <string name="desktop_accounts_dropbox_title">Dropbox</string>
     <string name="desktop_accounts_google_drive_title">Google Drive</string>
     <string name="desktop_accounts_icloud_title">iCloud</string>
@@ -550,7 +550,7 @@
     <string name="feed_verification_save_failed">Đã lấy nguồn tin nhưng không thể lưu.</string>
     <string name="feed_verification_browser_failed">Đã dừng xác minh website. Hủy bỏ và thử lại.</string>
     <string name="feed_clear_verification">Xóa xác minh website</string>
-    <string name="reader_content_save_failed">Đã mở bài viết, nhưng không thể lưu ngoại tuyến.</string>
+    <string name="reader_content_save_failed">Đã mở bài viết, nhưng không thể lưu bản sao offline.</string>
     <string name="feed_verification_explanation_title">Website này cần kiểm tra nhanh</string>
     <string name="feed_verification_explanation_body">Website này sử dụng thêm một bước kiểm tra bảo mật trước khi chia sẻ nội dung. Hãy mở trang web và hoàn tất mọi bước xác minh. FeedFlow sẽ tự động tiếp tục khi hoàn tất.</string>
     <string name="reader_verification_content_options">Bạn có thể chọn nội dung nguồn tin hoặc toàn bộ bài viết trong Cài đặt &gt; Thói quen đọc, hoặc bằng cách chỉnh sửa nguồn tin này.</string>
@@ -590,4 +590,10 @@
     <string name="account_disconnect_backup_message">FeedFlow sẽ ngừng sao lưu vào tài khoản này. Các nguồn tin và bài viết của bạn vẫn được lưu trữ trên thiết bị này và bản sao lưu hiện tại sẽ không bị xóa.</string>
     <string name="desktop_settings_search_placeholder">Tìm kiếm cài đặt</string>
     <string name="desktop_settings_search_no_results">Không có cài đặt trùng khớp</string>
+    <string name="settings_desktop_refresh_while_open">Làm mới khi mở</string>
+    <string name="settings_desktop_refresh_while_open_description">Lấy các bài viết mới mà không thay đổi vị trí của bạn trong danh sách.</string>
+    <string name="new_category_button">Danh mục mới</string>
+    <string name="article_unread_state">Chưa đọc</string>
+    <string name="article_unread_bookmarked_state">Chưa đọc, đã lưu</string>
+    <string name="unread_count_accessibility">%s chưa đọc</string>
 </resources>

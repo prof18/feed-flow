@@ -1,0 +1,39 @@
+appId: com.prof18.feedflow.dev
+---
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=reader-mode
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- scrollUntilVisible:
+    element:
+      id: article_row_e2e_article_reader_long
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: article_row_e2e_article_reader_long
+- extendedWaitUntil:
+    visible: "E2E long reader head anchor."
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      text: "E2E long reader tail link"
+    direction: DOWN
+    speed: 80
+    timeout: 30000
+- assertNotVisible: "E2E long reader head anchor."
+# The in-app browser is pushed over the reader. Coming back makes the reader appear again,
+# which must not reload the already loaded article and send it back to the top.
+- tapOn: "E2E long reader tail link"
+- extendedWaitUntil:
+    visible: "^(Done|Close)$"
+    timeout: 10000
+- tapOn: "^(Done|Close)$"
+- waitForAnimationToEnd:
+    timeout: 5000
+- extendedWaitUntil:
+    visible: "E2E long reader tail link"
+    timeout: 10000
+- assertNotVisible: "E2E long reader head anchor."

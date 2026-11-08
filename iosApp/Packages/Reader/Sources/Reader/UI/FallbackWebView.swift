@@ -13,6 +13,7 @@ struct FallbackWebView: View {
 
     @StateObject private var content = WebContent()
     @State private var isPageLoading = true
+    @State private var loadedUrl: URL?
 
     var body: some View {
         ZStack {
@@ -31,6 +32,10 @@ struct FallbackWebView: View {
             content.detachHandlers()
         }
         .onAppearOrChange(url) { url in
+            // Coming back from a pushed screen must keep the page and its scroll position. A load
+            // that finished while hidden had its handlers detached, so that one loads again.
+            if url == loadedUrl, !isPageLoading { return }
+            loadedUrl = url
             isPageLoading = true
             setupContentReadyHandler()
             content.populate { content in

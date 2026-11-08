@@ -141,6 +141,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | REG-185 | `185-back-closes-drawer-and-filter.yaml` | `content-rich` | Android | System Back with the drawer open closes the drawer and keeps the app open; with the drawer open over a category filter the first Back closes only the drawer and the next returns to Timeline. Only the Timeline root lets Back leave the app. iOS has no system Back. |
 | REG-186 | `186-server-feed-url-and-urlless-share-guards.yaml` | `sync-linked-mock` + `feed-content` | Android, iOS | With FreshRSS linked, Feed settings hides the server-owned feed URL field; a URL-less article's context menu omits Share. |
 | REG-187 | `187-scene-snackbar.yaml` | `reader-mode` + `content-rich` | iOS | A queued error appears on the pushed reader, Text Settings, the nested Add Category sheet and the root. Swipe dismissal stays dismissed as sheets close. |
+| REG-188 | `188-ios-reader-link-scroll-retention.yaml` | `reader-mode` | iOS | Reader mode keeps its scroll position after a link opened in the in-app browser is closed. The browser is pushed over the reader, so the reader appears again on return; the web view must keep the document it already shows instead of loading it again, which would send the article back to the top. Android is not covered: the reload came from the iOS SwiftUI reader web view. |
 
 Run REG-172 explicitly on a tablet-sized Android device or an iPad simulator in landscape:
 

@@ -327,13 +327,13 @@
     <string name="google_drive_connect_button">Connetti Google Drive</string>
     <string name="google_drive_desktop_sync_description">Fai clic sul pulsante qui sotto per collegare il tuo account Google Drive. Si aprirà una finestra del browser per l\'autenticazione. Una volta completato l\'accesso, potrai tornare a questa app.</string>
     <string name="browser_launch_error">Impossibile aprire il link. Controlla le impostazioni del browser.</string>
-    <string name="open_feed_website_button">Apri sito del feed</string>
+    <string name="open_feed_website_button">Apri sito web</string>
     <string name="drawer_title_library">Libreria</string>
     <string name="add_feed_anyway_acknowledgement">Questo feed non è stato verificato. Il recupero verrà comunque tentato, e può essere rimosso successivamente se non funziona.</string>
     <string name="add_feed_anyway_button">Aggiungi comunque</string>
     <string name="choose_another_file_button">Scegli un altro file</string>
     <string name="invalid_opml_import_title">Impossibile importare questo file</string>
-    <string name="about_the_app">FeedFlow è un lettore RSS minimalista per una timeline pulita e cronologica, senza algoritmi, senza distrazioni. Apri gli articoli nel tuo browser preferito o leggili senza interruzioni con la Modalità lettura. Pre-scarica e salva in cache gli articoli completi per leggerli offline ovunque.\nSincronizza i tuoi feed, lo stato di lettura e i segnalibri su Android, iOS, macOS, Windows e Linux utilizzando iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin o BazQux. Organizza i feed in categorie, blocca le parole chiave rumorose e importa o esporta tutto tramite file OPML.</string>
+    <string name="about_the_app">FeedFlow è un lettore RSS minimalista per una timeline pulita e cronologica, senza algoritmi, senza distrazioni. Apri gli articoli nel tuo browser preferito o leggili senza interruzioni con la modalità lettura. Conserva gli articoli completi per leggerli offline ovunque.\nSincronizza i tuoi feed, lo stato di lettura e i segnalibri su Android, iOS, macOS, Windows e Linux utilizzando iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin o BazQux. Organizza i feed in categorie, blocca le parole chiave rumorose e importa o esporta tutto tramite file OPML.</string>
     <string name="settings_hide_unread_dot">Nascondi indicatore non letto</string>
     <string name="invalid_rss_url_with_retry_hint">Impossibile convalidare questo feed. Potrebbe non essere un feed RSS valido o il server è momentaneamente irraggiungibile.</string>
     <string name="invalid_opml_import_description">Questo non sembra un file OPML valido. Prova a esportare i tuoi feed in formato OPML dalla tua app RSS e a importarli di nuovo.</string>
@@ -544,4 +544,5 @@
     <string name="hide_youtube_shorts_edit_fallback">Impossibile nascondere gli Shorts di questo canale. Le altre modifiche sono state salvate.</string>
     <string name="database_save_error">Impossibile salvare le modifiche. Riprova tra un attimo - codice dell\'errore: %s</string>
     <string name="database_recovered_from_corruption">I tuoi dati locali erano corrotti, perciò FeedFlow si è avviato con un nuovo database. Una copia del vecchio database è stata conservata nella cartella dei dati di FeedFlow.</string>
+    <string name="database_startup_locked">FeedFlow non può aprire i suoi dati in quanto un altro programma li sta utilizzando. Chiudi le altre finestre di FeedFlow, poi apri FeedFlow di nuovo.</string>
 </resources>

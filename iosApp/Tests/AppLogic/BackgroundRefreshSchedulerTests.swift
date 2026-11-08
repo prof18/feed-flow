@@ -1,4 +1,5 @@
 import BackgroundTasks
+import FeedFlowKit
 import Foundation
 import XCTest
 
@@ -19,6 +20,15 @@ final class BackgroundRefreshSchedulerTests: XCTestCase {
         XCTAssertEqual(request.identifier, "com.prof18.feedflow.articlesync")
         XCTAssertEqual(request.earliestBeginDate, now.addingTimeInterval(2 * 3_600))
         XCTAssertTrue(request.requiresNetworkConnectivity)
+    }
+
+    func testFetchingAndThumbnailsLeaveTimeToPostNotificationsBeforeIOSExpiresTheRefresh() {
+        // iOS expired a real app refresh 25 seconds after launching it.
+        let observedExpiryMillis: Int64 = 25_000
+        let worstCaseBeforePosting = BackgroundRefreshScheduler.refreshTimeBudgetMillis +
+            ArticleNotificationPolicy.shared.IMAGE_BATCH_BUDGET_MS
+
+        XCTAssertLessThanOrEqual(worstCaseBeforePosting, observedExpiryMillis - 5_000)
     }
 
     func testEveryRegisteredTaskIdentifierIsPermittedInTheAppInfoPlist() throws {

@@ -1053,7 +1053,8 @@ class E2eSeedRunner internal constructor(
         """
 
         // Long enough to scroll: REG-165 scrolls to the tail anchor, backgrounds the app and
-        // asserts the reader did not jump back to the top.
+        // asserts the reader did not jump back to the top. REG-188 opens the tail link and
+        // asserts the same after coming back from the in-app browser.
         private const val READER_LONG_HTML = """
             <article>
               <h1>E2E Reader Mode Long Article Heading</h1>
@@ -1073,6 +1074,7 @@ class E2eSeedRunner internal constructor(
               <p>E2E long reader filler paragraph 13. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
               <p>E2E long reader filler paragraph 14. It exists only to make the seeded article tall enough that the reader has somewhere to scroll to, so a test can prove the scroll position survives.</p>
               <p>E2E long reader tail anchor.</p>
+              <p><a href="https://example.com/e2e-reader-link">E2E long reader tail link</a></p>
             </article>
         """
 

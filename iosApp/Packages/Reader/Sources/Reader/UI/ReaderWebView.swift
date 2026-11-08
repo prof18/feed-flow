@@ -21,6 +21,7 @@ struct ReaderWebView: View {
     @StateObject private var content = WebContent(transparent: true, allowsZooming: false)
     @State private var loadingContentId: String?
     @State private var paintedContentId: String?
+    @State private var loadedModel: Model?
 
     /// Derived from the current document rather than set from a load callback, so when the web view
     /// is handed the next article the placeholder covers the previous one in that same frame.
@@ -49,6 +50,11 @@ struct ReaderWebView: View {
         }
         .onAppearOrChange(article.map { Model(baseURL: $0.baseURL, html: $0.html, contentId: $0.contentId) }) { model in
             guard let model else { return }
+            // The reader appears again when a pushed screen (the in-app browser) is popped, while
+            // the web view still shows the document: loading it again sends the article back to the top.
+            // A load that finished while hidden had its handlers detached, so that one loads again.
+            if model == loadedModel, paintedContentId == model.contentId { return }
+            loadedModel = model
             loadingContentId = model.contentId
             content.populate { content in
                 content.load(html: model.html, baseURL: model.baseURL)

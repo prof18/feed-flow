@@ -585,4 +585,15 @@
     <string name="reader_mode_open_again_in_browser">Im Browser öffnen</string>
     <string name="reader_mode_font">Schriftart</string>
     <string name="hide_youtube_shorts_edit_fallback">Shorts konnten für diesen Kanal nicht ausgeblendet werden. Die anderen Änderungen wurden übernommen.</string>
+    <string name="account_disconnect_title">Konto trennen?</string>
+    <string name="account_disconnect_server_message">Feeds, Artikel, Lesezeichen und Lesestatus werden von diesem Gerät entfernt. Ihr Konto am Server wird nicht geändert, und eine neue Verbindung wird die Daten neu herunterladen. Feeds, die während der Verbindung ersetzt wurden, werden nicht wieder hergestellt.</string>
+    <string name="account_disconnect_backup_message">FeedFlow beendet das Backup zu diesem Konto. Ihre Feeds und Artikel bleiben auf diesem Gerät, und das bestehende Backup wird nicht gelöscht.</string>
+    <string name="settings_desktop_refresh_while_open">Aktualisieren, solange geöffnet</string>
+    <string name="settings_desktop_refresh_while_open_description">Prüft auf neue Artikel ohne ihren Platz in der Liste zu verschieben.</string>
+    <string name="new_category_button">Neue Kategorie</string>
+    <string name="desktop_settings_search_placeholder">Einstellungen durchsuchen</string>
+    <string name="desktop_settings_search_no_results">Keine entsprechenden Einstellungen</string>
+    <string name="article_unread_state">Ungelesen</string>
+    <string name="article_unread_bookmarked_state">Ungelesen, mit Lesezeichen</string>
+    <string name="unread_count_accessibility">%s ungelesen</string>
 </resources>

@@ -235,7 +235,7 @@ internal fun ReaderModeScreen(
                         fontSize = fontSize,
                         openInBrowser = { url ->
                             if (isValidUrl(url)) {
-                                browserManager.openUrlWithFavoriteBrowser(url, context)
+                                browserManager.openUrlWithFavoriteBrowser(url, context, preferAppHandler = false)
                             }
                         },
                         onShareClick = { url, title ->
@@ -308,7 +308,10 @@ internal fun ReaderModeScreen(
                             toolbarHeightPx = toolbarHeightPx,
                             contentPadding = contentPadding,
                             navigator = navigator,
-                            openInBrowser = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
+                            openInBrowser = { url ->
+                                browserManager.openUrlWithFavoriteBrowser(url, context, preferAppHandler = false)
+                            },
+                            openDownload = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
                         )
                     }
 
@@ -483,6 +486,7 @@ private fun ReaderFallbackContent(
     contentPadding: PaddingValues,
     navigator: WebViewNavigator,
     openInBrowser: (String) -> Unit,
+    openDownload: (String) -> Unit,
 ) {
     // The fallback WebView can't render files such as PDFs; it reports them as downloads instead.
     var externallyOpenedUrl by remember(url) { mutableStateOf<String?>(null) }
@@ -507,7 +511,7 @@ private fun ReaderFallbackContent(
             navigator = navigator,
             onDownloadRequested = { downloadUrl ->
                 externallyOpenedUrl = downloadUrl
-                openInBrowser(downloadUrl)
+                openDownload(downloadUrl)
             },
         )
     }

@@ -13,6 +13,7 @@ appId: com.prof18.feedflow.debug
     id: settings_reading_behavior
 - assertVisible: "In-app browser"
 - tapOn: "Browser"
+- assertNotVisible: "Calculator"
 - tapOn: "Chrome"
 - assertVisible: "Chrome"
 - back

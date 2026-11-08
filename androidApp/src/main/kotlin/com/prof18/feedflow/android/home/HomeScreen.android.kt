@@ -191,7 +191,9 @@ internal fun HomeScreen(
                     context = context,
                 )
             },
-            openInBrowser = { urlInfo -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context) },
+            openInBrowser = { urlInfo ->
+                browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context, preferAppHandler = false)
+            },
             updateBookmarkStatus = updateBookmarkStatus,
             updateReadStatus = { feedItemId, isRead -> homeViewModel.updateReadStatus(feedItemId, isRead) },
             markAllAboveAsRead = { feedItemId -> homeViewModel.markAllAboveAsRead(feedItemId) },

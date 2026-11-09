@@ -151,9 +151,10 @@ class DesktopReaderContentTest {
         val imageUrl = "file:///feedflow-missing-image.avif"
         val state = success()
         showBody(state.copy(readerModeData = state.readerModeData.copy(content = "$BODY_TEXT\n\n![]($imageUrl)")))
+        // While loading, Jewel's inline placeholder text is the raw `![Open image](url)`, holding both the label
+        // and the URL, so wait for the failed-image link to replace it.
         rule.waitUntil(timeoutMillis = 5_000) {
-            rule.onAllNodesWithText(EnFeedFlowStrings.readerModeUnnamedImageLink, substring = true)
-                .fetchSemanticsNodes().isNotEmpty()
+            hasText(EnFeedFlowStrings.readerModeUnnamedImageLink) && !hasText(imageUrl)
         }
 
         rule.onAllNodesWithText(imageUrl, substring = true).assertCountEquals(0)

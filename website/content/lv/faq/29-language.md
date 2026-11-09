@@ -1,5 +1,5 @@
 ---
-title: "How can I change the app language or help translate it?"
+title: "Kā varu nomainīt lietotnes valodu vai palīdzēt to tulkot?"
 weight: 290
 ---
 

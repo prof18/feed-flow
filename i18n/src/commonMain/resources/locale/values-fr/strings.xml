@@ -403,7 +403,7 @@
     <string name="article_open_mode_full_article_short">Lecteur (site internet)</string>
     <string name="article_open_mode_feed_short">Lecteur (flux)</string>
     <string name="hide_images_for_feed_description">Masquer les images pour ce flux</string>
-    <string name="new_articles_button">%s d\'articles nouveaux</string>
+    <string name="new_articles_button">%s nouveaux articles</string>
     <string name="expand_category_button_content_description">Développer %s</string>
     <string name="collapse_category_button_content_description">Réduire %s</string>
     <string name="reader_mode_no_content_title">Aucun contenu disponible</string>

@@ -1,19 +1,19 @@
 {
     "title": "FeedFlow — RSS lasītājs",
-    "google_play_short_description": "Minimālistisks RSS lasītājs ar bezsaisti un elastīgu sinhronizāciju.",
-    "app_store_subtitle": "Lasiet bezsaistē. Sinhronizējiet, kā jums ērtāk.",
-    "app_store_promotional_text": "Atvērtā pirmkoda programmatūra ar minimālisma piegaršu. Lasiet rakstus savā pārlūkā vai iebūvētājā lasītājā, iespēja iepriekš saglabāt rakstus kešatmiņā bezsaistes lasīšanai un sinhronizēt RSS ziņu plūsmas visās savās ierīcēs. Nav algoritmisku ziņu plūsmu.",
-    "app_store_keywords": "lasīšana,režīms,opml,atlasīt,emuārs,raksts,grāmatzīme,saturs,abonēt,tīmeklis,iCloud,laikskala,kategorija",
-    "microsoft_store_short_description": "FeedFlow — atvērtā pirmkoda RSS lasītājs jūsu datoram: ātra hronoloģiska laikskala ziņām un emuāriem. Trīs rūšu, paneļu, darbvirsmas saskarnes izkārtojums ar īsinājumtaustiņiem efektīvai lasīšanai. Iespēja atvērt rakstus pārlūkā vai izmantot iebūvēto lasītāju. Iepriekš saglabāt pilnu rakstu saturu kešatmiņā, lai tiem varētu piekļūt, kad nav interneta, bezsaistē. Sinhronizēt datus starp ierīcēm, izmantojot mākoņkrātuves vai pašizmitinātos pakalpojumus (FreshRSS, Feedbin).",
-    "microsoft_store_keywords": "RSS lasītājs, RSS ziņu plūsmas lasītājs, bezsaistes lasīšanas režīms, OPML ievietošana un izgūšana, ziņu lasītājs, ziņu plūsmu apkopotājs, FreshRSS un Feedbin sinhronizācija",
+    "google_play_short_description": "RSS lasītājs ar bezsaistes režīmu, ērtu lasīšanu un elastīgu sinhronizāciju.",
+    "app_store_subtitle": "Lasi offline. Sinhronizē brīvi",
+    "app_store_promotional_text": "Minimālistisks, atvērtā pirmkoda RSS lasītājs bez algoritmiem. Lasi rakstus pārlūkā vai ērtajā lasītājā, saglabā tos kešatmiņā un sinhronizē ziņu plūsmas visās ierīcēs.",
+    "app_store_keywords": "lasīšana,režīms,opml,atlasīt,emuārs,raksts,grāmatzīme,saturs,abonēt,RSS,iCloud,laikskala,kategorija",
+    "microsoft_store_short_description": "FeedFlow — atvērtā pirmkoda RSS lasītājs datoram: ātra, hronoloģiska laikskalu ziņu un emuāru plūsma. Trīs rūšu, paneļu, saskarnes izkārtojums ar īsinājumtaustiņiem ļauj lasīt efektīvi. Iespēja atvērt rakstus pārlūkā vai ērtajā lasītājā. Iepriekš saglabāt pilnu rakstu saturu kešatmiņā lasīšanai bezsaistē. Ievietot un izgūt ziņu plūsmas OPML formātā. Sinhronizēt datus starp ierīcēm, izmantojot Dropbox vai citas mākoņkrātuves, jeb pašizmitinātos pakalpojumus (FreshRSS, Miniflux, Feedbin, BazQux).",
+    "microsoft_store_keywords": "RSS lasītājs, RSS ziņu plūsmu lasītājs, bezsaistes lasīšanas režīms, OPML ievietošana un izgūšana, ziņu lasītājs, ziņu plūsmu apkopotājs, FreshRSS un Feedbin sinhronizācija",
     "microsoft_store_product_features": [
-        "Skaidra, hronoloģiska laikskala — bez algoritmiem, bez liekiem kaitinošiem elementiem",
-        "Pieejams lasīšanas režīms bez uzmanības novērsošiem elementiem ar regulējamu teksta lielumu",
+        "Pārskatāma, hronoloģiska laikskalu plūsma — bez algoritmiem un liekiem kaitinošiem elementiem",
+        "Lasīšanas režīms ļauj netraucēti koncentrēties uz tekstu un pielāgot tā lielumu",
         "Bezsaistes lasīšana — pilni rakstu teksti tiek iepriekš ielādēti un saglabāti kešatmiņā",
         "Trīs rūšu, paneļu, darbvirsmas saskarnes izkārtojums ar īsinājumtaustiņiem",
         "Iespēja sinhronizēt ar Dropbox, Google disku, FreshRSS, Miniflux, Feedbin vai BazQux",
         "Kārtojiet saturu, izmantojot kategorijas, grāmatzīmes un pilnteksta meklēšanu",
-        "Ievietot un izgūt ziņu plūsmas, izmantojot OPML",
+        "Ievietot un izgūt ziņu plūsmas OPML formātā",
         "Atvērtā pirmkoda programmatūra — bez reklāmām, bez izsekošanas un nav nepieciešams konts"
     ]
 }

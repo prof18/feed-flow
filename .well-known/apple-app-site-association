@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["Q7CUB3RNAK.com.prof18.feedflow", "Q7CUB3RNAK.com.prof18.feedflow.dev"],
+        "components": [
+          { "/": "/add", "comment": "Add-feed link" },
+          { "/": "/add/*", "comment": "Add-feed link with trailing slash" }
+        ]
+      }
+    ]
+  }
+}

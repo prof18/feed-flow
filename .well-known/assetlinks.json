@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.prof18.feedflow",
+      "sha256_cert_fingerprints": [
+        "E9:C6:C8:68:BD:D4:F3:89:EE:72:44:2F:24:68:E2:0B:A3:59:D3:67:E5:D7:84:E3:35:19:66:E9:5D:EF:2D:41",
+        "90:EF:EB:4F:04:23:6A:1D:D4:8B:83:0E:5B:53:0E:47:40:64:53:93:5A:16:B2:BD:C4:F1:11:A4:83:A8:14:7D"
+      ]
+    }
+  }
+]

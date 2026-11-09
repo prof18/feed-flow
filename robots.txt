@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /add/
 
 Sitemap: https://www.feedflow.dev/sitemap.xml

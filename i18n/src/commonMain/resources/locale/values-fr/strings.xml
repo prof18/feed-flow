@@ -596,4 +596,5 @@
     <string name="settings_desktop_refresh_while_open">Actualiser pendant l\'ouverture</string>
     <string name="settings_desktop_refresh_while_open_description">Vérifie les nouveaux articles sans déplacer votre position dans la liste.</string>
     <string name="new_category_button">Nouvelle catégorie</string>
+    <string name="reader_mode_unnamed_image_link">Ouvrir l\'image</string>
 </resources>

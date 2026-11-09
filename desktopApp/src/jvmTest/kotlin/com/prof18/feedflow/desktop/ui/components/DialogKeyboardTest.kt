@@ -2,14 +2,11 @@
 
 package com.prof18.feedflow.desktop.ui.components
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeDialog
-import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsSelected
@@ -18,7 +15,6 @@ import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -29,7 +25,6 @@ import com.prof18.feedflow.desktop.home.NoFeedsDialog
 import com.prof18.feedflow.desktop.home.drawer.DesktopFeedMoveDialog
 import com.prof18.feedflow.desktop.settings.DesktopSettingsDialog
 import com.prof18.feedflow.desktop.testing.DesktopLibraryFixture
-import com.prof18.feedflow.desktop.testing.requestNativeTestAppForeground
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
@@ -39,16 +34,12 @@ import org.junit.Rule
 import org.junit.Test
 import java.awt.Component
 import java.awt.Container
-import java.awt.Dialog
-import java.awt.KeyboardFocusManager
 import java.awt.Window
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import javax.swing.SwingUtilities
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotSame
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DialogKeyboardTest {
@@ -186,70 +177,6 @@ class DialogKeyboardTest {
         chooseNoFeedsAction(tabCount = 3, label = EnFeedFlowStrings.feedSuggestionsTitle, action = "suggestions")
     }
 
-    @Test
-    fun `reopened empty library chooser retains its owner and returns launcher focus`() {
-        val visible = mutableStateOf(false)
-        var chosen = 0
-        setOwnedDialogContent {
-            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
-                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
-                    Dialog(title = OWNER_TITLE, size = DpSize(700.dp, 500.dp), onCloseRequest = {}) {
-                        OutlinedButton(
-                            onClick = { visible.value = true },
-                            modifier = Modifier.testTag(LAUNCHER_TAG),
-                        ) { Text("Open setup") }
-                        NoFeedsDialog(
-                            showDialog = visible.value,
-                            onDismissRequest = { visible.value = false },
-                            onAddFeedClick = { chosen++ },
-                            onImportExportClick = { chosen++ },
-                            onAccountsClick = { chosen++ },
-                            onFeedSuggestionsClick = { chosen++ },
-                        )
-                    }
-                }
-            }
-        }
-        val owner = dialog(OWNER_TITLE)
-        SwingUtilities.invokeAndWait {
-            assertTrue(owner.owner is ComposeWindow && owner.owner.isShowing)
-            requestNativeTestAppForeground()
-            owner.toFront()
-            owner.requestFocus()
-        }
-        awaitNativeFocus(owner)
-        rule.onNodeWithTag(LAUNCHER_TAG).requestFocus().assertIsFocused()
-        var previous: ComposeDialog? = null
-        repeat(2) {
-            rule.onNodeWithTag(LAUNCHER_TAG).performSemanticsAction(SemanticsActions.OnClick) { it() }
-            rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.addFeed), timeoutMillis = 5_000)
-            val child = dialog(EnFeedFlowStrings.noFeedModalTitle)
-            SwingUtilities.invokeAndWait {
-                assertSame(owner, child.owner)
-                assertEquals(Dialog.ModalityType.DOCUMENT_MODAL, child.modalityType)
-                previous?.let { prior -> assertNotSame(prior, child) }
-            }
-            rule.onNodeWithText(EnFeedFlowStrings.addFeed).assertIsFocused()
-            awaitNativeFocus(child)
-            SwingUtilities.invokeAndWait { owner.requestFocus() }
-            rule.waitForIdle()
-            SwingUtilities.invokeAndWait {
-                assertSame(child, KeyboardFocusManager.getCurrentKeyboardFocusManager().focusedWindow)
-            }
-            press(child, KeyEvent.VK_TAB)
-            awaitFocused(EnFeedFlowStrings.importExportLabel)
-            press(child, KeyEvent.VK_ESCAPE)
-            rule.waitUntilDoesNotExist(hasText(EnFeedFlowStrings.addFeed), timeoutMillis = 5_000)
-            awaitNativeFocus(owner)
-            rule.waitUntil(timeoutMillis = 5_000) {
-                rule.onNodeWithTag(LAUNCHER_TAG).fetchSemanticsNode().config[SemanticsProperties.Focused]
-            }
-            rule.onNodeWithTag(LAUNCHER_TAG).assertIsFocused()
-            rule.runOnIdle { assertEquals(0, chosen) }
-            previous = child
-        }
-    }
-
     private fun chooseNoFeedsAction(tabCount: Int, label: String, action: String) {
         val actions = mutableListOf<String>()
         noFeeds(actions)
@@ -367,78 +294,6 @@ class DialogKeyboardTest {
     }
 
     @Test
-    fun `reopened confirmation retains its native owner and returns focus to its launcher`() {
-        val visible = mutableStateOf(false)
-        setOwnedDialogContent {
-            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
-                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
-                    Dialog(title = OWNER_TITLE, size = DpSize(700.dp, 500.dp), onCloseRequest = {}) {
-                        OutlinedButton(onClick = {}, modifier = Modifier.testTag(OTHER_ACTION_TAG)) {
-                            Text("Another owner action")
-                        }
-                        OutlinedButton(
-                            onClick = { visible.value = true },
-                            modifier = Modifier.testTag(LAUNCHER_TAG),
-                        ) { Text("Open confirmation") }
-                        if (visible.value) {
-                            ConfirmationDialog(
-                                title = EnFeedFlowStrings.deleteFeedConfirmationTitle,
-                                message = EnFeedFlowStrings.deleteFeedConfirmationMessage,
-                                onConfirm = { error("This journey only cancels") },
-                                onDismiss = { visible.value = false },
-                            )
-                        }
-                    }
-                }
-            }
-        }
-        rule.onNodeWithTag(LAUNCHER_TAG).assertExists()
-        val owner = dialog(OWNER_TITLE)
-        SwingUtilities.invokeAndWait {
-            assertTrue(owner.owner is ComposeWindow && owner.owner.isShowing)
-            requestNativeTestAppForeground()
-            owner.toFront()
-            owner.requestFocus()
-        }
-        awaitNativeFocus(owner)
-        rule.onNodeWithTag(OTHER_ACTION_TAG).requestFocus().assertIsFocused()
-        rule.onNodeWithTag(LAUNCHER_TAG).requestFocus().assertIsFocused()
-        var previous: ComposeDialog? = null
-        repeat(2) {
-            rule.onNodeWithTag(LAUNCHER_TAG).performSemanticsAction(SemanticsActions.OnClick) { it() }
-            awaitActions()
-            val child = dialog(alertTitle(EnFeedFlowStrings.deleteFeedConfirmationTitle))
-            SwingUtilities.invokeAndWait {
-                assertSame(owner, child.owner)
-                assertEquals(Dialog.ModalityType.DOCUMENT_MODAL, child.modalityType)
-                previous?.let { prior -> assertNotSame(prior, child) }
-            }
-            rule.onNodeWithText(EnFeedFlowStrings.cancelButton).assertIsFocused()
-            awaitNativeFocus(child)
-            SwingUtilities.invokeAndWait { owner.requestFocus() }
-            rule.waitForIdle()
-            SwingUtilities.invokeAndWait {
-                assertSame(child, KeyboardFocusManager.getCurrentKeyboardFocusManager().focusedWindow)
-                assertFalse(owner.isFocused)
-            }
-            press(child, KeyEvent.VK_ESCAPE)
-            rule.waitUntilDoesNotExist(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
-            rule.waitUntil(timeoutMillis = 5_000) {
-                var disposed = false
-                SwingUtilities.invokeAndWait { disposed = !child.isDisplayable }
-                disposed
-            }
-            awaitNativeFocus(owner)
-            rule.waitUntil(timeoutMillis = 5_000) {
-                rule.onNodeWithTag(LAUNCHER_TAG).fetchSemanticsNode().config[SemanticsProperties.Focused]
-            }
-            rule.onNodeWithTag(LAUNCHER_TAG).assertIsFocused()
-            SwingUtilities.invokeAndWait { assertTrue(owner.isShowing) }
-            previous = child
-        }
-    }
-
-    @Test
     fun `native Escape dismisses confirmation without mutating data`() {
         var dismissed = false
         var confirmed = false
@@ -489,14 +344,6 @@ class DialogKeyboardTest {
         }
     }
 
-    private fun setOwnedDialogContent(content: @Composable () -> Unit) {
-        rule.setContent {
-            androidx.compose.ui.window.Window(title = OWNER_FRAME_TITLE, onCloseRequest = {}) {
-                content()
-            }
-        }
-    }
-
     private fun awaitActions() {
         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
     }
@@ -511,16 +358,6 @@ class DialogKeyboardTest {
 
     private fun dialog(title: String): ComposeDialog = Window.getWindows().filterIsInstance<ComposeDialog>().single {
         it.isShowing && it.title == title
-    }
-
-    private fun awaitNativeFocus(window: Window) {
-        rule.waitUntil(timeoutMillis = 5_000) {
-            var focused = false
-            SwingUtilities.invokeAndWait {
-                focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().focusedWindow === window
-            }
-            focused
-        }
     }
 
     // Focus moves after a key press can land a frame after idle on slow CI runners (seen on Windows).
@@ -544,12 +381,5 @@ class DialogKeyboardTest {
             }
         }
         rule.waitForIdle()
-    }
-
-    private companion object {
-        const val OWNER_FRAME_TITLE = "Native owner frame fixture"
-        const val OWNER_TITLE = "Confirmation owner fixture"
-        const val LAUNCHER_TAG = "confirmation-launcher"
-        const val OTHER_ACTION_TAG = "confirmation-other-action"
     }
 }

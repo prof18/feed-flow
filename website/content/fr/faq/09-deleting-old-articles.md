@@ -1,6 +1,6 @@
 ---
-titre: "Comment supprimer les anciens articles ?"
-poids : 90
+title: "Comment supprimer les anciens articles ?"
+weight: 90
 ---
 
 - **Suppression automatique des anciens articles** (Paramètres → Synchronisation
